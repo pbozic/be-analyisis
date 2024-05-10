@@ -1,20 +1,24 @@
+require('dotenv').config();
 const express = require('express');
 const bcrypt = require('bcrypt');
-const {getResetRequest, createNewResetRequest
+
+const {
+  getResetRequest,
+  createNewResetRequest,
+  updateUserPassword,
+  updateUser,
+  getUser,
+  getUserByEmail,
+  getUserById,
+  updateUserTelephone,
+  getUsers,
+  createNewUser
 } = require("../DatabaseHandler/dbConnections");
-const {updateUserPassword} = require("../DatabaseHandler/dbConnections");
-const {updateUser} = require("../DatabaseHandler/dbConnections");
-const {sendEmail} = require("../lib/emailSender");
-const {jsonParse} = require("../lib/helpersLib");
-const {getUserById} = require("../DatabaseHandler/dbConnections");
-const {updateUserTelephone} = require("../DatabaseHandler/dbConnections");
-const {getUsers} = require("../DatabaseHandler/dbConnections");
-const {createNewUser} = require("../DatabaseHandler/dbConnections");
-const {validateUserInput} = require("../lib/helpersLib");
-const {getUser} = require("../DatabaseHandler/dbConnections");
+const { sendEmail } = require("../lib/emailSender");
+const { jsonParse, validateUserInput } = require("../lib/helpersLib");
 
 const router = express.Router();
-
+const BCRYPT_SALT_ROUNDS = process.env.BCRYPT_SALT_ROUNDS || 12;
 
 // router.get('/test', async function(req, res, next) {
 //
@@ -103,51 +107,43 @@ router.post('/create', async function (req, res, next) {
 
   let isInputValid = validateUserInput([email, userRole]);
   if (!isInputValid) {
-    res.status(400).json({error: 'Error, missing input data..'});
-  } else {
-    try {
-      let userExistsRes = await getUser(email);
-      let userExists = userExistsRes["rows"][0];
+    return res.status(400).json({error: 'Error, missing input data..'});
+  } 
+  try {
+    let userExistsRes = await getUserByEmail(email);
+    let userExists = userExistsRes["rows"][0];
 
-      let userExistCaretakerRes = await getCaretaker(userExists?.user_id);
-      let userExistCaretaker = userExistCaretakerRes["rows"][0];
+    let userExistCaretakerRes = await getCaretaker(userExists?.user_id);
+    let userExistCaretaker = userExistCaretakerRes["rows"][0];
 
-      console.log(email, userExistsRes, userExists)
-      if (userExists) {
-        return res.status(500).json({
-          error: 'Error, creating new user failed.. ' + 'user already exists!',
-          user: userExists,
-          caretaker: userExistCaretaker
-        });
+    console.log(email, userExistsRes, userExists)
+    if (userExists) {
+      return res.status(500).json({
+        error: 'Error, creating new user failed.. ' + 'user already exists!',
+        user: userExists,
+        caretaker: userExistCaretaker
+      });
+    } else {
+
+      let randomisePass = Math.random().toString(36).substr(2, 8);
+      let hash = await bcrypt.hash(randomisePass, BCRYPT_SALT_ROUNDS);
+      //console.log("PASSWORD HASHED", hash);
+      let response = await createNewUser(fullName, email, hash, telephone, userRole, external_id);
+
+      let dbResponse = response["rows"][0];
+      console.log(dbResponse);
+      let subject = userRole === "SHAREPOINT" ? "Portal on trade potniki (Dobrodošel nov uporabnik!)" : "Dobrodošel nov uporabnik!"
+
+      if (dbResponse) {
+        sendEmail(subject, `Pozdravljeni, ${user.username}\nVaše geslo za vpis v portal PLU: ${randomisePass}\nDo portala lahko dostopate na tej povezavi: https://klikni.si/ \nLepo pozdravljeni`, email);
+        res.status(200).json(dbResponse);
       } else {
-
-        let randomisePass = Math.random().toString(36).substr(2, 8);
-        bcrypt.hash(randomisePass, 3).then(async (hash) => {
-          //console.log("PASSWORD HASHED", hash);
-
-          let response = await createNewUser(fullName, email, hash, telephone, userRole, external_id);
-
-          let dbResponse = response["rows"][0];
-          console.log(dbResponse);
-          let subject = userRole === "SHAREPOINT" ? "Portal on trade potniki (Dobrodošel nov uporabnik!)" : "Dobrodošel nov uporabnik!"
-
-          if (dbResponse) {
-            sendEmail(subject, `Pozdravljeni, ${user.username}\nVaše geslo za vpis v portal PLU: ${randomisePass}\nDo portala lahko dostopate na tej povezavi: https://klikni.si/ \nLepo pozdravljeni`, email);
-            res.status(200).json(dbResponse);
-          } else {
-            res.status(500).json({error: 'Error, creating new user failed.. ' + response});
-          }
-
-        })
-
-
+        res.status(500).json({error: 'Error, creating new user failed.. ' + response});
       }
-
-    } catch (e) {
-      console.log(e)
-      res.status(500).json({error: 'Error, creating new user failed.. \n' + e});
     }
-
+  } catch (e) {
+    console.log(e)
+    res.status(500).json({error: 'Error, creating new user failed.. \n' + e});
   }
 });
 
@@ -352,12 +348,19 @@ router.post('/user/reset/password', async function (req, res, next) {
     res.status(400).json({error: 'Error, missing input data..'});
   } else {
     try {
-      let passResetRes = await createNewResetRequest(user_id);
-      let resetPasswordRequest = passResetRes["rows"][0];
-      console.log("FOR USER:", user);
+      let token = await prisma.reset_requests.findUnique({ user_id: user.id });
+      if (token) {
+        await prisma.reset_requests.delete(
+          {where: {user_id: user.id}}
+        );
+      }
+      let resetToken = crypto.randomBytes(32).toString("hex");
+      const token_hash = await bcrypt.hash(resetToken, Number(bcryptSalt));
+      
+      let passResetRes = await createNewResetRequest(user_id, token_hash);
 
       if (user) {
-        let resetLink = `https://klikni.si/reset/${resetPasswordRequest.reset_request_id}`
+        let resetLink = `https://klikni.si/reset/${passResetRes.token}`
         sendEmail("Pozdravljeni, geslo uspešno ponastavljeno", `Pozdravljeni, ${username}\nVaše novo geslo za vpis v Klikni portal lahko ponastavite na povezavi: ${resetLink}\n\n \nLepo pozdravljeni`, username);
 
         res.status(200).json(resetPasswordRequest);
@@ -374,18 +377,17 @@ router.post('/user/reset/password', async function (req, res, next) {
 router.post('/user/update/password', async function (req, res, next) {
   let postData = jsonParse(req.body.data);
 
-  let reset_request_id = postData['reset_request_id'];
+  let token = postData.token;
   let password = postData['password'];
 
-  let isInputValid = validateUserInput([password, reset_request_id]);
+  let isInputValid = validateUserInput([password, token]);
   if (!isInputValid) {
     res.status(400).json({error: 'Error, missing input data..'});
   } else {
     try {
-      console.log(password, reset_request_id);
+      console.log(password, token);
 
-      let passResetExists = await getResetRequest(reset_request_id);
-      let resetPasswordRequest = passResetExists["rows"][0];
+      let resetPasswordRequest = await getResetRequest(token);
 
       let user_id = resetPasswordRequest?.user_id;
 

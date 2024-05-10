@@ -35,97 +35,118 @@ const getUser = async (email) => {
 };
 
 
-const updateUser = async (user_id, full_name, email, tel) => {
-    const query = `UPDATE public.users
-                    SET full_name = $2, email = $3, tel = $4
-                    WHERE user_id = $1
-                    RETURNING *;`;
+const updateUser = async (user_id, user) => {
+    delete user.telephone;
+    delete user.email;
+    delete user.password;
+    delete user.addresses;
 
-    return await pool.query(query, [user_id, full_name, email, tel]);
+    return prisma.users.update({
+        where: {
+            user_id: user_id,
+        },
+        data: {
+           ...user
+        },
+    });
 };
 
-const updateEmail = async (user_id, full_name) => {
-    const query = `UPDATE public.users
-                    SET full_name = $2
-                    WHERE user_id = $1
-                    RETURNING *;`;
-
-    return await pool.query(query, [user_id, full_name]);
+const updateEmail = async (user_id, email) => {
+   return prisma.users.update({
+        where: {
+            user_id: user_id,
+        },
+        data: {
+            email
+        },
+    });
 };
 
 
 const updateUserPassword = async (user_id, password) => {
-    const query = `UPDATE public.users
-                    SET password = $2
-                    WHERE user_id = $1
-                    RETURNING *;`;
-
-    return await pool.query(query, [user_id, password]);
+  return prisma.users.update({
+        where: {
+            user_id: user_id,
+        },
+        data: {
+            password
+        },
+    });
 };
 
-const updateUserTelephone = async (user_id, tel) => {
-    const query = `UPDATE public.users
-                    SET tel = $2
-                    WHERE user_id = $1
-                    RETURNING *;`;
-
-    return await pool.query(query, [user_id, tel]);
+const updateUserTelephone = async (user_id, telephone) => {
+    return prisma.users.update({
+        where: {
+            user_id: user_id,
+        },
+        data: {
+            telephone
+        },
+    });
 };
 
 const updateUserType = async (user_id, user_role) => {
-    const query = `UPDATE public.users
-                    SET type = $2
-                    WHERE user_id = $1
-                    RETURNING *;`;
-
-    return await pool.query(query, [user_id, user_role]);
+    return prisma.users.update({
+        where: {
+            user_id: user_id,
+        },
+        data: {
+            user_role
+        },
+    });
 };
 
-const createNewUser = async (fullName, email, password, tel, user_role) => {
-    const query = `
-        INSERT INTO public.users(full_name, email, password, tel, user_role)
-        VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING *;`;
-
-    return await pool.query(query, [fullName, email, password, user_role || null, tel]);
+const createNewUser = async (first_name, last_name, email, password, telephone, user_role) => {
+    return prisma.users.create({
+        data: {
+            first_name,
+            last_name,
+            email,
+            password,
+            telephone,
+            user_role
+        },
+    });
 };
 
 /* RESET PASSWORD REQUEST */
 
 const createNewResetRequest = async (user_id) => {
-    const query = `
-        INSERT INTO public.reset_requests(user_id)
-        VALUES ($1)
-        RETURNING *;`;
-
-    return await pool.query(query, [user_id]);
+    return prisma.reset_requests.create({
+        data: {
+            user_id
+        },
+    });
 };
 
-const getResetRequest = async (reset_request_id) => {
-    const query = `SELECT * 
-                    FROM public.reset_requests
-                    WHERE reset_request_id = $1
-                    AND active = TRUE`;
-
-    return await pool.query(query, [reset_request_id]);
+const getResetRequest = async (token) => {
+    return prisma.reset_requests.findUnique({
+        where: {
+            token
+        },
+    });
 };
 
-const expireResetRequest = async (reset_request_id) => {
-    const query = `UPDATE public.reset_requests
-                    SET active = $2
-                    WHERE reset_request_id = $1
-                    RETURNING *;`;
-
-    return await pool.query(query, [reset_request_id, false]);
+const expireResetRequest = async (token) => {
+   return prisma.reset_requests.update({
+        where: {
+            token,
+        },
+        data: {
+            active: false
+        },
+    });
 };
 
 const getAllActiveResetRequestsOlderThan30Min = async () => {
-    const query = `SELECT *
-                 FROM public.reset_requests
-                 WHERE date_create < (CURRENT_TIMESTAMP - INTERVAL '30 minutes')
-                 AND active = TRUE`;
-
-    return await pool.query(query, []);
+    return prisma.reset_requests.findMany({
+        where: {
+            date_create: {
+                lt: new Date(new Date() - 30 * 60000)
+            },
+            active: true
+        },
+    });
 };
 
 
@@ -187,6 +208,7 @@ module.exports = {
     getUsers,
     getUser,
     getUserById,
+    getUserByEmail,
     updateUserTelephone,
     updateUserType,
     updateUser,
