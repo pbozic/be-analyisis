@@ -6,6 +6,7 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "@prisma/client": "^5.13.0",
     "bcrypt": "^5.0.1",
     "canvas": "^2.8.0",
     "cookie-parser": "~1.4.4",
@@ -34,5 +35,8 @@
   "description": "BE server to Klikni project",
   "main": "app.js",
   "author": "Tadej Hiti",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "prisma": "^5.13.0"
+  }
 }

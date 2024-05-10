@@ -12,26 +12,35 @@ const {getUsers} = require("../DatabaseHandler/dbConnections");
 const {createNewUser} = require("../DatabaseHandler/dbConnections");
 const {validateUserInput} = require("../lib/helpersLib");
 const {getUser} = require("../DatabaseHandler/dbConnections");
+
 const router = express.Router();
 
-/* GET all users*/
-router.post('/', async function (req, res, next) {
-  let postData = JSON.parse(req.headers["postdata"]);
-  try {
-    let response = await getUsers();
-    let users = response["rows"];
 
+// router.get('/test', async function(req, res, next) {
+//
+//   let user = await prisma.users.create({
+//     data: {
+//       telephone: '04030667777',
+//       password: 'blabla1',
+//       email: "testemail@emailss11ss.com",
+//       first_name: "Test Name",
+//       last_name: "Test Last name",
+//       user_role: "PERSONAL"
+//     }
+//   });
+//
+//   res.status(200).json(user);
+// });
+
+/* GET all users*/
+router.get('/', async function (req, res, next) {
+  try {
+    let users = await getUsers();
     if (users) {
-      for (let i = 0; i < users.length; i++) {
-        let userParsed = jsonParse(users[i])
-        delete userParsed['password'];
-        users[i] = userParsed;
-      }
-      //console.log("RESPONSE:", users);
 
       res.status(200).json(users);
     } else {
-      res.status(400).json({error: 'Error obtaining list of users..', response});
+      res.status(400).json({error: 'Error obtaining list of users..', users});
     }
   } catch (e) {
     res.status(400).json({error: 'Error obtaining list of users..', e});
@@ -303,7 +312,8 @@ router.post('/user/update/telephone', async function (req, res, next) {
 
 /* UPDATE user*/
 router.post('/user/update', async function (req, res, next) {
-  let postData = JSON.parse(req.headers["postdata"]);
+  let postData = JSON.parse(req.headers["postdata"]); //read user_id from req.user_id, while user object is from req.body.user
+
   let user = postData['user'];
   let user_id = user['user_id'];
   let full_name = user['full_name'];
@@ -373,7 +383,6 @@ router.post('/user/update/password', async function (req, res, next) {
   } else {
     try {
       console.log(password, reset_request_id);
-
 
       let passResetExists = await getResetRequest(reset_request_id);
       let resetPasswordRequest = passResetExists["rows"][0];

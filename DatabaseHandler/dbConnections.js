@@ -1,26 +1,30 @@
 const {pool} = require("../pool/pool");
+const prisma = require("../prisma/prisma");
 
 pool.on('connect', () => {
     console.log('successfully connected to the DB..');
 });
 
-/* USER queries */
+/* USER prisma queries */
 const getUsers = async () => {
-    const query = `SELECT * 
-                   FROM public.users
-                   ORDER BY full_name ASC`;
-
-    return await pool.query(query, []);
+    return prisma.users.findMany();
 };
 
 const getUserById = async (user_id) => {
-    const query = `SELECT * 
-                    FROM public.users
-                    WHERE user_id = $1`;
-
-    return await pool.query(query, [user_id]);
+    return prisma.users.findUnique({
+        where: {
+            user_id: user_id,
+        },
+    });
 };
 
+const getUserByEmail = async (email) => {
+    return prisma.users.findUnique({
+        where: {
+            email: email,
+        },
+    });
+};
 
 const getUser = async (email) => {
     const query = `SELECT * 
