@@ -6,7 +6,7 @@ const UserDao = require("../dao/User");
  * @description Returns a list of users.
  * @operationId getUsers
  * @response 200 - successful operation
- * @responseContent {array<User>} 200.application/json
+ * @responseContent {User[]} 200.application/json
  * @response 400 - Error occurred while obtaining the user list
  * @responseContent {object} 400.application/json The error object
  */
