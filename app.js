@@ -7,10 +7,11 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const swaggerUi = require("swagger-ui-express");
 const cors = require("cors");
-const specs = require("./swagger/swaggerConfig");
+
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 const fileUploadLib = require("express-fileupload");
+const openapi = require("openapi-comment-parser");
 
 const { authMiddleware } = require("./middleware/auth");
 let app = express();
@@ -40,15 +41,14 @@ app.use(fileUploadLib());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 //app.use(express.static(path.join(__dirname, 'build')))
-
+const spec = openapi();
+app.use(
+	"/v1/api-docs",
+	swaggerUi.serve,
+	swaggerUi.setup(spec, { explorer: true }),
+);
 app.use(REST_API_ENDPOINT + "/", indexRouter);
 app.use(REST_API_ENDPOINT + "/users", authMiddleware, usersRouter);
-
-app.use(
-	"/api-docs",
-	swaggerUi.serve,
-	swaggerUi.setup(specs, { explorer: true }),
-);
 
 // listen to port 3001
 const port = process.env.PORT || 3001;

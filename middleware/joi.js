@@ -1,4 +1,4 @@
-const validateRequest = (schema) => {
+const joi = (schema) => {
 	return async (req, res, next) => {
 		try {
 			const result = await schema.validateAsync(req.body);
@@ -15,7 +15,7 @@ const validateRequest = (schema) => {
 			console.log("value", result.value);
 			next();
 		} catch (error) {
-			res.status(400).json({
+			return res.status(400).json({
 				error: error.message,
 			});
 		}
@@ -23,5 +23,5 @@ const validateRequest = (schema) => {
 };
 
 module.exports = {
-	validateRequest,
+	joi,
 };

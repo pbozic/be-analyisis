@@ -14,7 +14,9 @@ const {
 	getUsers,
 	createNewUser,
 } = require("../DatabaseHandler/dbConnections");
-const { generateAccessToken, generateRefreshToken } = require("../lib/jwt");
+const UserDao = require("../dao/User");
+const UserController = require("../controllers/UserController");
+
 const { sendEmail } = require("../lib/emailSender");
 const { jsonParse, validateUserInput } = require("../lib/helpersLib");
 
@@ -23,93 +25,30 @@ const BCRYPT_SALT_ROUNDS = process.env.BCRYPT_SALT_ROUNDS || 12;
 
 /* GET all users*/
 /**
- * @swagger
- * /users:
- *   get:
- *     summary: Get a list of users
- *     tags:
- *       - Users
- *     responses:
- *       200:
- *         description: Successful operation, returns a list of users.
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/User'
- *       400:
- *         description: Error occurred while obtaining the list of users.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   description: Error message.
- *                 e:
- *                   type: object
- *                   description: Detailed error message.
+ * GET /users
+ * @tag Users
+ * @summary Get a list of users
+ * @description Returns a list of users.
+ * @operationId getUsers
+ * @response 200 - successful operation
+ * @responseContent {array<User>} 200.application/json
+ * @response 400 - Error occurred while obtaining the user list
+ * @responseContent {object} 400.application/json The error object
  */
-router.get("/", async function (req, res, next) {
-	try {
-		let users = await getUsers();
-		if (users) {
-			res.status(200).json(users);
-		} else {
-			res.status(400).json({
-				error: "Error obtaining list of users..",
-				users,
-			});
-		}
-	} catch (e) {
-		res.status(400).json({ error: "Error obtaining list of users..", e });
-	}
-});
+router.get("/", UserController.listUsers);
 /**
- * @swagger
- * /users/me:
- *   get:
- *     summary: Retrieve the authenticated user's information.
- *     description: Retrieve the details of the authenticated user by their ID.
- *     tags: [Users]
- *     security:
- *       - bearerAuth: []
- *     responses:
- *       200:
- *         description: The user was successfully retrieved.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- *       400:
- *         description: Error obtaining user information.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   description: The error message.
+ * GET /users/me
+ * @tag Users
+ * @summary Retrieve authenticated user's information
+ * @description Retrieve the details of the authenticated user by their ID.
+ * @security bearerAuth: []
+ * @operationId retrieveUserInformation
+ * @response 200 - Successful operation, returns user info.
+ * @responseContent {User} 200.application/json
+ * @response 400 - Error obtaining user information.
+ * @responseContent {object} 400.application/json
  */
-router.get("/me", async function (req, res, next) {
-	console.log("us", req.user);
-	try {
-		let user = await getUserById(req.user.user_id);
-		if (user) {
-			return res.status(200).json(user);
-		} else {
-			res.status(400).json({
-				error: "Error obtaining user information",
-				users,
-			});
-		}
-	} catch (e) {
-		res.status(400).json({ error: "Error obtaining user information", e });
-	}
-});
+router.get("/me", UserController.me);
 
 /* CREATE new user. */
 router.post("/create", async function (req, res, next) {

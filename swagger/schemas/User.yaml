@@ -1,0 +1,99 @@
+components:
+    schemas:
+        RefreshTokenRequest:
+            type: "object"
+            properties:
+                refreshToken:
+                    type: "string"
+            required: ["refreshToken"]
+        RefreshTokenResponse:
+            type: "object"
+            properties:
+                accessToken:
+                    type: "string"
+                refreshToken:
+                    type: "string"
+        RegisterRequest:
+            type: "object"
+            properties:
+                first_name:
+                    type: "string"
+                last_name:
+                    type: "string"
+                email:
+                    type: "string"
+                password:
+                    type: "string"
+                confirm_password:
+                    type: "string"
+                telephone:
+                    type: "string"
+                profile_picture:
+                    type: "string"
+            required:
+                [
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "password",
+                    "telephone",
+                    "confirm_password",
+                ]
+        LoginRequest:
+            type: "object"
+            properties:
+                email:
+                    type: "string"
+                password:
+                    type: "string"
+            required: ["email", "password"]
+        User:
+            type: "object"
+            properties:
+                first_name:
+                    type: "string"
+                password:
+                    type: "string"
+                email:
+                    type: "string"
+                    unique: true
+                telephone:
+                    type: "string"
+                    unique: true
+                profile_picture:
+                    type: "string"
+                address:
+                    type: "string"
+                date_create:
+                    type: "string"
+                    format: "date-time"
+                    default: "now()"
+                date_modify:
+                    type: "string"
+                    format: "date-time"
+                    default: "now()"
+                last_name:
+                    type: "string"
+                user_id:
+                    type: "string"
+                    format: "uuid"
+                user_role:
+                    type: "string"
+                    enum: ["PERSONAL", "OTHER_ROLE"]
+                    default: "PERSONAL"
+            required: ["password", "email", "telephone"]
+            uniqueItems:
+                - uniqueUserIdentifier:
+                      fields:
+                          - "email"
+                          - "telephone"
+            primaryKey: ["user_id"]
+        AuthenticatedUser:
+            allOf:
+                - $ref: "#/components/schemas/User"
+                - type: object
+                  properties:
+                      accessToken:
+                          type: string
+                      refreshToken:
+                          type: string
