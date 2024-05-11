@@ -10,15 +10,15 @@ datasource db {
 model users {
   first_name      String?
   password        String
-  email           String      @unique
-  telephone       String      @unique
+  email           String           @unique
+  telephone       String           @unique
   profile_picture String?
   address         String?
-  date_create     DateTime    @default(now()) @db.Timestamptz(6)
-  date_modify     DateTime    @updatedAt @db.Timestamptz(6)
+  date_create     DateTime         @default(now()) @db.Timestamptz(6)
+  date_modify     DateTime         @updatedAt @db.Timestamptz(6)
   last_name       String?
-  user_id         String      @id @default(uuid()) @db.Uuid
-  user_role       USER_ROLES  @default(PERSONAL)
+  user_id         String           @id @default(uuid()) @db.Uuid
+  user_role       USER_ROLES       @default(PERSONAL)
   addresses       user_address[]
   reset_requests  reset_requests[]
 }
@@ -34,35 +34,39 @@ model reset_requests {
 }
 
 model addresses {
-  address_id    String   @id @default(uuid()) @db.Uuid
-  address       String
-  latitude      String
-  longitude     String
-  name          String
-  icon          String
-  street        String
-  house_number  String
-  city          String
-  country       String
-  postal        String
-  users         user_address[]
+  address_id   String         @id @default(uuid()) @db.Uuid
+  address      String
+  latitude     String
+  longitude    String
+  name         String
+  icon         String
+  street       String
+  house_number String
+  city         String
+  country      String
+  postal       String
+  users        user_address[]
+
   @@unique([address, latitude, longitude], name: "uniqueAdressIdentifier")
 }
 
 model user_address {
-  user_id    String @db.Uuid
-  address_id String @db.Uuid
-  selected   Boolean @default(false)
-  users      users    @relation(fields: [user_id], references: [user_id])
+  user_id    String    @db.Uuid
+  address_id String    @db.Uuid
+  selected   Boolean   @default(false)
+  users      users     @relation(fields: [user_id], references: [user_id])
   addresses  addresses @relation(fields: [address_id], references: [address_id])
+
   @@id([user_id, address_id])
 }
+
 model allergens {
-  allergen_id String @id @default(uuid()) @db.Uuid
+  allergen_id String  @id @default(uuid()) @db.Uuid
   name        String
   description String?
-  code        Int     @db.SmallInt @unique
+  code        Int     @unique @db.SmallInt
 }
+
 enum USER_ROLES {
   ADMIN
   PERSONAL

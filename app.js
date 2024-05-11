@@ -1,76 +1,81 @@
-const REST_API_ENDPOINT = '/rest'
+const REST_API_ENDPOINT = "/rest";
 
-const createError = require('http-errors');
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-
-let app = express();
-
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+const createError = require("http-errors");
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const swaggerUi = require("swagger-ui-express");
+const cors = require("cors");
+const specs = require("./swagger/swaggerConfig");
+const indexRouter = require("./routes/index");
+const usersRouter = require("./routes/users");
 const fileUploadLib = require("express-fileupload");
-const cors = require('cors')
 
-
+const { authMiddleware } = require("./middleware/auth");
+let app = express();
 // view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set("views", path.join(__dirname, "views"));
 
 // set the view engine to ejs
-app.set('view engine', 'ejs');
+app.set("view engine", "pug");
 
-app.use(logger('dev'));
+app.use(logger("dev"));
 
-app.use(express.json({limit: '512mb'}));
-app.use(express.urlencoded({limit: '512mb', extended: false}));
+app.use(express.json({ limit: "512mb" }));
+app.use(express.urlencoded({ limit: "512mb", extended: false }));
 
 //app.use(cors())
-app.use(cors({
-  //origin: 'http://localhost:8080',
-  //credentials: true,
-  exposedHeaders: ['Content-Disposition']
-}))
+app.use(
+	cors({
+		//origin: 'http://localhost:8080',
+		//credentials: true,
+		exposedHeaders: ["Content-Disposition"],
+	}),
+);
 app.use(fileUploadLib());
 
 //app.use(express.json());
 //pp.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 //app.use(express.static(path.join(__dirname, 'build')))
 
-app.use(REST_API_ENDPOINT, indexRouter);
-app.use(REST_API_ENDPOINT + '/users', usersRouter);
+app.use(REST_API_ENDPOINT + "/", indexRouter);
+app.use(REST_API_ENDPOINT + "/users", authMiddleware, usersRouter);
+
+app.use(
+	"/api-docs",
+	swaggerUi.serve,
+	swaggerUi.setup(specs, { explorer: true }),
+);
 
 // listen to port 3001
 const port = process.env.PORT || 3001;
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  next(createError(404));
+	next(createError(404));
 });
 
 // error handler
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+	// set locals, only providing error in development
+	res.locals.message = err.message;
+	res.locals.error = req.app.get("env") === "development" ? err : {};
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+	// render the error page
+	res.status(err.status || 500);
+	res.render("error");
 });
 
 module.exports = app;
 
-
 app.listen(port, () => {
-  console.log('server listening on: ' + port);
+	console.log("server listening on: " + port);
 
-  //precacheDataExport(app).then(r => console.log("pre-caching done"));
+	//precacheDataExport(app).then(r => console.log("pre-caching done"));
 });
-
 
 /*
 app.listen(port, async () => {
@@ -85,4 +90,3 @@ app.listen(port, async () => {
 
 });
 */
-

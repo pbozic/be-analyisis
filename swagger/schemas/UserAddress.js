@@ -1,0 +1,34 @@
+module.exports = {
+	type: "object",
+	properties: {
+		user_id: {
+			type: "string",
+			format: "uuid",
+		},
+		address_id: {
+			type: "string",
+			format: "uuid",
+		},
+		selected: {
+			type: "boolean",
+			default: false,
+		},
+		users: {
+			type: "users",
+			relation: {
+				fields: ["user_id"],
+				references: ["user_id"],
+			},
+		},
+		addresses: {
+			type: "addresses",
+			relation: {
+				fields: ["address_id"],
+				references: ["address_id"],
+			},
+		},
+	},
+	required: ["user_id", "address_id"],
+	additionalProperties: false,
+	primaryKey: ["user_id", "address_id"],
+};

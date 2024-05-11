@@ -26,16 +26,21 @@
     "html-pdf": "^3.0.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
+    "joi": "^17.13.1",
+    "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1",
     "node-schedule": "^2.0.0",
     "nodemailer": "^6.9.13",
     "nodemon": "^3.0.1",
+    "openapi-comment-parser": "^1.0.0",
     "pg": "^8.7.1",
     "pug": "^3.0.2",
     "qr-code-styling": "^1.6.0-rc.1",
     "qr-code-styling-node": "^1.5.0",
     "react-export-excel": "^0.5.3",
-    "read-excel-file": "^5.2.6"
+    "read-excel-file": "^5.2.6",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
   },
   "description": "BE server to Klikni project",
   "main": "app.js",
@@ -43,6 +48,7 @@
   "license": "ISC",
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
+    "prettier-plugin-prisma": "^5.0.0",
     "prisma": "^5.13.0"
   }
 }
