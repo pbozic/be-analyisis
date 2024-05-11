@@ -14,6 +14,7 @@ const {
 	getUsers,
 	createNewUser,
 } = require("../DatabaseHandler/dbConnections");
+
 const UserDao = require("../dao/User");
 const UserController = require("../controllers/UserController");
 
@@ -23,31 +24,7 @@ const { jsonParse, validateUserInput } = require("../lib/helpersLib");
 const router = express.Router();
 const BCRYPT_SALT_ROUNDS = process.env.BCRYPT_SALT_ROUNDS || 12;
 
-/* GET all users*/
-/**
- * GET /users
- * @tag Users
- * @summary Get a list of users
- * @description Returns a list of users.
- * @operationId getUsers
- * @response 200 - successful operation
- * @responseContent {array<User>} 200.application/json
- * @response 400 - Error occurred while obtaining the user list
- * @responseContent {object} 400.application/json The error object
- */
 router.get("/", UserController.listUsers);
-/**
- * GET /users/me
- * @tag Users
- * @summary Retrieve authenticated user's information
- * @description Retrieve the details of the authenticated user by their ID.
- * @security bearerAuth: []
- * @operationId retrieveUserInformation
- * @response 200 - Successful operation, returns user info.
- * @responseContent {User} 200.application/json
- * @response 400 - Error obtaining user information.
- * @responseContent {object} 400.application/json
- */
 router.get("/me", UserController.me);
 
 /* CREATE new user. */
@@ -66,7 +43,7 @@ router.post("/create", async function (req, res, next) {
 		return res.status(400).json({ error: "Error, missing input data.." });
 	}
 	try {
-		let userExistsRes = await getUserByEmail(email);
+		let userExistsRes = await UserDao.getUserByEmail(email);
 		let userExists = userExistsRes["rows"][0];
 
 		let userExistCaretakerRes = await getCaretaker(userExists?.user_id);
