@@ -1,7 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const bcrypt = require("bcrypt");
-
 const {
 	getResetRequest,
 	createNewResetRequest,
@@ -17,15 +16,17 @@ const {
 
 const UserDao = require("../dao/User");
 const UserController = require("../controllers/UserController");
-
+const joi = require("../middleware/joi");
+const { updateSchema } = require("../joi/userSchemas");
 const { sendEmail } = require("../lib/emailSender");
 const { jsonParse, validateUserInput } = require("../lib/helpersLib");
 
-const router = express.Router();
 const BCRYPT_SALT_ROUNDS = process.env.BCRYPT_SALT_ROUNDS || 12;
+const router = express.Router();
 
 router.get("/", UserController.listUsers);
 router.get("/me", UserController.me);
+router.patch("/me", joi(updateSchema), UserController.updateMe);
 
 /* CREATE new user. */
 router.post("/create", async function (req, res, next) {

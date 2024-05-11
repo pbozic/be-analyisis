@@ -7,7 +7,7 @@ const {
 	refreshSchema,
 } = require("../joi/userSchemas");
 
-const { joi } = require("../middleware/joi");
+const joi = require("../middleware/joi");
 
 /* GET home page. */
 router.get("/", function (req, res, next) {

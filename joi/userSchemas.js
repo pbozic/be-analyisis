@@ -51,8 +51,34 @@ const refreshSchema = Joi.object({
 	refresh_token: Joi.string().required(),
 });
 
+const updateSchema = Joi.object({
+	user_id: Joi.number().required(),
+	profile_picture: Joi.string().base64(),
+	first_name: Joi.string(),
+	last_name: Joi.string(),
+	email: Joi.string().email(),
+	telephone: Joi.string(),
+	user_role: Joi.string(),
+	addresses: Joi.array().items(
+		Joi.object({
+			address_id: Joi.string(),
+			address: Joi.string(),
+			latitude: Joi.string(),
+			longitude: Joi.string(),
+			name: Joi.string(),
+			icon: Joi.string(),
+			street: Joi.string(),
+			city: Joi.string(),
+			house_number: Joi.string(),
+			postal: Joi.string(),
+			country: Joi.string(),
+		}),
+	),
+});
+
 module.exports = {
 	loginSchema,
 	registerSchema,
 	refreshSchema,
+	updateSchema,
 };

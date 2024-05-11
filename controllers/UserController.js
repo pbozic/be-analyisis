@@ -50,8 +50,20 @@ async function me(req, res) {
 		res.status(400).json({ error: "Error obtaining user information", e });
 	}
 }
+async function updateMe(req, res) {
+	try {
+		let user = await UserDao.updateUser(req.user.user_id, req.body);
+
+		if (user) return res.status(200).json(user);
+
+		res.status(400).json({ error: "Error updating user information" });
+	} catch (e) {
+		res.status(400).json({ error: "Error updating user information", e });
+	}
+}
 
 module.exports = {
 	listUsers,
 	me,
+	updateMe,
 };

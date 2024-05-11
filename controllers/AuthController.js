@@ -46,16 +46,15 @@ async function login(req, res) {
 				.json({ error: "Wrong email / password combination.." });
 
 		delete user["password"];
-		const accessToken = generateAccessToken(user);
-		const refreshToken = generateRefreshToken(user);
+		const access_token = generateAccessToken(user);
+		const refresh_token = generateRefreshToken(user);
 		user = {
 			...user,
-			accessToken,
-			refreshToken,
+			access_token,
+			refresh_token,
 		};
-		res.status(200).header("Authorization", accessToken).json(user);
+		res.status(200).header("Authorization", access_token).json(user);
 	} catch (e) {
-		console.log("error", e);
 		res.status(500).json({ error: "Error something went wrong..", e });
 	}
 }
@@ -74,10 +73,8 @@ async function login(req, res) {
  * @responseHeader {string} 200.Authorization - The newly generated access token.
  * @response 400 - Error something went wrong.
  */
-async function register(req, res, next) {
-	console.log("register");
+async function register(req, res) {
 	let postData = req.body;
-	console.log("post data", postData);
 
 	try {
 		let hash = await bcrypt.hash(
@@ -92,16 +89,15 @@ async function register(req, res, next) {
 		delete userObj["confirm_password"];
 		let user = await UserDao.createNewUser(userObj);
 		delete user["password"];
-		const accessToken = generateAccessToken(user);
-		const refreshToken = generateRefreshToken(user);
+		const access_token = generateAccessToken(user);
+		const refresh_token = generateRefreshToken(user);
 		user = {
 			...user,
-			accessToken,
-			refreshToken,
+			access_token,
+			refresh_token,
 		};
-		res.status(200).header("Authorization", accessToken).json(user);
+		res.status(200).header("Authorization", access_token).json(user);
 	} catch (e) {
-		console.log("error", e);
 		res.status(400).json({ error: "Error something went wrong..", e });
 	}
 }
@@ -123,8 +119,7 @@ async function register(req, res, next) {
  */
 
 async function refreshToken(req, res) {
-	const refreshToken = req.body.refreshToken;
-	console.log("refresh", refreshToken);
+	const refreshToken = req.body.refresh_token;
 	if (!refreshToken) {
 		return res
 			.status(400)
@@ -142,16 +137,15 @@ async function refreshToken(req, res) {
 			}
 			delete decoded["iat"];
 			delete decoded["exp"];
-			const accessToken = generateAccessToken(decoded.user);
-			const refreshToken = generateRefreshToken(decoded.user);
+			const access_token = generateAccessToken(decoded.user);
+			const refresh_token = generateRefreshToken(decoded.user);
 
 			let user = {
 				...decoded,
-				accessToken,
-				refreshToken,
+				access_token,
+				refresh_token,
 			};
-			console.log(user);
-			res.status(200).header("Authorization", accessToken).json(user);
+			res.status(200).header("Authorization", access_token).json(user);
 		},
 	);
 }

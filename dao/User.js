@@ -30,10 +30,13 @@ const getUser = async (email) => {
 };
 
 const updateUser = async (user_id, user) => {
+	// We do not allow the user to update their email, password, telephone, user_role, or addresses in a general update
+	// we handle those separately
 	delete user.telephone;
 	delete user.email;
 	delete user.password;
 	delete user.addresses;
+	delete user.user_role;
 
 	return prisma.users.update({
 		where: {

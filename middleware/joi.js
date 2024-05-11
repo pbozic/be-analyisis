@@ -1,4 +1,4 @@
-const joi = (schema) => {
+const joiValidate = (schema) => {
 	return async (req, res, next) => {
 		try {
 			const result = await schema.validateAsync(req.body);
@@ -22,6 +22,4 @@ const joi = (schema) => {
 	};
 };
 
-module.exports = {
-	joi,
-};
+module.exports = joiValidate;
