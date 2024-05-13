@@ -4,11 +4,11 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 /**
- * POST /login
+ * POST /auth/login
  * @tag Authentication
  * @summary User login procedure.
  * @description This verifies the user's credentials and responds with an access token and refresh token if successful.
- * @operationId loginUser
+ * @operationId loginUser.
  * @bodyDescription Request body must include email and password for verification.
  * @bodyContent {LoginRequest} application/json
  * @bodyRequired
@@ -20,31 +20,18 @@ const jwt = require("jsonwebtoken");
  */
 async function login(req, res) {
 	let postData = req.body;
+	console.log("hi, login", postData.email);
 	try {
 		let user = await UserDao.getUserByEmail(postData.email, {
 			select: {
 				password: true,
-				email: true,
-				user_id: true,
-				first_name: true,
-				last_name: true,
-				telephone: true,
-				user_role: true,
-				date_create: true,
-				date_modify: true,
 			},
 		});
-		if (!user)
-			return res
-				.status(400)
-				.json({ error: "Wrong email / password combination.." });
-
+		if (!user) return res.status(400).json({ error: "Wrong email / password combination.." });
+		console.log("db accesssed");
 		let correctPw = await bcrypt.compare(postData.password, user.password);
-		if (!correctPw)
-			return res
-				.status(400)
-				.json({ error: "Wrong email / password combination.." });
-
+		if (!correctPw) return res.status(400).json({ error: "Wrong email / password combination.." });
+		user = await UserDao.getUserByEmail(postData.email);
 		delete user["password"];
 		const access_token = generateAccessToken(user);
 		const refresh_token = generateRefreshToken(user);
@@ -55,12 +42,12 @@ async function login(req, res) {
 		};
 		res.status(200).header("Authorization", access_token).json(user);
 	} catch (e) {
-		res.status(500).json({ error: "Error something went wrong..", e });
+		res.status(500).json(e);
 	}
 }
 
 /**
- * POST /register
+ * POST /auth/register
  * @tag Authentication
  * @summary Register a new user
  * @description This endpoint is used to register a new user.
@@ -77,10 +64,7 @@ async function register(req, res) {
 	let postData = req.body;
 
 	try {
-		let hash = await bcrypt.hash(
-			postData.password,
-			Number(process.env.BCRYPT_SALT_ROUNDS),
-		);
+		let hash = await bcrypt.hash(postData.password, Number(process.env.BCRYPT_SALT_ROUNDS));
 		let userObj = {
 			...postData,
 			password: hash,
@@ -91,6 +75,7 @@ async function register(req, res) {
 		delete user["password"];
 		const access_token = generateAccessToken(user);
 		const refresh_token = generateRefreshToken(user);
+		// todo: send phone verification
 		user = {
 			...user,
 			access_token,
@@ -103,7 +88,7 @@ async function register(req, res) {
 }
 
 /**
- * POST /refresh
+ * POST /auth/refresh
  * @tag Authentication
  * @summary Refreshes the user's access token
  * @description This endpoint is used to refresh the user's access and refresh tokens.
@@ -121,37 +106,50 @@ async function register(req, res) {
 async function refreshToken(req, res) {
 	const refreshToken = req.body.refresh_token;
 	if (!refreshToken) {
-		return res
-			.status(400)
-			.send("Access Denied. No refresh token provided.");
+		return res.status(400).send("Access Denied. No refresh token provided.");
 	}
 
-	jwt.verify(
-		refreshToken,
-		process.env.JWT_TOKEN_SECRET,
-		function (err, decoded) {
-			if (err) {
-				return res
-					.status(401)
-					.json({ error: "Access Denied. Token expired.", e: err });
-			}
-			delete decoded["iat"];
-			delete decoded["exp"];
-			const access_token = generateAccessToken(decoded.user);
-			const refresh_token = generateRefreshToken(decoded.user);
+	jwt.verify(refreshToken, process.env.JWT_TOKEN_SECRET, function (err, decoded) {
+		if (err) {
+			return res.status(401).json({ error: "Access Denied. Token expired.", e: err });
+		}
+		delete decoded["iat"];
+		delete decoded["exp"];
+		const access_token = generateAccessToken(decoded.user);
+		const refresh_token = generateRefreshToken(decoded.user);
 
-			let user = {
-				...decoded,
-				access_token,
-				refresh_token,
-			};
-			res.status(200).header("Authorization", access_token).json(user);
-		},
-	);
+		let user = {
+			...decoded,
+			access_token,
+			refresh_token,
+		};
+		res.status(200).header("Authorization", access_token).json(user);
+	});
+}
+/**
+ * POST /auth/password-reset
+ * @tag Authentication
+ * @summary Request a password reset
+ * @description This endpoint is used to request a password reset. It will generate and send a password reset token to the user.
+ * @operationId requestPasswordReset
+ * @bodyDescription The email of the user who wants to reset their password.
+ * @bodyContent {PasswordResetRequest} application/json
+ * @bodyRequired
+ * @response 200 - Password reset request processed. A token is sent to the user if the account is found.
+ * @response 400 - Error obtaining user information.
+ */
+async function requestPasswordReset(req, res) {
+	try {
+		let user = await UserDao.getUserByEmail(req.body.email);
+		await TokenDao.generateAndSendPaswordResetToken(user);
+	} catch (e) {
+		res.status(400).json({ error: "Error obtaining user information", e });
+	}
 }
 
 module.exports = {
 	login,
 	register,
 	refreshToken,
+	requestPasswordReset,
 };

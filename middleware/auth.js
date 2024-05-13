@@ -15,11 +15,7 @@ const authMiddleware = (req, res, next) => {
 		req.user = decoded.user;
 		next();
 	} catch (error) {
-		return res
-			.status(401)
-			.json({ error: "Access Denied. Token expired.", e: error });
+		return res.status(401).json({ error: "Access Denied. Token expired.", e: error });
 	}
 };
-module.exports = {
-	authMiddleware,
-};
+module.exports = authMiddleware;

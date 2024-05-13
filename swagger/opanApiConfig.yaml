@@ -11,7 +11,11 @@ info:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html
     x-github: https://github.com/bee-travels
-
+servers:
+    - url: http://localhost:3001/api
+      description: Development server server (uses local data)
+    - url: https://sandbox-api.example.com:8443/v1
+      description: Sandbox server (uses test data)
 tags:
     - name: Authentication
       description: Authentication Operations

@@ -1,6 +1,8 @@
 const prisma = require("../prisma");
 const { faker } = require("@faker-js/faker");
 const bcrypt = require("bcrypt");
+const BCRYPT_SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 12;
+
 async function userSeed() {
 	return new Promise(async (resolve, reject) => {
 		console.log("Seeding users...");
@@ -9,14 +11,15 @@ async function userSeed() {
 		for (let i = 0; i < amountOfUsers; i++) {
 			const firstName = faker.person.firstName();
 			const lastName = faker.person.lastName();
-			let hash = await bcrypt.hash("testuserpassword", 12);
+			let user_role = i == 0 ? "ADMIN" : "PERSONAL";
+			let hash = await bcrypt.hash("testuserpassword", BCRYPT_SALT_ROUNDS);
 			const user = {
 				first_name: firstName,
 				last_name: lastName,
 				email: `test${i + 1}@veryfakeemail.com`,
 				password: hash,
 				telephone: faker.phone.number(),
-				user_role: "PERSONAL",
+				user_role: user_role,
 			};
 
 			users.push(

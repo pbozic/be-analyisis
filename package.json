@@ -40,7 +40,8 @@
     "react-export-excel": "^0.5.3",
     "read-excel-file": "^5.2.6",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.0"
+    "swagger-ui-express": "^5.0.0",
+    "unklogger": "^2.3.0"
   },
   "description": "BE server to Klikni project",
   "main": "app.js",

@@ -13,24 +13,25 @@ model users {
   email           String           @unique
   telephone       String           @unique
   profile_picture String?
-  address         String?
   created_at      DateTime         @default(now()) @db.Timestamptz(6)
   updated_at      DateTime         @updatedAt @db.Timestamptz(6)
   last_name       String?
   user_id         String           @id @default(uuid()) @db.Uuid
   user_role       USER_ROLES       @default(PERSONAL)
   addresses       user_address[]
-  reset_requests  reset_requests[]
+  tokens          tokens[]
+  phone_verified     Boolean          @default(false)
 }
 
-model reset_requests {
-  reset_request_id String   @id @default(uuid()) @db.Uuid
-  user_id          String   @db.Uuid
-  token            String
-  created_at       DateTime @default(now()) @db.Timestamptz(6)
-  updated_at       DateTime @updatedAt @db.Timestamptz(6)
-  active           Boolean  @default(true)
-  users            users    @relation(fields: [user_id], references: [user_id])
+model tokens {
+  token_id String   @id @default(uuid()) @db.Uuid
+  user_id                String    @db.Uuid
+  type                   TokenType @default(API)
+  token                  String
+  created_at             DateTime @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime @updatedAt @db.Timestamptz(6)
+  active                 Boolean  @default(true)
+  users                  users    @relation(fields: [user_id], references: [user_id])
 }
 
 model addresses {
@@ -71,4 +72,11 @@ enum USER_ROLES {
   ADMIN
   PERSONAL
   DRIVER
+}
+
+enum TokenType {
+  EMAIL
+  PHONE_VERIFICATION
+  API
+  PASSWORD_RESET
 }

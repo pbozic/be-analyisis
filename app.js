@@ -1,4 +1,4 @@
-const REST_API_ENDPOINT = "/rest";
+const REST_API_ENDPOINT = "/api";
 
 const createError = require("http-errors");
 const express = require("express");
@@ -8,12 +8,16 @@ const logger = require("morgan");
 const swaggerUi = require("swagger-ui-express");
 const cors = require("cors");
 
-const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users");
+const mainRouter = require("./routes/index");
+const apiRouter = require("./routes/api");
 const fileUploadLib = require("express-fileupload");
 const openapi = require("openapi-comment-parser");
 
-const { authMiddleware } = require("./middleware/auth");
+const authMiddleware = require("./middleware/auth");
+const adminMiddleware = require("./middleware/admin");
+// listen to port 3001
+const port = process.env.PORT || 3001;
+
 let app = express();
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -26,7 +30,6 @@ app.use(logger("dev"));
 app.use(express.json({ limit: "512mb" }));
 app.use(express.urlencoded({ limit: "512mb", extended: false }));
 
-//app.use(cors())
 app.use(
 	cors({
 		//origin: 'http://localhost:8080',
@@ -36,23 +39,15 @@ app.use(
 );
 app.use(fileUploadLib());
 
-//app.use(express.json());
-//pp.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-//app.use(express.static(path.join(__dirname, 'build')))
+
 const spec = openapi();
-app.use(
-	"/v1/api-docs",
-	swaggerUi.serve,
-	swaggerUi.setup(spec, { explorer: true }),
-);
-app.use(REST_API_ENDPOINT + "/", indexRouter);
-app.use(REST_API_ENDPOINT + "/users", authMiddleware, usersRouter);
 
-// listen to port 3001
-const port = process.env.PORT || 3001;
+app.use("/v1/api-docs", swaggerUi.serve, swaggerUi.setup(spec, { explorer: true }));
 
+app.use(mainRouter);
+app.use(REST_API_ENDPOINT, apiRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
 	next(createError(404));
@@ -76,17 +71,3 @@ app.listen(port, () => {
 
 	//precacheDataExport(app).then(r => console.log("pre-caching done"));
 });
-
-/*
-app.listen(port, async () => {
-    //console.log('async server listening on port 3001..');
-    //let a = await getUserByCaretakerId('3d9387a3-bc8f-45d6-a96a-3f2415cb0d2a')
-     //   console.log(a['rows'][0])
-
-    //let n = await updateNotificationResponse('9cf9f85d-10db-428c-b42d-4225af6897db', 'Cenik avtomatsko potrjen po 24h.', NOTIFICATION_STATUS.CONFIRMED);
-    //console.log(n['rows'][0])
-
-
-
-});
-*/
