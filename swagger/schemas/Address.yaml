@@ -12,10 +12,6 @@ components:
                     type: "string"
                 longitude:
                     type: "string"
-                name:
-                    type: "string"
-                icon:
-                    type: "string"
                 street:
                     type: "string"
                 house_number:
@@ -33,8 +29,6 @@ components:
                 - "address"
                 - "latitude"
                 - "longitude"
-                - "name"
-                - "icon"
                 - "street"
                 - "house_number"
                 - "city"

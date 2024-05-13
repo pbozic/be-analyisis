@@ -9,6 +9,10 @@ components:
                 address_id:
                     type: "string"
                     format: "uuid"
+                name:
+                    type: "string"
+                icon:
+                    type: "string"
                 selected:
                     type: "boolean"
                     default: false

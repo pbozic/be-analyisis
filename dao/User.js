@@ -1,107 +1,146 @@
 const prisma = require("../prisma/prisma");
 
 const getUsers = async (args) => {
-	return prisma.users.findMany({
-		...args,
-	});
+	try {
+		return prisma.users.findMany({
+			...args,
+		});
+	} catch (error) {
+		return new Error(error);
+	}
 };
 
 const getUserById = async (user_id, args) => {
-	return prisma.users.findUnique({
-		where: {
-			user_id: user_id,
-		},
-		...args,
-	});
+	try {
+		return prisma.users.findUnique({
+			where: {
+				user_id: user_id,
+			},
+			...args,
+		});
+	} catch (error) {
+		return new Error(error);
+	}
 };
 
 const getUserByEmail = async (email, args) => {
-	console.log("dao:", email);
-	return prisma.users.findUnique({
-		where: {
-			email: email,
-		},
-		...args,
-	});
+	try {
+		return prisma.users.findUnique({
+			where: {
+				email: email,
+			},
+			...args,
+		});
+	} catch (error) {
+		return new Error(error);
+	}
 };
 
 const getUser = async (email, args) => {
-	return prisma.users.findUnique({
-		where: {
-			email: email,
-		},
-		...args,
-	});
+	try {
+		return prisma.users.findUnique({
+			where: {
+				email: email,
+			},
+			...args,
+		});
+	} catch (error) {
+		return new Error(error);
+	}
 };
 
 const updateUser = async (user_id, user) => {
-	// We do not allow the user to update their email, password, telephone, user_role, or addresses in a general update
-	// we handle those separately
-	delete user.user_id;
-	delete user.telephone;
-	delete user.email;
-	delete user.password;
-	delete user.addresses;
-	delete user.user_role;
+	try {
+		// We do not allow the user to update their email, password, telephone, user_role, or addresses in a general update
+		// we handle those separately
+		delete user.user_id;
+		delete user.telephone;
+		delete user.email;
+		delete user.password;
+		delete user.addresses;
+		delete user.user_role;
 
-	return prisma.users.update({
-		where: {
-			user_id: user_id,
-		},
-		data: {
-			...user,
-		},
-	});
+		return prisma.users.update({
+			where: {
+				user_id: user_id,
+			},
+			data: {
+				...user,
+			},
+		});
+	} catch (error) {
+		return new Error(error);
+	}
 };
 
 const updateEmail = async (user_id, email) => {
-	return prisma.users.update({
-		where: {
-			user_id: user_id,
-		},
-		data: {
-			email,
-		},
-	});
+	try {
+		return prisma.users.update({
+			where: {
+				user_id: user_id,
+			},
+			data: {
+				email,
+			},
+		});
+	} catch (error) {
+		return new Error(error);
+	}
 };
 
 const updateUserPassword = async (user_id, password) => {
-	return prisma.users.update({
-		where: {
-			user_id: user_id,
-		},
-		data: {
-			password,
-		},
-	});
+	try {
+		return prisma.users.update({
+			where: {
+				user_id: user_id,
+			},
+			data: {
+				password,
+			},
+		});
+	} catch (error) {
+		return new Error(error);
+	}
 };
 
 const updateUserTelephone = async (user_id, telephone) => {
-	return prisma.users.update({
-		where: {
-			user_id: user_id,
-		},
-		data: {
-			telephone,
-		},
-	});
+	try {
+		return prisma.users.update({
+			where: {
+				user_id: user_id,
+			},
+			data: {
+				telephone,
+			},
+		});
+	} catch (error) {
+		return new Error(error);
+	}
 };
 
 const updateUserType = async (user_id, user_role) => {
-	return prisma.users.update({
-		where: {
-			user_id: user_id,
-		},
-		data: {
-			user_role,
-		},
-	});
+	try {
+		return prisma.users.update({
+			where: {
+				user_id: user_id,
+			},
+			data: {
+				user_role,
+			},
+		});
+	} catch (error) {
+		return new Error(error);
+	}
 };
 
 const createNewUser = async (user) => {
-	return prisma.users.create({
-		data: user,
-	});
+	try {
+		return prisma.users.create({
+			data: user,
+		});
+	} catch (error) {
+		return new Error(error);
+	}
 };
 
 module.exports = {

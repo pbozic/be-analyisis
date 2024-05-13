@@ -1,55 +1,71 @@
 async function getActiveSMSToken(user) {
-	return prisma.tokens.findFirst({
-		where: {
-			active: true,
-			user_id: user.user_id,
-			type: "PHONE_VERIFICATION",
-		},
-	});
+	try {
+		return prisma.tokens.findFirst({
+			where: {
+				active: true,
+				user_id: user.user_id,
+				type: "PHONE_VERIFICATION",
+			},
+		});
+	} catch (e) {
+		return new Error(e);
+	}
 }
 const updateToken = async (token_id, data) => {
-	return prisma.tokens.update({
-		where: {
-			token_id,
-		},
-		data,
-	});
+	try {
+		return prisma.tokens.update({
+			where: {
+				token_id,
+			},
+			data,
+		});
+	} catch (e) {
+		return new Error(e);
+	}
 };
 const saveSMSToken = async (token) => {
-	await prisma.tokens.updateMany({
-		where: {
-			user_id: token.user_id,
-			type: "PHONE_VERIFICATION",
-		},
-		data: {
-			active: false,
-		},
-	});
-	return prisma.tokens.create({
-		data: {
-			...token,
-			active: true,
-			type: "PHONE_VERIFICATION",
-		},
-	});
+	try {
+		await prisma.tokens.updateMany({
+			where: {
+				user_id: token.user_id,
+				type: "PHONE_VERIFICATION",
+			},
+			data: {
+				active: false,
+			},
+		});
+		return prisma.tokens.create({
+			data: {
+				...token,
+				active: true,
+				type: "PHONE_VERIFICATION",
+			},
+		});
+	} catch (e) {
+		return new Error(e);
+	}
 };
 const savePasswordResetToken = async (token) => {
-	await prisma.tokens.updateMany({
-		where: {
-			user_id: token.user_id,
-			type: "PASSWORD_RESET",
-		},
-		data: {
-			active: false,
-		},
-	});
-	return prisma.tokens.create({
-		data: {
-			...token,
-			active: true,
-			type: "PASSWORD_RESET",
-		},
-	});
+	try {
+		await prisma.tokens.updateMany({
+			where: {
+				user_id: token.user_id,
+				type: "PASSWORD_RESET",
+			},
+			data: {
+				active: false,
+			},
+		});
+		return prisma.tokens.create({
+			data: {
+				...token,
+				active: true,
+				type: "PASSWORD_RESET",
+			},
+		});
+	} catch (e) {
+		return new Error(e);
+	}
 };
 
 async function generateAndSendSMSVerificationToken(user) {

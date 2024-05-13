@@ -31,7 +31,15 @@ async function login(req, res) {
 		console.log("db accesssed");
 		let correctPw = await bcrypt.compare(postData.password, user.password);
 		if (!correctPw) return res.status(400).json({ error: "Wrong email / password combination.." });
-		user = await UserDao.getUserByEmail(postData.email);
+		user = await UserDao.getUserByEmail(postData.email, {
+			include: {
+				addresses: {
+					include: {
+						address: true,
+					},
+				},
+			},
+		});
 		delete user["password"];
 		const access_token = generateAccessToken(user);
 		const refresh_token = generateRefreshToken(user);
@@ -42,6 +50,7 @@ async function login(req, res) {
 		};
 		res.status(200).header("Authorization", access_token).json(user);
 	} catch (e) {
+		console.log(e);
 		res.status(500).json(e);
 	}
 }

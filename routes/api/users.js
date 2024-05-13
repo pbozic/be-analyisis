@@ -8,6 +8,8 @@ const {
 	updateEmailSchema,
 	updateTelephoneSchema,
 	updatePasswordSchema,
+	addAddressSchema,
+	editAddressSchema,
 } = require("../../joi/userSchemas");
 
 const router = express.Router();
@@ -17,7 +19,10 @@ router.patch("/me", joi(updateSchema), UserController.updateMe);
 router.patch("/me/password", joi(updatePasswordSchema), UserController.updatePassword);
 router.patch("/me/email", joi(updateEmailSchema), UserController.updateEmail);
 router.patch("/me/telephone", joi(updateTelephoneSchema), UserController.updateEmail);
-
+router.post("/me/address", joi(addAddressSchema), UserController.addAddress);
+router.delete("/me/address/:address_id", UserController.deleteAddress);
+router.patch("/me/address/:address_id", joi(editAddressSchema), UserController.editAddress);
+router.patch("/me/address/:address_id/primary", UserController.setPrimaryAddress);
 router.get("/me/verify/phone", UserController.requestSMSVerification);
 router.post("/me/verify/phone", joi(verifyPhoneSchema), UserController.verifyMe);
 

@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 
 const UserDao = require("../dao/User");
 const TokenDao = require("../dao/Token");
+const AddressDao = require("../dao/Address");
 /**
  * GET /users
  * @tag Users
@@ -45,12 +46,17 @@ async function listUsers(req, res) {
 
 async function me(req, res) {
 	try {
-		let user = await UserDao.getUserById(req.user.user_id);
+		let user = await UserDao.getUserById(req.user.user_id, {
+			include: {
+				addresses: true,
+			},
+		});
 
 		if (user) return res.status(200).json(user);
 
 		res.status(400).json({ error: "Error obtaining user information" });
 	} catch (e) {
+		console.error(e);
 		res.status(400).json({ error: "Error obtaining user information", e });
 	}
 }
@@ -220,7 +226,106 @@ async function verifyMe(req, res) {
 		res.status(400).json({ error: "Error obtaining user information", e });
 	}
 }
+/**
+ * POST /me/address
+ * @tag Users
+ * @summary Adds an address to the current user
+ * @description This endpoint is used to add an address to the current user.
+ * @operationId addAddress
+ * @bodyDescription The address to add
+ * @bodyContent {Address} application/json
+ * @bodyRequired
+ * @response 200 - Address added successfully. Returns the updated user's details.
+ * @responseContent {UserAddress} 200.application/json
+ * @response 400 - Error adding address.
+ */
+async function addAddress(req, res) {
+	try {
+		console.log("addAdress", req.body);
+		let address = await AddressDao.addAddress(req.body);
+		console.log("ua1", address);
+		let userAddress = await AddressDao.addUserAddress(req.user.user_id, address.address_id);
+		console.log("ua", userAddress);
+		if (userAddress) {
+			return res.status(200).json(userAddress);
+		}
+		res.status(400).json({ error: "Error adding address1" });
+	} catch (e) {
+		console.log(e);
+		res.status(400).json({ error: "Error adding address", e });
+	}
+}
+/**
+ * DELETE /me/address/{address_id}
+ * @tag Users
+ * @summary Deletes an address from the current user
+ * @description This endpoint is used to delete an address from the current user.
+ * @operationId deleteAddress
+ * @pathParam {string} address_id - The ID of the address to delete
+ * @response 200 - Address deleted successfully.
+ * @response 400 - Error deleting address.
+ */
+async function deleteAddress(req, res) {
+	try {
+		await AddressDao.deleteUserAddress(req.user.user_id, req.params.address_id);
+		return res.status(200).json({ message: "Address deleted successfully." });
+	} catch (error) {
+		console.error(error);
+		return res.status(400).json({ error: "Error deleting address." });
+	}
+}
 
+/**
+ * PATCH /me/address/{address_id}
+ * @tag Users
+ * @summary Edits an address from the current user
+ * @description This endpoint is used to edit an address from the current user.
+ * @operationId editAddress
+ * @pathParam {string} address_id - The ID of the address to edit
+ * @bodyDescription The address to edit
+ * @bodyContent {Address} application/json
+ * @bodyRequired
+ * @response 200 - Address edited successfully. Returns the updated user's details.
+ * @responseContent {UserAddress} 200.application/json
+ * @response 400 - Error editing address.
+ * @responseContent {object} 400.application/json
+ */
+async function editAddress(req, res) {
+	try {
+		let userAddress = await AddressDao.editUserAddress(req.user.user_id, req.params.address_id, req.body);
+		if (userAddress) {
+			return res.status(200).json(userAddress);
+		}
+		res.status(400).json({ error: "Error editing address" });
+	} catch (e) {
+		console.log(e);
+		res.status(400).json({ error: "Error adding address", e });
+	}
+}
+
+/**
+ * PATCH /me/address/{address_id}/primary
+ * @tag Users
+ * @summary Sets an address as the primary address for the current user
+ * @description This endpoint is used to set an address as the primary address for the current user.
+ * @operationId setPrimaryAddress
+ * @pathParam {string} address_id - The ID of the address to set as primary
+ * @response 200 - Primary address set successfully.
+ * @response 400 - Error setting primary address.
+ */
+
+async function setPrimaryAddress(req, res) {
+	try {
+		let userAddress = await AddressDao.setPrimaryUserAddress(req.user.user_id, req.params.address_id);
+		if (userAddress) {
+			return res.status(200).json({ error: "Primary address set." });
+		}
+		res.status(400).json({ error: "Error setting primary address" });
+	} catch (e) {
+		console.log(e);
+		res.status(400).json({ error: "Error setting primary address", e });
+	}
+}
 module.exports = {
 	listUsers,
 	me,
@@ -230,4 +335,8 @@ module.exports = {
 	updatePassword,
 	updateEmail,
 	updateTelephone,
+	addAddress,
+	deleteAddress,
+	editAddress,
+	setPrimaryAddress,
 };

@@ -39,13 +39,11 @@ model addresses {
   address      String
   latitude     String
   longitude    String
-  name         String
-  icon         String
-  street       String
-  house_number String
-  city         String
-  country      String
-  postal       String
+  street       String?
+  house_number String?
+  city         String?
+  country      String?
+  postal       String?
   users        user_address[]
 
   @@unique([address, latitude, longitude], name: "uniqueAdressIdentifier")
@@ -54,9 +52,11 @@ model addresses {
 model user_address {
   user_id    String    @db.Uuid
   address_id String    @db.Uuid
-  selected   Boolean   @default(false)
+  name       String?
+  icon       String?
+  primary   Boolean   @default(false)
   users      users     @relation(fields: [user_id], references: [user_id])
-  addresses  addresses @relation(fields: [address_id], references: [address_id])
+  address    addresses @relation(fields: [address_id], references: [address_id])
 
   @@id([user_id, address_id])
 }

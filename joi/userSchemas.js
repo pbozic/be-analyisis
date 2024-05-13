@@ -43,11 +43,30 @@ const updatePasswordSchema = Joi.object({
 const updateTelephoneSchema = Joi.object({
 	telephone: Joi.string().required(),
 });
+const addAddressSchema = Joi.object({
+	address: Joi.string().required(),
+	latitude: Joi.string().required(),
+	longitude: Joi.string().required(),
+	name: Joi.string().optional(),
+	icon: Joi.string().optional(),
+	street: Joi.string().optional(),
+	city: Joi.string().optional(),
+	house_number: Joi.string().optional(),
+	postal: Joi.string().optional(),
+	country: Joi.string().optional(),
+});
 
+const editAddressSchema = Joi.object({
+	name: Joi.string().optional(),
+	icon: Joi.string().optional(),
+	primary: Joi.boolean().optional(),
+});
 module.exports = {
 	updateSchema,
 	verifyPhoneSchema,
 	updateEmailSchema,
 	updatePasswordSchema,
 	updateTelephoneSchema,
+	addAddressSchema,
+	editAddressSchema,
 };
