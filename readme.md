@@ -1,13 +1,27 @@
 # Klikni Backend
+
 ## Run the app
-
+Make sure to install the dependencies described in the [dependencies chapter](#dependencies)
+Make sure to set the .env variables described in the [.env chapter](#.env)
 ```npm run dev```
-This command runs **npx prisma db push** and then starts **nodemon** instance that runs the express server
+This command runs **npx prisma db push** and **npx prisma generate** and then starts **nodemon** instance that runs the express server
 
-```nodemon ./app.js``` 
-This command only starts the nodemon instance that runs the express server
+```npm run server``` 
+This command only starts the nodemon instance (**nodemon ./app.js**) that runs the express server
 
-Make sure to set the .env variables described in the [next chapter](#.env)
+
+## Dependencies
+### nodemon
+1. To install nodemon, run the following command in your terminal:
+```bash
+    npm install -g nodemon
+```
+2. If you are using npm locally (without `-g` or `--global` appended), you can also add it to your project with the following command:
+```bash
+    npm install --save-dev nodemon
+```
+**Nodemon**: It's a utility that monitors for any changes in your source files and automatically restarts your server, which is very useful during the development process. It saves you from manually stopping and starting the server each time you make changes.
+###
 ## .env
 
 ```
