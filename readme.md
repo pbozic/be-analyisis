@@ -1,8 +1,8 @@
 # Klikni Backend
 
 ## Run the app
-Make sure to install the dependencies described in the [dependencies chapter](#dependencies)
-Make sure to set the .env variables described in the [.env chapter](#.env)
+- Make sure to install the dependencies described in the [dependencies chapter](#dependencies)
+- Make sure to set the .env variables described in the [.env chapter](#.env)
 
 ```npm run dev```
 This command runs **npx prisma db push** and **npx prisma generate** and then starts **nodemon** instance that runs the express server
