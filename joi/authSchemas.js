@@ -14,11 +14,18 @@ const registerSchema = Joi.object({
 		.required()
 		.external(async (email, helpers) => {
 			console.log("helpers", helpers.error);
-			const isEmailInUse = await prisma.users.findUnique({
-				where: {
-					email,
-				},
-			});
+			let isEmailInUse;
+			try {
+				isEmailInUse = await prisma.users.findUnique({
+					where: {
+						email,
+					},
+				});
+				console.log(isEmailInUse)
+			} catch (error) {
+				console.log(error)
+			}
+		
 			if (isEmailInUse) {
 				throw new Error("Account with this email already exists.");
 			}
@@ -32,17 +39,26 @@ const registerSchema = Joi.object({
 	telephone: Joi.string()
 		.required()
 		.external(async (telephone, helpers) => {
-			const isPhoneNumberInUse = await prisma.users.findUnique({
-				where: {
-					telephone,
-				},
-			});
+			let isPhoneNumberInUse;
+			try {
+				isPhoneNumberInUse = await prisma.users.findUnique({
+					where: {
+						telephone,
+					},
+				});
+				console.log(isPhoneNumberInUse)
+			} catch (error) {
+				console.log(error)
+			}
+		
 			if (isPhoneNumberInUse) {
 				throw new Error("Account with this phone number already exists.");
 			}
 
 			return telephone;
 		}),
+	telephone_code: Joi.string().required(),
+	telephone_number: Joi.string().required(),
 });
 
 const refreshSchema = Joi.object({

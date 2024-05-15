@@ -87,7 +87,20 @@ const updateEmail = async (user_id, email) => {
 		return new Error(error);
 	}
 };
-
+const updateTelephone = async (user_id, telephone) => {
+	try {
+		return prisma.users.update({
+			where: {
+				user_id: user_id,
+			},
+			data: {
+				...telephone,
+			},
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+}
 const updateUserPassword = async (user_id, password) => {
 	try {
 		return prisma.users.update({
@@ -96,21 +109,6 @@ const updateUserPassword = async (user_id, password) => {
 			},
 			data: {
 				password,
-			},
-		});
-	} catch (error) {
-		return new Error(error);
-	}
-};
-
-const updateUserTelephone = async (user_id, telephone) => {
-	try {
-		return prisma.users.update({
-			where: {
-				user_id: user_id,
-			},
-			data: {
-				telephone,
 			},
 		});
 	} catch (error) {
@@ -151,7 +149,7 @@ module.exports = {
 	updateUser,
 	updateEmail,
 	updateUserPassword,
-	updateUserTelephone,
+	updateTelephone,
 	updateUserType,
 	createNewUser,
 };

@@ -2,6 +2,7 @@ const UserDao = require("../dao/User");
 const { generateAccessToken, generateRefreshToken } = require("../lib/jwt");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { post } = require("../routes/api/users");
 
 /**
  * POST /auth/login
@@ -71,7 +72,7 @@ async function login(req, res) {
  */
 async function register(req, res) {
 	let postData = req.body;
-
+	console.log(postData);
 	try {
 		let hash = await bcrypt.hash(postData.password, Number(process.env.BCRYPT_SALT_ROUNDS));
 		let userObj = {
@@ -92,6 +93,7 @@ async function register(req, res) {
 		};
 		res.status(200).header("Authorization", access_token).json(user);
 	} catch (e) {
+		console.log(e)
 		res.status(400).json({ error: "Error something went wrong..", e });
 	}
 }

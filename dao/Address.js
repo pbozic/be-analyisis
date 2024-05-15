@@ -1,5 +1,7 @@
 const prisma = require("../prisma/prisma");
 async function addAddress(address) {
+	delete address.name;
+	delete address.icon;
 	try {
 		return prisma.addresses.upsert({
 			where: {

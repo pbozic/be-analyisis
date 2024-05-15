@@ -42,18 +42,20 @@ const updatePasswordSchema = Joi.object({
 
 const updateTelephoneSchema = Joi.object({
 	telephone: Joi.string().required(),
+	telephone_code: Joi.string().required(),
+	telephone_number: Joi.string().required(),
 });
 const addAddressSchema = Joi.object({
 	address: Joi.string().required(),
 	latitude: Joi.string().required(),
 	longitude: Joi.string().required(),
-	name: Joi.string().optional(),
-	icon: Joi.string().optional(),
-	street: Joi.string().optional(),
-	city: Joi.string().optional(),
-	house_number: Joi.string().optional(),
-	postal: Joi.string().optional(),
-	country: Joi.string().optional(),
+	name:  [Joi.string().optional(), Joi.allow(null)],
+	icon:  [Joi.string().optional(), Joi.allow(null)],
+	street:  [Joi.string().optional(), Joi.allow(null)],
+	city:  [Joi.string().optional(), Joi.allow(null)],
+	house_number:  [Joi.string().optional(), Joi.allow(null)],
+	postal:  [Joi.string().optional(), Joi.allow(null)],
+	country:  [Joi.string().optional(), Joi.allow(null)],
 });
 
 const editAddressSchema = Joi.object({

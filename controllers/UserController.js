@@ -168,13 +168,15 @@ async function updateEmail(req, res) {
  */
 
 async function updateTelephone(req, res) {
+	console.log(req.body)
 	try {
-		let user = await UserDao.updateTelephone(req.user.user_id, req.body.telephone);
+		let user = await UserDao.updateTelephone(req.user.user_id, req.body);
 		await TokenDao.generateAndSendSMSVerificationToken(user);
 		if (user) return res.status(200).json(user);
 
 		res.status(400).json({ error: "Error updating user information" });
 	} catch (e) {
+		console.log(e);
 		res.status(400).json({ error: "Error updating user information", e });
 	}
 }
