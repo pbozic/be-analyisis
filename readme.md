@@ -34,7 +34,7 @@ This command only starts the nodemon instance (**nodemon ./app.js**) that runs t
 - **ENVIRONMENT**: This specifies the current environment in which your application is running (e.g., "development", "production", "test").
 - **BCRYPT_SALT_ROUNDS**: This variable determines the complexity of the hashing process in bcrypt. A higher value denotes more rounds of hashing, thereby providing better security but requiring more computational resources.
 - **JWT_TOKEN_SECRET**: This is the secret key used to sign and verify JSON Web Tokens (JWTs) for authentication purposes. See [Generating JWT Secret](#generating-jwt-secret) form detailed information on generating this variable.
-- **DATABASE_URL**: This provides the connection string to your database. It includes information such as the platform (PostgreSQL, MySQL, etc.), host, port, database name, user,
+- **DATABASE_URL**: This provides the connection string to your database. It includes information such as the platform (PostgreSQL, MySQL, etc.), host, port, database name, user. More info in [Prisma chapter](#prisma-usage-guide)
 
 ### Generating JWT Secret
 
