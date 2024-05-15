@@ -7,7 +7,7 @@ This command runs **npx prisma db push** and then starts **nodemon** instance th
 ```nodemon ./app.js``` 
 This command only starts the nodemon instance that runs the express server
 
-Make sure to set the .env variables described in the [next chapter](##-.env)
+Make sure to set the .env variables described in the [next chapter](#.env)
 ## .env
 
 ```
@@ -18,7 +18,7 @@ Make sure to set the .env variables described in the [next chapter](##-.env)
 ```
 - **ENVIRONMENT**: This specifies the current environment in which your application is running (e.g., "development", "production", "test").
 - **BCRYPT_SALT_ROUNDS**: This variable determines the complexity of the hashing process in bcrypt. A higher value denotes more rounds of hashing, thereby providing better security but requiring more computational resources.
-- **JWT_TOKEN_SECRET**: This is the secret key used to sign and verify JSON Web Tokens (JWTs) for authentication purposes. See [Generating JWT Secret](###-generating-jwt-secret) form detailed information on generating this variable.
+- **JWT_TOKEN_SECRET**: This is the secret key used to sign and verify JSON Web Tokens (JWTs) for authentication purposes. See [Generating JWT Secret](#generating-jwt-secret) form detailed information on generating this variable.
 - **DATABASE_URL**: This provides the connection string to your database. It includes information such as the platform (PostgreSQL, MySQL, etc.), host, port, database name, user,
 
 ### Generating JWT Secret
@@ -33,7 +33,7 @@ for `JWT_TOKEN_SECRET`.
 
 The JWT token secret is a key used for encoding and decoding the JSON Web Tokens (JWT). It needs to be kept private and secure. In the event you need to change your JWT secret:
 
-- First generate a new secret by running the command provided in [Generating jwt secret](###-Generating-jwt-secret) in your terminal.
+- First generate a new secret by running the command provided in [Generating jwt secret](#generating-jwt-secret) in your terminal.
 - Replace the 'JWT_TOKEN_SECRET' value in your `.env` file with the newly generated secret.
 - Restart your server for the changes to take effect.
 
