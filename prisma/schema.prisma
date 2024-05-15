@@ -23,6 +23,9 @@ model users {
   addresses       user_address[]
   tokens          tokens[]
   phone_verified     Boolean          @default(false)
+  push_notification_options Json?
+  notification_options Json?
+  taxi_options Json?
 }
 
 model tokens {
