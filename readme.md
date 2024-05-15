@@ -1,4 +1,34 @@
 # Klikni Backend
+## .env
+
+```
+    ENVIRONMENT="development"
+    BCRYPT_SALT_ROUNDS=12
+    JWT_TOKEN_SECRET=
+    DATABASE_URL=
+```
+- **ENVIRONMENT**: This specifies the current environment in which your application is running (e.g., "development", "production", "test").
+- **BCRYPT_SALT_ROUNDS**: This variable determines the complexity of the hashing process in bcrypt. A higher value denotes more rounds of hashing, thereby providing better security but requiring more computational resources.
+- **JWT_TOKEN_SECRET**: This is the secret key used to sign and verify JSON Web Tokens (JWTs) for authentication purposes. See [Generating JWT Secret] (###generating-jwt-secret) form detailed information on generating this variable.
+- **DATABASE_URL**: This provides the connection string to your database. It includes information such as the platform (PostgreSQL, MySQL, etc.), host, port, database name, user,
+
+### Generating JWT Secret
+
+```
+node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"
+```
+This command is used to generate a base64 encoded string that can be used as a secure JWT (JSON Web Token) secret. When run, it uses the crypto library in Node.js to create 256 random bytes and convert them into a base64 string. You can store this string in your .env file 
+for `JWT_TOKEN_SECRET`.
+
+### Changing JWT Secret
+
+The JWT token secret is a key used for encoding and decoding the JSON Web Tokens (JWT). It needs to be kept private and secure. In the event you need to change your JWT secret:
+
+- First generate a new secret by running the command provided in [Generating jwt secret](###Generating-jwt-secret) in your terminal.
+- Replace the 'JWT_TOKEN_SECRET' value in your `.env` file with the newly generated secret.
+- Restart your server for the changes to take effect.
+
+Please note that changing the JWT secret will invalidate all previously issued tokens. Therefore, all users will have to re-authenticate to receive new tokens.
 
 ## Run the app
 
@@ -23,7 +53,7 @@ Replace `"postgresql://user:password@localhost:5432/databaseName"` with your act
 
 #### Prisma Schema
 
-Your Prisma schema file (`./prisma/prisma.schema`) describes your database tables, relations, and also serves as the source of truth for your database schema. It contains model blocks which represent your application models. Each field in a model represents a column in the corresponding database table.
+Your [Prisma schema file](`./prisma/prisma.schema`) describes your database tables, relations, and also serves as the source of truth for your database schema. It contains model blocks which represent your application models. Each field in a model represents a column in the corresponding database table.
 
 ```prisma
     model Post {
