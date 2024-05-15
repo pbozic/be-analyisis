@@ -1,4 +1,13 @@
 # Klikni Backend
+## Run the app
+
+```npm run dev```
+This command runs **npx prisma db push** and then starts **nodemon** instance that runs the express server
+
+```nodemon ./app.js``` 
+This command only starts the nodemon instance that runs the express server
+
+Make sure to set the .env variables described in the [next chapter](##.env)
 ## .env
 
 ```
@@ -29,14 +38,6 @@ The JWT token secret is a key used for encoding and decoding the JSON Web Tokens
 - Restart your server for the changes to take effect.
 
 Please note that changing the JWT secret will invalidate all previously issued tokens. Therefore, all users will have to re-authenticate to receive new tokens.
-
-## Run the app
-
-```npm run dev```
-This command runs **npx prisma db push** and then starts **nodemon** instance that runs the express server
-
-```nodemon ./app.js``` 
-This command only starts the nodemon instance that runs the express server
 
 ## Prisma DB
 ### Prisma Usage Guide
