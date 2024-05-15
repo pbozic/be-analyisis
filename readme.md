@@ -54,7 +54,7 @@ Replace `"postgresql://user:password@localhost:5432/databaseName"` with your act
 
 #### Prisma Schema
 
-Your [Prisma schema file](./prisma/prisma.schema) describes your database tables, relations, and also serves as the source of truth for your database schema. It contains model blocks which represent your application models. Each field in a model represents a column in the corresponding database table.
+Your [Prisma schema file](./prisma/schema.prisma) describes your database tables, relations, and also serves as the source of truth for your database schema. It contains model blocks which represent your application models. Each field in a model represents a column in the corresponding database table.
 
 ```prisma
     model Post {
