@@ -7,16 +7,16 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const swaggerUi = require("swagger-ui-express");
 const cors = require("cors");
-
+const startCronJobs = require("./cron");
 const mainRouter = require("./routes/index");
 const apiRouter = require("./routes/api");
 const fileUploadLib = require("express-fileupload");
 const openapi = require("openapi-comment-parser");
 
-const authMiddleware = require("./middleware/auth");
-const adminMiddleware = require("./middleware/admin");
 // listen to port 3001
 const port = process.env.PORT || 3001;
+
+startCronJobs();
 
 let app = express();
 // view engine setup

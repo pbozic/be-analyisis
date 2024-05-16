@@ -8,9 +8,10 @@ const adminMiddleware = require("../middleware/admin");
 const adminRoutes = require("./api/admin");
 const userRoutes = require("./api/users");
 const authRoutes = require("./api/auth");
-
+const taxiRoutes = require("./api/taxi");
 router.use("/admin", [authMiddleware, adminMiddleware], adminRoutes);
 router.use("/users", [authMiddleware], userRoutes);
 router.use("/auth", authRoutes);
+router.use("/taxi", [authMiddleware], taxiRoutes);
 
 module.exports = router;
