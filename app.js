@@ -12,13 +12,14 @@ const mainRouter = require("./routes/index");
 const apiRouter = require("./routes/api");
 const fileUploadLib = require("express-fileupload");
 const openapi = require("openapi-comment-parser");
+const { app, server } = require('./server');
+const { io } = require('./socket'); // This initializes the socket.io server even if the io variable is not used in this file
 
 // listen to port 3001
 const port = process.env.PORT || 3001;
 
 startCronJobs();
 
-let app = express();
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 
@@ -38,8 +39,8 @@ app.use(
 	}),
 );
 app.use(fileUploadLib());
-
 app.use(cookieParser());
+
 app.use(express.static(path.join(__dirname, "public")));
 
 const spec = openapi();
@@ -64,9 +65,7 @@ app.use(function (err, req, res, next) {
 	res.render("error");
 });
 
-module.exports = app;
-
-app.listen(port, () => {
+server.listen(port, () => {
 	console.log("server listening on: " + port);
 
 	//precacheDataExport(app).then(r => console.log("pre-caching done"));

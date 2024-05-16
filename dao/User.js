@@ -59,6 +59,7 @@ const updateUser = async (user_id, user) => {
 		delete user.password;
 		delete user.addresses;
 		delete user.user_role;
+		delete user.profile_picture; // TODO: handle uploading profile picture
 
 		return prisma.users.update({
 			where: {
@@ -69,6 +70,7 @@ const updateUser = async (user_id, user) => {
 			},
 		});
 	} catch (error) {
+		console.log(error)
 		return new Error(error);
 	}
 };

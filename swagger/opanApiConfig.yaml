@@ -21,6 +21,8 @@ tags:
       description: Authentication Operations
     - name: Users
       description: Operations about user
+    - name: Taxi
+      description: Operations about taxi
 
 externalDocs:
     description: Find out more about Swagger

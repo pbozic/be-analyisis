@@ -75,13 +75,17 @@ async function me(req, res) {
  */
 async function updateMe(req, res) {
 	console.log("updateMe", req.body);
+
 	try {
 		let user = await UserDao.updateUser(req.user.user_id, req.body);
-
-		if (user) return res.status(200).json(user);
-
+		if (user) {
+			if (req.socket)
+				req.socket.emit("updateUser", user);
+			return res.status(200).json(user);
+		}
 		res.status(400).json({ error: "Error updating user information" });
 	} catch (e) {
+		console.log(e)
 		res.status(400).json({ error: "Error updating user information", e });
 	}
 }
