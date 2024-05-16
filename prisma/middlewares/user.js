@@ -15,6 +15,8 @@ async function handleHidePassword(model, operation, args, query, result) {
 	return middlewareResult;
 }
 
+//TODO: if user is type BUSINESS_CARETAKER || BUSINESS_OWNER, then handle address user_address_id, if empty get user_address.
+
 module.exports = {
 	handleHidePassword,
 };

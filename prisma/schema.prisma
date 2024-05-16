@@ -7,36 +7,107 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model finances {
+  finance_id          String     @id @default(uuid()) @db.Uuid
+  bank_name           String
+  account_number      String
+  account_holder      String
+  payment_preferences Json
+  created_at          DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
+  business            business[]
+
+  @@unique([account_number], name: "uniqueAccountNumber")
+}
+
+// add user_id
+model business {
+  business_id       String             @id @unique @default(uuid()) @db.Uuid
+  logo_id           String?            @db.Uuid
+  banner_id         String?            @db.Uuid
+  address_id        String?            @db.Uuid
+  finance_id        String?            @db.Uuid
+  type              BUSINESS_TYPE
+  name              String
+  description       String?
+  tax_id            String
+  registration_id   String
+  email             String             @unique
+  telephone         String
+  telephone_code    String
+  telephone_number  String
+  website_url       String?
+  working_hours     Json?
+  minimum_order     Int // Added field for minimum order requirement
+  popular           Boolean // Added field to indicate popularity
+  new               Boolean // Added field to indicate if the business is new
+  created_at        DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime           @default(now()) @updatedAt @db.Timestamptz(6)
+  address           addresses?         @relation(fields: [address_id], references: [address_id])
+  finances          finances?          @relation(fields: [finance_id], references: [finance_id])
+  // authored_reviews review[]         @relation("author_id", fields: [business_id], references: [author_id])
+  // received_reviews review[]         @relation("target_id", fields: [business_id], references: [target_id])
+  business_users    business_users[]
+  transfer_business transfer_business?
+}
+
+model business_users {
+  business_users_id String    @id @default(uuid()) @db.Uuid
+  business_id       String    @db.Uuid
+  user_id           String    @db.Uuid
+  created_at        DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+  users             users?    @relation(fields: [user_id], references: [user_id])
+  business          business? @relation(fields: [business_id], references: [business_id])
+}
+
 model users {
-  first_name      String?
-  password        String
-  email           String           @unique
-  telephone       String           @unique
-  telephone_code  String?           
-  telephone_number String?          
-  profile_picture String?
-  created_at      DateTime         @default(now()) @db.Timestamptz(6)
-  updated_at      DateTime         @updatedAt @db.Timestamptz(6)
-  last_name       String?
-  user_id         String           @id @default(uuid()) @db.Uuid
-  user_role       USER_ROLES       @default(PERSONAL)
-  addresses       user_address[]
-  tokens          tokens[]
-  phone_verified     Boolean          @default(false)
+  user_id                       String         @id @unique @default(uuid()) @db.Uuid
+  first_name                    String?
+  password                      String
+  email                         String         @unique
+  telephone                     String         @unique
+  telephone_code                String?
+  telephone_number              String?
+  profile_picture_id            String?        @db.Uuid
+  created_at                    DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at                    DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
+  last_name                     String?
+  user_role                     USER_ROLES     @default(PERSONAL)
+  addresses                     user_address[]
+  tokens                        tokens[]
+  phone_verified                Boolean        @default(false)
   push_notification_preferences Json?
-  notification_preferences Json?
-  taxi_preferences Json?
+  notification_preferences      Json?
+  taxi_preferences              Json?
+  // authored_reviews              reviews[]   //@relation("authored_reviews", fields: [user_id], references: [author_id])
+  // authored_reviews              user_reviews[]   @relation("authored_reviews", fields: [user_id], references: [author_id])
+  // received_reviews              user_reviews[]   @relation("received_reviews", fields: [user_id], references: [target_id])
+
+  business_users business_users[]
+  driver         drivers?
+}
+
+model files {
+  file_id     String    @id @default(uuid()) @db.Uuid
+  url         String
+  file_type   FILE_TYPE
+  mime_type   String
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+  user_id     String    @db.Uuid
+  business_id String    @db.Uuid
 }
 
 model tokens {
-  token_id String   @id @default(uuid()) @db.Uuid
-  user_id                String    @db.Uuid
-  type                   TokenType @default(API)
-  token                  String
-  created_at             DateTime @default(now()) @db.Timestamptz(6)
-  updated_at             DateTime @updatedAt @db.Timestamptz(6)
-  active                 Boolean  @default(true)
-  users                  users    @relation(fields: [user_id], references: [user_id])
+  token_id   String    @id @default(uuid()) @db.Uuid
+  user_id    String    @db.Uuid
+  type       TokenType @default(API)
+  token      String
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+  active     Boolean   @default(true)
+  users      users     @relation(fields: [user_id], references: [user_id])
 }
 
 model addresses {
@@ -50,8 +121,9 @@ model addresses {
   country      String?
   postal       String?
   users        user_address[]
+  businesses   business[]
 
-  @@unique([address, latitude, longitude], name: "uniqueAdressIdentifier")
+  @@unique([address, latitude, longitude], name: "uniqueAddressIdentifier")
 }
 
 model user_address {
@@ -59,11 +131,84 @@ model user_address {
   address_id String    @db.Uuid
   name       String?
   icon       String?
-  primary   Boolean   @default(false)
+  primary    Boolean   @default(false)
   users      users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   address    addresses @relation(fields: [address_id], references: [address_id], onDelete: Cascade)
 
   @@id([user_id, address_id])
+}
+
+//
+// model reviews {
+//   review_id        String            @id @default(uuid()) @db.Uuid
+//   author_id        String // ID of the author (user, driver, etc.)
+//   target_id        String // ID of the business, driver, or delivery personnel being reviewed
+//   rating           Float
+//   review           String
+//   created_at       DateTime          @default(now()) @db.Timestamptz(6)
+//   updated_at       DateTime          @updatedAt @db.Timestamptz(6)
+//   // comments         comment[]
+//   user_reviews     user_reviews?
+//   business_reviews business_reviews?
+//
+//   @@unique([review_id], name: "uniqueReviewId")
+// }
+
+// model user_reviews {
+//   user_review_id String @id @default(uuid()) @db.Uuid
+//   review_id      String @db.Uuid
+//   author_id      String @db.Uuid
+//   target_id      String @db.Uuid
+//   review         reviews @relation(fields: [review_id], references: [review_id])
+//   user           users  @relation(fields: [review_id], references: [user_id])
+// }
+//
+// model business_reviews {
+//   review_id String    @id @default(uuid()) @db.Uuid
+//   author_id String    @db.Uuid
+//   target_id String    @db.Uuid
+//   review    reviews    @relation(fields: [review_id], references: [review_id])
+//   business  business? @relation(fields: [target_id], references: [business_id])
+// }
+
+// model comment {
+//   comment_id  String   @id @default(uuid()) @db.Uuid
+//   review_id   String   @db.Uuid
+//   author_id   String // ID of the author (user, driver, etc.)
+//   author_type String // Type of the author: "user", "business", "driver", "delivery"
+//   comment     String
+//   created_at  DateTime @default(now()) @db.Timestamptz(6)
+//   updated_at  DateTime @updatedAt @db.Timestamptz(6)
+//   review      review   @relation(fields: [review_id], references: [review_id])
+//
+//   @@unique([comment_id], name: "uniqueCommentId")
+// }
+
+model transfer_business {
+  transfer_business_id String    @id @default(uuid()) @db.Uuid
+  business_id          String    @unique @db.Uuid
+  created_at           DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+  business             business? @relation(fields: [business_id], references: [business_id])
+}
+
+model drivers {
+  driver_id            String     @id @default(uuid()) @db.Uuid
+  transfer_business_id String?    @db.Uuid
+  created_at           DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
+  user_id              String?    @unique @db.Uuid
+  user                 users?     @relation(fields: [user_id], references: [user_id])
+  vehicle              vehicles[]
+}
+
+model vehicles {
+  driver_id            String   @id @default(uuid()) @db.Uuid
+  transfer_business_id String?  @db.Uuid
+  vehicle_id           String?  @db.Uuid
+  created_at           DateTime @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  driver               drivers? @relation(fields: [driver_id], references: [driver_id])
 }
 
 model allergens {
@@ -75,6 +220,8 @@ model allergens {
 
 enum USER_ROLES {
   ADMIN
+  BUSINESS_OWNER
+  BUSINESS_CARETAKER
   PERSONAL
   DRIVER
 }
@@ -84,4 +231,20 @@ enum TokenType {
   PHONE_VERIFICATION
   API
   PASSWORD_RESET
+}
+
+enum BUSINESS_TYPE {
+  BUSINESS
+  BUSINESS_UNIT
+}
+
+enum BUSINESS_CATEGORY {
+  TAXI
+  TRANSFER
+  MERCHANT
+}
+
+enum FILE_TYPE {
+  IMAGE
+  DOCUMENT
 }

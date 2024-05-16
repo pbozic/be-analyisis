@@ -1,3 +1,4 @@
+const prisma = require("../prisma/prisma");
 async function getActiveSMSToken(user) {
 	try {
 		return prisma.tokens.findFirst({
