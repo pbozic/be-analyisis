@@ -59,7 +59,6 @@ const updateUser = async (user_id, user) => {
 		delete user.password;
 		delete user.addresses;
 		delete user.user_role;
-		delete user.profile_picture; // TODO: handle uploading profile picture
 
 		return prisma.users.update({
 			where: {
@@ -127,6 +126,61 @@ const updateUserType = async (user_id, user_role) => {
 			data: {
 				user_role,
 			},
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
+
+const updateUserTaxiPreferences = async (user_id, taxiPreferences) => {
+	try {
+		return await prisma.users.update({
+			where: { user_id },
+			data: { taxi_preferences: taxiPreferences },
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
+
+const updateUserDateOfBirth = async (user_id, dateOfBirth) => {
+	try {
+		return await prisma.users.update({
+			where: { user_id },
+			data: { date_of_birth: dateOfBirth },
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
+
+const updateUserNotificationPreferences = async (user_id, notificationPreferences) => {
+	try {
+		return await prisma.users.update({
+			where: { user_id },
+			data: { notification_preferences: notificationPreferences },
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
+
+const updateUserPushNotifications = async (user_id, pushNotificationPreferences) => {
+	try {
+		return await prisma.users.update({
+			where: { user_id },
+			data: { push_notification_preferences: pushNotificationPreferences },
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
+
+const updateUserTelephoneVerified = async (user_id, telephoneVerified) => {
+	try {
+		return await prisma.users.update({
+			where: { user_id },
+			data: { phone_verified: telephoneVerified },
 		});
 	} catch (error) {
 		return new Error(error);
