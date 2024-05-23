@@ -1,0 +1,10 @@
+{
+  "ride_requirements": {
+    "luggage": true,
+    "traveling_with_pet": true,
+    "air_conditioning": true,
+    "child_seat": true,
+    "wheelchair_accessibility": true,
+    "quiet_ride": true
+  }
+}
