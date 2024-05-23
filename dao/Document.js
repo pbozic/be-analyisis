@@ -1,5 +1,41 @@
 const prisma = require("../prisma/prisma");
 
+const getDocumentsForBusiness = async (businessId) => {
+	return await prisma.documents.findMany({
+		where: { business_id: businessId },
+		include: {
+			files: true, // Include related files if needed
+		},
+	});
+};
+
+const getDocumentsForDeliveryPerson = async (deliveryPersonId) => {
+	return await prisma.documents.findMany({
+		where: { delivery_person_id: deliveryPersonId },
+		include: {
+			files: true, // Include related files if needed
+		},
+	});
+};
+
+const getDocumentsForDriver = async (driverId) => {
+	return await prisma.documents.findMany({
+		where: { driver_id: driverId },
+		include: {
+			files: true, // Include related files if needed
+		},
+	});
+};
+
+const getDocumentsForVehicle = async (vehicleId) => {
+	return await prisma.documents.findMany({
+		where: { vehicle_id: vehicleId },
+		include: {
+			files: true, // Include related files if needed
+		},
+	});
+};
+
 // Create a new document with associated files
 const createDocument = async (documentData, filesData) => {
 	return await prisma.documents.create({
@@ -69,6 +105,22 @@ const updateDocumentFiles = async (documentId, filesData) => {
 	});
 };
 
+const updateDocumentAdditionalInfo = async (documentId, jsonData) => {
+	return await prisma.documents.update({
+		where: { document_id: documentId },
+		data: { additional_info: jsonData },
+	});
+};
+
+const getDocumentsForUser = async (userId) => {
+	return await prisma.documents.findMany({
+		where: { user_id: userId },
+		include: {
+			files: true, // Include related files if needed
+		},
+	});
+};
+
 module.exports = {
 	createDocument,
 	getDocumentById,
@@ -76,4 +128,10 @@ module.exports = {
 	updateDocumentFiles,
 	updateDocumentExpirationDate,
 	updateDocumentIssueDate,
+	getDocumentsForUser,
+	getDocumentsForBusiness,
+	getDocumentsForDeliveryPerson,
+	getDocumentsForDriver,
+	getDocumentsForVehicle,
+	updateDocumentAdditionalInfo
 };
