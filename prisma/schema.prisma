@@ -20,7 +20,6 @@ model finances {
   @@unique([account_number], name: "uniqueAccountNumber")
 }
 
-// add user_id
 model business {
   business_id         String             @id @unique @default(uuid()) @db.Uuid
   address_id          String?            @db.Uuid
