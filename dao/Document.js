@@ -160,6 +160,19 @@ const updateDocumentAdditionalInfo = async (documentId, jsonData) => {
 	}
 };
 
+const getDocumentsByType = async (documentType) => {
+	try {
+		return await prisma.documents.findMany({
+			where: { document_type: documentType },
+			include: {
+				files: true,
+			},
+		});
+	} catch (error) {
+		console.error("Error getting documents by type:", error);
+		return new Error(error);
+	}
+};
 
 const getDocumentsForUser = async (userId) => {
 	try {
@@ -171,6 +184,91 @@ const getDocumentsForUser = async (userId) => {
 		});
 	} catch (error) {
 		console.error("Error getting documents for user:", error);
+		return new Error(error);
+	}
+};
+
+const getDocumentsForUserByType = async (userId, documentType) => {
+	try {
+		return await prisma.documents.findMany({
+			where: {
+				user_id: userId,
+				document_type: documentType,
+			},
+			include: {
+				files: true,
+			},
+		});
+	} catch (error) {
+		console.error("Error getting documents for user by type:", error);
+		return new Error(error);
+	}
+};
+
+const getDocumentsForBusinessByType = async (businessId, documentType) => {
+	try {
+		return await prisma.documents.findMany({
+			where: {
+				business_id: businessId,
+				document_type: documentType,
+			},
+			include: {
+				files: true,
+			},
+		});
+	} catch (error) {
+		console.error("Error getting documents for business by type:", error);
+		return new Error(error);
+	}
+};
+
+const getDocumentsForDriverByType = async (driverId, documentType) => {
+	try {
+		return await prisma.documents.findMany({
+			where: {
+				driver_id: driverId,
+				document_type: documentType,
+			},
+			include: {
+				files: true,
+			},
+		});
+	} catch (error) {
+		console.error("Error getting documents for driver by type:", error);
+		return new Error(error);
+	}
+};
+
+const getDocumentsForDeliveryPersonByType = async (deliveryPersonId, documentType) => {
+	try {
+		return await prisma.documents.findMany({
+			where: {
+				delivery_person_id: deliveryPersonId,
+				document_type: documentType,
+			},
+			include: {
+				files: true,
+			},
+		});
+	} catch (error) {
+		console.error("Error getting documents for delivery person by type:", error);
+		return new Error(error);
+	}
+};
+
+const getDocumentsForVehicleByType = async (vehicleId, documentType) => {
+	try {
+		return await prisma.documents.findMany({
+			where: {
+				vehicle_id: vehicleId,
+				document_type: documentType,
+			},
+			include: {
+				files: true,
+			},
+		});
+	} catch (error) {
+		console.error("Error getting documents for vehicle by type:", error);
 		return new Error(error);
 	}
 };
@@ -188,4 +286,10 @@ module.exports = {
 	getDocumentsForDeliveryPerson,
 	getDocumentsForDriver,
 	getDocumentsForVehicle,
+	getDocumentsByType,
+	getDocumentsForUserByType,
+	getDocumentsForBusinessByType,
+	getDocumentsForDriverByType,
+	getDocumentsForDeliveryPersonByType,
+	getDocumentsForVehicleByType,
 };
