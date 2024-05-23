@@ -4,6 +4,15 @@ const getDrivers = async (args) => {
 	try {
 		return await prisma.drivers.findMany({
 			...args,
+			include: {
+				user: true, // Include user information
+				vehicles: {
+					include: {
+						vehicle_specification: true,
+					},
+				},
+				documents: false,
+			},
 		});
 	} catch (error) {
 		console.error("Error retrieving drivers:", error);
@@ -11,27 +20,42 @@ const getDrivers = async (args) => {
 	}
 };
 
-const getDriverById = async (driver_id, args) => {
+const getDriverById = async (driver_id) => {
 	try {
 		return await prisma.drivers.findUnique({
 			where: {
 				driver_id: driver_id,
 			},
-			...args,
+			include: {
+				user: true,
+				vehicles: {
+					include: {
+						vehicle_specification: true,
+					},
+				},
+				documents: false,
+			},
 		});
 	} catch (error) {
 		console.error("Error retrieving driver:", error);
 		throw new Error(error);
 	}
 };
-
-const getDriverByUserId = async (user_id, args) => {
+const getDriverByUserId = async (user_id) => {
 	try {
 		return await prisma.drivers.findUnique({
 			where: {
 				user_id: user_id,
 			},
-			...args,
+			include: {
+				user: true,
+				vehicles: {
+					include: {
+						vehicle_specification: true,
+					},
+				},
+				documents: false,
+			},
 		});
 	} catch (error) {
 		console.error("Error retrieving driver by user ID:", error);
