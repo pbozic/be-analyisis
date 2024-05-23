@@ -5,7 +5,7 @@ async function addAddress(address) {
 	try {
 		return prisma.addresses.upsert({
 			where: {
-				uniqueAdressIdentifier: {
+				uniqueAddressIdentifier: {
 					address: address.address,
 					latitude: address.latitude,
 					longitude: address.longitude,
