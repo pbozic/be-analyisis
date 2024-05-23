@@ -23,8 +23,6 @@ model finances {
 // add user_id
 model business {
   business_id         String             @id @unique @default(uuid()) @db.Uuid
-  logo_id             String?            @db.Uuid
-  banner_id           String?            @db.Uuid
   address_id          String?            @db.Uuid
   finance_id          String?            @db.Uuid
   type                BUSINESS_TYPE
@@ -76,7 +74,6 @@ model users {
   telephone                     String            @unique
   telephone_code                String?
   telephone_number              String?
-  profile_picture_id            String?           @db.Uuid
   date_of_birth                 DateTime          @db.Timestamptz(6)
   created_at                    DateTime          @default(now()) @db.Timestamptz(6)
   updated_at                    DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
@@ -123,10 +120,6 @@ model files {
   mime_type   String
   created_at  DateTime   @default(now()) @db.Timestamptz(6)
   updated_at  DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
-  user_id     String     @db.Uuid
-  driver_id   String     @db.Uuid
-  business_id String     @db.Uuid
-  vehicle_id  String?    @db.Uuid
   document_id String?    @db.Uuid
   documents   documents? @relation(fields: [document_id], references: [document_id])
 }
