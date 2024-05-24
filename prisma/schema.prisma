@@ -21,15 +21,17 @@ model finances {
 }
 
 model business {
-  business_id         String             @id @unique @default(uuid()) @db.Uuid
-  address_id          String?            @db.Uuid
-  finance_id          String?            @db.Uuid
+  business_id         String            @id @unique @default(uuid()) @db.Uuid
+  address_id          String?           @db.Uuid
+  finance_id          String?           @db.Uuid
   type                BUSINESS_TYPE
+  is_business_unit    Boolean           @default(false)
+  business_group_name String? // if part of any holding or other business group
   name                String
   description         String?
   tax_id              String
   registration_id     String
-  email               String             @unique
+  email               String            @unique
   telephone           String
   telephone_code      String
   telephone_number    String
@@ -38,19 +40,17 @@ model business {
   minimum_order       Int // Added field for minimum order requirement
   popular             Boolean // Added field to indicate popularity
   new                 Boolean // Added field to indicate if the business is new
-  created_at          DateTime           @default(now()) @db.Timestamptz(6)
-  updated_at          DateTime           @default(now()) @updatedAt @db.Timestamptz(6)
-  address             addresses?         @relation(fields: [address_id], references: [address_id])
-  finances            finances?          @relation(fields: [finance_id], references: [finance_id])
+  created_at          DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+  address             addresses?        @relation(fields: [address_id], references: [address_id])
+  finances            finances?         @relation(fields: [finance_id], references: [finance_id])
   business_users      business_users[]
-  transfer_business   transfer_business?
-  merchant_business   merchant_business?
-  delivery_business   delivery_business?
   documents           documents[]
-  business_group_name String? // if part of any holding or other business group
-  parent_business_id  String?            @db.Uuid
-  parent_business     business?          @relation("parent_business", fields: [parent_business_id], references: [business_id])
-  child_businesses    business[]         @relation("parent_business")
+  parent_business_id  String?           @db.Uuid
+  parent_business     business?         @relation("parent_business", fields: [parent_business_id], references: [business_id])
+  child_businesses    business[]        @relation("parent_business")
+  taxi_orders         taxi_orders[]
+  delivery_orders     delivery_orders[]
 }
 
 model business_users {
@@ -162,60 +162,32 @@ model user_address {
   @@id([user_id, address_id])
 }
 
-model transfer_business {
-  transfer_business_id String        @id @default(uuid()) @db.Uuid
-  business_id          String        @unique @db.Uuid
-  created_at           DateTime      @default(now()) @db.Timestamptz(6)
-  updated_at           DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
-  business             business?     @relation(fields: [business_id], references: [business_id])
-  orders               taxi_orders[]
-}
-
 model drivers {
-  driver_id            String            @id @default(uuid()) @db.Uuid
-  transfer_business_id String?           @db.Uuid
-  created_at           DateTime          @default(now()) @db.Timestamptz(6)
-  updated_at           DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
-  user_id              String?           @unique @db.Uuid
-  user                 users?            @relation(fields: [user_id], references: [user_id])
-  vehicles             vehicles[]
-  orders               taxi_orders[]
-  received_orders      taxi_order_sent[]
-  documents            documents[]
-  location             Json?
-}
-
-model merchant_business {
-  merchant_business_id String            @id @default(uuid()) @db.Uuid
-  created_at           DateTime          @default(now()) @db.Timestamptz(6)
-  updated_at           DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
-  seat_capacity        Int               @unique @db.SmallInt
-  business_id          String            @unique @db.Uuid
-  business             business?         @relation(fields: [business_id], references: [business_id])
-  orders               delivery_orders[]
-}
-
-model delivery_business {
-  delivery_business_id String            @id @default(uuid()) @db.Uuid
-  business_id          String            @unique @db.Uuid
-  created_at           DateTime          @default(now()) @db.Timestamptz(6)
-  updated_at           DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
-  business             business?         @relation(fields: [business_id], references: [business_id])
-  orders               delivery_orders[]
+  driver_id       String            @id @default(uuid()) @db.Uuid
+  business_id     String?           @db.Uuid
+  created_at      DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+  user_id         String?           @unique @db.Uuid
+  user            users?            @relation(fields: [user_id], references: [user_id])
+  vehicles        vehicles[]
+  orders          taxi_orders[]
+  received_orders taxi_order_sent[]
+  documents       documents[]
+  location        Json?
 }
 
 model delivery_person {
-  delivery_person_id   String                @id @default(uuid()) @db.Uuid
-  delivery_business_id String?               @db.Uuid
-  created_at           DateTime              @default(now()) @db.Timestamptz(6)
-  updated_at           DateTime              @default(now()) @updatedAt @db.Timestamptz(6)
-  user_id              String?               @unique @db.Uuid
-  user                 users?                @relation(fields: [user_id], references: [user_id])
-  vehicles             vehicles[]
-  orders               delivery_orders[]
-  received_orders      delivery_order_sent[]
-  documents            documents[]
-  location             Json?
+  delivery_person_id String                @id @default(uuid()) @db.Uuid
+  business_id        String?               @db.Uuid
+  created_at         DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime              @default(now()) @updatedAt @db.Timestamptz(6)
+  user_id            String?               @unique @db.Uuid
+  user               users?                @relation(fields: [user_id], references: [user_id])
+  vehicles           vehicles[]
+  orders             delivery_orders[]
+  received_orders    delivery_order_sent[]
+  documents          documents[]
+  location           Json?
 }
 
 model vehicles {
@@ -253,21 +225,21 @@ model allergens {
 }
 
 model taxi_orders {
-  taxi_order_id        String             @id @default(uuid()) @db.Uuid
-  transfer_business_id String             @db.Uuid
-  user_id              String             @db.Uuid
-  driver_id            String             @db.Uuid
-  route                Json
-  pickup_location      Json
-  delivery_location    Json
-  status               TAXI_ORDER_STATUS
-  last_sent_at         DateTime?          @db.Timestamptz(6)
-  created_at           DateTime           @default(now()) @db.Timestamptz(6)
-  updated_at           DateTime           @default(now()) @updatedAt @db.Timestamptz(6)
-  transfer_business    transfer_business? @relation(fields: [transfer_business_id], references: [transfer_business_id])
-  driver               drivers?           @relation(fields: [driver_id], references: [driver_id])
-  user                 users?             @relation(fields: [user_id], references: [user_id])
-  history              taxi_order_sent[]
+  taxi_order_id     String            @id @default(uuid()) @db.Uuid
+  user_id           String            @db.Uuid
+  driver_id         String            @db.Uuid
+  route             Json
+  pickup_location   Json
+  delivery_location Json
+  status            TAXI_ORDER_STATUS
+  last_sent_at      DateTime?         @db.Timestamptz(6)
+  created_at        DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+  business_id       String            @db.Uuid
+  business          business?         @relation(fields: [business_id], references: [business_id])
+  driver            drivers?          @relation(fields: [driver_id], references: [driver_id])
+  user              users?            @relation(fields: [user_id], references: [user_id])
+  history           taxi_order_sent[]
 }
 
 model taxi_order_sent {
@@ -283,23 +255,21 @@ model taxi_order_sent {
 }
 
 model delivery_orders {
-  delivery_order_id                     String                @id @default(uuid()) @db.Uuid
-  route                                 Json
-  pickup_location                       Json
-  delivery_location                     Json
-  status                                DELIVERY_ORDER_STATUS
-  last_sent_at                          DateTime?             @db.Timestamptz(6)
-  created_at                            DateTime              @default(now()) @db.Timestamptz(6)
-  updated_at                            DateTime              @default(now()) @updatedAt @db.Timestamptz(6)
-  delivery_business_id                  String                @db.Uuid
-  delivery_business                     delivery_business?    @relation(fields: [delivery_business_id], references: [delivery_business_id])
-  user_id                               String                @db.Uuid
-  user                                  users?                @relation(fields: [user_id], references: [user_id])
-  history                               delivery_order_sent[]
-  delivery_person_id                    String                @db.Uuid
-  delivery_person                       delivery_person?      @relation(fields: [delivery_person_id], references: [delivery_person_id])
-  merchant_business                     merchant_business?    @relation(fields: [merchant_businessMerchant_business_id], references: [merchant_business_id])
-  merchant_businessMerchant_business_id String?               @db.Uuid
+  delivery_order_id  String                @id @default(uuid()) @db.Uuid
+  route              Json
+  pickup_location    Json
+  delivery_location  Json
+  status             DELIVERY_ORDER_STATUS
+  last_sent_at       DateTime?             @db.Timestamptz(6)
+  created_at         DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime              @default(now()) @updatedAt @db.Timestamptz(6)
+  user_id            String                @db.Uuid
+  user               users?                @relation(fields: [user_id], references: [user_id])
+  history            delivery_order_sent[]
+  delivery_person_id String                @db.Uuid
+  delivery_person    delivery_person?      @relation(fields: [delivery_person_id], references: [delivery_person_id])
+  business_id        String?               @db.Uuid
+  business           business?             @relation(fields: [business_id], references: [business_id])
 }
 
 model delivery_order_sent {
@@ -331,8 +301,8 @@ enum TokenType {
 }
 
 enum BUSINESS_TYPE {
-  BUSINESS
-  BUSINESS_UNIT
+  TRANSFER
+  MERCHANT
 }
 
 enum MERCHANT_TYPE {
