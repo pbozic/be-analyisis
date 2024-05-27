@@ -45,7 +45,7 @@ async function createOrderSent(taxi_order_id, driver) {
         return new Error(e);
     }
 }
-async function acceptOrder(taxi_order_id, driver_id) {
+async function acceptOrder(taxi_order_id, driver_id, business_id) {
     try {
        
         await acceptOrderSent(taxi_order_id, driver_id);
@@ -55,7 +55,8 @@ async function acceptOrder(taxi_order_id, driver_id) {
             },
             data: {
                 order_status: "DRIVER_ACCEPTED",
-                driver_id
+                driver_id,
+                business_id
             },
         });
     } catch (e) {
@@ -77,10 +78,30 @@ async function acceptOrderSent(taxi_order_id, driver_id) {
         return new Error(e);
     }
 }
+async function getSentDrivers(taxi_order_id) {
+    try {
+        return prisma.taxi_orders_sent.findMany({
+            where: {
+                taxi_order_id,
+                include: {
+                    driver: {
+                        include: {
+                            user: true
+                        }
+                    }
+                }
+            }
+        });
+    } catch (e) {
+        return new Error(e);
+    }
+}
 module.exports = {
     getOrder,
     createOrder,
     acceptOrder,
     createOrderSent,
-    getOrders
+    getOrders,
+    getSentDrivers
+
 };
