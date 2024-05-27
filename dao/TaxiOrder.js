@@ -96,12 +96,27 @@ async function getSentDrivers(taxi_order_id) {
         return new Error(e);
     }
 }
+async function updateOrderLastSentAt(taxi_order_id) {
+    try {
+        return prisma.taxi_orders.update({
+            where: {
+                taxi_order_id
+            },
+            data: {
+                last_sent_at: new Date()
+            }
+        });
+    } catch (e) {
+        return new Error(e);
+    }
+}
 module.exports = {
     getOrder,
     createOrder,
     acceptOrder,
     createOrderSent,
     getOrders,
-    getSentDrivers
+    getSentDrivers,
+    updateOrderLastSentAt
 
 };
