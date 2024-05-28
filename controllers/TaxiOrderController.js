@@ -1,19 +1,18 @@
 const TaxiOrderDao = require("../dao/TaxiOrder");
+const { UserSockets } = require('../socket');
+const TaxiHelper = require('../lib/taxiHelpers');
 /**
- * POST /auth/login
- * @tag Authentication
- * @summary User login procedure.
- * @description This verifies the user's credentials and responds with an access token and refresh token if successful.
- * @operationId loginUser.
- * @bodyDescription Request body must include email and password for verification.
- * @bodyContent {LoginRequest} application/json
- * @bodyRequired
- * @response 200 - Successful operation. Returns user details along with accessToken and refreshToken in the response body, additionally sets Authorization header with the accessToken.
- * @responseContent {AuthenticatedUser} 200.application/json
- * @responseHeader {string} 200.Authorization - The newly generated access token.
- * @response 400 - Unsuccessful operation. Returns error message "Wrong email / password combination." if the either the email or password (or both) are incorrect.
+ * GET /taxi/order/{orderId}
+ * @tag Taxi
+ * @summary Get order details.
+ * @description This fetches the order details using the given order id.
+ * @operationId getOrder
+ * @pathParam {integer} orderId - The ID of the taxi order to retrieve
+ * @response 200 - Successful operation. Returns order details in the response body.
+ * @responseContent {Order} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong.." if any exception is encountered during execution.
  */
+
 async function getOrder(req, res) {
 	try {
 		let order = await TaxiOrderDao.getOrder(req.params.order_id);
@@ -24,10 +23,53 @@ async function getOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
+
+/**
+ * POST /taxi/order
+ * @tag Taxi
+ * @summary Create a new taxi order.
+ * @description This creates a new taxi order with the provided details from the request body. Returns the created order if successful.
+ * @operationId createOrder
+ * @bodyDescription Request body must include necessary order details.
+ * @bodyContent {TaxiOrderRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the newly created order in the response body.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Returns error message "Something went wrong.." if any exception is encountered during execution.
+ */
 async function createOrder(req, res) {
 	try {
 		let order = await TaxiOrderDao.createOrder(req.body);
 		//TODO: select drivers to notify
+		TaxiHelper.findTaxiOrderDrivers(order);
+		res.status(200).json(order);
+	}
+	catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+/**
+ * POST /taxi/order/{orderId}/accept
+ * @tag Taxi
+ * @summary Accept a taxi order.
+ * @description Accepts taxi order with the provided details from the request body. Returns the accepted order if successful.
+ * @operationId acceptOrder
+ * @bodyDescription Request body must include necessary order details.
+ * @bodyContent {TaxiOrderRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the accepted order in the response body.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Returns error message "Something went wrong.." if any exception is encountered during execution.
+ */
+async function acceptOrder(req, res) {
+	try {
+		let order = await TaxiOrderDao.acceptOrder(req.params.order_id);
+		// 
+		let userSocket = UserSockets.get(order.user_id);
+		if (userSocket) {
+			userSocket.emit('order_accepted', order);
+		}
 		res.status(200).json(order);
 	}
 	catch (e) {
@@ -36,9 +78,8 @@ async function createOrder(req, res) {
 	}
 }
 
-
-
 module.exports = {
 	getOrder,
-	createOrder
+	createOrder,
+	acceptOrder
 };

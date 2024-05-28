@@ -1,5 +1,27 @@
 components:
   schemas:
+    Route:
+      type: "object"
+      properties:
+        start_location:
+          type: "string"
+        end_location:
+          type: "string"
+        start_time:
+          type: "string"
+        end_time:
+          type: "string"
+    TaxiOrderRequest:
+      type: "object"
+      properties:
+        user_id:
+          type: "string"
+        pickup_location:
+          type: "string"
+        delivery_location:
+          type: "string"
+        route:
+          $ref: '#/components/schemas/Route'
     TaxiOrderStatus:
       type: "string"
       enum: ["PENDING", "TAXI_ACCEPTED", "TAXI_REJECTED", "TAXI_ARRIVED", "TAXI_COMPLETED", "TAXI_CANCELLED", "CUSTOMER_CANCELLED"]
@@ -15,8 +37,7 @@ components:
         bussines_id:
           type: "string"
         status:
-          schema:
-            $ref: '#/components/schemas/TaxiOrderStatus'
+          $ref: '#/components/schemas/TaxiOrderStatus'
         pickup_location:
           type: "string"
         delivery_location:
@@ -24,17 +45,7 @@ components:
         last_sent_at:
           type: "string"
         route:
-          type: "object"
-          properties:
-          #TODO: FIXME: This is a placeholder. The actual schema should be defined here.
-            start_location:
-              type: "string"
-            end_location:
-              type: "string"
-            start_time:
-              type: "string"
-            end_time:
-              type: "string"
+          $ref: '#/components/schemas/Route'
         created_at:
           type: "string"
         updated_at:
