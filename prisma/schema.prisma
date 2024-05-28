@@ -23,6 +23,7 @@ model finances {
 model business {
   business_id         String            @id @unique @default(uuid()) @db.Uuid
   address_id          String?           @db.Uuid
+  delivery_address_id String?           @db.Uuid
   finance_id          String?           @db.Uuid
   type                BUSINESS_TYPE
   is_business_unit    Boolean           @default(false)
@@ -37,12 +38,13 @@ model business {
   telephone_number    String
   website_url         String?
   working_hours       Json?
-  minimum_order       Int // Added field for minimum order requirement
-  popular             Boolean // Added field to indicate popularity
-  new                 Boolean // Added field to indicate if the business is new
+  minimum_order       Int
+  popular             Boolean           @default(true)
+  new                 Boolean           @default(false)
   created_at          DateTime          @default(now()) @db.Timestamptz(6)
   updated_at          DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
-  address             addresses?        @relation(fields: [address_id], references: [address_id])
+  address             addresses?        @relation(name: "address", fields: [address_id], references: [address_id])
+  delivery_address    addresses?        @relation(name: "delivery_address", fields: [delivery_address_id], references: [address_id])
   finances            finances?         @relation(fields: [finance_id], references: [finance_id])
   business_users      business_users[]
   documents           documents[]
@@ -135,17 +137,18 @@ model tokens {
 }
 
 model addresses {
-  address_id   String         @id @default(uuid()) @db.Uuid
-  address      String
-  latitude     String
-  longitude    String
-  street       String?
-  house_number String?
-  city         String?
-  country      String?
-  postal       String?
-  users        user_address[]
-  businesses   business[]
+  address_id                  String         @id @default(uuid()) @db.Uuid
+  address                     String
+  latitude                    String
+  longitude                   String
+  street                      String?
+  house_number                String?
+  city                        String?
+  country                     String?
+  postal                      String?
+  users                       user_address[]
+  businesses                  business[]     @relation(name: "address")
+  businesses_delivery_address business[]     @relation(name: "delivery_address")
 
   @@unique([address, latitude, longitude], name: "uniqueAddressIdentifier")
 }
