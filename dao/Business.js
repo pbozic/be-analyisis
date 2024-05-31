@@ -1,4 +1,5 @@
 const prisma = require("../prisma/prisma");
+const AddressDao = require('./Address'); // Assuming Address.js exports are imported as AddressDao
 
 const getBusinesses = async (args) => {
 	try {
@@ -24,6 +25,8 @@ const getBusinesses = async (args) => {
 		throw new Error(error);
 	}
 };
+
+
 
 const getBusinessById = async (business_id) => {
 	try {
@@ -52,6 +55,93 @@ const getBusinessById = async (business_id) => {
 	}
 };
 
+const getBusinessesByNameSearch = async (search) => {
+	try {
+		return await prisma.business.findMany({
+			where: {
+				name: {
+					contains: search,
+					mode: 'insensitive', // This makes the search case-insensitive
+				},
+			},
+			include: {
+				address: true,
+				finances: true,
+				business_users: {
+					include: {
+						users: true,
+					},
+				},
+				parent_business: true,
+				child_businesses: true,
+				documents: false,
+				taxi_orders: false,
+				delivery_orders: false,
+			},
+		});
+	} catch (error) {
+		console.error("Error retrieving businesses by name:", error);
+		throw new Error(error);
+	}
+};
+
+const getBusinessesByGroupName = async (search) => {
+	try {
+		return await prisma.business.findMany({
+			where: {
+				business_group_name: {
+					contains: search,
+					mode: 'insensitive', // This makes the search case-insensitive
+				},
+			},
+			include: {
+				address: true,
+				finances: true,
+				business_users: {
+					include: {
+						users: true,
+					},
+				},
+				parent_business: true,
+				child_businesses: true,
+				documents: false,
+				taxi_orders: false,
+				delivery_orders: false,
+			},
+		});
+	} catch (error) {
+		console.error("Error retrieving businesses by group name:", error);
+		throw new Error(error);
+	}
+};
+
+const getBusinessesByType = async (type) => {
+	try {
+		return await prisma.business.findMany({
+			where: {
+				type: type,
+			},
+			include: {
+				address: true,
+				finances: true,
+				business_users: {
+					include: {
+						users: true,
+					},
+				},
+				parent_business: true,
+				child_businesses: true,
+				documents: false,
+				taxi_orders: false,
+				delivery_orders: false,
+			},
+		});
+	} catch (error) {
+		console.error(`Error retrieving businesses by type ${type}:`, error);
+		throw new Error(error);
+	}
+};
+
 const getParentBusiness = async (business_id) => {
 	try {
 		const business = await prisma.business.findUnique({
@@ -72,6 +162,29 @@ const getChildBusinesses = async (parent_business_id) => {
 		});
 	} catch (error) {
 		console.error("Error retrieving child businesses:", error);
+		throw new Error(error);
+	}
+};
+
+const getFinanceRecordByBusinessId = async (business_id) => {
+	try {
+		const businessWithFinance = await prisma.business.findUnique({
+			where: { business_id },
+			include: {
+				finances: true,
+			},
+		});
+		if (!businessWithFinance) {
+			console.log("Business not found");
+			return null;
+		}
+		if (!businessWithFinance.finances) {
+			console.log("No finance record found for the specified business");
+			return null;
+		}
+		return businessWithFinance.finances;
+	} catch (error) {
+		console.error("Error retrieving finance record by business ID:", error);
 		throw new Error(error);
 	}
 };
@@ -229,22 +342,10 @@ const updateParentBusiness = async (business_id, parent_business_id) => {
 	}
 };
 
-const addChildBusiness = async (child_business_id, parent_business_id) => {
+const removeParentBusiness = async (business_id) => {
 	try {
 		return await prisma.business.update({
-			where: { business_id: child_business_id },
-			data: { parent_business_id },
-		});
-	} catch (error) {
-		console.error("Error adding child business:", error);
-		throw new Error(error);
-	}
-};
-
-const removeChildBusiness = async (child_business_id) => {
-	try {
-		return await prisma.business.update({
-			where: { business_id: child_business_id },
+			where: { business_id: business_id },
 			data: { parent_business_id: null },
 		});
 	} catch (error) {
@@ -253,17 +354,38 @@ const removeChildBusiness = async (child_business_id) => {
 	}
 };
 
-const updateBusinessDeliveryAddress = async (business_id, delivery_address_id) => {
+async function updateBusinessAddress(business_id, address) {
 	try {
+		const updatedAddress = await AddressDao.addAddress(address);
+		if (!updatedAddress) {
+			throw new Error('Failed to update or add address');
+		}
 		return await prisma.business.update({
 			where: { business_id },
-			data: { delivery_address_id },
+			data: { address_id: updatedAddress.address_id },
+		});
+	} catch (error) {
+		console.error("Error updating business address:", error);
+		throw new Error(error);
+	}
+}
+
+async function updateBusinessDeliveryAddress(business_id, deliveryAddress) {
+	try {
+		const updatedDeliveryAddress = await AddressDao.addAddress(deliveryAddress);
+		if (!updatedDeliveryAddress) {
+			throw new Error('Failed to update or add delivery address');
+		}
+		// Update the business with the new delivery_address_id
+		return await prisma.business.update({
+			where: { business_id },
+			data: { delivery_address_id: updatedDeliveryAddress.address_id },
 		});
 	} catch (error) {
 		console.error("Error updating business delivery address:", error);
 		throw new Error(error);
 	}
-};
+}
 
 const removeBusinessDeliveryAddress = async (business_id) => {
 	try {
@@ -277,12 +399,20 @@ const removeBusinessDeliveryAddress = async (business_id) => {
 	}
 };
 
+
 module.exports = {
 	getBusinesses,
 	getBusinessById,
+	getBusinessesByType,
+	getBusinessesByNameSearch,
+	getBusinessesByGroupName,
+	getChildBusinesses,
+	getParentBusiness,
+	getFinanceRecordByBusinessId,
 	createNewBusiness,
 	updateBusiness,
 	deleteBusiness,
+	updateBusinessAddress,
 	updateBusinessType,
 	updateIsBusinessUnit,
 	updateBusinessGroupName,
@@ -292,10 +422,7 @@ module.exports = {
 	updateBusinessIsNew,
 	updateBusinessIsPopular,
 	updateParentBusiness,
+	removeParentBusiness,
 	updateBusinessDeliveryAddress,
 	removeBusinessDeliveryAddress,
-	addChildBusiness,
-	removeChildBusiness,
-	getChildBusinesses,
-	getParentBusiness,
 };

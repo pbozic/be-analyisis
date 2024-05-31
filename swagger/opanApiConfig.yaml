@@ -21,6 +21,10 @@ tags:
       description: Authentication Operations
     - name: Users
       description: Operations about user
+    - name: Business
+      description: Operations about business
+    - name: Finances
+      description: Operations about business finances
     - name: Taxi
       description: Operations about taxi
 

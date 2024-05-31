@@ -16,6 +16,7 @@ async function userSeed() {
 			const user = {
 				first_name: firstName,
 				last_name: lastName,
+				date_of_birth: faker.date.past(30).toISOString(),
 				email: `test${i + 1}@veryfakeemail.com`,
 				password: hash,
 				telephone: faker.phone.number(),

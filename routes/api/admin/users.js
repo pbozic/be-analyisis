@@ -5,4 +5,5 @@ const joi = require("../../../middleware/joi");
 
 router.get("/", UserController.listUsers);
 
+
 module.exports = router;

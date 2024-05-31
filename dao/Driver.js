@@ -63,6 +63,42 @@ const getDriverByUserId = async (user_id) => {
 	}
 };
 
+const getDriverLocation = async (driver_id) => {
+	try {
+		const driver = await prisma.drivers.findUnique({
+			where: { driver_id },
+			select: {
+				location: true, // Select only the location field
+			},
+		});
+		return driver ? driver.location : null;
+	} catch (error) {
+		console.error("Error retrieving driver's location:", error);
+		throw new Error(error);
+	}
+};
+
+const updateDriverLocation = async (user_id, location) => {
+	try {
+		const locationData = {
+			name: location?.name ?? null,
+			address: location?.address ?? null,
+			coordinates: {
+				latitude: location?.coordinates?.latitude ?? null,
+				longitude: location?.coordinates?.longitude ?? null,
+			},
+		};
+
+		return await prisma.drivers.update({
+			where: { user_id },
+			data: { location: locationData },
+		});
+	} catch (error) {
+		console.error("Error updating driver's location:", error);
+		throw new Error(error);
+	}
+};
+
 const createNewDriver = async (driver) => {
 	try {
 		const locationData = {
@@ -87,26 +123,9 @@ const createNewDriver = async (driver) => {
 	}
 };
 
-const updateDriverLocation = async (driver_id, location) => {
-	try {
-		const locationData = {
-			name: location?.name ?? null,
-			address: location?.address ?? null,
-			coordinates: {
-				latitude: location?.coordinates?.latitude ?? null,
-				longitude: location?.coordinates?.longitude ?? null,
-			},
-		};
 
-		return await prisma.drivers.update({
-			where: { driver_id },
-			data: { location: locationData },
-		});
-	} catch (error) {
-		console.error("Error updating driver's location:", error);
-		throw new Error(error);
-	}
-};
+
+
 
 module.exports = {
 	createNewDriver,
@@ -114,4 +133,5 @@ module.exports = {
 	getDriverByUserId,
 	getDrivers,
 	updateDriverLocation,
+	getDriverLocation
 };

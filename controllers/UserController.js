@@ -60,6 +60,7 @@ async function me(req, res) {
 		res.status(400).json({ error: "Error obtaining user information", e });
 	}
 }
+
 /**
  * PATCH /me
  * @tag Users

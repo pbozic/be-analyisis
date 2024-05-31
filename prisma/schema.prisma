@@ -53,16 +53,19 @@ model business {
   child_businesses    business[]        @relation("parent_business")
   taxi_orders         taxi_orders[]
   delivery_orders     delivery_orders[]
+  menus               menus[]
 }
 
 model business_users {
-  business_users_id String    @id @default(uuid()) @db.Uuid
-  business_id       String    @db.Uuid
-  user_id           String    @db.Uuid
-  created_at        DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at        DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
-  users             users?    @relation(fields: [user_id], references: [user_id])
-  business          business? @relation(fields: [business_id], references: [business_id])
+  business_users_id    String     @id @default(uuid()) @db.Uuid
+  created_at           DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
+  user_id              String     @db.Uuid
+  users                users?     @relation(fields: [user_id], references: [user_id])
+  business_id          String     @db.Uuid
+  business             business?  @relation(fields: [business_id], references: [business_id])
+  operating_address_id String?    @db.Uuid
+  operating_address    addresses? @relation("business_users_operating_address", fields: [operating_address_id], references: [address_id])
 }
 
 model users {
@@ -137,7 +140,7 @@ model tokens {
 }
 
 model addresses {
-  address_id                  String         @id @default(uuid()) @db.Uuid
+  address_id                  String           @id @default(uuid()) @db.Uuid
   address                     String
   latitude                    String
   longitude                   String
@@ -147,8 +150,9 @@ model addresses {
   country                     String?
   postal                      String?
   users                       user_address[]
-  businesses                  business[]     @relation(name: "address")
-  businesses_delivery_address business[]     @relation(name: "delivery_address")
+  businesses                  business[]       @relation(name: "address")
+  businesses_delivery_address business[]       @relation(name: "delivery_address")
+  business_users              business_users[] @relation("business_users_operating_address")
 
   @@unique([address, latitude, longitude], name: "uniqueAddressIdentifier")
 }
@@ -163,6 +167,19 @@ model user_address {
   address    addresses @relation(fields: [address_id], references: [address_id], onDelete: Cascade)
 
   @@id([user_id, address_id])
+}
+model delivery_person {
+  delivery_person_id String                @id @default(uuid()) @db.Uuid
+  business_id        String?               @db.Uuid
+  created_at         DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime              @default(now()) @updatedAt @db.Timestamptz(6)
+  user_id            String?               @unique @db.Uuid
+  user               users?                @relation(fields: [user_id], references: [user_id])
+  vehicles           vehicles[]
+  orders             delivery_orders[]
+  received_orders    delivery_order_sent[]
+  documents          documents[]
+  location           Json?
 }
 
 model drivers {
@@ -179,19 +196,6 @@ model drivers {
   location        Json?
 }
 
-model delivery_person {
-  delivery_person_id String                @id @default(uuid()) @db.Uuid
-  business_id        String?               @db.Uuid
-  created_at         DateTime              @default(now()) @db.Timestamptz(6)
-  updated_at         DateTime              @default(now()) @updatedAt @db.Timestamptz(6)
-  user_id            String?               @unique @db.Uuid
-  user               users?                @relation(fields: [user_id], references: [user_id])
-  vehicles           vehicles[]
-  orders             delivery_orders[]
-  received_orders    delivery_order_sent[]
-  documents          documents[]
-  location           Json?
-}
 
 model vehicles {
   vehicle_id               String                  @id @unique @default(uuid()) @db.Uuid
@@ -285,6 +289,46 @@ model delivery_order_sent {
   order                  delivery_orders? @relation(fields: [delivery_order_id], references: [delivery_order_id])
   delivery_person_id     String           @db.Uuid
   delivery_person        delivery_person? @relation(fields: [delivery_person_id], references: [delivery_person_id])
+}
+
+model menus {
+  menu_id     String            @id @default(uuid()) @db.Uuid
+  business_id String            @db.Uuid
+  business    business          @relation(fields: [business_id], references: [business_id])
+  categories  menu_categories[]
+
+  @@unique([menu_id])
+}
+
+model menu_categories {
+  menu_category_id String       @id @default(uuid()) @db.Uuid
+  names            Json // l10n names
+  categories       String[]
+  menu_items       menu_items[] @relation("menu_items_in_category")
+  menu_id          String       @db.Uuid
+  menu             menus        @relation(fields: [menu_id], references: [menu_id])
+
+  @@unique([menu_category_id])
+}
+
+model menu_items {
+  menu_item_id     String          @id @default(uuid()) @db.Uuid
+  names            Json // l10n names
+  image            String?
+  description      Json // l10n descriptions
+  categories       String[]
+  spicy_level      Int
+  unit_size        String
+  price            Float
+  discount         Float?
+  sides            Json? // Optional, for sides
+  extras           Json? // Optional, for extras, inside are menu_ids
+  ingredients      Json // Includes allergen and multilingual names
+  availability     String[] // Array of availability -> ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+  menu_category_id String          @db.Uuid
+  menu_category    menu_categories @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id])
+
+  @@unique([menu_item_id])
 }
 
 enum USER_ROLES {

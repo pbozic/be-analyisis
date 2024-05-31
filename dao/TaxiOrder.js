@@ -21,6 +21,22 @@ async function getOrder(order_id, args) {
 	}
 }
 
+async function getOrdersByDriverId(driver_id) {
+    try {
+        return await prisma.taxi_orders.findMany({
+            where: {
+                driver_id: driver_id,
+            },
+            include: {
+                driver: true,
+            }
+        });
+    } catch (e) {
+        console.error("Error getting orders by driver ID:", e);
+        throw new Error(e);
+    }
+}
+
 async function createOrder(order) {
     try {
         return prisma.taxi_orders.create({
@@ -112,6 +128,7 @@ async function updateOrderLastSentAt(taxi_order_id) {
 }
 module.exports = {
     getOrder,
+    getOrdersByDriverId,
     createOrder,
     acceptOrder,
     createOrderSent,
