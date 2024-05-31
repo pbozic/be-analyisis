@@ -188,6 +188,10 @@ async function getDriverLocation(req, res) {
 	}
 }
 
+//TODO: Implement the following functions
+// driverStartWorking - emits a "driver_available" event with driver object and updates driver.is_active to true
+// driverStopWorking - emits a "driver_unavailable" event with driver_id and updates driver.is_active to false
+
 module.exports = {
 	listDrivers,
 	getDriverById,

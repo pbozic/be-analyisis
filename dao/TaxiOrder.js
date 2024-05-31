@@ -5,19 +5,19 @@ async function getOrders(args) {
             ...args
         });
     } catch (e) {
-        return new Error(e);
+        throw new Error(e);
     }
 }
-async function getOrder(order_id, args) {
+async function getOrder(taxi_order_id, args) {
 	try {
 		return prisma.taxi_orders.findFirst({
 			where: {
-				order_id: order_id,
+				taxi_order_id: taxi_order_id,
             },
             ...args
 		});
 	} catch (e) {
-		return new Error(e);
+		throw new Error(e);
 	}
 }
 
@@ -43,45 +43,111 @@ async function createOrder(order) {
             data: order,
         });
     } catch (e) {
-        return new Error(e);
+        throw new Error(e);
     }
 }
 
 async function createOrderSent(taxi_order_id, driver) {
     try {
-        return prisma.taxi_orders_sent.create({
+        return prisma.taxi_order_sent.create({
             data: {
-                taxi_order_id,
-                driver_id: driver.driver_id,
+                order: {
+                    connect: {
+                        taxi_order_id
+                    }
+                },
+                driver: {
+                    connect: {
+                        driver_id: driver.driver_id
+                    }
+                },
                 location: driver.location,
                 accepted: false
             },
         });
     } catch (e) {
-        return new Error(e);
+        throw new Error(e);
     }
 }
-async function acceptOrder(taxi_order_id, driver_id, business_id) {
+async function isOrderSent(taxi_order_id, driver) {
     try {
-       
-        await acceptOrderSent(taxi_order_id, driver_id);
+        return prisma.taxi_order_sent.findFirst({
+            where: {
+                taxi_order_id,
+                driver_id: driver.driver_id
+            }
+        });
+    } catch (e) {
+        throw new Error(e);
+    }
+}
+async function acceptOrder(taxi_order_id, user) {
+    console.log("acceptOrder",taxi_order_id)
+    try {
+        let taxi_order_sent = await prisma.taxi_order_sent.update({
+            where: {
+                taxi_order_snet_driver_unique: {
+                    taxi_order_id,
+                    driver_id: user.driver.driver_id
+                }
+               
+            },
+            data: {
+                accepted: true
+            },
+        });
+        console.log("taxi_order_sent", taxi_order_sent)
         return prisma.taxi_orders.update({
             where: {
                 taxi_order_id
             },
             data: {
-                order_status: "DRIVER_ACCEPTED",
-                driver_id,
-                business_id
+                status: "TAXI_ACCEPTED",
+                driver: {
+                    connect: {
+                        driver_id: user.driver.driver_id
+                    }
+                }
             },
         });
     } catch (e) {
-        return new Error(e);
+        throw new Error(e);
     }
 }
-async function acceptOrderSent(taxi_order_id, driver_id) {
+async function updateOrderStatus(taxi_order_id, status) {
     try {
-        return prisma.taxi_orders_sent.create({
+        return prisma.taxi_orders.update({
+            where: {
+                taxi_order_id
+            },
+            data: {
+                status
+            }
+        });
+    } catch (e) {
+        throw new Error(e);
+    }
+}
+
+async function completeOrder(taxi_order_id) {
+    try {
+        return prisma.taxi_orders.update({
+            where: {
+                taxi_order_id
+            },
+            data: {
+                status: "TAXI_COMPLETED"
+            }
+        });
+    } catch (e) {
+        throw new Error(e);
+    }
+}
+
+async function acceptOrderSent(taxi_order_id, driver_id) {
+    console.log("order sent accept",taxi_order_id, driver_id)
+    try {
+        return prisma.taxi_order_sent.update({
             where: {
                 taxi_order_id,
                 driver_id
@@ -91,7 +157,7 @@ async function acceptOrderSent(taxi_order_id, driver_id) {
             },
         });
     } catch (e) {
-        return new Error(e);
+        throw new Error(e);
     }
 }
 async function getSentDrivers(taxi_order_id) {
@@ -109,7 +175,7 @@ async function getSentDrivers(taxi_order_id) {
             }
         });
     } catch (e) {
-        return new Error(e);
+        throw new Error(e);
     }
 }
 async function updateOrderLastSentAt(taxi_order_id) {
@@ -123,7 +189,7 @@ async function updateOrderLastSentAt(taxi_order_id) {
             }
         });
     } catch (e) {
-        return new Error(e);
+        throw new Error(e);
     }
 }
 module.exports = {
@@ -134,6 +200,8 @@ module.exports = {
     createOrderSent,
     getOrders,
     getSentDrivers,
-    updateOrderLastSentAt
-
+    updateOrderLastSentAt,
+    completeOrder,
+    updateOrderStatus,
+    isOrderSent
 };

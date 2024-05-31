@@ -39,6 +39,7 @@ async function login(req, res) {
 						address: true,
 					},
 				},
+				driver: true,
 			},
 		});
 		delete user["password"];

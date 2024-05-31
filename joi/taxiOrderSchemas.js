@@ -1,8 +1,16 @@
 const Joi = require("joi");
-
+const addressSchema = Joi.object({
+	address: Joi.string().required(),
+	coordinates: Joi.object({
+		latitude: Joi.number().required(),
+		longitude: Joi.number().required(),
+	}).required(),
+});
 const createOrderSchema = Joi.object({
-	email: Joi.string().email().required(),
-	password: Joi.string().required(),
+	preferences: Joi.object().unknown().required(),
+	route: Joi.array().items(addressSchema).required(),
+	pickup_location: addressSchema,
+	delivery_location: addressSchema,
 });
 
 module.exports = {
