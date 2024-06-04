@@ -24,6 +24,26 @@ async function listDrivers(req, res) {
 }
 
 /**
+ * GET /drivers/online
+ * @tag Drivers
+ * @summary Get all online drivers
+ * @description Returns a list of all drivers who are currently online.
+ * @operationId getOnlineDrivers
+ * @response 200 - Successful operation, returns a list of online drivers
+ * @responseContent {Driver[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the online driver list
+ */
+async function listOnlineDrivers(req, res) {
+	try {
+		const onlineDrivers = await DriverDao.getOnlineDrivers();
+		res.status(200).json(onlineDrivers);
+	} catch (error) {
+		console.error("Error listing online drivers:", error);
+		res.status(400).json({ error: "Error listing online drivers", detail: error.message });
+	}
+}
+
+/**
  * GET /drivers/:driver_id
  * @tag Drivers
  * @summary Get a driver by ID
@@ -46,115 +66,6 @@ async function getDriverById(req, res) {
 	} catch (error) {
 		console.error("Error retrieving driver:", error);
 		res.status(400).json({ error: "Error retrieving driver information", detail: error.message });
-	}
-}
-
-/**
- * POST /drivers
- * @tag Drivers
- * @summary Create a new driver
- * @description Adds a new driver to the database.
- * @operationId createNewDriver
- * @bodyContent {Driver} application/json
- * @bodyRequired
- * @response 201 - Driver created successfully
- * @responseContent {Driver} 201.application/json
- * @response 400 - Error creating driver
- */
-async function createDriver(req, res) {
-	try {
-		const newDriver = await DriverDao.createNewDriver(req.body);
-		res.status(201).json(newDriver);
-	} catch (error) {
-		console.error("Error creating new driver:", error);
-		res.status(400).json({ error: "Error creating new driver", detail: error.message });
-	}
-}
-
-/**
- * PATCH /drivers/:driver_id/location
- * @tag Drivers
- * @summary Update driver location
- * @description Updates the location of a specific driver.
- * @operationId updateDriverLocation
- * @pathParam {string} driver_id - The ID of the driver to update location for
- * @bodyContent {Location} application/json
- * @bodyRequired
- * @response 200 - Location updated successfully
- * @responseContent {Driver} 200.application/json
- * @response 400 - Error updating driver location
- */
-async function updateDriverLocation(req, res) {
-	try {
-		const updatedDriver = await DriverDao.updateDriverLocation(req.params.driver_id, req.body);
-		res.status(200).json(updatedDriver);
-	} catch (error) {
-		console.error("Error updating driver's location:", error);
-		res.status(400).json({ error: "Error updating driver location", detail: error.message });
-	}
-}
-
-/**
- * GET /drivers/:driver_id/vehicles
- * @tag Drivers
- * @summary Get all vehicles for a driver
- * @description Retrieves a list of vehicles assigned to a specific driver, including vehicle specifications.
- * @operationId getVehiclesByDriverId
- * @pathParam {string} driver_id - The ID of the driver
- * @response 200 - Successful operation, returns a list of vehicles
- * @responseContent {Vehicle[]} 200.application/json
- * @response 400 - Error retrieving vehicles for the driver
- */
-async function getVehiclesByDriverId(req, res) {
-	try {
-		const vehicles = await VehicleDao.getVehiclesByDriverId(req.params.driver_id);
-		res.status(200).json(vehicles);
-	} catch (error) {
-		console.error("Error retrieving vehicles for driver:", error);
-		res.status(400).json({ error: "Error retrieving vehicles for the driver", detail: error.message });
-	}
-}
-
-/**
- * PATCH /vehicles/assign-driver
- * @tag Vehicles
- * @summary Assign a vehicle to a driver
- * @description Assigns a specific vehicle to a driver by their IDs.
- * @operationId assignVehicleToDriver
- * @pathParam {string} vehicle_id - The ID of the vehicle to be assigned
- * @pathParam {string} driver_id - The ID of the driver to whom the vehicle will be assigned
- * @response 200 - Vehicle assigned successfully
- * @responseContent {Vehicle} 200.application/json
- * @response 400 - Error assigning vehicle to driver
- */
-async function assignVehicleToDriver(req, res) {
-	try {
-		const updatedVehicle = await VehicleDao.assignVehicleToDriver(req.params.vehicle_id, req.params.driver_id);
-		res.status(200).json(updatedVehicle);
-	} catch (error) {
-		console.error("Error assigning vehicle to driver:", error);
-		res.status(400).json({ error: "Error assigning vehicle to driver", detail: error.message });
-	}
-}
-
-/**
- * PATCH /vehicles/unassign-driver
- * @tag Vehicles
- * @summary Unassign a vehicle from any driver
- * @description Unassigns a specific vehicle from any driver it is currently assigned to.
- * @operationId removeVehicleFromDriver
- * @pathParam {string} vehicle_id - The ID of the vehicle to be unassigned
- * @response 200 - Vehicle unassigned successfully
- * @responseContent {Vehicle} 200.application/json
- * @response 400 - Error unassigning vehicle from driver
- */
-async function unassignVehicleFromDriver(req, res) {
-	try {
-		const updatedVehicle = await VehicleDao.removeVehicleFromDriver(req.params.vehicle_id);
-		res.status(200).json(updatedVehicle);
-	} catch (error) {
-		console.error("Error unassigning vehicle from driver:", error);
-		res.status(400).json({ error: "Error unassigning vehicle from driver", detail: error.message });
 	}
 }
 
@@ -188,13 +99,110 @@ async function getDriverLocation(req, res) {
 	}
 }
 
+/**
+ * PATCH /drivers/:driver_id
+ * @tag Drivers
+ * @summary Update a driver
+ * @description Updates information about a specific driver, excluding location.
+ * @operationId updateDriver
+ * @pathParam {string} driver_id - The ID of the driver to update
+ * @bodyContent {DriverUpdate} application/json
+ * @bodyRequired
+ * @response 200 - Driver updated successfully
+ * @responseContent {Driver} 200.application/json
+ * @response 400 - Error updating driver
+ */
+async function updateDriver(req, res) {
+	const { driver_id } = req.params;
+	const updateData = req.body;
+
+	try {
+		const updatedDriver = await DriverDao.updateDriver(driver_id, updateData);
+		res.status(200).json(updatedDriver);
+	} catch (error) {
+		console.error("Error updating driver:", error);
+		res.status(400).json({ error: "Error updating driver", detail: error.message });
+	}
+}
+
+/**
+ * PATCH /drivers/:driver_id/location
+ * @tag Drivers
+ * @summary Update driver location
+ * @description Updates the location of a specific driver.
+ * @operationId updateDriverLocation
+ * @pathParam {string} driver_id - The ID of the driver to update location for
+ * @bodyContent {Location} application/json
+ * @bodyRequired
+ * @response 200 - Location updated successfully
+ * @responseContent {Driver} 200.application/json
+ * @response 400 - Error updating driver location
+ */
+async function updateDriverLocation(req, res) {
+	try {
+		const updatedDriver = await DriverDao.updateDriverLocation(req.params.driver_id, req.body);
+		res.status(200).json(updatedDriver);
+	} catch (error) {
+		console.error("Error updating driver's location:", error);
+		res.status(400).json({ error: "Error updating driver location", detail: error.message });
+	}
+}
+
+/**
+ * PATCH /drivers/:driver_id/online
+ * @tag Drivers
+ * @summary Set driver online status
+ * @description Sets the online status of a specific driver.
+ * @operationId setDriverOnlineStatus
+ * @pathParam {string} driver_id - The ID of the driver to update the online status for
+ * @bodyContent {DriverOnlineStatus} application/json
+ * @bodyRequired
+ * @response 200 - Online status updated successfully
+ * @responseContent {Driver} 200.application/json
+ * @response 400 - Error updating online status
+ */
+async function updateDriverOnlineStatus(req, res) {
+	const { driver_id } = req.params;
+	const { online } = req.body; // Assuming `online` is a boolean
+
+	try {
+		const updatedDriver = await DriverDao.updateDriverOnlineStatus(driver_id, online);
+		res.status(200).json(updatedDriver);
+	} catch (error) {
+		console.error("Error setting online status for driver:", error);
+		res.status(400).json({ error: "Error setting online status for driver", detail: error.message });
+	}
+}
+
+/**
+ * POST /drivers
+ * @tag Drivers
+ * @summary Create a new driver
+ * @description Adds a new driver to the database.
+ * @operationId createNewDriver
+ * @bodyContent {Driver} application/json
+ * @bodyRequired
+ * @response 201 - Driver created successfully
+ * @responseContent {Driver} 201.application/json
+ * @response 400 - Error creating driver
+ */
+async function createDriver(req, res) {
+	try {
+		const newDriver = await DriverDao.createNewDriver(req.body);
+		res.status(201).json(newDriver);
+	} catch (error) {
+		console.error("Error creating new driver:", error);
+		res.status(400).json({ error: "Error creating new driver", detail: error.message });
+	}
+}
+
 module.exports = {
 	listDrivers,
+	listOnlineDrivers,
 	getDriverById,
 	getDriverLocation,
-	createDriver,
+	updateDriver,
 	updateDriverLocation,
-	getVehiclesByDriverId,
-	assignVehicleToDriver,
-	unassignVehicleFromDriver,
+	updateDriverOnlineStatus,
+	createDriver,
 };

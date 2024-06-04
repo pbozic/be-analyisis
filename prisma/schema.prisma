@@ -168,8 +168,10 @@ model user_address {
 
   @@id([user_id, address_id])
 }
+
 model delivery_person {
   delivery_person_id String                @id @default(uuid()) @db.Uuid
+  online             Boolean?              @default(false)
   business_id        String?               @db.Uuid
   created_at         DateTime              @default(now()) @db.Timestamptz(6)
   updated_at         DateTime              @default(now()) @updatedAt @db.Timestamptz(6)
@@ -185,6 +187,7 @@ model delivery_person {
 model drivers {
   driver_id       String            @id @default(uuid()) @db.Uuid
   business_id     String?           @db.Uuid
+  online          Boolean?          @default(false)
   created_at      DateTime          @default(now()) @db.Timestamptz(6)
   updated_at      DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
   user_id         String?           @unique @db.Uuid
@@ -195,7 +198,6 @@ model drivers {
   documents       documents[]
   location        Json?
 }
-
 
 model vehicles {
   vehicle_id               String                  @id @unique @default(uuid()) @db.Uuid

@@ -255,12 +255,9 @@ const getVehiclesOfDriverByClassAndCategory = async (driverId, vehicleClass, veh
 };
 
 module.exports = {
-	getVehiclesByBusiness,
-};
-
-module.exports = {
 	getVehicles,
 	getVehicleById,
+	getVehiclesByBusiness,
 	createNewVehicle,
 	updateVehicle,
 	assignVehicleToDriver,

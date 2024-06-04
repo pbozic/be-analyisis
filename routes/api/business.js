@@ -6,14 +6,16 @@ const joi = require("../../middleware/joi");
 const { updateSchema } = require("../../joi/businessSchemas");
 
 const BusinessController = require("../../controllers/BusinessController");
+const FinanceController = require("../../controllers/FinancesController");
 
-// List all businesses
 router.get("/businesses", BusinessController.listBusinesses);
 
-router.get("/", BusinessController.getBusinessById);
+router.get("/:business_id", BusinessController.getBusinessById);
 router.get("/search", BusinessController.getBusinessesByNameSearch);
 router.get("/parent", BusinessController.getParentBusiness);
+
 router.post("/register", BusinessController.createNewBusiness);
+
 router.patch("/", joi(updateSchema), BusinessController.update);
 router.patch("/type", BusinessController.updateBusinessType);
 router.patch("/business-unit", BusinessController.updateIsBusinessUnit);
@@ -27,6 +29,7 @@ router.patch("/parent/update", BusinessController.updateParentBusinessId);
 router.patch("/parent/remove", BusinessController.removeParentBusinessId);
 router.patch("/address", BusinessController.updateBusinessAddress);
 router.patch("/delivery-address", BusinessController.updateBusinessDeliveryAddress);
+
 router.delete("/:business_id", BusinessController.deleteBusiness);
 
 module.exports = router;

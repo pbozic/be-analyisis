@@ -5,7 +5,7 @@ const getDrivers = async (args) => {
 		return await prisma.drivers.findMany({
 			...args,
 			include: {
-				user: true, // Include user information
+				user: true,
 				vehicles: {
 					include: {
 						vehicle_specification: true,
@@ -16,6 +16,25 @@ const getDrivers = async (args) => {
 		});
 	} catch (error) {
 		console.error("Error retrieving drivers:", error);
+		throw new Error(error);
+	}
+};
+
+const getOnlineDrivers = async () => {
+	try {
+		return await prisma.drivers.findMany({
+			where: { online: true },
+			include: {
+				user: true,
+				vehicles: {
+					include: {
+						vehicle_specification: true,
+					},
+				},
+			},
+		});
+	} catch (error) {
+		console.error("Error retrieving online drivers:", error);
 		throw new Error(error);
 	}
 };
@@ -78,6 +97,18 @@ const getDriverLocation = async (driver_id) => {
 	}
 };
 
+const updateDriverOnlineStatus = async (driver_id, isOnline) => {
+	try {
+		return await prisma.drivers.update({
+			where: { driver_id },
+			data: { online: isOnline },
+		});
+	} catch (error) {
+		console.error("Error setting driver's online status:", error);
+		throw new Error(error);
+	}
+};
+
 const updateDriverLocation = async (user_id, location) => {
 	try {
 		const locationData = {
@@ -95,6 +126,28 @@ const updateDriverLocation = async (user_id, location) => {
 		});
 	} catch (error) {
 		console.error("Error updating driver's location:", error);
+		throw new Error(error);
+	}
+};
+
+const updateDriver = async (driver_id, updateData) => {
+	try {
+		delete updateData.location;
+
+		return await prisma.drivers.update({
+			where: { driver_id },
+			data: { ...updateData },
+			include: {
+				user: true,
+				vehicles: {
+					include: {
+						vehicle_specification: true,
+					},
+				},
+			},
+		});
+	} catch (error) {
+		console.error("Error updating driver:", error);
 		throw new Error(error);
 	}
 };
@@ -123,15 +176,14 @@ const createNewDriver = async (driver) => {
 	}
 };
 
-
-
-
-
 module.exports = {
-	createNewDriver,
+	getDrivers,
+	getOnlineDrivers,
 	getDriverById,
 	getDriverByUserId,
-	getDrivers,
+	getDriverLocation,
+	updateDriver,
 	updateDriverLocation,
-	getDriverLocation
+	updateDriverOnlineStatus,
+	createNewDriver,
 };
