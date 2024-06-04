@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const DriverDao = require("../dao/Driver");
 const VehicleDao = require("../dao/Vehicle");
+const UserDao = require("../dao/User");
 
 /**
  * GET /drivers
@@ -188,8 +189,28 @@ async function updateDriverOnlineStatus(req, res) {
  */
 async function createDriver(req, res) {
 	try {
-		const newDriver = await DriverDao.createNewDriver(req.body);
-		res.status(201).json(newDriver);
+		const userInfo = req.body.user;
+		// Create a new user
+		const newUser = await UserDao.createNewUser(userInfo);
+
+		if (!newUser) {
+			return res.status(400).json({ error: "Failed to create user for new driver" });
+		}
+		// Assuming the DriverDao.createNewDriver method accepts the user ID as part of the driver information
+		const driverInfo = req.body.driver;
+		driverInfo.userId = newUser.id; // Link the new user to the driver
+		const newDriver = await DriverDao.createNewDriver(driverInfo);
+
+		if (!newDriver) {
+			return res.status(400).json({ error: "Failed to create new driver" });
+		}
+
+		const driverWithUser = {
+			...newDriver,
+			user: newUser
+		};
+
+		res.status(201).json(driverWithUser);
 	} catch (error) {
 		console.error("Error creating new driver:", error);
 		res.status(400).json({ error: "Error creating new driver", detail: error.message });
