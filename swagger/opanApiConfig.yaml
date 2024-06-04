@@ -23,14 +23,16 @@ tags:
     description: Operations about user
   - name: Business
     description: Operations about business
+  - name: Taxi
+    description: Operations about taxi
   - name: Finances
     description: Operations about business finances
   - name: Drivers
     description: Operations about transfer drivers
   - name: Vehicles
     description: Operations about vehicles
-  - name: Taxi
-    description: Operations about taxi
+  - name: Documents
+    description: Operations about documents
 
 externalDocs:
   description: Find out more about Swagger
