@@ -6,6 +6,7 @@ router.get("/:finance_id", FinanceController.getFinanceRecordById);
 router.get("/business/:business_id", FinanceController.getFinanceRecordByBusinessId);
 
 router.post("/create", FinanceController.createNewFinanceRecord);
+
 router.patch("/:finance_id", FinanceController.updateFinanceRecord);
 router.patch("/:finance_id/account_number", FinanceController.updateAccountNumber);
 router.patch("/:finance_id/bank_name", FinanceController.updateBankName);

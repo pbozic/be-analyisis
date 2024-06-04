@@ -14,7 +14,6 @@ router.patch("/:driver_id/location", DriverController.updateDriverLocation);
 router.patch("/:driver_id", DriverController.updateDriver);
 router.patch("/:driver_id/online", DriverController.updateDriverOnlineStatus);
 
-
 router.post("/", DriverController.createDriver);
 
 module.exports = router;
