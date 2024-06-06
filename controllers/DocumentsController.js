@@ -394,7 +394,7 @@ async function createDeliveryPersonDocument(req, res) {
 		const { documentData, files } = req.body;
 		const deliveryPersonId = req.params.delivery_person_id;
 		const document = await DocumentDao.createDocument(documentData, files);
-		await DocumentDao.linkDocumentToDeliveryPerson(document.document_id, deliveryPersonId);
+		await DocumentDao.linkDocumentToDeliveryDriver(document.document_id, deliveryPersonId);
 		res.status(201).json(document);
 	} catch (error) {
 		console.error("Error creating document for delivery person:", error);

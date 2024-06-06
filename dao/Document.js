@@ -323,14 +323,14 @@ const linkDocumentToBusiness = async (documentId, businessId) => {
 	}
 };
 
-const linkDocumentToDeliveryPerson = async (documentId, deliveryPersonId) => {
+const linkDocumentToDeliveryDriver = async (documentId, deliveryDriverId) => {
 	try {
 		return await prisma.documents.update({
 			where: { document_id: documentId },
-			data: { delivery_person_id: deliveryPersonId },
+			data: { delivery_driver_id: deliveryDriverId },
 		});
 	} catch (error) {
-		console.error("Error linking document to delivery person:", error);
+		console.error("Error linking document to delivery driver:", error);
 		return new Error(error);
 	}
 };
@@ -368,7 +368,7 @@ module.exports = {
 	linkDocumentToUser,
 	linkDocumentToVehicle,
 	linkDocumentToDriver,
+	linkDocumentToDeliveryDriver,
 	linkDocumentToBusiness,
-	linkDocumentToDeliveryPerson,
 	deleteDocument,
 };
