@@ -34,6 +34,43 @@ const updateFinances = async (finance_id, updateData) => {
 	}
 };
 
+
+const updateAccountHolder = async (finance_id, accountHolder) => {
+	try {
+		return await prisma.finances.update({
+			where: { finance_id },
+			data: { account_holder: accountHolder },
+		});
+	} catch (error) {
+		console.error("Error updating account holder:", error);
+		throw new Error(error);
+	}
+};
+
+const updateAccountNumber = async (finance_id, accountNumber) => {
+	try {
+		return await prisma.finances.update({
+			where: { finance_id },
+			data: { account_number: accountNumber },
+		});
+	} catch (error) {
+		console.error("Error updating account number:", error);
+		throw new Error(error);
+	}
+};
+
+const updateBankName = async (finance_id, bankName) => {
+	try {
+		return await prisma.finances.update({
+			where: { finance_id },
+			data: { bank_name: bankName },
+		});
+	} catch (error) {
+		console.error("Error updating bank name:", error);
+		throw new Error(error);
+	}
+};
+
 const updatePaymentPreferences = async (finance_id, paymentPreferences) => {
 	try {
 		return await prisma.finances.update({
@@ -87,9 +124,12 @@ module.exports = {
 	addFinances,
 	getFinancesById,
 	updateFinances,
-	deleteFinances,
+	updateAccountHolder,
+	updateAccountNumber,
+	updateBankName,
 	linkFinancesToBusiness,
 	unlinkFinancesFromBusiness,
 	updatePaymentPreferences,
+	deleteFinances,
 
 };

@@ -4,6 +4,14 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { post } = require("../routes/api/users");
 
+const TokenDao = require("../dao/Token");
+const BusinessDao = require("../dao/Business");
+const FinancesDao = require("../dao/Finances");
+const DriverDao = require("../dao/Driver");
+const VehicleDao = require("../dao/Vehicle");
+const DocumentDao = require("../dao/Document");
+const DeliveryDriverDao = require("../dao/DeliveryDriver");
+
 /**
  * POST /auth/login
  * @tag Authentication
@@ -159,9 +167,179 @@ async function requestPasswordReset(req, res) {
 	}
 }
 
+/**
+ * POST /auth/taxi/register
+ * @tag Auth
+ * @summary Register a new taxi service
+ * @description Creates a new business, multiple taxi, vehicles, and optionally finances and documents, and links them together.
+ * @operationId registerTaxiService
+ * @bodyContent {TaxiServiceRegistration} application/json
+ * @bodyRequired
+ * @response 201 - Taxi service registered successfully
+ * @responseContent {TaxiServiceRegistrationResponse} 201.application/json
+ * @response 400 - Error registering taxi service
+ */
+async function registerTaxiService(req, res) {
+	try {
+		const business = await BusinessDao.createNewBusiness(req.body.business);
+		// Handle business documents
+		if (req.body.business.documents) {
+			for (const doc of req.body.business.documents) {
+				const document = await DocumentDao.createDocument(doc, doc.files);
+				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
+			}
+		}
+
+		let finances = {};
+		if (req.body.finances) {
+			finances = await FinancesDao.addFinances(req.body.finances);
+			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
+		}
+
+		let drivers = [];
+		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
+			for (const driverInfo of req.body.drivers) {
+
+				const newUser = await UserDao.createNewUser(driverInfo.user);
+				// Handle user documents
+				if (driverInfo.user.documents) {
+					for (const doc of driverInfo.user.documents) {
+						const document = await DocumentDao.createDocument(doc, doc.files);
+						await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
+					}
+				}
+
+				const driverData = { ...driverInfo, business_id: business.business_id, user_id: newUser.user_id };
+				const driver = await DriverDao.createNewDriver(driverData);
+				// Handle taxi documents
+				if (driverInfo.driver.documents) {
+					for (const doc of driverInfo.driver.documents) {
+						const document = await DocumentDao.createDocument(doc, doc.files);
+						await DocumentDao.linkDocumentToDriver(document.document_id, driver.driver_id);
+					}
+				}
+
+				let vehicles = [];
+				if (Array.isArray(driverInfo.vehicles) && driverInfo.vehicles.length) {
+					for (const vehicleInfo of driverInfo.vehicles) {
+						const vehicle = await VehicleDao.createNewVehicle(vehicleInfo);
+						await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver.driver_id);
+						// Handle vehicle documents
+						if (vehicleInfo.documents) {
+							for (const doc of vehicleInfo.documents) {
+								const document = await DocumentDao.createDocument(doc, doc.files);
+								await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
+							}
+						}
+						vehicles.push(vehicle);
+					}
+				}
+
+				drivers.push({ driver, vehicles });
+			}
+		}
+
+		res.status(201).json({
+			message: "Taxi service business registered successfully",
+			business,
+			drivers,
+			finances,
+		});
+	} catch (error) {
+		console.error("Error registering taxi service:", error);
+		res.status(400).json({ error: "Error registering taxi service", detail: error.message });
+	}
+}
+
+/**
+ * POST /auth/delivery/register
+ * @tag Auth
+ * @summary Register a new delivery service
+ * @description Creates a new business, multiple delivery drivers, vehicles, and optionally finances and documents, and links them together.
+ * @operationId registerDeliveryService
+ * @bodyContent {DeliveryServiceRegistration} application/json
+ * @bodyRequired
+ * @response 201 - Delivery service registered successfully
+ * @responseContent {DeliveryServiceRegistrationResponse} 201.application/json
+ * @response 400 - Error registering delivery service
+ */
+async function registerDeliveryService(req, res) {
+	try {
+		const business = await BusinessDao.createNewBusiness(req.body.business);
+		// Handle business documents
+		if (req.body.business.documents) {
+			for (const doc of req.body.business.documents) {
+				const document = await DocumentDao.createDocument(doc, doc.files);
+				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
+			}
+		}
+
+		let finances = {};
+		if (req.body.finances) {
+			finances = await FinancesDao.addFinances(req.body.finances);
+			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
+		}
+
+		let deliveryDrivers = [];
+		if (Array.isArray(req.body.deliveryDrivers) && req.body.deliveryDrivers.length) {
+			for (const deliveryDriverInfo of req.body.deliveryDrivers) {
+
+				const newUser = await UserDao.createNewUser(deliveryDriverInfo.user);
+				// Handle user documents
+				if (deliveryDriverInfo.user.documents) {
+					for (const doc of deliveryDriverInfo.user.documents) {
+						const document = await DocumentDao.createDocument(doc, doc.files);
+						await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
+					}
+				}
+
+				const deliveryDriverData = { ...deliveryDriverInfo, business_id: business.business_id, user_id: newUser.user_id };
+				const deliveryDriver = await DeliveryDriverDao.createNewDeliveryDriver(deliveryDriverData);
+				// Handle delivery taxi documents
+				if (deliveryDriverInfo.driver.documents) {
+					for (const doc of deliveryDriverInfo.driver.documents) {
+						const document = await DocumentDao.createDocument(doc, doc.files);
+						await DocumentDao.linkDocumentToDeliveryDriver(document.document_id, deliveryDriver.delivery_driver_id);
+					}
+				}
+
+				let vehicles = [];
+				if (Array.isArray(deliveryDriverInfo.vehicles) && deliveryDriverInfo.vehicles.length) {
+					for (const vehicleInfo of deliveryDriverInfo.vehicles) {
+						const vehicle = await VehicleDao.createNewVehicle(vehicleInfo);
+						await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, deliveryDriver.delivery_driver_id);
+						// Handle vehicle documents
+						if (vehicleInfo.documents) {
+							for (const doc of vehicleInfo.documents) {
+								const document = await DocumentDao.createDocument(doc, doc.files);
+								await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
+							}
+						}
+						vehicles.push(vehicle);
+					}
+				}
+
+				deliveryDrivers.push({ deliveryDriver, vehicles });
+			}
+		}
+
+		res.status(201).json({
+			message: "Delivery service business registered successfully",
+			business,
+			deliveryDrivers,
+			finances,
+		});
+	} catch (error) {
+		console.error("Error registering delivery service:", error);
+		res.status(400).json({ error: "Error registering delivery service", detail: error.message });
+	}
+}
+
 module.exports = {
 	login,
 	register,
 	refreshToken,
 	requestPasswordReset,
+	registerTaxiService,
+	registerDeliveryService
 };

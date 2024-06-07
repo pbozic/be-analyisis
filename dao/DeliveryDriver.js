@@ -1,9 +1,9 @@
 const prisma= require("../prisma/prisma");
 const UserDao = require("./User");
 
-const getDrivers = async (args) => {
+const getDeliveryDrivers = async (args) => {
 	try {
-		return await prisma.drivers.findMany({
+		return await prisma.delivery_drivers.findMany({
 			...args,
 			include: {
 				user: true,
@@ -16,14 +16,14 @@ const getDrivers = async (args) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving drivers:", error);
+		console.error("Error retrieving delivery drivers:", error);
 		throw new Error(error);
 	}
 };
 
-const getOnlineDrivers = async () => {
+const getOnlineDeliveryDrivers = async () => {
 	try {
-		return await prisma.drivers.findMany({
+		return await prisma.delivery_drivers.findMany({
 			where: { online: true },
 			include: {
 				user: true,
@@ -35,14 +35,14 @@ const getOnlineDrivers = async () => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving online drivers:", error);
+		console.error("Error retrieving online delivery drivers:", error);
 		throw new Error(error);
 	}
 };
 
-const getDriverById = async (driver_id) => {
+const getDeliveryDriverById = async (driver_id) => {
 	try {
-		return await prisma.drivers.findUnique({
+		return await prisma.delivery_drivers.findUnique({
 			where: {
 				driver_id: driver_id,
 			},
@@ -57,13 +57,13 @@ const getDriverById = async (driver_id) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving driver:", error);
+		console.error("Error retrieving delivery driver:", error);
 		throw new Error(error);
 	}
 };
-const getDriverByUserId = async (user_id) => {
+const getDeliveryDriverByUserId = async (user_id) => {
 	try {
-		return await prisma.drivers.findUnique({
+		return await prisma.delivery_drivers.findUnique({
 			where: {
 				user_id: user_id,
 			},
@@ -78,14 +78,14 @@ const getDriverByUserId = async (user_id) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving driver by user ID:", error);
+		console.error("Error retrieving delivery driver by user ID:", error);
 		throw new Error(error);
 	}
 };
 
-const getDriverLocation = async (driver_id) => {
+const getDeliveryDriverLocation = async (driver_id) => {
 	try {
-		const driver = await prisma.drivers.findUnique({
+		const driver = await prisma.delivery_drivers.findUnique({
 			where: { driver_id },
 			select: {
 				location: true, // Select only the location field
@@ -93,24 +93,24 @@ const getDriverLocation = async (driver_id) => {
 		});
 		return driver ? driver.location : null;
 	} catch (error) {
-		console.error("Error retrieving driver's location:", error);
+		console.error("Error retrieving delivery driver's location:", error);
 		throw new Error(error);
 	}
 };
 
-const updateDriverOnlineStatus = async (driver_id, isOnline) => {
+const updateDeliveryDriverOnlineStatus = async (driver_id, isOnline) => {
 	try {
-		return await prisma.drivers.update({
+		return await prisma.delivery_drivers.update({
 			where: { driver_id },
 			data: { online: isOnline },
 		});
 	} catch (error) {
-		console.error("Error setting driver's online status:", error);
+		console.error("Error setting delivery driver's online status:", error);
 		throw new Error(error);
 	}
 };
 
-const updateDriverLocation = async (user_id, location) => {
+const updateDeliveryDriverLocation = async (user_id, location) => {
 	try {
 		const locationData = {
 			name: location?.name ?? null,
@@ -121,21 +121,21 @@ const updateDriverLocation = async (user_id, location) => {
 			},
 		};
 
-		return await prisma.drivers.update({
+		return await prisma.delivery_drivers.update({
 			where: { user_id },
 			data: { location: locationData },
 		});
 	} catch (error) {
-		console.error("Error updating driver's location:", error);
+		console.error("Error updating delivery driver's location:", error);
 		throw new Error(error);
 	}
 };
 
-const updateDriver = async (driver_id, updateData) => {
+const updateDeliveryDriver = async (driver_id, updateData) => {
 	try {
 		delete updateData.location;
 
-		return await prisma.drivers.update({
+		return await prisma.delivery_drivers.update({
 			where: { driver_id },
 			data: { ...updateData },
 			include: {
@@ -148,19 +148,19 @@ const updateDriver = async (driver_id, updateData) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error updating driver:", error);
+		console.error("Error updating delivery driver:", error);
 		throw new Error(error);
 	}
 };
 
-const createNewDriver = async (driverData, userData) => {
+const createNewDeliveryDriver = async (deliveryDriverData, userData) => {
 	try {
 		const newUser = await UserDao.createNewUser(userData);
 		if (!newUser) {
-			throw new Error("Failed to create user for new driver");
+			throw new Error("Failed to create user for new delivery driver");
 		}
 
-		// Prepare location data for the driver
+		// Prepare location data for the delivery driver
 		const locationData = {
 			name: null,
 			address: null,
@@ -170,30 +170,29 @@ const createNewDriver = async (driverData, userData) => {
 			},
 		};
 
-		const newDriverData = {
-			...driverData,
+		const newDeliveryDriverData = {
+			...deliveryDriverData,
 			location: locationData,
 			user_id: newUser.user_id,
 		};
 
-		return await prisma.drivers.create({
-			data: newDriverData,
+		return await prisma.delivery_drivers.create({
+			data: newDeliveryDriverData,
 		});
 	} catch (error) {
-		console.error("Error creating new driver:", error);
+		console.error("Error creating new delivery driver:", error);
 		throw new Error(error.message); // Adjust error handling as needed
 	}
 };
 
-
 module.exports = {
-	getDrivers,
-	getOnlineDrivers,
-	getDriverById,
-	getDriverByUserId,
-	getDriverLocation,
-	updateDriver,
-	updateDriverLocation,
-	updateDriverOnlineStatus,
-	createNewDriver,
+	getDeliveryDrivers,
+	getOnlineDeliveryDrivers,
+	getDeliveryDriverById,
+	getDeliveryDriverByUserId,
+	getDeliveryDriverLocation,
+	updateDeliveryDriverOnlineStatus,
+	updateDeliveryDriverLocation,
+	updateDeliveryDriver,
+	createNewDeliveryDriver
 };

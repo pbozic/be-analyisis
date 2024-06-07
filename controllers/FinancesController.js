@@ -3,7 +3,7 @@ const FinanceDao = require("../dao/Finances");
 const BusinessDao = require("../dao/Business");
 
 /**
- * POST /business/finance
+ * POST /finances/create
  * @tag Finance
  * @summary Add new finance record
  * @description Adds a new finance record to the database.
@@ -25,7 +25,7 @@ async function createNewFinanceRecord(req, res) {
 }
 
 /**
- * GET /business/finance/:finance_id
+ * GET finances/:finance_id
  * @tag Finance
  * @summary Get finance record by ID
  * @description Retrieves a finance record by its ID.
@@ -51,7 +51,7 @@ async function getFinanceRecordById(req, res) {
 }
 
 /**
- * GET /business/:business_id/finance
+ * GET finances/business/:business_id
  * @tag Finance
  * @summary Get finance record for a company
  * @description Retrieves the finance record associated with a specific company by the company's business ID.
@@ -78,7 +78,7 @@ async function getFinanceRecordByBusinessId(req, res) {
 }
 
 /**
- * PATCH /business/finance/:finance_id
+ * PATCH /finances/:finance_id
  * @tag Finance
  * @summary Update finance record
  * @description Updates an existing finance record by its ID.
@@ -101,7 +101,85 @@ async function updateFinanceRecord(req, res) {
 }
 
 /**
- * DELETE /business/finance/:finance_id
+ * PATCH /finances/account_number
+ * @tag Finance
+ * @summary Update account number
+ * @description Updates the account number for a specific finance record.
+ * @operationId updateAccountNumber
+ * @pathParam {string} finance_id - The ID of the finance record to update
+ * @bodyContent {object} application/json - The new account number
+ * @bodyRequired
+ * @response 200 - Account number updated successfully
+ * @responseContent {Finance} 200.application/json
+ * @response 400 - Error updating account number
+ */
+async function updateAccountNumber(req, res) {
+	const { finance_id } = req.params;
+	const { account_number } = req.body;
+
+	try {
+		const updatedFinanceRecord = await FinanceDao.updateAccountNumber(finance_id, account_number);
+		res.status(200).json(updatedFinanceRecord);
+	} catch (error) {
+		console.error("Error updating account number:", error);
+		res.status(400).json({ error: "Error updating account number", detail: error.message });
+	}
+}
+
+/**
+ * PATCH /finances/:finance_id/bank_name
+ * @tag Finance
+ * @summary Update bank name
+ * @description Updates the bank name for a specific finance record.
+ * @operationId updateBankName
+ * @pathParam {string} finance_id - The ID of the finance record to update
+ * @bodyContent {object} application/json - The new bank name
+ * @bodyRequired
+ * @response 200 - Bank name updated successfully
+ * @responseContent {Finance} 200.application/json
+ * @response 400 - Error updating bank name
+ */
+async function updateBankName(req, res) {
+	const { finance_id } = req.params;
+	const { bank_name } = req.body;
+
+	try {
+		const updatedFinanceRecord = await FinanceDao.updateBankName(finance_id, bank_name);
+		res.status(200).json(updatedFinanceRecord);
+	} catch (error) {
+		console.error("Error updating bank name:", error);
+		res.status(400).json({ error: "Error updating bank name", detail: error.message });
+	}
+}
+
+/**
+ * PATCH /finances/:finance_id/payment_preferences
+ * @tag Finance
+ * @summary Update payment preferences
+ * @description Updates the payment preferences for a specific finance record.
+ * @operationId updatePaymentPreferences
+ * @pathParam {string} finance_id - The ID of the finance record to update
+ * @bodyContent {object} application/json - The new payment preferences
+ * @bodyRequired
+ * @response 200 - Payment preferences updated successfully
+ * @responseContent {Finance} 200.application/json
+ * @response 400 - Error updating payment preferences
+ */
+async function updatePaymentPreferences(req, res) {
+	const { finance_id } = req.params;
+	const { payment_preferences } = req.body;
+
+	try {
+		const updatedFinanceRecord = await FinanceDao.updatePaymentPreferences(finance_id, payment_preferences);
+		res.status(200).json(updatedFinanceRecord);
+	} catch (error) {
+		console.error("Error updating payment preferences:", error);
+		res.status(400).json({ error: "Error updating payment preferences", detail: error.message });
+	}
+}
+
+/**
+ * DELETE /finances/:finance_id
  * @tag Finance
  * @summary Delete finance record
  * @description Deletes a finance record by its ID.
@@ -125,5 +203,8 @@ module.exports = {
 	getFinanceRecordByBusinessId,
 	createNewFinanceRecord,
 	updateFinanceRecord,
+	updateAccountNumber,
+	updateBankName,
+	updatePaymentPreferences,
 	deleteFinanceRecord,
 };
