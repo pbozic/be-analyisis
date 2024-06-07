@@ -39,12 +39,21 @@ async function driverSeed() {
 		try {
             let values = await Promise.all(users);
             let drivers = []
+            let locations = [{ "latitude": 46.050189, "longitude": 14.477443 }, { "latitude": 46.054879, "longitude": 14.483 }, { "latitude": 46.06437, "longitude": 14.473872 }, { "latitude": 46.065809, "longitude": 14.522401 }, { "latitude": 46.048624, "longitude": 14.537979 }]
+            let cnt = 0;
             for (let val of values) {
                 drivers.push(prisma.drivers.upsert({
                     where: { user_id: val.user_id },
-                    update: { user_id: val.user_id },
-					create: { user_id: val.user_id },
-                }))
+                    update: {
+                        user_id: val.user_id,
+                        location: locations[cnt],
+                    },
+                    create: {
+                        user_id: val.user_id,
+                        location: locations[cnt],
+                    },
+                }));
+                cnt++;
             }
             let vehicles = []
             await prisma.vehicle_specifications.deleteMany({})

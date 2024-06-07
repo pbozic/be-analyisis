@@ -97,6 +97,14 @@ async function acceptOrder(taxi_order_id, user) {
             },
         });
         console.log("taxi_order_sent", taxi_order_sent)
+        prisma.drivers.update({
+            where: {
+                driver_id: user.driver.driver_id
+            },
+            data: {
+                on_order: true
+            }
+        });
         return prisma.taxi_orders.update({
             where: {
                 taxi_order_id
@@ -131,7 +139,8 @@ async function updateOrderStatus(taxi_order_id, status) {
 
 async function completeOrder(taxi_order_id) {
     try {
-        return prisma.taxi_orders.update({
+       
+        let taxi_order = await prisma.taxi_orders.update({
             where: {
                 taxi_order_id
             },
@@ -139,6 +148,15 @@ async function completeOrder(taxi_order_id) {
                 status: "TAXI_COMPLETED"
             }
         });
+        await prisma.drivers.update({
+            where: {
+                driver_id: taxi_order.driver_id
+            },
+            data: {
+                on_order: false
+            }
+        });
+        return taxi_order;
     } catch (e) {
         throw new Error(e);
     }

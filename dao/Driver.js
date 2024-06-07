@@ -185,6 +185,24 @@ const createNewDriver = async (driverData, userData) => {
 	}
 };
 
+async function getAvailableDrivers() {
+	try {
+		return await prisma.drivers.findMany({
+			where: { online: true, on_order: false },
+			include: {
+				user: true,
+				vehicles: {
+					include: {
+						vehicle_specification: true,
+					},
+				},
+			},
+		});
+	} catch (error) {
+		console.error("Error getting available drivers:", error);
+		throw new Error(error);
+	}
+}
 
 module.exports = {
 	getDrivers,
@@ -196,4 +214,5 @@ module.exports = {
 	updateDriverLocation,
 	updateDriverOnlineStatus,
 	createNewDriver,
+	getAvailableDrivers
 };

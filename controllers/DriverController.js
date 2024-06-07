@@ -217,6 +217,16 @@ async function createDriver(req, res) {
 	}
 }
 
+async function getAvailableDrivers(req, res) { 
+	try {
+		const drivers = await DriverDao.getAvailableDrivers();
+		res.status(200).json(drivers);
+	} catch (error) {
+		console.error("Error getting available drivers:", error);
+		res.status(400).json({ error: "Error getting available drivers", detail: error.message });
+	}
+
+}
 //TODO: Implement the following functions
 // driverStartWorking - emits a "driver_available" event with driver object and updates driver.is_active to true
 // driverStopWorking - emits a "driver_unavailable" event with driver_id and updates driver.is_active to false
@@ -230,4 +240,5 @@ module.exports = {
 	updateDriverLocation,
 	updateDriverOnlineStatus,
 	createDriver,
+	getAvailableDrivers
 };
