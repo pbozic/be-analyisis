@@ -1,0 +1,20 @@
+components:
+    schemas:
+        Review:
+            type: "object"
+            properties:
+                comment:
+                    type: "string"
+                rating:
+                    type: "number"
+        ReviewRequest:
+            type: "object"
+            properties:
+                comment:
+                    type: "string"
+                rating:
+                    type: "number"
+                bussines_id:
+                    type: "string"
+                user_id:
+                    type: "string"

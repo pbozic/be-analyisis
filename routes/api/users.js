@@ -11,6 +11,7 @@ const {
 	addAddressSchema,
 	editAddressSchema,
 } = require("../../joi/userSchemas");
+const {reviewUserSchema} = require("../../joi/reviewSchemas");
 
 const router = express.Router();
 
@@ -25,5 +26,6 @@ router.patch("/me/address/:address_id", joi(editAddressSchema), UserController.e
 router.patch("/me/address/:address_id/primary", UserController.setPrimaryAddress);
 router.get("/me/verify/phone", UserController.requestSMSVerification);
 router.post("/me/verify/phone", joi(verifyPhoneSchema), UserController.verifyMe);
+router.post("/review", joi(reviewUserSchema), UserController.reviewUser);
 
 module.exports = router;

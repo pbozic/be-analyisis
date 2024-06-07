@@ -2,6 +2,7 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 
 const BusinessDao = require("../dao/Business");
+const ReviewDao = require("../dao/Review");
 const { BUSINESS_TYPE } = require("@prisma/client");
 
 /**
@@ -159,7 +160,14 @@ async function getChildBusinesses(req, res) {
  */
 async function createNewBusiness(req, res) {
 	try {
-		const newBusiness = await BusinessDao.createNewBusiness(req.body);
+		const newBusiness = await BusinessDao.createNewBusiness({
+			...req.body,
+			reviewable: {
+				create: {
+					
+				},
+			}
+		});
 		res.status(201).json(newBusiness);
 	} catch (e) {
 		console.error("Error creating new business:", e);
@@ -559,6 +567,44 @@ async function removeParentBusinessId(req, res) {
 	}
 }
 
+/**
+ * POST /business/review
+ * @tag Business
+ * @summary Review a business
+ * @description This endpoint is used add a review of business.
+ * @operationId reviewBusiness
+ * @bodyDescription Conent of the review
+ * @bodyContent {ReviewRequest} application/json
+ * @bodyRequired
+ * @response 200 - Primary address set successfully.
+ * @response 400 - Error setting primary address.
+ */
+async function reviewBusiness(req, res) {
+	try {
+		let business = await UserDao.getUserById(req.body.business_id);
+		let review = await ReviewDao.createReview({
+			comment: req.body.comment,
+			rating: req.body.rating,
+			author: {
+				connect: {
+					user_id: req.user.user_id,
+				},
+			},
+			reviewable: {
+				connect: {
+					reviewable_id: business.reviewable_id,
+				},
+			}
+		});
+		if (review) {
+			return res.status(200).json(review);
+		}
+		res.status(400).json({ error: "Error adding review" });
+	} catch (e) {
+		console.log(e);
+		res.status(400).json({ error: "Error adding review", e });
+	}
+}
 
 module.exports = {
 	listBusinesses,
@@ -583,6 +629,7 @@ module.exports = {
 	updateBusinessIsPopular,
 	updateParentBusinessId,
 	removeParentBusinessId,
-	deleteBusiness
+	deleteBusiness,
+	reviewBusiness
 };
 

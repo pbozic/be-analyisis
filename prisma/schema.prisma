@@ -54,6 +54,8 @@ model business {
   taxi_orders         taxi_orders[]
   delivery_orders     delivery_orders[]
   menus               menus[]
+  reviewable_id       String?           @db.Uuid
+  reviewable          reviewable?       @relation(fields: [reviewable_id], references: [reviewable_id])
 }
 
 model business_users {
@@ -94,6 +96,9 @@ model users {
   documents                     documents[]
   delivery_driver               delivery_drivers?
   delivery_orders               delivery_orders[]
+  reviewable_id                 String?           @db.Uuid
+  reviewable                    reviewable?       @relation(fields: [reviewable_id], references: [reviewable_id])
+  reviews                       reviews[]         @relation("review_author")
 }
 
 model documents {
@@ -226,6 +231,25 @@ model vehicle_specifications {
   per_minute               String
   vehicle_id               String?          @db.Uuid
   vehicle                  vehicles?
+}
+
+model reviewable {
+  reviewable_id String @id @default(uuid()) @db.Uuid
+  reviews       reviews[]
+  user         users[]
+  business     business[]
+}
+
+model reviews {
+  review_id     String     @id @default(uuid()) @db.Uuid
+  reviewable_id String     @db.Uuid
+  author_id     String     @db.Uuid
+  rating        Float
+  comment       String?
+  created_at    DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
+  reviewable    reviewable @relation(fields: [reviewable_id], references: [reviewable_id])
+  author        users      @relation(fields: [author_id], references: [user_id], name: "review_author")
 }
 
 model allergens {

@@ -21,6 +21,11 @@ async function userSeed() {
 				password: hash,
 				telephone: faker.phone.number(),
 				user_role: user_role,
+				reviewable: {
+					create: {
+						
+					},
+				}
 			};
 
 			users.push(

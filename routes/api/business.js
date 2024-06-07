@@ -4,7 +4,7 @@ const router = express.Router();
 // Middleware and validation schemas (if applicable)
 const joi = require("../../middleware/joi");
 const { updateSchema } = require("../../joi/businessSchemas");
-
+const { reviewBusinessSchema } = require("../../joi/reviewSchemas");
 const BusinessController = require("../../controllers/BusinessController");
 const FinanceController = require("../../controllers/FinancesController");
 
@@ -15,6 +15,7 @@ router.get("/search", BusinessController.getBusinessesByNameSearch);
 router.get("/parent", BusinessController.getParentBusiness);
 
 router.post("/register", BusinessController.createNewBusiness);
+router.post("/review", joi(reviewBusinessSchema), BusinessController.reviewBusiness);
 
 router.patch("/", joi(updateSchema), BusinessController.update);
 router.patch("/type", BusinessController.updateBusinessType);

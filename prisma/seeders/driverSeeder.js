@@ -20,7 +20,12 @@ async function driverSeed() {
 				email: `driver${i + 1}@veryfakeemail.com`,
 				password: hash,
 				telephone: faker.phone.number(),
-				user_role: user_role,
+                user_role: user_role,
+                reviewable: {
+					create: {
+						
+					},
+				}
 			};
 
 			users.push(

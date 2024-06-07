@@ -3,7 +3,7 @@ const { generateAccessToken, generateRefreshToken } = require("../lib/jwt");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { post } = require("../routes/api/users");
-
+const ReviewDao = require("../dao/Review");
 const TokenDao = require("../dao/Token");
 const BusinessDao = require("../dao/Business");
 const FinancesDao = require("../dao/Finances");
@@ -88,6 +88,11 @@ async function register(req, res) {
 			...postData,
 			password: hash,
 			user_role: "PERSONAL",
+			reviewable: {
+				create: {
+					
+				},
+			}
 		};
 		delete userObj["confirm_password"];
 		let user = await UserDao.createNewUser(userObj);

@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 
 const UserDao = require("../dao/User");
 const TokenDao = require("../dao/Token");
+const ReviewDao = require("../dao/Review");
 const AddressDao = require("../dao/Address");
 /**
  * GET /users
@@ -333,6 +334,46 @@ async function setPrimaryAddress(req, res) {
 		res.status(400).json({ error: "Error setting primary address", e });
 	}
 }
+/**
+ * POST /user/review
+ * @tag Users
+ * @summary Review a user
+ * @description This endpoint is used add a review of user.
+ * @operationId reviewUser
+ * @bodyDescription Conent of the review
+ * @bodyContent {ReviewRequest} application/json
+ * @bodyRequired
+ * @response 200 - Primary address set successfully.
+ * @response 400 - Error setting primary address.
+ */
+async function reviewUser(req, res) {
+	try {
+		let user = await UserDao.getUserById(req.body.user_id);
+		let review = await ReviewDao.createReview({
+	
+			comment: req.body.comment,
+			rating: req.body.rating,
+			author: {
+				connect: {
+					user_id: req.user.user_id,
+				},
+			},
+			reviewable: {
+				connect: {
+					reviewable_id: user.reviewable_id,
+				},
+			}
+	
+		});
+		if (review) {
+			return res.status(200).json(review);
+		}
+		res.status(400).json({ error: "Error adding review" });
+	} catch (e) {
+		console.log(e);
+		res.status(400).json({ error: "Error adding review", e });
+	}
+}
 module.exports = {
 	listUsers,
 	me,
@@ -346,4 +387,5 @@ module.exports = {
 	deleteAddress,
 	editAddress,
 	setPrimaryAddress,
+	reviewUser
 };
