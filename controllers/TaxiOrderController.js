@@ -1,5 +1,6 @@
 const TaxiOrderDao = require("../dao/TaxiOrder");
-const { UserSockets } = require('../socket');
+const DriverDao = require("../dao/Driver");
+const { UserSockets, io } = require('../socket');
 const TaxiHelper = require('../lib/taxiHelpers');
 /**
  * GET /taxi/order/{orderId}
@@ -39,7 +40,13 @@ async function getOrder(req, res) {
  */
 async function createOrder(req, res) {
 	try {
-		let order = await TaxiOrderDao.createOrder(req.body);
+		let orderData = {
+			...req.body,
+			status: "PENDING",
+			user_id: req.user.user_id
+		};
+		
+		let order = await TaxiOrderDao.createOrder(orderData);
 		//TODO: select drivers to notify
 		TaxiHelper.findTaxiOrderDrivers(order);
 		res.status(200).json(order);
@@ -50,7 +57,7 @@ async function createOrder(req, res) {
 	}
 }
 /**
- * POST /taxi/order/{orderId}/accept
+ * POST /taxi/order/accept
  * @tag Taxi
  * @summary Accept a taxi order.
  * @description Accepts taxi order with the provided details from the request body. Returns the accepted order if successful.
@@ -64,11 +71,29 @@ async function createOrder(req, res) {
  */
 async function acceptOrder(req, res) {
 	try {
-		let order = await TaxiOrderDao.acceptOrder(req.params.order_id);
-		// 
+		//TODO: check if driver is online
+		//TODO: check if order is still pending
+		await TaxiOrderDao.acceptOrder(req.body.order_id, req.user);
+		let order = await TaxiOrderDao.getOrder(req.body.order_id, {
+			include: {
+				driver: true
+			}
+		}); 
+		let driver = await DriverDao.getDriverById(req.user.driver.driver_id, {
+			include: {
+				vehicles: {
+					vehicle_specification: true,
+				}
+			}
+		});
+		//TODO: how to handle multiple vehicles on driver
+		driver.vehicle = driver.vehicles[0];
+		order.driver = driver;
 		let userSocket = UserSockets.get(order.user_id);
+		console.log("order accepted" ,order)
 		if (userSocket) {
-			userSocket.emit('order_accepted', order);
+			io.to("order_" + order.taxi_order_id).emit('order_accepted', order);
+			io.emit('driver_unavailable', order.driver_id);
 		}
 		res.status(200).json(order);
 	}
@@ -77,9 +102,60 @@ async function acceptOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
-
+/**
+ * POST /taxi/order/complete
+ * @tag Taxi
+ * @summary Complete a taxi order.
+ * @description Completes a taxi order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
+ * @operationId completeOrder
+ * @bodyDescription Request body must include 'order_id'.
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the completed order in the response body.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Console logs the error message and returns it in the response.
+ */
+async function completeOrder(req, res) {
+	try {
+		let order = await TaxiOrderDao.completeOrder(req.body.order_id);
+		let driver = await TaxiOrderDao.getDriver(order.driver_id);
+		io.emit('driver_available', driver);
+		io.to("order_" + order.order_id).emit('order_completed', order);
+		res.status(200).json(order);
+	}
+	catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+/**
+ * POST /taxi/order/status
+ * @tag Taxi
+ * @summary Update a taxi order's status.
+ * @description Updates the status of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
+ * @operationId updateOrderStatus
+ * @bodyDescription Request body must include 'order_id' to identify the order and 'status' to specify the new status.
+ * @bodyContent {UpdateOrderStatusRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the updated order in the response body.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ */
+async function updateOrderStatus(req, res) {
+	try {
+		let order = await TaxiOrderDao.updateOrderStatus(req.body.order_id, req.body.status);
+		io.to("order_" + order.order_id).emit('order_status_change', order);
+		res.status(200).json(order);
+	}
+	catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
 module.exports = {
 	getOrder,
 	createOrder,
-	acceptOrder
+	acceptOrder,
+	completeOrder,
+	updateOrderStatus
 };
