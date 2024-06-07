@@ -11,6 +11,7 @@ const DriverDao = require("../dao/Driver");
 const VehicleDao = require("../dao/Vehicle");
 const DocumentDao = require("../dao/Document");
 const DeliveryDriverDao = require("../dao/DeliveryDriver");
+const BusinessUsersDao = require("../dao/BusinessUsers");
 
 /**
  * POST /auth/login
@@ -334,11 +335,63 @@ async function registerDeliveryService(req, res) {
 	}
 }
 
+/**
+ * POST /auth/merchant/register
+ * @tag Auth
+ * @summary Register a new merchant service
+ * @description Creates a new business, optionally business users, finances, and documents, and links them together.
+ * @operationId registerMerchantService
+ * @bodyContent {MerchantServiceRegistration} application/json
+ * @bodyRequired
+ * @response 201 - Merchant service registered successfully
+ * @responseContent {MerchantServiceRegistrationResponse} 201.application/json
+ * @response 400 - Error registering merchant service
+ */
+async function registerMerchantService(req, res) {
+	try {
+		const business = await BusinessDao.createNewBusiness(req.body.business);
+
+		// Handle business documents
+		if (req.body.business.documents) {
+			for (const doc of req.body.business.documents) {
+				const document = await DocumentDao.createDocument(doc, doc.files);
+				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
+			}
+		}
+
+		let finances = {};
+		if (req.body.finances) {
+			finances = await FinancesDao.addFinances(req.body.finances);
+			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
+		}
+
+		let businessUsers = [];
+		if (Array.isArray(req.body.business.users) && req.body.business.users.length) {
+			for (const userInfo of req.body.business.users) {
+				const businessUser = await BusinessUsersDao.createBusinessUser(userInfo, business.business_id);
+				businessUsers.push(businessUser);
+			}
+		}
+
+		res.status(201).json({
+			message: "Merchant service business registered successfully",
+			business,
+			businessUsers,
+			finances,
+		});
+	} catch (error) {
+		console.error("Error registering merchant service:", error);
+		res.status(400).json({ error: "Error registering merchant service", detail: error.message });
+	}
+}
+
+
 module.exports = {
 	login,
 	register,
 	refreshToken,
 	requestPasswordReset,
 	registerTaxiService,
-	registerDeliveryService
+	registerDeliveryService,
+	registerMerchantService
 };

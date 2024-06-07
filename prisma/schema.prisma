@@ -97,24 +97,24 @@ model users {
 }
 
 model documents {
-  document_id        String           @id @default(uuid()) @db.Uuid
+  document_id        String            @id @default(uuid()) @db.Uuid
   document_type      DOCUMENT_TYPE
-  created_at         DateTime         @default(now()) @db.Timestamptz(6)
-  updated_at         DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
-  expiration_date    DateTime?        @db.Timestamptz(6)
-  issue_date         DateTime?        @db.Timestamptz(6)
+  created_at         DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+  expiration_date    DateTime?         @db.Timestamptz(6)
+  issue_date         DateTime?         @db.Timestamptz(6)
   additional_info    Json? // JSON field for any additional document-specific information
   files              files[]
-  driver_id          String?          @db.Uuid
-  drivers            drivers?         @relation(fields: [driver_id], references: [driver_id])
-  delivery_driver_id String?          @db.Uuid
+  driver_id          String?           @db.Uuid
+  drivers            drivers?          @relation(fields: [driver_id], references: [driver_id])
+  delivery_driver_id String?           @db.Uuid
   delivery_driver    delivery_drivers? @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
-  business_id        String?          @db.Uuid
-  business           business?        @relation(fields: [business_id], references: [business_id])
-  user_id            String?          @db.Uuid
-  user               users?           @relation(fields: [user_id], references: [user_id])
-  vehicle_id         String?          @db.Uuid
-  vehicles           vehicles?        @relation(fields: [vehicle_id], references: [vehicle_id])
+  business_id        String?           @db.Uuid
+  business           business?         @relation(fields: [business_id], references: [business_id])
+  user_id            String?           @db.Uuid
+  user               users?            @relation(fields: [user_id], references: [user_id])
+  vehicle_id         String?           @db.Uuid
+  vehicles           vehicles?         @relation(fields: [vehicle_id], references: [vehicle_id])
 }
 
 model files {
@@ -211,7 +211,7 @@ model vehicles {
   driver                   drivers?                @relation(fields: [driver_id], references: [driver_id])
   documents                documents[]
   delivery_driver_id       String?                 @db.Uuid
-  delivery_driver          delivery_drivers?        @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
+  delivery_driver          delivery_drivers?       @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
   vehicle_specification_id String?                 @unique @db.Uuid
   vehicle_specification    vehicle_specifications? @relation(fields: [vehicle_specification_id], references: [vehicle_specification_id])
 }
@@ -278,20 +278,20 @@ model delivery_orders {
   user               users?                @relation(fields: [user_id], references: [user_id])
   history            delivery_order_sent[]
   delivery_driver_id String                @db.Uuid
-  delivery_driver    delivery_drivers?      @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
+  delivery_driver    delivery_drivers?     @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
   business_id        String?               @db.Uuid
   business           business?             @relation(fields: [business_id], references: [business_id])
 }
 
 model delivery_order_sent {
-  delivery_order_sent_id String           @id @default(uuid()) @db.Uuid
-  delivery_order_id      String           @db.Uuid
-  accepted               Boolean          @default(false)
+  delivery_order_sent_id String            @id @default(uuid()) @db.Uuid
+  delivery_order_id      String            @db.Uuid
+  accepted               Boolean           @default(false)
   location               Json
-  created_at             DateTime         @default(now()) @db.Timestamptz(6)
-  updated_at             DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
-  order                  delivery_orders? @relation(fields: [delivery_order_id], references: [delivery_order_id])
-  delivery_driver_id     String           @db.Uuid
+  created_at             DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+  order                  delivery_orders?  @relation(fields: [delivery_order_id], references: [delivery_order_id])
+  delivery_driver_id     String            @db.Uuid
   delivery_driver        delivery_drivers? @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
 }
 
@@ -384,11 +384,13 @@ enum DOCUMENT_TYPE {
   BANNER
   DRIVING_LICENSE
   TAXI_LICENCE
+  PASSENGER_TRANSFER_LICENSE
   BACKGROUND_CHECK_REPORT
   // VEHICLE
   VEHICLE_REGISTRATION
   VEHICLE_INSURANCE
   VEHICLE_TECHNICAL_INSPECTION
+
   // MERCHANT
   OPERATING_PERMIT
   HACCP_CERTIFICATION

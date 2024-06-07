@@ -1,4 +1,5 @@
 const prisma = require("../prisma/prisma");
+const UserDao = require("./User");
 
 const getAllBusinessUsers = async () => {
 	try {
@@ -46,16 +47,21 @@ const getBusinessUsersByBusinessType = async (type) => {
 	}
 };
 
-const addBusinessUser = async (business_id, user_id) => {
+const createBusinessUser = async (userData, business_id) => {
 	try {
+		const newUser = await UserDao.createNewUser(userData);
+		if (!newUser) {
+			throw new Error("Failed to create user for new driver");
+		}
+
 		return await prisma.business_users.create({
 			data: {
 				business_id,
-				user_id
+				user_id: newUser.user_id
 			}
 		});
 	} catch (error) {
-		console.error("Error adding a business user:", error);
+		console.error("Error creating a business user:", error);
 		throw new Error(error);
 	}
 };
@@ -83,12 +89,26 @@ const updateBusinessUser = async (business_users_id, updates) => {
 	}
 };
 
+async function addOperatingAddress(business_users_id, address_id) {
+	try {
+		return await prisma.business_users.update({
+			where: { business_users_id },
+			data: { operating_address_id: address_id }
+		});
+	} catch (error) {
+		console.error("Error updating business user:", error);
+		throw new Error(error);
+	}
+}
+
+
 
 module.exports = {
 	getAllBusinessUsers,
 	getBusinessUsersByBusinessId,
 	getBusinessUsersByBusinessType,
-	addBusinessUser,
+	createBusinessUser,
 	removeBusinessUser,
-	updateBusinessUser
+	updateBusinessUser,
+	addOperatingAddress
 };
