@@ -179,6 +179,8 @@ const createNewDriver = async (driverData, userData) => {
 		return await prisma.drivers.create({
 			data: newDriverData,
 		});
+
+
 	} catch (error) {
 		console.error("Error creating new driver:", error);
 		throw new Error(error.message); // Adjust error handling as needed

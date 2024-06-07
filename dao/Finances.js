@@ -94,11 +94,17 @@ const deleteFinances = async (finance_id) => {
 	}
 };
 
-const linkFinancesToBusiness = async (business_id, finance_id) => {
+const linkFinancesToBusiness = async (businessId, financeId) => {
 	try {
 		return await prisma.business.update({
-			where: { business_id },
-			data: { finance_id },
+			where: { business_id: businessId },
+			data: {
+				finances: {
+					connect: {
+						finance_id: financeId
+					}
+				}
+			},
 		});
 	} catch (error) {
 		console.error("Error linking finances to business:", error);
@@ -106,17 +112,22 @@ const linkFinancesToBusiness = async (business_id, finance_id) => {
 	}
 };
 
-const unlinkFinancesFromBusiness = async (business_id) => {
+const unlinkFinancesFromBusiness = async (businessId) => {
 	try {
 		return await prisma.business.update({
-			where: { business_id },
-			data: { finance_id: null },
+			where: { business_id: businessId },
+			data: {
+				finances: {
+					disconnect: true
+				}
+			},
 		});
 	} catch (error) {
 		console.error("Error unlinking finances from business:", error);
 		throw new Error(error);
 	}
 };
+
 
 
 

@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 
 const BusinessDao = require("../dao/Business");
 const ReviewDao = require("../dao/Review");
-const { BUSINESS_TYPE } = require("@prisma/client");
+const Constants = require("../lib/constants");
 
 /**
  * GET /businesses
@@ -44,7 +44,7 @@ async function listBusinesses(req, res) {
  */
 async function listMerchantBusinesses(req, res) {
 	try {
-		const merchantBusinesses = await getBusinessesByType(BUSINESS_TYPE.MERCHANT);
+		const merchantBusinesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT);
 		res.status(200).json(merchantBusinesses);
 	} catch (e) {
 		console.error("Error listing merchant businesses:", e);
@@ -64,7 +64,7 @@ async function listMerchantBusinesses(req, res) {
  */
 async function listTransferBusinesses(req, res) {
 	try {
-		const taxiBusinesses = await BusinessDao.getBusinessesByType(BUSINESS_TYPE.TRANSFER);
+		const taxiBusinesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.TRANSFER);
 		res.status(200).json(taxiBusinesses);
 	} catch (e) {
 		console.error("Error listing taxi businesses:", e);

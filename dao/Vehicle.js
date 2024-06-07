@@ -75,11 +75,18 @@ const updateVehicle = async (vehicle_id, vehicleData) => {
 	}
 };
 
-const assignVehicleToDriver = async (vehicle_id, driver_id) => {
+
+const assignVehicleToDriver = async (vehicleId, driverId) => {
 	try {
 		return await prisma.vehicles.update({
-			where: { vehicle_id },
-			data: { driver_id },
+			where: { vehicle_id: vehicleId },
+			data: {
+				driver: {
+					connect: {
+						driver_id: driverId
+					}
+				}
+			},
 		});
 	} catch (error) {
 		console.error("Error assigning vehicle to driver:", error);
@@ -87,11 +94,15 @@ const assignVehicleToDriver = async (vehicle_id, driver_id) => {
 	}
 };
 
-const removeVehicleFromDriver = async (vehicle_id) => {
+const removeVehicleFromDriver = async (vehicleId) => {
 	try {
 		return await prisma.vehicles.update({
-			where: { vehicle_id },
-			data: { driver_id: null }, // Set driver_id to null to disassociate the vehicle from the driver
+			where: { vehicle_id: vehicleId },
+			data: {
+				driver: {
+					disconnect: true
+				}
+			},
 		});
 	} catch (error) {
 		console.error("Error removing vehicle from driver:", error);
