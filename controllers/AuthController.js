@@ -87,6 +87,7 @@ async function register(req, res) {
 		let hash = await bcrypt.hash(postData.password, Number(process.env.BCRYPT_SALT_ROUNDS));
 		let userObj = {
 			...postData,
+			date_of_birth: new Date(postData.date_of_birth),
 			password: hash,
 			user_role: "PERSONAL",
 			reviewable: {

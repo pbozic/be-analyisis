@@ -1,4 +1,5 @@
-const Joi = require("joi");
+const Joi = require("joi").extend(require('@joi/date'));
+
 const prisma = require("../prisma/prisma");
 
 const loginSchema = Joi.object({
@@ -59,7 +60,7 @@ const registerSchema = Joi.object({
 		}),
 	telephone_code: Joi.string().required(),
 	telephone_number: Joi.string().required(),
-	date_of_birth: Joi.date().format("DD.MM.YYYY").required(),
+	date_of_birth: Joi.date().format("YYYY-MM-DD").required(),
 });
 
 const refreshSchema = Joi.object({
