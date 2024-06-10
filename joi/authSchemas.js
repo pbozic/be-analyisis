@@ -59,7 +59,7 @@ const registerSchema = Joi.object({
 		}),
 	telephone_code: Joi.string().required(),
 	telephone_number: Joi.string().required(),
-	date_of_birth: Joi.date().required(),
+	date_of_birth: Joi.date().format("DD.MM.YYYY").required(),
 });
 
 const refreshSchema = Joi.object({
