@@ -297,7 +297,7 @@ const linkDocumentToVehicle = async (documentId, vehicleId) => {
         return await prisma.documents.update({
             where: { document_id: documentId },
             data: {
-                vehicle: {
+                vehicles: {
                     connect: {
                         vehicle_id: vehicleId
                     }
@@ -315,7 +315,7 @@ const linkDocumentToDriver = async (documentId, driverId) => {
         return await prisma.documents.update({
             where: { document_id: documentId },
             data: {
-                driver: {
+                drivers: {
                     connect: {
                         driver_id: driverId
                     }

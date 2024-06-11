@@ -207,21 +207,21 @@ async function registerTaxiService(req, res) {
 		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
 			for (const driverInfo of req.body.drivers) {
 
-				const newUser = await UserDao.createNewUser(driverInfo.user);
+				const newUser = await UserDao.createNewUser(driverInfo.user.data);
 				// Handle user documents
 				if (driverInfo.user.documents) {
 					for (const doc of driverInfo.user.documents) {
-						const document = await DocumentDao.createDocument(doc, doc.files);
+						const document = await DocumentDao.createDocument(doc.documentData, doc.files);
 						await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 					}
 				}
 
-				const driverData = { ...driverInfo, business_id: business.business_id, user_id: newUser.user_id };
+				const driverData = { ...driverInfo.driver.data, business_id: business.business_id};
 				const driver = await DriverDao.createNewDriver(driverData, newUser);
 				// Handle taxi documents
 				if (driverInfo.driver.documents) {
 					for (const doc of driverInfo.driver.documents) {
-						const document = await DocumentDao.createDocument(doc, doc.files);
+						const document = await DocumentDao.createDocument(doc.documentData, doc.files);
 						await DocumentDao.linkDocumentToDriver(document.document_id, driver.driver_id);
 					}
 				}
@@ -229,12 +229,12 @@ async function registerTaxiService(req, res) {
 				let vehicles = [];
 				if (Array.isArray(driverInfo.vehicles) && driverInfo.vehicles.length) {
 					for (const vehicleInfo of driverInfo.vehicles) {
-						const vehicle = await VehicleDao.createNewVehicle(vehicleInfo);
+						const vehicle = await VehicleDao.createNewVehicle({business_id: business.business_id});
 						await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver.driver_id);
 						// Handle vehicle documents
 						if (vehicleInfo.documents) {
 							for (const doc of vehicleInfo.documents) {
-								const document = await DocumentDao.createDocument(doc, doc.files);
+								const document = await DocumentDao.createDocument(doc.documentData, doc.files);
 								await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
 							}
 						}
