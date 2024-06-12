@@ -276,7 +276,7 @@ async function registerDeliveryService(req, res) {
 		// Handle business documents
 		if (req.body.business.documents) {
 			for (const doc of req.body.business.documents) {
-				const document = await DocumentDao.createDocument(doc, doc.files);
+				const document = await DocumentDao.createDocument(doc.documentData, doc.files);
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
 		}
@@ -291,21 +291,21 @@ async function registerDeliveryService(req, res) {
 		if (Array.isArray(req.body.deliveryDrivers) && req.body.deliveryDrivers.length) {
 			for (const deliveryDriverInfo of req.body.deliveryDrivers) {
 
-				const newUser = await UserDao.createNewUser(deliveryDriverInfo.user);
+				const newUser = await UserDao.createNewUser(deliveryDriverInfo.user.data);
 				// Handle user documents
 				if (deliveryDriverInfo.user.documents) {
 					for (const doc of deliveryDriverInfo.user.documents) {
-						const document = await DocumentDao.createDocument(doc, doc.files);
+						const document = await DocumentDao.createDocument(doc.documentData, doc.files);
 						await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 					}
 				}
 
-				const deliveryDriverData = { ...deliveryDriverInfo, business_id: business.business_id, user_id: newUser.user_id };
-				const deliveryDriver = await DeliveryDriverDao.createNewDeliveryDriver(deliveryDriverData);
+				const deliveryDriverData = { ...deliveryDriverInfo.user.data, business_id: business.business_id };
+				const deliveryDriver = await DeliveryDriverDao.createNewDeliveryDriver(deliveryDriverData, newUser);
 				// Handle delivery taxi documents
 				if (deliveryDriverInfo.driver.documents) {
 					for (const doc of deliveryDriverInfo.driver.documents) {
-						const document = await DocumentDao.createDocument(doc, doc.files);
+						const document = await DocumentDao.createDocument(doc.documentData, doc.files);
 						await DocumentDao.linkDocumentToDeliveryDriver(document.document_id, deliveryDriver.delivery_driver_id);
 					}
 				}
@@ -313,12 +313,12 @@ async function registerDeliveryService(req, res) {
 				let vehicles = [];
 				if (Array.isArray(deliveryDriverInfo.vehicles) && deliveryDriverInfo.vehicles.length) {
 					for (const vehicleInfo of deliveryDriverInfo.vehicles) {
-						const vehicle = await VehicleDao.createNewVehicle(vehicleInfo);
+						const vehicle = await VehicleDao.createNewVehicle({business_id: business.business_id});
 						await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, deliveryDriver.delivery_driver_id);
 						// Handle vehicle documents
 						if (vehicleInfo.documents) {
 							for (const doc of vehicleInfo.documents) {
-								const document = await DocumentDao.createDocument(doc, doc.files);
+								const document = await DocumentDao.createDocument(doc.documentData, doc.files);
 								await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
 							}
 						}
