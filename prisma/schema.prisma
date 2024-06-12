@@ -59,15 +59,16 @@ model business {
 }
 
 model business_users {
-  business_users_id    String     @id @default(uuid()) @db.Uuid
-  created_at           DateTime   @default(now()) @db.Timestamptz(6)
-  updated_at           DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
-  user_id              String     @db.Uuid
-  users                users?     @relation(fields: [user_id], references: [user_id])
-  business_id          String     @db.Uuid
-  business             business?  @relation(fields: [business_id], references: [business_id])
-  operating_address_id String?    @db.Uuid
-  operating_address    addresses? @relation("business_users_operating_address", fields: [operating_address_id], references: [address_id])
+  business_users_id    String       @id @default(uuid()) @db.Uuid
+  created_at           DateTime     @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime     @default(now()) @updatedAt @db.Timestamptz(6)
+  user_id              String       @db.Uuid
+  users                users?       @relation(fields: [user_id], references: [user_id])
+  business_id          String       @db.Uuid
+  business             business?    @relation(fields: [business_id], references: [business_id])
+  operating_address_id String?      @db.Uuid
+  operating_address    addresses?   @relation("business_users_operating_address", fields: [operating_address_id], references: [address_id])
+  company_role         COMPANY_ROLE @default(DIRECTOR)
 }
 
 model users {
@@ -235,10 +236,10 @@ model vehicle_specifications {
 }
 
 model reviewable {
-  reviewable_id String @id @default(uuid()) @db.Uuid
+  reviewable_id String     @id @default(uuid()) @db.Uuid
   reviews       reviews[]
-  user         users[]
-  business     business[]
+  user          users[]
+  business      business[]
 }
 
 model reviews {
@@ -272,11 +273,11 @@ model taxi_orders {
   last_sent_at      DateTime?         @db.Timestamptz(6)
   created_at        DateTime          @default(now()) @db.Timestamptz(6)
   updated_at        DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
-  business_id       String?            @db.Uuid
+  business_id       String?           @db.Uuid
   business          business?         @relation(fields: [business_id], references: [business_id])
   driver            drivers?          @relation(fields: [driver_id], references: [driver_id])
   user              users?            @relation(fields: [user_id], references: [user_id])
-  history           taxi_order_sent[]  
+  history           taxi_order_sent[]
 }
 
 model taxi_order_sent {
@@ -480,4 +481,11 @@ enum GENDER {
   MALE
   FEMALE
   OTHER
+}
+
+enum COMPANY_ROLE {
+  DIRECTOR
+  MANAGER
+  REPRESENTATIVE_OF_SALES
+  HEAD_OF_PROCUREMENT
 }

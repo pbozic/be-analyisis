@@ -49,7 +49,7 @@ const getBusinessUsersByBusinessType = async (type) => {
 
 const createBusinessUser = async (userData, business_id) => {
 	try {
-		const newUser = await UserDao.createNewUser(userData);
+		const newUser = await UserDao.createNewUser(userData.data);
 		if (!newUser) {
 			throw new Error("Failed to create user for new driver");
 		}
@@ -57,7 +57,8 @@ const createBusinessUser = async (userData, business_id) => {
 		return await prisma.business_users.create({
 			data: {
 				business_id,
-				user_id: newUser.user_id
+				user_id: newUser.user_id,
+				company_role: userData.company_role,
 			}
 		});
 	} catch (error) {

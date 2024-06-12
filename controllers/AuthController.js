@@ -356,12 +356,12 @@ async function registerDeliveryService(req, res) {
  */
 async function registerMerchantService(req, res) {
 	try {
-		const business = await BusinessDao.createNewBusiness(req.body.business);
+		const business = await BusinessDao.createNewBusiness(req.body.business.data);
 
 		// Handle business documents
 		if (req.body.business.documents) {
 			for (const doc of req.body.business.documents) {
-				const document = await DocumentDao.createDocument(doc, doc.files);
+				const document = await DocumentDao.createDocument(doc.documentData, doc.files);
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
 		}
@@ -373,9 +373,9 @@ async function registerMerchantService(req, res) {
 		}
 
 		let businessUsers = [];
-		if (Array.isArray(req.body.business.users) && req.body.business.users.length) {
-			for (const userInfo of req.body.business.users) {
-				const businessUser = await BusinessUsersDao.createBusinessUser(userInfo, business.business_id);
+		if (Array.isArray(req.body.users) && req.body.users.length) {
+			for (const userInfo of req.body.users) {
+				const businessUser = await BusinessUsersDao.createBusinessUser(userInfo.user, business.business_id);
 				businessUsers.push(businessUser);
 			}
 		}
