@@ -103,6 +103,14 @@ const updateDriverOnlineStatus = async (driver_id, isOnline) => {
 		return await prisma.drivers.update({
 			where: { driver_id },
 			data: { online: isOnline },
+			include: {
+				user: true,
+				vehicles: {
+					include: {
+						vehicle_specification: true,
+					},
+				},
+			},
 		});
 	} catch (error) {
 		console.error("Error setting driver's online status:", error);

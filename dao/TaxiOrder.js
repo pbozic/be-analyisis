@@ -8,11 +8,11 @@ async function getOrders(args) {
         throw new Error(e);
     }
 }
-async function getOrder(taxi_order_id, args) {
+async function getOrder(order_id, args) {
 	try {
 		return prisma.taxi_orders.findFirst({
 			where: {
-				taxi_order_id: taxi_order_id,
+				order_id: order_id,
             },
             ...args
 		});
@@ -47,13 +47,13 @@ async function createOrder(order) {
     }
 }
 
-async function createOrderSent(taxi_order_id, driver) {
+async function createOrderSent(order_id, driver) {
     try {
         return prisma.taxi_order_sent.create({
             data: {
                 order: {
                     connect: {
-                        taxi_order_id
+                        order_id
                     }
                 },
                 driver: {
@@ -69,11 +69,11 @@ async function createOrderSent(taxi_order_id, driver) {
         throw new Error(e);
     }
 }
-async function isOrderSent(taxi_order_id, driver) {
+async function isOrderSent(order_id, driver) {
     try {
         return prisma.taxi_order_sent.findFirst({
             where: {
-                taxi_order_id,
+                order_id,
                 driver_id: driver.driver_id
             }
         });
@@ -81,13 +81,13 @@ async function isOrderSent(taxi_order_id, driver) {
         throw new Error(e);
     }
 }
-async function acceptOrder(taxi_order_id, user) {
-    console.log("acceptOrder",taxi_order_id)
+async function acceptOrder(order_id, user) {
+    console.log("acceptOrder",order_id)
     try {
         let taxi_order_sent = await prisma.taxi_order_sent.update({
             where: {
                 taxi_order_snet_driver_unique: {
-                    taxi_order_id,
+                    order_id,
                     driver_id: user.driver.driver_id
                 }
                
@@ -107,7 +107,7 @@ async function acceptOrder(taxi_order_id, user) {
         });
         return prisma.taxi_orders.update({
             where: {
-                taxi_order_id
+                order_id
             },
             data: {
                 status: "TAXI_ACCEPTED",
@@ -122,11 +122,11 @@ async function acceptOrder(taxi_order_id, user) {
         throw new Error(e);
     }
 }
-async function updateOrderStatus(taxi_order_id, status) {
+async function updateOrderStatus(order_id, status) {
     try {
         return prisma.taxi_orders.update({
             where: {
-                taxi_order_id
+                order_id
             },
             data: {
                 status
@@ -137,12 +137,12 @@ async function updateOrderStatus(taxi_order_id, status) {
     }
 }
 
-async function completeOrder(taxi_order_id) {
+async function completeOrder(order_id) {
     try {
        
         let taxi_order = await prisma.taxi_orders.update({
             where: {
-                taxi_order_id
+                order_id
             },
             data: {
                 status: "TAXI_COMPLETED"
@@ -162,12 +162,12 @@ async function completeOrder(taxi_order_id) {
     }
 }
 
-async function acceptOrderSent(taxi_order_id, driver_id) {
-    console.log("order sent accept",taxi_order_id, driver_id)
+async function acceptOrderSent(order_id, driver_id) {
+    console.log("order sent accept",order_id, driver_id)
     try {
         return prisma.taxi_order_sent.update({
             where: {
-                taxi_order_id,
+                order_id,
                 driver_id
             },
             data: {
@@ -178,11 +178,11 @@ async function acceptOrderSent(taxi_order_id, driver_id) {
         throw new Error(e);
     }
 }
-async function getSentDrivers(taxi_order_id) {
+async function getSentDrivers(order_id) {
     try {
         return prisma.taxi_orders_sent.findMany({
             where: {
-                taxi_order_id,
+                order_id,
                 include: {
                     driver: {
                         include: {
@@ -196,11 +196,11 @@ async function getSentDrivers(taxi_order_id) {
         throw new Error(e);
     }
 }
-async function updateOrderLastSentAt(taxi_order_id) {
+async function updateOrderLastSentAt(order_id) {
     try {
         return prisma.taxi_orders.update({
             where: {
-                taxi_order_id
+                order_id
             },
             data: {
                 last_sent_at: new Date()
