@@ -8,7 +8,7 @@ router.get("/business/:business_id", BusinessUsersController.getBusinessUsersByB
 router.get("/type/:type", BusinessUsersController.getBusinessUsersByBusinessType);
 
 router.post("/", BusinessUsersController.createBusinessUser);
-router.post("/:business_users_id/address/operating", BusinessUsersController.addOperatingAddress);
+router.post("/address/operating", BusinessUsersController.addOperatingAddress);
 
 router.delete("/:business_users_id", BusinessUsersController.removeBusinessUser);
 

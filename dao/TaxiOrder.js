@@ -86,7 +86,7 @@ async function acceptOrder(order_id, user) {
     try {
         let taxi_order_sent = await prisma.taxi_order_sent.update({
             where: {
-                taxi_order_snet_driver_unique: {
+                taxi_order_sent_driver_unique: {
                     order_id,
                     driver_id: user.driver.driver_id
                 }
