@@ -18,6 +18,8 @@ router.get("/parent", BusinessController.getParentBusiness);
 
 router.post("/register", BusinessController.createNewBusiness);
 router.post("/review", joi(reviewBusinessSchema), BusinessController.reviewBusiness);
+router.post("/address/add", BusinessController.addBusinessAddress);
+router.post("/delivery-address/add", BusinessController.addDeliveryAddress);
 
 router.patch("/", joi(updateSchema), BusinessController.update);
 router.patch("/type", BusinessController.updateBusinessType);

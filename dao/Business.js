@@ -354,6 +354,38 @@ const removeParentBusiness = async (business_id) => {
 	}
 };
 
+const addBusinessAddress = async (business_id, addressData) => {
+	try {
+		const newAddress = await prisma.addresses.create({
+			data: addressData
+		});
+
+		return await prisma.business.update({
+			where: { business_id },
+			data: { address_id: newAddress.address_id }
+		});
+	} catch (error) {
+		console.error("Error adding business address:", error);
+		throw new Error(error);
+	}
+};
+
+const addDeliveryAddress = async (business_id, addressData) => {
+	try {
+		const newAddress = await prisma.addresses.create({
+			data: addressData
+		});
+
+		return await prisma.business.update({
+			where: { business_id },
+			data: { delivery_address_id: newAddress.address_id }
+		});
+	} catch (error) {
+		console.error("Error adding delivery address:", error);
+		throw new Error(error);
+	}
+};
+
 async function updateBusinessAddress(business_id, address) {
 	try {
 		const updatedAddress = await AddressDao.addAddress(address);
@@ -410,6 +442,8 @@ module.exports = {
 	getParentBusiness,
 	getFinanceRecordByBusinessId,
 	createNewBusiness,
+	addBusinessAddress,
+	addDeliveryAddress,
 	updateBusiness,
 	deleteBusiness,
 	updateBusinessAddress,

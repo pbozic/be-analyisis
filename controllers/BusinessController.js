@@ -455,6 +455,54 @@ async function getBusinessesByNameSearch(req, res) {
 
 
 /**
+ * POST /business/address/add
+ * @tag Business
+ * @summary Add an address to a business
+ * @description Adds an address to a specific business.
+ * @operationId addBusinessAddress
+ * @pathParam {string} business_id - The ID of the business
+ * @bodyContent {Address} application/json
+ * @bodyRequired
+ * @response 200 - Address added successfully
+ * @response 400 - Error adding address
+ */
+async function addBusinessAddress(req, res) {
+	try {
+		const { business_id } = req.params;
+		const addressData = req.body;
+		const updatedBusiness = await BusinessDao.addBusinessAddress(business_id, addressData);
+		res.status(200).json(updatedBusiness);
+	} catch (error) {
+		console.error("Error adding business address:", error);
+		res.status(400).json({ error: "Error adding business address", detail: error.message });
+	}
+}
+
+/**
+ * POST /business/delivery-address/add
+ * @tag Business
+ * @summary Add a delivery address to a business
+ * @description Adds a delivery address to a specific business.
+ * @operationId addDeliveryAddress
+ * @pathParam {string} business_id - The ID of the business
+ * @bodyContent {Address} application/json
+ * @bodyRequired
+ * @response 200 - Delivery address added successfully
+ * @response 400 - Error adding delivery address
+ */
+async function addDeliveryAddress(req, res) {
+	try {
+		const { business_id } = req.params;
+		const addressData = req.body;
+		const updatedBusiness = await BusinessDao.addDeliveryAddress(business_id, addressData);
+		res.status(200).json(updatedBusiness);
+	} catch (error) {
+		console.error("Error adding delivery address:", error);
+		res.status(400).json({ error: "Error adding delivery address", detail: error.message });
+	}
+}
+
+/**
  * PATCH /business/parent/update
  * @tag Business
  * @summary Update parent business
@@ -610,6 +658,8 @@ module.exports = {
 	listBusinesses,
 	listTransferBusinesses,
 	listMerchantBusinesses,
+	addBusinessAddress,
+	addDeliveryAddress,
 	update,
 	createNewBusiness,
 	getBusinessById,
