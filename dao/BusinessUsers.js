@@ -47,6 +47,24 @@ const getBusinessUsersByBusinessType = async (type) => {
 	}
 };
 
+const getAllBusinessUsersForBusinessByCompanyRole = async (business_id, company_role) => {
+	try {
+		return await prisma.business_users.findMany({
+			where: {
+				business_id,
+				company_role
+			},
+			include: {
+				users: true
+			}
+		});
+	} catch (error) {
+		console.error("Error retrieving business users by company role:", error);
+		throw new Error(error);
+	}
+};
+
+
 const createBusinessUser = async (userData, business_id) => {
 	try {
 		const newUser = await UserDao.createNewUser(userData.data);
@@ -89,6 +107,17 @@ const updateBusinessUser = async (business_users_id, updates) => {
 		throw new Error(error);
 	}
 };
+const updateCompanyRole = async (business_users_id, company_role) => {
+	try {
+		return await prisma.business_users.update({
+			where: { business_users_id },
+			data: { company_role }
+		});
+	} catch (error) {
+		console.error("Error updating company role:", error);
+		throw new Error(error);
+	}
+};
 
 async function addOperatingAddress(business_users_id, address_id) {
 	try {
@@ -108,8 +137,10 @@ module.exports = {
 	getAllBusinessUsers,
 	getBusinessUsersByBusinessId,
 	getBusinessUsersByBusinessType,
+	getAllBusinessUsersForBusinessByCompanyRole,
 	createBusinessUser,
 	removeBusinessUser,
 	updateBusinessUser,
+	updateCompanyRole,
 	addOperatingAddress
 };

@@ -60,6 +60,7 @@ model business {
 
 model business_users {
   business_users_id    String       @id @default(uuid()) @db.Uuid
+  company_role         COMPANY_ROLE @default(DIRECTOR)
   created_at           DateTime     @default(now()) @db.Timestamptz(6)
   updated_at           DateTime     @default(now()) @updatedAt @db.Timestamptz(6)
   user_id              String       @db.Uuid
@@ -68,7 +69,6 @@ model business_users {
   business             business?    @relation(fields: [business_id], references: [business_id])
   operating_address_id String?      @db.Uuid
   operating_address    addresses?   @relation("business_users_operating_address", fields: [operating_address_id], references: [address_id])
-  company_role         COMPANY_ROLE @default(DIRECTOR)
 }
 
 model users {

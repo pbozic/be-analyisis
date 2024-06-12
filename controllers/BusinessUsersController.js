@@ -67,6 +67,30 @@ async function getBusinessUsersByBusinessType(req, res) {
 }
 
 /**
+ * GET /business-users/business/{business_id}/company-role/{company_role}
+ * @tag BusinessUsers
+ * @summary Get business users by business ID and company role
+ * @description Returns a list of business users for a specific business ID and company role.
+ * @operationId getAllBusinessUsersForBusinessByCompanyRole
+ * @pathParam {string} business_id - The ID of the business
+ * @pathParam {string} company_role - The company role of the business users
+ * @response 200 - successful operation
+ * @responseContent {BusinessUser[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the business user list
+ * @responseContent {object} 400.application/json The error object
+ */
+async function getAllBusinessUsersForBusinessByCompanyRole(req, res) {
+    try {
+        const { business_id, company_role } = req.params;
+        const businessUsers = await BusinessUsersDao.getAllBusinessUsersForBusinessByCompanyRole(business_id, company_role);
+        res.status(200).json(businessUsers);
+    } catch (error) {
+        console.error("Error retrieving business users by company role:", error);
+        res.status(400).json({ error: "Error retrieving business users by company role", detail: error.message });
+    }
+}
+
+/**
  * POST /business-users
  * @tag BusinessUsers
  * @summary Create a new business user
@@ -139,6 +163,35 @@ async function addOperatingAddress(req, res) {
         res.status(400).json({ error: "Error adding address", detail: e.message });
     }
 }
+
+/**
+ * PATCH /business-users/company-role
+ * @tag BusinessUsers
+ * @summary Update the company role of a business user
+ * @description Updates the company role of a specific business user.
+ * @operationId updateCompanyRole
+ * @pathParam {string} business_users_id - The ID of the business user
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Company role updated successfully
+ * @response 400 - Error updating company role
+ */
+async function updateCompanyRole(req, res) {
+    try {
+        const { business_users_id } = req.params;
+        const { company_role } = req.body;
+        const updatedBusinessUser = await BusinessUsersDao.updateCompanyRole(business_users_id, company_role);
+        res.status(200).json(updatedBusinessUser);
+    } catch (error) {
+        console.error("Error updating company role:", error);
+        res.status(400).json({ error: "Error updating company role", detail: error.message });
+    }
+}
+
+module.exports = {
+    updateCompanyRole,
+    getAllBusinessUsersForBusinessByCompanyRole
+};
 
 module.exports = {
     getAllBusinessUsers,
