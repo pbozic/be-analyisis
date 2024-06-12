@@ -11,10 +11,10 @@ router.get("/available", DriverController.getAvailableDrivers);
 router.get("/:driver_id", DriverController.getDriverById);
 router.get("/:driver_id/location", DriverController.getDriverLocation);
 
-router.patch("/:driver_id/location", DriverController.updateDriverLocation);
-router.patch("/:driver_id", DriverController.updateDriver);
-router.patch("/:driver_id/online", DriverController.updateDriverOnlineStatus);
+router.patch("/", DriverController.updateDriver);
+router.patch("/location", DriverController.updateDriverLocation);
+router.patch("/online", DriverController.updateDriverOnlineStatus);
 
-router.post("/", DriverController.createDriver);
+router.post("/create", DriverController.createDriver);
 
 module.exports = router;
