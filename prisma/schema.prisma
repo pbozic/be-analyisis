@@ -294,7 +294,7 @@ model taxi_order_sent {
 }
 
 model delivery_orders {
-  delivery_order_id  String                @id @default(uuid()) @db.Uuid
+  order_id           String                @id @default(uuid()) @db.Uuid
   route              Json
   pickup_location    Json
   delivery_location  Json
@@ -313,12 +313,12 @@ model delivery_orders {
 
 model delivery_order_sent {
   delivery_order_sent_id String            @id @default(uuid()) @db.Uuid
-  delivery_order_id      String            @db.Uuid
+  order_id               String            @db.Uuid
   accepted               Boolean           @default(false)
   location               Json
   created_at             DateTime          @default(now()) @db.Timestamptz(6)
   updated_at             DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
-  order                  delivery_orders?  @relation(fields: [delivery_order_id], references: [delivery_order_id])
+  order                  delivery_orders?  @relation(fields: [order_id], references: [order_id])
   delivery_driver_id     String            @db.Uuid
   delivery_driver        delivery_drivers? @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
 }
