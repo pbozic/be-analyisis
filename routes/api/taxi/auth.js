@@ -5,6 +5,6 @@ const { loginSchema, registerSchema, refreshSchema, resetPasswordSchema } = requ
 
 const joi = require("../../../middleware/joi");
 
-router.post("/register", joi(registerSchema), AuthController.registerTaxiService);
+router.post("/register", AuthController.registerTaxiService);
 
 module.exports = router;

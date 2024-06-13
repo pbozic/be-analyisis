@@ -211,9 +211,15 @@ model drivers {
 model vehicles {
   vehicle_id               String                  @id @unique @default(uuid()) @db.Uuid
   business_id              String?                 @db.Uuid
+  active                   Boolean?                @default(true)
+  class                    VEHICLE_CLASS?
+  category                 VEHICLE_CATEGORY?
+  make                     String?
+  model                    String?
+  color                    String?
+  license_plate            String?
   created_at               DateTime                @default(now()) @db.Timestamptz(6)
   updated_at               DateTime                @default(now()) @updatedAt @db.Timestamptz(6)
-  active                   Boolean?                @default(true)
   driver_id                String?                 @db.Uuid
   driver                   drivers?                @relation(fields: [driver_id], references: [driver_id])
   documents                documents[]

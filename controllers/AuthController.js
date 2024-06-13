@@ -229,7 +229,7 @@ async function registerTaxiService(req, res) {
 				let vehicles = [];
 				if (Array.isArray(driverInfo.vehicles) && driverInfo.vehicles.length) {
 					for (const vehicleInfo of driverInfo.vehicles) {
-						const vehicle = await VehicleDao.createNewVehicle({business_id: business.business_id});
+						const vehicle = await VehicleDao.createNewVehicle({...vehicleInfo?.data, business_id: business.business_id});
 						await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver.driver_id);
 						// Handle vehicle documents
 						if (vehicleInfo.documents) {
