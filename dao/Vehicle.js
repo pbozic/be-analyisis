@@ -94,6 +94,24 @@ const assignVehicleToDriver = async (vehicleId, driverId) => {
 	}
 };
 
+const assignVehicleToDeliveryDriver = async (vehicleId, driverId) => {
+	try {
+		return await prisma.vehicles.update({
+			where: { vehicle_id: vehicleId },
+			data: {
+				delivery_driver: {
+					connect: {
+						delivery_driver_id: driverId
+					}
+				}
+			},
+		});
+	} catch (error) {
+		console.error("Error assigning vehicle to delivery driver:", error);
+		throw new Error(error);
+	}
+};
+
 const removeVehicleFromDriver = async (vehicleId) => {
 	try {
 		return await prisma.vehicles.update({
@@ -280,5 +298,6 @@ module.exports = {
 	getVehiclesByClassAndCategory,
 	getVehiclesOfDriverByClass,
 	getVehiclesOfDriverByCategory,
-	getVehiclesOfDriverByClassAndCategory
+	getVehiclesOfDriverByClassAndCategory,
+	assignVehicleToDeliveryDriver
 };
