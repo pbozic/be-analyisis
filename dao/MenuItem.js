@@ -3,7 +3,9 @@ const prisma = require('../prisma/prisma');
 const createMenuItem = async (categoryId, names, description, price) => {
 	return await prisma.menu_items.create({
 		data: {
-			menu_category_id: categoryId,
+			menu_category: {
+				connect: { menu_category_id: categoryId },
+			},
 			names: names,
 			description: description,
 			price: price,
@@ -27,6 +29,17 @@ const deleteMenuItem = async (menuItemId) => {
 	});
 };
 
+const updateMenuItem = async (menuItemId, data) => {
+	// Exclude price from the data object if it exists
+	const { price, ...updateData } = data;
+	return await prisma.menu_items.update({
+		where: {
+			menu_item_id: menuItemId,
+		},
+		data: updateData,
+	});
+};
+
 const updateMenuItemPrice = async (menuItemId, price) => {
 	return await prisma.menu_items.update({
 		where: {
@@ -38,22 +51,38 @@ const updateMenuItemPrice = async (menuItemId, price) => {
 	});
 };
 
-const updateMenuItemMenuCategory = async (menu_item_id, menu_category_id) => {
+const addMenuItemToCategory = async (menu_item_id, menu_category_id) => {
 	return await prisma.menu_items.update({
 		where: {
 			menu_item_id: menu_item_id,
 		},
 		data: {
-			menu_category_id: menu_category_id,
+			menu_category: {
+				connect: { menu_category_id: menu_category_id },
+			},
 		},
 	});
 };
 
+const removeMenuItemFromCategory = async (menu_item_id) => {
+	return await prisma.menu_items.update({
+		where: {
+			menu_item_id: menu_item_id,
+		},
+		data: {
+			menu_category: {
+				disconnect: true,
+			},
+		},
+	});
+};
 
 module.exports = {
 	createMenuItem,
 	getMenuItemsByCategoryId,
 	deleteMenuItem,
+	updateMenuItem,
 	updateMenuItemPrice,
-	updateMenuItemMenuCategory
+	addMenuItemToCategory,
+	removeMenuItemFromCategory,
 };
