@@ -196,7 +196,10 @@ const getDocumentsForVehicleByType = async (vehicleId, documentType) => {
     }
 };
 
-const createDocument = async (documentData, filesData) => {
+const createDocument = async (documentData, filesData = []) => {
+    for (let file of filesData) {
+        delete file.data
+    }
     try {
         return await prisma.documents.create({
             data: {

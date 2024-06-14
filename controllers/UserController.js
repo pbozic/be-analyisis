@@ -76,7 +76,6 @@ async function me(req, res) {
  * @response 400 - Error updating user information.
  */
 async function updateMe(req, res) {
-	console.log("updateMe", req.body);
 
 	try {
 		let user = await UserDao.updateUser(req.user.user_id, req.body);
@@ -174,7 +173,6 @@ async function updateEmail(req, res) {
  */
 
 async function updateTelephone(req, res) {
-	console.log(req.body)
 	try {
 		let user = await UserDao.updateTelephone(req.user.user_id, req.body);
 		await TokenDao.generateAndSendSMSVerificationToken(user);
@@ -249,11 +247,8 @@ async function verifyMe(req, res) {
  */
 async function addAddress(req, res) {
 	try {
-		console.log("addAdress", req.body);
 		let address = await AddressDao.addAddress(req.body);
-		console.log("ua1", address);
 		let userAddress = await AddressDao.addUserAddress(req.user.user_id, address.address_id);
-		console.log("ua", userAddress);
 		if (userAddress) {
 			return res.status(200).json(userAddress);
 		}

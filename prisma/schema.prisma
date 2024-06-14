@@ -334,6 +334,7 @@ model delivery_order_sent {
 model menus {
   menu_id     String            @id @default(uuid()) @db.Uuid
   business_id String            @db.Uuid
+  active      Boolean           @default(true)
   business    business          @relation(fields: [business_id], references: [business_id])
   categories  menu_categories[]
 
