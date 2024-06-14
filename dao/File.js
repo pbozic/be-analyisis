@@ -1,5 +1,22 @@
 const prisma = require("../prisma/prisma");
+const addFileToDocument = async (documentId, fileData) => { 
+	try {
+		return await prisma.files.create({
+			data: {
+				...fileData,
+				documents: {
+					connect: {
+						document_id: documentId
+					}
+				}
+			}
+		});
+	} catch (error) {
+		console.error("Error adding file to document:", error);
+		return new Error(error);
+	}
 
+}
 const addFilesToDocument = async (documentId, filesData) => {
 	try {
 		// Ensure filesData is treated as an array
@@ -79,6 +96,7 @@ const removeAllFilesFromDocument = async (documentId) => {
 
 
 module.exports = {
+	addFileToDocument,
 	addFilesToDocument,
 	updateFileInDocument,
 	removeFileFromDocument,

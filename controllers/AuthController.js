@@ -12,6 +12,9 @@ const VehicleDao = require("../dao/Vehicle");
 const DocumentDao = require("../dao/Document");
 const DeliveryDriverDao = require("../dao/DeliveryDriver");
 const BusinessUsersDao = require("../dao/BusinessUsers");
+const FileDao = require("../dao/File");
+const S3Helper = require("../lib/s3");
+const { S3 } = require("aws-sdk");
 
 /**
  * POST /auth/login
@@ -189,10 +192,18 @@ async function requestPasswordReset(req, res) {
 async function registerTaxiService(req, res) {
 	try {
 		const business = await BusinessDao.createNewBusiness(req.body.business);
+		// TODO: handle uniqueness here or with joi validation
 		// Handle business documents
 		if (req.body.business.documents) {
 			for (const doc of req.body.business.documents) {
-				const document = await DocumentDao.createDocument(doc, doc.files);
+				const document = await DocumentDao.createDocument(doc);
+				for (const file of doc.files) {
+					let base64 = file.data;
+					delete file.data;
+					let fileData = await FileDao.addFileToDocument(document.document_id, file);
+					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+					await S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]});
+				}
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
 		}
@@ -211,7 +222,16 @@ async function registerTaxiService(req, res) {
 				// Handle user documents
 				if (driverInfo.user.documents) {
 					for (const doc of driverInfo.user.documents) {
-						const document = await DocumentDao.createDocument(doc.documentData, doc.files);
+						
+						const document = await DocumentDao.createDocument(doc.documentData);
+						for (const file of doc.files) {
+							let base64 = file.data;
+							delete file.data;
+							let fileData = await FileDao.addFileToDocument(document.document_id, file);
+							
+							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+							await S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]});
+						}
 						await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 					}
 				}
@@ -221,7 +241,14 @@ async function registerTaxiService(req, res) {
 				// Handle taxi documents
 				if (driverInfo.driver.documents) {
 					for (const doc of driverInfo.driver.documents) {
-						const document = await DocumentDao.createDocument(doc.documentData, doc.files);
+						const document = await DocumentDao.createDocument(doc.documentData);
+						for (const file of doc.files) {
+							let base64 = file.data;
+							delete file.data;
+							let fileData = await FileDao.addFileToDocument(document.document_id, file);
+							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+							await S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]});
+						}
 						await DocumentDao.linkDocumentToDriver(document.document_id, driver.driver_id);
 					}
 				}
@@ -234,7 +261,14 @@ async function registerTaxiService(req, res) {
 						// Handle vehicle documents
 						if (vehicleInfo.documents) {
 							for (const doc of vehicleInfo.documents) {
-								const document = await DocumentDao.createDocument(doc.documentData, doc.files);
+								const document = await DocumentDao.createDocument(doc.documentData);
+								for (const file of doc.files) {
+									let base64 = file.data;
+									delete file.data;
+									let fileData = await FileDao.addFileToDocument(document.document_id, file);
+									let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+									await S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]});
+								}
 								await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
 							}
 						}

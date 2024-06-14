@@ -13,8 +13,9 @@
 		"seed": "node prisma/seed.js"
 	},
 	"dependencies": {
-		"@aws-sdk/client-s3": "^3.583.0",
-		"@aws-sdk/s3-request-presigner": "^3.583.0",
+		"@aws-sdk/client-s3": "^3.596.0",
+		"@aws-sdk/lib-storage": "^3.596.0",
+		"@aws-sdk/s3-request-presigner": "^3.596.0",
 		"@joi/date": "^2.1.1",
 		"@prisma/client": "^5.14.0",
 		"aws-sdk": "^2.1628.0",
@@ -35,6 +36,7 @@
 		"jade": "~1.11.0",
 		"joi": "^17.13.1",
 		"jsonwebtoken": "^9.0.2",
+		"mime-types": "^2.1.35",
 		"morgan": "~1.9.1",
 		"node-cron": "^3.0.3",
 		"node-schedule": "^2.0.0",

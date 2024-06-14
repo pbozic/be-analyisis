@@ -3,6 +3,8 @@ const { PrismaClient } = require("@prisma/client");
 console.log(process.env.DATABASE_URL);
 const { handleAddressPivotTable, addAddressPivotTable } = require("./middlewares/address");
 const { handleHidePassword } = require("./middlewares/user");
+const { handleS3LinkForFiles } = require("./middlewares/file");
+const { handleS3LinkForDocuments} = require("./middlewares/documents");
 const prisma = new PrismaClient().$extends({
 	query: {
 		users: {
@@ -35,6 +37,27 @@ const prisma = new PrismaClient().$extends({
 				return result;
 			},
 		},
+		files: {
+			async $allOperations({ model, operation, args, query }) {
+				// If the operation is a query on the `files` model
+			
+				// Proceed with the operation
+				let result = await query(args);
+				result = await handleS3LinkForFiles(model, operation, args, query, result);
+				// Return the modified result
+				return result;
+			}
+		},
+		documents: {
+			async $allOperations({ model, operation, args, query }) {
+				// If the operation is a query on the `documents` model
+				// Proceed with the operation
+				let result = await query(args);
+				result = await handleS3LinkForDocuments(model, operation, args, query, result);
+				// Return the modified result
+				return result;
+			}
+		}
 	},
 });
 

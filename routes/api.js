@@ -4,7 +4,7 @@ const router = express.Router();
 const joi = require("../middleware/joi");
 const authMiddleware = require("../middleware/auth");
 const adminMiddleware = require("../middleware/admin");
-
+const {SaveObject, GetObject, isAllowedToSeeObject} = require("../lib/s3");
 const adminRoutes = require("./api/admin");
 const userRoutes = require("./api/users");
 const authRoutes = require("./api/auth");
@@ -35,5 +35,36 @@ router.use("/vehicles", [authMiddleware], vehicleRoutes);
 router.use("/finances", [authMiddleware], financesRoutes);
 router.use("/documents", [authMiddleware], documentsRoutes);
 
+
+router.get("/test/s3", [authMiddleware], async (req, res) => {
+    let key = "test.png";
+    try {
+        let isAllowed = await isAllowedToSeeObject(key, "user2", "business2");
+        if (!isAllowed) {
+            res.status(403).json({error: "Not allowed to see this object"});
+        }
+        let object = await GetObject(key);
+        res.json(object);
+    } catch (error) {
+        res.status(500).json({error: error.message});
+    }
+})
+
+router.post("/test/s3", [authMiddleware], async (req, res) => { 
+    let key = req.user.user_id + "/test.png";
+    let data = req.body.data;
+    let mimeType = req.body.mimeType;
+    let owners = {
+        users: ["user2"],
+        businesses: ["business2"]
+    };
+   
+    try {
+        let object = await SaveObject(key, data, mimeType, owners);
+        return res.json(object);
+    } catch (error) {
+        return res.status(500).json({error: error.message});
+    }
+});
 
 module.exports = router;
