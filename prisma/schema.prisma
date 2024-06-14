@@ -188,6 +188,7 @@ model delivery_drivers {
   received_orders    delivery_order_sent[]
   documents          documents[]
   location           Json?
+  working_hours      Json?
 }
 
 model drivers {
