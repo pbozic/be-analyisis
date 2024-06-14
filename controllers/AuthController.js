@@ -7,6 +7,7 @@ const ReviewDao = require("../dao/Review");
 const TokenDao = require("../dao/Token");
 const BusinessDao = require("../dao/Business");
 const FinancesDao = require("../dao/Finances");
+const AddressDao = require("../dao/Address");
 const DriverDao = require("../dao/Driver");
 const VehicleDao = require("../dao/Vehicle");
 const DocumentDao = require("../dao/Document");
@@ -203,6 +204,11 @@ async function registerTaxiService(req, res) {
 			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
 		}
 
+		let businessAddress = {}
+		if (req.body.addresses) {
+			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
+		}
+
 		let drivers = [];
 		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
 			for (const driverInfo of req.body.drivers) {
@@ -242,7 +248,17 @@ async function registerTaxiService(req, res) {
 					}
 				}
 
-				drivers.push({ driver, vehicles });
+				let addresses = []
+				// if (driverInfo.user.addresses) {
+				// 	for (const addressInfo of driverInfo.user.addresses) {
+				// 		const address = await AddressDao.addAddress(addressInfo)
+				// 		await AddressDao.addUserAddress(driver.driver_id, address.address_id);
+				// 		addresses.push(address);
+				// 	}
+				// }
+
+
+				drivers.push({ driver, vehicles, addresses });
 			}
 		}
 
@@ -251,6 +267,7 @@ async function registerTaxiService(req, res) {
 			business,
 			drivers,
 			finances,
+			businessAddress
 		});
 	} catch (error) {
 		console.error("Error registering taxi service:", error);
@@ -287,11 +304,17 @@ async function registerDeliveryService(req, res) {
 			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
 		}
 
+		let businessAddress = {}
+		if (req.body.addresses) {
+			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
+		}
+
 		let deliveryDrivers = [];
 		if (Array.isArray(req.body.deliveryDrivers) && req.body.deliveryDrivers.length) {
 			for (const deliveryDriverInfo of req.body.deliveryDrivers) {
 
 				const newUser = await UserDao.createNewUser(deliveryDriverInfo.user.data);
+				console.log('newUser', newUser);
 				// Handle user documents
 				if (deliveryDriverInfo.user.documents) {
 					for (const doc of deliveryDriverInfo.user.documents) {
@@ -300,7 +323,7 @@ async function registerDeliveryService(req, res) {
 					}
 				}
 
-				const deliveryDriverData = { ...deliveryDriverInfo.user.data, business_id: business.business_id };
+				const deliveryDriverData = { ...deliveryDriverInfo.driver.data, business_id: business.business_id };
 				const deliveryDriver = await DeliveryDriverDao.createNewDeliveryDriver(deliveryDriverData, newUser);
 				// Handle delivery taxi documents
 				if (deliveryDriverInfo.driver.documents) {
@@ -313,8 +336,8 @@ async function registerDeliveryService(req, res) {
 				let vehicles = [];
 				if (Array.isArray(deliveryDriverInfo.vehicles) && deliveryDriverInfo.vehicles.length) {
 					for (const vehicleInfo of deliveryDriverInfo.vehicles) {
-						const vehicle = await VehicleDao.createNewVehicle({business_id: business.business_id});
-						await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, deliveryDriver.delivery_driver_id);
+						const vehicle = await VehicleDao.createNewVehicle({...vehicleInfo?.data, business_id: business.business_id});
+						await VehicleDao.assignVehicleToDeliveryDriver(vehicle.vehicle_id, deliveryDriver.delivery_driver_id);
 						// Handle vehicle documents
 						if (vehicleInfo.documents) {
 							for (const doc of vehicleInfo.documents) {
@@ -326,7 +349,16 @@ async function registerDeliveryService(req, res) {
 					}
 				}
 
-				deliveryDrivers.push({ deliveryDriver, vehicles });
+				let addresses = []
+				// if (deliveryDriverInfo.user.addresses) {
+				// 	for (const addressInfo of deliveryDriverInfo.user.addresses) {
+				// 		const address = await AddressDao.addAddress(addressInfo)
+				// 		await AddressDao.addUserAddress(deliveryDriver.delivery_driver_id, address.address_id);
+				// 		addresses.push(address);
+				// 	}
+				// }
+
+				deliveryDrivers.push({ deliveryDriver, vehicles, addresses });
 			}
 		}
 
@@ -335,6 +367,7 @@ async function registerDeliveryService(req, res) {
 			business,
 			deliveryDrivers,
 			finances,
+			businessAddress
 		});
 	} catch (error) {
 		console.error("Error registering delivery service:", error);
@@ -372,11 +405,31 @@ async function registerMerchantService(req, res) {
 			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
 		}
 
+		let businessAddress = {}
+		if (req.body.addresses) {
+			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
+		}
+
+		let deliveryAddress = {}
+		if (req.body.addresses) {
+			deliveryAddress = await BusinessDao.addDeliveryAddress(business.business_id, req.body.addresses.delivery);
+		}
+
 		let businessUsers = [];
 		if (Array.isArray(req.body.users) && req.body.users.length) {
 			for (const userInfo of req.body.users) {
 				const businessUser = await BusinessUsersDao.createBusinessUser(userInfo.user, business.business_id);
-				businessUsers.push(businessUser);
+
+				let addresses = []
+				// if (userInfo.user.addresses) {
+				// 	for (const addressInfo of userInfo.user.addresses) {
+				// 		const address = await AddressDao.addAddress(addressInfo)
+				// 		await AddressDao.addUserAddress(businessUser.business_users_id, address.address_id);
+				// 		addresses.push(address);
+				// 	}
+				// }
+
+				businessUsers.push({ businessUser, addresses});
 			}
 		}
 
@@ -385,6 +438,8 @@ async function registerMerchantService(req, res) {
 			business,
 			businessUsers,
 			finances,
+			businessAddress,
+			deliveryAddress
 		});
 	} catch (error) {
 		console.error("Error registering merchant service:", error);
