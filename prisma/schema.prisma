@@ -344,6 +344,7 @@ model menus {
 model menu_categories {
   menu_category_id String       @id @default(uuid()) @db.Uuid
   names            Json // l10n names
+  description      Json // l10n descriptions
   categories       String[]
   menu_items       menu_items[] @relation("menu_items_in_category")
   menu_id          String       @db.Uuid

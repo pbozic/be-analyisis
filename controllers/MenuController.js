@@ -108,9 +108,9 @@ async function setActiveMenu(req, res) {
  * @response 400 - Error creating new menu category
  */
 async function createMenuCategory(req, res) {
-	const { menu_id, names, categories } = req.body;
+	const { menu_id, names, categories, description } = req.body;
 	try {
-		const menuCategory = await MenuCategoryDao.createMenuCategory(menu_id, names, categories);
+		const menuCategory = await MenuCategoryDao.createMenuCategory(menu_id, names, categories, description);
 		res.status(201).json(menuCategory);
 	} catch (e) {
 		console.error("Error creating menu category:", e);
@@ -182,7 +182,7 @@ async function deleteMenuCategory(req, res) {
 }
 
 /**
- * PATCH /menus/menu-categories/
+ * PATCH /menus/menu-categories/:menu_category_id
  * @tag MenuCategory
  * @summary Update a menu category
  * @description Updates a menu category by its ID.

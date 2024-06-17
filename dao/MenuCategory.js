@@ -1,13 +1,14 @@
 const prisma = require("../prisma/prisma");
 
-const createMenuCategory = async (menuId, names, categories) => {
+const createMenuCategory = async (menuId, names, categories, description) => {
 	return await prisma.menu_categories.create({
 		data: {
 			menu: {
 				connect: { menu_id: menuId }
 			},
 			names: names,
-			categories: categories
+			categories: categories,
+			description: description
 		}
 	});
 };
