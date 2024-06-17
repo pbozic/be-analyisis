@@ -1,9 +1,10 @@
 var express = require("express");
 const router = express.Router();
 
-const BusinessUsersController = require("../../controllers/BusinessUsersController");
+const BusinessUsersController = require("../../controllers/BusinessUsersController")
 
 router.get("/", BusinessUsersController.getAllBusinessUsers);
+router.get("/:user_id", BusinessUsersController.getBusinessUserByUserId);
 router.get("/business/:business_id", BusinessUsersController.getBusinessUsersByBusinessId);
 router.get("/type/:type", BusinessUsersController.getBusinessUsersByBusinessType);
 router.get("/business/:business_id/company-role/:company_role", BusinessUsersController.getAllBusinessUsersForBusinessByCompanyRole);

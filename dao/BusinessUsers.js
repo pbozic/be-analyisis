@@ -15,6 +15,23 @@ const getAllBusinessUsers = async () => {
 	}
 };
 
+const getBusinessUserByUserId = async (userId) => {
+	try {
+		return await prisma.business_users.findMany({
+			where: {
+				user_id: userId,
+			},
+			include: {
+				users: true,
+				business: true,
+			},
+		});
+	} catch (error) {
+		console.error(`Error retrieving business users for user ID ${userId}:`, error);
+		throw new Error(error);
+	}
+};
+
 const getBusinessUsersByBusinessId = async (business_id) => {
 	try {
 		return await prisma.business_users.findMany({
@@ -67,7 +84,7 @@ const getAllBusinessUsersForBusinessByCompanyRole = async (business_id, company_
 
 const createBusinessUser = async (userData, business_id) => {
 	try {
-		const newUser = await UserDao.createNewUser(userData.data);
+		const newUser = await UserDao.createNewUser(userData.data, true);
 		if (!newUser) {
 			throw new Error("Failed to create user for new driver");
 		}
@@ -135,6 +152,7 @@ async function addOperatingAddress(business_users_id, address_id) {
 
 module.exports = {
 	getAllBusinessUsers,
+	getBusinessUserByUserId,
 	getBusinessUsersByBusinessId,
 	getBusinessUsersByBusinessType,
 	getAllBusinessUsersForBusinessByCompanyRole,
