@@ -224,7 +224,7 @@ async function registerTaxiService(req, res) {
 		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
 			for (const driverInfo of req.body.drivers) {
 
-				const newUser = await UserDao.createNewUser(driverInfo.user.data);
+				const newUser = await UserDao.createNewUser(driverInfo.user.data, true);
 				// Handle user documents
 				if (driverInfo.user.documents) {
 					for (const doc of driverInfo.user.documents) {
@@ -347,7 +347,7 @@ async function registerDeliveryService(req, res) {
 		if (Array.isArray(req.body.deliveryDrivers) && req.body.deliveryDrivers.length) {
 			for (const deliveryDriverInfo of req.body.deliveryDrivers) {
 
-				const newUser = await UserDao.createNewUser(deliveryDriverInfo.user.data);
+				const newUser = await UserDao.createNewUser(deliveryDriverInfo.user.data, true);
 				console.log('newUser', newUser);
 				// Handle user documents
 				if (deliveryDriverInfo.user.documents) {

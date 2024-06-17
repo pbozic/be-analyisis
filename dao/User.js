@@ -1,4 +1,5 @@
 const prisma = require("../prisma/prisma");
+const bcrypt = require("bcrypt");
 
 const getUsers = async (args) => {
 	try {
@@ -187,13 +188,27 @@ const updateUserTelephoneVerified = async (user_id, telephoneVerified) => {
 	}
 };
 
-const createNewUser = async (user) => {
+const createNewUser = async (user, hashPassword = false) => {
 	try {
-		return prisma.users.create({
-			data: user,
+		let newUser = user;
+
+		// Check if password hashing is needed
+		if (hashPassword && user.password) {
+			let hash = await bcrypt.hash(user.password, Number(process.env.BCRYPT_SALT_ROUNDS));
+
+			// Replace the plain text password with the hashed password
+			newUser = {
+				...user,
+				password: hash,
+			};
+		}
+
+		// Create the user with the potentially hashed password
+		return await prisma.users.create({
+			data: newUser,
 		});
 	} catch (error) {
-		return new Error(error);
+		throw new Error(error.message || 'Failed to create new user.');
 	}
 };
 
