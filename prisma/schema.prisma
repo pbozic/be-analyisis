@@ -358,13 +358,13 @@ model menu_items {
   names            Json // l10n names
   image            String?
   description      Json // l10n descriptions
-  categories       String[]
+  allergens        String[]
   spicy_level      Int
   unit_size        String
   price            Float
   discount         Float?
-  sides            Json? // Optional, for sides
-  extras           Json? // Optional, for extras, inside are menu_ids
+  sides            String[] // Optional, for sides
+  extras           String[] // Optional, for extras, inside are menu_ids
   ingredients      Json // Includes allergen and multilingual names
   availability     String[] // Array of availability -> ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
   menu_category_id String          @db.Uuid
