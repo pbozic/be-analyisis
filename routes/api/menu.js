@@ -13,7 +13,7 @@ router.patch("/active", MenuController.setActiveMenu);
 router.post("/menu-categories/create", MenuController.createMenuCategory);
 router.get("/menu-categories/:menu_id", MenuController.getMenuCategoriesByMenuId);
 router.delete("/menu-categories/:menu_category_id", MenuController.deleteMenuCategory);
-router.patch("/menu-categories/:menu_category_id", MenuController.updateMenuCategory);
+router.patch("/menu-categories", MenuController.updateMenuCategory);
 
 // Menu Item routes
 router.post("/menu-items/create", MenuController.createMenuItem);
