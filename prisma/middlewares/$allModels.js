@@ -1,4 +1,4 @@
-const S3Helper = require('../helpers/S3Helper');
+const S3Helper = require('../../lib/s3');
 function shouldGenerateS3Links(args) {
     // Check if args include nested structures with files: true
     for (let key in args) {
