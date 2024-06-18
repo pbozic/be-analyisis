@@ -83,10 +83,8 @@ async function deleteMenu(req, res) {
  * @response 400 - Error updating menu active status
  */
 async function setActiveMenu(req, res) {
+	const { menu_id, active } = req.body;
 	//todo: deactivate all other active menus for this business_id when activating this one
-
-	const { menu_id } = req.params;
-	const { active } = req.body;
 	try {
 		const menu = await MenuDao.setActiveMenu(menu_id, active);
 		res.status(200).json(menu);
@@ -240,8 +238,7 @@ async function deleteMenuCategory(req, res) {
  * @response 400 - Error updating menu category
  */
 async function updateMenuCategory(req, res) {
-	const { menu_category_id } = req.params;
-	const data = req.body;
+	const { menu_category_id, data } = req.body;
 	try {
 		const menuCategory = await MenuCategoryDao.updateMenuCategory(menu_category_id, data);
 		res.status(200).json(menuCategory);
