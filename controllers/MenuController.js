@@ -84,6 +84,7 @@ async function deleteMenu(req, res) {
  */
 async function setActiveMenu(req, res) {
 	const { menu_id, active } = req.body;
+	//todo: deactivate all other active menus for this business_id when activating this one
 	try {
 		const menu = await MenuDao.setActiveMenu(menu_id, active);
 		res.status(200).json(menu);
@@ -181,7 +182,7 @@ async function deleteMenuCategory(req, res) {
 }
 
 /**
- * PATCH /menus/menu-categories/:menu_category_id
+ * PATCH /menus/menu-categories
  * @tag MenuCategory
  * @summary Update a menu category
  * @description Updates a menu category by its ID.
@@ -316,7 +317,7 @@ async function updateMenuItemPrice(req, res) {
  * @responseContent {MenuItem} 200.application/json
  * @response 400 - Error updating menu item category
  */
-async function updateMenuItemMenuCategory(req, res) {
+async function addMenuItemMenuCategory(req, res) {
 	const { menu_item_id } = req.params;
 	const { menu_category_id } = req.body;
 	try {
@@ -350,6 +351,54 @@ async function removeMenuItemFromCategory(req, res) {
 	}
 }
 
+/**
+ * PATCH /menus/menu-categories/add
+ * @tag MenuCategory
+ * @summary Add a menu category to a menu
+ * @description Adds a menu category to a menu.
+ * @operationId addMenuCategory
+ * @bodyDescription The menu ID and category ID to add
+ * @bodyContent {AddMenuCategoryRequest} application/json
+ * @bodyRequired
+ * @response 200 - Menu category added successfully
+ * @responseContent {MenuCategory} 200.application/json
+ * @response 400 - Error adding menu category
+ */
+async function addMenuCategory(req, res) {
+	const { menu_id, menu_category_id } = req.body;
+	try {
+		const menuCategory = await MenuCategoryDao.addCategoryToMenu(menu_id, menu_category_id);
+		res.status(200).json(menuCategory);
+	} catch (e) {
+		console.error("Error adding menu category:", e);
+		res.status(400).json({ error: "Error adding menu category", e });
+	}
+}
+
+/**
+ * PATCH /menus/menu-categories/remove
+ * @tag MenuCategory
+ * @summary Remove a menu category from a menu
+ * @description Removes a menu category from a menu.
+ * @operationId removeMenuCategory
+ * @bodyDescription The category ID to remove
+ * @bodyContent {RemoveMenuCategoryRequest} application/json
+ * @bodyRequired
+ * @response 200 - Menu category removed successfully
+ * @responseContent {MenuCategory} 200.application/json
+ * @response 400 - Error removing menu category
+ */
+async function removeMenuCategory(req, res) {
+	const { menu_category_id } = req.body;
+	try {
+		const menuCategory = await MenuCategoryDao.removeCategoryFromMenu(menu_category_id);
+		res.status(200).json(menuCategory);
+	} catch (e) {
+		console.error("Error removing menu category:", e);
+		res.status(400).json({ error: "Error removing menu category", e });
+	}
+}
+
 module.exports = {
 	getMenuByBusinessId,
 	createMenu,
@@ -358,12 +407,14 @@ module.exports = {
 	createMenuCategory,
 	getMenuCategoriesByMenuId,
 	deleteMenuCategory,
+	addMenuCategory,
+	removeMenuCategory,
 	updateMenuCategory,
 	createMenuItem,
 	getMenuItemsByCategoryId,
 	deleteMenuItem,
 	updateMenuItem,
 	updateMenuItemPrice,
-	updateMenuItemMenuCategory,
+	addMenuItemMenuCategory,
 	removeMenuItemFromCategory,
 };
