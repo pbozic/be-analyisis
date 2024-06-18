@@ -38,6 +38,7 @@ model business {
   telephone_number    String
   website_url         String?
   working_hours       Json?
+  seats               Int?
   minimum_order       Int
   popular             Boolean           @default(true)
   new                 Boolean           @default(false)
