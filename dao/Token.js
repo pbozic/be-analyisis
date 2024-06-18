@@ -1,4 +1,5 @@
 const prisma = require("../prisma/prisma");
+const crypto = require("crypto");
 async function getActiveSMSToken(user) {
 	try {
 		return prisma.tokens.findFirst({
@@ -69,24 +70,42 @@ const savePasswordResetToken = async (token) => {
 	}
 };
 
-async function generateAndSendSMSVerificationToken(user) {
+async function generateSMSVerificationToken(user) {
 	let tokenObj = {
 		user_id: user.user_id,
-		token: "123456",
+		token: (Math.floor(Math. random() * (999999 - 100000 + 1)) + 100000).toString(),
 		type: "PHONE_VERIFICATION",
+		expires_at: new Date(Date.now() + (3600000 * 2)), // 10 minutes from now
 	};
 	let token = await saveSMSToken(tokenObj);
 	// TODO: send SMS
 	return token;
 }
 
-async function generateAndSendPaswordResetToken(user) {
+async function generatePaswordResetToken(user) {
+	
+	const tokenHash = crypto.randomBytes(20).toString('hex');
+	const resetTokenExpires = Date.now() + (3600000 * 24); // 1 hour from now
+	let existsToken = await prisma.tokens.findUnique({
+		where: {
+			token: tokenHash,
+		},
+	});
+	while (existsToken) {
+		tokenHash = crypto.randomBytes(20).toString('hex');
+		existsToken = await prisma.tokens.findUnique({
+			where: {
+				token: tokenHash,
+			},
+		});
+	}
 	let tokenObj = {
 		user_id: user.user_id,
-		token: "123456",
+		token: tokenHash,
 		type: "PASSWORD_RESET",
+		expires_at: new Date(resetTokenExpires),
 	};
-	let token = await TokenDao.savePasswordResetToken(tokenObj);
+	let token = await savePasswordResetToken(tokenObj);
 	//TODO: send email
 	return token;
 }
@@ -96,6 +115,6 @@ module.exports = {
 	saveSMSToken,
 	updateToken,
 	savePasswordResetToken,
-	generateAndSendSMSVerificationToken,
-	generateAndSendPaswordResetToken,
+	generateSMSVerificationToken,
+	generatePaswordResetToken,
 };

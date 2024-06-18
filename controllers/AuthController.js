@@ -15,8 +15,9 @@ const DeliveryDriverDao = require("../dao/DeliveryDriver");
 const BusinessUsersDao = require("../dao/BusinessUsers");
 const FileDao = require("../dao/File");
 const S3Helper = require("../lib/s3");
+const EmailHelper = require("../lib/emailSender");
 const { S3 } = require("aws-sdk");
-
+require('dotenv').config();
 /**
  * POST /auth/login
  * @tag Authentication
@@ -34,7 +35,6 @@ const { S3 } = require("aws-sdk");
  */
 async function login(req, res) {
 	let postData = req.body;
-	console.log("hi, login", postData.email);
 	try {
 		let user = await UserDao.getUserByEmail(postData.email, {
 			select: {
@@ -42,7 +42,6 @@ async function login(req, res) {
 			},
 		});
 		if (!user) return res.status(400).json({ error: "Wrong email / password combination.." });
-		console.log("db accesssed");
 		let correctPw = await bcrypt.compare(postData.password, user.password);
 		if (!correctPw) return res.status(400).json({ error: "Wrong email / password combination.." });
 		user = await UserDao.getUserByEmail(postData.email, {
@@ -86,7 +85,6 @@ async function login(req, res) {
  */
 async function register(req, res) {
 	let postData = req.body;
-	console.log(postData);
 	try {
 		let hash = await bcrypt.hash(postData.password, Number(process.env.BCRYPT_SALT_ROUNDS));
 		let userObj = {
@@ -172,12 +170,57 @@ async function refreshToken(req, res) {
 async function requestPasswordReset(req, res) {
 	try {
 		let user = await UserDao.getUserByEmail(req.body.email);
-		await TokenDao.generateAndSendPaswordResetToken(user);
+		let token = await TokenDao.generatePaswordResetToken(user);
+		EmailHelper.sendEmailTemplate("Password Reset Request", "passwordReset", user.email, false,  {
+            name: user.first_name,
+            title: "Password Reset Request",
+            resetLink: process.env.LINK_BASE_URL + '/reset-password/' + token.token
+
+        });
+		console.log(token);
+		res.status(200).send("Password reset request processed. A token is sent to the user if the account is found.");
 	} catch (e) {
+		console.log(e)
 		res.status(400).json({ error: "Error obtaining user information", e });
 	}
 }
 
+async function passwordResetForm(req, res) {
+	const token = req.params.token;
+	let tkn = await UserDao.getUserByResetToken(token);
+	console.log(tkn);
+	if (!tkn.users) {
+		return res.status(400).send("Invalid or expired token");
+	}
+	res.render("resetPasswordForm", { token });
+}
+
+async function passowrdReset(req, res) {
+	const token = req.params.token;
+	const password = req.body.password;
+	const confirmPassword = req.body['confirm-password'];
+	const passwordPattern = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/;
+	try {
+		let user = await UserDao.getUserByResetToken(token);
+		if (!user) {
+			return res.status(400).send("Invalid or expired token");
+		}
+		if (!passwordPattern.test(password)) {
+			return res.render('reset-password-form', { token, error: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number' });
+		} else if (password !== confirmPassword) {
+			return res.render('reset-password-form', { token, error: 'Passwords do not match' });
+		}
+		let hash = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT_ROUNDS));
+		await UserDao.updateUserPassword(user.user_id, hash);
+		await TokenDao.updateToken(token, { active: false });
+		res.status(200).send("Password reset successfully");
+	}
+	catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+	
+}
 /**
  * POST /auth/taxi/register
  * @tag Auth
@@ -487,6 +530,8 @@ module.exports = {
 	register,
 	refreshToken,
 	requestPasswordReset,
+	passwordResetForm,
+	passowrdReset,
 	registerTaxiService,
 	registerDeliveryService,
 	registerMerchantService
