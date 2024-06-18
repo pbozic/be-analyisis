@@ -163,6 +163,48 @@ async function getMenuCategoriesByMenuId(req, res) {
 }
 
 /**
+ * GET /menus/menu-categories/business/:business_id
+ * @tag MenuCategory
+ * @summary Get menu categories by business ID
+ * @description Retrieves a list of menu categories for a specific business.
+ * @operationId getMenuCategoriesByBusinessId
+ * @pathParam {string} business_id - The ID of the business
+ * @response 200 - Successful operation, returns a list of menu categories
+ * @responseContent {MenuCategory[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the menu categories
+ */
+async function getMenuCategoriesByBusinessId(req, res) {
+	try {
+		const categories = await MenuCategoryDao.getMenuCategoriesByBusinessId(req.params.business_id);
+		res.status(200).json(categories);
+	} catch (e) {
+		console.error("Error obtaining menu categories:", e);
+		res.status(400).json({ error: "Error obtaining menu categories", e });
+	}
+}
+
+/**
+ * GET /menus/menu-items/business/:business_id
+ * @tag MenuItem
+ * @summary Get menu items by business ID
+ * @description Retrieves a list of menu items for a specific business.
+ * @operationId getMenuItemsByBusinessId
+ * @pathParam {string} business_id - The ID of the business
+ * @response 200 - Successful operation, returns a list of menu items
+ * @responseContent {MenuItem[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the menu items
+ */
+async function getMenuItemsByBusinessId(req, res) {
+	try {
+		const items = await MenuItemDao.getMenuItemsByBusinessId(req.params.business_id);
+		res.status(200).json(items);
+	} catch (e) {
+		console.error("Error obtaining menu items:", e);
+		res.status(400).json({ error: "Error obtaining menu items", e });
+	}
+}
+
+/**
  * DELETE /menus/menu-categories/:menu_category_id
  * @tag MenuCategory
  * @summary Delete a menu category
@@ -402,6 +444,7 @@ async function removeMenuCategory(req, res) {
 	}
 }
 
+
 module.exports = {
 	getMenuByBusinessId,
 	createMenu,
@@ -409,12 +452,14 @@ module.exports = {
 	setActiveMenu,
 	createMenuCategory,
 	getMenuCategoriesByMenuId,
+	getMenuCategoriesByBusinessId,
 	deleteMenuCategory,
 	addMenuCategory,
 	removeMenuCategory,
 	updateMenuCategory,
 	createMenuItem,
 	getMenuItemsByCategoryId,
+	getMenuItemsByBusinessId,
 	deleteMenuItem,
 	updateMenuItem,
 	updateMenuItemPrice,
