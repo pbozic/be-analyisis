@@ -67,8 +67,15 @@ const refreshSchema = Joi.object({
 	refresh_token: Joi.string().required(),
 });
 
-const resetPasswordSchema = Joi.object({
+const resetPasswordRequestSchema = Joi.object({
 	email: Joi.string().email().required(),
+});
+
+const resetPasswordSchema = Joi.object({
+	password: Joi.string()
+		.pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/)
+		.required(),
+	confirm_password: Joi.ref("password"),
 });
 
 module.exports = {
@@ -76,4 +83,6 @@ module.exports = {
 	registerSchema,
 	refreshSchema,
 	resetPasswordSchema,
+	resetPasswordRequestSchema,
+	
 };

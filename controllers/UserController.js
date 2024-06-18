@@ -5,6 +5,7 @@ const UserDao = require("../dao/User");
 const TokenDao = require("../dao/Token");
 const ReviewDao = require("../dao/Review");
 const AddressDao = require("../dao/Address");
+//const SMS = require("../lib/SMS");
 /**
  * GET /users
  * @tag Users
@@ -175,7 +176,8 @@ async function updateEmail(req, res) {
 async function updateTelephone(req, res) {
 	try {
 		let user = await UserDao.updateTelephone(req.user.user_id, req.body);
-		await TokenDao.generateAndSendSMSVerificationToken(user);
+		await TokenDao.generateSMSVerificationToken(user);
+		// TODO: Send SMS verification token
 		if (user) return res.status(200).json(user);
 
 		res.status(400).json({ error: "Error updating user information" });
@@ -195,13 +197,16 @@ async function updateTelephone(req, res) {
  */
 async function requestSMSVerification(req, res) {
 	try {
-		await TokenDao.generateAndSendSMSVerificationToken(user);
-		if (user) {
-			return res.status(200);
+		let token = await TokenDao.generateSMSVerificationToken(req.user);
+		//await SMS.sendSMSVerification(user.telephone, token.token);
+		console.log(token);
+		if (token) {
+			return res.status(200).json({ message: "Token sent" });
 		}
 
 		res.status(400).json({ error: "Error obtaining user information" });
 	} catch (e) {
+		console.log(e)
 		res.status(400).json({ error: "Error obtaining user information", e });
 	}
 }
@@ -221,14 +226,16 @@ async function verifyMe(req, res) {
 	try {
 		let user = await UserDao.getUserById(req.user.user_id);
 		let token = await TokenDao.getActiveSMSToken(user);
-		if (token.token === req.body.token) {
+		console.log(token);
+		if (token && (token.token === req.body.token)) {
 			await TokenDao.updateToken(token.token_id, { active: false });
 			user = await UserDao.updateUser(req.user.user_id, { phone_verified: true });
-			return res.status(200);
+			return res.status(200).json({message: "Phone verified successfully."});
 		} else {
 			return res.status(400).json({ error: "Invalid token" });
 		}
 	} catch (e) {
+		console.log(e)
 		res.status(400).json({ error: "Error obtaining user information", e });
 	}
 }

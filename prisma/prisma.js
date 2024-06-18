@@ -7,6 +7,14 @@ const { handleS3LinkForFiles } = require("./middlewares/file");
 const { handleS3LinkForDocuments} = require("./middlewares/documents");
 const prisma = new PrismaClient().$extends({
 	query: {
+		$allModels: {
+			async $allOperations({ model, operation, args, query }) {
+				// Proceed with the operation
+				let result = await query(args);
+				// Return the modified result
+				return result;
+			},
+		},
 		users: {
 			async $allOperations({ model, operation, args, query }) {
 				args = await addAddressPivotTable(model, operation, args, query);

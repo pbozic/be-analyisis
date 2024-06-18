@@ -1,0 +1,24 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    title Email Title
+    style(type="text/css").
+      body {
+        font-family: Arial, sans-serif;
+      }
+      .container {
+        padding: 20px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+      }
+      .content {
+        margin: 20px 0;
+      }
+  body
+    .container
+      include emailHeader.pug
+      .content
+        block content
+      include emailFooter.pug

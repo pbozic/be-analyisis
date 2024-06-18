@@ -35,7 +35,19 @@ const getUserByEmail = async (email, args) => {
 		return new Error(error);
 	}
 };
-
+const getUserByResetToken = async (resetToken, args) => {
+	try {
+		return prisma.tokens.findUnique({
+			where: {
+				token: resetToken,
+			},
+			include: { users: true },
+			...args
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+}
 const getUser = async (email, args) => {
 	try {
 		return prisma.users.findUnique({
@@ -208,4 +220,5 @@ module.exports = {
 	updateTelephone,
 	updateUserType,
 	createNewUser,
+	getUserByResetToken
 };
