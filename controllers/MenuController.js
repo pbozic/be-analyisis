@@ -108,9 +108,9 @@ async function setActiveMenu(req, res) {
  * @response 400 - Error creating new menu category
  */
 async function createMenuCategory(req, res) {
-	const { menu_id, names, categories, description } = req.body;
+	const { menu_id, data} = req.body;
 	try {
-		const menuCategory = await MenuCategoryDao.createMenuCategory(menu_id, names, categories, description);
+		const menuCategory = await MenuCategoryDao.createMenuCategory(menu_id, data);
 		res.status(201).json(menuCategory);
 	} catch (e) {
 		console.error("Error creating menu category:", e);
@@ -262,9 +262,9 @@ async function updateMenuCategory(req, res) {
  * @response 400 - Error creating new menu item
  */
 async function createMenuItem(req, res) {
-	const { category_id, names, description, price } = req.body;
+	const { category_id, data } = req.body;
 	try {
-		const menuItem = await MenuItemDao.createMenuItem(category_id, names, description, price);
+		const menuItem = await MenuItemDao.createMenuItem(category_id, data);
 		res.status(201).json(menuItem);
 	} catch (e) {
 		console.error("Error creating menu item:", e);
@@ -309,8 +309,7 @@ async function deleteMenuItem(req, res) {
  * @response 400 - Error updating menu item
  */
 async function updateMenuItem(req, res) {
-	const { menu_item_id } = req.params;
-	const data = req.body;
+	const { menu_item_id, data } = req.body;
 	try {
 		const menuItem = await MenuItemDao.updateMenuItem(menu_item_id, data);
 		res.status(200).json(menuItem);
@@ -360,8 +359,8 @@ async function updateMenuItemPrice(req, res) {
  * @response 400 - Error updating menu item category
  */
 async function addMenuItemMenuCategory(req, res) {
-	const { menu_item_id } = req.params;
-	const { menu_category_id } = req.body;
+	const { menu_item_id, menu_category_id } = req.body;
+
 	try {
 		const menuItem = await MenuItemDao.addMenuItemToCategory(menu_item_id, menu_category_id);
 		res.status(200).json(menuItem);

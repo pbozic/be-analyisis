@@ -1,7 +1,7 @@
 var express = require("express");
 const router = express.Router();
 const AuthController = require("../../controllers/AuthController");
-const { loginSchema, registerSchema, refreshSchema, resetPasswordSchema } = require("../../joi/authSchemas");
+const { loginSchema, registerSchema, refreshSchema, resetPasswordRequestSchema } = require("../../joi/authSchemas");
 
 const joi = require("../../middleware/joi");
 
@@ -13,6 +13,6 @@ router.get("/", function (req, res, next) {
 router.post("/login", joi(loginSchema), AuthController.login);
 router.post("/register", joi(registerSchema), AuthController.register);
 router.post("/refresh", joi(refreshSchema), AuthController.refreshToken);
-router.post("/reset-password", joi(resetPasswordSchema), AuthController.requestPasswordReset);
+router.post("/reset-password", joi(resetPasswordRequestSchema), AuthController.requestPasswordReset);
 
 module.exports = router;
