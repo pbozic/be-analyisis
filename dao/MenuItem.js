@@ -11,6 +11,17 @@ const createMenuItem = async (categoryId, menuItemData) => {
 	});
 };
 
+const getMenuItemsByBusinessId = async (business_id) => {
+	return await prisma.menu_items.findMany({
+		where: {
+			business_id: business_id,
+		},
+		include: {
+			menu_category: true,
+		},
+	});
+};
+
 const getMenuItemsByCategoryId = async (categoryId) => {
 	return await prisma.menu_items.findMany({
 		where: {
@@ -78,6 +89,7 @@ const removeMenuItemFromCategory = async (menu_item_id) => {
 module.exports = {
 	createMenuItem,
 	getMenuItemsByCategoryId,
+	getMenuItemsByBusinessId,
 	deleteMenuItem,
 	updateMenuItem,
 	updateMenuItemPrice,

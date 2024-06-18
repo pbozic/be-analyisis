@@ -13,6 +13,8 @@ router.patch("/active", MenuController.setActiveMenu);
 router.get("/menu-categories/:menu_id", MenuController.getMenuCategoriesByMenuId);
 router.post("/menu-categories/create", MenuController.createMenuCategory);
 router.delete("/menu-categories/:menu_category_id", MenuController.deleteMenuCategory);
+router.get("/menu-categories/business/:business_id", MenuController.getMenuCategoriesByBusinessId);
+
 router.patch("/menu-categories", MenuController.updateMenuCategory);
 router.patch("/menu-categories/add", MenuController.addMenuCategory);
 router.patch("/menu-categories/remove", MenuController.removeMenuCategory);
@@ -20,6 +22,7 @@ router.patch("/menu-categories/remove", MenuController.removeMenuCategory);
 // Menu Item routes
 router.post("/menu-items/create", MenuController.createMenuItem);
 router.get("/menu-items/:category_id", MenuController.getMenuItemsByCategoryId);
+router.get("/menu-items/business/:business_id", MenuController.getMenuItemsByBusinessId);
 router.delete("/menu-items/:menu_item_id", MenuController.deleteMenuItem);
 router.patch("/menu-items", MenuController.updateMenuItem);
 router.patch("/menu-items/price", MenuController.updateMenuItemPrice);
