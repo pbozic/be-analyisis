@@ -82,7 +82,7 @@ async function generateSMSVerificationToken(user) {
 	return token;
 }
 
-async function generateAndSendPaswordResetToken(user) {
+async function generatePaswordResetToken(user) {
 	
 	const tokenHash = crypto.randomBytes(20).toString('hex');
 	const resetTokenExpires = Date.now() + (3600000 * 24); // 1 hour from now
@@ -116,5 +116,5 @@ module.exports = {
 	updateToken,
 	savePasswordResetToken,
 	generateSMSVerificationToken,
-	generateAndSendPaswordResetToken,
+	generatePaswordResetToken,
 };

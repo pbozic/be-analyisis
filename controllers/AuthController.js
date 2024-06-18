@@ -15,8 +15,9 @@ const DeliveryDriverDao = require("../dao/DeliveryDriver");
 const BusinessUsersDao = require("../dao/BusinessUsers");
 const FileDao = require("../dao/File");
 const S3Helper = require("../lib/s3");
+const EmailHelper = require("../lib/emailSender");
 const { S3 } = require("aws-sdk");
-
+require('dotenv').config();
 /**
  * POST /auth/login
  * @tag Authentication
@@ -169,7 +170,13 @@ async function refreshToken(req, res) {
 async function requestPasswordReset(req, res) {
 	try {
 		let user = await UserDao.getUserByEmail(req.body.email);
-		let token = await TokenDao.generateAndSendPaswordResetToken(user);
+		let token = await TokenDao.generatePaswordResetToken(user);
+		EmailHelper.sendEmailTemplate("Password Reset Request", "passwordReset", user.email, false,  {
+            name: user.first_name,
+            title: "Password Reset Request",
+            resetLink: process.env.LINK_BASE_URL + '/reset-password/' + token.token
+
+        });
 		console.log(token);
 		res.status(200).send("Password reset request processed. A token is sent to the user if the account is found.");
 	} catch (e) {
