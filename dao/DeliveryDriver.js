@@ -155,9 +155,12 @@ const updateDeliveryDriver = async (driver_id, updateData) => {
 
 const createNewDeliveryDriver = async (deliveryDriverData, userData) => {
 	try {
-		const newUser = await UserDao.createNewUser(userData);
-		if (!newUser) {
-			throw new Error("Failed to create user for new delivery driver");
+		let newUser = userData;
+		if (!userData?.user_id) {
+			newUser = await UserDao.createNewUser(userData);
+			if (!newUser) {
+				throw new Error("Failed to create user for new delivery driver", userData);
+			}
 		}
 
 		// Prepare location data for the delivery driver

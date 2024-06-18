@@ -23,6 +23,27 @@ async function getAllBusinessUsers(req, res) {
 }
 
 /**
+ * GET /business-users/{user_id}
+ * @tag BusinessUsers
+ * @summary Get a business user based on user ID
+ * @description Returns a business user.
+ * @operationId getBusinessUsersByUserId
+ * @response 200 - successful operation
+ * @responseContent {BusinessUser[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the business user
+ * @responseContent {object} 400.application/json The error object
+ */
+async function getBusinessUserByUserId(req, res) {
+    try {
+        const businessUser = await BusinessUsersDao.getBusinessUserByUserId(req.params.user_id);
+        res.status(200).json(businessUser);
+    } catch (error) {
+        console.error("Error retrieving business user:", error);
+        res.status(400).json({ error: "Error retrieving business user", detail: error.message });
+    }
+}
+
+/**
  * GET /business-users/business/{business_id}
  * @tag BusinessUsers
  * @summary Get business users by business ID
@@ -190,14 +211,13 @@ async function updateCompanyRole(req, res) {
 
 module.exports = {
     updateCompanyRole,
-    getAllBusinessUsersForBusinessByCompanyRole
-};
-
-module.exports = {
+    getAllBusinessUsersForBusinessByCompanyRole,
     getAllBusinessUsers,
+    getBusinessUserByUserId,
     getBusinessUsersByBusinessId,
     getBusinessUsersByBusinessType,
     createBusinessUser,
     addOperatingAddress,
     removeBusinessUser,
 };
+

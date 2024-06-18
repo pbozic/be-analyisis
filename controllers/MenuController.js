@@ -83,8 +83,8 @@ async function deleteMenu(req, res) {
  * @response 400 - Error updating menu active status
  */
 async function setActiveMenu(req, res) {
-	const { menu_id } = req.params;
-	const { active } = req.body;
+	const { menu_id, active } = req.body;
+	//todo: deactivate all other active menus for this business_id when activating this one
 	try {
 		const menu = await MenuDao.setActiveMenu(menu_id, active);
 		res.status(200).json(menu);
@@ -108,9 +108,9 @@ async function setActiveMenu(req, res) {
  * @response 400 - Error creating new menu category
  */
 async function createMenuCategory(req, res) {
-	const { menu_id, names, categories } = req.body;
+	const { menu_id, data} = req.body;
 	try {
-		const menuCategory = await MenuCategoryDao.createMenuCategory(menu_id, names, categories);
+		const menuCategory = await MenuCategoryDao.createMenuCategory(menu_id, data);
 		res.status(201).json(menuCategory);
 	} catch (e) {
 		console.error("Error creating menu category:", e);
@@ -161,6 +161,48 @@ async function getMenuCategoriesByMenuId(req, res) {
 }
 
 /**
+ * GET /menus/menu-categories/business/:business_id
+ * @tag MenuCategory
+ * @summary Get menu categories by business ID
+ * @description Retrieves a list of menu categories for a specific business.
+ * @operationId getMenuCategoriesByBusinessId
+ * @pathParam {string} business_id - The ID of the business
+ * @response 200 - Successful operation, returns a list of menu categories
+ * @responseContent {MenuCategory[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the menu categories
+ */
+async function getMenuCategoriesByBusinessId(req, res) {
+	try {
+		const categories = await MenuCategoryDao.getMenuCategoriesByBusinessId(req.params.business_id);
+		res.status(200).json(categories);
+	} catch (e) {
+		console.error("Error obtaining menu categories:", e);
+		res.status(400).json({ error: "Error obtaining menu categories", e });
+	}
+}
+
+/**
+ * GET /menus/menu-items/business/:business_id
+ * @tag MenuItem
+ * @summary Get menu items by business ID
+ * @description Retrieves a list of menu items for a specific business.
+ * @operationId getMenuItemsByBusinessId
+ * @pathParam {string} business_id - The ID of the business
+ * @response 200 - Successful operation, returns a list of menu items
+ * @responseContent {MenuItem[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the menu items
+ */
+async function getMenuItemsByBusinessId(req, res) {
+	try {
+		const items = await MenuItemDao.getMenuItemsByBusinessId(req.params.business_id);
+		res.status(200).json(items);
+	} catch (e) {
+		console.error("Error obtaining menu items:", e);
+		res.status(400).json({ error: "Error obtaining menu items", e });
+	}
+}
+
+/**
  * DELETE /menus/menu-categories/:menu_category_id
  * @tag MenuCategory
  * @summary Delete a menu category
@@ -182,7 +224,7 @@ async function deleteMenuCategory(req, res) {
 }
 
 /**
- * PATCH /menus/menu-categories/
+ * PATCH /menus/menu-categories
  * @tag MenuCategory
  * @summary Update a menu category
  * @description Updates a menu category by its ID.
@@ -196,8 +238,7 @@ async function deleteMenuCategory(req, res) {
  * @response 400 - Error updating menu category
  */
 async function updateMenuCategory(req, res) {
-	const { menu_category_id } = req.params;
-	const data = req.body;
+	const { menu_category_id, data } = req.body;
 	try {
 		const menuCategory = await MenuCategoryDao.updateMenuCategory(menu_category_id, data);
 		res.status(200).json(menuCategory);
@@ -221,9 +262,9 @@ async function updateMenuCategory(req, res) {
  * @response 400 - Error creating new menu item
  */
 async function createMenuItem(req, res) {
-	const { category_id, names, description, price } = req.body;
+	const { category_id, data } = req.body;
 	try {
-		const menuItem = await MenuItemDao.createMenuItem(category_id, names, description, price);
+		const menuItem = await MenuItemDao.createMenuItem(category_id, data);
 		res.status(201).json(menuItem);
 	} catch (e) {
 		console.error("Error creating menu item:", e);
@@ -268,8 +309,7 @@ async function deleteMenuItem(req, res) {
  * @response 400 - Error updating menu item
  */
 async function updateMenuItem(req, res) {
-	const { menu_item_id } = req.params;
-	const data = req.body;
+	const { menu_item_id, data } = req.body;
 	try {
 		const menuItem = await MenuItemDao.updateMenuItem(menu_item_id, data);
 		res.status(200).json(menuItem);
@@ -318,9 +358,9 @@ async function updateMenuItemPrice(req, res) {
  * @responseContent {MenuItem} 200.application/json
  * @response 400 - Error updating menu item category
  */
-async function updateMenuItemMenuCategory(req, res) {
-	const { menu_item_id } = req.params;
-	const { menu_category_id } = req.body;
+async function addMenuItemMenuCategory(req, res) {
+	const { menu_item_id, menu_category_id } = req.body;
+
 	try {
 		const menuItem = await MenuItemDao.addMenuItemToCategory(menu_item_id, menu_category_id);
 		res.status(200).json(menuItem);
@@ -352,6 +392,55 @@ async function removeMenuItemFromCategory(req, res) {
 	}
 }
 
+/**
+ * PATCH /menus/menu-categories/add
+ * @tag MenuCategory
+ * @summary Add a menu category to a menu
+ * @description Adds a menu category to a menu.
+ * @operationId addMenuCategory
+ * @bodyDescription The menu ID and category ID to add
+ * @bodyContent {AddMenuCategoryRequest} application/json
+ * @bodyRequired
+ * @response 200 - Menu category added successfully
+ * @responseContent {MenuCategory} 200.application/json
+ * @response 400 - Error adding menu category
+ */
+async function addMenuCategory(req, res) {
+	const { menu_id, menu_category_id } = req.body;
+	try {
+		const menuCategory = await MenuCategoryDao.addCategoryToMenu(menu_id, menu_category_id);
+		res.status(200).json(menuCategory);
+	} catch (e) {
+		console.error("Error adding menu category:", e);
+		res.status(400).json({ error: "Error adding menu category", e });
+	}
+}
+
+/**
+ * PATCH /menus/menu-categories/remove
+ * @tag MenuCategory
+ * @summary Remove a menu category from a menu
+ * @description Removes a menu category from a menu.
+ * @operationId removeMenuCategory
+ * @bodyDescription The category ID to remove
+ * @bodyContent {RemoveMenuCategoryRequest} application/json
+ * @bodyRequired
+ * @response 200 - Menu category removed successfully
+ * @responseContent {MenuCategory} 200.application/json
+ * @response 400 - Error removing menu category
+ */
+async function removeMenuCategory(req, res) {
+	const { menu_category_id } = req.body;
+	try {
+		const menuCategory = await MenuCategoryDao.removeCategoryFromMenu(menu_category_id);
+		res.status(200).json(menuCategory);
+	} catch (e) {
+		console.error("Error removing menu category:", e);
+		res.status(400).json({ error: "Error removing menu category", e });
+	}
+}
+
+
 module.exports = {
 	getMenuByBusinessId,
 	createMenu,
@@ -359,13 +448,17 @@ module.exports = {
 	setActiveMenu,
 	createMenuCategory,
 	getMenuCategoriesByMenuId,
+	getMenuCategoriesByBusinessId,
 	deleteMenuCategory,
+	addMenuCategory,
+	removeMenuCategory,
 	updateMenuCategory,
 	createMenuItem,
 	getMenuItemsByCategoryId,
+	getMenuItemsByBusinessId,
 	deleteMenuItem,
 	updateMenuItem,
 	updateMenuItemPrice,
-	updateMenuItemMenuCategory,
+	addMenuItemMenuCategory,
 	removeMenuItemFromCategory,
 };

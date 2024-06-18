@@ -20,6 +20,7 @@ const vehicleRoutes = require("./api/vehicles");
 const financesRoutes = require("./api/finances");
 const documentsRoutes = require("./api/documents");
 const menusRoutes = require("./api/menu");
+const businessUserRoutes = require("./api/businessUsers");
 
 router.use("/admin", [authMiddleware, adminMiddleware], adminRoutes);
 router.use("/users", [authMiddleware], userRoutes);
@@ -35,8 +36,8 @@ router.use("/delivery-drivers", [authMiddleware], deliveryDriverRoutes);
 router.use("/vehicles", [authMiddleware], vehicleRoutes);
 router.use("/finances", [authMiddleware], financesRoutes);
 router.use("/documents", [authMiddleware], documentsRoutes);
-
-router.use("/menus", [authMiddleware], documentsRoutes);
+router.use("/menus", [authMiddleware], menusRoutes);
+router.use("/business-users", [authMiddleware], businessUserRoutes);
 
 
 router.get("/test/s3", [authMiddleware], async (req, res) => {

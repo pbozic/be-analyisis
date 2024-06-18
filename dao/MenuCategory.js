@@ -1,13 +1,12 @@
 const prisma = require("../prisma/prisma");
 
-const createMenuCategory = async (menuId, names, categories) => {
+const createMenuCategory = async (menuId, categoryData) => {
 	return await prisma.menu_categories.create({
 		data: {
 			menu: {
 				connect: { menu_id: menuId }
 			},
-			names: names,
-			categories: categories
+			...categoryData
 		}
 	});
 };
@@ -16,6 +15,17 @@ const getMenuCategoriesByMenuId = async (menu_id) => {
 	return await prisma.menu_categories.findMany({
 		where: {
 			menu_id: menu_id
+		},
+		include: {
+			menu_items: true
+		}
+	});
+};
+
+const getMenuCategoriesByBusinessId = async (business_id) => {
+	return await prisma.menu_categories.findMany({
+		where: {
+			business_id: business_id
 		},
 		include: {
 			menu_items: true
@@ -69,6 +79,7 @@ const removeCategoryFromMenu = async (menu_category_id) => {
 module.exports = {
 	createMenuCategory,
 	getMenuCategoriesByMenuId,
+	getMenuCategoriesByBusinessId,
 	deleteMenuCategory,
 	updateMenuCategory,
 	addCategoryToMenu,

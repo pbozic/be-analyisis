@@ -189,6 +189,7 @@ model delivery_drivers {
   received_orders    delivery_order_sent[]
   documents          documents[]
   location           Json?
+  working_hours      Json?
 }
 
 model drivers {
@@ -344,7 +345,9 @@ model menus {
 model menu_categories {
   menu_category_id String       @id @default(uuid()) @db.Uuid
   names            Json // l10n names
+  description      Json // l10n descriptions
   categories       String[]
+  business_id      String       @db.Uuid
   menu_items       menu_items[] @relation("menu_items_in_category")
   menu_id          String       @db.Uuid
   menu             menus        @relation(fields: [menu_id], references: [menu_id])
@@ -357,15 +360,16 @@ model menu_items {
   names            Json // l10n names
   image            String?
   description      Json // l10n descriptions
-  categories       String[]
+  allergens        String[]
   spicy_level      Int
   unit_size        String
   price            Float
   discount         Float?
-  sides            Json? // Optional, for sides
-  extras           Json? // Optional, for extras, inside are menu_ids
+  sides            String[] // Optional, for sides
+  extras           String[] // Optional, for extras, inside are menu_ids
   ingredients      Json // Includes allergen and multilingual names
   availability     String[] // Array of availability -> ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+  business_id      String          @db.Uuid
   menu_category_id String          @db.Uuid
   menu_category    menu_categories @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id])
 
