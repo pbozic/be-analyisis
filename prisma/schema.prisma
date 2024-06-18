@@ -346,6 +346,7 @@ model menu_categories {
   names            Json // l10n names
   description      Json // l10n descriptions
   categories       String[]
+  business_id      String       @db.Uuid
   menu_items       menu_items[] @relation("menu_items_in_category")
   menu_id          String       @db.Uuid
   menu             menus        @relation(fields: [menu_id], references: [menu_id])
@@ -367,6 +368,7 @@ model menu_items {
   extras           Json? // Optional, for extras, inside are menu_ids
   ingredients      Json // Includes allergen and multilingual names
   availability     String[] // Array of availability -> ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+  business_id      String          @db.Uuid
   menu_category_id String          @db.Uuid
   menu_category    menu_categories @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id])
 
