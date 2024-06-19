@@ -10,6 +10,7 @@ const {
 	updatePasswordSchema,
 	addAddressSchema,
 	editAddressSchema,
+	oneSignalIdSchema
 } = require("../../joi/userSchemas");
 const {reviewUserSchema} = require("../../joi/reviewSchemas");
 
@@ -20,6 +21,7 @@ router.patch("/me", joi(updateSchema), UserController.updateMe);
 router.patch("/me/password", joi(updatePasswordSchema), UserController.updatePassword);
 router.patch("/me/email", joi(updateEmailSchema), UserController.updateEmail);
 router.patch("/me/phone", joi(updateTelephoneSchema), UserController.updateTelephone);
+router.post("/me/oneSignalId", joi(oneSignalIdSchema), UserController.oneSignalId);
 router.post("/me/address", joi(addAddressSchema), UserController.addAddress);
 router.delete("/me/address/:address_id", UserController.deleteAddress);
 router.patch("/me/address/:address_id", joi(editAddressSchema), UserController.editAddress);

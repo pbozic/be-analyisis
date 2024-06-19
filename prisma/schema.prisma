@@ -101,6 +101,8 @@ model users {
   reviewable_id                 String?           @db.Uuid
   reviewable                    reviewable?       @relation(fields: [reviewable_id], references: [reviewable_id])
   reviews                       reviews[]         @relation("review_author")
+  review_complete              Boolean            @default(true)
+  one_signal_id                String?
 }
 
 model documents {
