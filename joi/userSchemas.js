@@ -63,6 +63,10 @@ const editAddressSchema = Joi.object({
 	icon: Joi.string().optional(),
 	primary: Joi.boolean().optional(),
 });
+
+const oneSignalIdSchema = Joi.object({
+	one_signal_id: Joi.string().required(),
+});
 module.exports = {
 	updateSchema,
 	verifyPhoneSchema,
@@ -71,4 +75,5 @@ module.exports = {
 	updateTelephoneSchema,
 	addAddressSchema,
 	editAddressSchema,
+	oneSignalIdSchema,
 };

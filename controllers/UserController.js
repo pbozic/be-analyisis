@@ -5,7 +5,7 @@ const UserDao = require("../dao/User");
 const TokenDao = require("../dao/Token");
 const ReviewDao = require("../dao/Review");
 const AddressDao = require("../dao/Address");
-//const SMS = require("../lib/SMS");
+const SMS = require("../lib/SMS");
 /**
  * GET /users
  * @tag Users
@@ -198,7 +198,7 @@ async function updateTelephone(req, res) {
 async function requestSMSVerification(req, res) {
 	try {
 		let token = await TokenDao.generateSMSVerificationToken(req.user);
-		//await SMS.sendSMSVerification(user.telephone, token.token);
+		await SMS.sendSMSVerification(req.user.telephone, token.token);
 		console.log(token);
 		if (token) {
 			return res.status(200).json({ message: "Token sent" });
@@ -227,7 +227,7 @@ async function verifyMe(req, res) {
 		let user = await UserDao.getUserById(req.user.user_id);
 		let token = await TokenDao.getActiveSMSToken(user);
 		console.log(token);
-		if (token && (token.token === req.body.token)) {
+		if (token && (token.token === req.body.token) && (token.user_id == req.user.user_id)) {
 			await TokenDao.updateToken(token.token_id, { active: false });
 			user = await UserDao.updateUser(req.user.user_id, { phone_verified: true });
 			return res.status(200).json({message: "Phone verified successfully."});
@@ -237,6 +237,18 @@ async function verifyMe(req, res) {
 	} catch (e) {
 		console.log(e)
 		res.status(400).json({ error: "Error obtaining user information", e });
+	}
+}
+async function oneSignalId(req, res) {
+	try {
+		let user = await UserDao.updateUser(req.user.user_id, { one_signal_id: req.body.player_id });
+		if (user) {
+			return res.status(200).json(user);
+		}
+		res.status(400).json({ error: "Error updating user information" });
+	} catch (e) {
+		console.log(e);
+		res.status(400).json({ error: "Error updating user information", e });
 	}
 }
 /**
@@ -389,5 +401,6 @@ module.exports = {
 	deleteAddress,
 	editAddress,
 	setPrimaryAddress,
-	reviewUser
+	reviewUser,
+	oneSignalId
 };
