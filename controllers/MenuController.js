@@ -382,7 +382,7 @@ async function addMenuItemMenuCategory(req, res) {
  * @response 400 - Error removing menu item from category
  */
 async function removeMenuItemFromCategory(req, res) {
-	const { menu_item_id } = req.params;
+	const { menu_item_id } = req.body;
 	try {
 		const menuItem = await MenuItemDao.removeMenuItemFromCategory(menu_item_id);
 		res.status(200).json(menuItem);
@@ -430,9 +430,9 @@ async function addMenuCategory(req, res) {
  * @response 400 - Error removing menu category
  */
 async function removeMenuCategory(req, res) {
-	const { menu_id, menu_category_id } = req.body;
+	const { menu_category_id } = req.body;
 	try {
-		const menuCategory = await MenuCategoryDao.removeCategoryFromMenu(menu_id, menu_category_id);
+		const menuCategory = await MenuCategoryDao.removeCategoryFromMenu(menu_category_id);
 		res.status(200).json(menuCategory);
 	} catch (e) {
 		console.error("Error removing menu category:", e);

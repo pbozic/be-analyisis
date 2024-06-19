@@ -74,16 +74,19 @@ const addMenuItemToCategory = async (menu_item_id, menu_category_id) => {
 };
 
 const removeMenuItemFromCategory = async (menu_item_id) => {
-	return await prisma.menu_items.update({
-		where: {
-			menu_item_id: menu_item_id,
-		},
-		data: {
-			menu_category: {
-				disconnect: true,
+	try {
+		return await prisma.menu_items.update({
+			where: {
+				menu_item_id: menu_item_id,
 			},
-		},
-	});
+			data: {
+				menu_category_id: null,
+			},
+		});
+	} catch (error) {
+		console.error(`Error removing menu item ${menu_item_id} from category:`, error);
+		throw new Error(error);
+	}
 };
 
 module.exports = {
