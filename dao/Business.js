@@ -1,5 +1,6 @@
 const prisma = require("../prisma/prisma");
-const AddressDao = require('./Address'); // Assuming Address.js exports are imported as AddressDao
+const AddressDao = require('./Address');
+const Constants = require("../lib/constants"); // Assuming Address.js exports are imported as AddressDao
 
 const getBusinesses = async (args) => {
 	try {
@@ -117,24 +118,36 @@ const getBusinessesByGroupName = async (search) => {
 
 const getBusinessesByType = async (type) => {
 	try {
+		const includeOptions = {
+			address: true,
+			finances: true,
+			business_users: {
+				include: {
+					users: true,
+				},
+			},
+			parent_business: true,
+			child_businesses: true,
+			documents: false,
+			taxi_orders: false,
+			delivery_orders: false,
+		}
+		if (type === Constants.BUSINESS_TYPE.MERCHANT) {
+			includeOptions.menus = { 
+				include: {
+					categories: {
+						include: {
+							menu_items: true
+						}
+					}
+				}
+			}
+		}
 		return await prisma.business.findMany({
 			where: {
 				type: type,
 			},
-			include: {
-				address: true,
-				finances: true,
-				business_users: {
-					include: {
-						users: true,
-					},
-				},
-				parent_business: true,
-				child_businesses: true,
-				documents: false,
-				taxi_orders: false,
-				delivery_orders: false,
-			},
+			include: includeOptions
 		});
 	} catch (error) {
 		console.error(`Error retrieving businesses by type ${type}:`, error);
