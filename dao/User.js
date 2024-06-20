@@ -211,6 +211,7 @@ const createNewUser = async (user, hashPassword = false) => {
 			// Replace the plain text password with the hashed password
 			newUser = {
 				...user,
+				email: user.email.toLowerCase(),
 				password: hash,
 			};
 		}

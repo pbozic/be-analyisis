@@ -17,6 +17,7 @@ const FileDao = require("../dao/File");
 const S3Helper = require("../lib/s3");
 const EmailHelper = require("../lib/emailSender");
 const { S3 } = require("aws-sdk");
+const fs = require('fs');
 require('dotenv').config();
 /**
  * POST /auth/login
@@ -234,6 +235,7 @@ async function passowrdReset(req, res) {
  * @response 400 - Error registering taxi service
  */
 async function registerTaxiService(req, res) {
+	
 	try {
 		const business = await BusinessDao.createNewBusiness(req.body.business);
 		// TODO: handle uniqueness here or with joi validation
@@ -242,11 +244,11 @@ async function registerTaxiService(req, res) {
 			for (const doc of req.body.business.documents) {
 				const document = await DocumentDao.createDocument(doc);
 				for (const file of doc.files) {
-					let base64 = file.data;
-					delete file.data;
+					let base64 = file.base64;
+					delete file.base64;
 					let fileData = await FileDao.addFileToDocument(document.document_id, file);
 					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-					await S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]});
+					S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]}, file);
 				}
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
@@ -259,9 +261,9 @@ async function registerTaxiService(req, res) {
 		}
 
 		let businessAddress = {}
-		if (req.body.addresses) {
-			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
-		}
+		// if (req.body.addresses) {
+		// 	businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
+		// }
 
 		let drivers = [];
 		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
@@ -274,12 +276,12 @@ async function registerTaxiService(req, res) {
 						
 						const document = await DocumentDao.createDocument(doc.documentData);
 						for (const file of doc.files) {
-							let base64 = file.data;
-							delete file.data;
+							let base64 = file.base64;
+							delete file.base64;
 							let fileData = await FileDao.addFileToDocument(document.document_id, file);
 							
 							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-							await S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]});
+							S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]}, file);
 						}
 						await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 					}
@@ -292,11 +294,11 @@ async function registerTaxiService(req, res) {
 					for (const doc of driverInfo.driver.documents) {
 						const document = await DocumentDao.createDocument(doc.documentData);
 						for (const file of doc.files) {
-							let base64 = file.data;
-							delete file.data;
+							let base64 = file.base64;
+							delete file.base64;
 							let fileData = await FileDao.addFileToDocument(document.document_id, file);
 							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-							await S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]});
+							S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]}, file);
 						}
 						await DocumentDao.linkDocumentToDriver(document.document_id, driver.driver_id);
 					}
@@ -312,11 +314,11 @@ async function registerTaxiService(req, res) {
 							for (const doc of vehicleInfo.documents) {
 								const document = await DocumentDao.createDocument(doc.documentData);
 								for (const file of doc.files) {
-									let base64 = file.data;
-									delete file.data;
+									let base64 = file.base64;
+									delete file.base64;
 									let fileData = await FileDao.addFileToDocument(document.document_id, file);
 									let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-									await S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]});
+									S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]}, file);
 								}
 								await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
 							}
@@ -395,7 +397,14 @@ async function registerDeliveryService(req, res) {
 				// Handle user documents
 				if (deliveryDriverInfo.user.documents) {
 					for (const doc of deliveryDriverInfo.user.documents) {
-						const document = await DocumentDao.createDocument(doc.documentData, doc.files);
+						const document = await DocumentDao.createDocument(doc.documentData);
+						for (const file of doc.files) {
+							let base64 = file.base64;
+							delete file.base64;
+							let fileData = await FileDao.addFileToDocument(document.document_id, file);
+							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+							S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]}, file);
+						}
 						await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 					}
 				}
@@ -405,7 +414,14 @@ async function registerDeliveryService(req, res) {
 				// Handle delivery taxi documents
 				if (deliveryDriverInfo.driver.documents) {
 					for (const doc of deliveryDriverInfo.driver.documents) {
-						const document = await DocumentDao.createDocument(doc.documentData, doc.files);
+						const document = await DocumentDao.createDocument(doc.documentData);
+						for (const file of doc.files) {
+							let base64 = file.base64;
+							delete file.base64;
+							let fileData = await FileDao.addFileToDocument(document.document_id, file);
+							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+							S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]}, file);
+						}
 						await DocumentDao.linkDocumentToDeliveryDriver(document.document_id, deliveryDriver.delivery_driver_id);
 					}
 				}
@@ -418,7 +434,14 @@ async function registerDeliveryService(req, res) {
 						// Handle vehicle documents
 						if (vehicleInfo.documents) {
 							for (const doc of vehicleInfo.documents) {
-								const document = await DocumentDao.createDocument(doc.documentData, doc.files);
+								const document = await DocumentDao.createDocument(doc.documentData);
+								for (const file of doc.files) {
+									let base64 = file.base64;
+									delete file.base64;
+									let fileData = await FileDao.addFileToDocument(document.document_id, file);
+									let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+									S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]}, file);
+								}
 								await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
 							}
 						}
@@ -471,7 +494,14 @@ async function registerMerchantService(req, res) {
 		// Handle business documents
 		if (req.body.business.documents) {
 			for (const doc of req.body.business.documents) {
-				const document = await DocumentDao.createDocument(doc.documentData, doc.files);
+				const document = await DocumentDao.createDocument(doc.documentData);
+				for (const file of doc.files) {
+					let base64 = file.base64;
+					delete file.base64;
+					let fileData = await FileDao.addFileToDocument(document.document_id, file);
+					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+					S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]});
+				}
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
 		}

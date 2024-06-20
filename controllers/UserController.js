@@ -198,7 +198,7 @@ async function updateTelephone(req, res) {
 async function requestSMSVerification(req, res) {
 	try {
 		let token = await TokenDao.generateSMSVerificationToken(req.user);
-		await SMS.sendSMSVerification(req.user.telephone, token.token);
+		//await SMS.sendSMSVerification(req.user.telephone, token.token);
 		console.log(token);
 		if (token) {
 			return res.status(200).json({ message: "Token sent" });
