@@ -210,6 +210,7 @@ async function updateOrderLastSentAt(order_id) {
         throw new Error(e);
     }
 }
+
 module.exports = {
     getOrder,
     getOrdersByDriverId,

@@ -46,6 +46,16 @@ async function listOnlineDrivers(req, res) {
 	}
 }
 
+async function getAvailableDrivers(req, res) {
+	try {
+		const drivers = await DriverDao.getAvailableDrivers();
+		res.status(200).json(drivers);
+	} catch (error) {
+		console.error("Error getting available drivers:", error);
+		res.status(400).json({ error: "Error getting available drivers", detail: error.message });
+	}
+}
+
 /**
  * GET /drivers/:driver_id
  * @tag Drivers
@@ -103,7 +113,7 @@ async function getDriverLocation(req, res) {
 }
 
 /**
- * PATCH /drivers/:driver_id
+ * PATCH /drivers/
  * @tag Drivers
  * @summary Update a driver
  * @description Updates information about a specific driver, excluding location.
@@ -129,7 +139,7 @@ async function updateDriver(req, res) {
 }
 
 /**
- * PATCH /drivers/:driver_id/location
+ * PATCH /drivers/location
  * @tag Drivers
  * @summary Update driver location
  * @description Updates the location of a specific driver.
@@ -180,7 +190,7 @@ async function updateDriverLocation(req, res) {
 }
 
 /**
- * PATCH /drivers/:driver_id/online
+ * PATCH /drivers/online
  * @tag Drivers
  * @summary Set driver online status
  * @description Sets the online status of a specific driver and emits appropriate socket events.
@@ -216,7 +226,7 @@ async function updateDriverOnlineStatus(req, res) {
 
 
 /**
- * POST /drivers
+ * POST /drivers/create
  * @tag Drivers
  * @summary Create a new driver
  * @description Adds a new driver to the database.
@@ -229,41 +239,18 @@ async function updateDriverOnlineStatus(req, res) {
  */
 async function createDriver(req, res) {
 	try {
-		const userInfo = req.body.user.data;
-		// Create a new user
-		const newUser = await UserDao.createNewUser(userInfo);
+		const userData = req.body.user;
+		const driverData = req.body.driver;
 
-		if (!newUser) {
-			return res.status(400).json({ error: "Failed to create user for new driver" });
-		}
-		// Assuming the DriverDao.createNewDriver method accepts the user ID as part of the driver information
-		const driverInfo = req.body.driver;
-		driverInfo.userId = newUser.id; // Link the new user to the driver
-		const newDriver = await DriverDao.createNewDriver(driverInfo, userInfo);
-
-		if (!newDriver) {
+		const driverCreated = await DriverDao.createNewDriver(driverData, userData);
+		if (!driverCreated) {
 			return res.status(400).json({ error: "Failed to create new driver" });
 		}
 
-		const driverWithUser = {
-			...newDriver,
-			user: newUser
-		};
-
-		res.status(201).json(driverWithUser);
+		res.status(201).json(driverCreated);
 	} catch (error) {
 		console.error("Error creating new driver:", error);
 		res.status(400).json({ error: "Error creating new driver", detail: error.message });
-	}
-}
-
-async function getAvailableDrivers(req, res) { 
-	try {
-		const drivers = await DriverDao.getAvailableDrivers();
-		res.status(200).json(drivers);
-	} catch (error) {
-		console.error("Error getting available drivers:", error);
-		res.status(400).json({ error: "Error getting available drivers", detail: error.message });
 	}
 }
 
