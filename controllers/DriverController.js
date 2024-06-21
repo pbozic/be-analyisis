@@ -4,6 +4,7 @@ const DriverDao = require("../dao/Driver");
 const VehicleDao = require("../dao/Vehicle");
 const UserDao = require("../dao/User");
 const { UserSockets, io } = require('../socket');
+const TaxiOrderDao = require("../dao/TaxiOrder");
 
 /**
  * GET /drivers
@@ -143,6 +144,34 @@ async function updateDriver(req, res) {
 async function updateDriverLocation(req, res) {
 	try {
 		const updatedDriver = await DriverDao.updateDriverLocation(req.params.driver_id, req.body);
+
+		try {
+			const userId = req.user.user_id;
+			const driver = await DriverDao.getDriverByUserId(userId);
+			await DriverDao.updateDriverLocation(driver.driver_id, req.body);
+
+			// Emit the driver's updated location to each order's specific channel
+			const orders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id);
+			for (let order of orders) {
+				try {
+					io.to(`order_${order.order_id}`).emit("driver_location", {
+						driver_id: driver.driver_id,
+						location: location
+					});
+				} catch (error) {
+					console.error("Error emiting driver's location to connected users:", error);
+				}
+			}
+			if (orders.length == 0) {
+				io.emit("driver_location", {
+					driver_id: driver.driver_id,
+					location: location
+				});
+			}
+		} catch (error) {
+			console.error("Error updating driver's location:", error);
+		}
+
 		res.status(200).json(updatedDriver);
 	} catch (error) {
 		console.error("Error updating driver's location:", error);
