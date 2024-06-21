@@ -180,7 +180,7 @@ async function acceptOrderSent(order_id, driver_id) {
 }
 async function getSentDrivers(order_id) {
     try {
-        return prisma.taxi_orders_sent.findMany({
+        return prisma.taxi_order_sent.findMany({
             where: {
                 order_id,
                 include: {
