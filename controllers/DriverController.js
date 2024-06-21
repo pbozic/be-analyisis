@@ -168,8 +168,7 @@ async function updateDriverLocation(req, res) {
  * - "driver_unavailable" event with driver_id if online is false
  */
 async function updateDriverOnlineStatus(req, res) {
-	const { driver_id } = req.params;
-	const { online } = req.body;
+	const { driver_id, online } = req.body;
 
 	try {
 		const updatedDriver = await DriverDao.updateDriverOnlineStatus(driver_id, online);
