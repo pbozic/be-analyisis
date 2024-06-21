@@ -29,6 +29,7 @@ router.use("/user/auth", authRoutes);
 router.use("/taxi/auth", authTaxiRoutes);
 router.use("/delivery/auth", authDeliveryRoutes);
 router.use("/merchant/auth", authMerchantRoutes);
+router.use("/delivery/orders", [authMiddleware], taxiRoutes);
 router.use("/taxi", [authMiddleware], taxiRoutes);
 router.use("/business", [authMiddleware], businessRoutes);
 router.use("/drivers", [authMiddleware], driverRoutes);
