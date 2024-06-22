@@ -8,6 +8,7 @@ const {
 const joi = require("../../middleware/joi");
 
 router.get("/order/:order_id", TaxiOrderController.getOrder);
+router.get("/orders/completed/:driver_id", TaxiOrderController.getCompletedTaxiOrders);
 router.post("/order", joi(createOrderSchema), TaxiOrderController.createOrder);
 router.post("/order/status", TaxiOrderController.updateOrderStatus);
 router.post("/order/route", TaxiOrderController.updateTaxiOrderRoute);
@@ -16,5 +17,7 @@ router.post("/order/delivery_location", TaxiOrderController.updateTaxiOrderDeliv
 router.post("/order/complete_route", TaxiOrderController.updateCompleteTaxiRoute);
 router.post("/order/accept", TaxiOrderController.acceptOrder);
 router.post("/order/complete", TaxiOrderController.completeOrder);
+router.post("/order/timeline", TaxiOrderController.updateTaxiOrderTimeline);
+router.post("/order/payment", TaxiOrderController.updateTaxiOrderPayment);
 
 module.exports = router;

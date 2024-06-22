@@ -1,7 +1,5 @@
 {
-  "estimates": {
-    "price": 0,
-    "distance": 0,
-    "duration": 0
-  }
+  "price": 0,
+  "distance": 0,
+  "duration": 0
 }
