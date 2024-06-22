@@ -26,7 +26,7 @@ async function getOrder(req, res) {
 }
 
 /**
- * POST /delivery/order
+ * POST /delivery/orders/order
  * @tag Delivery
  * @summary Create a new delivery order.
  * @description This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
