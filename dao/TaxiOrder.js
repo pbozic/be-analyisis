@@ -210,6 +210,72 @@ async function updateOrderLastSentAt(order_id) {
         throw new Error(e);
     }
 }
+
+async function updateTaxiOderRoute(order_id, route) {
+    try {
+        return prisma.taxi_orders.update({
+            where: {
+                order_id
+            },
+            data: {
+                route: route
+            }
+        });
+    } catch (e) {
+        throw new Error(e);
+    }
+}
+
+async function updateTaxiOrderPickupLocation(order_id, pickupLocation) {
+    try {
+        return prisma.taxi_orders.update({
+            where: {
+                order_id
+            },
+            data: {
+                pickup_location: pickupLocation
+            }
+        });
+    } catch (e) {
+        throw new Error(e);
+    }
+}
+
+async function updateTaxiOrderDeliveryLocation(order_id, deliveryLocation) {
+    try {
+        return prisma.taxi_orders.update({
+            where: {
+                order_id
+            },
+            data: {
+                delivery_location: deliveryLocation
+            }
+        });
+    } catch (e) {
+        throw new Error(e);
+    }
+}
+
+async function updateCompleteTaxiRoute(order_id, route) {
+    console.log("updateCompleteTaxiRoute", order_id, route)
+    console.log('pl', route[0])
+    console.log('dl', route[route.length - 1])
+    try {
+        return prisma.taxi_orders.update({
+            where: {
+                order_id
+            },
+            data: {
+                route: route,
+                pickup_location: route[0],
+                delivery_location: route[route.length - 1]
+            }
+        });
+    } catch (e) {
+        throw new Error(e);
+    }
+}
+
 module.exports = {
     getOrder,
     getOrdersByDriverId,
@@ -221,5 +287,9 @@ module.exports = {
     updateOrderLastSentAt,
     completeOrder,
     updateOrderStatus,
-    isOrderSent
+    isOrderSent,
+    updateTaxiOderRoute,
+    updateTaxiOrderPickupLocation,
+    updateTaxiOrderDeliveryLocation,
+    updateCompleteTaxiRoute
 };
