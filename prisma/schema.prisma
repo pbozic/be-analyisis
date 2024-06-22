@@ -182,6 +182,8 @@ model user_address {
 model delivery_drivers {
   delivery_driver_id String                @id @default(uuid()) @db.Uuid
   online             Boolean?              @default(false)
+  on_order           Boolean?              @default(false)
+  working_hours      Json?
   business_id        String?               @db.Uuid
   created_at         DateTime              @default(now()) @db.Timestamptz(6)
   updated_at         DateTime              @default(now()) @updatedAt @db.Timestamptz(6)
@@ -192,7 +194,6 @@ model delivery_drivers {
   received_orders    delivery_order_sent[]
   documents          documents[]
   location           Json?
-  working_hours      Json?
 }
 
 model drivers {

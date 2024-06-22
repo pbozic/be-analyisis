@@ -11,7 +11,7 @@ const TaxiHelper = require('../lib/taxiHelpers');
  * @pathParam {integer} orderId - The ID of the taxi order to retrieve
  * @response 200 - Successful operation. Returns order details in the response body.
  * @responseContent {Order} 200.application/json
- * @response 500 - Server error. Returns error message "Error something went wrong.." if any exception is encountered during execution.
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 
 async function getOrder(req, res) {
@@ -37,7 +37,7 @@ async function getOrder(req, res) {
  * @bodyRequired
  * @response 200 - Successful operation. Returns the newly created order in the response body.
  * @responseContent {TaxiOrder} 200.application/json
- * @response 500 - Server error. Returns error message "Something went wrong.." if any exception is encountered during execution.
+ * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function createOrder(req, res) {
 	try {
@@ -46,9 +46,8 @@ async function createOrder(req, res) {
 			status: "PENDING",
 			user_id: req.user.user_id
 		};
-		
 		let order = await TaxiOrderDao.createOrder(orderData);
-		//TODO: select drivers to notify
+
 		TaxiHelper.findTaxiOrderDrivers(order);
 		res.status(200).json(order);
 	}
@@ -68,7 +67,7 @@ async function createOrder(req, res) {
  * @bodyRequired
  * @response 200 - Successful operation. Returns the accepted order in the response body.
  * @responseContent {TaxiOrder} 200.application/json
- * @response 500 - Server error. Returns error message "Something went wrong.." if any exception is encountered during execution.
+ * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function acceptOrder(req, res) {
 	const { order_id, user } = req.body
@@ -121,8 +120,10 @@ async function completeOrder(req, res) {
 	try {
 		let order = await TaxiOrderDao.completeOrder(req.body.order_id);
 		let driver = await DriverDao.getDriverById(order.driver_id);
-		io.emit('driver_available', driver);
+		io.emit('driver_available', driver)
 		io.to("order_" + order.order_id).emit('order_completed', order);
+		io.emit('driver_available', driver);
+
 		res.status(200).json(order);
 	}
 	catch (e) {
@@ -147,6 +148,7 @@ async function updateOrderStatus(req, res) {
 	try {
 		let order = await TaxiOrderDao.updateOrderStatus(req.body.order_id, req.body.status);
 		io.to("order_" + order.order_id).emit('order_status_change', order);
+
 		res.status(200).json(order);
 	}
 	catch (e) {

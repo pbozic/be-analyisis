@@ -180,7 +180,7 @@ async function acceptOrderSent(order_id, driver_id) {
 }
 async function getSentDrivers(order_id) {
     try {
-        return prisma.taxi_orders_sent.findMany({
+        return prisma.taxi_order_sent.findMany({
             where: {
                 order_id,
                 include: {
@@ -257,9 +257,6 @@ async function updateTaxiOrderDeliveryLocation(order_id, deliveryLocation) {
 }
 
 async function updateCompleteTaxiRoute(order_id, route) {
-    console.log("updateCompleteTaxiRoute", order_id, route)
-    console.log('pl', route[0])
-    console.log('dl', route[route.length - 1])
     try {
         return prisma.taxi_orders.update({
             where: {
