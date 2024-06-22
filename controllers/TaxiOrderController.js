@@ -25,6 +25,33 @@ async function getOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
+/**
+ * GET /taxi/orders/completed
+ * @tag Taxi
+ * @summary Get completed taxi orders.
+ * @description This fetches all completed orders for a specific driver.
+ * @operationId getCompletedTaxiOrders
+ * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
+ * @response 200 - Successful operation. Returns a list of completed orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+
+async function getCompletedTaxiOrders(req, res) {
+	const { driver_id } = req.params;
+
+	try {
+		const completedOrders = await TaxiOrderDao.getOrders({
+			where: {
+				status: 'TAXI_COMPLETED',
+				driver_id: driver_id
+			}});
+		res.status(200).json(completedOrders);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
 
 /**
  * POST /taxi/order
@@ -258,9 +285,64 @@ async function updateCompleteTaxiRoute(req, res) {
 	}
 }
 
+/**
+ * POST /taxi/order/timeline
+ * @tag Taxi
+ * @summary Update a taxi order's timeline.
+ * @description Updates the timeline of a taxi order.
+ * @operationId updateTaxiOrderTimeline
+ * @bodyDescription Request body must include 'order_id', and the new 'timeline' details.
+ * @bodyContent {UpdateTaxiOrderTimelineRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the updated order with the new timeline in the response body.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ */
+async function updateTaxiOrderTimeline(req, res) {
+	const { order_id, timeline} = req.body
+
+	try {
+		let order = await TaxiOrderDao.updateTaxiOrderTimeline(order_id, timeline);
+		io.to("order_" + order.order_id).emit('order_timeline_change', order);
+		res.status(200).json(order);
+	}
+	catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * POST /taxi/order/payment
+ * @tag Taxi
+ * @summary Update a taxi order's payment details.
+ * @description Updates the payment details of the order.
+ * @operationId updateTaxiOrderPayment
+ * @bodyDescription Request body must include 'order_id', and the new 'route' details.
+ * @bodyContent {UpdateTaxiOrderPaymentRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the updated order with the new payment details.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ */
+async function updateTaxiOrderPayment(req, res) {
+	const { order_id, payment} = req.body
+
+	try {
+		let order = await TaxiOrderDao.updateTaxiOrderPayment(order_id, payment);
+		io.to("order_" + order.order_id).emit('order_payment_change', order);
+		res.status(200).json(order);
+	}
+	catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
 
 module.exports = {
 	getOrder,
+	getCompletedTaxiOrders,
 	createOrder,
 	acceptOrder,
 	completeOrder,
@@ -268,5 +350,7 @@ module.exports = {
 	updateTaxiOrderRoute,
 	updateTaxiOrderPickupLocation,
 	updateTaxiOrderDeliveryLocation,
-	updateCompleteTaxiRoute
+	updateCompleteTaxiRoute,
+	updateTaxiOrderPayment,
+	updateTaxiOrderTimeline
 };

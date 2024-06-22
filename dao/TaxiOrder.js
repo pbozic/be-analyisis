@@ -273,6 +273,36 @@ async function updateCompleteTaxiRoute(order_id, route) {
     }
 }
 
+async function updateTaxiOrderTimeline(order_id, timeline) {
+    try {
+        return prisma.taxi_orders.update({
+            where: {
+                order_id
+            },
+            data: {
+                timeline: timeline
+            }
+        });
+    } catch (e) {
+        throw new Error(e);
+    }
+}
+
+async function updateTaxiOrderPayment(order_id, payment) {
+    try {
+        return prisma.taxi_orders.update({
+            where: {
+                order_id
+            },
+            data: {
+                payment: payment
+            }
+        });
+    } catch (e) {
+        throw new Error(e);
+    }
+}
+
 module.exports = {
     getOrder,
     getOrdersByDriverId,
@@ -288,5 +318,7 @@ module.exports = {
     updateTaxiOderRoute,
     updateTaxiOrderPickupLocation,
     updateTaxiOrderDeliveryLocation,
-    updateCompleteTaxiRoute
+    updateCompleteTaxiRoute,
+    updateTaxiOrderPayment,
+    updateTaxiOrderTimeline
 };

@@ -172,7 +172,7 @@ async function updateDriverLocation(req, res) {
 					console.error("Error emiting driver's location to connected users:", error);
 				}
 			}
-			if (orders.length == 0) {
+			if (orders.length === 0) {
 				io.emit("driver_location", {
 					driver_id: driver.driver_id,
 					location: location
