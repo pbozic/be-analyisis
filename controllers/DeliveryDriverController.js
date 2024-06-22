@@ -1,16 +1,17 @@
 require("dotenv").config();
 
 const DeliveryDriverDao = require("../dao/DeliveryDriver");
-const VehicleDao = require("../dao/Vehicle");
 const UserDao = require("../dao/User");
+const { UserSockets, io } = require('../socket');
+const DeliveryOrderDao = require("../dao/DeliveryOrder");
 
 /**
  * GET /delivery
  * @tag DeliveryDrivers
- * @summary Get a list of delivery driver
- * @description Returns a list of delivery driver along with their user and vehicle information.
+ * @summary Get a list of delivery drivers
+ * @description Returns a list of delivery drivers along with their user and vehicle information.
  * @operationId getDeliveryDrivers
- * @response 200 - Successful operation, returns a list of delivery driver
+ * @response 200 - Successful operation, returns a list of delivery drivers
  * @responseContent {DeliveryDriver[]} 200.application/json
  * @response 400 - Error occurred while obtaining the delivery driver list
  */
@@ -19,18 +20,18 @@ async function listDeliveryDrivers(req, res) {
 		const deliveryDrivers = await DeliveryDriverDao.getDeliveryDrivers({});
 		res.status(200).json(deliveryDrivers);
 	} catch (error) {
-		console.error("Error listing delivery driver:", error);
-		res.status(400).json({ error: "Error listing delivery driver", detail: error.message });
+		console.error("Error listing delivery drivers:", error);
+		res.status(400).json({ error: "Error listing delivery drivers", detail: error.message });
 	}
 }
 
 /**
  * GET /delivery/online
  * @tag DeliveryDrivers
- * @summary Get all online delivery driver
- * @description Returns a list of all delivery driver who are currently online.
+ * @summary Get all online delivery drivers
+ * @description Returns a list of all delivery drivers who are currently online.
  * @operationId getOnlineDeliveryDrivers
- * @response 200 - Successful operation, returns a list of online delivery driver
+ * @response 200 - Successful operation, returns a list of online delivery drivers
  * @responseContent {DeliveryDriver[]} 200.application/json
  * @response 400 - Error occurred while obtaining the online delivery driver list
  */
@@ -39,8 +40,28 @@ async function listOnlineDeliveryDrivers(req, res) {
 		const onlineDeliveryDrivers = await DeliveryDriverDao.getOnlineDeliveryDrivers();
 		res.status(200).json(onlineDeliveryDrivers);
 	} catch (error) {
-		console.error("Error listing online delivery driver:", error);
-		res.status(400).json({ error: "Error listing online delivery driver", detail: error.message });
+		console.error("Error listing online delivery drivers:", error);
+		res.status(400).json({ error: "Error listing online delivery drivers", detail: error.message });
+	}
+}
+
+/**
+ * GET /delivery/available
+ * @tag DeliveryDrivers
+ * @summary Get all available delivery drivers
+ * @description Returns a list of all delivery drivers who are currently available.
+ * @operationId getAvailableDeliveryDrivers
+ * @response 200 - Successful operation, returns a list of available delivery drivers
+ * @responseContent {DeliveryDriver[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the available delivery driver list
+ */
+async function getAvailableDeliveryDrivers(req, res) {
+	try {
+		const deliveryDrivers = await DeliveryDriverDao.getAvailableDeliveryDrivers();
+		res.status(200).json(deliveryDrivers);
+	} catch (error) {
+		console.error("Error getting available delivery drivers:", error);
+		res.status(400).json({ error: "Error getting available delivery drivers", detail: error.message });
 	}
 }
 
@@ -101,18 +122,18 @@ async function getDeliveryDriverLocation(req, res) {
 }
 
 /**
-* POST /delivery/:delivery_driver_id
-* @tag DeliveryDrivers
-* @summary Update a delivery driver
-* @description Updates information about a specific delivery driver, excluding location.
-* @operationId updateDeliveryDriver
-* @pathParam {string} delivery_driver_id - The ID of the delivery driver to update
-* @bodyContent {DeliveryDriverUpdate} application/json
-* @bodyRequired
-* @response 200 - Delivery driver updated successfully
-* @responseContent {DeliveryDriver} 200.application/json
-* @response 400 - Error updating delivery driver
-*/
+ * PATCH /delivery/
+ * @tag DeliveryDrivers
+ * @summary Update a delivery driver
+ * @description Updates information about a specific delivery driver, excluding location.
+ * @operationId updateDeliveryDriver
+ * @pathParam {string} delivery_driver_id - The ID of the delivery driver to update
+ * @bodyContent {DeliveryDriverUpdate} application/json
+ * @bodyRequired
+ * @response 200 - Delivery driver updated successfully
+ * @responseContent {DeliveryDriver} 200.application/json
+ * @response 400 - Error updating delivery driver
+ */
 async function updateDeliveryDriver(req, res) {
 	const { delivery_driver_id } = req.params;
 	const updateData = req.body;
@@ -127,7 +148,7 @@ async function updateDeliveryDriver(req, res) {
 }
 
 /**
- * PATCH /delivery/:delivery_driver_id/location
+ * PATCH /delivery/location
  * @tag DeliveryDrivers
  * @summary Update delivery driver location
  * @description Updates the location of a specific delivery driver.
@@ -142,6 +163,34 @@ async function updateDeliveryDriver(req, res) {
 async function updateDeliveryDriverLocation(req, res) {
 	try {
 		const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriverLocation(req.params.delivery_driver_id, req.body);
+
+		try {
+			const userId = req.user.user_id;
+			const deliveryDriver = await DeliveryDriverDao.getDeliveryDriverByUserId(userId);
+			await DeliveryDriverDao.updateDeliveryDriverLocation(deliveryDriver.delivery_driver_id, req.body);
+
+			// Emit the delivery driver's updated location to each order's specific channel
+			const orders = await DeliveryOrderDao.getOrdersByDriverId(deliveryDriver.delivery_driver_id);
+			for (let order of orders) {
+				try {
+					io.to(`order_${order.order_id}`).emit("driver_location", {
+						delivery_driver_id: deliveryDriver.delivery_driver_id,
+						location: req.body
+					});
+				} catch (error) {
+					console.error("Error emitting delivery driver's location to connected users:", error);
+				}
+			}
+			if (orders.length == 0) {
+				io.emit("driver_location", {
+					delivery_driver_id: deliveryDriver.delivery_driver_id,
+					location: req.body
+				});
+			}
+		} catch (error) {
+			console.error("Error updating delivery driver's location:", error);
+		}
+
 		res.status(200).json(updatedDeliveryDriver);
 	} catch (error) {
 		console.error("Error updating delivery driver's location:", error);
@@ -150,10 +199,10 @@ async function updateDeliveryDriverLocation(req, res) {
 }
 
 /**
- * PATCH /delivery/:delivery_driver_id/online
+ * PATCH /delivery/online
  * @tag DeliveryDrivers
  * @summary Set delivery driver online status
- * @description Sets the online status of a specific delivery driver.
+ * @description Sets the online status of a specific delivery driver and emits appropriate socket events.
  * @operationId setDeliveryDriverOnlineStatus
  * @pathParam {string} delivery_driver_id - The ID of the delivery driver to update the online status for
  * @bodyContent {DeliveryDriverOnlineStatus} application/json
@@ -161,13 +210,22 @@ async function updateDeliveryDriverLocation(req, res) {
  * @response 200 - Online status updated successfully
  * @responseContent {DeliveryDriver} 200.application/json
  * @response 400 - Error updating online status
+ *
+ * Emits:
+ * - "driver_available" event with delivery driver object if online is true
+ * - "driver_unavailable" event with delivery_driver_id if online is false
  */
 async function updateDeliveryDriverOnlineStatus(req, res) {
-	const { delivery_driver_id } = req.params;
-	const { online } = req.body; // Assuming `online` is a boolean
+	const { delivery_driver_id, online } = req.body;
 
 	try {
 		const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriverOnlineStatus(delivery_driver_id, online);
+
+		if (online) {
+			io.emit("driver_available", updatedDeliveryDriver);
+		} else {
+			io.emit("driver_unavailable", delivery_driver_id);
+		}
 		res.status(200).json(updatedDeliveryDriver);
 	} catch (error) {
 		console.error("Error setting online status for delivery driver:", error);
@@ -176,7 +234,7 @@ async function updateDeliveryDriverOnlineStatus(req, res) {
 }
 
 /**
- * POST /delivery
+ * POST /delivery/create
  * @tag DeliveryDrivers
  * @summary Create a new delivery driver
  * @description Adds a new delivery driver to the database.
@@ -189,18 +247,25 @@ async function updateDeliveryDriverOnlineStatus(req, res) {
  */
 async function createDeliveryDriver(req, res) {
 	try {
-		const { user: userData, driver: driverData } = req.body;
+		const userData = req.body.user;
+		const driverData = req.body.driver;
 
-		const newDeliveryDriver = await DeliveryDriverDao.createNewDeliveryDriver(driverData, userData);
-		if (!newDeliveryDriver) {
+		const driverCreated = await DeliveryDriverDao.createDeliveryDriver(driverData, userData);
+		if (!driverCreated) {
 			return res.status(400).json({ error: "Failed to create new delivery driver" });
 		}
-		res.status(201).json(newDeliveryDriver);
+
+		res.status(201).json(driverCreated);
 	} catch (error) {
 		console.error("Error creating new delivery driver:", error);
 		res.status(400).json({ error: "Error creating new delivery driver", detail: error.message });
 	}
 }
+
+module.exports = {
+	createDeliveryDriver
+};
+
 
 module.exports = {
 	listDeliveryDrivers,
@@ -211,4 +276,5 @@ module.exports = {
 	updateDeliveryDriverLocation,
 	updateDeliveryDriverOnlineStatus,
 	createDeliveryDriver,
+	getAvailableDeliveryDrivers
 };

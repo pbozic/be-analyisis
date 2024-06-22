@@ -7,13 +7,15 @@ const { updateSchema } = require("../../joi/deliveryDriverSchemas");
 
 router.get("/", DeliveryDriverController.listDeliveryDrivers);
 router.get("/online", DeliveryDriverController.listOnlineDeliveryDrivers);
+router.get("/available", DeliveryDriverController.getAvailableDeliveryDrivers);
 router.get("/:delivery_driver_id", DeliveryDriverController.getDeliveryDriverById);
 router.get("/:delivery_driver_id/location", DeliveryDriverController.getDeliveryDriverLocation);
 
-router.patch("/:delivery_driver_id/location", joi(updateSchema), DeliveryDriverController.updateDeliveryDriverLocation);
-router.patch("/:delivery_driver_id", joi(updateSchema), DeliveryDriverController.updateDeliveryDriver);
-router.patch("/:delivery_driver_id/online", joi(updateSchema), DeliveryDriverController.updateDeliveryDriverOnlineStatus);
 
-router.post("/", joi(updateSchema), DeliveryDriverController.createDeliveryDriver);
+router.patch("/", DeliveryDriverController.updateDeliveryDriver);
+router.patch("/location", DeliveryDriverController.updateDeliveryDriverLocation);
+router.patch("/online", DeliveryDriverController.updateDeliveryDriverOnlineStatus);
+
+router.post("/create", DeliveryDriverController.createDeliveryDriver);
 
 module.exports = router;

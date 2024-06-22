@@ -11,15 +11,16 @@ const TaxiHelper = require('../lib/taxiHelpers');
  * @pathParam {integer} orderId - The ID of the taxi order to retrieve
  * @response 200 - Successful operation. Returns order details in the response body.
  * @responseContent {Order} 200.application/json
- * @response 500 - Server error. Returns error message "Error something went wrong.." if any exception is encountered during execution.
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 
 async function getOrder(req, res) {
+	const { order_id } = req.params;
+
 	try {
-		let order = await TaxiOrderDao.getOrder(req.params.order_id);
+		const order = await TaxiOrderDao.getOrder(order_id);
 		res.status(200).json(order);
-	}
-	catch (e) {
+	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
@@ -36,7 +37,7 @@ async function getOrder(req, res) {
  * @bodyRequired
  * @response 200 - Successful operation. Returns the newly created order in the response body.
  * @responseContent {TaxiOrder} 200.application/json
- * @response 500 - Server error. Returns error message "Something went wrong.." if any exception is encountered during execution.
+ * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function createOrder(req, res) {
 	try {
@@ -45,9 +46,8 @@ async function createOrder(req, res) {
 			status: "PENDING",
 			user_id: req.user.user_id
 		};
-		
 		let order = await TaxiOrderDao.createOrder(orderData);
-		//TODO: select drivers to notify
+
 		TaxiHelper.findTaxiOrderDrivers(order);
 		res.status(200).json(order);
 	}
@@ -67,19 +67,20 @@ async function createOrder(req, res) {
  * @bodyRequired
  * @response 200 - Successful operation. Returns the accepted order in the response body.
  * @responseContent {TaxiOrder} 200.application/json
- * @response 500 - Server error. Returns error message "Something went wrong.." if any exception is encountered during execution.
+ * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function acceptOrder(req, res) {
+	const { order_id, user } = req.body
 	try {
 		//TODO: check if driver is online
 		//TODO: check if order is still pending
-		await TaxiOrderDao.acceptOrder(req.body.order_id, req.user);
-		let order = await TaxiOrderDao.getOrder(req.body.order_id, {
+		await TaxiOrderDao.acceptOrder(order_id, user);
+		let order = await TaxiOrderDao.getOrder(order_id, {
 			include: {
 				driver: true
 			}
 		}); 
-		let driver = await DriverDao.getDriverById(req.user.driver.driver_id, {
+		let driver = await DriverDao.getDriverById(user.driver.driver_id, {
 			include: {
 				vehicles: {
 					vehicle_specification: true,
@@ -118,9 +119,11 @@ async function acceptOrder(req, res) {
 async function completeOrder(req, res) {
 	try {
 		let order = await TaxiOrderDao.completeOrder(req.body.order_id);
-		let driver = await TaxiOrderDao.getDriver(order.driver_id);
-		io.emit('driver_available', driver);
+		let driver = await DriverDao.getDriverById(order.driver_id);
+		io.emit('driver_available', driver)
 		io.to("order_" + order.order_id).emit('order_completed', order);
+		io.emit('driver_available', driver);
+
 		res.status(200).json(order);
 	}
 	catch (e) {
@@ -145,6 +148,7 @@ async function updateOrderStatus(req, res) {
 	try {
 		let order = await TaxiOrderDao.updateOrderStatus(req.body.order_id, req.body.status);
 		io.to("order_" + order.order_id).emit('order_status_change', order);
+
 		res.status(200).json(order);
 	}
 	catch (e) {
@@ -152,10 +156,117 @@ async function updateOrderStatus(req, res) {
 		res.status(500).json(e);
 	}
 }
+/**
+ * POST /taxi/order/route
+ * @tag Taxi
+ * @summary Update a taxi order's route.
+ * @description Updates the route of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
+ * @operationId updateTaxiOrderRoute
+ * @bodyDescription Request body must include 'order_id' and the new 'route' details.
+ * @bodyContent {UpdateOrderRouteRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the updated order with the new route in the response body.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ */
+async function updateTaxiOrderRoute(req, res) {
+	try {
+		let order = await TaxiOrderDao.updateTaxiOderRoute(req.body.order_id, req.body.route);
+		io.to("order_" + order.order_id).emit('order_route_change', order);
+		res.status(200).json(order);
+	}
+	catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * POST /taxi/order/pickup_location
+ * @tag Taxi
+ * @summary Update a taxi order's pickup location.
+ * @description Updates the pickup location of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
+ * @operationId updateTaxiOrderPickupLocation
+ * @bodyDescription Request body must include 'order_id' and the new 'pickup_location' details.
+ * @bodyContent {UpdateOrderPickupLocationRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the updated order with the new pickup location in the response body.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ */
+async function updateTaxiOrderPickupLocation(req, res) {
+	try {
+		let order = await TaxiOrderDao.updateTaxiOrderPickupLocation(req.body.order_id, req.body.pickup_location);
+		io.to("order_" + order.order_id).emit('order_pickup_location_change', order);
+		res.status(200).json(order);
+	}
+	catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * POST /taxi/order/delivery_location
+ * @tag Taxi
+ * @summary Update a taxi order's delivery location.
+ * @description Updates the delivery location of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
+ * @operationId updateTaxiOrderDeliveryLocation
+ * @bodyDescription Request body must include 'order_id' and the new 'delivery_location' details.
+ * @bodyContent {UpdateOrderDeliveryLocationRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the updated order with the new delivery location in the response body.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ */
+async function updateTaxiOrderDeliveryLocation(req, res) {
+	try {
+		let order = await TaxiOrderDao.updateTaxiOrderDeliveryLocation(req.body.order_id, req.body.delivery_location);
+		io.to("order_" + order.order_id).emit('order_delivery_location_change', order);
+		res.status(200).json(order);
+	}
+	catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * POST /taxi/order/complete_route
+ * @tag Taxi
+ * @summary Update a taxi order's complete route.
+ * @description Updates the complete route of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
+ * @operationId updateCompleteTaxiRoute
+ * @bodyDescription Request body must include 'order_id', and the new 'route' details.
+ * @bodyContent {UpdateCompleteRouteRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the updated order with the new complete route in the response body.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ */
+async function updateCompleteTaxiRoute(req, res) {
+	const { order_id, route} = req.body
+
+	try {
+		let order = await TaxiOrderDao.updateCompleteTaxiRoute(order_id, route);
+		io.to("order_" + order.order_id).emit('order_complete_route_change', order);
+		res.status(200).json(order);
+	}
+	catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+
 module.exports = {
 	getOrder,
 	createOrder,
 	acceptOrder,
 	completeOrder,
-	updateOrderStatus
+	updateOrderStatus,
+	updateTaxiOrderRoute,
+	updateTaxiOrderPickupLocation,
+	updateTaxiOrderDeliveryLocation,
+	updateCompleteTaxiRoute
 };

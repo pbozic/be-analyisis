@@ -279,6 +279,8 @@ async function registerTaxiService(req, res) {
 		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
 			for (const driverInfo of req.body.drivers) {
 
+
+				driverInfo.user.data.password = "lalaland1"
 				const newUser = await UserDao.createNewUser(driverInfo.user.data, true);
 				// Handle user documents
 				if (driverInfo.user.documents) {
@@ -384,7 +386,15 @@ async function registerDeliveryService(req, res) {
 		// Handle business documents
 		if (req.body.business.documents) {
 			for (const doc of req.body.business.documents) {
-				const document = await DocumentDao.createDocument(doc.documentData, doc.files);
+				const document = await DocumentDao.createDocument(doc.documentData);
+
+				for (const file of doc.files) {
+					let base64 = file.base64;
+					delete file.base64;
+					let fileData = await FileDao.addFileToDocument(document.document_id, file);
+					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+					S3Helper.SaveObject(key, base64, file.mime_type, { businesses: [business.business_id]}, file);
+				}
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
 		}
@@ -405,7 +415,6 @@ async function registerDeliveryService(req, res) {
 			for (const deliveryDriverInfo of req.body.deliveryDrivers) {
 
 				const newUser = await UserDao.createNewUser(deliveryDriverInfo.user.data, true);
-				console.log('newUser', newUser);
 				// Handle user documents
 				if (deliveryDriverInfo.user.documents) {
 					for (const doc of deliveryDriverInfo.user.documents) {
@@ -503,6 +512,26 @@ async function registerMerchantService(req, res) {
 	try {
 		const business = await BusinessDao.createNewBusiness(req.body.business.data);
 
+		//TODO: check at least one business user data is provided & created
+
+		let businessUsers = [];
+		if (Array.isArray(req.body.users) && req.body.users.length) {
+			for (const userInfo of req.body.users) {
+				const businessUser = await BusinessUsersDao.createBusinessUser(userInfo.user, business.business_id);
+
+				let addresses = [];
+				// if (userInfo.user.addresses) {
+				// 	for (const addressInfo of userInfo.user.addresses) {
+				// 		const address = await AddressDao.addAddress(addressInfo)
+				// 		await AddressDao.addUserAddress(businessUser.business_users_id, address.address_id);
+				// 		addresses.push(address);
+				// 	}
+				// }
+
+				businessUsers.push({ businessUser, addresses });
+			}
+		}
+
 		// Handle business documents
 		if (req.body.business.documents) {
 			for (const doc of req.body.business.documents) {
@@ -512,7 +541,7 @@ async function registerMerchantService(req, res) {
 					delete file.base64;
 					let fileData = await FileDao.addFileToDocument(document.document_id, file);
 					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-					S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]});
+					S3Helper.SaveObject(key, base64, file.mime_type, { businesses: [business.business_id] });
 				}
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
@@ -524,32 +553,14 @@ async function registerMerchantService(req, res) {
 			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
 		}
 
-		let businessAddress = {}
+		let businessAddress = {};
 		if (req.body.addresses) {
 			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
 		}
 
-		let deliveryAddress = {}
+		let deliveryAddress = {};
 		if (req.body.addresses) {
 			deliveryAddress = await BusinessDao.addDeliveryAddress(business.business_id, req.body.addresses.delivery);
-		}
-
-		let businessUsers = [];
-		if (Array.isArray(req.body.users) && req.body.users.length) {
-			for (const userInfo of req.body.users) {
-				const businessUser = await BusinessUsersDao.createBusinessUser(userInfo.user, business.business_id);
-
-				let addresses = []
-				// if (userInfo.user.addresses) {
-				// 	for (const addressInfo of userInfo.user.addresses) {
-				// 		const address = await AddressDao.addAddress(addressInfo)
-				// 		await AddressDao.addUserAddress(businessUser.business_users_id, address.address_id);
-				// 		addresses.push(address);
-				// 	}
-				// }
-
-				businessUsers.push({ businessUser, addresses});
-			}
 		}
 
 		res.status(201).json({

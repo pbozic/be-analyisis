@@ -187,10 +187,15 @@ const createNewDriver = async (driverData, userData) => {
 			user_id: newUser.user_id,
 		};
 
-		return await prisma.drivers.create({
+		const newDriver = await prisma.drivers.create({
 			data: newDriverData,
 		});
 
+		// Include the user data in the returned driver data
+		return {
+			...newDriver,
+			user: newUser
+		};
 
 	} catch (error) {
 		console.error("Error creating new driver:", error);
@@ -198,7 +203,7 @@ const createNewDriver = async (driverData, userData) => {
 	}
 };
 
-async function getAvailableDrivers() {
+const getAvailableDrivers = async () => {
 	try {
 		return await prisma.drivers.findMany({
 			where: { online: true, on_order: false },

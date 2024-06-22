@@ -1,0 +1,232 @@
+const prisma = require("../prisma/prisma");
+
+async function getOrders(args) {
+	try {
+		return prisma.delivery_orders.findMany({
+			...args
+		});
+	} catch (e) {
+		throw new Error(e);
+	}
+}
+
+async function getOrder(order_id, args) {
+	try {
+		return prisma.delivery_orders.findFirst({
+			where: {
+				order_id: order_id,
+			},
+			...args
+		});
+	} catch (e) {
+		throw new Error(e);
+	}
+}
+
+async function getOrdersByDeliveryDriverId(delivery_driver_id) {
+	try {
+		return await prisma.delivery_orders.findMany({
+			where: {
+				delivery_driver_id: delivery_driver_id,
+			},
+			include: {
+				delivery_driver: true,
+			}
+		});
+	} catch (e) {
+		console.error("Error getting delivery orders by driver ID:", e);
+		throw new Error(e);
+	}
+}
+
+async function createOrder(order) {
+	try {
+		return prisma.delivery_orders.create({
+			data: order,
+		});
+	} catch (e) {
+		throw new Error(e);
+	}
+}
+
+async function createOrderSent(order_id, driver) {
+	try {
+		return prisma.delivery_order_sent.create({
+			data: {
+				order: {
+					connect: {
+						order_id
+					}
+				},
+				delivery_driver: {
+					connect: {
+						delivery_driver_id: driver.delivery_driver_id
+					}
+				},
+				location: driver.location,
+				accepted: false
+			},
+		});
+	} catch (e) {
+		throw new Error(e);
+	}
+}
+
+async function isOrderSent(order_id, driver) {
+	try {
+		return prisma.delivery_order_sent.findFirst({
+			where: {
+				order_id,
+				delivery_driver_id: driver.delivery_driver_id
+			}
+		});
+	} catch (e) {
+		throw new Error(e);
+	}
+}
+
+async function acceptOrder(order_id, user) {
+	console.log("accept (delivery) order", order_id)
+	try {
+		let delivery_order_sent = await prisma.delivery_order_sent.update({
+			where: {
+				delivery_order_sent_driver_unique: {
+					order_id,
+					delivery_driver_id: user.delivery_driver.delivery_driver_id
+				}
+			},
+			data: {
+				accepted: true
+			},
+		});
+		console.log("delivery_order_sent", delivery_order_sent)
+		prisma.delivery_drivers.update({
+			where: {
+				delivery_driver_id: user.delivery_driver.delivery_driver_id
+			},
+			data: {
+				on_order: true
+			}
+		});
+		return prisma.delivery_orders.update({
+			where: {
+				order_id
+			},
+			data: {
+				status: "DELIVERY_ACCEPTED",
+				delivery_driver: {
+					connect: {
+						delivery_driver_id: user.delivery_driver.delivery_driver_id
+					}
+				}
+			},
+		});
+	} catch (e) {
+		throw new Error(e);
+	}
+}
+
+async function updateOrderStatus(order_id, status) {
+	try {
+		return prisma.delivery_orders.update({
+			where: {
+				order_id
+			},
+			data: {
+				status
+			}
+		});
+	} catch (e) {
+		throw new Error(e);
+	}
+}
+
+async function completeOrder(order_id) {
+	try {
+		let delivery_order = await prisma.delivery_orders.update({
+			where: {
+				order_id
+			},
+			data: {
+				status: "DELIVERY_COMPLETED"
+			}
+		});
+		await prisma.delivery_drivers.update({
+			where: {
+				delivery_driver_id: delivery_order.delivery_driver_id
+			},
+			data: {
+				on_order: false
+			}
+		});
+		return delivery_order;
+	} catch (e) {
+		throw new Error(e);
+	}
+}
+
+async function acceptOrderSent(order_id, driver_id) {
+	console.log("delivery order sent accept", order_id, driver_id)
+	try {
+		return prisma.delivery_order_sent.update({
+			where: {
+				order_id,
+				delivery_driver_id: driver_id
+			},
+			data: {
+				accepted: true
+			},
+		});
+	} catch (e) {
+		throw new Error(e);
+	}
+}
+
+async function getSentDeliveryDrivers(order_id) {
+	try {
+		return prisma.delivery_order_sent.findMany({
+			where: {
+				order_id,
+			},
+			include: {
+				delivery_driver: {
+					include: {
+						user: true
+					}
+				}
+			}
+		});
+	} catch (e) {
+		throw new Error(e);
+	}
+}
+
+async function updateOrderLastSentAt(order_id) {
+	try {
+		return prisma.delivery_orders.update({
+			where: {
+				order_id
+			},
+			data: {
+				last_sent_at: new Date()
+			}
+		});
+	} catch (e) {
+		throw new Error(e);
+	}
+}
+
+module.exports = {
+	getOrders,
+	getOrder,
+	getOrdersByDeliveryDriverId,
+	createOrder,
+	createOrderSent,
+	isOrderSent,
+	acceptOrder,
+	acceptOrderSent,
+	getSentDeliveryDrivers,
+	updateOrderLastSentAt,
+	updateOrderStatus,
+	completeOrder,
+};
