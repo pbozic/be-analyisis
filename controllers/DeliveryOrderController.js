@@ -2,6 +2,7 @@ const DeliveryOrderDao = require("../dao/DeliveryOrder");
 const DeliveryDriverDao = require("../dao/DeliveryDriver");
 const DeliveryHelper = require('../lib/deliveryHelpers');
 const { UserSockets, io } = require('../socket');
+const stripe = require("../lib/stripe");
 
 /**
  * GET /delivery/order/{orderId}
@@ -46,7 +47,7 @@ async function createOrder(req, res) {
 			user_id: req.user.user_id
 		};
 		let order = await DeliveryOrderDao.createOrder(orderData);
-
+		
 		DeliveryHelper.findDeliveryOrderDrivers(order);
 		res.status(200).json(order);
 	}
@@ -86,6 +87,7 @@ async function acceptOrder(req, res) {
 				}
 			}
 		});
+		stripe.confirmPaymentIntent(order.payment_intent_id);
 		//TODO: how to handle multiple vehicles on driver
 		driver.vehicle = driver.vehicles[0];
 		order.driver = driver;

@@ -324,6 +324,7 @@ model delivery_orders {
   delivery_driver    delivery_drivers?     @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
   business_id        String?               @db.Uuid
   business           business?             @relation(fields: [business_id], references: [business_id])
+  payment_intent_id  String?
 }
 
 model delivery_order_sent {
