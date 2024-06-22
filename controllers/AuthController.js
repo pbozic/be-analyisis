@@ -18,6 +18,7 @@ const S3Helper = require("../lib/s3");
 const EmailHelper = require("../lib/emailSender");
 const { S3 } = require("aws-sdk");
 const fs = require('fs');
+const stripe = require("../lib/stripe");
 require('dotenv').config();
 /**
  * POST /auth/login
@@ -88,17 +89,25 @@ async function register(req, res) {
 	let postData = req.body;
 	try {
 		let hash = await bcrypt.hash(postData.password, Number(process.env.BCRYPT_SALT_ROUNDS));
+		let stripeCustomer = await stripe.createCustomer(
+			postData.email,
+			postData.first_name + " " + postData.last_name,
+			postData.telephone,
+		);
+
 		let userObj = {
 			...postData,
 			date_of_birth: new Date(postData.date_of_birth),
 			password: hash,
 			user_role: "PERSONAL",
+			stripe_customer_id: stripeCustomer.id,
 			reviewable: {
 				create: {
 					
 				},
 			}
 		};
+		
 		delete userObj["confirm_password"];
 		let user = await UserDao.createNewUser(userObj);
 		delete user["password"];
@@ -238,6 +247,7 @@ async function registerTaxiService(req, res) {
 	
 	try {
 		const business = await BusinessDao.createNewBusiness(req.body.business);
+		
 		// TODO: handle uniqueness here or with joi validation
 		// Handle business documents
 		if (req.body.business.documents) {
@@ -346,7 +356,8 @@ async function registerTaxiService(req, res) {
 			business,
 			drivers,
 			finances,
-			businessAddress
+			businessAddress,
+			accountLink
 		});
 	} catch (error) {
 		console.error("Error registering taxi service:", error);
@@ -369,6 +380,7 @@ async function registerTaxiService(req, res) {
 async function registerDeliveryService(req, res) {
 	try {
 		const business = await BusinessDao.createNewBusiness(req.body.business);
+
 		// Handle business documents
 		if (req.body.business.documents) {
 			for (const doc of req.body.business.documents) {

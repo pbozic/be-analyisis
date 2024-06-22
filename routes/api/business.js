@@ -3,7 +3,7 @@ const router = express.Router();
 
 // Middleware and validation schemas (if applicable)
 const joi = require("../../middleware/joi");
-const { updateSchema } = require("../../joi/businessSchemas");
+const { updateSchema, paymentIntentSchema } = require("../../joi/businessSchemas");
 const { reviewBusinessSchema } = require("../../joi/reviewSchemas");
 const BusinessController = require("../../controllers/BusinessController");
 const FinanceController = require("../../controllers/FinancesController");
@@ -34,7 +34,7 @@ router.patch("/parent/update", BusinessController.updateParentBusinessId);
 router.patch("/parent/remove", BusinessController.removeParentBusinessId);
 router.patch("/address", BusinessController.updateBusinessAddress);
 router.patch("/delivery-address", BusinessController.updateBusinessDeliveryAddress);
-
+router.post("/paymentIntent", joi(paymentIntentSchema), BusinessController.createPaymentIntent);
 router.delete("/:business_id", BusinessController.deleteBusiness);
 
 module.exports = router;

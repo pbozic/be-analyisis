@@ -63,6 +63,11 @@ const editAddressSchema = Joi.object({
 	icon: Joi.string().optional(),
 	primary: Joi.boolean().optional(),
 });
+const paymentIntentSchema = Joi.object({
+	amount: Joi.number().required(),
+	payment_method: Joi.string().required(),
+	user_id: Joi.string().required(),
+});
 module.exports = {
 	updateSchema,
 	verifyPhoneSchema,
@@ -70,5 +75,6 @@ module.exports = {
 	updatePasswordSchema,
 	updateTelephoneSchema,
 	addAddressSchema,
+	paymentIntentSchema,
 	editAddressSchema,
 };

@@ -6,6 +6,7 @@ const TokenDao = require("../dao/Token");
 const ReviewDao = require("../dao/Review");
 const AddressDao = require("../dao/Address");
 const SMS = require("../lib/SMS");
+const stripe = require("../lib/stripe");
 /**
  * GET /users
  * @tag Users
@@ -388,6 +389,29 @@ async function reviewUser(req, res) {
 		res.status(400).json({ error: "Error adding review", e });
 	}
 }
+/**
+ * GET /users/me/payments/credentials
+ * @tag Users
+ * @summary Get payment sheet credentials for a user
+ * @description This endpoint is used to get Stripe payment sheet credentials for a particular user.
+ * @operationId getPaymentSheetCredentials
+ * @headerDescription Authorization Bearer token is required
+ * @response 200 - {StripePaymentSheetCredentials}
+ * @response 400 - Error obtaining payment sheet credentials
+ */
+async function getPaymentSheetCredentials(req, res) {
+	try {
+		let user = await UserDao.getUserById(req.user.user_id);
+		let credentials = await stripe.generatePaymentSheetCredentials(user);
+		if (credentials) {
+			return res.status(200).json(credentials);
+		}
+		res.status(400).json({ error: "Error obtaining payment sheet credentials" });
+	} catch (e) {
+		console.log(e);
+		res.status(400).json({ error: "Error obtaining payment sheet credentials", e });
+	}
+}
 module.exports = {
 	listUsers,
 	me,
@@ -402,5 +426,6 @@ module.exports = {
 	editAddress,
 	setPrimaryAddress,
 	reviewUser,
-	oneSignalId
+	oneSignalId,
+	getPaymentSheetCredentials
 };

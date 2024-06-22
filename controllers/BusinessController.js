@@ -4,7 +4,8 @@ const bcrypt = require("bcrypt");
 const BusinessDao = require("../dao/Business");
 const ReviewDao = require("../dao/Review");
 const Constants = require("../lib/constants");
-
+const stripe = require("../lib/stripe");
+const UserDao = require("../dao/User");
 /**
  * GET /businesses
  * @tag Business
@@ -654,6 +655,36 @@ async function reviewBusiness(req, res) {
 	}
 }
 
+async function confirmBusinessReview(req, res) {
+	try {
+	} catch (e) {
+		console.log(e);
+		res.status(400).json({ error: "Error confirming review", e });
+	}
+}
+/**
+ * POST /business/paymentIntent
+ * @tag Business
+ * @summary Create a payment intent
+ * @description This endpoint is used to create a payment intent.
+ * @operationId createPaymentIntent
+ * @bodyDescription The amount, currency, and user_id of the payment.
+ * @bodyContent {CreatePaymentIntentRequest} application/json
+ * @bodyRequired
+ * @response 200 - Payment Intent created successfully.
+ * @response 400 - Error creating payment intent.
+ */
+async function createPaymentIntent(req, res) {
+	try {
+		const { amount, payment_method, user_id } = req.body;
+		const user = await UserDao.getUserById(user_id);
+		let paymentIntent = await stripe.createPaymentIntent(amount, payment_method, user.stripe_customer_id);
+		res.status(200).json(paymentIntent);
+	} catch (e) {
+		console.log(e);
+		res.status(400).json({ error: "Error creating payment intent", e });
+	}
+}
 module.exports = {
 	listBusinesses,
 	listTransferBusinesses,
@@ -680,6 +711,7 @@ module.exports = {
 	updateParentBusinessId,
 	removeParentBusinessId,
 	deleteBusiness,
-	reviewBusiness
+	reviewBusiness,
+	createPaymentIntent
 };
 
