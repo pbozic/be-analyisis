@@ -39,10 +39,22 @@ async function getOrdersByDeliveryDriverId(delivery_driver_id) {
 	}
 }
 
-async function createOrder(order) {
+async function createOrder(order, user_id) {
 	try {
 		return prisma.delivery_orders.create({
-			data: order,
+			data: {
+				...order,
+				user: {
+					connect: {
+						user_id: user_id,
+					},
+				},
+				business: {
+					connect: {
+						business_id: order.details.business_id
+					}
+				}
+			},
 		});
 	} catch (e) {
 		throw new Error(e);

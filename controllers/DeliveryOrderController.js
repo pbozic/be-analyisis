@@ -40,13 +40,14 @@ async function getOrder(req, res) {
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function createOrder(req, res) {
+	const { orderBody , user_id } = req.body
 	try {
 		let orderData = {
-			...req.body,
+			...orderBody,
 			status: "PENDING",
-			user_id: req.user.user_id
+			// user_id: req.user.user_id
 		};
-		let order = await DeliveryOrderDao.createOrder(orderData);
+		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 		
 		DeliveryHelper.findDeliveryOrderDrivers(order);
 		res.status(200).json(order);

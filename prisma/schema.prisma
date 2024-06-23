@@ -314,7 +314,7 @@ model taxi_order_sent {
 
 model delivery_orders {
   order_id             String                @id @default(uuid()) @db.Uuid
-  user_id              String                @db.Uuid
+  user_id              String?               @db.Uuid
   route                Json
   pickup_location      Json
   delivery_location    Json
@@ -332,11 +332,11 @@ model delivery_orders {
   updated_at           DateTime              @default(now()) @updatedAt @db.Timestamptz(6)
   user                 users?                @relation(fields: [user_id], references: [user_id])
   history              delivery_order_sent[]
-  delivery_driver_id   String                @db.Uuid
+  delivery_driver_id   String?               @db.Uuid
   delivery_driver      delivery_drivers?     @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
   business_id          String?               @db.Uuid
   business             business?             @relation(fields: [business_id], references: [business_id])
-  payment_intent_id  String?
+  payment_intent_id    String?
 }
 
 model delivery_order_sent {
