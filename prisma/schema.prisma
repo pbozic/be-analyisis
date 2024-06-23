@@ -350,6 +350,8 @@ model delivery_order_sent {
   order                  delivery_orders?  @relation(fields: [order_id], references: [order_id])
   delivery_driver_id     String            @db.Uuid
   delivery_driver        delivery_drivers? @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
+
+  @@unique([order_id, delivery_driver_id], name: "delivery_order_sent_driver_unique")
 }
 
 model menus {
