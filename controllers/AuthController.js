@@ -359,7 +359,7 @@ async function registerTaxiService(req, res) {
 			drivers,
 			finances,
 			businessAddress,
-			accountLink
+			// accountLink
 		});
 	} catch (error) {
 		console.error("Error registering taxi service:", error);
@@ -431,7 +431,7 @@ async function registerDeliveryService(req, res) {
 				}
 
 				const deliveryDriverData = { ...deliveryDriverInfo.driver.data, business_id: business.business_id };
-				const deliveryDriver = await DeliveryDriverDao.createNewDeliveryDriver(deliveryDriverData, newUser);
+				const deliveryDriver = await DeliveryDriverDao.createDeliveryDriver(deliveryDriverData, newUser);
 				// Handle delivery taxi documents
 				if (deliveryDriverInfo.driver.documents) {
 					for (const doc of deliveryDriverInfo.driver.documents) {

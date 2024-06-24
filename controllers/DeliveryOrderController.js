@@ -41,13 +41,14 @@ async function getOrder(req, res) {
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function createOrder(req, res) {
+	const { orderBody , user_id } = req.body
 	try {
 		let orderData = {
-			...req.body,
+			...orderBody,
 			status: "PENDING",
-			user_id: req.user.user_id
+			// user_id: req.user.user_id
 		};
-		let order = await DeliveryOrderDao.createOrder(orderData);
+		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 		let business = await DeliveryOrderDao.getBusiness(orderData.details.business_id);
 		let user = await UsersDao.getUser(orderData.user_id);
 		let payment_intent = await stripe.createPaymentIntent(orderData.amount, orderData.payment_method, user.stripe_customer_id, business.stripe_account_id, order.order_id);
@@ -79,16 +80,17 @@ async function createOrder(req, res) {
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function acceptOrder(req, res) {
+	const { order_id, user } = req.body
 	try {
 		//TODO: check if driver is online
 		//TODO: check if order is still pending
-		await DeliveryOrderDao.acceptOrder(req.body.order_id, req.user);
-		let order = await DeliveryOrderDao.getOrder(req.body.order_id, {
+		await DeliveryOrderDao.acceptOrder(order_id, user);
+		let order = await DeliveryOrderDao.getOrder(order_id, {
 			include: {
-				driver: true
+				delivery_driver: true
 			}
 		});
-		let driver = await DeliveryDriverDao.getDriverById(req.user.driver.driver_id, {
+		let driver = await DeliveryDriverDao.getDeliveryDriverById(user.driver.delivery_driver_id, {
 			include: {
 				vehicles: {
 					vehicle_specification: true,
@@ -103,7 +105,7 @@ async function acceptOrder(req, res) {
 		console.log("order accepted", order)
 		if (userSocket) {
 			io.to("order_" + order.order_id).emit('order_accepted', order);
-			io.emit('driver_unavailable', order.driver_id);
+			io.emit('driver_unavailable', order.delivery_driver_id);
 		}
 		res.status(200).json(order);
 	}
@@ -129,7 +131,7 @@ async function acceptOrder(req, res) {
 async function completeOrder(req, res) {
 	try {
 		let order = await DeliveryOrderDao.completeOrder(req.body.order_id);
-		let driver = await DeliveryDriverDao.getDriverById(order.driver_id);
+		let driver = await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id);
 
 		io.to("order_" + order.order_id).emit('order_completed', order);
 		io.emit('driver_available', driver);
@@ -137,6 +139,34 @@ async function completeOrder(req, res) {
 		res.status(200).json(order);
 	}
 	catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * GET /delivery/orders/order/complete
+ * @tag Delivery
+ * @summary Get completed delivery orders.
+ * @description This fetches all completed orders for a specific driver.
+ * @operationId getCompletedDeliveryOrders
+ * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
+ * @response 200 - Successful operation. Returns a list of completed orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+
+async function getCompletedDeliveryOrders(req, res) {
+	const { driver_id } = req.params;
+
+	try {
+		const completedOrders = await DeliveryOrderDao.getOrders({
+			where: {
+				status: 'DELIVERY_COMPLETED',
+				delivery_driver_id: driver_id
+			}});
+		res.status(200).json(completedOrders);
+	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
@@ -168,10 +198,39 @@ async function updateOrderStatus(req, res) {
 	}
 }
 
+/**
+ * POST /delivery/order/timeline
+ * @tag Taxi
+ * @summary Update a delivery order's timeline.
+ * @description Updates the timeline of a taxi order.
+ * @operationId updateDeliveryOrderTimeline
+ * @bodyDescription Request body must include 'order_id', and the new 'timeline' details.
+ * @bodyContent {updateDeliveryOrderTimelineRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the updated order with the new timeline in the response body.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ */
+async function updateDeliveryOrderTimeline(req, res) {
+	const { order_id, timeline} = req.body
+
+	try {
+		let order = await DeliveryOrderDao.updateDeliveryOrderTimeline(order_id, timeline);
+		io.to("order_" + order.order_id).emit('delivery_order_timeline_change', order);
+		res.status(200).json(order);
+	}
+	catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
 module.exports = {
 	getOrder,
 	createOrder,
 	acceptOrder,
 	completeOrder,
-	updateOrderStatus
+	updateOrderStatus,
+	getCompletedDeliveryOrders,
+	updateDeliveryOrderTimeline
 };

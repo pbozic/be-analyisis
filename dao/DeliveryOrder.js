@@ -39,10 +39,22 @@ async function getOrdersByDeliveryDriverId(delivery_driver_id) {
 	}
 }
 
-async function createOrder(order) {
+async function createOrder(order, user_id) {
 	try {
 		return prisma.delivery_orders.create({
-			data: order,
+			data: {
+				...order,
+				user: {
+					connect: {
+						user_id: user_id,
+					},
+				},
+				business: {
+					connect: {
+						business_id: order.details.business_id
+					}
+				}
+			},
 		});
 	} catch (e) {
 		throw new Error(e);
@@ -92,7 +104,7 @@ async function acceptOrder(order_id, user) {
 			where: {
 				delivery_order_sent_driver_unique: {
 					order_id,
-					delivery_driver_id: user.delivery_driver.delivery_driver_id
+					delivery_driver_id: user.driver.delivery_driver_id
 				}
 			},
 			data: {
@@ -102,7 +114,7 @@ async function acceptOrder(order_id, user) {
 		console.log("delivery_order_sent", delivery_order_sent)
 		prisma.delivery_drivers.update({
 			where: {
-				delivery_driver_id: user.delivery_driver.delivery_driver_id
+				delivery_driver_id: user.driver.delivery_driver_id
 			},
 			data: {
 				on_order: true
@@ -116,7 +128,7 @@ async function acceptOrder(order_id, user) {
 				status: "DELIVERY_ACCEPTED",
 				delivery_driver: {
 					connect: {
-						delivery_driver_id: user.delivery_driver.delivery_driver_id
+						delivery_driver_id: user.driver.delivery_driver_id
 					}
 				}
 			},
@@ -215,6 +227,22 @@ async function updateOrderLastSentAt(order_id) {
 		throw new Error(e);
 	}
 }
+
+async function updateDeliveryOrderTimeline(order_id, timeline) {
+	try {
+		return prisma.delivery_orders.update({
+			where: {
+				order_id
+			},
+			data: {
+				timeline: timeline
+			}
+		});
+	} catch (e) {
+		throw new Error(e);
+	}
+}
+
 async function updateOrder(order_id, order) {
 	try {
 		return prisma.delivery_orders.update({
@@ -240,5 +268,6 @@ module.exports = {
 	updateOrderLastSentAt,
 	updateOrderStatus,
 	completeOrder,
+	updateDeliveryOrderTimeline,
 	updateOrder
 };

@@ -83,7 +83,35 @@ async function getDeliveryDriverById(req, res) {
 		if (deliveryDriver) {
 			res.status(200).json(deliveryDriver);
 		} else {
-			res.status(404).json({ error: "Delivery driver not found" });
+			res.status(404).json({ error: "Delivery driver not found by id" });
+		}
+	} catch (error) {
+		console.error("Error retrieving delivery driver:", error);
+		res.status(400).json({ error: "Error retrieving delivery driver information", detail: error.message });
+	}
+}
+
+/**
+ * GET /delivery_drivers/user/:user_id
+ * @tag DeliveryDrivers
+ * @summary Get a delivery driver by user ID
+ * @description Retrieves detailed information about a specific delivery driver by their user ID.
+ * @operationId getDeliveryDriverByUserId
+ * @pathParam {string} user_id - The ID of the delivery driver to retrieve
+ * @response 200 - Successful operation, returns detailed delivery driver information
+ * @responseContent {DeliveryDriver} 200.application/json
+ * @response 404 - Delivery driver not found
+ * @response 400 - Error retrieving delivery driver information
+ */
+async function getDeliveryDriverByUserId(req, res) {
+	console.log(req.params.user_id, 'user11')
+	try {
+		const deliveryDriver = await DeliveryDriverDao.getDeliveryDriverByUserId(req.params.user_id);
+		console.log(deliveryDriver, 'lala12')
+		if (deliveryDriver) {
+			res.status(200).json(deliveryDriver);
+		} else {
+			res.status(404).json({ error: "Delivery driver not found by user_id" }, deliveryDriver);
 		}
 	} catch (error) {
 		console.error("Error retrieving delivery driver:", error);
@@ -276,5 +304,6 @@ module.exports = {
 	updateDeliveryDriverLocation,
 	updateDeliveryDriverOnlineStatus,
 	createDeliveryDriver,
-	getAvailableDeliveryDrivers
+	getAvailableDeliveryDrivers,
+	getDeliveryDriverByUserId
 };

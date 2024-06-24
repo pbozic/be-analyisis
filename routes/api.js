@@ -34,7 +34,7 @@ router.use("/delivery/orders", [authMiddleware], deliveryRoutes);
 router.use("/taxi", [authMiddleware], taxiRoutes);
 router.use("/business", [authMiddleware], businessRoutes);
 router.use("/drivers", [authMiddleware], driverRoutes);
-router.use("/delivery-drivers", [authMiddleware], deliveryDriverRoutes);
+router.use("/delivery_drivers", [authMiddleware], deliveryDriverRoutes);
 router.use("/vehicles", [authMiddleware], vehicleRoutes);
 router.use("/finances", [authMiddleware], financesRoutes);
 router.use("/documents", [authMiddleware], documentsRoutes);
