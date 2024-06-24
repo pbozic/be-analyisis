@@ -22,7 +22,9 @@ const financesRoutes = require("./api/finances");
 const documentsRoutes = require("./api/documents");
 const menusRoutes = require("./api/menu");
 const businessUserRoutes = require("./api/businessUsers");
+const stripeRoutes = require("./api/stripe");
 
+router.use("/stripe", stripeRoutes);
 router.use("/admin", [authMiddleware, adminMiddleware], adminRoutes);
 router.use("/users", [authMiddleware], userRoutes);
 router.use("/auth", authRoutes);

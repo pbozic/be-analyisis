@@ -51,11 +51,14 @@ async function createOrder(req, res) {
 		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 		let business = await DeliveryOrderDao.getBusiness(orderData.details.business_id);
 		let user = await UsersDao.getUser(orderData.user_id);
-		let payment_intent = await stripe.createPaymentIntent(orderData.amount, orderData.payment_method, user.stripe_customer_id, business.stripe_account_id, order.order_id);
-		orderData.payment_intent_id = payment_intent.id;
-		order = await DeliveryOrderDao.updateOrder(order.order_id, {
-			payment_intent_id: payment_intent.id
-		});
+		if (order.payment.type == "CARD") {
+			let payment_intent = await stripe.createPaymentIntent(orderData.amount, orderData.payment_method, user.stripe_customer_id, business.stripe_account_id, order.order_id);
+			orderData.payment_intent_id = payment_intent.id;
+			order = await DeliveryOrderDao.updateOrder(order.order_id, {
+				payment_intent_id: payment_intent.id
+			});
+		}
+		io.to("orders_" + order.business_id).emit('new_order', order);
 
 		DeliveryHelper.findDeliveryOrderDrivers(order);
 		res.status(200).json(order);
@@ -97,16 +100,20 @@ async function acceptOrder(req, res) {
 				}
 			}
 		});
-		stripe.confirmPaymentIntent(order.payment_intent_id);
+		if (order.payment.type == "CARD") {
+			await stripe.confirmPaymentIntent(order.payment_intent_id);
+			await DeliveryOrderDao.updateOrderStatus(order_id, 'CUSTOMER_PAYMENT_PENDING');
+			io.to("orders_" + order.business_id).emit('order_status_change_delivery', order);
+		}
 		//TODO: how to handle multiple vehicles on driver
 		driver.vehicle = driver.vehicles[0];
 		order.driver = driver;
-		let userSocket = UserSockets.get(order.user_id);
+
 		console.log("order accepted", order)
-		if (userSocket) {
-			io.to("order_" + order.order_id).emit('order_accepted', order);
-			io.emit('driver_unavailable', order.delivery_driver_id);
-		}
+
+		io.to("order_" + order.order_id).emit('order_accepted', order);
+		io.emit('driver_unavailable', order.delivery_driver_id);
+
 		res.status(200).json(order);
 	}
 	catch (e) {

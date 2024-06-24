@@ -56,6 +56,7 @@ async function login(req, res) {
 				driver: true,
 			},
 		});
+		let payment_methods = await stripe.getPaymentMethods(user.stripe_customer_id);
 		delete user["password"];
 		const access_token = generateAccessToken(user);
 		const refresh_token = generateRefreshToken(user);
@@ -63,6 +64,7 @@ async function login(req, res) {
 			...user,
 			access_token,
 			refresh_token,
+			payment_methods
 		};
 		res.status(200).header("Authorization", access_token).json(user);
 	} catch (e) {
@@ -244,7 +246,7 @@ async function passowrdReset(req, res) {
  * @response 400 - Error registering taxi service
  */
 async function registerTaxiService(req, res) {
-	
+	fs.writeFileSync('taxi-service.json', JSON.stringify(req.body, null, 2));
 	try {
 		const business = await BusinessDao.createNewBusiness(req.body.business);
 		
