@@ -134,9 +134,9 @@ async function acceptOrder(req, res) {
 		if (order.payment.type == "CARD") {
 			await stripe.confirmPaymentIntent(order.payment_intent_id);
 			await DeliveryOrderDao.updateOrderStatus(order_id, 'CUSTOMER_PAYMENT_PENDING');
-			io.to("orders_" + order.business_id).emit('order_status_change_delivery', order);
+			io.to("orders_" + order.business_id).emit('order_status_change', order);
 		}
-		//TODO: how to handle multiple vehicles on driver
+		//TODO: how to handle multiple vehicles on driver -> check which vehicle has its field active, that's it, one active vehicle per delivery driver
 		driver.vehicle = driver.vehicles[0];
 		order.driver = driver;
 
@@ -254,7 +254,7 @@ async function updateDeliveryOrderTimeline(req, res) {
 
 	try {
 		let order = await DeliveryOrderDao.updateDeliveryOrderTimeline(order_id, timeline);
-		io.to("order_" + order.order_id).emit('delivery_order_timeline_change', order);
+		io.to("order_" + order.order_id).emit('order_timeline_change', order);
 		res.status(200).json(order);
 	}
 	catch (e) {
