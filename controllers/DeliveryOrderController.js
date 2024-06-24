@@ -129,7 +129,7 @@ async function acceptOrder(req, res) {
 				}
 			}
 		});
-		// stripe.confirmPaymentIntent(order.payment_intent_id);
+		stripe.confirmPaymentIntent(order.payment_intent_id);
 		//TODO: how to handle multiple vehicles on driver
 		driver.vehicle = driver.vehicles[0];
 		order.driver = driver;
