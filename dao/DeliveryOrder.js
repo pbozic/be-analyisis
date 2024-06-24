@@ -215,7 +215,18 @@ async function updateOrderLastSentAt(order_id) {
 		throw new Error(e);
 	}
 }
-
+async function updateOrder(order_id, order) {
+	try {
+		return prisma.delivery_orders.update({
+			where: {
+				order_id
+			},
+			data: order
+		});
+	} catch (e) {
+		throw new Error(e);
+	}
+}
 module.exports = {
 	getOrders,
 	getOrder,
@@ -229,4 +240,5 @@ module.exports = {
 	updateOrderLastSentAt,
 	updateOrderStatus,
 	completeOrder,
+	updateOrder
 };
