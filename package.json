@@ -6,7 +6,8 @@
 		"start": "node ./bin/www",
 		"dev": "npx prisma db push && npx prisma generate && nodemon ./app.js",
 		"server": "nodemon ./app.js",
-		"prisma": "npx prisma db push && npx prisma generate"
+		"prisma": "npx prisma db push && npx prisma generate",
+		"stripe": "stripe listen --skip-verify --forward-to localhost:3001/api/stripe/webhook"
 	},
 	"prisma": {
 		"schema": "./prisma/schema.prisma",
