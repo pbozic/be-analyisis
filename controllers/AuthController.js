@@ -271,9 +271,9 @@ async function registerTaxiService(req, res) {
 		}
 
 		let businessAddress = {}
-		// if (req.body.addresses) {
-		// 	businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
-		// }
+		if (req.body.addresses) {
+			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
+		}
 
 		let drivers = [];
 		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {

@@ -375,7 +375,14 @@ const addBusinessAddress = async (business_id, addressData) => {
 
 		return await prisma.business.update({
 			where: { business_id },
-			data: { address_id: newAddress.address_id }
+			data: {
+				address: {
+					connect: {
+						address_id: newAddress.address_id
+					}
+				
+				}
+			}
 		});
 	} catch (error) {
 		console.error("Error adding business address:", error);
