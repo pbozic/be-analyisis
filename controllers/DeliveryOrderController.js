@@ -80,8 +80,8 @@ async function createOrder(req, res) {
 		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
-		let user = await UsersDao.getUser(orderData.user_id);
-		if (order.payment.type === "CREDIT_CARD") {
+		let user = await UsersDao.getUserById(user_id);
+		if (order.payment.type === "CARD") {
 			let payment_intent = await stripe.createPaymentIntent(orderData.details.total_price, orderData.payment.type, user.stripe_customer_id, business.stripe_account_id, order.order_id);
 			orderData.payment_intent_id = payment_intent.id;
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
@@ -131,10 +131,10 @@ async function acceptOrder(req, res) {
 				}
 			}
 		});
-		if (order.payment.type == "CARD") {
+		if (order.payment.type === "CARD") {
 			await stripe.confirmPaymentIntent(order.payment_intent_id);
 			await DeliveryOrderDao.updateOrderStatus(order_id, 'CUSTOMER_PAYMENT_PENDING');
-			io.to("orders_" + order.business_id).emit('order_status_change', order);
+			io.to("orders_" + order.business_id).emit('order_status_change__delivery', order);
 		}
 		//TODO: how to handle multiple vehicles on driver -> check which vehicle has its field active, that's it, one active vehicle per delivery driver
 		driver.vehicle = driver.vehicles[0];
@@ -142,7 +142,7 @@ async function acceptOrder(req, res) {
 
 		console.log("order accepted", order)
 
-		io.to("order_" + order.order_id).emit('order_accepted', order);
+		io.to("order_" + order.order_id).emit('order_accepted__delivery', order);
 		io.emit('driver_unavailable', order.delivery_driver_id);
 
 		res.status(200).json(order);
@@ -171,7 +171,7 @@ async function completeOrder(req, res) {
 		let order = await DeliveryOrderDao.completeOrder(req.body.order_id);
 		let driver = await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id);
 
-		io.to("order_" + order.order_id).emit('order_completed', order);
+		io.to("order_" + order.order_id).emit('order_completed__delivery', order);
 		io.emit('driver_available', driver);
 
 		res.status(200).json(order);
@@ -183,7 +183,7 @@ async function completeOrder(req, res) {
 }
 
 /**
- * GET /delivery/orders/order/complete
+ * GET /delivery/orders/complete
  * @tag Delivery
  * @summary Get completed delivery orders.
  * @description This fetches all completed orders for a specific driver.
@@ -195,6 +195,7 @@ async function completeOrder(req, res) {
  */
 
 async function getCompletedDeliveryOrders(req, res) {
+	console.log("get completed orders");
 	const { driver_id } = req.params;
 
 	try {
@@ -204,6 +205,33 @@ async function getCompletedDeliveryOrders(req, res) {
 				delivery_driver_id: driver_id
 			}});
 		res.status(200).json(completedOrders);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * GET /delivery/orders/:business_id
+ * @tag Delivery
+ * @summary Get delivery orders.
+ * @description This fetches all restaurant orders.
+ * @operationId getDeliveryOrdersByBusinessId
+ * @requestBody {business_id} business_id - The ID of the business to retrieve orders for
+ * @response 200 - Successful operation. Returns a list of orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+
+async function getDeliveryOrdersByBusinessId(req, res) {
+	const { business_id } = req.params;
+
+	try {
+		const orders = await DeliveryOrderDao.getOrders({
+			where: {
+				business_id: business_id
+			}});
+		res.status(200).json(orders);
 	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
@@ -226,7 +254,34 @@ async function getCompletedDeliveryOrders(req, res) {
 async function updateOrderStatus(req, res) {
 	try {
 		let order = await DeliveryOrderDao.updateOrderStatus(req.body.order_id, req.body.status);
-		io.to("order_" + order.order_id).emit('order_status_change', order);
+		io.to("order_" + order.order_id).emit('order_status_change__delivery', order);
+
+		res.status(200).json(order);
+	}
+	catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * POST /delivery/orders/order/pickup_time
+ * @tag Delivery
+ * @summary Update a delivery order's pickup time.
+ * @description Updates pickup time of the delivery order
+ * @operationId updateOrderPickupTime
+ * @bodyDescription Request body must include 'order_id' to identify the order and 'status' to specify the new status.
+ * @bodyContent {updateOrderPickupTimeRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the updated order in the response body.
+ * @responseContent {DeliveryOrder} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ */
+async function updateOrderPickupTime(req, res) {
+	const { order_id, pickup_time } = req.body
+	try {
+		let order = await DeliveryOrderDao.updateOrderPickupTime(order_id, pickup_time);
+		io.to("order_" + order.order_id).emit('order_pickup_time', order);
 
 		res.status(200).json(order);
 	}
@@ -271,7 +326,7 @@ module.exports = {
 	updateOrderStatus,
 	getCompletedDeliveryOrders,
 	updateDeliveryOrderTimeline,
-	getUserByDeliveryOrderId
-
-
+	getUserByDeliveryOrderId,
+	updateOrderPickupTime,
+	getDeliveryOrdersByBusinessId
 };

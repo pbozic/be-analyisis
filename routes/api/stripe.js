@@ -20,7 +20,7 @@ router.post("/webhook", async (req, res) => {
                 },
                 status: "CUSTOMER_PAYMENT_SUCCESSFUL"
             });
-            io.to("orders_" + order.business_id).emit('order_status_change', order);
+            io.to("orders_" + order.business_id).emit('order_status_change__delivery', order);
             console.log('PaymentIntent was successful!');
         case 'payment_intent.payment_failed':
             paymentIntent = event.data.object;
@@ -31,7 +31,7 @@ router.post("/webhook", async (req, res) => {
                 },
                 status: "CUSTOMER_PAYMENT_FAILED"
             });
-            io.to("orders_" + order.business_id).emit('order_status_change', order);
+            io.to("orders_" + order.business_id).emit('order_status_change__delivery', order);
             console.log('PaymentIntent failed!');
         break;
         // ... handle other event types

@@ -174,7 +174,7 @@ async function completeOrder(req, res) {
 async function updateOrderStatus(req, res) {
 	try {
 		let order = await TaxiOrderDao.updateOrderStatus(req.body.order_id, req.body.status);
-		io.to("order_" + order.order_id).emit('order_status_change', order);
+		io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
 
 		res.status(200).json(order);
 	}
