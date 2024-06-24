@@ -1,7 +1,7 @@
 const DeliveryOrderDao = require("../dao/DeliveryOrder");
 const DeliveryDriverDao = require("../dao/DeliveryDriver");
 const DeliveryHelper = require('../lib/deliveryHelpers');
-const UsersDao = require('../dao/Users');
+const UsersDao = require('../dao/User');
 const { UserSockets, io } = require('../socket');
 const stripe = require("../lib/stripe");
 
