@@ -30,5 +30,7 @@ router.get("/me/verify/phone", UserController.requestSMSVerification);
 router.post("/me/verify/phone", joi(verifyPhoneSchema), UserController.verifyMe);
 router.post("/review", joi(reviewUserSchema), UserController.reviewUser);
 router.get("/me/payment-sheet", UserController.getPaymentSheetCredentials);
+router.post("/me/requestToAddFunds", UserController.requestToAddFundsToWallet);
+
 
 module.exports = router;

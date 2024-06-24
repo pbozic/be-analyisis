@@ -43,6 +43,8 @@ async function login(req, res) {
 				password: true,
 			},
 		});
+		console.log(user);
+		let user_id = user.user_id
 		if (!user) return res.status(400).json({ error: "Wrong email / password combination.." });
 		let correctPw = await bcrypt.compare(postData.password, user.password);
 		if (!correctPw) return res.status(400).json({ error: "Wrong email / password combination.." });
@@ -53,7 +55,7 @@ async function login(req, res) {
 						address: true,
 					},
 				},
-				driver: true,
+				driver: true
 			},
 		});
 		let payment_methods = await stripe.getPaymentMethods(user.stripe_customer_id);
@@ -112,6 +114,14 @@ async function register(req, res) {
 		
 		delete userObj["confirm_password"];
 		let user = await UserDao.createNewUser(userObj);
+		let wallet = await UserDao.createWallet(user.user_id);
+		user = UserDao.getUserById(user.user_id,
+			{
+				include: {
+					addresses: true
+				},
+			}
+		);
 		delete user["password"];
 		const access_token = generateAccessToken(user);
 		const refresh_token = generateRefreshToken(user);

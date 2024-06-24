@@ -106,6 +106,8 @@ model users {
   review_complete               Boolean           @default(true)
   one_signal_id                 String?
   stripe_customer_id            String?
+  wallet_balance                Float             @default(0)
+  transactions                  transactions[]  
 }
 
 model documents {
@@ -397,6 +399,22 @@ model menu_items {
   menu_category    menu_categories? @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id])
 
   @@unique([menu_item_id])
+}
+
+model transactions {
+  id            String   @id @default(uuid())
+  user_id        String   @db.Uuid
+  amount        Float
+  type          TRANSACTION_TYPE  // Enum for 'credit' or 'debit'
+  description   String?
+  createdAt     DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  user          users    @relation(fields: [user_id], references: [user_id])
+}
+
+enum TRANSACTION_TYPE {
+  DEBIT
+  CREDIT
 }
 
 enum USER_ROLES {

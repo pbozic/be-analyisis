@@ -7,6 +7,7 @@ const ReviewDao = require("../dao/Review");
 const AddressDao = require("../dao/Address");
 const SMS = require("../lib/SMS");
 const stripe = require("../lib/stripe");
+const { User } = require("@onesignal/node-onesignal");
 /**
  * GET /users
  * @tag Users
@@ -413,6 +414,19 @@ async function getPaymentSheetCredentials(req, res) {
 		res.status(400).json({ error: "Error obtaining payment sheet credentials", e });
 	}
 }
+async function requestToAddFundsToWallet(req, res) {
+	try {
+		const { amount, payment_method_id, return_url } = req.body;
+	  // Create a Payment Method to handle the transaction
+	  let paymentIntent = await stripe.createPaymentIntentForWallet(amount * 100, payment_method_id, req.user.stripe_customer_id, req.user.user_id, return_url);
+  
+	  res.status(200).json(paymentIntent);
+	} catch (error) {
+	  console.error('Error requesting to add funds to wallet:', error);
+
+	}
+}
+
 module.exports = {
 	listUsers,
 	me,
@@ -428,5 +442,6 @@ module.exports = {
 	setPrimaryAddress,
 	reviewUser,
 	oneSignalId,
-	getPaymentSheetCredentials
+	getPaymentSheetCredentials,
+	requestToAddFundsToWallet
 };

@@ -224,6 +224,84 @@ const createNewUser = async (user, hashPassword = false) => {
 		throw new Error(error.message || 'Failed to create new user.');
 	}
 };
+async function createWalletBalance(userId) { 
+	try {
+	  return await prisma.walletBalance.create({
+		data: {
+		  user: { connect: { user_id: userId } },
+		  balance: 0,
+		},
+	  });
+	} catch (error) {
+	  throw new Error(error.message || 'Failed to create wallet balance record.');
+	}
+  
+}
+async function addToWalletBalance (userId, amountToAdd) {
+	try {
+		await prisma.$transaction(async (transaction) => {
+			// Update wallet balance
+			await transaction.users.update({
+			  where: { user_id: userId },
+			  data: {
+				wallet_balance: {
+				  increment: amountToAdd,
+				},
+			  },
+			});
+	  
+			// Record transaction
+			await transaction.transactions.create({
+			  data: {
+				user: { connect: { user_id: userId } },
+				amount: amountToAdd,
+				type: 'CREDIT',
+				description: 'Added funds to wallet',
+			  },
+			});
+		  });
+		  console.log('Funds added to wallet successfully');
+	} catch (error) {
+	  console.error('Error adding to wallet balance:', error);
+	  throw error;
+	}
+  };
+
+async function removeWalletBalance(userId, amountToSubtract) {
+	try {
+		await prisma.$transaction(async (transaction) => {
+			// Check current balance
+			const user = await transaction.users.findUnique({ where: { user_idid: userId } });
+			if (user.walletBalance < amountToSubtract) {
+			  throw new Error('Insufficient funds');
+			}
+	  
+			// Update wallet balance
+			await transaction.user.update({
+			  where: { user_id: userId },
+			  data: {
+				wallet_balance: {
+				  decrement: amountToDeduct,
+				},
+			  },
+			});
+	  
+			// Record transaction
+			await transaction.transactions.create({
+			  data: {
+				user: { connect: { user_id: userId } },
+				amount: -amountToDeduct,
+				type: 'DEBIT',
+				description: 'Deducted funds from wallet',
+			  },
+			});
+		  });
+		  console.log('Funds deducted from wallet successfully');
+		} catch (error) {
+		  console.error('Error subtracting from wallet balance:', error);
+		  throw error;
+		}
+}
 
 module.exports = {
 	getUsers,
@@ -236,5 +314,8 @@ module.exports = {
 	updateTelephone,
 	updateUserType,
 	createNewUser,
-	getUserByResetToken
+	getUserByResetToken,
+	addToWalletBalance,
+	removeWalletBalance,
+	createWalletBalance
 };
