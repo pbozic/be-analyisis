@@ -58,6 +58,7 @@ model business {
   reviewable_id       String?           @db.Uuid
   reviewable          reviewable?       @relation(fields: [reviewable_id], references: [reviewable_id])
   stripe_account_id   String?
+  reservations        reservations[]
 }
 
 model business_users {
@@ -106,8 +107,12 @@ model users {
   review_complete               Boolean           @default(true)
   one_signal_id                 String?
   stripe_customer_id            String?
+<<<<<<< HEAD
   wallet_balance                Float             @default(0)
   transactions                  transactions[]  
+=======
+  reservations                  reservations[]
+>>>>>>> 724ec9c9b0093ae4132c55bdce6e156e94abb190
 }
 
 model documents {
@@ -401,6 +406,7 @@ model menu_items {
   @@unique([menu_item_id])
 }
 
+<<<<<<< HEAD
 model transactions {
   id            String   @id @default(uuid())
   user_id        String   @db.Uuid
@@ -415,6 +421,19 @@ model transactions {
 enum TRANSACTION_TYPE {
   DEBIT
   CREDIT
+=======
+model reservations {
+  reservation_id String   @id @default(uuid()) @db.Uuid
+  seats          Int
+  date           DateTime @db.Date
+  time           String
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  business_id    String   @db.Uuid
+  business       business @relation(fields: [business_id], references: [business_id])
+  user_id        String   @db.Uuid
+  user           users    @relation(fields: [user_id], references: [user_id])
+>>>>>>> 724ec9c9b0093ae4132c55bdce6e156e94abb190
 }
 
 enum USER_ROLES {
