@@ -2,6 +2,7 @@ var express = require("express");
 const router = express.Router();
 const DeliveryOrderDao = require("../../dao/DeliveryOrder");
 const { io } = require("../../socket");
+const { DELIVERY_ORDER_STATUS } = require("../../lib/constants");
 
 router.post("/webhook", async (req, res) => {
     const event = req.body;
@@ -18,10 +19,11 @@ router.post("/webhook", async (req, res) => {
                 payment: {
                     status: 'PAID',
                 },
-                status: "CUSTOMER_PAYMENT_SUCCESSFUL"
+                status: DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL
             });
             io.to("orders_" + order.business_id).emit('order_status_change__delivery', order);
             console.log('PaymentIntent was successful!');
+            break;
         case 'payment_intent.payment_failed':
             paymentIntent = event.data.object;
             order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
@@ -29,17 +31,17 @@ router.post("/webhook", async (req, res) => {
                 payment: {
                     status: 'UNPAID',
                 },
-                status: "CUSTOMER_PAYMENT_FAILED"
+                status: DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED
             });
             io.to("orders_" + order.business_id).emit('order_status_change__delivery', order);
             console.log('PaymentIntent failed!');
         break;
         // ... handle other event types
         default:
-            nsole.log(`Unhandled event type ${event.type}`);
+            console.log(`Unhandled event type ${event.type}`);
     }
     
-    response.json({received: true});
+    res.json({received: true});
 });
 
 module.exports = router;
