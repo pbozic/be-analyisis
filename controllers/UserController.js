@@ -54,7 +54,8 @@ async function me(req, res) {
 				addresses: true,
 			},
 		});
-
+		let paymentMethods = await stripe.getPaymentMethods(user.stripe_customer_id);
+		user.payment_methods = paymentMethods;
 		if (user) return res.status(200).json(user);
 
 		res.status(400).json({ error: "Error obtaining user information" });

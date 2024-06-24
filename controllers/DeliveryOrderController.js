@@ -1,8 +1,12 @@
 const DeliveryOrderDao = require("../dao/DeliveryOrder");
 const DeliveryDriverDao = require("../dao/DeliveryDriver");
 const DeliveryHelper = require('../lib/deliveryHelpers');
+const BusinessDao = require("../dao/Business");
+const UsersDao = require("../dao/User");
+
 const { UserSockets, io } = require('../socket');
 const stripe = require("../lib/stripe");
+const { DELIVERY_ORDER_STATUS } = require("../lib/constants");
 
 /**
  * GET /delivery/order/{orderId}
@@ -44,12 +48,22 @@ async function createOrder(req, res) {
 	try {
 		let orderData = {
 			...orderBody,
-			status: "PENDING",
+			status: DELIVERY_ORDER_STATUS.PENDING,
 			// user_id: req.user.user_id
 		};
 		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
-		
-		//DeliveryHelper.findDeliveryOrderDrivers(order); //here we do not need to auto notify the delivery drivers because of merchant preparation time
+
+		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
+		let user = await UsersDao.getUser(orderData.user_id);
+
+		let payment_intent = await stripe.createPaymentIntent(orderData.amount, orderData.payment_method, user.stripe_customer_id, business.stripe_account_id, order.order_id);
+		orderData.payment_intent_id = payment_intent.id;
+		order = await DeliveryOrderDao.updateOrder(order.order_id, {
+			payment_intent_id: payment_intent.id
+		});
+
+		//DeliveryHelper.findDeliveryOrderDrivers(order); here we do not need to notify delivery drivers yet, because of the merchant order preparation time
+
 		res.status(200).json(order);
 	}
 	catch (e) {
