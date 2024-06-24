@@ -80,7 +80,7 @@ async function createOrder(req, res) {
 		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
-		let user = await UsersDao.getUser(orderData.user_id);
+		let user = await UsersDao.getUserById(orderData.user_id);
 		let payment_intent;
 		if (order.payment.type == "CARD") {
 			payment_intent = await stripe.createPaymentIntentOnBehalf(orderData.amount, orderData.payment_method, user.stripe_customer_id, business.stripe_account_id, order.order_id);
