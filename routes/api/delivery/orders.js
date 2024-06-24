@@ -8,7 +8,7 @@ const joi = require("../../../middleware/joi");
 const DeliveryOrderController = require("../../../controllers/DeliveryOrderController");
 
 router.get("/order/:order_id", DeliveryOrderController.getOrder);
-
+router.get("/order/user/:order_id", DeliveryOrderController.getUserByDeliveryOrderId);
 router.post("/order", DeliveryOrderController.createOrder);
 
 router.post("/order/status", DeliveryOrderController.updateOrderStatus);

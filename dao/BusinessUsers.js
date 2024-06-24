@@ -148,6 +148,19 @@ async function addOperatingAddress(business_users_id, address_id) {
 	}
 }
 
+const updateBusinessUserOnlineStatus = async (business_users_id, online) => {
+	try {
+		return await prisma.business_users.update({
+			where: { business_users_id },
+			data: { online: online },
+		});
+	} catch (error) {
+		console.error("Error setting delivery driver's online status:", error);
+		throw new Error(error);
+	}
+};
+
+
 
 
 module.exports = {
@@ -160,5 +173,6 @@ module.exports = {
 	removeBusinessUser,
 	updateBusinessUser,
 	updateCompanyRole,
-	addOperatingAddress
+	addOperatingAddress,
+	updateBusinessUserOnlineStatus
 };

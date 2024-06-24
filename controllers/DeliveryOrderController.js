@@ -5,7 +5,7 @@ const { UserSockets, io } = require('../socket');
 const stripe = require("../lib/stripe");
 
 /**
- * GET /delivery/order/{orderId}
+ * GET /delivery/orders/order/{orderId}
  * @tag Delivery
  * @summary Get order details.
  * @description This fetches the order details using the given order id.
@@ -23,6 +23,31 @@ async function getOrder(req, res) {
 	catch (e) {
 		console.log(e);
 		res.status(500).json(e);
+	}
+}
+
+/**
+ * GET /delivery/orders/order/user/{order_id}
+ * @tag Delivery
+ * @summary Get order details.
+ * @description This fetches the order details using the given order id.
+ * @operationId getUserByDeliveryOrderId
+ * @pathParam {integer} order_id - The ID of the delivery order to retrieve the customer
+ * @response 200 - Successful operation. Returns order customer details in the response body.
+ * @responseContent {Order} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+async function getUserByDeliveryOrderId(req, res) {
+	const { order_id } = req.params
+	try {
+		const user = await DeliveryOrderDao.getUserByDeliveryOrderId(order_id);
+		if (user) {
+			res.json(user);
+		} else {
+			res.status(404).send('User not found for this order');
+		}
+	} catch (error) {
+		res.status(500).send('Failed to fetch user data');
 	}
 }
 
@@ -89,7 +114,7 @@ async function acceptOrder(req, res) {
 				}
 			}
 		});
-		stripe.confirmPaymentIntent(order.payment_intent_id);
+		// stripe.confirmPaymentIntent(order.payment_intent_id);
 		//TODO: how to handle multiple vehicles on driver
 		driver.vehicle = driver.vehicles[0];
 		order.driver = driver;
@@ -224,5 +249,8 @@ module.exports = {
 	completeOrder,
 	updateOrderStatus,
 	getCompletedDeliveryOrders,
-	updateDeliveryOrderTimeline
+	updateDeliveryOrderTimeline,
+	getUserByDeliveryOrderId
+
+
 };

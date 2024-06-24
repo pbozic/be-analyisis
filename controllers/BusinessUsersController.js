@@ -209,6 +209,29 @@ async function updateCompanyRole(req, res) {
     }
 }
 
+/**
+ * PATCH /business-users/online
+ * @tag BusinessUsers
+ * @summary Update the online status of a business user
+ * @description Updates the online status of a specific business user.
+ * @operationId updateBusinessUserOnlineStatus
+ * @pathParam {string} business_users_id - The ID of the business user
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Company role updated successfully
+ * @response 400 - Error updating company role
+ */
+async function updateBusinessUserOnlineStatus(req, res) {
+    try {
+        const { business_users_id, online  } = req.body;
+        const updatedBusinessUser = await BusinessUsersDao.updateBusinessUserOnlineStatus(business_users_id, online);
+        res.status(200).json(updatedBusinessUser);
+    } catch (error) {
+        console.error("Error updating online status:", error);
+        res.status(400).json({ error: "Error updating business user online status", detail: error.message });
+    }
+}
+
 module.exports = {
     updateCompanyRole,
     getAllBusinessUsersForBusinessByCompanyRole,
@@ -219,5 +242,6 @@ module.exports = {
     createBusinessUser,
     addOperatingAddress,
     removeBusinessUser,
+    updateBusinessUserOnlineStatus
 };
 
