@@ -44,7 +44,6 @@ async function login(req, res) {
 			},
 		});
 		console.log(user);
-		let user_id = user.user_id
 		if (!user) return res.status(400).json({ error: "Wrong email / password combination.." });
 		let correctPw = await bcrypt.compare(postData.password, user.password);
 		if (!correctPw) return res.status(400).json({ error: "Wrong email / password combination.." });
