@@ -23,6 +23,28 @@ async function getOrder(order_id, args) {
 	}
 }
 
+async function getUserByDeliveryOrderId(order_id) {
+	try {
+		const order = await prisma.delivery_orders.findUnique({
+			where: {
+				order_id: order_id
+			},
+			include: {
+				user: true
+			}
+		});
+
+		if (order && order.user) {
+			return order.user;
+		} else {
+			return null;
+		}
+	} catch (error) {
+		console.error("Error fetching user data from delivery order:", error);
+		throw error;
+	}
+}
+
 async function getOrdersByDeliveryDriverId(delivery_driver_id) {
 	try {
 		return await prisma.delivery_orders.findMany({
@@ -269,5 +291,6 @@ module.exports = {
 	updateOrderStatus,
 	completeOrder,
 	updateDeliveryOrderTimeline,
+	getUserByDeliveryOrderId,
 	updateOrder
 };
