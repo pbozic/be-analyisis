@@ -49,7 +49,7 @@ async function createOrder(req, res) {
 		};
 		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 		
-		DeliveryHelper.findDeliveryOrderDrivers(order);
+		//DeliveryHelper.findDeliveryOrderDrivers(order); //here we do not need to auto notify the delivery drivers because of merchant preparation time
 		res.status(200).json(order);
 	}
 	catch (e) {
