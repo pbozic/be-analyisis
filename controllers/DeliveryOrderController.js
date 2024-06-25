@@ -312,6 +312,34 @@ async function updateOrderPickupTime(req, res) {
 }
 
 /**
+ * POST /delivery/orders/order/delivery_time
+ * @tag Delivery
+ * @summary Update a delivery order's delivery time.
+ * @description Updates delivery time of the delivery order
+ * @operationId updateOrderDeliveryTime
+ * @bodyDescription Request body must include 'order_id' and 'delivery_time' to set the delivery time.
+ * @bodyContent {updateOrderDeliveryTimeRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the updated order in the response body.
+ * @responseContent {DeliveryOrder} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ */
+async function updateOrderDeliveryTime(req, res) {
+	const { order_id, delivery_time } = req.body
+	try {
+		let order = await DeliveryOrderDao.updateOrderDeliveryTime(order_id, delivery_time);
+		io.to("order_" + order.order_id).emit('order_delivery_time', order);
+
+		res.status(200).json(order);
+	}
+	catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+
+/**
  * POST /delivery/order/timeline
  * @tag Taxi
  * @summary Update a delivery order's timeline.
@@ -348,5 +376,6 @@ module.exports = {
 	updateDeliveryOrderTimeline,
 	getUserByDeliveryOrderId,
 	updateOrderPickupTime,
-	getDeliveryOrdersByBusinessId
+	getDeliveryOrdersByBusinessId,
+	updateOrderDeliveryTime
 };
