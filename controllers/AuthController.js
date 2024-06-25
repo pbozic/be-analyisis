@@ -562,7 +562,7 @@ async function registerMerchantService(req, res) {
 		}
 		let stripeAccount = await stripe.createAccount(business);
 		await BusinessDao.updateBusiness(business.business_id, { stripe_account_id: stripeAccount.id });
-		let accountLink = await stripe.createAccountLink(stripeAccount.id);
+		let accountLink = await stripe.getAccountLinks(stripeAccount.id);
 		// send email to business user with account link
 		EmailHelper.sendEmailTemplate("Stripe Onboarding", "stripeOnboarding", business.email, false,  {
             name: business.name,
