@@ -190,12 +190,10 @@ async function updateOrderPickupTime(order_id, pickup_time) {
 		if (!order) {
 			throw new Error('Order not found');
 		}
-
 		// Merge new pickup_time with existing details
 		const updatedDetails = {
 			...order.details,
 			ready_for_pickup_at: pickup_time,
-			customer_expected_delivery_at: null,
 		};
 
 		// Update the order with merged details and new pickup_time for ready_for_pickup_at

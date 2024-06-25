@@ -19,6 +19,7 @@ const EmailHelper = require("../lib/emailSender");
 const { S3 } = require("aws-sdk");
 const fs = require('fs');
 const stripe = require("../lib/stripe");
+const MenuDao = require('../dao/Menu');
 require('dotenv').config();
 /**
  * POST /auth/login
@@ -574,13 +575,16 @@ async function registerMerchantService(req, res) {
 			deliveryAddress = await BusinessDao.addDeliveryAddress(business.business_id, req.body.addresses.delivery);
 		}
 
+		const menu = await MenuDao.createMenu(business.business_id);
+
 		res.status(201).json({
 			message: "Merchant service business registered successfully",
 			business,
 			businessUsers,
 			finances,
 			businessAddress,
-			deliveryAddress
+			deliveryAddress,
+			menu
 		});
 	} catch (error) {
 		console.error("Error registering merchant service:", error);
