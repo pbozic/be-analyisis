@@ -8,7 +8,7 @@ const UsersDao = require("../dao/User");
 const { UserSockets, io } = require('../socket');
 const stripe = require("../lib/stripe");
 const { DELIVERY_ORDER_STATUS } = require("../lib/constants");
-
+const fs = require('fs');
 /**
  * GET /delivery/orders/order/{orderId}
  * @tag Delivery
@@ -70,26 +70,26 @@ async function getUserByDeliveryOrderId(req, res) {
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function createOrder(req, res) {
-	const { orderBody , user_id } = req.body
+	const { orderBody , user_id, return_url } = req.body
 	try {
 		let orderData = {
 			...orderBody,
-			status: DELIVERY_ORDER_STATUS.PENDING,
-			// user_id: req.user.user_id
+			status: DELIVERY_ORDER_STATUS.PENDING
 		};
+		let user_id = req.user.user_id
 		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
-		let user = await UsersDao.getUserById(orderData.user_id);
+		let user = await UsersDao.getUserById(user_id);
 		let payment_intent;
+		console.log("stripeCustomer", user.stripe_customer_id)
 		if (order.payment.type == "CARD") {
-			payment_intent = await stripe.createPaymentIntentOnBehalf(orderData.amount, orderData.payment_method, user.stripe_customer_id, business.stripe_account_id, order.order_id);
+			payment_intent = await stripe.createPaymentIntentOnBehalf(orderData.details.total_price, orderData.payment.payment_method_id, user.stripe_customer_id, business.stripe_account_id, order.order_id, return_url);
 			orderData.payment_intent_id = payment_intent.id;
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				payment_intent_id: payment_intent.id
 			});
 		}
-		io.to("orders_" + order.business_id).emit('new_order', order);
 
 		//DeliveryHelper.findDeliveryOrderDrivers(order); here we do not need to notify delivery drivers yet, because of the merchant order preparation time
 
@@ -136,7 +136,7 @@ async function acceptOrder(req, res) {
 			}
 		});
 		if (order.payment.type === "CARD") {
-			await stripe.confirmPaymentIntent(order.payment_intent_id);
+			const paymentIntent = await stripe.paymentIntents.capture(order.payment_intent_id);
 			await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING);
 			io.to("orders_" + order.business_id).emit('order_status_change__delivery', order);
 		}

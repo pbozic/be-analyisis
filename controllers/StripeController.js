@@ -1,7 +1,7 @@
 const e = require('cors');
 const DeliveryOrderDao = require('../dao/DeliveryOrder');
 const UsersDao = require('../dao/User');
-
+const {io} = require('../socket');
 async function handlePaymentIntentSuccess(paymentIntent) {
     switch (paymentIntent.metadata.type) { 
         case 'wallet_topup':
@@ -13,24 +13,26 @@ async function handlePaymentIntentSuccess(paymentIntent) {
             let order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
             order = await DeliveryOrderDao.updateOrder(order.order_id, {
                 payment: {
+                    ...order.payment,
                     status: 'PAID',
                 },
                 status: "CUSTOMER_PAYMENT_SUCCESSFUL"
             });
-            io.to("orders_" + order.business_id).emit('order_status_change_delivery', order);
+            io.to("orders_" + order.business_id).emit('new_order', order);
             console.log('PaymentIntent was successful!');
             break;
     }
    
 }
 async function handlePaymentIntentFaliure(paymentIntent) {
-    switch (paymentIntent.type) { 
+    switch (paymentIntent.metadata.type) { 
         case 'wallet_topup':
             break;
         case 'order_payment':
-            order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
+            let order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
             order = await DeliveryOrderDao.updateOrder(order.order_id, {
                 payment: {
+                    ...order.payment,
                     status: 'UNPAID',
                 },
                 status: "CUSTOMER_PAYMENT_FAILED"
@@ -46,7 +48,6 @@ async function handleWebhook(req, res) {
     const event = req.body;
     let paymentIntent;
     let order;
-    console.log("event", event);
     // Handle the event
     switch (event.type) {
         case 'payment_intent.succeeded':
@@ -55,6 +56,7 @@ async function handleWebhook(req, res) {
             break;
         case 'payment_intent.payment_failed':
             paymentIntent = event.data.object;
+            console.log("FAIL", paymentIntent)
             handlePaymentIntentFaliure(paymentIntent);
             break;
         // ... handle other event types

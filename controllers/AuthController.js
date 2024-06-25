@@ -57,7 +57,10 @@ async function login(req, res) {
 				driver: true
 			},
 		});
-		let payment_methods = await stripe.getPaymentMethods(user.stripe_customer_id);
+		let payment_methods = []
+		if (user.stripe_customer_id) {
+			payment_methods = await stripe.getPaymentMethods(user.stripe_customer_id);
+		}
 		delete user["password"];
 		const access_token = generateAccessToken(user);
 		const refresh_token = generateRefreshToken(user);
