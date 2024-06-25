@@ -89,6 +89,22 @@ async function createOrder(req, res) {
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				payment_intent_id: payment_intent.id
 			});
+		} else if (order.payment.type == "WALLET") {
+			// handle wallet payment
+			if (user.wallet_balance < orderData.details.total_price) { 
+				throw new Error("Insufficient funds")
+			}
+			await UsersDao.removeWalletBalance(user_id, orderData.details.total_price);
+			order = await DeliveryOrderDao.updateOrder(order.order_id, {
+				payment: {
+					...order.payment,
+					status: 'PAID',
+				},
+				status: "CUSTOMER_PAYMENT_SUCCESSFUL"
+			});
+			io.to("orders_" + order.business_id).emit('new_order', order);
+		} else if (order.payment.type == "CASH") {
+			io.to("orders_" + order.business_id).emit('new_order', order);
 		}
 
 		//DeliveryHelper.findDeliveryOrderDrivers(order); here we do not need to notify delivery drivers yet, because of the merchant order preparation time
