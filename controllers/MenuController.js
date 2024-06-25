@@ -108,7 +108,8 @@ async function setActiveMenu(req, res) {
  * @response 400 - Error creating new menu category
  */
 async function createMenuCategory(req, res) {
-	const { menu_id, data} = req.body;
+	const { menu_id, data } = req.body;
+	console.log(menu_id)
 	try {
 		const menuCategory = await MenuCategoryDao.createMenuCategory(menu_id, data);
 		res.status(201).json(menuCategory);
