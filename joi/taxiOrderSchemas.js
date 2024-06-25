@@ -11,6 +11,8 @@ const createOrderSchema = Joi.object({
 	route: Joi.array().items(addressSchema).required(),
 	pickup_location: addressSchema,
 	delivery_location: addressSchema,
+	estimates: Joi.object(),
+	payment: Joi.object()
 });
 
 module.exports = {

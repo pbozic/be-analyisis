@@ -120,7 +120,7 @@ async function acceptOrder(req, res) {
 		let userSocket = UserSockets.get(order.user_id);
 		console.log("order accepted" ,order)
 		if (userSocket) {
-			io.to("order_" + order.order_id).emit('order_accepted', order);
+			io.to("order_" + order.order_id).emit('order_accepted__taxi', order);
 			io.emit('driver_unavailable', order.driver_id);
 		}
 		res.status(200).json(order);
@@ -330,7 +330,7 @@ async function updateTaxiOrderPayment(req, res) {
 
 	try {
 		let order = await TaxiOrderDao.updateTaxiOrderPayment(order_id, payment);
-		io.to("order_" + order.order_id).emit('order_payment_change', order);
+		io.to("order_" + order.order_id).emit('order_payment_change__taxi', order);
 		res.status(200).json(order);
 	}
 	catch (e) {
