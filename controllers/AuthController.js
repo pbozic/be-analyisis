@@ -286,16 +286,6 @@ async function registerTaxiService(req, res) {
 				driverInfo.user.data.password = "lalaland1"
 				const newUser = await UserDao.createNewUser(driverInfo.user.data, true);
 
-				//Handle addresses of the driver
-				let addresses = []
-				if (driverInfo.user.addresses) {
-					for (const addressInfo of driverInfo.user.addresses) {
-						const address = await AddressDao.addAddress(addressInfo)
-						await AddressDao.addUserAddress(driver.driver_id, address.address_id);
-						addresses.push(address);
-					}
-				}
-
 				// Handle user documents
 				if (driverInfo.user.documents) {
 					for (const doc of driverInfo.user.documents) {
@@ -327,6 +317,16 @@ async function registerTaxiService(req, res) {
 							S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]}, file);
 						}
 						await DocumentDao.linkDocumentToDriver(document.document_id, driver.driver_id);
+					}
+				}
+
+				//Handle addresses of the driver
+				let addresses = []
+				if (driverInfo.user.addresses) {
+					for (const addressInfo of driverInfo.user.addresses) {
+						const address = await AddressDao.addAddress(addressInfo)
+						await AddressDao.addUserAddress(driver.driver_id, address.address_id);
+						addresses.push(address);
 					}
 				}
 
