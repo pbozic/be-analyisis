@@ -235,7 +235,6 @@ async function createWalletBalance(userId) {
 	} catch (error) {
 	  throw new Error(error.message || 'Failed to create wallet balance record.');
 	}
-  
 }
 async function addToWalletBalance (userId, amountToAdd) {
 	try {

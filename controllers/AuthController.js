@@ -117,7 +117,6 @@ async function register(req, res) {
 		
 		delete userObj["confirm_password"];
 		let user = await UserDao.createNewUser(userObj);
-		let wallet = await UserDao.createWallet(user.user_id);
 		user = UserDao.getUserById(user.user_id,
 			{
 				include: {
