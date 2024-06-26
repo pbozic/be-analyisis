@@ -1,5 +1,17 @@
 const prisma = require("../prisma/prisma");
 const crypto = require("crypto");
+async function getPasswordToken(token) {
+	try {
+		return prisma.tokens.findFirst({
+			where: {
+				token,
+				type: "PASSWORD_RESET",
+			},
+		});
+	} catch (e) {
+		return new Error(e);
+	}
+}
 async function getActiveSMSToken(user) {
 	try {
 		return prisma.tokens.findFirst({
@@ -117,4 +129,5 @@ module.exports = {
 	savePasswordResetToken,
 	generateSMSVerificationToken,
 	generatePaswordResetToken,
+	getPasswordToken
 };

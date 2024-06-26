@@ -117,7 +117,6 @@ async function register(req, res) {
 		
 		delete userObj["confirm_password"];
 		let user = await UserDao.createNewUser(userObj);
-		let wallet = await UserDao.createWallet(user.user_id);
 		user = UserDao.getUserById(user.user_id,
 			{
 				include: {
@@ -223,7 +222,7 @@ async function passwordResetForm(req, res) {
 async function passowrdReset(req, res) {
 	const token = req.params.token;
 	const password = req.body.password;
-	const confirmPassword = req.body['confirm-password'];
+	const confirmPassword = req.body['confirm_password'];
 	const passwordPattern = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/;
 	try {
 		let user = await UserDao.getUserByResetToken(token);
@@ -231,13 +230,14 @@ async function passowrdReset(req, res) {
 			return res.status(400).send("Invalid or expired token");
 		}
 		if (!passwordPattern.test(password)) {
-			return res.render('reset-password-form', { token, error: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number' });
+			return res.render('resetPasswordForm', { token, error: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number' });
 		} else if (password !== confirmPassword) {
-			return res.render('reset-password-form', { token, error: 'Passwords do not match' });
+			return res.render('resetPasswordForm', { token, error: 'Passwords do not match' });
 		}
 		let hash = await bcrypt.hash(password, Number(process.env.BCRYPT_SALT_ROUNDS));
 		await UserDao.updateUserPassword(user.user_id, hash);
-		await TokenDao.updateToken(token, { active: false });
+		let tokenObj = await TokenDao.getPasswordToken(token);
+		await TokenDao.updateToken(tokenObj.token_id, { active: false });
 		res.status(200).send("Password reset successfully");
 	}
 	catch (e) {
@@ -576,7 +576,6 @@ async function registerMerchantService(req, res) {
             name: business.name,
             title: "Stripe Onboarding",
             onboardLink: accountLink.url
-
         });
 		let finances = {};
 		if (req.body.finances) {
@@ -595,6 +594,8 @@ async function registerMerchantService(req, res) {
 		}
 
 		const menu = await MenuDao.createMenu(business.business_id);
+
+		console.log("ACCOUNT STRIPE ONBOARDING LINK", accountLink.url)
 
 		res.status(201).json({
 			message: "Merchant service business registered successfully",
