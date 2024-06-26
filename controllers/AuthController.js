@@ -576,7 +576,6 @@ async function registerMerchantService(req, res) {
             name: business.name,
             title: "Stripe Onboarding",
             onboardLink: accountLink.url
-
         });
 		let finances = {};
 		if (req.body.finances) {
@@ -595,6 +594,8 @@ async function registerMerchantService(req, res) {
 		}
 
 		const menu = await MenuDao.createMenu(business.business_id);
+
+		console.log("ACCOUNT STRIPE ONBOARDING LINK", accountLink.url)
 
 		res.status(201).json({
 			message: "Merchant service business registered successfully",
