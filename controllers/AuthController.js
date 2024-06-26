@@ -117,7 +117,7 @@ async function register(req, res) {
 		
 		delete userObj["confirm_password"];
 		let user = await UserDao.createNewUser(userObj);
-		user = UserDao.getUserById(user.user_id,
+		user = await UserDao.getUserById(user.user_id,
 			{
 				include: {
 					addresses: true
@@ -127,7 +127,7 @@ async function register(req, res) {
 		delete user["password"];
 		const access_token = generateAccessToken(user);
 		const refresh_token = generateRefreshToken(user);
-		// todo: send phone verification
+
 		user = {
 			...user,
 			access_token,
