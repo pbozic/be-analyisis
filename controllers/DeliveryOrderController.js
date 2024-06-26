@@ -94,7 +94,7 @@ async function createOrder(req, res) {
 			if (user.wallet_balance < orderData.details.total_price) { 
 				throw new Error("Insufficient funds")
 			}
-			await UsersDao.removeWalletBalance(user_id, orderData.details.total_price);
+			await UsersDao.removeWalletBalance(user_id, orderData.details.total_price, order.order_id);
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				payment: {
 					...order.payment,
@@ -152,8 +152,7 @@ async function acceptOrder(req, res) {
 			}
 		});
 		if (order.payment.type === "CARD") {
-			const paymentIntent = await stripe.paymentIntents.capture(order.payment_intent_id);
-			await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING);
+			const paymentIntent = await stripe.client.paymentIntents.capture(order.payment_intent_id);
 			io.to("orders_" + order.business_id).emit('order_status_change__delivery', order);
 		}
 		//TODO: how to handle multiple vehicles on driver -> check which vehicle has its field active, that's it, one active vehicle per delivery driver

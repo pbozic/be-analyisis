@@ -342,6 +342,7 @@ model delivery_orders {
   business_id          String?               @db.Uuid
   business             business?             @relation(fields: [business_id], references: [business_id])
   payment_intent_id    String?
+  transactions        transactions[]
 }
 
 model delivery_order_sent {
@@ -411,6 +412,8 @@ model transactions {
   description   String?
   createdAt     DateTime @default(now()) @db.Timestamptz(6)
   updatedAt     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  delivery_order_id      String?  @db.Uuid
+  order         delivery_orders? @relation(fields: [delivery_order_id], references: [order_id])
   user          users    @relation(fields: [user_id], references: [user_id])
 }
 
