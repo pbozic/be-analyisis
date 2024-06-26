@@ -108,7 +108,7 @@ model users {
   one_signal_id                 String?
   stripe_customer_id            String?
   wallet_balance                Float             @default(0)
-  transactions                  transactions[]  
+  transactions                  transactions[]
   reservations                  reservations[]
 }
 
@@ -131,6 +131,8 @@ model documents {
   user               users?            @relation(fields: [user_id], references: [user_id])
   vehicle_id         String?           @db.Uuid
   vehicles           vehicles?         @relation(fields: [vehicle_id], references: [vehicle_id])
+  menu_item_id       String?           @db.Uuid
+  menu_items         menu_items?       @relation(fields: [menu_item_id], references: [menu_item_id])
 }
 
 model files {
@@ -342,7 +344,7 @@ model delivery_orders {
   business_id          String?               @db.Uuid
   business             business?             @relation(fields: [business_id], references: [business_id])
   payment_intent_id    String?
-  transactions        transactions[]
+  transactions         transactions[]
 }
 
 model delivery_order_sent {
@@ -400,21 +402,22 @@ model menu_items {
   business_id      String           @db.Uuid
   menu_category_id String?          @db.Uuid
   menu_category    menu_categories? @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id])
+  documents        documents[]
 
   @@unique([menu_item_id])
 }
 
 model transactions {
-  id            String   @id @default(uuid())
-  user_id        String   @db.Uuid
-  amount        Float
-  type          TRANSACTION_TYPE  // Enum for 'credit' or 'debit'
-  description   String?
-  createdAt     DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
-  delivery_order_id      String?  @db.Uuid
-  order         delivery_orders? @relation(fields: [delivery_order_id], references: [order_id])
-  user          users    @relation(fields: [user_id], references: [user_id])
+  id                String           @id @default(uuid())
+  user_id           String           @db.Uuid
+  amount            Float
+  type              TRANSACTION_TYPE // Enum for 'credit' or 'debit'
+  description       String?
+  createdAt         DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
+  delivery_order_id String?          @db.Uuid
+  order             delivery_orders? @relation(fields: [delivery_order_id], references: [order_id])
+  user              users            @relation(fields: [user_id], references: [user_id])
 }
 
 enum TRANSACTION_TYPE {
@@ -423,16 +426,18 @@ enum TRANSACTION_TYPE {
 }
 
 model reservations {
-  reservation_id String   @id @default(uuid()) @db.Uuid
+  reservation_id String             @id @default(uuid()) @db.Uuid
   seats          Int
-  date           DateTime @db.Date
+  date           DateTime           @db.Date
   time           String
-  created_at     DateTime @default(now()) @db.Timestamptz(6)
-  updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
-  business_id    String   @db.Uuid
-  business       business @relation(fields: [business_id], references: [business_id])
-  user_id        String   @db.Uuid
-  user           users    @relation(fields: [user_id], references: [user_id])
+  created_at     DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime           @default(now()) @updatedAt @db.Timestamptz(6)
+  business_id    String             @db.Uuid
+  business       business           @relation(fields: [business_id], references: [business_id])
+  user_id        String             @db.Uuid
+  user           users              @relation(fields: [user_id], references: [user_id])
+  status         RESERVATION_STATUS @default(PENDING)
+  table          Int?
 }
 
 enum USER_ROLES {
@@ -495,6 +500,9 @@ enum DOCUMENT_TYPE {
   OPERATING_PERMIT
   HACCP_CERTIFICATION
   BUSINESS_LICENSE
+
+  // MENU_ITEM
+  MENU_ITEM_IMAGE
 }
 
 enum TAXI_ORDER_STATUS {
@@ -563,4 +571,13 @@ enum COMPANY_ROLE {
   MANAGER
   REPRESENTATIVE_OF_SALES
   HEAD_OF_PROCUREMENT
+}
+
+enum RESERVATION_STATUS {
+  PENDING
+  TABLE_RESERVATION_ACCEPTED
+  TABLE_RESERVATION_REJECTED
+  TABLE_RESERVATION_CANCELED
+  TABLE_RESERVATION_COMPLETED
+  TABLE_RESERVATION_EXPIRED
 }

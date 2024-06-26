@@ -59,6 +59,22 @@ const updateReservationStatus = async (reservation_id, status) => {
 	}
 };
 
+const addTableNumber = async (reservation_id, table) => {
+	try {
+		return await prisma.reservations.update({
+			where: {
+				reservation_id: reservation_id,
+			},
+			data: {
+				table: table,
+			},
+		});
+	} catch (error) {
+		console.error("Error updating reservation table number:", error);
+		throw new Error(error);
+	}
+};
+
 const deleteReservation = async (reservation_id) => {
 	try {
 		return await prisma.reservations.delete({
@@ -78,4 +94,5 @@ module.exports = {
 	createReservation,
 	updateReservationStatus,
 	deleteReservation,
+	addTableNumber
 };

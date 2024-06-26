@@ -1,5 +1,6 @@
 const ReservationDao = require("../dao/Reservation");
 const { UserSockets, io } = require('../socket');
+const prisma = require("../prisma/prisma");
 
 /**
  * GET /reservations
@@ -95,17 +96,18 @@ async function getReservationsByBusinessId(req, res) {
  * @response 400 - Error creating reservation
  */
 async function createReservation(req, res) {
+	const { reservation, user_id } = req.body
 	try {
 		const reservationData = {
-			...req.body,
-			user_id: req.user.user_id,
+			...reservation,
+			user_id: user_id,
 		};
 		const newReservation = await ReservationDao.createReservation(reservationData);
 
 		// Get all business users associated with the business
 		const businessUsers = await prisma.business_users.findMany({
 			where: {
-				business_id: req.body.business_id,
+				business_id: reservation.business_id
 			},
 			include: {
 				users: true,
@@ -116,7 +118,7 @@ async function createReservation(req, res) {
 		businessUsers.forEach(businessUser => {
 			const userSocket = UserSockets.get(businessUser.user_id);
 			if (userSocket) {
-				io.to("reservations_" + req.body.business_id).emit('new_reservation', newReservation);
+				io.to("reservations_" + reservation.business_id).emit('new_reservation', newReservation);
 			}
 		});
 
@@ -124,6 +126,36 @@ async function createReservation(req, res) {
 	} catch (error) {
 		console.error("Error creating new reservation:", error);
 		res.status(400).json({ error: "Error creating new reservation", detail: error.message });
+	}
+}
+
+/**
+ * POST /reservations/table
+ * @tag Reservations
+ * @summary Update table number
+ * @description Updates the table number of a specific reservation.
+ * @operationId addTableNumber
+ * @pathParam {string} reservationId - The ID of the reservation to update
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Reservation table updated successfully
+ * @responseContent {Reservation} 200.application/json
+ * @response 400 - Error updating reservation status
+ */
+async function addTableNumber(req, res) {
+	try {
+		const updatedReservation = await ReservationDao.addTableNumber(req.body.reservation_id, req.body.table);
+
+		// Notify the user about the reservation table number
+		const userSocket = UserSockets.get(updatedReservation.user_id);
+		if (userSocket) {
+			io.to("reservation_" + updatedReservation.reservation_id).emit('added_table_number', updatedReservation);
+		}
+
+		res.status(200).json(updatedReservation);
+	} catch (error) {
+		console.error("Error updating reservation table number:", error);
+		res.status(400).json({ error: "Error updating reservation table number", detail: error.message });
 	}
 }
 
@@ -185,4 +217,5 @@ module.exports = {
 	createReservation,
 	updateReservationStatus,
 	deleteReservation,
+	addTableNumber
 };

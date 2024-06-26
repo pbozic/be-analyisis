@@ -117,7 +117,6 @@ async function register(req, res) {
 		
 		delete userObj["confirm_password"];
 		let user = await UserDao.createNewUser(userObj);
-		let wallet = await UserDao.createWallet(user.user_id);
 		user = UserDao.getUserById(user.user_id,
 			{
 				include: {
@@ -259,7 +258,7 @@ async function passowrdReset(req, res) {
  * @response 400 - Error registering taxi service
  */
 async function registerTaxiService(req, res) {
-	fs.writeFileSync('taxi-service.json', JSON.stringify(req.body, null, 2));
+	// fs.writeFileSync('taxi-service.json', JSON.stringify(req.body, null, 2));
 	try {
 		const business = await BusinessDao.createNewBusiness(req.body.business);
 		
@@ -322,10 +321,11 @@ async function registerTaxiService(req, res) {
 
 				//Handle addresses of the driver
 				let addresses = []
+				console.log(driverInfo.user.addresses);
 				if (driverInfo.user.addresses) {
 					for (const addressInfo of driverInfo.user.addresses) {
 						const address = await AddressDao.addAddress(addressInfo)
-						await AddressDao.addUserAddress(driver.driver_id, address.address_id);
+						await AddressDao.addUserAddress(newUser.user_id, address.address_id);
 						addresses.push(address);
 					}
 				}
