@@ -108,7 +108,7 @@ model users {
   one_signal_id                 String?
   stripe_customer_id            String?
   wallet_balance                Float             @default(0)
-  transactions                  transactions[]  
+  transactions                  transactions[]
   reservations                  reservations[]
 }
 
@@ -342,7 +342,7 @@ model delivery_orders {
   business_id          String?               @db.Uuid
   business             business?             @relation(fields: [business_id], references: [business_id])
   payment_intent_id    String?
-  transactions        transactions[]
+  transactions         transactions[]
 }
 
 model delivery_order_sent {
@@ -405,16 +405,16 @@ model menu_items {
 }
 
 model transactions {
-  id            String   @id @default(uuid())
-  user_id        String   @db.Uuid
-  amount        Float
-  type          TRANSACTION_TYPE  // Enum for 'credit' or 'debit'
-  description   String?
-  createdAt     DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
-  delivery_order_id      String?  @db.Uuid
-  order         delivery_orders? @relation(fields: [delivery_order_id], references: [order_id])
-  user          users    @relation(fields: [user_id], references: [user_id])
+  id                String           @id @default(uuid())
+  user_id           String           @db.Uuid
+  amount            Float
+  type              TRANSACTION_TYPE // Enum for 'credit' or 'debit'
+  description       String?
+  createdAt         DateTime         @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
+  delivery_order_id String?          @db.Uuid
+  order             delivery_orders? @relation(fields: [delivery_order_id], references: [order_id])
+  user              users            @relation(fields: [user_id], references: [user_id])
 }
 
 enum TRANSACTION_TYPE {
