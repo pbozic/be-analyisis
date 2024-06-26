@@ -116,7 +116,7 @@ async function createReservation(req, res) {
 		businessUsers.forEach(businessUser => {
 			const userSocket = UserSockets.get(businessUser.user_id);
 			if (userSocket) {
-				io.to("reservation_" + newReservation.reservation_id).emit('new_reservation', newReservation);
+				io.to("reservations_" + req.body.business_id).emit('new_reservation', newReservation);
 			}
 		});
 

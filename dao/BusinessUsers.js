@@ -89,13 +89,15 @@ const createBusinessUser = async (userData, business_id) => {
 			throw new Error("Failed to create user for new driver");
 		}
 
-		return await prisma.business_users.create({
+		const businessUser = await prisma.business_users.create({
 			data: {
 				business_id,
 				user_id: newUser.user_id,
 				company_role: userData.company_role,
 			}
 		});
+
+		return { newUser, businessUser };
 	} catch (error) {
 		console.error("Error creating a business user:", error);
 		throw new Error(error);

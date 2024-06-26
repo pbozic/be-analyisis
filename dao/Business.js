@@ -369,18 +369,27 @@ const removeParentBusiness = async (business_id) => {
 
 const addBusinessAddress = async (business_id, addressData) => {
 	try {
-		const newAddress = await prisma.addresses.create({
-			data: addressData
+		// Use the upsert method to handle address creation or retrieval
+		const addressToUse = await prisma.addresses.upsert({
+			where: {
+				uniqueAddressIdentifier: {
+					address: addressData.address,
+					latitude: addressData.latitude,
+					longitude: addressData.longitude,
+				},
+			},
+			update: addressData,
+			create: addressData,
 		});
 
+		// Update the business with the address
 		return await prisma.business.update({
 			where: { business_id },
 			data: {
 				address: {
 					connect: {
-						address_id: newAddress.address_id
+						address_id: addressToUse.address_id
 					}
-				
 				}
 			}
 		});
@@ -392,13 +401,29 @@ const addBusinessAddress = async (business_id, addressData) => {
 
 const addDeliveryAddress = async (business_id, addressData) => {
 	try {
-		const newAddress = await prisma.addresses.create({
-			data: addressData
+		// Use the upsert method to handle address creation or retrieval
+		const addressToUse = await prisma.addresses.upsert({
+			where: {
+				uniqueAddressIdentifier: {
+					address: addressData.address,
+					latitude: addressData.latitude,
+					longitude: addressData.longitude,
+				},
+			},
+			update: addressData,
+			create: addressData,
 		});
 
+		// Update the business with the delivery address
 		return await prisma.business.update({
 			where: { business_id },
-			data: { delivery_address_id: newAddress.address_id }
+			data: {
+				delivery_address: {
+					connect: {
+						address_id: addressToUse.address_id
+					}
+				}
+			}
 		});
 	} catch (error) {
 		console.error("Error adding delivery address:", error);

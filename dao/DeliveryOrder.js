@@ -190,12 +190,45 @@ async function updateOrderPickupTime(order_id, pickup_time) {
 		if (!order) {
 			throw new Error('Order not found');
 		}
-
 		// Merge new pickup_time with existing details
 		const updatedDetails = {
 			...order.details,
 			ready_for_pickup_at: pickup_time,
-			customer_expected_delivery_at: null,
+		};
+
+		// Update the order with merged details and new pickup_time for ready_for_pickup_at
+		return await prisma.delivery_orders.update({
+			where: {
+				order_id
+			},
+			data: {
+				details: updatedDetails,
+			}
+		});
+	} catch (e) {
+		throw new Error(e.message);
+	}
+}
+
+async function updateOrderDeliveryTime(order_id, delivery_time) {
+	try {
+		// Retrieve the current details
+		const order = await prisma.delivery_orders.findUnique({
+			where: {
+				order_id
+			},
+			select: {
+				details: true
+			}
+		});
+
+		if (!order) {
+			throw new Error('Order not found');
+		}
+		// Merge new pickup_time with existing details
+		const updatedDetails = {
+			...order.details,
+			customer_expected_delivery_at: delivery_time,
 		};
 
 		// Update the order with merged details and new pickup_time for ready_for_pickup_at
@@ -330,5 +363,6 @@ module.exports = {
 	updateDeliveryOrderTimeline,
 	getUserByDeliveryOrderId,
 	updateOrder,
-	updateOrderPickupTime
+	updateOrderPickupTime,
+	updateOrderDeliveryTime
 };

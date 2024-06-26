@@ -19,6 +19,7 @@ const EmailHelper = require("../lib/emailSender");
 const { S3 } = require("aws-sdk");
 const fs = require('fs');
 const stripe = require("../lib/stripe");
+const MenuDao = require('../dao/Menu');
 require('dotenv').config();
 /**
  * POST /auth/login
@@ -278,24 +279,23 @@ async function registerTaxiService(req, res) {
 			}
 		}
 
-		let finances = {};
-		if (req.body.finances) {
-			finances = await FinancesDao.addFinances(req.body.finances);
-			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
-		}
-
-		let businessAddress = {}
-		if (req.body.addresses) {
-			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
-		}
-
 		let drivers = [];
 		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
 			for (const driverInfo of req.body.drivers) {
 
-
 				driverInfo.user.data.password = "lalaland1"
 				const newUser = await UserDao.createNewUser(driverInfo.user.data, true);
+
+				//Handle addresses of the driver
+				let addresses = []
+				if (driverInfo.user.addresses) {
+					for (const addressInfo of driverInfo.user.addresses) {
+						const address = await AddressDao.addAddress(addressInfo)
+						await AddressDao.addUserAddress(driver.driver_id, address.address_id);
+						addresses.push(address);
+					}
+				}
+
 				// Handle user documents
 				if (driverInfo.user.documents) {
 					for (const doc of driverInfo.user.documents) {
@@ -353,18 +353,19 @@ async function registerTaxiService(req, res) {
 					}
 				}
 
-				let addresses = []
-				// if (driverInfo.user.addresses) {
-				// 	for (const addressInfo of driverInfo.user.addresses) {
-				// 		const address = await AddressDao.addAddress(addressInfo)
-				// 		await AddressDao.addUserAddress(driver.driver_id, address.address_id);
-				// 		addresses.push(address);
-				// 	}
-				// }
-
-
 				drivers.push({ driver, vehicles, addresses });
 			}
+		}
+
+		let finances = {};
+		if (req.body.finances) {
+			finances = await FinancesDao.addFinances(req.body.finances);
+			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
+		}
+
+		let businessAddress = {}
+		if (req.body.addresses) {
+			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
 		}
 
 		res.status(201).json({
@@ -413,22 +414,22 @@ async function registerDeliveryService(req, res) {
 			}
 		}
 
-		let finances = {};
-		if (req.body.finances) {
-			finances = await FinancesDao.addFinances(req.body.finances);
-			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
-		}
-
-		let businessAddress = {}
-		if (req.body.addresses) {
-			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
-		}
-
 		let deliveryDrivers = [];
 		if (Array.isArray(req.body.deliveryDrivers) && req.body.deliveryDrivers.length) {
 			for (const deliveryDriverInfo of req.body.deliveryDrivers) {
 
+				deliveryDriverInfo.user.data.password = "lalaland1";
 				const newUser = await UserDao.createNewUser(deliveryDriverInfo.user.data, true);
+
+				let addresses = []
+				if (deliveryDriverInfo.user.addresses) {
+					for (const addressInfo of deliveryDriverInfo.user.addresses) {
+						const address = await AddressDao.addAddress(addressInfo)
+						await AddressDao.addUserAddress(deliveryDriver.delivery_driver_id, address.address_id);
+						addresses.push(address);
+					}
+				}
+
 				// Handle user documents
 				if (deliveryDriverInfo.user.documents) {
 					for (const doc of deliveryDriverInfo.user.documents) {
@@ -484,17 +485,19 @@ async function registerDeliveryService(req, res) {
 					}
 				}
 
-				let addresses = []
-				// if (deliveryDriverInfo.user.addresses) {
-				// 	for (const addressInfo of deliveryDriverInfo.user.addresses) {
-				// 		const address = await AddressDao.addAddress(addressInfo)
-				// 		await AddressDao.addUserAddress(deliveryDriver.delivery_driver_id, address.address_id);
-				// 		addresses.push(address);
-				// 	}
-				// }
-
 				deliveryDrivers.push({ deliveryDriver, vehicles, addresses });
 			}
+		}
+
+		let finances = {};
+		if (req.body.finances) {
+			finances = await FinancesDao.addFinances(req.body.finances);
+			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
+		}
+
+		let businessAddress = {}
+		if (req.body.addresses) {
+			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
 		}
 
 		res.status(201).json({
@@ -524,26 +527,29 @@ async function registerDeliveryService(req, res) {
  */
 async function registerMerchantService(req, res) {
 	try {
+		// fs.writeFileSync("merchant-req.json", null, JSON.stringify(req.body, null, 2), 'utf8')
 		const business = await BusinessDao.createNewBusiness(req.body.business.data);
 
-		//TODO: check at least one business user data is provided & created
+		// Ensure at least one business user data is provided & created
+		if (!Array.isArray(req.body.users) || !req.body.users.length) {
+			return res.status(400).json({ error: "At least one business user must be provided." });
+		}
 
 		let businessUsers = [];
-		if (Array.isArray(req.body.users) && req.body.users.length) {
-			for (const userInfo of req.body.users) {
-				const businessUser = await BusinessUsersDao.createBusinessUser(userInfo.user, business.business_id);
+		for (const userInfo of req.body.users) {
+			userInfo.user.data.password = "lalaland1";
+			const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userInfo.user, business.business_id);
 
-				let addresses = [];
-				// if (userInfo.user.addresses) {
-				// 	for (const addressInfo of userInfo.user.addresses) {
-				// 		const address = await AddressDao.addAddress(addressInfo)
-				// 		await AddressDao.addUserAddress(businessUser.business_users_id, address.address_id);
-				// 		addresses.push(address);
-				// 	}
-				// }
-
-				businessUsers.push({ businessUser, addresses });
+			let addresses = [];
+			if (userInfo.user.addresses) {
+				for (const addressInfo of userInfo.user.addresses) {
+					const address = await AddressDao.addAddress(addressInfo);
+					await AddressDao.addUserAddress(newUser.user_id, address.address_id);
+					addresses.push(address);
+				}
 			}
+
+			businessUsers.push({ businessUser, addresses });
 		}
 
 		// Handle business documents
@@ -555,13 +561,14 @@ async function registerMerchantService(req, res) {
 					delete file.base64;
 					let fileData = await FileDao.addFileToDocument(document.document_id, file);
 					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-					S3Helper.SaveObject(key, base64, file.mime_type, { businesses: [business.business_id] });
+					await S3Helper.SaveObject(key, base64, file.mime_type, { businesses: [business.business_id] });
 				}
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
 		}
 		let stripeAccount = await stripe.createAccount(business);
 		await BusinessDao.updateBusiness(business.business_id, { stripe_account_id: stripeAccount.id });
+
 		let accountLink = await stripe.getAccountLinks(stripeAccount.id);
 		// send email to business user with account link
 		EmailHelper.sendEmailTemplate("Stripe Onboarding", "stripeOnboarding", business.email, false,  {
@@ -577,14 +584,16 @@ async function registerMerchantService(req, res) {
 		}
 
 		let businessAddress = {};
-		if (req.body.addresses) {
+		if (req.body.addresses && req.body.addresses.business) {
 			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
 		}
 
 		let deliveryAddress = {};
-		if (req.body.addresses) {
+		if (req.body.addresses && req.body.addresses.delivery) {
 			deliveryAddress = await BusinessDao.addDeliveryAddress(business.business_id, req.body.addresses.delivery);
 		}
+
+		const menu = await MenuDao.createMenu(business.business_id);
 
 		res.status(201).json({
 			message: "Merchant service business registered successfully",
@@ -592,14 +601,14 @@ async function registerMerchantService(req, res) {
 			businessUsers,
 			finances,
 			businessAddress,
-			deliveryAddress
+			deliveryAddress,
+			menu
 		});
 	} catch (error) {
 		console.error("Error registering merchant service:", error);
 		res.status(400).json({ error: "Error registering merchant service", detail: error.message });
 	}
 }
-
 
 module.exports = {
 	login,
