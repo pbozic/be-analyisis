@@ -1,4 +1,5 @@
 const prisma = require("../prisma/prisma");
+const { TAXI_ORDER_STATUS } = require("../lib/constants");
 
 const getReservations = async (args) => {
 	try {
@@ -14,6 +15,30 @@ const getReservations = async (args) => {
 		throw new Error(error);
 	}
 };
+
+async function getReservationIfNotCompleted(user_id) {
+	try {
+		return await prisma.reservations.findFirst({
+			where: {
+				user_id: user_id,
+				status: {
+					notIn: ['TABLE_RESERVATION_COMPLETED', 'TABLE_RESERVATION_REJECTED']
+				},
+			},
+			include: {
+				business: {
+					include: {
+						address: true
+					}
+				}
+			}
+		});
+	} catch (e) {
+		console.error("Error fetching reservation:", e);
+		throw new Error(e.message);
+	}
+}
+
 
 const getReservationById = async (reservation_id) => {
 	try {
@@ -94,5 +119,6 @@ module.exports = {
 	createReservation,
 	updateReservationStatus,
 	deleteReservation,
-	addTableNumber
+	addTableNumber,
+	getReservationIfNotCompleted
 };

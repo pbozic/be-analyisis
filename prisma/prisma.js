@@ -13,7 +13,7 @@ const prisma = new PrismaClient().$extends({
 				// Proceed with the operation
 				
 				let result = await query(args);
-				// result = await generateS3LinksRecursively(args, result);
+				result = await generateS3LinksRecursively(args, result);
 				// Return the modified result
 				return result;
 			},

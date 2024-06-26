@@ -82,6 +82,30 @@ async function getReservationsByBusinessId(req, res) {
 	}
 }
 
+/**
+ * GET /reservations/active/:user_id
+ * @tag Delivery
+ * @summary Get active reservations orders.
+ * @description This fetches all completed orders for a specific driver.
+ * @operationId getActiveTableReservation
+ * @requestBody {DriverId} user_id - The ID of the user to retrieve completed orders for
+ * @response 200 - Successful operation. Returns a list of completed orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+
+async function getActiveTableReservation(req, res) {
+	const { user_id } = req.params;
+
+	try {
+		const activeReservations = await ReservationDao.getReservationIfNotCompleted(user_id)
+		res.status(200).json(activeReservations);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
 
 /**
  * POST /reservations/create
@@ -217,5 +241,6 @@ module.exports = {
 	createReservation,
 	updateReservationStatus,
 	deleteReservation,
-	addTableNumber
+	addTableNumber,
+	getActiveTableReservation
 };

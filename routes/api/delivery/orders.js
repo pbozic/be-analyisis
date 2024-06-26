@@ -10,6 +10,7 @@ const DeliveryOrderController = require("../../../controllers/DeliveryOrderContr
 router.get("/order/:order_id", DeliveryOrderController.getOrder);
 router.get("/:business_id", DeliveryOrderController.getDeliveryOrdersByBusinessId);
 router.get("/completed/:driver_id", DeliveryOrderController.getCompletedDeliveryOrders);
+router.get("/active/:user_id", DeliveryOrderController.getActiveDeliveryOrders);
 router.get("/order/user/:order_id", DeliveryOrderController.getUserByDeliveryOrderId);
 router.post("/order", DeliveryOrderController.createOrder);
 router.post("/order/status", DeliveryOrderController.updateOrderStatus);

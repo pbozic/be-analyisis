@@ -17,15 +17,7 @@ const getMenuCategoriesByMenuId = async (menu_id) => {
 			menu_id: menu_id
 		},
 		include: {
-			menu_items: {
-				include: {
-					documents: {
-						include: {
-							files: true
-						}
-					}
-				}
-			}
+			menu_items: true
 		}
 	});
 };

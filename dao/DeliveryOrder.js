@@ -1,4 +1,5 @@
 const prisma = require("../prisma/prisma");
+const { TAXI_ORDER_STATUS, DELIVERY_ORDER_STATUS } = require("../lib/constants");
 
 async function getOrders(args) {
 	try {
@@ -20,6 +21,26 @@ async function getOrder(order_id, args) {
 		});
 	} catch (e) {
 		throw new Error(e);
+	}
+}
+
+async function getDeliveryOrderIfNotCompleted(user_id) {
+	try {
+		return await prisma.delivery_orders.findFirst({
+			where: {
+				user_id: user_id,
+				status: {
+					not: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
+				},
+			},
+			include: {
+				delivery_driver: true,
+				user: true,
+			}
+		});
+	} catch (e) {
+		console.error("Error fetching order:", e);
+		throw new Error(e.message);
 	}
 }
 
@@ -364,5 +385,6 @@ module.exports = {
 	getUserByDeliveryOrderId,
 	updateOrder,
 	updateOrderPickupTime,
-	updateOrderDeliveryTime
+	updateOrderDeliveryTime,
+	getDeliveryOrderIfNotCompleted
 };

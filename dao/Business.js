@@ -137,15 +137,7 @@ const getBusinessesByType = async (type) => {
 				include: {
 					categories: {
 						include: {
-							menu_items: {
-								include: {
-									documents: {
-										include: {
-											files: true
-										}
-									}
-								}
-							}
+							menu_items: true
 						}
 					}
 				}

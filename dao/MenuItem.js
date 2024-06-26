@@ -18,11 +18,6 @@ const getMenuItemsByBusinessId = async (business_id) => {
 		},
 		include: {
 			menu_category: true,
-			documents: {
-				include: {
-					files: true
-				}
-			}
 		},
 	});
 };
@@ -31,13 +26,6 @@ const getMenuItemsByCategoryId = async (categoryId) => {
 	return await prisma.menu_items.findMany({
 		where: {
 			menu_category_id: categoryId,
-		},
-		include: {
-			documents: {
-				include: {
-					files: true
-				}
-			}
 		},
 	});
 };

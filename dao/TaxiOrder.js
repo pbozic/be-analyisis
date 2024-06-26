@@ -1,4 +1,5 @@
 const prisma = require("../prisma/prisma");
+const { DELIVERY_ORDER_STATUS, TAXI_ORDER_STATUS } = require("../lib/constants");
 async function getOrders(args) {
     try {
         return prisma.taxi_orders.findMany({
@@ -21,6 +22,26 @@ async function getOrder(order_id, args) {
 	}
 }
 
+async function getTaxiOrderIfNotCompleted(user_id) {
+    try {
+        return await prisma.taxi_orders.findFirst({
+            where: {
+                user_id: user_id,
+                status: {
+                    not: TAXI_ORDER_STATUS.TAXI_COMPLETED
+                },
+            },
+            include: {
+                driver: true
+            }
+        });
+    } catch (e) {
+        console.error("Error fetching taxi order:", e);
+        throw new Error(e.message);
+    }
+}
+
+
 async function getOrdersByDriverId(driver_id) {
     try {
         return await prisma.taxi_orders.findMany({
@@ -29,6 +50,9 @@ async function getOrdersByDriverId(driver_id) {
             },
             include: {
                 driver: true,
+                user: true,
+                payment: true,
+                estimates: true
             }
         });
     } catch (e) {
@@ -320,5 +344,6 @@ module.exports = {
     updateTaxiOrderDeliveryLocation,
     updateCompleteTaxiRoute,
     updateTaxiOrderPayment,
-    updateTaxiOrderTimeline
+    updateTaxiOrderTimeline,
+    getTaxiOrderIfNotCompleted
 };
