@@ -1,6 +1,9 @@
 const MenuDao = require('../dao/Menu');
 const MenuCategoryDao = require('../dao/MenuCategory');
 const MenuItemDao = require('../dao/MenuItem');
+const DocumentDao = require("../dao/Document");
+const FileDao = require("../dao/File");
+const S3Helper = require("../lib/s3");
 
 /**
  * GET /menus/business/:business_id
@@ -263,9 +266,24 @@ async function updateMenuCategory(req, res) {
  * @response 400 - Error creating new menu item
  */
 async function createMenuItem(req, res) {
-	const { category_id, data } = req.body;
+	const { category_id, data, image, user_id } = req.body;
 	try {
+
+		const document = await DocumentDao.createDocument(image.documentData);
+		for (const file of image.files) {
+			let base64 = file.base64;
+			delete file.base64;
+			let fileData = await FileDao.addFileToDocument(document.document_id, file);
+			let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+			await S3Helper.SaveObject(key, base64, file.mime_type, {
+				users: [user_id],
+				businesses: [data.business_id]
+			}, file);
+		}
 		const menuItem = await MenuItemDao.createMenuItem(category_id, data);
+
+		await DocumentDao.linkDocumentToMenuItem(document.document_id, menuItem.menu_item_id);
+
 		res.status(201).json(menuItem);
 	} catch (e) {
 		console.error("Error creating menu item:", e);
@@ -287,6 +305,7 @@ async function createMenuItem(req, res) {
 async function deleteMenuItem(req, res) {
 	const { menu_item_id } = req.params;
 	try {
+		await DocumentDao.deleteDocumentsAndFilesByMenuItemId(menu_item_id)
 		await MenuItemDao.deleteMenuItem(menu_item_id);
 		res.status(204).send();
 	} catch (e) {
@@ -310,9 +329,28 @@ async function deleteMenuItem(req, res) {
  * @response 400 - Error updating menu item
  */
 async function updateMenuItem(req, res) {
-	const { menu_item_id, data } = req.body;
+	const { menu_item_id, data, image, user_id } = req.body;
 	try {
 		const menuItem = await MenuItemDao.updateMenuItem(menu_item_id, data);
+
+		if (image.files[0].file_type === 'IMAGE') {
+			await DocumentDao.deleteDocumentsAndFilesByMenuItemId(menu_item_id)
+			const document = await DocumentDao.createDocument(image.documentData);
+			for (const file of image.files) {
+				let base64 = file.base64;
+				delete file.base64;
+				let fileData = await FileDao.addFileToDocument(document.document_id, file);
+				let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+				await S3Helper.SaveObject(key, base64, file.mime_type, {
+					users: [user_id],
+					businesses: [data.business_id]
+				}, file);
+			}
+			console.log(document, 'document')
+			const menuItem = await MenuItemDao.updateMenuItem(menu_item_id, data);
+			await DocumentDao.linkDocumentToMenuItem(document.document_id, menuItem.menu_item_id);
+		}
+
 		res.status(200).json(menuItem);
 	} catch (e) {
 		console.error("Error updating menu item:", e);

@@ -17,7 +17,15 @@ const getMenuCategoriesByMenuId = async (menu_id) => {
 			menu_id: menu_id
 		},
 		include: {
-			menu_items: true
+			menu_items: {
+				include: {
+					documents: {
+						include: {
+							files: true
+						}
+					}
+				}
+			}
 		}
 	});
 };
@@ -28,7 +36,15 @@ const getMenuCategoriesByBusinessId = async (business_id) => {
 			business_id: business_id
 		},
 		include: {
-			menu_items: true
+			menu_items: {
+				include: {
+					documents: {
+						include: {
+							files: true
+						}
+					}
+				}
+			}
 		}
 	});
 };

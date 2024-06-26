@@ -131,6 +131,8 @@ model documents {
   user               users?            @relation(fields: [user_id], references: [user_id])
   vehicle_id         String?           @db.Uuid
   vehicles           vehicles?         @relation(fields: [vehicle_id], references: [vehicle_id])
+  menu_item_id       String?           @db.Uuid
+  menu_items         menu_items?       @relation(fields: [menu_item_id], references: [menu_item_id])
 }
 
 model files {
@@ -400,6 +402,7 @@ model menu_items {
   business_id      String           @db.Uuid
   menu_category_id String?          @db.Uuid
   menu_category    menu_categories? @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id])
+  documents        documents[]
 
   @@unique([menu_item_id])
 }

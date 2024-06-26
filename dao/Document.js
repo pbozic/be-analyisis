@@ -313,6 +313,24 @@ const linkDocumentToVehicle = async (documentId, vehicleId) => {
     }
 };
 
+const linkDocumentToMenuItem = async (documentId, menuItemId) => {
+    try {
+        return await prisma.documents.update({
+            where: { document_id: documentId },
+            data: {
+                menu_items: {
+                    connect: {
+                        menu_item_id: menuItemId
+                    }
+                }
+            },
+        });
+    } catch (error) {
+        console.error("Error linking menu item image to menu item:", error);
+        return new Error(error);
+    }
+};
+
 const linkDocumentToDriver = async (documentId, driverId) => {
     try {
         return await prisma.documents.update({
@@ -378,6 +396,35 @@ const deleteDocument = async (documentId) => {
     }
 };
 
+const deleteDocumentsAndFilesByMenuItemId = async (menu_item_id) => {
+
+    const documents = await prisma.documents.findMany({
+        where: { menu_item_id: menu_item_id },
+        select: {
+            document_id: true,
+            files: {
+                select: { file_id: true }
+            }
+        }
+    });
+
+    for (const document of documents) {
+        await prisma.files.deleteMany({
+            where: {
+                document_id: document.document_id
+            }
+        });
+    }
+
+    await prisma.documents.deleteMany({
+        where: {
+            menu_item_id: menu_item_id
+        }
+    });
+
+    console.log('All documents and files deleted for menu item ID:', menu_item_id);
+}
+
 module.exports = {
     createDocument,
     getDocuments,
@@ -403,4 +450,6 @@ module.exports = {
     linkDocumentToDeliveryDriver,
     linkDocumentToBusiness,
     deleteDocument,
+    linkDocumentToMenuItem,
+    deleteDocumentsAndFilesByMenuItemId
 };
