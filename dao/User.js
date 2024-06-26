@@ -267,21 +267,21 @@ async function addToWalletBalance (userId, amountToAdd) {
 	}
   };
 
-async function removeWalletBalance(userId, amountToSubtract) {
+async function removeWalletBalance(userId, amountToSubtract, order_id) {
 	try {
 		await prisma.$transaction(async (transaction) => {
 			// Check current balance
-			const user = await transaction.users.findUnique({ where: { user_idid: userId } });
+			const user = await transaction.users.findUnique({ where: { user_id: userId } });
 			if (user.walletBalance < amountToSubtract) {
 			  throw new Error('Insufficient funds');
 			}
 	  
 			// Update wallet balance
-			await transaction.user.update({
+			await transaction.users.update({
 			  where: { user_id: userId },
 			  data: {
 				wallet_balance: {
-				  decrement: amountToDeduct,
+				  decrement: amountToSubtract,
 				},
 			  },
 			});
@@ -289,8 +289,11 @@ async function removeWalletBalance(userId, amountToSubtract) {
 			// Record transaction
 			await transaction.transactions.create({
 			  data: {
-				user: { connect: { user_id: userId } },
-				amount: -amountToDeduct,
+					user: { connect: { user_id: userId } },
+					order: {
+					  connect: { order_id: order_id },
+					},
+				amount: -amountToSubtract,
 				type: 'DEBIT',
 				description: 'Deducted funds from wallet',
 			  },
