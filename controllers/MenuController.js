@@ -268,7 +268,6 @@ async function updateMenuCategory(req, res) {
 async function createMenuItem(req, res) {
 	const { category_id, data, image, user_id } = req.body;
 	try {
-
 		const document = await DocumentDao.createDocument(image.documentData);
 		for (const file of image.files) {
 			let base64 = file.base64;
@@ -340,7 +339,6 @@ async function updateMenuItem(req, res) {
 				let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
 				await S3Helper.SaveObject(key, base64, file.mime_type, {}, file);
 			}
-			console.log(document, 'document')
 			const menuItem = await MenuItemDao.updateMenuItem(menu_item_id, data);
 			await DocumentDao.linkDocumentToMenuItem(document.document_id, menuItem.menu_item_id);
 		}

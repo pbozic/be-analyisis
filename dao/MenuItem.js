@@ -18,8 +18,13 @@ const getMenuItemsByBusinessId = async (business_id) => {
 		},
 		include: {
 			menu_category: true,
+			documents: {
+				include: {
+					files: true
+				}
+			}
 		},
-	});
+	})
 };
 
 const getMenuItemsByCategoryId = async (categoryId) => {

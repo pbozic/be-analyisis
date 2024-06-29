@@ -19,7 +19,7 @@ async function generateS3LinksRecursively(args, result) {
         // If result is an array, process each document
         if (Array.isArray(result)) {
             for (let document of result) {
-                if (document.files) {
+                if (document && document.files) {
                     document.files = await Promise.all(document.files.map(async (file) => {
                         return {
                             ...file,
@@ -28,7 +28,7 @@ async function generateS3LinksRecursively(args, result) {
                     }));
                 }
             }
-        } else if (result.files) {
+        } else if (result && result.files) {
             // If result is a single document
             result.files = await Promise.all(result.files.map(async (file) => {
                 return {
@@ -40,9 +40,11 @@ async function generateS3LinksRecursively(args, result) {
     }
 
     // Recursively traverse nested includes in args
-    for (let key in args) {
-        if (args[key] && typeof args[key] === 'object') {
-            await generateS3LinksRecursively(args[key], null); // No need to process results in args
+    if (args && typeof args === 'object') {
+        for (let key in args) {
+            if (args[key] && typeof args[key] === 'object') {
+                await generateS3LinksRecursively(args[key], null); // No need to process results in args
+            }
         }
     }
 
