@@ -17,7 +17,7 @@ router.get('/emails/:template', (req, res) => {
     )
 })
 router.get('/reset-password/:token', AuthController.passwordResetForm);
-router.post('/reset-password/:token', joi(resetPasswordSchema), AuthController.passowrdReset);
+router.post('/reset-password/:token', joi(resetPasswordSchema), AuthController.passwordReset);
 router.get('/test/sms', async (req, res) => { 
     try {
         //await sendSMSVerification("040975210", "123456")

@@ -211,15 +211,20 @@ async function requestPasswordReset(req, res) {
 
 async function passwordResetForm(req, res) {
 	const token = req.params.token;
-	let tkn = await UserDao.getUserByResetToken(token);
-	console.log(tkn);
-	if (!tkn.users) {
-		return res.status(400).send("Invalid or expired token");
+	try {
+		let tkn = await UserDao.getUserByResetToken(token);
+		console.log(tkn);
+		if (!tkn.users) {
+			return res.status(400).send("Invalid or expired token");
+		}
+		res.render("resetPasswordForm", { token });
+	} catch (error) {
+		console.error("Error fetching user by reset token:", error);
+		res.status(500).send("Internal Server Error");
 	}
-	res.render("resetPasswordForm", { token });
 }
 
-async function passowrdReset(req, res) {
+async function passwordReset(req, res) {
 	const token = req.params.token;
 	const password = req.body.password;
 	const confirmPassword = req.body['confirm_password'];
@@ -238,14 +243,14 @@ async function passowrdReset(req, res) {
 		await UserDao.updateUserPassword(user.user_id, hash);
 		let tokenObj = await TokenDao.getPasswordToken(token);
 		await TokenDao.updateToken(tokenObj.token_id, { active: false });
-		res.status(200).send("Password reset successfully");
+		res.status(200).render('passwordResetSuccess'); // Render the success template
 	}
 	catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
-	
 }
+
 /**
  * POST /auth/taxi/register
  * @tag Auth
@@ -264,20 +269,6 @@ async function registerTaxiService(req, res) {
 		const business = await BusinessDao.createNewBusiness(req.body.business);
 		
 		// TODO: handle uniqueness here or with joi validation
-		// Handle business documents
-		if (req.body.business.documents) {
-			for (const doc of req.body.business.documents) {
-				const document = await DocumentDao.createDocument(doc);
-				for (const file of doc.files) {
-					let base64 = file.base64;
-					delete file.base64;
-					let fileData = await FileDao.addFileToDocument(document.document_id, file);
-					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-					S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]}, file);
-				}
-				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
-			}
-		}
 
 		let drivers = [];
 		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
@@ -355,6 +346,21 @@ async function registerTaxiService(req, res) {
 				}
 
 				drivers.push({ driver, vehicles, addresses });
+			}
+		}
+
+		// Handle business documents
+		if (req.body.business.documents) {
+			for (const doc of req.body.business.documents) {
+				const document = await DocumentDao.createDocument(doc);
+				for (const file of doc.files) {
+					let base64 = file.base64;
+					delete file.base64;
+					let fileData = await FileDao.addFileToDocument(document.document_id, file);
+					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+					S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]}, file);
+				}
+				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
 		}
 
@@ -618,7 +624,7 @@ module.exports = {
 	refreshToken,
 	requestPasswordReset,
 	passwordResetForm,
-	passowrdReset,
+	passwordReset,
 	registerTaxiService,
 	registerDeliveryService,
 	registerMerchantService

@@ -3,7 +3,36 @@ div.header
     .header {
       background-color: #4CAF50;
       color: white;
-      padding: 10px;
+      padding: 20px;
       text-align: center;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: normal;
+    }
+    .stripes {
+      display: flex;
+      height: 5px;
+      margin-top: 10px;
+    }
+    .stripe-red {
+      background-color: #FF0000;
+      flex: 1;
+    }
+    .stripe-green {
+      background-color: #00FF00;
+      flex: 1;
+    }
+    .stripe-yellow {
+      background-color: #FFFF00;
+      flex: 1;
     }
   h1= title
+  .stripes
+    div.stripe-red
+    div.stripe-green
+    div.stripe-yellow
