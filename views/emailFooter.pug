@@ -1,9 +1,39 @@
 div.footer
   style(type="text/css").
     .footer {
-      margin-top: 20px;
+      background-color: #f4f4f4;
+      padding: 20px;
+      text-align: center;
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
       font-size: 0.9em;
       color: #777;
     }
+    .footer p {
+      margin: 5px 0;
+    }
+    .footer a {
+      color: #4CAF50;
+      text-decoration: none;
+    }
+    .footer .company-details {
+      margin-top: 20px;
+      font-size: 0.8em;
+      color: #555;
+    }
+    .footer .company-details img {
+      max-width: 100px;
+      margin-bottom: 10px;
+    }
   p Regards,
   p Klikni
+  p
+    | &copy; 2024 Klikni. All rights reserved.
+  p
+    a(href="https://bit01.xyz") Visit our website
+  .company-details
+    img(src="https://bit01.xyz/wp-content/uploads/2024/01/cropped-klikni-logo-removebg-preview-e1706284280782.png", alt="Company Logo")
+    p MLS Invest
+    p Savska cesta 3a, 1000 Ljubljana
+    p Phone: (123) 456-7890
+    p Email: support@klikni-web.eu
