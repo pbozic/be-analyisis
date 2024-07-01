@@ -11,6 +11,46 @@ const createMenuItem = async (categoryId, menuItemData) => {
 	});
 };
 
+const addMenuItemIdToOrder = async (menu_category_id, menuItemIdToAdd) => {
+	try {
+		const category = await prisma.menu_categories.findUnique({
+			where: { menu_category_id: menu_category_id },
+			select: { menu_items_ordered: true }
+		});
+
+		let orderedItems = category.menu_items_ordered ? JSON.parse(category.menu_items_ordered) : [];
+		if (!orderedItems.includes(menuItemIdToAdd)) {
+			orderedItems.push(menuItemIdToAdd);
+			return await prisma.menu_categories.update({
+				where: { menu_category_id: menu_category_id },
+				data: { menu_items_ordered: JSON.stringify(orderedItems) }
+			});
+		}
+	} catch (error) {
+		console.error("Error adding menu item ID to order:", error);
+		throw error;
+	}
+}
+
+const removeMenuItemIdFromOrder = async (menu_category_id, menuItemIdToRemove) =>  {
+	try {
+		const category = await prisma.menu_categories.findUnique({
+			where: { menu_category_id: menu_category_id },
+			select: { menu_items_ordered: true }
+		});
+
+		let orderedItems = category.menu_items_ordered ? JSON.parse(category.menu_items_ordered) : [];
+		orderedItems = orderedItems.filter(id => id !== menuItemIdToRemove);
+		return await prisma.menu_categories.update({
+			where: { menu_category_id: menu_category_id },
+			data: { menu_items_ordered: JSON.stringify(orderedItems) }
+		});
+	} catch (error) {
+		console.error("Error removing menu item ID from order:", error);
+		throw error;
+	}
+}
+
 const getMenuItemsByBusinessId = async (business_id) => {
 	return await prisma.menu_items.findMany({
 		where: {
@@ -96,6 +136,8 @@ const removeMenuItemFromCategory = async (menu_item_id) => {
 
 module.exports = {
 	createMenuItem,
+	addMenuItemIdToOrder,
+	removeMenuItemIdFromOrder,
 	getMenuItemsByCategoryId,
 	getMenuItemsByBusinessId,
 	deleteMenuItem,

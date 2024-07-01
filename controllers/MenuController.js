@@ -123,6 +123,103 @@ async function createMenuCategory(req, res) {
 }
 
 /**
+ * POST /menus/menu-items/add-order
+ * @tag MenuItem
+ * @summary Add a menu item ID to the ordered list
+ * @description Adds a menu item ID to the ordered list of a menu category.
+ * @operationId addMenuItemIdToOrder
+ * @bodyDescription The menu category ID and menu item ID to add
+ * @bodyContent {MenuItemOrderAddRequest} application/json
+ * @bodyRequired
+ * @response 200 - Menu item ID added to order successfully
+ * @responseContent {MenuCategory} 200.application/json
+ * @response 400 - Error adding menu item ID to order
+ */
+async function addMenuItemIdToOrder(req, res) {
+	const { menu_category_id, menuItemIdToAdd } = req.body;
+	try {
+		const response = await MenuItemDao.addMenuItemIdToOrder(menu_category_id, menuItemIdToAdd);
+		res.status(200).json(response);
+	} catch (error) {
+		console.error("Error adding menu item ID to order:", error);
+		res.status(400).json({ error: "Error adding menu item ID to order", details: error });
+	}
+}
+
+/**
+ * POST /menus/menu-items/remove-order
+ * @tag MenuCategory
+ * @summary Remove a menu item ID from the ordered list
+ * @description Removes a menu item ID from the ordered list of a menu category.
+ * @operationId removeMenuItemIdFromOrder
+ * @bodyDescription The menu category ID and menu item ID to remove
+ * @bodyContent {MenuItemOrderRemoveRequest} application/json
+ * @bodyRequired
+ * @response 200 - Menu item ID removed from order successfully
+ * @responseContent {MenuCategory} 200.application/json
+ * @response 400 - Error removing menu item ID from order
+ */
+async function removeMenuItemIdFromOrder(req, res) {
+	const { menu_category_id, menuItemIdToRemove } = req.body;
+	try {
+		const response = await MenuItemDao.removeMenuItemIdFromOrder(menu_category_id, menuItemIdToRemove);
+		res.status(200).json(response);
+	} catch (error) {
+		console.error("Error removing menu item ID from order:", error);
+		res.status(400).json({ error: "Error removing menu item ID from order", details: error });
+	}
+}
+
+/**
+ * POST /menus/add-category-order
+ * @tag Menu
+ * @summary Add a menu category ID to the ordered list
+ * @description Adds a menu category ID to the ordered list of categories in a menu.
+ * @operationId addMenuCategoryIdToOrder
+ * @bodyDescription The menu ID and the menu category ID to add
+ * @bodyContent {MenuCategoryOrderAddRequest} application/json
+ * @bodyRequired
+ * @response 200 - Menu category ID added to order successfully
+ * @responseContent {Menu} 200.application/json
+ * @response 400 - Error adding menu category ID to order
+ */
+async function addMenuCategoryIdToOrder(req, res) {
+	const { menu_id, menuCategoryIdToAdd } = req.body;
+	try {
+		const response = await MenuCategoryDao.addMenuCategoryIdToOrder(menu_id, menuCategoryIdToAdd);
+		res.status(200).json(response);
+	} catch (error) {
+		console.error("Error adding menu category ID to order:", error);
+		res.status(400).json({ error: "Error adding menu category ID to order", details: error });
+	}
+}
+
+/**
+ * POST /menus/remove-category-order
+ * @tag Menu
+ * @summary Remove a menu category ID from the ordered list
+ * @description Removes a menu category ID from the ordered list of categories in a menu.
+ * @operationId removeMenuCategoryIdFromOrder
+ * @bodyDescription The menu ID and the menu category ID to remove
+ * @bodyContent {MenuCategoryOrderRemoveRequest} application/json
+ * @bodyRequired
+ * @response 200 - Menu category ID removed from order successfully
+ * @responseContent {Menu} 200.application/json
+ * @response 400 - Error removing menu category ID from order
+ */
+async function removeMenuCategoryIdFromOrder(req, res) {
+	const { menu_id, menuCategoryIdToRemove } = req.body;
+	try {
+		const response = await MenuCategoryDao.removeMenuCategoryIdFromOrder(menu_id, menuCategoryIdToRemove);
+		res.status(200).json(response);
+	} catch (error) {
+		console.error("Error removing menu category ID from order:", error);
+		res.status(400).json({ error: "Error removing menu category ID from order", details: error });
+	}
+}
+
+
+/**
  * GET /menus/menu-items/:category_id
  * @tag MenuItem
  * @summary Get menu items by category ID
@@ -249,6 +346,57 @@ async function updateMenuCategory(req, res) {
 	} catch (e) {
 		console.error("Error updating menu category:", e);
 		res.status(400).json({ error: "Error updating menu category", e });
+	}
+}
+
+/**
+ * PATCH /menus/menu-categories/order
+ * @tag Menu
+ * @summary Update a menu order
+ * @description Updates a menu order by the menu category IDs.
+ * @operationId updateMenuOrder
+ * @pathParam {string} menu_id - The ID of the menu to update
+ * @bodyDescription The request body must include the new order of menu category IDs. This order is used to update the sequence of categories in the specified menu.
+ * @bodyContent {MenuCategoryUpdateRequest} application/json
+ * @bodyRequired
+ * @response 200 - Menu category updated successfully
+ * @responseContent {Menu} 200.application/json
+ * @response 400 - Error updating menu order
+ */
+async function updateMenuOrder(req, res) {
+	const { menu_id, ordered_menu_categories_ids } = req.body;
+	console.log(ordered_menu_categories_ids)
+	try {
+		const menu = await MenuDao.updateMenuOrder(menu_id, ordered_menu_categories_ids)
+		res.status(200).json(menu);
+	} catch (e) {
+		console.error("Error updating menu order:", e);
+		res.status(400).json({ error: "Error updating menu order", e });
+	}
+}
+
+/**
+ * PATCH /menus/menu-items/order
+ * @tag MenuItems
+ * @summary Update a menu items order
+ * @description Updates a menu items order by the menu items IDs.
+ * @operationId updateMenuItemsOrder
+ * @pathParam {string} menu_category_id - The ID of the menu category to update
+ * @bodyDescription The request body must include the new order of menu category IDs. This order is used to update the sequence of menu items in the specified menu category.
+ * @bodyContent {MenuCategoryUpdateRequest} application/json
+ * @bodyRequired
+ * @response 200 - Menu items order updated successfully
+ * @responseContent {Menu} 200.application/json
+ * @response 400 - Error updating menu order
+ */
+async function updateMenuItemsOrder(req, res) {
+	const { menu_category_id, ordered_menu_items_ids } = req.body;
+	try {
+		const menu = await MenuCategoryDao.updateMenuItemsOrder(menu_category_id, ordered_menu_items_ids)
+		res.status(200).json(menu);
+	} catch (e) {
+		console.error("Error updating menu items order:", e);
+		res.status(400).json({ error: "Error updating menu items order", e });
 	}
 }
 
@@ -475,6 +623,8 @@ async function removeMenuCategory(req, res) {
 module.exports = {
 	getMenuByBusinessId,
 	createMenu,
+	updateMenuOrder,
+	updateMenuItemsOrder,
 	deleteMenu,
 	setActiveMenu,
 	createMenuCategory,
@@ -482,6 +632,10 @@ module.exports = {
 	getMenuCategoriesByBusinessId,
 	deleteMenuCategory,
 	addMenuCategory,
+	addMenuCategoryIdToOrder,
+	removeMenuCategoryIdFromOrder,
+	addMenuItemIdToOrder,
+	removeMenuItemIdFromOrder,
 	removeMenuCategory,
 	updateMenuCategory,
 	createMenuItem,

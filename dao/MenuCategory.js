@@ -11,8 +11,48 @@ const createMenuCategory = async (menuId, categoryData) => {
 	});
 };
 
+const addMenuCategoryIdToOrder = async (menu_id, menuCategoryIdToAdd) => {
+	try {
+		const menu = await prisma.menus.findUnique({
+			where: { menu_id: menu_id },
+			select: { menu_categories_ordered: true }
+		});
+
+		let orderedCategories = menu.menu_categories_ordered ? JSON.parse(menu.menu_categories_ordered) : [];
+		if (!orderedCategories.includes(menuCategoryIdToAdd)) {
+			orderedCategories.push(menuCategoryIdToAdd);
+			return await prisma.menus.update({
+				where: { menu_id: menu_id },
+				data: { menu_categories_ordered: JSON.stringify(orderedCategories) }
+			});
+		}
+	} catch (error) {
+		console.error("Error adding menu category ID to order:", error);
+		throw error;
+	}
+}
+
+const removeMenuCategoryIdFromOrder = async (menu_id, menuCategoryIdToRemove) => {
+	try {
+		const menu = await prisma.menus.findUnique({
+			where: { menu_id: menu_id },
+			select: { menu_categories_ordered: true }
+		});
+
+		let orderedCategories = menu.menu_categories_ordered ? JSON.parse(menu.menu_categories_ordered) : [];
+		orderedCategories = orderedCategories.filter(id => id !== menuCategoryIdToRemove);
+		return await prisma.menus.update({
+			where: { menu_id: menu_id },
+			data: { menu_categories_ordered: JSON.stringify(orderedCategories) }
+		});
+	} catch (error) {
+		console.error("Error removing menu category ID from order:", error);
+		throw error;
+	}
+}
+
 const getMenuCategoriesByMenuId = async (menu_id) => {
-	return await prisma.menu_categories.findMany({
+	const categories = await prisma.menu_categories.findMany({
 		where: {
 			menu_id: menu_id
 		},
@@ -28,10 +68,29 @@ const getMenuCategoriesByMenuId = async (menu_id) => {
 			}
 		}
 	});
+
+	// Sort menu items within each category based on the ordered JSON field
+	categories.forEach(category => {
+		if (category.menu_items_ordered) {
+			try {
+				const orderedItemIds = JSON.parse(category.menu_items_ordered);
+				category.menu_items.sort((a, b) => {
+					return orderedItemIds.indexOf(a.menu_item_id) - orderedItemIds.indexOf(b.menu_item_id);
+				});
+			} catch (error) {
+				console.error(`Error parsing menu_items_ordered for category ${category.menu_category_id}:`, error);
+			}
+		} else {
+			console.log('No menu_items_ordered for category', category.menu_category_id);
+			return category.menu_items;
+		}
+	});
+
+	return categories;
 };
 
 const getMenuCategoriesByBusinessId = async (business_id) => {
-	return await prisma.menu_categories.findMany({
+	const categories = await prisma.menu_categories.findMany({
 		where: {
 			business_id: business_id
 		},
@@ -47,6 +106,25 @@ const getMenuCategoriesByBusinessId = async (business_id) => {
 			}
 		}
 	});
+
+	// Sort menu items within each category based on the ordered JSON field
+	categories.forEach(category => {
+		if (category.menu_items_ordered) {
+			try {
+				const orderedItemIds = JSON.parse(category.menu_items_ordered);
+				category.menu_items.sort((a, b) => {
+					return orderedItemIds.indexOf(a.menu_item_id) - orderedItemIds.indexOf(b.menu_item_id);
+				});
+			} catch (error) {
+				console.error(`Error parsing menu_items_ordered for category ${category.menu_category_id}:`, error);
+			}
+		} else {
+			console.log('No menu_items_ordered for category', category.menu_category_id);
+			return category.menu_items;
+		}
+	});
+
+	return categories;
 };
 
 const deleteMenuCategory = async (menu_category_id) => {
@@ -63,6 +141,17 @@ const updateMenuCategory = async (menu_category_id, data) => {
 			menu_category_id: menu_category_id,
 		},
 		data: data,
+	});
+};
+
+const updateMenuItemsOrder = async (menu_category_id, ordered_menu_items_ids) => {
+	return await prisma.menu_categories.update({
+		where: {
+			menu_category_id: menu_category_id
+		},
+		data: {
+			menu_items_ordered: ordered_menu_items_ids
+		}
 	});
 };
 
@@ -96,10 +185,13 @@ const removeCategoryFromMenu = async (menu_category_id) => {
 
 module.exports = {
 	createMenuCategory,
+	addMenuCategoryIdToOrder,
+	removeMenuCategoryIdFromOrder,
 	getMenuCategoriesByMenuId,
 	getMenuCategoriesByBusinessId,
 	deleteMenuCategory,
 	updateMenuCategory,
 	addCategoryToMenu,
-	removeCategoryFromMenu
+	removeCategoryFromMenu,
+	updateMenuItemsOrder
 };

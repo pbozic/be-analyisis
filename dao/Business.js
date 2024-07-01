@@ -133,7 +133,7 @@ const getBusinessesByType = async (type) => {
 			delivery_orders: false,
 		}
 		if (type === Constants.BUSINESS_TYPE.MERCHANT) {
-			includeOptions.menus = { 
+			includeOptions.menus = {
 				include: {
 					categories: {
 						include: {
@@ -151,12 +151,43 @@ const getBusinessesByType = async (type) => {
 				}
 			}
 		}
-		return await prisma.business.findMany({
+
+		const businesses = await prisma.business.findMany({
 			where: {
 				type: type,
 			},
 			include: includeOptions
 		});
+
+		// Sort menus, and menu categories if applicable
+		businesses.forEach(business => {
+			if (business.menus) {
+				business.menus.forEach(menu => {
+					if (menu.menu_categories_ordered) {
+						const orderedCategoryIds = JSON.parse(menu.menu_categories_ordered);
+						menu.categories.sort((a, b) => {
+							return orderedCategoryIds.indexOf(a.menu_category_id) - orderedCategoryIds.indexOf(b.menu_category_id);
+						});
+					} else {
+						console.log("No menu categories ordered");
+						return menu.categories
+					}
+					menu.categories.forEach(category => {
+						if (category.menu_items_ordered) {
+							const orderedItemIds = JSON.parse(category.menu_items_ordered);
+							category.menu_items.sort((a, b) => {
+								return orderedItemIds.indexOf(a.menu_item_id) - orderedItemIds.indexOf(b.menu_item_id);
+							});
+						} else {
+							console.log('No menu items ordered');
+							return category.menu_items;
+						}
+					});
+				});
+			}
+		});
+
+		return businesses;
 	} catch (error) {
 		console.error(`Error retrieving businesses by type ${type}:`, error);
 		throw new Error(error);
