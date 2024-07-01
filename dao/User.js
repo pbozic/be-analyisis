@@ -189,6 +189,50 @@ const updateUserPushNotifications = async (user_id, pushNotificationPreferences)
 	}
 };
 
+const updateUserSpicyPreferences = async (user_id, spicyPreferences) => {
+	try {
+		return await prisma.users.update({
+			where: { user_id },
+			data: { spicy_preferences: spicyPreferences },
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
+
+const updateUserTransferPreferences = async (user_id, transfer_preferences) => {
+	try {
+		return await prisma.users.update({
+			where: { user_id },
+			data: { transfer_preferences: transfer_preferences },
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
+
+const updateUserRadioPreferences = async (user_id, radioPreferences) => {
+	try {
+		return await prisma.users.update({
+			where: { user_id },
+			data: { radio_preferences: radioPreferences },
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
+
+const updateUserAllergiesPreferences = async (user_id, allergiesPreferences) => {
+	try {
+		return await prisma.users.update({
+			where: { user_id },
+			data: { allergies_preferences: allergiesPreferences },
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
+
 const updateUserTelephoneVerified = async (user_id, telephoneVerified) => {
 	try {
 		return await prisma.users.update({
@@ -224,7 +268,7 @@ const createNewUser = async (user, hashPassword = false) => {
 		throw new Error(error.message || 'Failed to create new user.');
 	}
 };
-async function createWalletBalance(userId) { 
+const createWalletBalance = async (userId) => {
 	try {
 	  return await prisma.walletBalance.create({
 		data: {
@@ -319,5 +363,15 @@ module.exports = {
 	getUserByResetToken,
 	addToWalletBalance,
 	removeWalletBalance,
-	createWalletBalance
+	createWalletBalance,
+	updateUserDateOfBirth,
+	updateUserTelephoneVerified,
+	updateUserTaxiPreferences,
+	updateUserNotificationPreferences,
+	updateUserPushNotifications,
+	updateUserSpicyPreferences,
+	updateUserAllergiesPreferences,
+	updateUserTransferPreferences,
+	updateUserRadioPreferences
+
 };

@@ -190,6 +190,29 @@ async function updateDriverLocation(req, res) {
 }
 
 /**
+ * PATCH /drivers/ride_requirements
+ * @tag Drivers
+ * @summary Updates the driver's ride requirements
+ * @description This endpoint is used to update the current user's ride requirements.
+ * @operationId updateDriverRideRequirements
+ * @bodyDescription The new ride requirements of the driver.
+ * @bodyContent {updateDriverRideRequirementsRequest} application/json
+ * @bodyRequired
+ * @response 200 - Ride requirements updated successfully. Returns the updated driver's details.
+ * @responseContent {User} 200.application/json
+ * @response 400 - Error updating user information.
+ */
+async function updateDriverRideRequirements(req, res) {
+	try {
+		let driver = await DriverDao.updateDriverRideRequirements(req.body.driver_id, req.body.ride_requirements);
+		if (driver) return res.status(200).json(driver);
+		res.status(400).json({ error: "Error updating user information" });
+	} catch (e) {
+		res.status(400).json({ error: "Error updating user information", e });
+	}
+}
+
+/**
  * PATCH /drivers/online
  * @tag Drivers
  * @summary Set driver online status
@@ -263,5 +286,6 @@ module.exports = {
 	updateDriverLocation,
 	updateDriverOnlineStatus,
 	createDriver,
-	getAvailableDrivers
+	getAvailableDrivers,
+	updateDriverRideRequirements
 };

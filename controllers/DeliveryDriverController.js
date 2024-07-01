@@ -107,7 +107,6 @@ async function getDeliveryDriverByUserId(req, res) {
 	console.log(req.params.user_id, 'user11')
 	try {
 		const deliveryDriver = await DeliveryDriverDao.getDeliveryDriverByUserId(req.params.user_id);
-		console.log(deliveryDriver, 'lala12')
 		if (deliveryDriver) {
 			res.status(200).json(deliveryDriver);
 		} else {

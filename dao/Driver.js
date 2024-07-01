@@ -118,6 +118,17 @@ const updateDriverOnlineStatus = async (driver_id, isOnline) => {
 	}
 };
 
+const updateDriverRideRequirements = async (driver_id, ride_requirements) => {
+	try {
+		return await prisma.drivers.update({
+			where: { driver_id },
+			data: { ride_requirements: ride_requirements },
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
+
 const updateDriverLocation = async (user_id, location) => {
 	try {
 		const locationData = {
@@ -232,5 +243,6 @@ module.exports = {
 	updateDriverLocation,
 	updateDriverOnlineStatus,
 	createNewDriver,
-	getAvailableDrivers
+	getAvailableDrivers,
+	updateDriverRideRequirements
 };

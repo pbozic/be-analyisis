@@ -162,6 +162,182 @@ async function updateEmail(req, res) {
 		res.status(400).json({ error: "Error updating user information", e });
 	}
 }
+
+/**
+ * PATCH /me/taxi-preferences
+ * @tag Users
+ * @summary Updates the current user's taxi preferences
+ * @description This endpoint is used to update the current user's taxi preferences.
+ * @operationId updateUserTaxiPreferences
+ * @bodyDescription The new taxi preferences
+ * @bodyContent {UpdateTaxiPreferencesRequest} application/json
+ * @bodyRequired
+ * @response 200 - Taxi preferences updated successfully. Returns the updated user's details.
+ * @responseContent {User} 200.application/json
+ * @response 400 - Error updating user information.
+ */
+async function updateUserTaxiPreferences(req, res) {
+	try {
+		let user = await UserDao.updateUserTaxiPreferences(req.user.user_id, req.body.taxi_preferences);
+
+		if (user) return res.status(200).json(user);
+
+		res.status(400).json({ error: "Error updating user information" });
+	} catch (e) {
+		res.status(400).json({ error: "Error updating user information", e });
+	}
+}
+
+/**
+ * PATCH /me/notification-preferences
+ * @tag Users
+ * @summary Updates the current user's notification preferences
+ * @description This endpoint is used to update the current user's notification preferences.
+ * @operationId updateUserNotificationPreferences
+ * @bodyDescription The new notification preferences
+ * @bodyContent {UpdateNotificationPreferencesRequest} application/json
+ * @bodyRequired
+ * @response 200 - Notification preferences updated successfully. Returns the updated user's details.
+ * @responseContent {User} 200.application/json
+ * @response 400 - Error updating user information.
+ */
+async function updateUserNotificationPreferences(req, res) {
+	try {
+		let user = await UserDao.updateUserNotificationPreferences(req.user.user_id, req.body.notification_preferences);
+
+		if (user) return res.status(200).json(user);
+
+		res.status(400).json({ error: "Error updating user information" });
+	} catch (e) {
+		res.status(400).json({ error: "Error updating user information", e });
+	}
+}
+
+/**
+ * PATCH /me/push-notification-preferences
+ * @tag Users
+ * @summary Updates the current user's push notification preferences
+ * @description This endpoint is used to update the current user's push notification preferences.
+ * @operationId updateUserPushNotifications
+ * @bodyDescription The new push notification preferences
+ * @bodyContent {UpdatePushNotificationPreferencesRequest} application/json
+ * @bodyRequired
+ * @response 200 - Push notification preferences updated successfully. Returns the updated user's details.
+ * @responseContent {User} 200.application/json
+ * @response 400 - Error updating user information.
+ */
+async function updateUserPushNotifications(req, res) {
+	try {
+		let user = await UserDao.updateUserPushNotifications(req.user.user_id, req.body.push_notification_preferences);
+
+		if (user) return res.status(200).json(user);
+
+		res.status(400).json({ error: "Error updating user information" });
+	} catch (e) {
+		res.status(400).json({ error: "Error updating user information", e });
+	}
+}
+
+/**
+ * PATCH /me/spicy-preferences
+ * @tag Users
+ * @summary Updates the current user's spicy preferences
+ * @description This endpoint is used to update the current user's spicy preferences.
+ * @operationId updateUserSpicyPreferences
+ * @bodyDescription The new spicy preferences
+ * @bodyContent {UpdateSpicyPreferencesRequest} application/json
+ * @bodyRequired
+ * @response 200 - Spicy preferences updated successfully. Returns the updated user's details.
+ * @responseContent {User} 200.application/json
+ * @response 400 - Error updating user information.
+ */
+async function updateUserSpicyPreferences(req, res) {
+	try {
+		let user = await UserDao.updateUserSpicyPreferences(req.user.user_id, req.body.spicy_preferences);
+
+		if (user) return res.status(200).json(user);
+
+		res.status(400).json({ error: "Error updating user information" });
+	} catch (e) {
+		res.status(400).json({ error: "Error updating user information", e });
+	}
+}
+
+/**
+ * PATCH /me/transfer-preferences
+ * @tag Users
+ * @summary Updates the current user's transfer preferences
+ * @description This endpoint is used to update the current user's transfer preferences.
+ * @operationId updateUserTransferPreferences
+ * @bodyDescription The new transfer preferences
+ * @bodyContent {UpdateTransferPreferencesRequest} application/json
+ * @bodyRequired
+ * @response 200 - Transfer preferences updated successfully. Returns the updated user's details.
+ * @responseContent {User} 200.application/json
+ * @response 400 - Error updating user information.
+ */
+async function updateUserTransferPreferences(req, res) {
+	try {
+		let user = await UserDao.updateUserTransferPreferences(req.user.user_id, req.body.transfer_preferences);
+
+		if (user) return res.status(200).json(user);
+
+		res.status(400).json({ error: "Error updating user information" });
+	} catch (e) {
+		res.status(400).json({ error: "Error updating user information", e });
+	}
+}
+
+/**
+ * PATCH /me/radio-preferences
+ * @tag Users
+ * @summary Updates the current user's radio preferences
+ * @description This endpoint is used to update the current user's radio preferences.
+ * @operationId updateUserRadioPreferences
+ * @bodyDescription The new radio preferences
+ * @bodyContent {UpdateRadioPreferencesRequest} application/json
+ * @bodyRequired
+ * @response 200 - Radio preferences updated successfully. Returns the updated user's details.
+ * @responseContent {User} 200.application/json
+ * @response 400 - Error updating user information.
+ */
+async function updateUserRadioPreferences(req, res) {
+	try {
+		let user = await UserDao.updateUserRadioPreferences(req.user.user_id, req.body.radio_preferences);
+
+		if (user) return res.status(200).json(user);
+
+		res.status(400).json({ error: "Error updating user information" });
+	} catch (e) {
+		res.status(400).json({ error: "Error updating user information", e });
+	}
+}
+
+/**
+ * PATCH /me/allergies-preferences
+ * @tag Users
+ * @summary Updates the current user's allergies preferences
+ * @description This endpoint is used to update the current user's allergies preferences.
+ * @operationId updateUserAllergiesPreferences
+ * @bodyDescription The new allergies preferences
+ * @bodyContent {UpdateAllergiesPreferencesRequest} application/json
+ * @bodyRequired
+ * @response 200 - Allergies preferences updated successfully. Returns the updated user's details.
+ * @responseContent {User} 200.application/json
+ * @response 400 - Error updating user information.
+ */
+async function updateUserAllergiesPreferences(req, res) {
+	try {
+		let user = await UserDao.updateUserAllergiesPreferences(req.user.user_id, req.body.allergies_preferences);
+
+		if (user) return res.status(200).json(user);
+
+		res.status(400).json({ error: "Error updating user information" });
+	} catch (e) {
+		res.status(400).json({ error: "Error updating user information", e });
+	}
+}
+
 /**
  * PATCH /me/telephone
  * @tag Users
@@ -443,5 +619,12 @@ module.exports = {
 	reviewUser,
 	oneSignalId,
 	getPaymentSheetCredentials,
-	requestToAddFundsToWallet
+	requestToAddFundsToWallet,
+	updateUserTaxiPreferences,
+	updateUserAllergiesPreferences,
+	updateUserSpicyPreferences,
+	updateUserTransferPreferences,
+	updateUserRadioPreferences,
+	updateUserNotificationPreferences,
+	updateUserPushNotifications
 };

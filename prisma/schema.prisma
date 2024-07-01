@@ -110,6 +110,10 @@ model users {
   wallet_balance                Float             @default(0)
   transactions                  transactions[]
   reservations                  reservations[]
+  transfer_preferences          Json?
+  allergies_preferences         Json?
+  spicy_preferences             Json?
+  radio_preferences             Json?
 }
 
 model documents {
