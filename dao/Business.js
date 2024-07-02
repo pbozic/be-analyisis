@@ -182,6 +182,22 @@ const getBusinessesByType = async (type) => {
 							console.log('No menu items ordered');
 							return category.menu_items;
 						}
+
+						// Create a deep copy of menu_items to avoid circular references
+						const menuItemsCopy = JSON.parse(JSON.stringify(category.menu_items));
+
+						category.menu_items.forEach(item => {
+							if (item.sides) {
+								item.sides = item.sides.map(sideId => {
+									return menuItemsCopy.find(menuItem => menuItem.menu_item_id === sideId) || sideId;
+								});
+							}
+							if (item.extras) {
+								item.extras = item.extras.map(extraId => {
+									return menuItemsCopy.find(menuItem => menuItem.menu_item_id === extraId) || extraId;
+								});
+							}
+						});
 					});
 				});
 			}

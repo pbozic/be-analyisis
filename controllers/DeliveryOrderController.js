@@ -83,13 +83,13 @@ async function createOrder(req, res) {
 		let user = await UsersDao.getUserById(user_id);
 		let payment_intent;
 		console.log("stripeCustomer", user.stripe_customer_id)
-		if (order.payment.type == "CARD") {
+		if (order.payment.type === "CARD") {
 			payment_intent = await stripe.createPaymentIntentOnBehalf(orderData.details.total_price, orderData.payment.payment_method_id, user.stripe_customer_id, business.stripe_account_id, order.order_id, return_url);
 			orderData.payment_intent_id = payment_intent.id;
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				payment_intent_id: payment_intent.id
 			});
-		} else if (order.payment.type == "WALLET") {
+		} else if (order.payment.type === "WALLET") {
 			// handle wallet payment
 			if (user.wallet_balance < orderData.details.total_price) { 
 				throw new Error("Insufficient funds")
@@ -102,11 +102,10 @@ async function createOrder(req, res) {
 				},
 				status: "CUSTOMER_PAYMENT_SUCCESSFUL"
 			});
-			io.to("orders_" + order.business_id).emit('new_order', order);
-		} else if (order.payment.type == "CASH") {
-			io.to("orders_" + order.business_id).emit('new_order', order);
+		} else if (order.payment.type === "CASH") {
+			// io.to("orders_" + order.business_id).emit('new_order', order);
 		}
-
+		io.to("orders_" + order.business_id).emit('new_order', order);
 		//DeliveryHelper.findDeliveryOrderDrivers(order); here we do not need to notify delivery drivers yet, because of the merchant order preparation time
 
 		res.status(200).json({

@@ -30,7 +30,14 @@ async function getDeliveryOrderIfNotCompleted(user_id) {
 			where: {
 				user_id: user_id,
 				status: {
-					not: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
+					notIn: [
+						DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+						DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
+						DELIVERY_ORDER_STATUS.CUSTOMER_CANCELLED,
+						DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
+						DELIVERY_ORDER_STATUS.DELIVERY_ARRIVED,
+						DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
+					]
 				},
 			},
 			include: {
