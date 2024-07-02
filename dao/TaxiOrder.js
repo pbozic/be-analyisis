@@ -326,7 +326,18 @@ async function updateTaxiOrderPayment(order_id, payment) {
         throw new Error(e);
     }
 }
-
+async function updateOrder(order_id, order) {
+    try {
+        return prisma.taxi_orders.update({
+            where: {
+                order_id
+            },
+            data: order
+        });
+    } catch (e) {
+        throw new Error(e);
+    }
+}
 module.exports = {
     getOrder,
     getOrdersByDriverId,
@@ -345,5 +356,6 @@ module.exports = {
     updateCompleteTaxiRoute,
     updateTaxiOrderPayment,
     updateTaxiOrderTimeline,
-    getTaxiOrderIfNotCompleted
+    getTaxiOrderIfNotCompleted,
+    updateOrder
 };

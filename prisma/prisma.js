@@ -69,8 +69,32 @@ const prisma = new PrismaClient().$extends({
 				// Return the modified result
 				return result;
 			}
-		}
+		},
 	},
+	model: {
+		drivers: {
+			async inRadius(point, radiusInMeters) { 
+				console.log("point", point);
+				console.log("radius", radiusInMeters);
+				const drivers = await prisma.$queryRaw`
+				 	SELECT *
+					FROM drivers 
+					WHERE online = true
+					AND on_order = false
+					AND ST_DWithin(
+						ST_MakePoint(
+							CAST((location->'coordinates'->>'longitude') AS FLOAT),
+							CAST((location->'coordinates'->>'latitude') AS FLOAT)
+						)::geography,
+						ST_MakePoint(${point.longitude}, ${point.latitude})::geography,
+						${radiusInMeters}
+					)
+				`;
+
+				return drivers;
+			}
+		}
+	}
 });
 
 module.exports = prisma;

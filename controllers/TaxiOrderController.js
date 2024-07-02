@@ -1,6 +1,7 @@
 const TaxiOrderDao = require("../dao/TaxiOrder");
 const DriverDao = require("../dao/Driver");
 const { UserSockets, io } = require('../socket');
+const gApi = require('../lib/gApis');
 const TaxiHelper = require('../lib/taxiHelpers');
 /**
  * GET /taxi/order/{orderId}
@@ -141,6 +142,9 @@ async function acceptOrder(req, res) {
 		//TODO: how to handle multiple vehicles on driver
 		driver.vehicle = driver.vehicles[0];
 		order.driver = driver;
+		let { result } = gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, driver.location.coordinates, "driving", new Date());
+		order.estimates.pickup_time_in_seconds = result.rows[0].elements[0].duration.value;
+		order = await TaxiOrderDao.updateOrder(order.order_id, order);
 		let userSocket = UserSockets.get(order.user_id);
 		console.log("order accepted" ,order)
 		if (userSocket) {

@@ -4,7 +4,7 @@ const DeliveryHelper = require('../lib/deliveryHelpers');
 
 const BusinessDao = require("../dao/Business");
 const UsersDao = require("../dao/User");
-
+const gApi = require('../lib/gApis');
 const { UserSockets, io } = require('../socket');
 const stripe = require("../lib/stripe");
 const { DELIVERY_ORDER_STATUS } = require("../lib/constants");
@@ -158,6 +158,11 @@ async function acceptOrder(req, res) {
 		//TODO: how to handle multiple vehicles on driver -> check which vehicle has its field active, that's it, one active vehicle per delivery driver
 		driver.vehicle = driver.vehicles[0];
 		order.driver = driver;
+		let { result } = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, order.delivery_location.coordinates, "driving", new Date());
+		order.details.distance = result.rows[0].elements[0].distance.text;
+		order.details.duration = result.rows[0].elements[0].duration.text;
+		order.details.customer_expected_delivery_at = new Date(new Date().getTime() + result.rows[0].elements[0].duration.value * 1000);
+		order = await DeliveryOrderDao.updateOrder(order.order_id, order)
 
 		console.log("order accepted", order)
 
