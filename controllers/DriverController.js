@@ -3,8 +3,9 @@ require("dotenv").config();
 const DriverDao = require("../dao/Driver");
 const VehicleDao = require("../dao/Vehicle");
 const UserDao = require("../dao/User");
-const { UserSockets, io } = require('../socket');
+const { UserSockets, io } = require("../socket");
 const TaxiOrderDao = require("../dao/TaxiOrder");
+const taxiHelpers = require("../lib/taxiHelpers");
 
 /**
  * GET /drivers
@@ -153,36 +154,33 @@ async function updateDriver(req, res) {
  */
 async function updateDriverLocation(req, res) {
 	try {
-		const updatedDriver = await DriverDao.updateDriverLocation(req.params.driver_id, req.body);
+		const userId = req.user.user_id;
+		const locationData = req.body.location;
 
-		try {
-			const userId = req.user.user_id;
-			const driver = await DriverDao.getDriverByUserId(userId);
-			await DriverDao.updateDriverLocation(driver.driver_id, req.body);
+		const driver = await DriverDao.getDriverByUserId(userId);
+		let driverUpdatedLocation = await DriverDao.updateDriverLocation(driver.driver_id, locationData);
 
-			// Emit the driver's updated location to each order's specific channel
-			const orders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id);
-			for (let order of orders) {
-				try {
-					io.to(`order_${order.order_id}`).emit("driver_location", {
-						driver_id: driver.driver_id,
-						location: location
-					});
-				} catch (error) {
-					console.error("Error emiting driver's location to connected users:", error);
-				}
-			}
-			if (orders.length === 0) {
-				io.emit("driver_location", {
+		// console.log(userId, locationData, driverUpdatedLocation)
+
+		// Emit the driver's updated location to each order's specific channel
+		const orders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id);
+		for (let order of orders) {
+			try {
+				io.to(`order_${order.order_id}`).emit("driver_location", {
 					driver_id: driver.driver_id,
-					location: location
+					location: locationData
 				});
+			} catch (error) {
+				console.error("Error emiting driver's location to connected users:", error);
 			}
-		} catch (error) {
-			console.error("Error updating driver's location:", error);
 		}
-
-		res.status(200).json(updatedDriver);
+		if (orders.length === 0) {
+			io.emit("driver_location", {
+				driver_id: driver.driver_id,
+				location: locationData
+			});
+		}
+		res.status(200).json(driverUpdatedLocation);
 	} catch (error) {
 		console.error("Error updating driver's location:", error);
 		res.status(400).json({ error: "Error updating driver location", detail: error.message });
@@ -237,6 +235,9 @@ async function updateDriverOnlineStatus(req, res) {
 
 		if (online) {
 			io.emit("driver_available", updatedDriver);
+
+			// Re-send pending orders to this driver
+			await taxiHelpers.resendPendingOrdersToDriver(updatedDriver);
 		} else {
 			io.emit("driver_unavailable", driver_id);
 		}

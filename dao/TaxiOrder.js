@@ -9,17 +9,27 @@ async function getOrders(args) {
         throw new Error(e);
     }
 }
-async function getOrder(order_id, args) {
-	try {
-		return prisma.taxi_orders.findFirst({
-			where: {
-				order_id: order_id,
-            },
-            ...args
-		});
-	} catch (e) {
-		throw new Error(e);
-	}
+async function getOrder(order_id) {
+    try {
+        return await prisma.taxi_orders.findFirst({
+            where: { order_id },
+            include: {
+                user: true,
+                driver: {
+                    include: {
+                        vehicles: {
+                            include: {
+                                vehicle_specification: true,
+                            }
+                        }
+                    }
+                },
+            }
+        });
+    } catch (e) {
+        console.error("Error fetching order by ID:", e);
+        throw new Error(e);
+    }
 }
 
 async function getTaxiOrderIfNotCompleted(user_id) {
@@ -32,7 +42,16 @@ async function getTaxiOrderIfNotCompleted(user_id) {
                 },
             },
             include: {
-                driver: true
+                driver: {
+                    include: {
+						user: true,
+                        vehicles: {
+                            include: {
+                                vehicle_specification: true,
+                            }
+                        }
+                    }
+                },
             }
         });
     } catch (e) {
@@ -51,8 +70,6 @@ async function getOrdersByDriverId(driver_id) {
             include: {
                 driver: true,
                 user: true,
-                payment: true,
-                estimates: true
             }
         });
     } catch (e) {
@@ -105,6 +122,24 @@ async function isOrderSent(order_id, driver) {
         throw new Error(e);
     }
 }
+
+async function getAlreadySentOrdersByDriverId(driver_id) {
+    try {
+        return await prisma.taxi_order_sent.findMany({
+            where: {
+                driver_id: driver_id,
+                accepted: false
+            },
+            include: {
+                order: true
+            }
+        });
+    } catch (e) {
+        console.error("Error fetching pending orders for driver:", e);
+        throw new Error(e);
+    }
+}
+
 async function acceptOrder(order_id, user) {
     console.log("acceptOrder",order_id)
     try {
@@ -114,7 +149,7 @@ async function acceptOrder(order_id, user) {
                     order_id,
                     driver_id: user.driver.driver_id
                 }
-               
+
             },
             data: {
                 accepted: true
@@ -163,7 +198,7 @@ async function updateOrderStatus(order_id, status) {
 
 async function completeOrder(order_id) {
     try {
-       
+
         let taxi_order = await prisma.taxi_orders.update({
             where: {
                 order_id
@@ -346,6 +381,7 @@ module.exports = {
     createOrderSent,
     getOrders,
     getSentDrivers,
+    updateOrder,
     updateOrderLastSentAt,
     completeOrder,
     updateOrderStatus,
@@ -357,5 +393,5 @@ module.exports = {
     updateTaxiOrderPayment,
     updateTaxiOrderTimeline,
     getTaxiOrderIfNotCompleted,
-    updateOrder
+    getAlreadySentOrdersByDriverId
 };
