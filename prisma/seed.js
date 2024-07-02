@@ -8,7 +8,7 @@ const driverSeed = require("./seeders/driverSeeder");
 async function main() {
 	if (process.env.ENVIRONMENT === "development") {
 		await userSeed();
-		//await driverSeed();
+		await driverSeed();
 	}
 	await allergernSeed();
 }

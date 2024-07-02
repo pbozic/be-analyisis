@@ -1,5 +1,6 @@
 const prisma= require("../prisma/prisma");
 const UserDao = require("./User");
+const { resendPendingOrdersToDriver } = require("../lib/taxiHelpers");
 
 const getDrivers = async (args) => {
 	try {
@@ -129,7 +130,7 @@ const updateDriverRideRequirements = async (driver_id, ride_requirements) => {
 	}
 };
 
-const updateDriverLocation = async (user_id, location) => {
+const updateDriverLocation = async (driver_id, location) => {
 	try {
 		const locationData = {
 			name: location?.name ?? null,
@@ -141,7 +142,7 @@ const updateDriverLocation = async (user_id, location) => {
 		};
 
 		return await prisma.drivers.update({
-			where: { user_id },
+			where: { driver_id },
 			data: { location: locationData },
 		});
 	} catch (error) {

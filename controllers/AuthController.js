@@ -39,7 +39,7 @@ require('dotenv').config();
 async function login(req, res) {
 	let postData = req.body;
 	try {
-		let user = await UserDao.getUserByEmail(postData.email, {
+		let user = await UserDao.getUserByEmail(postData.email.toLowerCase(), {
 			select: {
 				password: true,
 			},
@@ -48,7 +48,7 @@ async function login(req, res) {
 		if (!user) return res.status(400).json({ error: "Wrong email / password combination.." });
 		let correctPw = await bcrypt.compare(postData.password, user.password);
 		if (!correctPw) return res.status(400).json({ error: "Wrong email / password combination.." });
-		user = await UserDao.getUserByEmail(postData.email, {
+		user = await UserDao.getUserByEmail(postData.email.toLowerCase(), {
 			include: {
 				addresses: {
 					include: {
