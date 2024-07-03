@@ -167,6 +167,7 @@ async function updateDriverLocation(req, res) {
 		for (let order of orders) {
 			try {
 				io.to(`order_${order.order_id}`).emit("driver_location", {
+					...driver,
 					driver_id: driver.driver_id,
 					location: locationData
 				});
@@ -176,6 +177,7 @@ async function updateDriverLocation(req, res) {
 		}
 		if (orders.length === 0) {
 			io.emit("driver_location", {
+				...driver,
 				driver_id: driver.driver_id,
 				location: locationData
 			});

@@ -197,10 +197,11 @@ async function updateDeliveryDriverLocation(req, res) {
 			await DeliveryDriverDao.updateDeliveryDriverLocation(deliveryDriver.delivery_driver_id, req.body);
 
 			// Emit the delivery driver's updated location to each order's specific channel
-			const orders = await DeliveryOrderDao.getOrdersByDriverId(deliveryDriver.delivery_driver_id);
+			const orders = await DeliveryOrderDao.getOrdersByDeliveryDriverId(deliveryDriver.delivery_driver_id);
 			for (let order of orders) {
 				try {
 					io.to(`order_${order.order_id}`).emit("driver_location", {
+						...deliveryDriver,
 						delivery_driver_id: deliveryDriver.delivery_driver_id,
 						location: req.body
 					});
@@ -210,6 +211,7 @@ async function updateDeliveryDriverLocation(req, res) {
 			}
 			if (orders.length == 0) {
 				io.emit("driver_location", {
+					...deliveryDriver,
 					delivery_driver_id: deliveryDriver.delivery_driver_id,
 					location: req.body
 				});

@@ -80,7 +80,12 @@ async function getOrdersByDeliveryDriverId(delivery_driver_id) {
 				delivery_driver_id: delivery_driver_id,
 			},
 			include: {
-				delivery_driver: true,
+				delivery_driver: {
+					include: {
+						user: true
+					}
+				},
+				user: true,
 			}
 		});
 	} catch (e) {
