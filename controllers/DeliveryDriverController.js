@@ -210,7 +210,7 @@ async function updateDeliveryDriverLocation(req, res) {
 					console.error("Error emitting delivery driver's location to connected users:", error);
 				}
 			}
-			if (orders.length == 0) {
+			if (orders.length === 0) {
 				io.emit("driver_location_delivery", {
 					...deliveryDriver,
 					delivery_driver_id: deliveryDriver.delivery_driver_id,
