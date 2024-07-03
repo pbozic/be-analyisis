@@ -348,14 +348,32 @@ async function updateOrderLastSentAt(order_id) {
 	}
 }
 
-async function updateDeliveryOrderTimeline(order_id, timeline) {
+async function updateDeliveryOrderTimeline(order_id, newTimelineEntries) {
 	try {
-		return prisma.delivery_orders.update({
+		// Fetch the current timeline
+		const order = await prisma.delivery_orders.findUnique({
+			where: {
+				order_id
+			},
+			select: {
+				timeline: true
+			}
+		});
+
+		if (!order) {
+			throw new Error(`Order with ID ${order_id} not found`);
+		}
+
+		// Append the new timeline entries to the existing timeline
+		const updatedTimeline = [...order.timeline, ...newTimelineEntries];
+
+		// Update the timeline field with the combined array
+		return await prisma.delivery_orders.update({
 			where: {
 				order_id
 			},
 			data: {
-				timeline: timeline
+				timeline: updatedTimeline
 			}
 		});
 	} catch (e) {

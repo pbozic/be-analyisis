@@ -206,7 +206,7 @@ async function completeOrder(req, res) {
 }
 
 /**
- * GET /delivery/orders/complete
+ * GET /delivery/orders/completed
  * @tag Delivery
  * @summary Get completed delivery orders.
  * @description This fetches all completed orders for a specific driver.
@@ -227,6 +227,45 @@ async function getCompletedDeliveryOrders(req, res) {
 				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
 				delivery_driver_id: driver_id
 			}});
+		res.status(200).json(completedOrders);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * GET /delivery/orders/completed/user/:user_id
+ * @tag Delivery
+ * @summary Get completed delivery orders.
+ * @description This fetches all completed orders for a specific driver.
+ * @operationId getCompletedDeliveryOrders
+ * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
+ * @response 200 - Successful operation. Returns a list of completed orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+
+async function getCompletedDeliveryOrdersByUserId(req, res) {
+	const { user_id } = req.params;
+
+	try {
+		const completedOrders = await DeliveryOrderDao.getOrders({
+			where: {
+				OR: [
+					{ status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED },
+					{ status: DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP }
+				],
+				user_id: user_id
+			},
+			include: {
+				business: {
+					include: {
+						address: true
+					}
+				}
+			}
+		});
 		res.status(200).json(completedOrders);
 	} catch (e) {
 		console.log(e);
@@ -406,5 +445,6 @@ module.exports = {
 	updateOrderPickupTime,
 	getDeliveryOrdersByBusinessId,
 	updateOrderDeliveryTime,
-	getActiveDeliveryOrders
+	getActiveDeliveryOrders,
+	getCompletedDeliveryOrdersByUserId
 };

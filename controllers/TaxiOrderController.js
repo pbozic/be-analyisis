@@ -3,6 +3,7 @@ const DriverDao = require("../dao/Driver");
 const { UserSockets, io } = require('../socket');
 const gApi = require('../lib/gApis');
 const TaxiHelper = require('../lib/taxiHelpers');
+const { TAXI_ORDER_STATUS } = require("../lib/constants");
 /**
  * GET /taxi/order/{orderId}
  * @tag Taxi
@@ -68,8 +69,36 @@ async function getCompletedTaxiOrders(req, res) {
 	try {
 		const completedOrders = await TaxiOrderDao.getOrders({
 			where: {
-				status: 'TAXI_COMPLETED',
+				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
 				driver_id: driver_id
+			}});
+		res.status(200).json(completedOrders);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * GET /taxi/orders/completed/user/:user_id
+ * @tag Taxi
+ * @summary Get completed taxi orders.
+ * @description This fetches all completed orders for a specific driver.
+ * @operationId getCompletedTaxiOrders
+ * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
+ * @response 200 - Successful operation. Returns a list of completed orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+
+async function getCompletedTaxiOrdersByUserId(req, res) {
+	const { user_id } = req.params;
+
+	try {
+		const completedOrders = await TaxiOrderDao.getOrders({
+			where: {
+				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
+				user_id: user_id
 			}});
 		res.status(200).json(completedOrders);
 	} catch (e) {
@@ -381,5 +410,6 @@ module.exports = {
 	updateCompleteTaxiRoute,
 	updateTaxiOrderPayment,
 	updateTaxiOrderTimeline,
-	getActiveTaxiOrders
+	getActiveTaxiOrders,
+	getCompletedTaxiOrdersByUserId
 };
