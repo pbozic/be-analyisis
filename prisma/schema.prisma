@@ -434,7 +434,7 @@ enum TRANSACTION_TYPE {
 model reservations {
   reservation_id String             @id @default(uuid()) @db.Uuid
   seats          Int
-  date           DateTime           @db.Date
+  date           DateTime           @db.Timestamptz(6)
   time           String
   created_at     DateTime           @default(now()) @db.Timestamptz(6)
   updated_at     DateTime           @default(now()) @updatedAt @db.Timestamptz(6)

@@ -4,6 +4,8 @@ const DeliveryDriverDao = require("../dao/DeliveryDriver");
 const UserDao = require("../dao/User");
 const { UserSockets, io } = require('../socket');
 const DeliveryOrderDao = require("../dao/DeliveryOrder");
+const taxiHelpers = require("../lib/taxiHelpers");
+const { resendPendingOrdersToDeliveryDriver } = require("../lib/deliveryHelpers");
 
 /**
  * GET /delivery
@@ -189,36 +191,38 @@ async function updateDeliveryDriver(req, res) {
  */
 async function updateDeliveryDriverLocation(req, res) {
 	try {
-		const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriverLocation(req.params.delivery_driver_id, req.body);
-
+		console.log(req.body, 'location, body')
 		try {
 			const userId = req.user.user_id;
 			const deliveryDriver = await DeliveryDriverDao.getDeliveryDriverByUserId(userId);
-			await DeliveryDriverDao.updateDeliveryDriverLocation(deliveryDriver.delivery_driver_id, req.body);
+			const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriverLocation(deliveryDriver.delivery_driver_id, req.body.location);
 
 			// Emit the delivery driver's updated location to each order's specific channel
-			const orders = await DeliveryOrderDao.getOrdersByDriverId(deliveryDriver.delivery_driver_id);
+			const orders = await DeliveryOrderDao.getOrdersByDeliveryDriverId(deliveryDriver.delivery_driver_id);
 			for (let order of orders) {
 				try {
-					io.to(`order_${order.order_id}`).emit("driver_location", {
+					io.to(`order_${order.order_id}`).emit("driver_location_delivery", {
+						...deliveryDriver,
 						delivery_driver_id: deliveryDriver.delivery_driver_id,
-						location: req.body
+						location: req.body.location
 					});
 				} catch (error) {
 					console.error("Error emitting delivery driver's location to connected users:", error);
 				}
 			}
 			if (orders.length == 0) {
-				io.emit("driver_location", {
+				io.emit("driver_location_delivery", {
+					...deliveryDriver,
 					delivery_driver_id: deliveryDriver.delivery_driver_id,
-					location: req.body
+					location: req.body.location
 				});
 			}
+
+			res.status(200).json(updatedDeliveryDriver);
 		} catch (error) {
 			console.error("Error updating delivery driver's location:", error);
 		}
 
-		res.status(200).json(updatedDeliveryDriver);
 	} catch (error) {
 		console.error("Error updating delivery driver's location:", error);
 		res.status(400).json({ error: "Error updating delivery driver location", detail: error.message });
@@ -250,6 +254,7 @@ async function updateDeliveryDriverOnlineStatus(req, res) {
 
 		if (online) {
 			io.emit("driver_available", updatedDeliveryDriver);
+			await resendPendingOrdersToDeliveryDriver(updatedDeliveryDriver);
 		} else {
 			io.emit("driver_unavailable", delivery_driver_id);
 		}

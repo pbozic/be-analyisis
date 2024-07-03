@@ -81,6 +81,7 @@ async function getOrdersByDeliveryDriverId(delivery_driver_id) {
 			},
 			include: {
 				delivery_driver: true,
+				user: true
 			}
 		});
 	} catch (e) {
@@ -382,6 +383,8 @@ async function updateDeliveryOrderTimeline(order_id, newTimelineEntries) {
 }
 
 async function updateOrder(order_id, order) {
+	delete order.user_id
+	delete order.delivery_driver_id
 	try {
 		return prisma.delivery_orders.update({
 			where: {
@@ -393,6 +396,27 @@ async function updateOrder(order_id, order) {
 		throw new Error(e);
 	}
 }
+
+
+async function getAlreadySentOrdersByDeliveryDriverId(delivery_driver_id) {
+	try {
+		return await prisma.delivery_order_sent.findMany({
+			where: {
+				delivery_driver_id,
+				accepted: false
+			},
+			include: {
+				order: true
+			}
+		});
+	} catch (e) {
+		console.error("Error fetching pending orders for driver:", e);
+		throw new Error(e);
+	}
+}
+
+
+
 module.exports = {
 	getOrders,
 	getOrder,
@@ -411,5 +435,6 @@ module.exports = {
 	updateOrder,
 	updateOrderPickupTime,
 	updateOrderDeliveryTime,
-	getDeliveryOrderIfNotCompleted
+	getDeliveryOrderIfNotCompleted,
+	getAlreadySentOrdersByDeliveryDriverId
 };

@@ -126,6 +126,7 @@ async function createReservation(req, res) {
 			...reservation,
 			user_id: user_id,
 		};
+		console.log(reservationData, 'reservationData')
 		const newReservation = await ReservationDao.createReservation(reservationData);
 
 		// Get all business users associated with the business

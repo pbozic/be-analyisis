@@ -150,10 +150,6 @@ async function acceptOrder(req, res) {
 				}
 			}
 		});
-		if (order.payment.type === "CARD") {
-			const paymentIntent = await stripe.client.paymentIntents.capture(order.payment_intent_id);
-			io.to("orders_" + order.business_id).emit('order_status_change__delivery', order);
-		}
 		//TODO: how to handle multiple vehicles on driver -> check which vehicle has its field active, that's it, one active vehicle per delivery driver
 		driver.vehicle = driver.vehicles[0];
 		order.driver = driver;
@@ -161,7 +157,9 @@ async function acceptOrder(req, res) {
 		order.details.distance = result.rows[0].elements[0].distance.text;
 		order.details.duration = result.rows[0].elements[0].duration.text;
 		order.details.customer_expected_delivery_at = new Date(new Date().getTime() + result.rows[0].elements[0].duration.value * 1000);
-		order = await DeliveryOrderDao.updateOrder(order.order_id, order)
+		order = await DeliveryOrderDao.updateOrder(order.order_id, {
+			details: order.details
+		})
 
 		console.log("order accepted", order)
 
@@ -341,6 +339,13 @@ async function getDeliveryOrdersByBusinessId(req, res) {
 async function updateOrderStatus(req, res) {
 	try {
 		let order = await DeliveryOrderDao.updateOrderStatus(req.body.order_id, req.body.status);
+
+		if (req.body.status === DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED) {
+			if (order.payment.type === "CARD") {
+				const paymentIntent = await stripe.client.paymentIntents.capture(order.payment_intent_id);
+				io.to("orders_" + order.business_id).emit('order_status_change__delivery', order);
+			}
+		}
 		io.to("order_" + order.order_id).emit('order_status_change__delivery', order);
 
 		res.status(200).json(order);

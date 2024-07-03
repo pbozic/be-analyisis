@@ -27,7 +27,7 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
 app.use(logger("dev"));
-
+app.disable("etag")
 app.use(express.json({ limit: "512mb" }));
 app.use(express.urlencoded({ limit: "512mb", extended: false }));
 

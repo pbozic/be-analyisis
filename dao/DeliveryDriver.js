@@ -119,7 +119,7 @@ const updateDeliveryDriverOnlineStatus = async (delivery_driver_id, isOnline) =>
 	}
 };
 
-const updateDeliveryDriverLocation = async (user_id, location) => {
+const updateDeliveryDriverLocation = async (delivery_driver_id, location) => {
 	try {
 		const locationData = {
 			name: location?.name ?? null,
@@ -131,7 +131,7 @@ const updateDeliveryDriverLocation = async (user_id, location) => {
 		};
 
 		return await prisma.delivery_drivers.update({
-			where: { user_id },
+			where: { delivery_driver_id },
 			data: { location: locationData }
 		});
 	} catch (error) {
@@ -223,6 +223,28 @@ const getAvailableDeliveryDrivers = async () => {
 	}
 }
 
+
+const updateDriverLocation = async (delivery_driver_id, location) => {
+	try {
+		const locationData = {
+			name: location?.name ?? null,
+			address: location?.address ?? null,
+			coordinates: {
+				latitude: location?.coordinates?.latitude ?? null,
+				longitude: location?.coordinates?.longitude ?? null,
+			},
+		};
+
+		return await prisma.delivery_drivers.update({
+			where: { delivery_driver_id },
+			data: { location: locationData },
+		});
+	} catch (error) {
+		console.error("Error updating driver's location:", error);
+		throw new Error(error);
+	}
+};
+
 module.exports = {
 	getDeliveryDrivers,
 	getOnlineDeliveryDrivers,
@@ -233,5 +255,6 @@ module.exports = {
 	updateDeliveryDriverLocation,
 	updateDeliveryDriverOnlineStatus,
 	createDeliveryDriver,
-	getAvailableDeliveryDrivers
+	getAvailableDeliveryDrivers,
+	updateDriverLocation
 };

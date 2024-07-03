@@ -3,7 +3,9 @@ const { server } = require("./server");
 const UserSockets = new Map(); // Store user ID to socket mapping
 const jwt = require("jsonwebtoken");
 const DriverDao = require("./dao/Driver");
+const DeliveryDriverDao = require("./dao/DeliveryDriver");
 const TaxiOrderDao = require("./dao/TaxiOrder");
+const DeliveryOrderDao = require("./dao/DeliveryOrder");
 
 const io = new Server(server);
 
@@ -34,34 +36,7 @@ io.on("connection", (socket) => {
 		socket.join(roomName);
 		console.log(`Socket ${socket.id} for user ${socket.user.user_id} joined room ${roomName}`);
 	});
-	socket.on("update_location", async (location) => {
-		try {
-			const userId = socket.user.user_id;
-			const driver = await DriverDao.getDriverByUserId(userId);
-			await DriverDao.updateDriverLocation(userId, location);
 
-			// Emit the driver's updated location to each order's specific channel
-			const orders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id);
-			for (let order of orders) {
-				try {
-					io.to(`order_${order.order_id}`).emit("driver_location", {
-						driver_id: driver.driver_id,
-						location: location
-					});
-				} catch (error) {
-					console.error("Error emiting driver's location to connected users:", error);
-				}
-			}
-			if (orders.length === 0) {
-				io.emit("driver_location", {
-					driver_id: driver.driver_id,
-					location: location
-				});
-			}
-		} catch (error) {
-			console.error("Error updating driver's location:", error);
-		}
-	});
 });
 
 
