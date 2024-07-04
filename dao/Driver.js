@@ -62,6 +62,7 @@ const getDriverById = async (driver_id) => {
 		throw new Error(error);
 	}
 };
+
 const getDriverByUserId = async (user_id) => {
 	try {
 		return await prisma.drivers.findUnique({
