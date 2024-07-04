@@ -331,6 +331,24 @@ const linkDocumentToMenuItem = async (documentId, menuItemId) => {
     }
 };
 
+const linkDocumentToLostItem = async (documentId, lostItemId) => {
+    try {
+        return await prisma.documents.update({
+            where: { document_id: documentId },
+            data: {
+                lost_items: {
+                    connect: {
+                        lost_item_id: lostItemId
+                    }
+                }
+            },
+        });
+    } catch (error) {
+        console.error("Error linking lost item document:", error);
+        return new Error(error);
+    }
+};
+
 const linkDocumentToDriver = async (documentId, driverId) => {
     try {
         return await prisma.documents.update({
@@ -384,46 +402,79 @@ const linkDocumentToDeliveryDriver = async (documentId, deliveryDriverId) => {
         return new Error(error);
     }
 };
-
 const deleteDocument = async (documentId) => {
     try {
-        return await prisma.documents.delete({
-            where: {document_id: documentId},
+        // Fetch document to get associated files
+        const document = await prisma.documents.findUnique({
+            where: { document_id: documentId },
+            include: { files: true },
         });
+
+        // Ensure document exists
+        if (!document) {
+            throw new Error(`Document with ID ${documentId} not found`);
+        }
+
+        // Await the resolution of document.files
+        const files = await prisma.files.findMany({
+            where: { document_id: documentId },
+        });
+
+        // Delete all files associated with the document
+        for (const file of files) {
+            await prisma.files.delete({
+                where: { file_id: file.file_id },
+            });
+        }
+
+        // Delete the document itself
+        await prisma.documents.delete({
+            where: { document_id: documentId },
+        });
+
+        console.log(`Document ${documentId} and associated files deleted`);
     } catch (error) {
         console.error("Error deleting document:", error);
-        return new Error(error);
+        throw new Error(error);
     }
 };
 
-const deleteDocumentsAndFilesByMenuItemId = async (menu_item_id) => {
 
-    const documents = await prisma.documents.findMany({
-        where: { menu_item_id: menu_item_id },
-        select: {
-            document_id: true,
-            files: {
-                select: { file_id: true }
-            }
-        }
-    });
-
-    for (const document of documents) {
-        await prisma.files.deleteMany({
-            where: {
-                document_id: document.document_id
+const deleteDocumentsAndFiles = async (field, id) => {
+    try {
+        // Fetch all documents based on the provided field and id
+        const documents = await prisma.documents.findMany({
+            where: { [field]: id },
+            select: {
+                document_id: true,
+                files: {
+                    select: { file_id: true }
+                }
             }
         });
-    }
 
-    await prisma.documents.deleteMany({
-        where: {
-            menu_item_id: menu_item_id
+        // Delete all files associated with the fetched documents
+        for (const document of documents) {
+            await prisma.files.deleteMany({
+                where: {
+                    document_id: document.document_id
+                }
+            });
         }
-    });
 
-    console.log('All documents and files deleted for menu item ID:', menu_item_id);
-}
+        // Delete all documents associated with the provided field and id
+        await prisma.documents.deleteMany({
+            where: {
+                [field]: id
+            }
+        });
+
+        console.log(`All documents and files deleted for ${field}:`, id);
+    } catch (error) {
+        console.error(`Error deleting documents and files for ${field}:`, id, error);
+    }
+};
+
 
 module.exports = {
     createDocument,
@@ -451,5 +502,6 @@ module.exports = {
     linkDocumentToBusiness,
     deleteDocument,
     linkDocumentToMenuItem,
-    deleteDocumentsAndFilesByMenuItemId
+    linkDocumentToLostItem,
+    deleteDocumentsAndFiles
 };

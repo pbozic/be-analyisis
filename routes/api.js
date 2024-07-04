@@ -24,6 +24,7 @@ const documentsRoutes = require("./api/documents");
 const menusRoutes = require("./api/menu");
 const businessUserRoutes = require("./api/businessUsers");
 const stripeRoutes = require("./api/stripe");
+const lostItemsRoutes = require("./api/lostItems");
 
 router.use("/stripe", stripeRoutes);
 router.use("/admin", [authMiddleware, adminMiddleware], adminRoutes);
@@ -44,6 +45,7 @@ router.use("/finances", [authMiddleware], financesRoutes);
 router.use("/documents", [authMiddleware], documentsRoutes);
 router.use("/menus", [authMiddleware], menusRoutes);
 router.use("/business-users", [authMiddleware], businessUserRoutes);
+router.use("/lost_items", lostItemsRoutes);
 
 
 router.get("/test/s3", [authMiddleware], async (req, res) => {

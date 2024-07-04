@@ -1,0 +1,69 @@
+require("dotenv").config();
+const LostItemsDao = require("../dao/LostItems");
+const DocumentDao = require("../dao/Document");
+const FileDao = require("../dao/File");
+const S3Helper = require("../lib/s3");
+
+/**
+ * POST /lost_items/report
+ * @tag LostItems
+ * @summary Report a found item
+ * @description Reports a found item and adds it to the database.
+ * @operationId reportFoundItem
+ * @bodyContent {FoundItem} application/json
+ * @bodyRequired
+ * @response 201 - Found item reported successfully
+ * @responseContent {FoundItem} 201.application/json
+ * @response 400 - Error reporting found item
+ */
+async function reportFoundItem(req, res) {
+	const { description, found, images } = req.body;
+	try {
+		const foundItem = await LostItemsDao.reportFoundItem({description, found});
+
+		if (images && images.files.length > 0) {
+			const document = await DocumentDao.createDocument(images.documentData);
+			for (const file of images.files) {
+				let base64 = file.base64;
+				delete file.base64;
+				let fileData = await FileDao.addFileToDocument(document.document_id, file);
+				let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+				await S3Helper.SaveObject(key, base64, file.mime_type, {}, file);
+			}
+			await DocumentDao.linkDocumentToLostItem(document.document_id, foundItem.lost_item_id);
+		}
+
+		res.status(201).json(foundItem);
+	} catch (e) {
+		console.error("Error reporting found item:", e);
+		res.status(400).json({ error: "Error reporting found item", detail: e.message });
+	}
+}
+
+/**
+ * DELETE /lost_items/delete/:lost_item_id
+ * @tag LostItems
+ * @summary Delete a found item
+ * @description Deletes a found item from the database.
+ * @operationId deleteFoundItem
+ * @pathParam {string} lost_item_id - The ID of the found item to delete
+ * @response 200 - Found item deleted successfully
+ * @responseContent {LostItems} 200.application/json
+ * @response 400 - Error deleting found item
+ */
+async function deleteFoundItem(req, res) {
+	try {
+		const { lost_item_id } = req.params;
+		await DocumentDao.deleteDocumentsAndFiles('lost_item_id', lost_item_id);
+		await LostItemsDao.deleteFoundItem(lost_item_id);
+		res.status(200).json({ message: "Found item deleted successfully" });
+	} catch (e) {
+		console.error("Error deleting found item:", e);
+		res.status(400).json({ error: "Error deleting found item", detail: e.message });
+	}
+}
+
+module.exports = {
+	reportFoundItem,
+	deleteFoundItem,
+};
