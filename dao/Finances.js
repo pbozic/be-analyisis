@@ -128,6 +128,24 @@ const unlinkFinancesFromBusiness = async (businessId) => {
 	}
 };
 
+const getFinanceRecordByBusinessId = async (business_id) => {
+	try {
+		const business = await prisma.business.findUnique({
+			where: { business_id },
+			include: { finances: true }
+		});
+
+		if (!business) {
+			throw new Error(`Business with id ${business_id} not found`);
+		}
+
+		return business.finances;
+	} catch (error) {
+		console.error('Error retrieving finances information:', error);
+		throw error;
+	}
+}
+
 
 
 
@@ -142,5 +160,5 @@ module.exports = {
 	unlinkFinancesFromBusiness,
 	updatePaymentPreferences,
 	deleteFinances,
-
+	getFinanceRecordByBusinessId
 };
