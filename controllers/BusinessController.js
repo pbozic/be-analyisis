@@ -630,7 +630,14 @@ async function removeParentBusinessId(req, res) {
  */
 async function reviewBusiness(req, res) {
 	try {
-		let business = await UserDao.getUserById(req.body.business_id);
+		let business = await BusinessDao.getBusinessById(req.body.business_id);
+		if (business.reviewable_id === null) {
+			let reviewable = await ReviewDao.createReviewableBusiness(business.business_id);
+			if (!reviewable) {
+				return res.status(400).json({ error: "Error creating reviewable business" });
+			}
+			business.reviewable_id = reviewable.reviewable_id;
+		}
 		let review = await ReviewDao.createReview({
 			comment: req.body.comment,
 			rating: req.body.rating,

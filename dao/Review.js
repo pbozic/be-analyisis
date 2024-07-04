@@ -1,6 +1,6 @@
 const prisma = require("../prisma/prisma");
 
-async function createReviewableBussiness(bussines_id) {
+async function createReviewableBusiness(bussines_id) {
     try {
         return prisma.reviewable.create({
             data: {
@@ -42,7 +42,7 @@ async function createReview(review) {
 }
 
 module.exports = {
-    createReviewableBussiness,
+    createReviewableBusiness,
     createReviewableUser,
     createReview
 };

@@ -589,6 +589,14 @@ async function setPrimaryAddress(req, res) {
 async function reviewUser(req, res) {
 	try {
 		let user = await UserDao.getUserById(req.body.user_id);
+		if (!user.reviewable_id) { 
+			let reviewable = await ReviewDao.createReviewableUser(user.user_id);
+			if (!reviewable) {
+				return res.status(400).json({ error: "Error adding review" });
+			}
+			user.reviewable_id = reviewable.reviewable_id;
+
+		}
 		let review = await ReviewDao.createReview({
 	
 			comment: req.body.comment,
