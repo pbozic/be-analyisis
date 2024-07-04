@@ -12,6 +12,7 @@ router.get('/drivers/:driverId', DocumentsController.getDocumentsForDriver);
 router.get('/vehicles/:vehicleId', DocumentsController.getDocumentsForVehicle);
 router.get('/type/:documentType', DocumentsController.getDocumentsByDocumentType);
 router.get('/business/:business_id/type/:document_type', DocumentsController.getDocumentsForBusinessByDocumentType);
+router.get('/user/type/:document_type', DocumentsController.getDocumentsForUserByDocumentType);
 router.get('/drivers/:driverId/type/:documentType', DocumentsController.getDocumentsForDriverByDocumentType);
 router.get('/deliveryPersons/:deliveryPersonId/type/:documentType', DocumentsController.getDocumentsForDeliveryPersonByDocumentType);
 router.get('/vehicles/:vehicleId/type/:documentType', DocumentsController.getDocumentsForVehicleByDocumentType);

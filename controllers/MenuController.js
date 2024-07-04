@@ -449,7 +449,7 @@ async function createMenuItem(req, res) {
 async function deleteMenuItem(req, res) {
 	const { menu_item_id } = req.params;
 	try {
-		await DocumentDao.deleteDocumentsAndFilesByMenuItemId(menu_item_id)
+		await DocumentDao.deleteDocumentsAndFiles('menu_item_id', menu_item_id);
 		await MenuItemDao.deleteMenuItem(menu_item_id);
 		res.status(204).send();
 	} catch (e) {
@@ -478,7 +478,7 @@ async function updateMenuItem(req, res) {
 		const menuItem = await MenuItemDao.updateMenuItem(menu_item_id, data);
 
 		if (image.files[0].file_type === 'IMAGE') {
-			await DocumentDao.deleteDocumentsAndFilesByMenuItemId(menu_item_id)
+			await DocumentDao.deleteDocumentsAndFiles('menu_item_id', menu_item_id);
 			const document = await DocumentDao.createDocument(image.documentData);
 			for (const file of image.files) {
 				let base64 = file.base64;

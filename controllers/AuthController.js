@@ -405,22 +405,6 @@ async function registerDeliveryService(req, res) {
 	try {
 		const business = await BusinessDao.createNewBusiness(req.body.business);
 
-		// Handle business documents
-		if (req.body.business.documents) {
-			for (const doc of req.body.business.documents) {
-				const document = await DocumentDao.createDocument(doc.documentData);
-
-				for (const file of doc.files) {
-					let base64 = file.base64;
-					delete file.base64;
-					let fileData = await FileDao.addFileToDocument(document.document_id, file);
-					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-					S3Helper.SaveObject(key, base64, file.mime_type, { businesses: [business.business_id]}, file);
-				}
-				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
-			}
-		}
-
 		let deliveryDrivers = [];
 		if (Array.isArray(req.body.deliveryDrivers) && req.body.deliveryDrivers.length) {
 			for (const deliveryDriverInfo of req.body.deliveryDrivers) {
@@ -428,17 +412,8 @@ async function registerDeliveryService(req, res) {
 				deliveryDriverInfo.user.data.password = "lalaland1";
 				const newUser = await UserDao.createNewUser(deliveryDriverInfo.user.data, true);
 
-				let addresses = []
-				if (deliveryDriverInfo.user.addresses) {
-					for (const addressInfo of deliveryDriverInfo.user.addresses) {
-						const address = await AddressDao.addAddress(addressInfo)
-						await AddressDao.addUserAddress(deliveryDriver.delivery_driver_id, address.address_id);
-						addresses.push(address);
-					}
-				}
-
 				// Handle user documents
-				if (deliveryDriverInfo.user.documents) {
+				if (deliveryDriverInfo.user?.documents) {
 					for (const doc of deliveryDriverInfo.user.documents) {
 						const document = await DocumentDao.createDocument(doc.documentData);
 						for (const file of doc.files) {
@@ -446,7 +421,7 @@ async function registerDeliveryService(req, res) {
 							delete file.base64;
 							let fileData = await FileDao.addFileToDocument(document.document_id, file);
 							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-							S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]}, file);
+							S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id] }, file);
 						}
 						await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 					}
@@ -454,8 +429,9 @@ async function registerDeliveryService(req, res) {
 
 				const deliveryDriverData = { ...deliveryDriverInfo.driver.data, business_id: business.business_id };
 				const deliveryDriver = await DeliveryDriverDao.createDeliveryDriver(deliveryDriverData, newUser);
-				// Handle delivery taxi documents
-				if (deliveryDriverInfo.driver.documents) {
+
+				// Handle delivery driver documents
+				if (deliveryDriverInfo.driver?.documents) {
 					for (const doc of deliveryDriverInfo.driver.documents) {
 						const document = await DocumentDao.createDocument(doc.documentData);
 						for (const file of doc.files) {
@@ -463,16 +439,26 @@ async function registerDeliveryService(req, res) {
 							delete file.base64;
 							let fileData = await FileDao.addFileToDocument(document.document_id, file);
 							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-							S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]}, file);
+							S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id] }, file);
 						}
 						await DocumentDao.linkDocumentToDeliveryDriver(document.document_id, deliveryDriver.delivery_driver_id);
+					}
+				}
+
+				// Handle addresses of the delivery driver
+				let addresses = [];
+				if (deliveryDriverInfo.user.addresses) {
+					for (const addressInfo of deliveryDriverInfo.user.addresses) {
+						const address = await AddressDao.addAddress(addressInfo);
+						await AddressDao.addUserAddress(newUser.user_id, address.address_id);
+						addresses.push(address);
 					}
 				}
 
 				let vehicles = [];
 				if (Array.isArray(deliveryDriverInfo.vehicles) && deliveryDriverInfo.vehicles.length) {
 					for (const vehicleInfo of deliveryDriverInfo.vehicles) {
-						const vehicle = await VehicleDao.createNewVehicle({...vehicleInfo?.data, business_id: business.business_id});
+						const vehicle = await VehicleDao.createNewVehicle({ ...vehicleInfo?.data, business_id: business.business_id });
 						await VehicleDao.assignVehicleToDeliveryDriver(vehicle.vehicle_id, deliveryDriver.delivery_driver_id);
 						// Handle vehicle documents
 						if (vehicleInfo.documents) {
@@ -483,7 +469,7 @@ async function registerDeliveryService(req, res) {
 									delete file.base64;
 									let fileData = await FileDao.addFileToDocument(document.document_id, file);
 									let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-									S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]}, file);
+									S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id] }, file);
 								}
 								await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
 							}

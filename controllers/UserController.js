@@ -5,9 +5,14 @@ const UserDao = require("../dao/User");
 const TokenDao = require("../dao/Token");
 const ReviewDao = require("../dao/Review");
 const AddressDao = require("../dao/Address");
+const DocumentDao = require("../dao/Document");
+const FileDao = require("../dao/File");
 const SMS = require("../lib/SMS");
 const stripe = require("../lib/stripe");
+const S3Helper = require("../lib/s3");
 const { User } = require("@onesignal/node-onesignal");
+const { DOCUMENT_TYPE } = require("../lib/constants");
+
 /**
  * GET /users
  * @tag Users
@@ -160,6 +165,48 @@ async function updateEmail(req, res) {
 		res.status(400).json({ error: "Error updating user information" });
 	} catch (e) {
 		res.status(400).json({ error: "Error updating user information", e });
+	}
+}
+
+/**
+ * PATCH /me/profile_picture
+ * @tag Users
+ * @summary Updates the current user's profile picture
+ * @operationId updateProfilePicture
+ * @requestBody {ProfilePictureData} application/json - New profile picture data
+ * @response 200 - Profile picture updated successfully
+ * @responseContent {User} 200.application/json - Updated user details
+ * @response 400 - Error updating profile picture
+ */
+async function updateProfilePicture(req, res) {
+	const userId = req.user.user_id;
+	const { image } = req.body;
+
+	try {
+		const documents = await DocumentDao.getDocumentsForUserByType(userId, DOCUMENT_TYPE.PROFILE_PICTURE);
+		for (const document of documents) {
+			await DocumentDao.deleteDocument(document.document_id);
+		}
+
+		// Create new document for profile picture
+		const document = await DocumentDao.createDocument(image.documentData);
+
+		// Add files to the document and upload to S3
+		for (const file of image.files) {
+			let base64 = file.base64;
+			delete file.base64;
+			let fileData = await FileDao.addFileToDocument(document.document_id, file);
+			let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+			await S3Helper.SaveObject(key, base64, file.mime_type, { users: [userId] });
+		}
+
+		// Link new document to user
+		await DocumentDao.linkDocumentToUser(document.document_id, userId);
+
+		res.status(200).json({ message: 'Profile picture created successfully'});
+	} catch (error) {
+		console.error("Error updating profile picture:", error);
+		res.status(400).json({ error: "Error updating profile picture", detail: error.message });
 	}
 }
 
@@ -626,5 +673,6 @@ module.exports = {
 	updateUserTransferPreferences,
 	updateUserRadioPreferences,
 	updateUserNotificationPreferences,
-	updateUserPushNotifications
+	updateUserPushNotifications,
+	updateProfilePicture
 };

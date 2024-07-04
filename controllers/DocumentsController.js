@@ -204,6 +204,28 @@ async function getDocumentsForBusinessByDocumentType(req, res) {
 }
 
 /**
+ * GET /documents/user/type/:document_type
+ * @tag Documents
+ * @summary Get documents for a user by type
+ * @description Retrieves documents of a specific type associated with a user.
+ * @operationId getDocumentsForUserByDocumentType
+ * @pathParam {string} document_type - The type of the documents
+ * @response 200 - Successful operation, returns documents
+ * @responseContent {Document[]} 200.application/json
+ * @response 400 - Error retrieving documents
+ */
+async function getDocumentsForUserByDocumentType(req, res) {
+	try {
+		const { document_type } = req.params;
+		const documents = await DocumentDao.getDocumentsForUserByType(req.user.user_id, document_type);
+		res.status(200).json(documents);
+	} catch (error) {
+		console.error("Error getting documents for user by type:", error);
+		res.status(400).json({ error: "Error retrieving documents", detail: error.message });
+	}
+}
+
+/**
  * GET /documents/drivers/:driverId/documents/type/:documentType
  * @tag Documents
  * @summary Get documents for a driver by type
@@ -517,6 +539,7 @@ module.exports = {
 	getDocumentsForDriverByDocumentType,
 	getDocumentsForDeliveryPersonByDocumentType,
 	getDocumentsForVehicleByDocumentType,
+	getDocumentsForUserByDocumentType,
 	createUserDocument,
 	createBusinessDocument,
 	createVehicleDocument,
