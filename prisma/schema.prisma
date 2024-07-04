@@ -349,6 +349,7 @@ model delivery_orders {
   business             business?             @relation(fields: [business_id], references: [business_id])
   payment_intent_id    String?
   transactions         transactions[]
+  find_drivers_attempts Int?                 @default(0)
 }
 
 model delivery_order_sent {

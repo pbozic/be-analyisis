@@ -82,6 +82,13 @@ async function createOrder(req, res) {
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
 		let user = await UsersDao.getUserById(user_id);
 		let payment_intent;
+		let { result } = await gApi.distanceBetweenTwoPoints(order.delivery_location.coordinates, order.pickup_location.coordinates, "driving", new Date());
+		let distanceM = result.rows[0].elements[0].distance.value;
+		let distanceKm = distanceM / 1000;
+		order.details.distance = distanceKm;
+		order = await DeliveryOrderDao.updateOrder(order.order_id, {
+			details: order.details
+		});
 		console.log("stripeCustomer", user.stripe_customer_id)
 		if (order.payment.type === "CARD") {
 			payment_intent = await stripe.createPaymentIntentOnBehalf(orderData.details.total_price, orderData.payment.payment_method_id, user.stripe_customer_id, business.stripe_account_id, order.order_id, return_url);
