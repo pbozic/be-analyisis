@@ -413,7 +413,7 @@ async function registerDeliveryService(req, res) {
 				const newUser = await UserDao.createNewUser(deliveryDriverInfo.user.data, true);
 
 				// Handle user documents
-				if (deliveryDriverInfo.user.documents) {
+				if (deliveryDriverInfo.user?.documents) {
 					for (const doc of deliveryDriverInfo.user.documents) {
 						const document = await DocumentDao.createDocument(doc.documentData);
 						for (const file of doc.files) {
@@ -431,7 +431,7 @@ async function registerDeliveryService(req, res) {
 				const deliveryDriver = await DeliveryDriverDao.createDeliveryDriver(deliveryDriverData, newUser);
 
 				// Handle delivery driver documents
-				if (deliveryDriverInfo.driver.documents) {
+				if (deliveryDriverInfo.driver?.documents) {
 					for (const doc of deliveryDriverInfo.driver.documents) {
 						const document = await DocumentDao.createDocument(doc.documentData);
 						for (const file of doc.files) {
