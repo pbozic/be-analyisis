@@ -155,26 +155,26 @@ async function isOrderSent(order_id, driver) {
 async function acceptOrder(order_id, user) {
 	console.log("accept (delivery) order", order_id)
 	try {
-		// let delivery_order_sent = await prisma.delivery_order_sent.update({
-		// 	where: {
-		// 		delivery_order_sent_driver_unique: {
-		// 			order_id,
-		// 			delivery_driver_id: user.driver.delivery_driver_id
-		// 		}
-		// 	},
-		// 	data: {
-		// 		accepted: true
-		// 	},
-		// });
-		// console.log("delivery_order_sent", delivery_order_sent)
-		// prisma.delivery_drivers.update({
-		// 	where: {
-		// 		delivery_driver_id: user.driver.delivery_driver_id
-		// 	},
-		// 	data: {
-		// 		on_order: true
-		// 	}
-		// });
+		let delivery_order_sent = await prisma.delivery_order_sent.update({
+			where: {
+				delivery_order_sent_driver_unique: {
+					order_id,
+					delivery_driver_id: user.driver.delivery_driver_id
+				}
+			},
+			data: {
+				accepted: true
+			},
+		});
+		console.log("delivery_order_sent", delivery_order_sent)
+		prisma.delivery_drivers.update({
+			where: {
+				delivery_driver_id: user.driver.delivery_driver_id
+			},
+			data: {
+				on_order: true
+			}
+		});
 		return prisma.delivery_orders.update({
 			where: {
 				order_id
@@ -223,6 +223,7 @@ async function updateOrderPickupTime(order_id, pickup_time) {
 		if (!order) {
 			throw new Error('Order not found');
 		}
+		console.log(pickup_time, 'setting pickup time')
 		// Merge new pickup_time with existing details
 		const updatedDetails = {
 			...order.details,

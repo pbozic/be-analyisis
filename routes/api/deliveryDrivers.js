@@ -12,8 +12,7 @@ router.get("/:delivery_driver_id", DeliveryDriverController.getDeliveryDriverByI
 router.get("/user/:user_id", DeliveryDriverController.getDeliveryDriverByUserId);
 router.get("/:delivery_driver_id/location", DeliveryDriverController.getDeliveryDriverLocation);
 
-
-router.patch("/", DeliveryDriverController.updateDeliveryDriver);
+router.patch("/update/:delivery_driver_id", DeliveryDriverController.updateDeliveryDriver);
 router.patch("/location", DeliveryDriverController.updateDeliveryDriverLocation);
 router.patch("/online", DeliveryDriverController.updateDeliveryDriverOnlineStatus);
 

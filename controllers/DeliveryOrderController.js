@@ -240,6 +240,44 @@ async function getCompletedDeliveryOrders(req, res) {
 }
 
 /**
+ * GET /delivery/orders/active/driver/:driver_id
+ * @tag Delivery
+ * @summary Get active delivery orders.
+ * @description This fetches all active orders for a specific driver.
+ * @operationId getActiveDeliveryOrdersByDriverId
+ * @requestBody {DriverId} driverId - The ID of the driver to retrieve active orders for
+ * @response 200 - Successful operation. Returns a list of completed orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+
+async function getActiveDeliveryOrdersByDriverId(req, res) {
+	const { driver_id } = req.params;
+
+	try {
+		const completedOrders = await DeliveryOrderDao.getOrders({
+			where: {
+				status: {
+					notIn: [
+						DELIVERY_ORDER_STATUS.PENDING,
+						DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
+						DELIVERY_ORDER_STATUS.CUSTOMER_CANCELLED,
+						DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
+						DELIVERY_ORDER_STATUS.DELIVERY_ARRIVED,
+						DELIVERY_ORDER_STATUS.MERCHANT_REFUNDED,
+						DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
+					]
+				},
+				delivery_driver_id: driver_id
+			}});
+		res.status(200).json(completedOrders);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+/**
  * GET /delivery/orders/completed/user/:user_id
  * @tag Delivery
  * @summary Get completed delivery orders.
@@ -458,5 +496,6 @@ module.exports = {
 	getDeliveryOrdersByBusinessId,
 	updateOrderDeliveryTime,
 	getActiveDeliveryOrders,
-	getCompletedDeliveryOrdersByUserId
+	getCompletedDeliveryOrdersByUserId,
+	getActiveDeliveryOrdersByDriverId
 };
