@@ -236,11 +236,14 @@ async function updateDriverOnlineStatus(req, res) {
 		const updatedDriver = await DriverDao.updateDriverOnlineStatus(driver_id, online);
 
 		if (online) {
-			console.log("online", driver_id)
+			console.log("Driver is now online:", driver_id);
 			io.emit("driver_available", updatedDriver);
 
 			// Re-send pending orders to this driver
 			await taxiHelpers.resendPendingOrdersToDriver(updatedDriver);
+
+			// Send active orders to this driver
+			await taxiHelpers.sendActiveOrdersToDriver(updatedDriver);
 		} else {
 			io.emit("driver_unavailable", driver_id);
 		}
@@ -250,7 +253,6 @@ async function updateDriverOnlineStatus(req, res) {
 		res.status(400).json({ error: "Error setting online status for driver", detail: error.message });
 	}
 }
-
 
 /**
  * POST /drivers/create
