@@ -51,6 +51,7 @@ async function getActiveTaxiOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * GET /taxi/orders/completed
  * @tag Taxi
@@ -151,7 +152,7 @@ async function createOrder(req, res) {
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function acceptOrder(req, res) {
-	const { order_id, user } = req.body
+	const { order_id, user } = req.body;
 	try {
 		//TODO: check if driver is online
 		//TODO: check if order is still pending
@@ -160,7 +161,7 @@ async function acceptOrder(req, res) {
 			include: {
 				driver: true
 			}
-		}); 
+		});
 		let driver = await DriverDao.getDriverById(user.driver.driver_id, {
 			include: {
 				vehicles: {
@@ -171,22 +172,38 @@ async function acceptOrder(req, res) {
 		//TODO: how to handle multiple vehicles on driver -> only one is active at a time of driving by the driver
 		driver.vehicle = driver.vehicles[0];
 		order.driver = driver;
-		let { result } = gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, driver.location.coordinates, "driving", new Date());
-		order.estimates.pickup_time_in_seconds = result.rows[0].elements[0].duration.value;
-		order = await TaxiOrderDao.updateOrder(order.order_id, order);
+
+		const { result } = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, driver.location.coordinates, "driving", new Date());
+
+		console.log("ROES:", result, result?.rows[0], result?.rows[0]?.elements[0]);
+
+		if (result && result.rows && result.rows[0] && result.rows[0].elements && result.rows[0].elements[0]) {
+			order.estimates.pickup_time_in_seconds = result.rows[0].elements[0].duration.value;
+			const estimatedPickupTime = new Date();
+			estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + result.rows[0].elements[0].duration.value);
+			order.estimates.pickup_time = estimatedPickupTime;
+		} else {
+			console.error('Invalid response structure from distanceBetweenTwoPoints');
+			order.estimates.pickup_time_in_seconds = -1;
+			order.estimates.pickup_time = null;
+		}
+
+		order = await TaxiOrderDao.updateOrder(order.order_id, {
+			estimates: order.estimates
+		});
 		let userSocket = UserSockets.get(order.user_id);
-		console.log("order accepted" ,order)
+		console.log("order accepted", order);
 		if (userSocket) {
 			io.to("order_" + order.order_id).emit('order_accepted__taxi', order);
 			io.emit('driver_unavailable', order.driver_id);
 		}
 		res.status(200).json(order);
-	}
-	catch (e) {
+	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
 }
+
 /**
  * POST /taxi/order/complete
  * @tag Taxi
@@ -205,7 +222,11 @@ async function completeOrder(req, res) {
 		let order = await TaxiOrderDao.completeOrder(req.body.order_id);
 		let driver = await DriverDao.getDriverById(order.driver_id);
 		io.emit('driver_available', driver)
-		io.to("order_" + order.order_id).emit('order_completed', order);
+
+		io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
+		io.to("order_" + order.order_id).emit('order_completed__taxi', order);
+
+		console.log("order_status_change__taxi", "order_completed__taxi")
 		io.emit('driver_available', driver);
 
 		res.status(200).json(order);

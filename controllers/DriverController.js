@@ -236,6 +236,7 @@ async function updateDriverOnlineStatus(req, res) {
 		const updatedDriver = await DriverDao.updateDriverOnlineStatus(driver_id, online);
 
 		if (online) {
+			console.log("online", driver_id)
 			io.emit("driver_available", updatedDriver);
 
 			// Re-send pending orders to this driver
