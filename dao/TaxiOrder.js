@@ -60,6 +60,33 @@ async function getTaxiOrderIfNotCompleted(user_id) {
     }
 }
 
+async function getActiveOrdersByDriverId(driver_id) {
+    try {
+        return await prisma.taxi_orders.findMany({
+            where: {
+                driver_id: driver_id,
+                status: {
+                    notIn: [TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.PENDING] // Exclude both completed and pending orders
+                },
+            },
+            include: {
+                driver: {
+                    include: {
+                        user: true,
+                        vehicles: {
+                            include: {
+                                vehicle_specification: true,
+                            }
+                        }
+                    }
+                },
+            }
+        });
+    } catch (e) {
+        console.error("Error fetching taxi order:", e);
+        throw new Error(e.message);
+    }
+}
 
 async function getOrdersByDriverId(driver_id) {
     try {
@@ -397,5 +424,6 @@ module.exports = {
     updateTaxiOrderPayment,
     updateTaxiOrderTimeline,
     getTaxiOrderIfNotCompleted,
-    getAlreadySentOrdersByDriverId
+    getAlreadySentOrdersByDriverId,
+    getActiveOrdersByDriverId
 };

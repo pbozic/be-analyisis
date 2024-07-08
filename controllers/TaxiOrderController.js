@@ -53,6 +53,30 @@ async function getActiveTaxiOrders(req, res) {
 }
 
 /**
+ * GET /taxi/orders/active/driver/:driver_id
+ * @tag Taxi
+ * @summary Get active taxi orders for a driver.
+ * @description This fetches all active (not completed AND not pending) orders for a specific driver.
+ * @operationId getActiveTaxiOrdersByDriverId
+ * @pathParam {integer} driver_id - The ID of the driver to retrieve active orders for
+ * @response 200 - Successful operation. Returns a list of active orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+
+async function getActiveTaxiOrdersByDriverId(req, res) {
+	const { driver_id } = req.params;
+
+	try {
+		const activeOrders = await TaxiOrderDao.getActiveOrdersByDriverId(driver_id);
+		res.status(200).json(activeOrders);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json({ message: "Error something went wrong..." });
+	}
+}
+
+/**
  * GET /taxi/orders/completed
  * @tag Taxi
  * @summary Get completed taxi orders.
@@ -432,5 +456,6 @@ module.exports = {
 	updateTaxiOrderPayment,
 	updateTaxiOrderTimeline,
 	getActiveTaxiOrders,
-	getCompletedTaxiOrdersByUserId
+	getCompletedTaxiOrdersByUserId,
+	getActiveTaxiOrdersByDriverId,
 };
