@@ -82,13 +82,15 @@ async function createOrder(req, res) {
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
 		let user = await UsersDao.getUserById(user_id);
 		let payment_intent;
-		let { result } = await gApi.distanceBetweenTwoPoints(order.delivery_location.coordinates, order.pickup_location.coordinates, "driving", new Date());
-		let distanceM = result.rows[0].elements[0].distance.value;
-		let distanceKm = distanceM / 1000;
-		order.details.distance = distanceKm;
-		order = await DeliveryOrderDao.updateOrder(order.order_id, {
-			details: order.details
-		});
+		if (order.details.type === 'delivery') {
+			let { result } = await gApi.distanceBetweenTwoPoints(order.delivery_location.coordinates, order.pickup_location.coordinates, "driving", new Date());
+			let distanceM = result.rows[0].elements[0].distance.value;
+			let distanceKm = distanceM / 1000;
+			order.details.distance = distanceKm;
+			order = await DeliveryOrderDao.updateOrder(order.order_id, {
+				details: order.details
+			});
+		}
 		console.log("stripeCustomer", user.stripe_customer_id)
 		if (order.payment.type === "CARD") {
 			payment_intent = await stripe.createPaymentIntentOnBehalf(orderData.details.total_price, orderData.payment.payment_method_id, user.stripe_customer_id, business.stripe_account_id, order.order_id, return_url);
@@ -163,11 +165,11 @@ async function acceptOrder(req, res) {
 		let { result } = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, order.delivery_location.coordinates, "driving", new Date());
 		order.details.distance = result.rows[0].elements[0].distance.text;
 		order.details.duration = result.rows[0].elements[0].duration.text;
-		order.details.customer_expected_delivery_at = new Date(new Date().getTime() + result.rows[0].elements[0].duration.value * 1000);
+		order.details.customer_expected_delivery_at = new Date(new Date().getTime() + result.rows[0].elements[0].duration.value *  60*1000);
+		console.log(order.details.customer_expected_delivery_at, 'expected delivery ...')
 		order = await DeliveryOrderDao.updateOrder(order.order_id, {
-			details: order.details
+			details: order.details,
 		})
-
 		console.log("order accepted", order)
 
 		io.to("order_" + order.order_id).emit('order_accepted__delivery', order);
@@ -231,7 +233,11 @@ async function getCompletedDeliveryOrders(req, res) {
 			where: {
 				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
 				delivery_driver_id: driver_id
-			}});
+			},
+			include: {
+				business: true
+			}
+		});
 		res.status(200).json(completedOrders);
 	} catch (e) {
 		console.log(e);
@@ -419,7 +425,6 @@ async function updateOrderPickupTime(req, res) {
 	try {
 		let order = await DeliveryOrderDao.updateOrderPickupTime(order_id, pickup_time);
 		io.to("order_" + order.order_id).emit('order_pickup_time', order);
-
 		res.status(200).json(order);
 	}
 	catch (e) {

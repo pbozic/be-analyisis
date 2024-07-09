@@ -106,7 +106,6 @@ async function getDeliveryDriverById(req, res) {
  * @response 400 - Error retrieving delivery driver information
  */
 async function getDeliveryDriverByUserId(req, res) {
-	console.log(req.params.user_id, 'user11')
 	try {
 		const deliveryDriver = await DeliveryDriverDao.getDeliveryDriverByUserId(req.params.user_id);
 		if (deliveryDriver) {
@@ -166,6 +165,7 @@ async function getDeliveryDriverLocation(req, res) {
 async function updateDeliveryDriver(req, res) {
 	const { delivery_driver_id } = req.params;
 	const updateData = req.body;
+	console.log('update delivery timeline', updateData)
 
 	try {
 		const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriver(delivery_driver_id, updateData);

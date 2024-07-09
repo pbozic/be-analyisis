@@ -388,19 +388,24 @@ async function updateDeliveryOrderTimeline(order_id, newTimelineEntries) {
 }
 
 async function updateOrder(order_id, order) {
-	delete order.user_id
-	delete order.delivery_driver_id
+	delete order.user_id;
+	delete order.delivery_driver_id;
+
 	try {
-		return prisma.delivery_orders.update({
+		return await prisma.delivery_orders.update({
 			where: {
-				order_id
+				order_id: order_id,
 			},
-			data: order
+			data: order,
+			include: {
+				delivery_driver: true,
+			},
 		});
 	} catch (e) {
 		throw new Error(e);
 	}
 }
+
 
 
 async function getAlreadySentOrdersByDeliveryDriverId(delivery_driver_id) {
