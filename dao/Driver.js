@@ -235,16 +235,30 @@ const getAvailableDrivers = async () => {
 	}
 }
 
+const getBusinessByDriverId = async (driver_id) => {
+	try {
+		return await prisma.business.findUnique({
+			where: { driver_id },
+		});
+	} catch (error) {
+		console.error("Error retrieving business by driver ID:", error);
+		throw new Error(error);
+	}
+};
+
+
+
 module.exports = {
 	getDrivers,
 	getOnlineDrivers,
 	getDriverById,
 	getDriverByUserId,
 	getDriverLocation,
+	getBusinessByDriverId,
 	updateDriver,
 	updateDriverLocation,
 	updateDriverOnlineStatus,
 	createNewDriver,
 	getAvailableDrivers,
-	updateDriverRideRequirements
+	updateDriverRideRequirements,
 };
