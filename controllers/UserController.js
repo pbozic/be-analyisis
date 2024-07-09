@@ -580,7 +580,7 @@ async function setPrimaryAddress(req, res) {
  * @summary Review a user
  * @description This endpoint is used add a review of user.
  * @operationId reviewUser
- * @bodyDescription Conent of the review
+ * @bodyDescription Content of the review
  * @bodyContent {ReviewRequest} application/json
  * @bodyRequired
  * @response 200 - Primary address set successfully.
@@ -595,12 +595,11 @@ async function reviewUser(req, res) {
 				return res.status(400).json({ error: "Error adding review" });
 			}
 			user.reviewable_id = reviewable.reviewable_id;
-
 		}
 		let review = await ReviewDao.createReview({
-	
 			comment: req.body.comment,
 			rating: req.body.rating,
+			feedback: req.body.feedback,
 			author: {
 				connect: {
 					user_id: req.user.user_id,

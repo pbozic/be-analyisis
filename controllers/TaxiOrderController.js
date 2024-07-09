@@ -44,7 +44,46 @@ async function getActiveTaxiOrders(req, res) {
 	const { user_id } = req.params;
 
 	try {
-		const activeOrder = await TaxiOrderDao.getTaxiOrderIfNotCompleted(user_id)
+		const activeOrder = await TaxiOrderDao.getTaxiOrderIfNotCompleted(user_id);
+
+		if (activeOrder && activeOrder.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED) {
+			const driver = activeOrder.driver;
+
+			// Assuming only one vehicle is active at a time
+			driver.vehicle = driver.vehicles[0];
+
+			const { result, distance, duration } = await gApi.distanceBetweenTwoPoints(
+				activeOrder.pickup_location.coordinates,
+				driver.location.coordinates,
+				"driving",
+				new Date()
+			);
+
+			console.log("ROES:", result, result?.rows[0], result?.rows[0]?.elements[0]);
+			console.log("ROES DISTANCE:", distance);
+			console.log("ROES DURATION:", duration);
+
+			if (result && result.rows && result.rows[0] && result.rows[0].elements && result.rows[0].elements[0]) {
+				activeOrder.estimates.pickup_time_in_seconds = result.rows[0].elements[0].duration.value;
+				const estimatedPickupTime = new Date();
+				estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + result.rows[0].elements[0].duration.value);
+				activeOrder.estimates.pickup_time = estimatedPickupTime;
+			} else {
+				if (duration && distance) {
+					const estimatedPickupTime = new Date();
+					estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + duration);
+					activeOrder.estimates.pickup_time = estimatedPickupTime;
+				}
+				console.error('Invalid response structure from distanceBetweenTwoPoints');
+				activeOrder.estimates.pickup_time_in_seconds = -1;
+				activeOrder.estimates.pickup_time = null;
+			}
+
+			await TaxiOrderDao.updateOrder(activeOrder.order_id, {
+				estimates: activeOrder.estimates
+			});
+		}
+
 		res.status(200).json(activeOrder);
 	} catch (e) {
 		console.log(e);
@@ -197,9 +236,12 @@ async function acceptOrder(req, res) {
 		driver.vehicle = driver.vehicles[0];
 		order.driver = driver;
 
-		const { result } = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, driver.location.coordinates, "driving", new Date());
+		const { result, distance, duration } = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, driver.location.coordinates, "driving", new Date());
 
 		console.log("ROES:", result, result?.rows[0], result?.rows[0]?.elements[0]);
+		console.log("ROES DISTANCE:", distance);
+		console.log("ROES DURATION:", duration);
+
 
 		if (result && result.rows && result.rows[0] && result.rows[0].elements && result.rows[0].elements[0]) {
 			order.estimates.pickup_time_in_seconds = result.rows[0].elements[0].duration.value;
@@ -207,6 +249,11 @@ async function acceptOrder(req, res) {
 			estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + result.rows[0].elements[0].duration.value);
 			order.estimates.pickup_time = estimatedPickupTime;
 		} else {
+			if (duration && distance) {
+				const estimatedPickupTime = new Date();
+				estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + duration);
+				order.estimates.pickup_time = estimatedPickupTime;
+			}
 			console.error('Invalid response structure from distanceBetweenTwoPoints');
 			order.estimates.pickup_time_in_seconds = -1;
 			order.estimates.pickup_time = null;
@@ -215,6 +262,8 @@ async function acceptOrder(req, res) {
 		order = await TaxiOrderDao.updateOrder(order.order_id, {
 			estimates: order.estimates
 		});
+		order.driver = driver;
+
 		let userSocket = UserSockets.get(order.user_id);
 		console.log("order accepted", order);
 		if (userSocket) {

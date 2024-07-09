@@ -622,7 +622,7 @@ async function removeParentBusinessId(req, res) {
  * @summary Review a business
  * @description This endpoint is used add a review of business.
  * @operationId reviewBusiness
- * @bodyDescription Conent of the review
+ * @bodyDescription Content of the review
  * @bodyContent {ReviewRequest} application/json
  * @bodyRequired
  * @response 200 - Primary address set successfully.
@@ -630,7 +630,19 @@ async function removeParentBusinessId(req, res) {
  */
 async function reviewBusiness(req, res) {
 	try {
-		let business = await BusinessDao.getBusinessById(req.body.business_id);
+		let business_id = req.body.business_id;
+
+		// Check if driver_id is present in the request body
+		if (req.body.driver_id) {
+			const business = await DriverDao.getBusinessByDriverId(req.body.driver_id);
+			if (!business) {
+				return res.status(400).json({ error: "Error retrieving business for the driver" });
+			}
+			business_id = business.business_id;
+		}
+
+		// Proceed with the business_id obtained or provided
+		let business = await BusinessDao.getBusinessById(business_id);
 		if (business.reviewable_id === null) {
 			let reviewable = await ReviewDao.createReviewableBusiness(business.business_id);
 			if (!reviewable) {
@@ -638,9 +650,11 @@ async function reviewBusiness(req, res) {
 			}
 			business.reviewable_id = reviewable.reviewable_id;
 		}
+
 		let review = await ReviewDao.createReview({
 			comment: req.body.comment,
 			rating: req.body.rating,
+			feedback: req.body.feedback,
 			author: {
 				connect: {
 					user_id: req.user.user_id,
@@ -652,6 +666,7 @@ async function reviewBusiness(req, res) {
 				},
 			}
 		});
+
 		if (review) {
 			return res.status(200).json(review);
 		}
