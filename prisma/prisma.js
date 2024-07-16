@@ -13,6 +13,9 @@ const prisma = new PrismaClient().$extends({
 				// Proceed with the operation
 				
 				let result = await query(args);
+				if (args.include && args.include.user) {
+					result = removePasswords(result);
+				}
 				result = await generateS3LinksRecursively(args, result);
 				// Return the modified result
 				return result;
@@ -96,5 +99,21 @@ const prisma = new PrismaClient().$extends({
 		}
 	}
 });
+
+
+const removePasswords = (data) => {
+    if (Array.isArray(data)) {
+        return data.map(item => removePasswords(item));
+    } else if (data && typeof data === 'object') {
+        const { password, ...rest } = data;
+        for (const key in rest) {
+            if (typeof rest[key] === 'object') {
+                rest[key] = removePasswords(rest[key]);
+            }
+        }
+        return rest;
+    }
+    return data;
+};
 
 module.exports = prisma;

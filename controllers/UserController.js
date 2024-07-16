@@ -7,11 +7,15 @@ const ReviewDao = require("../dao/Review");
 const AddressDao = require("../dao/Address");
 const DocumentDao = require("../dao/Document");
 const FileDao = require("../dao/File");
+const DeliveryDriverDao = require("../dao/DeliveryDriver");
+const DriverDao = require("../dao/Driver");
+
 const SMS = require("../lib/SMS");
 const stripe = require("../lib/stripe");
 const S3Helper = require("../lib/s3");
 const { User } = require("@onesignal/node-onesignal");
 const { DOCUMENT_TYPE } = require("../lib/constants");
+
 
 /**
  * GET /users
@@ -158,12 +162,15 @@ async function updatePassword(req, res) {
 
 async function updateEmail(req, res) {
 	try {
+		let emaiLExists = await UserDao.getUserByEmailOrTelephone(req.body.email);
+		if (emaiLExists) return res.status(400).json({ error: "Email already exists.." });
 		let user = await UserDao.updateEmail(req.user.user_id, req.body.email);
-
+		await stripe.updateCustomerEmail(user.stripe_customer_id, req.body.email);
 		if (user) return res.status(200).json(user);
 
 		res.status(400).json({ error: "Error updating user information" });
 	} catch (e) {
+		console.log(e)
 		res.status(400).json({ error: "Error updating user information", e });
 	}
 }
@@ -401,8 +408,12 @@ async function updateUserAllergiesPreferences(req, res) {
 
 async function updateTelephone(req, res) {
 	try {
+		let phoneExists = await UserDao.getUserByEmailOrTelephone(req.body.telephone);
+		if (phoneExists) return res.status(400).json({ error: "Telephone already exists.." });
 		let user = await UserDao.updateTelephone(req.user.user_id, req.body);
-		await TokenDao.generateSMSVerificationToken(user);
+		user = await UserDao.updateUserTelephoneVerified(req.user.user_id, false);
+		//await TokenDao.generateSMSVerificationToken(user);
+		await stripe.updateCustomerPhone(user.stripe_customer_id, req.body.telephone);
 		// TODO: Send SMS verification token
 		if (user) return res.status(200).json(user);
 
@@ -656,7 +667,27 @@ async function requestToAddFundsToWallet(req, res) {
 
 	}
 }
-
+async function ping(req, res) {
+	let user = await UserDao.getUserById(req.user.user_id, {
+		include: {
+			driver: true,
+			delivery_driver: true,
+		},
+	});
+	if (!user) {
+		return res.status(400).json({ error: "Error obtaining user information" });
+	}
+	if (user.driver) {
+		let driver = await DriverDao.updateDriver(user.driver.driver_id, { last_ping_at: new Date() });
+		return res.status(200).json({ message: "Driver is online" });
+	}
+	else if (user.delivery_driver) {
+		let delliveryDriver = await DeliveryDriverDao.updateDeliveryDriver(user.delivery_driver.delivery_driver_id, { last_ping_at: new Date() });
+		return res.status(200).json({ message: "Delivery driver is online" });
+	} else {
+		return res.status(400).json({ error: "User is not a driver" });
+	}
+}
 module.exports = {
 	listUsers,
 	me,
@@ -681,5 +712,6 @@ module.exports = {
 	updateUserRadioPreferences,
 	updateUserNotificationPreferences,
 	updateUserPushNotifications,
-	updateProfilePicture
+	updateProfilePicture,
+	ping
 };

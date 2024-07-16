@@ -24,12 +24,33 @@ const getUserById = async (user_id, args) => {
 	}
 };
 
-const getUserByEmail = async (email, args) => {
+const getUserByEmailOrTelephone = async (query, args) => {
 	try {
-		return prisma.users.findUnique({
+		return prisma.users.findFirst({
 			where: {
-				email: email,
+				OR: [
+				{
+					email: query,
+				},
+				{
+					telephone: query
+				}
+			]
+				
 			},
+			...args,
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
+const getUserByTelephone = async (query, args) => {
+	try {
+		return prisma.users.findFirst({
+			where: {
+				telephone: query
+			},
+
 			...args,
 		});
 	} catch (error) {
@@ -251,11 +272,14 @@ const createNewUser = async (user, hashPassword = false) => {
 		// Check if password hashing is needed
 		if (hashPassword && user.password) {
 			let hash = await bcrypt.hash(user.password, Number(process.env.BCRYPT_SALT_ROUNDS));
-
+			let email = "";
+			if (user.email) {
+				email = user.email.toLowerCase();
+			}
 			// Replace the plain text password with the hashed password
 			newUser = {
 				...user,
-				email: user.email.toLowerCase(),
+				email,
 				password: hash,
 			};
 		}
@@ -352,7 +376,7 @@ async function removeWalletBalance(userId, amountToSubtract, order_id) {
 module.exports = {
 	getUsers,
 	getUserById,
-	getUserByEmail,
+	getUserByEmailOrTelephone,
 	getUser,
 	updateUser,
 	updateEmail,
@@ -372,6 +396,7 @@ module.exports = {
 	updateUserSpicyPreferences,
 	updateUserAllergiesPreferences,
 	updateUserTransferPreferences,
-	updateUserRadioPreferences
+	updateUserRadioPreferences,
+	getUserByTelephone
 
 };

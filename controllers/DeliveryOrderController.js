@@ -81,6 +81,7 @@ async function createOrder(req, res) {
 
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
 		let user = await UsersDao.getUserById(user_id);
+		orderData.telephone = user.telephone;
 		let payment_intent;
 		if (order.details.type === 'delivery') {
 			let { result } = await gApi.distanceBetweenTwoPoints(order.delivery_location.coordinates, order.pickup_location.coordinates, "driving", new Date());
@@ -502,5 +503,5 @@ module.exports = {
 	updateOrderDeliveryTime,
 	getActiveDeliveryOrders,
 	getCompletedDeliveryOrdersByUserId,
-	getActiveDeliveryOrdersByDriverId
+	getActiveDeliveryOrdersByDriverId,
 };

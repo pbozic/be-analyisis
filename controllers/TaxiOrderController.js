@@ -189,7 +189,39 @@ async function createOrder(req, res) {
 		let orderData = {
 			...req.body,
 			status: "PENDING",
-			user_id: req.user.user_id
+			user_id: req.user.user_id,
+			telephone: req.user.telephone
+		};
+		let order = await TaxiOrderDao.createOrder(orderData);
+
+		TaxiHelper.findTaxiOrderDrivers(order);
+		res.status(200).json(order);
+	}
+	catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+/**
+ * POST /taxi/dispatch-order
+ * @tag Taxi
+ * @summary Create a new delivery order as dispatch.
+ * @description This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
+ * @operationId createOrder
+ * @bodyDescription Request body must include necessary order details.
+ * @bodyContent {DeliveryOrderRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the newly created order in the response body.
+ * @responseContent {DeliveryOrder} 200.application/json
+ * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
+ */
+async function createDispatchOrder(req, res) {
+	try {
+		let orderData = {
+			...req.body,
+			status: "PENDING",
+			user_id: req.user.user_id,
+			telephone: req.body.telephone
 		};
 		let order = await TaxiOrderDao.createOrder(orderData);
 
@@ -507,4 +539,5 @@ module.exports = {
 	getActiveTaxiOrders,
 	getCompletedTaxiOrdersByUserId,
 	getActiveTaxiOrdersByDriverId,
+	createDispatchOrder
 };

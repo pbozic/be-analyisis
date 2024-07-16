@@ -39,7 +39,7 @@ require('dotenv').config();
 async function login(req, res) {
 	let postData = req.body;
 	try {
-		let user = await UserDao.getUserByEmail(postData.email.toLowerCase(), {
+		let user = await UserDao.getUserByEmailOrTelephone(postData.email.toLowerCase(), {
 			select: {
 				password: true,
 			},
@@ -48,7 +48,7 @@ async function login(req, res) {
 		if (!user) return res.status(400).json({ error: "Wrong email / password combination.." });
 		let correctPw = await bcrypt.compare(postData.password, user.password);
 		if (!correctPw) return res.status(400).json({ error: "Wrong email / password combination.." });
-		user = await UserDao.getUserByEmail(postData.email.toLowerCase(), {
+		user = await UserDao.getUserByEmailOrTelephone(postData.email.toLowerCase(), {
 			include: {
 				addresses: {
 					include: {
@@ -95,6 +95,15 @@ async function login(req, res) {
 async function register(req, res) {
 	let postData = req.body;
 	try {
+
+		if (!postData.email)
+		{
+			postData.email = "";
+		}
+		let UserExists = await UserDao.getUserByTelephone(postData.telephone);
+		if (UserExists) {
+			return res.status(400).json({ error: "Telephone already in use!" });
+		}
 		let hash = await bcrypt.hash(postData.password, Number(process.env.BCRYPT_SALT_ROUNDS));
 		let stripeCustomer = await stripe.createCustomer(
 			postData.email,
@@ -193,14 +202,19 @@ async function refreshToken(req, res) {
  */
 async function requestPasswordReset(req, res) {
 	try {
-		let user = await UserDao.getUserByEmail(req.body.email);
+		let user = await UserDao.getUserByEmailOrTelephone(req.body.email);
 		let token = await TokenDao.generatePaswordResetToken(user);
-		EmailHelper.sendEmailTemplate("Password Reset Request", "passwordReset", user.email, false,  {
-            name: user.first_name,
-            title: "Password Reset Request",
-            resetLink: process.env.LINK_BASE_URL + '/reset-password/' + token.token
-
-        });
+		if (user.email) {
+			EmailHelper.sendEmailTemplate("Password Reset Request", "passwordReset", user.email, false,  {
+				name: user.first_name,
+				title: "Password Reset Request",
+				resetLink: process.env.LINK_BASE_URL + '/reset-password/' + token.token
+	
+			});
+		} else {
+			// TODO: send link in sms
+			await SMSHelper.sendSMSPasswordReset(user.telephone, "Your password reset link is: " + process.env.LINK_BASE_URL + '/reset-password/' + token.token);
+		}
 		console.log(token);
 		res.status(200).send("Password reset request processed. A token is sent to the user if the account is found.");
 	} catch (e) {

@@ -81,7 +81,7 @@ model users {
   last_name                     String?
   password                      String
   gender                        GENDER?
-  email                         String            @unique
+  email                         String            
   telephone                     String            @unique
   telephone_code                String?
   telephone_number              String?
@@ -210,6 +210,7 @@ model delivery_drivers {
   documents          documents[]
   location           Json?
   delivery_timeline  Json?                 @default("[]")
+  last_ping_at       DateTime              @db.Timestamptz(6)
 }
 
 model drivers {
@@ -228,6 +229,7 @@ model drivers {
   received_orders   taxi_order_sent[]
   documents         documents[]
   location          Json?
+  last_ping_at      DateTime              @db.Timestamptz(6)
 }
 
 model vehicles {
@@ -310,6 +312,7 @@ model taxi_orders {
   driver            drivers?          @relation(fields: [driver_id], references: [driver_id])
   user              users?            @relation(fields: [user_id], references: [user_id])
   history           taxi_order_sent[]
+  telephone         String
 }
 
 model taxi_order_sent {
@@ -468,6 +471,7 @@ enum USER_ROLES {
   PERSONAL
   DRIVER
   DELIVERY_DRIVER
+  DISPATCHER
 }
 
 enum TokenType {

@@ -3,7 +3,7 @@ const Joi = require("joi").extend(require('@joi/date'));
 const prisma = require("../prisma/prisma");
 
 const loginSchema = Joi.object({
-	email: Joi.string().email().required(),
+	email: Joi.string().required(),
 	password: Joi.string().required(),
 });
 
@@ -12,7 +12,7 @@ const registerSchema = Joi.object({
 	last_name: Joi.string().required(),
 	email: Joi.string()
 		.email()
-		.required()
+		.optional()
 		.external(async (email, helpers) => {
 			console.log("helpers", helpers.error);
 			let isEmailInUse;
