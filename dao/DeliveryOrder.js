@@ -115,7 +115,6 @@ async function createOrder(order, user_id) {
 		throw new Error(e);
 	}
 }
-
 async function createOrderSent(order_id, driver) {
 	try {
 		return prisma.delivery_order_sent.create({
