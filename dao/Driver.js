@@ -145,6 +145,14 @@ const updateDriverLocation = async (driver_id, location) => {
 		return await prisma.drivers.update({
 			where: { driver_id },
 			data: { location: locationData },
+			include: {
+				user: true,
+				vehicles: {
+					include: {
+						vehicle_specification: true,
+					},
+				},
+			},
 		});
 	} catch (error) {
 		console.error("Error updating driver's location:", error);
@@ -198,6 +206,7 @@ const createNewDriver = async (driverData, userData) => {
 			...driverData,
 			location: locationData,
 			user_id: newUser.user_id,
+			last_ping_at: new Date()
 		};
 
 		const newDriver = await prisma.drivers.create({
@@ -236,14 +245,31 @@ const getAvailableDrivers = async () => {
 }
 
 const getBusinessByDriverId = async (driver_id) => {
-	try {
-		return await prisma.business.findUnique({
-			where: { driver_id },
-		});
-	} catch (error) {
-		console.error("Error retrieving business by driver ID:", error);
-		throw new Error(error);
-	}
+    try {
+        // Step 1: Get the business_id from the drivers model
+        const driver = await prisma.drivers.findUnique({
+            where: { driver_id },
+            select: { business_id: true }
+        });
+
+        if (!driver || !driver.business_id) {
+            throw new Error("Business not found for the given driver ID");
+        }
+
+        // Step 2: Get the business details using the business_id
+        const business = await prisma.business.findUnique({
+            where: { business_id: driver.business_id }
+        });
+
+        if (!business) {
+            throw new Error("Business not found for the given business ID");
+        }
+
+        return business;
+    } catch (error) {
+        console.error("Error retrieving business by driver ID:", error);
+        throw error;
+    }
 };
 
 

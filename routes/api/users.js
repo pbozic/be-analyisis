@@ -17,7 +17,7 @@ const {reviewUserSchema} = require("../../joi/reviewSchemas");
 const router = express.Router();
 
 router.get("/me", UserController.me);
-router.get("/me/ping", UserController.me);
+router.get("/me/ping", UserController.ping);
 router.patch("/me", joi(updateSchema), UserController.updateMe);
 router.patch("/me/password", joi(updatePasswordSchema), UserController.updatePassword);
 router.patch("/me/email", joi(updateEmailSchema), UserController.updateEmail);

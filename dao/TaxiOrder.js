@@ -2,13 +2,30 @@ const prisma = require("../prisma/prisma");
 const { DELIVERY_ORDER_STATUS, TAXI_ORDER_STATUS } = require("../lib/constants");
 async function getOrders(args) {
     try {
-        return prisma.taxi_orders.findMany({
-            ...args
-        });
+        const mergedArgs = {
+            ...args,
+            include: {
+                user: true,
+                driver: {
+                    include: {
+                        user: true,
+                        vehicles: {
+                            include: {
+                                vehicle_specification: true,
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        return prisma.taxi_orders.findMany(mergedArgs);
     } catch (e) {
+        console.error("Error fetching orders:", e);
         throw new Error(e);
     }
 }
+
 async function getOrder(order_id) {
     try {
         return await prisma.taxi_orders.findFirst({
@@ -17,6 +34,7 @@ async function getOrder(order_id) {
                 user: true,
                 driver: {
                     include: {
+                        user: true,
                         vehicles: {
                             include: {
                                 vehicle_specification: true,
@@ -38,10 +56,11 @@ async function getTaxiOrderIfNotCompleted(user_id) {
             where: {
                 user_id: user_id,
                 status: {
-                    not: TAXI_ORDER_STATUS.TAXI_COMPLETED
+                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELLED, TAXI_ORDER_STATUS.TAXI_COMPLETED] // Exclude both completed and pending orders
                 },
             },
             include: {
+                user: true,
                 driver: {
                     include: {
 						user: true,
@@ -66,10 +85,11 @@ async function getActiveOrdersByDriverId(driver_id) {
             where: {
                 driver_id: driver_id,
                 status: {
-                    notIn: [TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.PENDING] // Exclude both completed and pending orders
+                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELLED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.PENDING] // Exclude both completed and pending orders
                 },
             },
             include: {
+                user: true,
                 driver: {
                     include: {
                         user: true,
@@ -95,12 +115,17 @@ async function getOrdersByDriverId(driver_id) {
                 driver_id: driver_id
             },
             include: {
+                user: true,
                 driver: {
                     include: {
-                        user: true
+                        user: true,
+                        vehicles: {
+                            include: {
+                                vehicle_specification: true,
+                            }
+                        }
                     }
                 },
-                user: true
             }
         });
     } catch (e) {
@@ -172,7 +197,7 @@ async function getAlreadySentOrdersByDriverId(driver_id) {
 }
 
 async function acceptOrder(order_id, user) {
-    console.log("acceptOrder",order_id)
+    console.log("acceptOrder", order_id)
     try {
         let taxi_order_sent = await prisma.taxi_order_sent.update({
             where: {
@@ -180,14 +205,13 @@ async function acceptOrder(order_id, user) {
                     order_id,
                     driver_id: user.driver.driver_id
                 }
-
             },
             data: {
                 accepted: true
             },
         });
         console.log("taxi_order_sent", taxi_order_sent)
-        prisma.drivers.update({
+        await prisma.drivers.update({
             where: {
                 driver_id: user.driver.driver_id
             },
@@ -207,11 +231,25 @@ async function acceptOrder(order_id, user) {
                     }
                 }
             },
+            include: {
+                user: true,
+                driver: {
+                    include: {
+                        user: true,
+                        vehicles: {
+                            include: {
+                                vehicle_specification: true,
+                            }
+                        }
+                    }
+                },
+            }
         });
     } catch (e) {
         throw new Error(e);
     }
 }
+
 async function updateOrderStatus(order_id, status) {
     try {
         return prisma.taxi_orders.update({
@@ -220,6 +258,19 @@ async function updateOrderStatus(order_id, status) {
             },
             data: {
                 status
+            },
+            include: {
+                user: true,
+                driver: {
+                    include: {
+                        user: true,
+                        vehicles: {
+                            include: {
+                                vehicle_specification: true,
+                            }
+                        }
+                    }
+                },
             }
         });
     } catch (e) {
@@ -229,13 +280,25 @@ async function updateOrderStatus(order_id, status) {
 
 async function completeOrder(order_id) {
     try {
-
         let taxi_order = await prisma.taxi_orders.update({
             where: {
                 order_id
             },
             data: {
                 status: "TAXI_COMPLETED"
+            },
+            include: {
+                user: true,
+                driver: {
+                    include: {
+                        user: true,
+                        vehicles: {
+                            include: {
+                                vehicle_specification: true,
+                            }
+                        }
+                    }
+                },
             }
         });
         await prisma.drivers.update({
@@ -248,6 +311,49 @@ async function completeOrder(order_id) {
         });
         return taxi_order;
     } catch (e) {
+        throw new Error(e);
+    }
+}
+
+async function cancelOrder(order_id, status, cancellation_reason) {
+    try {
+        let taxi_order = await prisma.taxi_orders.update({
+            where: {
+                order_id
+            },
+            data: {
+                status: status,
+                cancellation_reason: cancellation_reason
+            },
+            include: {
+                user: true,
+                driver: {
+                    include: {
+                        user: true,
+                        vehicles: {
+                            include: {
+                                vehicle_specification: true,
+                            }
+                        }
+                    }
+                },
+            }
+        });
+
+        if (taxi_order.driver_id) {
+            await prisma.drivers.update({
+                where: {
+                    driver_id: taxi_order.driver_id
+                },
+                data: {
+                    on_order: false
+                }
+            });
+        }
+
+        return taxi_order;
+    } catch (e) {
+        console.error("Error cancelling order:", e);
         throw new Error(e);
     }
 }
@@ -398,12 +504,26 @@ async function updateOrder(order_id, order) {
             where: {
                 order_id
             },
-            data: order
+            data: order,
+            include: {
+                user: true,
+                driver: {
+                    include: {
+                        user: true,
+                        vehicles: {
+                            include: {
+                                vehicle_specification: true,
+                            }
+                        }
+                    }
+                },
+            }
         });
     } catch (e) {
         throw new Error(e);
     }
 }
+
 module.exports = {
     getOrder,
     getOrdersByDriverId,
@@ -415,6 +535,7 @@ module.exports = {
     updateOrder,
     updateOrderLastSentAt,
     completeOrder,
+    cancelOrder,
     updateOrderStatus,
     isOrderSent,
     updateTaxiOderRoute,

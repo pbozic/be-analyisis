@@ -15,6 +15,7 @@ const stripe = require("../lib/stripe");
 const S3Helper = require("../lib/s3");
 const { User } = require("@onesignal/node-onesignal");
 const { DOCUMENT_TYPE } = require("../lib/constants");
+const { generateAccessToken, generateRefreshToken } = require("../lib/jwt");
 
 
 /**
@@ -61,14 +62,35 @@ async function me(req, res) {
 	try {
 		let user = await UserDao.getUserById(req.user.user_id, {
 			include: {
-				addresses: true,
+				addresses: {
+					include: {
+						address: true,
+					},
+				},
+				driver: true
 			},
 		});
-		let paymentMethods = await stripe.getPaymentMethods(user.stripe_customer_id);
-		user.payment_methods = paymentMethods;
-		if (user) return res.status(200).json(user);
+		if (user) {
+			let payment_methods = []
+			if (user.stripe_customer_id) {
+				payment_methods = await stripe.getPaymentMethods(user.stripe_customer_id);
+			}
 
-		res.status(400).json({ error: "Error obtaining user information" });
+			delete user["password"];
+			// const access_token = generateAccessToken(user);
+			// const refresh_token = generateRefreshToken(user);
+			user = {
+				...user,
+				// access_token,
+				// refresh_token,
+				payment_methods
+			};
+			return res.status(200).json(user);
+		} else {
+			res.status(400).json({ error: "Error obtaining user information" });
+		}
+		// if (user) return res.status(200).json(user);
+		// res.status(400).json({ error: "Error obtaining user information" });
 	} catch (e) {
 		console.error(e);
 		res.status(400).json({ error: "Error obtaining user information", e });

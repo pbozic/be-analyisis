@@ -21,6 +21,7 @@ router.post("/order/delivery_location", TaxiOrderController.updateTaxiOrderDeliv
 router.post("/order/complete_route", TaxiOrderController.updateCompleteTaxiRoute);
 router.post("/order/accept", TaxiOrderController.acceptOrder);
 router.post("/order/complete", TaxiOrderController.completeOrder);
+router.post("/order/cancel", TaxiOrderController.cancelOrder);
 router.post("/order/timeline", TaxiOrderController.updateTaxiOrderTimeline);
 router.post("/order/payment", TaxiOrderController.updateTaxiOrderPayment);
 

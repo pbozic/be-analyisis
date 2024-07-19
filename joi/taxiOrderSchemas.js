@@ -12,7 +12,9 @@ const createOrderSchema = Joi.object({
 	pickup_location: addressSchema,
 	delivery_location: addressSchema,
 	estimates: Joi.object(),
-	payment: Joi.object()
+	payment: Joi.object(),
+	telephone: Joi.string(),
+	user: Joi.object(),
 });
 
 module.exports = {

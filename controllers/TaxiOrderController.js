@@ -252,18 +252,8 @@ async function acceptOrder(req, res) {
 		//TODO: check if driver is online
 		//TODO: check if order is still pending
 		await TaxiOrderDao.acceptOrder(order_id, user);
-		let order = await TaxiOrderDao.getOrder(order_id, {
-			include: {
-				driver: true
-			}
-		});
-		let driver = await DriverDao.getDriverById(user.driver.driver_id, {
-			include: {
-				vehicles: {
-					vehicle_specification: true,
-				}
-			}
-		});
+		let order = await TaxiOrderDao.getOrder(order_id);
+		let driver = await DriverDao.getDriverById(user.driver.driver_id);
 		//TODO: how to handle multiple vehicles on driver -> only one is active at a time of driving by the driver
 		driver.vehicle = driver.vehicles[0];
 		order.driver = driver;
@@ -328,10 +318,10 @@ async function completeOrder(req, res) {
 		let driver = await DriverDao.getDriverById(order.driver_id);
 		io.emit('driver_available', driver)
 
-		io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
+		// io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
 		io.to("order_" + order.order_id).emit('order_completed__taxi', order);
 
-		console.log("order_status_change__taxi", "order_completed__taxi")
+		console.log("order_completed__taxi ", req.body.order_id)
 		io.emit('driver_available', driver);
 
 		res.status(200).json(order);
@@ -366,6 +356,40 @@ async function updateOrderStatus(req, res) {
 		res.status(500).json(e);
 	}
 }
+
+/**
+ * POST /taxi/order/cancel
+ * @tag Taxi
+ * @summary Cancel a taxi order.
+ * @description Cancels a taxi order with the provided order ID, status, and cancellation reason from the request body. Returns the cancelled order if successful and emits a 'order_cancelled' event.
+ * @operationId cancelOrder
+ * @bodyDescription Request body must include 'order_id', 'status', and 'cancellation_reason'.
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the cancelled order in the response body.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Console logs the error message and returns it in the response.
+ */
+async function cancelOrder(req, res) {
+    const { order_id, status, cancellation_reason } = req.body;
+
+    try {
+        let order = await TaxiOrderDao.cancelOrder(order_id, status, cancellation_reason);
+        if (order.driver_id) {
+            let driver = await DriverDao.getDriverById(order.driver_id);
+            io.emit('driver_available', driver);
+        }
+        // io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
+        io.to("order_" + order.order_id).emit('order_cancelled__taxi', order);
+
+        console.log("order_status_change__taxi", "order_cancelled__taxi");
+        res.status(200).json(order);
+    } catch (e) {
+        console.log(e);
+        res.status(500).json(e);
+    }
+}
+
 /**
  * POST /taxi/order/route
  * @tag Taxi
@@ -468,6 +492,7 @@ async function updateCompleteTaxiRoute(req, res) {
 	}
 }
 
+
 /**
  * POST /taxi/order/timeline
  * @tag Taxi
@@ -529,6 +554,7 @@ module.exports = {
 	createOrder,
 	acceptOrder,
 	completeOrder,
+	cancelOrder,
 	updateOrderStatus,
 	updateTaxiOrderRoute,
 	updateTaxiOrderPickupLocation,
