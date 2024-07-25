@@ -5,6 +5,7 @@ const gApi = require('../lib/gApis');
 const TaxiHelper = require('../lib/taxiHelpers');
 const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY } = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
+const { connect } = require("../routes/api/taxi");
 /**
  * GET /taxi/order/{orderId}
  * @tag Taxi
@@ -199,40 +200,53 @@ async function createOrder(req, res) {
 		orderData.is_scheduled = is_scheduled;
 		let order;
 		console.log("is_repeat", prefs.repeat_ride);
+		let ordersData = [];
 		if (is_repeat) {
-			let ordersData = await generateOrdersForRepeatOrder(orderData, prefs.repeat_ride, prefs.repeat_duration);
-			for (let orderData of ordersData) {
-				let num_orders = Math.ceil((prefs.adults + prefs.children_above_140 + prefs.children_under_140) / VEHICLE_CAPACITY[prefs.vehicle_class])
-				let start_num_orders = num_orders;
-				let parentOrderId = null;
-				while (num_orders > 0) {
-					orderData.parent_order_id = parentOrderId;
-					order = await TaxiOrderDao.createOrder(orderData);
-					if (num_orders == start_num_orders) {
-						parentOrderId = order.order_id;
-					}
-					TaxiHelper.findTaxiOrderDrivers(order);
-					num_orders -= 1;
-				}
-			}
+			ordersData = await generateOrdersForRepeatOrder(orderData, prefs.repeat_ride, prefs.repeat_duration);
+		} else {
+			ordersData.push(orderData);
 		}
-		else {
-			
+		
+		for (let orderData of ordersData) {
 			let num_orders = Math.ceil((prefs.adults + prefs.children_above_140 + prefs.children_under_140) / VEHICLE_CAPACITY[prefs.vehicle_class])
 			let start_num_orders = num_orders;
 			let parentOrderId = null;
+			delete orderData.user_id;
 			while (num_orders > 0) {
-				orderData.parent_order_id = parentOrderId;
-				order = await TaxiOrderDao.createOrder(orderData);
+			
+				if (parentOrderId) {
+					order = await TaxiOrderDao.createOrder({
+						...orderData,
+						user: {
+							connect: {
+								user_id: req.user.user_id
+							}
+						},
+						parent_order: {
+							connect: {
+								order_id: parentOrderId
+							}
+						}
+					});
+				} else {
+					order = await TaxiOrderDao.createOrder({
+						...orderData,
+						user: {
+							connect: {
+								user_id: req.user.user_id
+							}
+						}
+					});
+				}
+				
 				if (num_orders == start_num_orders) {
 					parentOrderId = order.order_id;
 				}
 				TaxiHelper.findTaxiOrderDrivers(order);
 				num_orders -= 1;
 			}
+			order = await TaxiOrderDao.getOrder(parentOrderId);
 		}
-		
-		
 		
 		res.status(200).json(order);
 	}
