@@ -54,6 +54,7 @@ async function deliveryDriverSeed() {
                         location:{
                             coordinates: locations[cnt]
                         },
+                        
                     },
                 }));
                 cnt++;

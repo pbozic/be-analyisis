@@ -314,6 +314,8 @@ model taxi_orders {
   history             taxi_order_sent[]
   telephone           String?
   cancellation_reason String?
+  find_drivers_attempts Int?                  @default(0)
+  is_scheduled          Boolean         @default(false)
 }
 
 model taxi_order_sent {

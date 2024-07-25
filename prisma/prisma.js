@@ -76,23 +76,45 @@ const prisma = new PrismaClient().$extends({
 	},
 	model: {
 		drivers: {
-			async inRadius(point, radiusInMeters) { 
+			async inRadius(point, radiusInMeters, requirements, vehicleFilters) { 
+				console.log("vehicles", vehicleFilters)
 				console.log("point", point);
 				console.log("radius", radiusInMeters);
+				// const drivers = await prisma.$queryRaw`
+				//  	SELECT *
+				// 	FROM drivers 
+				// 	WHERE online = true
+				// 	AND on_order = false
+				// 	AND ST_DWithin(
+				// 		ST_MakePoint(
+				// 			CAST((location->'coordinates'->>'longitude') AS FLOAT),
+				// 			CAST((location->'coordinates'->>'latitude') AS FLOAT)
+				// 		)::geography,
+				// 		ST_MakePoint(${point.longitude}, ${point.latitude})::geography,
+				// 		${radiusInMeters}
+				// 	)
+				// `;
 				const drivers = await prisma.$queryRaw`
-				 	SELECT *
-					FROM drivers 
-					WHERE online = true
-					AND on_order = false
+					SELECT drivers.*, vehicles.*, vehicle_specifications.*
+					FROM drivers
+					JOIN vehicles ON vehicles.driver_id = drivers.driver_id
+					JOIN vehicle_specifications ON vehicle_specifications.vehicle_id = vehicles.vehicle_id
+					WHERE drivers.online = true
+					AND drivers.on_order = false
 					AND ST_DWithin(
-						ST_MakePoint(
-							CAST((location->'coordinates'->>'longitude') AS FLOAT),
-							CAST((location->'coordinates'->>'latitude') AS FLOAT)
-						)::geography,
-						ST_MakePoint(${point.longitude}, ${point.latitude})::geography,
-						${radiusInMeters}
+					ST_MakePoint(
+						CAST((drivers.location->'coordinates'->>'longitude') AS FLOAT),
+						CAST((drivers.location->'coordinates'->>'latitude') AS FLOAT)
+					)::geography,
+					ST_MakePoint(${point.longitude}, ${point.latitude})::geography,
+					${radiusInMeters}
 					)
-				`;
+					AND (drivers.ride_requirements->'traveling_with_pet')::BOOLEAN = ${requirements.traveling_with_pet}
+					AND (drivers.ride_requirements->'child_seat')::BOOLEAN = ${requirements.child_seat}
+					AND (drivers.ride_requirements->'wheelchair_accessibility')::BOOLEAN = ${requirements.wheelchair_accessibility}
+					AND vehicles.class::TEXT = ${vehicleFilters.class.toUpperCase()}
+    				AND vehicles.category::TEXT = ${vehicleFilters.category.toUpperCase()};
+			  `;
 
 				return drivers;
 			}

@@ -1,6 +1,5 @@
 const prisma= require("../prisma/prisma");
 const UserDao = require("./User");
-const { resendPendingOrdersToDriver } = require("../lib/taxiHelpers");
 
 const getDrivers = async (args) => {
 	try {

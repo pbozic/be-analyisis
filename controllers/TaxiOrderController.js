@@ -3,7 +3,8 @@ const DriverDao = require("../dao/Driver");
 const { UserSockets, io } = require('../socket');
 const gApi = require('../lib/gApis');
 const TaxiHelper = require('../lib/taxiHelpers');
-const { TAXI_ORDER_STATUS } = require("../lib/constants");
+const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY } = require("../lib/constants");
+const { User } = require("@onesignal/node-onesignal");
 /**
  * GET /taxi/order/{orderId}
  * @tag Taxi
@@ -192,9 +193,36 @@ async function createOrder(req, res) {
 			user_id: req.user.user_id,
 			telephone: req.user.telephone
 		};
-		let order = await TaxiOrderDao.createOrder(orderData);
-
-		TaxiHelper.findTaxiOrderDrivers(order);
+		let prefs = req.body.preferences
+		let is_scheduled = prefs.departure_date != null;
+		let is_repeat = prefs.repeat_ride[0].value != "do_not_repeat";
+		orderData.is_scheduled = is_scheduled;
+		let order;
+		console.log("is_repeat", prefs.repeat_ride
+		);
+		if (is_repeat) {
+			let ordersData = await generateOrdersForRepeatOrder(orderData, prefs.repeat_ride, prefs.repeat_duration);
+			for (let orderData of ordersData) {
+				let num_orders = Math.ceil((orderData.preferences.adults + orderData.preferences.children_above_140 + orderData.preferences.children_under_140) / VEHICLE_CAPACITY[orderData.preferences.vehicle_class])
+				while (num_orders > 0) {
+					order = await TaxiOrderDao.createOrder(orderData);
+					TaxiHelper.findTaxiOrderDrivers(order);
+					num_orders -= 1;
+				}
+			}
+		}
+		else {
+			let num_orders = Math.ceil((prefs.adults + prefs.children_above_140 + prefs.children_under_140) / VEHICLE_CAPACITY[prefs.vehicle_class])
+			
+			while (num_orders > 0) {
+				order = await TaxiOrderDao.createOrder(orderData);
+				TaxiHelper.findTaxiOrderDrivers(order);
+				num_orders -= 1;
+			}
+		}
+		
+		
+		
 		res.status(200).json(order);
 	}
 	catch (e) {
@@ -202,6 +230,70 @@ async function createOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
+function getDayIndex(dayName) {
+	// Map day names to their corresponding indices
+	const daysOfWeek = {
+	  "Sunday": 0,
+	  "Monday": 1,
+	  "Tuesday": 2,
+	  "Wednesday": 3,
+	  "Thursday": 4,
+	  "Friday": 5,
+	  "Saturday": 6
+	};
+  
+	return daysOfWeek[dayName]; // Return the index of the day
+  }
+
+  async function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
+	const orders = [];
+	const currentDate = new Date();
+  
+	// Get the hours and minutes from the departure time
+	const departureTime = new Date(orderData.preferences.departure_time);
+	const departureHours = departureTime.getHours();
+	const departureMinutes = departureTime.getMinutes();
+  
+	// Get current week's day number (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+	const currentDay = currentDate.getDay();
+  
+	for (let week = 0; week < repeatDuration; week++) {
+	  for (let day of repeatData) {
+		const dayIndex = getDayIndex(day.value); // Get day index (0 for Sunday, 1 for Monday, ..., 6 for Saturday)
+		const daysUntilNextOccurrence = (dayIndex - currentDay + 7) % 7 + (week * 7); // Calculate days until the next occurrence of this weekday
+		const orderDate = new Date(currentDate); // Create a copy of the current date
+		orderDate.setDate(orderDate.getDate() + daysUntilNextOccurrence); // Add the days to reach the next occurrence of this day
+  
+		// Set the time for the order
+		orderDate.setHours(departureHours);
+		orderDate.setMinutes(departureMinutes);
+		orderDate.setSeconds(0);
+		orderDate.setMilliseconds(0);
+  
+		// Format the date and time
+		const formattedDepartureDate = new Intl.DateTimeFormat('en-US', {
+		  day: '2-digit',
+		  month: 'long',
+		  year: 'numeric',
+		}).format(orderDate);
+  
+		const formattedDepartureTime = orderDate.toISOString();
+  
+		// Generate an order for this day
+		let order = {
+		  ...orderData,
+		  preferences: {
+			...orderData.preferences,
+			departure_date: formattedDepartureDate, // Format as "DD MMMM YYYY"
+			departure_time: formattedDepartureTime, // Format as "YYYY-MM-DDTHH:mm:ss.sss"
+		  },
+		};
+		orders.push(order); // Add to orders list
+	  }
+	}
+  
+	return orders; // Return generated orders
+  }
 /**
  * POST /taxi/dispatch-order
  * @tag Taxi
@@ -223,9 +315,16 @@ async function createDispatchOrder(req, res) {
 			user_id: req.user.user_id,
 			telephone: req.body.telephone
 		};
-		let order = await TaxiOrderDao.createOrder(orderData);
-
-		TaxiHelper.findTaxiOrderDrivers(order);
+		let prefs = req.body.preferences
+		let is_scheduled = prefs.departure_date != null;
+		orderData.is_scheduled = is_scheduled;
+		let num_orders = Math.ceil((prefs.adults + prefs.children_above_140 + prefs.children_under_140) / VEHICLE_CAPACITY[prefs.vehicle_class])
+		let order;
+		while (num_orders > 0) {
+			order = await TaxiOrderDao.createOrder(orderData);
+			TaxiHelper.findTaxiOrderDrivers(order);
+			num_orders -= 1;
+		}
 		res.status(200).json(order);
 	}
 	catch (e) {
@@ -372,16 +471,28 @@ async function updateOrderStatus(req, res) {
  */
 async function cancelOrder(req, res) {
     const { order_id, status, cancellation_reason } = req.body;
-
+	console.log("CANCEL ORDER", req.body)
     try {
-        let order = await TaxiOrderDao.cancelOrder(order_id, status, cancellation_reason);
+		let order = await TaxiOrderDao.getOrder(order_id);
+        
+		if (order.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED && req.user.user_id === order.driver_id) {
+			if(UserSockets.get(order.user_id)) {
+				UserSockets.get(order.user_id).emit('order_restart_search', order_id);
+			}
+			await TaxiOrderDao.updateOrder(order_id, {
+				status: TAXI_ORDER_STATUS.PENDING,
+			})
+		} else {
+			order = await TaxiOrderDao.cancelOrder(order_id, status, cancellation_reason);
+			io.to("order_" + order.order_id).emit('order_cancelled__taxi', order);
+
+		}
         if (order.driver_id) {
             let driver = await DriverDao.getDriverById(order.driver_id);
             io.emit('driver_available', driver);
         }
         // io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
-        io.to("order_" + order.order_id).emit('order_cancelled__taxi', order);
-
+      
         console.log("order_status_change__taxi", "order_cancelled__taxi");
         res.status(200).json(order);
     } catch (e) {
