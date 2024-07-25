@@ -198,24 +198,35 @@ async function createOrder(req, res) {
 		let is_repeat = prefs.repeat_ride[0].value != "do_not_repeat";
 		orderData.is_scheduled = is_scheduled;
 		let order;
-		console.log("is_repeat", prefs.repeat_ride
-		);
+		console.log("is_repeat", prefs.repeat_ride);
 		if (is_repeat) {
 			let ordersData = await generateOrdersForRepeatOrder(orderData, prefs.repeat_ride, prefs.repeat_duration);
 			for (let orderData of ordersData) {
-				let num_orders = Math.ceil((orderData.preferences.adults + orderData.preferences.children_above_140 + orderData.preferences.children_under_140) / VEHICLE_CAPACITY[orderData.preferences.vehicle_class])
+				let num_orders = Math.ceil((prefs.adults + prefs.children_above_140 + prefs.children_under_140) / VEHICLE_CAPACITY[prefs.vehicle_class])
+				let start_num_orders = num_orders;
+				let parentOrderId = null;
 				while (num_orders > 0) {
+					orderData.parent_order_id = parentOrderId;
 					order = await TaxiOrderDao.createOrder(orderData);
+					if (num_orders == start_num_orders) {
+						parentOrderId = order.order_id;
+					}
 					TaxiHelper.findTaxiOrderDrivers(order);
 					num_orders -= 1;
 				}
 			}
 		}
 		else {
-			let num_orders = Math.ceil((prefs.adults + prefs.children_above_140 + prefs.children_under_140) / VEHICLE_CAPACITY[prefs.vehicle_class])
 			
+			let num_orders = Math.ceil((prefs.adults + prefs.children_above_140 + prefs.children_under_140) / VEHICLE_CAPACITY[prefs.vehicle_class])
+			let start_num_orders = num_orders;
+			let parentOrderId = null;
 			while (num_orders > 0) {
+				orderData.parent_order_id = parentOrderId;
 				order = await TaxiOrderDao.createOrder(orderData);
+				if (num_orders == start_num_orders) {
+					parentOrderId = order.order_id;
+				}
 				TaxiHelper.findTaxiOrderDrivers(order);
 				num_orders -= 1;
 			}

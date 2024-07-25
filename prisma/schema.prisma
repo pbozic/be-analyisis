@@ -315,7 +315,10 @@ model taxi_orders {
   telephone           String?
   cancellation_reason String?
   find_drivers_attempts Int?                  @default(0)
-  is_scheduled          Boolean         @default(false)
+  is_scheduled         Boolean         @default(false)
+  parent_order_id      String?         @db.Uuid
+  parent_order         taxi_orders?    @relation("grouped_orders", fields: [parent_order_id], references: [order_id])
+  grouped_orders       taxi_orders[]   @relation("grouped_orders")
 }
 
 model taxi_order_sent {
