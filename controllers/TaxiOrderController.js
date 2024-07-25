@@ -475,7 +475,7 @@ async function cancelOrder(req, res) {
     try {
 		let order = await TaxiOrderDao.getOrder(order_id);
         
-		if (order.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED && req.user.user_id === order.driver_id) {
+		if (order.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED && req.user.user_id === order.driver.user_id) {
 			if(UserSockets.get(order.user_id)) {
 				UserSockets.get(order.user_id).emit('order_restart_search', order_id);
 			}
