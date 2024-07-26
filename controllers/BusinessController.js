@@ -57,6 +57,26 @@ async function listMerchantBusinesses(req, res) {
 }
 
 /**
+ * GET /businesses/merchants/daily-meals
+ * @tag Business
+ * @summary List all merchant businesses offering daily meals
+ * @description Retrieves a list of all businesses classified as merchants that offer daily meals.
+ * @operationId listMerchantBusinessesWithDailyMeals
+ * @response 200 - Successful operation, returns a list of merchant businesses offering daily meals
+ * @responseContent {Business[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the merchant business list
+ */
+async function listMerchantBusinessesWithDailyMeals(req, res) {
+    try {
+        const merchantBusinesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT, { offers_daily_meals: true });
+        res.status(200).json(merchantBusinesses);
+    } catch (e) {
+        console.error("Error listing merchant businesses with daily meals:", e);
+        res.status(400).json({ error: "Error listing merchant businesses with daily meals", e });
+    }
+}
+
+/**
  * GET /businesses/taxis
  * @tag Business
  * @summary List all taxi businesses
@@ -714,6 +734,7 @@ module.exports = {
 	listBusinesses,
 	listTransferBusinesses,
 	listMerchantBusinesses,
+	listMerchantBusinessesWithDailyMeals,
 	addBusinessAddress,
 	addDeliveryAddress,
 	update,

@@ -7,12 +7,14 @@ const {
 const joi = require("../../../middleware/joi");
 const DeliveryOrderController = require("../../../controllers/DeliveryOrderController");
 
-router.get("/order/:order_id", DeliveryOrderController.getOrder);
+router.get("/", DeliveryOrderController.getDeliveryOrders);
 router.get("/:business_id", DeliveryOrderController.getDeliveryOrdersByBusinessId);
-router.get("/completed/:driver_id", DeliveryOrderController.getCompletedDeliveryOrders);
+router.get("/active", DeliveryOrderController.getActiveDeliveryOrders);
+router.get("/active/:user_id", DeliveryOrderController.getActiveDeliveryOrdersByUserId);
 router.get("/active/driver/:driver_id", DeliveryOrderController.getActiveDeliveryOrdersByDriverId);
+router.get("/completed/:driver_id", DeliveryOrderController.getCompletedDeliveryOrdersByDriverId);
 router.get("/completed/user/:user_id", DeliveryOrderController.getCompletedDeliveryOrdersByUserId);
-router.get("/active/:user_id", DeliveryOrderController.getActiveDeliveryOrders);
+router.get("/order/:order_id", DeliveryOrderController.getOrder);
 router.get("/order/user/:order_id", DeliveryOrderController.getUserByDeliveryOrderId);
 router.post("/order", DeliveryOrderController.createOrder);
 router.post("/order/status", DeliveryOrderController.updateOrderStatus);

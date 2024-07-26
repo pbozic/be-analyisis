@@ -4,10 +4,41 @@ const { TAXI_ORDER_STATUS, DELIVERY_ORDER_STATUS } = require("../lib/constants")
 async function getOrders(args) {
 	try {
 		return prisma.delivery_orders.findMany({
-			...args
+			include: {
+				delivery_driver: true,
+				user: true,
+			},
+			...args,
 		});
 	} catch (e) {
 		throw new Error(e);
+	}
+}
+
+async function getActiveDeliveryOrders() {
+	try {
+		return await prisma.delivery_orders.findMany({
+			where: {
+				status: {
+					notIn: [
+						DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+						DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
+						DELIVERY_ORDER_STATUS.CUSTOMER_CANCELLED,
+						DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
+						DELIVERY_ORDER_STATUS.DELIVERY_ARRIVED,
+						DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
+						DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
+					]
+				},
+			},
+			include: {
+				delivery_driver: true,
+				user: true,
+			}
+		});
+	} catch (e) {
+		console.error("Error fetching order:", e);
+		throw new Error(e.message);
 	}
 }
 
@@ -23,6 +54,7 @@ async function getOrder(order_id, args) {
 		throw new Error(e);
 	}
 }
+
 
 async function getDeliveryOrderIfNotCompleted(user_id) {
 	try {
@@ -429,6 +461,7 @@ async function getAlreadySentOrdersByDeliveryDriverId(delivery_driver_id) {
 
 module.exports = {
 	getOrders,
+	getActiveDeliveryOrders,
 	getOrder,
 	getOrdersByDeliveryDriverId,
 	createOrder,

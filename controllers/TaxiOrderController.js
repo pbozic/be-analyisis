@@ -145,6 +145,28 @@ async function getCompletedTaxiOrders(req, res) {
 }
 
 /**
+ * GET /taxi/orders
+ * @tag Taxi
+ * @summary Get all taxi orders.
+ * @description This fetches all taxi orders.
+ * @operationId getTaxiOrders
+ * @response 200 - Successful operation. Returns a list of all taxi orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+
+async function getTaxiOrders(req, res) {
+	try {
+		const orders = await TaxiOrderDao.getOrders({});
+		res.status(200).json(orders);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+
+/**
  * GET /taxi/orders/completed/user/:user_id
  * @tag Taxi
  * @summary Get completed taxi orders.
@@ -497,6 +519,83 @@ async function updateOrderStatus(req, res) {
 }
 
 /**
+ * POST /taxi/order/update/preferences
+ * @tag Taxi
+ * @summary Update a taxi order's vehicle preferences.
+ * @description Updates the vehicle preferences of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
+ * @operationId updateOrderVehiclePreferences
+ * @bodyDescription Request body must include 'order_id' to identify the order and 'vehicle_category' and 'vehicle_class' to specify the new vehicle preferences.
+ * @bodyContent {UpdateOrderVehiclePreferencesRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the updated order in the response body.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ */
+async function updateOrderVehiclePreferences(req, res) {
+	try {
+		const { order_id, vehicle_category, vehicle_class } = req.body;
+
+		// Fetch the current order details
+		let order = await TaxiOrderDao.getOrder(order_id);
+
+		if (!order) {
+			return res.status(404).json({ message: "Order not found" });
+		}
+
+		// Update only the vehicle category and vehicle class in the order's preferences
+		const updatedPreferences = {
+			...order.preferences,
+			vehicle_category: vehicle_category,
+			vehicle_class: vehicle_class
+		};
+
+		order = await TaxiOrderDao.updateOrder(order.order_id, {
+			preferences: updatedPreferences
+		});
+
+		io.to("order_" + order.order_id).emit('order_preferences_change__taxi', order);
+
+		res.status(200).json(order);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json({ message: "Server error", error: e });
+	}
+}
+
+/**
+ * POST /taxi/order/reject
+ * @tag Taxi
+ * @summary Reject a taxi order.
+ * @description Rejects a taxi order with the provided order ID, status, and rejection reason from the request body. Returns the rejected order if successful and emits a 'order_rejected' event.
+ * @operationId rejectOrder
+ * @bodyDescription Request body must include 'order_id', 'status', and 'rejection_reason'.
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the rejected order in the response body.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Console logs the error message and returns it in the response.
+ */
+async function rejectOrder(req, res) {
+	const { order_id, status, cancellation_reason } = req.body;
+
+	try {
+		let order = await TaxiOrderDao.cancelOrder(order_id, status, cancellation_reason);
+		if (order.driver_id) {
+			let driver = await DriverDao.getDriverById(order.driver_id);
+			io.emit('driver_available', driver);
+		}
+		io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
+		io.to("order_" + order.order_id).emit('order_rejected__taxi', order);
+
+		console.log("order_status_change__taxi", "order_rejected__taxi");
+		res.status(200).json(order);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+/**
  * POST /taxi/order/cancel
  * @tag Taxi
  * @summary Cancel a taxi order.
@@ -515,24 +614,27 @@ async function cancelOrder(req, res) {
     try {
 		let order = await TaxiOrderDao.getOrder(order_id);
         
-		if (order.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED && req.user.user_id === order.driver.user_id) {
-			if(UserSockets.get(order.user_id)) {
-				UserSockets.get(order.user_id).emit('order_restart_search', order_id);
-			}
-			await TaxiOrderDao.updateOrder(order_id, {
-				status: TAXI_ORDER_STATUS.PENDING,
-			})
-		} else {
-			order = await TaxiOrderDao.cancelOrder(order_id, status, cancellation_reason);
-			io.to("order_" + order.order_id).emit('order_cancelled__taxi', order);
+		if (req.user.user_id === order.driver.user_id) {
 
+			if (status === TAXI_ORDER_STATUS.TAXI_CANCELED) {
+				if(UserSockets.get(order.user_id)) {
+					UserSockets.get(order.user_id).emit('order_restart_search', order_id);
+				}
+				await TaxiOrderDao.updateOrder(order_id, {
+					status: TAXI_ORDER_STATUS.PENDING,
+					last_sent_at: null
+				})
+			}
 		}
         if (order.driver_id) {
             let driver = await DriverDao.getDriverById(order.driver_id);
             io.emit('driver_available', driver);
         }
-        // io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
-      
+		order = await TaxiOrderDao.cancelOrder(order_id, TAXI_ORDER_STATUS.PENDING, cancellation_reason);
+
+        io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
+        io.to("order_" + order.order_id).emit('order_cancelled__taxi', order);
+
         console.log("order_status_change__taxi", "order_cancelled__taxi");
         res.status(200).json(order);
     } catch (e) {
@@ -700,16 +802,19 @@ async function updateTaxiOrderPayment(req, res) {
 
 
 module.exports = {
+	getTaxiOrders,
 	getOrder,
 	getCompletedTaxiOrders,
 	createOrder,
 	acceptOrder,
 	completeOrder,
 	cancelOrder,
+	rejectOrder,
 	updateOrderStatus,
 	updateTaxiOrderRoute,
 	updateTaxiOrderPickupLocation,
 	updateTaxiOrderDeliveryLocation,
+	updateOrderVehiclePreferences,
 	updateCompleteTaxiRoute,
 	updateTaxiOrderPayment,
 	updateTaxiOrderTimeline,

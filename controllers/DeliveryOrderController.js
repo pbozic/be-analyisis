@@ -1,14 +1,58 @@
 const DeliveryOrderDao = require("../dao/DeliveryOrder");
 const DeliveryDriverDao = require("../dao/DeliveryDriver");
-const DeliveryHelper = require('../lib/deliveryHelpers');
+const DeliveryHelper = require("../lib/deliveryHelpers");
 
 const BusinessDao = require("../dao/Business");
 const UsersDao = require("../dao/User");
-const gApi = require('../lib/gApis');
-const { UserSockets, io } = require('../socket');
+const gApi = require("../lib/gApis");
+const { UserSockets, io } = require("../socket");
 const stripe = require("../lib/stripe");
 const { DELIVERY_ORDER_STATUS } = require("../lib/constants");
-const fs = require('fs');
+const fs = require("fs");
+
+
+/**
+ * GET /delivery/orders
+ * @tag Delivery
+ * @summary Get all delivery orders.
+ * @description This fetches all delivery orders.
+ * @operationId getAllDeliveryOrders
+ * @response 200 - Successful operation. Returns a list of all orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+
+async function getDeliveryOrders(req, res) {
+	try {
+		const orders = await DeliveryOrderDao.getOrders({});
+		res.status(200).json(orders);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * GET /delivery/orders/active
+ * @tag Delivery
+ * @summary Get all active delivery orders.
+ * @description This fetches all active delivery orders.
+ * @operationId getActiveDeliveryOrders
+ * @response 200 - Successful operation. Returns a list of active orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+
+async function getActiveDeliveryOrders(req, res) {
+	try {
+		const activeOrders = await DeliveryOrderDao.getActiveDeliveryOrders();
+		res.status(200).json(activeOrders);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
 /**
  * GET /delivery/orders/order/{orderId}
  * @tag Delivery
@@ -24,8 +68,7 @@ async function getOrder(req, res) {
 	try {
 		let order = await DeliveryOrderDao.getOrder(req.params.order_id);
 		res.status(200).json(order);
-	}
-	catch (e) {
+	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
@@ -43,16 +86,16 @@ async function getOrder(req, res) {
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getUserByDeliveryOrderId(req, res) {
-	const { order_id } = req.params
+	const { order_id } = req.params;
 	try {
 		const user = await DeliveryOrderDao.getUserByDeliveryOrderId(order_id);
 		if (user) {
 			res.json(user);
 		} else {
-			res.status(404).send('User not found for this order');
+			res.status(404).send("User not found for this order");
 		}
 	} catch (error) {
-		res.status(500).send('Failed to fetch user data');
+		res.status(500).send("Failed to fetch user data");
 	}
 }
 
@@ -70,20 +113,20 @@ async function getUserByDeliveryOrderId(req, res) {
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function createOrder(req, res) {
-	const { orderBody , user_id, return_url } = req.body
+	const { orderBody, user_id, return_url } = req.body;
 	try {
 		let orderData = {
 			...orderBody,
 			status: DELIVERY_ORDER_STATUS.PENDING
 		};
-		let user_id = req.user.user_id
+		let user_id = req.user.user_id;
 		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
 		let user = await UsersDao.getUserById(user_id);
 		orderData.telephone = user.telephone;
 		let payment_intent;
-		if (order.details.type === 'delivery') {
+		if (order.details.type === "delivery") {
 			let { result } = await gApi.distanceBetweenTwoPoints(order.delivery_location.coordinates, order.pickup_location.coordinates, "driving", new Date());
 			let distanceM = result.rows[0].elements[0].distance.value;
 			let distanceKm = distanceM / 1000;
@@ -92,7 +135,7 @@ async function createOrder(req, res) {
 				details: order.details
 			});
 		}
-		console.log("stripeCustomer", user.stripe_customer_id)
+		console.log("stripeCustomer", user.stripe_customer_id);
 		if (order.payment.type === "CARD") {
 			payment_intent = await stripe.createPaymentIntentOnBehalf(orderData.details.total_price, orderData.payment.payment_method_id, user.stripe_customer_id, business.stripe_account_id, order.order_id, return_url);
 			orderData.payment_intent_id = payment_intent.id;
@@ -101,29 +144,28 @@ async function createOrder(req, res) {
 			});
 		} else if (order.payment.type === "WALLET") {
 			// handle wallet payment
-			if (user.wallet_balance < orderData.details.total_price) { 
-				throw new Error("Insufficient funds")
+			if (user.wallet_balance < orderData.details.total_price) {
+				throw new Error("Insufficient funds");
 			}
 			await UsersDao.removeWalletBalance(user_id, orderData.details.total_price, order.order_id);
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				payment: {
 					...order.payment,
-					status: 'PAID',
+					status: "PAID"
 				},
 				status: "CUSTOMER_PAYMENT_SUCCESSFUL"
 			});
 		} else if (order.payment.type === "CASH") {
 			// io.to("orders_" + order.business_id).emit('new_order', order);
 		}
-		io.to("orders_" + order.business_id).emit('new_order', order);
+		io.to("orders_" + order.business_id).emit("new_order", order);
 		//DeliveryHelper.findDeliveryOrderDrivers(order); here we do not need to notify delivery drivers yet, because of the merchant order preparation time
 
 		res.status(200).json({
 			...order,
 			payment_intent
 		});
-	}
-	catch (e) {
+	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
@@ -143,7 +185,7 @@ async function createOrder(req, res) {
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function acceptOrder(req, res) {
-	const { order_id, user } = req.body
+	const { order_id, user } = req.body;
 	try {
 		//TODO: check if driver is online
 		//TODO: check if order is still pending
@@ -156,7 +198,7 @@ async function acceptOrder(req, res) {
 		let driver = await DeliveryDriverDao.getDeliveryDriverById(user.driver.delivery_driver_id, {
 			include: {
 				vehicles: {
-					vehicle_specification: true,
+					vehicle_specification: true
 				}
 			}
 		});
@@ -166,19 +208,18 @@ async function acceptOrder(req, res) {
 		let { result } = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, order.delivery_location.coordinates, "driving", new Date());
 		order.details.distance = result.rows[0].elements[0].distance.text;
 		order.details.duration = result.rows[0].elements[0].duration.text;
-		order.details.customer_expected_delivery_at = new Date(new Date().getTime() + result.rows[0].elements[0].duration.value *  60*1000);
-		console.log(order.details.customer_expected_delivery_at, 'expected delivery ...')
+		order.details.customer_expected_delivery_at = new Date(new Date().getTime() + result.rows[0].elements[0].duration.value * 60 * 1000);
+		console.log(order.details.customer_expected_delivery_at, "expected delivery ...");
 		order = await DeliveryOrderDao.updateOrder(order.order_id, {
-			details: order.details,
-		})
-		console.log("order accepted", order)
+			details: order.details
+		});
+		console.log("order accepted", order);
 
-		io.to("order_" + order.order_id).emit('order_accepted__delivery', order);
-		io.emit('driver_unavailable', order.delivery_driver_id);
+		io.to("order_" + order.order_id).emit("order_accepted__delivery", order);
+		io.emit("driver_unavailable", order.delivery_driver_id);
 
 		res.status(200).json(order);
-	}
-	catch (e) {
+	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
@@ -202,12 +243,11 @@ async function completeOrder(req, res) {
 		let order = await DeliveryOrderDao.completeOrder(req.body.order_id);
 		let driver = await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id);
 
-		io.to("order_" + order.order_id).emit('order_completed__delivery', order);
-		io.emit('driver_available', driver);
+		io.to("order_" + order.order_id).emit("order_completed__delivery", order);
+		io.emit("driver_available", driver);
 
 		res.status(200).json(order);
-	}
-	catch (e) {
+	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
@@ -218,14 +258,14 @@ async function completeOrder(req, res) {
  * @tag Delivery
  * @summary Get completed delivery orders.
  * @description This fetches all completed orders for a specific driver.
- * @operationId getCompletedDeliveryOrders
+ * @operationId getCompletedDeliveryOrdersByDriverId
  * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 
-async function getCompletedDeliveryOrders(req, res) {
+async function getCompletedDeliveryOrdersByDriverId(req, res) {
 	console.log("get completed orders");
 	const { driver_id } = req.params;
 
@@ -276,7 +316,8 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 					]
 				},
 				delivery_driver_id: driver_id
-			}});
+			}
+		});
 		res.status(200).json(completedOrders);
 	} catch (e) {
 		console.log(e);
@@ -289,7 +330,7 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
  * @tag Delivery
  * @summary Get completed delivery orders.
  * @description This fetches all completed orders for a specific driver.
- * @operationId getCompletedDeliveryOrders
+ * @operationId getCompletedDeliveryOrdersByDriverId
  * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
@@ -329,18 +370,18 @@ async function getCompletedDeliveryOrdersByUserId(req, res) {
  * @tag Delivery
  * @summary Get active delivery orders.
  * @description This fetches all completed orders for a specific driver.
- * @operationId getCompletedDeliveryOrders
+ * @operationId getCompletedDeliveryOrdersByDriverId
  * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 
-async function getActiveDeliveryOrders(req, res) {
+async function getActiveDeliveryOrdersByUserId(req, res) {
 	const { user_id } = req.params;
 
 	try {
-		const activeOrder = await DeliveryOrderDao.getDeliveryOrderIfNotCompleted(user_id)
+		const activeOrder = await DeliveryOrderDao.getDeliveryOrderIfNotCompleted(user_id);
 		res.status(200).json(activeOrder);
 	} catch (e) {
 		console.log(e);
@@ -367,7 +408,8 @@ async function getDeliveryOrdersByBusinessId(req, res) {
 		const orders = await DeliveryOrderDao.getOrders({
 			where: {
 				business_id: business_id
-			}});
+			}
+		});
 		res.status(200).json(orders);
 	} catch (e) {
 		console.log(e);
@@ -395,14 +437,13 @@ async function updateOrderStatus(req, res) {
 		if (req.body.status === DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED) {
 			if (order.payment.type === "CARD") {
 				const paymentIntent = await stripe.client.paymentIntents.capture(order.payment_intent_id);
-				io.to("orders_" + order.business_id).emit('order_status_change__delivery', order);
+				io.to("orders_" + order.business_id).emit("order_status_change__delivery", order);
 			}
 		}
-		io.to("order_" + order.order_id).emit('order_status_change__delivery', order);
+		io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
 
 		res.status(200).json(order);
-	}
-	catch (e) {
+	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
@@ -422,13 +463,12 @@ async function updateOrderStatus(req, res) {
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
 async function updateOrderPickupTime(req, res) {
-	const { order_id, pickup_time } = req.body
+	const { order_id, pickup_time } = req.body;
 	try {
 		let order = await DeliveryOrderDao.updateOrderPickupTime(order_id, pickup_time);
-		io.to("order_" + order.order_id).emit('order_pickup_time', order);
+		io.to("order_" + order.order_id).emit("order_pickup_time", order);
 		res.status(200).json(order);
-	}
-	catch (e) {
+	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
@@ -448,14 +488,13 @@ async function updateOrderPickupTime(req, res) {
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
 async function updateOrderDeliveryTime(req, res) {
-	const { order_id, delivery_time } = req.body
+	const { order_id, delivery_time } = req.body;
 	try {
 		let order = await DeliveryOrderDao.updateOrderDeliveryTime(order_id, delivery_time);
-		io.to("order_" + order.order_id).emit('order_delivery_time', order);
+		io.to("order_" + order.order_id).emit("order_delivery_time", order);
 
 		res.status(200).json(order);
-	}
-	catch (e) {
+	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
@@ -476,32 +515,33 @@ async function updateOrderDeliveryTime(req, res) {
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
 async function updateDeliveryOrderTimeline(req, res) {
-	const { order_id, timeline} = req.body
+	const { order_id, timeline } = req.body;
 
 	try {
 		let order = await DeliveryOrderDao.updateDeliveryOrderTimeline(order_id, timeline);
-		io.to("order_" + order.order_id).emit('order_timeline_change', order);
+		io.to("order_" + order.order_id).emit("order_timeline_change", order);
 		res.status(200).json(order);
-	}
-	catch (e) {
+	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
 }
 
 module.exports = {
+	getDeliveryOrders,
+	getActiveDeliveryOrders,
 	getOrder,
 	createOrder,
 	acceptOrder,
 	completeOrder,
 	updateOrderStatus,
-	getCompletedDeliveryOrders,
+	getCompletedDeliveryOrdersByDriverId,
 	updateDeliveryOrderTimeline,
 	getUserByDeliveryOrderId,
 	updateOrderPickupTime,
 	getDeliveryOrdersByBusinessId,
 	updateOrderDeliveryTime,
-	getActiveDeliveryOrders,
+	getActiveDeliveryOrdersByUserId,
 	getCompletedDeliveryOrdersByUserId,
-	getActiveDeliveryOrdersByDriverId,
+	getActiveDeliveryOrdersByDriverId
 };

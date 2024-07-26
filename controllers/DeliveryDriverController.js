@@ -68,6 +68,28 @@ async function getAvailableDeliveryDrivers(req, res) {
 }
 
 /**
+ * GET /delivery/drivers/daily-meals
+ * @tag DeliveryDrivers
+ * @summary List all delivery drivers offering daily meals
+ * @description Retrieves a list of all delivery drivers that offer daily meals.
+ * @operationId listDeliveryDriversWithDailyMeals
+ * @response 200 - Successful operation, returns a list of delivery drivers offering daily meals
+ * @responseContent {DeliveryDriver[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the delivery driver list
+ */
+async function listDeliveryDriversWithDailyMeals(req, res) {
+    try {
+        const deliveryDrivers = await DeliveryDriverDao.getDeliveryDrivers({
+            where: { delivers_daily_meals: true }
+        });
+        res.status(200).json(deliveryDrivers);
+    } catch (e) {
+        console.error("Error listing delivery drivers with daily meals:", e);
+        res.status(400).json({ error: "Error listing delivery drivers with daily meals", e });
+    }
+}
+
+/**
  * GET /delivery/:delivery_driver_id
  * @tag DeliveryDrivers
  * @summary Get a delivery driver by ID
@@ -302,6 +324,7 @@ module.exports = {
 module.exports = {
 	listDeliveryDrivers,
 	listOnlineDeliveryDrivers,
+	listDeliveryDriversWithDailyMeals,
 	getDeliveryDriverById,
 	getDeliveryDriverLocation,
 	updateDeliveryDriver,

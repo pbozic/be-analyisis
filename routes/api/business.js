@@ -10,6 +10,7 @@ const FinanceController = require("../../controllers/FinancesController");
 
 router.get("/businesses", BusinessController.listBusinesses);
 router.get("/businesses/merchant", BusinessController.listMerchantBusinesses);
+router.get("/businesses/merchant/daily-meals", BusinessController.listMerchantBusinessesWithDailyMeals);
 router.get("/businesses/taxi", BusinessController.listTransferBusinesses);
 
 router.get("/:business_id", BusinessController.getBusinessById);
