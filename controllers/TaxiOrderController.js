@@ -613,9 +613,8 @@ async function cancelOrder(req, res) {
 	console.log("CANCEL ORDER", req.body)
     try {
 		let order = await TaxiOrderDao.getOrder(order_id);
-        
-		if (req.user.user_id === order.driver.user_id) {
 
+		if (req.user.user_id === order.driver?.user_id) {
 			if (status === TAXI_ORDER_STATUS.TAXI_CANCELED) {
 				if(UserSockets.get(order.user_id)) {
 					UserSockets.get(order.user_id).emit('order_restart_search', order_id);
@@ -630,7 +629,7 @@ async function cancelOrder(req, res) {
             let driver = await DriverDao.getDriverById(order.driver_id);
             io.emit('driver_available', driver);
         }
-		order = await TaxiOrderDao.cancelOrder(order_id, TAXI_ORDER_STATUS.PENDING, cancellation_reason);
+		order = await TaxiOrderDao.cancelOrder(order_id, status, cancellation_reason);
 
         io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
         io.to("order_" + order.order_id).emit('order_cancelled__taxi', order);
