@@ -5,7 +5,6 @@ const gApi = require('../lib/gApis');
 const TaxiHelper = require('../lib/taxiHelpers');
 const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY } = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
-const { connect } = require("../routes/api/taxi");
 /**
  * GET /taxi/order/{orderId}
  * @tag Taxi
@@ -172,42 +171,23 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
 		res.status(500).json(e);
 	}
 }
-
-/**
- * POST /taxi/order
- * @tag Taxi
- * @summary Create a new taxi order.
- * @description This creates a new taxi order with the provided details from the request body. Returns the created order if successful.
- * @operationId createOrder
- * @bodyDescription Request body must include necessary order details.
- * @bodyContent {TaxiOrderRequest} application/json
- * @bodyRequired
- * @response 200 - Successful operation. Returns the newly created order in the response body.
- * @responseContent {TaxiOrder} 200.application/json
- * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
- */
-async function createOrder(req, res) {
+async function createOrderHelper(req, res, orderData) {
 	try {
-		let orderData = {
-			...req.body,
-			status: "PENDING",
-			user_id: req.user.user_id,
-			telephone: req.user.telephone
-		};
-		let prefs = req.body.preferences
+		let prefs = orderData.preferences
 		let is_scheduled = prefs.departure_date != null;
-		let is_repeat = prefs.repeat_ride[0].value != "do_not_repeat";
+		let is_repeat = prefs.repeat_ride.some(item => item.value === "do_not_repeat") ? false : true;
 		orderData.is_scheduled = is_scheduled;
 		let order;
-		console.log("is_repeat", prefs.repeat_ride);
+		console.log("is_repeat", is_repeat);
 		let ordersData = [];
 		if (is_repeat) {
-			ordersData = await generateOrdersForRepeatOrder(orderData, prefs.repeat_ride, prefs.repeat_duration);
+			ordersData = await generateOrdersForRepeatOrder(orderData, prefs.repeat_ride, prefs.repeat_duration[0].value);
 		} else {
 			ordersData.push(orderData);
 		}
 		
 		for (let orderData of ordersData) {
+			console.log("od", orderData);
 			let num_orders = Math.ceil((prefs.adults + prefs.children_above_140 + prefs.children_under_140) / VEHICLE_CAPACITY[prefs.vehicle_class])
 			let start_num_orders = num_orders;
 			let parentOrderId = null;
@@ -242,12 +222,48 @@ async function createOrder(req, res) {
 				if (num_orders == start_num_orders) {
 					parentOrderId = order.order_id;
 				}
-				TaxiHelper.findTaxiOrderDrivers(order);
+				
 				num_orders -= 1;
 			}
-			order = await TaxiOrderDao.getOrder(parentOrderId);
+			if (parentOrderId) {
+				order = await TaxiOrderDao.getOrder(parentOrderId, {
+					include: {
+						grouped_orders: true
+					}
+				});
+			}
 		}
+		//TaxiHelper.findTaxiOrderDrivers(order);
+		return order
+	} catch (error) {
+		console.log(error);
+		res.status(500).json(error);
+	}
 		
+}
+/**
+ * POST /taxi/order
+ * @tag Taxi
+ * @summary Create a new taxi order.
+ * @description This creates a new taxi order with the provided details from the request body. Returns the created order if successful.
+ * @operationId createOrder
+ * @bodyDescription Request body must include necessary order details.
+ * @bodyContent {TaxiOrderRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the newly created order in the response body.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
+ */
+async function createOrder(req, res) {
+	try {
+		let orderData = {
+			...req.body,
+			status: "PENDING",
+			user_id: req.user.user_id,
+			telephone: req.user.telephone
+		};
+		
+		let order = await createOrderHelper(req, res, orderData);
 		res.status(200).json(order);
 	}
 	catch (e) {
@@ -271,53 +287,61 @@ function getDayIndex(dayName) {
   }
 
   async function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
-	const orders = [];
-	const currentDate = new Date();
-  
-	// Get the hours and minutes from the departure time
-	const departureTime = new Date(orderData.preferences.departure_time);
-	const departureHours = departureTime.getHours();
-	const departureMinutes = departureTime.getMinutes();
-  
-	// Get current week's day number (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
-	const currentDay = currentDate.getDay();
-  
-	for (let week = 0; week < repeatDuration; week++) {
-	  for (let day of repeatData) {
-		const dayIndex = getDayIndex(day.value); // Get day index (0 for Sunday, 1 for Monday, ..., 6 for Saturday)
-		const daysUntilNextOccurrence = (dayIndex - currentDay + 7) % 7 + (week * 7); // Calculate days until the next occurrence of this weekday
-		const orderDate = new Date(currentDate); // Create a copy of the current date
-		orderDate.setDate(orderDate.getDate() + daysUntilNextOccurrence); // Add the days to reach the next occurrence of this day
-  
-		// Set the time for the order
-		orderDate.setHours(departureHours);
-		orderDate.setMinutes(departureMinutes);
-		orderDate.setSeconds(0);
-		orderDate.setMilliseconds(0);
-  
-		// Format the date and time
-		const formattedDepartureDate = new Intl.DateTimeFormat('en-US', {
-		  day: '2-digit',
-		  month: 'long',
-		  year: 'numeric',
-		}).format(orderDate);
-  
-		const formattedDepartureTime = orderDate.toISOString();
-  
-		// Generate an order for this day
-		let order = {
-		  ...orderData,
-		  preferences: {
-			...orderData.preferences,
-			departure_date: formattedDepartureDate, // Format as "DD MMMM YYYY"
-			departure_time: formattedDepartureTime, // Format as "YYYY-MM-DDTHH:mm:ss.sss"
-		  },
-		};
-		orders.push(order); // Add to orders list
-	  }
+	try {
+		console.log(repeatDuration)
+		const orders = [];
+		const currentDate = new Date();
+	
+		// Get the hours and minutes from the departure time
+		const departureTime = new Date(orderData.preferences.departure_time);
+		const departureHours = departureTime.getHours();
+		const departureMinutes = departureTime.getMinutes();
+	
+		// Get current week's day number
+		const currentDay = currentDate.getDay();
+	
+		for (let week = 0; week < repeatDuration; week++) {
+		for (let day of repeatData) {
+			const dayIndex = getDayIndex(day.value); // Get day index from day name
+			const daysUntilNextOccurrence = (dayIndex - currentDay + 7) % 7 + (week * 7); // Calculate days until the next occurrence of this weekday
+			const orderDate = new Date(currentDate); // Create a copy of the current date
+			orderDate.setDate(orderDate.getDate() + daysUntilNextOccurrence); // Add the days to reach the next occurrence of this day
+			console.log(orderDate)
+			console.log(daysUntilNextOccurrence)
+			// Set the time for the order
+			orderDate.setHours(departureHours);
+			orderDate.setMinutes(departureMinutes);
+			orderDate.setSeconds(0);
+			orderDate.setMilliseconds(0);
+			console.log(orderDate)
+			// Format the date and time
+			const formattedDepartureDate = new Intl.DateTimeFormat('en-US', {
+			day: '2-digit',
+			month: 'long',
+			year: 'numeric',
+			}).format(orderDate);
+	
+			const formattedDepartureTime = orderDate.toISOString();
+	
+			// Generate an order for this day
+			let order = {
+			...orderData,
+			preferences: {
+				...orderData.preferences,
+				departure_date: formattedDepartureDate, // Format as "DD MMMM YYYY"
+				departure_time: formattedDepartureTime, // Format as "YYYY-MM-DDTHH:mm:ss.sss"
+			},
+			};
+			orders.push(order); // Add to orders list
+		}
+		}
+	
+		return orders; // Return generated orders
+	} catch (error) {
+		console.log(error);
+		throw new Error(error);
 	}
-  
-	return orders; // Return generated orders
+	
   }
 /**
  * POST /taxi/dispatch-order
@@ -340,16 +364,7 @@ async function createDispatchOrder(req, res) {
 			user_id: req.user.user_id,
 			telephone: req.body.telephone
 		};
-		let prefs = req.body.preferences
-		let is_scheduled = prefs.departure_date != null;
-		orderData.is_scheduled = is_scheduled;
-		let num_orders = Math.ceil((prefs.adults + prefs.children_above_140 + prefs.children_under_140) / VEHICLE_CAPACITY[prefs.vehicle_class])
-		let order;
-		while (num_orders > 0) {
-			order = await TaxiOrderDao.createOrder(orderData);
-			TaxiHelper.findTaxiOrderDrivers(order);
-			num_orders -= 1;
-		}
+		let order = await createOrderHelper(req, res, orderData);
 		res.status(200).json(order);
 	}
 	catch (e) {

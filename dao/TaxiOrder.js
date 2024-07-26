@@ -71,6 +71,7 @@ async function getTaxiOrderIfNotCompleted(user_id) {
                         }
                     }
                 },
+                grouped_orders: true
             }
         });
     } catch (e) {
