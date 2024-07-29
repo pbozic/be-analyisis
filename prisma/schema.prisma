@@ -115,6 +115,7 @@ model users {
   allergies_preferences         Json?
   spicy_preferences             Json?
   radio_preferences             Json?
+  subscribed_to_daily_meals     Boolean           @default(false)
 }
 
 model documents {
@@ -295,32 +296,32 @@ model allergens {
 }
 
 model taxi_orders {
-  order_id            String            @id @default(uuid()) @db.Uuid
-  user_id             String            @db.Uuid
-  driver_id           String?           @db.Uuid
-  route               Json
-  pickup_location     Json
-  delivery_location   Json
-  payment             Json?
-  estimates           Json?
-  timeline            Json              @default("[]")
-  preferences         Json?
-  status              TAXI_ORDER_STATUS
-  last_sent_at        DateTime?         @db.Timestamptz(6)
-  created_at          DateTime          @default(now()) @db.Timestamptz(6)
-  updated_at          DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
-  business_id         String?           @db.Uuid
-  business            business?         @relation(fields: [business_id], references: [business_id])
-  driver              drivers?          @relation(fields: [driver_id], references: [driver_id])
-  user                users?            @relation(fields: [user_id], references: [user_id])
-  history             taxi_order_sent[]
-  telephone           String?
-  cancellation_reason String?
-  find_drivers_attempts Int?                  @default(0)
-  is_scheduled         Boolean         @default(false)
-  parent_order_id      String?         @db.Uuid
-  parent_order         taxi_orders?    @relation("grouped_orders", fields: [parent_order_id], references: [order_id])
-  grouped_orders       taxi_orders[]   @relation("grouped_orders")
+  order_id              String            @id @default(uuid()) @db.Uuid
+  user_id               String            @db.Uuid
+  driver_id             String?           @db.Uuid
+  route                 Json
+  pickup_location       Json
+  delivery_location     Json
+  payment               Json?
+  estimates             Json?
+  timeline              Json              @default("[]")
+  preferences           Json?
+  status                TAXI_ORDER_STATUS
+  last_sent_at          DateTime?         @db.Timestamptz(6)
+  created_at            DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+  business_id           String?           @db.Uuid
+  business              business?         @relation(fields: [business_id], references: [business_id])
+  driver                drivers?          @relation(fields: [driver_id], references: [driver_id])
+  user                  users?            @relation(fields: [user_id], references: [user_id])
+  history               taxi_order_sent[]
+  telephone             String?
+  cancellation_reason   String?
+  find_drivers_attempts Int?              @default(0)
+  is_scheduled          Boolean           @default(false)
+  parent_order_id       String?           @db.Uuid
+  parent_order          taxi_orders?      @relation("grouped_orders", fields: [parent_order_id], references: [order_id])
+  grouped_orders        taxi_orders[]     @relation("grouped_orders")
 }
 
 model taxi_order_sent {

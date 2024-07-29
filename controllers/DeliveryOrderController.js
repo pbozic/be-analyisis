@@ -410,6 +410,7 @@ async function getDeliveryOrdersByBusinessId(req, res) {
 				business_id: business_id
 			}
 		});
+		console.log('business orders', orders)
 		res.status(200).json(orders);
 	} catch (e) {
 		console.log(e);
@@ -527,6 +528,32 @@ async function updateDeliveryOrderTimeline(req, res) {
 	}
 }
 
+/**
+ * POST /delivery/order/update
+ * @tag Taxi
+ * @summary Update a delivery order.
+ * @description Updates a delivery order.
+ * @operationId updateDeliveryOrderTimeline
+ * @bodyDescription Request body must include 'order_id', and the new 'timeline' details.
+ * @bodyContent {updateDeliveryOrderTimelineRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the updated order with the new timeline in the response body.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ */
+async function updateDeliveryOrder(req, res) {
+	const { order } = req.body;
+	const { order_id, ...data } = order;
+
+	try {
+		let order = await DeliveryOrderDao.updateOrder(order_id, data);
+		res.status(200).json(order);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
 module.exports = {
 	getDeliveryOrders,
 	getActiveDeliveryOrders,
@@ -543,5 +570,6 @@ module.exports = {
 	updateOrderDeliveryTime,
 	getActiveDeliveryOrdersByUserId,
 	getCompletedDeliveryOrdersByUserId,
-	getActiveDeliveryOrdersByDriverId
+	getActiveDeliveryOrdersByDriverId,
+	updateDeliveryOrder
 };

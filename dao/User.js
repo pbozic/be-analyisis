@@ -24,6 +24,19 @@ const getUserById = async (user_id, args) => {
 	}
 };
 
+const getScheduledUsers = async () => {
+	try {
+		return prisma.users.findMany({
+			where: {
+				subscribed_to_daily_meals: true
+			}
+		})
+	} catch (e) {
+		return new Error(e)
+	}
+}
+
+
 const getUserByEmailOrTelephone = async (query, args) => {
 	try {
 		return prisma.users.findFirst({
@@ -94,6 +107,22 @@ const updateUser = async (user_id, user) => {
 		delete user.addresses;
 		delete user.user_role;
 
+		return prisma.users.update({
+			where: {
+				user_id: user_id,
+			},
+			data: {
+				...user,
+			},
+		});
+	} catch (error) {
+		console.log(error)
+		return new Error(error);
+	}
+};
+
+const updateScheduledUser =  async (user_id, user) => {
+	try {
 		return prisma.users.update({
 			where: {
 				user_id: user_id,
@@ -397,6 +426,8 @@ module.exports = {
 	updateUserAllergiesPreferences,
 	updateUserTransferPreferences,
 	updateUserRadioPreferences,
-	getUserByTelephone
+	getUserByTelephone,
+	getScheduledUsers,
+	updateScheduledUser
 
 };

@@ -10,8 +10,11 @@ router.get("/", function (req, res, next) {
 	res.render("index", { title: "Express" });
 });
 
+router.get("/scheduled_users", AuthController.getScheduledUsers);
 router.post("/login", joi(loginSchema), AuthController.login);
 router.post("/register", joi(registerSchema), AuthController.register);
+router.post("/create/scheduled_user", AuthController.createScheduledUser);
+router.post("/update/scheduled_user", AuthController.updateScheduledUser);
 router.post("/refresh", joi(refreshSchema), AuthController.refreshToken);
 router.post("/reset-password", joi(resetPasswordRequestSchema), AuthController.requestPasswordReset);
 

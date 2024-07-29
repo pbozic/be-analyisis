@@ -21,6 +21,32 @@ const fs = require('fs');
 const stripe = require("../lib/stripe");
 const MenuDao = require('../dao/Menu');
 require('dotenv').config();
+
+
+/**
+ * POST /user/auth/scheduled_users
+ * @tag User
+ * @summary Get scheduled users
+ * @description This function fetches all scheduled users.
+ * @operationId getScheduledUsers
+ * @bodyDescription Request body must include necessary order details.
+ * @bodyContent {getScheduledUsersRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the newly created order in the response body.
+ * @responseContent {getScheduledUsers} 200.application/json
+ * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
+ */
+async function getScheduledUsers(req, res) {
+	try {
+		let users = await UserDao.getScheduledUsers();
+		res.status(200).json(users);
+	}
+	catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
 /**
  * POST /auth/login
  * @tag Authentication
@@ -618,6 +644,64 @@ async function registerMerchantService(req, res) {
 	}
 }
 
+/**
+ * POST /user/auth/create/scheduled_user
+ * @tag User
+ * @summary Create a new scheduled user.
+ * @description This created new scheduled user.
+ * @operationId createScheduledUser
+ * @bodyDescription Request body must include necessary order details.
+ * @bodyContent {createScheduledUserRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the newly created order in the response body.
+ * @responseContent {createScheduledUser} 200.application/json
+ * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
+ */
+async function createScheduledUser(req, res) {
+	const { data } = req.body
+	try {
+		let user = await UserDao.createNewUser({
+			...data,
+			password: 'lalaland1'
+		}, true);
+		res.status(200).json(user);
+	}
+	catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+
+/**
+ * PATCH /update/scheduled_user
+ * @tag Users
+ * @summary Updates a scheduled user's details
+ * @description This endpoint is used to update a scheduled user's details.
+ * @operationId updateScheduledUser
+ * @bodyDescription The data to update for the current user
+ * @bodyContent {updateScheduledUserRequest} application/json
+ * @bodyRequired
+ * @response 200 - User updated successfully. Returns the updated user's details.
+ * @responseContent {AuthenticatedUser} 200.application/json
+ * @response 400 - Error updating user information.
+ */
+async function updateScheduledUser(req, res) {
+	const {user_id, data} = req.body
+	console.log(user_id, data, 'vasdis')
+
+	try {
+		let user = await UserDao.updateScheduledUser(user_id, data);
+		if (user) {
+			return res.status(200).json(user);
+		}
+	} catch (e) {
+		console.log(e)
+		res.status(400).json({ error: "Error updating user information", e });
+	}
+
+}
+
 module.exports = {
 	login,
 	register,
@@ -627,5 +711,8 @@ module.exports = {
 	passwordReset,
 	registerTaxiService,
 	registerDeliveryService,
-	registerMerchantService
+	registerMerchantService,
+	createScheduledUser,
+	getScheduledUsers,
+	updateScheduledUser
 };

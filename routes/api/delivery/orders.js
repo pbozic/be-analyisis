@@ -8,8 +8,8 @@ const joi = require("../../../middleware/joi");
 const DeliveryOrderController = require("../../../controllers/DeliveryOrderController");
 
 router.get("/", DeliveryOrderController.getDeliveryOrders);
-router.get("/:business_id", DeliveryOrderController.getDeliveryOrdersByBusinessId);
 router.get("/active", DeliveryOrderController.getActiveDeliveryOrders);
+router.get("/:business_id", DeliveryOrderController.getDeliveryOrdersByBusinessId);
 router.get("/active/:user_id", DeliveryOrderController.getActiveDeliveryOrdersByUserId);
 router.get("/active/driver/:driver_id", DeliveryOrderController.getActiveDeliveryOrdersByDriverId);
 router.get("/completed/:driver_id", DeliveryOrderController.getCompletedDeliveryOrdersByDriverId);
@@ -23,5 +23,6 @@ router.post("/order/delivery_time", DeliveryOrderController.updateOrderDeliveryT
 router.post("/order/accept", DeliveryOrderController.acceptOrder);
 router.post("/order/complete", DeliveryOrderController.completeOrder);
 router.post("/timeline", DeliveryOrderController.updateDeliveryOrderTimeline);
+router.post("/order/update", DeliveryOrderController.updateDeliveryOrder);
 
 module.exports = router;
