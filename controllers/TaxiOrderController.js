@@ -629,7 +629,7 @@ async function cancelOrder(req, res) {
             let driver = await DriverDao.getDriverById(order.driver_id);
             io.emit('driver_available', driver);
         }
-		order = await TaxiOrderDao.cancelOrder(order_id, status, cancellation_reason);
+		order = await TaxiOrderDao.cancelOrder(order_id, status, cancellation_reason[0].value);
 
         io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
         io.to("order_" + order.order_id).emit('order_cancelled__taxi', order);
