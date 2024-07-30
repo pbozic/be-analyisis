@@ -78,6 +78,7 @@ const prisma = new PrismaClient().$extends({
 		drivers: {
 			async inRadius(point, radiusInMeters, requirements, vehicleFilters) { 
 				console.log("vehicle filters", vehicleFilters)
+				console.log("requirements", requirements)
 				// const drivers = await prisma.$queryRaw`
 				//  	SELECT *
 				// 	FROM drivers
