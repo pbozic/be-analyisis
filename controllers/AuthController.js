@@ -231,17 +231,16 @@ async function requestPasswordReset(req, res) {
 		let user = await UserDao.getUserByEmailOrTelephone(req.body.email);
 		let token = await TokenDao.generatePaswordResetToken(user);
 		if (user.email) {
-			EmailHelper.sendEmailTemplate("Password Reset Request", "passwordReset", user.email, false,  {
+			let settings = {
 				name: user.first_name,
 				title: "Password Reset Request",
 				resetLink: process.env.LINK_BASE_URL + '/reset-password/' + token.token
-	
-			});
+			};
+			EmailHelper.sendEmailTemplate("Password Reset Request", "passwordReset", user.email, settings);
 		} else {
 			// TODO: send link in sms
 			await SMSHelper.sendSMSPasswordReset(user.telephone, "Your password reset link is: " + process.env.LINK_BASE_URL + '/reset-password/' + token.token);
 		}
-		console.log(token);
 		res.status(200).send("Password reset request processed. A token is sent to the user if the account is found.");
 	} catch (e) {
 		console.log(e)
