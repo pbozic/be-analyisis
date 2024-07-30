@@ -77,12 +77,11 @@ const prisma = new PrismaClient().$extends({
 	model: {
 		drivers: {
 			async inRadius(point, radiusInMeters, requirements, vehicleFilters) { 
-				console.log("vehicles", vehicleFilters)
-				console.log("point", point);
-				console.log("radius", radiusInMeters);
+				console.log("vehicle filters", vehicleFilters)
+				console.log("requirements", requirements)
 				// const drivers = await prisma.$queryRaw`
 				//  	SELECT *
-				// 	FROM drivers 
+				// 	FROM drivers
 				// 	WHERE online = true
 				// 	AND on_order = false
 				// 	AND ST_DWithin(
@@ -95,10 +94,9 @@ const prisma = new PrismaClient().$extends({
 				// 	)
 				// `;
 				const drivers = await prisma.$queryRaw`
-					SELECT drivers.*, vehicles.*, vehicle_specifications.*
+					SELECT drivers.*, vehicles.*
 					FROM drivers
 					JOIN vehicles ON vehicles.driver_id = drivers.driver_id
-					JOIN vehicle_specifications ON vehicle_specifications.vehicle_id = vehicles.vehicle_id
 					WHERE drivers.online = true
 					AND drivers.on_order = false
 					AND ST_DWithin(
