@@ -254,7 +254,7 @@ async function passwordResetForm(req, res) {
 	try {
 		let tkn = await UserDao.getUserByResetToken(token);
 		console.log(tkn);
-		if (!tkn.users) {
+		if (!tkn && !tkn.users) {
 			return res.status(400).send("Invalid or expired token");
 		}
 		res.render("resetPasswordForm", { token });
