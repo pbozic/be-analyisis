@@ -97,7 +97,6 @@ const prisma = new PrismaClient().$extends({
 					SELECT drivers.*, vehicles.*, vehicle_specifications.*
 					FROM drivers
 					JOIN vehicles ON vehicles.driver_id = drivers.driver_id
-					JOIN vehicle_specifications ON vehicle_specifications.vehicle_id = vehicles.vehicle_id
 					WHERE drivers.online = true
 					AND drivers.on_order = false
 					AND ST_DWithin(
