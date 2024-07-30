@@ -19,7 +19,7 @@ async function getOrders(args) {
             }
         };
 
-        return prisma.taxi_orders.findMany(mergedArgs);
+        return await prisma.taxi_orders.findMany(mergedArgs);
     } catch (e) {
         console.error("Error fetching orders:", e);
         throw new Error(e);
@@ -86,7 +86,7 @@ async function getActiveOrdersByDriverId(driver_id) {
             where: {
                 driver_id: driver_id,
                 status: {
-                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELLED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.PENDING] // Exclude both completed and pending orders
+                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELLED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.PENDING, TAXI_ORDER_STATUS.TAXI_REJECTED] // Exclude both completed and pending orders
                 },
             },
             include: {

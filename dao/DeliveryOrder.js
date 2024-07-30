@@ -3,7 +3,7 @@ const { TAXI_ORDER_STATUS, DELIVERY_ORDER_STATUS } = require("../lib/constants")
 
 async function getOrders(args) {
 	try {
-		return prisma.delivery_orders.findMany({
+		return await prisma.delivery_orders.findMany({
 			include: {
 				delivery_driver: true,
 				user: true,
@@ -422,13 +422,25 @@ async function updateDeliveryOrderTimeline(order_id, newTimelineEntries) {
 async function updateOrder(order_id, order) {
 	delete order.user_id;
 	delete order.delivery_driver_id;
+	delete order.created_at
+	delete order.updated_at
+	delete order.business_id
+	delete order.delivery_driver
+	delete order.user
+
+	if (order.last_sent_at && Object.keys(order.last_sent_at).length === 0) {
+		delete order.last_sent_at
+	}
 
 	try {
 		return await prisma.delivery_orders.update({
 			where: {
 				order_id: order_id,
 			},
-			data: order,
+			data: {
+				...order,
+				updated_at: new Date(),
+			},
 			include: {
 				delivery_driver: true,
 			},
