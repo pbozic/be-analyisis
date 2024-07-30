@@ -659,6 +659,7 @@ async function cancelOrder(req, res) {
 					if(UserSockets.get(order.user_id)) {
 						UserSockets.get(order.user_id).emit('order_restart_search', order_id);
 					}
+					await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
 					await TaxiOrderDao.updateOrder(order_id, {
 						status: TAXI_ORDER_STATUS.PENDING,
 						last_sent_at: null
