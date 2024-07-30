@@ -217,28 +217,68 @@ async function createOrderHelper(req, res, orderData) {
 			while (num_orders > 0) {
 			
 				if (parentOrderId) {
-					order = await TaxiOrderDao.createOrder({
-						...orderData,
-						user: {
-							connect: {
-								user_id: req.user.user_id
+					if (orderData.driver) {
+						order = await TaxiOrderDao.createOrder({
+							...orderData,
+							user: {
+								connect: {
+									user_id: req.user.user_id
+								}
+							},
+							parent_order: {
+								connect: {
+									order_id: parentOrderId
+								}
+							},
+							driver: {
+								connect: {
+									driver_id: orderData.driver.driver_id
+								}
+
 							}
-						},
-						parent_order: {
-							connect: {
-								order_id: parentOrderId
+						});
+					} else {
+						order = await TaxiOrderDao.createOrder({
+							...orderData,
+							user: {
+								connect: {
+									user_id: req.user.user_id
+								}
+							},
+							parent_order: {
+								connect: {
+									order_id: parentOrderId
+								}
 							}
-						}
-					});
+						});
+					}
+
 				} else {
-					order = await TaxiOrderDao.createOrder({
-						...orderData,
-						user: {
-							connect: {
-								user_id: req.user.user_id
+					if (orderData.driver) {
+						order = await TaxiOrderDao.createOrder({
+							...orderData,
+							user: {
+								connect: {
+									user_id: req.user.user_id
+								}
+							},
+							driver:	{
+								connect: {
+									driver_id: orderData.driver.driver_id
+								}
 							}
-						}
-					});
+						});
+					} else {
+						order = await TaxiOrderDao.createOrder({
+							...orderData,
+							user: {
+								connect: {
+									user_id: req.user.user_id
+								}
+							}
+						});
+					}
+
 				}
 				
 				if (num_orders == start_num_orders) {
@@ -613,18 +653,21 @@ async function cancelOrder(req, res) {
 	console.log("CANCEL ORDER", req.body)
     try {
 		let order = await TaxiOrderDao.getOrder(order_id);
-
-		if (req.user.user_id === order.driver?.user_id) {
-			if (status === TAXI_ORDER_STATUS.TAXI_CANCELED) {
-				if(UserSockets.get(order.user_id)) {
-					UserSockets.get(order.user_id).emit('order_restart_search', order_id);
+		if (order.driver) {
+			if (req.user.user_id === order.driver?.user_id) {
+				if (status === TAXI_ORDER_STATUS.TAXI_CANCELED) {
+					if(UserSockets.get(order.user_id)) {
+						UserSockets.get(order.user_id).emit('order_restart_search', order_id);
+					}
+					await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
+					await TaxiOrderDao.updateOrder(order_id, {
+						status: TAXI_ORDER_STATUS.PENDING,
+						last_sent_at: null
+					})
 				}
-				await TaxiOrderDao.updateOrder(order_id, {
-					status: TAXI_ORDER_STATUS.PENDING,
-					last_sent_at: null
-				})
 			}
 		}
+
         if (order.driver_id) {
             let driver = await DriverDao.getDriverById(order.driver_id);
             io.emit('driver_available', driver);
