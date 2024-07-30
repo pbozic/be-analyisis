@@ -617,9 +617,10 @@ async function updateOrderVehiclePreferences(req, res) {
  */
 async function rejectOrder(req, res) {
 	const { order_id, status, cancellation_reason } = req.body;
+	console.log('REJECT ORDER', req.body)
 
 	try {
-		let order = await TaxiOrderDao.cancelOrder(order_id, status, cancellation_reason);
+		let order = await TaxiOrderDao.cancelOrder(order_id, status, cancellation_reason[0].value);
 		if (order.driver_id) {
 			let driver = await DriverDao.getDriverById(order.driver_id);
 			io.emit('driver_available', driver);

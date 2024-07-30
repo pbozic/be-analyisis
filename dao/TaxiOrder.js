@@ -380,11 +380,11 @@ async function getSentDrivers(order_id) {
         return prisma.taxi_order_sent.findMany({
             where: {
                 order_id,
-                include: {
-                    driver: {
-                        include: {
-                            user: true
-                        }
+            },
+            include: {
+                driver: {
+                    include: {
+                        user: true
                     }
                 }
             }
