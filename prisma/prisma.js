@@ -80,41 +80,41 @@ const prisma = new PrismaClient().$extends({
 				console.log("vehicles", vehicleFilters)
 				console.log("point", point);
 				console.log("radius", radiusInMeters);
-				// const drivers = await prisma.$queryRaw`
-				//  	SELECT *
-				// 	FROM drivers 
-				// 	WHERE online = true
-				// 	AND on_order = false
-				// 	AND ST_DWithin(
-				// 		ST_MakePoint(
-				// 			CAST((location->'coordinates'->>'longitude') AS FLOAT),
-				// 			CAST((location->'coordinates'->>'latitude') AS FLOAT)
-				// 		)::geography,
-				// 		ST_MakePoint(${point.longitude}, ${point.latitude})::geography,
-				// 		${radiusInMeters}
-				// 	)
-				// `;
 				const drivers = await prisma.$queryRaw`
-					SELECT drivers.*, vehicles.*, vehicle_specifications.*
-					FROM drivers
-					JOIN vehicles ON vehicles.driver_id = drivers.driver_id
-					JOIN vehicle_specifications ON vehicle_specifications.vehicle_id = vehicles.vehicle_id
-					WHERE drivers.online = true
-					AND drivers.on_order = false
+				 	SELECT *
+					FROM drivers 
+					WHERE online = true
+					AND on_order = false
 					AND ST_DWithin(
-					ST_MakePoint(
-						CAST((drivers.location->'coordinates'->>'longitude') AS FLOAT),
-						CAST((drivers.location->'coordinates'->>'latitude') AS FLOAT)
-					)::geography,
-					ST_MakePoint(${point.longitude}, ${point.latitude})::geography,
-					${radiusInMeters}
+						ST_MakePoint(
+							CAST((location->'coordinates'->>'longitude') AS FLOAT),
+							CAST((location->'coordinates'->>'latitude') AS FLOAT)
+						)::geography,
+						ST_MakePoint(${point.longitude}, ${point.latitude})::geography,
+						${radiusInMeters}
 					)
-					AND (COALESCE(${requirements.traveling_with_pet}, FALSE) = FALSE OR (drivers.ride_requirements->'traveling_with_pet')::BOOLEAN = ${requirements.traveling_with_pet})
-					AND (COALESCE(${requirements.child_seat}, FALSE) = FALSE OR (drivers.ride_requirements->'child_seat')::BOOLEAN = ${requirements.child_seat})
-					AND (COALESCE(${requirements.wheelchair_accessibility}, FALSE) = FALSE OR (drivers.ride_requirements->'wheelchair_accessibility')::BOOLEAN = ${requirements.wheelchair_accessibility})
-					AND (COALESCE(${vehicleFilters.class}, '') = '' OR vehicles.class::TEXT = ${vehicleFilters.class.toUpperCase()})
-					AND (COALESCE(${vehicleFilters.category}, '') = '' OR vehicles.category::TEXT = ${vehicleFilters.category.toUpperCase()});
-			  `;
+				`;
+				// const drivers = await prisma.$queryRaw`
+				// 	SELECT drivers.*, vehicles.*, vehicle_specifications.*
+				// 	FROM drivers
+				// 	JOIN vehicles ON vehicles.driver_id = drivers.driver_id
+				// 	JOIN vehicle_specifications ON vehicle_specifications.vehicle_id = vehicles.vehicle_id
+				// 	WHERE drivers.online = true
+				// 	AND drivers.on_order = false
+				// 	AND ST_DWithin(
+				// 	ST_MakePoint(
+				// 		CAST((drivers.location->'coordinates'->>'longitude') AS FLOAT),
+				// 		CAST((drivers.location->'coordinates'->>'latitude') AS FLOAT)
+				// 	)::geography,
+				// 	ST_MakePoint(${point.longitude}, ${point.latitude})::geography,
+				// 	${radiusInMeters}
+				// 	)
+				// 	AND (COALESCE(${requirements.traveling_with_pet}, FALSE) = FALSE OR (drivers.ride_requirements->'traveling_with_pet')::BOOLEAN = ${requirements.traveling_with_pet})
+				// 	AND (COALESCE(${requirements.child_seat}, FALSE) = FALSE OR (drivers.ride_requirements->'child_seat')::BOOLEAN = ${requirements.child_seat})
+				// 	AND (COALESCE(${requirements.wheelchair_accessibility}, FALSE) = FALSE OR (drivers.ride_requirements->'wheelchair_accessibility')::BOOLEAN = ${requirements.wheelchair_accessibility})
+				// 	AND (COALESCE(${vehicleFilters.class}, '') = '' OR vehicles.class::TEXT = ${vehicleFilters.class.toUpperCase()})
+				// 	AND (COALESCE(${vehicleFilters.category}, '') = '' OR vehicles.category::TEXT = ${vehicleFilters.category.toUpperCase()});
+			  // `;
 
 				return drivers;
 			}
