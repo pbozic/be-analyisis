@@ -198,7 +198,7 @@ async function createOrderHelper(req, res, orderData) {
 		let prefs = orderData.preferences
 		let is_scheduled = prefs.departure_date != null;
 		let is_repeat = false;
-		console.log("body repeat", pref)
+		console.log("body repeat", prefs)
 		if (pref.repeat_ride && prefs.repeat_ride.some(item => item.value === "do_not_repeat")) {
 			is_repeat = true;
 		}
