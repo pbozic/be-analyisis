@@ -209,7 +209,7 @@ async function createOrderHelper(req, res, orderData) {
 		console.log("is_repeat", is_repeat);
 		let ordersData = [];
 		if (is_repeat) {
-			ordersData = await generateOrdersForRepeatOrder(orderData, prefs.repeat_ride, prefs.repeat_duration[0].value);
+			ordersData = await generateOrdersForRepeatOrder(orderData, prefs.repeat_ride, prefs.repeat_duration.length > 0 ? prefs.repeat_duration[0].value : 0 );
 		} else {
 			ordersData.push(orderData);
 		}
@@ -660,13 +660,13 @@ async function cancelOrder(req, res) {
 	console.log("CANCEL ORDER", req.body)
     try {
 		let order = await TaxiOrderDao.getOrder(order_id);
+
 		if (order.driver) {
 			if (req.user.user_id === order.driver?.user_id) {
 				if (status === TAXI_ORDER_STATUS.TAXI_CANCELED) {
 					if(UserSockets.get(order.user_id)) {
 						UserSockets.get(order.user_id).emit('order_restart_search', order_id);
 					}
-					await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
 					await TaxiOrderDao.updateOrder(order_id, {
 						status: TAXI_ORDER_STATUS.PENDING,
 						last_sent_at: null
@@ -674,6 +674,8 @@ async function cancelOrder(req, res) {
 				}
 			}
 		}
+
+		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
 
         if (order.driver_id) {
             let driver = await DriverDao.getDriverById(order.driver_id);
