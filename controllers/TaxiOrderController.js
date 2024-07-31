@@ -158,6 +158,7 @@ async function getCompletedTaxiOrders(req, res) {
 async function getTaxiOrders(req, res) {
 	try {
 		const orders = await TaxiOrderDao.getOrders({});
+		console.log("taxi orders", orders);
 		res.status(200).json(orders);
 	} catch (e) {
 		console.log(e);
@@ -198,7 +199,6 @@ async function createOrderHelper(req, res, orderData) {
 		let prefs = orderData.preferences
 		let is_scheduled = prefs.departure_date != null;
 		let is_repeat = false;
-		console.log("body repeat", prefs)
 		if (prefs.repeat_ride && prefs.repeat_ride.some(item => item.value === "do_not_repeat")) {
 			is_repeat = false;
 		} else if (prefs.repeat_ride){
@@ -206,7 +206,6 @@ async function createOrderHelper(req, res, orderData) {
 		}
 		orderData.is_scheduled = is_scheduled;
 		let order;
-		console.log("is_repeat", is_repeat);
 		let ordersData = [];
 		if (is_repeat) {
 			ordersData = await generateOrdersForRepeatOrder(orderData, prefs.repeat_ride, prefs.repeat_duration[0].value);
@@ -301,7 +300,7 @@ async function createOrderHelper(req, res, orderData) {
 				});
 			}
 		}
-		//TaxiHelper.findTaxiOrderDrivers(order);
+		TaxiHelper.findTaxiOrderDrivers(order);
 		return order
 	} catch (error) {
 		console.log(error);
@@ -332,6 +331,7 @@ async function createOrder(req, res) {
 		};
 		
 		let order = await createOrderHelper(req, res, orderData);
+		
 		res.status(200).json(order);
 	}
 	catch (e) {
