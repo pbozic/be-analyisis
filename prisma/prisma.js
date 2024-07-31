@@ -14,7 +14,7 @@ const prisma = new PrismaClient().$extends({
 				
 				let result = await query(args);
 				if (args.include && args.include.user) {
-					result = removePasswords(result);
+					result = removeSensitiveProperties(result);
 				}
 				result = await generateS3LinksRecursively(args, result);
 				// Return the modified result
@@ -77,8 +77,8 @@ const prisma = new PrismaClient().$extends({
 	model: {
 		drivers: {
 			async inRadius(point, radiusInMeters, requirements, vehicleFilters) { 
-				console.log("vehicle filters", vehicleFilters)
-				console.log("requirements", requirements)
+				console.taxiHelpers("vehicle filters", vehicleFilters)
+				console.taxiHelpers("requirements", requirements)
 				// const drivers = await prisma.$queryRaw`
 				//  	SELECT *
 				// 	FROM drivers
@@ -121,19 +121,34 @@ const prisma = new PrismaClient().$extends({
 });
 
 
-const removePasswords = (data) => {
-    if (Array.isArray(data)) {
-        return data.map(item => removePasswords(item));
-    } else if (data && typeof data === 'object') {
-        const { password, ...rest } = data;
-        for (const key in rest) {
-            if (typeof rest[key] === 'object') {
-                rest[key] = removePasswords(rest[key]);
-            }
-        }
-        return rest;
-    }
-    return data;
-};
+const removeSensitiveProperties = (data, propertiesToRemove = ['password']) => {
+	if (Array.isArray(data)) {
+	  // Recursively process array items
+	  return data.map(item => removeSensitiveProperties(item, propertiesToRemove));
+	} else if (data && typeof data === 'object') {
+	  if (data instanceof Date) {
+		// Preserve Date objects as-is
+		return data;
+	  }
+	  
+	  // Create a new object excluding the properties to remove
+	  const result = {};
+	  for (const [key, value] of Object.entries(data)) {
+		if (propertiesToRemove.includes(key)) {
+		  // Skip the properties that should be removed
+		  continue;
+		}
+		if (value && typeof value === 'object') {
+		  result[key] = removeSensitiveProperties(value, propertiesToRemove);
+		} else {
+		  result[key] = value;
+		}
+	  }
+	  return result;
+	}
+	
+	// Return the data as-is if it's not an array or object
+	return data;
+  };
 
 module.exports = prisma;
