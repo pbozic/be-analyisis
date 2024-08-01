@@ -313,7 +313,7 @@ async function registerTaxiService(req, res) {
 		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
 			for (const driverInfo of req.body.drivers) {
 
-				driverInfo.user.data.password = "lalaland1"
+				// driverInfo.user.data.password = "lalaland1"
 				const newUser = await UserDao.createNewUser(driverInfo.user.data, true);
 
 				// Handle user documents
@@ -448,7 +448,7 @@ async function registerDeliveryService(req, res) {
 		if (Array.isArray(req.body.deliveryDrivers) && req.body.deliveryDrivers.length) {
 			for (const deliveryDriverInfo of req.body.deliveryDrivers) {
 
-				deliveryDriverInfo.user.data.password = "lalaland1";
+				// deliveryDriverInfo.user.data.password = "lalaland1";
 				const newUser = await UserDao.createNewUser(deliveryDriverInfo.user.data, true);
 
 				// Handle user documents
@@ -569,7 +569,7 @@ async function registerMerchantService(req, res) {
 
 		let businessUsers = [];
 		for (const userInfo of req.body.users) {
-			userInfo.user.data.password = "lalaland1";
+			// userInfo.user.data.password = "lalaland1";
 			const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userInfo.user, business.business_id);
 
 			let addresses = [];
@@ -661,7 +661,6 @@ async function createScheduledUser(req, res) {
 	try {
 		let user = await UserDao.createNewUser({
 			...data,
-			password: 'lalaland1'
 		}, true);
 		res.status(200).json(user);
 	}
@@ -687,10 +686,20 @@ async function createScheduledUser(req, res) {
  */
 async function updateScheduledUser(req, res) {
 	const {user_id, data} = req.body
-	console.log(user_id, data, 'vasdis')
+	const pass = data.password
+	delete data.password
+	let updatedData = {...data}
 
 	try {
-		let user = await UserDao.updateScheduledUser(user_id, data);
+		if (pass !== '') {
+			let hash = await bcrypt.hash(pass, Number(process.env.BCRYPT_SALT_ROUNDS));
+			updatedData = {
+				...updatedData,
+				password: hash
+			}
+		}
+
+		let user = await UserDao.updateScheduledUser(user_id, updatedData);
 		if (user) {
 			return res.status(200).json(user);
 		}
