@@ -24,7 +24,7 @@ components:
           $ref: '#/components/schemas/Route'
     TaxiOrderStatus:
       type: "string"
-      enum: ["PENDING", "TAXI_ACCEPTED", "TAXI_REJECTED", "TAXI_ARRIVED", "TAXI_COMPLETED", "TAXI_CANCELLED", "CUSTOMER_CANCELLED"]
+      enum: ["PENDING", "TAXI_ACCEPTED", "TAXI_REJECTED", "TAXI_ARRIVED", "TAXI_COMPLETED", "TAXI_CANCELED", "CUSTOMER_CANCELED"]
     TaxiOrder:
       type: "object"
       properties:
