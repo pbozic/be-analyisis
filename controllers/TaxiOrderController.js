@@ -5,6 +5,7 @@ const gApi = require('../lib/gApis');
 const TaxiHelper = require('../lib/taxiHelpers');
 const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY } = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
+const { sendNotificationToUser } = require("../lib/oneSignal");
 /**
  * GET /taxi/order/{orderId}
  * @tag Taxi
@@ -498,6 +499,7 @@ async function acceptOrder(req, res) {
 			io.to("order_" + order.order_id).emit('order_accepted__taxi', order);
 			io.emit('driver_unavailable', order.driver_id);
 		}
+		sendNotificationToUser("Taxi order accepted", "Your taxi order has been accepted", order.user_id);
 		res.status(200).json(order);
 	} catch (e) {
 		console.errorTag("TaxiOrderController",e);
