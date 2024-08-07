@@ -300,6 +300,19 @@ async function createOrderHelper(req, res, orderData) {
 				});
 			}
 		}
+		if (!order){
+			console.info('Final order is empty!')
+			delete orderData.user_id
+			order =  await TaxiOrderDao.createOrder({
+				...orderData,
+				user: {
+					connect: {
+						user_id: req.user.user_id
+					}
+				}
+			});
+			console.info('Final order created', order)
+		}
 		await TaxiHelper.findTaxiOrderDrivers(order);
 		return order
 	} catch (error) {
