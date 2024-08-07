@@ -471,7 +471,9 @@ async function acceptOrder(req, res) {
 		console.tag("TaxiOrderController","ROES DISTANCE:", distance);
 		console.tag("TaxiOrderController","ROES DURATION:", duration);
 
-
+		if (!order.estimates) 
+			order.estimates = {};
+		
 		if (result && result.rows && result.rows[0] && result.rows[0].elements && result.rows[0].elements[0]) {
 			order.estimates.pickup_time_in_seconds = result.rows[0].elements[0].duration.value;
 			const estimatedPickupTime = new Date();

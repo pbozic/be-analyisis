@@ -352,14 +352,13 @@ async function registerTaxiService(req, res) {
 
 				//Handle addresses of the driver
 				let addresses = []
-				console.log(driverInfo.user.addresses);
-				if (driverInfo.user.addresses) {
-					for (const addressInfo of driverInfo.user.addresses) {
-						const address = await AddressDao.addAddress(addressInfo)
-						await AddressDao.addUserAddress(newUser.user_id, address.address_id);
-						addresses.push(address);
-					}
-				}
+				// if (driverInfo.user.addresses) {
+				// 	for (const addressInfo of driverInfo.user.addresses) {
+				// 		const address = await AddressDao.addAddress(addressInfo)
+				// 		await AddressDao.addUserAddress(newUser.user_id, address.address_id);
+				// 		addresses.push(address);
+				// 	}
+				// }
 
 				let vehicles = [];
 				if (Array.isArray(driverInfo.vehicles) && driverInfo.vehicles.length) {
