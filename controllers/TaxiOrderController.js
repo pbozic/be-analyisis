@@ -313,7 +313,9 @@ async function createOrderHelper(req, res, orderData) {
 			});
 			console.info('Final order created', order)
 		}
-		await TaxiHelper.findTaxiOrderDrivers(order);
+		if (!is_scheduled) {
+			await TaxiHelper.findTaxiOrderDrivers(order);
+		}
 		return order
 	} catch (error) {
 		console.errorTag("TaxiOrderController",error);
@@ -383,23 +385,25 @@ function getDayIndex(dayName) {
 	
 		for (let week = 0; week < repeatDuration; week++) {
 		for (let day of repeatData) {
+			console.log("day", day)
 			const dayIndex = getDayIndex(day.value); // Get day index from day name
+			console.log("dayIndex", dayIndex)
 			const daysUntilNextOccurrence = (dayIndex - currentDay + 7) % 7 + (week * 7); // Calculate days until the next occurrence of this weekday
+			console.log("daysUntilNextOccurrence", dayIndex)
 			const orderDate = new Date(currentDate); // Create a copy of the current date
+			console.log("orderDate", orderDate)
 			orderDate.setDate(orderDate.getDate() + daysUntilNextOccurrence); // Add the days to reach the next occurrence of this day
-			console.tag("TaxiOrderController",orderDate)
-			console.tag("TaxiOrderController",daysUntilNextOccurrence)
 			// Set the time for the order
+			console.log("orderDate added", orderDate)
 			orderDate.setHours(departureHours);
 			orderDate.setMinutes(departureMinutes);
 			orderDate.setSeconds(0);
 			orderDate.setMilliseconds(0);
-			console.tag("TaxiOrderController",orderDate)
 			// Format the date and time
 			const formattedDepartureDate = new Intl.DateTimeFormat('en-US', {
-			day: '2-digit',
-			month: 'long',
-			year: 'numeric',
+				day: '2-digit',
+				month: 'long',
+				year: 'numeric',
 			}).format(orderDate);
 	
 			const formattedDepartureTime = orderDate.toISOString();
