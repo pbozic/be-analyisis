@@ -286,7 +286,7 @@ async function createOrderHelper(req, res, orderData) {
 
 				}
 				
-				if (num_orders == start_num_orders) {
+				if (num_orders === start_num_orders) {
 					parentOrderId = order.order_id;
 				}
 				
@@ -300,7 +300,7 @@ async function createOrderHelper(req, res, orderData) {
 				});
 			}
 		}
-		TaxiHelper.findTaxiOrderDrivers(order);
+		await TaxiHelper.findTaxiOrderDrivers(order);
 		return order
 	} catch (error) {
 		console.errorTag("TaxiOrderController",error);

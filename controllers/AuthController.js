@@ -136,12 +136,12 @@ async function register(req, res) {
 			postData.first_name + " " + postData.last_name,
 			postData.telephone,
 		);
-
+		const userRole = postData.user_role || "PERSONAL";
 		let userObj = {
 			...postData,
 			date_of_birth: new Date(postData.date_of_birth),
 			password: hash,
-			user_role: "PERSONAL",
+			user_role: userRole,
 			stripe_customer_id: stripeCustomer.id,
 			reviewable: {
 				create: {
