@@ -25,7 +25,7 @@ const menusRoutes = require("./api/menu");
 const businessUserRoutes = require("./api/businessUsers");
 const stripeRoutes = require("./api/stripe");
 const lostItemsRoutes = require("./api/lostItems");
-
+const {sendNotificationToUser} = require("../lib/oneSignal");
 router.use("/stripe", stripeRoutes);
 router.use("/admin", [authMiddleware, adminMiddleware], adminRoutes);
 router.use("/users", [authMiddleware], userRoutes);
@@ -48,18 +48,9 @@ router.use("/business-users", [authMiddleware], businessUserRoutes);
 router.use("/lost_items", lostItemsRoutes);
 
 
-router.get("/test/s3", [authMiddleware], async (req, res) => {
-    let key = "test.png";
-    try {
-        let isAllowed = await isAllowedToSeeObject(key, "user2", "business2");
-        if (!isAllowed) {
-            res.status(403).json({error: "Not allowed to see this object"});
-        }
-        let object = await GetObject(key);
-        res.json(object);
-    } catch (error) {
-        res.status(500).json({error: error.message});
-    }
+router.get("/test/s3", async (req, res) => {
+  
+    res.json({message: "Notification sent"});
 })
 
 router.post("/test/s3", [authMiddleware], async (req, res) => { 
