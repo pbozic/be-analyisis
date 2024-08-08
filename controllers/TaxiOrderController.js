@@ -314,6 +314,7 @@ async function createOrderHelper(req, res, orderData) {
 			console.info('Final order created', order)
 		}
 		if (!is_scheduled) {
+			console.log("order send", order)
 			await TaxiHelper.findTaxiOrderDrivers(order);
 		}
 		return order
@@ -519,6 +520,7 @@ async function acceptOrder(req, res) {
 			io.emit('driver_unavailable', order.driver_id);
 		}
 		sendNotificationToUser("Taxi order accepted", "Your taxi order has been accepted", order.user_id);
+		
 		res.status(200).json(order);
 	} catch (e) {
 		console.errorTag("TaxiOrderController",e);
