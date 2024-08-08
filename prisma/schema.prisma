@@ -116,6 +116,7 @@ model users {
   spicy_preferences             Json?
   radio_preferences             Json?
   subscribed_to_daily_meals     Boolean           @default(false)
+  daily_meal_preferences        Json?
 }
 
 model documents {
@@ -214,6 +215,7 @@ model delivery_drivers {
   location             Json?
   delivery_timeline    Json?                 @default("[]")
   last_ping_at         DateTime              @default(now()) @db.Timestamptz(6)
+  on_daily_meals       Boolean?              @default(false)
 }
 
 model drivers {

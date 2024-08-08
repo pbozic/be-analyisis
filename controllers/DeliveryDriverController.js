@@ -273,6 +273,7 @@ async function updateDeliveryDriverOnlineStatus(req, res) {
 
 	try {
 		const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriverOnlineStatus(delivery_driver_id, online);
+		console.info('updatedDeliveryDriver', updatedDeliveryDriver.online)
 
 		if (online) {
 			io.emit("driver_available", updatedDeliveryDriver);

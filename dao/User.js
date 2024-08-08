@@ -29,6 +29,13 @@ const getScheduledUsers = async () => {
 		return prisma.users.findMany({
 			where: {
 				subscribed_to_daily_meals: true
+			},
+			include: {
+				addresses: {
+					include: {
+						address: true
+					}
+				}
 			}
 		})
 	} catch (e) {
@@ -123,13 +130,20 @@ const updateUser = async (user_id, user) => {
 
 const updateScheduledUser =  async (user_id, user) => {
 	try {
-		return prisma.users.update({
+		return await prisma.users.update({
 			where: {
 				user_id: user_id,
 			},
 			data: {
 				...user,
 			},
+			include: {
+				addresses:{
+					include: {
+						address: true
+					}
+				}
+			}
 		});
 	} catch (error) {
 		console.log(error)

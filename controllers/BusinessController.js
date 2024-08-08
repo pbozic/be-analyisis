@@ -214,10 +214,10 @@ async function createNewBusiness(req, res) {
  * @response 400 - Error updating business information.
  */
 async function update(req, res) {
-	console.log("update business", req.body);
-
+	console.info("update business", req.body);
+	const business_id = req.business?.business_id || req.body.business_id
 	try {
-		let business = await BusinessDao.updateBusiness(req.business.business_id, req.body);
+		let business = await BusinessDao.updateBusiness(business_id, req.body);
 		if (business) {
 			if (req.socket)
 				req.socket.emit("updateBusiness", business);

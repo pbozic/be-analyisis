@@ -17,6 +17,7 @@ router.get("/completed/user/:user_id", DeliveryOrderController.getCompletedDeliv
 router.get("/order/:order_id", DeliveryOrderController.getOrder);
 router.get("/order/user/:order_id", DeliveryOrderController.getUserByDeliveryOrderId);
 router.post("/order", DeliveryOrderController.createOrder);
+router.post("/daily_meals", DeliveryOrderController.createDailyMeals);
 router.post("/order/status", DeliveryOrderController.updateOrderStatus);
 router.post("/order/pickup_time", DeliveryOrderController.updateOrderPickupTime);
 router.post("/order/delivery_time", DeliveryOrderController.updateOrderDeliveryTime);

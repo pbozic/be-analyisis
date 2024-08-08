@@ -9,6 +9,11 @@ const { UserSockets, io } = require("../socket");
 const stripe = require("../lib/stripe");
 const { DELIVERY_ORDER_STATUS } = require("../lib/constants");
 const fs = require("fs");
+const Constants = require("../lib/constants");
+const { getUsers } = require("../dao/User");
+const { delivery_orders } = require("@prisma/client");
+const { generateItemsFromPreferences } = require("../lib/deliveryHelpers");
+
 
 
 /**
@@ -114,6 +119,7 @@ async function getUserByDeliveryOrderId(req, res) {
  */
 async function createOrder(req, res) {
 	const { orderBody, user_id, return_url } = req.body;
+	console.info("CREATE DELIVERY ORDER: ", req.body );
 	try {
 		let orderData = {
 			...orderBody,
@@ -168,6 +174,176 @@ async function createOrder(req, res) {
 	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
+	}
+}
+
+/**
+ * POST /delivery/orders/daily_meals
+ * @tag Delivery
+ * @summary Create daily meals.
+ * @description This creates the daily meals for the subscribed users. Returns list of orders if successful.
+ * @operationId createDailyMeals
+ * @response 200 - Successful operation. Returns the newly created daily meals in the response body.
+ * @responseContent {DeliveryOrder} 200.application/json
+ * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
+ */
+async function createDailyMeals(req, res) {
+	try {
+		const subscribedUsers = await getUsers({
+			where: {
+				subscribed_to_daily_meals: true
+			},
+			include: {
+				addresses: {
+					include: {
+						address: true
+					}
+				}
+			}
+		});
+
+		// Fetch existing orders for the current day
+		const today = new Date();
+		const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
+		const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString();
+
+		const existingOrders = await DeliveryOrderDao.getOrders({
+			where: {
+				created_at: {
+					gte: startOfDay,
+					lt: endOfDay
+				}
+			}
+		});
+
+		if (!subscribedUsers.length) {
+			console.info("No users subscribed to daily meals.");
+			return res.status(200).json({ message: "No users subscribed to daily meals." });
+		}
+
+		const usersWithOrdersToday = new Set(existingOrders.map(order => order.user_id));
+		// Exclude users who have already received an order today
+		const usersToCreateOrdersFor = subscribedUsers.filter(user => !usersWithOrdersToday.has(user.user_id));
+
+		if (!usersToCreateOrdersFor.length) {
+			console.info("Daily meal already prepared for all subscribed users.");
+			return res.status(200).json({ message: "Daily meal already prepared for all subscribed users." });
+		}
+		console.info('users to create orders for', usersToCreateOrdersFor)
+		const merchantBusinesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT, { offers_daily_meals: true });
+
+		if (!merchantBusinesses.length) {
+			return res.status(404).json({ message: "No provider offers daily meals." });
+		}
+
+		const provider = merchantBusinesses[0];
+
+		// Create daily meal orders for each subscribed user
+		const orders = await Promise.all(
+			usersToCreateOrdersFor.map(async (user) => {
+
+				const userAddress = user.addresses.length > 0 ? user.addresses[0] : {
+					address:"Test address",
+					latitude:"46.0645293",
+					longitude:"14.5032959"
+				};
+
+				const providerAddress =  {
+					address: provider.address.address,
+					coordinates: {
+						latitude: parseFloat(provider.address.latitude),
+						longitude: parseFloat(provider.address.longitude)
+					}}
+
+				let dailyMealItems = [];
+				if (user.daily_meal_preferences) {
+					dailyMealItems = generateItemsFromPreferences(user.daily_meal_preferences, {
+						price: 25,
+						discount: 0.25
+					});
+				} else  {
+					dailyMealItems = generateItemsFromPreferences({
+						normal : {amount : 1},
+						substitution : {amount : 0},
+					}, {
+						price: 25,
+						discount: 0.25
+					});
+				}
+				console.info('daily meals', dailyMealItems)
+
+				const orderData = {
+					items: dailyMealItems,
+					details: {
+						type: "delivery",
+						sub_total_price: 69.75,
+						total_price: 74.75,
+						discount_savings: 6.25,
+						provider_address: provider.address,
+						business_id: provider.business_id,
+						delivery_cost: 5,
+						delivery_earnings: 0,
+						provider_delivery_cost: 5,
+						ready_for_pickup_at: null,
+						customer_expected_delivery_at: null,
+						daily_meal: true
+					},
+					payment: {
+						status: "UNPAID",
+						type: "CASH",
+						cash: {
+							type: "CHANGE_NOT_NEEDED",
+							amount: 0
+						},
+						date: new Date().toISOString()
+					},
+					courier_instructions: {
+						text: null
+					},
+					restaurant_message: {
+						text: null
+					},
+					delivery_location: {
+						address: userAddress.address,
+						coordinates: {
+							latitude: parseFloat(userAddress.latitude),
+							longitude: parseFloat(userAddress.longitude)
+						}
+					},
+					pickup_location: providerAddress,
+					scheduled: {
+						date: null,
+						time: null
+					},
+					route: [
+						providerAddress,
+						{
+							address: userAddress.address,
+							coordinates: {
+								latitude: parseFloat(userAddress.latitude),
+								longitude: parseFloat(userAddress.longitude)
+							}
+						}
+					],
+				};
+
+				let order = await DeliveryOrderDao.createOrder({
+						...orderData,
+						status: "PENDING"
+					},
+					user.user_id);
+
+				// Emit new order event to the business
+				io.to(`orders_${order.details.business_id}`).emit("new_order", order);
+
+				return order;
+			})
+		);
+
+		res.status(200).json(orders);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Something went wrong with creating daily meals..." });
 	}
 }
 
@@ -571,5 +747,6 @@ module.exports = {
 	getActiveDeliveryOrdersByUserId,
 	getCompletedDeliveryOrdersByUserId,
 	getActiveDeliveryOrdersByDriverId,
-	updateDeliveryOrder
+	updateDeliveryOrder,
+	createDailyMeals
 };

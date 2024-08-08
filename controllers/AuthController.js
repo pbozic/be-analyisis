@@ -656,12 +656,22 @@ async function registerMerchantService(req, res) {
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function createScheduledUser(req, res) {
-	const { data } = req.body
+	const { data, addresses } = req.body
 	try {
 		let user = await UserDao.createNewUser({
 			...data,
 		}, true);
-		res.status(200).json(user);
+
+		let addressList = [];
+		if (addresses) {
+			for (const addressInfo of addresses) {
+				const address = await AddressDao.addAddress(addressInfo);
+				await AddressDao.addUserAddress(user.user_id, address.address_id);
+				addressList.push(address);
+			}
+		}
+
+		res.status(200).json({user,addresses: addressList});
 	}
 	catch (e) {
 		console.log(e);
@@ -684,7 +694,7 @@ async function createScheduledUser(req, res) {
  * @response 400 - Error updating user information.
  */
 async function updateScheduledUser(req, res) {
-	const {user_id, data} = req.body
+	const {user_id, data, addresses} = req.body
 	const pass = data.password
 	delete data.password
 	let updatedData = {...data}
@@ -699,8 +709,25 @@ async function updateScheduledUser(req, res) {
 		}
 
 		let user = await UserDao.updateScheduledUser(user_id, updatedData);
+
 		if (user) {
-			return res.status(200).json(user);
+			let addressList = [];
+
+			// Check if the user has existing addresses and delete them
+			if (addresses && addresses.length > 0) {
+				for (const userAddress of user.addresses) {
+					await AddressDao.deleteUserAddress(user.user_id, userAddress.address_id);
+				}
+
+				// Add the new addresses
+				for (const addressInfo of addresses) {
+					const address = await AddressDao.addAddress(addressInfo);
+					await AddressDao.addUserAddress(user.user_id, address.address_id);
+					addressList.push(address);
+				}
+			}
+
+			return res.status(200).json({ user, addresses: addressList });
 		}
 	} catch (e) {
 		console.log(e)

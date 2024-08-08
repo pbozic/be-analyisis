@@ -22,7 +22,7 @@ router.post("/review", joi(reviewBusinessSchema), BusinessController.reviewBusin
 router.post("/address/add", BusinessController.addBusinessAddress);
 router.post("/delivery-address/add", BusinessController.addDeliveryAddress);
 
-router.patch("/", joi(updateSchema), BusinessController.update);
+router.patch("/", BusinessController.update);
 router.patch("/type", BusinessController.updateBusinessType);
 router.patch("/business-unit", BusinessController.updateIsBusinessUnit);
 router.patch("/business-group-name", BusinessController.updateBusinessGroupName);
