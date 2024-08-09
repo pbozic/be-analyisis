@@ -6,6 +6,7 @@ const TaxiHelper = require('../lib/taxiHelpers');
 const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY } = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
 const { sendNotificationToUser } = require("../lib/oneSignal");
+const { sendOrderNotifications } = require("../lib/notifications");
 /**
  * GET /taxi/order/{orderId}
  * @tag Taxi
@@ -560,6 +561,7 @@ async function completeOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * POST /taxi/order/status
  * @tag Taxi
@@ -578,10 +580,11 @@ async function updateOrderStatus(req, res) {
 		let order = await TaxiOrderDao.updateOrderStatus(req.body.order_id, req.body.status);
 		io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
 
+		sendOrderNotifications(order, req.body.status);
+
 		res.status(200).json(order);
-	}
-	catch (e) {
-		console.errorTag("TaxiOrderController",e);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
