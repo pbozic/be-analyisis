@@ -303,7 +303,7 @@ model taxi_orders {
   driver_id             String?           @db.Uuid
   route                 Json
   pickup_location       Json
-  delivery_location     Json
+  delivery_location     Json?
   payment               Json?
   estimates             Json?
   timeline              Json              @default("[]")
