@@ -521,7 +521,7 @@ async function acceptOrder(req, res) {
 			io.emit('driver_unavailable', order.driver_id);
 		}
 		sendNotificationToUser("Taxi order accepted", "Your taxi order has been accepted", order.user_id);
-		
+		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
 		res.status(200).json(order);
 	} catch (e) {
 		console.errorTag("TaxiOrderController",e);
