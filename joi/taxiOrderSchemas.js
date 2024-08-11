@@ -10,7 +10,7 @@ const createOrderSchema = Joi.object({
 	preferences: Joi.object().unknown().required(),
 	route: Joi.array().items(addressSchema).required(),
 	pickup_location: addressSchema,
-	delivery_location: addressSchema,
+	delivery_location: addressSchema.allow(null).optional(),
 	estimates: Joi.object(),
 	payment: Joi.object(),
 	telephone: Joi.string(),

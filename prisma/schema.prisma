@@ -216,6 +216,7 @@ model delivery_drivers {
   delivery_timeline    Json?                 @default("[]")
   last_ping_at         DateTime              @default(now()) @db.Timestamptz(6)
   on_daily_meals       Boolean?              @default(false)
+  is_inactive          Boolean?              @default(false)
 }
 
 model drivers {
@@ -235,6 +236,7 @@ model drivers {
   documents         documents[]
   location          Json?
   last_ping_at      DateTime          @default(now()) @db.Timestamptz(6)
+  is_inactive       Boolean?          @default(false)
 }
 
 model vehicles {

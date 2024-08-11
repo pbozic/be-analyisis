@@ -1,5 +1,6 @@
 const prisma = require("../prisma/prisma");
 const { DELIVERY_ORDER_STATUS, TAXI_ORDER_STATUS } = require("../lib/constants");
+const { not } = require("joi");
 async function getOrders(args) {
     try {
         const mergedArgs = {
@@ -524,7 +525,32 @@ async function updateOrder(order_id, order) {
         throw new Error(e);
     }
 }
-
+async function getAcceptedOrders() {
+    try {
+        return prisma.taxi_orders.findMany({
+            where: {
+                status: {
+                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.PENDING, TAXI_ORDER_STATUS.TAXI_REJECTED] // Exclude both completed and pending orders
+                }
+            },
+            include: {
+                user: true,
+                driver: {
+                    include: {
+                        user: true,
+                        vehicles: {
+                            include: {
+                                vehicle_specification: true,
+                            }
+                        }
+                    }
+                },
+            }
+        });
+    } catch (e) {
+        throw new Error(e);
+    }
+}
 module.exports = {
     getOrder,
     getOrdersByDriverId,
@@ -547,5 +573,6 @@ module.exports = {
     updateTaxiOrderTimeline,
     getTaxiOrderIfNotCompleted,
     getAlreadySentOrdersByDriverId,
-    getActiveOrdersByDriverId
+    getActiveOrdersByDriverId,
+    getAcceptedOrders
 };

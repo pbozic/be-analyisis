@@ -475,10 +475,14 @@ async function createDispatchOrder(req, res) {
 async function acceptOrder(req, res) {
 	const { order_id, user } = req.body;
 	try {
+		let order = await TaxiOrderDao.getOrder(order_id)
 		//TODO: check if driver is online
 		//TODO: check if order is still pending
+		if (!order.status === TAXI_ORDER_STATUS.PENDING) {
+			return res.status(400).json({ message: "Order is already accepted." });
+		}
 		await TaxiOrderDao.acceptOrder(order_id, user);
-		let order = await TaxiOrderDao.getOrder(order_id);
+	;
 		let driver = await DriverDao.getDriverById(user.driver.driver_id);
 		//TODO: how to handle multiple vehicles on driver -> only one is active at a time of driving by the driver
 		driver.vehicle = driver.vehicles[0];
