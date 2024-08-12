@@ -15,7 +15,6 @@ const { delivery_orders } = require("@prisma/client");
 const { generateItemsFromPreferences } = require("../lib/deliveryHelpers");
 
 
-
 /**
  * GET /delivery/orders
  * @tag Delivery
@@ -202,7 +201,6 @@ async function createDailyMeals(req, res) {
 			}
 		});
 
-		// Fetch existing orders for the current day
 		const today = new Date();
 		const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
 		const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString();
@@ -223,13 +221,15 @@ async function createDailyMeals(req, res) {
 
 		const usersWithOrdersToday = new Set(existingOrders.map(order => order.user_id));
 		// Exclude users who have already received an order today
-		const usersToCreateOrdersFor = subscribedUsers.filter(user => !usersWithOrdersToday.has(user.user_id));
+		const usersToCreateOrdersFor = subscribedUsers.filter(user =>
+			user.addresses.length > 0 && !usersWithOrdersToday.has(user.user_id)
+		);
 
 		if (!usersToCreateOrdersFor.length) {
 			console.info("Daily meal already prepared for all subscribed users.");
 			return res.status(200).json({ message: "Daily meal already prepared for all subscribed users." });
 		}
-		console.info('users to create orders for', usersToCreateOrdersFor)
+
 		const merchantBusinesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT, { offers_daily_meals: true });
 
 		if (!merchantBusinesses.length) {
@@ -237,40 +237,38 @@ async function createDailyMeals(req, res) {
 		}
 
 		const provider = merchantBusinesses[0];
+		const providerAddress = {
+			address: provider.address.address,
+			coordinates: {
+				latitude: parseFloat(provider.address.latitude),
+				longitude: parseFloat(provider.address.longitude)
+			}
+		};
 
-		// Create daily meal orders for each subscribed user
+		// Filter out users without valid addresses
+		const validUsersToCreateOrdersFor = usersToCreateOrdersFor.filter(user => {
+			const address = user.addresses[0];
+			return address &&
+				address.latitude &&
+				address.longitude &&
+				!isNaN(parseFloat(address.latitude)) &&
+				!isNaN(parseFloat(address.longitude));
+		});
+
+
 		const orders = await Promise.all(
-			usersToCreateOrdersFor.map(async (user) => {
-
-				const userAddress = user.addresses.length > 0 ? user.addresses[0] : {
-					address:"Test address",
-					latitude:"46.0645293",
-					longitude:"14.5032959"
-				};
-
-				const providerAddress =  {
-					address: provider.address.address,
+			validUsersToCreateOrdersFor.map(async (user) => {
+				const userAddress ={
+					address: user.addresses[0].address,
 					coordinates: {
-						latitude: parseFloat(provider.address.latitude),
-						longitude: parseFloat(provider.address.longitude)
-					}}
-
-				let dailyMealItems = [];
-				if (user.daily_meal_preferences) {
-					dailyMealItems = generateItemsFromPreferences(user.daily_meal_preferences, {
-						price: 25,
-						discount: 0.25
-					});
-				} else  {
-					dailyMealItems = generateItemsFromPreferences({
-						normal : {amount : 1},
-						substitution : {amount : 0},
-					}, {
-						price: 25,
-						discount: 0.25
-					});
+						latitude: parseFloat(user.addresses[0].latitude),
+						longitude: parseFloat(user.addresses[0].longitude)
+					}
 				}
-				console.info('daily meals', dailyMealItems)
+
+				const dailyMealItems = user.daily_meal_preferences
+					? generateItemsFromPreferences(user.daily_meal_preferences, { price: 25, discount: 0.25 })
+					: generateItemsFromPreferences({ normal: { amount: 1 }, substitution: { amount: 0 } }, { price: 25, discount: 0.25 });
 
 				const orderData = {
 					items: dailyMealItems,
@@ -298,18 +296,12 @@ async function createDailyMeals(req, res) {
 						date: new Date().toISOString()
 					},
 					courier_instructions: {
-						text: null
+						text: user.details.note
 					},
 					restaurant_message: {
 						text: null
 					},
-					delivery_location: {
-						address: userAddress.address,
-						coordinates: {
-							latitude: parseFloat(userAddress.latitude),
-							longitude: parseFloat(userAddress.longitude)
-						}
-					},
+					delivery_location: userAddress,
 					pickup_location: providerAddress,
 					scheduled: {
 						date: null,
@@ -317,13 +309,7 @@ async function createDailyMeals(req, res) {
 					},
 					route: [
 						providerAddress,
-						{
-							address: userAddress.address,
-							coordinates: {
-								latitude: parseFloat(userAddress.latitude),
-								longitude: parseFloat(userAddress.longitude)
-							}
-						}
+						userAddress
 					],
 				};
 
@@ -333,7 +319,6 @@ async function createDailyMeals(req, res) {
 					},
 					user.user_id);
 
-				// Emit new order event to the business
 				io.to(`orders_${order.details.business_id}`).emit("new_order", order);
 
 				return order;

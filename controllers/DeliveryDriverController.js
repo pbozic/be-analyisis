@@ -187,7 +187,6 @@ async function getDeliveryDriverLocation(req, res) {
 async function updateDeliveryDriver(req, res) {
 	const { delivery_driver_id } = req.params;
 	const updateData = req.body;
-	console.log('update delivery timeline', updateData)
 
 	try {
 		const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriver(delivery_driver_id, updateData);
