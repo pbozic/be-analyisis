@@ -13,6 +13,7 @@ const Constants = require("../lib/constants");
 const { getUsers } = require("../dao/User");
 const { delivery_orders } = require("@prisma/client");
 const { generateItemsFromPreferences } = require("../lib/deliveryHelpers");
+const { sortLocationsByNearestNeighbor } = require("../lib/helpersLib");
 
 
 /**
@@ -187,31 +188,39 @@ async function createOrder(req, res) {
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function createDailyMeals(req, res) {
+	const { user_id, delivery_driver } = req.body;
 	try {
 		const subscribedUsers = await getUsers({
 			where: {
-				subscribed_to_daily_meals: true
+				subscribed_to_daily_meals: true,
 			},
 			include: {
 				addresses: {
 					include: {
-						address: true
-					}
-				}
-			}
+						address: true,
+					},
+				},
+			},
 		});
 
 		const today = new Date();
 		const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
 		const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString();
 
+		const datePart = today.toISOString().substring(0, 10); // Extracts the first 10 characters (YYYY-MM-DD)
+		const customTime = "11:00:00.000"; // Manually define the time part
+		const customTime2 = "11:20:00.000";
+		const elevenAMISO = `${datePart}T${customTime}`;
+		const deliveryTime = `${datePart}T${customTime2}`;
+
+
 		const existingOrders = await DeliveryOrderDao.getOrders({
 			where: {
 				created_at: {
 					gte: startOfDay,
-					lt: endOfDay
-				}
-			}
+					lt: endOfDay,
+				},
+			},
 		});
 
 		if (!subscribedUsers.length) {
@@ -220,7 +229,6 @@ async function createDailyMeals(req, res) {
 		}
 
 		const usersWithOrdersToday = new Set(existingOrders.map(order => order.user_id));
-		// Exclude users who have already received an order today
 		const usersToCreateOrdersFor = subscribedUsers.filter(user =>
 			user.addresses.length > 0 && !usersWithOrdersToday.has(user.user_id)
 		);
@@ -241,89 +249,98 @@ async function createDailyMeals(req, res) {
 			address: provider.address.address,
 			coordinates: {
 				latitude: parseFloat(provider.address.latitude),
-				longitude: parseFloat(provider.address.longitude)
-			}
+				longitude: parseFloat(provider.address.longitude),
+			},
 		};
 
-		// Filter out users without valid addresses
-		const validUsersToCreateOrdersFor = usersToCreateOrdersFor.filter(user => {
-			const address = user.addresses[0];
-			return address &&
-				address.latitude &&
-				address.longitude &&
-				!isNaN(parseFloat(address.latitude)) &&
-				!isNaN(parseFloat(address.longitude));
-		});
-
-
-		const orders = await Promise.all(
-			validUsersToCreateOrdersFor.map(async (user) => {
-				const userAddress ={
+		// Filter and map users with valid addresses
+		const validUsersToCreateOrdersFor = usersToCreateOrdersFor
+			.filter(user => {
+				const address = user.addresses[0];
+				return address &&
+					address.latitude &&
+					address.longitude &&
+					!isNaN(parseFloat(address.latitude)) &&
+					!isNaN(parseFloat(address.longitude));
+			})
+			.map(user => ({
+				...user,
+				address: {
 					address: user.addresses[0].address,
 					coordinates: {
 						latitude: parseFloat(user.addresses[0].latitude),
-						longitude: parseFloat(user.addresses[0].longitude)
-					}
-				}
+						longitude: parseFloat(user.addresses[0].longitude),
+					},
+				},
+			}));
 
-				const dailyMealItems = user.daily_meal_preferences
-					? generateItemsFromPreferences(user.daily_meal_preferences, { price: 25, discount: 0.25 })
-					: generateItemsFromPreferences({ normal: { amount: 1 }, substitution: { amount: 0 } }, { price: 25, discount: 0.25 });
+		// Sort users by nearest neighbor based on their addresses
+		const sortedUsers = sortLocationsByNearestNeighbor([providerAddress, ...validUsersToCreateOrdersFor.map(user => user.address)]).slice(1);
 
-				const orderData = {
-					items: dailyMealItems,
-					details: {
-						type: "delivery",
-						sub_total_price: 69.75,
-						total_price: 74.75,
-						discount_savings: 6.25,
-						provider_address: provider.address,
-						business_id: provider.business_id,
-						delivery_cost: 5,
-						delivery_earnings: 0,
-						provider_delivery_cost: 5,
-						ready_for_pickup_at: null,
-						customer_expected_delivery_at: null,
-						daily_meal: true
-					},
-					payment: {
-						status: "UNPAID",
-						type: "CASH",
-						cash: {
-							type: "CHANGE_NOT_NEEDED",
-							amount: 0
-						},
-						date: new Date().toISOString()
-					},
-					courier_instructions: {
-						text: user.details.note
-					},
-					restaurant_message: {
-						text: null
-					},
-					delivery_location: userAddress,
-					pickup_location: providerAddress,
-					scheduled: {
-						date: null,
-						time: null
-					},
-					route: [
-						providerAddress,
-						userAddress
-					],
-				};
+		const orders = [];
+		for (const userAddress of sortedUsers) {
+			const user = validUsersToCreateOrdersFor.find(u => u.address.address === userAddress.address);
 
-				let order = await DeliveryOrderDao.createOrder({
-						...orderData,
-						status: "PENDING"
+			if (!user) continue;
+
+			const dailyMealItems = user.daily_meal_preferences
+				? generateItemsFromPreferences(user.daily_meal_preferences, { price: 25, discount: 0.25 })
+				: generateItemsFromPreferences({ normal: { amount: 1 }, substitution: { amount: 0 } }, { price: 25, discount: 0.25 });
+
+			const orderData = {
+				is_daily_meal: true,
+				items: dailyMealItems,
+				details: {
+					type: "delivery",
+					sub_total_price: 69.75,
+					total_price: 74.75,
+					discount_savings: 6.25,
+					provider_address: provider.address,
+					business_id: provider.business_id,
+					delivery_cost: 5,
+					delivery_earnings: 2.5,
+					provider_delivery_cost: 5,
+					ready_for_pickup_at: elevenAMISO,
+					customer_expected_delivery_at: deliveryTime,
+					floor_number: user.details?.floor_number,
+					door_number: user.details?.door_number
+				},
+				payment: {
+					status: "UNPAID",
+					type: "CASH",
+					cash: {
+						type: "CHANGE_NOT_NEEDED",
+						amount: 0,
 					},
-					user.user_id);
+					date: new Date().toISOString(),
+				},
+				courier_instructions: {
+					text: user.details.note,
+				},
+				restaurant_message: {
+					text: null,
+				},
+				delivery_location: userAddress,
+				pickup_location: providerAddress,
+				scheduled: {
+					date: null,
+					time: null,
+				},
+				route: [
+					providerAddress,
+					userAddress,
+				],
+			};
 
-				io.to(`orders_${order.details.business_id}`).emit("new_order", order);
-
-				return order;
-			})
-		);
+			const order = await DeliveryOrderDao.createOrder({
+				...orderData,
+				status: DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP,
+			}, user.user_id);
+			await DeliveryOrderDao.createOrderSent(order.order_id, delivery_driver)
+			orders.push(order);
+		}
+		console.info('daily, meals', orders)
+		UserSockets.get(user_id).emit("daily_meals", orders);
 
 		res.status(200).json(orders);
 	} catch (error) {

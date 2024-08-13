@@ -372,6 +372,7 @@ model delivery_orders {
   payment_intent_id     String?
   transactions          transactions[]
   find_drivers_attempts Int?                  @default(0)
+  is_daily_meal         Boolean               @default(false)
 }
 
 model delivery_order_sent {
