@@ -10,6 +10,7 @@ router.get("/online", DriverController.listOnlineDrivers);
 router.get("/available", DriverController.getAvailableDrivers);
 router.get("/:driver_id", DriverController.getDriverById);
 router.get("/:driver_id/location", DriverController.getDriverLocation);
+router.get("/orders", DriverController.resendDelegatedOrdersToDriver);
 
 router.patch("/", DriverController.updateDriver);
 router.patch("/ride_requirements", DriverController.updateDriverRideRequirements);

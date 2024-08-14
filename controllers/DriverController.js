@@ -114,6 +114,39 @@ async function getDriverLocation(req, res) {
 }
 
 /**
+ * GET /drivers/orders
+ * @tag Drivers
+ * @summary Send already sent pending or accepted orders to a driver
+ * @description Retrieves a list of orders for a specific driver by their user ID and sends them to the driver via socket emission.
+ * @operationId sendAcceptedOrdersToDriver
+ * @response 200 - Successful operation, orders sent to the driver
+ * @response 404 - Driver not found
+ * @response 400 - Error retrieving orders
+ */
+async function resendDelegatedOrdersToDriver(req, res) {
+	const userId = req.user.user_id;
+
+	try {
+		const driver = await DriverDao.getDriverByUserId(userId);
+		if (!driver) {
+			return res.status(404).json({ error: "Driver not found" });
+		}
+		const driver_id = driver.driver_id;
+
+		// Send already sent orders to this driver
+		await taxiHelpers.resendPendingOrdersToDriver({ driver_id });
+		// Send active orders to this driver
+		await taxiHelpers.sendActiveOrdersToDriver({ driver_id });
+
+		// Return a 200 status
+		res.status(200).send();
+	} catch (error) {
+		console.error("Error retrieving orders for driver:", error);
+		res.status(400).json({ error: "Error retrieving orders", detail: error.message });
+	}
+}
+
+/**
  * PATCH /drivers/
  * @tag Drivers
  * @summary Update a driver
@@ -283,6 +316,7 @@ async function createDriver(req, res) {
 	}
 }
 
+
 module.exports = {
 	listDrivers,
 	listOnlineDrivers,
@@ -293,5 +327,6 @@ module.exports = {
 	updateDriverOnlineStatus,
 	createDriver,
 	getAvailableDrivers,
-	updateDriverRideRequirements
+	updateDriverRideRequirements,
+	resendDelegatedOrdersToDriver
 };
