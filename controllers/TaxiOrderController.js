@@ -653,26 +653,10 @@ async function updateOrderVehiclePreferences(req, res) {
 async function rejectOrder(req, res) {
 	const { order_id, status, cancellation_reason } = req.body;
 	console.info("TaxiOrderController",'REJECT ORDER', req.body)
-	let new_status = status
 
 	try {
 
 		let order = await TaxiOrderDao.getOrder(order_id);
-
-		if (order.driver) {
-			if (req.user.user_id === order.driver?.user_id) {
-				if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
-					if(UserSockets.get(order.user_id)) {
-						UserSockets.get(order.user_id).emit('order_restart_search', order_id);
-					}
-					new_status = TAXI_ORDER_STATUS.PENDING
-					await TaxiOrderDao.updateOrder(order_id, {
-						status: TAXI_ORDER_STATUS.PENDING,
-						last_sent_at: null
-					})
-				}
-			}
-		}
 
 		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
 
@@ -684,7 +668,7 @@ async function rejectOrder(req, res) {
 			reason = cancellation_reason; // Use the raw cancellation reason if it's a non-empty string
 		}
 
-		order = await TaxiOrderDao.cancelOrder(order_id, new_status, reason);
+		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);
 
 
 		if (order.driver_id) {
