@@ -125,6 +125,7 @@ async function getDriverLocation(req, res) {
  */
 async function resendDelegatedOrdersToDriver(req, res) {
 	const userId = req.user.user_id;
+	console.log("USerId:", userId)
 
 	try {
 		const driver = await DriverDao.getDriverByUserId(userId);
