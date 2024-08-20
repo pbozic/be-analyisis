@@ -17,7 +17,7 @@ router.post("/order", joi(createOrderSchema), TaxiOrderController.createOrder);
 router.post("/dispatch-order", joi(createOrderSchema), TaxiOrderController.createDispatchOrder);
 router.post("/order/status", TaxiOrderController.updateOrderStatus);
 router.post("/order/route", TaxiOrderController.updateTaxiOrderRoute);
-router.post("/order/preferences", TaxiOrderController.updateOrderVehiclePreferences);
+router.post("/order/preferences", TaxiOrderController.updateTaxiOrderPreferences);
 router.post("/order/pickup_location", TaxiOrderController.updateTaxiOrderPickupLocation);
 router.post("/order/delivery_location", TaxiOrderController.updateTaxiOrderDeliveryLocation);
 router.post("/order/complete_route", TaxiOrderController.updateCompleteTaxiRoute);
@@ -27,5 +27,6 @@ router.post("/order/cancel", TaxiOrderController.cancelOrder);
 router.post("/order/reject", TaxiOrderController.rejectOrder);
 router.post("/order/timeline", TaxiOrderController.updateTaxiOrderTimeline);
 router.post("/order/payment", TaxiOrderController.updateTaxiOrderPayment);
+router.post("/order/driver", TaxiOrderController.selectTaxiDriver);
 
 module.exports = router;

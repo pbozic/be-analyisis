@@ -456,15 +456,20 @@ async function updateTaxiOrderDeliveryLocation(order_id, deliveryLocation) {
 
 async function updateCompleteTaxiRoute(order_id, route) {
     try {
+        const data = {
+            route: route,
+            pickup_location: route[0],
+        };
+
+        if (route.length > 1) {
+            data.delivery_location = route[route.length - 1];
+        }
+
         return prisma.taxi_orders.update({
             where: {
                 order_id
             },
-            data: {
-                route: route,
-                pickup_location: route[0],
-                delivery_location: route[route.length - 1]
-            }
+            data: data
         });
     } catch (e) {
         throw new Error(e);

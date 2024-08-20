@@ -598,7 +598,7 @@ async function updateOrderStatus(req, res) {
  * @tag Taxi
  * @summary Update a taxi order's vehicle preferences.
  * @description Updates the vehicle preferences of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
- * @operationId updateOrderVehiclePreferences
+ * @operationId updateTaxiOrderPreferences
  * @bodyDescription Request body must include 'order_id' to identify the order and 'vehicle_category' and 'vehicle_class' to specify the new vehicle preferences.
  * @bodyContent {UpdateOrderVehiclePreferencesRequest} application/json
  * @bodyRequired
@@ -606,9 +606,9 @@ async function updateOrderStatus(req, res) {
  * @responseContent {TaxiOrder} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
-async function updateOrderVehiclePreferences(req, res) {
+async function updateTaxiOrderPreferences(req, res) {
 	try {
-		const { order_id, vehicle_category, vehicle_class } = req.body;
+		const { order_id, vehicle_category, vehicle_class, ride_requirements } = req.body;
 
 		// Fetch the current order details
 		let order = await TaxiOrderDao.getOrder(order_id);
@@ -621,7 +621,8 @@ async function updateOrderVehiclePreferences(req, res) {
 		const updatedPreferences = {
 			...order.preferences,
 			vehicle_category: vehicle_category,
-			vehicle_class: vehicle_class
+			vehicle_class: vehicle_class,
+			ride_requirements: ride_requirements
 		};
 
 		order = await TaxiOrderDao.updateOrder(order.order_id, {
@@ -907,6 +908,32 @@ async function updateTaxiOrderPayment(req, res) {
 	}
 }
 
+/**
+ * POST /taxi/driver
+ * @tag Taxi
+ * @summary
+ * @description
+ * @operationId
+ * @bodyDescription Request body must include 'order_id', and 'driver_id'
+ * @bodyContent {selectTaxiDriverRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the updated order with the new driver details.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ */
+async function selectTaxiDriver(req, res) {
+	const { order_id, driver_id} = req.body
+
+	try {
+		console.info(order_id, driver_id)
+		res.status(200).json({"message": 'driver selected'})
+	}
+	catch (e) {
+		console.info("selectTaxiDriver", e);
+		res.status(500).json(e);
+	}
+}
+
 
 module.exports = {
 	getTaxiOrders,
@@ -921,12 +948,13 @@ module.exports = {
 	updateTaxiOrderRoute,
 	updateTaxiOrderPickupLocation,
 	updateTaxiOrderDeliveryLocation,
-	updateOrderVehiclePreferences,
+	updateTaxiOrderPreferences,
 	updateCompleteTaxiRoute,
 	updateTaxiOrderPayment,
 	updateTaxiOrderTimeline,
 	getActiveTaxiOrders,
 	getCompletedTaxiOrdersByUserId,
 	getActiveTaxiOrdersByDriverId,
-	createDispatchOrder
+	createDispatchOrder,
+	selectTaxiDriver
 };
