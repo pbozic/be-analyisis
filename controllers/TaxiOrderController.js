@@ -923,7 +923,7 @@ async function updateTaxiOrderPayment(req, res) {
  * @responseContent {TaxiOrder} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
-async function selectTaxiDriver(req, res) {
+async function appendTaxiDriver(req, res) {
 	const { order_id, driver_id} = req.body
 
 	try {
@@ -931,7 +931,7 @@ async function selectTaxiDriver(req, res) {
 		res.status(200).json({"message": 'driver selected'})
 	}
 	catch (e) {
-		console.info("selectTaxiDriver", e);
+		console.info("appendTaxiDriver", e);
 		res.status(500).json(e);
 	}
 }
@@ -958,5 +958,5 @@ module.exports = {
 	getCompletedTaxiOrdersByUserId,
 	getActiveTaxiOrdersByDriverId,
 	createDispatchOrder,
-	selectTaxiDriver
+	appendTaxiDriver
 };
