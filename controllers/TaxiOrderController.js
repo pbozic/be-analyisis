@@ -637,6 +637,8 @@ async function updateOrderVehiclePreferences(req, res) {
 	}
 }
 
+
+
 /**
  * POST /taxi/order/reject
  * @tag Taxi
