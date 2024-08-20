@@ -16,6 +16,7 @@ router.get("/orders/active/driver/:driver_id", TaxiOrderController.getActiveTaxi
 router.post("/order", joi(createOrderSchema), TaxiOrderController.createOrder);
 router.post("/dispatch-order", joi(createOrderSchema), TaxiOrderController.createDispatchOrder);
 router.post("/order/status", TaxiOrderController.updateOrderStatus);
+router.post("/order/append_driver", TaxiOrderController.updateOrderStatus);
 router.post("/order/route", TaxiOrderController.updateTaxiOrderRoute);
 router.post("/order/preferences", TaxiOrderController.updateTaxiOrderPreferences);
 router.post("/order/pickup_location", TaxiOrderController.updateTaxiOrderPickupLocation);
