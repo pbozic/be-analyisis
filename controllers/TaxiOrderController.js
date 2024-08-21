@@ -655,7 +655,7 @@ async function updateTaxiOrderPreferences(req, res) {
  * @responseContent {TaxiOrder} 200.application/json
  * @response 500 - Server error. Console logs the error message and returns it in the response.
  */
-async function rejectOrder(req, res) {
+async function cancelOrder(req, res) {
 	const { order_id, status, cancellation_reason } = req.body;
 	console.info("TaxiOrderController",'REJECT ORDER', req.body)
 
@@ -678,6 +678,12 @@ async function rejectOrder(req, res) {
 
 		if (order.driver_id) {
 			let driver = await DriverDao.getDriverById(order.driver_id);
+			await TaxiOrderDao.updateOrder(order_id, {
+				driver: {
+					disconnect: true
+				}
+			})
+
 			io.emit('driver_available', driver);
 		}
 		io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
@@ -704,7 +710,7 @@ async function rejectOrder(req, res) {
  * @responseContent {TaxiOrder} 200.application/json
  * @response 500 - Server error. Console logs the error message and returns it in the response.
  */
-async function cancelOrder(req, res) {
+async function rejectOrder(req, res) {
     const { order_id, status, cancellation_reason } = req.body;
 	console.info("TaxiOrderController","CANCEL ORDER", req.body)
 	let new_status = status
@@ -720,7 +726,7 @@ async function cancelOrder(req, res) {
 					new_status = TAXI_ORDER_STATUS.PENDING
 					await TaxiOrderDao.updateOrder(order_id, {
 						status: TAXI_ORDER_STATUS.PENDING,
-						last_sent_at: null
+						last_sent_at: null,
 					})
 				}
 			}
@@ -730,6 +736,11 @@ async function cancelOrder(req, res) {
 
         if (order.driver_id) {
             let driver = await DriverDao.getDriverById(order.driver_id);
+			await TaxiOrderDao.updateOrder(order_id, {
+				driver: {
+					disconnect: true
+				}
+			})
             io.emit('driver_available', driver);
         }
 
@@ -930,6 +941,14 @@ async function appendTaxiDriver(req, res) {
 
 	try {
 		console.info(order_id, driver_id)
+		await TaxiOrderDao.updateOrder(order_id, {
+			driver: {
+				connect: {
+					driver_id: driver_id
+				}
+			}
+		});
+		await TaxiHelper.findTaxiOrderDrivers(order_id);
 		res.status(200).json({"message": 'driver selected'})
 	}
 	catch (e) {
