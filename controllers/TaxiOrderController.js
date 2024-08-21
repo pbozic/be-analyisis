@@ -3,7 +3,7 @@ const DriverDao = require("../dao/Driver");
 const { UserSockets, io } = require('../socket');
 const gApi = require('../lib/gApis');
 const TaxiHelper = require('../lib/taxiHelpers');
-const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY } = require("../lib/constants");
+const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, ORDER_TYPE } = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
 const { sendNotificationToUser } = require("../lib/oneSignal");
 const { sendOrderNotifications } = require("../lib/notifications");
@@ -45,9 +45,11 @@ async function getOrder(req, res) {
 
 async function getActiveTaxiOrders(req, res) {
 	const { user_id } = req.params;
+	const { type = ORDER_TYPE.TAXI } = req.body
 
 	try {
-		const activeOrder = await TaxiOrderDao.getTaxiOrderIfNotCompleted(user_id);
+
+		const activeOrder = await TaxiOrderDao.getTaxiOrderIfNotCompleted(user_id, type);
 
 		if (activeOrder && activeOrder.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED) {
 			const driver = activeOrder.driver;

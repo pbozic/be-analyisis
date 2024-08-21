@@ -328,6 +328,7 @@ model taxi_orders {
   parent_order_id       String?           @db.Uuid
   parent_order          taxi_orders?      @relation("grouped_orders", fields: [parent_order_id], references: [order_id])
   grouped_orders        taxi_orders[]     @relation("grouped_orders")
+  type                  ORDER_TYPE        @default(TAXI)
 }
 
 model taxi_order_sent {
@@ -559,6 +560,9 @@ enum TAXI_ORDER_STATUS {
   TAXI_ARRIVED
   TAXI_COMPLETED
   CUSTOMER_CANCELED
+
+  TRANSFER_ACCEPTED
+  TRANSFER_COMPLETED
 }
 
 enum DELIVERY_ORDER_STATUS {
@@ -624,4 +628,10 @@ enum RESERVATION_STATUS {
   TABLE_RESERVATION_CANCELED
   TABLE_RESERVATION_COMPLETED
   TABLE_RESERVATION_EXPIRED
+}
+
+enum ORDER_TYPE {
+  TAXI
+  TRANSFER_PRIVATE
+  TRANSFER_SHUTTLE
 }

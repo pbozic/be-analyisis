@@ -1,5 +1,5 @@
 const prisma = require("../prisma/prisma");
-const { DELIVERY_ORDER_STATUS, TAXI_ORDER_STATUS } = require("../lib/constants");
+const { DELIVERY_ORDER_STATUS, TAXI_ORDER_STATUS, ORDER_TYPE } = require("../lib/constants");
 const { not } = require("joi");
 async function getOrders(args) {
     try {
@@ -51,10 +51,11 @@ async function getOrder(order_id) {
     }
 }
 
-async function getTaxiOrderIfNotCompleted(user_id) {
+async function getTaxiOrderIfNotCompleted(user_id, type = ORDER_TYPE.TAXI) {
     try {
         return await prisma.taxi_orders.findFirst({
             where: {
+                type: type,
                 user_id: user_id,
                 status: {
                     notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.TAXI_REJECTED] // Exclude both completed and pending orders
@@ -579,5 +580,5 @@ module.exports = {
     getTaxiOrderIfNotCompleted,
     getAlreadySentOrdersByDriverId,
     getActiveOrdersByDriverId,
-    getAcceptedOrders
+    getAcceptedOrders,
 };
