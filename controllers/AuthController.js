@@ -602,7 +602,7 @@ async function registerMerchantService(req, res) {
 
 		let accountLink = await stripe.getAccountLinks(stripeAccount.id);
 		// send email to business user with account link
-		EmailHelper.sendEmailTemplate("Stripe Onboarding", "stripeOnboarding", business.email, false,  {
+		EmailHelper.sendEmailTemplate("Stripe Onboarding", "stripeOnboarding", business.email,  {
             name: business.name,
             title: "Stripe Onboarding",
             onboardLink: accountLink.url

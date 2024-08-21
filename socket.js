@@ -3,7 +3,14 @@ const { server } = require("./server");
 const UserSockets = new Map(); // Store user ID to socket mapping
 const jwt = require("jsonwebtoken");
 
-const io = new Server(server);
+const io = new Server(
+	server, 
+	{
+		cors: {
+			origin: '*',
+		}
+	}
+);
 
 io.use((socket, next) => {
 	let token = socket.handshake.auth.token || (socket.handshake.headers["authorization"] && socket.handshake.headers["authorization"].split(" ")[1]);
