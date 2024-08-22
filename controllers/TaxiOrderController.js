@@ -657,7 +657,7 @@ async function updateTaxiOrderPreferences(req, res) {
  */
 async function cancelOrder(req, res) {
 	const { order_id, status, cancellation_reason } = req.body;
-	console.info("TaxiOrderController",'REJECT ORDER', req.body)
+	console.info("TaxiOrderController",'CANCEL ORDER', req.body)
 
 	try {
 
@@ -687,9 +687,9 @@ async function cancelOrder(req, res) {
 			io.emit('driver_available', driver);
 		}
 		io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
-		io.to("order_" + order.order_id).emit('order_rejected__taxi', order);
+		io.to("order_" + order.order_id).emit('order_cancelled__taxi', order);
 
-		console.info("TaxiOrderController","order_status_change__taxi", "order_rejected__taxi");
+		console.info("TaxiOrderController","order_status_change__taxi", "order_cancelled__taxi");
 		res.status(200).json(order);
 	} catch (e) {
 		console.errorTag("TaxiOrderController",e);
@@ -756,9 +756,9 @@ async function rejectOrder(req, res) {
 		order = await TaxiOrderDao.cancelOrder(order_id, new_status, reason);
 
         io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
-        io.to("order_" + order.order_id).emit('order_cancelled__taxi', order);
+        io.to("order_" + order.order_id).emit('order_rejected__taxi', order);
 
-        console.tag("TaxiOrderController","order_status_change__taxi", "order_cancelled__taxi");
+        console.tag("TaxiOrderController","order_status_change__taxi", "order_rejected__taxi");
         res.status(200).json(order);
     } catch (e) {
         console.errorTag("TaxiOrderController",e);
