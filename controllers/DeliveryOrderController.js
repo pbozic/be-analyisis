@@ -189,6 +189,8 @@ async function createOrder(req, res) {
  */
 async function createDailyMeals(req, res) {
 	const { user_id, delivery_driver } = req.body;
+
+	console.info('DELIVERY DRIVER', user_id, delivery_driver);
 	try {
 		const subscribedUsers = await getUsers({
 			where: {
@@ -207,12 +209,10 @@ async function createDailyMeals(req, res) {
 		const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
 		const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString();
 
-		const datePart = today.toISOString().substring(0, 10); // Extracts the first 10 characters (YYYY-MM-DD)
-		const customTime = "11:00:00.000"; // Manually define the time part
-		const customTime2 = "11:20:00.000";
-		const elevenAMISO = `${datePart}T${customTime}`;
-		const deliveryTime = `${datePart}T${customTime2}`;
-
+		// Set the time to 11:00 AM dynamically in UTC+2
+		const utcOffset = 2; // UTC+2 offset
+		const elevenAM = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 11 + utcOffset, 0, 0, 0);
+		const elevenAMISO = elevenAM.toISOString();
 
 		const existingOrders = await DeliveryOrderDao.getOrders({
 			where: {
@@ -253,7 +253,6 @@ async function createDailyMeals(req, res) {
 			},
 		};
 
-		// Filter and map users with valid addresses
 		const validUsersToCreateOrdersFor = usersToCreateOrdersFor
 			.filter(user => {
 				const address = user.addresses[0];
@@ -274,7 +273,6 @@ async function createDailyMeals(req, res) {
 				},
 			}));
 
-		// Sort users by nearest neighbor based on their addresses
 		const sortedUsers = sortLocationsByNearestNeighbor([providerAddress, ...validUsersToCreateOrdersFor.map(user => user.address)]).slice(1);
 
 		const orders = [];
@@ -287,27 +285,36 @@ async function createDailyMeals(req, res) {
 				? generateItemsFromPreferences(user.daily_meal_preferences, { price: 25, discount: 0.25 })
 				: generateItemsFromPreferences({ normal: { amount: 1 }, substitution: { amount: 0 } }, { price: 25, discount: 0.25 });
 
+			let { result } = await gApi.distanceBetweenTwoPoints(delivery_driver.location.coordinates, userAddress.coordinates, "driving", new Date());
+			const durationValue = result.rows[0].elements[0].duration.value;
+
+			// Calculate customer expected delivery time in UTC
+			const customerExpectedDeliveryUTC = new Date(new Date().getTime() + durationValue * 1000);
+
+			// Adjust for UTC+2 timezone
+			const customerExpectedDeliveryAt = new Date(customerExpectedDeliveryUTC.getTime() + 2 * 60 * 60 * 1000); // Adding 2 hours
+
 			const orderData = {
 				is_daily_meal: true,
 				items: dailyMealItems,
 				details: {
 					type: "delivery",
-					sub_total_price: 69.75,
-					total_price: 74.75,
-					discount_savings: 6.25,
+					sub_total_price: 0,
+					total_price: 0,
+					discount_savings: 0,
 					provider_address: provider.address,
 					business_id: provider.business_id,
-					delivery_cost: 5,
+					delivery_cost: 2.4,
 					delivery_earnings: 2.5,
-					provider_delivery_cost: 5,
+					provider_delivery_cost: 2.4,
 					ready_for_pickup_at: elevenAMISO,
-					customer_expected_delivery_at: deliveryTime,
+					customer_expected_delivery_at: customerExpectedDeliveryAt.toISOString(),
 					floor_number: user.details?.floor_number,
 					door_number: user.details?.door_number
 				},
 				payment: {
-					status: "UNPAID",
-					type: "CASH",
+					status: "SUCCESSFUL",
+					type: "ALREADY PAID",
 					cash: {
 						type: "CHANGE_NOT_NEEDED",
 						amount: 0,
@@ -336,10 +343,11 @@ async function createDailyMeals(req, res) {
 				...orderData,
 				status: DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP,
 			}, user.user_id);
-			await DeliveryOrderDao.createOrderSent(order.order_id, delivery_driver)
+
+			await DeliveryOrderDao.createOrderSent(order.order_id, delivery_driver);
 			orders.push(order);
 		}
-		console.info('daily, meals', orders)
+		console.info('daily, meals', orders);
 		UserSockets.get(user_id).emit("daily_meals", orders);
 
 		res.status(200).json(orders);
@@ -348,6 +356,8 @@ async function createDailyMeals(req, res) {
 		res.status(500).json({ message: "Something went wrong with creating daily meals..." });
 	}
 }
+
+
 
 /**
  * POST /delivery/order/accept
