@@ -209,9 +209,7 @@ async function createDailyMeals(req, res) {
 		const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
 		const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString();
 
-		// Set the time to 11:00 AM dynamically in UTC+2
-		const utcOffset = 2; // UTC+2 offset
-		const elevenAM = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 11 + utcOffset, 0, 0, 0);
+		const elevenAM = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 11, 0, 0, 0);
 		const elevenAMISO = elevenAM.toISOString();
 
 		const existingOrders = await DeliveryOrderDao.getOrders({
@@ -288,11 +286,7 @@ async function createDailyMeals(req, res) {
 			let { result } = await gApi.distanceBetweenTwoPoints(delivery_driver.location.coordinates, userAddress.coordinates, "driving", new Date());
 			const durationValue = result.rows[0].elements[0].duration.value;
 
-			// Calculate customer expected delivery time in UTC
-			const customerExpectedDeliveryUTC = new Date(new Date().getTime() + durationValue * 1000);
-
-			// Adjust for UTC+2 timezone
-			const customerExpectedDeliveryAt = new Date(customerExpectedDeliveryUTC.getTime() + 2 * 60 * 60 * 1000); // Adding 2 hours
+			const customerExpectedDeliveryAt = new Date(new Date().getTime() + durationValue * 1000);
 
 			const orderData = {
 				is_daily_meal: true,
