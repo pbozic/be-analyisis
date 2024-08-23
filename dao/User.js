@@ -23,10 +23,26 @@ const getUserById = async (user_id, args) => {
 		return new Error(error);
 	}
 };
-
 const getScheduledUsers = async () => {
 	try {
-		return prisma.users.findMany({
+		const merchantBusiness = await prisma.business.findFirst({
+			where: {
+				type: 'MERCHANT',
+				offers_daily_meals: true
+			}
+		});
+
+		console.info('MERCHANT BUSINESSES', merchantBusiness)
+
+		let sortingScheduledUsers;
+
+		if (!merchantBusiness) {
+			console.info('No merchant business found that offers daily meals');
+		} else {
+			sortingScheduledUsers = merchantBusiness.daily_users_sorted;
+		}
+
+		const scheduledUsers = await prisma.users.findMany({
 			where: {
 				subscribed_to_daily_meals: true
 			},
@@ -37,11 +53,27 @@ const getScheduledUsers = async () => {
 					}
 				}
 			}
-		})
-	} catch (e) {
-		return new Error(e)
+		});
+
+		if (sortingScheduledUsers && sortingScheduledUsers.length !== 0) {
+
+			// Map user_id to user object for easy lookup
+			const userMap = new Map(scheduledUsers.map(user => [user.user_id, user]));
+			console.info('ordered users', userMap)
+			// Sort users based on the order in sortingScheduledUsers
+			return sortingScheduledUsers
+				.map(userId => userMap.get(userId))
+				.filter(user => user !== undefined);
+		}
+		console.info('scheduled_users', scheduledUsers)
+		return scheduledUsers
+
+	} catch (error) {
+		console.error("Error fetching and sorting scheduled users:", error);
+		throw error;
 	}
-}
+};
+
 
 
 const getUserByEmailOrTelephone = async (query, args) => {
@@ -416,6 +448,21 @@ async function removeWalletBalance(userId, amountToSubtract, order_id) {
 		}
 }
 
+async function deleteUserByUserId(userId) {
+	try {
+		return await prisma.users.delete({
+			where: {
+				user_id: userId,
+			},
+		});
+	} catch (error) {
+		console.error("Error deleting user:", error);
+		throw error;
+	}
+}
+
+
+
 module.exports = {
 	getUsers,
 	getUserById,
@@ -442,6 +489,7 @@ module.exports = {
 	updateUserRadioPreferences,
 	getUserByTelephone,
 	getScheduledUsers,
-	updateScheduledUser
+	updateScheduledUser,
+	deleteUserByUserId
 
 };

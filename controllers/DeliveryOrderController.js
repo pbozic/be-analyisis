@@ -271,10 +271,28 @@ async function createDailyMeals(req, res) {
 				},
 			}));
 
-		const sortedUsers = sortLocationsByNearestNeighbor([providerAddress, ...validUsersToCreateOrdersFor.map(user => user.address)]).slice(1);
+		let sortedUserAddresses;
+
+		if (provider.daily_users_sorting_type === 'MANUAL') {
+			// Manual sorting based on provider.daily_users_sorted
+			const userMap = new Map(validUsersToCreateOrdersFor.map(user => [user.user_id, user]));
+			sortedUserAddresses = provider.daily_users_sorted
+				.map(userId => userMap.get(userId))
+				.filter(user => user !== undefined)
+				.map(user => user.address);
+
+			console.info('sortedUserAddresses MANUAL', sortedUserAddresses);
+		} else {
+			// Automatic sorting by nearest neighbor
+			sortedUserAddresses = sortLocationsByNearestNeighbor([providerAddress, ...validUsersToCreateOrdersFor.map(user => user.address)]).slice(1);
+			console.info('sortedUserAddresses AUTOMATIC', sortedUserAddresses);
+		}
 
 		const orders = [];
-		for (const userAddress of sortedUsers) {
+		let cumulativeTime = 0; // Track the total elapsed time
+
+		for (let i = 0; i < sortedUserAddresses.length; i++) {
+			const userAddress = sortedUserAddresses[i];
 			const user = validUsersToCreateOrdersFor.find(u => u.address.address === userAddress.address);
 
 			if (!user) continue;
@@ -286,7 +304,11 @@ async function createDailyMeals(req, res) {
 			let { result } = await gApi.distanceBetweenTwoPoints(delivery_driver.location.coordinates, userAddress.coordinates, "driving", new Date());
 			const durationValue = result.rows[0].elements[0].duration.value;
 
-			const customerExpectedDeliveryAt = new Date(new Date().getTime() + durationValue * 1000);
+			// Calculate expected delivery time based on cumulative time
+			const customerExpectedDeliveryAt = new Date(new Date().getTime() + cumulativeTime * 1000 + durationValue * 1000);
+
+			// Update cumulative time
+			cumulativeTime += durationValue;
 
 			const orderData = {
 				is_daily_meal: true,
@@ -304,7 +326,8 @@ async function createDailyMeals(req, res) {
 					ready_for_pickup_at: elevenAMISO,
 					customer_expected_delivery_at: customerExpectedDeliveryAt.toISOString(),
 					floor_number: user.details?.floor_number,
-					door_number: user.details?.door_number
+					door_number: user.details?.door_number,
+					daily_meal_delivery_order: i + 1, // Add sorted order number (1-based index)
 				},
 				payment: {
 					status: "SUCCESSFUL",
@@ -341,6 +364,7 @@ async function createDailyMeals(req, res) {
 			await DeliveryOrderDao.createOrderSent(order.order_id, delivery_driver);
 			orders.push(order);
 		}
+
 		console.info('daily, meals', orders);
 		UserSockets.get(user_id).emit("daily_meals", orders);
 
@@ -350,8 +374,6 @@ async function createDailyMeals(req, res) {
 		res.status(500).json({ message: "Something went wrong with creating daily meals..." });
 	}
 }
-
-
 
 /**
  * POST /delivery/order/accept

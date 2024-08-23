@@ -558,6 +558,36 @@ async function deleteAddress(req, res) {
 }
 
 /**
+ * DELETE /users/{user_id}
+ * @tag Users
+ * @summary Deletes a user by their ID
+ * @description This endpoint is used to delete a user from the system by their user ID.
+ * @operationId deleteUserByUserId
+ * @pathParam {string} user_id - The ID of the user to delete
+ * @response 200 - User deleted successfully.
+ * @response 400 - Error deleting user.
+ * @response 404 - User not found.
+ */
+async function deleteUserByUserId(req, res) {
+	const { user_id } = req.params;
+	try {
+		const deletedUser = await UserDao.deleteUserByUserId(user_id);
+
+		return res.status(200).json({
+			message: "User deleted successfully.",
+			user: deletedUser,
+		});
+	} catch (error) {
+		if (error.code === 'P2025') { // Prisma specific error code for "Record to delete not found"
+			return res.status(404).json({ error: "User not found." });
+		}
+		// Handle other errors
+		console.error("Error deleting user:", error);
+		return res.status(400).json({ error: "Error deleting user." });
+	}
+}
+
+/**
  * PATCH /me/address/{address_id}
  * @tag Users
  * @summary Edits an address from the current user
@@ -736,5 +766,6 @@ module.exports = {
 	updateUserNotificationPreferences,
 	updateUserPushNotifications,
 	updateProfilePicture,
-	ping
+	ping,
+	deleteUserByUserId
 };

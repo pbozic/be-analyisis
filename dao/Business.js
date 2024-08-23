@@ -532,6 +532,32 @@ const removeBusinessDeliveryAddress = async (business_id) => {
 	}
 };
 
+const addScheduledUserSortingType = async (type) => {
+	try {
+		return await prisma.business.updateMany({
+			where: { type: 'MERCHANT' },
+			data: { daily_users_sorting_type: type },
+		});
+	} catch (error) {
+		console.error("Error updating scheduled users sorting type:", error);
+		throw new Error(error);
+	}
+};
+
+const manualSortScheduledUsers = async (sorted_users) => {
+	try {
+		return await prisma.business.updateMany({
+			where: { type: 'MERCHANT' },
+			data: { daily_users_sorted: sorted_users },
+		});
+	} catch (error) {
+		console.error("Error updating sorted scheduled users:", error);
+		throw new Error(error);
+	}
+};
+
+
+
 
 module.exports = {
 	getBusinesses,
@@ -560,4 +586,6 @@ module.exports = {
 	removeParentBusiness,
 	updateBusinessDeliveryAddress,
 	removeBusinessDeliveryAddress,
+	addScheduledUserSortingType,
+	manualSortScheduledUsers
 };

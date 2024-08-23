@@ -7,6 +7,7 @@ const Constants = require("../lib/constants");
 const stripe = require("../lib/stripe");
 const UserDao = require("../dao/User");
 const DriverDao = require("../dao/Driver");
+const { BUSINESS_TYPE } = require("@prisma/client");
 
 
 /**
@@ -730,6 +731,54 @@ async function createPaymentIntent(req, res) {
 		res.status(400).json({ error: "Error creating payment intent", e });
 	}
 }
+
+/**
+ * POST /business/scheduled_users/sorting
+ * @tag Business
+ * @summary Manually sort scheduled users
+ * @description This endpoint is used to manually sort scheduled users.
+ * @operationId manualSortScheduledUsers
+ * @bodyDescription The list of sorted user IDs.
+ * @bodyContent {ManualSortScheduledUsersRequest} application/json
+ * @bodyRequired
+ * @response 200 - Users sorted successfully.
+ * @response 400 - Error sorting users.
+ */
+async function manualSortScheduledUsers(req, res) {
+	const { sorted_user_ids } = req.body;
+	try {
+		const updatedBusiness = await BusinessDao.manualSortScheduledUsers(sorted_user_ids)
+		res.status(200).json(updatedBusiness);
+	} catch (e) {
+		console.error(e);
+		res.status(400).json({ error: "Error sorting users", e });
+	}
+}
+
+/**
+ * POST /business/scheduled_users/sorting/type
+ * @tag Business
+ * @summary Add sorting type for scheduled users
+ * @description This endpoint is used to add the sorting type for scheduled users.
+ * @operationId addScheduledUserSortingType
+ * @bodyDescription The sorting type (manual or automatic).
+ * @bodyContent {AddScheduledUserSortingTypeRequest} application/json
+ * @bodyRequired
+ * @response 200 - Sorting type added successfully.
+ * @response 400 - Error adding sorting type.
+ */
+
+async function addScheduledUserSortingType(req, res) {
+	const { sorting_type } = req.body;
+	try {
+		const updatedBusiness = await BusinessDao.addScheduledUserSortingType(sorting_type)
+		res.status(200).json(updatedBusiness);
+	} catch (e) {
+		console.error(e);
+		res.status(400).json({ error: "Error adding sorting type", e });
+	}
+}
+
 module.exports = {
 	listBusinesses,
 	listTransferBusinesses,
@@ -758,6 +807,8 @@ module.exports = {
 	removeParentBusinessId,
 	deleteBusiness,
 	reviewBusiness,
-	createPaymentIntent
+	createPaymentIntent,
+	manualSortScheduledUsers,
+	addScheduledUserSortingType
 };
 
