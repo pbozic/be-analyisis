@@ -741,6 +741,22 @@ async function ping(req, res) {
 		return res.status(400).json({ error: "User is not a driver" });
 	}
 }
+
+async function getSelfScheduledOrders(req, res) {
+	try {
+		const orders = await TaxiOrderDao.getOrders({
+			where: {
+				is_scheduled: true,
+				status: TAXI_ORDER_STATUS.PENDING,
+				user_id: req.user.user_id,
+			}
+		});
+		res.status(200).json(orders);
+	} catch (e) {
+		console.errorTag("TaxiOrderController",e);
+		res.status(500).json(e);
+	}
+}
 module.exports = {
 	listUsers,
 	me,
@@ -767,5 +783,6 @@ module.exports = {
 	updateUserPushNotifications,
 	updateProfilePicture,
 	ping,
-	deleteUserByUserId
+	deleteUserByUserId,
+	getSelfScheduledOrders
 };

@@ -1,17 +1,18 @@
 const cron = require("node-cron");
-const { checkIfOrdersNeedSending, searchAfter20Seconds, searchAfter40Seconds, revokeAcceptedOrdersFromDriverHandler } = require("./lib/taxiHelpers");
-const { checkIfDeliveryOrdersNeedSending, checkIfRestaurantOrderIsPrepared } = require("./lib/deliveryHelpers");
+const TaxiHelpers = require("./lib/taxiHelpers");
+const DeliveryHelpers = require("./lib/deliveryHelpers");
 const  { chekPingStatus } = require("./lib/driverHelpers");
 
 function startCronJobs() { 
     // Every minute
-    cron.schedule("* * * * *", checkIfOrdersNeedSending);
-    cron.schedule("* * * * *", searchAfter20Seconds);
-    cron.schedule("* * * * *", searchAfter40Seconds);
-    cron.schedule("* * * * *", checkIfDeliveryOrdersNeedSending);
-    cron.schedule("* * * * *", checkIfRestaurantOrderIsPrepared);
+    cron.schedule("* * * * *", TaxiHelpers.checkIfOrdersNeedSending);
+    cron.schedule("* * * * *", TaxiHelpers.searchAfter20Seconds);
+    cron.schedule("* * * * *", TaxiHelpers.searchAfter40Seconds);
+    cron.schedule("* * * * *", DeliveryHelpers.checkIfDeliveryOrdersNeedSending);
+    cron.schedule("* * * * *", DeliveryHelpers.checkIfRestaurantOrderIsPrepared);
     cron.schedule("* * * * *", chekPingStatus);
-    cron.schedule("* * * * *", revokeAcceptedOrdersFromDriverHandler);
+    cron.schedule("* * * * *", TaxiHelpers.revokeAcceptedOrdersFromDriverHandler);
+    cron.schedule("* * * * *", TaxiHelpers.scheduledOrdersNotificationsHandler);
 
 }
 

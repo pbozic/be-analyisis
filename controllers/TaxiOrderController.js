@@ -957,7 +957,20 @@ async function appendTaxiDriver(req, res) {
 	}
 }
 
-
+async function getScheduledOrders(req, res) {
+	try {
+		const orders = await TaxiOrderDao.getOrders({
+			where: {
+				is_scheduled: true,
+				status: TAXI_ORDER_STATUS.PENDING
+			}
+		});
+		res.status(200).json(orders);
+	} catch (e) {
+		console.errorTag("TaxiOrderController",e);
+		res.status(500).json(e);
+	}
+}
 module.exports = {
 	getTaxiOrders,
 	getOrder,
@@ -979,5 +992,6 @@ module.exports = {
 	getCompletedTaxiOrdersByUserId,
 	getActiveTaxiOrdersByDriverId,
 	createDispatchOrder,
-	appendTaxiDriver
+	appendTaxiDriver,
+	getScheduledOrders
 };
