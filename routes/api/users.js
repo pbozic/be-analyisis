@@ -18,6 +18,8 @@ const router = express.Router();
 
 router.get("/me", UserController.me);
 router.get("/me/ping", UserController.ping);
+router.get("/me/reviews", UserController.getMyReviews);
+router.get("/:user_id/reviews", UserController.getReviewsByUserId);
 router.patch("/me", joi(updateSchema), UserController.updateMe);
 router.patch("/me/password", joi(updatePasswordSchema), UserController.updatePassword);
 router.patch("/me/email", joi(updateEmailSchema), UserController.updateEmail);

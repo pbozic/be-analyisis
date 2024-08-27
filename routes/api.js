@@ -56,6 +56,7 @@ router.use("/reviews", [authMiddleware], async (req, res) => {
                     first_name: true,
                     last_name: true,
                     user_id: true,
+                    user_role: true,
                     documents: {
                         where: {
                             document_type: "PROFILE_PICTURE"
@@ -90,6 +91,7 @@ router.use("/reviews", [authMiddleware], async (req, res) => {
                             first_name: true,
                             last_name: true,
                             user_id: true,
+                            user_role: true,
                             documents: {
                                 where: {
                                     document_type: "PROFILE_PICTURE"
