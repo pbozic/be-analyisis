@@ -855,7 +855,7 @@ async function getReviewsByUserId(req, res) {
 				business_id: driver.business_id
 			}
 		});
-		
+		console.log("business", business.business_id, business.reviewable_id);
 		if (!business.reviewable_id) {
 			return res.status(200).json([]);
 		}
