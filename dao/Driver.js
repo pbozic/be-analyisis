@@ -81,23 +81,34 @@ const getDriverById = async (driver_id) => {
 								files: true,
 							}
 						},
-						business: {
+						business_users: {
 							include: {
-								documents: {
+								business: {
 									include: {
-										files: true,
+										documents: {
+											include: {
+												files: true,
+											}
+										},
 									}
+								
 								}
 							}
-						},
+						},	
 					}
 				},
 				
 				vehicles: {
 					include: {
 						vehicle_specification: true,
+						documents: {
+							include: {
+								files: true,
+							}
+						},
 					},
 				},
+				
 				documents: {
 					include: {
 						files: true,
