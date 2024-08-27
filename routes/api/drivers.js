@@ -6,6 +6,7 @@ const joi = require("../../middleware/joi");
 const { updateSchema } = require("../../joi/driverSchemas");
 
 router.get("/", DriverController.listDrivers);
+router.get("/full", DriverController.listDriversFull);
 router.get("/online", DriverController.listOnlineDrivers);
 router.get("/available", DriverController.getAvailableDrivers);
 router.get("/orders", DriverController.resendDelegatedOrdersToDriver);

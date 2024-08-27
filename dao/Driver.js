@@ -1,3 +1,4 @@
+const { file } = require("googleapis/build/src/apis/file");
 const prisma= require("../prisma/prisma");
 const UserDao = require("./User");
 
@@ -20,7 +21,33 @@ const getDrivers = async (args) => {
 		throw new Error(error);
 	}
 };
-
+const getDriversFull = async (args) => {
+	try {
+		return await prisma.drivers.findMany({
+			...args,
+			include: {
+				user:{ 
+					include: {
+						documents: {
+							include: {
+								files: true,
+							}
+						},
+					}
+				},
+				vehicles: {
+					include: {
+						vehicle_specification: true,
+					},
+				},
+				
+			},
+		});
+	} catch (error) {
+		console.error("Error retrieving drivers:", error);
+		throw new Error(error);
+	}
+};
 const getOnlineDrivers = async () => {
 	try {
 		return await prisma.drivers.findMany({
@@ -53,7 +80,12 @@ const getDriverById = async (driver_id) => {
 						vehicle_specification: true,
 					},
 				},
-				documents: false,
+				documents: {
+					include: {
+						files: true,
+					}
+				},
+				
 			},
 		});
 	} catch (error) {
@@ -286,4 +318,5 @@ module.exports = {
 	createNewDriver,
 	getAvailableDrivers,
 	updateDriverRideRequirements,
+	getDriversFull,
 };

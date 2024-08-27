@@ -1,6 +1,6 @@
 require("dotenv").config();
 const bcrypt = require("bcrypt");
-
+const prisma = require("../prisma/prisma");
 const UserDao = require("../dao/User");
 const TokenDao = require("../dao/Token");
 const ReviewDao = require("../dao/Review");
@@ -757,6 +757,179 @@ async function getSelfScheduledOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
+async function getMyReviews(req, res) {
+	try {
+		let user = await UserDao.getUserById(req.user.user_id);
+		if (!user.reviewable_id) {
+			return res.status(200).json([]);
+		}
+		let reviews = await prisma.reviews.findMany({
+			where: {
+				reviewable_id: user.reviewable_id
+			},
+			include: {
+				author: {
+					select: {
+						first_name: true,
+						last_name: true,
+						user_id: true,
+						user_role: true,
+						documents: {
+							where: {
+								document_type: "PROFILE_PICTURE"
+							},
+							select: {
+								files: true,
+								document_type: true,
+							}
+						}
+					},
+				},
+				reviewable: {
+					include: {
+						business: {
+							select: {
+								name: true,
+								business_id: true,
+								documents: {
+									where: {
+										document_type: "PROFILE_PICTURE"
+									},
+									select: {
+										files: true,
+										document_type: true,
+									}
+								}
+							},
+							
+						},
+						user: {
+							select: {
+								first_name: true,
+								last_name: true,
+								user_id: true,
+								user_role: true,
+								documents: {
+									where: {
+										document_type: "PROFILE_PICTURE"
+									},
+									select: {
+										files: true,
+										document_type: true,
+									}
+								}
+							},
+						}
+					}
+				}
+			},
+			orderBy: {
+				created_at: 'desc',  // Order by 'created_at' field in descending order
+			}
+		});
+		for (let review of reviews) {
+			if (review.reviewable.user.length > 0) {
+				review.target = review.reviewable.user[0];
+			}
+			if (review.reviewable.business.length > 0) {
+				review.target = review.reviewable.business[0];
+			}
+			review.reviewable = undefined;
+		}
+		res.status(200).json(reviews);
+	}
+	catch (e) {
+		console.errorTag("UserController", e);
+		res.status(500).json(e);
+	}
+}
+async function getReviewsByUserId(req, res) {
+	try {
+		console.log(req.params)
+		let user = await UserDao.getUserById(req.params.user_id);
+		if (!user.reviewable_id) {
+			return res.status(200).json([]);
+		}
+		let reviews = await prisma.reviews.findMany({
+			where: {
+				reviewable_id: user.reviewable_id
+			},
+			include: {
+				author: {
+					select: {
+						first_name: true,
+						last_name: true,
+						user_id: true,
+						user_role: true,
+						documents: {
+							where: {
+								document_type: "PROFILE_PICTURE"
+							},
+							select: {
+								files: true,
+								document_type: true,
+							}
+						}
+					},
+				},
+				reviewable: {
+					include: {
+						business: {
+							select: {
+								name: true,
+								business_id: true,
+								documents: {
+									where: {
+										document_type: "PROFILE_PICTURE"
+									},
+									select: {
+										files: true,
+										document_type: true,
+									}
+								}
+							},
+							
+						},
+						user: {
+							select: {
+								first_name: true,
+								last_name: true,
+								user_id: true,
+								user_role: true,
+								documents: {
+									where: {
+										document_type: "PROFILE_PICTURE"
+									},
+									select: {
+										files: true,
+										document_type: true,
+									}
+								}
+							},
+						}
+					}
+				}
+			},
+			orderBy: {
+				created_at: 'desc',  // Order by 'created_at' field in descending order
+			}
+		});
+		for (let review of reviews) {
+			if (review.reviewable.user.length > 0) {
+				review.target = review.reviewable.user[0];
+			}
+			if (review.reviewable.business.length > 0) {
+				review.target = review.reviewable.business[0];
+			}
+			review.reviewable = undefined;
+		}
+		res.status(200).json(reviews);
+	}
+	catch (e) {
+		console.errorTag("UserController", e);
+		res.status(500).json(e);
+	}
+}
 module.exports = {
 	listUsers,
 	me,
@@ -784,5 +957,7 @@ module.exports = {
 	updateProfilePicture,
 	ping,
 	deleteUserByUserId,
-	getSelfScheduledOrders
+	getSelfScheduledOrders,
+	getMyReviews,
+	getReviewsByUserId
 };

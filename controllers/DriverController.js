@@ -26,7 +26,26 @@ async function listDrivers(req, res) {
 		res.status(400).json({ error: "Error listing drivers", detail: error.message });
 	}
 }
-
+/**
+ * GET /drivers/full
+ * @tag Drivers
+ * @summary Get a list of drivers
+ * @description Returns a list of drivers along with their user and vehicle information.
+ * @operationId getDrivers
+ * @response 200 - Successful operation, returns a list of drivers
+ * @responseContent {Driver[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the driver list
+ */
+async function listDriversFull(req, res) {
+	try {
+		const drivers = await DriverDao.getDriversFull();
+		console.log("drivers", drivers)	
+		res.status(200).json(drivers);
+	} catch (error) {
+		console.error("Error listing drivers:", error);
+		res.status(400).json({ error: "Error listing drivers", detail: error.message });
+	}
+}
 /**
  * GET /drivers/online
  * @tag Drivers
@@ -328,5 +347,6 @@ module.exports = {
 	createDriver,
 	getAvailableDrivers,
 	updateDriverRideRequirements,
-	resendDelegatedOrdersToDriver
+	resendDelegatedOrdersToDriver,
+	listDriversFull
 };
