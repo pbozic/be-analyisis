@@ -51,7 +51,7 @@ async function getOrder(order_id) {
     }
 }
 
-async function getTaxiOrderIfNotCompleted(user_id, type = ORDER_TYPE.TAXI) {
+async function getTaxiOrderIfNotCompleted(user_id, type) {
     try {
         return await prisma.taxi_orders.findFirst({
             where: {
@@ -73,7 +73,7 @@ async function getTaxiOrderIfNotCompleted(user_id, type = ORDER_TYPE.TAXI) {
                         }
                     }
                 },
-                grouped_orders: true
+                grouped_orders: true,
             }
         });
     } catch (e) {

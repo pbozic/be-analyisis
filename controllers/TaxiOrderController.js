@@ -32,7 +32,7 @@ async function getOrder(req, res) {
 }
 
 /**
- * GET /taxi/orders/active/:user_id
+ * GET /taxi/orders/active/:user_id/:type
  * @tag Taxi
  * @summary Get active taxi orders.
  * @description This fetches all completed orders for a specific user.
@@ -44,11 +44,9 @@ async function getOrder(req, res) {
  */
 
 async function getActiveTaxiOrders(req, res) {
-	const { user_id } = req.params;
-	const { type = ORDER_TYPE.TAXI } = req.body
+	const { user_id, type } = req.params;
 
 	try {
-
 		const activeOrder = await TaxiOrderDao.getTaxiOrderIfNotCompleted(user_id, type);
 
 		if (activeOrder && activeOrder.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED) {
@@ -346,7 +344,8 @@ async function createOrder(req, res) {
 			...req.body,
 			status: "PENDING",
 			user_id: req.user.user_id,
-			telephone: req.user.telephone
+			telephone: req.user.telephone,
+			is_scheduled: req.body.preferences?.scheduled_ride.length > 0 && req.body.preferences.scheduled_ride[0] === 'schedule_ride'
 		};
 		
 		let order = await createOrderHelper(req, res, orderData);
@@ -483,8 +482,16 @@ async function acceptOrder(req, res) {
 		if (!order.status === TAXI_ORDER_STATUS.PENDING) {
 			return res.status(400).json({ message: "Order is already accepted." });
 		}
+
+		if (order.is_scheduled) {
+			let isSent = await TaxiOrderDao.isOrderSent(order.order_id, user.driver);
+			if (!isSent) {
+				await TaxiOrderDao.createOrderSent(order.order_id, user.driver);
+			}
+		}
 		await TaxiOrderDao.acceptOrder(order_id, user);
-	;
+
+
 		let driver = await DriverDao.getDriverById(user.driver.driver_id);
 		//TODO: how to handle multiple vehicles on driver -> only one is active at a time of driving by the driver
 		driver.vehicle = driver.vehicles[0];

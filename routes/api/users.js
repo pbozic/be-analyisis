@@ -42,7 +42,7 @@ router.post("/me/verify/phone", joi(verifyPhoneSchema), UserController.verifyMe)
 router.post("/review", joi(reviewUserSchema), UserController.reviewUser);
 router.get("/me/payment-sheet", UserController.getPaymentSheetCredentials);
 router.post("/me/requestToAddFunds", UserController.requestToAddFundsToWallet);
-router.post("/me/scheduled_orders", UserController.getSelfScheduledOrders);
+router.get("/me/scheduled_orders", UserController.getSelfScheduledOrders);
 router.delete("/delete/:user_id", UserController.deleteUserByUserId);
 
 

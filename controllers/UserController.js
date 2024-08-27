@@ -14,8 +14,10 @@ const SMS = require("../lib/SMS");
 const stripe = require("../lib/stripe");
 const S3Helper = require("../lib/s3");
 const { User } = require("@onesignal/node-onesignal");
-const { DOCUMENT_TYPE } = require("../lib/constants");
+const { DOCUMENT_TYPE, TAXI_ORDER_STATUS } = require("../lib/constants");
 const { generateAccessToken, generateRefreshToken } = require("../lib/jwt");
+const { getOrders } = require("../dao/TaxiOrder");
+const TaxiOrderDao = require("../dao/TaxiOrder");
 
 
 /**
@@ -753,7 +755,7 @@ async function getSelfScheduledOrders(req, res) {
 		});
 		res.status(200).json(orders);
 	} catch (e) {
-		console.errorTag("TaxiOrderController",e);
+		console.info("TaxiOrderController",e);
 		res.status(500).json(e);
 	}
 }
