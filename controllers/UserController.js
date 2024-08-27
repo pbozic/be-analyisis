@@ -18,6 +18,7 @@ const { DOCUMENT_TYPE, TAXI_ORDER_STATUS } = require("../lib/constants");
 const { generateAccessToken, generateRefreshToken } = require("../lib/jwt");
 const { getOrders } = require("../dao/TaxiOrder");
 const TaxiOrderDao = require("../dao/TaxiOrder");
+const { drive } = require("googleapis/build/src/apis/drive");
 
 
 /**
@@ -848,21 +849,19 @@ async function getMyReviews(req, res) {
 async function getReviewsByUserId(req, res) {
 	try {
 		console.log(req.params)
-		let user = await UserDao.getUserById(req.params.user_id, {
-			include: {
-				business_users: {
-					include: {
-						business: true
-					}
-				}
+		let driver = await DriverDao.getDriverByUserId(req.params.user_id);
+		let business = await prisma.business_users.findMany({
+			where: {
+				business_id: driver.business_id
 			}
 		});
-		if (!user.business_users[0].business.reviewable_id) {
+		
+		if (!business.reviewable_id) {
 			return res.status(200).json([]);
 		}
 		let reviews = await prisma.reviews.findMany({
 			where: {
-				reviewable_id: user.business_users[0].business.reviewable_id
+				reviewable_id: business.reviewable_id
 			},
 			include: {
 				author: {
