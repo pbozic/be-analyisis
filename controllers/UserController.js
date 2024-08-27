@@ -852,7 +852,7 @@ async function getReviewsByUserId(req, res) {
 		let driver = await DriverDao.getDriverByUserId(req.params.user_id);
 
 		console.log("driver", driver.business_id);
-		let business = await prisma.business.findMany({
+		let business = await prisma.business.findUnique({
 			where: {
 				business_id: driver.business_id
 			}
