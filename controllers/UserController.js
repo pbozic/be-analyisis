@@ -848,13 +848,21 @@ async function getMyReviews(req, res) {
 async function getReviewsByUserId(req, res) {
 	try {
 		console.log(req.params)
-		let user = await UserDao.getUserById(req.params.user_id);
-		if (!user.reviewable_id) {
+		let user = await UserDao.getUserById(req.params.user_id, {
+			include: {
+				business_users: {
+					include: {
+						business: true
+					}
+				}
+			}
+		});
+		if (!user.business_users[0].business.reviewable_id) {
 			return res.status(200).json([]);
 		}
 		let reviews = await prisma.reviews.findMany({
 			where: {
-				reviewable_id: user.reviewable_id
+				reviewable_id: user.business_users[0].business.reviewable_id
 			},
 			include: {
 				author: {
