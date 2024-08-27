@@ -8,7 +8,7 @@ router.get('/:documentId', DocumentsController.getDocumentById);
 router.get('/users/:userId', DocumentsController.getDocumentsForUser);
 router.get('/businesses/:businessId', DocumentsController.getDocumentsForBusiness);
 router.get('/deliveryPersons/:deliveryPersonId', DocumentsController.getDocumentsForDeliveryPerson);
-router.get('/drivers/:driverId', DocumentsController.getDocumentsForDriver);
+router.get('/drivers/:driver_id', DocumentsController.getDocumentsForDriver);
 router.get('/vehicles/:vehicleId', DocumentsController.getDocumentsForVehicle);
 router.get('/type/:documentType', DocumentsController.getDocumentsByDocumentType);
 router.get('/business/:business_id/type/:document_type', DocumentsController.getDocumentsForBusinessByDocumentType);
