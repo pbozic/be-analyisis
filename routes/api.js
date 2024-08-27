@@ -1,6 +1,6 @@
 var express = require("express");
 const router = express.Router();
-
+const prisma = require("../prisma/prisma");
 const joi = require("../middleware/joi");
 const authMiddleware = require("../middleware/auth");
 const adminMiddleware = require("../middleware/admin");
@@ -26,6 +26,7 @@ const businessUserRoutes = require("./api/businessUsers");
 const stripeRoutes = require("./api/stripe");
 const lostItemsRoutes = require("./api/lostItems");
 const {sendNotificationToUser} = require("../lib/oneSignal");
+const { auth } = require("googleapis/build/src/apis/drive");
 router.use("/stripe", stripeRoutes);
 router.use("/admin", [authMiddleware, adminMiddleware], adminRoutes);
 router.use("/users", [authMiddleware], userRoutes);
@@ -47,6 +48,77 @@ router.use("/menus", [authMiddleware], menusRoutes);
 router.use("/business-users", [authMiddleware], businessUserRoutes);
 router.use("/lost_items", lostItemsRoutes);
 
+router.use("/reviews", [authMiddleware], async (req, res) => {
+    let reviews = await prisma.reviews.findMany({
+        include: {
+            author: {
+                select: {
+                    first_name: true,
+                    last_name: true,
+                    user_id: true,
+                    documents: {
+                        where: {
+                            document_type: "PROFILE_PICTURE"
+                        },
+                        select: {
+                            files: true,
+                            document_type: true,
+                        }
+                    }
+                },
+            },
+            reviewable: {
+                include: {
+                    business: {
+                        select: {
+                            name: true,
+                            business_id: true,
+                            documents: {
+                                where: {
+                                    document_type: "PROFILE_PICTURE"
+                                },
+                                select: {
+                                    files: true,
+                                    document_type: true,
+                                }
+                            }
+                        },
+                        
+                    },
+                    user: {
+                        select: {
+                            first_name: true,
+                            last_name: true,
+                            user_id: true,
+                            documents: {
+                                where: {
+                                    document_type: "PROFILE_PICTURE"
+                                },
+                                select: {
+                                    files: true,
+                                    document_type: true,
+                                }
+                            }
+                        },
+                    }
+                }
+            }
+        },
+        orderBy: {
+            created_at: 'desc',  // Order by 'created_at' field in descending order
+        }
+    });
+    for (let review of reviews) {
+        if (review.reviewable.user.length > 0) {
+            review.target = review.reviewable.user[0];
+        }
+        if (review.reviewable.business.length > 0) {
+            review.target = review.reviewable.business[0];
+        }
+        review.reviewable = undefined;
+    }
+    res.json(reviews);
+});
 
 router.get("/test/s3", async (req, res) => {
   
