@@ -34,7 +34,15 @@ const { drive } = require("googleapis/build/src/apis/drive");
  */
 async function listUsers(req, res) {
 	try {
-		let users = await UserDao.getUsers();
+		let users = await UserDao.getUsers({
+			include: {
+				addresses: {
+					include: {
+						address: true,
+					},
+				},
+			},
+		});
 		if (users) {
 			res.status(200).json(users);
 		} else {
@@ -120,6 +128,34 @@ async function updateMe(req, res) {
 		if (user) {
 			if (req.socket)
 				req.socket.emit("updateUser", user);
+			return res.status(200).json(user);
+		}
+		res.status(400).json({ error: "Error updating user information" });
+	} catch (e) {
+		console.log(e)
+		res.status(400).json({ error: "Error updating user information", e });
+	}
+}
+
+/**
+ * PATCH /me/update_user
+ * @tag Users
+ * @summary Updates the current user's details
+ * @description This endpoint is used to update the current user's details.
+ * @operationId updateMe
+ * @bodyDescription The data to update for the current user
+ * @bodyContent {UpdateUserRequest} application/json
+ * @bodyRequired
+ * @response 200 - User updated successfully. Returns the updated user's details.
+ * @responseContent {AuthenticatedUser} 200.application/json
+ * @response 400 - Error updating user information.
+ */
+async function updateUserByUserId(req, res) {
+	const { user_id, data } = req.body
+
+	try {
+		let user = await UserDao.updateScheduledUser(user_id, data);
+		if (user) {
 			return res.status(200).json(user);
 		}
 		res.status(400).json({ error: "Error updating user information" });
@@ -970,5 +1006,6 @@ module.exports = {
 	deleteUserByUserId,
 	getSelfScheduledOrders,
 	getMyReviews,
-	getReviewsByUserId
+	getReviewsByUserId,
+	updateUserByUserId
 };
