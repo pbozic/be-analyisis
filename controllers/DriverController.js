@@ -150,12 +150,11 @@ async function resendDelegatedOrdersToDriver(req, res) {
 		if (!driver) {
 			return res.status(404).json({ error: "Driver not found" });
 		}
-		const driver_id = driver.driver_id;
 
 		// Send already sent orders to this driver
-		await taxiHelpers.resendPendingOrdersToDriver({ driver_id });
+		await taxiHelpers.resendPendingOrdersToDriver(driver);
 		// Send active orders to this driver
-		await taxiHelpers.sendActiveOrdersToDriver({ driver_id });
+		await taxiHelpers.sendActiveOrdersToDriver(driver);
 
 		// Return a 200 status
 		res.status(200).send();

@@ -489,8 +489,8 @@ async function verifyMe(req, res) {
 	try {
 		let user = await UserDao.getUserById(req.user.user_id);
 		let token = await TokenDao.getActiveSMSToken(user);
-		console.log(token);
-		if (token && (token.token === req.body.token) && (token.user_id == req.user.user_id)) {
+		console.info(token);
+		if (token && (token.token === req.body.token) && (token.user_id === req.user.user_id)) {
 			await TokenDao.updateToken(token.token_id, { active: false });
 			user = await UserDao.updateUser(req.user.user_id, { phone_verified: true });
 			return res.status(200).json({message: "Phone verified successfully."});

@@ -47,49 +47,57 @@ async function getActiveTaxiOrders(req, res) {
 	const { user_id, type } = req.params;
 
 	try {
-		const activeOrder = await TaxiOrderDao.getTaxiOrderIfNotCompleted(user_id, type);
+		const activeOrders = await TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, type);
 
-		if (activeOrder && activeOrder.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED) {
-			const driver = activeOrder.driver;
+		if (activeOrders) {
+			// Iterate over the list of active orders
+			for (let i = 0; i < activeOrders.length; i++) {
+				const activeOrder = activeOrders[i];
 
-			// Assuming only one vehicle is active at a time
-			driver.vehicle = driver.vehicles[0];
+				if (activeOrder && activeOrder.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED) {
+					const driver = activeOrder.driver;
 
-			const { result, distance, duration } = await gApi.distanceBetweenTwoPoints(
-				activeOrder.pickup_location.coordinates,
-				driver.location.coordinates,
-				"driving",
-				new Date()
-			);
+					// Assuming only one vehicle is active at a time
+					driver.vehicle = driver.vehicles[0];
 
-			console.tag("TaxiOrderController","ROES:", result, result?.rows[0], result?.rows[0]?.elements[0]);
-			console.tag("TaxiOrderController","ROES DISTANCE:", distance);
-			console.tag("TaxiOrderController","ROES DURATION:", duration);
+					const { result, distance, duration } = await gApi.distanceBetweenTwoPoints(
+						activeOrder.pickup_location.coordinates,
+						driver.location.coordinates,
+						"driving",
+						new Date()
+					);
 
-			if (result && result.rows && result.rows[0] && result.rows[0].elements && result.rows[0].elements[0]) {
-				activeOrder.estimates.pickup_time_in_seconds = result.rows[0].elements[0].duration.value;
-				const estimatedPickupTime = new Date();
-				estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + result.rows[0].elements[0].duration.value);
-				activeOrder.estimates.pickup_time = estimatedPickupTime;
-			} else {
-				if (duration && distance) {
-					const estimatedPickupTime = new Date();
-					estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + duration);
-					activeOrder.estimates.pickup_time = estimatedPickupTime;
+					console.tag("TaxiOrderController", "ROES:", result, result?.rows[0], result?.rows[0]?.elements[0]);
+					console.tag("TaxiOrderController", "ROES DISTANCE:", distance);
+					console.tag("TaxiOrderController", "ROES DURATION:", duration);
+
+					if (result && result.rows && result.rows[0] && result.rows[0].elements && result.rows[0].elements[0]) {
+						activeOrder.estimates.pickup_time_in_seconds = result.rows[0].elements[0].duration.value;
+						const estimatedPickupTime = new Date();
+						estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + result.rows[0].elements[0].duration.value);
+						activeOrder.estimates.pickup_time = estimatedPickupTime;
+					} else {
+						if (duration && distance) {
+							const estimatedPickupTime = new Date();
+							estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + duration);
+							activeOrder.estimates.pickup_time = estimatedPickupTime;
+						}
+						console.errorTag('Invalid response structure from distanceBetweenTwoPoints');
+						activeOrder.estimates.pickup_time_in_seconds = -1;
+						activeOrder.estimates.pickup_time = null;
+					}
+
+					// Update the order with the new estimates
+					await TaxiOrderDao.updateOrder(activeOrder.order_id, {
+						estimates: activeOrder.estimates
+					});
 				}
-				console.errorTag('Invalid response structure from distanceBetweenTwoPoints');
-				activeOrder.estimates.pickup_time_in_seconds = -1;
-				activeOrder.estimates.pickup_time = null;
 			}
-
-			await TaxiOrderDao.updateOrder(activeOrder.order_id, {
-				estimates: activeOrder.estimates
-			});
 		}
 
-		res.status(200).json(activeOrder);
+		res.status(200).json(activeOrders);
 	} catch (e) {
-		console.errorTag("TaxiOrderController",e);
+		console.error("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -345,8 +353,10 @@ async function createOrder(req, res) {
 			status: "PENDING",
 			user_id: req.user.user_id,
 			telephone: req.user.telephone,
-			is_scheduled: req.body.preferences?.scheduled_ride.length > 0 && req.body.preferences.scheduled_ride[0] === 'schedule_ride'
+			is_scheduled: req.body.preferences?.departure_date
 		};
+
+		console.info('dep date',  req.body.preferences?.departure_date)
 		
 		let order = await createOrderHelper(req, res, orderData);
 		//console.tag("TaxiOrderController","create taxi order", order)
@@ -948,14 +958,14 @@ async function appendTaxiDriver(req, res) {
 
 	try {
 		console.info(order_id, driver_id)
-		await TaxiOrderDao.updateOrder(order_id, {
+		const order = await TaxiOrderDao.updateOrder(order_id, {
 			driver: {
 				connect: {
 					driver_id: driver_id
 				}
 			}
 		});
-		await TaxiHelper.findTaxiOrderDrivers(order_id);
+		await TaxiHelper.findTaxiOrderDrivers(order);
 		res.status(200).json({"message": 'driver selected'})
 	}
 	catch (e) {

@@ -610,6 +610,7 @@ enum VEHICLE_CLASS {
   VAN
   MINIBUS
   BUS
+  CARGO_VAN
 }
 
 enum GENDER {
