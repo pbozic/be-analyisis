@@ -341,6 +341,9 @@ const updateUserTelephoneVerified = async (user_id, telephoneVerified) => {
 };
 
 const createNewUser = async (user, hashPassword = false) => {
+	if (!user?.telephone || user?.telephone === '') {
+		delete user?.telephone
+	}
 	try {
 		let newUser = user;
 

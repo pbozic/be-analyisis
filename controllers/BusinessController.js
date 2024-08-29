@@ -78,6 +78,28 @@ async function listMerchantBusinessesWithDailyMeals(req, res) {
 }
 
 /**
+ * GET /businesses/merchants/main
+ * @tag Business
+ * @summary List all merchant businesses offering daily meals
+ * @description Retrieves a list of all businesses classified as merchants that offer daily meals.
+ * @operationId listMerchantBusinessesWithDailyMeals
+ * @response 200 - Successful operation, returns a list of merchant businesses offering daily meals
+ * @responseContent {Business[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the merchant business list
+ */
+async function listMerchantBusinessesMainInfo(req, res) {
+	try {
+		const merchantBusinesses = await BusinessDao.getBusinessesByTypeMainInformation(Constants.BUSINESS_TYPE.MERCHANT);
+		res.status(200).json(merchantBusinesses);
+	} catch (e) {
+		console.error("Error listing merchant businesses with daily meals:", e);
+		res.status(400).json({ error: "Error listing merchant businesses with daily meals", e });
+	}
+}
+
+
+
+/**
  * GET /businesses/taxis
  * @tag Business
  * @summary List all taxi businesses
@@ -746,8 +768,10 @@ async function createPaymentIntent(req, res) {
  */
 async function manualSortScheduledUsers(req, res) {
 	const { sorted_user_ids } = req.body;
+	const filteredData = sorted_user_ids.filter(item => item !== null);
+	console.info('sorted_user_ids', sorted_user_ids, filteredData)
 	try {
-		const updatedBusiness = await BusinessDao.manualSortScheduledUsers(sorted_user_ids)
+		const updatedBusiness = await BusinessDao.manualSortScheduledUsers(filteredData)
 		res.status(200).json(updatedBusiness);
 	} catch (e) {
 		console.error(e);
@@ -809,6 +833,7 @@ module.exports = {
 	reviewBusiness,
 	createPaymentIntent,
 	manualSortScheduledUsers,
-	addScheduledUserSortingType
+	addScheduledUserSortingType,
+	listMerchantBusinessesMainInfo
 };
 

@@ -17,6 +17,7 @@ const {reviewUserSchema} = require("../../joi/reviewSchemas");
 const router = express.Router();
 
 router.get("/", UserController.listUsers);
+router.get("/personal", UserController.listPersonalUsers);
 router.get("/me", UserController.me);
 router.get("/me/ping", UserController.ping);
 router.get("/me/reviews", UserController.getMyReviews);

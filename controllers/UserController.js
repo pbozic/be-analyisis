@@ -14,7 +14,7 @@ const SMS = require("../lib/SMS");
 const stripe = require("../lib/stripe");
 const S3Helper = require("../lib/s3");
 const { User } = require("@onesignal/node-onesignal");
-const { DOCUMENT_TYPE, TAXI_ORDER_STATUS } = require("../lib/constants");
+const { DOCUMENT_TYPE, TAXI_ORDER_STATUS, USER_ROLE } = require("../lib/constants");
 const { generateAccessToken, generateRefreshToken } = require("../lib/jwt");
 const { getOrders } = require("../dao/TaxiOrder");
 const TaxiOrderDao = require("../dao/TaxiOrder");
@@ -35,6 +35,44 @@ const { drive } = require("googleapis/build/src/apis/drive");
 async function listUsers(req, res) {
 	try {
 		let users = await UserDao.getUsers({
+			include: {
+				addresses: {
+					include: {
+						address: true,
+					},
+				},
+			},
+		});
+		if (users) {
+			res.status(200).json(users);
+		} else {
+			res.status(400).json({
+				error: "Error obtaining list of users..",
+				users,
+			});
+		}
+	} catch (e) {
+		res.status(400).json({ error: "Error obtaining list of users..", e });
+	}
+}
+
+/**
+ * GET /users
+ * @tag Users
+ * @summary Get a list of users
+ * @description Returns a list of users.
+ * @operationId getUsers
+ * @response 200 - successful operation
+ * @responseContent {User[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the user list
+ * @responseContent {object} 400.application/json The error object
+ */
+async function listPersonalUsers(req, res) {
+	try {
+		let users = await UserDao.getUsers({
+			where: {
+				user_role: USER_ROLE.PERSONAL
+			},
 			include: {
 				addresses: {
 					include: {
@@ -979,6 +1017,7 @@ async function getReviewsByUserId(req, res) {
 }
 module.exports = {
 	listUsers,
+	listPersonalUsers,
 	me,
 	updateMe,
 	verifyMe,
