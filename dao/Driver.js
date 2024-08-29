@@ -304,6 +304,25 @@ const getAvailableDrivers = async () => {
 	}
 }
 
+const getUnavailableDrivers = async () => {
+	try {
+		return await prisma.drivers.findMany({
+			where: { online: true, on_order: true },
+			include: {
+				user: true,
+				vehicles: {
+					include: {
+						vehicle_specification: true,
+					},
+				},
+			},
+		});
+	} catch (error) {
+		console.error("Error getting available drivers:", error);
+		throw new Error(error);
+	}
+}
+
 const getBusinessByDriverId = async (driver_id) => {
     try {
         // Step 1: Get the business_id from the drivers model
@@ -320,7 +339,6 @@ const getBusinessByDriverId = async (driver_id) => {
         const business = await prisma.business.findUnique({
             where: { business_id: driver.business_id }
         });
-
         if (!business) {
             throw new Error("Business not found for the given business ID");
         }
@@ -348,4 +366,5 @@ module.exports = {
 	getAvailableDrivers,
 	updateDriverRideRequirements,
 	getDriversFull,
+	getUnavailableDrivers
 };

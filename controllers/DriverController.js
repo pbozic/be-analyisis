@@ -76,6 +76,16 @@ async function getAvailableDrivers(req, res) {
 	}
 }
 
+async function getUnavailableDrivers(req, res) {
+	try {
+		const drivers = await DriverDao.getUnavailableDrivers();
+		res.status(200).json(drivers);
+	} catch (error) {
+		console.error("Error getting unavailable drivers:", error);
+		res.status(400).json({ error: "Error getting unavailable drivers", detail: error.message });
+	}
+}
+
 /**
  * GET /drivers/:driver_id
  * @tag Drivers
@@ -347,5 +357,6 @@ module.exports = {
 	getAvailableDrivers,
 	updateDriverRideRequirements,
 	resendDelegatedOrdersToDriver,
-	listDriversFull
+	listDriversFull,
+	getUnavailableDrivers
 };
