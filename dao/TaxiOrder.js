@@ -51,9 +51,9 @@ async function getOrder(order_id) {
     }
 }
 
-async function getTaxiOrderIfNotCompleted(user_id, type) {
+async function getTaxiOrdersIfNotCompleted(user_id, type) {
     try {
-        return await prisma.taxi_orders.findFirst({
+        return await prisma.taxi_orders.findMany({
             where: {
                 type: type,
                 user_id: user_id,
@@ -477,20 +477,36 @@ async function updateCompleteTaxiRoute(order_id, route) {
     }
 }
 
-async function updateTaxiOrderTimeline(order_id, timeline) {
+async function updateTaxiOrderTimeline(order_id, newTimelineEntries) {
     try {
-        return prisma.taxi_orders.update({
+        const order = await prisma.taxi_orders.findUnique({
+            where: {
+                order_id
+            },
+            select: {
+                timeline: true
+            }
+        });
+
+        if (!order) {
+            throw new Error(`Order with ID ${order_id} not found`);
+        }
+
+        const updatedTimeline = [...order.timeline, ...newTimelineEntries];
+
+        return await prisma.taxi_orders.update({
             where: {
                 order_id
             },
             data: {
-                timeline: timeline
+                timeline: updatedTimeline
             }
         });
     } catch (e) {
         throw new Error(e);
     }
 }
+
 
 async function updateTaxiOrderPayment(order_id, payment) {
     try {
@@ -577,7 +593,7 @@ module.exports = {
     updateCompleteTaxiRoute,
     updateTaxiOrderPayment,
     updateTaxiOrderTimeline,
-    getTaxiOrderIfNotCompleted,
+    getTaxiOrdersIfNotCompleted,
     getAlreadySentOrdersByDriverId,
     getActiveOrdersByDriverId,
     getAcceptedOrders,

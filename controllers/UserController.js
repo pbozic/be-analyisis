@@ -14,7 +14,7 @@ const SMS = require("../lib/SMS");
 const stripe = require("../lib/stripe");
 const S3Helper = require("../lib/s3");
 const { User } = require("@onesignal/node-onesignal");
-const { DOCUMENT_TYPE, TAXI_ORDER_STATUS } = require("../lib/constants");
+const { DOCUMENT_TYPE, TAXI_ORDER_STATUS, USER_ROLE } = require("../lib/constants");
 const { generateAccessToken, generateRefreshToken } = require("../lib/jwt");
 const { getOrders } = require("../dao/TaxiOrder");
 const TaxiOrderDao = require("../dao/TaxiOrder");
@@ -34,7 +34,53 @@ const { drive } = require("googleapis/build/src/apis/drive");
  */
 async function listUsers(req, res) {
 	try {
-		let users = await UserDao.getUsers();
+		let users = await UserDao.getUsers({
+			include: {
+				addresses: {
+					include: {
+						address: true,
+					},
+				},
+			},
+		});
+		if (users) {
+			res.status(200).json(users);
+		} else {
+			res.status(400).json({
+				error: "Error obtaining list of users..",
+				users,
+			});
+		}
+	} catch (e) {
+		res.status(400).json({ error: "Error obtaining list of users..", e });
+	}
+}
+
+/**
+ * GET /users
+ * @tag Users
+ * @summary Get a list of users
+ * @description Returns a list of users.
+ * @operationId getUsers
+ * @response 200 - successful operation
+ * @responseContent {User[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the user list
+ * @responseContent {object} 400.application/json The error object
+ */
+async function listPersonalUsers(req, res) {
+	try {
+		let users = await UserDao.getUsers({
+			where: {
+				user_role: USER_ROLE.PERSONAL
+			},
+			include: {
+				addresses: {
+					include: {
+						address: true,
+					},
+				},
+			},
+		});
 		if (users) {
 			res.status(200).json(users);
 		} else {
@@ -122,6 +168,34 @@ async function updateMe(req, res) {
 		if (user) {
 			if (req.socket)
 				req.socket.emit("updateUser", user);
+			return res.status(200).json(user);
+		}
+		res.status(400).json({ error: "Error updating user information" });
+	} catch (e) {
+		console.log(e)
+		res.status(400).json({ error: "Error updating user information", e });
+	}
+}
+
+/**
+ * PATCH /me/update_user
+ * @tag Users
+ * @summary Updates the current user's details
+ * @description This endpoint is used to update the current user's details.
+ * @operationId updateMe
+ * @bodyDescription The data to update for the current user
+ * @bodyContent {UpdateUserRequest} application/json
+ * @bodyRequired
+ * @response 200 - User updated successfully. Returns the updated user's details.
+ * @responseContent {AuthenticatedUser} 200.application/json
+ * @response 400 - Error updating user information.
+ */
+async function updateUserByUserId(req, res) {
+	const { user_id, data } = req.body
+
+	try {
+		let user = await UserDao.updateScheduledUser(user_id, data);
+		if (user) {
 			return res.status(200).json(user);
 		}
 		res.status(400).json({ error: "Error updating user information" });
@@ -487,8 +561,8 @@ async function verifyMe(req, res) {
 	try {
 		let user = await UserDao.getUserById(req.user.user_id);
 		let token = await TokenDao.getActiveSMSToken(user);
-		console.log(token);
-		if (token && (token.token === req.body.token) && (token.user_id == req.user.user_id)) {
+		console.info(token);
+		if (token && (token.token === req.body.token) && (token.user_id === req.user.user_id)) {
 			await TokenDao.updateToken(token.token_id, { active: false });
 			user = await UserDao.updateUser(req.user.user_id, { phone_verified: true });
 			return res.status(200).json({message: "Phone verified successfully."});
@@ -941,6 +1015,7 @@ async function getReviewsByUserId(req, res) {
 }
 module.exports = {
 	listUsers,
+	listPersonalUsers,
 	me,
 	updateMe,
 	verifyMe,
@@ -968,5 +1043,6 @@ module.exports = {
 	deleteUserByUserId,
 	getSelfScheduledOrders,
 	getMyReviews,
-	getReviewsByUserId
+	getReviewsByUserId,
+	updateUserByUserId
 };

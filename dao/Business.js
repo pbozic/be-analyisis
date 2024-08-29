@@ -116,6 +116,19 @@ const getBusinessesByGroupName = async (search) => {
 	}
 };
 
+const getBusinessesByTypeMainInformation = async (type) => {
+	try {
+		return await prisma.business.findMany({
+			where: {
+				type: type,
+			},
+		});
+	} catch (error) {
+		console.error(`Error retrieving businesses by type ${type}:`, error);
+		throw new Error(error);
+	}
+}
+
 const getBusinessesByType = async (type, args = {}) => {
     try {
         const includeOptions = {
@@ -544,11 +557,11 @@ const addScheduledUserSortingType = async (type) => {
 	}
 };
 
-const manualSortScheduledUsers = async (sorted_users) => {
+const manualSortScheduledUsers = async (sorted_users = []) => {
 	try {
 		return await prisma.business.updateMany({
 			where: { type: 'MERCHANT' },
-			data: { daily_users_sorted: sorted_users },
+			data: { daily_users_sorted: [...sorted_users] },
 		});
 	} catch (error) {
 		console.error("Error updating sorted scheduled users:", error);
@@ -587,5 +600,6 @@ module.exports = {
 	updateBusinessDeliveryAddress,
 	removeBusinessDeliveryAddress,
 	addScheduledUserSortingType,
-	manualSortScheduledUsers
+	manualSortScheduledUsers,
+	getBusinessesByTypeMainInformation
 };

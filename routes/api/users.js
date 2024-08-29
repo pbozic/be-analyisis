@@ -16,6 +16,8 @@ const {reviewUserSchema} = require("../../joi/reviewSchemas");
 
 const router = express.Router();
 
+router.get("/", UserController.listUsers);
+router.get("/personal", UserController.listPersonalUsers);
 router.get("/me", UserController.me);
 router.get("/me/ping", UserController.ping);
 router.get("/me/reviews", UserController.getMyReviews);
@@ -44,6 +46,7 @@ router.get("/me/payment-sheet", UserController.getPaymentSheetCredentials);
 router.post("/me/requestToAddFunds", UserController.requestToAddFundsToWallet);
 router.get("/me/scheduled_orders", UserController.getSelfScheduledOrders);
 router.delete("/delete/:user_id", UserController.deleteUserByUserId);
+router.post("/me/update_user", UserController.updateUserByUserId);
 
 
 module.exports = router;

@@ -33,7 +33,7 @@ model business {
   tax_id                   String
   registration_id          String
   email                    String            @unique
-  telephone                String
+  telephone                String?
   telephone_code           String
   telephone_number         String
   website_url              String?
@@ -84,8 +84,8 @@ model users {
   last_name                     String?
   password                      String
   gender                        GENDER?
-  email                         String
-  telephone                     String            @unique
+  email                         String?
+  telephone                     String?           @unique
   telephone_code                String?
   telephone_number              String?
   date_of_birth                 DateTime          @db.Date
@@ -610,6 +610,7 @@ enum VEHICLE_CLASS {
   VAN
   MINIBUS
   BUS
+  CARGO_VAN
 }
 
 enum GENDER {
