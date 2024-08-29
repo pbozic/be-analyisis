@@ -82,10 +82,12 @@ async function me(req, res) {
 			delete user["password"];
 			// const access_token = generateAccessToken(user);
 			// const refresh_token = generateRefreshToken(user);
+			let profile = await DocumentDao.getDocumentsForUserByType(user.user_id, DOCUMENT_TYPE.PROFILE_PICTURE);
 			user = {
 				...user,
 				// access_token,
 				// refresh_token,
+				profile_picture: profile[0]?.files[0]?.url,
 				payment_methods
 			};
 			return res.status(200).json(user);
@@ -145,29 +147,25 @@ async function updateMe(req, res) {
 async function updatePassword(req, res) {
 	try {
 		let postData = req.body;
-
+		console.log("changing password")
 		let userCheck = await UserDao.getUserById(req.user.user_id, {
 			select: {
 				password: true,
 				email: true,
 				user_id: true,
-				first_name: true,
-				last_name: true,
-				telephone: true,
-				user_role: true,
-				date_create: true,
-				date_modify: true,
 			},
 		});
+		console.log("changing password 1")
 		let correctPw = await bcrypt.compare(postData.password, userCheck.password);
 		if (!correctPw) return res.status(400).json({ error: "Wrong password.." });
 		let hash = await bcrypt.hash(postData.new_password, Number(process.env.BCRYPT_SALT_ROUNDS));
 		user = await UserDao.updateUserPassword(req.user.user_id, hash);
-
+		
 		if (user) return res.status(200).json(user);
 
 		res.status(400).json({ error: "Error updating user information" });
 	} catch (e) {
+		console.log(e)
 		res.status(400).json({ error: "Error updating user information", e });
 	}
 }
@@ -222,7 +220,7 @@ async function updateProfilePicture(req, res) {
 
 		// Create new document for profile picture
 		const document = await DocumentDao.createDocument(image.documentData);
-
+		console.log("files", image.files)
 		// Add files to the document and upload to S3
 		for (const file of image.files) {
 			let base64 = file.base64;

@@ -20,7 +20,7 @@ const getUserById = async (user_id, args) => {
 			...args,
 		});
 	} catch (error) {
-		return new Error(error);
+		throw new Error(error);
 	}
 };
 const getScheduledUsers = async () => {
