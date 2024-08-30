@@ -115,7 +115,15 @@ async function getOrdersByDeliveryDriverId(delivery_driver_id) {
 			include: {
 				delivery_driver: {
 					include: {
-						user: true
+						user: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									}
+								}
+							}
+						},
 					}
 				},
 				user: true,

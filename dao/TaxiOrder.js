@@ -9,7 +9,15 @@ async function getOrders(args) {
                 user: true,
                 driver: {
                     include: {
-                        user: true,
+                        user: {
+                            include: {
+                                documents: {
+                                    include: {
+                                        files: true,
+                                    }
+                                }
+                            }
+                        },
                         vehicles: {
                             include: {
                                 vehicle_specification: true,
@@ -35,7 +43,15 @@ async function getOrder(order_id) {
                 user: true,
                 driver: {
                     include: {
-                        user: true,
+                        user: {
+                            include: {
+                                documents: {
+                                    include: {
+                                        files: true,
+                                    }
+                                }
+                            }
+                        },
                         vehicles: {
                             include: {
                                 vehicle_specification: true,
@@ -65,7 +81,15 @@ async function getTaxiOrdersIfNotCompleted(user_id, type) {
                 user: true,
                 driver: {
                     include: {
-						user: true,
+                        user: {
+                            include: {
+                                documents: {
+                                    include: {
+                                        files: true,
+                                    }
+                                }
+                            }
+                        },
                         vehicles: {
                             include: {
                                 vehicle_specification: true,
@@ -95,7 +119,15 @@ async function getActiveOrdersByDriverId(driver_id) {
                 user: true,
                 driver: {
                     include: {
-                        user: true,
+                        user: {
+                            include: {
+                                documents: {
+                                    include: {
+                                        files: true,
+                                    }
+                                }
+                            }
+                        },
                         vehicles: {
                             include: {
                                 vehicle_specification: true,
@@ -121,7 +153,15 @@ async function getOrdersByDriverId(driver_id) {
                 user: true,
                 driver: {
                     include: {
-                        user: true,
+                        user: {
+                            include: {
+                                documents: {
+                                    include: {
+                                        files: true,
+                                    }
+                                }
+                            }
+                        },
                         vehicles: {
                             include: {
                                 vehicle_specification: true,
@@ -238,7 +278,15 @@ async function acceptOrder(order_id, user) {
                 user: true,
                 driver: {
                     include: {
-                        user: true,
+                        user: {
+                            include: {
+                                documents: {
+                                    include: {
+                                        files: true,
+                                    }
+                                }
+                            }
+                        },
                         vehicles: {
                             include: {
                                 vehicle_specification: true,
@@ -266,7 +314,15 @@ async function updateOrderStatus(order_id, status) {
                 user: true,
                 driver: {
                     include: {
-                        user: true,
+                        user: {
+                            include: {
+                                documents: {
+                                    include: {
+                                        files: true,
+                                    }
+                                }
+                            }
+                        },
                         vehicles: {
                             include: {
                                 vehicle_specification: true,
@@ -294,7 +350,15 @@ async function completeOrder(order_id) {
                 user: true,
                 driver: {
                     include: {
-                        user: true,
+                        user: {
+                            include: {
+                                documents: {
+                                    include: {
+                                        files: true,
+                                    }
+                                }
+                            }
+                        },
                         vehicles: {
                             include: {
                                 vehicle_specification: true,
@@ -332,7 +396,15 @@ async function cancelOrder(order_id, status, cancellation_reason) {
                 user: true,
                 driver: {
                     include: {
-                        user: true,
+                        user: {
+                            include: {
+                                documents: {
+                                    include: {
+                                        files: true,
+                                    }
+                                }
+                            }
+                        },
                         vehicles: {
                             include: {
                                 vehicle_specification: true,
@@ -386,7 +458,15 @@ async function getSentDrivers(order_id) {
             include: {
                 driver: {
                     include: {
-                        user: true
+                        user: {
+                            include: {
+                                documents: {
+                                    include: {
+                                        files: true,
+                                    }
+                                }
+                            }
+                        },
                     }
                 }
             }
@@ -533,7 +613,15 @@ async function updateOrder(order_id, order) {
                 user: true,
                 driver: {
                     include: {
-                        user: true,
+                        user: {
+                            include: {
+                                documents: {
+                                    include: {
+                                        files: true,
+                                    }
+                                }
+                            }
+                        },
                         vehicles: {
                             include: {
                                 vehicle_specification: true,
@@ -559,7 +647,15 @@ async function getAcceptedOrders() {
                 user: true,
                 driver: {
                     include: {
-                        user: true,
+                        user: {
+                            include: {
+                                documents: {
+                                    include: {
+                                        files: true,
+                                    }
+                                }
+                            }
+                        },
                         vehicles: {
                             include: {
                                 vehicle_specification: true,
