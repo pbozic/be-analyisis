@@ -20,5 +20,6 @@ router.patch("/location", DriverController.updateDriverLocation);
 router.patch("/online", DriverController.updateDriverOnlineStatus);
 
 router.post("/create", DriverController.createDriver);
+router.post("/sos", DriverController.handleSosAlert);
 
 module.exports = router;

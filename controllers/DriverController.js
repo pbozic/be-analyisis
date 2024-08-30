@@ -344,6 +344,16 @@ async function createDriver(req, res) {
 	}
 }
 
+async function handleSosAlert(req, res) {
+	const data = req.body
+	try {
+		io.emit("sos_alert", data);
+		res.status(200).json(data);
+	} catch (error) {
+		console.error("Error sending SOS alert:", error);
+		res.status(400).json({ error: "Error sending SOS alert", detail: error.message });
+	}
+}
 
 module.exports = {
 	listDrivers,
@@ -358,5 +368,6 @@ module.exports = {
 	updateDriverRideRequirements,
 	resendDelegatedOrdersToDriver,
 	listDriversFull,
-	getUnavailableDrivers
+	getUnavailableDrivers,
+	handleSosAlert
 };
