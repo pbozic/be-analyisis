@@ -1,5 +1,6 @@
 const TaxiOrderDao = require("../dao/TaxiOrder");
 const DriverDao = require("../dao/Driver");
+const FlagDao = require("../dao/Flags");
 const { UserSockets, io } = require('../socket');
 const gApi = require('../lib/gApis');
 const TaxiHelper = require('../lib/taxiHelpers');
@@ -357,7 +358,12 @@ async function createOrder(req, res) {
 		};
 
 		console.info('dep date',  req.body.preferences?.departure_date)
-		
+		let flags = await FlagDao.getFlags();
+		let falgsObj = {}; 
+		flags.map(flag => {
+			falgsObj[flag.name] = flag.status;
+		});
+		orderData.flags = falgsObj;
 		let order = await createOrderHelper(req, res, orderData);
 		//console.tag("TaxiOrderController","create taxi order", order)
 		res.status(200).json(order);

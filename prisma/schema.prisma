@@ -120,6 +120,7 @@ model users {
   subscribed_to_daily_meals     Boolean           @default(false)
   daily_meal_preferences        Json?
   details                       Json?
+  flag_changes                  flag_history[]
 }
 
 model documents {
@@ -331,6 +332,7 @@ model taxi_orders {
   parent_order          taxi_orders?      @relation("grouped_orders", fields: [parent_order_id], references: [order_id])
   grouped_orders        taxi_orders[]     @relation("grouped_orders")
   type                  ORDER_TYPE        @default(TAXI)
+  flags                 Json?
 }
 
 model taxi_order_sent {
@@ -376,6 +378,7 @@ model delivery_orders {
   transactions          transactions[]
   find_drivers_attempts Int?                  @default(0)
   is_daily_meal         Boolean               @default(false)
+  flags                 Json?
 }
 
 model delivery_order_sent {
@@ -479,6 +482,26 @@ model lost_items {
   documents    documents[]
   found        Boolean?    @default(false)
   created_at   DateTime    @default(now()) @db.Timestamptz(6)
+}
+
+model flags {
+  flag_id    String  @id @default(uuid()) @db.Uuid
+  name       String
+  status     Boolean @default(false)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  history    flag_history[]
+}
+
+model flag_history {
+  flag_history_id String    @id @default(uuid()) @db.Uuid
+  flag_id         String    @db.Uuid
+  user_id         String    @db.Uuid
+  status          Boolean
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+  flag            flags     @relation(fields: [flag_id], references: [flag_id])
+  user            users     @relation(fields: [user_id], references: [user_id])
 }
 
 enum USER_ROLES {

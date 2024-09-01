@@ -1,7 +1,7 @@
 const DeliveryOrderDao = require("../dao/DeliveryOrder");
 const DeliveryDriverDao = require("../dao/DeliveryDriver");
 const DeliveryHelper = require("../lib/deliveryHelpers");
-
+const FlagDao = require("../dao/Flags");
 const BusinessDao = require("../dao/Business");
 const UsersDao = require("../dao/User");
 const gApi = require("../lib/gApis");
@@ -126,6 +126,12 @@ async function createOrder(req, res) {
 			status: DELIVERY_ORDER_STATUS.PENDING
 		};
 		let user_id = req.user.user_id;
+		let flags = await FlagDao.getFlags();
+		let falgsObj = {}; 
+		flags.map(flag => {
+			falgsObj[flag.name] = flag.status;
+		});
+		orderData.flags = falgsObj;
 		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
