@@ -79,48 +79,50 @@ model business_users {
 }
 
 model users {
-  user_id                       String            @id @unique @default(uuid()) @db.Uuid
-  first_name                    String?
-  last_name                     String?
-  password                      String
-  gender                        GENDER?
-  email                         String?
-  telephone                     String?           @unique
-  telephone_code                String?
-  telephone_number              String?
-  date_of_birth                 DateTime          @db.Date
-  created_at                    DateTime          @default(now()) @db.Timestamptz(6)
-  updated_at                    DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
-  user_role                     USER_ROLES        @default(PERSONAL)
-  addresses                     user_address[]
-  tokens                        tokens[]
-  phone_verified                Boolean           @default(false)
-  push_notification_preferences Json?
-  notification_preferences      Json?
-  taxi_preferences              Json?
-  business_users                business_users[]
-  driver                        drivers?
-  orders                        taxi_orders[]
-  documents                     documents[]
-  delivery_driver               delivery_drivers?
-  delivery_orders               delivery_orders[]
-  reviewable_id                 String?           @db.Uuid
-  reviewable                    reviewable?       @relation(fields: [reviewable_id], references: [reviewable_id])
-  reviews                       reviews[]         @relation("review_author")
-  review_complete               Boolean           @default(true)
-  one_signal_id                 String?
-  stripe_customer_id            String?
-  wallet_balance                Float             @default(0)
-  transactions                  transactions[]
-  reservations                  reservations[]
-  transfer_preferences          Json?
-  allergies_preferences         Json?
-  spicy_preferences             Json?
-  radio_preferences             Json?
-  subscribed_to_daily_meals     Boolean           @default(false)
-  daily_meal_preferences        Json?
-  details                       Json?
-  flag_changes                  flag_history[]
+  user_id                                String            @id @unique @default(uuid()) @db.Uuid
+  first_name                             String?
+  last_name                              String?
+  password                               String
+  gender                                 GENDER?
+  email                                  String?
+  telephone                              String?           @unique
+  telephone_code                         String?
+  telephone_number                       String?
+  date_of_birth                          DateTime          @db.Date
+  created_at                             DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at                             DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+  user_role                              USER_ROLES        @default(PERSONAL)
+  addresses                              user_address[]
+  tokens                                 tokens[]
+  phone_verified                         Boolean           @default(false)
+  notification_preferences               Json?
+  taxi_preferences                       Json?
+  business_users                         business_users[]
+  driver                                 drivers?
+  orders                                 taxi_orders[]
+  documents                              documents[]
+  delivery_driver                        delivery_drivers?
+  delivery_orders                        delivery_orders[]
+  reviewable_id                          String?           @db.Uuid
+  reviewable                             reviewable?       @relation(fields: [reviewable_id], references: [reviewable_id])
+  reviews                                reviews[]         @relation("review_author")
+  review_complete                        Boolean           @default(true)
+  one_signal_id                          String?
+  stripe_customer_id                     String?
+  wallet_balance                         Float             @default(0)
+  transactions                           transactions[]
+  reservations                           reservations[]
+  transfer_preferences                   Json?
+  allergies_preferences                  Json?
+  spicy_preferences                      Json?
+  radio_preferences                      Json?
+  subscribed_to_daily_meals              Boolean           @default(false)
+  daily_meal_preferences                 Json?
+  details                                Json?
+  flag_changes                           flag_history[]
+  taxi_push_notification_preferences     Json?
+  transfer_push_notification_preferences Json?
+  delivery_push_notification_preferences Json?
 }
 
 model documents {
@@ -485,23 +487,23 @@ model lost_items {
 }
 
 model flags {
-  flag_id    String  @id @default(uuid()) @db.Uuid
+  flag_id    String         @id @default(uuid()) @db.Uuid
   name       String
-  status     Boolean @default(false)
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  status     Boolean        @default(false)
+  created_at DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
   history    flag_history[]
 }
 
 model flag_history {
-  flag_history_id String    @id @default(uuid()) @db.Uuid
-  flag_id         String    @db.Uuid
-  user_id         String    @db.Uuid
+  flag_history_id String   @id @default(uuid()) @db.Uuid
+  flag_id         String   @db.Uuid
+  user_id         String   @db.Uuid
   status          Boolean
-  created_at      DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at      DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
-  flag            flags     @relation(fields: [flag_id], references: [flag_id])
-  user            users     @relation(fields: [user_id], references: [user_id])
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  flag            flags    @relation(fields: [flag_id], references: [flag_id])
+  user            users    @relation(fields: [user_id], references: [user_id])
 }
 
 enum USER_ROLES {

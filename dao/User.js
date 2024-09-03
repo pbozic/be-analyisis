@@ -274,11 +274,33 @@ const updateUserNotificationPreferences = async (user_id, notificationPreference
 	}
 };
 
-const updateUserPushNotifications = async (user_id, pushNotificationPreferences) => {
+const updateUserTaxiPushNotifications = async (user_id, pushNotificationPreferences) => {
 	try {
 		return await prisma.users.update({
 			where: { user_id },
-			data: { push_notification_preferences: pushNotificationPreferences },
+			data: { taxi_push_notification_preferences: pushNotificationPreferences },
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
+
+const updateUserTransferPushNotifications = async (user_id, pushNotificationPreferences) => {
+	try {
+		return await prisma.users.update({
+			where: { user_id },
+			data: { transfer_push_notification_preferences: pushNotificationPreferences },
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
+
+const updateUserDeliveryPushNotifications = async (user_id, pushNotificationPreferences) => {
+	try {
+		return await prisma.users.update({
+			where: { user_id },
+			data: { delivery_push_notification_preferences: pushNotificationPreferences },
 		});
 	} catch (error) {
 		return new Error(error);
@@ -485,7 +507,7 @@ module.exports = {
 	updateUserTelephoneVerified,
 	updateUserTaxiPreferences,
 	updateUserNotificationPreferences,
-	updateUserPushNotifications,
+	updateUserTaxiPushNotifications,
 	updateUserSpicyPreferences,
 	updateUserAllergiesPreferences,
 	updateUserTransferPreferences,
@@ -493,6 +515,8 @@ module.exports = {
 	getUserByTelephone,
 	getScheduledUsers,
 	updateScheduledUser,
-	deleteUserByUserId
+	deleteUserByUserId,
+	updateUserDeliveryPushNotifications,
+	updateUserTransferPushNotifications
 
 };

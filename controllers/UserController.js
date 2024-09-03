@@ -405,11 +405,11 @@ async function updateUserNotificationPreferences(req, res) {
 }
 
 /**
- * PATCH /me/push-notification-preferences
+ * PATCH /me/taxi-push-notification-preferences
  * @tag Users
  * @summary Updates the current user's push notification preferences
  * @description This endpoint is used to update the current user's push notification preferences.
- * @operationId updateUserPushNotifications
+ * @operationId updateUserTaxiPushNotifications
  * @bodyDescription The new push notification preferences
  * @bodyContent {UpdatePushNotificationPreferencesRequest} application/json
  * @bodyRequired
@@ -417,9 +417,59 @@ async function updateUserNotificationPreferences(req, res) {
  * @responseContent {User} 200.application/json
  * @response 400 - Error updating user information.
  */
-async function updateUserPushNotifications(req, res) {
+async function updateUserTaxiPushNotifications(req, res) {
 	try {
-		let user = await UserDao.updateUserPushNotifications(req.user.user_id, req.body.push_notification_preferences);
+		let user = await UserDao.updateUserTaxiPushNotifications(req.user.user_id, req.body.taxi_push_notification_preferences);
+
+		if (user) return res.status(200).json(user);
+
+		res.status(400).json({ error: "Error updating user information" });
+	} catch (e) {
+		res.status(400).json({ error: "Error updating user information", e });
+	}
+}
+
+/**
+ * PATCH /me/transfer-push-notification-preferences
+ * @tag Users
+ * @summary Updates the current user's transfer push notification preferences
+ * @description This endpoint is used to update the current user's transfer push notification preferences.
+ * @operationId updateUserTransferPushNotifications
+ * @bodyDescription The new push notification preferences for transfers
+ * @bodyContent {UpdatePushNotificationPreferencesRequest} application/json
+ * @bodyRequired
+ * @response 200 - Transfer push notification preferences updated successfully. Returns the updated user's details.
+ * @responseContent {User} 200.application/json
+ * @response 400 - Error updating user information.
+ */
+async function updateUserTransferPushNotifications(req, res) {
+	try {
+		let user = await UserDao.updateUserTransferPushNotifications(req.user.user_id, req.body.transfer_push_notification_preferences);
+
+		if (user) return res.status(200).json(user);
+
+		res.status(400).json({ error: "Error updating user information" });
+	} catch (e) {
+		res.status(400).json({ error: "Error updating user information", e });
+	}
+}
+
+/**
+ * PATCH /me/delivery-push-notification-preferences
+ * @tag Users
+ * @summary Updates the current user's delivery push notification preferences
+ * @description This endpoint is used to update the current user's delivery push notification preferences.
+ * @operationId updateUserDeliveryPushNotifications
+ * @bodyDescription The new push notification preferences for deliveries
+ * @bodyContent {UpdatePushNotificationPreferencesRequest} application/json
+ * @bodyRequired
+ * @response 200 - Delivery push notification preferences updated successfully. Returns the updated user's details.
+ * @responseContent {User} 200.application/json
+ * @response 400 - Error updating user information.
+ */
+async function updateUserDeliveryPushNotifications(req, res) {
+	try {
+		let user = await UserDao.updateUserDeliveryPushNotifications(req.user.user_id, req.body.delivery_push_notification_preferences);
 
 		if (user) return res.status(200).json(user);
 
@@ -1078,12 +1128,14 @@ module.exports = {
 	updateUserTransferPreferences,
 	updateUserRadioPreferences,
 	updateUserNotificationPreferences,
-	updateUserPushNotifications,
+	updateUserTaxiPushNotifications,
 	updateProfilePicture,
 	ping,
 	deleteUserByUserId,
 	getSelfScheduledOrders,
 	getMyReviews,
 	getReviewsByUserId,
-	updateUserByUserId
+	updateUserByUserId,
+	updateUserTransferPushNotifications,
+	updateUserDeliveryPushNotifications
 };
