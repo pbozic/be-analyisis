@@ -95,6 +95,46 @@ async function listPersonalUsers(req, res) {
 }
 
 /**
+ * GET /users/:user_id
+ * @tag Users
+ * @summary Get a user by ID
+ * @description Retrieves detailed information about a specific user by their ID.
+ * @operationId getUserById
+ * @pathParam {string} user_id - The ID of the user to retrieve
+ * @response 200 - Successful operation, returns detailed user information
+ * @responseContent {User} 200.application/json
+ * @response 404 - User not found
+ * @response 400 - Error retrieving user information
+ */
+async function getUserById(req, res) {
+	try {
+		let user = await UserDao.getUserById(req.params.user_id, {
+			include: {
+				addresses: {
+					include: {
+						address: true,
+					},
+				},
+			},
+		});
+		if (user) {
+			delete user["password"];
+			let profile = await DocumentDao.getDocumentsForUserByType(user.user_id, DOCUMENT_TYPE.PROFILE_PICTURE);
+			user = {
+				...user,
+				profile_picture: profile[0]?.files[0]?.url,
+			};
+			return res.status(200).json(user);
+		} else {
+			res.status(404).json({ error: "User not found" });
+		}
+	} catch (error) {
+		console.error("Error retrieving user:", error);
+		res.status(400).json({ error: "Error retrieving user information", detail: error.message });
+	}
+}
+
+/**
  * GET /users/me
  * @tag Users
  * @summary Retrieve authenticated user's information
@@ -1016,6 +1056,7 @@ async function getReviewsByUserId(req, res) {
 module.exports = {
 	listUsers,
 	listPersonalUsers,
+	getUserById,
 	me,
 	updateMe,
 	verifyMe,
