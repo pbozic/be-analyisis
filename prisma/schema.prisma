@@ -123,6 +123,7 @@ model users {
   taxi_push_notification_preferences     Json?
   transfer_push_notification_preferences Json?
   delivery_push_notification_preferences Json?
+  spoken_languages                       Json?
 }
 
 model documents {
@@ -227,23 +228,25 @@ model delivery_drivers {
 }
 
 model drivers {
-  driver_id         String            @id @default(uuid()) @db.Uuid
-  business_id       String?           @db.Uuid
-  online            Boolean?          @default(false)
-  on_order          Boolean?          @default(false)
-  working_hours     Json?
-  ride_requirements Json?
-  created_at        DateTime          @default(now()) @db.Timestamptz(6)
-  updated_at        DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
-  user_id           String?           @unique @db.Uuid
-  user              users?            @relation(fields: [user_id], references: [user_id])
-  vehicles          vehicles[]
-  orders            taxi_orders[]
-  received_orders   taxi_order_sent[]
-  documents         documents[]
-  location          Json?
-  last_ping_at      DateTime          @default(now()) @db.Timestamptz(6)
-  is_inactive       Boolean?          @default(false)
+  driver_id             String            @id @default(uuid()) @db.Uuid
+  business_id           String?           @db.Uuid
+  online                Boolean?          @default(false)
+  on_order              Boolean?          @default(false)
+  working_hours         Json?
+  ride_requirements     Json?
+  created_at            DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+  user_id               String?           @unique @db.Uuid
+  user                  users?            @relation(fields: [user_id], references: [user_id])
+  vehicles              vehicles[]
+  orders                taxi_orders[]
+  received_orders       taxi_order_sent[]
+  documents             documents[]
+  location              Json?
+  last_ping_at          DateTime          @default(now()) @db.Timestamptz(6)
+  is_inactive           Boolean?          @default(false)
+  transfer_requirements Json?
+  regions               String[]
 }
 
 model vehicles {
