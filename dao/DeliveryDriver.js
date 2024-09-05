@@ -140,6 +140,37 @@ const updateDeliveryDriverLocation = async (delivery_driver_id, location) => {
 	}
 };
 
+const updateDeliveryDriverLocationHistory = async (delivery_driver_id, location, status) => {
+	try {
+		const locationData = {
+			name: location?.name ?? null,
+			address: location?.address ?? null,
+			coordinates: {
+				latitude: location?.coordinates?.latitude ?? null,
+				longitude: location?.coordinates?.longitude ?? null
+			}
+		};
+
+		const data = {
+			location: locationData,
+			delivery_driver: {
+				connect: {
+					delivery_driver_id: delivery_driver_id
+				}
+			}
+		};
+
+		if (status !== null && status !== undefined) {
+			data.status = status;
+		}
+
+		return await prisma.delivery_driver_history_locations.create({ data });
+	} catch (error) {
+		console.error("Error updating driver's location history:", error);
+		throw new Error(error);
+	}
+};
+
 const updateDeliveryDriver = async (delivery_driver_id, updateData) => {
 	try {
 		delete updateData.location;
@@ -256,5 +287,6 @@ module.exports = {
 	updateDeliveryDriverOnlineStatus,
 	createDeliveryDriver,
 	getAvailableDeliveryDrivers,
-	updateDriverLocation
+	updateDriverLocation,
+	updateDeliveryDriverLocationHistory
 };

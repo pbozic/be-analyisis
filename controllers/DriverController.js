@@ -221,10 +221,21 @@ async function updateDriverLocation(req, res) {
 		const driver = await DriverDao.getDriverByUserId(userId);
 		let driverUpdatedLocation = await DriverDao.updateDriverLocation(driver.driver_id, locationData);
 
-		// console.log(userId, locationData, driverUpdatedLocation)
-
 		// Emit the driver's updated location to each order's specific channel
 		const orders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id);
+		
+		let orderStatus = null;
+		if (driver?.on_order) {
+			// Find the most recently updated order
+			const latestOrder = orders.reduce((latest, order) => {
+				return !latest || order.updated_at > latest.updated_at ? order : latest;
+			}, null);
+
+			// If there's a most recently updated order, set its status
+			if (latestOrder) {
+				orderStatus = latestOrder.status;
+			}
+		}
 		for (let order of orders) {
 			try {
 				io.to(`order_${order.order_id}`).emit("driver_location", {
@@ -243,6 +254,7 @@ async function updateDriverLocation(req, res) {
 				location: locationData
 			});
 		}
+		await DriverDao.updateDriverLocationHistory(driver.driver_id, locationData, orderStatus);
 		res.status(200).json(driverUpdatedLocation);
 	} catch (error) {
 		console.error("Error updating driver's location:", error);

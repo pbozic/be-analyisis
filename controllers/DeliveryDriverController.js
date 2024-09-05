@@ -6,6 +6,7 @@ const { UserSockets, io } = require('../socket');
 const DeliveryOrderDao = require("../dao/DeliveryOrder");
 const taxiHelpers = require("../lib/taxiHelpers");
 const { resendPendingOrdersToDeliveryDriver } = require("../lib/deliveryHelpers");
+const DriverDao = require("../dao/Driver");
 
 /**
  * GET /delivery
@@ -220,6 +221,20 @@ async function updateDeliveryDriverLocation(req, res) {
 
 			// Emit the delivery driver's updated location to each order's specific channel
 			const orders = await DeliveryOrderDao.getOrdersByDeliveryDriverId(deliveryDriver.delivery_driver_id);
+
+			let orderStatus = null;
+			if (deliveryDriver?.on_order) {
+				// Find the most recently updated order
+				const latestOrder = orders.reduce((latest, order) => {
+					return !latest || order.updated_at > latest.updated_at ? order : latest;
+				}, null);
+
+				// If there's a most recently updated order, set its status
+				if (latestOrder) {
+					orderStatus = latestOrder.status;
+				}
+			}
+
 			for (let order of orders) {
 				try {
 					io.to(`order_${order.order_id}`).emit("driver_location_delivery", {
@@ -238,7 +253,7 @@ async function updateDeliveryDriverLocation(req, res) {
 					location: req.body.location
 				});
 			}
-
+			await DeliveryDriverDao.updateDeliveryDriverLocationHistory(deliveryDriver.delivery_driver_id, req.body.location, orderStatus);
 			res.status(200).json(updatedDeliveryDriver);
 		} catch (error) {
 			console.error("Error updating delivery driver's location:", error);
