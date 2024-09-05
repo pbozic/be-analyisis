@@ -338,6 +338,7 @@ model taxi_orders {
   grouped_orders        taxi_orders[]     @relation("grouped_orders")
   type                  ORDER_TYPE        @default(TAXI)
   flags                 Json?
+  cargo_preferences     Json?
 }
 
 model taxi_order_sent {
