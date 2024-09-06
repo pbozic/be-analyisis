@@ -4,6 +4,7 @@ const MenuItemDao = require('../dao/MenuItem');
 const DocumentDao = require("../dao/Document");
 const FileDao = require("../dao/File");
 const S3Helper = require("../lib/s3");
+const { linkDocumentToBusiness } = require("../dao/Document");
 
 /**
  * GET /menus/business/:business_id
@@ -437,6 +438,89 @@ async function createMenuItem(req, res) {
 
 
 /**
+ * POST /menus/daily-meals-menu/create
+ * @tag MenuItem
+ * @summary Create a new menu daily meals menu
+ * @description Creates a new daily meals menu for a business
+ * @operationId createDailyMealsMenu
+ * @bodyDescription The menu details to create
+ * @bodyContent {createDailyMealsMenuRequest} application/json
+ * @bodyRequired
+ * @response 201 - Menu created successfully
+ * @responseContent {MenuItem} 201.application/json
+ * @response 400 - Error creating new menu
+ */
+async function createDailyMealsMenu(req, res) {
+	const { business_id, data } = req.body;
+	try {
+
+		const document = await DocumentDao.createDocument({
+			document_type: 'DAILY_MEALS_MENU',
+			...data.documentData
+		});
+
+		for (const file of data.files) {
+			let base64 = file.base64;
+			delete file.base64;
+			let fileData = await FileDao.addFileToDocument(document.document_id, file);
+			let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+			await S3Helper.SaveObject(key, base64, file.mime_type, {}, file);
+		}
+
+		await linkDocumentToBusiness(document.document_id, business_id);
+
+		res.status(201).json(document);
+	} catch (e) {
+		console.error("Error creating daily meals menu document:", e);
+		res.status(400).json({ error: "Error creating daily meals menu document", e });
+	}
+}
+
+/**
+ * GET /menus/daily-meals-menu
+ * @tag MenuItem
+ * @summary Retrieve the last uploaded daily meals menu
+ * @description Fetches the most recent daily meals menu for a business, including the menu's name and URL.
+ * @operationId getLastDailyMealsMenu
+ * @response 200 - Last daily meals menu retrieved successfully
+ * @responseContent {LastDailyMealsMenuResponse} 200.application/json
+ * @response 404 - No daily meals menu found
+ * @responseContent {Error} 404.application/json
+ * @response 500 - Error retrieving the last daily meals menu
+ * @responseContent {Error} 500.application/json
+ */
+async function getLastUploadedDailyMealsMenu(req, res) {
+	const { business_id } = req.params;
+
+	try {
+		const lastDocument = await DocumentDao.getLastDocumentByTypeAndBusinessId('DAILY_MEALS_MENU', business_id);
+
+		if (!lastDocument) {
+			return res.status(404).json({ error: 'No daily meals menu found for the given business ID' });
+		}
+
+		const files = await FileDao.getFilesByDocumentId(lastDocument.document_id);
+
+		if (!files || files.length === 0) {
+			return res.status(404).json({ error: 'No files found for the document' });
+		}
+
+		const file = files[0];
+
+		res.status(200).json({
+			document_id: lastDocument.document_id,
+			name: 'Menu',
+			url: file.url,
+			business_id: business_id
+		});
+	} catch (e) {
+		console.error("Error retrieving last uploaded daily meals menu:", e);
+		res.status(500).json({ error: "Error retrieving last uploaded daily meals menu", e });
+	}
+}
+
+
+/**
  * DELETE /menus/menu-items/:menu_item_id
  * @tag MenuItem
  * @summary Delete a menu item
@@ -619,6 +703,22 @@ async function removeMenuCategory(req, res) {
 	}
 }
 
+/**
+ * Deletes all documents and associated files based on the provided field and id.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
+const deleteDocumentsAndFilesByDocumentId = async (req, res) => {
+	const { field, id } = req.params;
+
+	try {
+		await DocumentDao.deleteDocumentsAndFilesByDocumentId(field, id);
+		res.status(200).json({ message: `Documents and files deleted successfully for ${field}: ${id}` });
+	} catch (error) {
+		res.status(500).json({ error: `Failed to delete documents and files for ${field}: ${id}`, details: error.message });
+	}
+};
+
 
 module.exports = {
 	getMenuByBusinessId,
@@ -646,4 +746,7 @@ module.exports = {
 	updateMenuItemPrice,
 	addMenuItemMenuCategory,
 	removeMenuItemFromCategory,
+	createDailyMealsMenu,
+	getLastUploadedDailyMealsMenu,
+	deleteDocumentsAndFilesByDocumentId
 };

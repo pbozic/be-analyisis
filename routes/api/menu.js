@@ -22,6 +22,9 @@ router.patch("/menu-categories", MenuController.updateMenuCategory);
 router.patch("/menu-categories/add", MenuController.addMenuCategory);
 router.patch("/menu-categories/remove", MenuController.removeMenuCategory);
 
+router.get('/daily-meals-menu/:business_id', MenuController.getLastUploadedDailyMealsMenu);
+router.post("/daily-meals-menu/create", MenuController.createDailyMealsMenu);
+
 // Menu Item routes
 router.post("/menu-items/create", MenuController.createMenuItem);
 router.patch("/menu-items/add-order", MenuController.addMenuItemIdToOrder);

@@ -475,6 +475,58 @@ const deleteDocumentsAndFiles = async (field, id) => {
     }
 };
 
+const deleteDocumentsAndFilesByDocumentId = async (documentType, documentId) => {
+    try {
+        // Fetch all documents based on the provided documentType and documentId
+        const documents = await prisma.documents.findMany({
+            where: {
+                document_id: documentId,
+                document_type: documentType
+            },
+            select: {
+                document_id: true,
+                files: {
+                    select: { file_id: true }
+                }
+            }
+        });
+
+        // Delete all files associated with the fetched documents
+        for (const document of documents) {
+            await prisma.files.deleteMany({
+                where: {
+                    document_id: document.document_id
+                }
+            });
+        }
+
+        // Delete all documents based on the provided documentType and documentId
+        await prisma.documents.deleteMany({
+            where: {
+                document_id: documentId,
+                document_type: documentType
+            }
+        });
+
+        console.log(`All documents and files deleted for documentType: ${documentType} and documentId: ${documentId}`);
+    } catch (error) {
+        console.error(`Error deleting documents and files for documentType: ${documentType} and documentId: ${documentId}`, error);
+    }
+};
+
+
+async function getLastDocumentByTypeAndBusinessId(type, business_id) {
+    return await prisma.documents.findFirst({
+        where: {
+            document_type: type,
+            business_id: business_id
+        },
+        orderBy: {
+            created_at: 'desc'
+        }
+    });
+}
+
 
 module.exports = {
     createDocument,
@@ -503,5 +555,8 @@ module.exports = {
     deleteDocument,
     linkDocumentToMenuItem,
     linkDocumentToLostItem,
-    deleteDocumentsAndFiles
+    deleteDocumentsAndFiles,
+    getLastDocumentByTypeAndBusinessId,
+    deleteDocumentsAndFilesByDocumentId
+
 };
