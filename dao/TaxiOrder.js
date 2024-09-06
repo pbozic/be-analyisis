@@ -59,6 +59,7 @@ async function getOrder(order_id) {
                         }
                     }
                 },
+                grouped_orders: true,
             }
         });
     } catch (e) {

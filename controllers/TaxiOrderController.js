@@ -224,10 +224,12 @@ async function createOrderHelper(req, res, orderData) {
 		} else {
 			ordersData.push(orderData);
 		}
+		let parentOrderId = null;
 		for (let orderData of ordersData) {
 			let num_orders = Math.ceil((prefs.adults + prefs.children_above_140 + prefs.children_under_140) / VEHICLE_CAPACITY[prefs.vehicle_class])
+			console.log("num_orders", num_orders)
 			let start_num_orders = num_orders;
-			let parentOrderId = null;
+			
 			delete orderData.user_id;
 			while (num_orders > 0) {
 			
@@ -302,13 +304,17 @@ async function createOrderHelper(req, res, orderData) {
 				
 				num_orders -= 1;
 			}
-			if (parentOrderId) {
-				order = await TaxiOrderDao.getOrder(parentOrderId, {
-					include: {
-						grouped_orders: true
-					}
-				});
-			}
+			
+		
+		}
+		console.log("parentOrderId", parentOrderId)
+		if (parentOrderId) {
+			order = await TaxiOrderDao.getOrder(parentOrderId, {
+				include: {
+					grouped_orders: true
+				}
+			});
+			console.log("fetching grouped_orders", order.grouped_orders)
 		}
 		if (!order){
 			console.info('Final order is empty!')
@@ -324,7 +330,7 @@ async function createOrderHelper(req, res, orderData) {
 			console.info('Final order created', order)
 		}
 		if (!is_scheduled) {
-			console.log("order send", order)
+			//console.log("order send", order)
 			await TaxiHelper.findTaxiOrderDrivers(order);
 		}
 		return order
