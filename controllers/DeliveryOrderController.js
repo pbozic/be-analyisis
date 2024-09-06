@@ -160,6 +160,10 @@ async function createOrder(req, res) {
 				throw new Error("Insufficient funds");
 			}
 			await UsersDao.removeWalletBalance(user_id, orderData.details.total_price, order.order_id);
+			let transfer = await stripe.transferToConnectedAccount(orderData.details.total_price * 0.8, business.stripe_account_id);
+			if (transfer.id) {
+				console.log("success wallet transfer")
+			}
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				payment: {
 					...order.payment,

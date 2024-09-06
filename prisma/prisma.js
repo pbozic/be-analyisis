@@ -6,7 +6,9 @@ const { handleHidePassword, alwaysAddWalletBalance, handleWalletBalance } = requ
 const { handleS3LinkForFiles } = require("./middlewares/file");
 const { handleS3LinkForDocuments } = require("./middlewares/documents");
 const {generateS3LinksRecursively } = require("./middlewares/$allModels")
-const prisma = new PrismaClient().$extends({
+const prisma = new PrismaClient({
+	log: ['warn', 'error'],
+}).$extends({
 	query: {
 		$allModels: {
 			async $allOperations({ model, operation, args, query }) {
