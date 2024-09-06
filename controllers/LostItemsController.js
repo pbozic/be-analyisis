@@ -4,6 +4,29 @@ const DocumentDao = require("../dao/Document");
 const FileDao = require("../dao/File");
 const S3Helper = require("../lib/s3");
 
+
+
+/**
+ * GET /lost_items
+ * @tag LostItems
+ * @summary Get all lost items with their documents and files
+ * @description Retrieves all lost items, including their associated documents and files.
+ * @operationId getAllLostItems
+ * @response 200 - Successful retrieval of lost items
+ * @responseContent {LostItemsResponse[]} 200.application/json
+ * @response 500 - Error retrieving lost items
+ */
+async function getAllLostItems(req, res) {
+	try {
+		const lostItems = await LostItemsDao.getLostItems();
+		res.status(200).json(lostItems);
+	} catch (e) {
+		console.error("Error retrieving lost items:", e);
+		res.status(500).json({ error: "Error retrieving lost items", detail: e.message });
+	}
+}
+
+
 /**
  * POST /lost_items/report
  * @tag LostItems
@@ -17,9 +40,10 @@ const S3Helper = require("../lib/s3");
  * @response 400 - Error reporting found item
  */
 async function reportFoundItem(req, res) {
-	const { description, found, images } = req.body;
+	const { description, found, images, user } = req.body;
+	console.info('user', user)
 	try {
-		const foundItem = await LostItemsDao.reportFoundItem({description, found});
+		const foundItem = await LostItemsDao.reportFoundItem({description, found}, user);
 
 		if (images && images.files.length > 0) {
 			const document = await DocumentDao.createDocument(images.documentData);
@@ -64,6 +88,7 @@ async function deleteFoundItem(req, res) {
 }
 
 module.exports = {
+	getAllLostItems,
 	reportFoundItem,
 	deleteFoundItem,
 };
