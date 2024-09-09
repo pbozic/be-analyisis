@@ -52,8 +52,21 @@ const getLostItems = async () => {
 	}
 };
 
+const updateLostItem = async (lost_item_id, updateData) => {
+	try {
+		return await prisma.lost_items.update({
+			where: { lost_item_id },
+			data: updateData,
+		});
+	} catch (error) {
+		console.error("Error updating lost item:", error);
+		throw new Error("Error updating lost item");
+	}
+};
+
 module.exports = {
 	reportFoundItem,
 	deleteFoundItem,
-	getLostItems
+	getLostItems,
+	updateLostItem
 };

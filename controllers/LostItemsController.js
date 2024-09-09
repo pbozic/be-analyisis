@@ -87,8 +87,49 @@ async function deleteFoundItem(req, res) {
 	}
 }
 
+/**
+ * PATCH /lost_items/update/:lost_item_id
+ * @tag LostItems
+ * @summary Update a lost item
+ * @description Updates the details of a lost item in the database.
+ * @operationId updateLostItem
+ * @pathParam {string} lost_item_id - The ID of the lost item to update
+ * @bodyContent {UpdateLostItem} application/json
+ * @bodyRequired
+ * @response 200 - Lost item updated successfully
+ * @responseContent {LostItem} 200.application/json
+ * @response 400 - Error updating lost item
+ */
+async function updateLostItem(req, res) {
+	const { lost_item_id } = req.params;
+	const { description, status } = req.body;
+
+	try {
+		if (!description && !status) {
+			return res.status(400).json({ error: "No data provided to update" });
+		}
+
+		const updateData = {};
+		if (description) updateData.description = description;
+		if (status) updateData.status = status;
+
+		const updatedLostItem = await LostItemsDao.updateLostItem(lost_item_id, updateData);
+
+		if (!updatedLostItem) {
+			return res.status(404).json({ error: "Lost item not found" });
+		}
+
+		res.status(200).json(updatedLostItem);
+	} catch (e) {
+		console.error("Error updating lost item:", e);
+		res.status(400).json({ error: "Error updating lost item", detail: e.message });
+	}
+}
+
 module.exports = {
 	getAllLostItems,
 	reportFoundItem,
 	deleteFoundItem,
+	updateLostItem
 };
+
