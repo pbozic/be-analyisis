@@ -740,14 +740,14 @@ async function cancelOrder(req, res) {
  */
 async function rejectOrder(req, res) {
     const { order_id, status, cancellation_reason } = req.body;
-	console.info("TaxiOrderController","CANCEL ORDER", req.body)
+	console.info("TaxiOrderController","REJECT ORDER", req.body)
 	let new_status = status
     try {
 		let order = await TaxiOrderDao.getOrder(order_id);
 
 		if (order.driver) {
 			if (req.user.user_id === order.driver?.user_id) {
-				if (status === TAXI_ORDER_STATUS.TAXI_CANCELED) {
+				if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
 					if(UserSockets.get(order.user_id)) {
 						UserSockets.get(order.user_id).emit('order_restart_search', order_id);
 					}
