@@ -700,12 +700,8 @@ async function updateScheduledUser(req, res) {
 	let updatedData = {...data}
 
 	try {
-		if (pass !== '') {
-			let hash = await bcrypt.hash(pass, Number(process.env.BCRYPT_SALT_ROUNDS));
-			updatedData = {
-				...updatedData,
-				password: hash
-			}
+		if (pass && pass !== '') {
+			updatedData.password = await bcrypt.hash(pass, Number(process.env.BCRYPT_SALT_ROUNDS));
 		}
 
 		let user = await UserDao.updateScheduledUser(user_id, updatedData);
