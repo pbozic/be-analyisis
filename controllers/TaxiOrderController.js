@@ -759,8 +759,7 @@ async function rejectOrder(req, res) {
 				}
 			}
 		}
-
-		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
+		if (req.user.driver_id) await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, req.user.driver_id);
 
 		// Determine the cancellation reason
 		let reason = '';
