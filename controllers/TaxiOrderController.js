@@ -333,8 +333,8 @@ async function createOrderHelper(req, res, orderData) {
 			//console.log("order send", order)
 			await TaxiHelper.findTaxiOrderDrivers(order);
 			if (order.grouped_orders.length > 0) {
-				for (let order of order.grouped_orders) {
-					await TaxiHelper.findTaxiOrderDrivers(order);
+				for (let or of order.grouped_orders) {
+					await TaxiHelper.findTaxiOrderDrivers(or);
 				}
 			}
 		}
