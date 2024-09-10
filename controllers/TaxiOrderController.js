@@ -332,6 +332,11 @@ async function createOrderHelper(req, res, orderData) {
 		if (!is_scheduled) {
 			//console.log("order send", order)
 			await TaxiHelper.findTaxiOrderDrivers(order);
+			if (order.grouped_orders.length > 0) {
+				for (let order of order.grouped_orders) {
+					await TaxiHelper.findTaxiOrderDrivers(order);
+				}
+			}
 		}
 		return order
 	} catch (error) {
@@ -701,7 +706,12 @@ async function cancelOrder(req, res) {
 		} else if (typeof cancellation_reason === 'string' && cancellation_reason.trim() !== '') {
 			reason = cancellation_reason; // Use the raw cancellation reason if it's a non-empty string
 		}
-
+		if (order.grouped_orders.length > 0) {
+			for (let order of order.grouped_orders) {
+				await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
+				await TaxiOrderDao.cancelOrder(order_id, status, reason);
+			}
+		}
 		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);
 
 		if (order.driver_id) {
