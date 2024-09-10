@@ -5,8 +5,40 @@ const UserDao = require("../dao/User");
 const { UserSockets, io } = require('../socket');
 const DeliveryOrderDao = require("../dao/DeliveryOrder");
 const taxiHelpers = require("../lib/taxiHelpers");
-const { resendPendingOrdersToDeliveryDriver } = require("../lib/deliveryHelpers");
+const { resendPendingOrdersToDeliveryDriver, sendActiveOrdersToDeliveryDriver } = require("../lib/deliveryHelpers");
 const DriverDao = require("../dao/Driver");
+
+/**
+ * GET /delivery_drivers/orders
+ * @tag DeliveryDrivers
+ * @summary Send already sent pending or accepted orders to a delivery driver
+ * @description Retrieves a list of orders for a specific delivery driver by their user ID and sends them to the delivery driver via socket emission.
+ * @operationId sendAcceptedOrdersToDeliveryDriver
+ * @response 200 - Successful operation, orders sent to the delivery driver
+ * @response 404 - Delivery Driver not found
+ * @response 400 - Error retrieving orders
+ */
+async function resendDelegatedOrdersToDeliveryDriver(req, res) {
+	const userId = req.user.user_id;
+	console.info('resendDelegatedOrdersToDeliveryDriver', userId)
+	try {
+		const driver = await DeliveryDriverDao.getDeliveryDriverByUserId(userId);
+		if (!driver) {
+			return res.status(404).json({ error: "Driver not found" });
+		}
+
+		// Send already sent orders to this driver
+		// await resendPendingOrdersToDeliveryDriver(driver);
+		// Send active orders to this driver
+		await sendActiveOrdersToDeliveryDriver(driver);
+
+		// Return a 200 status
+		res.status(200).send();
+	} catch (error) {
+		console.error("Error retrieving orders for delivery driver:", error);
+		res.status(400).json({ error: "Error retrieving orders", detail: error.message });
+	}
+}
 
 /**
  * GET /delivery
@@ -103,8 +135,12 @@ async function listDeliveryDriversWithDailyMeals(req, res) {
  * @response 400 - Error retrieving delivery driver information
  */
 async function getDeliveryDriverById(req, res) {
+	console.log('GET DELIVERY DRIVER BY ID', req.params)
 	try {
-		const deliveryDriver = await DeliveryDriverDao.getDeliveryDriverById(req.params.delivery_driver_id);
+		let deliveryDriver;
+		if (req.params?.delivery_driver_id) {
+			deliveryDriver = await DeliveryDriverDao.getDeliveryDriverById(req.params.delivery_driver_id);
+		}
 		if (deliveryDriver) {
 			res.status(200).json(deliveryDriver);
 		} else {
@@ -112,7 +148,7 @@ async function getDeliveryDriverById(req, res) {
 		}
 	} catch (error) {
 		console.error("Error retrieving delivery driver:", error);
-		res.status(400).json({ error: "Error retrieving delivery driver information", detail: error.message });
+		res.status(400).json({ error: "Error retrieving delivery driver information (by delivery driver id)", detail: error.message });
 	}
 }
 
@@ -138,7 +174,7 @@ async function getDeliveryDriverByUserId(req, res) {
 		}
 	} catch (error) {
 		console.error("Error retrieving delivery driver:", error);
-		res.status(400).json({ error: "Error retrieving delivery driver information", detail: error.message });
+		res.status(400).json({ error: "Error retrieving delivery driver (by user_id) information", detail: error.message });
 	}
 }
 
@@ -347,5 +383,6 @@ module.exports = {
 	updateDeliveryDriverOnlineStatus,
 	createDeliveryDriver,
 	getAvailableDeliveryDrivers,
-	getDeliveryDriverByUserId
+	getDeliveryDriverByUserId,
+	resendDelegatedOrdersToDeliveryDriver
 };
