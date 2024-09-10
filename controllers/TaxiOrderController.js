@@ -745,20 +745,20 @@ async function rejectOrder(req, res) {
     try {
 		let order = await TaxiOrderDao.getOrder(order_id);
 
-		if (order.driver) {
-			if (req.user.user_id === order.driver?.user_id) {
-				if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
+
+			if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
+				if (order.driver) {
 					if(UserSockets.get(order.user_id)) {
 						UserSockets.get(order.user_id).emit('order_restart_search', order_id);
 					}
-					new_status = TAXI_ORDER_STATUS.PENDING
-					await TaxiOrderDao.updateOrder(order_id, {
-						status: TAXI_ORDER_STATUS.PENDING,
-						last_sent_at: null,
-					})
 				}
+
+				new_status = TAXI_ORDER_STATUS.PENDING
+				await TaxiOrderDao.updateOrder(order_id, {
+					status: TAXI_ORDER_STATUS.PENDING,
+					last_sent_at: null,
+				})
 			}
-		}
 		if (req.user.driver_id) await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, req.user.driver_id);
 
 		// Determine the cancellation reason

@@ -14,7 +14,7 @@ const authMiddleware = (req, res, next) => {
 	try {
 		const decoded = jwt.verify(token, process.env.JWT_TOKEN_SECRET);
 		req.user = decoded.user;
-		req.socket = UserSockets.get(decoded.user_id); // Attach socket to the request
+		req.socket = UserSockets.get(decoded.user_id);
 		next();
 	} catch (error) {
 		console.log(error)
