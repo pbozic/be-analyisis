@@ -1024,7 +1024,7 @@ async function appendTaxiDriver(req, res) {
 				}
 			}
 		});
-		await TaxiHelper.findTaxiOrderDrivers(order);
+		await TaxiHelper.revokeTaxiOrderFromOtherDrivers(order_id, driver_id);
 		res.status(200).json({"message": 'driver selected'})
 	}
 	catch (e) {
