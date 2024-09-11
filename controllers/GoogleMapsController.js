@@ -32,10 +32,10 @@ async function geocodeAddress(req, res) {
 			},
 		});
 		const location = response.data.results[0]?.geometry.location;
-
+		const formattedAddress = response.data.results[0]?.formatted_address;
 		if (location) {
 			const addressData = {
-				address,
+				address: formattedAddress,
 				coordinates: {
 					latitude: location.lat,
 					longitude: location.lng,
@@ -44,7 +44,7 @@ async function geocodeAddress(req, res) {
 
 			return res.status(200).json({ addressData });
 		} else {
-			return res.status(404).json({ error: 'Location not found' });
+			return res.status(400).json({ error: 'Location not found' });
 		}
 	} catch (error) {
 		console.error('Error fetching geocode:', error.response?.data || error.message || error);
