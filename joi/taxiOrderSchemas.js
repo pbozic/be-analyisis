@@ -18,7 +18,7 @@ const deliveryLocationSchema = Joi.object({
 const createOrderSchema = Joi.object({
 	type: Joi.string().optional(),
 	preferences: Joi.object().unknown().required(),
-	cargo_preferences: Joi.object().unknown().optional(),
+	cargo_preferences: Joi.optional(),
 	route: Joi.array().items(addressSchema).min(1).required(),
 	pickup_location: addressSchema,
 	delivery_location: deliveryLocationSchema.optional(),

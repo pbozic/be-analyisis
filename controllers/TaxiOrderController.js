@@ -332,6 +332,11 @@ async function createOrderHelper(req, res, orderData) {
 		if (!is_scheduled) {
 			//console.log("order send", order)
 			await TaxiHelper.findTaxiOrderDrivers(order);
+			if (order.grouped_orders.length > 0) {
+				for (let or of order.grouped_orders) {
+					await TaxiHelper.findTaxiOrderDrivers(or);
+				}
+			}
 		}
 		return order
 	} catch (error) {
@@ -701,7 +706,12 @@ async function cancelOrder(req, res) {
 		} else if (typeof cancellation_reason === 'string' && cancellation_reason.trim() !== '') {
 			reason = cancellation_reason; // Use the raw cancellation reason if it's a non-empty string
 		}
-
+		if (order.grouped_orders.length > 0) {
+			for (let or of order.grouped_orders) {
+				await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
+				await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
+			}
+		}
 		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);
 
 		if (order.driver_id) {
@@ -740,27 +750,26 @@ async function cancelOrder(req, res) {
  */
 async function rejectOrder(req, res) {
     const { order_id, status, cancellation_reason } = req.body;
-	console.info("TaxiOrderController","CANCEL ORDER", req.body)
+	console.info("TaxiOrderController","REJECT ORDER", req.body)
 	let new_status = status
     try {
 		let order = await TaxiOrderDao.getOrder(order_id);
 
-		if (order.driver) {
-			if (req.user.user_id === order.driver?.user_id) {
-				if (status === TAXI_ORDER_STATUS.TAXI_CANCELED) {
+
+			if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
+				if (order.driver) {
 					if(UserSockets.get(order.user_id)) {
 						UserSockets.get(order.user_id).emit('order_restart_search', order_id);
 					}
-					new_status = TAXI_ORDER_STATUS.PENDING
-					await TaxiOrderDao.updateOrder(order_id, {
-						status: TAXI_ORDER_STATUS.PENDING,
-						last_sent_at: null,
-					})
 				}
-			}
-		}
 
-		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
+				new_status = TAXI_ORDER_STATUS.PENDING
+				await TaxiOrderDao.updateOrder(order_id, {
+					status: TAXI_ORDER_STATUS.PENDING,
+					last_sent_at: null,
+				})
+			}
+		if (req.user.driver_id) await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, req.user.driver_id);
 
 		// Determine the cancellation reason
 		let reason = '';

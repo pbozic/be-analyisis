@@ -1008,101 +1008,200 @@ async function getMyReviews(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 async function getReviewsByUserId(req, res) {
 	try {
-		console.log(req.params)
+		console.log(req.params);
+
+		// Check if the user_id corresponds to a driver
 		let driver = await DriverDao.getDriverByUserId(req.params.user_id);
 
-		console.log("driver", driver.business_id);
-		let business = await prisma.business.findUnique({
-			where: {
-				business_id: driver.business_id
+		if (driver) {
+			// Fetch business associated with the driver
+			let business = await prisma.business.findUnique({
+				where: {
+					business_id: driver.business_id
+				}
+			});
+
+			if (!business?.reviewable_id) {
+				return res.status(200).json([]);
 			}
-		});
-		console.log("business", business.business_id, business.reviewable_id);
-		if (!business.reviewable_id) {
-			return res.status(200).json([]);
-		}
-		let reviews = await prisma.reviews.findMany({
-			where: {
-				reviewable_id: business.reviewable_id
-			},
-			include: {
-				author: {
-					select: {
-						first_name: true,
-						last_name: true,
-						user_id: true,
-						user_role: true,
-						documents: {
-							where: {
-								document_type: "PROFILE_PICTURE"
-							},
-							select: {
-								files: true,
-								document_type: true,
+
+			// Fetch reviews for the business
+			let reviews = await prisma.reviews.findMany({
+				where: {
+					reviewable_id: business.reviewable_id
+				},
+				include: {
+					author: {
+						select: {
+							first_name: true,
+							last_name: true,
+							user_id: true,
+							user_role: true,
+							documents: {
+								where: {
+									document_type: "PROFILE_PICTURE"
+								},
+								select: {
+									files: true,
+									document_type: true
+								}
 							}
 						}
 					},
-				},
-				reviewable: {
-					include: {
-						business: {
-							select: {
-								name: true,
-								business_id: true,
-								documents: {
-									where: {
-										document_type: "PROFILE_PICTURE"
-									},
-									select: {
-										files: true,
-										document_type: true,
+					reviewable: {
+						include: {
+							business: {
+								select: {
+									name: true,
+									business_id: true,
+									documents: {
+										where: {
+											document_type: "PROFILE_PICTURE"
+										},
+										select: {
+											files: true,
+											document_type: true
+										}
 									}
 								}
 							},
-							
-						},
-						user: {
-							select: {
-								first_name: true,
-								last_name: true,
-								user_id: true,
-								user_role: true,
-								documents: {
-									where: {
-										document_type: "PROFILE_PICTURE"
-									},
-									select: {
-										files: true,
-										document_type: true,
+							user: {
+								select: {
+									first_name: true,
+									last_name: true,
+									user_id: true,
+									user_role: true,
+									documents: {
+										where: {
+											document_type: "PROFILE_PICTURE"
+										},
+										select: {
+											files: true,
+											document_type: true
+										}
 									}
 								}
-							},
+							}
 						}
 					}
+				},
+				orderBy: {
+					created_at: 'desc'
 				}
-			},
-			orderBy: {
-				created_at: 'desc',  // Order by 'created_at' field in descending order
+			});
+
+			for (let review of reviews) {
+				if (review.reviewable.user.length > 0) {
+					review.target = review.reviewable.user[0];
+				}
+				if (review.reviewable.business.length > 0) {
+					review.target = review.reviewable.business[0];
+				}
+				review.reviewable = undefined;
 			}
-		});
-		for (let review of reviews) {
-			if (review.reviewable.user.length > 0) {
-				review.target = review.reviewable.user[0];
+
+			res.status(200).json(reviews);
+		} else {
+			// If not a driver, assume it's a regular user and fetch their reviews
+			let user = await prisma.users.findUnique({
+				where: {
+					user_id: req.params.user_id
+				}
+			});
+
+			if (!user) {
+				return res.status(404).json({ error: 'User not found' });
 			}
-			if (review.reviewable.business.length > 0) {
-				review.target = review.reviewable.business[0];
+
+			let reviews = await prisma.reviews.findMany({
+				where: {
+					OR: [
+						{ author_id: user.user_id },  // Reviews authored by the user
+						{ reviewable: { user: { some: { user_id: user.user_id } } } }  // Reviews for the user
+					]
+				},
+				include: {
+					author: {
+						select: {
+							first_name: true,
+							last_name: true,
+							user_id: true,
+							user_role: true,
+							documents: {
+								where: {
+									document_type: "PROFILE_PICTURE"
+								},
+								select: {
+									files: true,
+									document_type: true
+								}
+							}
+						}
+					},
+					reviewable: {
+						include: {
+							business: {
+								select: {
+									name: true,
+									business_id: true,
+									documents: {
+										where: {
+											document_type: "PROFILE_PICTURE"
+										},
+										select: {
+											files: true,
+											document_type: true
+										}
+									}
+								}
+							},
+							user: {
+								select: {
+									first_name: true,
+									last_name: true,
+									user_id: true,
+									user_role: true,
+									documents: {
+										where: {
+											document_type: "PROFILE_PICTURE"
+										},
+										select: {
+											files: true,
+											document_type: true
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				orderBy: {
+					created_at: 'desc'
+				}
+			});
+
+			for (let review of reviews) {
+				if (review.reviewable.user.length > 0) {
+					review.target = review.reviewable.user[0];
+				}
+				if (review.reviewable.business.length > 0) {
+					review.target = review.reviewable.business[0];
+				}
+				review.reviewable = undefined;
 			}
-			review.reviewable = undefined;
+
+			res.status(200).json(reviews);
 		}
-		res.status(200).json(reviews);
-	}
-	catch (e) {
-		console.errorTag("UserController", e);
-		res.status(500).json(e);
+	} catch (e) {
+		console.error("UserController", e);
+		res.status(500).json({ error: 'Internal server error' });
 	}
 }
+
+
 module.exports = {
 	listUsers,
 	listPersonalUsers,

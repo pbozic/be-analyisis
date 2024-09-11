@@ -12,10 +12,11 @@ const fs = require("fs");
 const Constants = require("../lib/constants");
 const { getUsers } = require("../dao/User");
 const { delivery_orders } = require("@prisma/client");
-const { generateItemsFromPreferences } = require("../lib/deliveryHelpers");
+const { generateItemsFromPreferences, resendPendingOrdersToDeliveryDriver, sendActiveOrdersToDeliveryDriver } = require("../lib/deliveryHelpers");
 const { sortLocationsByNearestNeighbor } = require("../lib/helpersLib");
 const { connect } = require("http2");
 const {RESTAURANT_FEE} = require('../lib/constants');
+
 
 /**
  * GET /delivery/orders
@@ -237,9 +238,6 @@ async function createDailyMeals(req, res) {
 		const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
 		const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString();
 
-		const elevenAM = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 11, 0, 0, 0);
-		const elevenAMISO = elevenAM.toISOString();
-
 		const existingOrders = await DeliveryOrderDao.getOrders({
 			where: {
 				created_at: {
@@ -338,6 +336,9 @@ async function createDailyMeals(req, res) {
 			// Update cumulative time
 			cumulativeTime += durationValue;
 
+			// Set ready_for_pickup_at to the current time
+			const readyForPickupAt = new Date().toISOString();
+
 			const orderData = {
 				is_daily_meal: true,
 				items: dailyMealItems,
@@ -351,7 +352,7 @@ async function createDailyMeals(req, res) {
 					delivery_cost: 2.4,
 					delivery_earnings: 2.5,
 					provider_delivery_cost: 2.4,
-					ready_for_pickup_at: elevenAMISO,
+					ready_for_pickup_at: readyForPickupAt,
 					customer_expected_delivery_at: customerExpectedDeliveryAt.toISOString(),
 					floor_number: user.details?.floor_number,
 					door_number: user.details?.door_number,
@@ -394,7 +395,12 @@ async function createDailyMeals(req, res) {
 		}
 
 		console.info('daily, meals', orders);
-		UserSockets.get(user_id).emit("daily_meals", orders);
+		console.info('USERID, meals', user_id, UserSockets.get(user_id));
+		if (UserSockets.get(user_id)) {
+			UserSockets.get(user_id).emit("daily_meals", orders);
+		} else {
+			console.info('USER NOT CONNECTED TO THE SOCKET')
+		}
 
 		res.status(200).json(orders);
 	} catch (error) {

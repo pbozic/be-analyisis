@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const DocumentsController = require("../../controllers/DocumentsController");
+const { deleteDocumentsAndFilesByDocumentId } = require("../../controllers/MenuController");
 
 router.get('/', DocumentsController.listDocuments);
 router.get('/:documentId', DocumentsController.getDocumentById);
@@ -27,5 +28,7 @@ router.patch('/expirationDate', DocumentsController.updateDocumentExpirationDate
 router.patch('/issueDate', DocumentsController.updateDocumentIssueDate);
 router.patch('/files', DocumentsController.updateDocumentFiles);
 router.patch('/additionalInfo', DocumentsController.updateDocumentAdditionalInfo);
+
+router.delete('/files/:field/:id', deleteDocumentsAndFilesByDocumentId);
 
 module.exports = router;

@@ -124,6 +124,7 @@ model users {
   transfer_push_notification_preferences Json?
   delivery_push_notification_preferences Json?
   spoken_languages                       Json?
+  lost_items                             lost_items[]
 }
 
 model documents {
@@ -486,11 +487,15 @@ model reservations {
 }
 
 model lost_items {
-  lost_item_id String      @id @default(uuid()) @db.Uuid
+  lost_item_id String            @id @default(uuid()) @db.Uuid
+  user_id      String?           @db.Uuid
+  status       LOST_FOUND_STATUS @default(REPORTED)
   description  String
   documents    documents[]
-  found        Boolean?    @default(false)
-  created_at   DateTime    @default(now()) @db.Timestamptz(6)
+  found        Boolean?          @default(false)
+  created_at   DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+  user         users?            @relation(fields: [user_id], references: [user_id], onDelete: SetNull) // Update the relation
 }
 
 model flags {
@@ -614,6 +619,8 @@ enum DOCUMENT_TYPE {
   LOST_ITEM
 
   HEALTH_DECLARATION
+
+  DAILY_MEALS_MENU
 }
 
 enum TAXI_ORDER_STATUS {
@@ -706,4 +713,9 @@ enum ORDER_TYPE {
 enum SORTING_TYPE {
   AUTOMATIC
   MANUAL
+}
+
+enum LOST_FOUND_STATUS {
+  REPORTED
+  RESOLVED
 }

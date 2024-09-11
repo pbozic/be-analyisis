@@ -94,6 +94,14 @@ const removeAllFilesFromDocument = async (documentId) => {
 	}
 };
 
+async function getFilesByDocumentId(document_id) {
+	return await prisma.files.findMany({
+		where: {
+			document_id: document_id
+		}
+	});
+}
+
 
 module.exports = {
 	addFileToDocument,
@@ -101,4 +109,5 @@ module.exports = {
 	updateFileInDocument,
 	removeFileFromDocument,
 	removeAllFilesFromDocument,
+	getFilesByDocumentId
 };
