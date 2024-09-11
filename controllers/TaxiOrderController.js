@@ -212,10 +212,7 @@ async function createOrderHelper(req, res, orderData) {
 		
 		let prefs = orderData.preferences
 
-		let seats_Adults = prefs.adults;
-		let seats_ChildrenAbove140 = prefs.children_above_140;
-		let seats_ChildrenUnder140 = prefs.children_under_140;
-		let total_seats = seats_Adults + seats_ChildrenAbove140 + seats_ChildrenUnder140;
+
 
 		let is_scheduled = prefs.departure_date != null;
 		let is_repeat = false;
@@ -234,6 +231,11 @@ async function createOrderHelper(req, res, orderData) {
 		}
 		let parentOrderId = null;
 		for (let orderData of ordersData) {
+
+			let seats_Adults = prefs.adults;
+			let seats_ChildrenAbove140 = prefs.children_above_140;
+			let seats_ChildrenUnder140 = prefs.children_under_140;
+			let total_seats = seats_Adults + seats_ChildrenAbove140 + seats_ChildrenUnder140;
 			let num_orders = Math.ceil((total_seats) / VEHICLE_CAPACITY[prefs.vehicle_class])
 			console.log("num_orders", num_orders)
 			let start_num_orders = num_orders;
