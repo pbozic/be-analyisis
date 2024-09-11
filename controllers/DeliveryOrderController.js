@@ -331,16 +331,20 @@ async function createDailyMeals(req, res) {
 			if (!user) continue;
 
 			const dailyMealItems = user.daily_meal_preferences
-				? generateItemsFromPreferences(user.daily_meal_preferences, { price: 25, discount: 0.25 })
-				: generateItemsFromPreferences({ normal: { amount: 1 }, substitution: { amount: 0 } }, { price: 25, discount: 0.25 });
+				? generateItemsFromPreferences(user.daily_meal_preferences, { price: 0, discount: 0 })
+				: generateItemsFromPreferences({ normal: { amount: 1 }, substitution: { amount: 0 } }, { price: 0, discount: 0 });
 
 			let { result } = await gApi.distanceBetweenTwoPoints(delivery_driver.location.coordinates, userAddress.coordinates, "driving", new Date());
 			const durationValue = result.rows[0].elements[0].duration.value;
 
 			// Calculate expected delivery time based on cumulative time
-			const customerExpectedDeliveryAt = new Date(new Date().getTime() + cumulativeTime * 1000 + durationValue * 1000);
+			const customerExpectedDeliveryAt = new Date(
+				new Date().getTime() + cumulativeTime * 1000 + durationValue * 1000 + (5 * 60 * 1000)
+			);
 			cumulativeTime += durationValue;
 			const readyForPickupAt = new Date().toISOString();
+
+			console.info('CUSTOMER EXPECTED DELIVERY AT: ', customerExpectedDeliveryAt.toISOString())
 
 			const orderData = {
 				is_daily_meal: true,
@@ -442,8 +446,10 @@ async function acceptOrder(req, res) {
 		let { result } = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, order.delivery_location.coordinates, "driving", new Date());
 		order.details.distance = result.rows[0].elements[0].distance.text;
 		order.details.duration = result.rows[0].elements[0].duration.text;
-		order.details.customer_expected_delivery_at = new Date(new Date().getTime() + result.rows[0].elements[0].duration.value * 60 * 1000);
-		console.log(order.details.customer_expected_delivery_at, "expected delivery ...");
+		if (!order?.is_daily_meal) {
+			order.details.customer_expected_delivery_at = new Date(new Date().getTime() + result.rows[0].elements[0].duration.value * 60 * 1000);
+			console.log(order.details.customer_expected_delivery_at, "expected delivery ...");
+		}
 		order = await DeliveryOrderDao.updateOrder(order.order_id, {
 			details: order.details
 		});

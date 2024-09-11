@@ -9,7 +9,7 @@ const { resendPendingOrdersToDeliveryDriver, sendActiveOrdersToDeliveryDriver } 
 const DriverDao = require("../dao/Driver");
 
 /**
- * GET /delivery_drivers/orders
+ * GET /delivery_drivers/orders/user_id
  * @tag DeliveryDrivers
  * @summary Send already sent pending or accepted orders to a delivery driver
  * @description Retrieves a list of orders for a specific delivery driver by their user ID and sends them to the delivery driver via socket emission.
@@ -19,7 +19,7 @@ const DriverDao = require("../dao/Driver");
  * @response 400 - Error retrieving orders
  */
 async function resendDelegatedOrdersToDeliveryDriver(req, res) {
-	const userId = req.user.user_id;
+	const userId = req.params.user_id
 	console.info('resendDelegatedOrdersToDeliveryDriver', userId)
 	try {
 		const driver = await DeliveryDriverDao.getDeliveryDriverByUserId(userId);

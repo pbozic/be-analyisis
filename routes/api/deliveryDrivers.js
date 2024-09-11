@@ -6,7 +6,7 @@ const joi = require("../../middleware/joi");
 const { updateSchema } = require("../../joi/deliveryDriverSchemas");
 
 router.get("/", DeliveryDriverController.listDeliveryDrivers);
-router.get("/orders", DeliveryDriverController.resendDelegatedOrdersToDeliveryDriver);
+router.get("/orders/:user_id", DeliveryDriverController.resendDelegatedOrdersToDeliveryDriver);
 router.get("/online", DeliveryDriverController.listOnlineDeliveryDrivers);
 router.get("/available", DeliveryDriverController.getAvailableDeliveryDrivers);
 router.get("/daily-meals", DeliveryDriverController.listDeliveryDriversWithDailyMeals);
