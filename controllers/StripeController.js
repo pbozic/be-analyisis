@@ -48,6 +48,7 @@ async function handleWebhook(req, res) {
     const event = req.body;
     let paymentIntent;
     let order;
+    console.log("WEBHOOK", event.type)
     // Handle the event
     switch (event.type) {
         case 'payment_intent.succeeded':

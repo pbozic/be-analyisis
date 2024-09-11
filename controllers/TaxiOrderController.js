@@ -8,6 +8,8 @@ const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, ORDER_TYPE } = require("../lib/cons
 const { User } = require("@onesignal/node-onesignal");
 const { sendNotificationToUser } = require("../lib/oneSignal");
 const { sendOrderNotifications } = require("../lib/notifications");
+const {sleep, range} = require("../lib/helpersLib");
+
 /**
  * GET /taxi/order/{orderId}
  * @tag Taxi
@@ -209,6 +211,12 @@ async function createOrderHelper(req, res, orderData) {
 	try {
 		
 		let prefs = orderData.preferences
+
+		let seats_Adults = prefs.adults;
+		let seats_ChildrenAbove140 = prefs.children_above_140;
+		let seats_ChildrenUnder140 = prefs.children_under_140;
+		let total_seats = seats_Adults + seats_ChildrenAbove140 + seats_ChildrenUnder140;
+
 		let is_scheduled = prefs.departure_date != null;
 		let is_repeat = false;
 		if (prefs.repeat_ride && prefs.repeat_ride.some(item => item.value === "do_not_repeat")) {
@@ -226,13 +234,43 @@ async function createOrderHelper(req, res, orderData) {
 		}
 		let parentOrderId = null;
 		for (let orderData of ordersData) {
-			let num_orders = Math.ceil((prefs.adults + prefs.children_above_140 + prefs.children_under_140) / VEHICLE_CAPACITY[prefs.vehicle_class])
+			let num_orders = Math.ceil((total_seats) / VEHICLE_CAPACITY[prefs.vehicle_class])
 			console.log("num_orders", num_orders)
 			let start_num_orders = num_orders;
 			
 			delete orderData.user_id;
 			while (num_orders > 0) {
-			
+				let availableSeats = VEHICLE_CAPACITY[prefs.vehicle_class];
+				let adults = 0;
+				let children_above_140 = 0;
+				let children_under_140 = 0;
+
+				for (let i of range(availableSeats)) { 
+					if (availableSeats === 0) {
+						break;
+					}
+					if (seats_Adults > 0) {
+						adults += 1;
+						seats_Adults -= 1;
+						availableSeats -= 1;
+					} else if (seats_ChildrenAbove140 > 0) {
+						children_above_140 += 1;
+						seats_ChildrenAbove140 -= 1;
+						availableSeats -= 1;
+					}
+					else if (seats_ChildrenUnder140 > 0) {
+						children_under_140 += 1;
+						seats_ChildrenUnder140 -= 1;
+						availableSeats -= 1;
+					} else {
+						break;
+					}
+				}
+				
+				orderData.preferences.adults = adults;
+				orderData.preferences.children_above_140 = children_above_140;
+				orderData.preferences.children_under_140 = children_under_140;
+
 				if (parentOrderId) {
 					if (orderData.driver) {
 						order = await TaxiOrderDao.createOrder({
@@ -334,6 +372,7 @@ async function createOrderHelper(req, res, orderData) {
 			await TaxiHelper.findTaxiOrderDrivers(order);
 			if (order.grouped_orders.length > 0) {
 				for (let or of order.grouped_orders) {
+					console.log("Sending Grouped Order: " + or.order_id)
 					await TaxiHelper.findTaxiOrderDrivers(or);
 				}
 			}
