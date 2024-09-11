@@ -220,6 +220,13 @@ async function createDailyMeals(req, res) {
 	const { user_id, delivery_driver } = req.body;
 
 	console.info('DELIVERY DRIVER', user_id, delivery_driver);
+
+	const userSocket = UserSockets.get(user_id);
+	if (!userSocket) {
+		console.info('User is not connected to the socket');
+		return res.status(400).json({ message: "User is not connected to the socket." });
+	}
+
 	try {
 		const subscribedUsers = await getUsers({
 			where: {
@@ -332,11 +339,7 @@ async function createDailyMeals(req, res) {
 
 			// Calculate expected delivery time based on cumulative time
 			const customerExpectedDeliveryAt = new Date(new Date().getTime() + cumulativeTime * 1000 + durationValue * 1000);
-
-			// Update cumulative time
 			cumulativeTime += durationValue;
-
-			// Set ready_for_pickup_at to the current time
 			const readyForPickupAt = new Date().toISOString();
 
 			const orderData = {
@@ -394,14 +397,7 @@ async function createDailyMeals(req, res) {
 			orders.push(order);
 		}
 
-		console.info('daily, meals', orders);
-		console.info('USERID, meals', user_id, UserSockets.get(user_id));
-		if (UserSockets.get(user_id)) {
-			UserSockets.get(user_id).emit("daily_meals", orders);
-		} else {
-			console.info('USER NOT CONNECTED TO THE SOCKET')
-		}
-
+		userSocket.emit("daily_meals", orders);
 		res.status(200).json(orders);
 	} catch (error) {
 		console.error(error);
