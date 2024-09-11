@@ -373,6 +373,14 @@ const createNewUser = async (user, hashPassword = false) => {
 			if (user.email) {
 				email = user.email.toLowerCase();
 			}
+			let exists = await prisma.users.findFirst({
+				where: {
+					email: email,
+				},
+			});
+			if (exists) {
+				throw new Error("User with that email already exists");
+			}
 			// Replace the plain text password with the hashed password
 			newUser = {
 				...user,

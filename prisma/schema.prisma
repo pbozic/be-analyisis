@@ -387,6 +387,7 @@ model delivery_orders {
   find_drivers_attempts Int?                  @default(0)
   is_daily_meal         Boolean               @default(false)
   flags                 Json?
+  wallet_transfer       wallet_transfer_history[]
 }
 
 model delivery_order_sent {
@@ -530,6 +531,16 @@ model delivery_driver_history_locations {
   delivery_driver                     delivery_drivers?      @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
   created_at                          DateTime               @default(now()) @db.Timestamptz(6)
   updated_at                          DateTime               @default(now()) @updatedAt @db.Timestamptz(6)
+}
+
+model wallet_transfer_history {
+  wallet_transfer_history_id String   @id @default(uuid()) @db.Uuid
+  order_id                   String   @db.Uuid
+  amount                     Float
+  created_at                 DateTime @default(now()) @db.Timestamptz(6)
+  updated_at                 DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  success                    Boolean
+  order                      delivery_orders? @relation(fields: [order_id], references: [order_id])
 }
 
 enum USER_ROLES {

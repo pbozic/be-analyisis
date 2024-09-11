@@ -14,7 +14,8 @@ const { getUsers } = require("../dao/User");
 const { delivery_orders } = require("@prisma/client");
 const { generateItemsFromPreferences } = require("../lib/deliveryHelpers");
 const { sortLocationsByNearestNeighbor } = require("../lib/helpersLib");
-
+const { connect } = require("http2");
+const {RESTAURANT_FEE} = require('../lib/constants');
 
 /**
  * GET /delivery/orders
@@ -160,10 +161,9 @@ async function createOrder(req, res) {
 				throw new Error("Insufficient funds");
 			}
 			await UsersDao.removeWalletBalance(user_id, orderData.details.total_price, order.order_id);
-			let transfer = await stripe.transferToConnectedAccount(orderData.details.total_price * 0.8, business.stripe_account_id);
-			if (transfer.id) {
-				console.log("success wallet transfer")
-			}
+			let WALLET_AMOUNT = orderData.details.total_price * (1 - RESTAURANT_FEE);
+			WALLET_AMOUNT = Math.round(WALLET_AMOUNT * 100);
+			console.log("WALLET_AMOUNT", WALLET_AMOUNT);
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				payment: {
 					...order.payment,
@@ -171,6 +171,24 @@ async function createOrder(req, res) {
 				},
 				status: "CUSTOMER_PAYMENT_SUCCESSFUL"
 			});
+			let balance = await stripe.getBalance();
+			console.log("balance", balance);
+			let transfer = await stripe.transferToConnectedAccount(WALLET_AMOUNT, business.stripe_account_id);
+			let walletTransfer = await prisma.wallet_transfers.create(
+				{
+					data: {
+						amount: WALLET_AMOUNT,
+						order: {
+							connect: {
+								order_id: order.order_id
+							}
+						},
+						success: transfer.id ? true : false
+
+					}
+				}
+			);
+			
 		} else if (order.payment.type === "CASH") {
 			// io.to("orders_" + order.business_id).emit('new_order', order);
 		}
