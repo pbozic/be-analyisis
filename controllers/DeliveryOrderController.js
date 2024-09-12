@@ -357,7 +357,7 @@ async function createDailyMeals(req, res) {
 					provider_address: provider.address,
 					business_id: provider.business_id,
 					delivery_cost: 2.4,
-					delivery_earnings: 2.5,
+					delivery_earnings: 0,
 					provider_delivery_cost: 2.4,
 					ready_for_pickup_at: readyForPickupAt,
 					customer_expected_delivery_at: customerExpectedDeliveryAt.toISOString(),
