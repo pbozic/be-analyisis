@@ -375,7 +375,7 @@ async function createDailyMeals(req, res) {
 					date: new Date().toISOString(),
 				},
 				courier_instructions: {
-					text: user.details.note,
+					text: user.details?.note,
 				},
 				restaurant_message: {
 					text: null,
