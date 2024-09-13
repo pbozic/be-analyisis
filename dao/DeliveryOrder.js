@@ -248,7 +248,7 @@ async function acceptOrder(order_id, user) {
 			},
 		});
 		console.log("delivery_order_sent", delivery_order_sent)
-		prisma.delivery_drivers.update({
+		await prisma.delivery_drivers.update({
 			where: {
 				delivery_driver_id: user.driver.delivery_driver_id
 			},
