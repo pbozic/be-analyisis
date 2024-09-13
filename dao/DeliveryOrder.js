@@ -386,6 +386,7 @@ async function completeOrder(order_id) {
 				},
 			}
 		})
+		console.log("DELIVERY DRIVER ORDERS", orders.length)
 		await prisma.delivery_drivers.update({
 			where: {
 				delivery_driver_id: delivery_order.delivery_driver_id
