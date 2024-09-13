@@ -370,12 +370,28 @@ async function completeOrder(order_id) {
 				status: "DELIVERY_COMPLETED"
 			}
 		});
+		let orders = await prisma.delivery_orders.findMany({
+			where: {
+				delivery_driver_id: delivery_order.delivery_driver_id,
+				status: {
+					notIn: [
+						DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+						DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
+						DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
+						DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
+						DELIVERY_ORDER_STATUS.DELIVERY_ARRIVED,
+						DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
+						DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
+					]
+				},
+			}
+		})
 		await prisma.delivery_drivers.update({
 			where: {
 				delivery_driver_id: delivery_order.delivery_driver_id
 			},
 			data: {
-				on_order: false
+				on_order: orders.length > 0
 			}
 		});
 		return delivery_order;
