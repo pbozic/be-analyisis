@@ -360,8 +360,8 @@ model taxi_order_sent {
 }
 
 model delivery_orders {
-  order_id              String                @id @default(uuid()) @db.Uuid
-  user_id               String?               @db.Uuid
+  order_id              String                    @id @default(uuid()) @db.Uuid
+  user_id               String?                   @db.Uuid
   route                 Json
   pickup_location       Json
   delivery_location     Json
@@ -372,21 +372,21 @@ model delivery_orders {
   courier_instructions  Json?
   restaurant_message    Json?
   scheduled             Json?
-  timeline              Json                  @default("[]")
+  timeline              Json                      @default("[]")
   status                DELIVERY_ORDER_STATUS
-  last_sent_at          DateTime?             @db.Timestamptz(6)
-  created_at            DateTime              @default(now()) @db.Timestamptz(6)
-  updated_at            DateTime              @default(now()) @updatedAt @db.Timestamptz(6)
-  user                  users?                @relation(fields: [user_id], references: [user_id])
+  last_sent_at          DateTime?                 @db.Timestamptz(6)
+  created_at            DateTime                  @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                  @default(now()) @updatedAt @db.Timestamptz(6)
+  user                  users?                    @relation(fields: [user_id], references: [user_id])
   history               delivery_order_sent[]
-  delivery_driver_id    String?               @db.Uuid
-  delivery_driver       delivery_drivers?     @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
-  business_id           String?               @db.Uuid
-  business              business?             @relation(fields: [business_id], references: [business_id])
+  delivery_driver_id    String?                   @db.Uuid
+  delivery_driver       delivery_drivers?         @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
+  business_id           String?                   @db.Uuid
+  business              business?                 @relation(fields: [business_id], references: [business_id])
   payment_intent_id     String?
   transactions          transactions[]
-  find_drivers_attempts Int?                  @default(0)
-  is_daily_meal         Boolean               @default(false)
+  find_drivers_attempts Int?                      @default(0)
+  is_daily_meal         Boolean                   @default(false)
   flags                 Json?
   wallet_transfer       wallet_transfer_history[]
 }
@@ -539,11 +539,11 @@ model delivery_driver_history_locations {
 }
 
 model wallet_transfer_history {
-  wallet_transfer_history_id String   @id @default(uuid()) @db.Uuid
-  order_id                   String   @db.Uuid
+  wallet_transfer_history_id String           @id @default(uuid()) @db.Uuid
+  order_id                   String           @db.Uuid
   amount                     Float
-  created_at                 DateTime @default(now()) @db.Timestamptz(6)
-  updated_at                 DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  created_at                 DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at                 DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
   success                    Boolean
   order                      delivery_orders? @relation(fields: [order_id], references: [order_id])
 }
@@ -633,7 +633,6 @@ enum TAXI_ORDER_STATUS {
   TAXI_ARRIVED
   TAXI_COMPLETED
   CUSTOMER_CANCELED
-
   TRANSFER_ACCEPTED
   TRANSFER_COMPLETED
 }

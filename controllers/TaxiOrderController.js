@@ -171,7 +171,7 @@ async function getCompletedTaxiOrders(req, res) {
 async function getTaxiOrders(req, res) {
 	try {
 		const orders = await TaxiOrderDao.getOrders();
-		console.tag("TaxiOrderController","taxi orders", orders);
+		// console.tag("TaxiOrderController","taxi orders", orders);
 		res.status(200).json(orders);
 	} catch (e) {
 		console.errorTag("TaxiOrderController",e);

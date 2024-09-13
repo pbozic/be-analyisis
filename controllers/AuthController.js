@@ -695,9 +695,9 @@ async function createScheduledUser(req, res) {
  */
 async function updateScheduledUser(req, res) {
 	const {user_id, data, addresses} = req.body
-	const pass = data.password
-	delete data.password
-	let updatedData = {...data}
+	const pass = data?.password
+	delete data?.password
+	let updatedData = data ? {...data} : {}
 
 	try {
 		if (pass && pass !== '') {
@@ -705,7 +705,6 @@ async function updateScheduledUser(req, res) {
 		}
 
 		let user = await UserDao.updateScheduledUser(user_id, updatedData);
-
 		if (user) {
 			let addressList = [];
 
@@ -722,7 +721,6 @@ async function updateScheduledUser(req, res) {
 					addressList.push(address);
 				}
 			}
-
 			return res.status(200).json({ user, addresses: addressList });
 		}
 	} catch (e) {
