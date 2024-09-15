@@ -315,15 +315,17 @@ async function createDailyMeals(req, res) {
 				.map(user => user.address);
 
 			console.info('sortedUserAddresses MANUAL', sortedUserAddresses);
+			console.info('sortedUserAddresses MANUAL', sortedUserAddresses[0].address);
 		} else {
 			// Automatic sorting by nearest neighbor
 			sortedUserAddresses = sortLocationsByNearestNeighbor([providerAddress, ...validUsersToCreateOrdersFor.map(user => user.address)]).slice(1);
 			console.info('sortedUserAddresses AUTOMATIC', sortedUserAddresses);
+			console.info('sortedUserAddresses AUTOMATIC', sortedUserAddresses[0].address);
 		}
 
 		const orders = [];
 		let cumulativeTime = 0; // Track the total elapsed time
-
+		let scheduledMealsRoute = [providerAddress]
 		for (let i = 0; i < sortedUserAddresses.length; i++) {
 			const userAddress = sortedUserAddresses[i];
 			const user = validUsersToCreateOrdersFor.find(u => u.address.address === userAddress.address);
@@ -343,8 +345,6 @@ async function createDailyMeals(req, res) {
 			);
 			cumulativeTime += durationValue;
 			const readyForPickupAt = new Date().toISOString();
-
-			console.info('CUSTOMER EXPECTED DELIVERY AT: ', customerExpectedDeliveryAt.toISOString())
 
 			const orderData = {
 				is_daily_meal: true,
@@ -398,10 +398,22 @@ async function createDailyMeals(req, res) {
 			}, user.user_id);
 
 			await DeliveryOrderDao.createOrderSent(order.order_id, delivery_driver);
+			await DeliveryOrderDao.connectOrderWithDriver(order.order_id, delivery_driver.delivery_driver_id);
 			orders.push(order);
+			scheduledMealsRoute.push(userAddress)
 		}
 
-		userSocket.emit("daily_meals", orders);
+		scheduledMealsRoute.push(providerAddress)
+		await DeliveryDriverDao.updateDeliveryDriver(delivery_driver?.delivery_driver_id, {
+			scheduled_meals_route: scheduledMealsRoute,
+			delivery_timeline: []
+		});
+
+		userSocket.emit("daily_meals", {
+			orders: orders,
+			scheduled_meals_route: scheduledMealsRoute
+		});
+
 		res.status(200).json(orders);
 	} catch (error) {
 		console.error(error);
@@ -550,7 +562,6 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 						DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
 						DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
 						DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
-						DELIVERY_ORDER_STATUS.DELIVERY_ARRIVED,
 						DELIVERY_ORDER_STATUS.MERCHANT_REFUNDED,
 						DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
 					]

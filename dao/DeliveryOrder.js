@@ -25,7 +25,6 @@ async function getActiveDeliveryOrders() {
 						DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
 						DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
 						DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
-						DELIVERY_ORDER_STATUS.DELIVERY_ARRIVED,
 						DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
 						DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
 					]
@@ -67,7 +66,6 @@ async function getDeliveryOrderIfNotCompleted(user_id) {
 						DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
 						DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
 						DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
-						DELIVERY_ORDER_STATUS.DELIVERY_ARRIVED,
 						DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
 						DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
 					]
@@ -118,7 +116,6 @@ async function getActiveOrdersByDeliveryDriverId(delivery_driver_id) {
 						DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
 						DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
 						DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
-						DELIVERY_ORDER_STATUS.DELIVERY_ARRIVED,
 						DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
 						DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
 					]
@@ -274,6 +271,27 @@ async function acceptOrder(order_id, user) {
 	}
 }
 
+async function connectOrderWithDriver(order_id, delivery_driver_id) {
+	try {
+		return await prisma.delivery_orders.update({
+			where: {
+				order_id
+			},
+			data: {
+				delivery_driver: {
+					connect: {
+						delivery_driver_id: delivery_driver_id
+					}
+				}
+			}
+		});
+	} catch (error) {
+		console.error(`Error connecting order ${order_id} with driver ${delivery_driver_id}:`, error);
+		throw new Error(`Failed to connect order ${order_id} with driver ${delivery_driver_id}`);
+	}
+}
+
+
 async function updateOrderStatus(order_id, status) {
 	try {
 		return prisma.delivery_orders.update({
@@ -379,7 +397,6 @@ async function completeOrder(order_id) {
 						DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
 						DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
 						DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
-						DELIVERY_ORDER_STATUS.DELIVERY_ARRIVED,
 						DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
 						DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
 					]
@@ -558,5 +575,6 @@ module.exports = {
 	updateOrderDeliveryTime,
 	getDeliveryOrderIfNotCompleted,
 	getAlreadySentOrdersByDeliveryDriverId,
-	getActiveOrdersByDeliveryDriverId
+	getActiveOrdersByDeliveryDriverId,
+	connectOrderWithDriver
 };

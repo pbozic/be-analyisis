@@ -327,7 +327,7 @@ async function updateDeliveryDriverOnlineStatus(req, res) {
 
 		if (online) {
 			io.emit("driver_available", updatedDeliveryDriver);
-			await resendPendingOrdersToDeliveryDriver(updatedDeliveryDriver);
+			// await resendPendingOrdersToDeliveryDriver(updatedDeliveryDriver);
 		} else {
 			io.emit("driver_unavailable", delivery_driver_id);
 		}
