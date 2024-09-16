@@ -81,7 +81,8 @@ async function login(req, res) {
 						address: true,
 					},
 				},
-				driver: true
+				driver: true,
+				delivery_driver: true
 			},
 		});
 		let payment_methods = []

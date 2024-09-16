@@ -156,7 +156,8 @@ async function me(req, res) {
 						address: true,
 					},
 				},
-				driver: true
+				driver: true,
+				delivery_driver: true
 			},
 		});
 		if (user) {
