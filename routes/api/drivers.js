@@ -13,6 +13,7 @@ router.get("/unavailable", DriverController.getUnavailableDrivers);
 router.get("/orders", DriverController.resendDelegatedOrdersToDriver);
 router.get("/:driver_id", DriverController.getDriverById);
 router.get("/:driver_id/location", DriverController.getDriverLocation);
+router.get("/:driver_id/history_location/:start_time/:end_time", DriverController.getDriverHistoryLocations);
 
 router.patch("/", DriverController.updateDriver);
 router.patch("/ride_requirements", DriverController.updateDriverRideRequirements);

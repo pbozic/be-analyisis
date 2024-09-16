@@ -367,6 +367,35 @@ async function handleSosAlert(req, res) {
 	}
 }
 
+/**
+ * GET /drivers/:driver_id/history_location/:start_time/:end_time
+ * @tag Drivers
+ * @summary Get history of locations for a driver.
+ * @description Get history of locations for a driver with a given driver id and between specified time interval
+ * @operationId getDriverLocationsController
+ * @bodyContent {Driver} application/json
+ * @bodyRequired
+ * @response 201 - Driver history locations fetched successfully
+ * @responseContent {Driver} 201.application/json
+ * @response 400 - Error fetching history locations for a particular driver
+ */
+async function getDriverHistoryLocations (req, res) {
+	const { driver_id, start_time, end_time } = req.params;
+	console.info(req.params, 'getDriverHistoryLocations')
+
+	if (!driver_id || !start_time || !end_time) {
+		return res.status(400).json({ message: 'Missing required parameters' });
+	}
+
+	try {
+		const locations = await DriverDao.getDriverLocationsWithPerformance(driver_id, start_time, end_time);
+		res.status(200).json(locations);
+	} catch (error) {
+		console.error('Error fetching driver locations:', error);
+		res.status(500).json({ message: 'Something went wrong...' });
+	}
+}
+
 module.exports = {
 	listDrivers,
 	listOnlineDrivers,
@@ -381,5 +410,6 @@ module.exports = {
 	resendDelegatedOrdersToDriver,
 	listDriversFull,
 	getUnavailableDrivers,
-	handleSosAlert
+	handleSosAlert,
+	getDriverHistoryLocations
 };

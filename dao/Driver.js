@@ -1,6 +1,7 @@
 const { file } = require("googleapis/build/src/apis/file");
 const prisma= require("../prisma/prisma");
 const UserDao = require("./User");
+const { calculateDistance, calculateTimeDifference } = require("../lib/helpersLib");
 
 const getDrivers = async (args) => {
 	try {
@@ -380,6 +381,127 @@ const getBusinessByDriverId = async (driver_id) => {
         throw error;
     }
 };
+async function getDriverLocations(driverId, startTime, endTime) {
+	try {
+		const locations = await prisma.driver_history_locations.findMany({
+			where: {
+				driver_id: driverId,
+				created_at: {
+					gte: new Date(startTime),
+					lte: new Date(endTime),
+				},
+			},
+			select: {
+				location: true,
+				created_at: true,
+			},
+			orderBy: {
+				created_at: 'asc',
+			},
+		});
+
+		// Format the results
+		const formattedLocations = locations.map((entry) => {
+			const location = entry.location;
+			return {
+				address: location?.address || null,
+				coordinates: {
+					latitude: location?.coordinates?.latitude || null,
+					longitude: location?.coordinates?.longitude || null,
+				},
+				timestamp: entry.created_at,
+			};
+		});
+
+		return formattedLocations;
+	} catch (error) {
+		console.error('Error fetching driver locations:', error);
+		throw new Error('Could not fetch driver locations');
+	}
+}
+
+async function getDriverLocationsWithPerformance(driverId, startTime, endTime) {
+	try {
+		const locations = await prisma.driver_history_locations.findMany({
+			where: {
+				driver_id: driverId,
+				created_at: {
+					gte: new Date(startTime),
+					lte: new Date(endTime),
+				},
+			},
+			select: {
+				location: true,
+				created_at: true,
+			},
+			orderBy: {
+				created_at: 'asc',
+			},
+		});
+
+		// Initialize previous location for distance calculation
+		let previousLocation = null;
+		let totalScore = 0;
+
+		const formattedLocations = locations.map((entry, index) => {
+			const location = entry.location;
+			const currentCoordinates = {
+				latitude: location?.coordinates?.latitude || null,
+				longitude: location?.coordinates?.longitude || null,
+			};
+
+			// First location has no distance or time
+			if (index === 0) {
+				previousLocation = { ...currentCoordinates, timestamp: entry.created_at };
+				return {
+					...currentCoordinates,
+					timestamp: entry.created_at,
+					distance: 0, // First location has 0 distance
+					time_taken: 0, // First location has no time taken
+					performance_score: 0, // First location has 0 score
+				};
+			}
+
+			// Calculate distance between the previous and current location
+			const distance = calculateDistance(
+				previousLocation.latitude, previousLocation.longitude,
+				currentCoordinates.latitude, currentCoordinates.longitude
+			);
+
+			// Calculate time taken between the previous and current location
+			const time_taken = calculateTimeDifference(previousLocation.timestamp, entry.created_at);
+
+			// Calculate the speed (distance per minute)
+			const speed = distance / time_taken;
+
+			// Assume a threshold speed, e.g., normal speed = 50 km/h (0.83 km/min)
+			const normalSpeed = 0.83; // 50 km/h in km/min
+			const performance_score =  normalSpeed / speed
+
+			totalScore += performance_score;
+
+			// Update previous location
+			previousLocation = { ...currentCoordinates, timestamp: entry.created_at };
+
+			return {
+				...currentCoordinates,
+				timestamp: entry.created_at,
+				distance: distance, // Distance between this and the previous location
+				time_taken: time_taken, // Time taken in minutes
+				performance_score: performance_score, // Performance score based on speed
+			};
+		});
+
+		// Calculate the average score for the whole trip
+		const averageScore = totalScore / (locations.length - 1);
+
+		return { locations: formattedLocations, averageScore };
+	} catch (error) {
+		console.error('Error fetching driver locations:', error);
+		throw new Error('Could not fetch driver locations');
+	}
+}
+
 
 
 
@@ -398,5 +520,7 @@ module.exports = {
 	getAvailableDrivers,
 	updateDriverRideRequirements,
 	getDriversFull,
-	getUnavailableDrivers
+	getUnavailableDrivers,
+	getDriverLocations,
+	getDriverLocationsWithPerformance
 };
