@@ -241,6 +241,7 @@ async function createDailyMeals(req, res) {
 			},
 		});
 
+		const todayDayName = new Date().toLocaleDateString('en-US', { weekday: 'long' }); // Get today's day name
 		const today = new Date();
 		const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString();
 		const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString();
@@ -260,9 +261,16 @@ async function createDailyMeals(req, res) {
 		}
 
 		const usersWithOrdersToday = new Set(existingOrders.map(order => order.user_id));
-		const usersToCreateOrdersFor = subscribedUsers.filter(user =>
-			user.addresses.length > 0 && !usersWithOrdersToday.has(user.user_id)
-		);
+		const usersToCreateOrdersFor = subscribedUsers
+			.filter(user =>
+				user.addresses.length > 0 &&
+				!usersWithOrdersToday.has(user.user_id)
+				// &&
+				// (
+				// 	user.daily_meal_day_preferences.length === 0 ||
+				// 	user.daily_meal_day_preferences.includes(todayDayName)
+				// )
+			);
 
 		if (!usersToCreateOrdersFor.length) {
 			console.info("Daily meal already prepared for all subscribed users.");

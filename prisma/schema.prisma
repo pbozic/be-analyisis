@@ -125,6 +125,7 @@ model users {
   delivery_push_notification_preferences Json?
   spoken_languages                       Json?
   lost_items                             lost_items[]
+  daily_meal_day_preferences             Json?             @default("[]")
 }
 
 model documents {
