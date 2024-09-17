@@ -265,11 +265,11 @@ async function createDailyMeals(req, res) {
 			.filter(user =>
 				user.addresses.length > 0 &&
 				!usersWithOrdersToday.has(user.user_id)
-				// &&
-				// (
-				// 	user.daily_meal_day_preferences.length === 0 ||
-				// 	user.daily_meal_day_preferences.includes(todayDayName)
-				// )
+				&&
+				(
+					user.daily_meal_day_preferences.length === 0 ||
+					user.daily_meal_day_preferences.includes(todayDayName)
+				)
 			);
 
 		if (!usersToCreateOrdersFor.length) {
