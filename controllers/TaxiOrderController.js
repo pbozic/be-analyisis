@@ -405,9 +405,11 @@ async function createOrder(req, res) {
 			...req.body,
 			status: "PENDING",
 			user_id: req.user.user_id,
-			telephone: req.user.telephone,
+			telephone: !req.body?.telephone ? req.user.telephone : req.body?.telephone,
 			is_scheduled: req.body.preferences?.departure_date
 		};
+
+		console.info('USER TELEPHONE', orderData.telephone)
 
 		console.info('dep date',  req.body.preferences?.departure_date)
 		let flags = await FlagDao.getFlags();
