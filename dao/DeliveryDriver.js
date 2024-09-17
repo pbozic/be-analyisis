@@ -147,22 +147,18 @@ const updateDeliveryDriverLocationHistory = async (delivery_driver_id, location,
 			address: location?.address ?? null,
 			coordinates: {
 				latitude: location?.coordinates?.latitude ?? null,
-				longitude: location?.coordinates?.longitude ?? null
-			}
+				longitude: location?.coordinates?.longitude ?? null,
+			},
 		};
 
 		const data = {
 			location: locationData,
 			delivery_driver: {
 				connect: {
-					delivery_driver_id: delivery_driver_id
-				}
+					delivery_driver_id: delivery_driver_id,
+				},
 			},
-			order: {
-				connect: {
-					order_id: order_id
-				}
-			}
+			...(order_id ? { order: { connect: { order_id: order_id } } } : {}),
 		};
 
 		if (status !== null && status !== undefined) {
@@ -175,6 +171,7 @@ const updateDeliveryDriverLocationHistory = async (delivery_driver_id, location,
 		throw new Error(error);
 	}
 };
+
 
 const updateDeliveryDriver = async (delivery_driver_id, updateData) => {
 	try {

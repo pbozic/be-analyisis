@@ -239,11 +239,7 @@ const updateDriverLocationHistory = async (driver_id, location, status, order_id
 					driver_id: driver_id
 				}
 			},
-			order: {
-				connect: {
-					order_id: order_id
-				}
-			}
+			...(order_id ? { order: { connect: { order_id: order_id } } } : {})
 		};
 
 		if (status !== null && status !== undefined) {
@@ -256,6 +252,7 @@ const updateDriverLocationHistory = async (driver_id, location, status, order_id
 		throw new Error(error);
 	}
 };
+
 
 const updateDriver = async (driver_id, updateData) => {
 	try {

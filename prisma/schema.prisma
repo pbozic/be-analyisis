@@ -524,7 +524,7 @@ model flag_history {
 model driver_history_locations {
   driver_history_location_id String             @id @default(uuid()) @db.Uuid
   driver_id                  String             @db.Uuid
-  order_id                   String             @db.Uuid
+  order_id                   String?            @db.Uuid
   status                     TAXI_ORDER_STATUS?
   location                   Json?
   driver                     drivers?           @relation(fields: [driver_id], references: [driver_id])
@@ -536,7 +536,7 @@ model driver_history_locations {
 model delivery_driver_history_locations {
   delivery_driver_history_location_id String                 @id @default(uuid()) @db.Uuid
   delivery_driver_id                  String                 @db.Uuid
-  order_id                            String                 @db.Uuid
+  order_id                            String?                @db.Uuid
   status                              DELIVERY_ORDER_STATUS?
   location                            Json?
   delivery_driver                     delivery_drivers?      @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
