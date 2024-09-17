@@ -221,7 +221,7 @@ const updateDriverLocation = async (driver_id, location) => {
 	}
 };
 
-const updateDriverLocationHistory = async (driver_id, location, status) => {
+const updateDriverLocationHistory = async (driver_id, location, status, order_id) => {
 	try {
 		const locationData = {
 			name: location?.name ?? null,
@@ -237,6 +237,11 @@ const updateDriverLocationHistory = async (driver_id, location, status) => {
 			driver: {
 				connect: {
 					driver_id: driver_id
+				}
+			},
+			order: {
+				connect: {
+					order_id: order_id
 				}
 			}
 		};

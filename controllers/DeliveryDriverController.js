@@ -259,6 +259,7 @@ async function updateDeliveryDriverLocation(req, res) {
 			const orders = await DeliveryOrderDao.getOrdersByDeliveryDriverId(deliveryDriver.delivery_driver_id);
 
 			let orderStatus = null;
+			let orderId = null;
 			if (deliveryDriver?.on_order) {
 				// Find the most recently updated order
 				const latestOrder = orders.reduce((latest, order) => {
@@ -268,6 +269,7 @@ async function updateDeliveryDriverLocation(req, res) {
 				// If there's a most recently updated order, set its status
 				if (latestOrder) {
 					orderStatus = latestOrder.status;
+					orderId = latestOrder.order_id;
 				}
 			}
 
@@ -289,7 +291,7 @@ async function updateDeliveryDriverLocation(req, res) {
 					location: req.body.location
 				});
 			}
-			await DeliveryDriverDao.updateDeliveryDriverLocationHistory(deliveryDriver.delivery_driver_id, req.body.location, orderStatus);
+			await DeliveryDriverDao.updateDeliveryDriverLocationHistory(deliveryDriver.delivery_driver_id, req.body.location, orderStatus, orderId);
 			res.status(200).json(updatedDeliveryDriver);
 		} catch (error) {
 			console.error("Error updating delivery driver's location:", error);
