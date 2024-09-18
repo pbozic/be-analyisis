@@ -2,7 +2,7 @@ require('dotenv').config();
 const { Client } = require('@googlemaps/google-maps-services-js');
 const apiKey = process.env.GOOGLE_API_KEY;
 const client = new Client({});
-
+const axios = require('axios');
 
 /**
  * GET /google_maps/geocode_address
