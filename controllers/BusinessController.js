@@ -7,6 +7,7 @@ const Constants = require("../lib/constants");
 const stripe = require("../lib/stripe");
 const UserDao = require("../dao/User");
 const DriverDao = require("../dao/Driver");
+const DeliveryDriverDao = require("../dao/DeliveryDriver");
 const { BUSINESS_TYPE } = require("@prisma/client");
 
 
@@ -683,6 +684,14 @@ async function reviewBusiness(req, res) {
 			const business = await DriverDao.getBusinessByDriverId(req.body.driver_id);
 			if (!business) {
 				return res.status(400).json({ error: "Error retrieving business for the driver" });
+			}
+			business_id = business.business_id;
+		}
+
+		if (req.body.delivery_driver_id) {
+			const business = await DeliveryDriverDao.getBusinessByDeliveryDriverId(req.body.delivery_driver_id);
+			if (!business) {
+				return res.status(400).json({ error: "Error retrieving business for the delivery driver" });
 			}
 			business_id = business.business_id;
 		}

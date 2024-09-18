@@ -7,7 +7,7 @@ const UsersDao = require("../dao/User");
 const gApi = require("../lib/gApis");
 const { UserSockets, io } = require("../socket");
 const stripe = require("../lib/stripe");
-const { DELIVERY_ORDER_STATUS } = require("../lib/constants");
+const { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE } = require("../lib/constants");
 const fs = require("fs");
 const Constants = require("../lib/constants");
 const { getUsers } = require("../dao/User");
@@ -595,7 +595,6 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
-
 async function getCompletedDeliveryOrdersByUserId(req, res) {
 	const { user_id } = req.params;
 
@@ -611,17 +610,46 @@ async function getCompletedDeliveryOrdersByUserId(req, res) {
 			include: {
 				business: {
 					include: {
-						address: true
+						address: true,
+						documents: {
+							where: {
+								document_type: DOCUMENT_TYPE.LOGO
+							},
+							include: {
+								files: true
+							}
+						}
 					}
-				}
+				},
+				delivery_driver: true
 			}
 		});
-		res.status(200).json(completedOrders);
+
+		const result = completedOrders.map(order => {
+			const business = order.business;
+			const logoDocument = business.documents.find(doc => doc.document_type === DOCUMENT_TYPE.LOGO);
+			const logo = logoDocument ? {
+				...logoDocument,
+				files: logoDocument.files
+			} : null;
+
+			return {
+				...order,
+				business: {
+					...business,
+					logo: logo
+				}
+			};
+		});
+
+		res.status(200).json(result);
 	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
 }
+
+
 
 
 /**

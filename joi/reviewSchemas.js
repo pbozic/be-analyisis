@@ -1,8 +1,9 @@
 const Joi = require("joi");
 
 const reviewBusinessSchema = Joi.object({
-    // business_id: Joi.string().optional(), //NOT WORKING in any way if one or the other should be present, null is not string, throws error...[Error [ValidationError]: "business_id" must be a string]
+    business_id: Joi.string().allow(null).optional(),
     driver_id: Joi.string().optional(),
+    delivery_driver_id: Joi.string().optional(),
     comment: Joi.string().allow("").optional(),
     rating: Joi.number().optional(),
     feedback: Joi.object().optional(),

@@ -278,6 +278,32 @@ const updateDriverLocation = async (delivery_driver_id, location) => {
 	}
 };
 
+
+const getBusinessByDeliveryDriverId = async (delivery_driver_id) => {
+	try {
+		const driver = await prisma.delivery_drivers.findUnique({
+			where: { delivery_driver_id },
+			select: { business_id: true }
+		});
+
+		if (!driver || !driver.business_id) {
+			throw new Error("Business not found for the given driver ID");
+		}
+
+		const business = await prisma.business.findUnique({
+			where: { business_id: driver.business_id }
+		});
+		if (!business) {
+			throw new Error("Business not found for the given business ID");
+		}
+
+		return business;
+	} catch (error) {
+		console.error("Error retrieving business by driver ID:", error);
+		throw error;
+	}
+};
+
 module.exports = {
 	getDeliveryDrivers,
 	getOnlineDeliveryDrivers,
@@ -290,5 +316,6 @@ module.exports = {
 	createDeliveryDriver,
 	getAvailableDeliveryDrivers,
 	updateDriverLocation,
-	updateDeliveryDriverLocationHistory
+	updateDeliveryDriverLocationHistory,
+	getBusinessByDeliveryDriverId
 };
