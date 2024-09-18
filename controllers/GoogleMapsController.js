@@ -76,8 +76,8 @@ async function getPlacePredictions(req, res) {
 			`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(inputText)}&location=${location}&radius=${radius}&components=country:${country}&key=${process.env.GOOGLE_API_KEY}&language=sl`
 		);
 		const data = response.data;
-
-		if (!response.ok) {
+		console.log(data)
+		if (!response.status === 200) {
 			console.error('Failed to fetch data:', response.status, response.statusText);
 			return res.status(500).json({ error: 'Failed to fetch predictions' });
 		}
