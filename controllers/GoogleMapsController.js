@@ -2,7 +2,7 @@ require('dotenv').config();
 const { Client } = require('@googlemaps/google-maps-services-js');
 const apiKey = process.env.GOOGLE_API_KEY;
 const client = new Client({});
-
+const axios = require('axios');
 
 /**
  * GET /google_maps/geocode_address
@@ -72,12 +72,12 @@ async function getPlacePredictions(req, res) {
 		const radius = 150000; // 150km in meters
 		const country = 'SI'; // Country code for Slovenia
 
-		const response = await fetch(
+		const response = await axios.get(
 			`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(inputText)}&location=${location}&radius=${radius}&components=country:${country}&key=${process.env.GOOGLE_API_KEY}&language=sl`
 		);
-		const data = await response.json();
-
-		if (!response.ok) {
+		const data = response.data;
+		console.log(data)
+		if (!response.status === 200) {
 			console.error('Failed to fetch data:', response.status, response.statusText);
 			return res.status(500).json({ error: 'Failed to fetch predictions' });
 		}
