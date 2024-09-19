@@ -77,6 +77,11 @@ const getDriverById = async (driver_id) => {
 			include: {
 				user: {
 					include: {
+						addresses: {
+							include: {
+								address: true,
+							},
+						},
 						documents: {
 							include: {
 								files: true,
@@ -477,7 +482,7 @@ async function getDriverLocationsWithPerformance(driverId, startTime, endTime) {
 			const speed = distance / time_taken;
 
 			// Assume a threshold speed, e.g., normal speed = 50 km/h (0.83 km/min)
-			const normalSpeed = 0.83; // 50 km/h in km/min
+			const normalSpeed = 0.5; // 30 km/h in km/min
 			const performance_score =  normalSpeed / speed
 
 			totalScore += performance_score;
