@@ -6,6 +6,9 @@ const UserDao = require("../dao/User");
 const { UserSockets, io } = require("../socket");
 const TaxiOrderDao = require("../dao/TaxiOrder");
 const taxiHelpers = require("../lib/taxiHelpers");
+const { updateAddressByAddressId } = require("../dao/Address");
+const { updateDocumentByDocumentId } = require("../dao/Document");
+const { updateFileInDocument } = require("../dao/File");
 
 /**
  * GET /drivers
@@ -197,6 +200,62 @@ async function updateDriver(req, res) {
 	} catch (error) {
 		console.error("Error updating driver:", error);
 		res.status(400).json({ error: "Error updating driver", detail: error.message });
+	}
+}
+
+/**
+ * PATCH /drivers/edit
+ * @tag Drivers
+ * @summary Edit a driver
+ * @description Edits the data of specific driver.
+ * @operationId editDriver
+ * @pathParam {string} driver_id - The ID of the driver to edit
+ * @bodyContent {DriverEdit} application/json
+ * @bodyRequired
+ * @response 200 - Driver edited successfully
+ * @responseContent {Driver} 200.application/json
+ * @response 400 - Error updating driver
+ */
+async function editDriver(req, res) {
+	const { user, driver, vehicle, documents, files, address } = req.body
+	const driver_id = driver?.driver_id
+	delete driver?.driver_id
+	const user_id = user?.user_id
+	delete user?.user_id
+	const address_id = address?.address_id
+	delete address?.address_id
+	const vehicle_id = vehicle?.vehicle_id
+	delete vehicle?.vehicle_id
+
+	try {
+		const updatedDriver = await DriverDao.updateDriver(driver_id, driver);
+
+		let updatedUser = await UserDao.updateScheduledUser(user_id, user);
+
+		let updatedAddress = await updateAddressByAddressId(address_id, address)
+
+		if (documents && documents.length > 0) {
+			for (const doc of documents) {
+				const documentId = doc.document_id;
+				delete doc.document_id;
+				await updateDocumentByDocumentId(documentId, doc);
+			}
+		}
+
+		if (files && files.length > 0) {
+			for (const file of files) {
+				const fileId = file.file_id;
+				delete file.file_id;
+				await updateFileInDocument(fileId, file);
+			}
+		}
+
+		let updatedVehicle = await VehicleDao.updateVehicle(vehicle_id, vehicle)
+
+		res.status(200).json({ updatedDriver, updatedUser, updatedAddress, updatedVehicle });
+	} catch (error) {
+		console.error("Error editing driver:", error);
+		res.status(400).json({ error: "Error editing driver", detail: error.message });
 	}
 }
 
@@ -413,5 +472,6 @@ module.exports = {
 	listDriversFull,
 	getUnavailableDrivers,
 	handleSosAlert,
-	getDriverHistoryLocations
+	getDriverHistoryLocations,
+	editDriver
 };

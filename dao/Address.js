@@ -96,10 +96,32 @@ async function setPrimaryUserAddress(user_id, address_id) {
 		return new Error(error);
 	}
 }
+
+const updateAddressByAddressId = async (addressId, updateData) => {
+	try {
+		const existingAddress = await prisma.addresses.findUnique({
+			where: { address_id: addressId },
+		});
+
+		if (!existingAddress) {
+			throw new Error("Address not found");
+		}
+
+		return await prisma.addresses.update({
+			where: { address_id: addressId },
+			data: updateData,
+		});
+	} catch (error) {
+		console.error("Error updating user address:", error);
+		throw new Error(error);
+	}
+};
+
 module.exports = {
 	addAddress,
 	addUserAddress,
 	deleteUserAddress,
 	editUserAddress,
 	setPrimaryUserAddress,
+	updateAddressByAddressId
 };

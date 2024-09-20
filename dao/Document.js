@@ -1,4 +1,5 @@
 const prisma = require("../prisma/prisma");
+const { updateFileInDocument } = require("./File");
 
 const getDocuments = async () => {
     try {
@@ -527,6 +528,29 @@ async function getLastDocumentByTypeAndBusinessId(type, business_id) {
     });
 }
 
+const updateDocumentByDocumentId = async (documentId, updateData) => {
+
+    try {
+        const document = await prisma.documents.findUnique({
+            where: { document_id: documentId },
+            include: { files: true },
+        });
+
+        if (!document) {
+            throw new Error("Document not found");
+        }
+
+        return await prisma.documents.update({
+            where: { document_id: documentId },
+            data: updateData,
+        });
+
+    } catch (error) {
+        console.error("Error updating document:", error);
+        throw new Error(error);
+    }
+};
+
 
 module.exports = {
     createDocument,
@@ -557,6 +581,7 @@ module.exports = {
     linkDocumentToLostItem,
     deleteDocumentsAndFiles,
     getLastDocumentByTypeAndBusinessId,
-    deleteDocumentsAndFilesByDocumentId
+    deleteDocumentsAndFilesByDocumentId,
+    updateDocumentByDocumentId
 
 };

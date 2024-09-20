@@ -16,6 +16,7 @@ router.get("/:driver_id/location", DriverController.getDriverLocation);
 router.get("/:driver_id/history_location/:start_time/:end_time", DriverController.getDriverHistoryLocations);
 
 router.patch("/", DriverController.updateDriver);
+router.patch("/edit", DriverController.editDriver);
 router.patch("/ride_requirements", DriverController.updateDriverRideRequirements);
 router.patch("/location", DriverController.updateDriverLocation);
 router.patch("/online", DriverController.updateDriverOnlineStatus);
