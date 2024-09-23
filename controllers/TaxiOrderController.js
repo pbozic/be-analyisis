@@ -896,9 +896,9 @@ async function rejectOrder(req, res) {
 				}
 			})
 			io.emit('driver_available', driver);
-			io.to("order_" + order.order_id).emit('order_rejected__taxi', order);
+			
 		}
-
+		io.to("order_" + order.order_id).emit('order_rejected__taxi', order);
         io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
         
 
