@@ -229,7 +229,7 @@ async function getAlreadySentOrdersByDriverId(driver_id) {
             where: {
                 driver_id: driver_id,
                 accepted: false,
-                rejected: true,
+                rejected: false,
             },
             include: {
                 order: true
