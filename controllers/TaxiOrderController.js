@@ -903,8 +903,10 @@ async function rejectOrder(req, res) {
 				pending = false;
 			}
 		}
+		console.log("pending", pending)
 		if (pending) {
 			if(UserSockets.get(order.user_id)) {
+				console.log("EMITTING order_restart_search")
 				UserSockets.get(order.user_id).emit('order_restart_search', order);
 			}
 		}
