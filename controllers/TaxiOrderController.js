@@ -391,7 +391,7 @@ async function createOrderHelper(req, res, orderData) {
 		if (!is_scheduled) {
 			//console.log("order send", order)
 			await TaxiHelper.findTaxiOrderDrivers(order);
-			if (order.grouped_orders.length > 0) {
+			if (order.grouped_orders && order.grouped_orders.length > 0) {
 				for (let or of order.grouped_orders) {
 					console.log("Sending Grouped Order: " + or.order_id)
 					await TaxiHelper.findTaxiOrderDrivers(or);
@@ -400,7 +400,7 @@ async function createOrderHelper(req, res, orderData) {
 		}
 		return order
 	} catch (error) {
-		console.errorTag("TaxiOrderController",error);
+		console.errorTag("TaxiOrderController", error);
 		res.status(500).json(error);
 	}
 		
