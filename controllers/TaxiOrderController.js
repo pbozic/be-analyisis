@@ -812,6 +812,8 @@ async function rejectOrder(req, res) {
 					last_sent_at: null,
 				})
 			}
+		console.log("REJECT USERR", req.user)
+			
 		if (req.user.driver_id) {
 			await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, req.user.driver_id);
 			let order_sent =  await prisma.taxi_order_sent.findUnique({
