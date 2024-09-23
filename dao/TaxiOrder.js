@@ -230,6 +230,9 @@ async function getAlreadySentOrdersByDriverId(driver_id) {
                 driver_id: driver_id,
                 accepted: false,
                 rejected: false,
+                order: {
+                    status: TAXI_ORDER_STATUS.PENDING, // Replace with your desired status value
+                },
             },
             include: {
                 order: true
