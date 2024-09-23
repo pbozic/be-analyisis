@@ -11,7 +11,7 @@ async function handlePaymentIntentSuccess(paymentIntent) {
             
             await UsersDao.addToWalletBalance(paymentIntent.metadata.user_id, paymentIntent.amount / 100);
             if (UserSockets.get(paymentIntent.metadata.user_id)) {
-                let user = await UsersDao.getUser(paymentIntent.metadata.user_id);
+                let user = await UsersDao.getUserById(paymentIntent.metadata.user_id);
                 UserSockets.get(paymentIntent.metadata.user_id).emit('wallet_balance_change', user.wallet_balance);
             }
             break;
