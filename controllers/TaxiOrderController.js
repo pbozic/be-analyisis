@@ -122,7 +122,26 @@ async function getActiveTaxiOrdersByDriverId(req, res) {
 
 	try {
 		const activeOrders = await TaxiOrderDao.getActiveOrdersByDriverId(driver_id);
-		res.status(200).json(activeOrders);
+		let pendingOrders = []
+
+		const sentOrders = await TaxiOrderDao.getAlreadySentOrdersByDriverId(driver_id);
+		for (let sentOrder of sentOrders) {
+			const order = await TaxiOrderDao.getOrder(sentOrder.order.order_id);
+			if (order.status !== TAXI_ORDER_STATUS.PENDING) {
+				continue;
+			}
+			console.info("Re-sending pending order: ", order.order_id, " to driver: ", driver_id);
+
+
+
+			pendingOrders.push(order)
+		}
+
+		res.status(200).json({
+			active: activeOrders,
+			pending: pendingOrders
+		});
+
 	} catch (e) {
 		console.errorTag("TaxiOrderController",e);
 		res.status(500).json({ message: "Error something went wrong..." });
