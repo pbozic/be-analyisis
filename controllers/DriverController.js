@@ -9,6 +9,9 @@ const taxiHelpers = require("../lib/taxiHelpers");
 const { updateAddressByAddressId } = require("../dao/Address");
 const { updateDocumentByDocumentId } = require("../dao/Document");
 const { updateFileInDocument } = require("../dao/File");
+const FileDao = require("../dao/File");
+const S3Helper = require("../lib/s3");
+const DocumentDao = require("../dao/Document");
 
 /**
  * GET /drivers
@@ -218,6 +221,8 @@ async function updateDriver(req, res) {
  */
 async function editDriver(req, res) {
 	const { user, driver, vehicle, documents, files, address } = req.body
+	const business_id = driver?.business_id
+	delete driver?.business_id
 	const driver_id = driver?.driver_id
 	delete driver?.driver_id
 	const user_id = user?.user_id
@@ -226,7 +231,7 @@ async function editDriver(req, res) {
 	delete address?.address_id
 	const vehicle_id = vehicle?.vehicle_id
 	delete vehicle?.vehicle_id
-
+	console.info('FILES #', files?.length)
 	try {
 		const updatedDriver = await DriverDao.updateDriver(driver_id, driver);
 
@@ -244,15 +249,31 @@ async function editDriver(req, res) {
 
 		if (files && files.length > 0) {
 			for (const file of files) {
-				const fileId = file.file_id;
-				delete file.file_id;
-				await updateFileInDocument(fileId, file);
+				if (file?.base64) {
+					const fileId = file.file_id;
+					delete file.document_id
+					delete file.file_id;
+					delete file?.name
+
+					let base64 = file.base64;
+					delete file.base64;
+
+					await updateFileInDocument(fileId, file)
+
+					let key = S3Helper.getFileKey(fileId, file.mime_type);
+					await S3Helper.SaveObject(key, base64, file.mime_type, {
+						users: [user_id],
+						businesses: [business_id]
+					}, file);
+
+
+				}
 			}
 		}
 
 		let updatedVehicle = await VehicleDao.updateVehicle(vehicle_id, vehicle)
 
-		res.status(200).json({ updatedDriver, updatedUser, updatedAddress, updatedVehicle });
+		res.status(200).json({ updatedDriver, updatedUser, updatedAddress, updatedVehicle, files });
 	} catch (error) {
 		console.error("Error editing driver:", error);
 		res.status(400).json({ error: "Error editing driver", detail: error.message });
