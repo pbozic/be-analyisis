@@ -898,14 +898,14 @@ async function rejectOrder(req, res) {
 
         let userActiveOrders = await TaxiOrderDao.userActiveOrders(order.user_id);
 		let pending = true;
-		for  (let order of userActiveOrders) {
-			if (order.status !== TAXI_ORDER_STATUS.PENDING) {
+		for  (let or of userActiveOrders) {
+			if (or.status !== TAXI_ORDER_STATUS.PENDING) {
 				pending = false;
 			}
 		}
 		if (pending) {
 			if(UserSockets.get(order.user_id)) {
-				UserSockets.get(order.user_id).emit('order_restart_search', order_id);
+				UserSockets.get(order.user_id).emit('order_restart_search', order);
 			}
 		}
 
