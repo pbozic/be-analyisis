@@ -228,7 +228,8 @@ async function getAlreadySentOrdersByDriverId(driver_id) {
         return await prisma.taxi_order_sent.findMany({
             where: {
                 driver_id: driver_id,
-                accepted: false
+                accepted: false,
+                rejected: false,
             },
             include: {
                 order: true

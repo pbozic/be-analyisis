@@ -9,7 +9,7 @@ const { User } = require("@onesignal/node-onesignal");
 const { sendNotificationToUser } = require("../lib/oneSignal");
 const { sendOrderNotifications } = require("../lib/notifications");
 const {sleep, range} = require("../lib/helpersLib");
-
+const prisma = require('../prisma/prisma');
 /**
  * GET /taxi/order/{orderId}
  * @tag Taxi
@@ -812,7 +812,23 @@ async function rejectOrder(req, res) {
 					last_sent_at: null,
 				})
 			}
-		if (req.user.driver_id) await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, req.user.driver_id);
+		if (req.user.driver_id) {
+			await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, req.user.driver_id);
+			let order_sent =  await prisma.taxi_order_sent.findUnique({
+				where: {
+					driver_id: req.user.driver_id,
+					order_id: order_id
+				}
+			});
+			await prisma.taxi_order_sent.update({
+				where: {
+					id: order_sent.id
+				},
+				data: {
+					rejected: true
+				}
+			})
+		}
 
 		// Determine the cancellation reason
 		let reason = '';
