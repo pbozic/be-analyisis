@@ -9,7 +9,7 @@ const { User } = require("@onesignal/node-onesignal");
 const { sendNotificationToUser } = require("../lib/oneSignal");
 const { sendOrderNotifications } = require("../lib/notifications");
 const {sleep, range} = require("../lib/helpersLib");
-
+const prisma = require('../prisma/prisma');
 /**
  * GET /taxi/order/{orderId}
  * @tag Taxi
@@ -831,7 +831,32 @@ async function rejectOrder(req, res) {
 					last_sent_at: null,
 				})
 			}
-		if (req.user.driver_id) await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, req.user.driver_id);
+		
+			
+		if (req.user.driver && req.user.driver.driver_id) {
+			await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, req.user.driver.driver_id);
+			let order_sent =  await prisma.taxi_order_sent.findUnique({
+				where: {
+					taxi_order_sent_driver_unique: {
+						order_id,
+						driver_id: req.user.driver.driver_id
+					}
+				},
+			});
+			
+			console.log("REJECT " + order_sent.taxi_order_sent_id)
+			if (order_sent.taxi_order_sent_id) {
+				await prisma.taxi_order_sent.update({
+					where: {
+						taxi_order_sent_id: order_sent.taxi_order_sent_id
+					},
+					data: {
+						rejected: true
+					}
+				})
+			}
+			
+		}
 
 		// Determine the cancellation reason
 		let reason = '';
@@ -852,10 +877,11 @@ async function rejectOrder(req, res) {
 				}
 			})
 			io.emit('driver_available', driver);
+			io.to("order_" + order.order_id).emit('order_rejected__taxi', order);
 		}
 
         io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
-        io.to("order_" + order.order_id).emit('order_rejected__taxi', order);
+        
 
         console.tag("TaxiOrderController","order_status_change__taxi", "order_rejected__taxi");
         res.status(200).json(order);
@@ -1048,6 +1074,8 @@ async function appendTaxiDriver(req, res) {
 			}
 		});
 		await TaxiHelper.revokeTaxiOrderFromOtherDrivers(order_id, driver_id);
+		const driver = await DriverDao.getDriverById(driver_id);
+		await TaxiHelper.sendTaxiOrderToDriver(order, driver, true)
 		res.status(200).json({"message": 'driver selected'})
 	}
 	catch (e) {

@@ -357,7 +357,7 @@ model taxi_order_sent {
   updated_at         DateTime     @default(now()) @updatedAt @db.Timestamptz(6)
   order              taxi_orders? @relation(fields: [order_id], references: [order_id], onDelete: Cascade)
   driver             drivers?     @relation(fields: [driver_id], references: [driver_id])
-
+  rejected           Boolean      @default(false)
   @@unique([order_id, driver_id], name: "taxi_order_sent_driver_unique")
 }
 

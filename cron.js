@@ -13,6 +13,7 @@ function startCronJobs() {
     cron.schedule("* * * * *", chekPingStatus);
     cron.schedule("* * * * *", TaxiHelpers.revokeAcceptedOrdersFromDriverHandler);
     cron.schedule("* * * * *", TaxiHelpers.scheduledOrdersNotificationsHandler);
+    cron.schedule("* * * * *", TaxiHelpers.closeScheduledOrders);
 
 }
 
