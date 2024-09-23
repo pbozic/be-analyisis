@@ -820,6 +820,7 @@ async function rejectOrder(req, res) {
 					order_id: order_id
 				}
 			});
+			console.log("REJECT " + order_sent.order_sent_id)
 			await prisma.taxi_order_sent.update({
 				where: {
 					id: order_sent.order_sent_id
