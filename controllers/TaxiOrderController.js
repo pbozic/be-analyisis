@@ -664,7 +664,6 @@ async function completeOrder(req, res) {
 					...order.payment,
 					status: "PAID"
 				},
-				status: "CUSTOMER_PAYMENT_SUCCESSFUL"
 			});
 		}
 		// io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
