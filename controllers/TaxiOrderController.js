@@ -895,8 +895,8 @@ async function rejectOrder(req, res) {
 		}
 		io.to("order_" + order.order_id).emit('order_rejected__taxi', order);
         io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
-		
-        let userActiveOrders = TaxiOrderDao.userActiveOrders(order.user_id);
+
+        let userActiveOrders = await TaxiOrderDao.userActiveOrders(order.user_id);
 		let pending = true;
 		for  (let order of userActiveOrders) {
 			if (order.status !== TAXI_ORDER_STATUS.PENDING) {
