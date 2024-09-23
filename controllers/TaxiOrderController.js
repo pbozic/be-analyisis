@@ -838,12 +838,7 @@ async function rejectOrder(req, res) {
 
 
 			if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
-				if (order.driver) {
-					if(UserSockets.get(order.user_id)) {
-						UserSockets.get(order.user_id).emit('order_restart_search', order_id);
-					}
-				}
-
+				
 				new_status = TAXI_ORDER_STATUS.PENDING
 				await TaxiOrderDao.updateOrder(order_id, {
 					status: TAXI_ORDER_STATUS.PENDING,
@@ -900,7 +895,19 @@ async function rejectOrder(req, res) {
 		}
 		io.to("order_" + order.order_id).emit('order_rejected__taxi', order);
         io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
-        
+		
+        let userActiveOrders = TaxiOrderDao.userActiveOrders(order.user_id);
+		let pending = true;
+		for  (let order of userActiveOrders) {
+			if (order.status !== TAXI_ORDER_STATUS.PENDING) {
+				pending = false;
+			}
+		}
+		if (pending) {
+			if(UserSockets.get(order.user_id)) {
+				UserSockets.get(order.user_id).emit('order_restart_search', order_id);
+			}
+		}
 
         console.tag("TaxiOrderController","order_status_change__taxi", "order_rejected__taxi");
         res.status(200).json(order);

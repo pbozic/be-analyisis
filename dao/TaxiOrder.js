@@ -675,6 +675,20 @@ async function getAcceptedOrders() {
         throw new Error(e);
     }
 }
+async function userActiveOrders(user_id) {
+    try {
+        return prisma.taxi_orders.findMany({
+            where: {
+                user_id,
+                status: {
+                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.TAXI_REJECTED] // Exclude both completed and pending orders
+                }
+            },
+        });
+    } catch (e) {
+        throw new Error(e);
+    }
+} 
 module.exports = {
     getOrder,
     getOrdersByDriverId,
@@ -698,5 +712,6 @@ module.exports = {
     getTaxiOrdersIfNotCompleted,
     getAlreadySentOrdersByDriverId,
     getActiveOrdersByDriverId,
-    getAcceptedOrders
+    getAcceptedOrders,
+    userActiveOrders
 };
