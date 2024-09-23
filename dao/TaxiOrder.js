@@ -611,6 +611,7 @@ async function updateOrder(order_id, order) {
             },
             data: order,
             include: {
+                grouped_orders: true,
                 user: true,
                 driver: {
                     include: {
@@ -693,5 +694,5 @@ module.exports = {
     getTaxiOrdersIfNotCompleted,
     getAlreadySentOrdersByDriverId,
     getActiveOrdersByDriverId,
-    getAcceptedOrders,
+    getAcceptedOrders
 };
