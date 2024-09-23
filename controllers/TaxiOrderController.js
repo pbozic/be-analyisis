@@ -820,19 +820,23 @@ async function rejectOrder(req, res) {
 				where: {
 					taxi_order_sent_driver_unique: {
 						order_id,
-						driver_id: req.user.driver.driver_id
+						driver_id: user.driver.driver_id
 					}
-				}
-			});
-			console.log("REJECT " + order_sent.order_sent_id)
-			await prisma.taxi_order_sent.update({
-				where: {
-					id: order_sent.order_sent_id
 				},
-				data: {
-					rejected: true
-				}
-			})
+			});
+			
+			console.log("REJECT " + order_sent.taxi_order_sent_id)
+			if (order_sent.taxi_order_sent_id) {
+				await prisma.taxi_order_sent.update({
+					where: {
+						id: order_sent.taxi_order_sent_id
+					},
+					data: {
+						rejected: true
+					}
+				})
+			}
+			
 		}
 
 		// Determine the cancellation reason
