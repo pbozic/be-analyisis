@@ -650,7 +650,22 @@ async function completeOrder(req, res) {
 		console.log("COMPLLETED", order);
 		let driver = await DriverDao.getDriverById(order.driver_id);
 		io.emit('driver_available', driver)
-
+		let user = await UsersDao.getUserById(order.user_id);
+		if (order.payment.type === "WALLET") {
+			// handle wallet payment
+			if (user.wallet_balance < order.paymet.price) {
+				throw new Error("Insufficient funds");
+			}
+			await UsersDao.removeWalletBalance(user_id, order.payment.price, order.order_id);
+			
+			order = await DeliveryOrderDao.updateOrder(order.order_id, {
+				payment: {
+					...order.payment,
+					status: "PAID"
+				},
+				status: "CUSTOMER_PAYMENT_SUCCESSFUL"
+			});
+		}
 		// io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
 		io.to("order_" + order.order_id).emit('order_completed__taxi', order);
 
