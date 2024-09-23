@@ -815,7 +815,7 @@ async function rejectOrder(req, res) {
 		
 			
 		if (req.user.driver && req.user.driver.driver_id) {
-			await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, req.user.driver_id);
+			await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, req.user.driver.driver_id);
 			let order_sent =  await prisma.taxi_order_sent.findUnique({
 				where: {
 					driver_id: req.user.driver_id,
