@@ -788,6 +788,8 @@ async function cancelOrder(req, res) {
 			for (let or of order.grouped_orders) {
 				await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
 				await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
+				io.to("order_" + or.order_id).emit('order_status_change__taxi', or);
+				io.to("order_" + or.order_id).emit('order_cancelled__taxi', or);		
 			}
 		}
 		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);
