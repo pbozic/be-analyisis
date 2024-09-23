@@ -653,7 +653,7 @@ async function completeOrder(req, res) {
 		let user = await UsersDao.getUserById(order.user_id);
 		if (order.payment.type === "WALLET") {
 			// handle wallet payment
-			if (user.wallet_balance < order.paymet.price) {
+			if (user.wallet_balance < order.payment.price) {
 				throw new Error("Insufficient funds");
 			}
 			await UsersDao.removeWalletBalance(user_id, order.payment.price, order.order_id);

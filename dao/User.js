@@ -439,7 +439,7 @@ async function addToWalletBalance (userId, amountToAdd) {
 	}
   };
 
-async function removeWalletBalance(userId, amountToSubtract, order_id) {
+async function removeWalletBalance(userId, amountToSubtract, order_id, order_type = "delivery") {
 	try {
 		await prisma.$transaction(async (transaction) => {
 			// Check current balance
@@ -459,17 +459,17 @@ async function removeWalletBalance(userId, amountToSubtract, order_id) {
 			});
 	  
 			// Record transaction
-			await transaction.transactions.create({
-			  data: {
-					user: { connect: { user_id: userId } },
-					order: {
-					  connect: { order_id: order_id },
-					},
-				amount: -amountToSubtract,
-				type: 'DEBIT',
-				description: 'Deducted funds from wallet',
-			  },
-			});
+			// await transaction.transactions.create({
+			//   data: {
+			// 		user: { connect: { user_id: userId } },
+			// 		order: {
+			// 		  connect: { order_id: order_id },
+			// 		},
+			// 	amount: -amountToSubtract,
+			// 	type: 'DEBIT',
+			// 	description: 'Deducted funds from wallet',
+			//   },
+			// });
 		  });
 		  console.log('Funds deducted from wallet successfully');
 		} catch (error) {

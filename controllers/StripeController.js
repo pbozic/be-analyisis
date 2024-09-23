@@ -1,13 +1,19 @@
 const e = require('cors');
 const DeliveryOrderDao = require('../dao/DeliveryOrder');
 const UsersDao = require('../dao/User');
-const {io} = require('../socket');
+const {io, UserSockets} = require('../socket');
+
+
 async function handlePaymentIntentSuccess(paymentIntent) {
     switch (paymentIntent.metadata.type) { 
         case 'wallet_topup':
             console.log("wallet_topup", paymentIntent)
             
             await UsersDao.addToWalletBalance(paymentIntent.metadata.user_id, paymentIntent.amount / 100);
+            if (UserSockets.get(paymentIntent.metadata.user_id)) {
+                let user = await UsersDao.getUser(paymentIntent.metadata.user_id);
+                UserSockets.get(paymentIntent.metadata.user_id).emit('wallet_balance_change', user.wallet_balance);
+            }
             break;
         case 'order_payment':
             // let order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
