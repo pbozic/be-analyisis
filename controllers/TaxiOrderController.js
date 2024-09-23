@@ -647,6 +647,7 @@ async function acceptOrder(req, res) {
 async function completeOrder(req, res) {
 	try {
 		let order = await TaxiOrderDao.completeOrder(req.body.order_id);
+		console.log("COMPLLETED", order);
 		let driver = await DriverDao.getDriverById(order.driver_id);
 		io.emit('driver_available', driver)
 
