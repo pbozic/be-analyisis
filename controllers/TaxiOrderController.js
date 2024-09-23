@@ -820,7 +820,7 @@ async function rejectOrder(req, res) {
 				where: {
 					taxi_order_sent_driver_unique: {
 						order_id,
-						driver_id: user.driver.driver_id
+						driver_id: req.user.driver.driver_id
 					}
 				},
 			});
