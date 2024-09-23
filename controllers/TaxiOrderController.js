@@ -659,7 +659,7 @@ async function completeOrder(req, res) {
 			}
 			await UsersDao.removeWalletBalance(order.user_id, parseFloat(order.payment.price), order.order_id);
 			
-			order = await DeliveryOrderDao.updateOrder(order.order_id, {
+			order = await TaxiOrderDao.updateOrder(order.order_id, {
 				payment: {
 					...order.payment,
 					status: "PAID"
