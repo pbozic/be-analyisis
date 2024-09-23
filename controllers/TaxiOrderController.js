@@ -1,5 +1,6 @@
 const TaxiOrderDao = require("../dao/TaxiOrder");
 const DriverDao = require("../dao/Driver");
+const UsersDao = require("../dao/User");
 const FlagDao = require("../dao/Flags");
 const { UserSockets, io } = require('../socket');
 const gApi = require('../lib/gApis');
