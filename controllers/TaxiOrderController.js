@@ -657,7 +657,7 @@ async function completeOrder(req, res) {
 			if (user.wallet_balance < order.payment.price) {
 				throw new Error("Insufficient funds");
 			}
-			await UsersDao.removeWalletBalance(user_id, order.payment.price, order.order_id);
+			await UsersDao.removeWalletBalance(order.user_id, order.payment.price, order.order_id);
 			
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				payment: {
