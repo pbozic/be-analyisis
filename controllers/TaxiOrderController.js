@@ -11,6 +11,7 @@ const { sendNotificationToUser } = require("../lib/oneSignal");
 const { sendOrderNotifications } = require("../lib/notifications");
 const {sleep, range} = require("../lib/helpersLib");
 const prisma = require('../prisma/prisma');
+const { is } = require("core-js/core/object");
 /**
  * GET /taxi/order/{orderId}
  * @tag Taxi
@@ -657,7 +658,7 @@ async function completeOrder(req, res) {
 			if (user.wallet_balance < order.payment.price) {
 				throw new Error("Insufficient funds");
 			}
-			await UsersDao.removeWalletBalance(order.user_id, parseFloat(order.payment.price), order.order_id);
+			await UsersDao.removeWalletBalance(order.user_id, parseFloat(order.payment.price), order.order_id, "taxi");
 			
 			order = await TaxiOrderDao.updateOrder(order.order_id, {
 				payment: {
@@ -1127,6 +1128,26 @@ async function getScheduledOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
+
+async function getDriversForOrder(req, res) {
+	try {
+		const drivers = await DriverDao.getAvailableDrivers();
+		const order_id = req.params.order_id;
+		let availableDrivers = [];
+
+		for (let driver of drivers) {
+			let isSent = await TaxiOrderDao.isOrderSent(order_id, driver);
+			if (isSent && isSent.rejected) {
+				continue;
+			}
+			availableDrivers.push(driver);
+		}
+		res.status(200).json(availableDrivers);
+	} catch (error) {
+		res.status(500).json(error);
+	}
+}
+
 module.exports = {
 	getTaxiOrders,
 	getOrder,
@@ -1149,5 +1170,6 @@ module.exports = {
 	getActiveTaxiOrdersByDriverId,
 	createDispatchOrder,
 	appendTaxiDriver,
-	getScheduledOrders
+	getScheduledOrders,
+	getDriversForOrder
 };

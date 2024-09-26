@@ -457,19 +457,33 @@ async function removeWalletBalance(userId, amountToSubtract, order_id, order_typ
 				},
 			  },
 			});
-	  
-			// Record transaction
-			// await transaction.transactions.create({
-			//   data: {
-			// 		user: { connect: { user_id: userId } },
-			// 		order: {
-			// 		  connect: { order_id: order_id },
-			// 		},
-			// 	amount: -amountToSubtract,
-			// 	type: 'DEBIT',
-			// 	description: 'Deducted funds from wallet',
-			//   },
-			// });
+			if (order_type == "delivery") {
+				//Record transaction
+				await transaction.transactions.create({
+					data: {
+							user: { connect: { user_id: userId } },
+							delivery_order: {
+								connect: { order_id: order_id },
+							},
+						amount: -amountToSubtract,
+						type: 'DEBIT',
+						description: 'Deducted funds from wallet',
+					},
+				});
+			} else {
+				await transaction.transactions.create({
+					data: {
+							user: { connect: { user_id: userId } },
+							taxi_order: {
+								connect: { order_id: order_id },
+							},
+						amount: -amountToSubtract,
+						type: 'DEBIT',
+						description: 'Deducted funds from wallet',
+					},
+				});
+			}
+			
 		  });
 		  console.log('Funds deducted from wallet successfully');
 		} catch (error) {

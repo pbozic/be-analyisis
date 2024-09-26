@@ -344,6 +344,8 @@ model taxi_orders {
   flags                    Json?
   cargo_preferences        Json?
   driver_history_locations driver_history_locations[]
+  wallet_transfer          wallet_transfer_history[]
+  transactions             transactions[]
 }
 
 model taxi_order_sent {
@@ -465,7 +467,9 @@ model transactions {
   createdAt         DateTime         @default(now()) @db.Timestamptz(6)
   updatedAt         DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
   delivery_order_id String?          @db.Uuid
-  order             delivery_orders? @relation(fields: [delivery_order_id], references: [order_id])
+  taxi_order_id     String?          @db.Uuid
+  taxi_order        taxi_orders?     @relation(fields: [taxi_order_id], references: [order_id])
+  delivery_order    delivery_orders? @relation(fields: [delivery_order_id], references: [order_id])
   user              users            @relation(fields: [user_id], references: [user_id])
 }
 
@@ -552,7 +556,8 @@ model wallet_transfer_history {
   created_at                 DateTime         @default(now()) @db.Timestamptz(6)
   updated_at                 DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
   success                    Boolean
-  order                      delivery_orders? @relation(fields: [order_id], references: [order_id])
+  delivery_order             delivery_orders? @relation(fields: [order_id], references: [order_id])
+  taxi_order                 taxi_orders?     @relation(fields: [order_id], references: [order_id], map: "wallet_transfer_history_taxi_order_id_fkey")
 }
 
 enum USER_ROLES {
