@@ -785,6 +785,17 @@ async function cancelOrder(req, res) {
 		} else if (typeof cancellation_reason === 'string' && cancellation_reason.trim() !== '') {
 			reason = cancellation_reason; // Use the raw cancellation reason if it's a non-empty string
 		}
+		if (order.parentOrderId) {
+			let parentOrder = await TaxiOrderDao.getOrder(order.parentOrderId);
+			if (parentOrder.grouped_orders.length > 0) {
+				for (let or of parentOrder.grouped_orders) {
+					await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
+					await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
+					io.to("order_" + or.order_id).emit('order_status_change__taxi', or);
+					io.to("order_" + or.order_id).emit('order_cancelled__taxi', or);		
+				}
+			}
+		}
 		if (order.grouped_orders.length > 0) {
 			for (let or of order.grouped_orders) {
 				await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
