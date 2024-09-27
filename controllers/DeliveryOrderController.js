@@ -444,16 +444,17 @@ async function createDailyMeals(req, res) {
  */
 async function acceptOrder(req, res) {
 	const { order_id, user } = req.body;
+	const delivery_driver_id = user?.delivery_driver?.delivery_driver_id || user?.driver?.delivery_driver_id
 	try {
 		//TODO: check if driver is online
 		//TODO: check if order is still pending
-		await DeliveryOrderDao.acceptOrder(order_id, user);
+		await DeliveryOrderDao.acceptOrder(order_id, delivery_driver_id);
 		let order = await DeliveryOrderDao.getOrder(order_id, {
 			include: {
 				delivery_driver: true
 			}
 		});
-		let driver = await DeliveryDriverDao.getDeliveryDriverById(user.driver.delivery_driver_id, {
+		let driver = await DeliveryDriverDao.getDeliveryDriverById(delivery_driver_id, {
 			include: {
 				vehicles: {
 					vehicle_specification: true
