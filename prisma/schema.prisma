@@ -346,6 +346,7 @@ model taxi_orders {
   driver_history_locations driver_history_locations[]
   wallet_transfer          wallet_transfer_history[]
   transactions             transactions[]
+  customer_note            String?
 }
 
 model taxi_order_sent {
@@ -360,6 +361,7 @@ model taxi_order_sent {
   order              taxi_orders? @relation(fields: [order_id], references: [order_id], onDelete: Cascade)
   driver             drivers?     @relation(fields: [driver_id], references: [driver_id])
   rejected           Boolean      @default(false)
+
   @@unique([order_id, driver_id], name: "taxi_order_sent_driver_unique")
 }
 
