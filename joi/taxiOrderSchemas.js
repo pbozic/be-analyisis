@@ -26,7 +26,8 @@ const createOrderSchema = Joi.object({
 	payment: Joi.object(),
 	telephone: Joi.string(),
 	user: Joi.object(),
-	driver: Joi.any().allow(null).optional()
+	driver: Joi.any().allow(null).optional(),
+	customer_note: Joi.string().allow(null).optional(),
 });
 
 module.exports = {
