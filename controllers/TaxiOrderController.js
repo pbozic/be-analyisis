@@ -11,7 +11,6 @@ const { sendNotificationToUser } = require("../lib/oneSignal");
 const { sendOrderNotifications } = require("../lib/notifications");
 const {sleep, range} = require("../lib/helpersLib");
 const prisma = require('../prisma/prisma');
-const { is } = require("core-js/core/object");
 /**
  * GET /taxi/order/{orderId}
  * @tag Taxi
@@ -785,8 +784,8 @@ async function cancelOrder(req, res) {
 		} else if (typeof cancellation_reason === 'string' && cancellation_reason.trim() !== '') {
 			reason = cancellation_reason; // Use the raw cancellation reason if it's a non-empty string
 		}
-		if (order.parentOrderId) {
-			let parentOrder = await TaxiOrderDao.getOrder(order.parentOrderId);
+		if (order.parent_order_id) {
+			let parentOrder = await TaxiOrderDao.getOrder(order.parent_order_id);
 			if (parentOrder.grouped_orders.length > 0) {
 				for (let or of parentOrder.grouped_orders) {
 					await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
