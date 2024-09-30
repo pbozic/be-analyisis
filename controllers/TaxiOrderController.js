@@ -11,7 +11,6 @@ const { sendNotificationToUser } = require("../lib/oneSignal");
 const { sendOrderNotifications } = require("../lib/notifications");
 const {sleep, range} = require("../lib/helpersLib");
 const prisma = require('../prisma/prisma');
-const { is } = require("core-js/core/object");
 /**
  * GET /taxi/order/{orderId}
  * @tag Taxi
