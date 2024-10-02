@@ -4,8 +4,10 @@ const router = express.Router();
 const DeliveryDriverController = require("../../controllers/DeliveryDriverController");
 const joi = require("../../middleware/joi");
 const { updateSchema } = require("../../joi/deliveryDriverSchemas");
+const DriverController = require("../../controllers/DriverController");
 
 router.get("/", DeliveryDriverController.listDeliveryDrivers);
+router.patch("/edit", DeliveryDriverController.editDeliveryDriver);
 router.get("/orders/:user_id", DeliveryDriverController.resendDelegatedOrdersToDeliveryDriver);
 router.get("/online", DeliveryDriverController.listOnlineDeliveryDrivers);
 router.get("/available", DeliveryDriverController.getAvailableDeliveryDrivers);

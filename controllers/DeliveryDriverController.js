@@ -7,6 +7,11 @@ const DeliveryOrderDao = require("../dao/DeliveryOrder");
 const taxiHelpers = require("../lib/taxiHelpers");
 const { resendPendingOrdersToDeliveryDriver, sendActiveOrdersToDeliveryDriver } = require("../lib/deliveryHelpers");
 const DriverDao = require("../dao/Driver");
+const { updateAddressByAddressId } = require("../dao/Address");
+const { updateDocumentByDocumentId } = require("../dao/Document");
+const { updateFileInDocument } = require("../dao/File");
+const S3Helper = require("../lib/s3");
+const VehicleDao = require("../dao/Vehicle");
 
 /**
  * GET /delivery_drivers/orders/user_id
@@ -39,6 +44,87 @@ async function resendDelegatedOrdersToDeliveryDriver(req, res) {
 		res.status(400).json({ error: "Error retrieving orders", detail: error.message });
 	}
 }
+
+
+/**
+ * PATCH /delivery_drivers/edit
+ * @tag Delivery Drivers
+ * @summary Edit a delivery driver
+ * @description Edits the data of specific delivery driver.
+ * @operationId editDeliveryDriver
+ * @pathParam {string} delivery_driver_id - The ID of the delivery driver to edit
+ * @bodyContent {DeliveryDriverEdit} application/json
+ * @bodyRequired
+ * @response 200 - Delivery driver edited successfully
+ * @responseContent {DeliveryDriver} 200.application/json
+ * @response 400 - Error updating delivery driver
+ */
+async function editDeliveryDriver(req, res) {
+	const { user, driver, vehicle, documents, files, address } = req.body
+
+	const business_id = driver?.business_id
+	delete driver?.business_id
+	const delivery_driver_id = driver?.delivery_driver_id
+	delete driver?.delivery_driver_id
+	const user_id = user?.user_id
+	delete user?.user_id
+	const address_id = address?.address_id
+	delete address?.address_id
+	const vehicle_id = vehicle?.vehicle_id
+	delete vehicle?.vehicle_id
+	delete driver?.ride_requirements
+	delete driver?.regions
+
+	console.info('FILES #', files?.length)
+
+	try {
+		const updatedDriver = await DeliveryDriverDao.updateDeliveryDriver(delivery_driver_id, driver);
+
+		let updatedUser = await UserDao.updateScheduledUser(user_id, user);
+
+		let updatedAddress = await updateAddressByAddressId(address_id, address)
+
+		if (documents && documents.length > 0) {
+			for (const doc of documents) {
+				const documentId = doc.document_id;
+				delete doc.document_id;
+				await updateDocumentByDocumentId(documentId, doc);
+			}
+		}
+
+		if (files && files.length > 0) {
+			for (const file of files) {
+				if (file?.base64) {
+					const fileId = file.file_id;
+					delete file.document_id
+					delete file.file_id;
+					delete file?.name
+
+					let base64 = file.base64;
+					delete file.base64;
+
+					await updateFileInDocument(fileId, file)
+
+					let key = S3Helper.getFileKey(fileId, file.mime_type);
+					await S3Helper.SaveObject(key, base64, file.mime_type, {
+						users: [user_id],
+						businesses: [business_id]
+					}, file);
+
+
+				}
+			}
+		}
+
+		let updatedVehicle = await VehicleDao.updateVehicle(vehicle_id, vehicle)
+
+		res.status(200).json({ updatedDriver, updatedUser, updatedAddress, updatedVehicle, files });
+	} catch (error) {
+		console.error("Error editing driver:", error);
+		res.status(400).json({ error: "Error editing driver", detail: error.message });
+	}
+}
+
 
 /**
  * GET /delivery
@@ -135,11 +221,56 @@ async function listDeliveryDriversWithDailyMeals(req, res) {
  * @response 400 - Error retrieving delivery driver information
  */
 async function getDeliveryDriverById(req, res) {
-	console.log('GET DELIVERY DRIVER BY ID', req.params)
+	console.log('GET DELIVERY DRIVER BY ID', req.params);
 	try {
 		let deliveryDriver;
 		if (req.params?.delivery_driver_id) {
-			deliveryDriver = await DeliveryDriverDao.getDeliveryDriverById(req.params.delivery_driver_id);
+			const includeParams = {
+				user: {
+					include: {
+						addresses: {
+							include: {
+								address: true,
+							},
+						},
+						documents: {
+							include: {
+								files: true,
+							},
+						},
+						business_users: {
+							include: {
+								business: {
+									include: {
+										documents: {
+											include: {
+												files: true,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				vehicles: {
+					include: {
+						vehicle_specification: true,
+						documents: {
+							include: {
+								files: true,
+							},
+						},
+					},
+				},
+				documents: {
+					include: {
+						files: true,
+					},
+				},
+			};
+
+			deliveryDriver = await DeliveryDriverDao.getDeliveryDriverById(req.params.delivery_driver_id, includeParams);
 		}
 		if (deliveryDriver) {
 			res.status(200).json(deliveryDriver);
@@ -151,6 +282,7 @@ async function getDeliveryDriverById(req, res) {
 		res.status(400).json({ error: "Error retrieving delivery driver information (by delivery driver id)", detail: error.message });
 	}
 }
+
 
 /**
  * GET /delivery_drivers/user/:user_id
@@ -386,5 +518,6 @@ module.exports = {
 	createDeliveryDriver,
 	getAvailableDeliveryDrivers,
 	getDeliveryDriverByUserId,
-	resendDelegatedOrdersToDeliveryDriver
+	resendDelegatedOrdersToDeliveryDriver,
+	editDeliveryDriver
 };

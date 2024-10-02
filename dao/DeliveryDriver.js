@@ -40,27 +40,54 @@ const getOnlineDeliveryDrivers = async () => {
 	}
 };
 
-const getDeliveryDriverById = async (delivery_driver_id) => {
+const updateDeliveryDriver = async (delivery_driver_id, updateData) => {
 	try {
-		return await prisma.delivery_drivers.findUnique({
-			where: {
-				delivery_driver_id: delivery_driver_id
-			},
+		delete updateData.location;
+
+		return await prisma.delivery_drivers.update({
+			where: { delivery_driver_id },
+			data: { ...updateData },
 			include: {
 				user: true,
 				vehicles: {
 					include: {
-						vehicle_specification: true
-					}
+						vehicle_specification: true,
+					},
 				},
-				documents: false
-			}
+			},
+		});
+	} catch (error) {
+		console.error("Error updating driver:", error);
+		throw new Error(error);
+	}
+};
+
+const getDeliveryDriverById = async (delivery_driver_id, includeParams) => {
+	const defaultInclude = {
+		user: true,
+		vehicles: {
+			include: {
+				vehicle_specification: true,
+			},
+		},
+		documents: false,
+	};
+
+	const include = includeParams || defaultInclude;
+
+	try {
+		return await prisma.delivery_drivers.findUnique({
+			where: {
+				delivery_driver_id: delivery_driver_id,
+			},
+			include: include,
 		});
 	} catch (error) {
 		console.error("Error retrieving delivery driver:", error);
 		throw new Error(error);
 	}
 };
+
 
 const getDeliveryDriverByUserId = async (user_id) => {
 	try {
@@ -168,29 +195,6 @@ const updateDeliveryDriverLocationHistory = async (delivery_driver_id, location,
 		return await prisma.delivery_driver_history_locations.create({ data });
 	} catch (error) {
 		console.error("Error updating driver's location history:", error);
-		throw new Error(error);
-	}
-};
-
-
-const updateDeliveryDriver = async (delivery_driver_id, updateData) => {
-	try {
-		delete updateData.location;
-
-		return await prisma.delivery_drivers.update({
-			where: { delivery_driver_id },
-			data: { ...updateData },
-			include: {
-				user: true,
-				vehicles: {
-					include: {
-						vehicle_specification: true
-					}
-				}
-			}
-		});
-	} catch (error) {
-		console.error("Error updating delivery driver:", error);
 		throw new Error(error);
 	}
 };
@@ -317,5 +321,5 @@ module.exports = {
 	getAvailableDeliveryDrivers,
 	updateDriverLocation,
 	updateDeliveryDriverLocationHistory,
-	getBusinessByDeliveryDriverId
+	getBusinessByDeliveryDriverId,
 };
