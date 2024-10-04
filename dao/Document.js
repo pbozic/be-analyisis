@@ -197,6 +197,38 @@ const getDocumentsForVehicleByType = async (vehicleId, documentType) => {
     }
 };
 
+const findDocumentByTypeAndDeliveryDriverId = async (documentType, deliveryDriverId) => {
+    try {
+        return await prisma.documents.findFirst({
+            where: {
+                AND: [
+                    { document_type: documentType },
+                    { delivery_driver_id: deliveryDriverId}
+                ]
+            }
+        });
+    } catch (error) {
+        console.error("Error finding document by type and delivery driver ID:", error);
+        throw new Error("Unable to find document");
+    }
+}
+
+const findDocumentByTypeAndDriverId = async (documentType, driverId) => {
+    try {
+        return await prisma.documents.findFirst({
+            where: {
+                AND: [
+                    { document_type: documentType },
+                    { driver_id: driverId}
+                ]
+            }
+        });
+    } catch (error) {
+        console.error("Error finding document by type and driver ID:", error);
+        throw new Error("Unable to find document");
+    }
+}
+
 const createDocument = async (documentData, filesData = []) => {
     for (let file of filesData) {
         delete file.data
@@ -582,6 +614,7 @@ module.exports = {
     deleteDocumentsAndFiles,
     getLastDocumentByTypeAndBusinessId,
     deleteDocumentsAndFilesByDocumentId,
-    updateDocumentByDocumentId
-
+    updateDocumentByDocumentId,
+    findDocumentByTypeAndDeliveryDriverId,
+    findDocumentByTypeAndDriverId
 };
