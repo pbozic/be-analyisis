@@ -418,13 +418,12 @@ async function updateDriverLocation(req, res) {
 				console.error("Error emiting driver's location to connected users:", error);
 			}
 		}
-		if (orders.length === 0) {
-			io.emit("driver_location", {
-				...driver,
-				driver_id: driver.driver_id,
-				location: locationData
-			});
-		}
+
+		io.emit("driver_location", {
+			...driver,
+			driver_id: driver.driver_id,
+			location: locationData
+		});
 		await DriverDao.updateDriverLocationHistory(driver.driver_id, locationData, orderStatus, orderId);
 		res.status(200).json(driverUpdatedLocation);
 	} catch (error) {
