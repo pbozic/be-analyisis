@@ -418,7 +418,10 @@ async function updateDriverLocation(req, res) {
 				console.error("Error emiting driver's location to connected users:", error);
 			}
 		}
-		if (orders.length === 0) {
+
+		console.info('ORDERS LENGTH driver_location', orders.length)
+		if (!driver?.on_order) {
+			console.info('EMIT DRIVER_LOCATION')
 			io.emit("driver_location", {
 				...driver,
 				driver_id: driver.driver_id,
