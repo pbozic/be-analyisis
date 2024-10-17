@@ -509,9 +509,6 @@ async function getDriverLocationsWithPerformance(driverId, startTime, endTime) {
 	}
 }
 
-
-
-
 module.exports = {
 	getDrivers,
 	getOnlineDrivers,

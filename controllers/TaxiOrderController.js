@@ -425,11 +425,13 @@ async function createOrder(req, res) {
 
 		console.info('dep date',  req.body.preferences?.departure_date)
 		let flags = await FlagDao.getFlags();
-		let falgsObj = {}; 
+		let flagsObj = {};
 		flags.map(flag => {
-			falgsObj[flag.name] = flag.status;
+			flagsObj[flag.name] = flag.status;
 		});
-		orderData.flags = falgsObj;
+		orderData.flags = flagsObj;
+
+
 		let order = await createOrderHelper(req, res, orderData);
 		//console.tag("TaxiOrderController","create taxi order", order)
 		res.status(200).json(order);
@@ -439,6 +441,7 @@ async function createOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 function getDayIndex(dayName) {
 	// Map day names to their corresponding indices
 	const daysOfWeek = {

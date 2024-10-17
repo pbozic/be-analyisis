@@ -15,8 +15,9 @@ const { updateFileInDocument, addFileToDocument } = require("../dao/File");
 const FileDao = require("../dao/File");
 const S3Helper = require("../lib/s3");
 const DocumentDao = require("../dao/Document");
-const { DOCUMENT_TYPE } = require("../lib/constants");
+const { TAXI_ORDER_STATUS, DOCUMENT_TYPE } = require("../lib/constants");
 const { createNewVehicle } = require("../dao/Vehicle");
+const { filterOrdersByDateRange, calculateTotalDriversEarnings, calculateDriversEarnings } = require('../lib/driverHelpers');
 
 /**
  * GET /drivers
@@ -570,6 +571,97 @@ async function getDriverHistoryLocations (req, res) {
 	}
 }
 
+/**
+ * GET /drivers/:driver_id/earnings/:start_date/:end_date
+ * @tag Drivers
+ * @summary Get earnings for a specific driver
+ * @description Retrieves the earnings of a specific driver within a specified date range.
+ * @operationId getDriverEarnings
+ * @pathParam {string} driver_id - The ID of the driver whose earnings are being retrieved
+ * @pathParam {string} start_date - The start date for the earnings period (format: YYYY-MM-DD)
+ * @pathParam {string} end_date - The end date for the earnings period (format: YYYY-MM-DD)
+ * @response 200 - Successful operation, returns driver's earnings
+ * @responseContent {Earnings} 200.application/json
+ * @response 404 - Driver not found
+ * @response 400 - Error retrieving driver's earnings
+ */
+async function getDriverEarnings(req, res) {
+	const { driver_id, start_date, end_date } = req.params;
+
+	try {
+		// Fetch completed orders for the driver
+		const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver_id);
+		const driver = await DriverDao.getDriverById(driver_id);
+		const completedOrders = driverOrders.filter(order => order.status === TAXI_ORDER_STATUS.TAXI_COMPLETED);
+		const filteredOrders = filterOrdersByDateRange(completedOrders, start_date, end_date);
+		const earningsData = calculateDriversEarnings(filteredOrders, driver);
+
+		if (earningsData) {
+			res.status(200).json({ driver_id, ...earningsData });
+		} else {
+			res.status(404).json({ error: "Driver not found or no earnings data available" });
+		}
+	} catch (error) {
+		console.error("Error retrieving driver's earnings:", error);
+		res.status(400).json({ error: "Error retrieving driver's earnings", detail: error.message });
+	}
+}
+
+/**
+ * GET /drivers/earnings/:start_date/:end_date
+ * @tag Drivers
+ * @summary Get earnings for all drivers
+ * @description Retrieves the earnings of all drivers within a specified date range.
+ * @operationId getAllDriversEarnings
+ * @pathParam {string} start_date - The start date for the earnings period (format: YYYY-MM-DD)
+ * @pathParam {string} end_date - The end date for the earnings period (format: YYYY-MM-DD)
+ * @response 200 - Successful operation, returns all drivers' earnings
+ * @responseContent {Earnings[]} 200.application/json
+ * @response 400 - Error retrieving all drivers' earnings
+ */
+async function getAllDriversEarnings(req, res) {
+	const { start_date, end_date } = req.params;
+
+	try {
+		const drivers = await DriverDao.getDrivers({});
+		const earningsPromises = drivers.map(async (driver) => {
+			const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id);
+			const completedOrders = driverOrders.filter(order => order.status === TAXI_ORDER_STATUS.TAXI_COMPLETED);
+			const filteredOrders = filterOrdersByDateRange(completedOrders, start_date, end_date);
+			return calculateDriversEarnings(filteredOrders, driver);
+		});
+
+		const allEarnings = await Promise.all(earningsPromises);
+		res.status(200).json(allEarnings);
+	} catch (error) {
+		console.error("Error retrieving all drivers' earnings:", error);
+		res.status(400).json({ error: "Error retrieving all drivers' earnings", detail: error.message });
+	}
+}
+
+/**
+ * GET /drivers/total-earnings
+ * @tag Drivers
+ * @summary Get total earnings for all drivers
+ * @description Retrieves the total earnings of all drivers based on completed orders.
+ * @operationId getTotalEarnings
+ * @response 200 - Successful operation, returns total earnings for all drivers
+ * @responseContent {TotalEarnings} 200.application/json
+ * @response 400 - Error retrieving total earnings
+ */
+async function getTotalEarnings(req, res) {
+	try {
+		const drivers = await DriverDao.getDrivers({});
+		const orders = await TaxiOrderDao.getOrders({});
+		const completedOrders = orders.filter(order => order.status === TAXI_ORDER_STATUS.TAXI_COMPLETED);
+		const totalEarnings = calculateTotalDriversEarnings(completedOrders, drivers);
+		res.status(200).json(totalEarnings);
+	} catch (error) {
+		console.error("Error retrieving all drivers' total earnings:", error);
+		res.status(400).json({ error: "Error retrieving all drivers' total earnings", detail: error.message });
+	}
+}
+
 module.exports = {
 	listDrivers,
 	listOnlineDrivers,
@@ -586,5 +678,8 @@ module.exports = {
 	getUnavailableDrivers,
 	handleSosAlert,
 	getDriverHistoryLocations,
-	editDriver
+	editDriver,
+	getDriverEarnings,
+	getAllDriversEarnings,
+	getTotalEarnings
 };
