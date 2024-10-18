@@ -640,10 +640,8 @@ async function getAllDriversEarnings(req, res) {
             const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id);
 			// TODO: getCompletedOrders()
             const completedOrders = driverOrders.filter(order => order.status === TAXI_ORDER_STATUS.TAXI_COMPLETED);
-            console.log(completedOrders.length, 'completedOrders');
-			const filteredOrders = filterOrdersByDateRange(completedOrders, start_date, end_date);
-			console.log(filteredOrders, 'filteredOrders');
-            return calculateDriversEarnings(filteredOrders, driver);
+            const filteredOrders = filterOrdersByDateRange(completedOrders, start_date, end_date);
+			return calculateDriversEarnings(filteredOrders, driver);
         });
 
         const allEarnings = await Promise.all(earningsPromises);
