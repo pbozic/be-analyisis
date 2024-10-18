@@ -597,12 +597,10 @@ async function getDriverEarnings(req, res) {
 	try {
 		const driver = await DriverDao.getDriverById(driver_id);
 		const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id, {
-			where: {
-				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
-				created_at: {
-					gte: new Date(start_date).toISOString(),
-					lte: new Date(end_date).toISOString()
-				}
+			status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
+			created_at: {
+				gte: new Date(start_date).toISOString(),
+				lte: new Date(end_date).toISOString()
 			}
 		});
 		const earningsData = calculateDriversEarnings(driverOrders, driver);
@@ -641,13 +639,11 @@ async function getAllDriversEarnings(req, res) {
         const drivers = await DriverDao.getDrivers();
 		const earningsPromises = drivers.map(async (driver) => {
             const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id, {
-                where: {
-                    status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
-                    created_at: {
-						gte: new Date(start_date).toISOString(),
-						lte: new Date(end_date).toISOString()
-                    }
-                }
+				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
+				created_at: {
+					gte: new Date(start_date).toISOString(),
+					lte: new Date(end_date).toISOString()
+				}
             });
             return calculateDriversEarnings(driverOrders, driver);
         });
