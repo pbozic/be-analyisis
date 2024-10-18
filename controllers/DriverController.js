@@ -649,6 +649,7 @@ async function getAllDriversEarnings(req, res) {
                     }
                 }
             });
+			console.log("startDate", start_date, "endDate", end_date, driverOrders.length)
             return calculateDriversEarnings(driverOrders, driver);
         });
 
