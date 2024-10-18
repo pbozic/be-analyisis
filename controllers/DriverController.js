@@ -587,6 +587,11 @@ async function getDriverHistoryLocations (req, res) {
  */
 async function getDriverEarnings(req, res) {
 	const { driver_id, start_date, end_date } = req.params;
+	console.info(req.params, 'getDriverEarnings')
+
+	if (!driver_id || !start_date || !end_date) {
+		return res.status(400).json({ message: 'Missing required parameters' });
+	}
 
 	try {
 		// Fetch completed orders for the driver
@@ -621,6 +626,11 @@ async function getDriverEarnings(req, res) {
  */
 async function getAllDriversEarnings(req, res) {
 	const { start_date, end_date } = req.params;
+	console.info(req.params, 'getAllDriversEarnings')
+
+	if (!start_date || !end_date) {
+		return res.status(400).json({ message: 'Missing required parameters' });
+	}
 
 	try {
 		const drivers = await DriverDao.getDrivers({});
@@ -651,10 +661,9 @@ async function getAllDriversEarnings(req, res) {
  */
 async function getTotalEarnings(req, res) {
 	try {
-		const drivers = await DriverDao.getDrivers({});
 		const orders = await TaxiOrderDao.getOrders({});
 		const completedOrders = orders.filter(order => order.status === TAXI_ORDER_STATUS.TAXI_COMPLETED);
-		const totalEarnings = calculateTotalDriversEarnings(completedOrders, drivers);
+		const totalEarnings = calculateTotalDriversEarnings(completedOrders);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
 		console.error("Error retrieving all drivers' total earnings:", error);
