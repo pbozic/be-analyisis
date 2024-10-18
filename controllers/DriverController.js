@@ -600,8 +600,8 @@ async function getDriverEarnings(req, res) {
 			where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
 				created_at: {
-					gte: new Date(start_date).toISOString(),
-					lte: new Date(end_date).toISOString()
+					$gte: new Date(start_date).toISOString(),
+					$lte: new Date(end_date).toISOString()
 				}
 			}
 		});
@@ -644,8 +644,8 @@ async function getAllDriversEarnings(req, res) {
                 where: {
                     status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
                     created_at: {
-						gte: new Date(start_date).toISOString(),
-						lte: new Date(end_date).toISOString()
+						$gte: new Date(start_date).toISOString(),
+						$lte: new Date(end_date).toISOString()
                     }
                 }
             });
