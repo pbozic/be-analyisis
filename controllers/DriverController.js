@@ -556,7 +556,7 @@ async function handleSosAlert(req, res) {
  */
 async function getDriverHistoryLocations (req, res) {
 	const { driver_id } = req.params;
-	const { start_time, end_time } = req.body;
+	const { start_time, end_time } = req.query;
 	console.info(req.params, 'getDriverHistoryLocations')
 
 	if (!driver_id || !start_time || !end_time) {
@@ -588,7 +588,7 @@ async function getDriverHistoryLocations (req, res) {
  */
 async function getDriverEarnings(req, res) {
 	const { driver_id } = req.params;
-	const { start_date, end_date } = req.body;
+	const { start_date, end_date } = req.query;
 	console.info(req.params, 'getDriverEarnings')
 
 	if (!driver_id || !start_date || !end_date) {
@@ -627,7 +627,7 @@ async function getDriverEarnings(req, res) {
  * @response 400 - Error retrieving all drivers' earnings
  */
 async function getAllDriversEarnings(req, res) {
-    const { start_date, end_date } = req.body;
+    const { start_date, end_date } = req.query;
     console.info(req.params, 'getAllDriversEarnings');
 
     if (!start_date || !end_date) {
