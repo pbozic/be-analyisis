@@ -637,6 +637,7 @@ async function getAllDriversEarnings(req, res) {
     try {
         const drivers = await DriverDao.getDrivers();
         const orders = await TaxiOrderDao.getOrders();
+		// TODO: getCompletedOrders()
         const completedOrders = orders.filter(order => order.status === TAXI_ORDER_STATUS.TAXI_COMPLETED);
 
         // Check if start_date is the epoch date
@@ -648,8 +649,10 @@ async function getAllDriversEarnings(req, res) {
         // Otherwise, calculate earnings for each driver
         const earningsPromises = drivers.map(async (driver) => {
             const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id);
+			// TODO: getCompletedOrders()
             const completedOrders = driverOrders.filter(order => order.status === TAXI_ORDER_STATUS.TAXI_COMPLETED);
             const filteredOrders = filterOrdersByDateRange(completedOrders, start_date, end_date);
+			console.log(filteredOrders, 'filteredOrders');
             return calculateDriversEarnings(filteredOrders, driver);
         });
 
