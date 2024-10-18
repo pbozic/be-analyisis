@@ -555,7 +555,8 @@ async function handleSosAlert(req, res) {
  * @response 400 - Error fetching history locations for a particular driver
  */
 async function getDriverHistoryLocations (req, res) {
-	const { driver_id, start_time, end_time } = req.params;
+	const { driver_id } = req.params;
+	const { start_time, end_time } = req.body;
 	console.info(req.params, 'getDriverHistoryLocations')
 
 	if (!driver_id || !start_time || !end_time) {
@@ -586,7 +587,8 @@ async function getDriverHistoryLocations (req, res) {
  * @response 400 - Error retrieving driver's earnings
  */
 async function getDriverEarnings(req, res) {
-	const { driver_id, start_date, end_date } = req.params;
+	const { driver_id } = req.params;
+	const { start_date, end_date } = req.body;
 	console.info(req.params, 'getDriverEarnings')
 
 	if (!driver_id || !start_date || !end_date) {
@@ -625,28 +627,38 @@ async function getDriverEarnings(req, res) {
  * @response 400 - Error retrieving all drivers' earnings
  */
 async function getAllDriversEarnings(req, res) {
-	const { start_date, end_date } = req.params;
-	console.info(req.params, 'getAllDriversEarnings')
+    const { start_date, end_date } = req.body;
+    console.info(req.params, 'getAllDriversEarnings');
 
-	if (!start_date || !end_date) {
-		return res.status(400).json({ message: 'Missing required parameters' });
-	}
+    if (!start_date || !end_date) {
+        return res.status(400).json({ message: 'Missing required parameters' });
+    }
 
-	try {
-		const drivers = await DriverDao.getDrivers({});
-		const earningsPromises = drivers.map(async (driver) => {
-			const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id);
-			const completedOrders = driverOrders.filter(order => order.status === TAXI_ORDER_STATUS.TAXI_COMPLETED);
-			const filteredOrders = filterOrdersByDateRange(completedOrders, start_date, end_date);
-			return calculateDriversEarnings(filteredOrders, driver);
-		});
+    try {
+        const drivers = await DriverDao.getDrivers({});
+        const orders = await TaxiOrderDao.getOrders({});
+        const completedOrders = orders.filter(order => order.status === TAXI_ORDER_STATUS.TAXI_COMPLETED);
 
-		const allEarnings = await Promise.all(earningsPromises);
-		res.status(200).json(allEarnings);
-	} catch (error) {
-		console.error("Error retrieving all drivers' earnings:", error);
-		res.status(400).json({ error: "Error retrieving all drivers' earnings", detail: error.message });
-	}
+        // Check if start_date is the epoch date
+        if (new Date(start_date).getTime() === 0) {
+            const totalEarnings = calculateTotalDriversEarnings(completedOrders, drivers);
+            return res.status(200).json(totalEarnings);
+        }
+
+        // Otherwise, calculate earnings for each driver
+        const earningsPromises = drivers.map(async (driver) => {
+            const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id);
+            const completedOrders = driverOrders.filter(order => order.status === TAXI_ORDER_STATUS.TAXI_COMPLETED);
+            const filteredOrders = filterOrdersByDateRange(completedOrders, start_date, end_date);
+            return calculateDriversEarnings(filteredOrders, driver);
+        });
+
+        const allEarnings = await Promise.all(earningsPromises);
+        res.status(200).json(allEarnings);
+    } catch (error) {
+        console.error("Error retrieving all drivers' earnings:", error);
+        res.status(400).json({ error: "Error retrieving all drivers' earnings", detail: error.message });
+    }
 }
 
 /**
