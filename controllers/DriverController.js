@@ -17,7 +17,7 @@ const S3Helper = require("../lib/s3");
 const DocumentDao = require("../dao/Document");
 const { TAXI_ORDER_STATUS, DOCUMENT_TYPE } = require("../lib/constants");
 const { createNewVehicle } = require("../dao/Vehicle");
-const { filterOrdersByDateRange, calculateTotalDriversEarnings, calculateDriversEarnings } = require('../lib/driverHelpers');
+const { calculateTotalDriversEarnings, calculateDriversEarnings } = require('../lib/driverHelpers');
 
 /**
  * GET /drivers
@@ -599,10 +599,13 @@ async function getDriverEarnings(req, res) {
 		const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id, {
 			where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
-				driver_id: driver.driver_id
-			}});
-		const filteredOrders = filterOrdersByDateRange(driverOrders, start_date, end_date);
-		const earningsData = calculateDriversEarnings(filteredOrders, driver);
+				created_at: {
+					gte: new Date(start_date), // Start date
+					lte: new Date(end_date) // End date
+				}
+			}
+		});
+		const earningsData = calculateDriversEarnings(driverOrders, driver);
 
 		if (earningsData) {
 			res.status(200).json({ driver_id, ...earningsData });
@@ -638,12 +641,15 @@ async function getAllDriversEarnings(req, res) {
         const drivers = await DriverDao.getDrivers();
         const earningsPromises = drivers.map(async (driver) => {
             const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id, {
-				where: {
-					status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
-					driver_id: driver.driver_id
-				}});
-			const filteredOrders = filterOrdersByDateRange(driverOrders, start_date, end_date);
-			return calculateDriversEarnings(filteredOrders, driver);
+                where: {
+                    status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
+                    created_at: {
+                        gte: new Date(start_date), // Start date
+                        lte: new Date(end_date) // End date
+                    }
+                }
+            });
+            return calculateDriversEarnings(driverOrders, driver);
         });
 
         const allEarnings = await Promise.all(earningsPromises);
