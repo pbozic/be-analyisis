@@ -587,11 +587,6 @@ async function createDeliveryDriver(req, res) {
 }
 
 module.exports = {
-	createDeliveryDriver
-};
-
-
-module.exports = {
 	listDeliveryDrivers,
 	listOnlineDeliveryDrivers,
 	listDeliveryDriversWithDailyMeals,

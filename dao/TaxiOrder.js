@@ -76,7 +76,7 @@ async function getTaxiOrdersIfNotCompleted(user_id, type) {
                 type: type,
                 user_id: user_id,
                 status: {
-                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED, TAXI_ORDER_STATUS.TAXI_REJECTED] // Exclude both completed and pending orders
+                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED, TAXI_ORDER_STATUS.TAXI_REJECTED] // Exclude both completed and pending orders
                 },
             },
             include: {
