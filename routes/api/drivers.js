@@ -14,9 +14,8 @@ router.get("/orders", DriverController.resendDelegatedOrdersToDriver);
 router.get("/:driver_id", DriverController.getDriverById);
 router.get("/:driver_id/location", DriverController.getDriverLocation);
 router.get("/:driver_id/history_location", DriverController.getDriverHistoryLocations);
-
+router.get("/earnings/all", DriverController.getAllDriversEarnings);
 router.get("/earnings/:driver_id", DriverController.getDriverEarnings);
-router.get("/earnings/", DriverController.getAllDriversEarnings);
 
 router.patch("/", DriverController.updateDriver);
 router.patch("/edit", DriverController.editDriver);

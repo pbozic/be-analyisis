@@ -628,15 +628,15 @@ async function getDriverEarnings(req, res) {
  */
 async function getAllDriversEarnings(req, res) {
     const { start_date, end_date } = req.query;
-    console.info(req.params, 'getAllDriversEarnings');
+    console.info(start_date, end_date, 'getAllDriversEarnings');
 
     if (!start_date || !end_date) {
         return res.status(400).json({ message: 'Missing required parameters' });
     }
 
     try {
-        const drivers = await DriverDao.getDrivers({});
-        const orders = await TaxiOrderDao.getOrders({});
+        const drivers = await DriverDao.getDrivers();
+        const orders = await TaxiOrderDao.getOrders();
         const completedOrders = orders.filter(order => order.status === TAXI_ORDER_STATUS.TAXI_COMPLETED);
 
         // Check if start_date is the epoch date
