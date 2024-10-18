@@ -596,12 +596,14 @@ async function getDriverEarnings(req, res) {
 
 	try {
 		const driver = await DriverDao.getDriverById(driver_id);
+		const formattedStartDate = new Date(start_date).toISOString().slice(0, 19).replace('T', ' ') + '+02';
+		const formattedEndDate = new Date(end_date).toISOString().slice(0, 19).replace('T', ' ') + '+02';
 		const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id, {
 			where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
 				created_at: {
-					gte: new Date(start_date), // Start date
-					lte: new Date(end_date) // End date
+					gte: formattedStartDate,
+					lte: formattedEndDate
 				}
 			}
 		});
@@ -639,13 +641,15 @@ async function getAllDriversEarnings(req, res) {
 
     try {
         const drivers = await DriverDao.getDrivers();
-        const earningsPromises = drivers.map(async (driver) => {
+		const formattedStartDate = new Date(start_date).toISOString().slice(0, 19).replace('T', ' ') + '+02';
+		const formattedEndDate = new Date(end_date).toISOString().slice(0, 19).replace('T', ' ') + '+02';
+		const earningsPromises = drivers.map(async (driver) => {
             const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id, {
                 where: {
                     status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
                     created_at: {
-                        gte: new Date(start_date), // Start date
-                        lte: new Date(end_date) // End date
+                        gte: formattedStartDate,
+                        lte: formattedEndDate
                     }
                 }
             });
