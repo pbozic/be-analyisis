@@ -147,11 +147,13 @@ async function getActiveOrdersByDriverId(driver_id) {
 
 async function getOrdersByDriverId(driver_id, args) {
     try {
+        const whereClause = {
+            driver_id: driver_id,
+            ...args
+        }
+
         return await prisma.taxi_orders.findMany({
-            ...args,
-            where: {
-                driver_id: driver_id
-            },
+            where: whereClause,
             include: {
                 user: true,
                 driver: {
