@@ -589,7 +589,6 @@ async function getDriverHistoryLocations (req, res) {
 async function getDriverEarnings(req, res) {
 	const { driver_id } = req.params;
 	const { start_date, end_date } = req.query;
-	console.info(req.params, 'getDriverEarnings')
 
 	if (!driver_id || !start_date || !end_date) {
 		return res.status(400).json({ message: 'Missing required parameters' });
@@ -628,7 +627,6 @@ async function getDriverEarnings(req, res) {
  */
 async function getAllDriversEarnings(req, res) {
     const { start_date, end_date } = req.query;
-    console.info(start_date, end_date, 'getAllDriversEarnings');
 
     if (!start_date || !end_date) {
         return res.status(400).json({ message: 'Missing required parameters' });
