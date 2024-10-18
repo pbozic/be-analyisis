@@ -595,11 +595,13 @@ async function getDriverEarnings(req, res) {
 	}
 
 	try {
-		// Fetch completed orders for the driver
-		const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver_id);
 		const driver = await DriverDao.getDriverById(driver_id);
-		const completedOrders = driverOrders.filter(order => order.status === TAXI_ORDER_STATUS.TAXI_COMPLETED);
-		const filteredOrders = filterOrdersByDateRange(completedOrders, start_date, end_date);
+		const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id, {
+			where: {
+				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
+				driver_id: driver.driver_id
+			}});
+		const filteredOrders = filterOrdersByDateRange(driverOrders, start_date, end_date);
 		const earningsData = calculateDriversEarnings(filteredOrders, driver);
 
 		if (earningsData) {
@@ -635,10 +637,12 @@ async function getAllDriversEarnings(req, res) {
     try {
         const drivers = await DriverDao.getDrivers();
         const earningsPromises = drivers.map(async (driver) => {
-            const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id);
-			// TODO: getCompletedOrders()
-            const completedOrders = driverOrders.filter(order => order.status === TAXI_ORDER_STATUS.TAXI_COMPLETED);
-            const filteredOrders = filterOrdersByDateRange(completedOrders, start_date, end_date);
+            const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id, {
+				where: {
+					status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
+					driver_id: driver.driver_id
+				}});
+			const filteredOrders = filterOrdersByDateRange(driverOrders, start_date, end_date);
 			return calculateDriversEarnings(filteredOrders, driver);
         });
 
@@ -662,10 +666,11 @@ async function getAllDriversEarnings(req, res) {
  */
 async function getTotalEarnings(req, res) {
 	try {
-		const orders = await TaxiOrderDao.getOrders({});
-		// TODO: getCompletedOrders()
-		const completedOrders = orders.filter(order => order.status === TAXI_ORDER_STATUS.TAXI_COMPLETED);
-		const totalEarnings = calculateTotalDriversEarnings(completedOrders);
+		const orders = await TaxiOrderDao.getOrders({
+			where: {
+				status: TAXI_ORDER_STATUS.TAXI_COMPLETED
+			}});
+		const totalEarnings = calculateTotalDriversEarnings(orders);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
 		console.error("Error retrieving all drivers' total earnings:", error);
