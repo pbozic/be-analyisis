@@ -270,7 +270,7 @@ const updateUserDisabled = async (user_id, disabled) => {
 				user_id: user_id,
 			},
 			data: {
-				disabled,
+				disabled: disabled,
 			},
 		});
 	} catch (error) {

@@ -759,7 +759,7 @@ async function deleteUserByUserId(req, res) {
  * @tag Users
  * @summary Disables the current user
  * @description This endpoint is used to disable the current user.
- * @operationId disableUserByUserId
+ * @operationId disableMe
  * @bodyDescription
  * @bodyContent
  * @bodyRequired
@@ -768,7 +768,6 @@ async function deleteUserByUserId(req, res) {
  * @response 400 - Error updating user information.
  */
 async function disableMe(req, res) {
-	const { user_id } = req.params;
 	try {
 		let disabledUser = await UserDao.updateUserDisabled(req.user.user_id, true);
 		if (disabledUser) return res.status(200).json({
@@ -779,7 +778,7 @@ async function disableMe(req, res) {
 		res.status(400).json({ error: "Error updating user information" });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error updating user information", e });
+		return res.status(400).json({ error: "Error updating user information", e });
 	}
 }
 
