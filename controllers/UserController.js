@@ -1268,5 +1268,5 @@ module.exports = {
 	updateUserByUserId,
 	updateUserTransferPushNotifications,
 	updateUserDeliveryPushNotifications,
-	disableMe
+	disableMe,
 };
