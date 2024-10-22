@@ -263,6 +263,21 @@ const updateUserDateOfBirth = async (user_id, dateOfBirth) => {
 	}
 };
 
+const updateUserDisabled = async (user_id, disabled) => {
+	try {
+		return prisma.users.update({
+			where: {
+				user_id: user_id,
+			},
+			data: {
+				disabled,
+			},
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
+
 const updateUserNotificationPreferences = async (user_id, notificationPreferences) => {
 	try {
 		return await prisma.users.update({
@@ -517,6 +532,7 @@ module.exports = {
 	updateUserPassword,
 	updateTelephone,
 	updateUserType,
+	updateUserDisabled,
 	createNewUser,
 	getUserByResetToken,
 	addToWalletBalance,
