@@ -6,12 +6,18 @@ const UserDao = require("../dao/User");
 const { UserSockets, io } = require("../socket");
 const TaxiOrderDao = require("../dao/TaxiOrder");
 const taxiHelpers = require("../lib/taxiHelpers");
-const { updateAddressByAddressId } = require("../dao/Address");
-const { updateDocumentByDocumentId } = require("../dao/Document");
-const { updateFileInDocument } = require("../dao/File");
+const { updateAddressByAddressId, addAddress, addUserAddress } = require("../dao/Address");
+const { updateDocumentByDocumentId, findDocumentByTypeAndDriverId, createDocument, linkDocumentToDriver,
+	linkDocumentToUser,
+	linkDocumentToVehicle,
+} = require("../dao/Document");
+const { updateFileInDocument, addFileToDocument } = require("../dao/File");
 const FileDao = require("../dao/File");
 const S3Helper = require("../lib/s3");
 const DocumentDao = require("../dao/Document");
+const { TAXI_ORDER_STATUS, DOCUMENT_TYPE } = require("../lib/constants");
+const { createNewVehicle } = require("../dao/Vehicle");
+const { calculateTotalDriversEarnings, calculateDriversEarnings } = require('../lib/driverHelpers');
 
 /**
  * GET /drivers
@@ -220,24 +226,29 @@ async function updateDriver(req, res) {
  * @response 400 - Error updating driver
  */
 async function editDriver(req, res) {
-	const { user, driver, vehicle, documents, files, address } = req.body
-	const business_id = driver?.business_id
-	delete driver?.business_id
-	const driver_id = driver?.driver_id
-	delete driver?.driver_id
-	const user_id = user?.user_id
-	delete user?.user_id
-	const address_id = address?.address_id
-	delete address?.address_id
-	const vehicle_id = vehicle?.vehicle_id
-	delete vehicle?.vehicle_id
-	console.info('FILES #', files?.length)
+	const { user, driver, vehicle, documents, files, address } = req.body;
+
+	const business_id = driver?.business_id;
+	delete driver?.business_id;
+	const driver_id = driver?.driver_id;
+	delete driver?.driver_id;
+	const user_id = user?.user_id;
+	delete user?.user_id;
+
+	let vehicle_id;
+	let updatedAddress
+
 	try {
 		const updatedDriver = await DriverDao.updateDriver(driver_id, driver);
-
 		let updatedUser = await UserDao.updateScheduledUser(user_id, user);
 
-		let updatedAddress = await updateAddressByAddressId(address_id, address)
+		if (address?.address_id) {
+			const address_id = address?.address_id
+			updatedAddress = await updateAddressByAddressId(address_id, address);
+		} else if ( Object.keys(address).length !== 0) {
+			const response = await addAddress(address)
+			await addUserAddress(user_id, response.address_id);
+		}
 
 		if (documents && documents.length > 0) {
 			for (const doc of documents) {
@@ -246,10 +257,20 @@ async function editDriver(req, res) {
 				await updateDocumentByDocumentId(documentId, doc);
 			}
 		}
+		let updatedVehicle;
+		if (vehicle?.vehicle_id) {
+			vehicle_id = vehicle?.vehicle_id
+			delete vehicle?.vehicle_id
+			updatedVehicle = await VehicleDao.updateVehicle(vehicle_id, vehicle)
+		} else if ( Object.keys(vehicle).length !== 0) {
+			const response = await VehicleDao.createNewVehicle({...vehicle, business_id: business_id});
+			vehicle_id = response?.vehicle_id
+			await VehicleDao.assignVehicleToDriver(vehicle_id, driver_id);
+		}
 
 		if (files && files.length > 0) {
 			for (const file of files) {
-				if (file?.base64) {
+				if (file?.base64 && file?.file_id) {
 					const fileId = file.file_id;
 					delete file.document_id
 					delete file.file_id;
@@ -257,7 +278,7 @@ async function editDriver(req, res) {
 
 					let base64 = file.base64;
 					delete file.base64;
-
+					delete file?.document_type
 					await updateFileInDocument(fileId, file)
 
 					let key = S3Helper.getFileKey(fileId, file.mime_type);
@@ -266,12 +287,81 @@ async function editDriver(req, res) {
 						businesses: [business_id]
 					}, file);
 
+				} else if (!file?.file_id) {
+					const existingDocument = await findDocumentByTypeAndDriverId(file.document_type, driver_id);
+					if (existingDocument) {
+						const base64 = file.base64;
+						delete file.base64;
+						delete file.document_type;
+						delete file.name;
 
+						const newFile = await addFileToDocument(existingDocument.document_id, file);
+
+						const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
+						await S3Helper.SaveObject(key, base64, file.mime_type, {
+							users: [user_id],
+							businesses: [business_id],
+						}, file);
+
+					} else {
+						const documentData = {
+							document_type: file.document_type,
+						};
+						const newDocument = await createDocument(documentData);
+
+						const base64 = file.base64;
+						delete file.base64;
+						const document_type = file?.document_type
+						delete file.document_type;
+						delete file.name;
+
+						const newFile = await addFileToDocument(newDocument.document_id, file);
+
+						const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
+						await S3Helper.SaveObject(key, base64, file.mime_type, {
+							users: [user_id],
+							businesses: [business_id],
+						}, file);
+
+						if (
+							document_type === DOCUMENT_TYPE.PROFILE_PICTURE ||
+							document_type === DOCUMENT_TYPE.NATIONAL_ID ||
+							document_type === DOCUMENT_TYPE.PASSPORT
+						) {
+							await linkDocumentToUser(newDocument.document_id, user_id);
+						} else if (
+							document_type === DOCUMENT_TYPE.VEHICLE_REGISTRATION ||
+							document_type === DOCUMENT_TYPE.VEHICLE_INSURANCE ||
+							document_type === DOCUMENT_TYPE.VEHICLE_TECHNICAL_INSPECTION
+						) {
+							if (vehicle_id) {
+								await linkDocumentToVehicle(newDocument.document_id, vehicle_id);
+							} else {
+								const newVehicle = await createNewVehicle({
+									make: '',
+									model: '',
+									color: '',
+									class: 'SEDAN',
+									category: 'STANDARD',
+								});
+								await VehicleDao.assignVehicleToDriver(newVehicle.vehicle_id, driver_id);
+								await linkDocumentToVehicle(newDocument.document_id, newVehicle.vehicle_id);
+							}
+						} else if (
+							document_type === DOCUMENT_TYPE.DRIVING_LICENSE ||
+							document_type === DOCUMENT_TYPE.TAXI_LICENCE ||
+							document_type === DOCUMENT_TYPE.PASSENGER_TRANSFER_LICENSE ||
+							document_type === DOCUMENT_TYPE.BACKGROUND_CHECK_REPORT ||
+							document_type === DOCUMENT_TYPE.HEALTH_DECLARATION
+						) {
+							console.log(file?.document_type)
+							await linkDocumentToDriver(newDocument.document_id, driver_id);
+						}
+
+					}
 				}
 			}
 		}
-
-		let updatedVehicle = await VehicleDao.updateVehicle(vehicle_id, vehicle)
 
 		res.status(200).json({ updatedDriver, updatedUser, updatedAddress, updatedVehicle, files });
 	} catch (error) {
@@ -329,7 +419,10 @@ async function updateDriverLocation(req, res) {
 				console.error("Error emiting driver's location to connected users:", error);
 			}
 		}
-		if (orders.length === 0) {
+
+		console.info('ORDERS LENGTH driver_location', orders.length)
+		if (!driver?.on_order) {
+			console.info('EMIT DRIVER_LOCATION')
 			io.emit("driver_location", {
 				...driver,
 				driver_id: driver.driver_id,
@@ -462,7 +555,8 @@ async function handleSosAlert(req, res) {
  * @response 400 - Error fetching history locations for a particular driver
  */
 async function getDriverHistoryLocations (req, res) {
-	const { driver_id, start_time, end_time } = req.params;
+	const { driver_id } = req.params;
+	const { start_time, end_time } = req.query;
 	console.info(req.params, 'getDriverHistoryLocations')
 
 	if (!driver_id || !start_time || !end_time) {
@@ -475,6 +569,114 @@ async function getDriverHistoryLocations (req, res) {
 	} catch (error) {
 		console.error('Error fetching driver locations:', error);
 		res.status(500).json({ message: 'Something went wrong...' });
+	}
+}
+
+/**
+ * GET /drivers/:driver_id/earnings/:start_date/:end_date
+ * @tag Drivers
+ * @summary Get earnings for a specific driver
+ * @description Retrieves the earnings of a specific driver within a specified date range.
+ * @operationId getDriverEarnings
+ * @pathParam {string} driver_id - The ID of the driver whose earnings are being retrieved
+ * @pathParam {string} start_date - The start date for the earnings period (format: YYYY-MM-DD)
+ * @pathParam {string} end_date - The end date for the earnings period (format: YYYY-MM-DD)
+ * @response 200 - Successful operation, returns driver's earnings
+ * @responseContent {Earnings} 200.application/json
+ * @response 404 - Driver not found
+ * @response 400 - Error retrieving driver's earnings
+ */
+async function getDriverEarnings(req, res) {
+	const { driver_id } = req.params;
+	const { start_date, end_date } = req.query;
+
+	if (!driver_id || !start_date || !end_date) {
+		return res.status(400).json({ message: 'Missing required parameters' });
+	}
+
+	try {
+		const driver = await DriverDao.getDriverById(driver_id);
+		const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id, {
+			status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
+			created_at: {
+				gte: new Date(start_date).toISOString(),
+				lte: new Date(end_date).toISOString()
+			}
+		});
+		const earningsData = calculateDriversEarnings(driverOrders, driver);
+
+		if (earningsData) {
+			res.status(200).json({ driver_id, ...earningsData });
+		} else {
+			res.status(404).json({ error: "Driver not found or no earnings data available" });
+		}
+	} catch (error) {
+		console.error("Error retrieving driver's earnings:", error);
+		res.status(400).json({ error: "Error retrieving driver's earnings", detail: error.message });
+	}
+}
+
+/**
+ * GET /drivers/earnings/:start_date/:end_date
+ * @tag Drivers
+ * @summary Get earnings for all drivers
+ * @description Retrieves the earnings of all drivers within a specified date range.
+ * @operationId getAllDriversEarnings
+ * @pathParam {string} start_date - The start date for the earnings period (format: YYYY-MM-DD)
+ * @pathParam {string} end_date - The end date for the earnings period (format: YYYY-MM-DD)
+ * @response 200 - Successful operation, returns all drivers' earnings
+ * @responseContent {Earnings[]} 200.application/json
+ * @response 400 - Error retrieving all drivers' earnings
+ */
+async function getAllDriversEarnings(req, res) {
+    const { start_date, end_date } = req.query;
+
+    if (!start_date || !end_date) {
+        return res.status(400).json({ message: 'Missing required parameters' });
+    }
+
+    try {
+        const drivers = await DriverDao.getDrivers();
+		const earningsPromises = drivers.map(async (driver) => {
+            const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id, {
+				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
+				created_at: {
+					gte: new Date(start_date).toISOString(),
+					lte: new Date(end_date).toISOString()
+				}
+            });
+            return calculateDriversEarnings(driverOrders, driver);
+        });
+
+        const allEarnings = await Promise.all(earningsPromises);
+        res.status(200).json(allEarnings);
+    } catch (error) {
+        console.error("Error retrieving all drivers' earnings:", error);
+        res.status(400).json({ error: "Error retrieving all drivers' earnings", detail: error.message });
+    }
+}
+
+/**
+ * GET /drivers/total-earnings
+ * @tag Drivers
+ * @summary Get total earnings for all drivers
+ * @description Retrieves the total earnings of all drivers based on completed orders.
+ * @operationId getTotalEarnings
+ * @response 200 - Successful operation, returns total earnings for all drivers
+ * @responseContent {TotalEarnings} 200.application/json
+ * @response 400 - Error retrieving total earnings
+ */
+async function getTotalEarnings(req, res) {
+	try {
+		const orders = await TaxiOrderDao.getOrders({
+			where: {
+				status: TAXI_ORDER_STATUS.TAXI_COMPLETED
+			}});
+		const totalEarnings = calculateTotalDriversEarnings(orders);
+		res.status(200).json(totalEarnings);
+	} catch (error) {
+		console.error("Error retrieving all drivers' total earnings:", error);
+		res.status(400).json({ error: "Error retrieving all drivers' total earnings", detail: error.message });
 	}
 }
 
@@ -494,5 +696,8 @@ module.exports = {
 	getUnavailableDrivers,
 	handleSosAlert,
 	getDriverHistoryLocations,
-	editDriver
+	editDriver,
+	getDriverEarnings,
+	getAllDriversEarnings,
+	getTotalEarnings
 };

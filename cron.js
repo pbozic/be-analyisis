@@ -1,7 +1,7 @@
 const cron = require("node-cron");
 const TaxiHelpers = require("./lib/taxiHelpers");
 const DeliveryHelpers = require("./lib/deliveryHelpers");
-const  { chekPingStatus } = require("./lib/driverHelpers");
+const  { checkPingStatus } = require("./lib/driverHelpers");
 
 function startCronJobs() { 
     // Every minute
@@ -10,7 +10,7 @@ function startCronJobs() {
     cron.schedule("* * * * *", TaxiHelpers.searchAfter40Seconds);
     cron.schedule("* * * * *", DeliveryHelpers.checkIfDeliveryOrdersNeedSending);
     cron.schedule("* * * * *", DeliveryHelpers.checkIfRestaurantOrderIsPrepared);
-    cron.schedule("* * * * *", chekPingStatus);
+    cron.schedule("* * * * *", checkPingStatus);
     cron.schedule("* * * * *", TaxiHelpers.revokeAcceptedOrdersFromDriverHandler);
     cron.schedule("* * * * *", TaxiHelpers.scheduledOrdersNotificationsHandler);
     cron.schedule("* * * * *", TaxiHelpers.closeScheduledOrders);

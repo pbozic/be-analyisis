@@ -126,6 +126,7 @@ model users {
   spoken_languages                       Json?
   lost_items                             lost_items[]
   daily_meal_day_preferences             Json?             @default("[]")
+  disabled                               Boolean           @default(false)
 }
 
 model documents {
@@ -315,6 +316,7 @@ model allergens {
 
 model taxi_orders {
   order_id                 String                     @id @default(uuid()) @db.Uuid
+  order_number             Int                        @default(0)
   user_id                  String                     @db.Uuid
   driver_id                String?                    @db.Uuid
   route                    Json

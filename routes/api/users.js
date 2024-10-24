@@ -50,6 +50,7 @@ router.post("/me/requestToAddFunds", UserController.requestToAddFundsToWallet);
 router.get("/me/scheduled_orders", UserController.getSelfScheduledOrders);
 router.delete("/delete/:user_id", UserController.deleteUserByUserId);
 router.post("/me/update_user", UserController.updateUserByUserId);
+router.patch("/me/disabled", UserController.disableMe);
 
 
 module.exports = router;

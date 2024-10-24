@@ -229,7 +229,7 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
 }
 async function createOrderHelper(req, res, orderData) {
 	try {
-		
+
 		let prefs = orderData.preferences
 
 
@@ -258,14 +258,14 @@ async function createOrderHelper(req, res, orderData) {
 			let num_orders = Math.ceil((total_seats) / VEHICLE_CAPACITY[prefs.vehicle_class])
 			console.log("num_orders", num_orders)
 			let start_num_orders = num_orders;
-			
+
 			delete orderData.user_id;
 			while (num_orders > 0) {
 				let availableSeats = VEHICLE_CAPACITY[prefs.vehicle_class];
 				let adults = 0;
 				let children_under_140 = 0;
 
-				for (let i of range(availableSeats)) { 
+				for (let i of range(availableSeats)) {
 					if (availableSeats === 0) {
 						break;
 					}
@@ -281,7 +281,7 @@ async function createOrderHelper(req, res, orderData) {
 						break;
 					}
 				}
-				
+
 				orderData.preferences.adults = adults;
 				orderData.preferences.children_under_140 = children_under_140;
 
@@ -349,15 +349,15 @@ async function createOrderHelper(req, res, orderData) {
 					}
 
 				}
-				
+
 				if (num_orders === start_num_orders) {
 					parentOrderId = order.order_id;
 				}
-				
+
 				num_orders -= 1;
 			}
-			
-		
+
+
 		}
 		console.log("parentOrderId", parentOrderId)
 		if (parentOrderId) {
@@ -396,7 +396,7 @@ async function createOrderHelper(req, res, orderData) {
 		console.errorTag("TaxiOrderController", error);
 		res.status(500).json(error);
 	}
-		
+
 }
 /**
  * POST /taxi/order
@@ -425,11 +425,13 @@ async function createOrder(req, res) {
 
 		console.info('dep date',  req.body.preferences?.departure_date)
 		let flags = await FlagDao.getFlags();
-		let falgsObj = {}; 
+		let flagsObj = {};
 		flags.map(flag => {
-			falgsObj[flag.name] = flag.status;
+			flagsObj[flag.name] = flag.status;
 		});
-		orderData.flags = falgsObj;
+		orderData.flags = flagsObj;
+
+
 		let order = await createOrderHelper(req, res, orderData);
 		//console.tag("TaxiOrderController","create taxi order", order)
 		res.status(200).json(order);
@@ -439,6 +441,7 @@ async function createOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 function getDayIndex(dayName) {
 	// Map day names to their corresponding indices
 	const daysOfWeek = {
@@ -450,7 +453,7 @@ function getDayIndex(dayName) {
 	  "Friday": 5,
 	  "Saturday": 6
 	};
-  
+
 	return daysOfWeek[dayName]; // Return the index of the day
   }
 
@@ -459,15 +462,15 @@ function getDayIndex(dayName) {
 		console.tag("TaxiOrderController","rd", repeatDuration)
 		const orders = [];
 		const currentDate = new Date();
-	
+
 		// Get the hours and minutes from the departure time
 		const departureTime = new Date(orderData.preferences.departure_time);
 		const departureHours = departureTime.getHours();
 		const departureMinutes = departureTime.getMinutes();
-	
+
 		// Get current week's day number
 		const currentDay = currentDate.getDay();
-	
+
 		for (let week = 0; week < repeatDuration; week++) {
 		for (let day of repeatData) {
 			console.log("day", day)
@@ -490,9 +493,9 @@ function getDayIndex(dayName) {
 				month: 'long',
 				year: 'numeric',
 			}).format(orderDate);
-	
+
 			const formattedDepartureTime = orderDate.toISOString();
-	
+
 			// Generate an order for this day
 			let order = {
 			...orderData,
@@ -505,13 +508,13 @@ function getDayIndex(dayName) {
 			orders.push(order); // Add to orders list
 		}
 		}
-	
+
 		return orders; // Return generated orders
 	} catch (error) {
 		console.errorTag("TaxiOrderController",error);
 		throw new Error(error);
 	}
-	
+
   }
 /**
  * POST /taxi/dispatch-order
@@ -585,9 +588,9 @@ async function acceptOrder(req, res) {
 		console.tag("TaxiOrderController","ROES DISTANCE:", distance);
 		console.tag("TaxiOrderController","ROES DURATION:", duration);
 
-		if (!order.estimates) 
+		if (!order.estimates)
 			order.estimates = {};
-		
+
 		if (result && result.rows && result.rows[0] && result.rows[0].elements && result.rows[0].elements[0]) {
 			order.estimates.pickup_time_in_seconds = result.rows[0].elements[0].duration.value;
 			const estimatedPickupTime = new Date();
@@ -650,7 +653,7 @@ async function completeOrder(req, res) {
 				throw new Error("Insufficient funds");
 			}
 			await UsersDao.removeWalletBalance(order.user_id, parseFloat(order.payment.price), order.order_id, "taxi");
-			
+
 			order = await TaxiOrderDao.updateOrder(order.order_id, {
 				payment: {
 					...order.payment,
@@ -747,15 +750,15 @@ async function updateTaxiOrderPreferences(req, res) {
 
 
 /**
- * POST /taxi/order/reject
+ * POST /taxi/order/cancel
  * @tag Taxi
- * @summary Reject a taxi order.
- * @description Rejects a taxi order with the provided order ID, status, and rejection reason from the request body. Returns the rejected order if successful and emits a 'order_rejected' event.
- * @operationId rejectOrder
- * @bodyDescription Request body must include 'order_id', 'status', and 'rejection_reason'.
+ * @summary Cancel a taxi order.
+ * @description Cancels a taxi order with the provided order ID, status, and cancellation reason from the request body. Returns the cancelled order if successful and emits a 'order_cancelled' event.
+ * @operationId cancelOrder
+ * @bodyDescription Request body must include 'order_id', 'status', and 'cancellation_reason'.
  * @bodyContent {object} application/json
  * @bodyRequired
- * @response 200 - Successful operation. Returns the rejected order in the response body.
+ * @response 200 - Successful operation. Returns the cancelled order in the response body.
  * @responseContent {TaxiOrder} 200.application/json
  * @response 500 - Server error. Console logs the error message and returns it in the response.
  */
@@ -764,8 +767,8 @@ async function cancelOrder(req, res) {
 	console.info("TaxiOrderController",'CANCEL ORDER', req.body)
 
 	try {
-
 		let order = await TaxiOrderDao.getOrder(order_id);
+		sendOrderNotifications(order, status);
 
 		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
 
@@ -783,7 +786,7 @@ async function cancelOrder(req, res) {
 					await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
 					await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
 					io.to("order_" + or.order_id).emit('order_status_change__taxi', or);
-					io.to("order_" + or.order_id).emit('order_cancelled__taxi', or);		
+					io.to("order_" + or.order_id).emit('order_cancelled__taxi', or);
 				}
 			}
 		}
@@ -792,7 +795,7 @@ async function cancelOrder(req, res) {
 				await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
 				await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
 				io.to("order_" + or.order_id).emit('order_status_change__taxi', or);
-				io.to("order_" + or.order_id).emit('order_cancelled__taxi', or);		
+				io.to("order_" + or.order_id).emit('order_cancelled__taxi', or);
 			}
 		}
 		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);
@@ -819,15 +822,15 @@ async function cancelOrder(req, res) {
 }
 
 /**
- * POST /taxi/order/cancel
+ * POST /taxi/order/reject
  * @tag Taxi
- * @summary Cancel a taxi order.
- * @description Cancels a taxi order with the provided order ID, status, and cancellation reason from the request body. Returns the cancelled order if successful and emits a 'order_cancelled' event.
- * @operationId cancelOrder
- * @bodyDescription Request body must include 'order_id', 'status', and 'cancellation_reason'.
+ * @summary Reject a taxi order.
+ * @description Rejects a taxi order with the provided order ID, status, and rejection reason from the request body. Returns the rejected order if successful and emits a 'order_rejected' event.
+ * @operationId rejectOrder
+ * @bodyDescription Request body must include 'order_id', 'status', and 'rejection_reason'.
  * @bodyContent {object} application/json
  * @bodyRequired
- * @response 200 - Successful operation. Returns the cancelled order in the response body.
+ * @response 200 - Successful operation. Returns the rejected order in the response body.
  * @responseContent {TaxiOrder} 200.application/json
  * @response 500 - Server error. Console logs the error message and returns it in the response.
  */
@@ -837,18 +840,17 @@ async function rejectOrder(req, res) {
 	let new_status = status
     try {
 		let order = await TaxiOrderDao.getOrder(order_id);
+		sendOrderNotifications(order, status);
+
+		if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
+			new_status = TAXI_ORDER_STATUS.PENDING
+			await TaxiOrderDao.updateOrder(order_id, {
+				status: TAXI_ORDER_STATUS.PENDING,
+				last_sent_at: null,
+			})
+		}
 
 
-			if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
-				
-				new_status = TAXI_ORDER_STATUS.PENDING
-				await TaxiOrderDao.updateOrder(order_id, {
-					status: TAXI_ORDER_STATUS.PENDING,
-					last_sent_at: null,
-				})
-			}
-		
-			
 		if (req.user.driver && req.user.driver.driver_id) {
 			await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, req.user.driver.driver_id);
 			let order_sent =  await prisma.taxi_order_sent.findUnique({
@@ -859,7 +861,7 @@ async function rejectOrder(req, res) {
 					}
 				},
 			});
-			
+
 			console.log("REJECT " + order_sent.taxi_order_sent_id)
 			if (order_sent.taxi_order_sent_id) {
 				await prisma.taxi_order_sent.update({
@@ -871,7 +873,7 @@ async function rejectOrder(req, res) {
 					}
 				})
 			}
-			
+
 		}
 
 		// Determine the cancellation reason
@@ -893,7 +895,7 @@ async function rejectOrder(req, res) {
 				}
 			})
 			io.emit('driver_available', driver);
-			
+
 		}
 		io.to("order_" + order.order_id).emit('order_rejected__taxi', order);
         io.to("order_" + order.order_id).emit('order_status_change__taxi', order);

@@ -753,6 +753,35 @@ async function deleteUserByUserId(req, res) {
 	}
 }
 
+
+/**
+ * PATCH /me/disabled
+ * @tag Users
+ * @summary Disables the current user
+ * @description This endpoint is used to disable the current user.
+ * @operationId disableMe
+ * @bodyDescription
+ * @bodyContent
+ * @bodyRequired
+ * @response 200 - User disabled successfully. Returns user.
+ * @responseContent {User} 200.application/json
+ * @response 400 - Error updating user information.
+ */
+async function disableMe(req, res) {
+	try {
+		let disabledUser = await UserDao.updateUserDisabled(req.user.user_id, true);
+		if (disabledUser) return res.status(200).json({
+			message: "User disabled successfully.",
+			user: disabledUser
+		});
+
+		res.status(400).json({ error: "Error updating user information" });
+	} catch (e) {
+		console.log(e);
+		return res.status(400).json({ error: "Error updating user information", e });
+	}
+}
+
 /**
  * PATCH /me/address/{address_id}
  * @tag Users
@@ -1237,5 +1266,6 @@ module.exports = {
 	getReviewsByUserId,
 	updateUserByUserId,
 	updateUserTransferPushNotifications,
-	updateUserDeliveryPushNotifications
+	updateUserDeliveryPushNotifications,
+	disableMe,
 };
