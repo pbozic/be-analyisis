@@ -20,7 +20,7 @@ const registerSchema = Joi.object({
 			try {
 				isEmailInUse = await prisma.users.findUnique({
 					where: {
-						email,
+						email: email.toLowerCase(),
 					},
 				});
 				console.log(isEmailInUse)

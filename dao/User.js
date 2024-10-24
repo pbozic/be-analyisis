@@ -96,6 +96,18 @@ const getUserByEmailOrTelephone = async (query, args) => {
 		return new Error(error);
 	}
 };
+const getUserByEmail = async (query, args) => {
+	try {
+		return prisma.users.findFirst({
+			where: {
+				email: query
+			},
+			...args,
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
 const getUserByTelephone = async (query, args) => {
 	try {
 		return prisma.users.findFirst({
@@ -536,6 +548,7 @@ module.exports = {
 	updateScheduledUser,
 	deleteUserByUserId,
 	updateUserDeliveryPushNotifications,
-	updateUserTransferPushNotifications
+	updateUserTransferPushNotifications,
+	getUserByEmail
 
 };

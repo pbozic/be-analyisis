@@ -127,9 +127,14 @@ async function register(req, res) {
 		{
 			postData.email = "";
 		}
-		let UserExists = await UserDao.getUserByTelephone(postData.telephone);
-		if (UserExists) {
+		postData.email = postData.email.toLowerCase();
+		let UserExistsPhone = await UserDao.getUserByTelephone(postData.telephone);
+		if (UserExistsPhone) {
 			return res.status(400).json({ error: "Telephone already in use!" });
+		}
+		let UserExistsEmail = await UserDao.getUserByEmail(postData.email);
+		if (UserExistsEmail) {
+			return res.status(400).json({ error: "Email already in use!" });
 		}
 		let hash = await bcrypt.hash(postData.password, Number(process.env.BCRYPT_SALT_ROUNDS));
 		let stripeCustomer = await stripe.createCustomer(
