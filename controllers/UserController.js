@@ -753,6 +753,32 @@ async function deleteUserByUserId(req, res) {
 	}
 }
 
+/**
+ * PATCH /users/disabled/{user_id}
+ * @tag Users
+ * @summary Disables a user by their ID
+ * @description This endpoint is used to disable a user's account by their user ID.
+ * @operationId disableUserByUserId
+ * @pathParam {string} user_id - The ID of the user to disable
+ * @response 200 - User disabled successfully.
+ * @responseContent {User} 200.application/json
+ * @response 400 - Error disabling user.
+ */
+async function updateUserDisabledByUserId(req, res) {
+	const { user_id, disabled} = req.params;
+	try {
+		const disabledUser = await UserDao.updateUserDisabled(user_id,disabled);
+
+		return res.status(200).json({
+			message: "User disabled field updated successfully.",
+			user: disabledUser,
+		});
+	} catch (error) {
+		console.error("Error updating disabled field:", error);
+		return res.status(400).json({ error: "Error updating disabled field."});
+	}
+}
+
 
 /**
  * PATCH /me/disabled
@@ -1268,4 +1294,5 @@ module.exports = {
 	updateUserTransferPushNotifications,
 	updateUserDeliveryPushNotifications,
 	disableMe,
+	updateUserDisabledByUserId,
 };
