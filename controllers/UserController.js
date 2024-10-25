@@ -765,7 +765,8 @@ async function deleteUserByUserId(req, res) {
  * @response 400 - Error disabling user.
  */
 async function updateUserDisabledByUserId(req, res) {
-	const { user_id, disabled} = req.params;
+	const { user_id} = req.params;
+	const { disabled } = req.body
 	try {
 		const disabledUser = await UserDao.updateUserDisabled(user_id,disabled);
 
