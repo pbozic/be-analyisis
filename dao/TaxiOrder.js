@@ -1,7 +1,6 @@
 const prisma = require("../prisma/prisma");
 const { DELIVERY_ORDER_STATUS, TAXI_ORDER_STATUS, ORDER_TYPE } = require("../lib/constants");
 const { not } = require("joi");
-const { calculateNewOrderNumber } = require("../lib/taxiHelpers");
 async function getOrders(args) {
     try {
         const mergedArgs = {
@@ -184,20 +183,8 @@ async function getOrdersByDriverId(driver_id, args) {
 
 async function createOrder(order) {
     try {
-        const lastOrder = await prisma.taxi_orders.findFirst({
-            orderBy: {
-                order_number: 'desc',
-            },
-            take: 1,
-        });
-
-        const newOrderNumber = lastOrder ? calculateNewOrderNumber(lastOrder.order_number) : 0;
-
         return prisma.taxi_orders.create({
-            data: {
-                ...order,
-                order_number: newOrderNumber,
-            },
+            data: order,
         });
     } catch (e) {
         throw new Error(e);

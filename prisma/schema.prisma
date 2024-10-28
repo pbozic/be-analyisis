@@ -316,7 +316,6 @@ model allergens {
 
 model taxi_orders {
   order_id                 String                     @id @default(uuid()) @db.Uuid
-  order_number             Int                        @default(0)
   user_id                  String                     @db.Uuid
   driver_id                String?                    @db.Uuid
   route                    Json
