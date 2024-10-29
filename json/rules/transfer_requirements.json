@@ -8,6 +8,13 @@
     "quiet_ride": true,
     "onboard_restrooms": true,
     "multilingual_staff": true,
-    "outlets": true
+    "outlets": true,
+    "language_en": true,
+    "language_it": true,
+    "language_de": true,
+    "language_es": true,
+    "language_cro": true,
+    "language_fr": true,
+    "language_ru": true
   }
 }
