@@ -312,122 +312,140 @@ async function passwordReset(req, res) {
 async function registerTaxiService(req, res) {
 	// fs.writeFileSync('taxi-service.json', JSON.stringify(req.body, null, 2));
 	try {
-		const business = await BusinessDao.createNewBusiness(req.body.business);
-		
-		// TODO: handle uniqueness here or with joi validation
+		const result = await prisma.$transaction(async (prisma) => {
+			const business = await BusinessDao.createNewBusiness(req.body.business);
 
-		let drivers = [];
-		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
-			for (const driverInfo of req.body.drivers) {
+			// TODO: handle uniqueness here or with joi validation
 
-				// driverInfo.user.data.password = "lalaland1"
-				const newUser = await UserDao.createNewUser(driverInfo.user.data, true);
+			let drivers = [];
+			if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
+				for (const driverInfo of req.body.drivers) {
 
-				// Handle user documents
-				if (driverInfo.user.documents) {
-					for (const doc of driverInfo.user.documents) {
-						
-						const document = await DocumentDao.createDocument(doc.documentData);
-						for (const file of doc.files) {
-							let base64 = file.base64;
-							delete file.base64;
-							let fileData = await FileDao.addFileToDocument(document.document_id, file);
-							
-							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-							S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]}, file);
-						}
-						await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
-					}
-				}
+					// driverInfo.user.data.password = "lalaland1"
+					const newUser = await UserDao.createNewUser(driverInfo.user.data, true);
 
-				const driverData = { ...driverInfo.driver.data, business_id: business.business_id};
-				const driver = await DriverDao.createNewDriver(driverData, newUser);
-				// Handle taxi documents
-				if (driverInfo.driver.documents) {
-					for (const doc of driverInfo.driver.documents) {
-						const document = await DocumentDao.createDocument(doc.documentData);
-						for (const file of doc.files) {
-							let base64 = file.base64;
-							delete file.base64;
-							let fileData = await FileDao.addFileToDocument(document.document_id, file);
-							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-							S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]}, file);
-						}
-						await DocumentDao.linkDocumentToDriver(document.document_id, driver.driver_id);
-					}
-				}
+					// Handle user documents
+					if (driverInfo.user.documents) {
+						for (const doc of driverInfo.user.documents) {
 
-				//Handle addresses of the driver
-				let addresses = []
-				// if (driverInfo.user.addresses) {
-				// 	for (const addressInfo of driverInfo.user.addresses) {
-				// 		const address = await AddressDao.addAddress(addressInfo)
-				// 		await AddressDao.addUserAddress(newUser.user_id, address.address_id);
-				// 		addresses.push(address);
-				// 	}
-				// }
+							const document = await DocumentDao.createDocument(doc.documentData);
+							for (const file of doc.files) {
+								let base64 = file.base64;
+								delete file.base64;
+								let fileData = await FileDao.addFileToDocument(document.document_id, file);
 
-				let vehicles = [];
-				if (Array.isArray(driverInfo.vehicles) && driverInfo.vehicles.length) {
-					for (const vehicleInfo of driverInfo.vehicles) {
-						const vehicle = await VehicleDao.createNewVehicle({...vehicleInfo?.data, business_id: business.business_id});
-						await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver.driver_id);
-						// Handle vehicle documents
-						if (vehicleInfo.documents) {
-							for (const doc of vehicleInfo.documents) {
-								const document = await DocumentDao.createDocument(doc.documentData);
-								for (const file of doc.files) {
-									let base64 = file.base64;
-									delete file.base64;
-									let fileData = await FileDao.addFileToDocument(document.document_id, file);
-									let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-									S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]}, file);
-								}
-								await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
+								let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+								S3Helper.SaveObject(key, base64, file.mime_type, {
+									users: [newUser.user_id],
+									businesses: [business.business_id]
+								}, file);
 							}
+							await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 						}
-						vehicles.push(vehicle);
 					}
+
+					const driverData = { ...driverInfo.driver.data, business_id: business.business_id };
+					const driver = await DriverDao.createNewDriver(driverData, newUser);
+					// Handle taxi documents
+					if (driverInfo.driver.documents) {
+						for (const doc of driverInfo.driver.documents) {
+							const document = await DocumentDao.createDocument(doc.documentData);
+							for (const file of doc.files) {
+								let base64 = file.base64;
+								delete file.base64;
+								let fileData = await FileDao.addFileToDocument(document.document_id, file);
+								let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+								S3Helper.SaveObject(key, base64, file.mime_type, {
+									users: [newUser.user_id],
+									businesses: [business.business_id]
+								}, file);
+							}
+							await DocumentDao.linkDocumentToDriver(document.document_id, driver.driver_id);
+						}
+					}
+
+					//Handle addresses of the driver
+					let addresses = []
+					// if (driverInfo.user.addresses) {
+					// 	for (const addressInfo of driverInfo.user.addresses) {
+					// 		const address = await AddressDao.addAddress(addressInfo)
+					// 		await AddressDao.addUserAddress(newUser.user_id, address.address_id);
+					// 		addresses.push(address);
+					// 	}
+					// }
+
+					let vehicles = [];
+					if (Array.isArray(driverInfo.vehicles) && driverInfo.vehicles.length) {
+						for (const vehicleInfo of driverInfo.vehicles) {
+							const vehicle = await VehicleDao.createNewVehicle({
+								...vehicleInfo?.data,
+								business_id: business.business_id
+							});
+							await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver.driver_id);
+							// Handle vehicle documents
+							if (vehicleInfo.documents) {
+								for (const doc of vehicleInfo.documents) {
+									const document = await DocumentDao.createDocument(doc.documentData);
+									for (const file of doc.files) {
+										let base64 = file.base64;
+										delete file.base64;
+										let fileData = await FileDao.addFileToDocument(document.document_id, file);
+										let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+										S3Helper.SaveObject(key, base64, file.mime_type, {
+											users: [newUser.user_id],
+											businesses: [business.business_id]
+										}, file);
+									}
+									await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
+								}
+							}
+							vehicles.push(vehicle);
+						}
+					}
+
+					drivers.push({ driver, vehicles, addresses });
 				}
-
-				drivers.push({ driver, vehicles, addresses });
 			}
-		}
 
-		// Handle business documents
-		if (req.body.business.documents) {
-			for (const doc of req.body.business.documents) {
-				const document = await DocumentDao.createDocument(doc);
-				for (const file of doc.files) {
-					let base64 = file.base64;
-					delete file.base64;
-					let fileData = await FileDao.addFileToDocument(document.document_id, file);
-					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-					S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id]}, file);
+			// Handle business documents
+			if (req.body.business.documents) {
+				for (const doc of req.body.business.documents) {
+					const document = await DocumentDao.createDocument(doc);
+					for (const file of doc.files) {
+						let base64 = file.base64;
+						delete file.base64;
+						let fileData = await FileDao.addFileToDocument(document.document_id, file);
+						let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+						S3Helper.SaveObject(key, base64, file.mime_type, {
+							users: [newUser.user_id],
+							businesses: [business.business_id]
+						}, file);
+					}
+					await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 				}
-				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
-		}
 
-		let finances = {};
-		if (req.body.finances) {
-			finances = await FinancesDao.addFinances(req.body.finances);
-			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
-		}
+			let finances = {};
+			if (req.body.finances) {
+				finances = await FinancesDao.addFinances(req.body.finances);
+				await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
+			}
 
-		let businessAddress = {}
-		if (req.body.addresses) {
-			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
-		}
+			let businessAddress = {}
+			if (req.body.addresses) {
+				businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
+			}
 
-		res.status(201).json({
-			message: "Taxi service business registered successfully",
-			business,
-			drivers,
-			finances,
-			businessAddress,
-			// accountLink
+			res.status(201).json({
+				message: "Taxi service business registered successfully",
+				business,
+				drivers,
+				finances,
+				businessAddress,
+				// accountLink
+			});
 		});
+		res.status(201).json(result);
 	} catch (error) {
 		console.error("Error registering taxi service:", error);
 		res.status(400).json({ error: "Error registering taxi service", detail: error.message });
