@@ -20,6 +20,8 @@ const { S3 } = require("aws-sdk");
 const fs = require('fs');
 const stripe = require("../lib/stripe");
 const MenuDao = require('../dao/Menu');
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 require('dotenv').config();
 
 
@@ -312,7 +314,7 @@ async function passwordReset(req, res) {
 async function registerTaxiService(req, res) {
 	// fs.writeFileSync('taxi-service.json', JSON.stringify(req.body, null, 2));
 	try {
-		const result = await prisma.$transaction(async (prisma) => {
+		const result = await prisma.$transaction(async () => {
 			const business = await BusinessDao.createNewBusiness(req.body.business);
 
 			// TODO: handle uniqueness here or with joi validation
