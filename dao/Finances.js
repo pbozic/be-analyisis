@@ -11,10 +11,10 @@ const addFinances = async (financeData) => {
 	}
 };
 
-const getFinances = async (args) => {
+const getFinancesByAccountNumber = async (account_number) => {
 	try {
-		return prisma.finances.findMany({
-			...args,
+		return prisma.finances.findUnique({
+			where: { account_number },
 		});
 	} catch (error) {
 		return new Error(error);
@@ -161,7 +161,7 @@ const getFinanceRecordByBusinessId = async (business_id) => {
 
 module.exports = {
 	addFinances,
-	getFinances,
+	getFinancesByAccountNumber,
 	getFinancesById,
 	updateFinances,
 	updateAccountHolder,

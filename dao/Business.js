@@ -27,8 +27,6 @@ const getBusinesses = async (args) => {
 	}
 };
 
-
-
 const getBusinessById = async (business_id) => {
 	try {
 		return await prisma.business.findUnique({
@@ -52,6 +50,60 @@ const getBusinessById = async (business_id) => {
 		});
 	} catch (error) {
 		console.error("Error retrieving business:", error);
+		throw new Error(error);
+	}
+};
+
+const getBusinessByEmail = async (email) => {
+	try {
+		return await prisma.business.findUnique({
+			where: {
+				email: email,
+			},
+			include: {
+				address: true,
+				finances: true,
+				business_users: {
+					include: {
+						users: true,
+					},
+				},
+				parent_business: true,
+				child_businesses: true,
+				documents: false,
+				taxi_orders: false,
+				delivery_orders: false,
+			},
+		});
+	} catch (error) {
+		console.error("Error retrieving business by email:", error);
+		throw new Error(error);
+	}
+};
+
+const getBusinessByTelephone = async (telephone) => {
+	try {
+		return await prisma.business.findUnique({
+			where: {
+				telephone: telephone,
+			},
+			include: {
+				address: true,
+				finances: true,
+				business_users: {
+					include: {
+						users: true,
+					},
+				},
+				parent_business: true,
+				child_businesses: true,
+				documents: false,
+				taxi_orders: false,
+				delivery_orders: false,
+			},
+		});
+	} catch (error) {
+		console.error("Error retrieving business by telephone:", error);
 		throw new Error(error);
 	}
 };
@@ -575,6 +627,8 @@ const manualSortScheduledUsers = async (sorted_users = []) => {
 module.exports = {
 	getBusinesses,
 	getBusinessById,
+	getBusinessByEmail,
+	getBusinessByTelephone,
 	getBusinessesByType,
 	getBusinessesByNameSearch,
 	getBusinessesByGroupName,
