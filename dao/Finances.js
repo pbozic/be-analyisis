@@ -13,8 +13,10 @@ const addFinances = async (financeData) => {
 
 const getFinancesByAccountNumber = async (account_number) => {
 	try {
-		return prisma.finances.findUnique({
-			where: { account_number },
+		return prisma.finances.findFirst({
+			where: {
+				account_number: account_number
+			},
 		});
 	} catch (error) {
 		return new Error(error);
