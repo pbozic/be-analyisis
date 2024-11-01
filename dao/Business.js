@@ -83,7 +83,7 @@ const getBusinessByEmail = async (email) => {
 
 const getBusinessByTelephone = async (telephone_number) => {
 	try {
-		return await prisma.business.findUnique({
+		return await prisma.business.findFirst({
 			where: {
 				telephone_number: telephone_number,
 			},

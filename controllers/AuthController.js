@@ -320,11 +320,11 @@ async function registerTaxiService(req, res) {
 				console.error('Business with this email already exists.');
 				return res.status(400).json({ error: 'Business with this email already exists.' });
 			}
-			const existingBusinessPhone = await BusinessDao.getBusinessByTelephone(req.body.business.telephone_number);
-			if (existingBusinessPhone) {
-				console.error('Business with this phone number already exists.');
-				return res.status(400).json({ error: 'Business with this phone number already exists.' });
-			}
+			//const existingBusinessPhone = await BusinessDao.getBusinessByTelephone(req.body.business.telephone_number);
+			//if (existingBusinessPhone) {
+			//	console.error('Business with this phone number already exists.');
+			//	return res.status(400).json({ error: 'Business with this phone number already exists.' });
+			//}
 		}
 		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
 			for (const driverInfo of req.body.drivers) {
