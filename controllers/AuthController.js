@@ -333,7 +333,7 @@ async function registerTaxiService(req, res) {
 					console.error('Driver with this email already exists.');
 					return res.status(400).json({ error: `Driver with this email already exists.` });
 				}
-				const existingDriverPhone = await UserDao.getUserByTelephone(driverInfo.user.data.telephone_number);
+				const existingDriverPhone = await UserDao.getUserByTelephone(driverInfo.user.data.telephone);
 				if (existingDriverPhone) {
 					console.error('Driver with this phone number already exists.');
 					return res.status(400).json({ error: `Driver with this phone number already exists.` });
