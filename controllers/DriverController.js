@@ -17,7 +17,7 @@ const S3Helper = require("../lib/s3");
 const DocumentDao = require("../dao/Document");
 const { TAXI_ORDER_STATUS, DOCUMENT_TYPE } = require("../lib/constants");
 const { createNewVehicle } = require("../dao/Vehicle");
-const { calculateTotalDriversEarnings, calculateDriversEarnings } = require('../lib/driverHelpers');
+const { calculateTotalEarnings, calculateDriversEarnings } = require('../lib/helpersLib');
 
 /**
  * GET /drivers
@@ -672,7 +672,7 @@ async function getTotalEarnings(req, res) {
 			where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED
 			}});
-		const totalEarnings = calculateTotalDriversEarnings(orders);
+		const totalEarnings = calculateTotalEarnings(orders, TAXI_ORDER_STATUS.TAXI_COMPLETED);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
 		console.error("Error retrieving all drivers' total earnings:", error);

@@ -8,8 +8,10 @@ const stripe = require("../lib/stripe");
 const UserDao = require("../dao/User");
 const DriverDao = require("../dao/Driver");
 const DeliveryDriverDao = require("../dao/DeliveryDriver");
+const DeliveryOrderDao = require("../dao/DeliveryOrder");
 const { BUSINESS_TYPE } = require("@prisma/client");
-
+const { DELIVERY_ORDER_STATUS } = require("../lib/constants");
+const { calculateBusinessEarnings, calculateTotalEarnings } = require("../lib/helpersLib");
 
 /**
  * GET /businesses
@@ -812,6 +814,106 @@ async function addScheduledUserSortingType(req, res) {
 	}
 }
 
+/**
+ * GET /business/earnings/:business_id
+ * @tag Business
+ * @summary Get earnings for a specific business
+ * @description Retrieves earnings data for a specific business based on the provided business ID and date range.
+ * @operationId getBusinessEarnings
+ * @pathParam {string} business_id - The ID of the business to retrieve earnings for
+ * @queryParam {string} start_date - The start date for the earnings calculation
+ * @queryParam {string} end_date - The end date for the earnings calculation
+ * @response 200 - Successful operation, returns the earnings data for the specified business
+ * @responseContent {object} 200.application/json
+ * @response 400 - Missing required parameters
+ * @responseContent {object} 400.application/json The error object
+ * @response 404 - Business not found or no earnings data available
+ * @responseContent {object} 404.application/json The error object
+ */
+async function getBusinessEarnings(req, res) {
+	const { business_id } = req.params;
+	const { start_date, end_date } = req.query;
+
+	if (!business_id || !start_date || !end_date) {
+		return res.status(400).json({ message: 'Missing required parameters' });
+	}
+
+	try {
+		const business = await BusinessDao.getBusinessById(business_id);
+		const businessDeliveryOrders = business.delivery_orders;
+		const earningsData = calculateBusinessEarnings(businessDeliveryOrders, business);
+
+		if (earningsData) {
+			res.status(200).json({ business_id, ...earningsData });
+		} else {
+			res.status(404).json({ error: "Business not found or no earnings data available" });
+		}
+	} catch (error) {
+		console.error("Error retrieving business' earnings:", error);
+		res.status(400).json({ error: "Error retrieving business' earnings", detail: error.message });
+	}
+}
+
+/**
+ * GET /business/earnings
+ * @tag Business
+ * @summary Get earnings for all businesses
+ * @description Retrieves earnings data for all businesses of type MERCHANT based on the provided date range.
+ * @operationId getAllBusinessesEarnings
+ * @queryParam {string} start_date - The start date for the earnings calculation
+ * @queryParam {string} end_date - The end date for the earnings calculation
+ * @response 200 - Successful operation, returns the earnings data for all businesses
+ * @responseContent {object[]} 200.application/json
+ * @response 400 - Missing required parameters
+ * @responseContent {object} 400.application/json The error object
+ */
+async function getAllBusinessesEarnings(req, res) {
+	const { start_date, end_date } = req.query;
+
+	if (!start_date || !end_date) {
+		return res.status(400).json({ message: 'Missing required parameters' });
+	}
+
+	try {
+		const businesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT);
+		const earningsPromises = businesses.map(async (business) => {
+			const businessDeliveryOrders = business.delivery_orders;
+			return calculateBusinessEarnings(businessDeliveryOrders, business);
+		});
+
+		const allEarnings = await Promise.all(earningsPromises);
+		res.status(200).json(allEarnings);
+	} catch (error) {
+		console.error("Error retrieving all drivers' earnings:", error);
+		res.status(400).json({ error: "Error retrieving all drivers' earnings", detail: error.message });
+	}
+}
+
+/**
+ * GET /business/total-earnings
+ * @tag Business
+ * @summary Get total earnings for completed delivery orders
+ * @description Retrieves the total earnings from all completed delivery orders.
+ * @operationId getTotalEarnings
+ * @response 200 - Successful operation, returns the total earnings
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error retrieving total earnings
+ * @responseContent {object} 400.application/json The error object
+ */
+async function getTotalEarnings(req, res) {
+	try {
+		const orders = await DeliveryOrderDao.getOrders({
+			where: {
+				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
+			}});
+		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED);
+		res.status(200).json(totalEarnings);
+	} catch (error) {
+		console.error("Error retrieving all drivers' total earnings:", error);
+		res.status(400).json({ error: "Error retrieving all drivers' total earnings", detail: error.message });
+	}
+}
+
 module.exports = {
 	listBusinesses,
 	listTransferBusinesses,
@@ -843,6 +945,9 @@ module.exports = {
 	createPaymentIntent,
 	manualSortScheduledUsers,
 	addScheduledUserSortingType,
-	listMerchantBusinessesMainInfo
+	listMerchantBusinessesMainInfo,
+	getBusinessEarnings,
+	getAllBusinessesEarnings,
+	getTotalEarnings
 };
 

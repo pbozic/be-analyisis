@@ -18,6 +18,10 @@ router.get("/:business_id", BusinessController.getBusinessById);
 router.get("/search", BusinessController.getBusinessesByNameSearch);
 router.get("/parent", BusinessController.getParentBusiness);
 
+router.get("/earnings/all", BusinessController.getAllBusinessesEarnings);
+router.get("/earnings/total", BusinessController.getTotalEarnings);
+router.get("/earnings/:business_id", BusinessController.getBusinessEarnings);
+
 router.post("/register", BusinessController.createNewBusiness);
 router.post("/review", joi(reviewBusinessSchema), BusinessController.reviewBusiness);
 router.post("/address/add", BusinessController.addBusinessAddress);

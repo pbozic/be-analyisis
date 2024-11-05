@@ -30,6 +30,7 @@
 		"core-js": "^3.37.1",
 		"cors": "^2.8.5",
 		"crypto": "^1.0.1",
+		"date-holidays": "^3.23.12",
 		"debug": "^4.3.4",
 		"dotenv": "^16.4.5",
 		"easyqrcodejs-nodejs": "^4.2.6",
