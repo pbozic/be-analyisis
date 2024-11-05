@@ -9,8 +9,7 @@ const UserDao = require("../dao/User");
 const DriverDao = require("../dao/Driver");
 const DeliveryDriverDao = require("../dao/DeliveryDriver");
 const DeliveryOrderDao = require("../dao/DeliveryOrder");
-const { BUSINESS_TYPE } = require("@prisma/client");
-const { DELIVERY_ORDER_STATUS } = require("../lib/constants");
+const { BUSINESS_TYPE, DELIVERY_ORDER_STATUS } = require("../lib/constants");
 const { calculateBusinessEarnings, calculateTotalEarnings } = require("../lib/helpersLib");
 
 /**
@@ -875,7 +874,7 @@ async function getAllBusinessesEarnings(req, res) {
 	}
 
 	try {
-		const businesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT);
+		const businesses = await BusinessDao.getBusinessesByType(BUSINESS_TYPE.MERCHANT);
 		const earningsPromises = businesses.map(async (business) => {
 			const businessDeliveryOrders = business.delivery_orders;
 			return calculateBusinessEarnings(businessDeliveryOrders, business);
@@ -884,8 +883,8 @@ async function getAllBusinessesEarnings(req, res) {
 		const allEarnings = await Promise.all(earningsPromises);
 		res.status(200).json(allEarnings);
 	} catch (error) {
-		console.error("Error retrieving all drivers' earnings:", error);
-		res.status(400).json({ error: "Error retrieving all drivers' earnings", detail: error.message });
+		console.error("Error retrieving all businesses' earnings:", error);
+		res.status(400).json({ error: "Error retrieving all businesses' earnings", detail: error.message });
 	}
 }
 
@@ -909,8 +908,8 @@ async function getTotalEarnings(req, res) {
 		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
-		console.error("Error retrieving all drivers' total earnings:", error);
-		res.status(400).json({ error: "Error retrieving all drivers' total earnings", detail: error.message });
+		console.error("Error retrieving all businesses' total earnings:", error);
+		res.status(400).json({ error: "Error retrieving all businesses' total earnings", detail: error.message });
 	}
 }
 
