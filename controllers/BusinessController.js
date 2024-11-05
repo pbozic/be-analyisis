@@ -839,7 +839,10 @@ async function getBusinessEarnings(req, res) {
 
 	try {
 		const business = await BusinessDao.getBusinessById(business_id);
-		const businessDeliveryOrders = business.delivery_orders;
+		const businessDeliveryOrders = await DeliveryOrderDao.getOrders({
+			where: {
+				business_id: business.business_id,
+			}});
 		const earningsData = calculateBusinessEarnings(businessDeliveryOrders, business);
 
 		if (earningsData) {
@@ -875,10 +878,11 @@ async function getAllBusinessesEarnings(req, res) {
 
 	try {
 		const businesses = await BusinessDao.getBusinessesByType(BUSINESS_TYPE.MERCHANT);
-		console.log("Businesses:", businesses);
 		const earningsPromises = businesses.map(async (business) => {
-			const businessDeliveryOrders = business.delivery_orders;
-			console.log(`${business.name} delivery orders:`, businessDeliveryOrders);
+			const businessDeliveryOrders = await DeliveryOrderDao.getOrders({
+				where: {
+					business_id: business.business_id,
+				}});
 			return calculateBusinessEarnings(businessDeliveryOrders, business);
 		});
 
