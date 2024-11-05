@@ -875,8 +875,10 @@ async function getAllBusinessesEarnings(req, res) {
 
 	try {
 		const businesses = await BusinessDao.getBusinessesByType(BUSINESS_TYPE.MERCHANT);
+		console.log("Businesses:", businesses);
 		const earningsPromises = businesses.map(async (business) => {
 			const businessDeliveryOrders = business.delivery_orders;
+			console.log(`${business.name} delivery orders:`, businessDeliveryOrders);
 			return calculateBusinessEarnings(businessDeliveryOrders, business);
 		});
 
