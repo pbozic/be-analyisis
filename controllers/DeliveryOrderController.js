@@ -707,6 +707,35 @@ async function getDeliveryOrdersByBusinessId(req, res) {
 }
 
 /**
+ * GET /delivery/orders/completed/business/:business_id
+ * @tag Delivery
+ * @summary Get completed delivery orders by business id.
+ * @description This fetches all completed restaurant orders.
+ * @operationId getCompletedDeliveryOrdersByBusinessId
+ * @requestBody {business_id} business_id - The ID of the business to retrieve orders for
+ * @response 200 - Successful operation. Returns a list of orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+
+async function getCompletedDeliveryOrdersByBusinessId(req, res) {
+	const { business_id } = req.params;
+	try {
+		const orders = await DeliveryOrderDao.getOrders({
+			where: {
+				business_id: business_id,
+				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
+			}
+		});
+		// console.log('business completed orders', orders)
+		res.status(200).json(orders);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+/**
  * POST /delivery/order/status
  * @tag Delivery
  * @summary Update a delivery order's status.
