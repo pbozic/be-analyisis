@@ -842,6 +842,11 @@ async function getBusinessEarnings(req, res) {
 		const businessDeliveryOrders = await DeliveryOrderDao.getOrders({
 			where: {
 				business_id: business.business_id,
+				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				created_at: {
+					gte: new Date(start_date).toISOString(),
+					lte: new Date(end_date).toISOString()
+				}
 			}});
 		const earningsData = calculateBusinessEarnings(businessDeliveryOrders, business);
 
@@ -882,6 +887,11 @@ async function getAllBusinessesEarnings(req, res) {
 			const businessDeliveryOrders = await DeliveryOrderDao.getOrders({
 				where: {
 					business_id: business.business_id,
+					status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+					created_at: {
+						gte: new Date(start_date).toISOString(),
+						lte: new Date(end_date).toISOString()
+					}
 				}});
 			return calculateBusinessEarnings(businessDeliveryOrders, business);
 		});
