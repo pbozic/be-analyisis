@@ -889,5 +889,6 @@ module.exports = {
 	getCompletedDeliveryOrdersByUserId,
 	getActiveDeliveryOrdersByDriverId,
 	updateDeliveryOrder,
-	createDailyMeals
+	createDailyMeals,
+	getCompletedDeliveryOrdersByBusinessId
 };
