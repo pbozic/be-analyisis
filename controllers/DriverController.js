@@ -705,7 +705,7 @@ async function getDriverTotalEarnings(req, res) {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
 				driver_id: driver_id
 			}});
-		const totalEarnings = calculateDriversEarnings(orders, TAXI_ORDER_STATUS.TAXI_COMPLETED);
+		const totalEarnings = calculateTotalEarnings(orders, TAXI_ORDER_STATUS.TAXI_COMPLETED);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
 		console.error("Error retrieving driver's total earnings:", error);
