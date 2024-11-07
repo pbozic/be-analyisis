@@ -573,7 +573,7 @@ async function getDriverHistoryLocations (req, res) {
 }
 
 /**
- * GET /drivers/:driver_id/earnings/:start_date/:end_date
+ * GET /drivers/:driver_id/earnings
  * @tag Drivers
  * @summary Get earnings for a specific driver
  * @description Retrieves the earnings of a specific driver within a specified date range.
@@ -617,7 +617,7 @@ async function getDriverEarnings(req, res) {
 }
 
 /**
- * GET /drivers/earnings/:start_date/:end_date
+ * GET /drivers/earnings/all
  * @tag Drivers
  * @summary Get earnings for all drivers
  * @description Retrieves the earnings of all drivers within a specified date range.
@@ -657,7 +657,7 @@ async function getAllDriversEarnings(req, res) {
 }
 
 /**
- * GET /drivers/total-earnings
+ * GET /drivers/earnings/total
  * @tag Drivers
  * @summary Get total earnings for all drivers
  * @description Retrieves the total earnings of all drivers based on completed orders.
@@ -680,6 +680,38 @@ async function getTotalEarnings(req, res) {
 	}
 }
 
+/**
+ * GET /drivers/earnings/:driver_id/total
+ * @tag Drivers
+ * @summary Get total earnings for a specific driver
+ * @description Retrieves the total earnings of a specific driver based on completed orders.
+ * @operationId getDriverTotalEarnings
+ * @pathParam {string} driver_id - The ID of the driver whose total earnings are being retrieved
+ * @response 200 - Successful operation, returns total earnings for the specified driver
+ * @responseContent {TotalEarnings} 200.application/json
+ * @response 404 - Driver not found
+ * @response 400 - Error retrieving driver's total earnings
+ */
+async function getDriverTotalEarnings(req, res) {
+	const { driver_id } = req.params;
+
+	if (!driver_id) {
+		return res.status(400).json({ message: 'Missing required parameter: driver_id' });
+	}
+
+	try {
+		const orders = await TaxiOrderDao.getOrders({
+			where: {
+				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
+				driver_id: driver_id
+			}});
+		const totalEarnings = calculateDriversEarnings(orders, TAXI_ORDER_STATUS.TAXI_COMPLETED);
+		res.status(200).json(totalEarnings);
+	} catch (error) {
+		console.error("Error retrieving driver's total earnings:", error);
+		res.status(400).json({ error: "Error retrieving driver's total earnings", detail: error.message });
+	}
+}
 module.exports = {
 	listDrivers,
 	listOnlineDrivers,
@@ -699,5 +731,6 @@ module.exports = {
 	editDriver,
 	getDriverEarnings,
 	getAllDriversEarnings,
-	getTotalEarnings
+	getTotalEarnings,
+	getDriverTotalEarnings
 };
