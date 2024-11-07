@@ -573,7 +573,7 @@ async function getDriverHistoryLocations (req, res) {
 }
 
 /**
- * GET /drivers/:driver_id/earnings
+ * GET /drivers/earnings/:driver_id
  * @tag Drivers
  * @summary Get earnings for a specific driver
  * @description Retrieves the earnings of a specific driver within a specified date range.
