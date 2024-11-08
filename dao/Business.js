@@ -35,6 +35,7 @@ const getBusinessById = async (business_id) => {
 			},
 			include: {
 				address: true,
+				delivery_address: true,
 				finances: true,
 				business_users: {
 					include: {
