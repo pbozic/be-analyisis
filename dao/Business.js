@@ -1,6 +1,7 @@
 const prisma = require("../prisma/prisma");
 const AddressDao = require('./Address');
-const Constants = require("../lib/constants"); // Assuming Address.js exports are imported as AddressDao
+const Constants = require("../lib/constants");
+const { reorderMenusAndCategories } = require("../lib/businessHelpers"); // Assuming Address.js exports are imported as AddressDao
 
 const getBusinesses = async (args) => {
 	try {
@@ -225,51 +226,8 @@ const getBusinessesByType = async (type, args = {}) => {
             include: includeOptions
         });
 
-        // Sort menus, and menu categories if applicable
-        businesses.forEach(business => {
-            if (business.menus) {
-                business.menus.forEach(menu => {
-                    if (menu.menu_categories_ordered) {
-                        const orderedCategoryIds = JSON.parse(menu.menu_categories_ordered);
-                        menu.categories.sort((a, b) => {
-                            return orderedCategoryIds.indexOf(a.menu_category_id) - orderedCategoryIds.indexOf(b.menu_category_id);
-                        });
-                    } else {
-                        console.log("No menu categories ordered");
-                        return menu.categories;
-                    }
-                    menu.categories.forEach(category => {
-                        if (category.menu_items_ordered) {
-                            const orderedItemIds = JSON.parse(category.menu_items_ordered);
-                            category.menu_items.sort((a, b) => {
-                                return orderedItemIds.indexOf(a.menu_item_id) - orderedItemIds.indexOf(b.menu_item_id);
-                            });
-                        } else {
-                            console.log('No menu items ordered');
-                            return category.menu_items;
-                        }
-
-                        // Create a deep copy of menu_items to avoid circular references
-                        const menuItemsCopy = JSON.parse(JSON.stringify(category.menu_items));
-
-                        category.menu_items.forEach(item => {
-                            if (item.sides) {
-                                item.sides = item.sides.map(sideId => {
-                                    return menuItemsCopy.find(menuItem => menuItem.menu_item_id === sideId) || sideId;
-                                });
-                            }
-                            if (item.extras) {
-                                item.extras = item.extras.map(extraId => {
-                                    return menuItemsCopy.find(menuItem => menuItem.menu_item_id === extraId) || extraId;
-                                });
-                            }
-                        });
-                    });
-                });
-            }
-        });
-
-        return businesses;
+        // Before returning, sort menus, and menu categories if applicable
+        return reorderMenusAndCategories(businesses);
     } catch (error) {
         console.error(`Error retrieving businesses by type ${type}:`, error);
         throw new Error(error);
