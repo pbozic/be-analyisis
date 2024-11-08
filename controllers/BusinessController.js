@@ -1058,6 +1058,61 @@ async function getBusinessReviewsById(req, res) {
 	}
 }
 
+/**
+ * PATCH /business/edit
+ * @tag Business
+ * @summary Edit business details
+ * @description This endpoint is used to update multiple details of a business, including address, delivery address, finances, and other specific data.
+ * @operationId editBusiness
+ * @bodyDescription The data to update for the business.
+ * @bodyContent {EditBusinessRequest} application/json
+ * @bodyRequired
+ * @response 200 - Business updated successfully. Returns the updated business details.
+ * @responseContent {Business} 200.application/json
+ * @response 400 - Error updating business information.
+ */
+async function editBusiness(req, res) {
+    const { business_id } = req.body;
+    const { business_group_name, email, telephone, address, delivery_address, working_hours, new_business, popular, ...otherData } = req.body;
+
+    try {
+        // Update the business details
+        let updatedBusiness = await BusinessDao.updateBusiness(business_id, otherData);
+
+        // Update address if provided
+        if (address) {
+            updatedBusiness = await BusinessDao.updateBusinessAddress(business_id, address);
+        }
+        // Update delivery address if provided
+        if (delivery_address) {
+            updatedBusiness = await BusinessDao.updateBusinessDeliveryAddress(business_id, delivery_address);
+        }
+		if (business_group_name) {
+			updatedBusiness = await BusinessDao.updateBusinessGroupName(business_id, business_group_name);
+		}
+		if (email) {
+			updatedBusiness = await BusinessDao.updateBusinessEmail(business_id, email);
+		}
+		if (telephone) {
+			updatedBusiness = await BusinessDao.updateBusinessTelephone(business_id, telephone);
+		}
+		if (working_hours) {
+			updatedBusiness = await BusinessDao.updateBusinessWorkingHours(business_id, working_hours);
+		}
+		if (new_business) {
+			updatedBusiness = await BusinessDao.updateBusinessIsNew(business_id, new_business);
+		}
+		if (popular) {
+			updatedBusiness = await BusinessDao.updateBusinessIsPopular(business_id, popular);
+		}
+
+        // Return the updated business details
+        res.status(200).json(updatedBusiness);
+    } catch (error) {
+        console.error("Error updating business:", error);
+        res.status(400).json({ error: "Error updating business information", detail: error.message });
+    }
+}
 module.exports = {
 	listBusinesses,
 	listTransferBusinesses,
@@ -1094,6 +1149,7 @@ module.exports = {
 	getAllBusinessesEarnings,
 	getTotalEarnings,
 	getBusinessTotalEarnings,
-	getBusinessReviewsById
+	getBusinessReviewsById,
+	editBusiness
 };
 
