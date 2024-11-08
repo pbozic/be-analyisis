@@ -354,11 +354,19 @@ const updateBusiness = async (business_id, businessData) => {
 
 const updateBusinessFinances = async (business_id, financesData) => {
     try {
-        // Assuming financesData contains the fields you want to update
-        return await prisma.business.update({
-            where: { business_id }, // Assuming finances are linked to business by business_id
-            data: { ...financesData }, // Spread the financesData to update the relevant fields
+        // Use the upsert method to handle finance creation or retrieval
+        const updatedFinances = await prisma.finances.upsert({
+            where: {
+                business_id: business_id, // Assuming finances are linked to business by business_id
+            },
+            update: financesData, // Update the existing finance record with new data
+            create: {
+                business_id: business_id, // Create a new finance record linked to the business
+                ...financesData, // Include the new finance data
+            },
         });
+
+        return updatedFinances; // Return the updated or created finance record
     } catch (error) {
         console.error("Error updating business finances:", error);
         throw new Error(error);
