@@ -331,6 +331,8 @@ const updateBusiness = async (business_id, businessData) => {
 		delete businessData.type;
 		delete businessData.is_business_unit;
 		delete businessData.business_group_name;
+		delete businessData.address;
+		delete businessData.delivery_address;
 		delete businessData.email;
 		delete businessData.telephone;
 		delete businessData.telephone_code;
