@@ -1072,18 +1072,19 @@ async function getBusinessReviewsById(req, res) {
  * @response 400 - Error updating business information.
  */
 async function editBusiness(req, res) {
-	const { business_group_name, email, telephone, address, delivery_address, working_hours, new_business, popular, ...otherData } = req.body;
+	const { business_group_name, email, telephone, address, delivery_address, working_hours, finances, new_business, popular, ...otherData } = req.body;
 	const business_id = otherData.business_id;
 
     try {
         // Update the business details
         let updatedBusiness = await BusinessDao.updateBusiness(business_id, otherData);
 
-        // Update address if provided
+        if (finances) {
+            updatedBusiness = await BusinessDao.updateBusinessFinances(business_id, finances);
+        }
         if (address) {
             updatedBusiness = await BusinessDao.updateBusinessAddress(business_id, address);
         }
-        // Update delivery address if provided
         if (delivery_address) {
             updatedBusiness = await BusinessDao.updateBusinessDeliveryAddress(business_id, delivery_address);
         }

@@ -338,6 +338,7 @@ const updateBusiness = async (business_id, businessData) => {
 		delete businessData.telephone_code;
 		delete businessData.telephone_number;
 		delete businessData.working_hours;
+		delete businessData.finances;
 		delete businessData.popular;
 		delete businessData.new;
 
@@ -349,6 +350,19 @@ const updateBusiness = async (business_id, businessData) => {
 		console.error("Error updating business:", error);
 		throw new Error(error);
 	}
+};
+
+const updateBusinessFinances = async (business_id, financesData) => {
+    try {
+        // Assuming financesData contains the fields you want to update
+        return await prisma.finances.update({
+            where: { business_id }, // Assuming finances are linked to business by business_id
+            data: { ...financesData }, // Spread the financesData to update the relevant fields
+        });
+    } catch (error) {
+        console.error("Error updating business finances:", error);
+        throw new Error(error);
+    }
 };
 
 const updateBusinessType = async (business_id, type) => {
@@ -659,5 +673,6 @@ module.exports = {
 	removeBusinessDeliveryAddress,
 	addScheduledUserSortingType,
 	manualSortScheduledUsers,
-	getBusinessesByTypeMainInformation
+	getBusinessesByTypeMainInformation,
+	updateBusinessFinances
 };
