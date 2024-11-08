@@ -36,6 +36,7 @@ const getBusinessById = async (business_id) => {
 			},
 			include: {
 				address: true,
+				delivery_address: true,
 				finances: true,
 				business_users: {
 					include: {
@@ -186,7 +187,8 @@ const getBusinessesByType = async (type, args = {}) => {
     try {
         const includeOptions = {
             address: true,
-            finances: true,
+			delivery_address: true,
+			finances: true,
             business_users: {
                 include: {
                     users: true,
@@ -287,11 +289,14 @@ const updateBusiness = async (business_id, businessData) => {
 		delete businessData.type;
 		delete businessData.is_business_unit;
 		delete businessData.business_group_name;
+		delete businessData.address;
+		delete businessData.delivery_address;
 		delete businessData.email;
 		delete businessData.telephone;
 		delete businessData.telephone_code;
 		delete businessData.telephone_number;
 		delete businessData.working_hours;
+		delete businessData.finances;
 		delete businessData.popular;
 		delete businessData.new;
 
@@ -305,6 +310,32 @@ const updateBusiness = async (business_id, businessData) => {
 	}
 };
 
+const updateBusinessFinances = async (business_id, financesData) => {
+    try {
+        // Use the upsert method to handle finance creation or retrieval
+        const updatedFinances = await prisma.finances.upsert({
+            where: {
+                business: {
+                    business_id: business_id, // Reference the business relation
+                },
+            },
+            update: financesData, // Update the existing finance record with new data
+            create: {
+                business: {
+                    connect: {
+                        business_id: business_id, // Link the new finance record to the business
+                    },
+                },
+                ...financesData, // Include the new finance data
+            },
+        });
+
+        return updatedFinances; // Return the updated or created finance record
+    } catch (error) {
+        console.error("Error updating business finances:", error);
+        throw new Error(error);
+    }
+};
 const updateBusinessType = async (business_id, type) => {
 	try {
 		return await prisma.business.update({
@@ -613,5 +644,6 @@ module.exports = {
 	removeBusinessDeliveryAddress,
 	addScheduledUserSortingType,
 	manualSortScheduledUsers,
-	getBusinessesByTypeMainInformation
+	getBusinessesByTypeMainInformation,
+	updateBusinessFinances
 };

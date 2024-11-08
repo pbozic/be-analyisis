@@ -17,6 +17,7 @@ router.get("/:driver_id/history_location", DriverController.getDriverHistoryLoca
 router.get("/earnings/all", DriverController.getAllDriversEarnings);
 router.get("/earnings/total", DriverController.getTotalEarnings);
 router.get("/earnings/:driver_id", DriverController.getDriverEarnings);
+router.get("/earnings/:driver_id/total", DriverController.getDriverTotalEarnings);
 
 router.patch("/", DriverController.updateDriver);
 router.patch("/edit", DriverController.editDriver);

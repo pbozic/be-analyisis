@@ -11,6 +11,7 @@ const DeliveryDriverDao = require("../dao/DeliveryDriver");
 const DeliveryOrderDao = require("../dao/DeliveryOrder");
 const { BUSINESS_TYPE, DELIVERY_ORDER_STATUS } = require("../lib/constants");
 const { calculateBusinessEarnings, calculateTotalEarnings } = require("../lib/helpersLib");
+const prisma = require("../prisma/prisma");
 
 /**
  * GET /businesses
@@ -929,6 +930,190 @@ async function getTotalEarnings(req, res) {
 	}
 }
 
+/**
+ * GET /business/earnings/:business_id/total
+ * @tag Business
+ * @summary Get total earnings for a specific business
+ * @description Retrieves the total earnings of a specific business based on completed orders.
+ * @operationId getBusinessTotalEarnings
+ * @pathParam {string} business_id - The ID of the business whose total earnings are being retrieved
+ * @response 200 - Successful operation, returns total earnings for the specified business
+ * @responseContent {TotalEarnings} 200.application/json
+ * @response 404 - Business not found
+ * @response 400 - Error retrieving business' total earnings
+ */
+async function getBusinessTotalEarnings(req, res) {
+	const { business_id: business_id } = req.params;
+
+	if (!business_id) {
+		return res.status(400).json({ message: 'Missing required parameter: business_id' });
+	}
+
+	try {
+		const orders = await DeliveryOrderDao.getOrders({
+			where: {
+				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				business_id: business_id
+			}});
+		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED);
+		res.status(200).json(totalEarnings);
+	} catch (error) {
+		console.error("Error retrieving business' total earnings:", error);
+		res.status(400).json({ error: "Error retrieving business' total earnings", detail: error.message });
+	}
+}
+
+async function getBusinessReviewsById(req, res) {
+	const { business_id: business_id } = req.params;
+
+	if (!business_id) {
+		return res.status(400).json({ message: 'Missing required parameter: business_id' });
+	}
+
+	try {
+		const business = await BusinessDao.getBusinessById(business_id);
+		if (!business?.reviewable_id) {
+			return res.status(200).json([]);
+		} else {
+			// Fetch reviews for the business
+			let reviews = await prisma.reviews.findMany({
+				where: {
+					reviewable_id: business.reviewable_id
+				},
+				include: {
+					author: {
+						select: {
+							first_name: true,
+							last_name: true,
+							user_id: true,
+							user_role: true,
+							documents: {
+								where: {
+									document_type: "PROFILE_PICTURE"
+								},
+								select: {
+									files: true,
+									document_type: true
+								}
+							}
+						}
+					},
+					reviewable: {
+						include: {
+							business: {
+								select: {
+									name: true,
+									business_id: true,
+									documents: {
+										where: {
+											document_type: "PROFILE_PICTURE"
+										},
+										select: {
+											files: true,
+											document_type: true
+										}
+									}
+								}
+							},
+							user: {
+								select: {
+									first_name: true,
+									last_name: true,
+									user_id: true,
+									user_role: true,
+									documents: {
+										where: {
+											document_type: "PROFILE_PICTURE"
+										},
+										select: {
+											files: true,
+											document_type: true
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				orderBy: {
+					created_at: 'desc'
+				}
+			});
+
+			for (let review of reviews) {
+				if (review.reviewable.user.length > 0) {
+					review.target = review.reviewable.user[0];
+				}
+				if (review.reviewable.business.length > 0) {
+					review.target = review.reviewable.business[0];
+				}
+				review.reviewable = undefined;
+			}
+
+			res.status(200).json(reviews);
+		}
+	} catch (e) {
+		console.error("BusinessController", e);
+		res.status(500).json({ error: 'Internal server error' });
+	}
+}
+
+/**
+ * PATCH /business/edit
+ * @tag Business
+ * @summary Edit business details
+ * @description This endpoint is used to update multiple details of a business, including address, delivery address, finances, and other specific data.
+ * @operationId editBusiness
+ * @bodyDescription The data to update for the business.
+ * @bodyContent {EditBusinessRequest} application/json
+ * @bodyRequired
+ * @response 200 - Business updated successfully. Returns the updated business details.
+ * @responseContent {Business} 200.application/json
+ * @response 400 - Error updating business information.
+ */
+async function editBusiness(req, res) {
+	const { business_group_name, email, telephone, address, delivery_address, working_hours, finances, new_business, popular, ...otherData } = req.body;
+	const business_id = otherData.business_id;
+
+    try {
+        // Update the business details
+        let updatedBusiness = await BusinessDao.updateBusiness(business_id, otherData);
+
+        if (finances) {
+            updatedBusiness = await BusinessDao.updateBusinessFinances(business_id, finances);
+        }
+        if (address) {
+            updatedBusiness = await BusinessDao.updateBusinessAddress(business_id, address);
+        }
+        if (delivery_address) {
+            updatedBusiness = await BusinessDao.updateBusinessDeliveryAddress(business_id, delivery_address);
+        }
+		if (business_group_name) {
+			updatedBusiness = await BusinessDao.updateBusinessGroupName(business_id, business_group_name);
+		}
+		if (email) {
+			updatedBusiness = await BusinessDao.updateBusinessEmail(business_id, email);
+		}
+		if (telephone) {
+			updatedBusiness = await BusinessDao.updateBusinessTelephone(business_id, telephone);
+		}
+		if (working_hours) {
+			updatedBusiness = await BusinessDao.updateBusinessWorkingHours(business_id, working_hours);
+		}
+		if (new_business) {
+			updatedBusiness = await BusinessDao.updateBusinessIsNew(business_id, new_business);
+		}
+		if (popular) {
+			updatedBusiness = await BusinessDao.updateBusinessIsPopular(business_id, popular);
+		}
+
+        // Return the updated business details
+        res.status(200).json(updatedBusiness);
+    } catch (error) {
+        console.error("Error updating business:", error);
+        res.status(400).json({ error: "Error updating business information", detail: error.message });
+    }
+}
 module.exports = {
 	listBusinesses,
 	listTransferBusinesses,
@@ -963,6 +1148,9 @@ module.exports = {
 	listMerchantBusinessesMainInfo,
 	getBusinessEarnings,
 	getAllBusinessesEarnings,
-	getTotalEarnings
+	getTotalEarnings,
+	getBusinessTotalEarnings,
+	getBusinessReviewsById,
+	editBusiness
 };
 
