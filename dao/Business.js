@@ -354,30 +354,33 @@ const updateBusiness = async (business_id, businessData) => {
 
 const updateBusinessFinances = async (business_id, financesData) => {
     try {
+        // First, retrieve the finance record associated with the business
+        const business = await prisma.business.findUnique({
+            where: { business_id },
+            select: { finance_id: true }, // Select only the finance_id
+        });
+
+        if (!business || !business.finance_id) {
+            throw new Error('No finance record found for the specified business');
+        }
+
         // Use the upsert method to handle finance creation or retrieval
-        const updatedFinances = await prisma.finances.upsert({
+        const updatedFinances = await prisma.finances.update({
             where: {
-                business: {
-                    business_id: business_id, // Reference the business relation
-                },
+                finance_id: business.finance_id, // Use the finance_id to find the record
             },
-            update: financesData, // Update the existing finance record with new data
-            create: {
-                business: {
-                    connect: {
-                        business_id: business_id, // Link the new finance record to the business
-                    },
-                },
-                ...financesData, // Include the new finance data
+            data: {
+                ...financesData, // Update the existing finance record with new data
             },
         });
 
-        return updatedFinances; // Return the updated or created finance record
+        return updatedFinances; // Return the updated finance record
     } catch (error) {
         console.error("Error updating business finances:", error);
         throw new Error(error);
     }
 };
+
 const updateBusinessType = async (business_id, type) => {
 	try {
 		return await prisma.business.update({
