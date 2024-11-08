@@ -357,11 +357,17 @@ const updateBusinessFinances = async (business_id, financesData) => {
         // Use the upsert method to handle finance creation or retrieval
         const updatedFinances = await prisma.finances.upsert({
             where: {
-                business_id: business_id, // Assuming finances are linked to business by business_id
+                business: {
+                    business_id: business_id, // Reference the business relation
+                },
             },
             update: financesData, // Update the existing finance record with new data
             create: {
-                business_id: business_id, // Create a new finance record linked to the business
+                business: {
+                    connect: {
+                        business_id: business_id, // Link the new finance record to the business
+                    },
+                },
                 ...financesData, // Include the new finance data
             },
         });
@@ -372,7 +378,6 @@ const updateBusinessFinances = async (business_id, financesData) => {
         throw new Error(error);
     }
 };
-
 const updateBusinessType = async (business_id, type) => {
 	try {
 		return await prisma.business.update({
