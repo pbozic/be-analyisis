@@ -1072,8 +1072,8 @@ async function getBusinessReviewsById(req, res) {
  * @response 400 - Error updating business information.
  */
 async function editBusiness(req, res) {
-	const { business_id: business_id } = req.params;
-    const { business_group_name, email, telephone, address, delivery_address, working_hours, new_business, popular, ...otherData } = req.body;
+	const { business_group_name, email, telephone, address, delivery_address, working_hours, new_business, popular, ...otherData } = req.body;
+	const business_id = otherData.business_id;
 
     try {
         // Update the business details

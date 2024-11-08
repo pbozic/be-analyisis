@@ -33,6 +33,7 @@ router.post("/scheduled_users/sorting", BusinessController.manualSortScheduledUs
 router.post("/scheduled_users/sorting/type", BusinessController.addScheduledUserSortingType);
 
 router.patch("/", BusinessController.update);
+router.patch("/edit", BusinessController.editBusiness);
 router.patch("/type", BusinessController.updateBusinessType);
 router.patch("/business-unit", BusinessController.updateIsBusinessUnit);
 router.patch("/business-group-name", BusinessController.updateBusinessGroupName);
