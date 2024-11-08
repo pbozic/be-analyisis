@@ -15,6 +15,7 @@ router.get("/businesses/merchant/main", BusinessController.listMerchantBusinesse
 router.get("/businesses/taxi", BusinessController.listTransferBusinesses);
 
 router.get("/:business_id", BusinessController.getBusinessById);
+router.get("/:business_id/reviews", BusinessController.getBusinessReviewsById);
 router.get("/search", BusinessController.getBusinessesByNameSearch);
 router.get("/parent", BusinessController.getParentBusiness);
 

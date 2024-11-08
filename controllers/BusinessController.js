@@ -11,6 +11,7 @@ const DeliveryDriverDao = require("../dao/DeliveryDriver");
 const DeliveryOrderDao = require("../dao/DeliveryOrder");
 const { BUSINESS_TYPE, DELIVERY_ORDER_STATUS } = require("../lib/constants");
 const { calculateBusinessEarnings, calculateTotalEarnings } = require("../lib/helpersLib");
+const prisma = require("../prisma/prisma");
 
 /**
  * GET /businesses
@@ -961,6 +962,102 @@ async function getBusinessTotalEarnings(req, res) {
 		res.status(400).json({ error: "Error retrieving business' total earnings", detail: error.message });
 	}
 }
+
+async function getBusinessReviewsById(req, res) {
+	const { business_id: business_id } = req.params;
+
+	if (!business_id) {
+		return res.status(400).json({ message: 'Missing required parameter: business_id' });
+	}
+
+	try {
+		const business = await BusinessDao.getBusinessById(business_id);
+		if (!business?.reviewable_id) {
+			return res.status(200).json([]);
+		} else {
+			// Fetch reviews for the business
+			let reviews = await prisma.reviews.findMany({
+				where: {
+					reviewable_id: business.reviewable_id
+				},
+				include: {
+					author: {
+						select: {
+							first_name: true,
+							last_name: true,
+							user_id: true,
+							user_role: true,
+							documents: {
+								where: {
+									document_type: "PROFILE_PICTURE"
+								},
+								select: {
+									files: true,
+									document_type: true
+								}
+							}
+						}
+					},
+					reviewable: {
+						include: {
+							business: {
+								select: {
+									name: true,
+									business_id: true,
+									documents: {
+										where: {
+											document_type: "PROFILE_PICTURE"
+										},
+										select: {
+											files: true,
+											document_type: true
+										}
+									}
+								}
+							},
+							user: {
+								select: {
+									first_name: true,
+									last_name: true,
+									user_id: true,
+									user_role: true,
+									documents: {
+										where: {
+											document_type: "PROFILE_PICTURE"
+										},
+										select: {
+											files: true,
+											document_type: true
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				orderBy: {
+					created_at: 'desc'
+				}
+			});
+
+			for (let review of reviews) {
+				if (review.reviewable.user.length > 0) {
+					review.target = review.reviewable.user[0];
+				}
+				if (review.reviewable.business.length > 0) {
+					review.target = review.reviewable.business[0];
+				}
+				review.reviewable = undefined;
+			}
+
+			res.status(200).json(reviews);
+		}
+	} catch (e) {
+		console.error("BusinessController", e);
+		res.status(500).json({ error: 'Internal server error' });
+	}
+}
+
 module.exports = {
 	listBusinesses,
 	listTransferBusinesses,
@@ -996,6 +1093,7 @@ module.exports = {
 	getBusinessEarnings,
 	getAllBusinessesEarnings,
 	getTotalEarnings,
-	getBusinessTotalEarnings
+	getBusinessTotalEarnings,
+	getBusinessReviewsById
 };
 
