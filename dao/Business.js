@@ -355,7 +355,7 @@ const updateBusiness = async (business_id, businessData) => {
 const updateBusinessFinances = async (business_id, financesData) => {
     try {
         // Assuming financesData contains the fields you want to update
-        return await prisma.finances.update({
+        return await prisma.business.update({
             where: { business_id }, // Assuming finances are linked to business by business_id
             data: { ...financesData }, // Spread the financesData to update the relevant fields
         });
