@@ -929,6 +929,38 @@ async function getTotalEarnings(req, res) {
 	}
 }
 
+/**
+ * GET /business/earnings/:business_id/total
+ * @tag Business
+ * @summary Get total earnings for a specific business
+ * @description Retrieves the total earnings of a specific business based on completed orders.
+ * @operationId getBusinessTotalEarnings
+ * @pathParam {string} business_id - The ID of the business whose total earnings are being retrieved
+ * @response 200 - Successful operation, returns total earnings for the specified business
+ * @responseContent {TotalEarnings} 200.application/json
+ * @response 404 - Business not found
+ * @response 400 - Error retrieving business' total earnings
+ */
+async function getBusinessTotalEarnings(req, res) {
+	const { business_id: business_id } = req.params;
+
+	if (!business_id) {
+		return res.status(400).json({ message: 'Missing required parameter: business_id' });
+	}
+
+	try {
+		const orders = await DeliveryOrderDao.getOrders({
+			where: {
+				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				business_id: business_id
+			}});
+		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED);
+		res.status(200).json(totalEarnings);
+	} catch (error) {
+		console.error("Error retrieving business' total earnings:", error);
+		res.status(400).json({ error: "Error retrieving business' total earnings", detail: error.message });
+	}
+}
 module.exports = {
 	listBusinesses,
 	listTransferBusinesses,
@@ -963,6 +995,7 @@ module.exports = {
 	listMerchantBusinessesMainInfo,
 	getBusinessEarnings,
 	getAllBusinessesEarnings,
-	getTotalEarnings
+	getTotalEarnings,
+	getBusinessTotalEarnings
 };
 

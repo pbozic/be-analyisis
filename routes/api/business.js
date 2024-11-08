@@ -21,6 +21,7 @@ router.get("/parent", BusinessController.getParentBusiness);
 router.get("/earnings/all", BusinessController.getAllBusinessesEarnings);
 router.get("/earnings/total", BusinessController.getTotalEarnings);
 router.get("/earnings/:business_id", BusinessController.getBusinessEarnings);
+router.get("/earnings/:business_id/total", BusinessController.getBusinessTotalEarnings);
 
 router.post("/register", BusinessController.createNewBusiness);
 router.post("/review", joi(reviewBusinessSchema), BusinessController.reviewBusiness);
