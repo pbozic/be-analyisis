@@ -185,7 +185,8 @@ const getBusinessesByType = async (type, args = {}) => {
     try {
         const includeOptions = {
             address: true,
-            finances: true,
+			delivery_address: true,
+			finances: true,
             business_users: {
                 include: {
                     users: true,
