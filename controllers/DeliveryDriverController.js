@@ -14,9 +14,10 @@ const { updateDocumentByDocumentId, createDocument, linkDocumentToUser, linkDocu
 const { updateFileInDocument, addFileToDocument } = require("../dao/File");
 const S3Helper = require("../lib/s3");
 const VehicleDao = require("../dao/Vehicle");
-const { DOCUMENT_TYPE } = require("../lib/constants");
+const { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE } = require("../lib/constants");
 const { createVehicle } = require("./VehiclesController");
 const { createNewVehicle } = require("../dao/Vehicle");
+const { calculateTotalEarnings, calculateDeliveryDriversEarnings } = require("../lib/helpersLib");
 
 /**
  * GET /delivery_drivers/orders/user_id
@@ -586,6 +587,147 @@ async function createDeliveryDriver(req, res) {
 	}
 }
 
+/**
+ * GET /drivers/earnings/:delivery_driver_id
+ * @tag DeliveryDrivers
+ * @summary Get earnings for a specific delivery driver
+ * @description Retrieves the earnings of a specific delivery driver within a specified date range.
+ * @operationId getDriverEarnings
+ * @pathParam {string} delivery_driver_id - The ID of the driver whose earnings are being retrieved
+ * @pathParam {string} start_date - The start date for the earnings period (format: YYYY-MM-DD)
+ * @pathParam {string} end_date - The end date for the earnings period (format: YYYY-MM-DD)
+ * @response 200 - Successful operation, returns delivery driver's earnings
+ * @responseContent {Earnings} 200.application/json
+ * @response 404 - Driver not found
+ * @response 400 - Error retrieving delivery driver's earnings
+ */
+async function getDriverEarnings(req, res) {
+	const { delivery_driver_id } = req.params;
+	const { start_date, end_date } = req.query;
+
+	if (!delivery_driver_id || !start_date || !end_date) {
+		return res.status(400).json({ message: 'Missing required parameters' });
+	}
+
+	try {
+		const driver = await DeliveryDriverDao.getDeliveryDriverById(delivery_driver_id);
+		const driverOrders = await DeliveryOrderDao.getOrdersByDeliveryDriverId(driver.delivery_driver_id, {
+			status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+			created_at: {
+				gte: new Date(start_date).toISOString(),
+				lte: new Date(end_date).toISOString()
+			}
+		});
+		const earningsData = calculateDeliveryDriversEarnings(driverOrders, driver);
+
+		if (earningsData) {
+			res.status(200).json({ delivery_driver_id, ...earningsData });
+		} else {
+			res.status(404).json({ error: "Delivery driver not found or no earnings data available" });
+		}
+	} catch (error) {
+		console.error("Error retrieving delivery driver's earnings:", error);
+		res.status(400).json({ error: "Error retrieving delivery driver's earnings", detail: error.message });
+	}
+}
+
+/**
+ * GET /drivers/earnings/all
+ * @tag DeliveryDrivers
+ * @summary Get earnings for all delivery drivers
+ * @description Retrieves the earnings of all delivery drivers within a specified date range.
+ * @operationId getAllDriversEarnings
+ * @pathParam {string} start_date - The start date for the earnings period (format: YYYY-MM-DD)
+ * @pathParam {string} end_date - The end date for the earnings period (format: YYYY-MM-DD)
+ * @response 200 - Successful operation, returns all delivery drivers' earnings
+ * @responseContent {Earnings[]} 200.application/json
+ * @response 400 - Error retrieving all delivery drivers' earnings
+ */
+async function getAllDriversEarnings(req, res) {
+	const { start_date, end_date } = req.query;
+
+	if (!start_date || !end_date) {
+		return res.status(400).json({ message: 'Missing required parameters' });
+	}
+
+	try {
+		const drivers = await DeliveryDriverDao.getDeliveryDrivers();
+		const earningsPromises = drivers.map(async (driver) => {
+			const driverOrders = await DeliveryOrderDao.getOrdersByDeliveryDriverId(driver.delivery_driver_id, {
+				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				created_at: {
+					gte: new Date(start_date).toISOString(),
+					lte: new Date(end_date).toISOString()
+				}
+			});
+			return calculateDeliveryDriversEarnings(driverOrders, driver);
+		});
+
+		const allEarnings = await Promise.all(earningsPromises);
+		res.status(200).json(allEarnings);
+	} catch (error) {
+		console.error("Error retrieving all delivery delivery drivers' earnings:", error);
+		res.status(400).json({ error: "Error retrieving all delivery delivery drivers' earnings", detail: error.message });
+	}
+}
+
+/**
+ * GET /drivers/earnings/total
+ * @tag DeliveryDrivers
+ * @summary Get total earnings for all delivery drivers
+ * @description Retrieves the total earnings of all drivers based on completed orders.
+ * @operationId getTotalEarnings
+ * @response 200 - Successful operation, returns total earnings for all delivery drivers
+ * @responseContent {TotalEarnings} 200.application/json
+ * @response 400 - Error retrieving total earnings
+ */
+async function getTotalEarnings(req, res) {
+	try {
+		const orders = await DeliveryOrderDao.getOrders({
+			where: {
+				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
+			}});
+		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED, true);
+		res.status(200).json(totalEarnings);
+	} catch (error) {
+		console.error("Error retrieving all delivery drivers' total earnings:", error);
+		res.status(400).json({ error: "Error retrieving all delivery drivers' total earnings", detail: error.message });
+	}
+}
+
+/**
+ * GET /drivers/earnings/:delivery_driver_id/total
+ * @tag DeliveryDrivers
+ * @summary Get total earnings for a specific delivery driver
+ * @description Retrieves the total earnings of a specific delivery driver based on completed orders.
+ * @operationId getDriverTotalEarnings
+ * @pathParam {string} delivery_driver_id - The ID of the delivery driver whose total earnings are being retrieved
+ * @response 200 - Successful operation, returns total earnings for the specified driver
+ * @responseContent {TotalEarnings} 200.application/json
+ * @response 404 - Driver not found
+ * @response 400 - Error retrieving delivery driver's total earnings
+ */
+async function getDriverTotalEarnings(req, res) {
+	const { delivery_driver_id } = req.params;
+
+	if (!delivery_driver_id) {
+		return res.status(400).json({ message: 'Missing required parameter: delivery_driver_id' });
+	}
+
+	try {
+		const orders = await DeliveryOrderDao.getOrders({
+			where: {
+				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				delivery_driver_id: delivery_driver_id
+			}});
+		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED, true);
+		res.status(200).json(totalEarnings);
+	} catch (error) {
+		console.error("Error retrieving delivery driver's total earnings:", error);
+		res.status(400).json({ error: "Error retrieving delivery driver's total earnings", detail: error.message });
+	}
+}
+
 module.exports = {
 	listDeliveryDrivers,
 	listOnlineDeliveryDrivers,
@@ -599,5 +741,9 @@ module.exports = {
 	getAvailableDeliveryDrivers,
 	getDeliveryDriverByUserId,
 	resendDelegatedOrdersToDeliveryDriver,
-	editDeliveryDriver
+	editDeliveryDriver,
+	getDriverEarnings,
+	getAllDriversEarnings,
+	getTotalEarnings,
+	getDriverTotalEarnings
 };
