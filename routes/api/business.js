@@ -40,8 +40,8 @@ router.patch("/business-group-name", BusinessController.updateBusinessGroupName)
 router.patch("/email", BusinessController.updateBusinessEmail);
 router.patch("/telephone", BusinessController.updateBusinessTelephone);
 router.patch("/workingHours", BusinessController.updateBusinessWorkingHours);
-router.patch("/new", BusinessController.updateBusinessIsNew);
-router.patch("/popular", BusinessController.updateBusinessIsPopular);
+router.patch("/new/:business_id", BusinessController.updateBusinessIsNew);
+router.patch("/popular/:business_id", BusinessController.updateBusinessIsPopular);
 router.patch("/parent/update", BusinessController.updateParentBusinessId);
 router.patch("/parent/remove", BusinessController.removeParentBusinessId);
 router.patch("/address", BusinessController.updateBusinessAddress);
