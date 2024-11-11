@@ -498,6 +498,40 @@ async function registerTaxiService(req, res) {
  */
 async function registerDeliveryService(req, res) {
 	try {
+		if (req.body.business) {
+			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.business.email);
+			if (existingBusinessEmail) {
+				console.error('Business with this email already exists.');
+				return res.status(400).json({ error: 'Business with this email already exists.' });
+			}
+			//const existingBusinessPhone = await BusinessDao.getBusinessByTelephone(req.body.business.telephone_number);
+			//if (existingBusinessPhone) {
+			//	console.error('Business with this phone number already exists.');
+			//	return res.status(400).json({ error: 'Business with this phone number already exists.' });
+			//}
+		}
+		if (Array.isArray(req.body.deliveryDrivers) && req.body.deliveryDrivers.length) {
+			for (const driverInfo of req.body.deliveryDrivers) {
+				const existingDriverEmail = await UserDao.getUserByEmail(driverInfo.user.data.email);
+				if (existingDriverEmail) {
+					console.error('Driver with this email already exists.');
+					return res.status(400).json({ error: `Driver with this email already exists.` });
+				}
+				const existingDriverPhone = await UserDao.getUserByTelephone(driverInfo.user.data.telephone);
+				if (existingDriverPhone) {
+					console.error('Driver with this phone number already exists.');
+					return res.status(400).json({ error: `Driver with this phone number already exists.` });
+				}
+			}
+		}
+		if (req.body.finances) {
+			const existingFinances = await FinancesDao.getFinancesByAccountNumber(req.body.finances.account_number);
+			if (existingFinances) {
+				console.error('This account number already exists.');
+				return res.status(400).json({ error: 'This account number is already in use.' });
+			}
+		}
+
 		const business = await BusinessDao.createNewBusiness(req.body.business);
 
 		let deliveryDrivers = [];
@@ -616,6 +650,26 @@ async function registerDeliveryService(req, res) {
 async function registerMerchantService(req, res) {
 	try {
 		// fs.writeFileSync("merchant-req.json", null, JSON.stringify(req.body, null, 2), 'utf8')
+		if (req.body.business) {
+			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.business.email);
+			if (existingBusinessEmail) {
+				console.error('Business with this email already exists.');
+				return res.status(400).json({ error: 'Business with this email already exists.' });
+			}
+			//const existingBusinessPhone = await BusinessDao.getBusinessByTelephone(req.body.business.telephone_number);
+			//if (existingBusinessPhone) {
+			//	console.error('Business with this phone number already exists.');
+			//	return res.status(400).json({ error: 'Business with this phone number already exists.' });
+			//}
+		}
+		if (req.body.finances) {
+			const existingFinances = await FinancesDao.getFinancesByAccountNumber(req.body.finances.account_number);
+			if (existingFinances) {
+				console.error('This account number already exists.');
+				return res.status(400).json({ error: 'This account number is already in use.' });
+			}
+		}
+
 		const business = await BusinessDao.createNewBusiness(req.body.business.data);
 
 		// Ensure at least one business user data is provided & created
