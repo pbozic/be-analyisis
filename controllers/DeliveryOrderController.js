@@ -456,10 +456,8 @@ async function acceptOrder(req, res) {
 			}
 		});
 		let driver = await DeliveryDriverDao.getDeliveryDriverById(delivery_driver_id, {
-			include: {
-				vehicles: {
-					vehicle_specification: true
-				}
+			vehicles: {
+				vehicle_specification: true
 			}
 		});
 		//TODO: how to handle multiple vehicles on driver -> check which vehicle has its field active, that's it, one active vehicle per delivery driver
