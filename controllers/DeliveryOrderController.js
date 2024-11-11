@@ -443,6 +443,7 @@ async function createDailyMeals(req, res) {
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function acceptOrder(req, res) {
+	console.log("accept order function",req.body);
 	const { order_id, user } = req.body;
 	const delivery_driver_id = user?.delivery_driver?.delivery_driver_id || user?.driver?.delivery_driver_id
 	try {
@@ -455,9 +456,9 @@ async function acceptOrder(req, res) {
 			}
 		});
 		let driver = await DeliveryDriverDao.getDeliveryDriverById(delivery_driver_id, {
-			include: {
-				vehicles: {
-					vehicle_specification: true
+			vehicles: {
+				include: {
+					vehicle_specification: true,
 				}
 			}
 		});
