@@ -611,13 +611,15 @@ async function getDriverEarnings(req, res) {
 
 	try {
 		const driver = await DeliveryDriverDao.getDeliveryDriverById(delivery_driver_id);
-		const driverOrders = await DeliveryOrderDao.getOrdersByDeliveryDriverId(driver.delivery_driver_id, {
-			status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
-			created_at: {
-				gte: new Date(start_date).toISOString(),
-				lte: new Date(end_date).toISOString()
-			}
-		});
+		const driverOrders = await DeliveryOrderDao.getOrders({
+			where: {
+				delivery_driver_id: delivery_driver_id,
+				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				created_at: {
+					gte: new Date(start_date).toISOString(),
+					lte: new Date(end_date).toISOString()
+				}
+			}});
 		const earningsData = calculateDeliveryDriversEarnings(driverOrders, driver);
 
 		if (earningsData) {
@@ -653,13 +655,15 @@ async function getAllDriversEarnings(req, res) {
 	try {
 		const drivers = await DeliveryDriverDao.getDeliveryDrivers();
 		const earningsPromises = drivers.map(async (driver) => {
-			const driverOrders = await DeliveryOrderDao.getOrdersByDeliveryDriverId(driver.delivery_driver_id, {
-				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
-				created_at: {
-					gte: new Date(start_date).toISOString(),
-					lte: new Date(end_date).toISOString()
-				}
-			});
+			const driverOrders = await DeliveryOrderDao.getOrders({
+				where: {
+					delivery_driver_id: driver.delivery_driver_id,
+					status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+					created_at: {
+						gte: new Date(start_date).toISOString(),
+						lte: new Date(end_date).toISOString()
+					}
+			}});
 			return calculateDeliveryDriversEarnings(driverOrders, driver);
 		});
 
