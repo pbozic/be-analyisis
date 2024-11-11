@@ -74,7 +74,7 @@ const getDeliveryDriverById = async (delivery_driver_id, includeParams) => {
 	};
 
 	const include = includeParams || defaultInclude;
-	console.log("include:", JSON.stringify(include));
+	console.log("include:",include);
 	try {
 		return await prisma.delivery_drivers.findUnique({
 			where: {
