@@ -1331,6 +1331,87 @@ async function registerChildUser(req, res) {
 	}
 }
 
+/**
+ * PATCH /users/me/group_user/status
+ * @tag Users
+ * @summary Updates the enabled field of the given child_user_id
+ * @description This endpoint is used to update enabled field of the given child_user_id
+ * @operationId updateChildUser
+ * @bodyDescription The child's group_user_id and value to set for the child user's enabled field
+ * @bodyContent {group_user_id,value}
+ * @bodyRequired
+ * @response 200 - User updated successfully. Returns the updated group_user.
+ * @responseContent {group_user} 200.application/json
+ * @response 400 - Error updating group user enabled status.
+ */
+async function updateChildUserEnabledByGroupUserId(req, res) {
+	const { group_user_id, value } = req.body
+
+	try {
+		let group_user = await GroupDao.updateGroupUserEnabled(group_user_id, value);
+		if (group_user) {
+			return res.status(200).json(group_user);
+		}
+		res.status(400).json({ error: "Error updating group user enabled status" });
+	} catch (e) {
+		console.log(e)
+		res.status(400).json({ error: "Error updating group user enabled status", e });
+	}
+}
+
+/**
+ * PATCH /users/me/group_user/status
+ * @tag Users
+ * @summary Updates the enabled field of the given child_user_id
+ * @description This endpoint is used to update enabled field of the given child_user_id
+ * @operationId updateChildUser
+ * @bodyDescription The child's group_user_id and value to set for the child user's enabled field
+ * @bodyContent {group_user_id,value}
+ * @bodyRequired
+ * @response 200 - User updated successfully. Returns the updated group_user.
+ * @responseContent {group_user} 200.application/json
+ * @response 400 - Error updating group user enabled status.
+ */
+async function updateChildUserAllowanceByGroupUserId(req, res) {
+	const { group_user_id, value } = req.body
+
+	try {
+		let group_user = await GroupDao.updateGroupUserAllowance(group_user_id, value);
+		if (group_user) {
+			return res.status(200).json(group_user);
+		}
+		res.status(400).json({ error: "Error updating group user enabled status" });
+	} catch (e) {
+		console.log(e)
+		res.status(400).json({ error: "Error updating group user enabled status", e });
+	}
+}
+
+/**
+ * DELETE /users/me/group_user/delete/:group_user_id
+ * @tag Users
+ * @summary Deletes a group_user by their ID
+ * @description This endpoint is used to delete a child user from the system by their group_user ID.
+ * @operationId deleteChildUserByGroupUserId
+ * @pathParam {string} group_user_id - The ID of the child user to delete
+ * @response 200 - User deleted successfully.
+ * @response 400 - Error deleting user.
+ * @response 404 - User not found.
+ */
+async function deleteChildUserByGroupUserId(req, res) {
+	const group_user_id  = req.params.group_user_id
+
+	try {
+		let group_user = await GroupDao.deleteGroupUser(group_user_id);
+		if (group_user) {
+			return res.status(200).json(group_user);
+		}
+		res.status(400).json({ error: "Error deleting group user" });
+	} catch (e) {
+		console.log(e)
+		res.status(400).json({ error: "Error deleting group user", e });
+	}
+}
 
 module.exports = {
 	listUsers,
@@ -1369,5 +1450,8 @@ module.exports = {
 	updateUserDeliveryPushNotifications,
 	disableMe,
 	updateUserDisabledByUserId,
-	registerChildUser
+	registerChildUser,
+	updateChildUserEnabledByGroupUserId,
+	updateChildUserAllowanceByGroupUserId,
+	deleteChildUserByGroupUserId
 };

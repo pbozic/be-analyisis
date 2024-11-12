@@ -56,5 +56,6 @@ module.exports = {
 	getGroupUsersByParentId,
 	createGroupUser,
 	deleteGroupUser,
-	updateGroupUserEnabled
+	updateGroupUserEnabled,
+	updateGroupUserAllowance
 };
