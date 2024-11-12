@@ -13,6 +13,7 @@ const {
 	oneSignalIdSchema
 } = require("../../joi/userSchemas");
 const {reviewUserSchema} = require("../../joi/reviewSchemas");
+const { registerChildSchema } = require("../../joi/authSchemas");
 
 const router = express.Router();
 
@@ -52,6 +53,7 @@ router.delete("/delete/:user_id", UserController.deleteUserByUserId);
 router.post("/me/update_user", UserController.updateUserByUserId);
 router.patch("/disabled/:user_id", UserController.updateUserDisabledByUserId);
 router.patch("/me/disabled", UserController.disableMe);
+router.post("/me/group_user/register-child", joi(registerChildSchema), UserController.registerChildUser);
 
 
 module.exports = router;
