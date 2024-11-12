@@ -19,6 +19,7 @@ const { generateAccessToken, generateRefreshToken } = require("../lib/jwt");
 const { getOrders } = require("../dao/TaxiOrder");
 const TaxiOrderDao = require("../dao/TaxiOrder");
 const { drive } = require("googleapis/build/src/apis/drive");
+const GroupDao = require("../dao/Group");
 
 
 /**
@@ -115,6 +116,8 @@ async function getUserById(req, res) {
 						address: true,
 					},
 				},
+				child_users: true,
+				parent_user: true,
 			},
 		});
 		if (user) {
@@ -1259,6 +1262,76 @@ async function getReviewsByUserId(req, res) {
 }
 
 
+/**
+ * POST /users/me/group_user/register-child
+ * @tag GroupUser
+ * @summary Register a new child user - new user and connected group_user entry
+ * @description This endpoint is used to register a new user and create group_user entry .
+ * @operationId registerNewUser
+ * @bodyDescription The required data to register a new user
+ * @bodyContent {RegisterRequest} application/json
+ * @bodyRequired
+ * @response 200 - User registered successfully. Returns user info and tokens.
+ * @responseContent {AuthenticatedUser} 200.application/json
+ * @responseHeader {string} 200.Authorization - The newly generated access token.
+ * @response 400 - Error something went wrong.
+ */
+async function registerChildUser(req, res) {
+	let { user_data,parent_uid } = req.body;
+	try {
+
+		if (!user_data.email)
+		{
+			user_data.email = "";
+		}
+		user_data.email = user_data.email.toLowerCase();
+		let UserExistsPhone = await UserDao.getUserByTelephone(user_data.telephone);
+		if (UserExistsPhone) {
+			return res.status(400).json({ error: "Telephone already in use!" });
+		}
+		let UserExistsEmail = await UserDao.getUserByEmail(user_data.email);
+		if (UserExistsEmail) {
+			return res.status(400).json({ error: "Email already in use!" });
+		}
+		let hash = await bcrypt.hash(user_data.password, Number(process.env.BCRYPT_SALT_ROUNDS));
+		let stripeCustomer = await stripe.createCustomer(
+			user_data.email,
+			user_data.first_name + " " + user_data.last_name,
+			user_data.telephone,
+		);
+		const userRole = user_data.user_role || "PERSONAL";
+		let userObj = {
+			...user_data,
+			date_of_birth: new Date(user_data.date_of_birth),
+			password: hash,
+			user_role: userRole,
+			stripe_customer_id: stripeCustomer.id,
+			reviewable: {
+				create: {
+
+				},
+			}
+		};
+
+		delete userObj["confirm_password"];
+		let user = await UserDao.createNewUser(userObj);
+		delete user["password"];
+
+		//create and connect group_user entry
+		const group_user_data = {
+			parent_user_id: parent_uid,
+			child_user_id: user.user_id,
+		}
+		const group_user_entry = GroupDao.createGroupUser(group_user_data)
+
+		res.status(200).json({ user,group_user_entry });
+	} catch (e) {
+		console.log(e)
+		res.status(400).json({ error: "Error something went wrong..", e });
+	}
+}
+
+
 module.exports = {
 	listUsers,
 	listPersonalUsers,
@@ -1296,4 +1369,5 @@ module.exports = {
 	updateUserDeliveryPushNotifications,
 	disableMe,
 	updateUserDisabledByUserId,
+	registerChildUser
 };
