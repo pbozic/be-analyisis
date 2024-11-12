@@ -85,7 +85,9 @@ async function login(req, res) {
 					},
 				},
 				driver: true,
-				delivery_driver: true
+				delivery_driver: true,
+				child_users: true,
+				parent_user: true
 			},
 		});
 		let payment_methods = []
