@@ -1,5 +1,7 @@
 const BusinessUsersDao = require("../dao/BusinessUsers");
 const AddressDao = require("../dao/Address");
+const GroupDao = require("../dao/Group");
+
 
 /**
  * GET /business-users
@@ -232,6 +234,37 @@ async function updateBusinessUserOnlineStatus(req, res) {
     }
 }
 
+/**
+ * GET /business-users/business/group-users/{business_id}
+ * @tag GroupUsers
+ * @summary Get nested group_users by business ID
+ * @description Retrieves a list of user_id:group_users pairs for a specific business.
+ * @operationId getGroupUsersByParentId
+ * @pathParam {string} business_id - The ID of the business for which to list nested child users
+ * @response 200 - Successful operation, returns an array containing all business_user user_ids for given business id and their respective child_users[]
+ * @responseContent {Menu[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the menu list
+ */
+async function getBusinessGroupsByBusinessId(req, res) {
+    try {
+        const businessUsers = await BusinessUsersDao.getBusinessUsersByBusinessId(req.params.business_id);
+        const nested_groupUsers = [];
+        for(const business_user in businessUsers){
+            const group_users = await GroupDao.getGroupUsersByParentId(business_user.user_id);
+            if(group_users.length > 0){
+                nested_groupUsers.push({
+                    user_id: business_user.user_id,
+                    child_users: group_users
+                });
+            }
+        }
+        res.status(200).json(nested_groupUsers);
+    } catch (e) {
+        console.error("Error obtaining group_users for business", e );
+        res.status(400).json({ error: "Error obtaining group_users for business", e });
+    }
+}
+
 module.exports = {
     updateCompanyRole,
     getAllBusinessUsersForBusinessByCompanyRole,
@@ -242,6 +275,7 @@ module.exports = {
     createBusinessUser,
     addOperatingAddress,
     removeBusinessUser,
-    updateBusinessUserOnlineStatus
+    updateBusinessUserOnlineStatus,
+    getBusinessGroupsByBusinessId
 };
 

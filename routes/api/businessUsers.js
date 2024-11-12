@@ -7,6 +7,7 @@ router.get("/", BusinessUsersController.getAllBusinessUsers);
 router.get("/:user_id", BusinessUsersController.getBusinessUserByUserId);
 router.get("/business/:business_id", BusinessUsersController.getBusinessUsersByBusinessId);
 router.get("/type/:type", BusinessUsersController.getBusinessUsersByBusinessType);
+router.get("/business/group-users/:business_id", BusinessUsersController.getBusinessGroupsByBusinessId);
 router.get("/business/:business_id/company-role/:company_role", BusinessUsersController.getAllBusinessUsersForBusinessByCompanyRole);
 
 router.post("/", BusinessUsersController.createBusinessUser);
