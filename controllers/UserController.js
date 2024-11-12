@@ -939,7 +939,7 @@ async function requestToAddFundsToWallet(req, res) {
 	  res.status(200).json(paymentIntent);
 	} catch (error) {
 	  console.error('Error requesting to add funds to wallet:', error);
-
+	  res.status(400).json({ error: 'Error requesting to add funds to wallet' });
 	}
 }
 async function ping(req, res) {
