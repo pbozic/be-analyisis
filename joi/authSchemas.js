@@ -64,6 +64,11 @@ const registerSchema = Joi.object({
 	date_of_birth: Joi.date().format("YYYY-MM-DD").required(),
 });
 
+const registerChildSchema = Joi.object({
+	user_data: registerSchema.required(), // Require the register schema
+	parent_uid: Joi.string().required(),    // New required string field
+});
+
 const refreshSchema = Joi.object({
 	refresh_token: Joi.string().required(),
 });
@@ -85,5 +90,6 @@ module.exports = {
 	refreshSchema,
 	resetPasswordSchema,
 	resetPasswordRequestSchema,
+	registerChildSchema
 	
 };
