@@ -66,7 +66,7 @@ const registerSchema = Joi.object({
 
 const registerChildSchema = Joi.object({
 	user_data: registerSchema.required(), // Require the register schema
-	parent_uid: Joi.string().required(),    // New required string field
+	parent_user_id: Joi.string().required(),    // New required string field
 });
 
 const refreshSchema = Joi.object({
