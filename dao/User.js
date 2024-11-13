@@ -22,12 +22,7 @@ const getUserById = async (user_id, args) => {
 			where: {
 				user_id: user_id,
 			},
-			...args,
-			include: {
-				child_users: true,
-				parent_user: true,
-				...args?.include
-			}
+			...args
 		});
 	} catch (error) {
 		throw new Error(error);
@@ -61,9 +56,7 @@ const getScheduledUsers = async () => {
 					include: {
 						address: true
 					}
-				},
-				child_users: true,
-				parent_user: true,
+				}
 			}
 		});
 
@@ -102,12 +95,7 @@ const getUserByEmailOrTelephone = async (query, args) => {
 			]
 				
 			},
-			...args,
-			include: {
-				child_users: true,
-				parent_user: true,
-				...args?.include
-			}
+			...args
 		});
 	} catch (error) {
 		return new Error(error);
@@ -119,12 +107,7 @@ const getUserByEmail = async (query, args) => {
 			where: {
 				email: query
 			},
-			...args,
-			include: {
-				child_users: true,
-				parent_user: true,
-				...args?.include
-			}
+			...args
 		});
 	} catch (error) {
 		return new Error(error);
@@ -136,12 +119,7 @@ const getUserByTelephone = async (query, args) => {
 			where: {
 				telephone: query
 			},
-			...args,
-			include: {
-				child_users: true,
-				parent_user: true,
-				...args?.include
-			}
+			...args
 		});
 	} catch (error) {
 		return new Error(error);
@@ -154,12 +132,7 @@ const getUserByResetToken = async (resetToken, args) => {
 				token: resetToken,
 			},
 			include: {
-				users: {
-					include: {
-						child_users: true,
-						parent_user: true,
-					}
-				}
+				users: true
 			},
 			...args
 		});
@@ -173,12 +146,7 @@ const getUser = async (email, args) => {
 			where: {
 				email: email,
 			},
-			...args,
-			include: {
-				child_users: true,
-				parent_user: true,
-				...args?.include
-			}
+			...args
 		});
 	} catch (error) {
 		return new Error(error);
@@ -202,10 +170,6 @@ const updateUser = async (user_id, user) => {
 			},
 			data: {
 				...user,
-			},
-			include: {
-				child_users: true,
-				parent_user: true,
 			}
 		});
 	} catch (error) {
@@ -228,10 +192,7 @@ const updateScheduledUser =  async (user_id, user) => {
 					include: {
 						address: true
 					}
-				},
-
-				child_users: true,
-				parent_user: true,
+				}
 			}
 		});
 	} catch (error) {

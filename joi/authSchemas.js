@@ -18,7 +18,7 @@ const registerSchema = Joi.object({
 			console.log("helpers", helpers.error);
 			let isEmailInUse;
 			try {
-				isEmailInUse = await prisma.users.findUnique({
+				isEmailInUse = await prisma.users.findFirst({
 					where: {
 						email: email.toLowerCase(),
 					},
@@ -74,10 +74,9 @@ const registerChildSchema = Joi.object({
 		.optional()
 		.external(async (email, helpers) => {
 			console.log("helpers", helpers.error);
-			console.log("EMAIL VALIDATE", email);
 			let isEmailInUse;
 			try {
-				isEmailInUse = await prisma.users.findUnique({
+				isEmailInUse = await prisma.users.findFirst({
 					where: {
 						email: email.toLowerCase(),
 					},
