@@ -102,12 +102,7 @@ const getUserByEmailOrTelephone = async (query, args) => {
 			]
 				
 			},
-			...args,
-			include: {
-				child_users: true,
-				parent_user: true,
-				...args?.include
-			}
+			...args
 		});
 	} catch (error) {
 		return new Error(error);
