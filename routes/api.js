@@ -15,6 +15,7 @@ const authMerchantRoutes = require("./api/merchant/auth")
 const reservationsMerchantRoutes = require("./api/merchant/reservations")
 const taxiRoutes = require("./api/taxi");
 const deliveryRoutes = require("./api/delivery/orders");
+const authBusinessRoutes = require("./api/business/auth")
 const businessRoutes = require("./api/business");
 const driverRoutes = require("./api/drivers");
 const deliveryDriverRoutes = require("./api/deliveryDrivers");
@@ -40,6 +41,7 @@ router.use("/merchant/auth", authMerchantRoutes);
 router.use("/merchant/reservations", reservationsMerchantRoutes);
 router.use("/delivery/orders", [authMiddleware], deliveryRoutes);
 router.use("/taxi", [authMiddleware], taxiRoutes);
+router.use("/business/auth", authBusinessRoutes);
 router.use("/business", [authMiddleware], businessRoutes);
 router.use("/drivers", [authMiddleware], driverRoutes);
 router.use("/delivery_drivers", [authMiddleware], deliveryDriverRoutes);
