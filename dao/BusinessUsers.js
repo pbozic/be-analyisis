@@ -5,7 +5,11 @@ const getAllBusinessUsers = async () => {
 	try {
 		return await prisma.business_users.findMany({
 			include: {
-				users: true, // Assuming you want to include details of the user
+				users: {
+					include:{
+						child_users:true
+					}
+				}, // Assuming you want to include details of the user
 				business: true, // Assuming you want to include details of the business
 			},
 		});
@@ -22,7 +26,11 @@ const getBusinessUserByUserId = async (userId) => {
 				user_id: userId,
 			},
 			include: {
-				users: true,
+				users: {
+					include:{
+						child_users:true
+					}
+				},
 				business: true,
 			},
 		});
@@ -37,7 +45,11 @@ const getBusinessUsersByBusinessId = async (business_id) => {
 		return await prisma.business_users.findMany({
 			where: { business_id },
 			include: {
-				users: true
+				users: {
+					include:{
+						child_users:true
+					}
+				}
 			}
 		});
 	} catch (error) {
@@ -53,7 +65,11 @@ const getBusinessUsersByBusinessType = async (type) => {
 			include: {
 				business_users: {
 					include: {
-						users: true
+						users: {
+							include:{
+								child_users:true
+							}
+						}
 					}
 				}
 			}
@@ -72,7 +88,11 @@ const getAllBusinessUsersForBusinessByCompanyRole = async (business_id, company_
 				company_role
 			},
 			include: {
-				users: true
+				users: {
+					include:{
+						child_users:true
+					}
+				}
 			}
 		});
 	} catch (error) {
