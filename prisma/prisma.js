@@ -102,18 +102,39 @@ const prisma = new PrismaClient({
 					WHERE drivers.online = true
 					AND drivers.on_order = false
 					AND ST_DWithin(
-					ST_MakePoint(
-						CAST((drivers.location->'coordinates'->>'longitude') AS FLOAT),
-						CAST((drivers.location->'coordinates'->>'latitude') AS FLOAT)
-					)::geography,
-					ST_MakePoint(${point.longitude}, ${point.latitude})::geography,
-					${radiusInMeters}
+						ST_MakePoint(
+							CAST((drivers.location->'coordinates'->>'longitude') AS FLOAT),
+							CAST((drivers.location->'coordinates'->>'latitude') AS FLOAT)
+						)::geography,
+						ST_MakePoint(${point.longitude}, ${point.latitude})::geography,
+						${radiusInMeters}
 					)
 					AND (COALESCE(${requirements.traveling_with_pet}, FALSE) = FALSE OR (drivers.ride_requirements->'traveling_with_pet')::BOOLEAN = ${requirements.traveling_with_pet})
 					AND (COALESCE(${requirements.child_seat}, FALSE) = FALSE OR (drivers.ride_requirements->'child_seat')::BOOLEAN = ${requirements.child_seat})
 					AND (COALESCE(${requirements.wheelchair_accessibility}, FALSE) = FALSE OR (drivers.ride_requirements->'wheelchair_accessibility')::BOOLEAN = ${requirements.wheelchair_accessibility})
 					AND (COALESCE(${vehicleFilters.class}, '') = '' OR vehicles.class::TEXT = ${vehicleFilters.class.toUpperCase()})
-					AND (COALESCE(${vehicleFilters.category}, '') = '' OR vehicles.category::TEXT = ${vehicleFilters.category.toUpperCase()});
+					AND (COALESCE(${vehicleFilters.category}, '') = '' OR vehicles.category::TEXT = ${vehicleFilters.category.toUpperCase()})
+					-- Language requirements (match at least one if any are specified)
+					AND (
+						-- Check if no language requirements are specified, or at least one matches
+						(
+							COALESCE(${requirements.language_en}, FALSE) = FALSE
+							AND COALESCE(${requirements.language_it}, FALSE) = FALSE
+							AND COALESCE(${requirements.language_de}, FALSE) = FALSE
+							AND COALESCE(${requirements.language_es}, FALSE) = FALSE
+							AND COALESCE(${requirements.language_cro}, FALSE) = FALSE
+							AND COALESCE(${requirements.language_fr}, FALSE) = FALSE
+							AND COALESCE(${requirements.language_ru}, FALSE) = FALSE
+						) OR (
+							(COALESCE(${requirements.language_en}, FALSE) = TRUE AND (drivers.ride_requirements->'language_en')::BOOLEAN = TRUE) OR
+							(COALESCE(${requirements.language_it}, FALSE) = TRUE AND (drivers.ride_requirements->'language_it')::BOOLEAN = TRUE) OR
+							(COALESCE(${requirements.language_de}, FALSE) = TRUE AND (drivers.ride_requirements->'language_de')::BOOLEAN = TRUE) OR
+							(COALESCE(${requirements.language_es}, FALSE) = TRUE AND (drivers.ride_requirements->'language_es')::BOOLEAN = TRUE) OR
+							(COALESCE(${requirements.language_cro}, FALSE) = TRUE AND (drivers.ride_requirements->'language_cro')::BOOLEAN = TRUE) OR
+							(COALESCE(${requirements.language_fr}, FALSE) = TRUE AND (drivers.ride_requirements->'language_fr')::BOOLEAN = TRUE) OR
+							(COALESCE(${requirements.language_ru}, FALSE) = TRUE AND (drivers.ride_requirements->'language_ru')::BOOLEAN = TRUE)
+						)
+					);
 			  `;
 
 				return drivers;
