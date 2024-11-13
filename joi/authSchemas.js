@@ -71,28 +71,27 @@ const registerChildSchema = Joi.object({
 	last_name: Joi.string().required(),
 	email: Joi.string()
 		.email()
-		.optional()
-		.external(async (email, helpers) => {
-			console.log("helpers", helpers.error);
-			console.log("EMAIL VALIDATE", email);
-			let isEmailInUse;
-			try {
-				isEmailInUse = await prisma.users.findUnique({
-					where: {
-						email: email.toLowerCase(),
-					},
-				});
-				console.log(isEmailInUse)
-			} catch (error) {
-				console.log(error)
-			}
-
-			if (isEmailInUse) {
-				throw new Error("Account with this email already exists.");
-			}
-
-			return email;
-		}),
+		.optional(),
+		// .external(async (email, helpers) => {
+		// 	console.log("helpers", helpers.error);
+		// 	let isEmailInUse;
+		// 	try {
+		// 		isEmailInUse = await prisma.users.findUnique({
+		// 			where: {
+		// 				email: email.toLowerCase(),
+		// 			},
+		// 		});
+		// 		console.log(isEmailInUse)
+		// 	} catch (error) {
+		// 		console.log(error)
+		// 	}
+		//
+		// 	if (isEmailInUse) {
+		// 		throw new Error("Account with this email already exists.");
+		// 	}
+		//
+		// 	return email;
+		// }),
 	password: Joi.string()
 		.pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/)
 		.required(),
