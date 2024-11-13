@@ -41,6 +41,7 @@ const updateGroupUserEnabled = async (group_user_id,value) => {
 }
 
 const updateGroupUserAllowance = async (group_user_id,value) => {
+	console.log("UPDATE ALLOWANCE FOR GROUP_USER: ",group_user_id,value);
 	return await prisma.group_users.update({
 		where: {
 			group_user_id: group_user_id,
