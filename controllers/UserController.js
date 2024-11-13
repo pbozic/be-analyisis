@@ -1277,7 +1277,7 @@ async function getReviewsByUserId(req, res) {
  * @response 400 - Error something went wrong.
  */
 async function registerChildUser(req, res) {
-	let { user_data,parent_uid } = req.body;
+	let { user_data,parent_user_id } = req.body;
 	try {
 
 		if (!user_data.email)
@@ -1319,7 +1319,7 @@ async function registerChildUser(req, res) {
 
 		//create and connect group_user entry
 		const group_user_data = {
-			parent_user_id: parent_uid,
+			parent_user_id: parent_user_id,
 			child_user_id: user.user_id,
 		}
 		const group_user_entry = GroupDao.createGroupUser(group_user_data)
