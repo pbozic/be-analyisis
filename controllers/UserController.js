@@ -79,7 +79,7 @@ async function listPersonalUsers(req, res) {
 					include: {
 						address: true,
 					},
-				},
+				}
 			},
 		});
 		if (users) {
@@ -160,7 +160,9 @@ async function me(req, res) {
 					},
 				},
 				driver: true,
-				delivery_driver: true
+				delivery_driver: true,
+				child_users: true,
+				parent_user: true,
 			},
 		});
 		if (user) {
