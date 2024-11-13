@@ -653,7 +653,7 @@ async function registerMerchantService(req, res) {
 	try {
 		// fs.writeFileSync("merchant-req.json", null, JSON.stringify(req.body, null, 2), 'utf8')
 		if (req.body.business) {
-			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.business.email);
+			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.business.data.email);
 			if (existingBusinessEmail) {
 				console.error('Business with this email already exists.');
 				return res.status(400).json({ error: 'Business with this email already exists.' });
@@ -784,7 +784,7 @@ async function registerMerchantService(req, res) {
 async function registerBusiness(req, res) {
 	try {
 		if (req.body.business) {
-			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.business.email);
+			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.business.data.email);
 			if (existingBusinessEmail) {
 				console.error('Business with this email already exists.');
 				return res.status(400).json({ error: 'Business with this email already exists.' });
