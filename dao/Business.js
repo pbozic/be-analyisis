@@ -12,7 +12,11 @@ const getBusinesses = async (args) => {
 				finances: true,
 				business_users: {
 					include: {
-						users: true,
+						users: {
+							include:{
+								child_users:true
+							}
+						},
 					},
 				},
 				parent_business: true,
@@ -40,7 +44,11 @@ const getBusinessById = async (business_id) => {
 				finances: true,
 				business_users: {
 					include: {
-						users: true,
+						users: {
+							include:{
+								child_users:true
+							}
+						},
 					},
 				},
 				parent_business: true,
@@ -67,7 +75,11 @@ const getBusinessByEmail = async (email) => {
 				finances: true,
 				business_users: {
 					include: {
-						users: true,
+						users: {
+							include:{
+								child_users:true
+							}
+						},
 					},
 				},
 				parent_business: true,
@@ -94,7 +106,11 @@ const getBusinessByTelephone = async (telephone_number) => {
 				finances: true,
 				business_users: {
 					include: {
-						users: true,
+						users: {
+							include:{
+								child_users:true
+							}
+						},
 					},
 				},
 				parent_business: true,
@@ -124,7 +140,11 @@ const getBusinessesByNameSearch = async (search) => {
 				finances: true,
 				business_users: {
 					include: {
-						users: true,
+						users: {
+							include:{
+								child_users:true
+							}
+						},
 					},
 				},
 				parent_business: true,
@@ -154,7 +174,11 @@ const getBusinessesByGroupName = async (search) => {
 				finances: true,
 				business_users: {
 					include: {
-						users: true,
+						users: {
+							include:{
+								child_users:true
+							}
+						},
 					},
 				},
 				parent_business: true,
@@ -191,7 +215,11 @@ const getBusinessesByType = async (type, args = {}) => {
 			finances: true,
             business_users: {
                 include: {
-                    users: true,
+                    users: {
+						include:{
+							child_users:true
+						}
+					},
                 },
             },
             parent_business: true,
