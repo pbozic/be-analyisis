@@ -161,8 +161,8 @@ async function me(req, res) {
 				},
 				driver: true,
 				delivery_driver: true,
-				child_users: true,
-				parent_user: true,
+				child_users: { include:{child_user: true}},
+				parent_user: { include:{parent_user: true}},
 			},
 		});
 		if (user) {
