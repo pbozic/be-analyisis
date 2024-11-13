@@ -127,20 +127,20 @@ model users {
   lost_items                             lost_items[]
   daily_meal_day_preferences             Json?             @default("[]")
   disabled                               Boolean           @default(false)
-  child_users                            group_users[]    @relation("parent_user")
-  parent_user                            group_users?     @relation("child_user")
+  child_users                            group_users[]     @relation("parent_user")
+  parent_user                            group_users?      @relation("child_user")
 }
 
 model group_users {
-  group_user_id     String    @id @default(uuid()) @db.Uuid
-  parent_user_id    String    @db.Uuid
-  child_user_id     String    @unique @db.Uuid
-  created_at        DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at        DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
-  parent_user       users     @relation("parent_user", fields: [parent_user_id], references: [user_id])
-  child_user        users     @relation("child_user", fields: [child_user_id], references: [user_id])
-  allowance         Float     @default(0)
-  enabled           Boolean   @default(true)
+  group_user_id  String   @id @default(uuid()) @db.Uuid
+  parent_user_id String   @db.Uuid
+  child_user_id  String   @unique @db.Uuid
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  parent_user    users    @relation("parent_user", fields: [parent_user_id], references: [user_id])
+  child_user     users    @relation("child_user", fields: [child_user_id], references: [user_id])
+  allowance      Float    @default(0)
+  enabled        Boolean  @default(true)
 }
 
 model documents {
@@ -599,6 +599,7 @@ enum TokenType {
 enum BUSINESS_TYPE {
   TRANSFER
   MERCHANT
+  OTHER
 }
 
 enum MERCHANT_TYPE {

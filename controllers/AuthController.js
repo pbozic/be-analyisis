@@ -664,6 +664,20 @@ async function registerMerchantService(req, res) {
 			//	return res.status(400).json({ error: 'Business with this phone number already exists.' });
 			//}
 		}
+		if (Array.isArray(req.body.users) && req.body.users.length) {
+			for (const driverInfo of req.body.users) {
+				const existingDriverEmail = await UserDao.getUserByEmail(driverInfo.user.data.email);
+				if (existingDriverEmail) {
+					console.error('User with this email already exists.');
+					return res.status(400).json({ error: `User with this email already exists.` });
+				}
+				const existingDriverPhone = await UserDao.getUserByTelephone(driverInfo.user.data.telephone);
+				if (existingDriverPhone) {
+					console.error('User with this phone number already exists.');
+					return res.status(400).json({ error: `User with this phone number already exists.` });
+				}
+			}
+		}
 		if (req.body.finances) {
 			const existingFinances = await FinancesDao.getFinancesByAccountNumber(req.body.finances.account_number);
 			if (existingFinances) {
@@ -752,6 +766,111 @@ async function registerMerchantService(req, res) {
 	} catch (error) {
 		console.error("Error registering merchant service:", error);
 		res.status(400).json({ error: "Error registering merchant service", detail: error.message });
+	}
+}
+
+/**
+ * POST /auth/business/register
+ * @tag Auth
+ * @summary Register a new business
+ * @description Creates a new business, optionally business users, finances, and documents, and links them together.
+ * @operationId registerBusiness
+ * @bodyContent {BusinessRegistration} application/json
+ * @bodyRequired
+ * @response 201 - Business registered successfully
+ * @responseContent {BusinessRegistrationResponse} 201.application/json
+ * @response 400 - Error registering business
+ */
+async function registerBusiness(req, res) {
+	try {
+		if (req.body.business) {
+			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.business.email);
+			if (existingBusinessEmail) {
+				console.error('Business with this email already exists.');
+				return res.status(400).json({ error: 'Business with this email already exists.' });
+			}
+		}
+		if (Array.isArray(req.body.users) && req.body.users.length) {
+			for (const driverInfo of req.body.users) {
+				const existingDriverEmail = await UserDao.getUserByEmail(driverInfo.user.data.email);
+				if (existingDriverEmail) {
+					console.error('User with this email already exists.');
+					return res.status(400).json({ error: `User with this email already exists.` });
+				}
+				const existingDriverPhone = await UserDao.getUserByTelephone(driverInfo.user.data.telephone);
+				if (existingDriverPhone) {
+					console.error('User with this phone number already exists.');
+					return res.status(400).json({ error: `User with this phone number already exists.` });
+				}
+			}
+		}
+		if (req.body.finances) {
+			const existingFinances = await FinancesDao.getFinancesByAccountNumber(req.body.finances.account_number);
+			if (existingFinances) {
+				console.error('This account number already exists.');
+				return res.status(400).json({ error: 'This account number is already in use.' });
+			}
+		}
+
+		const business = await BusinessDao.createNewBusiness(req.body.business.data);
+
+		// Ensure at least one business user data is provided & created
+		if (!Array.isArray(req.body.users) || !req.body.users.length) {
+			return res.status(400).json({ error: "At least one business user must be provided." });
+		}
+
+		let businessUsers = [];
+		for (const userInfo of req.body.users) {
+			const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userInfo.user, business.business_id);
+
+			let addresses = [];
+			if (userInfo.user.addresses) {
+				for (const addressInfo of userInfo.user.addresses) {
+					const address = await AddressDao.addAddress(addressInfo);
+					await AddressDao.addUserAddress(newUser.user_id, address.address_id);
+					addresses.push(address);
+				}
+			}
+
+			businessUsers.push({ businessUser, addresses });
+		}
+
+		// Handle business documents
+		if (req.body.business.documents) {
+			for (const doc of req.body.business.documents) {
+				const document = await DocumentDao.createDocument(doc.documentData);
+				for (const file of doc.files) {
+					let base64 = file.base64;
+					delete file.base64;
+					let fileData = await FileDao.addFileToDocument(document.document_id, file);
+					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+					await S3Helper.SaveObject(key, base64, file.mime_type, { businesses: [business.business_id] });
+				}
+				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
+			}
+		}
+
+		let finances = {};
+		if (req.body.finances) {
+			finances = await FinancesDao.addFinances(req.body.finances);
+			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
+		}
+
+		let businessAddress = {};
+		if (req.body.addresses && req.body.addresses.business) {
+			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
+		}
+
+		res.status(201).json({
+			message: "Business registered successfully",
+			business,
+			businessUsers,
+			finances,
+			businessAddress
+		});
+	} catch (error) {
+		console.error("Error registering business:", error);
+		res.status(400).json({ error: "Error registering business", detail: error.message });
 	}
 }
 
@@ -853,6 +972,7 @@ module.exports = {
 	registerTaxiService,
 	registerDeliveryService,
 	registerMerchantService,
+	registerBusiness,
 	createScheduledUser,
 	getScheduledUsers,
 	updateScheduledUser
