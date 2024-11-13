@@ -792,11 +792,13 @@ async function registerBusiness(req, res) {
 		}
 		if (Array.isArray(req.body.users) && req.body.users.length) {
 			for (const driverInfo of req.body.users) {
+				console.log('user email: ', driverInfo.user.data.email);
 				const existingDriverEmail = await UserDao.getUserByEmail(driverInfo.user.data.email);
 				if (existingDriverEmail) {
 					console.error('User with this email already exists.');
 					return res.status(400).json({ error: `User with this email already exists.` });
 				}
+				console.log('user phone: ', driverInfo.user.data.telephone);
 				const existingDriverPhone = await UserDao.getUserByTelephone(driverInfo.user.data.telephone);
 				if (existingDriverPhone) {
 					console.error('User with this phone number already exists.');
