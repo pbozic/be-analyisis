@@ -7,7 +7,8 @@ const getAllBusinessUsers = async () => {
 			include: {
 				users: {
 					include:{
-						child_users:true
+						child_users: true,
+						parent_user: true,
 					}
 				}, // Assuming you want to include details of the user
 				business: true, // Assuming you want to include details of the business
@@ -28,7 +29,8 @@ const getBusinessUserByUserId = async (userId) => {
 			include: {
 				users: {
 					include:{
-						child_users:true
+						child_users: true,
+						parent_user: true,
 					}
 				},
 				business: true,
@@ -47,7 +49,8 @@ const getBusinessUsersByBusinessId = async (business_id) => {
 			include: {
 				users: {
 					include:{
-						child_users:true
+						child_users: true,
+						parent_user: true,
 					}
 				}
 			}
@@ -67,7 +70,8 @@ const getBusinessUsersByBusinessType = async (type) => {
 					include: {
 						users: {
 							include:{
-								child_users:true
+								child_users: true,
+								parent_user: true,
 							}
 						}
 					}
@@ -90,7 +94,8 @@ const getAllBusinessUsersForBusinessByCompanyRole = async (business_id, company_
 			include: {
 				users: {
 					include:{
-						child_users:true
+						child_users: true,
+						parent_user: true,
 					}
 				}
 			}
