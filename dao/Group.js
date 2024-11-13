@@ -15,7 +15,8 @@ const getGroupUsersByParentId = async (parent_id) => {
 
 const createGroupUser = async (group_user_data) => {
 	return await prisma.group_users.create({
-		data: {...group_user_data,
+		data: {
+			allowance:group_user_data.allowance,
 			parent_user: { connect: { user_id: group_user_data.parent_user_id } },
 			child_user:{ connect: { user_id: group_user_data.child_user_id } },
 		},
