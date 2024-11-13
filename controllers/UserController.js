@@ -1280,6 +1280,9 @@ async function getReviewsByUserId(req, res) {
  */
 async function registerChildUser(req, res) {
 	let user_data = req.body;
+	const parent_user_id = user_data.parent_user_id;
+	delete user_data["parent_user_id"];
+
 	try {
 
 		if (!user_data.email)
@@ -1314,14 +1317,13 @@ async function registerChildUser(req, res) {
 				},
 			}
 		};
-
 		delete userObj["confirm_password"];
 		let user = await UserDao.createNewUser(userObj);
 		delete user["password"];
 
 		//create and connect group_user entry
 		const group_user_data = {
-			parent_user_id: user_data.parent_user_id,
+			parent_user_id: parent_user_id,
 			child_user_id: user.user_id,
 		}
 		const group_user_entry = GroupDao.createGroupUser(group_user_data)
