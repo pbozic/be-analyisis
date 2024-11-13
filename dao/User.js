@@ -8,7 +8,7 @@ const getUsers = async (args) => {
 			include: {
 				child_users: true,
 				parent_user: true,
-				...args.include
+				...args?.include
 			}
 		});
 	} catch (error) {
@@ -26,7 +26,7 @@ const getUserById = async (user_id, args) => {
 			include: {
 				child_users: true,
 				parent_user: true,
-				...args.include
+				...args?.include
 			}
 		});
 	} catch (error) {
@@ -106,7 +106,7 @@ const getUserByEmailOrTelephone = async (query, args) => {
 			include: {
 				child_users: true,
 				parent_user: true,
-				...args.include
+				...args?.include
 			}
 		});
 	} catch (error) {
@@ -123,7 +123,7 @@ const getUserByEmail = async (query, args) => {
 			include: {
 				child_users: true,
 				parent_user: true,
-				...args.include
+				...args?.include
 			}
 		});
 	} catch (error) {
@@ -140,7 +140,7 @@ const getUserByTelephone = async (query, args) => {
 			include: {
 				child_users: true,
 				parent_user: true,
-				...args.include
+				...args?.include
 			}
 		});
 	} catch (error) {
@@ -177,7 +177,7 @@ const getUser = async (email, args) => {
 			include: {
 				child_users: true,
 				parent_user: true,
-				...args.include
+				...args?.include
 			}
 		});
 	} catch (error) {
