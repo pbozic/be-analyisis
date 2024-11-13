@@ -26,7 +26,7 @@ const prisma = require("../prisma/prisma");
  */
 async function listBusinesses(req, res) {
 	try {
-		let businesses = await BusinessDao.getBusinesses();
+		let businesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.BUSINESS);
 		if (businesses) {
 			res.status(200).json(businesses);
 		} else {
