@@ -39,7 +39,11 @@ const getBusinessUserByUserId = async (userId) => {
 							include:{
 								users: {
 									include:{
-										child_users: true,
+										child_users: {
+											include:{
+												child_user: true,
+											}
+										},
 										parent_user: true,
 									}
 								}
