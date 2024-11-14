@@ -1351,6 +1351,10 @@ async function registerChildUser(req, res) {
 async function updateChildUserEnabledByGroupUserId(req, res) {
 	const { group_user_id, value } = req.body
 
+	if (!group_user_id || typeof value !== 'boolean') {
+		return res.status(400).json({ error: "Invalid input. Please provide a valid group_user_id and a boolean value." });
+	}
+
 	try {
 		let group_user = await GroupDao.updateGroupUserEnabled(group_user_id, value);
 		if (group_user) {
