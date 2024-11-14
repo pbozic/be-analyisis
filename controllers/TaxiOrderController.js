@@ -2,6 +2,7 @@ const TaxiOrderDao = require("../dao/TaxiOrder");
 const DriverDao = require("../dao/Driver");
 const UsersDao = require("../dao/User");
 const FlagDao = require("../dao/Flags");
+const BusinessUsersDao = require("../dao/BusinessUsers");
 const { UserSockets, io } = require('../socket');
 const gApi = require('../lib/gApis');
 const TaxiHelper = require('../lib/taxiHelpers');
@@ -646,14 +647,56 @@ async function completeOrder(req, res) {
 		console.log("COMPLLETED", order);
 		let driver = await DriverDao.getDriverById(order.driver_id);
 		io.emit('driver_available', driver)
-		let user = await UsersDao.getUserById(order.user_id);
+		let user = await UsersDao.getUserById(order.user_id, {
+			include: {
+				parent_user: { include:{parent_user: true}},
+			}
+		});
 		if (order.payment.type === "WALLET") {
 			// handle wallet payment
+			
 			if (user.wallet_balance < order.payment.price) {
 				throw new Error("Insufficient funds");
 			}
 			await UsersDao.removeWalletBalance(order.user_id, parseFloat(order.payment.price), order.order_id, "taxi");
 
+			order = await TaxiOrderDao.updateOrder(order.order_id, {
+				payment: {
+					...order.payment,
+					status: "PAID"
+				},
+			});
+		}
+		if (order.payment.type === "FAMILY_WALLET") {
+			// handle wallet payment
+			let has_parent_user = user.parent_user;
+			if (!has_parent_user) {
+				throw new Error("User has no family wallet");
+			}
+			let parent_user  = user.parent_user.parent_user;
+			let is_businessUser = await BusinessUsersDao.getBusinessUserByUserId(parent_user.user_id);
+			let allowance = user.parent_user.allowance;
+			if (is_businessUser) {
+				allowance = allowance * 2;
+			}
+			// todo is parent business user?
+			
+			if (allowance < order.payment.price) {
+				throw new Error("Insufficient allowance");
+			}
+			if (parent_user.wallet_balance < order.payment.price) {
+				throw new Error("Insufficient funds");
+			}
+
+			await UsersDao.removeWalletBalance(parent_user.user_id, parseFloat(order.payment.price), order.order_id, "taxi");
+			await prisma.group_users.update({
+				where: {
+					group_user_id: user.parent_user.group_user_id,
+				},
+				data: {
+					allowance: user.parent_user.allowance - order.payment.price
+				}
+			});
 			order = await TaxiOrderDao.updateOrder(order.order_id, {
 				payment: {
 					...order.payment,
