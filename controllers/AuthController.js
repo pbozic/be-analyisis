@@ -800,9 +800,10 @@ async function registerBusiness(req, res) {
 		}
 		if (Array.isArray(req.body.users) && req.body.users.length) {
 			for (const driverInfo of req.body.users) {
+				console.info('User data:', driverInfo);
 				const existingDriverEmail = await UserDao.getUserByEmail(driverInfo.user.data.email);
 				if (existingDriverEmail) {
-					console.error('User with this email already exists.');
+					console.error('User with this email already exists.', driverInfo.user.data.email,existingDriverEmail);
 					return res.status(400).json({ error: `User with this email already exists.` });
 				}
 				const existingDriverPhone = await UserDao.getUserByTelephone(driverInfo.user.data.telephone);

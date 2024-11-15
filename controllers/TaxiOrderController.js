@@ -230,34 +230,30 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
 }
 async function createOrderHelper(req, res, orderData) {
 	try {
-
-		let prefs = orderData.preferences
-
-
+		let prefs = orderData.preferences;
 
 		let is_scheduled = prefs.departure_date != null;
 		let is_repeat = false;
 		if (prefs.repeat_ride && prefs.repeat_ride.some(item => item.value === "do_not_repeat")) {
 			is_repeat = false;
-		} else if (prefs.repeat_ride){
+		} else if (prefs.repeat_ride) {
 			is_repeat = true;
 		}
 		orderData.is_scheduled = is_scheduled;
 		let order;
 		let ordersData = [];
 		if (is_repeat) {
-			ordersData = await generateOrdersForRepeatOrder(orderData, prefs.repeat_ride, prefs.repeat_duration.length > 0 ? prefs.repeat_duration[0].value : 0 );
+			ordersData = await generateOrdersForRepeatOrder(orderData, prefs.repeat_ride, prefs.repeat_duration.length > 0 ? prefs.repeat_duration[0].value : 0);
 		} else {
 			ordersData.push(orderData);
 		}
 		let parentOrderId = null;
 		for (let orderData of ordersData) {
-
 			let seats_Adults = prefs.adults;
 			let seats_ChildrenUnder140 = prefs.children_under_140;
 			let total_seats = seats_Adults + seats_ChildrenUnder140;
-			let num_orders = Math.ceil((total_seats) / VEHICLE_CAPACITY[prefs.vehicle_class])
-			console.log("num_orders", num_orders)
+			let num_orders = Math.ceil((total_seats) / VEHICLE_CAPACITY[prefs.vehicle_class]);
+			console.log("num_orders", num_orders);
 			let start_num_orders = num_orders;
 
 			delete orderData.user_id;
@@ -304,8 +300,8 @@ async function createOrderHelper(req, res, orderData) {
 								connect: {
 									driver_id: orderData.driver.driver_id
 								}
-
-							}
+							},
+							parent_user_id: orderData.parent_user_id
 						});
 					} else {
 						order = await TaxiOrderDao.createOrder({
@@ -319,10 +315,10 @@ async function createOrderHelper(req, res, orderData) {
 								connect: {
 									order_id: parentOrderId
 								}
-							}
+							},
+							parent_user_id: orderData.parent_user_id
 						});
 					}
-
 				} else {
 					if (orderData.driver) {
 						order = await TaxiOrderDao.createOrder({
@@ -332,11 +328,12 @@ async function createOrderHelper(req, res, orderData) {
 									user_id: req.user.user_id
 								}
 							},
-							driver:	{
+							driver: {
 								connect: {
 									driver_id: orderData.driver.driver_id
 								}
-							}
+							},
+							parent_user_id: orderData.parent_user_id
 						});
 					} else {
 						order = await TaxiOrderDao.createOrder({
@@ -345,10 +342,10 @@ async function createOrderHelper(req, res, orderData) {
 								connect: {
 									user_id: req.user.user_id
 								}
-							}
+							},
+							parent_user_id: orderData.parent_user_id
 						});
 					}
-
 				}
 
 				if (num_orders === start_num_orders) {
@@ -357,47 +354,44 @@ async function createOrderHelper(req, res, orderData) {
 
 				num_orders -= 1;
 			}
-
-
 		}
-		console.log("parentOrderId", parentOrderId)
+		console.log("parentOrderId", parentOrderId);
 		if (parentOrderId) {
 			order = await TaxiOrderDao.getOrder(parentOrderId, {
 				include: {
 					grouped_orders: true
 				}
 			});
-			console.log("fetching grouped_orders", order.grouped_orders)
+			console.log("fetching grouped_orders", order.grouped_orders);
 		}
-		if (!order){
-			console.info('Final order is empty!')
-			delete orderData.user_id
-			order =  await TaxiOrderDao.createOrder({
+		if (!order) {
+			console.info('Final order is empty!');
+			delete orderData.user_id;
+			order = await TaxiOrderDao.createOrder({
 				...orderData,
 				user: {
 					connect: {
 						user_id: req.user.user_id
 					}
-				}
+				},
+				parent_user_id: orderData.parent_user_id
 			});
-			console.info('Final order created', order)
+			console.info('Final order created', order);
 		}
 		if (!is_scheduled) {
-			//console.log("order send", order)
 			await TaxiHelper.findTaxiOrderDrivers(order);
 			if (order.grouped_orders && order.grouped_orders.length > 0) {
 				for (let or of order.grouped_orders) {
-					console.log("Sending Grouped Order: " + or.order_id)
+					console.log("Sending Grouped Order: " + or.order_id);
 					await TaxiHelper.findTaxiOrderDrivers(or);
 				}
 			}
 		}
-		return order
+		return order;
 	} catch (error) {
 		console.errorTag("TaxiOrderController", error);
 		res.status(500).json(error);
 	}
-
 }
 /**
  * POST /taxi/order
@@ -418,6 +412,7 @@ async function createOrder(req, res) {
 			...req.body,
 			status: "PENDING",
 			user_id: req.user.user_id,
+			parent_user_id: req.parent_user_id,
 			telephone: !req.body?.telephone ? req.user.telephone : req.body?.telephone,
 			is_scheduled: req.body.preferences?.departure_date
 		};

@@ -27,13 +27,30 @@ const getBusinessUserByUserId = async (userId) => {
 				user_id: userId,
 			},
 			include: {
-				users: {
+				// users: {
+				// 	include:{
+				// 		child_users: true,
+				// 		parent_user: true,
+				// 	}
+				// },
+				business: {
 					include:{
-						child_users: true,
-						parent_user: true,
+						business_users:{
+							include:{
+								users: {
+									include:{
+										child_users: {
+											include:{
+												child_user: true,
+											}
+										},
+										parent_user: true,
+									}
+								}
+							}
+						}
 					}
 				},
-				business: true,
 			},
 		});
 	} catch (error) {
