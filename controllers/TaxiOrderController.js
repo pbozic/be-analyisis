@@ -300,8 +300,7 @@ async function createOrderHelper(req, res, orderData) {
 								connect: {
 									driver_id: orderData.driver.driver_id
 								}
-							},
-							parent_user_id: orderData.parent_user_id
+							}
 						});
 					} else {
 						order = await TaxiOrderDao.createOrder({
@@ -315,8 +314,7 @@ async function createOrderHelper(req, res, orderData) {
 								connect: {
 									order_id: parentOrderId
 								}
-							},
-							parent_user_id: orderData.parent_user_id
+							}
 						});
 					}
 				} else {
@@ -332,8 +330,7 @@ async function createOrderHelper(req, res, orderData) {
 								connect: {
 									driver_id: orderData.driver.driver_id
 								}
-							},
-							parent_user_id: orderData.parent_user_id
+							}
 						});
 					} else {
 						order = await TaxiOrderDao.createOrder({
@@ -342,8 +339,7 @@ async function createOrderHelper(req, res, orderData) {
 								connect: {
 									user_id: req.user.user_id
 								}
-							},
-							parent_user_id: orderData.parent_user_id
+							}
 						});
 					}
 				}
@@ -373,8 +369,7 @@ async function createOrderHelper(req, res, orderData) {
 					connect: {
 						user_id: req.user.user_id
 					}
-				},
-				parent_user_id: orderData.parent_user_id
+				}
 			});
 			console.info('Final order created', order);
 		}
@@ -411,8 +406,7 @@ async function createOrder(req, res) {
 		let orderData = {
 			...req.body,
 			status: "PENDING",
-			user_id: req.user.user_id,
-			parent_user_id: req.parent_user_id,
+			user_id: !req.body?.user_id ? req.user.user_id : req.body?.user_id,
 			telephone: !req.body?.telephone ? req.user.telephone : req.body?.telephone,
 			is_scheduled: req.body.preferences?.departure_date
 		};
