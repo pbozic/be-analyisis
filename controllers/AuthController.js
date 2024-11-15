@@ -95,8 +95,16 @@ async function login(req, res) {
 			payment_methods = await stripe.getPaymentMethods(user.stripe_customer_id);
 		}
 		delete user["password"];
-		const access_token = generateAccessToken(user);
-		const refresh_token = generateRefreshToken(user);
+		const access_token = generateAccessToken({
+			...user,
+			child_users: null,
+			parent_user: null
+		});
+		const refresh_token = generateRefreshToken({
+			...user,
+			child_users: null,
+			parent_user: null
+		});
 		user = {
 			...user,
 			access_token,
