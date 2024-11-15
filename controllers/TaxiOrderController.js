@@ -255,8 +255,8 @@ async function createOrderHelper(req, res, orderData) {
 			let num_orders = Math.ceil((total_seats) / VEHICLE_CAPACITY[prefs.vehicle_class]);
 			console.log("num_orders", num_orders);
 			let start_num_orders = num_orders;
-
-			//delete orderData.user_id;
+			const user_id = orderData.user_id;
+			delete orderData.user_id;
 			while (num_orders > 0) {
 				let availableSeats = VEHICLE_CAPACITY[prefs.vehicle_class];
 				let adults = 0;
@@ -288,7 +288,7 @@ async function createOrderHelper(req, res, orderData) {
 							...orderData,
 							user: {
 								connect: {
-									user_id: !orderData.user_id ? req.user.user_id : orderData.user_id
+									user_id: !user_id ? req.user.user_id : user_id
 								}
 							},
 							parent_order: {
@@ -307,7 +307,7 @@ async function createOrderHelper(req, res, orderData) {
 							...orderData,
 							user: {
 								connect: {
-									user_id: !orderData.user_id ? req.user.user_id : orderData.user_id
+									user_id: !user_id ? req.user.user_id : user_id
 								}
 							},
 							parent_order: {
@@ -323,7 +323,7 @@ async function createOrderHelper(req, res, orderData) {
 							...orderData,
 							user: {
 								connect: {
-									user_id: !orderData.user_id ? req.user.user_id : orderData.user_id
+									user_id: !user_id ? req.user.user_id : user_id
 								}
 							},
 							driver: {
@@ -337,7 +337,7 @@ async function createOrderHelper(req, res, orderData) {
 							...orderData,
 							user: {
 								connect: {
-									user_id: !orderData.user_id ? req.user.user_id : orderData.user_id
+									user_id: !user_id ? req.user.user_id : user_id
 								}
 							}
 						});
@@ -367,7 +367,7 @@ async function createOrderHelper(req, res, orderData) {
 				...orderData,
 				user: {
 					connect: {
-						user_id: !orderData.user_id ? req.user.user_id : orderData.user_id
+						user_id: !user_id ? req.user.user_id : user_id
 					}
 				}
 			});
