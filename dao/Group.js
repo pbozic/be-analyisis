@@ -13,6 +13,20 @@ const getGroupUsersByParentId = async (parent_id) => {
 	}
 };
 
+const getGroupUserByChildId = async (child_id) => {
+	try {
+		return await prisma.group_users.findFirst({
+			where: {
+				child_user_id: child_id,
+			},
+			include: {parent_user:true}
+		});
+	} catch (error) {
+		console.error("Error retrieving group_user by child_id:", error);
+		throw new Error(error);
+	}
+};
+
 const createGroupUser = async (group_user_data) => {
 	return await prisma.group_users.create({
 		data: {
@@ -56,6 +70,7 @@ const updateGroupUserAllowance = async (group_user_id,value) => {
 
 module.exports = {
 	getGroupUsersByParentId,
+	getGroupUserByChildId,
 	createGroupUser,
 	deleteGroupUser,
 	updateGroupUserEnabled,

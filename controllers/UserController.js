@@ -2,6 +2,7 @@ require("dotenv").config();
 const bcrypt = require("bcrypt");
 const prisma = require("../prisma/prisma");
 const UserDao = require("../dao/User");
+const BusinessUsersDao = require("../dao/BusinessUsers");
 const TokenDao = require("../dao/Token");
 const ReviewDao = require("../dao/Review");
 const AddressDao = require("../dao/Address");
@@ -1421,6 +1422,59 @@ async function deleteChildUserByGroupUserId(req, res) {
 	}
 }
 
+/**
+ * GET /users/:user_id/wallet
+ * @tag Users
+ * @summary Get wallet balance for regular wallet.
+ * @description This endpoint is used to check wallet balance for a particular user.
+ * @operationId getPaymentSheetCredentials
+ * @headerDescription Authorization Bearer token is required
+ * @response 200 - {wallet_balance:float}
+ * @response 400 - Error checking wallet balances
+ */
+async function getWalletBalance(req, res) {
+	try {
+		let user = await UserDao.getUserById(req.user_id);
+		if (user) {
+			return res.status(200).json({ wallet_balance: user.wallet_balance });
+		}
+		res.status(400).json({ error: "Error obtaining wallet balance" });
+	} catch (e) {
+		console.log(e);
+		res.status(400).json({ error: "Error obtaining wallet balance", e });
+	}
+}
+
+/**
+ * GET /users/:user_id/family_wallet
+ * @tag Users
+ * @summary Get family wallet type and allowance.
+ * @description This endpoint is used to check wallet allowance adn type for a particular user.
+ * @operationId getPaymentSheetCredentials
+ * @headerDescription Authorization Bearer token is required
+ * @response 200 - {family_wallet_allowance:float,family_wallet_type:string}
+ * @response 400 - Error checking wallet balances
+ */
+async function getFamilyWalletAllowanceAndType(req, res) {
+	try {
+		let group_user = await GroupDao.getGroupUserByChildId(req.user_id);
+		if(group_user===null){
+			return res.status(200).json({ family_wallet_allowance: 0, family_wallet_type: null });
+		}else if (group_user) {
+			return res.status(200).json({
+				family_wallet_allowance: group_user.allowance,
+				family_wallet_type: group_user.parent_user.user_role.startsWith('BUSINESS') ? "BUSINESS" : "FAMILY"
+			});
+		}
+		res.status(400).json({ error: "Error obtaining family wallet allowance and type" });
+	} catch (e) {
+		console.log(e);
+		res.status(400).json({ error: "Error obtaining family wallet allowance and type", e });
+	}
+}
+
+
+
 module.exports = {
 	listUsers,
 	listPersonalUsers,
@@ -1461,5 +1515,7 @@ module.exports = {
 	registerChildUser,
 	updateChildUserEnabledByGroupUserId,
 	updateChildUserAllowanceByGroupUserId,
-	deleteChildUserByGroupUserId
+	deleteChildUserByGroupUserId,
+	getFamilyWalletAllowanceAndType,
+	getWalletBalance
 };
