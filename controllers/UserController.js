@@ -117,8 +117,8 @@ async function getUserById(req, res) {
 						address: true,
 					},
 				},
-				child_users: true,
-				parent_user: true,
+				child_users: { include:{child_user: true}},
+				parent_user: { include:{parent_user: true}},
 			},
 		});
 		if (user) {
