@@ -424,6 +424,10 @@ async function createOrder(req, res) {
 
 		let order = await createOrderHelper(req, res, orderData);
 		//console.tag("TaxiOrderController","create taxi order", order)
+		let userSocket = UserSockets.get(order.user_id);
+		if (userSocket) {
+			io.to("order_" + order.order_id).emit('order_created__taxi', order);
+		}
 		res.status(200).json(order);
 	}
 	catch (e) {
