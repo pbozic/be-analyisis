@@ -26,6 +26,7 @@ router.get("/:user_id/reviews", UserController.getReviewsByUserId);
 router.get("/:user_id/wallet", UserController.getWalletBalance);
 router.get("/:user_id/family_wallet", UserController.getFamilyWalletAllowanceAndType);
 router.get("/:user_id", UserController.getUserById);
+router.patch("/:user_id/wallet", UserController.updateWalletBalance);
 router.patch("/me", joi(updateSchema), UserController.updateMe);
 router.patch("/me/password", joi(updatePasswordSchema), UserController.updatePassword);
 router.patch("/me/email", joi(updateEmailSchema), UserController.updateEmail);

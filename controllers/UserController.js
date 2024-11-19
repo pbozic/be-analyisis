@@ -1473,7 +1473,36 @@ async function getFamilyWalletAllowanceAndType(req, res) {
 	}
 }
 
+/**
+ * PATCH /users/:user_id/wallet
+ * @tag Users
+ * @summary Update wallet balance for a user.
+ * @description This endpoint is used to update the wallet balance for a particular user.
+ * @operationId updateWalletBalance
+ * @pathParam {string} user_id - The ID of the user whose wallet balance is to be updated.
+ * @bodyDescription The new wallet balance
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Wallet balance updated successfully.
+ * @responseContent {object} 200.application/json
+ * @response 400 - Error updating wallet balance.
+ */
+async function updateWalletBalance(req, res) {
+	const { user_id } = req.params;
+	const { amount } = req.body;
 
+	try {
+		let updatedUser = await UserDao.updateWalletBalance(user_id, amount);
+
+		if (updatedUser) {
+			return res.status(200).json({ message: "Wallet balance updated successfully.", wallet_balance: updatedUser.wallet_balance });
+		}
+		res.status(400).json({ error: "Error updating wallet balance" });
+	} catch (e) {
+		console.log(e);
+		res.status(400).json({ error: "Error updating wallet balance", e });
+	}
+}
 
 module.exports = {
 	listUsers,
@@ -1517,5 +1546,6 @@ module.exports = {
 	updateChildUserAllowanceByGroupUserId,
 	deleteChildUserByGroupUserId,
 	getFamilyWalletAllowanceAndType,
-	getWalletBalance
+	getWalletBalance,
+	updateWalletBalance
 };
