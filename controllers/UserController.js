@@ -1434,7 +1434,7 @@ async function deleteChildUserByGroupUserId(req, res) {
  */
 async function getWalletBalance(req, res) {
 	try {
-		let user = await UserDao.getUserById(req.user_id);
+		let user = await UserDao.getUserById(req.params.user_id);
 		if (user) {
 			return res.status(200).json({ wallet_balance: user.wallet_balance });
 		}
@@ -1457,7 +1457,7 @@ async function getWalletBalance(req, res) {
  */
 async function getFamilyWalletAllowanceAndType(req, res) {
 	try {
-		let group_user = await GroupDao.getGroupUserByChildId(req.user_id);
+		let group_user = await GroupDao.getGroupUserByChildId(req.params.user_id);
 		if(group_user===null){
 			return res.status(200).json({ family_wallet_allowance: 0, family_wallet_type: null });
 		}else if (group_user) {

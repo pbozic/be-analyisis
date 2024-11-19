@@ -728,7 +728,7 @@ async function updateOrderStatus(req, res) {
 		let user_id = order?.user_id;
 		let driver_id = order?.driver?.driver_id;
 
-		await sendOrderNotifications(user_id, driver_id, status);
+		await sendOrderNotifications(user_id, driver_id, req.body.status);
 
 		res.status(200).json(order);
 	} catch (e) {
