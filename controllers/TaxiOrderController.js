@@ -725,7 +725,10 @@ async function updateOrderStatus(req, res) {
 		let order = await TaxiOrderDao.updateOrderStatus(req.body.order_id, req.body.status);
 		io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
 
-		sendOrderNotifications(order, req.body.status);
+		let user_id = order?.user_id;
+		let driver_id = order?.driver?.driver_id;
+
+		await sendOrderNotifications(user_id, driver_id, status);
 
 		res.status(200).json(order);
 	} catch (e) {
@@ -800,7 +803,11 @@ async function cancelOrder(req, res) {
 
 	try {
 		let order = await TaxiOrderDao.getOrder(order_id);
-		sendOrderNotifications(order, status);
+		let user_id = order?.user_id;
+		let driver_id = order?.driver_id;
+
+		// TODO: Send notifications after all operations are complete (@end of fn)
+		await sendOrderNotifications(user_id, driver_id, status);
 
 		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
 
@@ -872,7 +879,11 @@ async function rejectOrder(req, res) {
 	let new_status = status
     try {
 		let order = await TaxiOrderDao.getOrder(order_id);
-		sendOrderNotifications(order, status);
+		let user_id = order?.user_id;
+		let driver_id = order?.driver_id;
+
+		// TODO: Send notifications after all operations are complete (@end of fn)
+		await sendOrderNotifications(user_id, driver_id, status);
 
 		if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
 			new_status = TAXI_ORDER_STATUS.PENDING
