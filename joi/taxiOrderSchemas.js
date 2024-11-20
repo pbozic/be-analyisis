@@ -29,6 +29,7 @@ const createOrderSchema = Joi.object({
 	user_id: Joi.string().allow(null).optional(),
 	driver: Joi.any().allow(null).optional(),
 	customer_note: Joi.string().allow(null).optional(),
+	parent_user_type: Joi.string().allow(null).optional(),
 });
 
 module.exports = {
