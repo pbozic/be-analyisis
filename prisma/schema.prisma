@@ -362,6 +362,7 @@ model taxi_orders {
   wallet_transfer          wallet_transfer_history[]
   transactions             transactions[]
   customer_note            String?
+  parent_user_type         String?                    @default("")
 }
 
 model taxi_order_sent {
