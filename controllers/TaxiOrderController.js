@@ -3,15 +3,16 @@ const DriverDao = require("../dao/Driver");
 const UsersDao = require("../dao/User");
 const FlagDao = require("../dao/Flags");
 const BusinessUsersDao = require("../dao/BusinessUsers");
-const { UserSockets, io } = require('../socket');
-const gApi = require('../lib/gApis');
-const TaxiHelper = require('../lib/taxiHelpers');
+const { UserSockets, io } = require("../socket");
+const gApi = require("../lib/gApis");
+const TaxiHelper = require("../lib/taxiHelpers");
 const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, ORDER_TYPE } = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
 const { sendNotificationToUser } = require("../lib/oneSignal");
 const { sendOrderNotifications } = require("../lib/notifications");
-const {sleep, range} = require("../lib/helpersLib");
-const prisma = require('../prisma/prisma');
+const { sleep, range } = require("../lib/helpersLib");
+const prisma = require("../prisma/prisma");
+
 /**
  * GET /taxi/order/{orderId}
  * @tag Taxi
@@ -87,7 +88,7 @@ async function getActiveTaxiOrders(req, res) {
 							estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + duration);
 							activeOrder.estimates.pickup_time = estimatedPickupTime;
 						}
-						console.errorTag('Invalid response structure from distanceBetweenTwoPoints');
+						console.errorTag("Invalid response structure from distanceBetweenTwoPoints");
 						activeOrder.estimates.pickup_time_in_seconds = -1;
 						activeOrder.estimates.pickup_time = null;
 					}
@@ -124,7 +125,7 @@ async function getActiveTaxiOrdersByDriverId(req, res) {
 
 	try {
 		const activeOrders = await TaxiOrderDao.getActiveOrdersByDriverId(driver_id);
-		let pendingOrders = []
+		let pendingOrders = [];
 
 		const sentOrders = await TaxiOrderDao.getAlreadySentOrdersByDriverId(driver_id);
 		for (let sentOrder of sentOrders) {
@@ -135,8 +136,7 @@ async function getActiveTaxiOrdersByDriverId(req, res) {
 			console.info("Re-sending pending order: ", order.order_id, " to driver: ", driver_id);
 
 
-
-			pendingOrders.push(order)
+			pendingOrders.push(order);
 		}
 
 		res.status(200).json({
@@ -145,7 +145,7 @@ async function getActiveTaxiOrdersByDriverId(req, res) {
 		});
 
 	} catch (e) {
-		console.errorTag("TaxiOrderController",e);
+		console.errorTag("TaxiOrderController", e);
 		res.status(500).json({ message: "Error something went wrong..." });
 	}
 }
@@ -170,10 +170,11 @@ async function getCompletedTaxiOrders(req, res) {
 			where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
 				driver_id: driver_id
-			}});
+			}
+		});
 		res.status(200).json(completedOrders);
 	} catch (e) {
-		console.errorTag("TaxiOrderController",e);
+		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -195,7 +196,7 @@ async function getTaxiOrders(req, res) {
 		// console.tag("TaxiOrderController","taxi orders", orders);
 		res.status(200).json(orders);
 	} catch (e) {
-		console.errorTag("TaxiOrderController",e);
+		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -221,13 +222,15 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
 			where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
 				user_id: user_id
-			}});
+			}
+		});
 		res.status(200).json(completedOrders);
 	} catch (e) {
-		console.errorTag("TaxiOrderController",e);
+		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
+
 async function createOrderHelper(req, res, orderData) {
 	try {
 		let prefs = orderData.preferences;
@@ -361,7 +364,7 @@ async function createOrderHelper(req, res, orderData) {
 			console.log("fetching grouped_orders", order.grouped_orders);
 		}
 		if (!order) {
-			console.info('Final order is empty!');
+			console.info("Final order is empty!");
 			delete orderData.user_id;
 			order = await TaxiOrderDao.createOrder({
 				...orderData,
@@ -371,7 +374,7 @@ async function createOrderHelper(req, res, orderData) {
 					}
 				}
 			});
-			console.info('Final order created', order);
+			console.info("Final order created", order);
 		}
 		if (!is_scheduled) {
 			await TaxiHelper.findTaxiOrderDrivers(order);
@@ -388,6 +391,7 @@ async function createOrderHelper(req, res, orderData) {
 		res.status(500).json(error);
 	}
 }
+
 /**
  * POST /taxi/order
  * @tag Taxi
@@ -411,9 +415,9 @@ async function createOrder(req, res) {
 			is_scheduled: req.body.preferences?.departure_date
 		};
 
-		console.info('USER TELEPHONE', orderData.telephone)
+		console.info("USER TELEPHONE", orderData.telephone);
 
-		console.info('dep date',  req.body.preferences?.departure_date)
+		console.info("dep date", req.body.preferences?.departure_date);
 		let flags = await FlagDao.getFlags();
 		let flagsObj = {};
 		flags.map(flag => {
@@ -424,13 +428,15 @@ async function createOrder(req, res) {
 
 		let order = await createOrderHelper(req, res, orderData);
 		//console.tag("TaxiOrderController","create taxi order", order)
-		let userSocket = UserSockets.get(order.user_id);
+
+		const userSocket = UserSockets.get(order.user_id);
 		if (userSocket) {
-			io.to("user_" + order.user_id).emit('order_created__taxi', order);
+			io.to(userSocket).emit('child_order_created__taxi', {
+				...order
+			});
 		}
 		res.status(200).json(order);
-	}
-	catch (e) {
+	} catch (e) {
 		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
@@ -439,21 +445,21 @@ async function createOrder(req, res) {
 function getDayIndex(dayName) {
 	// Map day names to their corresponding indices
 	const daysOfWeek = {
-	  "Sunday": 0,
-	  "Monday": 1,
-	  "Tuesday": 2,
-	  "Wednesday": 3,
-	  "Thursday": 4,
-	  "Friday": 5,
-	  "Saturday": 6
+		"Sunday": 0,
+		"Monday": 1,
+		"Tuesday": 2,
+		"Wednesday": 3,
+		"Thursday": 4,
+		"Friday": 5,
+		"Saturday": 6
 	};
 
 	return daysOfWeek[dayName]; // Return the index of the day
-  }
+}
 
-  async function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
+async function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
 	try {
-		console.tag("TaxiOrderController","rd", repeatDuration)
+		console.tag("TaxiOrderController", "rd", repeatDuration);
 		const orders = [];
 		const currentDate = new Date();
 
@@ -466,50 +472,51 @@ function getDayIndex(dayName) {
 		const currentDay = currentDate.getDay();
 
 		for (let week = 0; week < repeatDuration; week++) {
-		for (let day of repeatData) {
-			console.log("day", day)
-			const dayIndex = getDayIndex(day.value); // Get day index from day name
-			console.log("dayIndex", dayIndex)
-			const daysUntilNextOccurrence = (dayIndex - currentDay + 7) % 7 + (week * 7); // Calculate days until the next occurrence of this weekday
-			console.log("daysUntilNextOccurrence", dayIndex)
-			const orderDate = new Date(currentDate); // Create a copy of the current date
-			console.log("orderDate", orderDate)
-			orderDate.setDate(orderDate.getDate() + daysUntilNextOccurrence); // Add the days to reach the next occurrence of this day
-			// Set the time for the order
-			console.log("orderDate added", orderDate)
-			orderDate.setHours(departureHours);
-			orderDate.setMinutes(departureMinutes);
-			orderDate.setSeconds(0);
-			orderDate.setMilliseconds(0);
-			// Format the date and time
-			const formattedDepartureDate = new Intl.DateTimeFormat('en-US', {
-				day: '2-digit',
-				month: 'long',
-				year: 'numeric',
-			}).format(orderDate);
+			for (let day of repeatData) {
+				console.log("day", day);
+				const dayIndex = getDayIndex(day.value); // Get day index from day name
+				console.log("dayIndex", dayIndex);
+				const daysUntilNextOccurrence = (dayIndex - currentDay + 7) % 7 + (week * 7); // Calculate days until the next occurrence of this weekday
+				console.log("daysUntilNextOccurrence", dayIndex);
+				const orderDate = new Date(currentDate); // Create a copy of the current date
+				console.log("orderDate", orderDate);
+				orderDate.setDate(orderDate.getDate() + daysUntilNextOccurrence); // Add the days to reach the next occurrence of this day
+				// Set the time for the order
+				console.log("orderDate added", orderDate);
+				orderDate.setHours(departureHours);
+				orderDate.setMinutes(departureMinutes);
+				orderDate.setSeconds(0);
+				orderDate.setMilliseconds(0);
+				// Format the date and time
+				const formattedDepartureDate = new Intl.DateTimeFormat("en-US", {
+					day: "2-digit",
+					month: "long",
+					year: "numeric"
+				}).format(orderDate);
 
-			const formattedDepartureTime = orderDate.toISOString();
+				const formattedDepartureTime = orderDate.toISOString();
 
-			// Generate an order for this day
-			let order = {
-			...orderData,
-			preferences: {
-				...orderData.preferences,
-				departure_date: formattedDepartureDate, // Format as "DD MMMM YYYY"
-				departure_time: formattedDepartureTime, // Format as "YYYY-MM-DDTHH:mm:ss.sss"
-			},
-			};
-			orders.push(order); // Add to orders list
-		}
+				// Generate an order for this day
+				let order = {
+					...orderData,
+					preferences: {
+						...orderData.preferences,
+						departure_date: formattedDepartureDate, // Format as "DD MMMM YYYY"
+						departure_time: formattedDepartureTime // Format as "YYYY-MM-DDTHH:mm:ss.sss"
+					}
+				};
+				orders.push(order); // Add to orders list
+			}
 		}
 
 		return orders; // Return generated orders
 	} catch (error) {
-		console.errorTag("TaxiOrderController",error);
+		console.errorTag("TaxiOrderController", error);
 		throw new Error(error);
 	}
 
-  }
+}
+
 /**
  * POST /taxi/dispatch-order
  * @tag Taxi
@@ -533,12 +540,12 @@ async function createDispatchOrder(req, res) {
 		};
 		let order = await createOrderHelper(req, res, orderData);
 		res.status(200).json(order);
-	}
-	catch (e) {
-		console.errorTag("TaxiOrderController",e);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
+
 /**
  * POST /taxi/order/accept
  * @tag Taxi
@@ -555,7 +562,7 @@ async function createDispatchOrder(req, res) {
 async function acceptOrder(req, res) {
 	const { order_id, user } = req.body;
 	try {
-		let order = await TaxiOrderDao.getOrder(order_id)
+		let order = await TaxiOrderDao.getOrder(order_id);
 		//TODO: check if driver is online
 		//TODO: check if order is still pending
 		if (order.status !== TAXI_ORDER_STATUS.PENDING) {
@@ -576,11 +583,15 @@ async function acceptOrder(req, res) {
 		driver.vehicle = driver.vehicles[0];
 		order.driver = driver;
 
-		const { result, distance, duration } = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, driver.location.coordinates, "driving", new Date());
+		const {
+			result,
+			distance,
+			duration
+		} = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, driver.location.coordinates, "driving", new Date());
 
-		console.tag("TaxiOrderController","ROES:", result, result?.rows[0], result?.rows[0]?.elements[0]);
-		console.tag("TaxiOrderController","ROES DISTANCE:", distance);
-		console.tag("TaxiOrderController","ROES DURATION:", duration);
+		console.tag("TaxiOrderController", "ROES:", result, result?.rows[0], result?.rows[0]?.elements[0]);
+		console.tag("TaxiOrderController", "ROES DISTANCE:", distance);
+		console.tag("TaxiOrderController", "ROES DURATION:", duration);
 
 		if (!order.estimates)
 			order.estimates = {};
@@ -596,7 +607,7 @@ async function acceptOrder(req, res) {
 				estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + duration);
 				order.estimates.pickup_time = estimatedPickupTime;
 			}
-			console.errorTag('Invalid response structure from distanceBetweenTwoPoints');
+			console.errorTag("Invalid response structure from distanceBetweenTwoPoints");
 			order.estimates.pickup_time_in_seconds = -1;
 			order.estimates.pickup_time = null;
 		}
@@ -607,16 +618,19 @@ async function acceptOrder(req, res) {
 		order.driver = driver;
 
 		let userSocket = UserSockets.get(order.user_id);
-		console.tag("TaxiOrderController","order accepted", order);
+		console.log("LALA, user_id", order.user_id);
+		console.tag("TaxiOrderController", "order accepted", order);
 		if (userSocket) {
-			io.to("order_" + order.order_id).emit('order_accepted__taxi', order);
-			io.emit('driver_unavailable', order.driver_id);
+			io.to("order_" + order.order_id).emit("order_accepted__taxi", order);
+			io.emit("driver_unavailable", order.driver_id);
+
+			console.log("userSocket", userSocket);
 		}
 		sendNotificationToUser("Taxi order accepted", "Your taxi order has been accepted", order.user_id);
 		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController",e);
+		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -639,15 +653,15 @@ async function completeOrder(req, res) {
 		let order = await TaxiOrderDao.completeOrder(req.body.order_id);
 		console.log("COMPLLETED", order);
 		let driver = await DriverDao.getDriverById(order.driver_id);
-		io.emit('driver_available', driver)
+		io.emit("driver_available", driver);
 		let user = await UsersDao.getUserById(order.user_id, {
 			include: {
-				parent_user: { include:{parent_user: true}},
+				parent_user: { include: { parent_user: true } }
 			}
 		});
 		if (order.payment.type === "WALLET") {
 			// handle wallet payment
-			
+
 			if (user.wallet_balance < order.payment.price) {
 				throw new Error("Insufficient funds");
 			}
@@ -657,7 +671,7 @@ async function completeOrder(req, res) {
 				payment: {
 					...order.payment,
 					status: "PAID"
-				},
+				}
 			});
 		}
 		if (order.payment.type === "FAMILY_WALLET") {
@@ -666,14 +680,14 @@ async function completeOrder(req, res) {
 			if (!has_parent_user) {
 				throw new Error("User has no family wallet");
 			}
-			let parent_user  = user.parent_user.parent_user;
+			let parent_user = user.parent_user.parent_user;
 			let is_businessUser = await BusinessUsersDao.getBusinessUserByUserId(parent_user.user_id);
 			let allowance = user.parent_user.allowance;
 			if (is_businessUser) {
 				allowance = allowance * 2;
 			}
 			// todo is parent business user?
-			
+
 			if (allowance < order.payment.price) {
 				throw new Error("Insufficient allowance");
 			}
@@ -684,7 +698,7 @@ async function completeOrder(req, res) {
 			await UsersDao.removeWalletBalance(parent_user.user_id, parseFloat(order.payment.price), order.order_id, "taxi");
 			await prisma.group_users.update({
 				where: {
-					group_user_id: user.parent_user.group_user_id,
+					group_user_id: user.parent_user.group_user_id
 				},
 				data: {
 					allowance: user.parent_user.allowance - order.payment.price
@@ -694,19 +708,18 @@ async function completeOrder(req, res) {
 				payment: {
 					...order.payment,
 					status: "PAID"
-				},
+				}
 			});
 		}
 		// io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
-		io.to("order_" + order.order_id).emit('order_completed__taxi', order);
+		io.to("order_" + order.order_id).emit("order_completed__taxi", order);
 
-		console.tag("TaxiOrderController","order_completed__taxi ", req.body.order_id)
-		io.emit('driver_available', driver);
+		console.tag("TaxiOrderController", "order_completed__taxi ", req.body.order_id);
+		io.emit("driver_available", driver);
 
 		res.status(200).json(order);
-	}
-	catch (e) {
-		console.errorTag("TaxiOrderController",e);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -727,7 +740,7 @@ async function completeOrder(req, res) {
 async function updateOrderStatus(req, res) {
 	try {
 		let order = await TaxiOrderDao.updateOrderStatus(req.body.order_id, req.body.status);
-		io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
+		io.to("order_" + order.order_id).emit("order_status_change__taxi", order);
 
 		let user_id = order?.user_id;
 		let driver_id = order?.driver?.driver_id;
@@ -777,15 +790,14 @@ async function updateTaxiOrderPreferences(req, res) {
 			preferences: updatedPreferences
 		});
 
-		io.to("order_" + order.order_id).emit('order_preferences_change__taxi', order);
+		io.to("order_" + order.order_id).emit("order_preferences_change__taxi", order);
 
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController",e);
+		console.errorTag("TaxiOrderController", e);
 		res.status(500).json({ message: "Server error", error: e });
 	}
 }
-
 
 
 /**
@@ -803,7 +815,7 @@ async function updateTaxiOrderPreferences(req, res) {
  */
 async function cancelOrder(req, res) {
 	const { order_id, status, cancellation_reason } = req.body;
-	console.info("TaxiOrderController",'CANCEL ORDER', req.body)
+	console.info("TaxiOrderController", "CANCEL ORDER", req.body);
 
 	try {
 		let order = await TaxiOrderDao.getOrder(order_id);
@@ -816,10 +828,10 @@ async function cancelOrder(req, res) {
 		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
 
 		// Determine the cancellation reason
-		let reason = '';
+		let reason = "";
 		if (Array.isArray(cancellation_reason) && cancellation_reason.length > 0) {
 			reason = cancellation_reason[0].value;
-		} else if (typeof cancellation_reason === 'string' && cancellation_reason.trim() !== '') {
+		} else if (typeof cancellation_reason === "string" && cancellation_reason.trim() !== "") {
 			reason = cancellation_reason; // Use the raw cancellation reason if it's a non-empty string
 		}
 		if (order.parent_order_id) {
@@ -828,8 +840,8 @@ async function cancelOrder(req, res) {
 				for (let or of parentOrder.grouped_orders) {
 					await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
 					await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
-					io.to("order_" + or.order_id).emit('order_status_change__taxi', or);
-					io.to("order_" + or.order_id).emit('order_cancelled__taxi', or);
+					io.to("order_" + or.order_id).emit("order_status_change__taxi", or);
+					io.to("order_" + or.order_id).emit("order_cancelled__taxi", or);
 				}
 			}
 		}
@@ -837,8 +849,8 @@ async function cancelOrder(req, res) {
 			for (let or of order.grouped_orders) {
 				await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
 				await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
-				io.to("order_" + or.order_id).emit('order_status_change__taxi', or);
-				io.to("order_" + or.order_id).emit('order_cancelled__taxi', or);
+				io.to("order_" + or.order_id).emit("order_status_change__taxi", or);
+				io.to("order_" + or.order_id).emit("order_cancelled__taxi", or);
 			}
 		}
 		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);
@@ -849,17 +861,17 @@ async function cancelOrder(req, res) {
 				driver: {
 					disconnect: true
 				}
-			})
+			});
 
-			io.emit('driver_available', driver);
+			io.emit("driver_available", driver);
 		}
-		io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
-		io.to("order_" + order.order_id).emit('order_cancelled__taxi', order);
+		io.to("order_" + order.order_id).emit("order_status_change__taxi", order);
+		io.to("order_" + order.order_id).emit("order_cancelled__taxi", order);
 
-		console.info("TaxiOrderController","order_status_change__taxi", "order_cancelled__taxi");
+		console.info("TaxiOrderController", "order_status_change__taxi", "order_cancelled__taxi");
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController",e);
+		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -878,10 +890,10 @@ async function cancelOrder(req, res) {
  * @response 500 - Server error. Console logs the error message and returns it in the response.
  */
 async function rejectOrder(req, res) {
-    const { order_id, status, cancellation_reason } = req.body;
-	console.info("TaxiOrderController","REJECT ORDER", req.body)
-	let new_status = status
-    try {
+	const { order_id, status, cancellation_reason } = req.body;
+	console.info("TaxiOrderController", "REJECT ORDER", req.body);
+	let new_status = status;
+	try {
 		let order = await TaxiOrderDao.getOrder(order_id);
 		let user_id = order?.user_id;
 		let driver_id = order?.driver_id;
@@ -890,26 +902,26 @@ async function rejectOrder(req, res) {
 		await sendOrderNotifications(user_id, driver_id, status);
 
 		if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
-			new_status = TAXI_ORDER_STATUS.PENDING
+			new_status = TAXI_ORDER_STATUS.PENDING;
 			await TaxiOrderDao.updateOrder(order_id, {
 				status: TAXI_ORDER_STATUS.PENDING,
-				last_sent_at: null,
-			})
+				last_sent_at: null
+			});
 		}
 
 
 		if (req.user.driver && req.user.driver.driver_id) {
 			await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, req.user.driver.driver_id);
-			let order_sent =  await prisma.taxi_order_sent.findUnique({
+			let order_sent = await prisma.taxi_order_sent.findUnique({
 				where: {
 					taxi_order_sent_driver_unique: {
 						order_id,
 						driver_id: req.user.driver.driver_id
 					}
-				},
+				}
 			});
 
-			console.log("REJECT " + order_sent.taxi_order_sent_id)
+			console.log("REJECT " + order_sent.taxi_order_sent_id);
 			if (order_sent.taxi_order_sent_id) {
 				await prisma.taxi_order_sent.update({
 					where: {
@@ -918,16 +930,16 @@ async function rejectOrder(req, res) {
 					data: {
 						rejected: true
 					}
-				})
+				});
 			}
 
 		}
 
 		// Determine the cancellation reason
-		let reason = '';
+		let reason = "";
 		if (Array.isArray(cancellation_reason) && cancellation_reason.length > 0) {
 			reason = cancellation_reason[0].value;
-		} else if (typeof cancellation_reason === 'string' && cancellation_reason.trim() !== '') {
+		} else if (typeof cancellation_reason === "string" && cancellation_reason.trim() !== "") {
 			reason = cancellation_reason;
 		}
 
@@ -940,34 +952,34 @@ async function rejectOrder(req, res) {
 				driver: {
 					disconnect: true
 				}
-			})
-			io.emit('driver_available', driver);
+			});
+			io.emit("driver_available", driver);
 
 		}
-		io.to("order_" + order.order_id).emit('order_rejected__taxi', order);
-        io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
+		io.to("order_" + order.order_id).emit("order_rejected__taxi", order);
+		io.to("order_" + order.order_id).emit("order_status_change__taxi", order);
 
-        let userActiveOrders = await TaxiOrderDao.userActiveOrders(order.user_id);
+		let userActiveOrders = await TaxiOrderDao.userActiveOrders(order.user_id);
 		let pending = true;
-		for  (let or of userActiveOrders) {
+		for (let or of userActiveOrders) {
 			if (or.status !== TAXI_ORDER_STATUS.PENDING) {
 				pending = false;
 			}
 		}
-		console.log("pending", pending)
+		console.log("pending", pending);
 		if (pending) {
-			if(UserSockets.get(order.user_id)) {
-				console.log("EMITTING order_restart_search")
-				UserSockets.get(order.user_id).emit('order_restart_search', order);
+			if (UserSockets.get(order.user_id)) {
+				console.log("EMITTING order_restart_search");
+				UserSockets.get(order.user_id).emit("order_restart_search", order);
 			}
 		}
 
-        console.tag("TaxiOrderController","order_status_change__taxi", "order_rejected__taxi");
-        res.status(200).json(order);
-    } catch (e) {
-        console.errorTag("TaxiOrderController",e);
-        res.status(500).json(e);
-    }
+		console.tag("TaxiOrderController", "order_status_change__taxi", "order_rejected__taxi");
+		res.status(200).json(order);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
+		res.status(500).json(e);
+	}
 }
 
 /**
@@ -986,11 +998,10 @@ async function rejectOrder(req, res) {
 async function updateTaxiOrderRoute(req, res) {
 	try {
 		let order = await TaxiOrderDao.updateTaxiOderRoute(req.body.order_id, req.body.route);
-		io.to("order_" + order.order_id).emit('order_route_change', order);
+		io.to("order_" + order.order_id).emit("order_route_change", order);
 		res.status(200).json(order);
-	}
-	catch (e) {
-		console.errorTag("TaxiOrderController",e);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1011,11 +1022,10 @@ async function updateTaxiOrderRoute(req, res) {
 async function updateTaxiOrderPickupLocation(req, res) {
 	try {
 		let order = await TaxiOrderDao.updateTaxiOrderPickupLocation(req.body.order_id, req.body.pickup_location);
-		io.to("order_" + order.order_id).emit('order_pickup_location_change', order);
+		io.to("order_" + order.order_id).emit("order_pickup_location_change", order);
 		res.status(200).json(order);
-	}
-	catch (e) {
-		console.errorTag("TaxiOrderController",e);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1036,11 +1046,10 @@ async function updateTaxiOrderPickupLocation(req, res) {
 async function updateTaxiOrderDeliveryLocation(req, res) {
 	try {
 		let order = await TaxiOrderDao.updateTaxiOrderDeliveryLocation(req.body.order_id, req.body.delivery_location);
-		io.to("order_" + order.order_id).emit('order_delivery_location_change', order);
+		io.to("order_" + order.order_id).emit("order_delivery_location_change", order);
 		res.status(200).json(order);
-	}
-	catch (e) {
-		console.errorTag("TaxiOrderController",e);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1059,15 +1068,14 @@ async function updateTaxiOrderDeliveryLocation(req, res) {
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
 async function updateCompleteTaxiRoute(req, res) {
-	const { order_id, route} = req.body
+	const { order_id, route } = req.body;
 
 	try {
 		let order = await TaxiOrderDao.updateCompleteTaxiRoute(order_id, route);
-		io.to("order_" + order.order_id).emit('order_complete_route_change', order);
+		io.to("order_" + order.order_id).emit("order_complete_route_change", order);
 		res.status(200).json(order);
-	}
-	catch (e) {
-		console.errorTag("TaxiOrderController",e);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1087,15 +1095,14 @@ async function updateCompleteTaxiRoute(req, res) {
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
 async function updateTaxiOrderTimeline(req, res) {
-	const { order_id, timeline} = req.body
+	const { order_id, timeline } = req.body;
 
 	try {
 		let order = await TaxiOrderDao.updateTaxiOrderTimeline(order_id, timeline);
-		io.to("order_" + order.order_id).emit('order_timeline_change', order);
+		io.to("order_" + order.order_id).emit("order_timeline_change", order);
 		res.status(200).json(order);
-	}
-	catch (e) {
-		console.errorTag("TaxiOrderController",e);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1114,15 +1121,14 @@ async function updateTaxiOrderTimeline(req, res) {
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
 async function updateTaxiOrderPayment(req, res) {
-	const { order_id, payment} = req.body
+	const { order_id, payment } = req.body;
 
 	try {
 		let order = await TaxiOrderDao.updateTaxiOrderPayment(order_id, payment);
-		io.to("order_" + order.order_id).emit('order_payment_change__taxi', order);
+		io.to("order_" + order.order_id).emit("order_payment_change__taxi", order);
 		res.status(200).json(order);
-	}
-	catch (e) {
-		console.errorTag("TaxiOrderController",e);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1141,10 +1147,10 @@ async function updateTaxiOrderPayment(req, res) {
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
 async function appendTaxiDriver(req, res) {
-	const { order_id, driver_id} = req.body
+	const { order_id, driver_id } = req.body;
 
 	try {
-		console.info(order_id, driver_id)
+		console.info(order_id, driver_id);
 		const order = await TaxiOrderDao.updateOrder(order_id, {
 			driver: {
 				connect: {
@@ -1154,10 +1160,9 @@ async function appendTaxiDriver(req, res) {
 		});
 		await TaxiHelper.revokeTaxiOrderFromOtherDrivers(order_id, driver_id);
 		const driver = await DriverDao.getDriverById(driver_id);
-		await TaxiHelper.sendTaxiOrderToDriver(order, driver, true)
-		res.status(200).json({"message": 'driver selected'})
-	}
-	catch (e) {
+		await TaxiHelper.sendTaxiOrderToDriver(order, driver, true);
+		res.status(200).json({ "message": "driver selected" });
+	} catch (e) {
 		console.info("appendTaxiDriver", e);
 		res.status(500).json(e);
 	}
@@ -1172,10 +1177,10 @@ async function getScheduledOrders(req, res) {
 			}
 		});
 
-		console.info(orders.length, 'scheduled orders')
+		console.info(orders.length, "scheduled orders");
 		res.status(200).json(orders);
 	} catch (e) {
-		console.errorTag("TaxiOrderController",e);
+		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
