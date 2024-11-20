@@ -24,7 +24,7 @@ router.get("/me/ping", UserController.ping);
 router.get("/me/reviews", UserController.getMyReviews);
 router.get("/:user_id/reviews", UserController.getReviewsByUserId);
 router.get("/:user_id/wallet", UserController.getWalletBalance);
-router.get("/:user_id/family_wallet", UserController.getFamilyWalletAllowanceAndType);
+router.get("/:user_id/family_wallet", UserController.getFamilyWalletBalanceAndType);
 router.get("/:user_id", UserController.getUserById);
 router.patch("/:user_id/wallet", UserController.updateWalletBalance);
 router.patch("/me", joi(updateSchema), UserController.updateMe);

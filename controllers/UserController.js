@@ -1448,35 +1448,37 @@ async function getWalletBalance(req, res) {
 /**
  * GET /users/:user_id/family_wallet
  * @tag Users
- * @summary Get family wallet type and allowance.
- * @description This endpoint is used to check wallet allowance adn type for a particular user.
+ * @summary Get family wallet type and minimum between allowance and actual family wallet balance.
+ * @description This endpoint is used to check wallet balance and type for a particular user.
  * @operationId getPaymentSheetCredentials
  * @headerDescription Authorization Bearer token is required
- * @response 200 - {family_wallet_allowance:float,family_wallet_type:string}
+ * @response 200 - {family_wallet_balance:float,family_wallet_type:string}
  * @response 400 - Error checking wallet balances
  */
-async function getFamilyWalletAllowanceAndType(req, res) {
+async function getFamilyWalletBalanceAndType(req, res) {
 	try {
 		let group_user = await GroupDao.getGroupUserByChildId(req.params.user_id);
 		if(group_user===null){
-			return res.status(200).json({ family_wallet_allowance: 0, family_wallet_type: null });
+			return res.status(200).json({ family_wallet_balance: 0, family_wallet_type: null });
 		}else if (group_user) {
+			console.log(group_user);
 			if(group_user.enabled){
+				const parent_wallet_balance = group_user.parent_user.wallet_balance;
 				return res.status(200).json({
-					family_wallet_allowance: group_user.allowance,
+					family_wallet_balance: Math.min(group_user.allowance, parent_wallet_balance),
 					family_wallet_type: group_user.parent_user.user_role.startsWith('BUSINESS') ? "BUSINESS" : "FAMILY"
 				});
 			}else{
 				return res.status(200).json({
-					family_wallet_allowance: 0,
+					family_wallet_balance: 0,
 					family_wallet_type: group_user.parent_user.user_role.startsWith('BUSINESS') ? "BUSINESS" : "FAMILY"
 				});
 			}
 		}
-		res.status(400).json({ error: "Error obtaining family wallet allowance and type" });
+		res.status(400).json({ error: "Error obtaining family wallet balance and type" });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error obtaining family wallet allowance and type", e });
+		res.status(400).json({ error: "Error obtaining family wallet balance and type", e });
 	}
 }
 
@@ -1552,7 +1554,7 @@ module.exports = {
 	updateChildUserEnabledByGroupUserId,
 	updateChildUserAllowanceByGroupUserId,
 	deleteChildUserByGroupUserId,
-	getFamilyWalletAllowanceAndType,
+	getFamilyWalletBalanceAndType,
 	getWalletBalance,
 	updateWalletBalance
 };
