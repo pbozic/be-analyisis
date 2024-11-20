@@ -1461,10 +1461,17 @@ async function getFamilyWalletAllowanceAndType(req, res) {
 		if(group_user===null){
 			return res.status(200).json({ family_wallet_allowance: 0, family_wallet_type: null });
 		}else if (group_user) {
-			return res.status(200).json({
-				family_wallet_allowance: group_user.allowance,
-				family_wallet_type: group_user.parent_user.user_role.startsWith('BUSINESS') ? "BUSINESS" : "FAMILY"
-			});
+			if(group_user.enabled){
+				return res.status(200).json({
+					family_wallet_allowance: group_user.allowance,
+					family_wallet_type: group_user.parent_user.user_role.startsWith('BUSINESS') ? "BUSINESS" : "FAMILY"
+				});
+			}else{
+				return res.status(200).json({
+					family_wallet_allowance: 0,
+					family_wallet_type: group_user.parent_user.user_role.startsWith('BUSINESS') ? "BUSINESS" : "FAMILY"
+				});
+			}
 		}
 		res.status(400).json({ error: "Error obtaining family wallet allowance and type" });
 	} catch (e) {
