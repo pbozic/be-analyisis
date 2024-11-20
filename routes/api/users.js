@@ -59,6 +59,7 @@ router.patch("/me/disabled", UserController.disableMe);
 router.post("/me/group_user/register-child", joi(registerChildSchema), UserController.registerChildUser);
 router.patch("/me/group_user/status/", UserController.updateChildUserEnabledByGroupUserId);
 router.patch("/me/group_user/allowance/", UserController.updateChildUserAllowanceByGroupUserId);
+router.patch("/group_user/allowance", UserController.updateChildUserAllowanceByGroupUserId);
 router.delete("/me/group_user/delete/:group_user_id", UserController.deleteChildUserByGroupUserId);
 
 
