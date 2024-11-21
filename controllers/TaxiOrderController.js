@@ -430,7 +430,9 @@ async function createOrder(req, res) {
 		//console.tag("TaxiOrderController","create taxi order", order)
 
 		const userSocket = UserSockets.get(order.user_id);
+		console.log("userSocket: ", userSocket);
 		if (userSocket) {
+			console.log("userSocket exists!");
 			io.emit('child_order_created__taxi', {
 				...order
 			});
