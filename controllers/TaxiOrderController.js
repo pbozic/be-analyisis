@@ -431,7 +431,7 @@ async function createOrder(req, res) {
 
 		const userSocket = UserSockets.get(order.user_id);
 		if (userSocket) {
-			io.to(userSocket).emit('child_order_created__taxi', {
+			io.emit('child_order_created__taxi', {
 				...order
 			});
 		}
