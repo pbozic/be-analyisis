@@ -180,6 +180,39 @@ async function getCompletedTaxiOrders(req, res) {
 }
 
 /**
+ * GET /taxi/orders/canceled-or-rejected
+ * @tag Taxi
+ * @summary Get canceled or rejected taxi orders.
+ * @description This fetches all canceled or rejected orders for a specific driver.
+ * @operationId getCanceledOrRejectedTaxiOrders
+ * @requestBody {DriverId} driverId - The ID of the driver to retrieve canceled or rejected orders for
+ * @response 200 - Successful operation. Returns a list of canceled or rejected orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+async function getCanceledAndRejectedTaxiOrders(req, res) {
+	const { driver_id } = req.params;
+
+	try {
+		const canceledOrRejectedOrders = await TaxiOrderDao.getOrders({
+			where: {
+				status: {
+					in: [
+						TAXI_ORDER_STATUS.TAXI_CANCELED,
+						TAXI_ORDER_STATUS.TAXI_REJECTED
+					]
+				},
+				driver_id: driver_id
+			}
+		});
+		res.status(200).json(canceledOrRejectedOrders);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
+		res.status(500).json(e);
+	}
+}
+
+/**
  * GET /taxi/orders
  * @tag Taxi
  * @summary Get all taxi orders.
@@ -221,6 +254,35 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
 		const completedOrders = await TaxiOrderDao.getOrders({
 			where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
+				user_id: user_id
+			}
+		});
+		res.status(200).json(completedOrders);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * GET /taxi/orders/canceled/user/:user_id
+ * @tag Taxi
+ * @summary Get canceled taxi orders.
+ * @description This fetches all canceled orders for a specific driver.
+ * @operationId getCanceledTaxiOrders
+ * @requestBody {DriverId} driverId - The ID of the driver to retrieve canceled orders for
+ * @response 200 - Successful operation. Returns a list of canceled orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+
+async function getCanceledTaxiOrdersByUserId(req, res) {
+	const { user_id } = req.params;
+
+	try {
+		const completedOrders = await TaxiOrderDao.getOrders({
+			where: {
+				status: TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
 				user_id: user_id
 			}
 		});
@@ -1210,6 +1272,7 @@ module.exports = {
 	getTaxiOrders,
 	getOrder,
 	getCompletedTaxiOrders,
+	getCanceledAndRejectedTaxiOrders,
 	createOrder,
 	acceptOrder,
 	completeOrder,
@@ -1225,6 +1288,7 @@ module.exports = {
 	updateTaxiOrderTimeline,
 	getActiveTaxiOrders,
 	getCompletedTaxiOrdersByUserId,
+	getCanceledTaxiOrdersByUserId,
 	getActiveTaxiOrdersByDriverId,
 	createDispatchOrder,
 	appendTaxiDriver,
