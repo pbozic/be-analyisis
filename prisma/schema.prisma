@@ -479,7 +479,7 @@ model menu_items {
 }
 
 model transactions {
-  id                String           @id @default(uuid()) @db.Uuid
+  transaction_id    String           @id @default(uuid()) @db.Uuid
   user_id           String           @db.Uuid
   amount            Float
   type              TRANSACTION_TYPE // Enum for 'credit' or 'debit'
