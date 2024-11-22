@@ -1,5 +1,8 @@
+import { createDocument } from "./Document";
+
 const prisma = require("../prisma/prisma");
 const bcrypt = require("bcrypt");
+import { DOCUMENT_TYPE } from "../lib/constants";
 
 const getUsers = async (args) => {
 	try {
@@ -542,16 +545,37 @@ async function deleteUserByUserId(userId) {
 	}
 }
 
-const updateWalletBalance = async (userId, amount) => {
+const updateWalletBalance = async (userId, amount, document) => {
 	try {
-		return await prisma.users.update({
-			where: {
-				user_id: userId,
-			},
-			data: {
-				wallet_balance: amount,
-			},
+		await prisma.$transaction(async (transaction) => {
+			// Update wallet balance
+			await transaction.users.update({
+				where: { user_id: userId },
+				data: {
+					wallet_balance: {
+						increment: amount,
+					},
+				},
+			});
+
+			const newTransaction = await transaction.transactions.create({
+				data: {
+					user: { connect: { user_id: userId } },
+					amount: amount,
+					type: 'CREDIT',
+					description: 'Added funds to wallet',
+				},
+			});
+
+			if (document) {
+				const documentData = {
+					...document,
+					transaction_id: newTransaction.id
+				};
+				await createDocument(documentData);
+			}
 		});
+		console.log('Funds added to wallet successfully');
 	} catch (error) {
 		console.error("Error updating wallet balance:", error);
 		throw new Error(error);

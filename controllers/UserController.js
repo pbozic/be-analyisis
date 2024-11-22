@@ -1498,10 +1498,10 @@ async function getFamilyWalletBalanceAndType(req, res) {
  */
 async function updateWalletBalance(req, res) {
 	const { user_id } = req.params;
-	const { amount } = req.body;
+	const { amount, document } = req.body;
 
 	try {
-		let updatedUser = await UserDao.updateWalletBalance(user_id, amount);
+		let updatedUser = await UserDao.updateWalletBalance(user_id, amount, document);
 
 		if (updatedUser) {
 			return res.status(200).json({ message: "Wallet balance updated successfully.", wallet_balance: updatedUser.wallet_balance });
@@ -1524,7 +1524,7 @@ async function getTransactions(req, res) {
 		res.status(400).json({ error: "Error updating wallet balance" });
 	} catch (e) {
 		console.log(e);
-		req.status(400).json({ error: "Error fetching transactions", e });
+		res.status(400).json({ error: "Error fetching transactions", e });
 	}
 }
 
