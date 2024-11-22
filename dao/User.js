@@ -542,6 +542,22 @@ async function deleteUserByUserId(userId) {
 	}
 }
 
+const updateWalletBalance = async (userId, amount) => {
+	try {
+		return await prisma.users.update({
+			where: {
+				user_id: userId,
+			},
+			data: {
+				wallet_balance: amount,
+			},
+		});
+	} catch (error) {
+		console.error("Error updating wallet balance:", error);
+		throw new Error(error);
+	}
+};
+
 const getTransactions = async (userId) => {
 	try {
 		return await prisma.transactions.findMany({
