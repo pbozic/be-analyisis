@@ -180,32 +180,55 @@ async function getCompletedTaxiOrders(req, res) {
 }
 
 /**
- * GET /taxi/orders/canceled-or-rejected
+ * GET /taxi/orders/canceled/:driver_id
  * @tag Taxi
- * @summary Get canceled or rejected taxi orders.
- * @description This fetches all canceled or rejected orders for a specific driver.
- * @operationId getCanceledOrRejectedTaxiOrders
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve canceled or rejected orders for
- * @response 200 - Successful operation. Returns a list of canceled or rejected orders in the response body.
+ * @summary Get canceled taxi orders.
+ * @description This fetches all canceled orders for a specific driver.
+ * @operationId getCanceledTaxiOrders
+ * @requestBody {DriverId} driverId - The ID of the driver to retrieve canceled orders for
+ * @response 200 - Successful operation. Returns a list of canceled orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
-async function getCanceledAndRejectedTaxiOrders(req, res) {
+async function getCanceledTaxiOrders(req, res) {
 	const { driver_id } = req.params;
 
 	try {
-		const canceledOrRejectedOrders = await TaxiOrderDao.getOrders({
+		const canceledOrders = await TaxiOrderDao.getOrders({
 			where: {
-				status: {
-					in: [
-						TAXI_ORDER_STATUS.TAXI_CANCELED,
-						TAXI_ORDER_STATUS.TAXI_REJECTED
-					]
-				},
+				status: TAXI_ORDER_STATUS.TAXI_CANCELED,
 				driver_id: driver_id
 			}
 		});
-		res.status(200).json(canceledOrRejectedOrders);
+		res.status(200).json(canceledOrders);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * GET /taxi/orders/rejected/:driver_id
+ * @tag Taxi
+ * @summary Get rejected taxi orders.
+ * @description This fetches all rejected orders for a specific driver.
+ * @operationId getRejectedTaxiOrders
+ * @requestBody {DriverId} driverId - The ID of the driver to retrieve rejected orders for
+ * @response 200 - Successful operation. Returns a list of rejected orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+async function getRejectedTaxiOrders(req, res) {
+	const { driver_id } = req.params;
+
+	try {
+		const rejectedOrders = await TaxiOrderDao.getOrders({
+			where: {
+				status: TAXI_ORDER_STATUS.TAXI_REJECTED,
+				driver_id: driver_id
+			}
+		});
+		res.status(200).json(rejectedOrders);
 	} catch (e) {
 		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
@@ -1272,7 +1295,8 @@ module.exports = {
 	getTaxiOrders,
 	getOrder,
 	getCompletedTaxiOrders,
-	getCanceledAndRejectedTaxiOrders,
+	getCanceledTaxiOrders,
+	getRejectedTaxiOrders,
 	createOrder,
 	acceptOrder,
 	completeOrder,

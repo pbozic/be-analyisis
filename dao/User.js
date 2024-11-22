@@ -558,6 +558,18 @@ const updateWalletBalance = async (userId, amount) => {
 	}
 };
 
+const getTransactions = async (userId) => {
+	try {
+		return await prisma.transactions.findMany({
+			where: {
+				user_id: userId
+			}
+		});
+	} catch (error) {
+		console.error("Error fetching transactions:", error);
+		throw new Error(error);
+	}
+}
 module.exports = {
 	getUsers,
 	getUserById,
@@ -590,5 +602,6 @@ module.exports = {
 	updateUserDeliveryPushNotifications,
 	updateUserTransferPushNotifications,
 	getUserByEmail,
+	getTransactions,
 	updateWalletBalance
 };

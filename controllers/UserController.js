@@ -1513,6 +1513,21 @@ async function updateWalletBalance(req, res) {
 	}
 }
 
+async function getTransactions(req, res) {
+	const { user_id } = req.params;
+
+	try {
+		const transactions = await UserDao.getTransactions(user_id);
+		if (transactions) {
+			return res.status(200).json(transactions);
+		}
+		res.status(400).json({ error: "Error updating wallet balance" });
+	} catch (e) {
+		console.log(e);
+		req.status(400).json({ error: "Error fetching transactions", e });
+	}
+}
+
 module.exports = {
 	listUsers,
 	listPersonalUsers,
@@ -1556,5 +1571,6 @@ module.exports = {
 	deleteChildUserByGroupUserId,
 	getFamilyWalletBalanceAndType,
 	getWalletBalance,
+	getTransactions,
 	updateWalletBalance
 };
