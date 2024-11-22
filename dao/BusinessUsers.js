@@ -1,5 +1,6 @@
 const prisma = require("../prisma/prisma");
 const UserDao = require("./User");
+const stripe = require("../lib/stripe");
 
 const getAllBusinessUsers = async () => {
 	try {
@@ -126,7 +127,18 @@ const getAllBusinessUsersForBusinessByCompanyRole = async (business_id, company_
 
 const createBusinessUser = async (userData, business_id) => {
 	try {
-		const newUser = await UserDao.createNewUser(userData.data, true);
+		let stripeCustomer = await stripe.createCustomer(
+			userData.data.email,
+			userData.data.first_name + " " + userData.data.last_name,
+			userData.data.telephone,
+		);
+
+		const userObj={
+			...userData.data,
+			stripe_customer_id:stripeCustomer.id,
+		}
+
+		const newUser = await UserDao.createNewUser(userObj, true);
 		if (!newUser) {
 			throw new Error("Failed to create user for new driver");
 		}
