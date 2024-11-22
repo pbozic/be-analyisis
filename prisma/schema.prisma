@@ -166,8 +166,6 @@ model documents {
   menu_items         menu_items?       @relation(fields: [menu_item_id], references: [menu_item_id])
   lost_item_id       String?           @db.Uuid
   lost_items         lost_items?       @relation(fields: [lost_item_id], references: [lost_item_id])
-  transaction_id     String?           @db.Uuid
-  transactions       transactions?     @relation("Documents_transaction", fields: [transaction_id], references: [transaction_id])
 }
 
 model files {
@@ -479,7 +477,8 @@ model menu_items {
 }
 
 model transactions {
-  transaction_id    String           @id @default(uuid()) @db.Uuid
+  id                String           @id @default(uuid())
+  transaction_id    String           @db.Uuid
   user_id           String           @db.Uuid
   amount            Float
   type              TRANSACTION_TYPE // Enum for 'credit' or 'debit'
@@ -491,7 +490,6 @@ model transactions {
   taxi_order        taxi_orders?     @relation(fields: [taxi_order_id], references: [order_id])
   delivery_order    delivery_orders? @relation(fields: [delivery_order_id], references: [order_id])
   user              users            @relation(fields: [user_id], references: [user_id])
-  documents         documents[]      @relation("Documents_transaction")
 }
 
 enum TRANSACTION_TYPE {
