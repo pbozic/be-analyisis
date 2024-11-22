@@ -167,7 +167,7 @@ model documents {
   lost_item_id       String?           @db.Uuid
   lost_items         lost_items?       @relation(fields: [lost_item_id], references: [lost_item_id])
   transaction_id     String?           @db.Uuid
-  transactions       transactions?     @relation("Documents_transaction", fields: [transaction_id], references: [id])
+  transactions       transactions?     @relation("Documents_transaction", fields: [transaction_id], references: [transaction_id])
 }
 
 model files {
