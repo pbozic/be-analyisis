@@ -1,8 +1,6 @@
-import { createDocument } from "./Document";
-
 const prisma = require("../prisma/prisma");
 const bcrypt = require("bcrypt");
-import { DOCUMENT_TYPE } from "../lib/constants";
+const DocumentDao = require("../dao/Document");
 
 const getUsers = async (args) => {
 	try {
@@ -572,7 +570,7 @@ const updateWalletBalance = async (userId, amount, document) => {
 					...document,
 					transaction_id: newTransaction.id
 				};
-				await createDocument(documentData);
+				await DocumentDao.createDocument(documentData);
 			}
 		});
 		console.log('Funds added to wallet successfully');
