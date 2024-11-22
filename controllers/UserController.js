@@ -1498,10 +1498,10 @@ async function getFamilyWalletBalanceAndType(req, res) {
  */
 async function updateWalletBalance(req, res) {
 	const { user_id } = req.params;
-	const { amount, document } = req.body;
+	const { amount, documents } = req.body;
 
 	try {
-		let updatedUser = await UserDao.updateWalletBalance(user_id, amount, document);
+		let updatedUser = await UserDao.updateWalletBalance(user_id, amount, documents);
 
 		if (updatedUser) {
 			return res.status(200).json({ message: "Wallet balance updated successfully.", wallet_balance: updatedUser.wallet_balance });
