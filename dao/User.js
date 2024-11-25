@@ -1,6 +1,8 @@
 const prisma = require("../prisma/prisma");
 const bcrypt = require("bcrypt");
-const DocumentDao = require("../dao/Document");
+const { createDocument } = require("./Document");
+const { addFileToDocument } = require("./File");
+const S3Helper = require("../lib/s3");
 
 const getUsers = async (args) => {
 	try {
@@ -566,12 +568,23 @@ const updateWalletBalance = async (userId, amount, documents) => {
 			});
 
 			if (documents && Array.isArray(documents)) {
-				for (const document of documents) {
+				for (const file of documents) {
 					const documentData = {
-						...document,
-						transaction_id: newTransaction.id
+						document_type: file.document_type,
+						transaction: { connect: { transaction_id: newTransaction.transaction_id } },
 					};
-					await DocumentDao.createDocument(documentData);
+					const newDocument = await createDocument(documentData);
+
+					const base64 = file.base64;
+					delete file.base64;
+					delete file.document_type;
+					delete file.name;
+					const newFile = await addFileToDocument(newDocument.document_id, file);
+
+					const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
+					await S3Helper.SaveObject(key, base64, file.mime_type, {
+						users: [userId],
+					}, file);
 				}
 			}
 		});
