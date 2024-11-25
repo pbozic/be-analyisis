@@ -365,6 +365,7 @@ model taxi_orders {
   transactions             transactions[]
   customer_note            String?
   parent_user_type         String?                    @default("")
+  creating_user_id         String?                    @db.Uuid
 }
 
 model taxi_order_sent {
