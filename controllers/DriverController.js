@@ -1,5 +1,5 @@
 require("dotenv").config();
-
+const prisma = require("../prisma/prisma");
 const DriverDao = require("../dao/Driver");
 const VehicleDao = require("../dao/Vehicle");
 const UserDao = require("../dao/User");
@@ -596,13 +596,14 @@ async function getDriverEarnings(req, res) {
 
 	try {
 		const driver = await DriverDao.getDriverById(driver_id);
-		const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id, {
-			status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
-			created_at: {
-				gte: new Date(start_date).toISOString(),
-				lte: new Date(end_date).toISOString()
-			}
-		});
+		const driverOrders = await prisma.taxi_orders.findMany({where: {
+				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
+				driver_id: driver.driver_id,
+				created_at: {
+					gte: new Date(start_date).toISOString(),
+					lte: new Date(end_date).toISOString()
+				}
+			}});
 		const earningsData = calculateDriversEarnings(driverOrders, driver);
 
 		if (earningsData) {
@@ -638,13 +639,14 @@ async function getAllDriversEarnings(req, res) {
     try {
         const drivers = await DriverDao.getDrivers();
 		const earningsPromises = drivers.map(async (driver) => {
-            const driverOrders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id, {
+			const driverOrders = await prisma.taxi_orders.findMany({where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
+				driver_id: driver.driver_id,
 				created_at: {
 					gte: new Date(start_date).toISOString(),
 					lte: new Date(end_date).toISOString()
 				}
-            });
+			}});
             return calculateDriversEarnings(driverOrders, driver);
         });
 
@@ -668,10 +670,9 @@ async function getAllDriversEarnings(req, res) {
  */
 async function getTotalEarnings(req, res) {
 	try {
-		const orders = await TaxiOrderDao.getOrders({
-			where: {
+		const orders = await prisma.taxi_orders.findMany({where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED
-			}});
+			}})
 		const totalEarnings = calculateTotalEarnings(orders, TAXI_ORDER_STATUS.TAXI_COMPLETED);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
@@ -700,11 +701,10 @@ async function getDriverTotalEarnings(req, res) {
 	}
 
 	try {
-		const orders = await TaxiOrderDao.getOrders({
-			where: {
+		const orders = await prisma.taxi_orders.findMany({where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
 				driver_id: driver_id
-			}});
+			}})
 		const totalEarnings = calculateTotalEarnings(orders, TAXI_ORDER_STATUS.TAXI_COMPLETED);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
