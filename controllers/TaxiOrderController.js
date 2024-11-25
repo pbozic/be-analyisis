@@ -248,7 +248,21 @@ async function getRejectedTaxiOrders(req, res) {
 
 async function getTaxiOrders(req, res) {
 	try {
-		const orders = await TaxiOrderDao.getOrders();
+		const orders = await prisma.taxi_orders.findMany({
+			include: {
+				user: true,
+				driver: {
+					include: {
+						user: true,
+						vehicles: {
+							include: {
+								vehicle_specification: true,
+							}
+						}
+					}
+				}
+			}
+		});
 		// console.tag("TaxiOrderController","taxi orders", orders);
 		res.status(200).json(orders);
 	} catch (e) {
@@ -256,7 +270,6 @@ async function getTaxiOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 
 /**
  * GET /taxi/orders/completed/user/:user_id
