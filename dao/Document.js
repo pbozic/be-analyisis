@@ -328,6 +328,24 @@ const linkDocumentToUser = async (documentId, userId) => {
     }
 };
 
+const linkDocumentToTransaction = async (documentId, transactionId) => {
+    try {
+        return await prisma.documents.update({
+            where: { document_id: documentId },
+            data: {
+                transactions: {
+                    connect: {
+                        transaction_id: transactionId
+                    }
+                }
+            },
+        });
+    } catch (error) {
+        console.error("Error linking document to transaction:", error);
+        return new Error(error);
+    }
+};
+
 const linkDocumentToVehicle = async (documentId, vehicleId) => {
     try {
         return await prisma.documents.update({
@@ -604,6 +622,7 @@ module.exports = {
     updateDocumentIssueDate,
     updateDocumentAdditionalInfo,
     linkDocumentToUser,
+    linkDocumentToTransaction,
     linkDocumentToVehicle,
     linkDocumentToDriver,
     linkDocumentToDeliveryDriver,

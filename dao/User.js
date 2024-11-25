@@ -1,6 +1,6 @@
 const prisma = require("../prisma/prisma");
 const bcrypt = require("bcrypt");
-const { createDocument } = require("./Document");
+const { createDocument, linkDocumentToTransaction } = require("./Document");
 const { addFileToDocument } = require("./File");
 const S3Helper = require("../lib/s3");
 
@@ -547,56 +547,45 @@ async function deleteUserByUserId(userId) {
 
 const updateWalletBalance = async (userId, amount, documents) => {
 	try {
-		await prisma.$transaction(async (transaction) => {
-			// Update wallet balance
-			await transaction.users.update({
-				where: { user_id: userId },
-				data: {
-					wallet_balance: {
-						increment: amount,
-					},
+		await prisma.users.update({
+			where: { user_id: userId },
+			data: {
+				wallet_balance: {
+					increment: amount,
 				},
-			});
-
-			const newTransaction = await transaction.transactions.create({
-				data: {
-					user: { connect: { user_id: userId } },
-					amount: amount,
-					type: 'CREDIT',
-					description: 'Added funds to wallet',
-				},
-			});
-			console.log("Transaction", newTransaction)
-
-			if (documents && Array.isArray(documents)) {
-				for (const file of documents) {
-					let documentData
-					if (newTransaction.transaction_id) {
-						console.log("ID: ", newTransaction.transaction_id)
-						documentData = {
-							document_type: file.document_type,
-							transaction_id: newTransaction.transaction_id,
-						};
-					} else {
-						documentData = {
-							document_type: file.document_type,
-						}
-					}
-					const newDocument = await createDocument(documentData);
-
-					const base64 = file.base64;
-					delete file.base64;
-					delete file.document_type;
-					delete file.name;
-					const newFile = await addFileToDocument(newDocument.document_id, file);
-
-					const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
-					await S3Helper.SaveObject(key, base64, file.mime_type, {
-						users: [userId],
-					}, file);
-				}
-			}
+			},
 		});
+
+		const newTransaction = await prisma.transactions.create({
+			data: {
+				user: { connect: { user_id: userId } },
+				amount: amount,
+				type: 'CREDIT',
+				description: 'Added funds to wallet',
+			},
+		});
+
+		if (documents && Array.isArray(documents)) {
+			for (const file of documents) {
+				const documentData = {
+						document_type: file.document_type,
+					};
+				const newDocument = await createDocument(documentData);
+
+				await linkDocumentToTransaction(newDocument.document_id, newTransaction.transaction_id);
+
+				const base64 = file.base64;
+				delete file.base64;
+				delete file.document_type;
+				delete file.name;
+				const newFile = await addFileToDocument(newDocument.document_id, file);
+
+				const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
+				await S3Helper.SaveObject(key, base64, file.mime_type, {
+					users: [userId],
+				}, file);
+			}
+		}
 		console.log('Funds added to wallet successfully');
 	} catch (error) {
 		console.error("Error updating wallet balance:", error);
