@@ -566,13 +566,22 @@ const updateWalletBalance = async (userId, amount, documents) => {
 					description: 'Added funds to wallet',
 				},
 			});
+			console.log("Transaction", newTransaction)
 
 			if (documents && Array.isArray(documents)) {
 				for (const file of documents) {
-					const documentData = {
-						document_type: file.document_type,
-						transaction_id: newTransaction.transaction_id,
-					};
+					let documentData
+					if (newTransaction.transaction_id) {
+						console.log("ID: ", newTransaction.transaction_id)
+						documentData = {
+							document_type: file.document_type,
+							transaction_id: newTransaction.transaction_id,
+						};
+					} else {
+						documentData = {
+							document_type: file.document_type,
+						}
+					}
 					const newDocument = await createDocument(documentData);
 
 					const base64 = file.base64;
