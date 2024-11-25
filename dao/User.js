@@ -571,7 +571,7 @@ const updateWalletBalance = async (userId, amount, documents) => {
 				for (const file of documents) {
 					const documentData = {
 						document_type: file.document_type,
-						transactions: { connect: { transaction_id: newTransaction.transaction_id } },
+						transaction_id: newTransaction.transaction_id,
 					};
 					const newDocument = await createDocument(documentData);
 
