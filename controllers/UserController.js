@@ -1502,7 +1502,7 @@ async function updateWalletBalance(req, res) {
 
 	try {
 		let updatedUser = await UserDao.updateWalletBalance(user_id, amount, documents);
-
+		console.log("Updated User: ", updatedUser)
 		if (updatedUser) {
 			return res.status(200).json({ message: "Wallet balance updated successfully.", wallet_balance: updatedUser.wallet_balance });
 		}
