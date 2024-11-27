@@ -547,7 +547,7 @@ async function deleteUserByUserId(userId) {
 
 const updateWalletBalance = async (userId, amount, documents) => {
 	try {
-		await prisma.users.update({
+		const updatedUser = await prisma.users.update({
 			where: { user_id: userId },
 			data: {
 				wallet_balance: {
@@ -587,6 +587,7 @@ const updateWalletBalance = async (userId, amount, documents) => {
 			}
 		}
 		console.log('Funds added to wallet successfully');
+		return updatedUser
 	} catch (error) {
 		console.error("Error updating wallet balance:", error);
 		throw new Error(error);
