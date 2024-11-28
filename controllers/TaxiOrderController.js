@@ -1321,6 +1321,48 @@ async function getDriversForOrder(req, res) {
 	}
 }
 
+
+/**
+ * GET /taxi/orders/pagination
+ * @tag Taxi
+ * @summary Get taxi orders with pagination.
+ * @description This fetches orders with pagination.
+ * @operationId getTaxiOrdersWithPagination
+ * @requestBody {Object} where - Optional filters for the query.
+ * @requestBody {Object} cursor - Cursor for pagination.
+ * @requestBody {number} take - Number of records to fetch.
+ * @response 200 - Successful operation. Returns a list of orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+async function getTaxiOrdersWithPagination(req, res) {
+	const { cursor, take, where } = req.body;
+
+	try {
+		const [data, total] = await Promise.all([
+			prisma.taxi_orders.findMany({
+				take,
+				skip: cursor ? 1 : 0,
+				cursor: cursor ? {
+					order_id: cursor.order_id,
+					createdAt: cursor.createdAt,
+				} : undefined,
+				where,
+				orderBy: { createdAt: 'desc' },
+				include: { user: true },
+			}),
+			prisma.taxi_orders.count({
+				where // Ensure the count matches the filtered results
+			}),
+		]);
+
+		res.status(200).json({ data, total });
+	} catch (error) {
+		console.error("TaxiOrderController", error);
+		res.status(500).json({ message: "Error something went wrong..." });
+	}
+}
+
 module.exports = {
 	getTaxiOrders,
 	getOrder,
@@ -1348,5 +1390,6 @@ module.exports = {
 	appendTaxiDriver,
 	getScheduledOrders,
 	getDriversForOrder,
-	getScheduledOrdersByUserId
+	getScheduledOrdersByUserId,
+	getTaxiOrdersWithPagination
 };

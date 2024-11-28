@@ -10,6 +10,7 @@ const joi = require("../../middleware/joi");
 router.get("/", TaxiOrderController.getTaxiOrders);
 router.get("/order/:order_id", TaxiOrderController.getOrder);
 router.get("/order/:order_id/available-drivers", TaxiOrderController.getDriversForOrder);
+router.get("/orders/pagination/", TaxiOrderController.getTaxiOrdersWithPagination);
 router.get("/orders/completed/:driver_id", TaxiOrderController.getCompletedTaxiOrders);
 router.get("/orders/completed/user/:user_id", TaxiOrderController.getCompletedTaxiOrdersByUserId);
 router.get("/orders/rejected/:driver_id", TaxiOrderController.getRejectedTaxiOrders);
