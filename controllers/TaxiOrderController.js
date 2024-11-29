@@ -1347,10 +1347,10 @@ async function getTaxiOrdersWithPagination(req, res) {
 				skip: cursor ? 1 : 0,
 				cursor: cursor ? {
 					order_id: cursor.order_id,
-					createdAt: cursor.createdAt,
+					created_at: cursor.created_at,
 				} : undefined,
 				where,
-				orderBy: { createdAt: 'desc' },
+				orderBy: { created_at: 'desc' },
 				include: { user: true },
 			}),
 			prisma.taxi_orders.count({
