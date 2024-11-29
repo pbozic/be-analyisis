@@ -1349,7 +1349,7 @@ async function getTaxiOrdersWithPagination(req, res) {
 				} : undefined,
 				where,
 				orderBy: { created_at: 'desc' },
-				include: { user: true, driver: { include: {	user: true } } },
+				include: { user: true, driver: { include: {	user: true, vehicles: true } } },
 			}),
 			prisma.taxi_orders.count({
 				where // Ensure the count matches the filtered results
