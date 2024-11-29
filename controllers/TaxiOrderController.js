@@ -1337,11 +1337,11 @@ async function getDriversForOrder(req, res) {
  */
 async function getTaxiOrdersWithPagination(req, res) {
 	const { cursor, take, where } = req.body;
-
+	console.log("cursor: ", cursor, "where: ", where);
 	try {
 		const [data, total] = await Promise.all([
 			prisma.taxi_orders.findMany({
-				take,
+				take: take,
 				skip: cursor ? 1 : 0,
 				cursor: cursor ? {
 					order_id: cursor.order_id,
@@ -1349,7 +1349,7 @@ async function getTaxiOrdersWithPagination(req, res) {
 				} : undefined,
 				where,
 				orderBy: { created_at: 'desc' },
-				include: { user: true },
+				include: { user: true, driver: { include: {	user: true } } },
 			}),
 			prisma.taxi_orders.count({
 				where // Ensure the count matches the filtered results
