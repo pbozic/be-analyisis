@@ -1336,12 +1336,12 @@ async function getDriversForOrder(req, res) {
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getTaxiOrdersWithPagination(req, res) {
-	const { cursor, take, where } = req.body;
-	console.log("cursor: ", cursor, "where: ", where);
+	const { cursor, take, where } = req.query;
+
 	try {
 		const [data, total] = await Promise.all([
 			prisma.taxi_orders.findMany({
-				take: take,
+				take: parseInt(take),
 				skip: cursor ? 1 : 0,
 				cursor: cursor ? {
 					order_id: cursor.order_id,
