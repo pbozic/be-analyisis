@@ -1,4 +1,4 @@
-export const bih = {
+const bih = {
     USER_NOTIFICATIONS: {
         pending: '',
         accepted: "Vaša narudžba za taksi je prihvaćena.",
@@ -22,3 +22,4 @@ export const bih = {
         customerCanceled: "Kupac je otkazao narudžbu.",
     }
 }
+module.exports = bih;

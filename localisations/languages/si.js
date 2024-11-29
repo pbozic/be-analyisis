@@ -1,4 +1,4 @@
-export const   si = {
+const   si = {
     USER_NOTIFICATIONS: {
         pending: '',
         accepted: "Vaše naročilo taksija je bilo sprejeto.",
@@ -22,3 +22,4 @@ export const   si = {
         customerCanceled: "Stranka je preklicala naročilo.",
     }
 }
+module.exports = si;

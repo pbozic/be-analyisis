@@ -1,7 +1,7 @@
-import { languageTexts } from "./texts";
+const { languageTexts } = require("./texts");
 
 // Modified function to accept user data directly
-export const getLocalisedTexts = (routeName, user) => {
+const getLocalisedTexts = (routeName, user) => {
     const langSelected = user.language;
     const texts = languageTexts[langSelected ? langSelected.toLowerCase() : 'en'];
 
@@ -12,3 +12,4 @@ export const getLocalisedTexts = (routeName, user) => {
 
     return texts[routeName] || routeName;
 };
+module.exports = { getLocalisedTexts };
