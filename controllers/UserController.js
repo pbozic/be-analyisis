@@ -1534,7 +1534,7 @@ async function getTransactions(req, res) {
  * @summary Update the language preference for a user.
  * @description This endpoint is used to update the language preference for a particular user.
  * @operationId updateUserLanguage
- * @bodyDescription The user ID and the new language preference
+ * @bodyDescription The user selected Language
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Language updated successfully. Returns the updated user details.
@@ -1543,13 +1543,7 @@ async function getTransactions(req, res) {
  */
 async function updateUserLanguage(req, res) {
 	try {
-
-		if (req.body.language) {
-			return res.status(400).json({ error: "User language is required." });
-		}if (req.user.user_id) {
-			return res.status(400).json({ error: "User ID is required." });
-		}
-
+		console.log("language body req", req.body)
 		const updatedUser = await UserDao.updateUserLanguage(req.user.user_id, req.body.language);
 		if (updatedUser) {
 			return res.status(200).json(updatedUser);

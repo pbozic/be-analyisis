@@ -31,6 +31,9 @@ const verifyPhoneSchema = Joi.object({
 const updateEmailSchema = Joi.object({
 	email: Joi.string().required(),
 });
+const updateUserLanguageSchema = Joi.object({
+	language: Joi.string().required(),
+});
 
 const updatePasswordSchema = Joi.object({
 	password: Joi.string().required(),
@@ -71,6 +74,7 @@ module.exports = {
 	updateSchema,
 	verifyPhoneSchema,
 	updateEmailSchema,
+	updateUserLanguageSchema,
 	updatePasswordSchema,
 	updateTelephoneSchema,
 	addAddressSchema,
