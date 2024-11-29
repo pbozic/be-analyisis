@@ -1342,6 +1342,7 @@ async function getTaxiOrdersWithPagination(req, res) {
 
 	try {
 		const whereObject = buildWhereObject(where);
+		console.log("whereObject: ", whereObject);
 		const [data, total] = await Promise.all([
 			prisma.taxi_orders.findMany({
 				take: parseInt(take),
