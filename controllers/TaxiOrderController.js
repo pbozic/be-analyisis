@@ -10,7 +10,7 @@ const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, ORDER_TYPE } = require("../lib/cons
 const { User } = require("@onesignal/node-onesignal");
 const { sendNotificationToUser } = require("../lib/oneSignal");
 const { sendOrderNotifications } = require("../lib/notifications");
-const { sleep, range } = require("../lib/helpersLib");
+const { sleep, range, buildWhereObject } = require("../lib/helpersLib");
 const prisma = require("../prisma/prisma");
 
 /**
@@ -1324,7 +1324,6 @@ async function getDriversForOrder(req, res) {
 	}
 }
 
-
 /**
  * GET /taxi/orders/pagination
  * @tag Taxi
@@ -1342,6 +1341,7 @@ async function getTaxiOrdersWithPagination(req, res) {
 	const { cursor, take, where } = req.query;
 
 	try {
+		const whereObject = buildWhereObject(where);
 		const [data, total] = await Promise.all([
 			prisma.taxi_orders.findMany({
 				take: parseInt(take),
@@ -1350,12 +1350,12 @@ async function getTaxiOrdersWithPagination(req, res) {
 					order_id: cursor.order_id,
 					created_at: cursor.created_at,
 				} : undefined,
-				where,
+				whereObject,
 				orderBy: { created_at: 'desc' },
 				include: { user: true, driver: { include: {	user: true, vehicles: true } } },
 			}),
 			prisma.taxi_orders.count({
-				where // Ensure the count matches the filtered results
+				whereObject // Ensure the count matches the filtered results
 			}),
 		]);
 
