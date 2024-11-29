@@ -1528,6 +1528,37 @@ async function getTransactions(req, res) {
 	}
 }
 
+/**
+ * PATCH /users/language
+ * @tag Users
+ * @summary Update the language preference for a user.
+ * @description This endpoint is used to update the language preference for a particular user.
+ * @operationId updateUserLanguage
+ * @bodyDescription The user ID and the new language preference
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Language updated successfully. Returns the updated user details.
+ * @responseContent {User} 200.application/json
+ * @response 400 - Error updating user language.
+ */
+async function updateUserLanguage(req, res) {
+	try {
+		const { user_id, language } = req.body;
+		if (!user_id || !language) {
+			return res.status(400).json({ error: "User ID and language are required." });
+		}
+
+		const updatedUser = await UserDao.updateUserLanguage(user_id, language);
+		if (updatedUser) {
+			return res.status(200).json(updatedUser);
+		}
+		res.status(400).json({ error: "Error updating user language." });
+	} catch (e) {
+		console.log(e);
+		res.status(400).json({ error: "Error updating user language.", e });
+	}
+}
+
 module.exports = {
 	listUsers,
 	listPersonalUsers,
@@ -1572,5 +1603,6 @@ module.exports = {
 	getFamilyWalletBalanceAndType,
 	getWalletBalance,
 	getTransactions,
-	updateWalletBalance
+	updateWalletBalance,
+	updateUserLanguage,
 };

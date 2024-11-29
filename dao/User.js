@@ -606,6 +606,20 @@ const getTransactions = async (userId) => {
 		throw new Error(error);
 	}
 }
+const updateUserLanguage = async (user_id, language) => {
+	try {
+		return prisma.users.update({
+			where: {
+				user_id: user_id,
+			},
+			data: {
+				language: language,
+			},
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
 module.exports = {
 	getUsers,
 	getUserById,
@@ -613,6 +627,7 @@ module.exports = {
 	getUser,
 	updateUser,
 	updateEmail,
+	updateUserLanguage,
 	updateUserPassword,
 	updateTelephone,
 	updateUserType,
@@ -639,5 +654,5 @@ module.exports = {
 	updateUserTransferPushNotifications,
 	getUserByEmail,
 	getTransactions,
-	updateWalletBalance
+	updateWalletBalance,
 };

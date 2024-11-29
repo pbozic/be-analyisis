@@ -844,8 +844,9 @@ async function updateOrderStatus(req, res) {
 
 		let user_id = order?.user_id;
 		let driver_id = order?.driver?.driver_id;
-
-		sendOrderNotifications(user_id, driver_id, req.body.status);
+		let user = await UsersDao.getUserById(user_id);
+		let driver = await DriverDao.getDriverById(driver_id);
+		sendOrderNotifications(user, driver, user_id, driver_id, req.body.status);
 
 		res.status(200).json(order);
 	} catch (e) {
@@ -921,8 +922,9 @@ async function cancelOrder(req, res) {
 		let order = await TaxiOrderDao.getOrder(order_id);
 		let user_id = order?.user_id;
 		let driver_id = order?.driver_id;
-
-		sendOrderNotifications(user_id, driver_id, status);
+		let user = await UsersDao.getUserById(user_id);
+		let driver = await DriverDao.getDriverById(driver_id);
+		sendOrderNotifications(user, driver, user_id, driver_id, status);
 
 		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
 
@@ -996,8 +998,9 @@ async function rejectOrder(req, res) {
 		let order = await TaxiOrderDao.getOrder(order_id);
 		let user_id = order?.user_id;
 		let driver_id = order?.driver_id;
-
-		sendOrderNotifications(user_id, driver_id, status);
+		let user = await UsersDao.getUserById(user_id);
+		let driver = await DriverDao.getDriverById(driver_id);
+		sendOrderNotifications(user, driver, user_id, driver_id, status);
 
 		if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
 			new_status = TAXI_ORDER_STATUS.PENDING;

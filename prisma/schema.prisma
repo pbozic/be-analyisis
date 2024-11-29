@@ -129,6 +129,7 @@ model users {
   disabled                               Boolean           @default(false)
   child_users                            group_users[]     @relation("parent_user")
   parent_user                            group_users?      @relation("child_user")
+  language                               String?           @default("en")
 }
 
 model group_users {
