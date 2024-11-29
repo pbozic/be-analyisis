@@ -1543,12 +1543,14 @@ async function getTransactions(req, res) {
  */
 async function updateUserLanguage(req, res) {
 	try {
-		const { user_id, language } = req.body;
-		if (!user_id || !language) {
-			return res.status(400).json({ error: "User ID and language are required." });
+
+		if (req.body.language) {
+			return res.status(400).json({ error: "User language is required." });
+		}if (req.user.user_id) {
+			return res.status(400).json({ error: "User ID is required." });
 		}
 
-		const updatedUser = await UserDao.updateUserLanguage(user_id, language);
+		const updatedUser = await UserDao.updateUserLanguage(req.user.user_id, req.body.language);
 		if (updatedUser) {
 			return res.status(200).json(updatedUser);
 		}
