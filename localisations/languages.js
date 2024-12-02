@@ -4,6 +4,7 @@ const { languageTexts } = require("./texts");
 const getLocalisedTexts = (routeName, user) => {
     const langSelected = user?.language;
     const texts = languageTexts[langSelected ? langSelected.toLowerCase() : 'en'];
+    console.info(`\nGot texts: ${texts}\nfor route: ${routeName} and language: ${langSelected}`);
 
     if (!texts) {
         console.log(`Localization texts not found for language: ${langSelected}`);
