@@ -920,10 +920,11 @@ async function cancelOrder(req, res) {
 
 	try {
 		let order = await TaxiOrderDao.getOrder(order_id);
+		console.info("TaxiOrderController", "GET ORDER BY ID", order);
 		let user_id = order?.user_id;
 		let driver_id = order?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
-		let driver = driver_id!==null ? await DriverDao.getDriverById(driver_id) : null;
+		let driver = (driver_id!==null) ? await DriverDao.getDriverById(driver_id) : null;
 		sendOrderNotifications(user, driver, user_id, driver_id, status);
 
 		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
@@ -935,23 +936,29 @@ async function cancelOrder(req, res) {
 		} else if (typeof cancellation_reason === "string" && cancellation_reason.trim() !== "") {
 			reason = cancellation_reason; // Use the raw cancellation reason if it's a non-empty string
 		}
-		if (order.parent_order_id) {
-			let parentOrder = await TaxiOrderDao.getOrder(order.parent_order_id);
-			if (parentOrder.grouped_orders.length > 0) {
-				for (let or of parentOrder.grouped_orders) {
+		//TODO: handle scenario where grouped order is also scheduled order
+		//	currently a repeating scheduled order is also a grouped order,
+		//	this, for example, causes an issue when cancelling a single repeat of a scheduled order
+		//	TEMPORARY FIX: never checking the group members when deleting a scheduled order
+		if(!order.is_scheduled) {
+			if (order.parent_order_id) {
+				let parentOrder = await TaxiOrderDao.getOrder(order.parent_order_id);
+				if (parentOrder.grouped_orders.length > 0) {
+					for (let or of parentOrder.grouped_orders) {
+						await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
+						await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
+						io.to("order_" + or.order_id).emit("order_status_change__taxi", or);
+						io.to("order_" + or.order_id).emit("order_cancelled__taxi", or);
+					}
+				}
+			}
+			if (order.grouped_orders.length > 0) {
+				for (let or of order.grouped_orders) {
 					await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
 					await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
 					io.to("order_" + or.order_id).emit("order_status_change__taxi", or);
 					io.to("order_" + or.order_id).emit("order_cancelled__taxi", or);
 				}
-			}
-		}
-		if (order.grouped_orders.length > 0) {
-			for (let or of order.grouped_orders) {
-				await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
-				await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
-				io.to("order_" + or.order_id).emit("order_status_change__taxi", or);
-				io.to("order_" + or.order_id).emit("order_cancelled__taxi", or);
 			}
 		}
 		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);
@@ -1197,6 +1204,7 @@ async function updateCompleteTaxiRoute(req, res) {
  */
 async function updateTaxiOrderTimeline(req, res) {
 	const { order_id, timeline } = req.body;
+	console.info("TaxiOrderController", "UPDATE ORDER TIMELINE", req.body);
 
 	try {
 		let order = await TaxiOrderDao.updateTaxiOrderTimeline(order_id, timeline);
