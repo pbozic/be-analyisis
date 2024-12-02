@@ -2,7 +2,7 @@ const { languageTexts } = require("./texts");
 
 // Modified function to accept user data directly
 const getLocalisedTexts = (routeName, user) => {
-    const langSelected = user.language;
+    const langSelected = user?.language;
     const texts = languageTexts[langSelected ? langSelected.toLowerCase() : 'en'];
 
     if (!texts) {
