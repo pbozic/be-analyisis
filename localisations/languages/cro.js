@@ -1,4 +1,4 @@
-const cro = {
+export const cro = {
     USER_NOTIFICATIONS: {
         pending: '',
         accepted: "Vaša narudžba za taksi je prihvaćena.",
@@ -22,4 +22,3 @@ const cro = {
         customerCanceled: "Kupac je otkazao narudžbu.",
     }
 }
-module.exports = cro;

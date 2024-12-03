@@ -1,4 +1,4 @@
-const  srb = {
+export const  srb = {
     USER_NOTIFICATIONS: {
         pending: '',
         accepted: "Vaša narudžbina za taksi je prihvaćena.",
@@ -22,4 +22,3 @@ const  srb = {
         customerCanceled: "Kupac je otkazao narudžbinu.",
     }
 }
-module.exports = srb;

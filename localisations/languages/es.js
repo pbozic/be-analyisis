@@ -1,4 +1,4 @@
-const es = {
+export const es = {
     USER_NOTIFICATIONS: {
         pending: '',
         accepted: "Su pedido de taxi ha sido aceptado.",
@@ -22,4 +22,3 @@ const es = {
         customerCanceled: "El cliente ha cancelado el pedido.",
     }
 }
-module.exports = es;

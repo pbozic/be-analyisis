@@ -1,15 +1,15 @@
-const { en } = require("./languages/en");
-const { si } = require("./languages/si");
-const { it } = require("./languages/it");
-const { de } = require("./languages/de");
-const { es } = require("./languages/es");
-const { srb } = require("./languages/srb");
-const { bih } = require("./languages/bih");
-const { cro } = require("./languages/cro");
-const { fr } = require("./languages/fr");
-const { ru } = require("./languages/ru");
+import {en} from "./languages/en";
+import {si} from "./languages/si";
+import {it} from "./languages/it";
+import {de} from "./languages/de";
+import {es} from "./languages/es";
+import {srb} from "./languages/srb";
+import {bih} from "./languages/bih";
+import {cro} from "./languages/cro";
+import {fr} from "./languages/fr";
+import {ru} from "./languages/ru";
 
-const languageTexts = {
+export const languageTexts = {
     en,
     si,
     it,
@@ -19,9 +19,5 @@ const languageTexts = {
     bih,
     cro,
     fr,
-    ru
-};
-
-module.exports = {
-    languageTexts
+    ru,
 };

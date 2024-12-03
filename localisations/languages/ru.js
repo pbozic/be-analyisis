@@ -1,4 +1,4 @@
-const ru = {
+export const ru = {
     USER_NOTIFICATIONS: {
         pending: '',
         accepted: "Ваш заказ такси был принят.",
@@ -22,4 +22,3 @@ const ru = {
         customerCanceled: "Клиент отменил заказ.",
     }
 }
-module.exports = ru;
