@@ -1346,11 +1346,9 @@ async function getDriversForOrder(req, res) {
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getTaxiOrdersWithPagination(req, res) {
-	const { cursor, take, where } = req.query;
+	const { cursor, take, where, orderBy } = req.query;
 
 	try {
-		const whereObject = buildWhereObject(where);
-		console.log("whereObject: ", whereObject);
 		const [data, total] = await Promise.all([
 			prisma.taxi_orders.findMany({
 				take: parseInt(take),
@@ -1359,12 +1357,12 @@ async function getTaxiOrdersWithPagination(req, res) {
 					order_id: cursor.order_id,
 					created_at: cursor.created_at,
 				} : undefined,
-				where: whereObject,
-				orderBy: { created_at: 'desc' },
+				where,
+				orderBy: orderBy ? orderBy : { created_at: 'desc' },
 				include: { user: true, driver: { include: {	user: true, vehicles: true } } },
 			}),
 			prisma.taxi_orders.count({
-				where: whereObject // Ensure the count matches the filtered results
+				where // Ensure the count matches the filtered results
 			}),
 		]);
 
