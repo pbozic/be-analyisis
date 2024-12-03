@@ -1,4 +1,4 @@
-import { languageTexts } from "./texts";
+const { languageTexts } = require("./texts");
 
 // Modified function to accept user data directly
 const getLocalisedTexts = (routeName, user) => {
