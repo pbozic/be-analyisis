@@ -16,7 +16,7 @@ const { generateItemsFromPreferences, resendPendingOrdersToDeliveryDriver, sendA
 const { sortLocationsByNearestNeighbor, todaysEarnings } = require("../lib/helpersLib");
 const { connect } = require("http2");
 const {RESTAURANT_FEE} = require('../lib/constants');
-
+const prisma = require("../prisma/prisma");
 
 /**
  * GET /delivery/orders
@@ -904,7 +904,7 @@ async function getDeliveryOrdersToday(req, res) {
 			return res.status(200).json({orders: orders.length, amount: todaysEarnings(orders, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED) });
 		}
 	} catch (e) {
-		console.error("TaxiOrderController", e);
+		console.error("DeliveryOrderController", e);
 		res.status(500).json(e);
 	}
 }
