@@ -1339,24 +1339,23 @@ async function getDriversForOrder(req, res) {
  * @description This fetches orders with pagination.
  * @operationId getTaxiOrdersWithPagination
  * @requestBody {Object} where - Optional filters for the query.
- * @requestBody {Object} cursor - Cursor for pagination.
+ * @requestBody {Object} orderBy - Optional sorting for the query.
  * @requestBody {number} take - Number of records to fetch.
+ * @requestBody {number} page - Page number to fetch.
  * @response 200 - Successful operation. Returns a list of orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getTaxiOrdersWithPagination(req, res) {
-	const { cursor, take, where, orderBy } = req.query;
-
+	const { where, orderBy } = req.query;
+	const page = req.query.page ? parseInt(req.query.page) : 1;
+	const take = req.query.take ? parseInt(req.query.take) : 8;
 	try {
+		const skip = (page-1)*take;
 		const [data, total] = await Promise.all([
 			prisma.taxi_orders.findMany({
-				take: parseInt(take),
-				skip: cursor ? 1 : 0,
-				cursor: cursor ? {
-					order_id: cursor.order_id,
-					created_at: cursor.created_at,
-				} : undefined,
+				take: take,
+				skip: skip,
 				where,
 				orderBy: orderBy ? orderBy : { created_at: 'desc' },
 				include: { user: true, driver: { include: {	user: true, vehicles: true } } },
