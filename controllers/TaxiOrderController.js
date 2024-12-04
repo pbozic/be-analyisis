@@ -1388,20 +1388,7 @@ async function getTaxiOrdersWithPagination(req, res) {
 async function getTaxiOrdersToday(req, res) {
 	try {
 		const orders = await prisma.taxi_orders.findMany({
-			where: { status: TAXI_ORDER_STATUS.TAXI_COMPLETED, created_at: { gte: new Date(new Date().setHours(0,0,0,0)) } },
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						vehicles: {
-							include: {
-								vehicle_specification: true,
-							}
-						}
-					}
-				}
-			}
+			where: { status: TAXI_ORDER_STATUS.TAXI_COMPLETED, created_at: { gte: new Date(new Date().setHours(0,0,0,0)) } }
 		});
 		if (orders) {
 			return res.status(200).json({orders: orders.length, amount: todaysEarnings(orders, TAXI_ORDER_STATUS.TAXI_COMPLETED) });

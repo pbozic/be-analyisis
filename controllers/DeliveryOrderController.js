@@ -885,20 +885,7 @@ async function updateDeliveryOrder(req, res) {
 async function getDeliveryOrdersToday(req, res) {
 	try {
 		const orders = await prisma.delivery_orders.findMany({
-			where: { status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED, created_at: { gte: new Date(new Date().setHours(0,0,0,0)) } },
-			include: {
-				user: true,
-				driver: {
-					include: {
-						user: true,
-						vehicles: {
-							include: {
-								vehicle_specification: true,
-							}
-						}
-					}
-				}
-			}
+			where: { status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED, created_at: { gte: new Date(new Date().setHours(0,0,0,0)) } }
 		});
 		if (orders) {
 			return res.status(200).json({orders: orders.length, amount: todaysEarnings(orders, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED) });
