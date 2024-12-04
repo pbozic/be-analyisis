@@ -924,7 +924,7 @@ async function cancelOrder(req, res) {
 		let user_id = order?.user_id;
 		let driver_id = order?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
-		let driver = (driver_id!==null) ? await DriverDao.getDriverById(driver_id) : null;
+		let driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
 		sendOrderNotifications(user, driver, user_id, driver_id, status);
 
 		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
@@ -1006,7 +1006,7 @@ async function rejectOrder(req, res) {
 		let user_id = order?.user_id;
 		let driver_id = order?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
-		let driver = await DriverDao.getDriverById(driver_id);
+		let driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
 		sendOrderNotifications(user, driver, user_id, driver_id, status);
 
 		if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
