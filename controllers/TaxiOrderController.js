@@ -10,7 +10,7 @@ const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, ORDER_TYPE } = require("../lib/cons
 const { User } = require("@onesignal/node-onesignal");
 const { sendNotificationToUser } = require("../lib/oneSignal");
 const { sendOrderNotifications } = require("../lib/notifications");
-const { sleep, range, buildWhereObject } = require("../lib/helpersLib");
+const { sleep, range, buildWhereObject, todaysEarnings } = require("../lib/helpersLib");
 const prisma = require("../prisma/prisma");
 
 /**
@@ -1372,8 +1372,46 @@ async function getTaxiOrdersWithPagination(req, res) {
 	}
 }
 
+/**
+ * GET /taxi/orders/today
+ * @tag Taxi
+ * @summary Get all taxi orders for today and earnings.
+ * @description This fetches all taxi orders for today and earnings.
+ * @operationId getTaxiOrdersToday
+ * @response 200 - Successful operation. Returns a list of all taxi orders today and earnings in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+async function getTaxiOrdersToday(req, res) {
+	try {
+		const orders = await prisma.taxi_orders.findMany({
+			where: { status: TAXI_ORDER_STATUS.TAXI_COMPLETED, created_at: { gte: new Date(new Date().setHours(0,0,0,0)) } },
+			include: {
+				user: true,
+				driver: {
+					include: {
+						user: true,
+						vehicles: {
+							include: {
+								vehicle_specification: true,
+							}
+						}
+					}
+				}
+			}
+		});
+		if (orders) {
+			return res.status(200).json({orders: orders.length, amount: todaysEarnings(orders, TAXI_ORDER_STATUS.TAXI_COMPLETED) });
+		}
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
+		res.status(500).json(e);
+	}
+}
+
 module.exports = {
 	getTaxiOrders,
+	getTaxiOrdersToday,
 	getOrder,
 	getCompletedTaxiOrders,
 	getCanceledTaxiOrders,
