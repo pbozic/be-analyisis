@@ -1004,7 +1004,7 @@ async function rejectOrder(req, res) {
 	try {
 		let order = await TaxiOrderDao.getOrder(order_id);
 		if(order?.status === TAXI_ORDER_STATUS.CUSTOMER_CANCELED) {
-			return res.status(410).json({ error: "Order was already canceled by customer.", error_type:"ERR_ORDER_ALREADY_CANCELED" });
+			return res.status(410).json({ error: "Order was already canceled by customer."});//, error_type:"ERR_ORDER_ALREADY_CANCELED" });
 		}
 		let user_id = order?.user_id;
 		let driver_id = order?.driver_id;
