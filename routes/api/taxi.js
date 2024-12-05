@@ -14,6 +14,7 @@ router.get("/order/:order_id/available-drivers", TaxiOrderController.getDriversF
 router.get("/orders/pagination/", TaxiOrderController.getTaxiOrdersWithPagination);
 router.get("/orders/completed/:driver_id", TaxiOrderController.getCompletedTaxiOrders);
 router.get("/orders/completed/user/:user_id", TaxiOrderController.getCompletedTaxiOrdersByUserId);
+router.get("/orders/completed/business/:business_id", TaxiOrderController.getCompletedTaxiOrdersByBusinessId);
 router.get("/orders/rejected/:driver_id", TaxiOrderController.getRejectedTaxiOrders);
 router.get("/orders/canceled/:driver_id", TaxiOrderController.getCanceledTaxiOrders);
 router.get("/orders/canceled/user/:user_id", TaxiOrderController.getCanceledTaxiOrdersByUserId);

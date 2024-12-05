@@ -3,6 +3,7 @@ const DriverDao = require("../dao/Driver");
 const UsersDao = require("../dao/User");
 const FlagDao = require("../dao/Flags");
 const BusinessUsersDao = require("../dao/BusinessUsers");
+const GroupDao = require("../dao/Group");
 const { UserSockets, io } = require("../socket");
 const gApi = require("../lib/gApis");
 const TaxiHelper = require("../lib/taxiHelpers");
@@ -276,8 +277,8 @@ async function getTaxiOrders(req, res) {
  * @tag Taxi
  * @summary Get completed taxi orders.
  * @description This fetches all completed orders for a specific driver.
- * @operationId getCompletedTaxiOrders
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
+ * @operationId getCompletedTaxiOrdersByUserId
+ * @requestBody {UserId} userId - The ID of the driver to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -291,6 +292,41 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
 			where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
 				user_id: user_id
+			}
+		});
+		res.status(200).json(completedOrders);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * GET /taxi/orders/completed/business/:business_id
+ * @tag Taxi
+ * @summary Get completed taxi orders.
+ * @description This fetches all completed orders for a business.
+ * @operationId getCompletedTaxiOrdersByBusinessId
+ * @requestBody {BusinessId} businessId - The ID of the business to retrieve completed orders for
+ * @response 200 - Successful operation. Returns a list of completed orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+
+async function getCompletedTaxiOrdersByBusinessId(req, res) {
+	const { business_id } = req.params;
+
+	try {
+		const businessUsers = await BusinessUsersDao.getBusinessUsersByBusinessId(business_id);
+		const userIds = businessUsers.flatMap(businessUser => [
+			businessUser.user_id,
+			...businessUser.users?.child_users?.map(child => child.child_user_id)
+		]);
+
+		const completedOrders = await TaxiOrderDao.getOrders({
+			where: {
+				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
+				user_id: { in: userIds }
 			}
 		});
 		res.status(200).json(completedOrders);
@@ -1421,6 +1457,7 @@ module.exports = {
 	updateTaxiOrderTimeline,
 	getActiveTaxiOrders,
 	getCompletedTaxiOrdersByUserId,
+	getCompletedTaxiOrdersByBusinessId,
 	getCanceledTaxiOrdersByUserId,
 	getActiveTaxiOrdersByDriverId,
 	createDispatchOrder,
