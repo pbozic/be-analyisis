@@ -701,8 +701,11 @@ async function acceptOrder(req, res) {
 		let order = await TaxiOrderDao.getOrder(order_id);
 		//TODO: check if driver is online
 		//TODO: check if order is still pending
-		if (order.status !== TAXI_ORDER_STATUS.PENDING) {
-			return res.status(400).json({ message: "Order is already accepted." });
+
+		if (order.status === TAXI_ORDER_STATUS.CUSTOMER_CANCELED) {
+			return res.status(400).json({ error: "Order has been canceled by customer.",error_type:"ERR_ORDER_ALREADY_CANCELED" });
+		}else if (order.status !== TAXI_ORDER_STATUS.PENDING) {
+			return res.status(400).json({ error: "Order is already accepted." });
 		}
 
 		if (order.is_scheduled) {
@@ -1040,7 +1043,7 @@ async function rejectOrder(req, res) {
 	try {
 		let order = await TaxiOrderDao.getOrder(order_id);
 		if(order?.status === TAXI_ORDER_STATUS.CUSTOMER_CANCELED) {
-			return res.status(410).json({ error: "Order was already canceled by customer." });
+			return res.status(410).json({ error: "Order was already canceled by customer.", error_type:"ERR_ORDER_ALREADY_CANCELED" });
 		}
 		let user_id = order?.user_id;
 		let driver_id = order?.driver_id;
