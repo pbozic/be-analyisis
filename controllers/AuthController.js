@@ -111,7 +111,7 @@ async function login(req, res) {
 			refresh_token,
 			payment_methods
 		};
-		res.status(200).header("Authorization", access_token).json(user);
+		res.status(200).header("x-authorization", access_token).json(user);
 	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
@@ -187,7 +187,7 @@ async function register(req, res) {
 			access_token,
 			refresh_token,
 		};
-		res.status(200).header("Authorization", access_token).json(user);
+		res.status(200).header("x-authorization", access_token).json(user);
 	} catch (e) {
 		console.log(e)
 		res.status(400).json({ error: "Error something went wrong..", e });
@@ -230,7 +230,7 @@ async function refreshToken(req, res) {
 			access_token,
 			refresh_token,
 		};
-		res.status(200).header("Authorization", access_token).json(user);
+		res.status(200).header("x-authorization", access_token).json(user);
 	});
 }
 /**
