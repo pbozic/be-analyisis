@@ -3,6 +3,7 @@ const DriverDao = require("../dao/Driver");
 const UsersDao = require("../dao/User");
 const FlagDao = require("../dao/Flags");
 const BusinessUsersDao = require("../dao/BusinessUsers");
+const GroupDao = require("../dao/Group");
 const { UserSockets, io } = require("../socket");
 const gApi = require("../lib/gApis");
 const TaxiHelper = require("../lib/taxiHelpers");
@@ -10,7 +11,7 @@ const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, ORDER_TYPE } = require("../lib/cons
 const { User } = require("@onesignal/node-onesignal");
 const { sendNotificationToUser } = require("../lib/oneSignal");
 const { sendOrderNotifications } = require("../lib/notifications");
-const { sleep, range } = require("../lib/helpersLib");
+const { sleep, range, buildWhereObject, todaysEarnings } = require("../lib/helpersLib");
 const prisma = require("../prisma/prisma");
 
 /**
@@ -276,8 +277,8 @@ async function getTaxiOrders(req, res) {
  * @tag Taxi
  * @summary Get completed taxi orders.
  * @description This fetches all completed orders for a specific driver.
- * @operationId getCompletedTaxiOrders
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
+ * @operationId getCompletedTaxiOrdersByUserId
+ * @requestBody {UserId} userId - The ID of the driver to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -291,6 +292,41 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
 			where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
 				user_id: user_id
+			}
+		});
+		res.status(200).json(completedOrders);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * GET /taxi/orders/completed/business/:business_id
+ * @tag Taxi
+ * @summary Get completed taxi orders.
+ * @description This fetches all completed orders for a business.
+ * @operationId getCompletedTaxiOrdersByBusinessId
+ * @requestBody {BusinessId} businessId - The ID of the business to retrieve completed orders for
+ * @response 200 - Successful operation. Returns a list of completed orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+
+async function getCompletedTaxiOrdersByBusinessId(req, res) {
+	const { business_id } = req.params;
+
+	try {
+		const businessUsers = await BusinessUsersDao.getBusinessUsersByBusinessId(business_id);
+		const userIds = businessUsers.flatMap(businessUser => [
+			businessUser.user_id,
+			...businessUser.users?.child_users?.map(child => child.child_user_id)
+		]);
+
+		const completedOrders = await TaxiOrderDao.getOrders({
+			where: {
+				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
+				user_id: { in: userIds }
 			}
 		});
 		res.status(200).json(completedOrders);
@@ -665,8 +701,11 @@ async function acceptOrder(req, res) {
 		let order = await TaxiOrderDao.getOrder(order_id);
 		//TODO: check if driver is online
 		//TODO: check if order is still pending
-		if (order.status !== TAXI_ORDER_STATUS.PENDING) {
-			return res.status(400).json({ message: "Order is already accepted." });
+
+		if (order.status === TAXI_ORDER_STATUS.CUSTOMER_CANCELED) {
+			return res.status(400).json({ error: "Order has been canceled by customer.",error_type:"ERR_ORDER_ALREADY_CANCELED" });
+		}else if (order.status !== TAXI_ORDER_STATUS.PENDING) {
+			return res.status(400).json({ error: "Order is already accepted." });
 		}
 
 		if (order.is_scheduled) {
@@ -920,10 +959,11 @@ async function cancelOrder(req, res) {
 
 	try {
 		let order = await TaxiOrderDao.getOrder(order_id);
+		console.info("TaxiOrderController", "GET ORDER BY ID", order);
 		let user_id = order?.user_id;
 		let driver_id = order?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
-		let driver = await DriverDao.getDriverById(driver_id);
+		let driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
 		sendOrderNotifications(user, driver, user_id, driver_id, status);
 
 		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
@@ -935,23 +975,29 @@ async function cancelOrder(req, res) {
 		} else if (typeof cancellation_reason === "string" && cancellation_reason.trim() !== "") {
 			reason = cancellation_reason; // Use the raw cancellation reason if it's a non-empty string
 		}
-		if (order.parent_order_id) {
-			let parentOrder = await TaxiOrderDao.getOrder(order.parent_order_id);
-			if (parentOrder.grouped_orders.length > 0) {
-				for (let or of parentOrder.grouped_orders) {
+		//TODO: handle scenario where grouped order is also scheduled order
+		//	currently a repeating scheduled order is also a grouped order,
+		//	this, for example, causes an issue when cancelling a single repeat of a scheduled order
+		//	TEMPORARY FIX: never checking the group members when deleting a scheduled order
+		if(!order.is_scheduled) {
+			if (order.parent_order_id) {
+				let parentOrder = await TaxiOrderDao.getOrder(order.parent_order_id);
+				if (parentOrder.grouped_orders.length > 0) {
+					for (let or of parentOrder.grouped_orders) {
+						await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
+						await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
+						io.to("order_" + or.order_id).emit("order_status_change__taxi", or);
+						io.to("order_" + or.order_id).emit("order_cancelled__taxi", or);
+					}
+				}
+			}
+			if (order.grouped_orders.length > 0) {
+				for (let or of order.grouped_orders) {
 					await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
 					await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
 					io.to("order_" + or.order_id).emit("order_status_change__taxi", or);
 					io.to("order_" + or.order_id).emit("order_cancelled__taxi", or);
 				}
-			}
-		}
-		if (order.grouped_orders.length > 0) {
-			for (let or of order.grouped_orders) {
-				await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
-				await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
-				io.to("order_" + or.order_id).emit("order_status_change__taxi", or);
-				io.to("order_" + or.order_id).emit("order_cancelled__taxi", or);
 			}
 		}
 		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);
@@ -996,10 +1042,13 @@ async function rejectOrder(req, res) {
 	let new_status = status;
 	try {
 		let order = await TaxiOrderDao.getOrder(order_id);
+		if(order?.status === TAXI_ORDER_STATUS.CUSTOMER_CANCELED) {
+			return res.status(410).json({ error: "Order was already canceled by customer.", error_type:"ERR_ORDER_ALREADY_CANCELED" });
+		}
 		let user_id = order?.user_id;
 		let driver_id = order?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
-		let driver = await DriverDao.getDriverById(driver_id);
+		let driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
 		sendOrderNotifications(user, driver, user_id, driver_id, status);
 
 		if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
@@ -1197,6 +1246,7 @@ async function updateCompleteTaxiRoute(req, res) {
  */
 async function updateTaxiOrderTimeline(req, res) {
 	const { order_id, timeline } = req.body;
+	console.info("TaxiOrderController", "UPDATE ORDER TIMELINE", req.body);
 
 	try {
 		let order = await TaxiOrderDao.updateTaxiOrderTimeline(order_id, timeline);
@@ -1324,7 +1374,6 @@ async function getDriversForOrder(req, res) {
 	}
 }
 
-
 /**
  * GET /taxi/orders/pagination
  * @tag Taxi
@@ -1332,26 +1381,25 @@ async function getDriversForOrder(req, res) {
  * @description This fetches orders with pagination.
  * @operationId getTaxiOrdersWithPagination
  * @requestBody {Object} where - Optional filters for the query.
- * @requestBody {Object} cursor - Cursor for pagination.
+ * @requestBody {Object} orderBy - Optional sorting for the query.
  * @requestBody {number} take - Number of records to fetch.
+ * @requestBody {number} page - Page number to fetch.
  * @response 200 - Successful operation. Returns a list of orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getTaxiOrdersWithPagination(req, res) {
-	const { cursor, take, where } = req.query;
-
+	const { where, orderBy } = req.query;
+	const page = req.query.page ? parseInt(req.query.page) : 1;
+	const take = req.query.take ? parseInt(req.query.take) : 8;
 	try {
+		const skip = (page-1)*take;
 		const [data, total] = await Promise.all([
 			prisma.taxi_orders.findMany({
-				take: parseInt(take),
-				skip: cursor ? 1 : 0,
-				cursor: cursor ? {
-					order_id: cursor.order_id,
-					created_at: cursor.created_at,
-				} : undefined,
+				take: take,
+				skip: skip,
 				where,
-				orderBy: { created_at: 'desc' },
+				orderBy: orderBy ? orderBy : { created_at: 'desc' },
 				include: { user: true, driver: { include: {	user: true, vehicles: true } } },
 			}),
 			prisma.taxi_orders.count({
@@ -1366,8 +1414,33 @@ async function getTaxiOrdersWithPagination(req, res) {
 	}
 }
 
+/**
+ * GET /taxi/orders/today
+ * @tag Taxi
+ * @summary Get all taxi orders for today and earnings.
+ * @description This fetches all taxi orders for today and earnings.
+ * @operationId getTaxiOrdersToday
+ * @response 200 - Successful operation. Returns a list of all taxi orders today and earnings in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+async function getTaxiOrdersToday(req, res) {
+	try {
+		const orders = await prisma.taxi_orders.findMany({
+			where: { status: TAXI_ORDER_STATUS.TAXI_COMPLETED, created_at: { gte: new Date(new Date().setHours(0,0,0,0)) } }
+		});
+		if (orders) {
+			return res.status(200).json({orders: orders.length, amount: todaysEarnings(orders, TAXI_ORDER_STATUS.TAXI_COMPLETED) });
+		}
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
+		res.status(500).json(e);
+	}
+}
+
 module.exports = {
 	getTaxiOrders,
+	getTaxiOrdersToday,
 	getOrder,
 	getCompletedTaxiOrders,
 	getCanceledTaxiOrders,
@@ -1387,6 +1460,7 @@ module.exports = {
 	updateTaxiOrderTimeline,
 	getActiveTaxiOrders,
 	getCompletedTaxiOrdersByUserId,
+	getCompletedTaxiOrdersByBusinessId,
 	getCanceledTaxiOrdersByUserId,
 	getActiveTaxiOrdersByDriverId,
 	createDispatchOrder,

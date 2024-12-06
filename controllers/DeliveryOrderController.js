@@ -13,10 +13,10 @@ const Constants = require("../lib/constants");
 const { getUsers } = require("../dao/User");
 const { delivery_orders } = require("@prisma/client");
 const { generateItemsFromPreferences, resendPendingOrdersToDeliveryDriver, sendActiveOrdersToDeliveryDriver } = require("../lib/deliveryHelpers");
-const { sortLocationsByNearestNeighbor } = require("../lib/helpersLib");
+const { sortLocationsByNearestNeighbor, todaysEarnings } = require("../lib/helpersLib");
 const { connect } = require("http2");
 const {RESTAURANT_FEE} = require('../lib/constants');
-
+const prisma = require("../prisma/prisma");
 
 /**
  * GET /delivery/orders
@@ -872,8 +872,33 @@ async function updateDeliveryOrder(req, res) {
 	}
 }
 
+/**
+ * GET /delivery/orders/today
+ * @tag Delivery
+ * @summary Get all delivery orders for today and earnings.
+ * @description This fetches all delivery orders for today and earnings.
+ * @operationId getDeliveryOrdersToday
+ * @response 200 - Successful operation. Returns a list of all delivery orders today and earnings in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+async function getDeliveryOrdersToday(req, res) {
+	try {
+		const orders = await prisma.delivery_orders.findMany({
+			where: { status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED, created_at: { gte: new Date(new Date().setHours(0,0,0,0)) } }
+		});
+		if (orders) {
+			return res.status(200).json({orders: orders.length, amount: todaysEarnings(orders, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED) });
+		}
+	} catch (e) {
+		console.error("DeliveryOrderController", e);
+		res.status(500).json(e);
+	}
+}
+
 module.exports = {
 	getDeliveryOrders,
+	getDeliveryOrdersToday,
 	getActiveDeliveryOrders,
 	getOrder,
 	createOrder,
