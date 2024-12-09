@@ -3,8 +3,7 @@ const jwt = require("jsonwebtoken");
 const { UserSockets } = require("../socket");
 
 const authMiddleware = (req, res, next) => {
-	// const authHeader = req.headers["authorization"];
-	const authHeader = req.headers["x-authorization"];
+	const authHeader = req.headers["authorization"];
 
 	const token = authHeader && authHeader.split(" ")[1];
 	if (!token) {

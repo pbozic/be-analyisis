@@ -13,7 +13,7 @@ const io = new Server(
 );
 
 io.use((socket, next) => {
-	let token = socket.handshake.auth.token || (socket.handshake.headers["x-authorization"] && socket.handshake.headers["x-authorization"].split(" ")[1]);
+	let token = socket.handshake.auth.token || (socket.handshake.headers["authorization"] && socket.handshake.headers["authorization"].split(" ")[1]);
 	
 	if (!token) return next(new Error("Authentication error"));
 	jwt.verify(token, process.env.JWT_TOKEN_SECRET, (err, data) => {
