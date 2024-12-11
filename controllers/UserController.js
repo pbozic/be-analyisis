@@ -1543,8 +1543,8 @@ async function getTransactions(req, res) {
  */
 async function updateUserLanguage(req, res) {
 	try {
-		console.log("language body req", req.body)
-		const updatedUser = await UserDao.updateUserLanguage(req.user.user_id, req.body.language);
+		//console.log("language body req", req.body)
+		const updatedUser = await UserDao.updateUserLanguage(req.body.user_id, req.body.language);
 		if (updatedUser) {
 			return res.status(200).json(updatedUser);
 		}
