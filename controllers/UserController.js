@@ -914,7 +914,7 @@ async function reviewUser(req, res) {
 	}
 }
 /**
- * GET /users/me/payments/credentials
+ * GET /users/me/payment-sheet
  * @tag Users
  * @summary Get payment sheet credentials for a user
  * @description This endpoint is used to get Stripe payment sheet credentials for a particular user.
