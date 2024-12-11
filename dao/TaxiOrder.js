@@ -581,8 +581,7 @@ async function updateTaxiOrderTimeline(order_id, newTimelineEntries) {
         }
 
         const updatedTimeline = [...order.timeline, ...newTimelineEntries];
-
-        return await prisma.taxi_orders.update({
+        const updated_order = await prisma.taxi_orders.update({
             where: {
                 order_id
             },
@@ -590,9 +589,35 @@ async function updateTaxiOrderTimeline(order_id, newTimelineEntries) {
                 timeline: updatedTimeline
             },
             include: {
-              driver:true
+                grouped_orders: true,
+                user: true,
+                driver: {
+                    include: {
+                        user: {
+                            include: {
+                                documents: {
+                                    include: {
+                                        files: true,
+                                    }
+                                }
+                            }
+                        },
+                        vehicles: {
+                            include: {
+                                vehicle_specification: true,
+                            }
+                        }
+                    }
+                },
             }
-        });
+        })
+
+        // const responseOrder = await prisma.taxi_orders.findUnique({
+        //     where: {
+        //         order_id
+        //     }
+        // });
+        return updated_order;
     } catch (e) {
         throw new Error(e);
     }
