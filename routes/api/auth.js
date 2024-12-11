@@ -4,12 +4,15 @@ const AuthController = require("../../controllers/AuthController");
 const { loginSchema, registerSchema, refreshSchema, resetPasswordRequestSchema } = require("../../joi/authSchemas");
 
 const joi = require("../../middleware/joi");
+const { updateUserLanguageSchema } = require("../../joi/userSchemas");
+const UserController = require("../../controllers/UserController");
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
 	res.render("index", { title: "Express" });
 });
 
+router.patch("/language",joi(updateUserLanguageSchema), UserController.updateUserLanguage);
 router.get("/scheduled_users", AuthController.getScheduledUsers);
 router.post("/login", joi(loginSchema), AuthController.login);
 router.post("/register", joi(registerSchema), AuthController.register);
