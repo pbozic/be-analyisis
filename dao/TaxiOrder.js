@@ -588,6 +588,9 @@ async function updateTaxiOrderTimeline(order_id, newTimelineEntries) {
             },
             data: {
                 timeline: updatedTimeline
+            },
+            include: {
+              driver:true
             }
         });
     } catch (e) {
