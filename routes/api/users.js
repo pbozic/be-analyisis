@@ -32,7 +32,6 @@ router.patch("/:user_id/wallet", UserController.updateWalletBalance);
 router.patch("/me", joi(updateSchema), UserController.updateMe);
 router.patch("/me/password", joi(updatePasswordSchema), UserController.updatePassword);
 router.patch("/me/email", joi(updateEmailSchema), UserController.updateEmail);
-router.patch("/me/language",joi(updateUserLanguageSchema), UserController.updateUserLanguage);
 router.patch("/me/profile_picture", UserController.updateProfilePicture);
 router.patch("/me/taxi-preferences", UserController.updateUserTaxiPreferences);
 router.patch("/me/notification-preferences", UserController.updateUserNotificationPreferences);
