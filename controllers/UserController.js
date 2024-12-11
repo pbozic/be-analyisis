@@ -914,7 +914,7 @@ async function reviewUser(req, res) {
 	}
 }
 /**
- * GET /users/me/payments/credentials
+ * GET /users/me/payment-sheet
  * @tag Users
  * @summary Get payment sheet credentials for a user
  * @description This endpoint is used to get Stripe payment sheet credentials for a particular user.
@@ -1543,8 +1543,8 @@ async function getTransactions(req, res) {
  */
 async function updateUserLanguage(req, res) {
 	try {
-		console.log("language body req", req.body)
-		const updatedUser = await UserDao.updateUserLanguage(req.user.user_id, req.body.language);
+		//console.log("language body req", req.body)
+		const updatedUser = await UserDao.updateUserLanguage(req.body.user_id, req.body.language);
 		if (updatedUser) {
 			return res.status(200).json(updatedUser);
 		}

@@ -32,6 +32,7 @@ const updateEmailSchema = Joi.object({
 	email: Joi.string().required(),
 });
 const updateUserLanguageSchema = Joi.object({
+	user_id: Joi.string().required(),
 	language: Joi.string().required(),
 });
 

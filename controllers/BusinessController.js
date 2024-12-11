@@ -100,7 +100,25 @@ async function listMerchantBusinessesMainInfo(req, res) {
 	}
 }
 
-
+/**
+ * GET /businesses/taxi/main
+ * @tag Business
+ * @summary List all transfer businesses (main info only)
+ * @description Retrieves a list of all transfer businesses
+ * @operationId listTransferBusinessesMainInfo
+ * @response 200 - Successful operation, returns a list of transfer businesses
+ * @responseContent {Business[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the transfer businesses list
+ */
+async function listTransferBusinessesMainInfo(req, res) {
+	try {
+		const transferBusinesses = await BusinessDao.getBusinessesByTypeMainInformation(Constants.BUSINESS_TYPE.TRANSFER);
+		res.status(200).json(transferBusinesses);
+	} catch (e) {
+		console.error("Error listing transfer businesses", e);
+		res.status(400).json({ error: "Error listing transfer businesses", e });
+	}
+}
 
 /**
  * GET /businesses/taxis
@@ -1146,6 +1164,7 @@ module.exports = {
 	manualSortScheduledUsers,
 	addScheduledUserSortingType,
 	listMerchantBusinessesMainInfo,
+	listTransferBusinessesMainInfo,
 	getBusinessEarnings,
 	getAllBusinessesEarnings,
 	getTotalEarnings,
