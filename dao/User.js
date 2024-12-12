@@ -620,6 +620,36 @@ const updateUserLanguage = async (user_id, language) => {
 		return new Error(error);
 	}
 };
+
+const wipeUserPersonalData = async (user_id) => {
+	try {
+		const disabled_count = await prisma.users.aggregate({
+			where: {
+				disabled: true,
+			},
+			_count: {
+				age: true,
+			},
+		})
+		const fake_number = String(disabled_count).padStart(10, '0')
+		return prisma.users.update({
+			where: {
+				user_id: user_id,
+			},
+			data: {
+				first_name: null,
+				last_name: null,
+				email: null,
+				telephone_code: "",
+				telephone_number: "",
+				telephone: fake_number,
+				phone_verified: false,
+			},
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
 module.exports = {
 	getUsers,
 	getUserById,
@@ -655,4 +685,5 @@ module.exports = {
 	getUserByEmail,
 	getTransactions,
 	updateWalletBalance,
+	wipeUserPersonalData
 };

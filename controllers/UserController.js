@@ -786,6 +786,31 @@ async function updateUserDisabledByUserId(req, res) {
 	}
 }
 
+/**
+ * PATCH /users/soft_delete/{user_id}
+ * @tag Users
+ * @summary Performs a "soft delete" for a user by their ID
+ * @description This endpoint is used to "soft delete" a user's account by their user ID.
+ * @operationId softDeleteUserByUserId
+ * @pathParam {string} user_id - The ID of the user to disable
+ * @response 200 - User "soft delete" successful.
+ * @responseContent {User} 200.application/json
+ * @response 400 - Error soft deleting user.
+ */
+async function softDeleteUserByUserId(req, res) {
+	const {user_id} = req.params;
+	try {
+		const disabledUser = await UserDao.updateUserDisabled(user_id,true);
+		const wipedUser = await UserDao.wipeUserPersonalData(user_id);
+		return res.status(200).json({
+			message: "User \"soft delete\" successful.",
+			user: wipedUser,
+		});
+	} catch (error) {
+		console.error("Error soft deleting user:", error);
+		return res.status(400).json({ error: "Error soft deleting user."});
+	}
+}
 
 /**
  * PATCH /me/disabled
@@ -1601,4 +1626,5 @@ module.exports = {
 	getTransactions,
 	updateWalletBalance,
 	updateUserLanguage,
+	softDeleteUserByUserId
 };
