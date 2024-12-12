@@ -68,9 +68,8 @@ async function getScheduledUsers(req, res) {
  */
 async function login(req, res) {
 	let postData = req.body;
-	const email = parseTelephone(postData.email.toLowerCase());
 	try {
-		let user = await UserDao.getUserByEmailOrTelephone(email, {
+		let user = await UserDao.getUserByEmailOrTelephone(postData.email.toLowerCase().replace(/\s+/g, ''), {
 			select: {
 				password: true,
 			},

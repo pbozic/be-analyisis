@@ -90,10 +90,13 @@ const getUserByEmailOrTelephone = async (query, args) => {
 			where: {
 				OR: [
 				{
-					email: query,
+					email: query
 				},
 				{
 					telephone: query
+				},
+				{
+					telephone_number: query
 				}
 			]
 				

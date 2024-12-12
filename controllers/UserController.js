@@ -73,7 +73,9 @@ async function listPersonalUsers(req, res) {
 	try {
 		let users = await UserDao.getUsers({
 			where: {
-				user_role: USER_ROLE.PERSONAL
+				user_role: USER_ROLE.PERSONAL,
+				parent_user: null,
+				disabled: false
 			},
 			include: {
 				addresses: {
