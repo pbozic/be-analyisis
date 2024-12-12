@@ -812,8 +812,6 @@ async function softDeleteUserByUserId(req, res) {
 	}
 }
 
-
-
 /**
  * PATCH /me/disabled
  * @tag Users

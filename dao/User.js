@@ -639,10 +639,9 @@ const wipeUserPersonalData = async (user_id) => {
 			data: {
 				first_name: null,
 				last_name: null,
-				gender: null,
 				email: null,
-				telephone_code: null,
-				telephone_number: null,
+				telephone_code: "",
+				telephone_number: "",
 				telephone: fake_number,
 				phone_verified: false,
 			},
