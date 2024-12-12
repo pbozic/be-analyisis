@@ -623,12 +623,9 @@ const updateUserLanguage = async (user_id, language) => {
 
 const wipeUserPersonalData = async (user_id) => {
 	try {
-		const disabled_count = await prisma.users.aggregate({
+		const disabled_count = await prisma.users.count({
 			where: {
 				disabled: true,
-			},
-			_count: {
-				age: true,
 			},
 		})
 		const fake_number = String(disabled_count).padStart(10, '0')
