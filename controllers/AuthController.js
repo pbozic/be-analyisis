@@ -22,6 +22,7 @@ const stripe = require("../lib/stripe");
 const MenuDao = require('../dao/Menu');
 const { PrismaClient } = require("@prisma/client");
 const SMSHelper = require("../lib/SMS");
+const { parseTelephone } = require("../lib/helpersLib");
 const prisma = new PrismaClient();
 require('dotenv').config();
 
@@ -67,8 +68,9 @@ async function getScheduledUsers(req, res) {
  */
 async function login(req, res) {
 	let postData = req.body;
+	const email = parseTelephone(postData.email.toLowerCase());
 	try {
-		let user = await UserDao.getUserByEmailOrTelephone(postData.email.toLowerCase(), {
+		let user = await UserDao.getUserByEmailOrTelephone(email, {
 			select: {
 				password: true,
 			},
