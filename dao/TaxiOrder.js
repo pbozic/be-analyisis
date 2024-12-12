@@ -558,7 +558,29 @@ async function updateCompleteTaxiRoute(order_id, route) {
             where: {
                 order_id
             },
-            data: data
+            data: data,
+            include: {
+                grouped_orders: true,
+                user: true,
+                driver: {
+                    include: {
+                        user: {
+                            include: {
+                                documents: {
+                                    include: {
+                                        files: true,
+                                    }
+                                }
+                            }
+                        },
+                        vehicles: {
+                            include: {
+                                vehicle_specification: true,
+                            }
+                        }
+                    }
+                },
+            }
         });
     } catch (e) {
         throw new Error(e);
@@ -611,12 +633,6 @@ async function updateTaxiOrderTimeline(order_id, newTimelineEntries) {
                 },
             }
         })
-
-        // const responseOrder = await prisma.taxi_orders.findUnique({
-        //     where: {
-        //         order_id
-        //     }
-        // });
         return updated_order;
     } catch (e) {
         throw new Error(e);
