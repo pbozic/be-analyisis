@@ -128,8 +128,9 @@ const refreshSchema = Joi.object({
 });
 
 const resetPasswordRequestSchema = Joi.object({
-	email: Joi.string().email().required().allow(Joi.string().pattern(/^(?:\+?[1-9]\d{0,14}|0\d{1,14})$/)),
-});
+	email: Joi.string().email().optional(),
+	telephone: Joi.string().pattern(/^(?:\+?[1-9]\d{0,14}|0\d{1,14})$/).optional(),
+}).xor('email', 'telephone');
 
 const resetPasswordSchema = Joi.object({
 	password: Joi.string()
