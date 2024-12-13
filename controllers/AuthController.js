@@ -69,7 +69,7 @@ async function getScheduledUsers(req, res) {
 async function login(req, res) {
 	let postData = req.body;
 	try {
-		let user = await UserDao.getUserByEmailOrTelephone(postData.email.toLowerCase().replace(/\s+/g, ''), {
+		let user = await UserDao.getUserByEmailOrTelephone(postData.email.toLowerCase(), {
 			select: {
 				password: true,
 			},
@@ -137,7 +137,6 @@ async function login(req, res) {
 async function register(req, res) {
 	let postData = req.body;
 	try {
-
 		if (!postData.email)
 		{
 			postData.email = "";
@@ -158,8 +157,13 @@ async function register(req, res) {
 			postData.telephone,
 		);
 		const userRole = postData.user_role || "PERSONAL";
+		const countryCode = postData.telephone_code;
+		const phoneNumber = postData.telephone_number;
+		//TODO: Adjust this for other country codes?
+		const normalizedPhoneNumber = countryCode === 'SI' && !phoneNumber.startsWith('0') ? '0' + phoneNumber : phoneNumber;
 		let userObj = {
 			...postData,
+			telephone_number: normalizedPhoneNumber,
 			date_of_birth: new Date(postData.date_of_birth),
 			password: hash,
 			user_role: userRole,
