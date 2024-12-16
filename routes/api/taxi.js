@@ -33,9 +33,11 @@ router.post("/order/complete_route", TaxiOrderController.updateCompleteTaxiRoute
 router.post("/order/accept", TaxiOrderController.acceptOrder);
 router.post("/order/complete", TaxiOrderController.completeOrder);
 router.post("/order/cancel", TaxiOrderController.cancelOrder);
-router.post("/order/reject", TaxiOrderController.rejectOrder);
 router.post("/order/timeline", TaxiOrderController.updateTaxiOrderTimeline);
 router.post("/order/payment", TaxiOrderController.updateTaxiOrderPayment);
 router.post("/order/append_driver", TaxiOrderController.appendTaxiDriver);
+router.post("/order/reject", TaxiOrderController.rejectOrder);
+router.post("/grouped_order/cancel", TaxiOrderController.cancelGroupedOrderByParentId);
+router.post("/grouped_order/reject", TaxiOrderController.rejectGroupedOrderByParentId);
 
 module.exports = router;
