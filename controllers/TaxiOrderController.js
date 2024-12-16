@@ -544,12 +544,13 @@ async function createOrder(req, res) {
 		let orderData = {
 			...req.body,
 			status: "PENDING",
-			user_id: !req.body?.user_id ? req.user.user_id : req.body?.user_id,
-			telephone: !req.body?.telephone ? req.user.telephone : req.body?.telephone,
+			user_id: req.body?.user_id || req.user.user_id,
+			telephone: req.body?.telephone || req.user.telephone,
 			is_scheduled: req.body.preferences?.departure_date
 		};
 
 		console.info("USER TELEPHONE", orderData.telephone);
+		console.info("USER ID", orderData.user_id);
 
 		console.info("dep date", req.body.preferences?.departure_date);
 		let flags = await FlagDao.getFlags();
@@ -938,7 +939,6 @@ async function updateTaxiOrderPreferences(req, res) {
 		res.status(500).json({ message: "Server error", error: e });
 	}
 }
-
 
 /**
  * POST /taxi/order/cancel
