@@ -975,31 +975,27 @@ async function cancelOrder(req, res) {
 		} else if (typeof cancellation_reason === "string" && cancellation_reason.trim() !== "") {
 			reason = cancellation_reason; // Use the raw cancellation reason if it's a non-empty string
 		}
-		//TODO: handle scenario where grouped order is also scheduled order
-		//	currently a repeating scheduled order is also a grouped order,
-		//	this, for example, causes an issue when cancelling a single repeat of a scheduled order
-		//	TEMPORARY FIX: never checking the group members when deleting a scheduled order
-		if(!order.is_scheduled) {
-			if (order.parent_order_id) {
-				let parentOrder = await TaxiOrderDao.getOrder(order.parent_order_id);
-				if (parentOrder.grouped_orders.length > 0) {
-					for (let or of parentOrder.grouped_orders) {
-						await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
-						await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
-						io.to("order_" + or.order_id).emit("order_status_change__taxi", or);
-						io.to("order_" + or.order_id).emit("order_cancelled__taxi", or);
-					}
-				}
-			}
-			if (order.grouped_orders.length > 0) {
-				for (let or of order.grouped_orders) {
-					await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
-					await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
-					io.to("order_" + or.order_id).emit("order_status_change__taxi", or);
-					io.to("order_" + or.order_id).emit("order_cancelled__taxi", or);
-				}
-			}
-		}
+		// if(!order.is_scheduled) {
+		// 	if (order.parent_order_id) {
+		// 		let parentOrder = await TaxiOrderDao.getOrder(order.parent_order_id);
+		// 		if (parentOrder.grouped_orders.length > 0) {
+		// 			for (let or of parentOrder.grouped_orders) {
+		// 				await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
+		// 				await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
+		// 				io.to("order_" + or.order_id).emit("order_status_change__taxi", or);
+		// 				io.to("order_" + or.order_id).emit("order_cancelled__taxi", or);
+		// 			}
+		// 		}
+		// 	}
+		// 	if (order.grouped_orders.length > 0) {
+		// 		for (let or of order.grouped_orders) {
+		// 			await TaxiHelper.revokeTaxiOrderFromDrivers(or.order_id);
+		// 			await TaxiOrderDao.cancelOrder(or.order_id, status, reason);
+		// 			io.to("order_" + or.order_id).emit("order_status_change__taxi", or);
+		// 			io.to("order_" + or.order_id).emit("order_cancelled__taxi", or);
+		// 		}
+		// 	}
+		// }
 		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);
 
 		if (order.driver_id) {
@@ -1644,7 +1640,7 @@ async function rejectGroupedOrderByParentId(req,res){
 		if (pending) {
 			if (UserSockets.get(user_id)) {
 				console.log("EMITTING order_restart_search");
-				UserSockets.get(user_id).emit("order_restart_search", order);
+				UserSockets.get(user_id).emit("order_restart_search", parent_order);
 			}
 		}
 
