@@ -1438,6 +1438,223 @@ async function getTaxiOrdersToday(req, res) {
 	}
 }
 
+async function cancelGroupedOrderByParentId(req,res){
+	console.info("TaxiOrderController", "CANCEL GROUP ORDER", req.body);
+	const { parent_order_id, cancellation_reason } = req.body;
+	let reason = "";
+	if (Array.isArray(cancellation_reason) && cancellation_reason.length > 0) {
+		reason = cancellation_reason[0].value;
+	} else if (typeof cancellation_reason === "string" && cancellation_reason.trim() !== "") {
+		reason = cancellation_reason; // Use the raw cancellation reason if it's a non-empty string
+	}
+	const STATUS = TAXI_ORDER_STATUS.TAXI_CANCELED
+
+	try {
+		await TaxiHelper.revokeTaxiOrderFromDrivers(parent_order_id);
+
+		let parent_order = await TaxiOrderDao.getOrder(parent_order_id);
+		console.info(parent_order.grouped_orders)
+
+		for (let order of parent_order.grouped_orders) {
+			console.info("TaxiOrderController", "CANCELLING CHILD ORDER", order);
+
+			const { order_id, user_id, driver_id } = order
+			const user = await UsersDao.getUserById(user_id);
+			const driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
+
+			sendOrderNotifications(user, driver, user_id, driver_id, STATUS);
+			await TaxiHelper.revokeTaxiOrderFromDrivers(order_id);
+			await TaxiOrderDao.cancelOrder(order_id, STATUS, reason);
+
+			io.to("order_" + order_id).emit("order_status_change__taxi", order);
+			io.to("order_" + order_id).emit("order_cancelled__taxi", order);
+			if(driver){
+				await TaxiOrderDao.updateOrder(order_id, {
+					driver: {
+						disconnect: true
+					}
+				});
+				io.emit("driver_available", driver);
+			}
+		}
+
+		console.info("TaxiOrderController", "CANCELLING PARENT ORDER", parent_order);
+		const { order_id, user_id, driver_id } = parent_order
+		const user = await UsersDao.getUserById(user_id);
+		const driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
+
+		sendOrderNotifications(user, driver, user_id, driver_id, STATUS);
+		await TaxiOrderDao.cancelOrder(order_id, STATUS, reason);
+
+		io.to("order_" + order_id).emit("order_status_change__taxi", order);
+		io.to("order_" + order_id).emit("order_cancelled__taxi", order);
+		if(driver){
+			await TaxiOrderDao.updateOrder(order_id, {
+				driver: {
+					disconnect: true
+				}
+			});
+			io.emit("driver_available", driver);
+		}
+		res.status(200).json([parent_order_id,...parent_order.grouped_orders.map(order => order.order_id)]);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
+		res.status(500).json(e);
+	}
+}
+
+async function rejectGroupedOrderByParentId(req,res){
+	console.info("TaxiOrderController", "REJECT GROUP ORDER", req.body);
+	const { parent_order_id, rejection_reason } = req.body;
+	let reason = "";
+	if (Array.isArray(rejection_reason) && rejection_reason.length > 0) {
+		reason = rejection_reason[0].value;
+	} else if (typeof rejection_reason === "string" && rejection_reason.trim() !== "") {
+		reason = rejection_reason; // Use the raw cancellation reason if it's a non-empty string
+	}
+	const STATUS = TAXI_ORDER_STATUS.TAXI_REJECTED
+
+	try {
+		let parent_order = await TaxiOrderDao.getOrder(parent_order_id);
+		console.info(parent_order.grouped_orders)
+
+		for (let order of parent_order.grouped_orders) {
+			console.info("TaxiOrderController", "REJECTING CHILD ORDER", order);
+
+			const { order_id, user_id, driver_id } = order
+			const user = await UsersDao.getUserById(user_id);
+			const driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
+
+			sendOrderNotifications(user, driver, user_id, driver_id, STATUS);
+			await TaxiOrderDao.updateOrder(order_id, {
+				status: TAXI_ORDER_STATUS.PENDING,
+				last_sent_at: null
+			});
+
+			if (req.user.driver && req.user.driver.driver_id) {
+				await TaxiHelper.revokeTaxiOrderFromDriver(order_id, req.user.driver.driver_id);
+				let order_sent = await prisma.taxi_order_sent.findUnique({
+					where: {
+						taxi_order_sent_driver_unique: {
+							order_id,
+							driver_id: req.user.driver.driver_id
+						}
+					}
+				});
+
+				console.log("REJECT " + order_sent.taxi_order_sent_id);
+				if (order_sent.taxi_order_sent_id) {
+					await prisma.taxi_order_sent.update({
+						where: {
+							taxi_order_sent_id: order_sent.taxi_order_sent_id
+						},
+						data: {
+							rejected: true
+						}
+					});
+				}
+
+			}
+			await TaxiOrderDao.cancelOrder(order_id, TAXI_ORDER_STATUS.PENDING, reason);
+
+
+			io.to("order_" + order_id).emit("order_status_change__taxi", order);
+			io.to("order_" + order_id).emit("order_rejected__taxi", order);
+			if(driver){
+				await TaxiOrderDao.updateOrder(order_id, {
+					driver: {
+						disconnect: true
+					}
+				});
+				io.emit("driver_available", driver);
+			}
+
+			let userActiveOrders = await TaxiOrderDao.userActiveOrders(order.user_id);
+			let pending = true;
+			for (let or of userActiveOrders) {
+				if (or.status !== TAXI_ORDER_STATUS.PENDING) {
+					pending = false;
+				}
+			}
+			if (pending) {
+				if (UserSockets.get(user_id)) {
+					console.log("EMITTING order_restart_search");
+					UserSockets.get(user_id).emit("order_restart_search", order);
+				}
+			}
+		}
+
+		console.info("TaxiOrderController", "REJECTING PARENT ORDER", parent_order);
+		const { order_id, user_id, driver_id } = parent_order
+		const user = await UsersDao.getUserById(user_id);
+		const driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
+
+		sendOrderNotifications(user, driver, user_id, driver_id, STATUS);
+		await TaxiOrderDao.updateOrder(order_id, {
+			status: TAXI_ORDER_STATUS.PENDING,
+			last_sent_at: null
+		});
+
+		if (req.user.driver && req.user.driver.driver_id) {
+			await TaxiHelper.revokeTaxiOrderFromDriver(order_id, req.user.driver.driver_id);
+			let order_sent = await prisma.taxi_order_sent.findUnique({
+				where: {
+					taxi_order_sent_driver_unique: {
+						order_id,
+						driver_id: req.user.driver.driver_id
+					}
+				}
+			});
+
+			console.log("REJECT " + order_sent.taxi_order_sent_id);
+			if (order_sent.taxi_order_sent_id) {
+				await prisma.taxi_order_sent.update({
+					where: {
+						taxi_order_sent_id: order_sent.taxi_order_sent_id
+					},
+					data: {
+						rejected: true
+					}
+				});
+			}
+
+		}
+		await TaxiOrderDao.cancelOrder(order_id, TAXI_ORDER_STATUS.PENDING, reason);
+
+
+		io.to("order_" + order_id).emit("order_status_change__taxi", parent_order);
+		io.to("order_" + order_id).emit("order_rejected__taxi", parent_order);
+		if(driver){
+			await TaxiOrderDao.updateOrder(order_id, {
+				driver: {
+					disconnect: true
+				}
+			});
+			io.emit("driver_available", driver);
+		}
+
+		let userActiveOrders = await TaxiOrderDao.userActiveOrders(user_id);
+		let pending = true;
+		for (let or of userActiveOrders) {
+			if (or.status !== TAXI_ORDER_STATUS.PENDING) {
+				pending = false;
+			}
+		}
+		console.log("pending", pending);
+		if (pending) {
+			if (UserSockets.get(user_id)) {
+				console.log("EMITTING order_restart_search");
+				UserSockets.get(user_id).emit("order_restart_search", order);
+			}
+		}
+
+		res.status(200).json([parent_order_id,...parent_order.grouped_orders.map(order => order.order_id)]);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
+		res.status(500).json(e);
+	}
+}
+
 module.exports = {
 	getTaxiOrders,
 	getTaxiOrdersToday,
@@ -1449,7 +1666,9 @@ module.exports = {
 	acceptOrder,
 	completeOrder,
 	cancelOrder,
+	cancelGroupedOrderByParentId,
 	rejectOrder,
+	rejectGroupedOrderByParentId,
 	updateOrderStatus,
 	updateTaxiOrderRoute,
 	updateTaxiOrderPickupLocation,
