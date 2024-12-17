@@ -368,7 +368,7 @@ async function getCanceledTaxiOrdersByUserId(req, res) {
 async function createOrderHelper(req, res, orderData) {
 	try {
 		let prefs = orderData.preferences;
-		if (prefs.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
+		/*if (prefs.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
 			orderData.payment = {
 				...orderData.payment,
 				extras: {
@@ -376,7 +376,7 @@ async function createOrderHelper(req, res, orderData) {
 					type: 'PRIVATE_DRIVER_FEE'
 				}
 			}
-		}
+		}*/
 
 		let is_scheduled = prefs.departure_date != null;
 		let is_repeat = false;
@@ -810,11 +810,12 @@ async function completeOrder(req, res) {
 		});
 		if (order.payment.type === "WALLET") {
 			// handle wallet payment
-
-			if (user.wallet_balance < order.payment.price) {
+			const extraCost = order.payment.extras?.price || 0;
+			const totalCost = parseFloat(order.payment.price) + parseFloat(extraCost);
+			if (user.wallet_balance < totalCost) {
 				throw new Error("Insufficient funds");
 			}
-			await UsersDao.removeWalletBalance(order.user_id, parseFloat(order.payment.price), order.order_id, "taxi");
+			await UsersDao.removeWalletBalance(order.user_id, totalCost, order.order_id, "taxi");
 
 			order = await TaxiOrderDao.updateOrder(order.order_id, {
 				payment: {
@@ -840,17 +841,19 @@ async function completeOrder(req, res) {
 			if (allowance < order.payment.price) {
 				throw new Error("Insufficient allowance");
 			}
-			if (parent_user.wallet_balance < order.payment.price) {
+			const extraCost = order.payment.extras?.price || 0;
+			const totalCost = parseFloat(order.payment.price) + parseFloat(extraCost);
+			if (parent_user.wallet_balance < totalCost) {
 				throw new Error("Insufficient funds");
 			}
 
-			await UsersDao.removeWalletBalance(parent_user.user_id, parseFloat(order.payment.price), order.order_id, "taxi");
+			await UsersDao.removeWalletBalance(parent_user.user_id, totalCost, order.order_id, "taxi");
 			await prisma.group_users.update({
 				where: {
 					group_user_id: user.parent_user.group_user_id
 				},
 				data: {
-					allowance: user.parent_user.allowance - order.payment.price
+					allowance: user.parent_user.allowance - totalCost
 				}
 			});
 			order = await TaxiOrderDao.updateOrder(order.order_id, {
