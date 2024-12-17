@@ -1469,10 +1469,10 @@ async function cancelGroupedOrderByParentId(req,res){
 
 			sendOrderNotifications(user, driver, user_id, driver_id, STATUS);
 			await TaxiHelper.revokeTaxiOrderFromDrivers(order_id);
-			await TaxiOrderDao.cancelOrder(order_id, STATUS, reason);
+			const canceled_order = await TaxiOrderDao.cancelOrder(order_id, STATUS, reason);
 
-			io.to("order_" + order_id).emit("order_status_change__taxi", order);
-			io.to("order_" + order_id).emit("order_cancelled__taxi", order);
+			io.to("order_" + order_id).emit("order_status_change__taxi", canceled_order);
+			io.to("order_" + order_id).emit("order_cancelled__taxi", canceled_order);
 			if(driver){
 				await TaxiOrderDao.updateOrder(order_id, {
 					driver: {
@@ -1489,10 +1489,10 @@ async function cancelGroupedOrderByParentId(req,res){
 		const driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
 
 		sendOrderNotifications(user, driver, user_id, driver_id, STATUS);
-		await TaxiOrderDao.cancelOrder(order_id, STATUS, reason);
+		const canceled_order = await TaxiOrderDao.cancelOrder(order_id, STATUS, reason);
 
-		io.to("order_" + order_id).emit("order_status_change__taxi", parent_order);
-		io.to("order_" + order_id).emit("order_cancelled__taxi", parent_order);
+		io.to("order_" + order_id).emit("order_status_change__taxi", canceled_order);
+		io.to("order_" + order_id).emit("order_cancelled__taxi", canceled_order);
 		if(driver){
 			await TaxiOrderDao.updateOrder(order_id, {
 				driver: {
