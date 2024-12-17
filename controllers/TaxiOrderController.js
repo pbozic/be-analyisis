@@ -11,7 +11,7 @@ const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS } = require("../lib/c
 const { User } = require("@onesignal/node-onesignal");
 const { sendNotificationToUser } = require("../lib/oneSignal");
 const { sendOrderNotifications } = require("../lib/notifications");
-const { sleep, range, buildWhereObject, todaysEarnings } = require("../lib/helpersLib");
+const { sleep, range, calculatePrivateDriverFee, todaysEarnings } = require("../lib/helpersLib");
 const prisma = require("../prisma/prisma");
 
 /**
@@ -372,7 +372,7 @@ async function createOrderHelper(req, res, orderData) {
 			orderData.payment = {
 				...orderData.payment,
 				extras: {
-					price: 40,
+					price: calculatePrivateDriverFee(orderData?.estimates?.distance),
 					type: 'PRIVATE_DRIVER_FEE'
 				}
 			}
