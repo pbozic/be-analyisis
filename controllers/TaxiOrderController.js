@@ -1560,13 +1560,13 @@ async function rejectGroupedOrderByParentId(req,res){
 				}
 
 			}
-			await TaxiOrderDao.cancelOrder(order_id, TAXI_ORDER_STATUS.PENDING, reason);
+			let rejected_order = await TaxiOrderDao.cancelOrder(order_id, TAXI_ORDER_STATUS.PENDING, reason);
 
 
-			io.to("order_" + order_id).emit("order_status_change__taxi", order);
-			io.to("order_" + order_id).emit("order_rejected__taxi", order);
+			io.to("order_" + order_id).emit("order_status_change__taxi", rejected_order);
+			io.to("order_" + order_id).emit("order_rejected__taxi", rejected_order);
 			if(driver){
-				await TaxiOrderDao.updateOrder(order_id, {
+				rejected_order = await TaxiOrderDao.updateOrder(order_id, {
 					driver: {
 						disconnect: true
 					}
@@ -1574,7 +1574,7 @@ async function rejectGroupedOrderByParentId(req,res){
 				io.emit("driver_available", driver);
 			}
 
-			let userActiveOrders = await TaxiOrderDao.userActiveOrders(order.user_id);
+			let userActiveOrders = await TaxiOrderDao.userActiveOrders(rejected_order.user_id);
 			let pending = true;
 			for (let or of userActiveOrders) {
 				if (or.status !== TAXI_ORDER_STATUS.PENDING) {
@@ -1584,7 +1584,7 @@ async function rejectGroupedOrderByParentId(req,res){
 			if (pending) {
 				if (UserSockets.get(user_id)) {
 					console.log("EMITTING order_restart_search");
-					UserSockets.get(user_id).emit("order_restart_search", order);
+					UserSockets.get(user_id).emit("order_restart_search", rejected_order);
 				}
 			}
 		}
@@ -1624,13 +1624,13 @@ async function rejectGroupedOrderByParentId(req,res){
 			}
 
 		}
-		await TaxiOrderDao.cancelOrder(order_id, TAXI_ORDER_STATUS.PENDING, reason);
+		let rejected_order = await TaxiOrderDao.cancelOrder(order_id, TAXI_ORDER_STATUS.PENDING, reason);
 
 
-		io.to("order_" + order_id).emit("order_status_change__taxi", parent_order);
-		io.to("order_" + order_id).emit("order_rejected__taxi", parent_order);
+		io.to("order_" + order_id).emit("order_status_change__taxi", rejected_order);
+		io.to("order_" + order_id).emit("order_rejected__taxi", rejected_order);
 		if(driver){
-			await TaxiOrderDao.updateOrder(order_id, {
+			rejected_order = await TaxiOrderDao.updateOrder(order_id, {
 				driver: {
 					disconnect: true
 				}
@@ -1649,7 +1649,7 @@ async function rejectGroupedOrderByParentId(req,res){
 		if (pending) {
 			if (UserSockets.get(user_id)) {
 				console.log("EMITTING order_restart_search");
-				UserSockets.get(user_id).emit("order_restart_search", parent_order);
+				UserSockets.get(user_id).emit("order_restart_search", rejected_order);
 			}
 		}
 
