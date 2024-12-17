@@ -136,6 +136,7 @@ async function getActiveOrdersByDriverId(driver_id) {
                         }
                     }
                 },
+                grouped_orders: true,
             }
         });
     } catch (e) {

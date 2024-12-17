@@ -1491,8 +1491,8 @@ async function cancelGroupedOrderByParentId(req,res){
 		sendOrderNotifications(user, driver, user_id, driver_id, STATUS);
 		await TaxiOrderDao.cancelOrder(order_id, STATUS, reason);
 
-		io.to("order_" + order_id).emit("order_status_change__taxi", order);
-		io.to("order_" + order_id).emit("order_cancelled__taxi", order);
+		io.to("order_" + order_id).emit("order_status_change__taxi", parent_order);
+		io.to("order_" + order_id).emit("order_cancelled__taxi", parent_order);
 		if(driver){
 			await TaxiOrderDao.updateOrder(order_id, {
 				driver: {
