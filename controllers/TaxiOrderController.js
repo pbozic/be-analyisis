@@ -7,7 +7,7 @@ const GroupDao = require("../dao/Group");
 const { UserSockets, io } = require("../socket");
 const gApi = require("../lib/gApis");
 const TaxiHelper = require("../lib/taxiHelpers");
-const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, ORDER_TYPE } = require("../lib/constants");
+const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS } = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
 const { sendNotificationToUser } = require("../lib/oneSignal");
 const { sendOrderNotifications } = require("../lib/notifications");
@@ -368,6 +368,15 @@ async function getCanceledTaxiOrdersByUserId(req, res) {
 async function createOrderHelper(req, res, orderData) {
 	try {
 		let prefs = orderData.preferences;
+		if (prefs.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
+			orderData.payment = {
+				...orderData.payment,
+				extras: {
+					price: 40,
+					type: 'PRIVATE_DRIVER_FEE'
+				}
+			}
+		}
 
 		let is_scheduled = prefs.departure_date != null;
 		let is_repeat = false;
