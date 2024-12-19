@@ -368,15 +368,15 @@ async function getCanceledTaxiOrdersByUserId(req, res) {
 async function createOrderHelper(req, res, orderData) {
 	try {
 		let prefs = orderData.preferences;
-		/*if (prefs.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
+		if (prefs.vehicle_class === VEHICLE_CLASS.CARGO_VAN) {
 			orderData.payment = {
 				...orderData.payment,
 				extras: {
-					price: calculatePrivateDriverFee(orderData?.estimates?.distance),
-					type: 'PRIVATE_DRIVER_FEE'
+					price: CARGO_TRANSFER_FEE.CARGO_FEE + orderData.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE,
+					type: 'CARGO_TRANSFER_FEE'
 				}
 			}
-		}*/
+		}
 
 		let is_scheduled = prefs.departure_date != null;
 		let is_repeat = false;
@@ -526,6 +526,19 @@ async function createOrderHelper(req, res, orderData) {
 					console.log("Sending Grouped Order: " + or.order_id);
 					await TaxiHelper.findTaxiOrderDrivers(or);
 				}
+			}
+		}
+		if (prefs.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER && orderData.vehicle_transfer_order) {
+			if (order) {
+				const vehicle_transfer_order = await TaxiOrderDao.createOrder({
+					...orderData.vehicle_transfer_order,
+					user: {
+						connect: {
+							user_id: orderData.user_id
+						}
+					}
+				});
+				await TaxiHelper.findTaxiOrderDrivers(vehicle_transfer_order);
 			}
 		}
 		return order;
