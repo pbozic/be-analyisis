@@ -648,7 +648,29 @@ const manualSortScheduledUsers = async (sorted_users = []) => {
 	}
 };
 
-
+const getBusinessStripeByUserId = async (user_id) => {
+	try {
+		const business_user = prisma.business_users.findUnique({
+			where: {
+				user_id: user_id,
+			},
+			select:{
+				business_id: true,
+			}
+		});
+		return await prisma.business.findUnique({
+			where: {
+				business_id: business_user.business_id,
+			},
+			select: {
+				stripe_account_id:true
+			}
+		});
+	} catch (error) {
+		console.error("Error retrieving business stripe ID:", error);
+		throw new Error(error);
+	}
+};
 
 
 module.exports = {
@@ -683,5 +705,6 @@ module.exports = {
 	addScheduledUserSortingType,
 	manualSortScheduledUsers,
 	getBusinessesByTypeMainInformation,
-	updateBusinessFinances
+	updateBusinessFinances,
+	getBusinessStripeByUserId
 };

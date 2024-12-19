@@ -18,6 +18,7 @@ router.get("/:business_id", BusinessController.getBusinessById);
 router.get("/:business_id/reviews", BusinessController.getBusinessReviewsById);
 router.get("/search", BusinessController.getBusinessesByNameSearch);
 router.get("/parent", BusinessController.getParentBusiness);
+router.get("/stripe/:user_id", BusinessController.getBusinessStripeByUserId);
 
 router.get("/earnings/all", BusinessController.getAllBusinessesEarnings);
 router.get("/earnings/total", BusinessController.getTotalEarnings);
@@ -46,6 +47,7 @@ router.patch("/parent/update", BusinessController.updateParentBusinessId);
 router.patch("/parent/remove", BusinessController.removeParentBusinessId);
 router.patch("/address", BusinessController.updateBusinessAddress);
 router.patch("/delivery-address", BusinessController.updateBusinessDeliveryAddress);
+router.patch("/stripe/generate/:user_id", BusinessController.generateBusinessStripeByBusinessId);
 router.post("/paymentIntent", joi(paymentIntentSchema), BusinessController.createPaymentIntent);
 router.delete("/:business_id", BusinessController.deleteBusiness);
 

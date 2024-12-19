@@ -12,6 +12,8 @@ const DeliveryOrderDao = require("../dao/DeliveryOrder");
 const { BUSINESS_TYPE, DELIVERY_ORDER_STATUS } = require("../lib/constants");
 const { calculateBusinessEarnings, calculateTotalEarnings } = require("../lib/helpersLib");
 const prisma = require("../prisma/prisma");
+const BusinessUsersDao = require("../dao/BusinessUsers");
+const EmailHelper = require("../lib/emailSender");
 
 /**
  * GET /businesses
@@ -1132,6 +1134,39 @@ async function editBusiness(req, res) {
         res.status(400).json({ error: "Error updating business information", detail: error.message });
     }
 }
+
+async function getBusinessStripeByUserId(req, res){
+	try{
+		const user_id = req.params.user_id
+		const stripe_account_id = await BusinessDao.getBusinessStripeByUserId(user_id)
+		res.status(200).json(stripe_account_id)
+	}catch (error) {
+		console.error("Error updating sorted scheduled users:", error);
+		throw new Error(error);
+	}
+}
+
+async function generateBusinessStripeByBusinessId(req,res){
+	try{
+		const business_id = req.params.business_id
+		const business = await BusinessDao.getBusinessById(business_id);
+		let stripeAccount = await stripe.createAccount(business);
+		const updated_business = await BusinessDao.updateBusiness(business.business_id, { stripe_account_id: stripeAccount.id });
+
+		let accountLink = await stripe.getAccountLinks(stripeAccount.id);
+		// send email to business user with account link
+		EmailHelper.sendEmailTemplate("Stripe Onboarding", "stripeOnboarding", business.email,  {
+			name: business.name,
+			title: "Stripe Onboarding",
+			onboardLink: accountLink.url
+		});
+		res.status(200).json(updated_business)
+	}catch (error) {
+		console.error("Error updating sorted scheduled users:", error);
+		throw new Error(error);
+	}
+}
+
 module.exports = {
 	listBusinesses,
 	listTransferBusinesses,
@@ -1170,6 +1205,8 @@ module.exports = {
 	getTotalEarnings,
 	getBusinessTotalEarnings,
 	getBusinessReviewsById,
-	editBusiness
+	editBusiness,
+	getBusinessStripeByUserId,
+	generateBusinessStripeByBusinessId
 };
 
