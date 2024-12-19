@@ -700,6 +700,5 @@ module.exports = {
 	manualSortScheduledUsers,
 	getBusinessesByTypeMainInformation,
 	updateBusinessFinances,
-	getBusinessStripeByUserId,
 	getBusinessStripeByBusinessId
 };
