@@ -655,17 +655,27 @@ const getBusinessStripeByUserId = async (user_id) => {
 				user_id: user_id,
 			},
 			select:{
+				business_users_id:true,
+				user_id:true,
 				business_id: true,
 			}
 		});
-		return await prisma.business.findUnique({
-			where: {
-				business_id: business_user.business_id,
-			},
-			select: {
-				stripe_account_id:true
-			}
-		});
+		if(business_user){
+			const business_data = await prisma.business.findUnique({
+				where: {
+					business_id: business_user.business_id,
+				},
+				select: {
+					business_id:true,
+					stripe_account_id:true
+				}
+			});
+			return business_data.stripe_account_id;
+		}else{
+			console.error("Error retrieving business stripe ID for userID:",user_id,"\n Got business_user:",business_user);
+			throw new Error("Error retrieving business stripe ID for userID:",user_id,"\n Got business_user:",business_user);
+		}
+
 	} catch (error) {
 		console.error("Error retrieving business stripe ID:", error);
 		throw new Error(error);
