@@ -812,6 +812,7 @@ async function completeOrder(req, res) {
 			// handle wallet payment
 			const extraCost = order.payment.extras?.price
 				|| order.cargo_preferences?.additional_workers*CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE + CARGO_TRANSFER_FEE.CARGO_FEE || 0;
+			console.log("EXTRAS COST", extraCost, CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE, CARGO_TRANSFER_FEE.CARGO_FEE);
 			const totalCost = parseFloat(order.payment.price) + parseFloat(extraCost);
 			if (user.wallet_balance < totalCost) {
 				throw new Error("Insufficient funds");
