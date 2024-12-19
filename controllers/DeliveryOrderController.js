@@ -137,6 +137,7 @@ async function createOrder(req, res) {
 		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
+		let delivery_business = await BusinessDao.getBusinessById(orderData?.delivery_driver?.business_id);
 		let user = await UsersDao.getUserById(user_id);
 		orderData.telephone = user.telephone;
 		let payment_intent;
@@ -151,7 +152,16 @@ async function createOrder(req, res) {
 		}
 		console.log("stripeCustomer", user.stripe_customer_id);
 		if (order.payment.type === "CARD") {
-			payment_intent = await stripe.createPaymentIntentOnBehalf(orderData.details.total_price, orderData.payment.payment_method_id, user.stripe_customer_id, business.stripe_account_id, order.order_id, return_url);
+			payment_intent = await stripe.createPaymentIntentOnBehalf(
+				orderData.details.total_price,
+				orderData.details.delivery_earnings,
+				orderData.payment.payment_method_id,
+				user.stripe_customer_id,
+				business.stripe_account_id,
+				delivery_business.stripe_account_id,
+				order.order_id,
+				return_url
+			);
 			orderData.payment_intent_id = payment_intent.id;
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				payment_intent_id: payment_intent.id
@@ -161,10 +171,14 @@ async function createOrder(req, res) {
 			if (user.wallet_balance < orderData.details.total_price) {
 				throw new Error("Insufficient funds");
 			}
+
 			await UsersDao.removeWalletBalance(user_id, orderData.details.total_price, order.order_id);
-			let WALLET_AMOUNT = orderData.details.total_price * (1 - RESTAURANT_FEE);
-			WALLET_AMOUNT = Math.round(WALLET_AMOUNT * 100);
-			console.log("WALLET_AMOUNT", WALLET_AMOUNT);
+
+			const DELIVERY_EARNINGS_AMOUNT = Math.round(orderData.details.delivery_earnings * 100);
+			let MERCHANT_AMOUNT = (orderData.details.total_price - orderData.details.delivery_earnings) * (1 - RESTAURANT_FEE);
+			MERCHANT_AMOUNT = Math.round(MERCHANT_AMOUNT * 100);
+			console.log("MERCHANT_AMOUNT", MERCHANT_AMOUNT);
+
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				payment: {
 					...order.payment,
@@ -174,17 +188,34 @@ async function createOrder(req, res) {
 			});
 			let balance = await stripe.getBalance();
 			console.log("balance", balance);
-			let transfer = await stripe.transferToConnectedAccount(WALLET_AMOUNT, business.stripe_account_id);
+
+			let transfer = await stripe.transferToConnectedAccount(MERCHANT_AMOUNT, business.stripe_account_id);
 			let walletTransfer = await prisma.wallet_transfers.create(
 				{
 					data: {
-						amount: WALLET_AMOUNT,
+						amount: MERCHANT_AMOUNT,
 						order: {
 							connect: {
 								order_id: order.order_id
 							}
 						},
 						success: transfer.id ? true : false
+
+					}
+				}
+			);
+
+			let transfer_delivery = await stripe.transferToConnectedAccount(DELIVERY_EARNINGS_AMOUNT, delivery_business.stripe_account_id);
+			await prisma.wallet_transfers.create(
+				{
+					data: {
+						amount: DELIVERY_EARNINGS_AMOUNT,
+						order: {
+							connect: {
+								order_id: order.order_id
+							}
+						},
+						success: transfer_delivery.id ? true : false
 
 					}
 				}
