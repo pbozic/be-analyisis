@@ -535,7 +535,7 @@ async function createOrderHelper(req, res, orderData) {
 		if (prefs.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER && vehicleTransferOrderData) {
 			if (order) {
 				const vehicle_transfer_order = await TaxiOrderDao.createOrder({
-					...orderData.vehicle_transfer_order,
+					...vehicleTransferOrderData,
 					user: {
 						connect: {
 							user_id: orderData.user_id
