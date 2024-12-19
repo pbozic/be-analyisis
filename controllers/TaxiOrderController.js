@@ -592,7 +592,7 @@ async function createOrder(req, res) {
 
 		const userSocket = UserSockets.get(order.user_id);
 		console.log("userSocket: ", userSocket);
-		if (userSocket) {
+		if (userSocket && order.parent_user_type) {
 			console.log("userSocket exists!");
 			io.emit('child_order_created__taxi', {
 				...order
