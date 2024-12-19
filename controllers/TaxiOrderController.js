@@ -7,12 +7,14 @@ const GroupDao = require("../dao/Group");
 const { UserSockets, io } = require("../socket");
 const gApi = require("../lib/gApis");
 const TaxiHelper = require("../lib/taxiHelpers");
-const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, CARGO_TRANSFER_FEE } = require("../lib/constants");
+const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE ,CARGO_TRANSFER_FEE} = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
 const { sendNotificationToUser } = require("../lib/oneSignal");
 const { sendOrderNotifications } = require("../lib/notifications");
 const { sleep, range, calculatePrivateDriverFee, todaysEarnings } = require("../lib/helpersLib");
 const prisma = require("../prisma/prisma");
+const stripe = require("../lib/stripe");
+const BusinessDao = require("../dao/Business");
 
 /**
  * GET /taxi/order/{orderId}
@@ -802,22 +804,29 @@ async function completeOrder(req, res) {
 		let order = await TaxiOrderDao.completeOrder(req.body.order_id);
 		console.log("COMPLLETED", order);
 		let driver = await DriverDao.getDriverById(order.driver_id);
+		let driver_business = await BusinessDao.getBusinessById(driver.business_id);
+
 		io.emit("driver_available", driver);
 		let user = await UsersDao.getUserById(order.user_id, {
 			include: {
 				parent_user: { include: { parent_user: true } }
 			}
 		});
+		const PRICE = parseFloat(order.payment.price)
+		const EXTRAS_COST = order.payment.extras?.price
+			|| order.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE + CARGO_TRANSFER_FEE.CARGO_FEE
+			|| 0;
+		console.log("EXTRAS COST", EXTRAS_COST, CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE, CARGO_TRANSFER_FEE.CARGO_FEE);
+		const TOTAL_COST = parseFloat(order.payment.price) + parseFloat(EXTRAS_COST);
+
+		const DRIVER_CUT_AMOUNT = Math.round(PRICE*(1-DRIVE_FEE) * 100)
+
 		if (order.payment.type === "WALLET") {
 			// handle wallet payment
-			const extraCost = order.payment.extras?.price
-				|| order.cargo_preferences?.additional_workers*CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE + CARGO_TRANSFER_FEE.CARGO_FEE || 0;
-			console.log("EXTRAS COST", extraCost, CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE, CARGO_TRANSFER_FEE.CARGO_FEE);
-			const totalCost = parseFloat(order.payment.price) + parseFloat(extraCost);
-			if (user.wallet_balance < totalCost) {
+			if (user.wallet_balance < TOTAL_COST) {
 				throw new Error("Insufficient funds");
 			}
-			await UsersDao.removeWalletBalance(order.user_id, totalCost, order.order_id, "taxi");
+			await UsersDao.removeWalletBalance(order.user_id, TOTAL_COST, order.order_id, "taxi");
 
 			order = await TaxiOrderDao.updateOrder(order.order_id, {
 				payment: {
@@ -825,6 +834,23 @@ async function completeOrder(req, res) {
 					status: "PAID"
 				}
 			});
+
+			//Only transfer money to driver since we already have the wallet money?
+			const transfer = await stripe.transferToConnectedAccount(DRIVER_CUT_AMOUNT, driver_business.stripe_account_id);
+			await prisma.wallet_transfers.create(
+				{
+					data: {
+						amount: DRIVER_CUT_AMOUNT,
+						order: {
+							connect: {
+								order_id: order.order_id
+							}
+						},
+						success: transfer.id ? true : false
+
+					}
+				}
+			);
 		}
 		if (order.payment.type === "FAMILY_WALLET") {
 			// handle wallet payment
@@ -843,19 +869,17 @@ async function completeOrder(req, res) {
 			if (allowance < order.payment.price) {
 				throw new Error("Insufficient allowance");
 			}
-			const extraCost = order.payment.extras?.price || 0;
-			const totalCost = parseFloat(order.payment.price) + parseFloat(extraCost);
-			if (parent_user.wallet_balance < totalCost) {
+			if (parent_user.wallet_balance < TOTAL_COST) {
 				throw new Error("Insufficient funds");
 			}
 
-			await UsersDao.removeWalletBalance(parent_user.user_id, totalCost, order.order_id, "taxi");
+			await UsersDao.removeWalletBalance(parent_user.user_id, TOTAL_COST, order.order_id, "taxi");
 			await prisma.group_users.update({
 				where: {
 					group_user_id: user.parent_user.group_user_id
 				},
 				data: {
-					allowance: user.parent_user.allowance - totalCost
+					allowance: user.parent_user.allowance - TOTAL_COST
 				}
 			});
 			order = await TaxiOrderDao.updateOrder(order.order_id, {
@@ -864,6 +888,23 @@ async function completeOrder(req, res) {
 					status: "PAID"
 				}
 			});
+
+			//Only transfer money to driver since we already have the wallet money?
+			const transfer = await stripe.transferToConnectedAccount(DRIVER_CUT_AMOUNT, driver_business.stripe_account_id);
+			await prisma.wallet_transfers.create(
+				{
+					data: {
+						amount: DRIVER_CUT_AMOUNT,
+						order: {
+							connect: {
+								order_id: order.order_id
+							}
+						},
+						success: transfer.id ? true : false
+
+					}
+				}
+			);
 		}
 		// io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
 		io.to("order_" + order.order_id).emit("order_completed__taxi", order);
