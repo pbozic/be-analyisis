@@ -1150,6 +1150,9 @@ async function generateBusinessStripeByBusinessId(req,res){
 	try{
 		const business_id = req.params.business_id
 		const business = await BusinessDao.getBusinessById(business_id);
+		if(business?.stripe_account_id){
+			return res.status(400).json({ error: "Business already has a Stripe account id"})
+		}
 		let stripeAccount = await stripe.createAccount(business);
 		const updated_business = await BusinessDao.updateBusiness(business.business_id, { stripe_account_id: stripeAccount.id });
 
