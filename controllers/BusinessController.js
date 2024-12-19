@@ -1139,6 +1139,7 @@ async function getBusinessStripeByBusinessId(req, res){
 	try{
 		const business_id = req.params.business_id
 		const stripe_account_id = await BusinessDao.getBusinessStripeByBusinessId(business_id)
+		await stripe.checkAccountState(stripe_account_id)
 		res.status(200).json(stripe_account_id)
 	}catch (error) {
 		console.error("Error updating sorted scheduled users:", error);
