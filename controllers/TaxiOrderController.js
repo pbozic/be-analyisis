@@ -7,7 +7,7 @@ const GroupDao = require("../dao/Group");
 const { UserSockets, io } = require("../socket");
 const gApi = require("../lib/gApis");
 const TaxiHelper = require("../lib/taxiHelpers");
-const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS } = require("../lib/constants");
+const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, CARGO_TRANSFER_FEE } = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
 const { sendNotificationToUser } = require("../lib/oneSignal");
 const { sendOrderNotifications } = require("../lib/notifications");
@@ -810,7 +810,8 @@ async function completeOrder(req, res) {
 		});
 		if (order.payment.type === "WALLET") {
 			// handle wallet payment
-			const extraCost = order.payment.extras?.price || 0;
+			const extraCost = order.payment.extras?.price
+				|| order.cargo_preferences?.additional_workers*CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE + CARGO_TRANSFER_FEE.CARGO_FEE || 0;
 			const totalCost = parseFloat(order.payment.price) + parseFloat(extraCost);
 			if (user.wallet_balance < totalCost) {
 				throw new Error("Insufficient funds");
