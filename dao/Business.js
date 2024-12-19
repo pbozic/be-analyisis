@@ -660,7 +660,8 @@ const getBusinessStripeByUserId = async (user_id) => {
 				business_id: true,
 			}
 		});
-		if(business_user){
+		console.info("logging stripe BusinessUser",business_user);
+		if(business_user?.business_id){
 			const business_data = await prisma.business.findUnique({
 				where: {
 					business_id: business_user.business_id,
