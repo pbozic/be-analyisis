@@ -1135,10 +1135,10 @@ async function editBusiness(req, res) {
     }
 }
 
-async function getBusinessStripeByUserId(req, res){
+async function getBusinessStripeByBusinessId(req, res){
 	try{
-		const user_id = req.params.user_id
-		const stripe_account_id = await BusinessDao.getBusinessStripeByUserId(user_id)
+		const business_id = req.params.business_id
+		const stripe_account_id = await BusinessDao.getBusinessStripeByBusinessId(business_id)
 		res.status(200).json(stripe_account_id)
 	}catch (error) {
 		console.error("Error updating sorted scheduled users:", error);
@@ -1206,7 +1206,7 @@ module.exports = {
 	getBusinessTotalEarnings,
 	getBusinessReviewsById,
 	editBusiness,
-	getBusinessStripeByUserId,
+	getBusinessStripeByBusinessId,
 	generateBusinessStripeByBusinessId
 };
 

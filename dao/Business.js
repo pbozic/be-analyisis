@@ -648,35 +648,18 @@ const manualSortScheduledUsers = async (sorted_users = []) => {
 	}
 };
 
-const getBusinessStripeByUserId = async (user_id) => {
+const getBusinessStripeByBusinessId = async (business_id) => {
 	try {
-		const business_user = prisma.business_users.findUnique({
+		const business_data = await prisma.business.findUnique({
 			where: {
-				user_id: user_id,
+				business_id: business_id,
 			},
-			select:{
-				business_users_id:true,
-				user_id:true,
-				business_id: true,
+			select: {
+				business_id:true,
+				stripe_account_id:true
 			}
 		});
-		console.info("logging stripe BusinessUser",business_user);
-		if(business_user?.business_id){
-			const business_data = await prisma.business.findUnique({
-				where: {
-					business_id: business_user.business_id,
-				},
-				select: {
-					business_id:true,
-					stripe_account_id:true
-				}
-			});
-			return business_data.stripe_account_id;
-		}else{
-			console.error("Error retrieving business stripe ID for userID:",user_id,"\n Got business_user:",business_user);
-			throw new Error("Error retrieving business stripe ID for userID:",user_id,"\n Got business_user:",business_user);
-		}
-
+		return business_data.stripe_account_id;
 	} catch (error) {
 		console.error("Error retrieving business stripe ID:", error);
 		throw new Error(error);
@@ -717,5 +700,6 @@ module.exports = {
 	manualSortScheduledUsers,
 	getBusinessesByTypeMainInformation,
 	updateBusinessFinances,
-	getBusinessStripeByUserId
+	getBusinessStripeByUserId,
+	getBusinessStripeByBusinessId
 };
