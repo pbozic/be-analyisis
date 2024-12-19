@@ -538,7 +538,7 @@ async function createOrderHelper(req, res, orderData) {
 					...vehicleTransferOrderData,
 					user: {
 						connect: {
-							user_id: orderData.user_id
+							user_id: vehicleTransferOrderData.user_id
 						}
 					}
 				});
