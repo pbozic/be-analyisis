@@ -546,11 +546,6 @@ async function createOrderHelper(req, res, orderData) {
 						connect: {
 							user_id: order.user_id || req.user.user_id,
 						}
-					},
-					parent_order: {
-						connect: {
-							order_id: order.order_id
-						}
 					}
 				});
 				await TaxiHelper.findTaxiOrderDrivers(vehicle_transfer_order);
