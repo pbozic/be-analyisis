@@ -4,3 +4,4 @@
 .env
 .history
 /.expo
+.DS_Store
