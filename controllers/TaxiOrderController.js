@@ -544,7 +544,12 @@ async function createOrderHelper(req, res, orderData) {
 					...vehicleTransferOrderData,
 					user: {
 						connect: {
-							user_id: orderData.user_id || req.user.user_id,
+							user_id: order.user_id || req.user.user_id,
+						}
+					},
+					parent_order: {
+						connect: {
+							order_id: order.order_id
 						}
 					}
 				});
