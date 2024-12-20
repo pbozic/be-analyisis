@@ -384,7 +384,6 @@ async function createOrderHelper(req, res, orderData) {
 		vehicleTransferOrderData = {
 			...vehicleTransferOrderData,
 			status: "PENDING",
-			user_id: orderData.user_id || req.user.user_id,
 			telephone: orderData.telephone || req.user.telephone,
 			is_scheduled: !!orderData.preferences?.departure_date
 		};
@@ -545,7 +544,7 @@ async function createOrderHelper(req, res, orderData) {
 					...vehicleTransferOrderData,
 					user: {
 						connect: {
-							user_id: vehicleTransferOrderData.user_id
+							user_id: orderData.user_id || req.user.user_id,
 						}
 					}
 				});
