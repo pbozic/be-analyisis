@@ -18,7 +18,7 @@ router.get("/:business_id", BusinessController.getBusinessById);
 router.get("/:business_id/reviews", BusinessController.getBusinessReviewsById);
 router.get("/search", BusinessController.getBusinessesByNameSearch);
 router.get("/parent", BusinessController.getParentBusiness);
-router.get("/stripe/:business_id", BusinessController.getBusinessStripeByBusinessId);
+router.get("/stripe/:business_id", BusinessController.getBusinessStripeStatusByBusinessId);
 
 router.get("/earnings/all", BusinessController.getAllBusinessesEarnings);
 router.get("/earnings/total", BusinessController.getTotalEarnings);
