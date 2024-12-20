@@ -100,6 +100,13 @@ async function getActiveTaxiOrders(req, res) {
 					await TaxiOrderDao.updateOrder(activeOrder.order_id, {
 						estimates: activeOrder.estimates
 					});
+					const userSocket = UserSockets.get(activeOrder.user_id);
+					console.log("userSocket: ", userSocket);
+					if (userSocket) {
+						io.emit('active_order_updated__taxi', {
+							...activeOrder
+						});
+					}
 				}
 			}
 		}
