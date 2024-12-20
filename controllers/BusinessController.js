@@ -1139,9 +1139,8 @@ async function getBusinessStripeStatusByBusinessId(req, res){
 	try{
 		const business_id = req.params.business_id
 		const stripe_account_id = await BusinessDao.getBusinessStripeByBusinessId(business_id)
-		const stripe_account = await stripe.accounts.retrieve(stripe_account_id);
-
-		res.status(200).json(stripe_account.charges_enabled)
+		const is_active = await stripe.checkAccountActive(stripe_account_id);
+		res.status(200).json(is_active)
 	}catch (error) {
 		console.error("Error fetching stripe account for business:", error);
 		throw new Error(error);
@@ -1155,15 +1154,9 @@ async function generateBusinessStripeByBusinessId(req,res){
 		let stripe_account;
 
 		if(business?.stripe_account_id){
-			stripe_account = await stripe.accounts.retrieve(business?.stripe_account_id);
-			// Check if the account exists
-			if (!stripe_account || !stripe_account.id) {
-				throw new Error("The connected account does not exist.");
-			}else{
-				// Check the account status
-				if(stripe_account.charges_enabled){
-					return res.status(400).json({ error: "Business already has an active Stripe account"})
-				}
+			const is_active = await stripe.checkAccountActive(business.stripe_account_id);
+			if(is_active) {
+				return res.status(400).json({ error: "Business already has an active Stripe account" })
 			}
 		}else{
 			stripe_account = await stripe.createAccount(business);
