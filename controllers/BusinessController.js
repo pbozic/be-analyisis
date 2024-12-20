@@ -1154,7 +1154,7 @@ async function generateBusinessStripeByBusinessId(req,res){
 		let stripe_account;
 
 		if(business?.stripe_account_id){
-			const stripe_account = await stripe.client.accounts.retrieve(business.stripe_account_id);
+			stripe_account = await stripe.client.accounts.retrieve(business.stripe_account_id);
 			if(stripe_account.charges_enabled) {
 				return res.status(400).json({ error: "Business already has an active Stripe account" })
 			}
