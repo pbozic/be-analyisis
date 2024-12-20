@@ -841,9 +841,9 @@ async function completeOrder(req, res) {
 			}
 		});
 		const PRICE = parseFloat(order.payment.price)
-		const EXTRAS_COST = order.payment.extras?.price
+		const EXTRAS_COST = [VEHICLE_CLASS.PRIVATE_DRIVER, VEHICLE_CLASS.CARGO_VAN].includes(order.preferences?.vehicle_class) ? order.payment.extras?.price
 			|| order.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE + CARGO_TRANSFER_FEE.CARGO_FEE
-			|| 0;
+			: 0;
 		console.log("EXTRAS COST", EXTRAS_COST, CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE, CARGO_TRANSFER_FEE.CARGO_FEE);
 		const TOTAL_COST = parseFloat(order.payment.price) + parseFloat(EXTRAS_COST);
 
