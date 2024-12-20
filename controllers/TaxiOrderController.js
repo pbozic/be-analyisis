@@ -379,8 +379,15 @@ async function createOrderHelper(req, res, orderData) {
 				}
 			}
 		}
-		const vehicleTransferOrderData = orderData.vehicle_transfer_order;
+		let vehicleTransferOrderData = orderData.vehicle_transfer_order;
 		delete orderData.vehicle_transfer_order;
+		vehicleTransferOrderData = {
+			...vehicleTransferOrderData,
+			status: "PENDING",
+			user_id: orderData.user_id || req.user.user_id,
+			telephone: orderData.telephone || req.user.telephone,
+			is_scheduled: !!orderData.preferences?.departure_date
+		};
 
 		let is_scheduled = prefs.departure_date != null;
 		let is_repeat = false;
