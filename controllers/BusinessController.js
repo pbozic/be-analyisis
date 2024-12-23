@@ -1139,8 +1139,11 @@ async function getBusinessStripeStatusByBusinessId(req, res){
 	try{
 		const business_id = req.params.business_id
 		const stripe_account_id = await BusinessDao.getBusinessStripeByBusinessId(business_id)
-		const is_active = await stripe.checkAccountActive(stripe_account_id);
-		res.status(200).json(is_active)
+		if(stripe_account_id){
+			const is_active = await stripe.checkAccountActive(stripe_account_id);
+			return res.status(200).json(is_active)
+		}
+		res.status(200).json(false)
 	}catch (error) {
 		console.error("Error fetching stripe account for business:", error);
 		throw new Error(error);
