@@ -1158,8 +1158,13 @@ async function generateBusinessStripeByBusinessId(req,res){
 
 		if(business?.stripe_account_id){
 			stripe_account = await stripe.client.accounts.retrieve(business.stripe_account_id);
-			if(stripe_account.charges_enabled && stripe_account.payouts_enabled) {
-				return res.status(400).json({ error: "Business already has an active Stripe account" })
+			const current_reqs = stripe_account?.requirements?.currently_due
+			const eventual_reqs = stripe_account?.requirements?.eventually_due
+
+			if( stripe_account.details_submitted &&
+				!(current_reqs && current_reqs.length > 0) &&
+				!(eventual_reqs && eventual_reqs.length>0)){
+				return res.status(400).json({ error: "Business has already satisfied all onboarding requirements." })
 			}
 		}else{
 			stripe_account = await stripe.createAccount(business);
