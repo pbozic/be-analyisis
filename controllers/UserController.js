@@ -779,8 +779,7 @@ async function updateUserActiveByUserId(req, res) {
 	const { user_id } = req.params;
 	const { active } = req.body
 	try {
-		const updatedUser = await UserDao.updateUserDisabled(user_id,active);
-
+		const updatedUser = await UserDao.updateUserActive(user_id,active);
 		return res.status(200).json({
 			message: "User active field updated successfully.",
 			user: updatedUser,
