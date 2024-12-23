@@ -635,7 +635,7 @@ async function requestSMSVerification(req, res) {
 		console.log(token);
 		console.info(token)
 		if (token) {
-			return res.status(200).json({ message: "Token sent" });
+			return res.status(200).json({ message: "Token sent", phone_number:req.user.telephone });
 		}
 
 		res.status(400).json({ error: "Error obtaining user information" });
