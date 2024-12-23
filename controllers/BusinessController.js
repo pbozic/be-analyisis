@@ -1158,6 +1158,7 @@ async function generateBusinessStripeByBusinessId(req,res){
 
 		if(business?.stripe_account_id){
 			stripe_account = await stripe.client.accounts.retrieve(business.stripe_account_id);
+			console.info("stripe_account", stripe_account);
 			const current_reqs = stripe_account?.requirements?.currently_due
 			const eventual_reqs = stripe_account?.requirements?.eventually_due
 
