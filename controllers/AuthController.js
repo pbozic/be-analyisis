@@ -79,6 +79,7 @@ async function login(req, res) {
 		let correctPw = await bcrypt.compare(postData.password, user.password);
 		if (!correctPw) return res.status(400).json({ error: "Wrong email / password combination.." });
 		if (user.disabled) return res.status(400).json({ error: "Account is disabled." });
+		if (!user.active) return res.status(400).json({ error: "Account is inactive." });
 		user = await UserDao.getUserByEmailOrTelephone(postData.email.toLowerCase(), {
 			include: {
 				addresses: {

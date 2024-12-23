@@ -127,6 +127,7 @@ model users {
   lost_items                             lost_items[]
   daily_meal_day_preferences             Json?             @default("[]")
   disabled                               Boolean           @default(false)
+  active                                 Boolean           @default(true)
   child_users                            group_users[]     @relation("parent_user")
   parent_user                            group_users?      @relation("child_user")
   language                               String?           @default("en")

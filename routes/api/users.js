@@ -58,6 +58,7 @@ router.delete("/delete/:user_id", UserController.softDeleteUserByUserId);
 //router.delete("/delete/:user_id", UserController.deleteUserByUserId);
 router.post("/me/update_user", UserController.updateUserByUserId);
 router.patch("/disabled/:user_id", UserController.updateUserDisabledByUserId);
+router.patch("/active/:user_id", UserController.updateUserActiveByUserId);
 router.patch("/me/disabled", UserController.disableMe);
 router.post("/me/group_user/register-child", joi(registerChildSchema), UserController.registerChildUser);
 router.patch("/me/group_user/status/", UserController.updateChildUserEnabledByGroupUserId);

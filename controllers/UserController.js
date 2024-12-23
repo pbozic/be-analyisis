@@ -761,6 +761,37 @@ async function deleteUserByUserId(req, res) {
 	}
 }
 
+
+/**
+ * PATCH /users/active/{user_id}
+ * @tag Users
+ * @summary Updates a user's active field by their ID
+ * @description This endpoint is used to update a user's active field by their ID.
+ * @operationId updateUserActiveByUserId
+ * @pathParam {string} user_id - The ID of the user to disable
+ * @bodyDescription The new value
+ * @bodyContent {boolean} application/json
+ * @response 200 - User active field updated successfully.
+ * @responseContent {User} 200.application/json
+ * @response 400 - Error updating active field.
+ */
+async function updateUserActiveByUserId(req, res) {
+	const { user_id } = req.params;
+	const { active } = req.body
+	try {
+		const updatedUser = await UserDao.updateUserDisabled(user_id,active);
+
+		return res.status(200).json({
+			message: "User active field updated successfully.",
+			user: updatedUser,
+		});
+	} catch (error) {
+		console.error("Error updating active field:", error);
+		return res.status(400).json({ error: "Error updating active field."});
+	}
+}
+
+
 /**
  * PATCH /users/disabled/{user_id}
  * @tag Users
@@ -1619,6 +1650,7 @@ module.exports = {
 	updateUserDeliveryPushNotifications,
 	disableMe,
 	updateUserDisabledByUserId,
+	updateUserActiveByUserId,
 	registerChildUser,
 	updateChildUserEnabledByGroupUserId,
 	updateChildUserAllowanceByGroupUserId,

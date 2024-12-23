@@ -406,7 +406,7 @@ const createNewUser = async (user, hashPassword = false) => {
 	try {
 		let newUser = user;
 		if(newUser?.user_role && [USER_ROLE.DRIVER,USER_ROLE.DELIVERY_DRIVER].includes(newUser?.user_role)){
-			newUser.disabled = true
+			newUser.active = false
 		}
 
 		// Check if password hashing is needed
@@ -654,6 +654,22 @@ const wipeUserPersonalData = async (user_id) => {
 		return new Error(error);
 	}
 };
+
+const updateUserActive = async (user_id, active) => {
+	try {
+		return prisma.users.update({
+			where: {
+				user_id: user_id,
+			},
+			data: {
+				active: active,
+			},
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
+
 module.exports = {
 	getUsers,
 	getUserById,
@@ -689,5 +705,6 @@ module.exports = {
 	getUserByEmail,
 	getTransactions,
 	updateWalletBalance,
+	updateUserActive,
 	wipeUserPersonalData
 };
