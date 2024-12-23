@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const { createDocument, linkDocumentToTransaction } = require("./Document");
 const { addFileToDocument } = require("./File");
 const S3Helper = require("../lib/s3");
+const { USER_ROLE } = require("../lib/constants");
 
 const getUsers = async (args) => {
 	try {
@@ -404,6 +405,9 @@ const updateUserTelephoneVerified = async (user_id, telephoneVerified) => {
 const createNewUser = async (user, hashPassword = false) => {
 	try {
 		let newUser = user;
+		if(newUser?.user_role && [USER_ROLE.DRIVER,USER_ROLE.DELIVERY_DRIVER].includes(newUser?.user_role)){
+			newUser.disabled = true
+		}
 
 		// Check if password hashing is needed
 		if (hashPassword && user.password) {
