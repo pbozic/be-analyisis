@@ -1135,20 +1135,17 @@ async function editBusiness(req, res) {
     }
 }
 
-async function getBusinessStripeByBusinessId(req, res){
+async function getBusinessStripeStatusByBusinessId(req, res){
 	try{
 		const business_id = req.params.business_id
 		const stripe_account_id = await BusinessDao.getBusinessStripeByBusinessId(business_id)
 		if(stripe_account_id){
-			await stripe.checkAccountState(stripe_account_id)
-			let accountLink = await stripe.getAccountLinks(stripe_account_id)
-			console.info("business_id:",business_id,"\nOnboardLink:",accountLink)
-		}else{
-			console.info("Stripe id falsy:",stripe_account_id)
+			const is_active = await stripe.checkAccountActive(stripe_account_id);
+			return res.status(200).json(is_active)
 		}
-		res.status(200).json(stripe_account_id)
+		res.status(200).json(false)
 	}catch (error) {
-		console.error("Error updating sorted scheduled users:", error);
+		console.error("Error fetching stripe account for business:", error);
 		throw new Error(error);
 	}
 }
@@ -1157,22 +1154,36 @@ async function generateBusinessStripeByBusinessId(req,res){
 	try{
 		const business_id = req.params.business_id
 		const business = await BusinessDao.getBusinessById(business_id);
-		if(business?.stripe_account_id){
-			return res.status(400).json({ error: "Business already has a Stripe account id"})
-		}
-		let stripeAccount = await stripe.createAccount(business);
-		const updated_business = await BusinessDao.updateBusiness(business.business_id, { stripe_account_id: stripeAccount.id });
+		let stripe_account;
 
-		let accountLink = await stripe.getAccountLinks(stripeAccount.id);
+		if(business?.stripe_account_id){
+			stripe_account = await stripe.client.accounts.retrieve(business.stripe_account_id);
+			console.info("stripe_account", stripe_account);
+			const current_reqs = stripe_account?.requirements?.currently_due
+			const eventual_reqs = stripe_account?.requirements?.eventually_due
+
+			if( stripe_account.details_submitted &&
+				!(current_reqs && current_reqs.length > 0) &&
+				!(eventual_reqs && eventual_reqs.length>0)){
+				return res.status(400).json({ error: "Business has already satisfied all onboarding requirements." })
+			}
+		}else{
+			stripe_account = await stripe.createAccount(business);
+			await BusinessDao.updateBusiness(business.business_id, { stripe_account_id: stripe_account.id });
+		}
+
+
+		let accountLink = await stripe.getAccountLinks(stripe_account.id);
 		// send email to business user with account link
 		EmailHelper.sendEmailTemplate("Stripe Onboarding", "stripeOnboarding", business.email,  {
 			name: business.name,
 			title: "Stripe Onboarding",
 			onboardLink: accountLink.url
 		});
-		res.status(200).json(updated_business)
+
+		res.status(200).json(stripe_account)
 	}catch (error) {
-		console.error("Error updating sorted scheduled users:", error);
+		console.error("Error generating stripe account for business:", error);
 		throw new Error(error);
 	}
 }
@@ -1216,7 +1227,7 @@ module.exports = {
 	getBusinessTotalEarnings,
 	getBusinessReviewsById,
 	editBusiness,
-	getBusinessStripeByBusinessId,
+	getBusinessStripeStatusByBusinessId,
 	generateBusinessStripeByBusinessId
 };
 
