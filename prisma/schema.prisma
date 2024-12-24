@@ -246,6 +246,7 @@ model delivery_drivers {
   on_daily_meals                    Boolean?                            @default(false)
   is_inactive                       Boolean?                            @default(false)
   scheduled_meals_route             Json?                               @default("[]")
+  regions                           String[]
   delivery_driver_history_locations delivery_driver_history_locations[]
 }
 
