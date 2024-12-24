@@ -223,7 +223,7 @@ const getBusinessesByType = async (type, args = {}) => {
                 include: {
                     users: {
 						include: {
-							child_users: { include:{child_user: {include:{parent_user: {include:{parent_user: true}}}}}},
+							child_users: { include:{child_user: true}},
 							parent_user: { include:{parent_user: true}},
 						}
 					},

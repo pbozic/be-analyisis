@@ -43,6 +43,8 @@ async function listUsers(req, res) {
 						address: true,
 					},
 				},
+				child_users: { include:{child_user: true}},
+				parent_user: { include:{parent_user: true}},
 			},
 		});
 		if (users) {
