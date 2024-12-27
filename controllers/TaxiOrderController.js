@@ -7,7 +7,7 @@ const GroupDao = require("../dao/Group");
 const { UserSockets, io } = require("../socket");
 const gApi = require("../lib/gApis");
 const TaxiHelper = require("../lib/taxiHelpers");
-const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE ,CARGO_TRANSFER_FEE} = require("../lib/constants");
+const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE ,CARGO_TRANSFER_FEE, ORDER_TYPE} = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
 const { sendNotificationToUser } = require("../lib/oneSignal");
 const { sendOrderNotifications } = require("../lib/notifications");
@@ -1079,22 +1079,14 @@ async function cancelOrder(req, res) {
 		// 		}
 		// 	}
 		// }
+		let vehicle_transfer_order
 		if (order.preferences?.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
-			console.log('PRIVATE DRIVER')
-			let vehicle_transfer_order = await TaxiOrderDao.cancelVehicleTransferOrder(user_id, status, reason);
-			console.log('vehicle_transfer_order', vehicle_transfer_order.status, vehicle_transfer_order.cancellation_reason);
-			if (vehicle_transfer_order.driver_id) {
-				let driver = await DriverDao.getDriverById(order.driver_id);
-				await TaxiOrderDao.updateOrder(order_id, {
-					driver: {
-						disconnect: true
-					}
-				});
-				io.emit("driver_available", driver);
-			}
-			io.to("order_" + vehicle_transfer_order.order_id).emit("order_status_change__taxi", vehicle_transfer_order);
-			io.to("order_" + vehicle_transfer_order.order_id).emit("order_cancelled__taxi", vehicle_transfer_order);
+			vehicle_transfer_order = await TaxiOrderDao.getOrders({where: {
+				user_id: user_id,
+				type: ORDER_TYPE.VEHICLE_TRANSFER_COMBO,
+			}});
 		}
+		const vehicle_transfer_order_id = vehicle_transfer_order?.order_id;
 		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);
 
 		if (order.driver_id) {
@@ -1111,7 +1103,7 @@ async function cancelOrder(req, res) {
 		io.to("order_" + order.order_id).emit("order_cancelled__taxi", order);
 
 		console.info("TaxiOrderController", "order_status_change__taxi", "order_cancelled__taxi");
-		res.status(200).json(order);
+		res.status(200).json({order, vehicle_transfer_order_id});
 	} catch (e) {
 		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
