@@ -442,6 +442,68 @@ async function cancelOrder(order_id, status, cancellation_reason) {
     }
 }
 
+async function cancelVehicleTransferOrder(user_id, status, cancellation_reason) {
+    try {
+        let taxi_order = await prisma.taxi_orders.findFirst({
+            where: {
+                user_id: user_id,
+                type: ORDER_TYPE.VEHICLE_TRANSFER_COMBO
+            }
+        });
+
+        if (!taxi_order) {
+            throw new Error(`Vehicle transfer order for user: ${user_id} not found`);
+        }
+
+        taxi_order = await prisma.taxi_orders.update({
+            where: {
+                order_id: taxi_order.order_id
+            },
+            data: {
+                status: status,
+                cancellation_reason: cancellation_reason
+            },
+            include: {
+                user: true,
+                driver: {
+                    include: {
+                        user: {
+                            include: {
+                                documents: {
+                                    include: {
+                                        files: true,
+                                    }
+                                }
+                            }
+                        },
+                        vehicles: {
+                            include: {
+                                vehicle_specification: true,
+                            }
+                        }
+                    }
+                },
+            }
+        });
+
+        if (taxi_order.driver_id) {
+            await prisma.drivers.update({
+                where: {
+                    driver_id: taxi_order.driver_id
+                },
+                data: {
+                    on_order: false
+                }
+            });
+        }
+
+        return taxi_order;
+    } catch (e) {
+        console.error("Error cancelling vehicle transfer order:", e);
+        throw new Error(e);
+    }
+}
+
 async function acceptOrderSent(order_id, driver_id) {
     console.log("order sent accept",order_id, driver_id)
     try {
