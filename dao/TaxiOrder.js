@@ -449,7 +449,7 @@ async function cancelVehicleTransferOrder(user_id, status, cancellation_reason) 
                 user_id: user_id,
                 type: ORDER_TYPE.VEHICLE_TRANSFER_COMBO,
                 status: {
-                    notIn: [TAXI_ORDER_STATUS.COMPLETED, TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED]
+                    notIn: [TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED]
                 }
             }
         });
