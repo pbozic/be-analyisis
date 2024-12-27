@@ -1080,7 +1080,7 @@ async function cancelOrder(req, res) {
 		// 	}
 		// }
 		if (order.preferences?.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
-			let vehicle_transfer_order = await TaxiOrderDao.cancelVehicleTransferOrder(order.user_id, status, reason);
+			let vehicle_transfer_order = await TaxiOrderDao.cancelVehicleTransferOrder(user_id, status, reason);
 			if (vehicle_transfer_order.driver_id) {
 				let driver = await DriverDao.getDriverById(order.driver_id);
 				await TaxiOrderDao.updateOrder(order_id, {
@@ -1090,8 +1090,8 @@ async function cancelOrder(req, res) {
 				});
 				io.emit("driver_available", driver);
 			}
-			io.to("order_" + order.order_id).emit("order_status_change__taxi", order);
-			io.to("order_" + order.order_id).emit("order_cancelled__taxi", order);
+			io.to("order_" + vehicle_transfer_order.order_id).emit("order_status_change__taxi", order);
+			io.to("order_" + vehicle_transfer_order.order_id).emit("order_cancelled__taxi", order);
 		}
 		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);
 
