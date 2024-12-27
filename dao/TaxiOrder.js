@@ -811,6 +811,7 @@ module.exports = {
     updateOrderLastSentAt,
     completeOrder,
     cancelOrder,
+    cancelVehicleTransferOrder,
     updateOrderStatus,
     isOrderSent,
     updateTaxiOderRoute,
