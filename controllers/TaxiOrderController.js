@@ -1079,7 +1079,7 @@ async function cancelOrder(req, res) {
 		// 		}
 		// 	}
 		// }
-		let vehicle_transfer_order
+		let vehicle_transfer_order;
 		if (order.preferences?.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
 			vehicle_transfer_order = await TaxiOrderDao.getOrders({where: {
 				user_id: user_id,
@@ -1087,6 +1087,7 @@ async function cancelOrder(req, res) {
 			}});
 		}
 		const vehicle_transfer_order_id = vehicle_transfer_order?.order_id;
+		console.log("VEHICLE TRANSFER COMBO: ", vehicle_transfer_order_id)
 		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);
 
 		if (order.driver_id) {
