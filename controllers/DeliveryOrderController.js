@@ -556,9 +556,9 @@ async function completeOrder(req, res) {
 		let order = await DeliveryOrderDao.completeOrder(req.body.order_id);
 		let driver = await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id);
 		let delivery_business = await BusinessDao.getBusinessById(driver.business_id);
-
+		const paymentIntent = stripe.paymentIntents.retrieve(order.payment_intent_id);
 		const transferDelivery = stripe.splitCutFromPaymentIntent(
-			order.payment_intent_id,
+			paymentIntent,
 			delivery_business.stripe_account_id,
 			order.details.delivery_cost
 		);
