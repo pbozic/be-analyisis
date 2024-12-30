@@ -151,17 +151,33 @@ async function createOrder(req, res) {
 			});
 		}
 		console.log("stripeCustomer", user.stripe_customer_id);
+
+		const customer_acc = user.stripe_customer_id
+		const restaurant_acc = business.stripe_account_id
+		const pm_id = orderData.payment.payment_method_id
+		const TOTAL_PRICE = orderData.details.total_price
+		const DELIVERY_COST = orderData.details.delivery_cost
+
 		if (order.payment.type === "CARD") {
-			payment_intent = await stripe.createPaymentIntentOnBehalf(
-				orderData.details.total_price,
-				orderData.details.delivery_earnings,
-				orderData.payment.payment_method_id,
-				user.stripe_customer_id,
-				business.stripe_account_id,
-				delivery_business.stripe_account_id,
+			payment_intent = await stripe.createSplitPayment(
+				customer_acc,
+				restaurant_acc,
 				order.order_id,
-				return_url
-			);
+				pm_id,
+				TOTAL_PRICE,
+				DELIVERY_COST
+			)
+
+			// payment_intent = await stripe.createPaymentIntentOnBehalf(
+			// 	orderData.details.total_price,
+			// 	orderData.details.delivery_earnings,
+			// 	orderData.payment.payment_method_id,
+			// 	user.stripe_customer_id,
+			// 	business.stripe_account_id,
+			// 	delivery_business.stripe_account_id,
+			// 	order.order_id,
+			// 	return_url
+			// );
 			orderData.payment_intent_id = payment_intent.id;
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				payment_intent_id: payment_intent.id
@@ -535,6 +551,13 @@ async function completeOrder(req, res) {
 	try {
 		let order = await DeliveryOrderDao.completeOrder(req.body.order_id);
 		let driver = await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id);
+		let delivery_business = await BusinessDao.getBusinessById(driver.business_id);
+
+		const transferDelivery = stripe.splitCutFromPaymentIntent(
+			order.payment_intent_id,
+			delivery_business.stripe_account_id,
+			order.details.delivery_cost
+		);
 
 		io.to("order_" + order.order_id).emit("order_completed__delivery", order);
 		io.emit("driver_available", driver);
