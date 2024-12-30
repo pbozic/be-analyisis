@@ -137,7 +137,7 @@ async function createOrder(req, res) {
 		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
-		let delivery_business = await BusinessDao.getBusinessById(orderData?.delivery_driver?.business_id);
+		// let delivery_business = await BusinessDao.getBusinessById(orderData?.delivery_driver?.business_id);
 		let user = await UsersDao.getUserById(user_id);
 		orderData.telephone = user.telephone;
 		let payment_intent;
@@ -221,6 +221,7 @@ async function createOrder(req, res) {
 				}
 			);
 
+			/*
 			let transfer_delivery = await stripe.transferToConnectedAccount(DELIVERY_EARNINGS_AMOUNT, delivery_business.stripe_account_id);
 			await prisma.wallet_transfers.create(
 				{
@@ -236,6 +237,8 @@ async function createOrder(req, res) {
 					}
 				}
 			);
+			*/
+
 			
 		} else if (order.payment.type === "CASH") {
 			// io.to("orders_" + order.business_id).emit('new_order', order);
