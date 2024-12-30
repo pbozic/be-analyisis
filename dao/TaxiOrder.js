@@ -455,7 +455,8 @@ async function cancelVehicleTransferOrder(user_id, status, cancellation_reason) 
         });
 
         if (!taxi_order) {
-            throw new Error(`Vehicle transfer order for user: ${user_id} not found`);
+            console.info(`Vehicle transfer order for user: ${user_id} not found`);
+            return null;
         }
 
         taxi_order = await prisma.taxi_orders.update({
