@@ -15,6 +15,7 @@ const { sleep, range, calculatePrivateDriverFee, todaysEarnings } = require("../
 const prisma = require("../prisma/prisma");
 const stripe = require("../lib/stripe");
 const BusinessDao = require("../dao/Business");
+const WalletFundsContoller = require("./WalletFundsController");
 
 /**
  * GET /taxi/order/{orderId}
@@ -847,14 +848,17 @@ async function completeOrder(req, res) {
 		console.log("EXTRAS COST", EXTRAS_COST, CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE, CARGO_TRANSFER_FEE.CARGO_FEE);
 		const TOTAL_COST = parseFloat(order.payment.price) + parseFloat(EXTRAS_COST);
 
-		const DRIVER_CUT_AMOUNT = Math.round(PRICE*(1-DRIVE_FEE) * 100)
+		const DRIVER_CUT = PRICE*(1-DRIVE_FEE)
+		const DRIVER_CUT_AMOUNT = Math.round(DRIVER_CUT * 100)
 
 		if (order.payment.type === "WALLET") {
 			// handle wallet payment
 			if (user.wallet_balance < TOTAL_COST) {
 				throw new Error("Insufficient funds");
 			}
+
 			await UsersDao.removeWalletBalance(order.user_id, TOTAL_COST, order.order_id, "taxi");
+			const reservedFunds = await WalletFundsContoller.reserveAvailableWalletFundsForOrder(user.user_id, TOTAL_COST, order.order_id);
 
 			order = await TaxiOrderDao.updateOrder(order.order_id, {
 				payment: {
@@ -864,17 +868,19 @@ async function completeOrder(req, res) {
 			});
 
 			//Only transfer money to driver since we already have the wallet money?
-			const transfer = await stripe.transferToConnectedAccount(DRIVER_CUT_AMOUNT, driver_business.stripe_account_id);
+			// const transfer = await stripe.transferToConnectedAccount(DRIVER_CUT_AMOUNT, driver_business.stripe_account_id);
+			const transfersForDriver = await WalletFundsContoller.transferReservedWalletFundsForOrder(user.user_id,driver_business.stripe_account_id, DRIVER_CUT, order.order_id);
+			const transfersForPlatform = await WalletFundsContoller.transferReservedWalletFundsForOrder(user.user_id,"platform", TOTAL_COST-DRIVER_CUT, order.order_id);
 			await prisma.wallet_transfers.create(
 				{
 					data: {
-						amount: DRIVER_CUT_AMOUNT,
+						amount: DRIVER_CUT*100,
 						order: {
 							connect: {
 								order_id: order.order_id
 							}
 						},
-						success: transfer.id ? true : false
+						success: (transfersForDriver && transfersForDriver.length>0) ? true : false
 
 					}
 				}
@@ -902,6 +908,8 @@ async function completeOrder(req, res) {
 			}
 
 			await UsersDao.removeWalletBalance(parent_user.user_id, TOTAL_COST, order.order_id, "taxi");
+			const reservedFunds = await WalletFundsContoller.reserveAvailableWalletFundsForOrder(parent_user.user_id, TOTAL_COST, order.order_id);
+
 			await prisma.group_users.update({
 				where: {
 					group_user_id: user.parent_user.group_user_id
@@ -918,17 +926,18 @@ async function completeOrder(req, res) {
 			});
 
 			//Only transfer money to driver since we already have the wallet money?
-			const transfer = await stripe.transferToConnectedAccount(DRIVER_CUT_AMOUNT, driver_business.stripe_account_id);
+			const transfersForDriver = await WalletFundsContoller.transferReservedWalletFundsForOrder(parent_user.user_id,driver_business.stripe_account_id, DRIVER_CUT, order.order_id);
+			const transfersForPlatform = await WalletFundsContoller.transferReservedWalletFundsForOrder(parent_user.user_id,"platform", TOTAL_COST-DRIVER_CUT, order.order_id);
 			await prisma.wallet_transfers.create(
 				{
 					data: {
-						amount: DRIVER_CUT_AMOUNT,
+						amount: DRIVER_CUT*100,
 						order: {
 							connect: {
 								order_id: order.order_id
 							}
 						},
-						success: transfer.id ? true : false
+						success: (transfersForDriver && transfersForDriver.length>0) ? true : false
 
 					}
 				}

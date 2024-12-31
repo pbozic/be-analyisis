@@ -10,6 +10,7 @@ const DocumentDao = require("../dao/Document");
 const FileDao = require("../dao/File");
 const DeliveryDriverDao = require("../dao/DeliveryDriver");
 const DriverDao = require("../dao/Driver");
+const WalletFundsDao = require("../dao/WalletFunds");
 
 const SMS = require("../lib/SMS");
 const stripe = require("../lib/stripe");
@@ -1000,7 +1001,7 @@ async function requestToAddFundsToWallet(req, res) {
 		const { amount, payment_method_id, return_url } = req.body;
 	  // Create a Payment Method to handle the transaction
 	  let paymentIntent = await stripe.createPaymentIntentForWallet(amount * 100, payment_method_id, req.user.stripe_customer_id, req.user.user_id, return_url);
-  
+	  const newWalletFunds = await WalletFundsDao.createWalletFunds(req.user.user_id,paymentIntent.latest_charge, amount);
 	  res.status(200).json(paymentIntent);
 	} catch (error) {
 	  console.error('Error requesting to add funds to wallet:', error);
