@@ -131,6 +131,7 @@ model users {
   child_users                            group_users[]     @relation("parent_user")
   parent_user                            group_users?      @relation("child_user")
   language                               String?           @default("en")
+  wallet_funds                           wallet_funds[]    @relation("wallet_funds")
 }
 
 model group_users {
@@ -584,6 +585,19 @@ model wallet_transfer_history {
   delivery_order             delivery_orders? @relation(fields: [order_id], references: [order_id])
   taxi_order                 taxi_orders?     @relation(fields: [order_id], references: [order_id], map: "wallet_transfer_history_taxi_order_id_fkey")
 }
+
+model wallet_funds {
+  wallet_funds_id String      @id @unique @default(uuid()) @db.Uuid
+  user_id         String      @db.Uuid
+  charge_id       String
+  amount          Float
+  reserved_for    String?      @db.Uuid
+  created_at      DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime    @default(now()) @updatedAt @db.Timestamptz(6)
+
+  user            users      @relation("wallet_funds",fields: [user_id], references: [user_id])
+}
+
 
 enum USER_ROLES {
   ADMIN
