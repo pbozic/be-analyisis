@@ -872,7 +872,7 @@ async function completeOrder(req, res) {
 			// const transfer = await stripe.transferToConnectedAccount(DRIVER_CUT_AMOUNT, driver_business.stripe_account_id);
 			const transfersForDriver = await WalletFundsContoller.transferReservedWalletFundsForOrder(user.user_id,driver_business.stripe_account_id, DRIVER_CUT_CENTS, order.order_id);
 			const transfersForPlatform = await WalletFundsContoller.transferReservedWalletFundsForOrder(user.user_id,"platform", PLATFORM_CUT_CENTS, order.order_id);
-			await prisma.wallet_transfers.create(
+			await prisma.wallet_transfer_history.create(
 				{
 					data: {
 						amount: DRIVER_CUT_CENTS,
@@ -929,7 +929,7 @@ async function completeOrder(req, res) {
 			//Only transfer money to driver since we already have the wallet money?
 			const transfersForDriver = await WalletFundsContoller.transferReservedWalletFundsForOrder(parent_user.user_id, driver_business.stripe_account_id, DRIVER_CUT_CENTS, order.order_id);
 			const transfersForPlatform = await WalletFundsContoller.transferReservedWalletFundsForOrder(parent_user.user_id,"platform", PLATFORM_CUT_CENTS, order.order_id);
-			await prisma.wallet_transfers.create(
+			await prisma.wallet_transfer_history.create(
 				{
 					data: {
 						amount: DRIVER_CUT_CENTS,
