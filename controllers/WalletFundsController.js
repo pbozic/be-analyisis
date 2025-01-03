@@ -127,7 +127,7 @@ async function transferReservedWalletFundsForOrder(userId,destination_acc,amount
 			const split_amount = Math.min(fundsToSubtract, included_wallet_funds[i].amount);
 			fundsToSubtract -= split_amount;
 			if(destination_acc !== "platform"){
-				const transfer = await stripe.splitCutFromCharge(included_wallet_funds[i].charge_id, destination_acc, split_amount,`wallet_payment_for_${orderId}`);
+				const transfer = await stripe.splitCutFromCharge(included_wallet_funds[i].charge_id, destination_acc, split_amount, orderId);
 				transfers.push(transfer);
 			}
 			const subtractedWF = await WalletFundsDao.subtractFunds(included_wallet_funds[i].wallet_funds_id,split_amount)
