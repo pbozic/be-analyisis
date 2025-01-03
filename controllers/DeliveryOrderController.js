@@ -211,20 +211,20 @@ async function createOrder(req, res) {
 			console.log("balance", balance);
 			const transfersForMerchant = await WalletFundsController.transferReservedWalletFundsForOrder(user_id,business.stripe_account_id, MERCHANT_CUT_CENTS, order.order_id);
 			const transfersForPlatform = await WalletFundsController.transferReservedWalletFundsForOrder(user_id,"platform", PLATFORM_CUT_CENTS, order.order_id);
-			let walletTransfer = await prisma.wallet_transfer_history.create(
-				{
-					data: {
-						amount: MERCHANT_CUT_CENTS,
-						order: {
-							connect: {
-								order_id: order.order_id
-							}
-						},
-						success: (transfersForPlatform && transfersForPlatform.length>0) ? true : false
-
-					}
-				}
-			);
+			// let walletTransfer = await prisma.wallet_transfer_history.create(
+			// 	{
+			// 		data: {
+			// 			amount: MERCHANT_CUT_CENTS,
+			// 			order: {
+			// 				connect: {
+			// 					order_id: order.order_id
+			// 				}
+			// 			},
+			// 			success: (transfersForPlatform && transfersForPlatform.length>0) ? true : false
+			//
+			// 		}
+			// 	}
+			// );
 			
 		} else if (order.payment.type === "CASH") {
 			// io.to("orders_" + order.business_id).emit('new_order', order);
@@ -551,19 +551,19 @@ async function completeOrder(req, res) {
 		}else if(order.payment.type==="WALLET"){
 			const DELIVERY_COST_CENTS = Math.round(order.details.delivery_cost*100);
 			const transfersForDeliveryDriver = await WalletFundsController.transferReservedWalletFundsForOrder(order.user.user_id,delivery_business.stripe_account_id, DELIVERY_COST_CENTS, order.order_id);
-			let walletTransfer = await prisma.wallet_transfer_history.create(
-				{
-					data: {
-						amount: DELIVERY_COST_CENTS,
-						order: {
-							connect: {
-								order_id: order.order_id
-							}
-						},
-						success: (transfersForDeliveryDriver && transfersForDeliveryDriver.length>0) ? true : false
-					}
-				}
-			);
+			// let walletTransfer = await prisma.wallet_transfer_history.create(
+			// 	{
+			// 		data: {
+			// 			amount: DELIVERY_COST_CENTS,
+			// 			order: {
+			// 				connect: {
+			// 					order_id: order.order_id
+			// 				}
+			// 			},
+			// 			success: (transfersForDeliveryDriver && transfersForDeliveryDriver.length>0) ? true : false
+			// 		}
+			// 	}
+			// );
 		}
 
 		io.to("order_" + order.order_id).emit("order_completed__delivery", order);
