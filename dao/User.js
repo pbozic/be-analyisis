@@ -4,6 +4,7 @@ const { createDocument, linkDocumentToTransaction } = require("./Document");
 const { addFileToDocument } = require("./File");
 const S3Helper = require("../lib/s3");
 const { USER_ROLE } = require("../lib/constants");
+const WalletFundsDao = require("../dao/WalletFunds");
 
 const getUsers = async (args) => {
 	try {
@@ -554,6 +555,8 @@ async function deleteUserByUserId(userId) {
 
 const updateWalletBalance = async (userId, amount, documents) => {
 	try {
+		const new_wallet_fund = WalletFundsDao.createWalletFunds(userId,null,amount);
+
 		const updatedUser = await prisma.users.update({
 			where: { user_id: userId },
 			data: {
