@@ -595,6 +595,8 @@ model wallet_funds {
   charge_id       String
   amount          Float
   reserved_for    String?  @db.Uuid
+  reserved_order    String?  @db.Uuid
+  reserved_business    String?  @db.Uuid
   created_at      DateTime @default(now()) @db.Timestamptz(6)
   updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 

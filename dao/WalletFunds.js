@@ -25,7 +25,7 @@ async function getAvailableWalletFunds(userId) {
 		const walletFunds = await prisma.wallet_funds.findMany({
 			where: {
 				user_id: userId,
-				reserved_for: null
+				reserved_order: null
 			},
 			orderBy: {
 				created_at: 'asc',
@@ -43,7 +43,7 @@ async function getReservedWalletFunds(userId,order_id) {
 		const walletFunds = await prisma.wallet_funds.findMany({
 			where: {
 				user_id: userId,
-				reserved_for: order_id,
+				reserved_order: order_id,
 			},
 			orderBy: {
 				created_at: 'asc',
@@ -124,7 +124,7 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId) {
 			throw new Error("Wallet fund entry not found");
 		}
 
-		if (walletFund.reserved_for !== null) {
+		if (walletFund.reserved_order !== null) {
 			throw new Error("Source wallet fund entry already reserved");
 		}
 
@@ -135,12 +135,12 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId) {
 		// Update the existing wallet fund entry
 		await subtractFunds(walletFund.wallet_funds_id, reserveAmount);
 
-		// Check if a wallet fund with the same charge_id and reserved_for exists
+		// Check if a wallet fund with the same charge_id and reserved_order exists
 		//TODO: maybe convert to findUnique?
 		const existingReservedFund = await prisma.wallet_funds.findFirst({
 			where: {
 				charge_id: walletFund.charge_id,
-				reserved_for: orderId,
+				reserved_order: orderId,
 			},
 		});
 
@@ -162,7 +162,7 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId) {
 					user_id: walletFund.user_id,
 					charge_id: walletFund.charge_id,
 					amount: reserveAmount,
-					reserved_for: orderId,
+					reserved_order: orderId,
 				},
 			});
 			return newWalletFund;
@@ -178,7 +178,7 @@ async function getAvailableWalletBalance(userId) {
 		const walletFunds = await prisma.wallet_funds.findMany({
 			where: {
 				user_id: userId,
-				reserved_for: null
+				reserved_order: null
 			}
 		});
 		const availableBalance = walletFunds.reduce((sum, fund) => sum + fund.amount, 0);
