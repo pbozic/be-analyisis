@@ -10,6 +10,7 @@ async function createWalletFunds(user_id, charge_id, amount){
 				user_id: user_id,
 				charge_id: charge_id,
 				amount: amount,
+				user:{connect:{user_id:user_id}},
 			},
 		});
 		console.log(`Wallet fund created with ID: ${newWalletFund.wallet_funds_id}`);
