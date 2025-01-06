@@ -556,7 +556,7 @@ async function deleteUserByUserId(userId) {
 const updateWalletBalance = async (userId, amount, documents) => {
 	try {
 		const new_wallet_fund = await WalletFundsDao.createWalletFunds(userId,null,amount);
-
+		console.info("Added wallet funds: ",new_wallet_fund)
 		const updatedUser = await prisma.users.update({
 			where: { user_id: userId },
 			data: {
