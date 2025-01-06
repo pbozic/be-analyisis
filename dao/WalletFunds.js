@@ -173,9 +173,27 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId) {
 	}
 }
 
+async function getAvailableWalletBalance(userId) {
+	try {
+		const walletFunds = await prisma.wallet_funds.findMany({
+			where: {
+				user_id: userId,
+				reserved_for: null
+			}
+		});
+		const availableBalance = walletFunds.reduce((sum, fund) => sum + fund.amount, 0);
+
+		return availableBalance;
+	} catch (error) {
+		console.error("Error retrieving available wallet balance:", error);
+		throw error;
+	}
+}
+
 module.exports = {
 	createWalletFunds,
 	getAvailableWalletFunds,
+	getAvailableWalletBalance,
 	getReservedWalletFunds,
 	deleteWalletFunds,
 	subtractFunds,

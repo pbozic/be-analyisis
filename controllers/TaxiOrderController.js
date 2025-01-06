@@ -15,7 +15,7 @@ const { sleep, range, calculatePrivateDriverFee, todaysEarnings } = require("../
 const prisma = require("../prisma/prisma");
 const stripe = require("../lib/stripe");
 const BusinessDao = require("../dao/Business");
-const WalletFundsContoller = require("./WalletFundsController");
+const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
 
 /**
  * GET /taxi/order/{orderId}
@@ -859,7 +859,7 @@ async function completeOrder(req, res) {
 			}
 
 			await UsersDao.removeWalletBalance(order.user_id, (TOTAL_COST_CENTS/100), order.order_id, "taxi");
-			const reservedFunds = await WalletFundsContoller.reserveAvailableWalletFundsForOrder(user.user_id, TOTAL_COST_CENTS, order.order_id);
+			const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(user.user_id, TOTAL_COST_CENTS, order.order_id);
 
 			order = await TaxiOrderDao.updateOrder(order.order_id, {
 				payment: {
@@ -870,8 +870,8 @@ async function completeOrder(req, res) {
 
 			//Only transfer money to driver since we already have the wallet money?
 			// const transfer = await stripe.transferToConnectedAccount(DRIVER_CUT_AMOUNT, driver_business.stripe_account_id);
-			const transfersForDriver = await WalletFundsContoller.transferReservedWalletFundsForOrder(user.user_id,driver_business.stripe_account_id, DRIVER_CUT_CENTS, order.order_id);
-			const transfersForPlatform = await WalletFundsContoller.transferReservedWalletFundsForOrder(user.user_id,"platform", PLATFORM_CUT_CENTS, order.order_id);
+			const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user.user_id,driver_business.stripe_account_id, DRIVER_CUT_CENTS, order.order_id);
+			const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user.user_id,"platform", PLATFORM_CUT_CENTS, order.order_id);
 			// await prisma.wallet_transfer_history.create(
 			// 	{
 			// 		data: {
@@ -909,7 +909,7 @@ async function completeOrder(req, res) {
 			}
 
 			await UsersDao.removeWalletBalance(parent_user.user_id, TOTAL_COST_CENTS, order.order_id, "taxi");
-			const reservedFunds = await WalletFundsContoller.reserveAvailableWalletFundsForOrder(parent_user.user_id, TOTAL_COST_CENTS, order.order_id);
+			const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(parent_user.user_id, TOTAL_COST_CENTS, order.order_id);
 
 			await prisma.group_users.update({
 				where: {
@@ -927,8 +927,8 @@ async function completeOrder(req, res) {
 			});
 
 			//Only transfer money to driver since we already have the wallet money?
-			const transfersForDriver = await WalletFundsContoller.transferReservedWalletFundsForOrder(parent_user.user_id, driver_business.stripe_account_id, DRIVER_CUT_CENTS, order.order_id);
-			const transfersForPlatform = await WalletFundsContoller.transferReservedWalletFundsForOrder(parent_user.user_id,"platform", PLATFORM_CUT_CENTS, order.order_id);
+			const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(parent_user.user_id, driver_business.stripe_account_id, DRIVER_CUT_CENTS, order.order_id);
+			const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(parent_user.user_id,"platform", PLATFORM_CUT_CENTS, order.order_id);
 			// await prisma.wallet_transfer_history.create(
 			// 	{
 			// 		data: {
