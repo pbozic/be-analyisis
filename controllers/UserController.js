@@ -1584,7 +1584,6 @@ async function getFamilyWalletBalanceAndType(req, res) {
 async function updateWalletBalance(req, res) {
 	const { user_id } = req.params;
 	const { amount, documents } = req.body;
-	return res.status(410).json({ error: "Error updating wallet balance: This method is deprecated because it would cause issues with Wallet Funds." });
 
 	try {
 		let updatedUser = await UserDao.updateWalletBalance(user_id, amount, documents);
