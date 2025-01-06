@@ -17,7 +17,7 @@ const { sortLocationsByNearestNeighbor, todaysEarnings } = require("../lib/helpe
 const { connect } = require("http2");
 const {RESTAURANT_FEE} = require('../lib/constants');
 const prisma = require("../prisma/prisma");
-const WalletFundsController = require("../controllers/WalletFundsController");
+const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
 
 /**
  * GET /delivery/orders
@@ -197,7 +197,7 @@ async function createOrder(req, res) {
 			}
 
 			await UsersDao.removeWalletBalance(user_id, TOTAL_PRICE_CENTS/100, order.order_id);
-			const reservedFunds = await WalletFundsController.reserveAvailableWalletFundsForOrder(user_id, TOTAL_PRICE_CENTS,order.order_id);
+			const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(user_id, TOTAL_PRICE_CENTS,order.order_id);
 
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				payment: {
@@ -209,8 +209,8 @@ async function createOrder(req, res) {
 
 			let balance = await stripe.getBalance();
 			console.log("balance", balance);
-			const transfersForMerchant = await WalletFundsController.transferReservedWalletFundsForOrder(user_id,business.stripe_account_id, MERCHANT_CUT_CENTS, order.order_id);
-			const transfersForPlatform = await WalletFundsController.transferReservedWalletFundsForOrder(user_id,"platform", PLATFORM_CUT_CENTS, order.order_id);
+			const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user_id,business.stripe_account_id, MERCHANT_CUT_CENTS, order.order_id);
+			const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user_id,"platform", PLATFORM_CUT_CENTS, order.order_id);
 			// let walletTransfer = await prisma.wallet_transfer_history.create(
 			// 	{
 			// 		data: {
@@ -541,8 +541,8 @@ async function completeOrder(req, res) {
 		let order = await DeliveryOrderDao.completeOrder(req.body.order_id);
 		let driver = await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id);
 		let delivery_business = await BusinessDao.getBusinessById(driver.business_id);
-		const paymentIntent = await stripe.client.paymentIntents.retrieve(order.payment_intent_id);
 		if(order.payment.type==="CARD"){
+			const paymentIntent = await stripe.client.paymentIntents.retrieve(order.payment_intent_id);
 			const transferDelivery = stripe.splitCutFromPaymentIntent(
 				paymentIntent,
 				delivery_business.stripe_account_id,
@@ -550,7 +550,7 @@ async function completeOrder(req, res) {
 			);
 		}else if(order.payment.type==="WALLET"){
 			const DELIVERY_COST_CENTS = Math.round(order.details.delivery_cost*100);
-			const transfersForDeliveryDriver = await WalletFundsController.transferReservedWalletFundsForOrder(order.user.user_id,delivery_business.stripe_account_id, DELIVERY_COST_CENTS, order.order_id);
+			const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user.user_id,delivery_business.stripe_account_id, DELIVERY_COST_CENTS, order.order_id);
 			// let walletTransfer = await prisma.wallet_transfer_history.create(
 			// 	{
 			// 		data: {

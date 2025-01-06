@@ -1482,21 +1482,46 @@ async function deleteChildUserByGroupUserId(req, res) {
 	}
 }
 
+// /**
+//  * DEPRECATED CODE DUE TO ADDING WALLET_FUNDS
+//  * GET /users/:user_id/wallet
+//  * @tag Users
+//  * @summary Get wallet balance for regular wallet.
+//  * @description This endpoint is used to check wallet balance for a particular user.
+//  * @operationId getPaymentSheetCredentials
+//  * @headerDescription Authorization Bearer token is required
+//  * @response 200 - {wallet_balance:float}
+//  * @response 400 - Error checking wallet balances
+//  */
+// async function getWalletBalance(req, res) {
+// 	try {
+// 		let user = await UserDao.getUserById(req.params.user_id);
+// 		if (user) {
+// 			return res.status(200).json({ wallet_balance: user.wallet_balance });
+// 		}
+// 		res.status(400).json({ error: "Error obtaining wallet balance" });
+// 	} catch (e) {
+// 		console.log(e);
+// 		res.status(400).json({ error: "Error obtaining wallet balance", e });
+// 	}
+// }
+
 /**
  * GET /users/:user_id/wallet
  * @tag Users
- * @summary Get wallet balance for regular wallet.
- * @description This endpoint is used to check wallet balance for a particular user.
+ * @summary Get wallet balance from wallet_funds.
+ * @description This endpoint is used to check available wallet balance for a particular user.
  * @operationId getPaymentSheetCredentials
  * @headerDescription Authorization Bearer token is required
  * @response 200 - {wallet_balance:float}
  * @response 400 - Error checking wallet balances
  */
-async function getWalletBalance(req, res) {
+async function getAvailableWalletBalance(req, res) {
 	try {
-		let user = await UserDao.getUserById(req.params.user_id);
-		if (user) {
-			return res.status(200).json({ wallet_balance: user.wallet_balance });
+		let balance = await WalletFundsDao.getAvailableWalletBalance(req.params.user_id);
+
+		if (balance) {
+			return res.status(200).json({ wallet_balance: balance });
 		}
 		res.status(400).json({ error: "Error obtaining wallet balance" });
 	} catch (e) {
@@ -1523,7 +1548,7 @@ async function getFamilyWalletBalanceAndType(req, res) {
 		}else if (group_user) {
 			console.log(group_user);
 			if(group_user.enabled){
-				const parent_wallet_balance = group_user.parent_user.wallet_balance;
+				const parent_wallet_balance = await WalletFundsDao.getAvailableWalletBalance(group_user.parent_user.user_id);
 				return res.status(200).json({
 					family_wallet_balance: Math.min(group_user.allowance, parent_wallet_balance),
 					family_wallet_type: group_user.parent_user.user_role.startsWith('BUSINESS') ? "BUSINESS" : "FAMILY"
@@ -1559,6 +1584,7 @@ async function getFamilyWalletBalanceAndType(req, res) {
 async function updateWalletBalance(req, res) {
 	const { user_id } = req.params;
 	const { amount, documents } = req.body;
+	return res.status(410).json({ error: "Error updating wallet balance: This method is deprecated because it would cause issues with Wallet Funds." });
 
 	try {
 		let updatedUser = await UserDao.updateWalletBalance(user_id, amount, documents);
@@ -1658,7 +1684,8 @@ module.exports = {
 	updateChildUserAllowanceByGroupUserId,
 	deleteChildUserByGroupUserId,
 	getFamilyWalletBalanceAndType,
-	getWalletBalance,
+	// getWalletBalance,
+	getAvailableWalletBalance,
 	getTransactions,
 	updateWalletBalance,
 	updateUserLanguage,
