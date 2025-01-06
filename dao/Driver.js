@@ -509,7 +509,32 @@ async function getDriverLocationsWithPerformance(driverId, startTime, endTime) {
 	}
 }
 
+async function toggleDriverHandle(driver_id, action, type) {
+	const updateData = {};
+	const isEnableAction = action === 'enable';
+
+	switch (type) {
+		case 'taxi':
+			updateData.handles_taxi_orders = isEnableAction;
+			break;
+		case 'transfer':
+			updateData.handles_transfer_orders = isEnableAction;
+			break;
+		case 'delivery':
+			updateData.handles_delivery_orders = isEnableAction;
+			break;
+		default:
+			throw new Error("Invalid type for toggling driver handle field");
+	}
+
+	return await prisma.drivers.update({
+		where: { driver_id },
+		data: updateData,
+	});
+}
+
 module.exports = {
+	toggleDriverHandle,
 	getDrivers,
 	getOnlineDrivers,
 	getDriverById,

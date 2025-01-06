@@ -712,7 +712,39 @@ async function getDriverTotalEarnings(req, res) {
 		res.status(400).json({ error: "Error retrieving driver's total earnings", detail: error.message });
 	}
 }
+
+/**
+ * PATCH /drivers/:driver_id/:action/:type
+ * @tag Drivers
+ * @summary Enable or disable a driver
+ * @description Enables or disables a specific driver based on the provided action and type.
+ * @operationId toggleDriverHandle
+ * @pathParam {string} driver_id - The ID of the driver to toggle
+ * @pathParam {string} action - The action to perform (enable or disable)
+ * @pathParam {string} type - The type of action (taxi, transfer, delivery)
+ * @response 200 - Driver toggled successfully
+ * @response 404 - Driver not found
+ * @response 400 - Error toggling driver
+ */
+async function toggleDriverHandle(req, res) {
+	const { driver_id, action, type } = req.params;
+
+	try {
+		const driver = await DriverDao.getDriverById(driver_id);
+		if (!driver) {
+			return res.status(404).json({ error: "Driver not found" });
+		}
+		await DriverDao.toggleDriverHandle(driver_id, action, type);
+
+		res.status(200).json({ message: `Driver ${action}d successfully` });
+	} catch (error) {
+		console.error("Error toggling driver handle field:", error);
+		res.status(400).json({ error: "Error toggling driver handle field", detail: error.message });
+	}
+}
+
 module.exports = {
+	toggleDriverHandle,
 	listDrivers,
 	listOnlineDrivers,
 	getDriverById,
