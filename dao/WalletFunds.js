@@ -7,7 +7,7 @@ async function createWalletFunds(user_id, charge_id, amount){
 		}
 		const newWalletFund = await prisma.wallet_funds.create({
 			data: {
-				user_id: user_id,
+				// user_id: user_id,
 				charge_id: charge_id,
 				amount: amount,
 				user:{connect:{user_id:user_id}},
