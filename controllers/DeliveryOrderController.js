@@ -203,10 +203,8 @@ async function createOrder(req, res) {
 				payment: {
 					...order.payment,
 					status: "PAID"
-				},
-				status: "CUSTOMER_PAYMENT_SUCCESSFUL"
+				}
 			});
-
 			let balance = await stripe.getBalance();
 			console.log("balance", balance);
 			const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user_id,business.stripe_account_id, MERCHANT_CUT_CENTS, order.order_id);
@@ -229,6 +227,7 @@ async function createOrder(req, res) {
 		} else if (order.payment.type === "CASH") {
 			// io.to("orders_" + order.business_id).emit('new_order', order);
 		}
+		console.info("order paid:", order);
 		io.to("orders_" + order.business_id).emit("new_order", order);
 		//DeliveryHelper.findDeliveryOrderDrivers(order); here we do not need to notify delivery drivers yet, because of the merchant order preparation time
 
