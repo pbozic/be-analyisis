@@ -1011,6 +1011,7 @@ async function requestToAddFundsToWallet(req, res) {
 	}
 }
 async function ping(req, res) {
+	console.log("ping, req.user ", req.user);
 	let user = await UserDao.getUserById(req.user.user_id, {
 		include: {
 			driver: true,
