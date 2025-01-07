@@ -158,6 +158,7 @@ async function getUserById(req, res) {
 
 async function me(req, res) {
 	try {
+		console.log("/me req: ",req)
 		let user = await UserDao.getUserById(req.user.user_id, {
 			include: {
 				addresses: {
@@ -171,6 +172,7 @@ async function me(req, res) {
 				parent_user: { include:{parent_user: true}},
 			},
 		});
+		console.log("/me user: ",user)
 		if (user) {
 			let payment_methods = []
 			if (user.stripe_customer_id) {
