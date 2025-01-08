@@ -5,15 +5,44 @@ async function createWalletFunds(user_id, charge_id, amount){
 		if(amount<=0){
 			throw new Error("Amount must be greater than 0");
 		}
+
 		const newWalletFund = await prisma.wallet_funds.create({
 			data: {
 				// user_id: user_id,
 				charge_id: charge_id,
 				amount: amount,
 				user:{connect:{user_id:user_id}},
+				transaction: {
+					create: {
+						user: { connect: { user_id: userId } },
+						amount: amount,
+						type: 'CREDIT',
+						description: 'Added funds to wallet',
+					},
+				},
 			},
 		});
+
+		// const newTransaction = await prisma.transactions.create({
+		// 	data: {
+		// 		user: { connect: { user_id: userId } },
+		// 		amount: amount,
+		// 		type: 'CREDIT',
+		// 		description: 'Added funds to wallet',
+		// 	},
+		// });
+		// const newWalletFund = await prisma.wallet_funds.create({
+		// 	data: {
+		// 		// user_id: user_id,
+		// 		charge_id: charge_id,
+		// 		amount: amount,
+		// 		user:{connect:{user_id:user_id}},
+		// 		transaction_id: newTransaction.transaction_id
+		// 	},
+		// });
 		console.log(`Wallet fund created with ID: ${newWalletFund.wallet_funds_id}`);
+
+
 		return newWalletFund;
 	} catch (error) {
 		console.error('Error creating wallet fund:', error);
