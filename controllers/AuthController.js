@@ -87,7 +87,7 @@ async function login(req, res) {
 					},
 				},
 				driver: {
-					include: {
+					select: {
 						driver_id: true,
 						business_id: true,
 						ride_requirements: true,
@@ -99,7 +99,7 @@ async function login(req, res) {
 					}
 				},
 				delivery_driver: {
-					include: {
+					select: {
 						delivery_driver_id: true,
 						delivers_daily_meals: true,
 						business_id: true,
