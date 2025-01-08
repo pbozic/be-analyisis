@@ -87,20 +87,24 @@ async function login(req, res) {
 					},
 				},
 				driver: {
-					driver_id: true,
-					business_id: true,
-					ride_requirements: true,
-					user_id: true,
-					transfer_requirements: true,
-					handles_taxi_orders: true,
-					handles_transfer_orders: true,
-					handles_delivery_orders: true,
+					include: {
+						driver_id: true,
+						business_id: true,
+						ride_requirements: true,
+						user_id: true,
+						transfer_requirements: true,
+						handles_taxi_orders: true,
+						handles_transfer_orders: true,
+						handles_delivery_orders: true,
+					}
 				},
 				delivery_driver: {
-					delivery_driver_id: true,
-					delivers_daily_meals: true,
-					business_id: true,
-					user_id: true
+					include: {
+						delivery_driver_id: true,
+						delivers_daily_meals: true,
+						business_id: true,
+						user_id: true
+					}
 				},
 				child_users: { include:{child_user: true}},
 				parent_user: { include:{parent_user: true}},
