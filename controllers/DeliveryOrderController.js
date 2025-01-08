@@ -760,7 +760,7 @@ async function getDeliveryOrdersByBusinessId(req, res) {
 				business_id: business_id
 			}
 		});
-		console.log('business orders', orders)
+		// console.log('business orders', orders)
 		res.status(200).json(orders);
 	} catch (e) {
 		console.log(e);
