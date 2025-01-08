@@ -597,12 +597,12 @@ model wallet_funds {
   amount          Float
   reserved_order    String?  @db.Uuid
   reserved_business    String?  @db.Uuid
-  transaction_id   String  @db.Uuid @unique
+  transaction_id   String?  @db.Uuid @unique
   created_at      DateTime @default(now()) @db.Timestamptz(6)
   updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   user users @relation("wallet_funds", fields: [user_id], references: [user_id])
-  transaction transactions @relation("wallet_funds_transaction", fields: [transaction_id], references: [transaction_id])
+  transaction transactions? @relation("wallet_funds_transaction", fields: [transaction_id], references: [transaction_id])
 }
 
 enum USER_ROLES {
