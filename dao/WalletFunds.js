@@ -14,7 +14,7 @@ async function createWalletFunds(user_id, charge_id, amount){
 				user:{connect:{user_id:user_id}},
 				transaction: {
 					create: {
-						user: { connect: { user_id: userId } },
+						user: { connect: { user_id: user_id } },
 						amount: amount,
 						type: 'CREDIT',
 						description: 'Added funds to wallet',
@@ -25,7 +25,7 @@ async function createWalletFunds(user_id, charge_id, amount){
 
 		// const newTransaction = await prisma.transactions.create({
 		// 	data: {
-		// 		user: { connect: { user_id: userId } },
+		// 		user: { connect: { user_id: user_id } },
 		// 		amount: amount,
 		// 		type: 'CREDIT',
 		// 		description: 'Added funds to wallet',
