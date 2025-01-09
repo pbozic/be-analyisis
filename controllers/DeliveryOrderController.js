@@ -557,7 +557,7 @@ async function completeOrder(req, res) {
 		}else if(order.payment.type==="WALLET"){
 			const DELIVERY_COST_CENTS = Math.round(order.details.delivery_cost*100);
 			console.info(order)
-			const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id,delivery_business.stripe_account_id, DELIVERY_COST_CENTS, order.order_id, order.type, "delivery");
+			const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id,delivery_business.stripe_account_id, DELIVERY_COST_CENTS, order.order_id, "delivery");
 			// let walletTransfer = await prisma.wallet_transfer_history.create(
 			// 	{
 			// 		data: {
