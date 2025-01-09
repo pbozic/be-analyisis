@@ -251,34 +251,24 @@ async function acceptOrder(order_id, delivery_driver_id) {
 	console.log("accept (delivery) order", order_id)
 	console.log("accept (delivery_id)", delivery_driver_id)
 	try {
-		let delivery_order_sent = await prisma.delivery_order_sent.update({
-			where: {
-				OR: [
-					{
-						delivery_order_sent_delivery_driver_unique: {
-							order_id,
-							delivery_driver_id: delivery_driver_id
-						}
-					},
-					{
-						delivery_order_sent_driver_unique: {
-							order_id,
-							driver_id: delivery_driver_id
-						}
-					}
-				]
-			},
-			data: {
-				accepted: true
-			},
-		});
-		console.log("delivery_order_sent", delivery_order_sent)
 		const deliveryDriver = await prisma.delivery_drivers.findUnique({
 			where: {
 				delivery_driver_id: delivery_driver_id
 			}
 		});
 		if (deliveryDriver) {
+			let delivery_order_sent = await prisma.delivery_order_sent.update({
+				where: {
+					delivery_order_sent_delivery_driver_unique: {
+						order_id,
+						delivery_driver_id: delivery_driver_id
+					}
+				},
+				data: {
+					accepted: true
+				},
+			});
+			console.log("delivery_order_sent", delivery_order_sent)
 			await prisma.delivery_drivers.update({
 				where: {
 					delivery_driver_id: delivery_driver_id
@@ -301,6 +291,18 @@ async function acceptOrder(order_id, delivery_driver_id) {
 				},
 			});
 		} else {
+			let delivery_order_sent = await prisma.delivery_order_sent.update({
+				where: {
+					delivery_order_sent_driver_unique: {
+						order_id,
+						driver_id: delivery_driver_id
+					}
+				},
+				data: {
+					accepted: true
+				},
+			});
+			console.log("delivery_order_sent", delivery_order_sent)
 			await prisma.drivers.update({
 				where: {
 					driver_id: delivery_driver_id
