@@ -1,5 +1,5 @@
 const prisma = require("../prisma/prisma");
-
+/*
 async function createWalletFunds(user_id, charge_id, amount){
 	try {
 		if(amount<=0){
@@ -73,6 +73,7 @@ async function createWalletFunds(user_id, charge_id, amount){
 		throw error; // Rethrow the error for further handling if necessary
 	}
 }
+ */
 
 async function getAvailableWalletFunds(userId) {
 	try {
@@ -144,13 +145,27 @@ async function subtractFunds(walletFundsId, amount) {
 			throw new Error("Insufficient funds");
 		}
 
-		let updatedWalletFund = await prisma.wallet_funds.update({
-			where: {
-				wallet_funds_id: walletFundsId,
-			},
-			data: {
-				amount: walletFund.amount - amount, // Updated to use amount
-			},
+		let updatedWalletFund = await prisma.$transaction(async (tx) => {
+			const updated_WF = await tx.wallet_funds.update({
+				where: {
+					wallet_funds_id: walletFundsId,
+				},
+				data: {
+					amount: walletFund.amount - amount,
+				},
+			});
+
+			await tx.transactions.create({
+				data: {
+					user: { connect: { user_id: updated_WF.user_id } },
+					amount: -amount/100,
+					type: 'PAYMENT',
+					description: 'Subtracted funds from wallet',
+					wallet_funds: { connect: { wallet_funds_id: updated_WF.wallet_funds_id } },
+				}
+			});
+
+			return updated_WF;
 		});
 		if(updatedWalletFund.amount===0){
 			updatedWalletFund = await deleteWalletFunds(updatedWalletFund.wallet_funds_id);
@@ -245,7 +260,7 @@ async function getAvailableWalletBalance(userId) {
 }
 
 module.exports = {
-	createWalletFunds,
+	// createWalletFunds,
 	getAvailableWalletFunds,
 	getAvailableWalletBalance,
 	getReservedWalletFunds,
