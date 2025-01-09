@@ -6,6 +6,7 @@ async function getOrders(args) {
 		return await prisma.delivery_orders.findMany({
 			include: {
 				delivery_driver: true,
+				driver: true,
 				user: true,
 			},
 			...args,
@@ -32,6 +33,7 @@ async function getActiveDeliveryOrders() {
 			},
 			include: {
 				delivery_driver: true,
+				driver: true,
 				user: true,
 			}
 		});
@@ -73,6 +75,7 @@ async function getDeliveryOrderIfNotCompleted(user_id) {
 			},
 			include: {
 				delivery_driver: true,
+				driver: true,
 				user: true,
 			}
 		});
@@ -196,21 +199,32 @@ async function createOrder(order, user_id) {
 }
 async function createOrderSent(order_id, driver) {
 	try {
-		return prisma.delivery_order_sent.create({
-			data: {
-				order: {
-					connect: {
-						order_id
-					}
-				},
-				delivery_driver: {
-					connect: {
-						delivery_driver_id: driver.delivery_driver_id
-					}
-				},
-				location: driver.location,
-				accepted: false
+		const data = {
+			order: {
+				connect: {
+					order_id
+				}
 			},
+			location: driver.location,
+			accepted: false
+		};
+
+		// Check if the driver is a delivery driver or a normal driver
+		if (driver.delivery_driver_id) {
+			data.delivery_driver = {
+				connect: {
+					delivery_driver_id: driver.delivery_driver_id
+				}
+			};
+		} else if (driver.driver_id) {
+			data.driver = {
+				connect: {
+					driver_id: driver.driver_id
+				}
+			};
+		}
+		return prisma.delivery_order_sent.create({
+			data
 		});
 	} catch (e) {
 		throw new Error(e);
@@ -222,7 +236,10 @@ async function isOrderSent(order_id, driver) {
 		return prisma.delivery_order_sent.findFirst({
 			where: {
 				order_id,
-				delivery_driver_id: driver.delivery_driver_id
+				OR: [
+					{ delivery_driver_id: driver.delivery_driver_id },
+					{ driver_id: driver.driver_id }
+				]
 			}
 		});
 	} catch (e) {
@@ -236,37 +253,76 @@ async function acceptOrder(order_id, delivery_driver_id) {
 	try {
 		let delivery_order_sent = await prisma.delivery_order_sent.update({
 			where: {
-				delivery_order_sent_driver_unique: {
-					order_id,
-					delivery_driver_id: delivery_driver_id
-				}
+				OR: [
+					{
+						delivery_order_sent_delivery_driver_unique: {
+							order_id,
+							delivery_driver_id: delivery_driver_id
+						}
+					},
+					{
+						delivery_order_sent_driver_unique: {
+							order_id,
+							driver_id: delivery_driver_id
+						}
+					}
+				]
 			},
 			data: {
 				accepted: true
 			},
 		});
 		console.log("delivery_order_sent", delivery_order_sent)
-		await prisma.delivery_drivers.update({
+		const deliveryDriver = await prisma.delivery_drivers.findUnique({
 			where: {
 				delivery_driver_id: delivery_driver_id
-			},
-			data: {
-				on_order: true
 			}
 		});
-		return prisma.delivery_orders.update({
-			where: {
-				order_id
-			},
-			data: {
-				status: "DELIVERY_ACCEPTED",
-				delivery_driver: {
-					connect: {
-						delivery_driver_id: delivery_driver_id
-					}
+		if (deliveryDriver) {
+			await prisma.delivery_drivers.update({
+				where: {
+					delivery_driver_id: delivery_driver_id
+				},
+				data: {
+					on_order: true
 				}
-			},
-		});
+			});
+			return prisma.delivery_orders.update({
+				where: {
+					order_id
+				},
+				data: {
+					status: "DELIVERY_ACCEPTED",
+					delivery_driver: {
+						connect: {
+							delivery_driver_id: delivery_driver_id
+						}
+					}
+				},
+			});
+		} else {
+			await prisma.drivers.update({
+				where: {
+					driver_id: delivery_driver_id
+				},
+				data: {
+					on_order: true
+				}
+			});
+			return prisma.delivery_orders.update({
+				where: {
+					order_id
+				},
+				data: {
+					status: "DELIVERY_ACCEPTED",
+					driver: {
+						connect: {
+							driver_id: delivery_driver_id
+						}
+					}
+				},
+			});
+		}
 	} catch (e) {
 		throw new Error(e);
 	}
@@ -391,7 +447,10 @@ async function completeOrder(order_id) {
 		});
 		let orders = await prisma.delivery_orders.findMany({
 			where: {
-				delivery_driver_id: delivery_order.delivery_driver_id,
+				OR: [
+					{ delivery_driver_id: delivery_order.delivery_driver_id },
+					{ driver_id: delivery_order.driver_id }
+				],
 				status: {
 					notIn: [
 						DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
@@ -405,14 +464,25 @@ async function completeOrder(order_id) {
 			}
 		})
 		console.log("DELIVERY DRIVER ORDERS", orders.length)
-		await prisma.delivery_drivers.update({
-			where: {
-				delivery_driver_id: delivery_order.delivery_driver_id
-			},
-			data: {
-				on_order: orders.length > 0
-			}
-		});
+		if (delivery_order.delivery_driver_id) {
+			await prisma.delivery_drivers.update({
+				where: {
+					delivery_driver_id: delivery_order.delivery_driver_id
+				},
+				data: {
+					on_order: orders.length > 0
+				}
+			});
+		} else if (delivery_order.driver_id) {
+			await prisma.drivers.update({
+				where: {
+					delivery_driver_id: delivery_order.driver_id
+				},
+				data: {
+					on_order: orders.length > 0
+				}
+			});
+		}
 		return delivery_order;
 	} catch (e) {
 		throw new Error(e);
@@ -425,7 +495,10 @@ async function acceptOrderSent(order_id, driver_id) {
 		return prisma.delivery_order_sent.update({
 			where: {
 				order_id,
-				delivery_driver_id: driver_id
+				OR: [
+					{ delivery_driver_id: driver_id },
+					{ driver_id: driver_id }
+				]
 			},
 			data: {
 				accepted: true
@@ -506,10 +579,12 @@ async function updateDeliveryOrderTimeline(order_id, newTimelineEntries) {
 async function updateOrder(order_id, order) {
 	delete order.user_id;
 	delete order.delivery_driver_id;
+	delete order.driver_id;
 	delete order.created_at
 	delete order.updated_at
 	delete order.business_id
 	delete order.delivery_driver
+	delete order.driver
 	delete order.user
 
 	if (order.last_sent_at && Object.keys(order.last_sent_at).length === 0) {
@@ -527,6 +602,7 @@ async function updateOrder(order_id, order) {
 			},
 			include: {
 				delivery_driver: true,
+				driver: true
 			},
 		});
 	} catch (e) {

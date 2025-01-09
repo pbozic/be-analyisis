@@ -18,6 +18,7 @@ const { connect } = require("http2");
 const {RESTAURANT_FEE} = require('../lib/constants');
 const prisma = require("../prisma/prisma");
 const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
+const DriverDao = require("../dao/Driver");
 
 /**
  * GET /delivery/orders
@@ -480,26 +481,30 @@ async function createDailyMeals(req, res) {
 async function acceptOrder(req, res) {
 	console.log("accept order function",req.body);
 	const { order_id, user } = req.body;
-	const delivery_driver_id = user?.delivery_driver?.delivery_driver_id || user?.driver?.delivery_driver_id
+	const delivery_driver_id = user?.delivery_driver?.delivery_driver_id || user?.driver?.driver_id
 	try {
 		//TODO: check if driver is online
 		//TODO: check if order is still pending
 		await DeliveryOrderDao.acceptOrder(order_id, delivery_driver_id);
 		let order = await DeliveryOrderDao.getOrder(order_id, {
 			include: {
-				delivery_driver: true
+				delivery_driver: true,
+				driver: true
 			}
 		});
-		let driver = await DeliveryDriverDao.getDeliveryDriverById(delivery_driver_id, {
-			vehicles: {
-				include: {
-					vehicle_specification: true,
+		let driver;
+		if (order.delivery_driver.delivery_driver_id) {
+			driver = await DeliveryDriverDao.getDeliveryDriverById(delivery_driver_id, {
+				vehicles: {
+					include: {
+						vehicle_specification: true,
+					}
 				}
-			}
-		});
-		//TODO: how to handle multiple vehicles on driver -> check which vehicle has its field active, that's it, one active vehicle per delivery driver
-		driver.vehicle = driver.vehicles[0];
-		order.driver = driver;
+			});
+			//TODO: how to handle multiple vehicles on driver -> check which vehicle has its field active, that's it, one active vehicle per delivery driver
+			driver.vehicle = driver.vehicles[0];
+			order.driver = driver;
+		}
 		let { result } = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, order.delivery_location.coordinates, "driving", new Date());
 		order.details.distance = result.rows[0].elements[0].distance.text;
 		order.details.duration = result.rows[0].elements[0].duration.text;
@@ -513,7 +518,7 @@ async function acceptOrder(req, res) {
 		console.log("order accepted", order);
 
 		io.to("order_" + order.order_id).emit("order_accepted__delivery", order);
-		io.emit("driver_unavailable", order.delivery_driver_id);
+		io.emit("driver_unavailable", delivery_driver_id);
 
 		res.status(200).json(order);
 	} catch (e) {
@@ -538,7 +543,9 @@ async function acceptOrder(req, res) {
 async function completeOrder(req, res) {
 	try {
 		let order = await DeliveryOrderDao.completeOrder(req.body.order_id);
-		let driver = await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id);
+		let driver = order.delivery_driver_id
+			? await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id)
+			: await DriverDao.getDriverById(order.driver_id);
 		let delivery_business = await BusinessDao.getBusinessById(driver.business_id);
 		if(order.payment.type==="CARD"){
 			const paymentIntent = await stripe.client.paymentIntents.retrieve(order.payment_intent_id);
@@ -587,7 +594,6 @@ async function completeOrder(req, res) {
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
-
 async function getCompletedDeliveryOrdersByDriverId(req, res) {
 	console.log("get completed orders");
 	const { driver_id } = req.params;
@@ -596,7 +602,10 @@ async function getCompletedDeliveryOrdersByDriverId(req, res) {
 		const completedOrders = await DeliveryOrderDao.getOrders({
 			where: {
 				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
-				delivery_driver_id: driver_id
+				OR: [
+					{ delivery_driver_id: driver_id },
+					{ driver_id: driver_id }
+				]
 			},
 			include: {
 				business: true
@@ -620,7 +629,6 @@ async function getCompletedDeliveryOrdersByDriverId(req, res) {
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
-
 async function getActiveDeliveryOrdersByDriverId(req, res) {
 	const { driver_id } = req.params;
 
@@ -637,7 +645,10 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 						DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
 					]
 				},
-				delivery_driver_id: driver_id
+				OR: [
+					{ delivery_driver_id: driver_id },
+					{ driver_id: driver_id }
+				]
 			}
 		});
 		res.status(200).json(completedOrders);
@@ -684,7 +695,8 @@ async function getCompletedDeliveryOrdersByUserId(req, res) {
 						}
 					}
 				},
-				delivery_driver: true
+				delivery_driver: true,
+				driver: true
 			}
 		});
 
@@ -711,9 +723,6 @@ async function getCompletedDeliveryOrdersByUserId(req, res) {
 		res.status(500).json(e);
 	}
 }
-
-
-
 
 /**
  * GET /delivery/orders/active/:user_id
