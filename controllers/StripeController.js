@@ -9,7 +9,7 @@ async function handlePaymentIntentSuccess(paymentIntent) {
         case 'wallet_topup':
             console.log("wallet_topup", paymentIntent)
             
-            await UsersDao.addToWalletBalance(paymentIntent.metadata.user_id, paymentIntent.amount / 100);
+            await UsersDao.addToWalletBalance(paymentIntent.metadata.user_id, paymentIntent.amount, paymentIntent.latest_charge);
             if (UserSockets.get(paymentIntent.metadata.user_id)) {
                 let user = await UsersDao.getUserById(paymentIntent.metadata.user_id);
                 console.log("user", user.user_id)

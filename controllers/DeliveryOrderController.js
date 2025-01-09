@@ -208,8 +208,8 @@ async function createOrder(req, res) {
 			});
 			let balance = await stripe.getBalance();
 			console.log("balance", balance);
-			const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user_id,business.stripe_account_id, MERCHANT_CUT_CENTS, order.order_id);
-			const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user_id,"platform", PLATFORM_CUT_CENTS, order.order_id);
+			const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user_id,business.stripe_account_id, MERCHANT_CUT_CENTS, order.order_id,"delivery");
+			const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user_id,"platform", PLATFORM_CUT_CENTS, order.order_id,"delivery");
 			// let walletTransfer = await prisma.wallet_transfer_history.create(
 			// 	{
 			// 		data: {
@@ -557,7 +557,7 @@ async function completeOrder(req, res) {
 		}else if(order.payment.type==="WALLET"){
 			const DELIVERY_COST_CENTS = Math.round(order.details.delivery_cost*100);
 			console.info(order)
-			const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id,delivery_business.stripe_account_id, DELIVERY_COST_CENTS, order.order_id);
+			const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id,delivery_business.stripe_account_id, DELIVERY_COST_CENTS, order.order_id, order.type, "delivery");
 			// let walletTransfer = await prisma.wallet_transfer_history.create(
 			// 	{
 			// 		data: {
