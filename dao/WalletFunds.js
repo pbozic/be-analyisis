@@ -125,7 +125,7 @@ async function deleteWalletFunds(wallet_funds_id) {
 	}
 }
 
-async function subtractFunds(walletFundsId, amount) {
+async function subtractFunds(walletFundsId, amount, order_id=null,order_type=null) {
 	try {
 		if(amount<=0){
 			throw new Error("Subtract amount must be greater than 0");
@@ -162,6 +162,11 @@ async function subtractFunds(walletFundsId, amount) {
 						user: { connect: { user_id: updated_WF.user_id } },
 						amount: -amount/100,
 						type: 'DEBIT',
+						...(
+							(order_type==="delivery") ?
+							{delivery_order: { connect: { order_id: order_id } }} :
+							{taxi_order: { connect: { order_id: order_id } }}
+						),
 						description: 'Subtracted funds from wallet',
 						wallet_funds: { connect: { wallet_funds_id: updated_WF.wallet_funds_id } },
 					}
