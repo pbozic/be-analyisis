@@ -155,7 +155,8 @@ async function subtractFunds(walletFundsId, amount) {
 				},
 			});
 
-			if(walletFund.reserved_order !== null && walletFund.reserved_business !== null){
+			console.info(`subtracted ${amount} from WF:\n${JSON.stringify(walletFund,null,2)}. ` )
+			if(walletFund.reserved_order !== null){
 				await tx.transactions.create({
 					data: {
 						user: { connect: { user_id: updated_WF.user_id } },

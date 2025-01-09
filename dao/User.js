@@ -543,7 +543,7 @@ async function removeWalletBalance(userId, amountToSubtract, order_id, order_typ
 							},
 						amount: -amountToSubtract,
 						type: 'DEBIT',
-						description: 'Deducted funds from wallet',
+						description: 'Deducted funds from wallet balance',
 					},
 				});
 			} else {
@@ -555,7 +555,7 @@ async function removeWalletBalance(userId, amountToSubtract, order_id, order_typ
 							},
 						amount: -amountToSubtract,
 						type: 'DEBIT',
-						description: 'Deducted funds from wallet',
+						description: 'Deducted funds from wallet balance',
 					},
 				});
 			}
