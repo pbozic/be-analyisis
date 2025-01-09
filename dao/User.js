@@ -555,8 +555,7 @@ async function deleteUserByUserId(userId) {
 
 const updateWalletBalance = async (userId, amount, documents) => {
 	try {
-		const new_wallet_fund = await WalletFundsDao.createWalletFunds(userId,null,Math.round(amount*100));
-		console.info("Added wallet funds: ",new_wallet_fund)
+		const newTransaction = await WalletFundsDao.createWalletFunds(userId,null,Math.round(amount*100));
 		const updatedUser = await prisma.users.update({
 			where: { user_id: userId },
 			data: {
@@ -566,14 +565,14 @@ const updateWalletBalance = async (userId, amount, documents) => {
 			},
 		});
 
-		const newTransaction = await prisma.transactions.create({
-			data: {
-				user: { connect: { user_id: userId } },
-				amount: amount,
-				type: 'CREDIT',
-				description: 'Added funds to wallet',
-			},
-		});
+		// const newTransaction = await prisma.transactions.create({
+		// 	data: {
+		// 		user: { connect: { user_id: userId } },
+		// 		amount: amount,
+		// 		type: 'CREDIT',
+		// 		description: 'Added funds to wallet',
+		// 	},
+		// });
 
 		if (documents && Array.isArray(documents)) {
 			for (const file of documents) {
