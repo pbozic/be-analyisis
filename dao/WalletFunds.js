@@ -155,15 +155,17 @@ async function subtractFunds(walletFundsId, amount) {
 				},
 			});
 
-			await tx.transactions.create({
-				data: {
-					user: { connect: { user_id: updated_WF.user_id } },
-					amount: -amount/100,
-					type: 'PAYMENT',
-					description: 'Subtracted funds from wallet',
-					wallet_funds: { connect: { wallet_funds_id: updated_WF.wallet_funds_id } },
-				}
-			});
+			if(walletFund.reserved_order !== null && walletFund.reserved_business !== null){
+				await tx.transactions.create({
+					data: {
+						user: { connect: { user_id: updated_WF.user_id } },
+						amount: -amount/100,
+						type: 'DEBIT',
+						description: 'Subtracted funds from wallet',
+						wallet_funds: { connect: { wallet_funds_id: updated_WF.wallet_funds_id } },
+					}
+				});
+			}
 
 			return updated_WF;
 		});
