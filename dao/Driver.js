@@ -49,10 +49,13 @@ const getDriversFull = async (args) => {
 		throw new Error(error);
 	}
 };
-const getOnlineDrivers = async () => {
+const getOnlineDrivers = async (args) => {
 	try {
 		return await prisma.drivers.findMany({
-			where: { online: true },
+			where: {
+				online: true,
+				...args
+			},
 			include: {
 				user: true,
 				vehicles: {

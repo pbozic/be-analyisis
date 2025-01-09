@@ -43,7 +43,7 @@ async function listBusinesses(req, res) {
 }
 
 /**
- * GET /businesses/merchants
+ * GET /businesses/merchant
  * @tag Business
  * @summary List all merchant businesses
  * @description Retrieves a list of all businesses classified as merchants.
@@ -63,7 +63,7 @@ async function listMerchantBusinesses(req, res) {
 }
 
 /**
- * GET /businesses/merchants/daily-meals
+ * GET /businesses/merchant/daily-meals
  * @tag Business
  * @summary List all merchant businesses offering daily meals
  * @description Retrieves a list of all businesses classified as merchants that offer daily meals.
@@ -83,7 +83,7 @@ async function listMerchantBusinessesWithDailyMeals(req, res) {
 }
 
 /**
- * GET /businesses/merchants/main
+ * GET /businesses/merchant/main
  * @tag Business
  * @summary List all merchant businesses offering daily meals
  * @description Retrieves a list of all businesses classified as merchants that offer daily meals.
