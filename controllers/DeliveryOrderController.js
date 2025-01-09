@@ -493,7 +493,7 @@ async function acceptOrder(req, res) {
 			}
 		});
 		let driver;
-		if (order.delivery_driver.delivery_driver_id) {
+		if (order.delivery_driver?.delivery_driver_id) {
 			driver = await DeliveryDriverDao.getDeliveryDriverById(delivery_driver_id, {
 				vehicles: {
 					include: {
