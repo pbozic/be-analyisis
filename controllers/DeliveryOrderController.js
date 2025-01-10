@@ -478,7 +478,7 @@ async function acceptOrder(req, res) {
 		});
 		if (order.status === DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED || order.status === DELIVERY_ORDER_STATUS.MERCHANT_CANCELED) {
 			return res.status(400).json({ error: `Order has been canceled: ${order.status}.`,error_type:"ERR_ORDER_ALREADY_CANCELED" });
-		} else if (order.status !== DELIVERY_ORDER_STATUS.PENDING) {
+		} else if (order.status.startsWith('DELIVERY')) {
 			return res.status(400).json({ error: "Order is already accepted." });
 		}
 		await DeliveryOrderDao.acceptOrder(order_id, delivery_driver_id);
