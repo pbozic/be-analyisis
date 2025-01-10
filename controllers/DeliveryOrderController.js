@@ -210,20 +210,6 @@ async function createOrder(req, res) {
 			console.log("balance", balance);
 			const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user_id,business.stripe_account_id, MERCHANT_CUT_CENTS, order.order_id,"delivery");
 			const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user_id,"platform", PLATFORM_CUT_CENTS, order.order_id,"delivery");
-			// let walletTransfer = await prisma.wallet_transfer_history.create(
-			// 	{
-			// 		data: {
-			// 			amount: MERCHANT_CUT_CENTS,
-			// 			order: {
-			// 				connect: {
-			// 					order_id: order.order_id
-			// 				}
-			// 			},
-			// 			success: (transfersForPlatform && transfersForPlatform.length>0) ? true : false
-			//
-			// 		}
-			// 	}
-			// );
 			
 		} else if (order.payment.type === "CASH") {
 			// io.to("orders_" + order.business_id).emit('new_order', order);
