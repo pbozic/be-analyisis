@@ -7,7 +7,7 @@ const UsersDao = require("../dao/User");
 const gApi = require("../lib/gApis");
 const { UserSockets, io } = require("../socket");
 const stripe = require("../lib/stripe");
-const { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE } = require("../lib/constants");
+const { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE, TAXI_ORDER_STATUS } = require("../lib/constants");
 const fs = require("fs");
 const Constants = require("../lib/constants");
 const { getUsers } = require("../dao/User");
@@ -470,14 +470,18 @@ async function acceptOrder(req, res) {
 	const delivery_driver_id = user?.delivery_driver?.delivery_driver_id || user?.driver?.driver_id
 	try {
 		//TODO: check if driver is online
-		//TODO: check if order is still pending
-		await DeliveryOrderDao.acceptOrder(order_id, delivery_driver_id);
 		let order = await DeliveryOrderDao.getOrder(order_id, {
 			include: {
 				delivery_driver: true,
 				driver: true
 			}
 		});
+		if (order.status === DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED || order.status === DELIVERY_ORDER_STATUS.MERCHANT_CANCELED) {
+			return res.status(400).json({ error: `Order has been canceled: ${order.status}.`,error_type:"ERR_ORDER_ALREADY_CANCELED" });
+		} else if (order.status !== DELIVERY_ORDER_STATUS.PENDING) {
+			return res.status(400).json({ error: "Order is already accepted." });
+		}
+		await DeliveryOrderDao.acceptOrder(order_id, delivery_driver_id);
 		let driver;
 		if (order.delivery_driver?.delivery_driver_id) {
 			driver = await DeliveryDriverDao.getDeliveryDriverById(delivery_driver_id, {
