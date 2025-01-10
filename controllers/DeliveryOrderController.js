@@ -19,6 +19,7 @@ const {RESTAURANT_FEE} = require('../lib/constants');
 const prisma = require("../prisma/prisma");
 const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
 const DriverDao = require("../dao/Driver");
+const TaxiOrderDao = require("../dao/TaxiOrder");
 
 /**
  * GET /delivery/orders
@@ -476,10 +477,13 @@ async function acceptOrder(req, res) {
 				driver: true
 			}
 		});
-		if (order.status === DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED || order.status === DELIVERY_ORDER_STATUS.MERCHANT_CANCELED) {
+		if (order.status === DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED || order.status === DELIVERY_ORDER_STATUS.MERCHANT_CANCELED || DELIVERY_ORDER_STATUS.DELIVERY_CANCELED) {
 			return res.status(400).json({ error: `Order has been canceled: ${order.status}.`,error_type:"ERR_ORDER_ALREADY_CANCELED" });
-		} else if (order.status.startsWith('DELIVERY')) {
-			return res.status(400).json({ error: "Order is already accepted." });
+		} else if (![DELIVERY_ORDER_STATUS.PENDING, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING,
+			DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED,
+			DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_DELAYED,
+			DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(order.status) || order.driver?.driver_id || order.delivery_driver?.delivery_driver_id) {
+			return res.status(400).json({ error: "Order is already accepted." }); //TODO: handle status DELIVERY_REJECTED
 		}
 		await DeliveryOrderDao.acceptOrder(order_id, delivery_driver_id);
 		let driver;
@@ -623,13 +627,15 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 	const { driver_id } = req.params;
 
 	try {
-		const completedOrders = await DeliveryOrderDao.getOrders({
+		const activeOrders = await DeliveryOrderDao.getOrders({
 			where: {
 				status: {
 					notIn: [
 						DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
+						DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
 						DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
 						DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
+						DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
 						DELIVERY_ORDER_STATUS.MERCHANT_REFUNDED,
 						DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
 					]
@@ -640,16 +646,17 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 				]
 			}
 		});
-		const activeOrders = [];
 		const pendingOrders = [];
-		if (completedOrders && completedOrders.length > 0) {
-			completedOrders.forEach(order => {
-				if (order.status === DELIVERY_ORDER_STATUS.PENDING) {
-					pendingOrders.push(order);
-				} else {
-					activeOrders.push(order);
-				}
-			});
+		const sentOrders = await DeliveryOrderDao.getAlreadySentOrdersByDeliveryDriverId(driver_id);
+		for (let sentOrder of sentOrders) {
+			const order = await DeliveryOrderDao.getOrder(sentOrder.order.order_id);
+			if ([DELIVERY_ORDER_STATUS.PENDING, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING,
+				DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED,
+				DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_DELAYED,
+				DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(order.status)) {
+				pendingOrders.push(order);
+			}
+			console.info("Re-sending pending order: ", order.order_id, " to driver: ", driver_id);
 		}
 		res.status(200).json({
 			active: activeOrders,

@@ -612,13 +612,14 @@ async function updateOrder(order_id, order) {
 	}
 }
 
-
-
 async function getAlreadySentOrdersByDeliveryDriverId(delivery_driver_id) {
 	try {
 		return await prisma.delivery_order_sent.findMany({
 			where: {
-				delivery_driver_id,
+				OR: [
+					{ delivery_driver_id: delivery_driver_id },
+					{ driver_id: delivery_driver_id }
+				],
 				accepted: false
 			},
 			include: {
@@ -630,8 +631,6 @@ async function getAlreadySentOrdersByDeliveryDriverId(delivery_driver_id) {
 		throw new Error(e);
 	}
 }
-
-
 
 module.exports = {
 	getOrders,

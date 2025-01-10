@@ -145,8 +145,6 @@ async function getActiveTaxiOrdersByDriverId(req, res) {
 				continue;
 			}
 			console.info("Re-sending pending order: ", order.order_id, " to driver: ", driver_id);
-
-
 			pendingOrders.push(order);
 		}
 
