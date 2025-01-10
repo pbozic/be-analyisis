@@ -466,7 +466,7 @@ async function createDailyMeals(req, res) {
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function acceptOrder(req, res) {
-	console.log("accept order function",req.body);
+	console.log("accept order function", req.body.user?.user_id);
 	const { order_id, user } = req.body;
 	const delivery_driver_id = user?.delivery_driver?.delivery_driver_id || user?.driver?.driver_id
 	try {
@@ -478,6 +478,7 @@ async function acceptOrder(req, res) {
 			}
 		});
 		if (order.status === DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED || order.status === DELIVERY_ORDER_STATUS.MERCHANT_CANCELED || DELIVERY_ORDER_STATUS.DELIVERY_CANCELED) {
+			console.log("ORDER STATUS:", order.status)
 			return res.status(400).json({ error: `Order has been canceled: ${order.status}.`, error_type: "ERR_ORDER_ALREADY_CANCELED" });
 		} else if (![DELIVERY_ORDER_STATUS.PENDING, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING,
 			DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED,
