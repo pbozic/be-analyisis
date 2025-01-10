@@ -2,7 +2,8 @@ const e = require('cors');
 const DeliveryOrderDao = require('../dao/DeliveryOrder');
 const UsersDao = require('../dao/User');
 const {io, UserSockets} = require('../socket');
-
+const stripe = require('../lib/stripe')
+const BusinessDao = require("../dao/Business");
 
 async function handlePaymentIntentSuccess(paymentIntent) {
     switch (paymentIntent.metadata.type) { 
@@ -17,14 +18,22 @@ async function handlePaymentIntentSuccess(paymentIntent) {
             }
             break;
         case 'order_payment':
-            // let order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
-            // order = await DeliveryOrderDao.updateOrder(order.order_id, {
-            //     payment: {
-            //         ...order.payment,
-            //         status: 'PAID',
-            //     },
-            //     status: "CUSTOMER_PAYMENT_SUCCESSFUL"
-            // });
+            let order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
+            if(paymentIntent.metadata?.merchant_cut) {
+                const business = await BusinessDao.getBusinessById(order.details.business_id);
+                const transferRestaurant = await stripe.splitCutFromPaymentIntent(
+                    paymentIntent,
+                    business.stripe_account_id,
+                    parseFloat(paymentIntent.metadata.merchant_cut),
+                );
+            }
+            order = await DeliveryOrderDao.updateOrder(order.order_id, {
+                payment: {
+                    ...order.payment,
+                    status: 'PAID',
+                },
+                // status: "CUSTOMER_PAYMENT_SUCCESSFUL"
+            });
             
             console.log('PaymentIntent was successful!');
             break;
