@@ -478,7 +478,7 @@ async function completeOrder(order_id) {
 		} else if (delivery_order.driver_id) {
 			await prisma.drivers.update({
 				where: {
-					delivery_driver_id: delivery_order.driver_id
+					driver_id: delivery_order.driver_id
 				},
 				data: {
 					on_order: orders.length > 0
