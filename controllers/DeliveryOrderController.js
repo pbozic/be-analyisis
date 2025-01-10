@@ -637,7 +637,6 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 			where: {
 				status: {
 					notIn: [
-						DELIVERY_ORDER_STATUS.PENDING,
 						DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
 						DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
 						DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
@@ -651,7 +650,21 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 				]
 			}
 		});
-		res.status(200).json(completedOrders);
+		const activeOrders = [];
+		const pendingOrders = [];
+		if (completedOrders && completedOrders.length > 0) {
+			completedOrders.forEach(order => {
+				if (order.status === DELIVERY_ORDER_STATUS.PENDING) {
+					pendingOrders.push(order);
+				} else {
+					activeOrders.push(order);
+				}
+			});
+		}
+		res.status(200).json({
+			active: activeOrders,
+			pending: pendingOrders,
+		});
 	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
