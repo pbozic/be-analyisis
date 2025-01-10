@@ -427,7 +427,7 @@ async function getDeliveryDriverLocation(req, res) {
 }
 
 /**
- * PATCH /delivery/
+ * PATCH /delivery_drivers/update/:delivery_driver_id
  * @tag DeliveryDrivers
  * @summary Update a delivery driver
  * @description Updates information about a specific delivery driver, excluding location.

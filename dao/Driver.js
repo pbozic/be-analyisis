@@ -512,7 +512,7 @@ async function getDriverLocationsWithPerformance(driverId, startTime, endTime) {
 	}
 }
 
-async function toggleDriverHandle(driver_id, action, type) {
+async function setDriverHandle(driver_id, action, type) {
 	const updateData = {};
 	const isEnableAction = action === 'enable';
 
@@ -536,8 +536,25 @@ async function toggleDriverHandle(driver_id, action, type) {
 	});
 }
 
+async function toggleDriverOrders(driver_id, types) {
+	try {
+		return await prisma.drivers.update({
+			where: { driver_id: driver_id },
+			data: {
+				taxi_orders_toggled: types?.taxi || true,
+				transfer_orders_toggled: types?.transfer || false,
+				delivery_orders_toggled: types?.delivery || false,
+			},
+		});
+	} catch (error) {
+		console.error("Error toggling driver orders:", error);
+		throw new Error(error);
+	}
+}
+
 module.exports = {
-	toggleDriverHandle,
+	setDriverHandle,
+	toggleDriverOrders,
 	getDrivers,
 	getOnlineDrivers,
 	getDriverById,

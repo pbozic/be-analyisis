@@ -19,12 +19,13 @@ router.get("/earnings/total", DriverController.getTotalEarnings);
 router.get("/earnings/:driver_id", DriverController.getDriverEarnings);
 router.get("/earnings/:driver_id/total", DriverController.getDriverTotalEarnings);
 
-router.patch("/", DriverController.updateDriver);
+router.patch("/update/:driver_id", DriverController.updateDriver);
 router.patch("/edit", DriverController.editDriver);
 router.patch("/ride_requirements", DriverController.updateDriverRideRequirements);
 router.patch("/location", DriverController.updateDriverLocation);
 router.patch("/online", DriverController.updateDriverOnlineStatus);
-router.patch("/:driver_id/:action/:type", DriverController.toggleDriverHandle);
+router.patch("/:driver_id/toggle_orders", DriverController.toggleDriverOrders);
+router.patch("/:driver_id/:action/:type", DriverController.setDriverHandle);
 
 router.post("/create", DriverController.createDriver);
 router.post("/sos", DriverController.handleSosAlert);

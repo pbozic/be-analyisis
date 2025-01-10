@@ -187,7 +187,7 @@ async function resendDelegatedOrdersToDriver(req, res) {
 }
 
 /**
- * PATCH /drivers/
+ * PATCH /drivers/update/:driver_id
  * @tag Drivers
  * @summary Update a driver
  * @description Updates information about a specific driver, excluding location.
@@ -718,7 +718,7 @@ async function getDriverTotalEarnings(req, res) {
  * @tag Drivers
  * @summary Enable or disable a driver
  * @description Enables or disables a specific driver based on the provided action and type.
- * @operationId toggleDriverHandle
+ * @operationId setDriverHandle
  * @pathParam {string} driver_id - The ID of the driver to toggle
  * @pathParam {string} action - The action to perform (enable or disable)
  * @pathParam {string} type - The type of action (taxi, transfer, delivery)
@@ -726,7 +726,7 @@ async function getDriverTotalEarnings(req, res) {
  * @response 404 - Driver not found
  * @response 400 - Error toggling driver
  */
-async function toggleDriverHandle(req, res) {
+async function setDriverHandle(req, res) {
 	const { driver_id, action, type } = req.params;
 
 	try {
@@ -734,17 +734,53 @@ async function toggleDriverHandle(req, res) {
 		if (!driver) {
 			return res.status(404).json({ error: "Driver not found" });
 		}
-		await DriverDao.toggleDriverHandle(driver_id, action, type);
+		await DriverDao.setDriverHandle(driver_id, action, type);
 
-		res.status(200).json({ message: `Driver ${action}d successfully` });
+		res.status(200).json({ message: `Driver ${type} orders ${action}d successfully` });
 	} catch (error) {
 		console.error("Error toggling driver handle field:", error);
 		res.status(400).json({ error: "Error toggling driver handle field", detail: error.message });
 	}
 }
 
+/**
+ * PATCH /drivers/:driver_id/toggle_orders
+ * @tag Drivers
+ * @summary Toggle driver's orders he should receive
+ * @description This endpoint allows toggling the types of orders a specific driver can receive. The request body should contain an object specifying which order types (taxi, transfer, delivery) to toggle on or off.
+ * @operationId toggleDriverOrders
+ * @pathParam {string} driver_id - The ID of the driver to toggle
+ * @bodyContent {Object} application/json
+ * @bodyRequired
+ * @response 200 - Driver orders toggled successfully
+ * @responseContent {Object} 200.application/json
+ * @response 404 - Driver not found
+ * @response 400 - Error toggling driver orders
+ */
+async function toggleDriverOrders(req, res) {
+	const { driver_id } = req.params;
+	const { types } = req.body;
+	if (!types) {
+		return res.status(400).json({ error: "Missing required parameter: types" });
+	}
+
+	try {
+		const driver = await DriverDao.getDriverById(driver_id);
+		if (!driver) {
+			return res.status(404).json({ error: "Driver not found" });
+		}
+		await DriverDao.toggleDriverOrders(driver_id, types);
+
+		res.status(200).json({ message: `Driver orders toggled successfully` });
+	} catch (error) {
+		console.error("Error toggling driver orders:", error);
+		res.status(400).json({ error: "Error toggling driver orders", detail: error.message });
+	}
+}
+
 module.exports = {
-	toggleDriverHandle,
+	setDriverHandle,
+	toggleDriverOrders,
 	listDrivers,
 	listOnlineDrivers,
 	getDriverById,
