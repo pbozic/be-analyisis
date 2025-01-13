@@ -461,11 +461,13 @@ async function completeOrder(order_id) {
 						DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
 						DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
 						DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
+						DELIVERY_ORDER_STATUS.MERCHANT_REFUNDED,
+						DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED,
 					]
 				},
 			}
 		})
-		console.log("DELIVERY DRIVER ORDERS", orders.length)
+		console.log("DELIVERY DRIVER ORDERS", orders.length, delivery_order.delivery_driver_id, delivery_order.driver_id)
 		if (delivery_order.delivery_driver_id) {
 			await prisma.delivery_drivers.update({
 				where: {
