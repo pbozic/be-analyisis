@@ -566,6 +566,8 @@ async function completeOrder(req, res) {
 			// 	}
 			// );
 		}
+		//Transfer our share of the delivery_earnings to the delivery business account
+		const transferDeliveryEarnings = stripe.transferToConnectedAccount(Math.round((order.details.delivery_earings - order.details.delivery_cost)*100), delivery_business.stripe_account_id, order.order_id);
 
 		io.to("order_" + order.order_id).emit("order_completed__delivery", order);
 		io.emit("driver_available", driver);
