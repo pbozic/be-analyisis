@@ -40,7 +40,15 @@ async function getOrder(order_id) {
         return await prisma.taxi_orders.findFirst({
             where: { order_id },
             include: {
-                user: true,
+                user: {
+                    include: {
+                        documents: {
+                            include: {
+                                files: true,
+                            }
+                        }
+                    }
+                },
                 driver: {
                     include: {
                         user: {
@@ -117,7 +125,15 @@ async function getActiveOrdersByDriverId(driver_id) {
                 },
             },
             include: {
-                user: true,
+                user: {
+                    include: {
+                        documents: {
+                            include: {
+                                files: true,
+                            }
+                        }
+                    }
+                },
                 driver: {
                     include: {
                         user: {
