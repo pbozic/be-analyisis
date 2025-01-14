@@ -1197,18 +1197,18 @@ async function getBusynessFactorsBusinessIdList(req, res) {
 		// Assuming we have a function to get orders by business IDs
 		const busynessFactors = {};
 
-		business_ids.forEach(businessId => {
-			const orderCount = DeliveryOrderDao.getInProgressDeliveryOrdersCountForBusinessId(businessId);
-			console.info("orderCount: ",businessId,orderCount);
-			if(!orderCount){
+		for (const businessId of business_ids) {
+			const orderCount = await DeliveryOrderDao.getInProgressDeliveryOrdersCountForBusinessId(businessId);
+			console.info("orderCount: ", businessId, orderCount);
+			if (!orderCount) {
 				busynessFactors[businessId] = 1;
-				return
+				continue; // Use continue instead of return to proceed with the next iteration
 			}
 			// Calculate busyness factor
 			let busynessFactor = 1;
 			busynessFactor += Math.floor(orderCount / 5) * 0.2;
 			busynessFactors[businessId] = busynessFactor;
-		});
+		}
 
 		res.status(200).json(busynessFactors);
 	} catch (error) {
