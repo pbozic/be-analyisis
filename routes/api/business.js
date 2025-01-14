@@ -13,6 +13,7 @@ router.get("/businesses/merchant/daily-meals", BusinessController.listMerchantBu
 router.get("/businesses/merchant/main", BusinessController.listMerchantBusinessesMainInfo);
 router.get("/businesses/taxi", BusinessController.listTransferBusinesses);
 router.get("/businesses/taxi/main", BusinessController.listTransferBusinessesMainInfo);
+router.get("/businesses/busyness", BusinessController.getBusynessFactorsBusinessIdList);
 
 router.get("/:business_id", BusinessController.getBusinessById);
 router.get("/:business_id/reviews", BusinessController.getBusinessReviewsById);

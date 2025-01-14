@@ -640,6 +640,29 @@ async function getAlreadySentOrdersByDeliveryDriverId(delivery_driver_id) {
 	}
 }
 
+
+async function getInProgressDeliveryOrdersCountForBusinessId(business_id) {
+	try {
+		return await prisma.delivery_orders.count({
+			where: {
+				business_id:business_id,
+				status: {
+					OR: [
+						DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL,
+						DELIVERY_ORDER_STATUS.PENDING,
+						DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED,
+						DELIVERY_ORDER_STATUS.MERCHANT_PREPARING,
+					]
+				},
+			}
+		});
+	} catch (e) {
+		console.error("Error fetching orders:", e);
+		throw new Error(e.message);
+	}
+}
+
+
 module.exports = {
 	getOrders,
 	getActiveDeliveryOrders,
@@ -662,5 +685,6 @@ module.exports = {
 	getDeliveryOrderIfNotCompleted,
 	getAlreadySentOrdersByDeliveryDriverId,
 	getActiveOrdersByDeliveryDriverId,
-	connectOrderWithDriver
+	connectOrderWithDriver,
+	getInProgressDeliveryOrdersCountForBusinessId
 };

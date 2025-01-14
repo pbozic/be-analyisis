@@ -1188,6 +1188,28 @@ async function generateBusinessStripeByBusinessId(req,res){
 	}
 }
 
+async function getBusynessFactorsBusinessIdList(req, res) {
+	const { business_ids } = req.params;
+
+	try {
+		// Assuming we have a function to get orders by business IDs
+		const busynessFactors = {};
+
+		business_ids.forEach(businessId => {
+			const orderCount = DeliveryOrderDao.getInProgressDeliveryOrdersCountForBusinessId(businessId);
+			// Calculate busyness factor
+			let busynessFactor = 1;
+			busynessFactor += Math.floor(orderCount / 5) * 0.2;
+			busynessFactors[businessId] = busynessFactor;
+		});
+
+		res.status(200).json(busynessFactors);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: 'Internal Server Error while getting busyness factors' });
+	}
+}
+
 module.exports = {
 	listBusinesses,
 	listTransferBusinesses,
@@ -1228,6 +1250,7 @@ module.exports = {
 	getBusinessReviewsById,
 	editBusiness,
 	getBusinessStripeStatusByBusinessId,
-	generateBusinessStripeByBusinessId
+	generateBusinessStripeByBusinessId,
+	getBusynessFactorsBusinessIdList
 };
 
