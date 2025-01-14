@@ -117,7 +117,15 @@ async function getActiveOrdersByDriverId(driver_id) {
                 },
             },
             include: {
-                user: true,
+                user: {
+                    include: {
+                        documents: {
+                            include: {
+                                files: true,
+                            }
+                        }
+                    }
+                },
                 driver: {
                     include: {
                         user: {
