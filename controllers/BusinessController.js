@@ -1189,8 +1189,10 @@ async function generateBusinessStripeByBusinessId(req,res){
 }
 
 async function getBusynessFactorsBusinessIdList(req, res) {
-	const { business_ids } = req.params;
-
+	const { business_ids } = req.query;
+	if (!business_ids) {
+		return res.status(400).json({ error: 'business_ids parameter is required' });
+	}
 	try {
 		// Assuming we have a function to get orders by business IDs
 		const busynessFactors = {};
