@@ -9,8 +9,13 @@ async function handlePaymentIntentSuccess(paymentIntent) {
     switch (paymentIntent.metadata.type) { 
         case 'wallet_topup':
             console.log("wallet_topup", paymentIntent)
-            
-            await UsersDao.addToWalletBalance(paymentIntent.metadata.user_id, paymentIntent.amount, paymentIntent.latest_charge);
+            //The amount in the charge is in the given currency, whereas the amount after conversion to Eur is stored in the balance transaction connected to the charge.
+            const pi_latest_charge = await stripe.charges.retrieve(paymentIntent.latest_charge, {
+                expand: ['balance_transaction'],
+            });
+            const amount_in_eur_cents= pi_latest_charge.balance_transaction.amount
+
+            await UsersDao.addToWalletBalance(paymentIntent.metadata.user_id, amount_in_eur_cents, paymentIntent.latest_charge);
             if (UserSockets.get(paymentIntent.metadata.user_id)) {
                 let user = await UsersDao.getUserById(paymentIntent.metadata.user_id);
                 console.log("user", user.user_id)
