@@ -746,7 +746,15 @@ async function updateOrder(order_id, order) {
             data: order,
             include: {
                 grouped_orders: true,
-                user: true,
+                user: {
+                    include: {
+                        documents: {
+                            include: {
+                                files: true,
+                            }
+                        }
+                    }
+                },
                 driver: {
                     include: {
                         user: {
