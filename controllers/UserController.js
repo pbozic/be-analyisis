@@ -1000,9 +1000,12 @@ async function getPaymentSheetCredentials(req, res) {
 }
 async function requestToAddFundsToWallet(req, res) {
 	try {
-		const { amount, payment_method_id, return_url } = req.body;
+		const { amount, currency, payment_method_id, return_url } = req.body;
+		if((!amount && amount<=0) || !currency || !payment_method_id) {
+			return res.status(400).json({ error: 'Error requesting to add funds to wallet: Invalid parameters!' });
+		}
 	  // Create a Payment Method to handle the transaction
-	  let paymentIntent = await stripe.createPaymentIntentForWallet(Math.round(amount * 100), payment_method_id, req.user.stripe_customer_id, req.user.user_id, return_url);
+	  let paymentIntent = await stripe.createPaymentIntentForWallet(Math.round(amount * 100), currency, payment_method_id, req.user.stripe_customer_id, req.user.user_id, return_url);
 	  // const newWalletFunds = await WalletFundsDao.createWalletFunds(req.user.user_id,paymentIntent.latest_charge, amount * 100);
 	  res.status(200).json(paymentIntent);
 	} catch (error) {
