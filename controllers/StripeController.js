@@ -71,7 +71,7 @@ async function handleChargeUpdate(charge) {
         case 'wallet_topup':
             if(charge.status==='succeeded' && charge.balance_transaction!==null) {
                 //The amount in the charge is in the given currency, whereas the amount after conversion to Eur is stored in the balance transaction connected to the charge.
-                const charge_balance_transaction = await stripe.client.balance_transactions.retrieve(charge.balance_transaction);
+                const charge_balance_transaction = await stripe.client.balanceTransactions.retrieve(charge.balance_transaction);
                 console.info(charge_balance_transaction)
                 const amount_in_eur_cents= charge_balance_transaction.amount
 
