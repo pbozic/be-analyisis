@@ -10,7 +10,7 @@ async function handlePaymentIntentSuccess(paymentIntent) {
         case 'wallet_topup':
             console.log("wallet_topup", paymentIntent)
             //The amount in the charge is in the given currency, whereas the amount after conversion to Eur is stored in the balance transaction connected to the charge.
-            const pi_latest_charge = await stripe.charges.retrieve(paymentIntent.latest_charge, {
+            const pi_latest_charge = await stripe.client.charges.retrieve(paymentIntent.latest_charge, {
                 expand: ['balance_transaction'],
             });
             const amount_in_eur_cents= pi_latest_charge.balance_transaction.amount
