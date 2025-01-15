@@ -2,7 +2,7 @@ const cron = require("node-cron");
 const TaxiHelpers = require("./lib/taxiHelpers");
 const DeliveryHelpers = require("./lib/deliveryHelpers");
 const  { checkPingStatus } = require("./lib/driverHelpers");
-const stripe = require("stripe");
+const stripe = require("./lib/stripe");
 
 function startCronJobs() { 
     // Every minute
