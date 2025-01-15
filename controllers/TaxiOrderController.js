@@ -1101,6 +1101,7 @@ async function cancelOrder(req, res) {
 					});
 					io.emit("driver_available", driver);
 				}
+				console.log("vehicle_transfer_order_canceled", vehicle_transfer_order);
 				io.to("order_" + vehicle_transfer_order.order_id).emit("order_status_change__taxi", vehicle_transfer_order);
 				io.to("order_" + vehicle_transfer_order.order_id).emit("order_cancelled__taxi", vehicle_transfer_order);
 			}
