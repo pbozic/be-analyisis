@@ -9,19 +9,19 @@ async function handlePaymentIntentSuccess(paymentIntent) {
     switch (paymentIntent.metadata.type) { 
         case 'wallet_topup':
             console.log("wallet_topup", paymentIntent)
-            //The amount in the charge is in the given currency, whereas the amount after conversion to Eur is stored in the balance transaction connected to the charge.
-            const pi_latest_charge = await stripe.client.charges.retrieve(paymentIntent.latest_charge, {
-                expand: ['balance_transaction'],
-            });
-            console.info(pi_latest_charge)
-            const amount_in_eur_cents= pi_latest_charge.balance_transaction.amount
-
-            await UsersDao.addToWalletBalance(paymentIntent.metadata.user_id, amount_in_eur_cents, paymentIntent.latest_charge);
-            if (UserSockets.get(paymentIntent.metadata.user_id)) {
-                let user = await UsersDao.getUserById(paymentIntent.metadata.user_id);
-                console.log("user", user.user_id)
-                UserSockets.get(user.user_id).emit('wallet_balance_change', user.wallet_balance);
-            }
+            // //The amount in the charge is in the given currency, whereas the amount after conversion to Eur is stored in the balance transaction connected to the charge.
+            // const pi_latest_charge = await stripe.client.charges.retrieve(paymentIntent.latest_charge, {
+            //     expand: ['balance_transaction'],
+            // });
+            // console.info(pi_latest_charge)
+            // const amount_in_eur_cents= pi_latest_charge.balance_transaction.amount
+            //
+            // await UsersDao.addToWalletBalance(paymentIntent.metadata.user_id, amount_in_eur_cents, paymentIntent.latest_charge);
+            // if (UserSockets.get(paymentIntent.metadata.user_id)) {
+            //     let user = await UsersDao.getUserById(paymentIntent.metadata.user_id);
+            //     console.log("user", user.user_id)
+            //     UserSockets.get(user.user_id).emit('wallet_balance_change', user.wallet_balance);
+            // }
             break;
         case 'order_payment':
             let order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
@@ -66,6 +66,28 @@ async function handlePaymentIntentFaliure(paymentIntent) {
    
 }
 
+async function handleChargeUpdate(charge) {
+    switch (charge.metadata.type) {
+        case 'wallet_topup':
+            if(charge.status==='succeeded' && charge.balance_transaction!==null) {
+                //The amount in the charge is in the given currency, whereas the amount after conversion to Eur is stored in the balance transaction connected to the charge.
+                const charge_balance_transaction = await stripe.client.balance_transactions.retrieve(charge.balance_transaction);
+                console.info(charge_balance_transaction)
+                const amount_in_eur_cents= charge_balance_transaction.amount
+
+                await UsersDao.addToWalletBalance(charge.metadata.user_id, amount_in_eur_cents, charge.id);
+                if (UserSockets.get(charge.metadata.user_id)) {
+                    let user = await UsersDao.getUserById(charge.metadata.user_id);
+                    console.log("user", user.user_id)
+                    UserSockets.get(user.user_id).emit('wallet_balance_change', user.wallet_balance);
+                }
+            }
+            break;
+    }
+
+}
+
+
 async function handleWebhook(req, res) {
     const event = req.body;
     let paymentIntent;
@@ -99,6 +121,10 @@ async function handleWebhook(req, res) {
             break;
         case 'charge.succeeded':
             paymentIntent = event.data.object;
+            break;
+        case 'charge.updated':
+            console.log(event.data.object)
+            handleChargeUpdate(event.data.object);
             break;
         // ... handle other event types
         default:
