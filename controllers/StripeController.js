@@ -13,6 +13,7 @@ async function handlePaymentIntentSuccess(paymentIntent) {
             const pi_latest_charge = await stripe.client.charges.retrieve(paymentIntent.latest_charge, {
                 expand: ['balance_transaction'],
             });
+            console.info(pi_latest_charge)
             const amount_in_eur_cents= pi_latest_charge.balance_transaction.amount
 
             await UsersDao.addToWalletBalance(paymentIntent.metadata.user_id, amount_in_eur_cents, paymentIntent.latest_charge);
