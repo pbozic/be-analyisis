@@ -666,6 +666,26 @@ const getBusinessStripeByBusinessId = async (business_id) => {
 	}
 };
 
+/**
+ * Retrieves the Stripe account IDs for all businesses from the database.
+ *
+ * @returns {Promise<Array<{ business_id: number, stripe_account_id: string }>>}
+ *          A promise that resolves to an array of objects containing business IDs and their corresponding Stripe account IDs.
+ * @throws {Error} If there is an error fetching the Stripe IDs from the database.
+ */
+const getStripeIdsForAllBusinesses = async () => {
+	try {
+		return await prisma.business.findMany({
+			select: {
+				business_id: true,
+				stripe_account_id: true
+			}
+		});
+	} catch (error) {
+		console.error("Error fetching Stripe IDs for businesses:", error);
+		throw new Error(error);
+	}
+}
 
 module.exports = {
 	getBusinesses,
@@ -700,5 +720,6 @@ module.exports = {
 	manualSortScheduledUsers,
 	getBusinessesByTypeMainInformation,
 	updateBusinessFinances,
-	getBusinessStripeByBusinessId
+	getBusinessStripeByBusinessId,
+	getStripeIdsForAllBusinesses
 };
