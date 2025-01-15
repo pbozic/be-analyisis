@@ -16,8 +16,8 @@ function startCronJobs() {
     cron.schedule("* * * * *", TaxiHelpers.scheduledOrdersNotificationsHandler);
     cron.schedule("* * * * *", TaxiHelpers.closeScheduledOrders);
 
-    //Every 10 days at 10AM
-    cron.schedule("0 10 */10 * *", stripe.payoutAvailableBalanceToBusinesses);
+    //Every 10 days
+    cron.schedule("0 0 */10 * *", stripe.payoutAvailableBalanceToBusinesses);
 
 }
 
