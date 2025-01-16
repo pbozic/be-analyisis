@@ -151,4 +151,19 @@ router.post("/test/s3", [authMiddleware], async (req, res) => {
     }
 });
 
+router.post('/test/notification', async (req, res) => {
+    const { heading, message, userId } = req.body;
+
+    if (!heading || !message || !userId) {
+        return res.status(400).json({ error: 'Heading, message, and userId are required.' });
+    }
+
+    try {
+        await sendNotificationToUser(heading, message, userId);
+        res.status(200).json({ success: 'Notification sent successfully.' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to send notification.', details: error.message });
+    }
+});
+
 module.exports = router;
