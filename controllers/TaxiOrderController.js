@@ -803,7 +803,7 @@ async function acceptOrder(req, res) {
 			console.log("userSocket", userSocket);
 		}
 		sendNotificationToUser("Taxi order accepted", "Your taxi order has been accepted", order.user_id);
-		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
+		await TaxiHelper.revokeTaxiOrderFromOtherDrivers(order.order_id, user.driver.driver_id);
 		res.status(200).json(order);
 	} catch (e) {
 		console.errorTag("TaxiOrderController", e);
