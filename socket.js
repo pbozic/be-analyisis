@@ -44,8 +44,8 @@ io.on("connection", (socket) => {
 		console.socket(`Socket ${socket.id} for user ${socket.user.user_id} left room ${roomName}`);
 	});
 
-	socket.onAnyOutgoing((eventName, args) => {
-		console.info("Socket emitted event:", eventName,...args)
+	socket.onAnyOutgoing((eventName) => {
+		console.info("Socket emitted event:", eventName)
 	});
 });
 
