@@ -47,6 +47,10 @@ io.on("connection", (socket) => {
 	socket.onAnyOutgoing((eventName) => {
 		console.info("Socket emitted event:", eventName)
 	});
+
+	socket.on('connect_error', (err) => {
+		console.error(`Socket ${socket.id} for user ${socket.user.user_id} encountered connection error:`, err);
+	});
 });
 
 
