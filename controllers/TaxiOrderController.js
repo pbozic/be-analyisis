@@ -1101,8 +1101,9 @@ async function cancelOrder(req, res) {
 					});
 					io.emit("driver_available", driver);
 				}
-				//io.to("order_" + vehicle_transfer_order.order_id).emit("order_status_change__taxi", vehicle_transfer_order);
-				io.to("order_" + vehicle_transfer_order.order_id).emit("order_cancelled__taxi_vehicle_transfer", vehicle_transfer_order);
+				await TaxiHelper.revokeTaxiOrderFromDrivers(vehicle_transfer_order.order_id);
+				io.to("order_" + vehicle_transfer_order.order_id).emit("order_status_change__taxi", vehicle_transfer_order);
+				io.to("order_" + vehicle_transfer_order.order_id).emit("order_cancelled__taxi", vehicle_transfer_order);
 			}
 		}
 		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);
