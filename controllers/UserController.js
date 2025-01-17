@@ -1526,10 +1526,8 @@ async function getAvailableWalletBalance(req, res) {
 	try {
 		let balance = await WalletFundsDao.getAvailableWalletBalance(req.params.user_id);
 
-		if (balance) {
-			return res.status(200).json({ wallet_balance: balance });
-		}
-		res.status(400).json({ error: "Error obtaining wallet balance" });
+		return res.status(200).json({ wallet_balance: balance });
+
 	} catch (e) {
 		console.log(e);
 		res.status(400).json({ error: "Error obtaining wallet balance", e });
