@@ -194,12 +194,23 @@ async function createOrder(req, res) {
 			const PLATFORM_CUT_CENTS = (TOTAL_PRICE_CENTS-DELIVERY_COST_CENTS-MERCHANT_CUT_CENTS)
 
 			// handle wallet payment
-			if (user.wallet_balance < TOTAL_PRICE_CENTS/100) {
-				throw new Error("Insufficient funds");
-			}
+			try{
+				if (user.wallet_balance < TOTAL_PRICE_CENTS/100) {
+					throw new Error("Insufficient funds");
+				}
 
-			await UsersDao.removeWalletBalance(user_id, TOTAL_PRICE_CENTS/100, order.order_id);
-			const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(user_id, TOTAL_PRICE_CENTS,order.order_id);
+				await UsersDao.removeWalletBalance(user_id, TOTAL_PRICE_CENTS/100, order.order_id);
+				const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(user_id, TOTAL_PRICE_CENTS,order.order_id);
+			}catch (err) {
+				order = await DeliveryOrderDao.updateOrder(order.order_id, {
+					payment: {
+						...order.payment,
+						status: 'UNPAID',
+					},
+					status: "CUSTOMER_PAYMENT_FAILED"
+				});
+				throw err
+			}
 
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				payment: {
@@ -207,8 +218,8 @@ async function createOrder(req, res) {
 					status: "PAID"
 				}
 			});
-			let balance = await stripe.getBalance();
-			console.log("balance", balance);
+			// let balance = await stripe.getBalance();
+			// console.log("balance", balance);
 			const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user_id,business.stripe_account_id, MERCHANT_CUT_CENTS, order.order_id,"delivery");
 			const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user_id,"platform", PLATFORM_CUT_CENTS, order.order_id,"delivery");
 			
