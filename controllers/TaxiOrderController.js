@@ -1548,14 +1548,14 @@ async function getTaxiOrdersToday(req, res) {
 
 async function cancelGroupedOrderByParentId(req,res){
 	console.info("TaxiOrderController", "CANCEL GROUP ORDER", req.body);
-	const { parent_order_id, cancellation_reason } = req.body;
+	const { parent_order_id, status, cancellation_reason } = req.body;
 	let reason = "";
 	if (Array.isArray(cancellation_reason) && cancellation_reason.length > 0) {
 		reason = cancellation_reason[0].value;
 	} else if (typeof cancellation_reason === "string" && cancellation_reason.trim() !== "") {
 		reason = cancellation_reason; // Use the raw cancellation reason if it's a non-empty string
 	}
-	const STATUS = TAXI_ORDER_STATUS.TAXI_CANCELED
+	const STATUS = status
 
 	try {
 		await TaxiHelper.revokeTaxiOrderFromDrivers(parent_order_id);
