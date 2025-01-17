@@ -447,26 +447,32 @@ async function completeOrder(order_id) {
 				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
 			}
 		});
-		let orders = [];
-		if (delivery_order.is_daily_meal) {
-			orders = await prisma.delivery_orders.findMany({
-				where: {
-					delivery_driver_id: delivery_order.delivery_driver_id,
-					status: {
-						notIn: [
-							DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
-							DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
-							DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
-							DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
-							DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
-							DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
-							DELIVERY_ORDER_STATUS.MERCHANT_REFUNDED,
-							DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED,
+		let orders = await prisma.delivery_orders.findMany({
+			where: {
+				AND: [
+					{
+						AND: [
+							{ delivery_driver_id: delivery_order.delivery_driver_id },
+							{ driver_id: delivery_order.driver_id }
 						]
+					},
+					{
+						status: {
+							notIn: [
+								DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+								DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
+								DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
+								DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
+								DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
+								DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
+								DELIVERY_ORDER_STATUS.MERCHANT_REFUNDED,
+								DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED,
+							]
+						}
 					}
-				}
-			})
-		}
+				]
+			}
+		})
 		console.log("DELIVERY DRIVER ORDERS", orders.length)
 		if (delivery_order.delivery_driver_id) {
 			await prisma.delivery_drivers.update({
