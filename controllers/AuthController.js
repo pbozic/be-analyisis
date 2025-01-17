@@ -391,9 +391,16 @@ async function registerTaxiService(req, res) {
 		let drivers = [];
 		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
 			for (const driverInfo of req.body.drivers) {
-
-				// driverInfo.user.data.password = "lalaland1"
-				const newUser = await UserDao.createNewUser(driverInfo.user.data, true);
+				let stripeCustomer = await stripe.createCustomer(
+					driverInfo.user.data.email,
+					driverInfo.user.data.first_name + " " + driverInfo.user.data.last_name,
+					driverInfo.user.data.telephone,
+				);
+				let userObj = {
+					...driverInfo.user.data,
+					stripe_customer_id: stripeCustomer.id,
+				};
+				const newUser = await UserDao.createNewUser(userObj, true);
 
 				// Handle user documents
 				if (driverInfo.user.documents) {
@@ -585,9 +592,16 @@ async function registerDeliveryService(req, res) {
 		let deliveryDrivers = [];
 		if (Array.isArray(req.body.deliveryDrivers) && req.body.deliveryDrivers.length) {
 			for (const deliveryDriverInfo of req.body.deliveryDrivers) {
-
-				// deliveryDriverInfo.user.data.password = "lalaland1";
-				const newUser = await UserDao.createNewUser(deliveryDriverInfo.user.data, true);
+				let stripeCustomer = await stripe.createCustomer(
+					deliveryDriverInfo.user.data.email,
+					deliveryDriverInfo.user.data.first_name + " " + deliveryDriverInfo.user.data.last_name,
+					deliveryDriverInfo.user.data.telephone,
+				);
+				let userObj = {
+					...deliveryDriverInfo.user.data,
+					stripe_customer_id: stripeCustomer.id,
+				};
+				const newUser = await UserDao.createNewUser(userObj, true);
 
 				// Handle user documents
 				if (deliveryDriverInfo.user?.documents) {
