@@ -803,7 +803,7 @@ async function acceptOrder(req, res) {
 			console.log("userSocket", userSocket);
 		}
 		sendNotificationToUser("Taxi order accepted", "Your taxi order has been accepted", order.user_id);
-		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
+		await TaxiHelper.revokeTaxiOrderFromOtherDrivers(order.order_id, user.driver.driver_id);
 		res.status(200).json(order);
 	} catch (e) {
 		console.errorTag("TaxiOrderController", e);
@@ -1101,8 +1101,9 @@ async function cancelOrder(req, res) {
 					});
 					io.emit("driver_available", driver);
 				}
-				//io.to("order_" + vehicle_transfer_order.order_id).emit("order_status_change__taxi", vehicle_transfer_order);
-				io.to("order_" + vehicle_transfer_order.order_id).emit("order_cancelled__taxi_vehicle_transfer", vehicle_transfer_order);
+				await TaxiHelper.revokeTaxiOrderFromDrivers(vehicle_transfer_order.order_id);
+				io.to("order_" + vehicle_transfer_order.order_id).emit("order_status_change__taxi", vehicle_transfer_order);
+				io.to("order_" + vehicle_transfer_order.order_id).emit("order_cancelled__taxi", vehicle_transfer_order);
 			}
 		}
 		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);
@@ -1547,14 +1548,14 @@ async function getTaxiOrdersToday(req, res) {
 
 async function cancelGroupedOrderByParentId(req,res){
 	console.info("TaxiOrderController", "CANCEL GROUP ORDER", req.body);
-	const { parent_order_id, cancellation_reason } = req.body;
+	const { parent_order_id, status, cancellation_reason } = req.body;
 	let reason = "";
 	if (Array.isArray(cancellation_reason) && cancellation_reason.length > 0) {
 		reason = cancellation_reason[0].value;
 	} else if (typeof cancellation_reason === "string" && cancellation_reason.trim() !== "") {
 		reason = cancellation_reason; // Use the raw cancellation reason if it's a non-empty string
 	}
-	const STATUS = TAXI_ORDER_STATUS.TAXI_CANCELED
+	const STATUS = status
 
 	try {
 		await TaxiHelper.revokeTaxiOrderFromDrivers(parent_order_id);

@@ -451,7 +451,7 @@ async function completeOrder(order_id) {
 			where: {
 				AND: [
 					{
-						OR: [
+						AND: [
 							{ delivery_driver_id: delivery_order.delivery_driver_id },
 							{ driver_id: delivery_order.driver_id }
 						]
@@ -473,7 +473,7 @@ async function completeOrder(order_id) {
 				]
 			}
 		})
-		console.log("DELIVERY DRIVER ORDERS", orders.length, delivery_order.delivery_driver_id, delivery_order.driver_id)
+		console.log("DELIVERY DRIVER ORDERS", orders.length)
 		if (delivery_order.delivery_driver_id) {
 			await prisma.delivery_drivers.update({
 				where: {
