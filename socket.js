@@ -33,7 +33,7 @@ io.on("connection", (socket) => {
 	});
 	socket.on("disconnect", () => {
 		UserSockets.delete(socket.user.user_id);
-		console.socket("user disconnected");
+		console.socket(`user ${socket.user.user_id} disconnected`);
 	});
 	socket.on('joinRoom', (roomName) => {
 		socket.join(roomName);
@@ -48,8 +48,8 @@ io.on("connection", (socket) => {
 		console.info("Socket emitted event:", eventName)
 	});
 
-	socket.on('connect_error', (err) => {
-		console.error(`Socket ${socket.id} for user ${socket.user.user_id} encountered connection error:`, err);
+	socket.on('error', (err) => {
+		console.error(`Socket ${socket.id} for user ${socket.user.user_id} encountered error:`, err);
 	});
 });
 
