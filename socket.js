@@ -31,9 +31,9 @@ io.on("connection", (socket) => {
 		console.socket("message: " + msg);
 		io.emit("chat message", msg);
 	});
-	socket.on("disconnect", () => {
+	socket.on("disconnect", (reason) => {
 		UserSockets.delete(socket.user.user_id);
-		console.socket(`user ${socket.user.user_id} disconnected, Reason: ${socket.disconnectReason}`);
+		console.socket(`user ${socket.user.user_id} disconnected, Reason: ${reason}`);
 	});
 	socket.on('joinRoom', (roomName) => {
 		socket.join(roomName);
