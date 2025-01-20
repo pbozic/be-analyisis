@@ -12,7 +12,9 @@ const fs = require("fs");
 const Constants = require("../lib/constants");
 const { getUsers } = require("../dao/User");
 const { delivery_orders } = require("@prisma/client");
-const { generateItemsFromPreferences, resendPendingOrdersToDeliveryDriver, sendActiveOrdersToDeliveryDriver } = require("../lib/deliveryHelpers");
+const { generateItemsFromPreferences, resendPendingOrdersToDeliveryDriver, sendActiveOrdersToDeliveryDriver,
+	revokeDeliveryOrderFromDrivers
+} = require("../lib/deliveryHelpers");
 const { sortLocationsByNearestNeighbor, todaysEarnings } = require("../lib/helpersLib");
 const { connect } = require("http2");
 const {RESTAURANT_FEE} = require('../lib/constants');
@@ -524,7 +526,8 @@ async function acceptOrder(req, res) {
 
 		io.to("order_" + order.order_id).emit("order_accepted__delivery", order);
 		io.emit("driver_unavailable", delivery_driver_id);
-
+		//TODO: send notifications?
+		await revokeDeliveryOrderFromDrivers(order.order_id);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);

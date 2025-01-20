@@ -530,6 +530,11 @@ async function getSentDeliveryDrivers(order_id) {
 					include: {
 						user: true
 					}
+				},
+				driver: {
+					include: {
+						user: true
+					}
 				}
 			}
 		});
