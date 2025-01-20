@@ -19,6 +19,11 @@ io.use((socket, next) => {
 	jwt.verify(token, process.env.JWT_TOKEN_SECRET, (err, data) => {
 		if (err) return next(new Error("Authentication error"));
 		socket.user = data.user;
+		const existingSocket = UserSockets.get(data.user.user_id);
+		if (existingSocket) {
+			// Disconnect the old socket
+			existingSocket.disconnect(true);
+		}
 		UserSockets.set(data.user.user_id, socket);
 		console.socket("socket connected: ", data.user.user_id);
 		next();
