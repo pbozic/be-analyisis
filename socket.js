@@ -33,7 +33,7 @@ io.on("connection", (socket) => {
 	});
 	socket.on("disconnect", () => {
 		UserSockets.delete(socket.user.user_id);
-		console.socket(`user ${socket.user.user_id} disconnected`);
+		console.socket(`user ${socket.user.user_id} disconnected, Reason: ${socket.disconnectReason}`);
 	});
 	socket.on('joinRoom', (roomName) => {
 		socket.join(roomName);
