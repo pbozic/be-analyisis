@@ -9,7 +9,6 @@ const gApi = require("../lib/gApis");
 const TaxiHelper = require("../lib/taxiHelpers");
 const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE ,CARGO_TRANSFER_FEE, ORDER_TYPE} = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
-const { sendNotificationToUser } = require("../lib/oneSignal");
 const { sendOrderNotifications } = require("../lib/notifications");
 const { sleep, range, calculatePrivateDriverFee, todaysEarnings } = require("../lib/helpersLib");
 const prisma = require("../prisma/prisma");
@@ -802,7 +801,7 @@ async function acceptOrder(req, res) {
 
 			console.log("userSocket", userSocket);
 		}
-		sendNotificationToUser("Taxi order accepted", "Your taxi order has been accepted", order.user_id);
+		sendOrderNotifications(order.user, driver, order.user_id, driver.driver_id, TAXI_ORDER_STATUS.TAXI_ACCEPTED)
 		await TaxiHelper.revokeTaxiOrderFromOtherDrivers(order.order_id, user.driver.driver_id);
 		res.status(200).json(order);
 	} catch (e) {

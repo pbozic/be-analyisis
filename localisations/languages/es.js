@@ -1,5 +1,7 @@
 const es = {
     USER_NOTIFICATIONS: {
+        scheduled_tomorrow: "Tu pedido de taxi está programado para mañana a ",
+        scheduled_hour: "Tu pedido de taxi está programado para dentro de una hora",
         pending: '',
         accepted: "Su pedido de taxi ha sido aceptado.",
         rejected: "Su pedido de taxi ha sido rechazado. Un nuevo conductor aceptará su solicitud en breve.",
@@ -11,7 +13,9 @@ const es = {
         customerCanceled: "",
     },
     DRIVER_NOTIFICATIONS: {
-        pending: "",
+        offline: "Ahora estás desconectado, por favor abre KlikniApp",
+        inactive: "Estás inactivo, por favor abre KlikniApp",
+        pending: "Tienes un nuevo pedido de taxi.",
         accepted: "",
         rejected: "",
         canceled: "El pedido de taxi ha sido cancelado.",
@@ -20,6 +24,28 @@ const es = {
         arrived: "Ha llegado al lugar de recogida.",
         completed: "",
         customerCanceled: "El cliente ha cancelado el pedido.",
+    },
+    DELIVERY_NOTIFICATIONS: {
+        accepted: "Su pedido de entrega ha sido aceptado.",
+        ready_for_pickup: "",
+        canceled: "Su pedido de entrega ha sido cancelado.",
+        delayed: "",
+    },
+    DELIVERY_DRIVER_NOTIFICATIONS: {
+        accepted: "Tienes un nuevo pedido de entrega.",
+        ready_for_pickup: "El pedido de entrega está listo para ser recogido.",
+        canceled: "El pedido de entrega ha sido cancelado.",
+        delayed: "El pedido de entrega ha sido retrasado por el comerciante.",
+    },
+    HEADING: {
+        accepted: "Pedido de taxi aceptado",
+        pending: "Nuevo pedido de taxi",
+        pending_delivery: "Nuevo pedido de entrega",
+        scheduled_tomorrow: "Su pedido de taxi está programado para mañana",
+        scheduled_hour: "Su pedido de taxi está programado para dentro de una hora",
+        driver: "Conductor de Klikni",
+        taxi: "Actualización del pedido de taxi",
+        delivery: "Actualización del pedido de entrega",
     }
 }
 module.exports = es;

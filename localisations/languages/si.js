@@ -1,5 +1,7 @@
 const   si = {
     USER_NOTIFICATIONS: {
+        scheduled_tomorrow: "Vaše taksi naročilo je načrtovano za jutri ob ",
+        scheduled_hour: "Vaše taksi naročilo je načrtovano čez eno uro",
         pending: '',
         accepted: "Vaše naročilo taksija je bilo sprejeto.",
         rejected: "Vaše naročilo taksija je bilo zavrnjeno. Nov voznik bo kmalu sprejel vašo zahtevo.",
@@ -11,7 +13,9 @@ const   si = {
         customerCanceled: "",
     },
     DRIVER_NOTIFICATIONS: {
-        pending: "",
+        offline: "Zdaj niste več prijavljeni, prosimo, odprite KlikniApp",
+        inactive: "Ste neaktivni, prosimo, odprite KlikniApp",
+        pending: "Imate novo taksi naročilo.",
         accepted: "",
         rejected: "",
         canceled: "Naročilo taksija je bilo preklicano.",
@@ -20,6 +24,28 @@ const   si = {
         arrived: "Prišli ste na mesto prevzema.",
         completed: "",
         customerCanceled: "Stranka je preklicala naročilo.",
+    },
+    DELIVERY_NOTIFICATIONS: {
+        accepted: "Vaše naročilo je bilo sprejeto.",
+        ready_for_pickup: "",
+        canceled: "Vaše naročilo je bilo preklicano.",
+        delayed: "",
+    },
+    DELIVERY_DRIVER_NOTIFICATIONS: {
+        accepted: "Imate novo naročilo dostave.",
+        ready_for_pickup: "Naročilo je pripravljeno za prevzem.",
+        canceled: "Naročilo je bilo preklicano.",
+        delayed: "Zamuda pri pripravi naročila.",
+    },
+    HEADING: {
+        accepted: "Naročilo sprejeto",
+        pending: "Novo taksi naročilo",
+        pending_delivery: "Novo naročilo dostave",
+        scheduled_tomorrow: "Vaše taksi naročilo je načrtovano za jutri",
+        scheduled_hour: "Vaše taksi naročilo je načrtovano čez eno uro",
+        driver: "Klikni voznik",
+        taxi: "Posodobitev naročila",
+        delivery: "Posodobitev naročila",
     }
 }
 module.exports = si;

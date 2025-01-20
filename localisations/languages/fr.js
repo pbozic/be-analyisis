@@ -1,5 +1,7 @@
 const fr = {
     USER_NOTIFICATIONS: {
+        scheduled_tomorrow: "Votre commande de taxi est prévue pour demain à ",
+        scheduled_hour: "Votre commande de taxi est prévue dans une heure",
         pending: '',
         accepted: "Votre commande de taxi a été acceptée.",
         rejected: "Votre commande de taxi a été rejetée. Un nouveau chauffeur acceptera votre demande sous peu.",
@@ -11,7 +13,9 @@ const fr = {
         customerCanceled: "",
     },
     DRIVER_NOTIFICATIONS: {
-        pending: "",
+        offline: "Vous êtes maintenant hors ligne, veuillez ouvrir KlikniApp",
+        inactive: "Vous êtes inactif, veuillez ouvrir KlikniApp",
+        pending: "Vous avez une nouvelle commande de taxi.",
         accepted: "",
         rejected: "",
         canceled: "La commande de taxi a été annulée.",
@@ -20,6 +24,28 @@ const fr = {
         arrived: "Vous êtes arrivé au point de rendez-vous.",
         completed: "",
         customerCanceled: "Le client a annulé la commande.",
+    },
+    DELIVERY_NOTIFICATIONS: {
+        accepted: "Votre commande de livraison a été acceptée.",
+        ready_for_pickup: "",
+        canceled: "Votre commande de livraison a été annulée.",
+        delayed: "",
+    },
+    DELIVERY_DRIVER_NOTIFICATIONS: {
+        accepted: "Vous avez une nouvelle commande de livraison.",
+        ready_for_pickup: "La commande de livraison est prête à être récupérée.",
+        canceled: "La commande de livraison a été annulée.",
+        delayed: "La commande de livraison a été retardée par le commerçant.",
+    },
+    HEADING: {
+        accepted: "Commande de taxi acceptée",
+        pending: "Nouvelle commande de taxi",
+        pending_delivery: "Nouvelle commande de livraison",
+        scheduled_tomorrow: "Votre commande de taxi est prévue pour demain",
+        scheduled_hour: "Votre commande de taxi est prévue dans une heure",
+        driver: "Conducteur Klikni",
+        taxi: "Mise à jour de la commande de taxi",
+        delivery: "Mise à jour de la commande de livraison",
     }
 }
 module.exports = fr;

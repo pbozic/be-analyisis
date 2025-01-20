@@ -21,7 +21,7 @@ const {RESTAURANT_FEE} = require('../lib/constants');
 const prisma = require("../prisma/prisma");
 const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
 const DriverDao = require("../dao/Driver");
-const TaxiOrderDao = require("../dao/TaxiOrder");
+const { sendDeliveryOrderNotifications } = require("../lib/notifications");
 
 /**
  * GET /delivery/orders
@@ -526,7 +526,7 @@ async function acceptOrder(req, res) {
 
 		io.to("order_" + order.order_id).emit("order_accepted__delivery", order);
 		io.emit("driver_unavailable", delivery_driver_id);
-		//TODO: send notifications?
+
 		await revokeDeliveryOrderFromDrivers(order.order_id);
 		res.status(200).json(order);
 	} catch (e) {
@@ -857,7 +857,12 @@ async function updateOrderStatus(req, res) {
 			}
 		}
 		io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
-
+		order = await DeliveryOrderDao.getOrder(req.body.order_id, { include: { user: true, driver: true, delivery_driver: true } });
+		if (order.driver && order.driver?.driver_id) {
+			sendDeliveryOrderNotifications(order.user, order.driver, order.user_id, order.driver_id, req.body.status);
+		} else if (order.delivery_driver && order.delivery_driver?.delivery_driver_id) {
+			sendDeliveryOrderNotifications(order.user, order.delivery_driver, order.user_id, order.delivery_driver_id, req.body.status);
+		}
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);

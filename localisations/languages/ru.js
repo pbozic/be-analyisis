@@ -1,5 +1,7 @@
 const ru = {
     USER_NOTIFICATIONS: {
+        scheduled_tomorrow: "Ваш заказ такси запланирован на завтра в ",
+        scheduled_hour: "Ваш заказ такси запланирован через час",
         pending: '',
         accepted: "Ваш заказ такси был принят.",
         rejected: "Ваш заказ такси был отклонен. Новый водитель скоро примет ваш запрос.",
@@ -11,7 +13,9 @@ const ru = {
         customerCanceled: "",
     },
     DRIVER_NOTIFICATIONS: {
-        pending: "",
+        offline: "Вы сейчас оффлайн, пожалуйста, откройте KlikniApp",
+        inactive: "Вы неактивны, пожалуйста, откройте KlikniApp",
+        pending: "У вас новый заказ такси.",
         accepted: "",
         rejected: "",
         canceled: "Заказ такси был отменен.",
@@ -20,6 +24,28 @@ const ru = {
         arrived: "Вы прибыли на место посадки.",
         completed: "",
         customerCanceled: "Клиент отменил заказ.",
+    },
+    DELIVERY_NOTIFICATIONS: {
+        accepted: "Ваш заказ на доставку принят.",
+        ready_for_pickup: "",
+        canceled: "Ваш заказ на доставку отменен.",
+        delayed: "",
+    },
+    DELIVERY_DRIVER_NOTIFICATIONS: {
+        accepted: "У вас новый заказ на доставку.",
+        ready_for_pickup: "Заказ на доставку готов к получению.",
+        canceled: "Заказ на доставку отменен.",
+        delayed: "Заказ на доставку задержан продавцом.",
+    },
+    HEADING: {
+        accepted: "Заказ такси принят",
+        pending: "Новый заказ такси",
+        pending_delivery: "Новый заказ на доставку",
+        scheduled_tomorrow: "Ваш заказ такси запланирован на завтра",
+        scheduled_hour: "Ваш заказ такси запланирован на час",
+        driver: "Водитель Klikni",
+        taxi: "Обновление заказа такси",
+        delivery: "Обновление заказа на доставку",
     }
 }
 module.exports = ru;

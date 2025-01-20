@@ -1,5 +1,7 @@
 const  srb = {
     USER_NOTIFICATIONS: {
+        scheduled_tomorrow: "Vaša narudžba za taksi je zakazana za sutra u ",
+        scheduled_hour: "Vaša narudžba za taksi je zakazana za sat vremena",
         pending: '',
         accepted: "Vaša narudžbina za taksi je prihvaćena.",
         rejected: "Vaša narudžbina za taksi je odbijena. Novi vozač će uskoro prihvatiti vaš zahtev.",
@@ -11,7 +13,9 @@ const  srb = {
         customerCanceled: "",
     },
     DRIVER_NOTIFICATIONS: {
-        pending: "",
+        offline: "Sada ste offline, molimo otvorite KlikniApp",
+        inactive: "Niste aktivni, molimo otvorite KlikniApp",
+        pending: "Imate novu narudžbu za taksi.",
         accepted: "",
         rejected: "",
         canceled: "Narudžbina za taksi je otkazana.",
@@ -20,6 +24,28 @@ const  srb = {
         arrived: "Stigli ste na mesto preuzimanja.",
         completed: "",
         customerCanceled: "Kupac je otkazao narudžbinu.",
+    },
+    DELIVERY_NOTIFICATIONS: {
+        accepted: "Vaša narudžbina za dostavu je prihvaćena.",
+        ready_for_pickup: "",
+        canceled: "Vaša narudžbina za dostavu je otkazana.",
+        delayed: "",
+    },
+    DELIVERY_DRIVER_NOTIFICATIONS: {
+        accepted: "Imate novu narudžbinu za dostavu.",
+        ready_for_pickup: "Narudžbina za dostavu je spremna za preuzimanje.",
+        canceled: "Narudžbina za dostavu je otkazana.",
+        delayed: "Narudžbina za dostavu je odložena od strane trgovca.",
+    },
+    HEADING: {
+        accepted: "Narudžbina za taksi je prihvaćena",
+        pending: "Nova narudžbina za taksi",
+        pending_delivery: "Nova narudžbina za dostavu",
+        scheduled_tomorrow: "Vaša narudžbina za taksi je zakazana za sutra",
+        scheduled_hour: "Vaša narudžbina za taksi je zakazana za sat vremena",
+        driver: "Klikni vozač",
+        taxi: "Ažuriranje narudžbine za taksi",
+        delivery: "Ažuriranje narudžbine za dostavu",
     }
 }
 module.exports = srb;

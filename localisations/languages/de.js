@@ -1,5 +1,7 @@
 const  de = {
     USER_NOTIFICATIONS: {
+        scheduled_tomorrow: "Ihre Taxi-Bestellung ist für morgen um ",
+        scheduled_hour: "Ihre Taxi-Bestellung ist in einer Stunde geplant",
         pending: '',
         accepted: "Ihre Taxibestellung wurde angenommen.",
         rejected: "Ihre Taxibestellung wurde abgelehnt. Ein neuer Fahrer wird Ihre Anfrage in Kürze annehmen.",
@@ -11,7 +13,9 @@ const  de = {
         customerCanceled: "",
     },
     DRIVER_NOTIFICATIONS: {
-        pending: "",
+        offline: "Sie sind jetzt offline, bitte öffnen Sie KlikniApp",
+        inactive: "Sie sind inaktiv, bitte öffnen Sie KlikniApp",
+        pending: "Sie haben eine neue Taxi-Bestellung.",
         accepted: "",
         rejected: "",
         canceled: "Die Taxibestellung wurde storniert.",
@@ -20,6 +24,28 @@ const  de = {
         arrived: "Sie sind am Abholort angekommen.",
         completed: "",
         customerCanceled: "Der Kunde hat die Bestellung storniert.",
+    },
+    DELIVERY_NOTIFICATIONS: {
+        accepted: "Ihre Lieferbestellung wurde angenommen.",
+        ready_for_pickup: "",
+        canceled: "Ihre Lieferbestellung wurde storniert.",
+        delayed: "",
+    },
+    DELIVERY_DRIVER_NOTIFICATIONS: {
+        accepted: "Sie haben eine neue Lieferbestellung.",
+        ready_for_pickup: "Die Lieferbestellung ist zur Abholung bereit.",
+        canceled: "Die Lieferbestellung wurde storniert.",
+        delayed: "Die Lieferbestellung wurde vom Händler verzögert.",
+    },
+    HEADING: {
+        accepted: "Taxi-Bestellung angenommen",
+        pending: "Neue Taxi-Bestellung",
+        pending_delivery: "Neue Lieferbestellung",
+        scheduled_tomorrow: "Ihre Taxi-Bestellung ist für morgen geplant",
+        scheduled_hour: "Ihre Taxi-Bestellung ist in einer Stunde geplant",
+        driver: "Klikni Fahrer",
+        taxi: "Aktualisierung der Taxi-Bestellung",
+        delivery: "Aktualisierung der Lieferbestellung",
     }
 }
 module.exports = de;
