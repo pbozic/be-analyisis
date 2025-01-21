@@ -496,7 +496,9 @@ async function acceptOrder(req, res) {
 		} else if (![DELIVERY_ORDER_STATUS.PENDING, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING,
 			DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED,
 			DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_DELAYED,
-			DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(order.status) || order.driver?.driver_id || order.delivery_driver?.delivery_driver_id) {
+			DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(order.status) ||
+			(order.driver?.driver_id && order.driver?.driver_id !== delivery_driver_id) ||
+			(order.delivery_driver?.delivery_driver_id && order.delivery_driver?.delivery_driver_id !== delivery_driver_id)) {
 			return res.status(400).json({ error: "Order is already accepted.", errorType: "ERR_ORDER_ALREADY_ACCEPTED" }); //TODO: handle status DELIVERY_REJECTED
 		}
 		await DeliveryOrderDao.acceptOrder(order_id, delivery_driver_id);
