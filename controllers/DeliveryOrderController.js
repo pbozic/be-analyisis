@@ -151,6 +151,7 @@ async function createOrder(req, res) {
 			let distanceM = result.rows[0].elements[0].distance.value;
 			let distanceKm = distanceM / 1000;
 			order.details.distance = distanceKm;
+			order.details.duration = result.rows[0].elements[0].duration.value;
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				details: order.details
 			});
@@ -512,16 +513,16 @@ async function acceptOrder(req, res) {
 			driver.vehicle = driver.vehicles[0];
 			order.driver = driver;
 		}
-		let { result } = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, order.delivery_location.coordinates, "driving", new Date());
+		/*let { result } = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, order.delivery_location.coordinates, "driving", new Date());
 		order.details.distance = result.rows[0].elements[0].distance.text;
 		order.details.duration = result.rows[0].elements[0].duration.text;
 		if (!order?.is_daily_meal) {
-			order.details.customer_expected_delivery_at = new Date(new Date().getTime() + result.rows[0].elements[0].duration.value * 60 * 1000);
+			order.details.customer_expected_delivery_at = new Date(new Date(order.details.ready_for_pickup_at).getTime() + result.rows[0].elements[0].duration.value * 1000 + 3600000);
 			console.log(order.details.customer_expected_delivery_at, "expected delivery ...");
 		}
 		order = await DeliveryOrderDao.updateOrder(order.order_id, {
 			details: order.details
-		});
+		});*/
 		console.log("order accepted", order);
 
 		io.to("order_" + order.order_id).emit("order_accepted__delivery", order);
