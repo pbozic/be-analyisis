@@ -917,7 +917,6 @@ async function updateOrderDeliveryTime(req, res) {
 	}
 }
 
-
 /**
  * POST /delivery/order/timeline
  * @tag Taxi
@@ -936,7 +935,7 @@ async function updateDeliveryOrderTimeline(req, res) {
 
 	try {
 		let order = await DeliveryOrderDao.updateDeliveryOrderTimeline(order_id, timeline);
-		io.to("order_" + order.order_id).emit("order_timeline_change", order);
+		io.to("order_" + order.order_id).emit("order_timeline_change_delivery", order);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);
