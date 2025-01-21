@@ -387,7 +387,7 @@ async function updateOrderPickupTime(order_id, pickup_time) {
 		const updatedDetails = {
 			...order.details,
 			ready_for_pickup_at: pickup_time,
-			customer_expected_delivery_at: new Date(new Date(pickup_time).getTime() + order.details.duration * 1000 + 3600000)
+			customer_expected_delivery_at: new Date(new Date(pickup_time).getTime() + order.details.duration * 1000)
 		};
 
 		// Update the order with merged details and new pickup_time for ready_for_pickup_at
