@@ -423,7 +423,7 @@ async function updateBusinessWorkingHours(req, res) {
 	}
 }
 /**
- * PATCH /business/overwhelmed
+ * PATCH /business/overwhelmed/{business_id}
  * @tag Business
  * @summary Updates the overwhelmed status of a restaurant
  * @description This endpoint is used to update whether a restaurant is considered overwhelmed.
@@ -431,7 +431,7 @@ async function updateBusinessWorkingHours(req, res) {
  * @pathParam {string} business_id - The ID of the restaurant to update
  * @bodyDescription The overwhelmed status for the restaurant
  * @bodyContent {UpdateRestaurantOverwhelmedRequest} application/json
- * @bodyRequired
+ * @requestBodyRequired
  * @response 200 - Overwhelmed status updated successfully. Returns the updated restaurant details.
  * @responseContent {Business} 200.application/json
  * @response 400 - Error updating restaurant information.
