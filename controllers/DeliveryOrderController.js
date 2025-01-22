@@ -139,11 +139,21 @@ async function createOrder(req, res) {
 			falgsObj[flag.name] = flag.status;
 		});
 		orderData.flags = falgsObj;
-		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 
+		let user = await UsersDao.getUserById(user_id);
+		const customer_acc = user.stripe_customer_id
+
+		const TOTAL_PRICE_CENT = Math.round(orderData.details.total_price * 100)
+		if (user.wallet_balance < TOTAL_PRICE_CENT / 100) {
+			throw new Error("Insufficient funds");
+
+		}
+		if (!customer_acc) {
+			throw new Error("Missing stripe_customer_id");
+		}
+		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
 		// let delivery_business = await BusinessDao.getBusinessById(orderData?.delivery_driver?.business_id);
-		let user = await UsersDao.getUserById(user_id);
 		orderData.telephone = user.telephone;
 		let payment_intent;
 		if (order.details.type === "delivery") {
@@ -158,7 +168,6 @@ async function createOrder(req, res) {
 		}
 		console.log("stripeCustomer", user.stripe_customer_id);
 
-		const customer_acc = user.stripe_customer_id
 		const restaurant_acc = business.stripe_account_id
 		const pm_id = orderData.payment.payment_method_id
 		const TOTAL_PRICE = orderData.details.total_price
