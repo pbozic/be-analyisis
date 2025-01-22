@@ -143,13 +143,17 @@ async function createOrder(req, res) {
 		let user = await UsersDao.getUserById(user_id);
 		const customer_acc = user.stripe_customer_id
 
-		const TOTAL_PRICE_CENT = Math.round(orderData.details.total_price * 100)
-		if (user.wallet_balance < TOTAL_PRICE_CENT / 100) {
-			throw new Error("Insufficient funds");
+		if (orderData.payment.type === "WALLET") {
+			const TOTAL_PRICE_CENT = Math.round(orderData.details.total_price * 100)
+			if (user.wallet_balance < TOTAL_PRICE_CENT / 100) {
+				throw new Error("Insufficient funds");
 
+			}
 		}
-		if (!customer_acc) {
-			throw new Error("Missing stripe_customer_id");
+		if (orderData.payment.type === "CARD") {
+			if (!customer_acc) {
+				throw new Error("Missing stripe_customer_id");
+			}
 		}
 		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
