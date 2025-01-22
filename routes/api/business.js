@@ -42,6 +42,7 @@ router.patch("/business-group-name", BusinessController.updateBusinessGroupName)
 router.patch("/email", BusinessController.updateBusinessEmail);
 router.patch("/telephone", BusinessController.updateBusinessTelephone);
 router.patch("/workingHours", BusinessController.updateBusinessWorkingHours);
+router.patch("/restaurant-overwhelmed/:business_id", BusinessController.updateRestaurantOverwhelmed);
 router.patch("/new/:business_id", BusinessController.updateBusinessIsNew);
 router.patch("/popular/:business_id", BusinessController.updateBusinessIsPopular);
 router.patch("/parent/update", BusinessController.updateParentBusinessId);

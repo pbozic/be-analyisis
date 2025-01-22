@@ -444,6 +444,16 @@ const updateBusinessWorkingHours = async (business_id, working_hours) => {
 		console.error("Error updating business working hours:", error);
 		throw new Error(error);
 	}
+};const updateRestaurantOverwhelmed = async (business_id, restaurant_overwhelmed) => {
+	try {
+		return await prisma.business.update({
+			where: { business_id },
+			data: { restaurant_overwhelmed },
+		});
+	} catch (error) {
+		console.error("Error updating business overwhelmed:", error);
+		throw new Error(error);
+	}
 };
 const updateBusinessIsNew = async (business_id, isNew) => {
 	try {
@@ -710,6 +720,7 @@ module.exports = {
 	updateBusinessEmail,
 	updateBusinessTelephone,
 	updateBusinessWorkingHours,
+	updateRestaurantOverwhelmed,
 	updateBusinessIsNew,
 	updateBusinessIsPopular,
 	updateParentBusiness,
