@@ -6,8 +6,26 @@ async function getOrders(args) {
 	try {
 		return await prisma.delivery_orders.findMany({
 			include: {
-				delivery_driver: true,
-				driver: true,
+				delivery_driver: {
+					include: {
+						user: true,
+						vehicles: {
+							include: {
+								vehicle_specification: true
+							}
+						},
+					}
+				},
+				driver: {
+					include: {
+						user: true,
+						vehicles: {
+							include: {
+								vehicle_specification: true
+							}
+						},
+					}
+				},
 				user: true,
 			},
 			...args,
