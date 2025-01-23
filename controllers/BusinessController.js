@@ -14,6 +14,8 @@ const { calculateBusinessEarnings, calculateTotalEarnings } = require("../lib/he
 const prisma = require("../prisma/prisma");
 const BusinessUsersDao = require("../dao/BusinessUsers");
 const EmailHelper = require("../lib/emailSender");
+const { UserSockets, io } = require('../socket');
+
 
 /**
  * GET /businesses
@@ -439,8 +441,14 @@ async function updateBusinessWorkingHours(req, res) {
 async function updateRestaurantOverwhelmed(req, res) {
 	try {
 		let business = await BusinessDao.updateRestaurantOverwhelmed(req.params.business_id, req.body.restaurant_overwhelmed);
-		if (business) return res.status(200).json(business);
-		res.status(400).json({ error: "Error updating restaurant overwhelmed" });
+		if (business){
+			const userSocket = UserSockets.get(business.business_id);
+			if (userSocket) {
+				io.emit('refetch_providers', business);
+			}
+			return res.status(200).json(business);
+		}
+			res.status(400).json({ error: "Error updating restaurant overwhelmed" });
 	} catch (e) {
 		console.error("Error updating business restaurant overwhelmed:", e);
 		res.status(400).json({ error: "Error updating business restaurant overwhelmed", e});
