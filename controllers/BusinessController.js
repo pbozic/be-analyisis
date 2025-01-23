@@ -443,9 +443,12 @@ async function updateRestaurantOverwhelmed(req, res) {
 		let business = await BusinessDao.updateRestaurantOverwhelmed(req.params.business_id, req.body.restaurant_overwhelmed);
 		if (business){
 			const userSocket = UserSockets.get(business.business_id);
+			console.log("overwhelmed in business, the usersocket",userSocket)
 			if (userSocket) {
+				console.log("overwhelmed in usersocket, businees",business)
 				io.emit('refetch_providers', business);
 			}
+			console.log("overwhelmed in function, 200")
 			return res.status(200).json(business);
 		}
 			res.status(400).json({ error: "Error updating restaurant overwhelmed" });
