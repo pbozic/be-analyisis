@@ -1,12 +1,31 @@
 const prisma = require("../prisma/prisma");
 const { TAXI_ORDER_STATUS, DELIVERY_ORDER_STATUS } = require("../lib/constants");
+const gApi = require("../lib/gApis");
 
 async function getOrders(args) {
 	try {
 		return await prisma.delivery_orders.findMany({
 			include: {
-				delivery_driver: true,
-				driver: true,
+				delivery_driver: {
+					include: {
+						user: true,
+						vehicles: {
+							include: {
+								vehicle_specification: true
+							}
+						},
+					}
+				},
+				driver: {
+					include: {
+						user: true,
+						vehicles: {
+							include: {
+								vehicle_specification: true
+							}
+						},
+					}
+				},
 				user: true,
 			},
 			...args,
@@ -386,6 +405,7 @@ async function updateOrderPickupTime(order_id, pickup_time) {
 		const updatedDetails = {
 			...order.details,
 			ready_for_pickup_at: pickup_time,
+			customer_expected_delivery_at: order.details.duration ? new Date(new Date(pickup_time).getTime() + order.details.duration * 1000) : pickup_time
 		};
 
 		// Update the order with merged details and new pickup_time for ready_for_pickup_at

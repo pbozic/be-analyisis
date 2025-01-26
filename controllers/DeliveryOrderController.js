@@ -139,11 +139,25 @@ async function createOrder(req, res) {
 			falgsObj[flag.name] = flag.status;
 		});
 		orderData.flags = falgsObj;
-		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 
+		let user = await UsersDao.getUserById(user_id);
+		const customer_acc = user.stripe_customer_id
+
+		if (orderData.payment.type === "WALLET") {
+			const TOTAL_PRICE_CENT = Math.round(orderData.details.total_price * 100)
+			if (user.wallet_balance < TOTAL_PRICE_CENT / 100) {
+				throw new Error("Insufficient funds");
+
+			}
+		}
+		if (orderData.payment.type === "CARD") {
+			if (!customer_acc) {
+				throw new Error("Missing stripe_customer_id");
+			}
+		}
+		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
 		// let delivery_business = await BusinessDao.getBusinessById(orderData?.delivery_driver?.business_id);
-		let user = await UsersDao.getUserById(user_id);
 		orderData.telephone = user.telephone;
 		let payment_intent;
 		if (order.details.type === "delivery") {
@@ -151,13 +165,13 @@ async function createOrder(req, res) {
 			let distanceM = result.rows[0].elements[0].distance.value;
 			let distanceKm = distanceM / 1000;
 			order.details.distance = distanceKm;
+			order.details.duration = result.rows[0].elements[0].duration.value;
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				details: order.details
 			});
 		}
 		console.log("stripeCustomer", user.stripe_customer_id);
 
-		const customer_acc = user.stripe_customer_id
 		const restaurant_acc = business.stripe_account_id
 		const pm_id = orderData.payment.payment_method_id
 		const TOTAL_PRICE = orderData.details.total_price
@@ -495,7 +509,9 @@ async function acceptOrder(req, res) {
 		} else if (![DELIVERY_ORDER_STATUS.PENDING, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING,
 			DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED,
 			DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_DELAYED,
-			DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(order.status) || order.driver?.driver_id || order.delivery_driver?.delivery_driver_id) {
+			DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(order.status) ||
+			(order.driver?.driver_id && order.driver?.driver_id !== delivery_driver_id) ||
+			(order.delivery_driver?.delivery_driver_id && order.delivery_driver?.delivery_driver_id !== delivery_driver_id)) {
 			return res.status(400).json({ error: "Order is already accepted.", errorType: "ERR_ORDER_ALREADY_ACCEPTED" }); //TODO: handle status DELIVERY_REJECTED
 		}
 		await DeliveryOrderDao.acceptOrder(order_id, delivery_driver_id);
@@ -512,16 +528,16 @@ async function acceptOrder(req, res) {
 			driver.vehicle = driver.vehicles[0];
 			order.driver = driver;
 		}
-		let { result } = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, order.delivery_location.coordinates, "driving", new Date());
+		/*let { result } = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, order.delivery_location.coordinates, "driving", new Date());
 		order.details.distance = result.rows[0].elements[0].distance.text;
 		order.details.duration = result.rows[0].elements[0].duration.text;
 		if (!order?.is_daily_meal) {
-			order.details.customer_expected_delivery_at = new Date(new Date().getTime() + result.rows[0].elements[0].duration.value * 60 * 1000);
+			order.details.customer_expected_delivery_at = new Date(new Date(order.details.ready_for_pickup_at).getTime() + result.rows[0].elements[0].duration.value * 1000 + 3600000);
 			console.log(order.details.customer_expected_delivery_at, "expected delivery ...");
 		}
 		order = await DeliveryOrderDao.updateOrder(order.order_id, {
 			details: order.details
-		});
+		});*/
 		console.log("order accepted", order);
 
 		io.to("order_" + order.order_id).emit("order_accepted__delivery", order);
@@ -917,7 +933,6 @@ async function updateOrderDeliveryTime(req, res) {
 	}
 }
 
-
 /**
  * POST /delivery/order/timeline
  * @tag Taxi
@@ -936,7 +951,7 @@ async function updateDeliveryOrderTimeline(req, res) {
 
 	try {
 		let order = await DeliveryOrderDao.updateDeliveryOrderTimeline(order_id, timeline);
-		io.to("order_" + order.order_id).emit("order_timeline_change", order);
+		io.to("order_" + order.order_id).emit("order_timeline_change_delivery", order);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);

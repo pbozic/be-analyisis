@@ -14,6 +14,8 @@ const { calculateBusinessEarnings, calculateTotalEarnings } = require("../lib/he
 const prisma = require("../prisma/prisma");
 const BusinessUsersDao = require("../dao/BusinessUsers");
 const EmailHelper = require("../lib/emailSender");
+const { UserSockets, io } = require('../socket');
+
 
 /**
  * GET /businesses
@@ -419,7 +421,40 @@ async function updateBusinessWorkingHours(req, res) {
 		res.status(400).json({ error: "Error updating business working hours" });
 	} catch (e) {
 		console.error("Error updating business working hours:", e);
-		res.status(400).json({ error: "Error updating business working hours", e});
+		res.status(400).json({ error: "Error updating business working hours", e });
+	}
+}
+/**
+ * PATCH /business/overwhelmed/{business_id}
+ * @tag Business
+ * @summary Updates the overwhelmed status of a restaurant
+ * @description This endpoint is used to update whether a restaurant is considered overwhelmed.
+ * @operationId updateRestaurantOverwhelmed
+ * @pathParam {string} business_id - The ID of the restaurant to update
+ * @bodyDescription The overwhelmed status for the restaurant
+ * @bodyContent {UpdateRestaurantOverwhelmedRequest} application/json
+ * @requestBodyRequired
+ * @response 200 - Overwhelmed status updated successfully. Returns the updated restaurant details.
+ * @responseContent {Business} 200.application/json
+ * @response 400 - Error updating restaurant information.
+ */
+async function updateRestaurantOverwhelmed(req, res) {
+	try {
+		let business = await BusinessDao.updateRestaurantOverwhelmed(req.params.business_id, req.body.restaurant_overwhelmed);
+		if (business){
+			const userSocket = UserSockets.get(business.business_id);
+			console.log("overwhelmed in business, the usersocket",userSocket)
+			if (userSocket) {
+				console.log("overwhelmed in usersocket, businees",business)
+				io.emit('refetch_providers', business);
+			}
+			console.log("overwhelmed in function, 200")
+			return res.status(200).json(business);
+		}
+			res.status(400).json({ error: "Error updating restaurant overwhelmed" });
+	} catch (e) {
+		console.error("Error updating business restaurant overwhelmed:", e);
+		res.status(400).json({ error: "Error updating business restaurant overwhelmed", e});
 	}
 }
 
@@ -1239,6 +1274,7 @@ module.exports = {
 	updateBusinessEmail,
 	updateBusinessTelephone,
 	updateBusinessWorkingHours,
+	updateRestaurantOverwhelmed,
 	updateBusinessIsNew,
 	updateBusinessIsPopular,
 	updateParentBusinessId,

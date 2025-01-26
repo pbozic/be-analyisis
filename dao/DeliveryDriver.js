@@ -21,10 +21,13 @@ const getDeliveryDrivers = async (args) => {
 	}
 };
 
-const getOnlineDeliveryDrivers = async () => {
+const getOnlineDeliveryDrivers = async (args) => {
 	try {
 		return await prisma.delivery_drivers.findMany({
-			where: { online: true },
+			where: {
+				online: true,
+				...args
+			},
 			include: {
 				user: true,
 				vehicles: {
