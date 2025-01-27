@@ -713,6 +713,7 @@ async function getTotalEarnings(req, res) {
  */
 async function getDriverTotalEarnings(req, res) {
 	const { delivery_driver_id } = req.params;
+	const detailed = req.query?.detailed === 'true';
 
 	if (!delivery_driver_id) {
 		return res.status(400).json({ message: 'Missing required parameter: delivery_driver_id' });
@@ -724,7 +725,7 @@ async function getDriverTotalEarnings(req, res) {
 				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
 				delivery_driver_id: delivery_driver_id
 			}});
-		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED, true);
+		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED, true, detailed);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
 		console.error("Error retrieving delivery driver's total earnings:", error);

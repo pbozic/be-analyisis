@@ -15,7 +15,7 @@ const { updateFileInDocument, addFileToDocument } = require("../dao/File");
 const FileDao = require("../dao/File");
 const S3Helper = require("../lib/s3");
 const DocumentDao = require("../dao/Document");
-const { TAXI_ORDER_STATUS, DOCUMENT_TYPE } = require("../lib/constants");
+const { TAXI_ORDER_STATUS,DELIVERY_ORDER_STATUS, DOCUMENT_TYPE } = require("../lib/constants");
 const { createNewVehicle } = require("../dao/Vehicle");
 const { calculateTotalEarnings, calculateDriversEarnings } = require('../lib/helpersLib');
 
@@ -596,14 +596,27 @@ async function getDriverEarnings(req, res) {
 
 	try {
 		const driver = await DriverDao.getDriverById(driver_id);
-		const driverOrders = await prisma.taxi_orders.findMany({where: {
+		let driverOrders = await prisma.taxi_orders.findMany({
+			where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
 				driver_id: driver.driver_id,
-				created_at: {
+				updated_at: {
 					gte: new Date(start_date).toISOString(),
 					lte: new Date(end_date).toISOString()
 				}
-			}});
+			}
+		});
+		const deliveryOrders = await prisma.delivery_orders.findMany({
+			where: {
+				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				driver_id: driver.driver_id,
+				updated_at: {
+					gte: new Date(start_date).toISOString(),
+					lte: new Date(end_date).toISOString()
+				}
+			}
+		});
+		if (deliveryOrders) driverOrders = driverOrders.concat(deliveryOrders);
 		const earningsData = calculateDriversEarnings(driverOrders, driver);
 
 		if (earningsData) {
@@ -639,14 +652,27 @@ async function getAllDriversEarnings(req, res) {
     try {
         const drivers = await DriverDao.getDrivers();
 		const earningsPromises = drivers.map(async (driver) => {
-			const driverOrders = await prisma.taxi_orders.findMany({where: {
-				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
-				driver_id: driver.driver_id,
-				created_at: {
-					gte: new Date(start_date).toISOString(),
-					lte: new Date(end_date).toISOString()
+			let driverOrders = await prisma.taxi_orders.findMany({
+				where: {
+					status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
+					driver_id: driver.driver_id,
+					updated_at: {
+						gte: new Date(start_date).toISOString(),
+						lte: new Date(end_date).toISOString()
+					}
 				}
-			}});
+			});
+			const deliveryOrders = await prisma.delivery_orders.findMany({
+				where: {
+					status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+					driver_id: driver.driver_id,
+					updated_at: {
+						gte: new Date(start_date).toISOString(),
+						lte: new Date(end_date).toISOString()
+					}
+				}
+			});
+			if (deliveryOrders) driverOrders = driverOrders.concat(deliveryOrders);
             return calculateDriversEarnings(driverOrders, driver);
         });
 
@@ -670,9 +696,18 @@ async function getAllDriversEarnings(req, res) {
  */
 async function getTotalEarnings(req, res) {
 	try {
-		const orders = await prisma.taxi_orders.findMany({where: {
+		let orders = await prisma.taxi_orders.findMany({
+			where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED
-			}})
+			}
+		});
+		const delivery_orders = await prisma.delivery_orders.findMany({
+			where: {
+				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				driver_id: {not: null}
+			}
+		});
+		if (delivery_orders) orders = orders.concat(delivery_orders);
 		const totalEarnings = calculateTotalEarnings(orders, TAXI_ORDER_STATUS.TAXI_COMPLETED);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
@@ -695,17 +730,27 @@ async function getTotalEarnings(req, res) {
  */
 async function getDriverTotalEarnings(req, res) {
 	const { driver_id } = req.params;
+	const detailed = req.query?.detailed === 'true';
 
 	if (!driver_id) {
 		return res.status(400).json({ message: 'Missing required parameter: driver_id' });
 	}
 
 	try {
-		const orders = await prisma.taxi_orders.findMany({where: {
+		let orders = await prisma.taxi_orders.findMany({
+			where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
 				driver_id: driver_id
-			}})
-		const totalEarnings = calculateTotalEarnings(orders, TAXI_ORDER_STATUS.TAXI_COMPLETED);
+			}
+		});
+		const delivery_orders = await prisma.delivery_orders.findMany({
+			where: {
+				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				driver_id: driver_id
+			}
+		});
+		if (delivery_orders) orders = orders.concat(delivery_orders);
+		const totalEarnings = calculateTotalEarnings(orders, TAXI_ORDER_STATUS.TAXI_COMPLETED, true, detailed);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
 		console.error("Error retrieving driver's total earnings:", error);
