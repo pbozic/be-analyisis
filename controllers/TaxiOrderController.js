@@ -582,6 +582,8 @@ async function createOrder(req, res) {
 			...req.body,
 			status: "PENDING",
 			user_id: req.body?.user_id || req.user.user_id,
+			first_name: req.body?.first_name || req.user.first_name,
+			last_name: req.body?.last_name || req.user.last_name,
 			telephone: req.body?.telephone || req.user.telephone,
 			is_scheduled: req.body.preferences?.departure_date
 		};
