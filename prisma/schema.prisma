@@ -367,6 +367,8 @@ model taxi_orders {
   user                     users?                     @relation(fields: [user_id], references: [user_id])
   history                  taxi_order_sent[]
   telephone                String?
+  first_name               String?
+  last_name                String?
   cancellation_reason      String?
   find_drivers_attempts    Int?                       @default(0)
   is_scheduled             Boolean                    @default(false)
@@ -374,6 +376,7 @@ model taxi_orders {
   parent_order             taxi_orders?               @relation("grouped_orders", fields: [parent_order_id], references: [order_id])
   grouped_orders           taxi_orders[]              @relation("grouped_orders")
   type                     ORDER_TYPE                 @default(TAXI)
+  subtype                  ORDER_SUBTYPE              @default(CREATED_BY_USER)
   flags                    Json?
   cargo_preferences        Json?
   driver_history_locations driver_history_locations[]
@@ -787,6 +790,12 @@ enum ORDER_TYPE {
   TRANSFER_SHUTTLE
   VEHICLE_TRANSFER
   VEHICLE_TRANSFER_COMBO
+}
+
+enum ORDER_SUBTYPE {
+  CREATED_BY_USER
+  CREATED_BY_DISPATCHER
+  CREATED_BY_BUSINESS
 }
 
 enum SORTING_TYPE {
