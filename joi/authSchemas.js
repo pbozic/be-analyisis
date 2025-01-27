@@ -62,7 +62,8 @@ const registerSchema = Joi.object({
 	telephone_code: Joi.string().required(),
 	telephone_number: Joi.string().required(),
 	date_of_birth: Joi.date().format("YYYY-MM-DD").required(),
-	googleToken: Joi.string().optional(),
+	google_id: Joi.string().optional(),
+	apple_id: Joi.string().optional(),
 });
 
 const registerChildSchema = Joi.object({
