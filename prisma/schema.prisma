@@ -133,8 +133,8 @@ model users {
   parent_user                            group_users?      @relation("child_user")
   language                               String?           @default("en")
   wallet_funds                           wallet_funds[]    @relation("wallet_funds")
-  apple_id                               String?
-  google_id                              String?
+  apple_id                               String?           
+  google_id                              String?           
 }
 
 model group_users {
