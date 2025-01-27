@@ -194,7 +194,7 @@ async function register(req, res) {
 				},
 			},
 			apple_id: postData.apple_id || null,
-			google_id: postData.googleToken || null,
+			google_id: postData.google_id || null,
 		};
 		
 		delete userObj["confirm_password"];
