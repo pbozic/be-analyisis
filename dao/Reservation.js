@@ -24,6 +24,9 @@ async function getReservationIfNotCompleted(user_id) {
 				status: {
 					notIn: ['TABLE_RESERVATION_COMPLETED', 'TABLE_RESERVATION_REJECTED']
 				},
+				time: {
+					gt: new Date(Date.now() + 2 * 60 * 60 * 1000)
+				}
 			},
 			include: {
 				business: {
