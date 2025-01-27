@@ -390,6 +390,8 @@ async function createOrderHelper(req, res, orderData) {
 			...vehicleTransferOrderData,
 			status: "PENDING",
 			telephone: orderData.telephone || req.user.telephone,
+			first_name: orderData.first_name || req.user.first_name,
+			last_name: orderData.last_name || req.user.last_name,
 			is_scheduled: !!orderData.preferences?.departure_date
 		};
 
