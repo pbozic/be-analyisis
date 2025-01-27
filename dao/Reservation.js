@@ -18,9 +18,11 @@ const getReservations = async (args) => {
 
 async function getReservationIfNotCompleted(user_id) {
 	try {
-		const now = new Date();
-		const twoHoursFromNow = new Date(now.getTime() + 2 * 60 * 60 * 1000);
-		const timeString = twoHoursFromNow.toTimeString().slice(0, 8); // HH:mm:ss format
+
+		const now=new Date();
+		const yesterday = new Date(now.setDate(now.getDate()-1));
+		// const twoHoursFromNow = new Date(now.getTime() + 2 * 60 * 60 * 1000);
+		// const timeString = twoHoursFromNow.toTimeString().slice(0, 8); // HH:mm:ss format
 
 		return await prisma.reservations.findFirst({
 			where: {
@@ -28,29 +30,9 @@ async function getReservationIfNotCompleted(user_id) {
 				status: {
 					notIn: ['TABLE_RESERVATION_COMPLETED', 'TABLE_RESERVATION_REJECTED']
 				},
-				OR: [
-					{
-						// Future dates - any time is valid
-						date: {
-							gt: now
-						}
-					},
-					{
-						// Same date - only times after twoHoursFromNow
-						AND: [
-							{
-								date: {
-									equals: now
-								}
-							},
-							{
-								time: {
-									gt: `${now.toISOString().split('T')[0]}T${timeString}.000`
-								}
-							}
-						]
-					}
-				]
+				date: {
+					gt: yesterday
+				}
 			},
 			include: {
 				business: {
