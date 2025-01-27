@@ -5,7 +5,7 @@ const router = express.Router();
 const AuthController = require("../../controllers/AuthController");
 const { loginSchema, registerSchema, refreshSchema, resetPasswordRequestSchema } = require("../../joi/authSchemas");
 const jwt = require("jsonwebtoken");
-const { generateAccessToken } = require("../../lib/jwt");
+const { generateAccessToken, generateRefreshToken } = require("../../lib/jwt");
 const prisma = require("../../prisma/prisma");
 const joi = require("../../middleware/joi");
 const { updateUserLanguageSchema } = require("../../joi/userSchemas");
@@ -75,6 +75,7 @@ async function getUser(id, res) {
 		};
 		return res.status(200).json(user);
 	} catch (error) {
+		console.log(error)
 		return res.status(400).json({ error: "Error obtaining user information" });
 	}
 	
