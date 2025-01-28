@@ -66,5 +66,6 @@ router.patch("/me/group_user/allowance/", UserController.updateChildUserAllowanc
 router.patch("/group_user/allowance", UserController.updateChildUserAllowanceByGroupUserId);
 router.delete("/me/group_user/delete/:group_user_id", UserController.deleteChildUserByGroupUserId);
 
+router.get("/user/:code", UserController.getUserByReferralCode);
 
 module.exports = router;
