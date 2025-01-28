@@ -15,6 +15,8 @@ const prisma = require("../prisma/prisma");
 const stripe = require("../lib/stripe");
 const BusinessDao = require("../dao/Business");
 const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
+const { sendNotificationToUser } = require("../lib/oneSignal");
+const { getLocalisedTexts } = require("../localisations/languages");
 
 /**
  * GET /taxi/order/{orderId}
@@ -945,6 +947,11 @@ async function completeOrder(req, res) {
 		}
 		// io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
 		io.to("order_" + order.order_id).emit("order_completed__taxi", order);
+		if (order.type === ORDER_TYPE.VEHICLE_TRANSFER_COMBO) {
+			const l10nText = getLocalisedTexts("USER_NOTIFICATIONS", order.user)
+			const l10nTextHeading = getLocalisedTexts("HEADING", order.user);
+			await sendNotificationToUser(l10nTextHeading?.completed, l10nText?.vehicleTransferCompleted, order.user_id);
+		}
 
 		console.tag("TaxiOrderController", "order_completed__taxi ", req.body.order_id);
 		io.emit("driver_available", driver);

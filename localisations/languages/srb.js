@@ -11,6 +11,7 @@ const  srb = {
         arrived: "Vaš vozač je stigao.",
         completed: "Vaša vožnja je završena. Hvala što koristite našu uslugu!",
         customerCanceled: "",
+        vehicleTransferCompleted: "Vaš transfer vozila je završen.",
     },
     DRIVER_NOTIFICATIONS: {
         offline: "Sada ste offline, molimo otvorite KlikniApp",
@@ -38,6 +39,7 @@ const  srb = {
         delayed: "Narudžbina za dostavu je odložena od strane trgovca.",
     },
     HEADING: {
+        completed: "Narudžba taksija završena",
         accepted: "Narudžbina za taksi je prihvaćena",
         pending: "Nova narudžbina za taksi",
         pending_delivery: "Nova narudžbina za dostavu",
