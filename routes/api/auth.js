@@ -5,13 +5,81 @@ const router = express.Router();
 const AuthController = require("../../controllers/AuthController");
 const { loginSchema, registerSchema, refreshSchema, resetPasswordRequestSchema } = require("../../joi/authSchemas");
 const jwt = require("jsonwebtoken");
+const { generateAccessToken, generateRefreshToken } = require("../../lib/jwt");
 const prisma = require("../../prisma/prisma");
 const joi = require("../../middleware/joi");
 const { updateUserLanguageSchema } = require("../../joi/userSchemas");
 const UserController = require("../../controllers/UserController");
 const { OAuth2Client } = require('google-auth-library');
-
+const UserDao = require("../../dao/User");
+const DocumentDao = require("../../dao/Document");
+const { DOCUMENT_TYPE } = require("../../lib/constants");
+const stripe = require("../../lib/stripe");
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+async function getUser(id, res) {
+	try {
+		let user = await UserDao.getUserById(id, {
+			include: {
+				addresses: {
+					include: {
+						address: true,
+					},
+				},
+				driver: {
+					select: {
+						driver_id: true,
+						business_id: true,
+						ride_requirements: true,
+						user_id: true,
+						transfer_requirements: true,
+						handles_taxi_orders: true,
+						handles_transfer_orders: true,
+						handles_delivery_orders: true,
+					}
+				},
+				delivery_driver: {
+					select: {
+						delivery_driver_id: true,
+						delivers_daily_meals: true,
+						business_id: true,
+						user_id: true
+					}
+				},
+				child_users: { include:{child_user: true}},
+				parent_user: { include:{parent_user: true}},
+			},
+		});
+		if (user.disabled) return res.status(400).json({ error: "Account is disabled." });
+		if (!user.active) return res.status(400).json({ error: "Account is inactive." });
+		let payment_methods = []
+		if (user.stripe_customer_id) {
+			payment_methods = await stripe.getPaymentMethods(user.stripe_customer_id);
+		}
+		delete user["password"];
+		const access_token = generateAccessToken({
+			...user,
+			child_users: null,
+			parent_user: null
+		});
+		const refresh_token = generateRefreshToken({
+			...user,
+			child_users: null,
+			parent_user: null
+		});
+		user = {
+			...user,
+			access_token,
+			refresh_token,
+			payment_methods
+		};
+		return res.status(200).json(user);
+	} catch (error) {
+		console.log(error)
+		return res.status(400).json({ error: "Error obtaining user information" });
+	}
+	
+}
 /* GET home page. */
 router.get("/", function (req, res, next) {
 	res.render("index", { title: "Express" });
@@ -40,21 +108,7 @@ router.post('/login/apple', async (req, res) => {
 	  });
   
 	  if (user) {
-		// If the user exists, generate a JWT token and return it
-		const userToken = jwt.sign(
-		  { user_id: user.user_id, email: user.email },
-		  'YOUR_SECRET_KEY', // Your secret key for signing the JWT
-		  { expiresIn: '1h' }
-		);
-  
-		return res.json({
-		  message: 'Login successful',
-		  token: userToken,
-		  user: {
-			user_id: user.user_id,
-			email: user.email,
-		  },
-		});
+			return await getUser(user.user_id, res);
 	  }
   
 	  // If the user does not exist, return the auth data (no JWT token)
@@ -78,7 +132,7 @@ router.post('/login/google', async (req, res) => {
 	  // Verify the Google ID token
 	  const ticket = await client.verifyIdToken({
 		idToken: token,
-		audience: 'YOUR_GOOGLE_CLIENT_ID',
+		audience: process.env.GOOGLE_CLIENT_ID,
 	  });
   
 	  const payload = ticket.getPayload();
@@ -88,28 +142,13 @@ router.post('/login/google', async (req, res) => {
 	  const lastName = payload.family_name;
   
 	  // Check if the user already exists in the database
-	  let user = await prisma.users.findUnique({
+	  let user = await prisma.users.findMany({
 		where: { google_id: googleId },
 	  });
-  
-	  if (user) {
+	  
+	  if (user.length > 0) {
 		// If the user exists, generate a JWT token and return it
-		const userToken = jwt.sign(
-		  { user_id: user.user_id, email: user.email },
-		  'YOUR_SECRET_KEY', // Your secret key for signing the JWT
-		  { expiresIn: '1h' }
-		);
-  
-		return res.json({
-		  message: 'Login successful',
-		  token: userToken,
-		  user: {
-			user_id: user.user_id,
-			email: user.email,
-			first_name: user.first_name,
-			last_name: user.last_name,
-		  },
-		});
+		return await getUser(user[0].user_id, res);
 	  }
   
 	  // If the user does not exist, return the auth data (no JWT token)
