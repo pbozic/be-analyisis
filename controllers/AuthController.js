@@ -199,6 +199,7 @@ async function register(req, res) {
 		};
 		
 		delete userObj["confirm_password"];
+		delete userObj.referral_code;
 		let user = await UserDao.createNewUser(userObj);
 		user = await UserDao.getUserById(user.user_id,
 			{
