@@ -133,8 +133,8 @@ model users {
   parent_user                            group_users?      @relation("child_user")
   language                               String?           @default("en")
   wallet_funds                           wallet_funds[]    @relation("wallet_funds")
-  apple_id                               String?
-  google_id                              String?
+  apple_id                               String?           
+  google_id                              String?           
 }
 
 model group_users {
@@ -533,6 +533,7 @@ model reservations {
   seats          Int
   date           DateTime           @db.Timestamptz(6)
   time           String
+  datetime       DateTime           @db.Timestamptz(0) @default(now())
   created_at     DateTime           @default(now()) @db.Timestamptz(6)
   updated_at     DateTime           @default(now()) @updatedAt @db.Timestamptz(6)
   business_id    String             @db.Uuid
