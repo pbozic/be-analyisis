@@ -136,7 +136,7 @@ model users {
   apple_id                               String?
   google_id                              String?
   referred_by                            String?           @db.Uuid
-  referral_code                          String?           @unique @default(dbgenerated("substring(upper(replace(uuid()::text, '-', '')), 1, 6)")) @db.Char(6)
+  referral_code                          String?           @unique @default(dbgenerated("upper(substring(md5(random()::text), 1, 6))")) @db.Char(6)
   referral_conditions_met                Boolean           @default(false)
   taxi_credits                           Int?              @default(0)
   delivery_credits                       Int?              @default(0)
