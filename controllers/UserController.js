@@ -11,6 +11,7 @@ const FileDao = require("../dao/File");
 const DeliveryDriverDao = require("../dao/DeliveryDriver");
 const DriverDao = require("../dao/Driver");
 const WalletFundsDao = require("../dao/WalletFunds");
+const ReferralDao = require("../dao/Referrals")
 
 const SMS = require("../lib/SMS");
 const stripe = require("../lib/stripe");
@@ -170,6 +171,8 @@ async function me(req, res) {
 				delivery_driver: true,
 				child_users: { include:{child_user: true}},
 				parent_user: { include:{parent_user: true}},
+				referrals_made: true,
+				referral: { include: {referrer: true} }
 			},
 		});
 		console.log("/me user: ",user?.user_id)
@@ -313,11 +316,22 @@ async function updatePassword(req, res) {
 
 async function updateEmail(req, res) {
 	try {
-		let emaiLExists = await UserDao.getUserByEmailOrTelephone(req.body.email);
-		if (emaiLExists) return res.status(400).json({ error: "Email already exists.." });
-		let user = await UserDao.updateEmail(req.user.user_id, req.body.email);
-		await stripe.updateCustomerEmail(user.stripe_customer_id, req.body.email);
-		if (user) return res.status(200).json(user);
+		let user = await UserDao.getUserByEmailOrTelephone(req.body.email);
+		if (user) return res.status(400).json({ error: "Email already exists.." });
+		let updated_user = await UserDao.updateEmail(req.user.user_id, req.body.email);
+
+		if(!updated_user.stripe_customer_id){
+			const stripe_customer = await stripe.createCustomer(
+				updated_user.email,
+				updated_user.first_name + " " + updated_user.last_name,
+				updated_user.telephone
+			)
+			await UserDao.updateStripeCustomerId(req.user.user_id,stripe_customer.id)
+		}else{
+			await stripe.updateCustomerEmail(updated_user.stripe_customer_id, req.body.email);
+		}
+
+		if (updated_user) return res.status(200).json(updated_user);
 
 		res.status(400).json({ error: "Error updating user information" });
 	} catch (e) {
@@ -1686,7 +1700,50 @@ async function getUserByReferralCode(req, res) {
 	}
 }
 
+/**
+ * POST /users/me/redeem-referral-code
+ * @tag Users
+ * @summary Redeem a referral code for an existing user
+ * @description This endpoint allows an existing user to redeem a referral code
+ * @operationId redeemReferralCode
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Referral code redeemed successfully
+ * @response 400 - Error redeeming referral code
+ */
+async function redeemReferralCode(req, res) {
+	try {
+		const { referral_code } = req.body;
+		const user_id = req.user.user_id;
+
+		// First check if user already has a referral
+		const existingReferral = ReferralDao.getReferralByReferredUserId(user_id);
+		if (existingReferral) {
+			return res.status(400).json("User has already redeemed a referral code");
+		}
+		// Find the referrer by their referral code
+		const referrer = UserDao.getUserByReferralCode(referral_code);
+		if (!referrer) {
+			return res.status(400).json("Invalid referral code");
+		}
+		// Prevent self-referral
+		if (referrer.user_id === user_id) {
+			return res.status(400).json("Cannot use own referral code");
+		}
+		// Referrer can only refer up to 10 people
+		if (referrer.referrals_made?.length >= 10) {
+			return res.status(400).json("This user has already referred 10 people");
+		}
+		const referral = await ReferralDao.createReferral(referrer.user_id, user_id, referral_code);
+
+		return res.status(200).json({ message: "Referral code redeemed successfully", referral });
+	} catch (error) {
+		return res.status(400).json({ error: error.message || "Error redeeming referral code" });
+	}
+}
+
 module.exports = {
+	redeemReferralCode,
 	getUserByReferralCode,
 	listUsers,
 	listPersonalUsers,

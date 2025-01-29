@@ -135,11 +135,23 @@ model users {
   wallet_funds                           wallet_funds[]    @relation("wallet_funds")
   apple_id                               String?
   google_id                              String?
-  referred_by                            String?           @db.Uuid
   referral_code                          String?           @unique @default(dbgenerated("upper(substring(md5(random()::text), 1, 6))")) @db.Char(6)
-  referral_conditions_met                Boolean           @default(false)
+  referrals_made                         referrals[]       @relation("referrer")
+  referral                               referrals?        @relation("referred")
   taxi_credits                           Int?              @default(0)
   delivery_credits                       Int?              @default(0)
+}
+
+model referrals {
+  referral_id      String   @id @default(uuid()) @db.Uuid
+  referral_code    String   @db.Char(6)
+  referrer_user_id String   @db.Uuid
+  referred_user_id String   @unique @db.Uuid
+  conditions_met   Boolean  @default(false)
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  referrer         users    @relation("referrer", fields: [referrer_user_id], references: [user_id])
+  referred         users    @relation("referred", fields: [referred_user_id], references: [user_id])
 }
 
 model group_users {

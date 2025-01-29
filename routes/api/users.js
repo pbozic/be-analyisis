@@ -68,7 +68,7 @@ router.delete("/me/group_user/delete/:group_user_id", UserController.deleteChild
 router.post("/me/request-payment-intent", UserController.requestPaymentIntent);
 router.post("/me/confirm-payment-intent", UserController.confirmPaymentIntent);
 
-
+router.post("/me/redeem-referral-code", UserController.redeemReferralCode);
 router.get("/user/:code", UserController.getUserByReferralCode);
 
 module.exports = router;

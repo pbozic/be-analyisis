@@ -714,6 +714,21 @@ const updateUserActive = async (user_id, active) => {
 	}
 };
 
+const updateStripeCustomerId = async (user_id, customer_id) => {
+	try {
+		return prisma.users.update({
+			where: {
+				user_id: user_id,
+			},
+			data: {
+				stripe_customer_id: customer_id,
+			},
+		});
+	} catch (error) {
+		return new Error(error);
+	}
+};
+
 module.exports = {
 	getUsers,
 	getUserByReferralCode,
@@ -727,6 +742,7 @@ module.exports = {
 	updateTelephone,
 	updateUserType,
 	updateUserDisabled,
+	updateStripeCustomerId,
 	createNewUser,
 	getUserByResetToken,
 	addToWalletBalance,
