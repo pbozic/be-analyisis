@@ -11,6 +11,7 @@ const ru = {
         arrived: "Ваш водитель прибыл.",
         completed: "Ваша поездка завершена. Спасибо за использование нашего сервиса!",
         customerCanceled: "",
+        vehicleTransferCompleted: "Трансфер вашего автомобиля завершен.",
     },
     DRIVER_NOTIFICATIONS: {
         offline: "Вы сейчас оффлайн, пожалуйста, откройте KlikniApp",
@@ -38,6 +39,7 @@ const ru = {
         delayed: "Заказ на доставку задержан продавцом.",
     },
     HEADING: {
+        completed: "Заказ такси выполнен",
         accepted: "Заказ такси принят",
         pending: "Новый заказ такси",
         pending_delivery: "Новый заказ на доставку",

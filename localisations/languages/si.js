@@ -11,6 +11,7 @@ const   si = {
         arrived: "Vaš voznik je prispel.",
         completed: "Vaša vožnja je zaključena. Hvala, ker uporabljate našo storitev!",
         customerCanceled: "",
+        vehicleTransferCompleted: "Prevoz vašega vozila je zaključen.",
     },
     DRIVER_NOTIFICATIONS: {
         offline: "Zdaj niste več prijavljeni, prosimo, odprite KlikniApp",
@@ -38,6 +39,7 @@ const   si = {
         delayed: "Zamuda pri pripravi naročila.",
     },
     HEADING: {
+        completed: "Taksi naročilo zaključeno",
         accepted: "Naročilo sprejeto",
         pending: "Novo taksi naročilo",
         pending_delivery: "Novo naročilo dostave",

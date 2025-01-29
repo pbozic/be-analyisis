@@ -195,9 +195,11 @@ async function register(req, res) {
 			},
 			apple_id: postData.apple_id || null,
 			google_id: postData.google_id || null,
+			referred_by: postData.referral_code || null,
 		};
 		
 		delete userObj["confirm_password"];
+		delete userObj.referral_code;
 		let user = await UserDao.createNewUser(userObj);
 		user = await UserDao.getUserById(user.user_id,
 			{

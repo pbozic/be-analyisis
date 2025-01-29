@@ -11,6 +11,7 @@ const  de = {
         arrived: "Ihr Fahrer ist angekommen.",
         completed: "Ihre Fahrt wurde abgeschlossen. Vielen Dank, dass Sie unseren Service nutzen!",
         customerCanceled: "",
+        vehicleTransferCompleted: "Ihre Fahrzeugüberführung wurde abgeschlossen.",
     },
     DRIVER_NOTIFICATIONS: {
         offline: "Sie sind jetzt offline, bitte öffnen Sie KlikniApp",
@@ -38,6 +39,7 @@ const  de = {
         delayed: "Die Lieferbestellung wurde vom Händler verzögert.",
     },
     HEADING: {
+        completed: "Taxibestellung abgeschlossen",
         accepted: "Taxi-Bestellung angenommen",
         pending: "Neue Taxi-Bestellung",
         pending_delivery: "Neue Lieferbestellung",

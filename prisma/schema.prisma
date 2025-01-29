@@ -133,8 +133,13 @@ model users {
   parent_user                            group_users?      @relation("child_user")
   language                               String?           @default("en")
   wallet_funds                           wallet_funds[]    @relation("wallet_funds")
-  apple_id                               String?           
-  google_id                              String?           
+  apple_id                               String?
+  google_id                              String?
+  referred_by                            String?           @db.Uuid
+  referral_code                          String?           @unique @default(dbgenerated("upper(substring(md5(random()::text), 1, 6))")) @db.Char(6)
+  referral_conditions_met                Boolean           @default(false)
+  taxi_credits                           Int?              @default(0)
+  delivery_credits                       Int?              @default(0)
 }
 
 model group_users {
@@ -252,6 +257,7 @@ model delivery_drivers {
   scheduled_meals_route             Json?                               @default("[]")
   regions                           String[]
   delivery_driver_history_locations delivery_driver_history_locations[]
+  partner_cash_balance              Float?                              @default(0)
 }
 
 model drivers {
@@ -284,6 +290,7 @@ model drivers {
   taxi_orders_toggled      Boolean?                   @default(false)
   transfer_orders_toggled  Boolean?                   @default(false)
   delivery_orders_toggled  Boolean?                   @default(false)
+  partner_cash_balance     Float?                     @default(0)
 }
 
 model vehicles {
@@ -533,6 +540,7 @@ model reservations {
   seats          Int
   date           DateTime           @db.Timestamptz(6)
   time           String
+  datetime       DateTime           @default(now()) @db.Timestamptz(0)
   created_at     DateTime           @default(now()) @db.Timestamptz(6)
   updated_at     DateTime           @default(now()) @updatedAt @db.Timestamptz(6)
   business_id    String             @db.Uuid

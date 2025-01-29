@@ -33,6 +33,20 @@ const getUserById = async (user_id, args) => {
 		throw new Error(error);
 	}
 };
+
+const getUserByReferralCode = async (code, args) => {
+	try {
+		return prisma.users.findUnique({
+			where: {
+				referral_code: code,
+			},
+			...args
+		});
+	} catch (error) {
+		throw new Error(error);
+	}
+};
+
 const getScheduledUsers = async () => {
 	try {
 		const merchantBusiness = await prisma.business.findFirst({
@@ -702,6 +716,7 @@ const updateUserActive = async (user_id, active) => {
 
 module.exports = {
 	getUsers,
+	getUserByReferralCode,
 	getUserById,
 	getUserByEmailOrTelephone,
 	getUser,

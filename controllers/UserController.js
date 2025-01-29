@@ -1675,7 +1675,20 @@ async function updateUserLanguage(req, res) {
 	}
 }
 
+async function getUserByReferralCode(req, res) {
+	try {
+		const user = await UserDao.getUserByReferralCode(req.params.code)
+		if (user) {
+			return res.status(200).json(user);
+		}
+		res.status(400).json({ error: "Error fetching user by referral code." });
+	} catch (err) {
+		res.status(400).json({ error: "Error fetching user by referral code.", err });
+	}
+}
+
 module.exports = {
+	getUserByReferralCode,
 	listUsers,
 	listPersonalUsers,
 	getUserById,

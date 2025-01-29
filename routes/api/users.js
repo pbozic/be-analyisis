@@ -69,5 +69,6 @@ router.post("/me/request-payment-intent", UserController.requestPaymentIntent);
 router.post("/me/confirm-payment-intent", UserController.confirmPaymentIntent);
 
 
+router.get("/user/:code", UserController.getUserByReferralCode);
 
 module.exports = router;
