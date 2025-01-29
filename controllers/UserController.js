@@ -315,18 +315,19 @@ async function updateEmail(req, res) {
 	try {
 		let user = await UserDao.getUserByEmailOrTelephone(req.body.email);
 		if (user) return res.status(400).json({ error: "Email already exists.." });
-		if(!user.stripe_customer_id){
+		let updated_user = await UserDao.updateEmail(req.user.user_id, req.body.email);
+
+		if(!updated_user.stripe_customer_id){
 			const stripe_customer = await stripe.createCustomer(
-				user.email,
-				user.first_name + " " + user.last_name,
-				user.telephone
+				updated_user.email,
+				updated_user.first_name + " " + updated_user.last_name,
+				updated_user.telephone
 			)
 			await UserDao.updateStripeCustomerId(req.user.user_id,stripe_customer.id)
 		}else{
-			await stripe.updateCustomerEmail(user.stripe_customer_id, req.body.email);
+			await stripe.updateCustomerEmail(updated_user.stripe_customer_id, req.body.email);
 		}
 
-		let updated_user = await UserDao.updateEmail(req.user.user_id, req.body.email);
 		if (user) return res.status(200).json(user);
 
 		res.status(400).json({ error: "Error updating user information" });
