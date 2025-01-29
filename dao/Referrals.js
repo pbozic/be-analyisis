@@ -7,6 +7,9 @@ const createReferral = async (referrerUserId, referredUserId, referralCode) => {
 				referral_code: referralCode,
 				referrer: { connect: { user_id: referrerUserId } },
 				referred: { connect: { user_id: referredUserId } },
+			},
+			include: {
+				referrer: true
 			}
 		});
 	} catch (error) {
