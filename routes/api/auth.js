@@ -16,6 +16,8 @@ const DocumentDao = require("../../dao/Document");
 const { DOCUMENT_TYPE } = require("../../lib/constants");
 const stripe = require("../../lib/stripe");
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const axios = require("axios");
+const jwkToPem = require('jwk-to-pem');
 
 async function getUser(id, res) {
 	try {
@@ -94,13 +96,13 @@ router.post("/update/scheduled_user", AuthController.updateScheduledUser);
 router.post("/refresh", joi(refreshSchema), AuthController.refreshToken);
 router.post("/reset-password", joi(resetPasswordRequestSchema), AuthController.requestPasswordReset);
 router.post('/login/apple', async (req, res) => {
-	const { token } = req.body;
+	const { token, jwt } = req.body;
   
 	try {
 	  // Decode the Apple ID token
-	  const decodedToken = jwt.decode(token);
-	  const appleId = decodedToken.sub;
-	  const email = decodedToken.email;
+	  const decodedToken = await verifyAppleToken(jwt);
+	  console.log("Apple Decoded", decodedToken);
+	  const appleId = token;
   
 	  // Check if the user already exists in the database
 	  let user = await prisma.users.findUnique({
@@ -114,10 +116,6 @@ router.post('/login/apple', async (req, res) => {
 	  // If the user does not exist, return the auth data (no JWT token)
 	  return res.json({
 		message: 'User not found',
-		user: {
-		  apple_id: appleId,
-		  email,
-		},
 	  });
 	} catch (error) {
 	  console.error('Apple token verification error:', error);
@@ -166,5 +164,33 @@ router.post('/login/google', async (req, res) => {
 	  res.status(500).send('Error during authentication');
 	}
   });
-
+  const verifyAppleToken = async (identityToken) => {
+	try {
+	  // Fetch Apple's public keys
+	  const response = await axios.get('https://appleid.apple.com/auth/keys');
+	  const applePublicKeys = response.data.keys;
+  
+	  // Decode the JWT header to get the key ID (kid)
+	  const decodedHeader = jwt.decode(identityToken, { complete: true }).header;
+	  const { kid } = decodedHeader;
+  
+	  // Find the corresponding public key based on the kid
+	  const applePublicKey = applePublicKeys.find(key => key.kid === kid);
+	  if (!applePublicKey) {
+		throw new Error('Apple public key not found.');
+	  }
+  
+	  // Convert the Apple public key to PEM format
+	  const pem = jwkToPem(applePublicKey);
+  
+	  // Verify the token using the public key
+	  const decoded = jwt.verify(identityToken, pem);
+	  console.log('Decoded token:', decoded);
+  
+	  return decoded;
+	} catch (error) {
+	  console.error('Error verifying Apple token:', error);
+	  throw error;
+	}
+  };
 module.exports = router;
