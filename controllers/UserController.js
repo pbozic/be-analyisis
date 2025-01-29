@@ -328,7 +328,7 @@ async function updateEmail(req, res) {
 			await stripe.updateCustomerEmail(updated_user.stripe_customer_id, req.body.email);
 		}
 
-		if (user) return res.status(200).json(user);
+		if (updated_user) return res.status(200).json(updated_user);
 
 		res.status(400).json({ error: "Error updating user information" });
 	} catch (e) {
