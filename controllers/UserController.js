@@ -1755,9 +1755,13 @@ async function claimReward(req, res) {
 			}
 		});
 		//TODO: add delivery credits?
+		const alreadyClaimed = await ReferralDao.getReferralByReferralId(referral_id);
+		if (alreadyClaimed?.reward_claimed) {
+			return res.status(400).json({ error: "Reward already claimed!" });
+		}
 		const referral = await ReferralDao.updateReferralRewardClaimed(referral_id, true);
 		if (!referral) {
-			return res.status(400).json("Error claiming reward");
+			return res.status(400).json({ error: "Error claiming reward" });
 		}
 		return res.status(200).json({ message: "Reward claimed successfully" });
 	} catch (error) {
