@@ -22,6 +22,7 @@ const { getOrders } = require("../dao/TaxiOrder");
 const TaxiOrderDao = require("../dao/TaxiOrder");
 const { drive } = require("googleapis/build/src/apis/drive");
 const GroupDao = require("../dao/Group");
+const { metadata } = require("core-js/fn/reflect");
 
 
 /**
@@ -1013,6 +1014,36 @@ async function requestToAddFundsToWallet(req, res) {
 	  res.status(400).json({ error: 'Error requesting to add funds to wallet' });
 	}
 }
+async function requestPaymentIntent(req, res) {
+	try {
+		const { amount, currency, return_url } = req.body;
+		if((!amount && amount<=0) || !currency) {
+			return res.status(400).json({ error: 'Error requesting payment intent: Invalid parameters!' });
+		}
+	  // Create a Payment Method to handle the transaction
+	  let paymentIntent = await stripe.createPaymentIntent(Math.round(amount * 100), currency, req.user.stripe_customer_id, return_url, { user_id: req.user.user_id, type: "wallet_topup" });
+	  res.status(200).json(paymentIntent);
+	} catch (error) {
+	  console.error('Error requesting payment intent:', error);
+	  res.status(400).json({ error: 'Error requesting payment intent' });
+	}
+
+}
+
+async function confirmPaymentIntent(req, res) {
+	try {
+		const { payment_intent_id } = req.body;
+		if(!payment_intent_id) {
+			return res.status(400).json({ error: 'Error confirming payment intent: Invalid parameters!' });
+		}
+	  // Confirm the Payment Intent
+	  let paymentIntent = await stripe.confirmPaymentIntent(payment_intent_id);
+	  res.status(200).json(paymentIntent);
+	} catch (error) {
+	  console.error('Error confirming payment intent:', error);
+	  res.status(400).json({ error: 'Error confirming payment intent' });
+	}
+}
 async function ping(req, res) {
 	console.log("ping, req.user ", req.user);
 	let user = await UserDao.getUserById(req.user.user_id, {
@@ -1692,5 +1723,7 @@ module.exports = {
 	getTransactions,
 	updateWalletBalance,
 	updateUserLanguage,
-	softDeleteUserByUserId
+	softDeleteUserByUserId,
+	requestPaymentIntent,
+	confirmPaymentIntent,
 };
