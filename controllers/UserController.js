@@ -171,6 +171,8 @@ async function me(req, res) {
 				delivery_driver: true,
 				child_users: { include:{child_user: true}},
 				parent_user: { include:{parent_user: true}},
+				referrals_made: true,
+				referral: { include: {referrer: true} }
 			},
 		});
 		console.log("/me user: ",user?.user_id)
