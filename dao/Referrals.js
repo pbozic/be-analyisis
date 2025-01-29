@@ -51,7 +51,7 @@ const updateReferralRewardClaimed = async (referralId, claimed) => {
 				referral_id: referralId
 			},
 			data: {
-				award_accepted: claimed
+				reward_claimed: claimed
 			}
 		});
 	} catch (error) {
