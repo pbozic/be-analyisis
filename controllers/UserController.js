@@ -1717,12 +1717,12 @@ async function redeemReferralCode(req, res) {
 		const user_id = req.user.user_id;
 
 		// First check if user already has a referral
-		const existingReferral = ReferralDao.getReferralByReferredUserId(user_id);
+		const existingReferral = await ReferralDao.getReferralByReferredUserId(user_id);
 		if (existingReferral) {
 			return res.status(400).json("User has already redeemed a referral code");
 		}
 		// Find the referrer by their referral code
-		const referrer = UserDao.getUserByReferralCode(referral_code);
+		const referrer = await UserDao.getUserByReferralCode(referral_code);
 		if (!referrer) {
 			return res.status(400).json("Invalid referral code");
 		}
