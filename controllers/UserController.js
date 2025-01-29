@@ -1020,7 +1020,7 @@ async function requestPaymentIntent(req, res) {
 			return res.status(400).json({ error: 'Error requesting payment intent: Invalid parameters!' });
 		}
 	  // Create a Payment Method to handle the transaction
-	  let paymentIntent = await stripe.createPaymentIntentForPlatform(Math.round(amount * 100), currency, req.user.stripe_customer_id, return_url, { user_id: req.user.user_id, type: "wallet_topup" });
+	  let paymentIntent = await stripe.createPaymentIntentForPlatform(Math.round(amount * 100), currency, req.user.stripe_customer_id, { user_id: req.user.user_id, type: "wallet_topup" });
 	  res.status(200).json(paymentIntent);
 	} catch (error) {
 	  console.error('Error requesting payment intent:', error);
