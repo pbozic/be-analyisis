@@ -15,6 +15,19 @@ const createReferral = async (referrerUserId, referredUserId, referralCode) => {
 	}
 };
 
+const getReferralByReferralId = async (referralId) => {
+	try {
+		return await prisma.referrals.findUnique({
+			where: {
+				referral_id: referralId
+			}
+		});
+	} catch (error) {
+		console.error("Error getting referral:", error);
+		throw error;
+	}
+}
+
 const updateReferralConditionsMet = async (referralId, conditionsMet) => {
 	try {
 		return await prisma.referrals.update({
@@ -26,7 +39,23 @@ const updateReferralConditionsMet = async (referralId, conditionsMet) => {
 			}
 		});
 	} catch (error) {
-		console.error("Error updating referral conditions:", error);
+		console.error("Error updating referral conditions met:", error);
+		throw error;
+	}
+};
+
+const updateReferralRewardClaimed = async (referralId, claimed) => {
+	try {
+		return await prisma.referrals.update({
+			where: {
+				referral_id: referralId
+			},
+			data: {
+				award_accepted: claimed
+			}
+		});
+	} catch (error) {
+		console.error("Error updating referral award claimed:", error);
 		throw error;
 	}
 };
@@ -65,8 +94,10 @@ const getReferralsByReferrerUserId = async (referrerUserId) => {
 };
 
 module.exports = {
+	getReferralByReferralId,
 	createReferral,
 	updateReferralConditionsMet,
+	updateReferralRewardClaimed,
 	getReferralByReferredUserId,
 	getReferralsByReferrerUserId
 };
