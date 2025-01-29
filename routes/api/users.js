@@ -65,6 +65,9 @@ router.patch("/me/group_user/status/", UserController.updateChildUserEnabledByGr
 router.patch("/me/group_user/allowance/", UserController.updateChildUserAllowanceByGroupUserId);
 router.patch("/group_user/allowance", UserController.updateChildUserAllowanceByGroupUserId);
 router.delete("/me/group_user/delete/:group_user_id", UserController.deleteChildUserByGroupUserId);
+router.post("/me/request-payment-intent", UserController.requestPaymentIntent);
+router.post("/me/confirm-payment-intent", UserController.confirmPaymentIntent);
+
 
 router.get("/user/:code", UserController.getUserByReferralCode);
 
