@@ -116,6 +116,7 @@ router.post('/login/apple', async (req, res) => {
 	  // If the user does not exist, return the auth data (no JWT token)
 	  return res.json({
 		message: 'User not found',
+		email: decodedToken.email,
 	  });
 	} catch (error) {
 	  console.error('Apple token verification error:', error);
