@@ -3,6 +3,7 @@ const DriverDao = require("../dao/Driver");
 const UsersDao = require("../dao/User");
 const FlagDao = require("../dao/Flags");
 const BusinessUsersDao = require("../dao/BusinessUsers");
+const ReferralDao = require("../dao/Referrals");
 const GroupDao = require("../dao/Group");
 const { UserSockets, io } = require("../socket");
 const gApi = require("../lib/gApis");
@@ -839,9 +840,13 @@ async function completeOrder(req, res) {
 		io.emit("driver_available", driver);
 		let user = await UsersDao.getUserById(order.user_id, {
 			include: {
-				parent_user: { include: { parent_user: true } }
+				parent_user: { include: { parent_user: true } },
+				referral: true,
 			}
 		});
+		if (!user?.referral?.conditions_met) {
+			await ReferralDao.updateReferralConditionsMet(user.referral.referral_id, true);
+		}
 
 		//CALCULATE IN CENTS
 		const PRICE_CENTS = Math.round(parseFloat(order.payment.price)*100)

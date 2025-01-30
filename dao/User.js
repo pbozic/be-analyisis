@@ -729,6 +729,19 @@ const updateStripeCustomerId = async (user_id, customer_id) => {
 	}
 };
 
+const addCredits = async (user_id, updateData) => {
+	try {
+		return prisma.users.update({
+			where: {
+				user_id: user_id
+			},
+			data: updateData
+		});
+	} catch (err) {
+		return new Error(err);
+	}
+}
+
 module.exports = {
 	getUsers,
 	getUserByReferralCode,
@@ -767,5 +780,6 @@ module.exports = {
 	getTransactions,
 	updateWalletBalance,
 	updateUserActive,
-	wipeUserPersonalData
+	wipeUserPersonalData,
+	addCredits,
 };

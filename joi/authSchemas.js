@@ -64,7 +64,6 @@ const registerSchema = Joi.object({
 	date_of_birth: Joi.date().format("YYYY-MM-DD").required(),
 	google_id: Joi.string().optional(),
 	apple_id: Joi.string().optional(),
-	referral_code: Joi.string().optional(),
 });
 
 const registerChildSchema = Joi.object({
