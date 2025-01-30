@@ -112,7 +112,11 @@ const prisma = new PrismaClient({
 					AND (COALESCE(${requirements.traveling_with_pet}, FALSE) = FALSE OR (drivers.ride_requirements->'traveling_with_pet')::BOOLEAN = ${requirements.traveling_with_pet})
 					AND (COALESCE(${requirements.child_seat}, FALSE) = FALSE OR (drivers.ride_requirements->'child_seat')::BOOLEAN = ${requirements.child_seat})
 					AND (COALESCE(${requirements.wheelchair_accessibility}, FALSE) = FALSE OR (drivers.ride_requirements->'wheelchair_accessibility')::BOOLEAN = ${requirements.wheelchair_accessibility})
-					AND (COALESCE(${vehicleFilters.class}, '') = '' OR vehicles.class::TEXT = ${vehicleFilters.class.toUpperCase()})
+					AND (
+						COALESCE(${vehicleFilters.class}, '') = '' 
+						OR vehicles.class::TEXT = ${vehicleFilters.class.toUpperCase()}
+						OR vehicles.class::TEXT NOT IN ('MINIVAN', 'MINIBUS', 'BUS', 'CARGO_VAN')
+					)
 					AND (COALESCE(${vehicleFilters.category}, '') = '' OR vehicles.category::TEXT = ${vehicleFilters.category.toUpperCase()})
 					-- Language requirements (match at least one if any are specified)
 					AND (
