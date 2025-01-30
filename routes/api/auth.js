@@ -105,12 +105,12 @@ router.post('/login/apple', async (req, res) => {
 	  const appleId = token;
   
 	  // Check if the user already exists in the database
-	  let user = await prisma.users.findUnique({
+	  let user = await prisma.users.findMany({
 		where: { apple_id: appleId },
 	  });
   
-	  if (user) {
-			return await getUser(user.user_id, res);
+	  if (user.length > 0) {
+		 return await getUser(user[0].user_id, res);
 	  }
   
 	  // If the user does not exist, return the auth data (no JWT token)
