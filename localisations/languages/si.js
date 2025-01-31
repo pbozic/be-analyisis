@@ -39,15 +39,15 @@ const   si = {
         delayed: "Zamuda pri pripravi naročila.",
     },
     HEADING: {
-        completed: "Taksi naročilo zaključeno",
-        accepted: "Naročilo sprejeto",
-        pending: "Novo taksi naročilo",
-        pending_delivery: "Novo naročilo dostave",
-        scheduled_tomorrow: "Vaše taksi naročilo je načrtovano za jutri",
-        scheduled_hour: "Vaše taksi naročilo je načrtovano čez eno uro",
-        driver: "Klikni voznik",
-        taxi: "Posodobitev naročila",
-        delivery: "Posodobitev naročila",
+        completed: 'Taksi Naročilo Zaključeno',
+        accepted: "Taksi Naročilo Sprejeto",
+        pending: "Novo Taksi Naročilo",
+        pending_delivery: "Novo Naročilo za Dostavo",
+        scheduled_tomorrow: "Načrtovano Taksi Naročilo",
+        scheduled_hour: "Načrtovano Taksi Naročilo",
+        driver: "Klikni Voznik",
+        taxi: "Posodobitev Taksi Naročila",
+        delivery: "Posodobitev Dostave",
     }
 }
 module.exports = si;

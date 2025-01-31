@@ -39,15 +39,15 @@ const it = {
         delayed: "L'ordine di consegna è stato ritardato dal commerciante.",
     },
     HEADING: {
-        completed: "Ordine taxi completato",
-        accepted: "Ordine di taxi accettato",
-        pending: "Nuovo ordine di taxi",
+        completed: 'Corsa in Taxi Completata',
+        accepted: "Corsa in Taxi Accettata",
+        pending: "Nuova Prenotazione Taxi",
         pending_delivery: "Nuovo ordine di consegna",
-        scheduled_tomorrow: "Il tuo ordine di taxi è programmato per domani",
-        scheduled_hour: "Il tuo ordine di taxi è programmato per un'ora",
+        scheduled_tomorrow: "Corsa in Taxi Programmata",
+        scheduled_hour: "Corsa in Taxi Programmata",
         driver: "Autista Klikni",
-        taxi: "Aggiornamento dell'ordine di taxi",
-        delivery: "Aggiornamento dell'ordine di consegna",
+        taxi: "Aggiornamento Corsa Taxi",
+        delivery: "Aggiornamento Consegna",
     }
 }
 module.exports = it;

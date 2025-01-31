@@ -8,7 +8,7 @@ const GroupDao = require("../dao/Group");
 const { UserSockets, io } = require("../socket");
 const gApi = require("../lib/gApis");
 const TaxiHelper = require("../lib/taxiHelpers");
-const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE ,CARGO_TRANSFER_FEE, ORDER_TYPE} = require("../lib/constants");
+const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE , CARGO_TRANSFER_FEE, ORDER_TYPE, CREDITS} = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
 const { sendOrderNotifications } = require("../lib/notifications");
 const { sleep, range, calculatePrivateDriverFee, todaysEarnings } = require("../lib/helpersLib");
@@ -808,7 +808,7 @@ async function acceptOrder(req, res) {
 
 			console.log("userSocket", userSocket);
 		}
-		sendOrderNotifications(order.user, driver, order.user_id, driver.driver_id, TAXI_ORDER_STATUS.TAXI_ACCEPTED)
+		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO) sendOrderNotifications(order.user, driver, order.user_id, driver.driver_id, TAXI_ORDER_STATUS.TAXI_ACCEPTED)
 		await TaxiHelper.revokeTaxiOrderFromOtherDrivers(order.order_id, user.driver.driver_id);
 		res.status(200).json(order);
 	} catch (e) {
@@ -846,6 +846,12 @@ async function completeOrder(req, res) {
 		});
 		if (!user?.referral?.conditions_met) {
 			await ReferralDao.updateReferralConditionsMet(user.referral.referral_id, true);
+			const referrer = await UsersDao.getUserById(user.referral?.referrer_user_id);
+			if (!referrer) {
+				console.error("The referrer was not found and couldn't be given Taxi credits")
+			}
+			await UsersDao.addCredits(referrer.user_id, {taxi_credits: {increment: CREDITS.TAXI}})
+			//TODO: send notification to user that he received credits
 		}
 
 		//CALCULATE IN CENTS
@@ -990,9 +996,9 @@ async function updateOrderStatus(req, res) {
 		let driver_id = order?.driver?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
 		let driver = await DriverDao.getDriverById(driver_id);
-		console.log("user console.log", user);
-		console.log("Driver console.log", driver);
-		sendOrderNotifications(user, driver, user_id, driver_id, req.body.status);
+		console.log("user console.log", user?.user_id);
+		console.log("Driver console.log", driver?.user?.user_id);
+		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO) sendOrderNotifications(user, driver, user_id, driver_id, req.body.status);
 
 		res.status(200).json(order);
 	} catch (e) {
@@ -1070,9 +1076,9 @@ async function cancelOrder(req, res) {
 		let driver_id = order?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
 		let driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
-		console.log("user console.log", user);
-		console.log("Driver console.log", driver);
-		sendOrderNotifications(user, driver, user_id, driver_id, status);
+		console.log("user console.log", user?.user_id);
+		console.log("Driver console.log", driver?.user?.user_id);
+		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO) sendOrderNotifications(user, driver, user_id, driver_id, status);
 
 		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
 
@@ -1170,9 +1176,9 @@ async function rejectOrder(req, res) {
 		let driver_id = order?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
 		let driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
-		console.log("user console.log", user);
-		console.log("Driver console.log", driver);
-		sendOrderNotifications(user, driver, user_id, driver_id, status);
+		console.log("user console.log", user?.user_id);
+		console.log("Driver console.log", driver?.user?.user_id);
+		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO) sendOrderNotifications(user, driver, user_id, driver_id, status);
 
 		if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
 			new_status = TAXI_ORDER_STATUS.PENDING;

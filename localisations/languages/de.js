@@ -39,15 +39,15 @@ const  de = {
         delayed: "Die Lieferbestellung wurde vom Händler verzögert.",
     },
     HEADING: {
-        completed: "Taxibestellung abgeschlossen",
-        accepted: "Taxi-Bestellung angenommen",
-        pending: "Neue Taxi-Bestellung",
+        completed: 'Taxifahrt Abgeschlossen',
+        accepted: "Taxifahrt Akzeptiert",
+        pending: "Neue Taxibestellung",
         pending_delivery: "Neue Lieferbestellung",
-        scheduled_tomorrow: "Ihre Taxi-Bestellung ist für morgen geplant",
-        scheduled_hour: "Ihre Taxi-Bestellung ist in einer Stunde geplant",
+        scheduled_tomorrow: "Geplante Taxifahrt",
+        scheduled_hour: "Geplante Taxifahrt",
         driver: "Klikni Fahrer",
-        taxi: "Aktualisierung der Taxi-Bestellung",
-        delivery: "Aktualisierung der Lieferbestellung",
+        taxi: "Taxifahrt Update",
+        delivery: "Lieferung Update",
     }
 }
 module.exports = de;

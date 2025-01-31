@@ -39,15 +39,15 @@ const bih = {
         delayed: "Narudžbina za dostavu je odložena od strane trgovca.",
     },
     HEADING: {
-        completed: "Narudžba taksija završena",
-        accepted: "Narudžbina za taksi je prihvaćena",
-        pending: "Nova narudžbina za taksi",
-        pending_delivery: "Nova narudžbina za dostavu",
-        scheduled_tomorrow: "Vaša narudžbina za taksi je zakazana za sutra",
-        scheduled_hour: "Vaša narudžbina za taksi je zakazana za sat vremena",
-        driver: "Klikni vozač",
-        taxi: "Ažuriranje narudžbine za taksi",
-        delivery: "Ažuriranje narudžbine za dostavu",
+        completed: 'Vožnja Taksijem Završena',
+        accepted: "Vožnja Taksijem Prihvaćena",
+        pending: "Nova Narudžba Taksija",
+        pending_delivery: "Nova narudžba za dostavu",
+        scheduled_tomorrow: "Zakazana Vožnja Taksijem",
+        scheduled_hour: "Zakazana Vožnja Taksijem",
+        driver: "Klikni Vozač",
+        taxi: "Ažuriranje Vožnje Taksijem",
+        delivery: "Ažuriranje Dostave",
     }
 }
 module.exports = bih;

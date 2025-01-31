@@ -39,15 +39,15 @@ const  srb = {
         delayed: "Narudžbina za dostavu je odložena od strane trgovca.",
     },
     HEADING: {
-        completed: "Narudžba taksija završena",
-        accepted: "Narudžbina za taksi je prihvaćena",
-        pending: "Nova narudžbina za taksi",
-        pending_delivery: "Nova narudžbina za dostavu",
-        scheduled_tomorrow: "Vaša narudžbina za taksi je zakazana za sutra",
-        scheduled_hour: "Vaša narudžbina za taksi je zakazana za sat vremena",
-        driver: "Klikni vozač",
-        taxi: "Ažuriranje narudžbine za taksi",
-        delivery: "Ažuriranje narudžbine za dostavu",
+        completed: 'Вожња Таксијем Завршена',
+        accepted: "Вожња Таксијем Прихваћена",
+        pending: "Нова Наруџба Таксија",
+        pending_delivery: "Нова наруџба за доставу",
+        scheduled_tomorrow: "Заказана Вожња Таксијем",
+        scheduled_hour: "Заказана Вожња Таксијем",
+        driver: "Кликни Возач",
+        taxi: "Ажурирање Вожње Таксијем",
+        delivery: "Ажурирање Доставе",
     }
 }
 module.exports = srb;
