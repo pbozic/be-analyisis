@@ -295,7 +295,7 @@ async function getDocumentsForVehicleByDocumentType(req, res) {
 }
 
 /**
- * POST /documents/create/user
+ * POST /documents/create/user/:user_id
  * @tag Documents
  * @summary Create a document for a user
  * @description Creates a new document and links it to a specific user.
@@ -310,7 +310,7 @@ async function getDocumentsForVehicleByDocumentType(req, res) {
 async function createUserDocument(req, res) {
 	try {
 		const { documentData, files } = req.body;
-		const userId = req.params.userId;
+		const userId = req.params.user_id;
 		const document = await DocumentDao.createDocument(documentData, files);
 		await DocumentDao.linkDocumentToUser(document.document_id, userId);
 		res.status(201).json(document);
@@ -321,7 +321,7 @@ async function createUserDocument(req, res) {
 }
 
 /**
- * POST /documents/create/business
+ * POST /documents/create/business/:business_id
  * @tag Documents
  * @summary Create a document for a business
  * @description Creates a new document and links it to a specific business.
@@ -347,7 +347,7 @@ async function createBusinessDocument(req, res) {
 }
 
 /**
- * POST /documents/create/driver
+ * POST /documents/create/driver/:driver_id
  * @tag Documents
  * @summary Create a document for a driver
  * @description Creates a new document and links it to a specific driver.
@@ -373,7 +373,7 @@ async function createDriverDocument(req, res) {
 }
 
 /**
- * POST /documents/create/vehicle
+ * POST /documents/create/vehicle/:vehicle_id
  * @tag Documents
  * @summary Create a document for a vehicle
  * @description Creates a new document and links it to a specific vehicle.
@@ -399,7 +399,7 @@ async function createVehicleDocument(req, res) {
 }
 
 /**
- * POST /documents/create/deliveryPerson
+ * POST /documents/create/delivery_driver/:delivery_driver_id
  * @tag Documents
  * @summary Create a document for a delivery person
  * @description Creates a new document and links it to a specific delivery person.
@@ -414,7 +414,7 @@ async function createVehicleDocument(req, res) {
 async function createDeliveryPersonDocument(req, res) {
 	try {
 		const { documentData, files } = req.body;
-		const deliveryPersonId = req.params.delivery_person_id;
+		const deliveryPersonId = req.params.delivery_driver_id;
 		const document = await DocumentDao.createDocument(documentData, files);
 		await DocumentDao.linkDocumentToDeliveryDriver(document.document_id, deliveryPersonId);
 		res.status(201).json(document);

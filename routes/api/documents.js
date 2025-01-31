@@ -18,11 +18,11 @@ router.get('/drivers/:driverId/type/:documentType', DocumentsController.getDocum
 router.get('/deliveryPersons/:deliveryPersonId/type/:documentType', DocumentsController.getDocumentsForDeliveryPersonByDocumentType);
 router.get('/vehicles/:vehicleId/type/:documentType', DocumentsController.getDocumentsForVehicleByDocumentType);
 
-router.post('/create/user', DocumentsController.createUserDocument);
-router.post('/create/business', DocumentsController.createBusinessDocument);
-router.post('/create/driver', DocumentsController.createDriverDocument);
-router.post('/create/vehicle', DocumentsController.createVehicleDocument);
-router.post('/create/deliveryPerson', DocumentsController.createDeliveryPersonDocument);
+router.post('/create/user/:user_id', DocumentsController.createUserDocument);
+router.post('/create/business/:business_id', DocumentsController.createBusinessDocument);
+router.post('/create/driver/:driver_id', DocumentsController.createDriverDocument);
+router.post('/create/vehicle/:vehicle_id', DocumentsController.createVehicleDocument);
+router.post('/create/delivery_driver/:delivery_driver_id', DocumentsController.createDeliveryPersonDocument);
 
 router.patch('/expirationDate', DocumentsController.updateDocumentExpirationDate);
 router.patch('/issueDate', DocumentsController.updateDocumentIssueDate);
