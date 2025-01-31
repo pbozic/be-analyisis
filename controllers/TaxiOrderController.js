@@ -4,11 +4,13 @@ const UsersDao = require("../dao/User");
 const FlagDao = require("../dao/Flags");
 const BusinessUsersDao = require("../dao/BusinessUsers");
 const ReferralDao = require("../dao/Referrals");
-const GroupDao = require("../dao/Group");
+const CashbackDao = require("../dao/Cashback");
 const { UserSockets, io } = require("../socket");
 const gApi = require("../lib/gApis");
 const TaxiHelper = require("../lib/taxiHelpers");
-const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE , CARGO_TRANSFER_FEE, ORDER_TYPE, CREDITS} = require("../lib/constants");
+const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE , CARGO_TRANSFER_FEE, ORDER_TYPE, CREDITS,
+	CASHBACK_SOURCE
+} = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
 const { sendOrderNotifications } = require("../lib/notifications");
 const { sleep, range, calculatePrivateDriverFee, todaysEarnings } = require("../lib/helpersLib");
@@ -844,14 +846,38 @@ async function completeOrder(req, res) {
 				referral: true,
 			}
 		});
+		const expiryDate = new Date();
+		expiryDate.setDate(expiryDate.getDate() + 30);
+		expiryDate.setHours(23, 59, 59, 999);
 		if (!user?.referral?.conditions_met) {
 			await ReferralDao.updateReferralConditionsMet(user.referral.referral_id, true);
+			//referrer
 			const referrer = await UsersDao.getUserById(user.referral?.referrer_user_id);
-			if (!referrer) {
-				console.error("The referrer was not found and couldn't be given Taxi credits")
+			if (referrer) {
+				await CashbackDao.createCashback({
+					expires_at: expiryDate,
+					user: { connect: { user_id: referrer.user_id } },
+					amount: CREDITS.TAXI,
+					type: ORDER_TYPE.TAXI,
+					source: CASHBACK_SOURCE.REFERRAL,
+					description: `Referral bonus, because ${user.first_name} ${user.last_name} completed first taxi order`,
+					referral: { connect: { referral_id: user.referral.referral_id } }
+				});
+				await UsersDao.addCredits(referrer.user_id, {taxi_credits: {increment: CREDITS.TAXI}})
+				//TODO: send notification to user that he received credits for referral
+			} else {
+				console.error("The referrer was not found and couldn't be given Taxi credits");
 			}
-			await UsersDao.addCredits(referrer.user_id, {taxi_credits: {increment: CREDITS.TAXI}})
-			//TODO: send notification to user that he received credits
+			//referred
+			await CashbackDao.createCashback({
+				expires_at: expiryDate,
+				user_id: { connect: { user_id: user.user_id } },
+				amount: CREDITS.TAXI,
+				type: ORDER_TYPE.TAXI,
+				source: CASHBACK_SOURCE.REFERRAL,
+				description: `Welcome bonus for using referral code ${user.referral?.referral_code}`,
+				referral_id: { connect: { referral_id: user.referral?.referral_id } }
+			});
 		}
 
 		//CALCULATE IN CENTS
@@ -862,7 +888,26 @@ async function completeOrder(req, res) {
 		const TOTAL_COST_CENTS = PRICE_CENTS + EXTRAS_COST_CENTS;
 		const DRIVER_CUT_CENTS = Math.round(PRICE_CENTS*(1-DRIVE_FEE));
 		const PLATFORM_CUT_CENTS = PRICE_CENTS-DRIVER_CUT_CENTS;
-		// console.log("EXTRAS COST", EXTRAS_COST, CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE, CARGO_TRANSFER_FEE.CARGO_FEE);
+
+		if (TOTAL_COST_CENTS >= CREDITS.MINIMUM_ORDER_AMOUNT*100) {
+			let cashbackAmount = Math.min(
+				TOTAL_COST_CENTS * (CREDITS.TAXI_ORDER_CASHBACK_PERCENTAGE),
+				CREDITS.MAXIMUM_CASHBACK_TAXI_ORDER*100
+			);
+			cashbackAmount = (cashbackAmount/100)/CREDITS.CONVERSION_TAXI;
+			if (cashbackAmount > 0) {
+				await CashbackDao.createCashback({
+					expires_at: expiryDate,
+					user: { connect: { user_id: user.user_id } },
+					amount: cashbackAmount,
+					type: ORDER_TYPE.TAXI,
+					source: CASHBACK_SOURCE.ORDER,
+					description: `Cashback for taxi order ${order.order_id}`,
+					taxi_order: { connect: { user_id: order.order_id } },
+				});
+				//TODO: Notify user about earned cashback
+			}
+		}
 
 		if (order.payment.type === "WALLET") {
 			// handle wallet payment
