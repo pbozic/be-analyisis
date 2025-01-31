@@ -1,5 +1,5 @@
-import prisma from '../prisma/prisma';
-import { CASHBACK_STATUS } from '../lib/constants';
+const prisma = require('../prisma/prisma');
+const { CASHBACK_STATUS } = require('../lib/constants');
 
 const createCashback = async (data) => {
 	try {
