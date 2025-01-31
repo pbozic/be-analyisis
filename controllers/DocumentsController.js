@@ -312,10 +312,12 @@ async function createUserDocument(req, res) {
 		const { documentData, files } = req.body;
 		const userId = req.params.user_id;
 		const document = await DocumentDao.createDocument(documentData, files);
+		if (!document) {
+			return res.status(400).json({ error: "Error creating the document" });
+		}
 		await DocumentDao.linkDocumentToUser(document.document_id, userId);
-		res.status(201).json(document);
+		res.status(200).json(document);
 	} catch (error) {
-		console.error("Error creating document for user:", error);
 		res.status(400).json({ error: "Error creating user document or linking the document", detail: error.message });
 	}
 }
@@ -338,10 +340,12 @@ async function createBusinessDocument(req, res) {
 		const { documentData, files } = req.body;
 		const businessId = req.params.business_id;
 		const document = await DocumentDao.createDocument(documentData, files);
+		if (!document) {
+			return res.status(400).json({ error: "Error creating the document" });
+		}
 		await DocumentDao.linkDocumentToBusiness(document.document_id, businessId);
-		res.status(201).json(document);
+		res.status(200).json(document);
 	} catch (error) {
-		console.error("Error creating document for business:", error);
 		res.status(400).json({ error: "Error creating or linking the document", detail: error.message });
 	}
 }
@@ -364,10 +368,12 @@ async function createDriverDocument(req, res) {
 		const { documentData, files } = req.body;
 		const driverId = req.params.driver_id;
 		const document = await DocumentDao.createDocument(documentData, files);
+		if (!document) {
+			return res.status(400).json({ error: "Error creating the document" });
+		}
 		await DocumentDao.linkDocumentToDriver(document.document_id, driverId);
-		res.status(201).json(document);
+		res.status(200).json(document);
 	} catch (error) {
-		console.error("Error creating document for driver:", error);
 		res.status(400).json({ error: "Error creating or linking the document", detail: error.message });
 	}
 }
@@ -416,10 +422,12 @@ async function createDeliveryPersonDocument(req, res) {
 		const { documentData, files } = req.body;
 		const deliveryPersonId = req.params.delivery_driver_id;
 		const document = await DocumentDao.createDocument(documentData, files);
+		if (!document) {
+			return res.status(400).json({ error: "Error creating the document" });
+		}
 		await DocumentDao.linkDocumentToDeliveryDriver(document.document_id, deliveryPersonId);
-		res.status(201).json(document);
+		res.status(200).json(document);
 	} catch (error) {
-		console.error("Error creating document for delivery person:", error);
 		res.status(400).json({ error: "Error creating delivery person document or linking the document", detail: error.message });
 	}
 }

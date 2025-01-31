@@ -232,6 +232,8 @@ const findDocumentByTypeAndDriverId = async (documentType, driverId) => {
 const createDocument = async (documentData, filesData = []) => {
     for (let file of filesData) {
         delete file.data
+        delete file.base64
+        delete file.name
     }
     try {
         return await prisma.documents.create({
