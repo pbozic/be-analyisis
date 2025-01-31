@@ -1,5 +1,7 @@
 require("dotenv").config();
 const DocumentDao = require("../dao/Document");
+const DeliveryDriverDao = require("../dao/DeliveryDriver");
+const DriverDao = require("../dao/Driver");
 
 /**
  * GET /documents
@@ -425,7 +427,13 @@ async function createDeliveryPersonDocument(req, res) {
 		if (!document) {
 			return res.status(400).json({ error: "Error creating the document" });
 		}
-		await DocumentDao.linkDocumentToDeliveryDriver(document.document_id, deliveryPersonId);
+		let driver = await DeliveryDriverDao.getDeliveryDriverById(deliveryPersonId);
+		if (!driver) {
+			driver = await DriverDao.getDriverById(deliveryPersonId);
+			await DocumentDao.linkDocumentToDriver(document.document_id, driver.driver_id);
+		} else {
+			await DocumentDao.linkDocumentToDeliveryDriver(document.document_id, driver.delivery_driver_id);
+		}
 		res.status(200).json(document);
 	} catch (error) {
 		res.status(400).json({ error: "Error creating delivery person document or linking the document", detail: error.message });
