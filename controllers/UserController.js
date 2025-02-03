@@ -1765,12 +1765,12 @@ async function claimReward(req, res) {
 		expiryDate.setHours(23, 59, 59, 999);
 		await CashbackDao.createCashback({
 			expires_at: expiryDate,
-			user_id: { connect: { user_id: req.user.user_id } },
+			user: { connect: { user_id: req.user.user_id } },
 			amount: CREDITS.TAXI,
 			type: 'TAXI', // we add taxi credits on referral
 			source: CASHBACK_SOURCE.REFERRAL,
 			description: `Welcome bonus for using referral code ${referral.referral_code}`,
-			referral_id: { connect: { referral_id: referral_id } }
+			referral: { connect: { referral_id: referral_id } }
 		});
 
 		return res.status(200).json({ message: "Reward claimed successfully" });
