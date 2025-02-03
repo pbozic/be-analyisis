@@ -897,7 +897,7 @@ async function completeOrder(req, res) {
 						type: ORDER_TYPE.TAXI,
 						source: CASHBACK_SOURCE.ORDER,
 						description: `Cashback for taxi order ${order.order_id}`,
-						taxi_order: { connect: { user_id: order.order_id } },
+						taxi_order: { connect: { order_id: order.order_id } },
 					});
 					//TODO: Notify user about earned cashback
 				}
