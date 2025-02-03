@@ -3,16 +3,38 @@ const { CASHBACK_STATUS } = require('../lib/constants');
 
 const createCashback = async (data) => {
 	try {
-		return prisma.cashback.create({
-			data: {
-				data
-			}
+		return await prisma.$transaction(async (tx) => {
+			const cashback = await tx.cashback.create({
+				data: {
+					...data,
+				}
+			});
+			await tx.users.update({
+				where: {
+					user_id: data.user.connect.user_id
+				},
+				data: {
+					...(data.type === 'TAXI'
+						? {
+							taxi_credits: {
+								increment: data.amount
+							}
+						}
+						: {
+							delivery_credits: {
+								increment: data.amount
+							}
+						}
+					)
+				}
+			});
+			return cashback;
 		});
 	} catch (error) {
 		console.error('Error creating credits:', error);
 		throw error;
 	}
-}
+};
 
 const getUserCashbackHistory = async (user_id) => {
 	try {

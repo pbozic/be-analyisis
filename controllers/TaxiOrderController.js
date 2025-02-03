@@ -851,10 +851,10 @@ async function completeOrder(req, res) {
 			const l10nTextHeading = getLocalisedTexts("HEADING", order.user);
 			await sendNotificationToUser(l10nTextHeading?.completed, l10nText?.vehicleTransferCompleted, order.user_id);
 		} else {
+			const expiryDate = new Date();
+			expiryDate.setDate(expiryDate.getDate() + 30);
+			expiryDate.setHours(23, 59, 59, 999);
 			if (!user?.referral?.conditions_met) {
-				const expiryDate = new Date();
-				expiryDate.setDate(expiryDate.getDate() + 30);
-				expiryDate.setHours(23, 59, 59, 999);
 				await ReferralDao.updateReferralConditionsMet(user.referral.referral_id, true);
 				//referrer
 				const referrer = await UsersDao.getUserById(user.referral?.referrer_user_id);
@@ -868,21 +868,10 @@ async function completeOrder(req, res) {
 						description: `Referral bonus, because ${user.first_name} ${user.last_name} completed first taxi order`,
 						referral: { connect: { referral_id: user.referral.referral_id } }
 					});
-					await UsersDao.addCredits(referrer.user_id, {taxi_credits: {increment: CREDITS.TAXI}})
 					//TODO: send notification to user that he received credits for referral
 				} else {
 					console.error("The referrer was not found and couldn't be given Taxi credits");
 				}
-				//referred
-				await CashbackDao.createCashback({
-					expires_at: expiryDate,
-					user_id: { connect: { user_id: user.user_id } },
-					amount: CREDITS.TAXI,
-					type: ORDER_TYPE.TAXI,
-					source: CASHBACK_SOURCE.REFERRAL,
-					description: `Welcome bonus for using referral code ${user.referral?.referral_code}`,
-					referral_id: { connect: { referral_id: user.referral?.referral_id } }
-				});
 			}
 
 			//CALCULATE IN CENTS
