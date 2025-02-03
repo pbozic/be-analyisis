@@ -146,7 +146,7 @@ model users {
 model cashback {
   credit_id         String           @id @unique @default(uuid()) @db.Uuid
   user_id           String           @db.Uuid
-  amount            Float
+  amount            Int
   type              CASHBACK_TYPE
   source            CASHBACK_SOURCE
   status            CASHBACK_STATUS  @default(ACTIVE)
