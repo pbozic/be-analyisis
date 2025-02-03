@@ -465,6 +465,13 @@ async function completeOrder(order_id) {
 			},
 			data: {
 				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
+			},
+			include: {
+				business: {
+					documents: {
+						files: true
+					}
+				}
 			}
 		});
 		let orders = await prisma.delivery_orders.findMany({

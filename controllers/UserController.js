@@ -1755,11 +1755,6 @@ async function claimReward(req, res) {
 			return res.status(400).json({ error: "Reward already claimed!" });
 		}
 
-		const referral = await ReferralDao.updateReferralRewardClaimed(referral_id, true);
-		if (!referral) {
-			return res.status(400).json({ error: "Error claiming reward" });
-		}
-
 		const expiryDate = new Date();
 		expiryDate.setDate(expiryDate.getDate() + 30);
 		expiryDate.setHours(23, 59, 59, 999);
@@ -1769,9 +1764,14 @@ async function claimReward(req, res) {
 			amount: CREDITS.TAXI,
 			type: 'TAXI', // we add taxi credits on referral
 			source: CASHBACK_SOURCE.REFERRAL,
-			description: `Welcome bonus for using referral code ${referral.referral_code}`,
+			description: `Welcome bonus for using referral code`,
 			referral: { connect: { referral_id: referral_id } }
 		});
+
+		const referral = await ReferralDao.updateReferralRewardClaimed(referral_id, true);
+		if (!referral) {
+			return res.status(400).json({ error: "Error claiming reward" });
+		}
 
 		return res.status(200).json({ message: "Reward claimed successfully" });
 	} catch (error) {
