@@ -468,8 +468,12 @@ async function completeOrder(order_id) {
 			},
 			include: {
 				business: {
-					documents: {
-						files: true
+					include: {
+						documents: {
+							include: {
+								files: true
+							}
+						}
 					}
 				}
 			}
