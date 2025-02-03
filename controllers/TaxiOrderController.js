@@ -899,7 +899,7 @@ async function completeOrder(req, res) {
 					TOTAL_COST_CENTS * (CREDITS.TAXI_ORDER_CASHBACK_PERCENTAGE),
 					CREDITS.MAXIMUM_CASHBACK_TAXI_ORDER * 100
 				);
-				cashbackAmount = (cashbackAmount / 100) / CREDITS.CONVERSION_TAXI;
+				cashbackAmount = Math.round((cashbackAmount / 100) / CREDITS.CONVERSION_TAXI);
 				if (cashbackAmount > 0) {
 					await CashbackDao.createCashback({
 						expires_at: expiryDate,
