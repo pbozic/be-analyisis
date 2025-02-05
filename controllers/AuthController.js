@@ -387,8 +387,15 @@ async function registerTaxiService(req, res) {
 				return res.status(400).json({ error: 'This account number is already in use.' });
 			}
 		}
-
-		const business = await BusinessDao.createNewBusiness(req.body.business);
+		let stripeCustomer = await stripe.createCustomer(
+			req.body.business.email,
+			req.body.business.name,
+			req.body.business.telephone,
+		);
+		const business = await BusinessDao.createNewBusiness({
+			...req.body.business,
+			stripe_customer_id: stripeCustomer.id,
+		});
 
 		// TODO: handle uniqueness here or with joi validation
 		let drivers = [];
@@ -590,7 +597,15 @@ async function registerDeliveryService(req, res) {
 			}
 		}
 
-		const business = await BusinessDao.createNewBusiness(req.body.business);
+		let stripeCustomer = await stripe.createCustomer(
+			req.body.business.email,
+			req.body.business.name,
+			req.body.business.telephone,
+		);
+		const business = await BusinessDao.createNewBusiness({
+			...req.body.business,
+			stripe_customer_id: stripeCustomer.id,
+		});
 
 		let deliveryDrivers = [];
 		if (Array.isArray(req.body.deliveryDrivers) && req.body.deliveryDrivers.length) {
@@ -749,7 +764,15 @@ async function registerMerchantService(req, res) {
 			}
 		}
 
-		const business = await BusinessDao.createNewBusiness(req.body.business.data);
+		let stripeCustomer = await stripe.createCustomer(
+			req.body.business.email,
+			req.body.business.name,
+			req.body.business.telephone,
+		);
+		const business = await BusinessDao.createNewBusiness({
+			...req.body.business.data,
+			stripe_customer_id: stripeCustomer.id,
+		});
 
 		// Ensure at least one business user data is provided & created
 		if (!Array.isArray(req.body.users) || !req.body.users.length) {
@@ -876,8 +899,15 @@ async function registerBusiness(req, res) {
 			}
 		}
 
-		const business = await BusinessDao.createNewBusiness(req.body.business.data);
-
+		let stripeCustomer = await stripe.createCustomer(
+			req.body.business.email,
+			req.body.business.name,
+			req.body.business.telephone,
+		);
+		const business = await BusinessDao.createNewBusiness({
+			...req.body.business.data,
+			stripe_customer_id: stripeCustomer.id,
+		});
 		// Ensure at least one business user data is provided & created
 		if (!Array.isArray(req.body.users) || !req.body.users.length) {
 			return res.status(400).json({ error: "At least one business user must be provided." });
