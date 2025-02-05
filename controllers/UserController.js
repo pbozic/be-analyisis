@@ -17,12 +17,13 @@ const SMS = require("../lib/SMS");
 const stripe = require("../lib/stripe");
 const S3Helper = require("../lib/s3");
 const { User } = require("@onesignal/node-onesignal");
-const { DOCUMENT_TYPE, TAXI_ORDER_STATUS, USER_ROLE, CREDITS } = require("../lib/constants");
+const { DOCUMENT_TYPE, TAXI_ORDER_STATUS, USER_ROLE, CREDITS, CASHBACK_SOURCE } = require("../lib/constants");
 const { generateAccessToken, generateRefreshToken } = require("../lib/jwt");
 const { getOrders } = require("../dao/TaxiOrder");
 const TaxiOrderDao = require("../dao/TaxiOrder");
 const { drive } = require("googleapis/build/src/apis/drive");
 const GroupDao = require("../dao/Group");
+const CashbackDao = require("../dao/Cashback");
 
 
 /**
@@ -1745,24 +1746,33 @@ async function redeemReferralCode(req, res) {
 async function claimReward(req, res) {
 	try {
 		const { referral_id } = req.body;
-
 		if (!referral_id) {
 			return res.status(400).json("Missing referral_id in the request body!");
 		}
-		await UserDao.addCredits(req.user.user_id, {
-			taxi_credits: {
-				increment: CREDITS.TAXI
-			}
-		});
-		//TODO: add delivery credits?
+
 		const alreadyClaimed = await ReferralDao.getReferralByReferralId(referral_id);
 		if (alreadyClaimed?.reward_claimed) {
 			return res.status(400).json({ error: "Reward already claimed!" });
 		}
+
+		const expiryDate = new Date();
+		expiryDate.setDate(expiryDate.getDate() + 30);
+		expiryDate.setHours(23, 59, 59, 999);
+		await CashbackDao.createCashback({
+			expires_at: expiryDate,
+			user: { connect: { user_id: req.user.user_id } },
+			amount: CREDITS.TAXI,
+			type: 'TAXI', // we add taxi credits on referral
+			source: CASHBACK_SOURCE.REFERRAL,
+			description: `Welcome bonus for using referral code`,
+			referral: { connect: { referral_id: referral_id } }
+		});
+
 		const referral = await ReferralDao.updateReferralRewardClaimed(referral_id, true);
 		if (!referral) {
 			return res.status(400).json({ error: "Error claiming reward" });
 		}
+
 		return res.status(200).json({ message: "Reward claimed successfully" });
 	} catch (error) {
 		return res.status(400).json({ error: error.message || "Error claiming reward" });
