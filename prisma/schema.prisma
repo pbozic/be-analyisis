@@ -137,7 +137,7 @@ model users {
   wallet_funds                           wallet_funds[]    @relation("wallet_funds")
   apple_id                               String?
   google_id                              String?
-  referral_code                          String?           @unique @default(dbgenerated("upper(substring(md5(random()::text), 1, 6))")) @db.Char(6)
+  referral_code                          String?           @unique @default(dbgenerated("upper(\"substring\"(md5((random())::text), 1, 6))")) @db.Char(6)
   referrals_made                         referrals[]       @relation("referrer")
   referral                               referrals?        @relation("referred")
   taxi_credits                           Int?              @default(0)
