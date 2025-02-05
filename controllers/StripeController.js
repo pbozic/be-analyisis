@@ -1,9 +1,12 @@
-const e = require('cors');
+const dotenv = require('dotenv');
+dotenv.config();
+
 const DeliveryOrderDao = require('../dao/DeliveryOrder');
 const UsersDao = require('../dao/User');
 const {io, UserSockets} = require('../socket');
 const stripe = require('../lib/stripe')
 const BusinessDao = require("../dao/Business");
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 async function handlePaymentIntentSuccess(paymentIntent) {
     switch (paymentIntent.metadata.type) { 
@@ -89,7 +92,14 @@ async function handleChargeUpdate(charge) {
 
 
 async function handleWebhook(req, res) {
-    const event = req.body;
+    let event;
+    try {
+        event = stripe.webhooks.constructEvent(req.body, req.headers['stripe-signature'], webhookSecret);
+    } catch (err) {
+        console.error('Webhook signature verification failed.', err.message);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+    let data = event.data.object;
     let paymentIntent;
     let order;
     console.log("WEBHOOK", event.type)
@@ -125,6 +135,53 @@ async function handleWebhook(req, res) {
         case 'charge.updated':
             console.log(event.data.object)
             handleChargeUpdate(event.data.object);
+            break;
+            
+              /*** PRODUCT EVENTS ***/
+        case 'product.created':
+            await StripeDao.createProduct({
+                name: data.name,
+                description: data.description || '',
+                stripe_product_id: data.id
+            });
+            console.log(`Product added: ${data.name}`);
+            break;
+
+        case 'product.updated':
+            await StripeDao.updateProductByStripeId(data.id, {
+                name: data.name,
+                description: data.description || '',
+            });
+            console.log(`Product updated: ${data.name}`);
+            break;
+
+        case 'product.deleted':
+            await StripeDao.deleteProductByStripeId(data.id);
+            console.log(`Product deleted: ${data.id}`);
+            break;
+
+        /*** PRICE EVENTS ***/
+        case 'price.created':
+            await StripeDao.createPrice({
+                amount: data.unit_amount / 100,
+                currency: data.currency,
+                stripe_price_id: data.id,
+                stripe_product_id: data.product
+            });
+            console.log(`Price added: ${data.unit_amount / 100} ${data.currency}`);
+            break;
+
+        case 'price.updated':
+            await StripeDao.updatePriceByStripeId(data.id, {
+                amount: data.unit_amount / 100,
+                currency: data.currency,
+            });
+            console.log(`Price updated: ${data.unit_amount / 100} ${data.currency}`);
+            break;
+
+        case 'price.deleted':
+            await StripeDao.deletePriceByStripeId(data.id);
+            console.log(`Price deleted: ${data.id}`);
             break;
         // ... handle other event types
         default:

@@ -55,6 +55,8 @@ async function listBusinesses(req, res) {
  * @response 400 - Error occurred while obtaining the merchant business list
  */
 async function listMerchantBusinesses(req, res) {
+
+	//TODO: elastic search
 	try {
 		const merchantBusinesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT);
 		res.status(200).json(merchantBusinesses);

@@ -35,6 +35,10 @@ router.delete("/menu-items/:menu_item_id", MenuController.deleteMenuItem);
 router.patch("/menu-items", MenuController.updateMenuItem);
 router.patch("/menu-items/order", MenuController.updateMenuItemsOrder);
 router.patch("/menu-items/price", MenuController.updateMenuItemPrice);
+
+router.post("/menu-items/category/:category_id", MenuController.addMenuItemMenuCategory);
+router.delete("/menu-items/category/:category_id", MenuController.addMenuItemMenuCategory);
+
 router.patch("/menu-items/category/add", MenuController.addMenuItemMenuCategory);
 router.patch("/menu-items/category/remove", MenuController.removeMenuItemFromCategory);
 

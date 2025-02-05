@@ -217,6 +217,8 @@ model documents {
   lost_items         lost_items?       @relation(fields: [lost_item_id], references: [lost_item_id])
   transaction_id     String?           @db.Uuid
   transactions       transactions?     @relation("Documents_transaction", fields: [transaction_id], references: [transaction_id])
+  promo_banner_id    String?           @db.Uuid
+  promo_banners      promo_banners?    @relation(fields: [promo_banner_id], references: [promo_banner_id])
 }
 
 model files {
@@ -524,11 +526,12 @@ model menu_categories {
   menu_id            String?      @db.Uuid
   menu               menus?       @relation(fields: [menu_id], references: [menu_id])
   menu_items_ordered Json? // JSON field to store ordered menu item IDs
-
+  menu_categories_catgeories menu_categories_categories[]
   @@unique([menu_category_id])
 }
 
 model menu_items {
+
   menu_item_id     String           @id @default(uuid()) @db.Uuid
   names            Json // l10n names
   image            String?
@@ -670,6 +673,106 @@ model wallet_funds {
 
   user         users          @relation("wallet_funds", fields: [user_id], references: [user_id])
   transactions transactions[] @relation("wallet_funds_transaction")
+}
+
+model local_products {
+  local_product_id  String   @id @default(uuid()) @db.Uuid
+  name              String
+  description       String?
+  prices            local_prices[]
+  currency          String
+  stripe_product_id String @unique
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@index([stripe_product_id])
+}
+
+model local_prices {
+  local_prices_id   String @id @default(uuid()) @db.Uuid
+  local_product_id  String @db.Uuid
+  product           local_products @relation(fields: [local_product_id], references: [local_product_id])
+  amount            Float
+  currency          String
+  stripe_price_id   String @unique
+  stripe_product_id String
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  @@index([local_product_id, amount])
+  @@index([stripe_product_id, amount])
+  @@index([currency])
+}
+
+model categories {
+  category_id         String  @id @default(uuid()) @db.Uuid
+  name                String
+  description         String?
+  translations        Json?
+  menu_categories     menu_categories_categories[]
+  promo_ads_category  promo_ads_category[]
+  parent_category_id  String? @db.Uuid
+  code                Int     @unique @db.SmallInt
+}
+
+model menu_categories_categories {
+  menu_category_id  String @db.Uuid
+  category_id       String @db.Uuid
+  menu_category     menu_categories @relation(fields: [menu_category_id], references: [menu_category_id])
+  category          categories @relation(fields: [category_id], references: [category_id])
+
+  @@id([menu_category_id, category_id])
+}
+
+model promo_sections {
+  promo_section_id  String  @id @default(uuid()) @db.Uuid
+  name              String
+  tag               String
+  service_type      String
+  promo_section_buy promo_sections_buy[]
+  code              Int     @unique @db.SmallInt
+}
+
+model promo_banners {
+  promo_banner_id       String  @id @default(uuid()) @db.Uuid
+  type                  String
+  size                  String?
+  title                 String
+  text                  String
+  image                 documents[]
+  promo_ads             promo_ads[]
+  promo_section_buy_id  String @db.Uuid
+
+}
+model promo_sections_buy {
+  promo_section_buy_id    String  @id @db.Uuid
+  promo_section_id        String  @db.Uuid
+  promo_section           promo_sections @relation(fields: [promo_section_id], references: [promo_section_id])
+  active_at               DateTime
+  expires_at              DateTime
+  tier                    Int
+
+}
+
+model promo_ads {
+  promo_ad_id  String  @id @default(uuid()) @db.Uuid
+  title        String
+  text         String
+  tag          String
+  service_type String
+  discount     Float   @default(0)
+  banner_id    String  @db.Uuid
+  banner       promo_banners @relation(fields: [banner_id], references: [promo_banner_id])
+  categories   promo_ads_category[]
+  code         Int     @unique @db.SmallInt
+} 
+
+model promo_ads_category {
+  promo_ads_category_id String @id @default(uuid()) @db.Uuid
+  promo_ad_id  String  @db.Uuid
+  category_id  String  @db.Uuid
+  promo_ad     promo_ads @relation(fields: [promo_ad_id], references: [promo_ad_id])
+  category     categories @relation(fields: [category_id], references: [category_id])
 }
 
 enum USER_ROLES {

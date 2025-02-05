@@ -21,10 +21,7 @@ const getBusinesses = async (args) => {
 					},
 				},
 				parent_business: true,
-				child_businesses: true,
-				documents: false,
-				taxi_orders: false,
-				delivery_orders: false,
+				child_businesses: true
 			},
 		});
 	} catch (error) {

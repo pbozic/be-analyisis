@@ -1,7 +1,10 @@
 const prisma = require("../prisma/prisma");
 
 const createMenuCategory = async (menuId, categoryData) => {
-	return await prisma.menu_categories.create({
+	// Handle creating categories
+	let categories = categoryData.category_ids ? categoryData.category_ids : [];
+	
+	let menu_category = await prisma.menu_categories.create({
 		data: {
 			menu: {
 				connect: { menu_id: menuId }
@@ -9,6 +12,33 @@ const createMenuCategory = async (menuId, categoryData) => {
 			...categoryData
 		}
 	});
+	let errors = [];
+	for (let cat of categories) {
+		let category =	await prisma.categories.findFirst({
+			where: {
+				category_id: cat,
+			}
+		})
+
+		if (!category) {
+			errors.push(`Category with ID ${cat} not found`);
+			console.log(`Category with ID ${cat} not found`);
+			continue;
+		}
+
+		await prisma.menu_categories_categories.create({
+			data: {
+				menu_category: {
+					connect: { menu_category_id: menu_category.menu_category_id }
+				},
+				category: {
+					connect: { category_id: cat }
+				}
+			}
+		});
+	}
+	
+	return menu_category;
 };
 
 const addMenuCategoryIdToOrder = async (menu_id, menuCategoryIdToAdd) => {
@@ -183,6 +213,32 @@ const removeCategoryFromMenu = async (menu_category_id) => {
 	}
 };
 
+const addCategoryToMenuCategory = async (menu_category_id, category_id) => {
+	return await prisma.menu_categories_categories.create({
+		data: {
+			menu_category: {
+				connect: { menu_category_id: menu_category_id }
+			},
+			category: {
+				connect: { category_id: category_id }
+			}
+		}
+	});
+
+};
+
+const removeCategoryFromMenuCategory = async (menu_category_id, category_id) => {
+	return await prisma.menu_categories_categories.delete({
+		where: {
+			menu_category_id_category_id: {
+				menu_category_id: menu_category_id,
+				category_id: category_id
+			}
+		}
+	});
+};
+
+
 module.exports = {
 	createMenuCategory,
 	addMenuCategoryIdToOrder,
@@ -193,5 +249,7 @@ module.exports = {
 	updateMenuCategory,
 	addCategoryToMenu,
 	removeCategoryFromMenu,
-	updateMenuItemsOrder
+	updateMenuItemsOrder,
+	addCategoryToMenuCategory,
+	removeCategoryFromMenuCategory,
 };
