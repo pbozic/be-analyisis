@@ -82,6 +82,17 @@ Your [Prisma schema file](./prisma/schema.prisma) describes your database tables
 
 In the example above, `Post` is a model that corresponds to a database table.
 
+#### Migrations
+After editing [Prisma schema file](./prisma/schema.prisma) file, we need to generate a .sql file that migrates the current state of the database to the new changes.
+
+We achieve this by running the **npx prisma migrate dev**, the command will ask us for a migration name, a few good examples for migration names (spaces will be converted to _)
+
+- added users table
+- added stripe_customer_id to business
+- fixed default value of email on users
+- ...
+
+  
 #### Useful Prisma Commands
 
 Here are some common Prisma commands you might find useful:
