@@ -60,6 +60,8 @@ model business {
   reviewable               reviewable?       @relation(fields: [reviewable_id], references: [reviewable_id])
   stripe_account_id        String?
   stripe_customer_id       String?
+  word_buy_stripe_product_id String?
+  word_buy_stripe_product   local_products? 
   word_buy_stripe_subscription_id String?
   reservations             reservations[]
   daily_users_sorted       Json?             @default("[]")
@@ -684,7 +686,8 @@ model local_products {
   prices            local_prices[]
   currency          String
   stripe_product_id String @unique
-  subscriptions     word_buy[]
+  business_id       String @db.Uuid @unique
+  business          business @relation(fields: [business_id], references: [business_id])
   created_at        DateTime @default(now()) @db.Timestamptz(6)
   updated_at        DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
@@ -700,7 +703,6 @@ model local_prices {
   currency          String
   stripe_price_id   String @unique
   stripe_product_id String
-  subscriptions     word_buy[]
   created_at        DateTime @default(now()) @db.Timestamptz(6)
   updated_at        DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
@@ -739,9 +741,9 @@ model promo_sections {
   promo_section_id  String  @id @default(uuid()) @db.Uuid
   name              String
   tag               String
-  service_type      String
+  description       String?
+  service_type      PROMO_SERVICE_TYPES
   promo_section_buy promo_sections_buy[]
-  code              Int     @unique @db.SmallInt
 }
 
 model promo_banners {
@@ -771,7 +773,7 @@ model promo_ads {
   title        String
   text         String
   tag          String
-  service_type String
+  service_type PROMO_SERVICE_TYPES
   discount     Float   @default(0)
   banner_id    String  @db.Uuid
   banner       promo_banners @relation(fields: [banner_id], references: [promo_banner_id])
@@ -791,6 +793,7 @@ model words {
   word_id     String  @id @default(uuid()) @db.Uuid
   word        String
   popularity  Int
+  translations Json?
   category_id String @db.Uuid
   category    categories @relation(fields: [category_id], references: [category_id])
   subscriptions word_buy[]
@@ -802,10 +805,6 @@ model word_buy {
   word_buy_id         String @id @default(uuid()) @db.Uuid
   word_id             String @db.Uuid
   word                words @relation(fields: [word_id], references: [word_id])
-  stripe_product_id   String @unique
-  stripe_price_id     String @unique
-  stripe_product      local_products @relation(fields: [stripe_product_id], references: [stripe_product_id])
-  stripe_price        local_prices @relation(fields: [stripe_price_id], references: [stripe_price_id])
   stripe_subscription_id String @unique
   price               Float
   active_at           DateTime
@@ -815,7 +814,10 @@ model word_buy {
   updated_at          DateTime @default(now()) @updatedAt @db.Timestamptz(6)
   deleted_at          DateTime? @db.Timestamptz(6)
 }
-
+enum PROMO_SERVICE_TYPES {
+  TAXI
+  DELIVERY
+}
 enum USER_ROLES {
   ADMIN
   BUSINESS_OWNER
