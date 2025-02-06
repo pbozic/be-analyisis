@@ -145,6 +145,9 @@ model users {
   taxi_credits                           Int?              @default(0)
   delivery_credits                       Int?              @default(0)
   cashback                               cashback[]
+  business_teams_id                      String?           @db.Uuid
+  business_teams                         business_teams?    @relation("user_to_business_team", fields: [business_teams_id],references: [business_teams_id])
+  order_lobby_users                      order_lobby_users[] @relation("user_to_OL_user")
 }
 
 model cashback {
@@ -489,6 +492,7 @@ model delivery_orders {
   wallet_transfer                   wallet_transfer_history[]
   delivery_driver_history_locations delivery_driver_history_locations[]
   cashback                          cashback[]
+  order_lobbies                     order_lobbies?                       @relation("origin_lobby")
 }
 
 model delivery_order_sent {
@@ -816,6 +820,62 @@ model word_buy {
   updated_at          DateTime @default(now()) @updatedAt @db.Timestamptz(6)
   deleted_at          DateTime? @db.Timestamptz(6)
 }
+
+model order_lobbies {
+  order_lobbies_id    String @id @default(uuid()) @db.Uuid
+  lobby_name        String
+  business_id       String @db.Uuid
+  restaurant_id     String @db.Uuid
+  creator_id        String @db.Uuid
+  active            Boolean @default(true)
+  delivery_orders_id String @db.Uuid @unique
+  created_at          DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
+
+  order_lobby_items order_lobby_items[] @relation("item_to_lobby")
+  order_lobby_users order_lobby_users[] @relation("user_to_lobby")
+  delivery_orders delivery_orders? @relation("origin_lobby",fields: [delivery_orders_id],references: [order_id])
+}
+
+model order_lobby_items {
+  order_lobby_items_id   String @id @default(uuid()) @db.Uuid
+  order_lobbies_id  String @db.Uuid
+  menu_item_id    String @db.Uuid
+  user_id         String? @db.Uuid
+  quantity        Int
+  customer_note   String?
+  price           Float
+  created_at          DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
+
+  order_lobbies order_lobbies @relation("item_to_lobby",fields: [order_lobbies_id],references: [order_lobbies_id])
+}
+
+model order_lobby_users {
+  order_lobby_users_id  String @id @default(uuid()) @db.Uuid
+  user_id               String @db.Uuid
+  order_lobbies_id      String @db.Uuid
+  limit                 Float
+  created_at          DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
+
+  order_lobbies         order_lobbies @relation("user_to_lobby",fields: [order_lobbies_id],references: [order_lobbies_id])
+  users                 users @relation("user_to_OL_user", fields: [user_id],references: [user_id])
+  @@unique([user_id,order_lobbies_id])
+}
+
+model business_teams {
+  business_teams_id  String @id @default(uuid()) @db.Uuid
+  team_name         String @unique
+  business_id       String @db.Uuid
+  limit_per_person  Float
+  created_at          DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
+
+  users             users[] @relation("user_to_business_team")
+}
+
+
 enum PROMO_SERVICE_TYPES {
   TAXI
   DELIVERY
