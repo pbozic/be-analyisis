@@ -1,5 +1,6 @@
 const { name } = require('ejs');
-const prisma = require('../prisma');
+const prisma = require('../prisma/prisma');
+const stripe = require('../lib/stripe');
 
 async function createPromoSection(args) {
     return await prisma.promo_sections.create({
@@ -201,6 +202,87 @@ async function getAllPromoBannersBySection(section) {
         }
     });
 }
+async function createPromoSectionBuy(args) {
+    return await prisma.promo_sections_buy.create({
+        data: {
+            promo_sections_id: args.promo_sections_id,
+            business: {
+                connect: {
+                    business_id: args.business_id
+                }
+            },
+            stripe_subscription_id: args.stripe_subscription_id || null,
+            tier: args.tier
+        },
+    });
+}
+
+async function addStripeSubToPromoSectionBuy(id, stripe_subscription_id) {
+    return await prisma.promo_sections_buy.update({
+        where: {
+            promo_sections_buy_id: id
+        },
+        data: {
+            stripe_subscription_id: stripe_subscription_id
+        }
+    });
+}
+
+async function getPromoSectionBuyById(id) {
+    return await prisma.promo_sections_buy.findUnique({
+        where: {
+            promo_sections_buy_id: id
+        }
+    });
+}
+
+async function getAllPromoSectionBuys() {
+    return await prisma.promo_sections_buy.findMany();
+}
+
+async function getAllPromoSectionBuysBySection(section) {
+    return await prisma.promo_sections_buy.findMany({
+        where: {
+            promo_sections_id: section
+        }
+    });
+}
+
+async function getAllPromoSectionBuysByBusiness(business) {
+    return await prisma.promo_sections_buy.findMany({
+        where: {
+            business: {
+                business_id: business
+            }
+        }
+    });
+}
+
+async function getAllPromoSectionBuysByTier(tier) {
+    return await prisma.promo_sections_buy.findMany({
+        where: {
+            tier: tier
+        }
+    });
+}
+
+async function getAllPromoSectionBuysByStripeSub(stripe_subscription_id) {
+    return await prisma.promo_sections_buy.findMany({
+        where: {
+            stripe_subscription_id: stripe_subscription_id
+        }
+    });
+}
+
+async function updatePromoSectionBuy(id, args) {
+    return await prisma.promo_sections_buy.update({
+        where: {
+            promo_sections_buy_id: id
+        },
+        data: args
+    });
+}
+
 
 module.exports = {
     createPromoSection,
@@ -224,5 +306,14 @@ module.exports = {
     getAllPromoBannersByType,
     getAllPromoBannersBySize,
     getAllPromoBannersByAd,
-    getAllPromoBannersBySection
+    getAllPromoBannersBySection,
+    createPromoSectionBuy,
+    addStripeSubToPromoSectionBuy,
+    getPromoSectionBuyById,
+    getAllPromoSectionBuys,
+    getAllPromoSectionBuysBySection,
+    getAllPromoSectionBuysByBusiness,
+    getAllPromoSectionBuysByTier,
+    getAllPromoSectionBuysByStripeSub,
+    updatePromoSectionBuy
 }

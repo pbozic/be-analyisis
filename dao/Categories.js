@@ -1,4 +1,4 @@
-const prisma = require('../prisma');
+const prisma = require('../prisma/prisma');
 
 async function getCategories() {
     return await prisma.categories.findMany();

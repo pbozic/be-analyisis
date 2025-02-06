@@ -762,8 +762,10 @@ model promo_sections_buy {
   promo_section_buy_id    String  @id @db.Uuid
   promo_section_id        String  @db.Uuid
   promo_section           promo_sections @relation(fields: [promo_section_id], references: [promo_section_id])
-  active_at               DateTime
-  expires_at              DateTime
+  stripe_subscription_id  String
+  business_id             String  @db.Uuid
+  active_at               DateTime?
+  expires_at              DateTime?
   tier                    Int
 
 }
@@ -805,7 +807,7 @@ model word_buy {
   word_buy_id         String @id @default(uuid()) @db.Uuid
   word_id             String @db.Uuid
   word                words @relation(fields: [word_id], references: [word_id])
-  stripe_subscription_id String @unique
+  stripe_subscription_id String
   price               Float
   active_at           DateTime
   expires_at          DateTime

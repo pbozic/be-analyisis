@@ -6,7 +6,6 @@ const UsersDao = require('../dao/User');
 const {io, UserSockets} = require('../socket');
 const stripe = require('../lib/stripe')
 const BusinessDao = require("../dao/Business");
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 async function handlePaymentIntentSuccess(paymentIntent) {
     switch (paymentIntent.metadata.type) { 

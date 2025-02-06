@@ -28,6 +28,7 @@ const stripeRoutes = require("./api/stripe");
 const lostItemsRoutes = require("./api/lostItems");
 const flagRoutes = require("./api/flags");
 const categoriesRoutes = require("./api/categories");
+const promoRoutes = require("./api/promo");
 const googleMaps = require("./api/googleMaps");
 const {sendNotificationToUser} = require("../lib/oneSignal");
 const { auth } = require("googleapis/build/src/apis/drive");
@@ -56,6 +57,7 @@ router.use("/lost_items", lostItemsRoutes);
 router.use("/flags", [authMiddleware], flagRoutes);
 router.use("/google_maps", googleMaps);
 router.use("/categories", categoriesRoutes);
+router.use("/promo", [authMiddleware], promoRoutes);
 router.use("/reviews", [authMiddleware], async (req, res) => {
     let reviews = await prisma.reviews.findMany({
         include: {
