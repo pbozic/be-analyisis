@@ -25,9 +25,6 @@ properties:
 required:
   - wallet_funds_id
   - user_id
-  - charge_id
   - amount
-  - reserved_order
-  - reserved_business
   - created_at
   - updated_at

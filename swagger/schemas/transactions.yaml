@@ -34,9 +34,5 @@ required:
   - transaction_id
   - user_id
   - amount
-  - description
   - createdAt
   - updatedAt
-  - delivery_order_id
-  - taxi_order_id
-  - wallet_fund_id

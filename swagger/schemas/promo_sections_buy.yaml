@@ -21,6 +21,4 @@ required:
   - promo_sections_id
   - stripe_subscription_id
   - business_id
-  - active_at
-  - expires_at
   - tier

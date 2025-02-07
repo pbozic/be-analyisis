@@ -76,25 +76,11 @@ properties:
       $ref: ./cashback.yaml
 required:
   - order_id
-  - user_id
   - route
   - pickup_location
   - delivery_location
-  - payment
-  - estimates
   - items
-  - details
-  - courier_instructions
-  - restaurant_message
-  - scheduled
   - timeline
-  - last_sent_at
   - created_at
   - updated_at
-  - delivery_driver_id
-  - driver_id
-  - business_id
-  - payment_intent_id
-  - find_drivers_attempts
   - is_daily_meal
-  - flags

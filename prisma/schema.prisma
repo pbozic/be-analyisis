@@ -723,7 +723,6 @@ model categories {
   menu_categories     menu_categories_categories[]
   promo_ads_category  promo_ads_category[]
   parent_categories_id  String? @db.Uuid
-  code                Int     @unique @db.SmallInt
   parent_category     categories? @relation("sub_categories", fields: [parent_categories_id], references: [categories_id])
   sub_categories      categories[] @relation("sub_categories")
   words               words[]

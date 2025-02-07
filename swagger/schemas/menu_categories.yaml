@@ -29,5 +29,3 @@ required:
   - names
   - description
   - business_id
-  - menu_id
-  - menu_items_ordered

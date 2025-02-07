@@ -18,4 +18,3 @@ required:
   - menu_id
   - business_id
   - active
-  - menu_categories_ordered

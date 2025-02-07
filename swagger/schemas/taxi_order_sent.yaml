@@ -27,7 +27,6 @@ required:
   - order_id
   - driver_id
   - accepted
-  - location
   - timeline
   - created_at
   - updated_at

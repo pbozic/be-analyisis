@@ -24,6 +24,5 @@ required:
   - currency
   - stripe_price_id
   - stripe_product_id
-  - tier
   - created_at
   - updated_at

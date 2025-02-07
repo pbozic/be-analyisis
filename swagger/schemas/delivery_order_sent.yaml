@@ -32,5 +32,3 @@ required:
   - timeline
   - created_at
   - updated_at
-  - delivery_driver_id
-  - driver_id

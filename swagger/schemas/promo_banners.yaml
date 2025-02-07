@@ -23,7 +23,6 @@ properties:
 required:
   - promo_banners_id
   - type
-  - size
   - title
   - text
   - promo_section_buy_id

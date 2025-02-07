@@ -19,7 +19,5 @@ properties:
 required:
   - driver_history_location_id
   - driver_id
-  - order_id
-  - location
   - created_at
   - updated_at

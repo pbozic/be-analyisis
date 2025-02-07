@@ -25,7 +25,6 @@ properties:
 required:
   - local_product_id
   - name
-  - description
   - currency
   - stripe_product_id
   - business_id

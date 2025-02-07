@@ -17,6 +17,4 @@ properties:
 required:
   - user_id
   - address_id
-  - name
-  - icon
   - primary

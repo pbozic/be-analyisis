@@ -39,8 +39,3 @@ required:
   - address
   - latitude
   - longitude
-  - street
-  - house_number
-  - city
-  - country
-  - postal
