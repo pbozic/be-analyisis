@@ -683,10 +683,8 @@ async function getInProgressDeliveryOrdersCountForBusinessId(business_id) {
 			where: {
 				business_id: business_id,
 				status: {
-					notIn: [
-						DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL,
-						DELIVERY_ORDER_STATUS.PENDING,
-						DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED,
+					in: [
+						DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP,
 						DELIVERY_ORDER_STATUS.MERCHANT_PREPARING,
 					],
 				},
