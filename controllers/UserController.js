@@ -173,7 +173,7 @@ async function me(req, res) {
 				child_users: { include:{child_user: true}},
 				parent_user: { include:{parent_user: true}},
 				referrals_made: true,
-				referral: { include: {referrer: true} }
+				referral: { include: {referrer: { select: { first_name: true, last_name: true } } } }
 			},
 		});
 		console.log("/me user: ",user?.user_id)
