@@ -363,7 +363,7 @@ async function updateProfilePicture(req, res) {
 
 		// Create new document for profile picture
 		const document = await DocumentDao.createDocument(image.documentData);
-		console.log("files", image.files)
+		//console.log("files", image.files)
 		// Add files to the document and upload to S3
 		for (const file of image.files) {
 			let base64 = file.base64;

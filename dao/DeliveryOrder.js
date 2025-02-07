@@ -75,6 +75,35 @@ async function getOrder(order_id, args) {
 	}
 }
 
+async function getActiveDeliveryOrdersForBusiness(business_id) {
+	try {
+		return await prisma.delivery_orders.findMany({
+			where: {
+				business_id: business_id,
+				status: {
+					in: [
+						DELIVERY_ORDER_STATUS.DELIVERY_IN_DELIVERY,
+						DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED,
+						DELIVERY_ORDER_STATUS.MERCHANT_PREPARING,
+						DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP,
+						DELIVERY_ORDER_STATUS.MERCHANT_DELAYED,
+						DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP,
+						DELIVERY_ORDER_STATUS.DELIVERY_ARRIVED,
+						DELIVERY_ORDER_STATUS.DELIVERY_DELIVERED,
+					]
+				},
+			},
+			include: {
+				delivery_driver: true,
+				driver: true,
+				user: true,
+			}
+		});
+	} catch (e) {
+		console.error("Error fetching order:", e);
+		throw new Error(e.message);
+	}
+}
 
 async function getDeliveryOrderIfNotCompleted(user_id) {
 	try {
@@ -724,5 +753,6 @@ module.exports = {
 	getAlreadySentOrdersByDeliveryDriverId,
 	getActiveOrdersByDeliveryDriverId,
 	connectOrderWithDriver,
+	getActiveDeliveryOrdersForBusiness,
 	getInProgressDeliveryOrdersCountForBusinessId
 };
