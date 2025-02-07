@@ -235,7 +235,7 @@ const createDocument = async (documentData, filesData = []) => {
         delete file.base64
         delete file.name
     }
-    const publicDocumentTypes = ["PROFILE_PICTURE", "LOGO", "BANNER", "MENU_ITEM_IMAGE", "LOST_ITEM"];
+    const publicDocumentTypes = ["PROFILE_PICTURE", "LOGO", "BANNER", "MENU_ITEM_IMAGE", "LOST_ITEM", "DAILY_MEALS_MENU"];
     if (publicDocumentTypes.includes(documentData.document_type)) {
         documentData.public = true; 
     }
