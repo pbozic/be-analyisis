@@ -67,6 +67,9 @@ model business {
   daily_users_sorted       Json?             @default("[]")
   daily_users_sorting_type SORTING_TYPE      @default(AUTOMATIC)
   restaurant_overwhelmed   Boolean           @default(false)
+
+  business_teams business_teams[] @relation("business_to_business_teams")
+  business_order_lobbies order_lobbies[] @relation("business_to_lobby")
 }
 
 model business_users {
@@ -824,10 +827,11 @@ model word_buy {
 model order_lobbies {
   order_lobbies_id    String @id @default(uuid()) @db.Uuid
   lobby_name        String
+  lobby_description String
+  active            Boolean @default(true)
   business_id       String @db.Uuid
   restaurant_id     String @db.Uuid
   creator_id        String @db.Uuid
-  active            Boolean @default(true)
   delivery_orders_id String @db.Uuid @unique
   created_at          DateTime   @default(now()) @db.Timestamptz(6)
   updated_at          DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
@@ -835,6 +839,8 @@ model order_lobbies {
   order_lobby_items order_lobby_items[] @relation("item_to_lobby")
   order_lobby_users order_lobby_users[] @relation("user_to_lobby")
   delivery_orders delivery_orders? @relation("origin_lobby",fields: [delivery_orders_id],references: [order_id])
+  business      business @relation("business_to_lobby",fields: [business_id],references: [business_id])
+  // restaurant      business @relation("restaurant_to_lobby",fields: [restaurant_id],references: [business_id])
 }
 
 model order_lobby_items {
@@ -873,6 +879,7 @@ model business_teams {
   updated_at          DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
 
   users             users[] @relation("user_to_business_team")
+  business          business @relation("business_to_business_teams", fields: [business_id],references: [business_id])
 }
 
 
