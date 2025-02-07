@@ -1,0 +1,18 @@
+type: object
+properties:
+  reviewable_id:
+    type: string
+  reviews:
+    type: array
+    items:
+      $ref: ./reviews.yaml
+  user:
+    type: array
+    items:
+      $ref: ./users.yaml
+  business:
+    type: array
+    items:
+      $ref: ./business.yaml
+required:
+  - reviewable_id

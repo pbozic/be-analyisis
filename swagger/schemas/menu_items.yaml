@@ -1,0 +1,50 @@
+type: object
+properties:
+  menu_item_id:
+    type: string
+  names:
+    type: object
+  image:
+    type: string
+  description:
+    type: object
+  allergens:
+    type: string
+  spicy_level:
+    type: integer
+  unit_size:
+    type: string
+  price:
+    type: number
+  discount:
+    type: number
+  sides:
+    type: string
+  extras:
+    type: string
+  ingredients:
+    type: object
+  availability:
+    type: string
+  business_id:
+    type: string
+  menu_category_id:
+    type: string
+  menu_category:
+    $ref: ./menu_categories.yaml
+  documents:
+    type: array
+    items:
+      $ref: ./documents.yaml
+required:
+  - menu_item_id
+  - names
+  - image
+  - description
+  - spicy_level
+  - unit_size
+  - price
+  - discount
+  - ingredients
+  - business_id
+  - menu_category_id

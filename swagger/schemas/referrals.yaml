@@ -1,0 +1,35 @@
+type: object
+properties:
+  referral_id:
+    type: string
+  referral_code:
+    type: string
+  referrer_user_id:
+    type: string
+  referred_user_id:
+    type: string
+  conditions_met:
+    type: boolean
+  reward_claimed:
+    type: boolean
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  referrer:
+    $ref: ./users.yaml
+  referred:
+    $ref: ./users.yaml
+  cashback:
+    type: array
+    items:
+      $ref: ./cashback.yaml
+required:
+  - referral_id
+  - referral_code
+  - referrer_user_id
+  - referred_user_id
+  - conditions_met
+  - reward_claimed
+  - created_at
+  - updated_at

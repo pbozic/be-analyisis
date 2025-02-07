@@ -1,0 +1,22 @@
+type: object
+properties:
+  user_id:
+    type: string
+  address_id:
+    type: string
+  name:
+    type: string
+  icon:
+    type: string
+  primary:
+    type: boolean
+  users:
+    $ref: ./users.yaml
+  address:
+    $ref: ./addresses.yaml
+required:
+  - user_id
+  - address_id
+  - name
+  - icon
+  - primary

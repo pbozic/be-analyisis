@@ -1,0 +1,48 @@
+type: object
+properties:
+  categories_id:
+    type: string
+  name:
+    type: string
+  description:
+    type: string
+  translations:
+    type: object
+  menu_categories:
+    type: array
+    items:
+      $ref: ./menu_categories_categories.yaml
+  promo_ads_category:
+    type: array
+    items:
+      $ref: ./promo_ads_category.yaml
+  parent_categories_id:
+    type: string
+  code:
+    type: integer
+  parent_category:
+    $ref: ./categories.yaml
+  sub_categories:
+    type: array
+    items:
+      $ref: ./categories.yaml
+  words:
+    type: array
+    items:
+      $ref: ./words.yaml
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  deleted_at:
+    type: string
+required:
+  - categories_id
+  - name
+  - description
+  - translations
+  - parent_categories_id
+  - code
+  - created_at
+  - updated_at
+  - deleted_at

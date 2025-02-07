@@ -50,9 +50,9 @@ async function reportFoundItem(req, res) {
 			for (const file of images.files) {
 				let base64 = file.base64;
 				delete file.base64;
-				let fileData = await FileDao.addFileToDocument(document.document_id, file);
+				let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 				let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-				await S3Helper.SaveObject(key, base64, file.mime_type, {}, file);
+				await S3Helper.SaveObject(key, base64, file.mime_type, {}, file, document.public);
 			}
 			await DocumentDao.linkDocumentToLostItem(document.document_id, foundItem.lost_item_id);
 		}

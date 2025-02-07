@@ -1,0 +1,13 @@
+type: object
+properties:
+  menu_categories_id:
+    type: string
+  categories_id:
+    type: string
+  menu_category:
+    $ref: ./menu_categories.yaml
+  category:
+    $ref: ./categories.yaml
+required:
+  - menu_categories_id
+  - categories_id

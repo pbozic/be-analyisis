@@ -5,7 +5,6 @@ const stripe = require('../lib/stripe');
 async function createPromoSection(args) {
     return await prisma.promo_sections.create({
         data: {
-            promo_sections_id: args.promo_sections_id,
             name: args.name,
             tag: args.tag,
             description: args.description,
@@ -35,8 +34,16 @@ async function getPromoSectionById(id) {
     return await prisma.promo_sections.findUnique({
         where: {
             promo_sections_id: id
+        },
+    
+        include: {
+            promo_ads: true,
+            promo_banners: true,
+            promo_sections_buy: true
         }
+    
     });
+    
 }
 
 async function getAllPromoSections() {
@@ -54,7 +61,7 @@ async function getAllPromoSectionsByServiceType(type) {
 async function createPromoAd(args) {
     return await prisma.promo_ads.create({
         data: {
-            promo_ad_id: args.promo_ad_id,
+            promo_ads_id: args.promo_ads_id,
             title: args.title,
             text: args.text,
             tag: args.tag,
@@ -74,7 +81,7 @@ async function createPromoAd(args) {
 async function updatePromoAd(id, args) {
     return await prisma.promo_ads.update({
         where: {
-            promo_ad_id: id
+            promo_ads_id: id
         },
         data: args
     });
@@ -83,7 +90,7 @@ async function updatePromoAd(id, args) {
 async function deletePromoAd(id) {
     return await prisma.promo_ads.delete({
         where: {
-            promo_ad_id: id
+            promo_ads_id: id
         }
     });
 }
@@ -91,7 +98,7 @@ async function deletePromoAd(id) {
 async function getPromoAdById(id) {
     return await prisma.promo_ads.findUnique({
         where: {
-            promo_ad_id: id
+            promo_ads_id: id
         }
     });
 }
@@ -113,7 +120,7 @@ async function getAllPromoAdsByCategory(category) {
         where: {
             categories: {
                 some: {
-                    id: category
+                    categories_id: category
                 }
             }
         }
@@ -128,9 +135,9 @@ async function createPromoBanner(args) {
             text: args.text,
             type: args.type,                  
             size: args.size,
-            promo_ads_id: args.promo_ad_id ? {
+            promo_ads_id: args.promo_ads_id ? {
                 connect: {
-                    promo_ads_id: args.promo_ad_id
+                    promo_ads_id: args.promo_ads_id
                 }
             } : null,
             promo_sections_id: args.promo_sections_id ? {
@@ -145,7 +152,7 @@ async function createPromoBanner(args) {
 async function updatePromoBanner(id, args) {
     return await prisma.promo_banners.update({
         where: {
-            promo_banner_id: id
+            promo_banners_id: id
         },
         data: args
     });
@@ -154,7 +161,7 @@ async function updatePromoBanner(id, args) {
 async function deletePromoBanner(id) {
     return await prisma.promo_banners.delete({
         where: {
-            promo_banner_id: id
+            promo_banners_id: id
         }
     });
 }
@@ -162,7 +169,7 @@ async function deletePromoBanner(id) {
 async function getPromoBannerById(id) {
     return await prisma.promo_banners.findUnique({
         where: {
-            promo_banner_id: id
+            promo_banners_id: id
         }
     });
 }

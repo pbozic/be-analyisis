@@ -1,0 +1,98 @@
+type: object
+properties:
+  driver_id:
+    type: string
+  business_id:
+    type: string
+  online:
+    type: boolean
+  on_order:
+    type: boolean
+  working_hours:
+    type: object
+  ride_requirements:
+    type: object
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  user_id:
+    type: string
+  user:
+    $ref: ./users.yaml
+  vehicles:
+    type: array
+    items:
+      $ref: ./vehicles.yaml
+  orders:
+    type: array
+    items:
+      $ref: ./taxi_orders.yaml
+  received_orders:
+    type: array
+    items:
+      $ref: ./taxi_order_sent.yaml
+  delivery_orders:
+    type: array
+    items:
+      $ref: ./delivery_orders.yaml
+  received_delivery_orders:
+    type: array
+    items:
+      $ref: ./delivery_order_sent.yaml
+  documents:
+    type: array
+    items:
+      $ref: ./documents.yaml
+  location:
+    type: object
+  delivery_timeline:
+    type: object
+  last_ping_at:
+    type: string
+  is_inactive:
+    type: boolean
+  transfer_requirements:
+    type: object
+  regions:
+    type: string
+  driver_history_locations:
+    type: array
+    items:
+      $ref: ./driver_history_locations.yaml
+  handles_taxi_orders:
+    type: boolean
+  handles_transfer_orders:
+    type: boolean
+  handles_delivery_orders:
+    type: boolean
+  taxi_orders_toggled:
+    type: boolean
+  transfer_orders_toggled:
+    type: boolean
+  delivery_orders_toggled:
+    type: boolean
+  partner_cash_balance:
+    type: number
+required:
+  - driver_id
+  - business_id
+  - online
+  - on_order
+  - working_hours
+  - ride_requirements
+  - created_at
+  - updated_at
+  - user_id
+  - location
+  - delivery_timeline
+  - last_ping_at
+  - is_inactive
+  - transfer_requirements
+  - handles_taxi_orders
+  - handles_transfer_orders
+  - handles_delivery_orders
+  - taxi_orders_toggled
+  - transfer_orders_toggled
+  - delivery_orders_toggled
+  - partner_cash_balance

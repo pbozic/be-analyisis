@@ -1,0 +1,25 @@
+type: object
+properties:
+  flag_history_id:
+    type: string
+  flag_id:
+    type: string
+  user_id:
+    type: string
+  status:
+    type: boolean
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  flag:
+    $ref: ./flags.yaml
+  user:
+    $ref: ./users.yaml
+required:
+  - flag_history_id
+  - flag_id
+  - user_id
+  - status
+  - created_at
+  - updated_at

@@ -271,6 +271,7 @@ async function editDriver(req, res) {
 		if (files && files.length > 0) {
 			for (const file of files) {
 				if (file?.base64 && file?.file_id) {
+					let document = await DocumentDao.findDocumentByFileId(file.file_id);
 					const fileId = file.file_id;
 					delete file.document_id
 					delete file.file_id;
@@ -279,13 +280,13 @@ async function editDriver(req, res) {
 					let base64 = file.base64;
 					delete file.base64;
 					delete file?.document_type
-					await updateFileInDocument(fileId, file)
+					await updateFileInDocument(fileId, file, document.public);
 
 					let key = S3Helper.getFileKey(fileId, file.mime_type);
 					await S3Helper.SaveObject(key, base64, file.mime_type, {
 						users: [user_id],
 						businesses: [business_id]
-					}, file);
+					}, file, document.public);
 
 				} else if (!file?.file_id) {
 					const existingDocument = await findDocumentByTypeAndDriverId(file.document_type, driver_id);
@@ -295,13 +296,13 @@ async function editDriver(req, res) {
 						delete file.document_type;
 						delete file.name;
 
-						const newFile = await addFileToDocument(existingDocument.document_id, file);
+						const newFile = await addFileToDocument(existingDocument.document_id, file, existingDocument.public);
 
 						const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
 						await S3Helper.SaveObject(key, base64, file.mime_type, {
 							users: [user_id],
 							businesses: [business_id],
-						}, file);
+						}, file, existingDocument.public);
 
 					} else {
 						const documentData = {
@@ -315,13 +316,13 @@ async function editDriver(req, res) {
 						delete file.document_type;
 						delete file.name;
 
-						const newFile = await addFileToDocument(newDocument.document_id, file);
+						const newFile = await addFileToDocument(newDocument.document_id, file, newDocument.public);
 
 						const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
 						await S3Helper.SaveObject(key, base64, file.mime_type, {
 							users: [user_id],
 							businesses: [business_id],
-						}, file);
+						}, file, newDocument.public);
 
 						if (
 							document_type === DOCUMENT_TYPE.PROFILE_PICTURE ||

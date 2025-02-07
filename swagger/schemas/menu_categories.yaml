@@ -1,0 +1,33 @@
+type: object
+properties:
+  menu_category_id:
+    type: string
+  names:
+    type: object
+  description:
+    type: object
+  categories:
+    type: string
+  business_id:
+    type: string
+  menu_items:
+    type: array
+    items:
+      $ref: ./menu_items.yaml
+  menu_id:
+    type: string
+  menu:
+    $ref: ./menus.yaml
+  menu_items_ordered:
+    type: object
+  menu_categories_catgeories:
+    type: array
+    items:
+      $ref: ./menu_categories_categories.yaml
+required:
+  - menu_category_id
+  - names
+  - description
+  - business_id
+  - menu_id
+  - menu_items_ordered

@@ -1,0 +1,33 @@
+type: object
+properties:
+  wallet_funds_id:
+    type: string
+  user_id:
+    type: string
+  charge_id:
+    type: string
+  amount:
+    type: number
+  reserved_order:
+    type: string
+  reserved_business:
+    type: string
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  user:
+    $ref: ./users.yaml
+  transactions:
+    type: array
+    items:
+      $ref: ./transactions.yaml
+required:
+  - wallet_funds_id
+  - user_id
+  - charge_id
+  - amount
+  - reserved_order
+  - reserved_business
+  - created_at
+  - updated_at

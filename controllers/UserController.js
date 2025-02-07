@@ -368,9 +368,9 @@ async function updateProfilePicture(req, res) {
 		for (const file of image.files) {
 			let base64 = file.base64;
 			delete file.base64;
-			let fileData = await FileDao.addFileToDocument(document.document_id, file);
+			let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 			let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-			await S3Helper.SaveObject(key, base64, file.mime_type, { users: [userId] });
+			await S3Helper.SaveObject(key, base64, file.mime_type, { users: [userId] }, null, document.public);
 		}
 
 		// Link new document to user

@@ -9,11 +9,11 @@ async function createCategory(data) {
 }
 
 async function updateCategory(id, data) {
-    return await prisma.categories.update({ where: { category_id: id }, data });
+    return await prisma.categories.update({ where: { categories_id: id }, data });
 }
 
 async function deleteCategory(id) {
-    return await prisma.categories.delete({ where: { category_id: id } });
+    return await prisma.categories.delete({ where: { categories_id: id } });
 }
 
 module.exports = {

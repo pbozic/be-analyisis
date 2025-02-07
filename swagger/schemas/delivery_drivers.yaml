@@ -1,0 +1,75 @@
+type: object
+properties:
+  delivery_driver_id:
+    type: string
+  online:
+    type: boolean
+  on_order:
+    type: boolean
+  delivers_daily_meals:
+    type: boolean
+  working_hours:
+    type: object
+  business_id:
+    type: string
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  user_id:
+    type: string
+  user:
+    $ref: ./users.yaml
+  vehicles:
+    type: array
+    items:
+      $ref: ./vehicles.yaml
+  orders:
+    type: array
+    items:
+      $ref: ./delivery_orders.yaml
+  received_orders:
+    type: array
+    items:
+      $ref: ./delivery_order_sent.yaml
+  documents:
+    type: array
+    items:
+      $ref: ./documents.yaml
+  location:
+    type: object
+  delivery_timeline:
+    type: object
+  last_ping_at:
+    type: string
+  on_daily_meals:
+    type: boolean
+  is_inactive:
+    type: boolean
+  scheduled_meals_route:
+    type: object
+  regions:
+    type: string
+  delivery_driver_history_locations:
+    type: array
+    items:
+      $ref: ./delivery_driver_history_locations.yaml
+  partner_cash_balance:
+    type: number
+required:
+  - delivery_driver_id
+  - online
+  - on_order
+  - delivers_daily_meals
+  - working_hours
+  - business_id
+  - created_at
+  - updated_at
+  - user_id
+  - location
+  - delivery_timeline
+  - last_ping_at
+  - on_daily_meals
+  - is_inactive
+  - scheduled_meals_route
+  - partner_cash_balance

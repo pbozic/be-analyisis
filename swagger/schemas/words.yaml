@@ -1,0 +1,30 @@
+type: object
+properties:
+  word_id:
+    type: string
+  word:
+    type: string
+  popularity:
+    type: integer
+  translations:
+    type: object
+  categories_id:
+    type: string
+  category:
+    $ref: ./categories.yaml
+  subscriptions:
+    type: array
+    items:
+      $ref: ./word_buy.yaml
+  created_at:
+    type: string
+  updated_at:
+    type: string
+required:
+  - word_id
+  - word
+  - popularity
+  - translations
+  - categories_id
+  - created_at
+  - updated_at

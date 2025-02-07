@@ -16,7 +16,7 @@ const createMenuCategory = async (menuId, categoryData) => {
 	for (let cat of categories) {
 		let category =	await prisma.categories.findFirst({
 			where: {
-				category_id: cat,
+				categories_id: cat,
 			}
 		})
 
@@ -32,7 +32,7 @@ const createMenuCategory = async (menuId, categoryData) => {
 					connect: { menu_category_id: menu_category.menu_category_id }
 				},
 				category: {
-					connect: { category_id: cat }
+					connect: { categories_id: cat }
 				}
 			}
 		});

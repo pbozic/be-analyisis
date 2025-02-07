@@ -1,0 +1,29 @@
+type: object
+properties:
+  local_prices_id:
+    type: string
+  local_product_id:
+    type: string
+  product:
+    $ref: ./local_products.yaml
+  currency:
+    type: string
+  stripe_price_id:
+    type: string
+  stripe_product_id:
+    type: string
+  tier:
+    type: string
+  created_at:
+    type: string
+  updated_at:
+    type: string
+required:
+  - local_prices_id
+  - local_product_id
+  - currency
+  - stripe_price_id
+  - stripe_product_id
+  - tier
+  - created_at
+  - updated_at

@@ -1,0 +1,33 @@
+type: object
+properties:
+  local_product_id:
+    type: string
+  name:
+    type: string
+  description:
+    type: string
+  prices:
+    type: array
+    items:
+      $ref: ./local_prices.yaml
+  currency:
+    type: string
+  stripe_product_id:
+    type: string
+  business_id:
+    type: string
+  business:
+    $ref: ./business.yaml
+  created_at:
+    type: string
+  updated_at:
+    type: string
+required:
+  - local_product_id
+  - name
+  - description
+  - currency
+  - stripe_product_id
+  - business_id
+  - created_at
+  - updated_at

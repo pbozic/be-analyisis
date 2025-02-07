@@ -1,4 +1,4 @@
-const prisma = require('../prisma');
+const prisma = require('../prisma/prisma');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -7,13 +7,13 @@ dotenv.config();
 const createProduct = async (product) => {
     // check if it exists
 
-    const product = await prisma.local_product.findUnique({
+    const isProduct = await prisma.local_product.findUnique({
         where: {
             stripe_product_id: product.stripe_product_id,
         }
     })
-    if (product) {
-        return product;
+    if (isProduct) {
+        return isProduct;
     }
     try {
         const result = await prisma.local_product.create({
@@ -182,13 +182,45 @@ const deletePriceByStripeId = async (stripe_price_id) => {
     }
 }
 
+async function getPricesByProductId(product_id) {
+    try {
+        const result = await prisma.local_price.findMany({
+            where: {
+                local_product_id: product_id
+            }
+        });
+        return result;
+    } catch (error) {
+        console.log(error);
+        return error;
+    }
+}
 
-
+async function getPricesByStripeProductId(stripe_product_id) {
+    try {
+        const result = await prisma.local_price.findMany({
+            where: {
+                stripe_product_id: stripe_product_id
+            }
+        });
+        return result;
+    } catch (error) {
+        console.log(error);
+        return error;
+    }
+}
 module.exports = {
     createProduct,
     createPrice,
     getProductByStripeId,
     getPriceByStripeId,
     getProduct,
-    getPrice
+    getPrice,
+    updateProductByStripeId,
+    updatePriceByStripeId,
+    deleteProductByStripeId,
+    deletePriceByStripeId,
+    getPricesByProductId,
+    getPricesByStripeProductId
+
 }
