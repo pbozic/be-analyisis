@@ -23,7 +23,8 @@ async function generateSchemas() {
     for (const field of model.fields) {
       if (field.kind === 'scalar') {
         schema.properties[field.name] = { type: mapPrismaTypeToOpenAPI(field.type, enums) };
-        if (!field.isNullable && !field.isList) {
+        console.log("field", field)
+        if (field.isRequired && !field.isList) {
           schema.required.push(field.name);
         }
       } else if (field.kind === 'object') {
@@ -39,11 +40,7 @@ async function generateSchemas() {
     }
 
     const schemaPath = path.join(__dirname, '../swagger/schemas', `${model.name}.yaml`);
-    if (fs.existsSync(schemaPath)) {
-      const existingSchema = YAML.parse(fs.readFileSync(schemaPath, 'utf8'));
-      schema.properties = { ...existingSchema.properties, ...schema.properties };
-      schema.required = Array.from(new Set([...existingSchema.required, ...schema.required]));
-    }
+   
 
     fs.writeFileSync(schemaPath, YAML.stringify(schema));
   }

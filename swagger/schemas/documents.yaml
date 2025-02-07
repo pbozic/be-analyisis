@@ -12,6 +12,8 @@ properties:
     type: string
   additional_info:
     type: object
+  public:
+    type: boolean
   files:
     type: array
     items:
@@ -56,15 +58,4 @@ required:
   - document_id
   - created_at
   - updated_at
-  - expiration_date
-  - issue_date
-  - additional_info
-  - driver_id
-  - delivery_driver_id
-  - business_id
-  - user_id
-  - vehicle_id
-  - menu_item_id
-  - lost_item_id
-  - transaction_id
-  - promo_banners_id
+  - public

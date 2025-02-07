@@ -39,12 +39,9 @@ properties:
 required:
   - menu_item_id
   - names
-  - image
   - description
   - spicy_level
   - unit_size
   - price
-  - discount
   - ingredients
   - business_id
-  - menu_category_id

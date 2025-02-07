@@ -18,8 +18,6 @@ properties:
       $ref: ./promo_ads_category.yaml
   parent_categories_id:
     type: string
-  code:
-    type: integer
   parent_category:
     $ref: ./categories.yaml
   sub_categories:
@@ -39,10 +37,5 @@ properties:
 required:
   - categories_id
   - name
-  - description
-  - translations
-  - parent_categories_id
-  - code
   - created_at
   - updated_at
-  - deleted_at

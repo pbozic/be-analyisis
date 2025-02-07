@@ -76,23 +76,6 @@ properties:
     type: number
 required:
   - driver_id
-  - business_id
-  - online
-  - on_order
-  - working_hours
-  - ride_requirements
   - created_at
   - updated_at
-  - user_id
-  - location
-  - delivery_timeline
   - last_ping_at
-  - is_inactive
-  - transfer_requirements
-  - handles_taxi_orders
-  - handles_transfer_orders
-  - handles_delivery_orders
-  - taxi_orders_toggled
-  - transfer_orders_toggled
-  - delivery_orders_toggled
-  - partner_cash_balance

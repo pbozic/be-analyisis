@@ -20,8 +20,6 @@ properties:
     $ref: ./users.yaml
 required:
   - lost_item_id
-  - user_id
   - description
-  - found
   - created_at
   - updated_at

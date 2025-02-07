@@ -11,5 +11,4 @@ properties:
 required:
   - allergen_id
   - name
-  - description
   - code

@@ -20,4 +20,3 @@ required:
   - start_cost
   - per_kilometre
   - per_minute
-  - vehicle_id

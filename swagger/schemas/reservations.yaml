@@ -34,4 +34,3 @@ required:
   - updated_at
   - business_id
   - user_id
-  - table

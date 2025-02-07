@@ -26,9 +26,5 @@ required:
   - promo_sections_id
   - name
   - tag
-  - description
-  - prices
-  - limits
-  - stripe_product_id
   - canPurchase
   - promo_duration_days

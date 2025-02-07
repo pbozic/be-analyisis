@@ -36,14 +36,5 @@ properties:
     $ref: ./vehicle_specifications.yaml
 required:
   - vehicle_id
-  - business_id
-  - active
-  - make
-  - model
-  - color
-  - license_plate
   - created_at
   - updated_at
-  - driver_id
-  - delivery_driver_id
-  - vehicle_specification_id
