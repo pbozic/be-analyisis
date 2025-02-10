@@ -792,7 +792,7 @@ async function getActiveDeliveryOrdersByUserId(req, res) {
 }
 
 /**
- * GET /delivery/orders/active/:business_id
+ * GET /delivery/orders/active/business/:business_id
  * @tag Delivery
  * @summary Get active delivery orders.
  * @description This fetches all completed orders for a specific business.
@@ -806,8 +806,8 @@ async function getActiveDeliveryOrdersByBusinessId(req, res) {
 	const { business_id } = req.params;
 
 	try {
-		const activeOrder = await DeliveryOrderDao.getActiveDeliveryOrdersForBusiness(business_id);
-		res.status(200).json(activeOrder);
+		const activeOrders = await DeliveryOrderDao.getActiveDeliveryOrdersForBusiness(business_id);
+		res.status(200).json(activeOrders);
 	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);

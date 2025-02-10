@@ -12,7 +12,7 @@ router.get("/today", DeliveryOrderController.getDeliveryOrdersToday);
 router.get("/active", DeliveryOrderController.getActiveDeliveryOrders);
 router.get("/:business_id", DeliveryOrderController.getDeliveryOrdersByBusinessId);
 router.get("/active/:user_id", DeliveryOrderController.getActiveDeliveryOrdersByUserId);
-router.get("/active/:business_id", DeliveryOrderController.getActiveDeliveryOrdersByBusinessId);
+router.get("/active/business/:business_id", DeliveryOrderController.getActiveDeliveryOrdersByBusinessId);
 router.get("/active/driver/:driver_id", DeliveryOrderController.getActiveDeliveryOrdersByDriverId);
 router.get("/completed/:driver_id", DeliveryOrderController.getCompletedDeliveryOrdersByDriverId);
 router.get("/completed/user/:user_id", DeliveryOrderController.getCompletedDeliveryOrdersByUserId);
