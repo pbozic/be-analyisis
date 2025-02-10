@@ -1,0 +1,86 @@
+type: object
+properties:
+  order_id:
+    type: string
+  user_id:
+    type: string
+  route:
+    type: object
+  pickup_location:
+    type: object
+  delivery_location:
+    type: object
+  payment:
+    type: object
+  estimates:
+    type: object
+  items:
+    type: object
+  details:
+    type: object
+  courier_instructions:
+    type: object
+  restaurant_message:
+    type: object
+  scheduled:
+    type: object
+  timeline:
+    type: object
+  last_sent_at:
+    type: string
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  user:
+    $ref: ./users.yaml
+  history:
+    type: array
+    items:
+      $ref: ./delivery_order_sent.yaml
+  delivery_driver_id:
+    type: string
+  delivery_driver:
+    $ref: ./delivery_drivers.yaml
+  driver_id:
+    type: string
+  driver:
+    $ref: ./drivers.yaml
+  business_id:
+    type: string
+  business:
+    $ref: ./business.yaml
+  payment_intent_id:
+    type: string
+  transactions:
+    type: array
+    items:
+      $ref: ./transactions.yaml
+  find_drivers_attempts:
+    type: integer
+  is_daily_meal:
+    type: boolean
+  flags:
+    type: object
+  wallet_transfer:
+    type: array
+    items:
+      $ref: ./wallet_transfer_history.yaml
+  delivery_driver_history_locations:
+    type: array
+    items:
+      $ref: ./delivery_driver_history_locations.yaml
+  cashback:
+    type: array
+    items:
+      $ref: ./cashback.yaml
+required:
+  - order_id
+  - route
+  - pickup_location
+  - delivery_location
+  - items
+  - timeline
+  - created_at
+  - updated_at
+  - is_daily_meal

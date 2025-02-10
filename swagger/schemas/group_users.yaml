@@ -1,0 +1,28 @@
+type: object
+properties:
+  group_user_id:
+    type: string
+  parent_user_id:
+    type: string
+  child_user_id:
+    type: string
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  parent_user:
+    $ref: ./users.yaml
+  child_user:
+    $ref: ./users.yaml
+  allowance:
+    type: number
+  enabled:
+    type: boolean
+required:
+  - group_user_id
+  - parent_user_id
+  - child_user_id
+  - created_at
+  - updated_at
+  - allowance
+  - enabled

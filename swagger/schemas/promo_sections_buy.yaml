@@ -1,0 +1,24 @@
+type: object
+properties:
+  promo_sections_buy_id:
+    type: string
+  promo_sections_id:
+    type: string
+  promo_section:
+    $ref: ./promo_sections.yaml
+  stripe_subscription_id:
+    type: string
+  business_id:
+    type: string
+  active_at:
+    type: string
+  expires_at:
+    type: string
+  tier:
+    type: integer
+required:
+  - promo_sections_buy_id
+  - promo_sections_id
+  - stripe_subscription_id
+  - business_id
+  - tier

@@ -23,7 +23,7 @@ async function generateS3LinksRecursively(args, result) {
                     document.files = await Promise.all(document.files.map(async (file) => {
                         return {
                             ...file,
-                            url: await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type)),
+                            url: await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public),
                         };
                     }));
                 }
@@ -33,7 +33,7 @@ async function generateS3LinksRecursively(args, result) {
             result.files = await Promise.all(result.files.map(async (file) => {
                 return {
                     ...file,
-                    url: await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type)),
+                    url: await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public),
                 };
             }));
         }

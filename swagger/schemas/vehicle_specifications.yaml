@@ -1,0 +1,22 @@
+type: object
+properties:
+  vehicle_specification_id:
+    type: string
+  people:
+    type: string
+  start_cost:
+    type: string
+  per_kilometre:
+    type: string
+  per_minute:
+    type: string
+  vehicle_id:
+    type: string
+  vehicle:
+    $ref: ./vehicles.yaml
+required:
+  - vehicle_specification_id
+  - people
+  - start_cost
+  - per_kilometre
+  - per_minute

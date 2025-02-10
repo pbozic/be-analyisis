@@ -173,4 +173,21 @@ router.post('/test/notification', async (req, res) => {
     }
 });
 
+router.get("/purchase-status/:sessionId", async (req, res) => {
+    try {
+        const sessionId = req.params.session_id;
+
+        const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+        res.json({
+            success: session.payment_status === "paid",
+            amount: session.amount_total / 100,
+            metadata: session.metadata
+        });
+    } catch (error) {
+        console.error("Error fetching purchase status:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 module.exports = router;

@@ -70,6 +70,7 @@ model business {
 
   business_teams business_teams[] @relation("business_to_business_teams")
   business_order_lobbies order_lobbies[] @relation("business_to_lobby")
+  activated_at             DateTime?
 }
 
 model business_users {
@@ -148,6 +149,7 @@ model users {
   taxi_credits                           Int?              @default(0)
   delivery_credits                       Int?              @default(0)
   cashback                               cashback[]
+  activated_at                           DateTime?
   business_teams_id                      String?           @db.Uuid
   business_teams                         business_teams?    @relation("user_to_business_team", fields: [business_teams_id],references: [business_teams_id])
   order_lobby_users                      order_lobby_users[] @relation("user_to_OL_user")
@@ -210,6 +212,7 @@ model documents {
   expiration_date    DateTime?         @db.Timestamptz(6)
   issue_date         DateTime?         @db.Timestamptz(6)
   additional_info    Json? // JSON field for any additional document-specific information
+  public             Boolean           @default(false)
   files              files[]
   driver_id          String?           @db.Uuid
   drivers            drivers?          @relation(fields: [driver_id], references: [driver_id])
@@ -227,14 +230,15 @@ model documents {
   lost_items         lost_items?       @relation(fields: [lost_item_id], references: [lost_item_id])
   transaction_id     String?           @db.Uuid
   transactions       transactions?     @relation("Documents_transaction", fields: [transaction_id], references: [transaction_id])
-  promo_banner_id    String?           @db.Uuid
-  promo_banners      promo_banners?    @relation(fields: [promo_banner_id], references: [promo_banner_id])
+  promo_banners_id    String?           @db.Uuid
+  promo_banners      promo_banners?    @relation(fields: [promo_banners_id], references: [promo_banners_id])
 }
 
 model files {
   file_id     String     @id @default(uuid()) @db.Uuid
   url         String
   file_type   FILE_TYPE
+  public      Boolean    @default(false)
   mime_type   String
   created_at  DateTime   @default(now()) @db.Timestamptz(6)
   updated_at  DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
@@ -706,28 +710,27 @@ model local_prices {
   local_prices_id   String @id @default(uuid()) @db.Uuid
   local_product_id  String @db.Uuid
   product           local_products @relation(fields: [local_product_id], references: [local_product_id])
-  amount            Float
   currency          String
   stripe_price_id   String @unique
   stripe_product_id String
+  tier              String?
   created_at        DateTime @default(now()) @db.Timestamptz(6)
   updated_at        DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
-  @@index([local_product_id, amount])
-  @@index([stripe_product_id, amount])
+  @@index([local_product_id])
+  @@index([stripe_product_id])
   @@index([currency])
 }
 
 model categories {
-  category_id         String  @id @default(uuid()) @db.Uuid
+  categories_id         String  @id @default(uuid()) @db.Uuid
   name                String
   description         String?
   translations        Json?
   menu_categories     menu_categories_categories[]
   promo_ads_category  promo_ads_category[]
-  parent_category_id  String? @db.Uuid
-  code                Int     @unique @db.SmallInt
-  parent_category     categories? @relation("sub_categories", fields: [parent_category_id], references: [category_id])
+  parent_categories_id  String? @db.Uuid
+  parent_category     categories? @relation("sub_categories", fields: [parent_categories_id], references: [categories_id])
   sub_categories      categories[] @relation("sub_categories")
   words               words[]
   created_at          DateTime @default(now()) @db.Timestamptz(6)
@@ -736,25 +739,30 @@ model categories {
 }
 
 model menu_categories_categories {
-  menu_category_id  String @db.Uuid
-  category_id       String @db.Uuid
-  menu_category     menu_categories @relation(fields: [menu_category_id], references: [menu_category_id])
-  category          categories @relation(fields: [category_id], references: [category_id])
+  menu_categories_id  String @db.Uuid
+  categories_id       String @db.Uuid
+  menu_category     menu_categories @relation(fields: [menu_categories_id], references: [menu_category_id])
+  category          categories @relation(fields: [categories_id], references: [categories_id])
 
-  @@id([menu_category_id, category_id])
+  @@id([menu_categories_id, categories_id])
 }
 
 model promo_sections {
-  promo_section_id  String  @id @default(uuid()) @db.Uuid
+  promo_sections_id  String  @id @default(uuid()) @db.Uuid
   name              String
   tag               String
   description       String?
+  prices            Json?
+  limits            Json?
+  stripe_product_id String?
+  canPurchase       Boolean
   service_type      PROMO_SERVICE_TYPES
   promo_section_buy promo_sections_buy[]
+  promo_duration_days Int @default(30)
 }
 
 model promo_banners {
-  promo_banner_id       String  @id @default(uuid()) @db.Uuid
+  promo_banners_id       String  @id @default(uuid()) @db.Uuid
   type                  String
   size                  String?
   title                 String
@@ -766,9 +774,9 @@ model promo_banners {
 }
 
 model promo_sections_buy {
-  promo_section_buy_id    String  @id @db.Uuid
-  promo_section_id        String  @db.Uuid
-  promo_section           promo_sections @relation(fields: [promo_section_id], references: [promo_section_id])
+  promo_sections_buy_id    String  @id @db.Uuid
+  promo_sections_id        String  @db.Uuid
+  promo_section           promo_sections @relation(fields: [promo_sections_id], references: [promo_sections_id])
   stripe_subscription_id  String
   business_id             String  @db.Uuid
   active_at               DateTime?
@@ -778,24 +786,24 @@ model promo_sections_buy {
 }
 
 model promo_ads {
-  promo_ad_id  String  @id @default(uuid()) @db.Uuid
+  promo_ads_id  String  @id @default(uuid()) @db.Uuid
   title        String
   text         String
   tag          String
   service_type PROMO_SERVICE_TYPES
   discount     Float   @default(0)
   banner_id    String  @db.Uuid
-  banner       promo_banners @relation(fields: [banner_id], references: [promo_banner_id])
+  banner       promo_banners @relation(fields: [banner_id], references: [promo_banners_id])
   categories   promo_ads_category[]
   code         Int     @unique @db.SmallInt
 } 
 
 model promo_ads_category {
   promo_ads_category_id String @id @default(uuid()) @db.Uuid
-  promo_ad_id  String  @db.Uuid
-  category_id  String  @db.Uuid
-  promo_ad     promo_ads @relation(fields: [promo_ad_id], references: [promo_ad_id])
-  category     categories @relation(fields: [category_id], references: [category_id])
+  promo_ads_id  String  @db.Uuid
+  categories_id  String  @db.Uuid
+  promo_ad     promo_ads @relation(fields: [promo_ads_id], references: [promo_ads_id])
+  category     categories @relation(fields: [categories_id], references: [categories_id])
 }
 
 model words {
@@ -803,8 +811,8 @@ model words {
   word        String
   popularity  Int
   translations Json?
-  category_id String @db.Uuid
-  category    categories @relation(fields: [category_id], references: [category_id])
+  categories_id String @db.Uuid
+  category    categories @relation(fields: [categories_id], references: [categories_id])
   subscriptions word_buy[]
   created_at  DateTime @default(now()) @db.Timestamptz(6)
   updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(6)

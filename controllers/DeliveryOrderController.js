@@ -790,6 +790,29 @@ async function getActiveDeliveryOrdersByUserId(req, res) {
 }
 
 /**
+ * GET /delivery/orders/active/business/:business_id
+ * @tag Delivery
+ * @summary Get active delivery orders.
+ * @description This fetches all completed orders for a specific business.
+ * @operationId getCompletedDeliveryOrdersByBusinessId
+ * @requestBody {BusinessId} businessId - The ID of the business to retrieve completed orders for
+ * @response 200 - Successful operation. Returns a list of completed orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+async function getActiveDeliveryOrdersByBusinessId(req, res) {
+	const { business_id } = req.params;
+
+	try {
+		const activeOrders = await DeliveryOrderDao.getActiveDeliveryOrdersForBusiness(business_id);
+		res.status(200).json(activeOrders);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+/**
  * GET /delivery/orders/:business_id
  * @tag Delivery
  * @summary Get delivery orders.
@@ -1027,5 +1050,6 @@ module.exports = {
 	getActiveDeliveryOrdersByDriverId,
 	updateDeliveryOrder,
 	createDailyMeals,
+	getActiveDeliveryOrdersByBusinessId,
 	getCompletedDeliveryOrdersByBusinessId
 };

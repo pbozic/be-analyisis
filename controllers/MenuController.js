@@ -421,9 +421,9 @@ async function createMenuItem(req, res) {
 		for (const file of image.files) {
 			let base64 = file.base64;
 			delete file.base64;
-			let fileData = await FileDao.addFileToDocument(document.document_id, file);
+			let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 			let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-			await S3Helper.SaveObject(key, base64, file.mime_type, {}, file);
+			await S3Helper.SaveObject(key, base64, file.mime_type, {}, file, document.public);
 		}
 		const menuItem = await MenuItemDao.createMenuItem(category_id, data);
 
@@ -462,9 +462,9 @@ async function createDailyMealsMenu(req, res) {
 		for (const file of data.files) {
 			let base64 = file.base64;
 			delete file.base64;
-			let fileData = await FileDao.addFileToDocument(document.document_id, file);
+			let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 			let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-			await S3Helper.SaveObject(key, base64, file.mime_type, {}, file);
+			await S3Helper.SaveObject(key, base64, file.mime_type, {}, file, document.public);
 		}
 
 		await linkDocumentToBusiness(document.document_id, business_id);
@@ -567,9 +567,9 @@ async function updateMenuItem(req, res) {
 			for (const file of image.files) {
 				let base64 = file.base64;
 				delete file.base64;
-				let fileData = await FileDao.addFileToDocument(document.document_id, file);
+				let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 				let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-				await S3Helper.SaveObject(key, base64, file.mime_type, {}, file);
+				await S3Helper.SaveObject(key, base64, file.mime_type, {}, file, document.public);
 			}
 			const menuItem = await MenuItemDao.updateMenuItem(menu_item_id, data);
 			await DocumentDao.linkDocumentToMenuItem(document.document_id, menuItem.menu_item_id);

@@ -1,0 +1,95 @@
+type: object
+properties:
+  order_id:
+    type: string
+  user_id:
+    type: string
+  driver_id:
+    type: string
+  route:
+    type: object
+  pickup_location:
+    type: object
+  delivery_location:
+    type: object
+  payment:
+    type: object
+  estimates:
+    type: object
+  timeline:
+    type: object
+  preferences:
+    type: object
+  last_sent_at:
+    type: string
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  business_id:
+    type: string
+  business:
+    $ref: ./business.yaml
+  driver:
+    $ref: ./drivers.yaml
+  user:
+    $ref: ./users.yaml
+  history:
+    type: array
+    items:
+      $ref: ./taxi_order_sent.yaml
+  telephone:
+    type: string
+  first_name:
+    type: string
+  last_name:
+    type: string
+  cancellation_reason:
+    type: string
+  find_drivers_attempts:
+    type: integer
+  is_scheduled:
+    type: boolean
+  parent_order_id:
+    type: string
+  parent_order:
+    $ref: ./taxi_orders.yaml
+  grouped_orders:
+    type: array
+    items:
+      $ref: ./taxi_orders.yaml
+  flags:
+    type: object
+  cargo_preferences:
+    type: object
+  driver_history_locations:
+    type: array
+    items:
+      $ref: ./driver_history_locations.yaml
+  wallet_transfer:
+    type: array
+    items:
+      $ref: ./wallet_transfer_history.yaml
+  transactions:
+    type: array
+    items:
+      $ref: ./transactions.yaml
+  customer_note:
+    type: string
+  parent_user_type:
+    type: string
+  creating_user_id:
+    type: string
+  cashback:
+    type: array
+    items:
+      $ref: ./cashback.yaml
+required:
+  - order_id
+  - user_id
+  - route
+  - pickup_location
+  - timeline
+  - created_at
+  - updated_at
+  - is_scheduled

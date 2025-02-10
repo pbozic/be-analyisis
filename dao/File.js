@@ -1,5 +1,7 @@
+const { file } = require("googleapis/build/src/apis/file");
 const prisma = require("../prisma/prisma");
-const addFileToDocument = async (documentId, fileData) => { 
+const addFileToDocument = async (documentId, fileData, public) => { 
+	fileData.public = public || false; 
 	try {
 		return await prisma.files.create({
 			data: {
@@ -41,7 +43,8 @@ const addFilesToDocument = async (documentId, filesData) => {
 	}
 };
 
-const updateFileInDocument = async (fileId, updateData) => {
+const updateFileInDocument = async (fileId, updateData, public) => {
+	updateData.public = public || false;
 	try {
 		return await prisma.files.update({
 			where: { file_id: fileId },

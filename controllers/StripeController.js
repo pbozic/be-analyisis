@@ -6,7 +6,7 @@ const UsersDao = require('../dao/User');
 const {io, UserSockets} = require('../socket');
 const stripe = require('../lib/stripe')
 const BusinessDao = require("../dao/Business");
-
+const PromoDao = require("../dao/Promo");
 async function handlePaymentIntentSuccess(paymentIntent) {
     switch (paymentIntent.metadata.type) { 
         case 'wallet_topup':
@@ -89,7 +89,21 @@ async function handleChargeUpdate(charge) {
 
 }
 
+async function handleSessionCompleted(session) {
+    if (session.metadata.type === 'promo_section') {
+        await handlePromoSectionBuy(session);
+    }
+}
 
+async function handlePromoSectionBuy(session) {
+    //TODO: Add the promo section buy to the database
+        // await PromoDao.createPromoSectionBuy({
+        //     promo_sections_id: session.metadata.promo_sections_id,
+        //     business_id: session.metadata.business_id,
+        //     stripe_subscription_id: session.subscription,
+        //     tier: session.metadata.tier
+        // });
+}
 async function handleWebhook(req, res) {
     let event;
     try {
@@ -183,6 +197,8 @@ async function handleWebhook(req, res) {
             console.log(`Price deleted: ${data.id}`);
             break;
         // ... handle other event types
+        case 'checkout.session.completed':
+            handleSessionCompleted(data);
         default:
             console.log(`Unhandled event type ${event.type}`);
     }

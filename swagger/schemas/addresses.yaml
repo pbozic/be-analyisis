@@ -1,0 +1,41 @@
+type: object
+properties:
+  address_id:
+    type: string
+  address:
+    type: string
+  latitude:
+    type: string
+  longitude:
+    type: string
+  street:
+    type: string
+  house_number:
+    type: string
+  city:
+    type: string
+  country:
+    type: string
+  postal:
+    type: string
+  users:
+    type: array
+    items:
+      $ref: ./user_address.yaml
+  businesses:
+    type: array
+    items:
+      $ref: ./business.yaml
+  businesses_delivery_address:
+    type: array
+    items:
+      $ref: ./business.yaml
+  business_users:
+    type: array
+    items:
+      $ref: ./business_users.yaml
+required:
+  - address_id
+  - address
+  - latitude
+  - longitude

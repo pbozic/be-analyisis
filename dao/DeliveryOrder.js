@@ -1,5 +1,5 @@
 const prisma = require("../prisma/prisma");
-const { TAXI_ORDER_STATUS, DELIVERY_ORDER_STATUS } = require("../lib/constants");
+const { DOCUMENT_TYPE, DELIVERY_ORDER_STATUS } = require("../lib/constants");
 const gApi = require("../lib/gApis");
 
 async function getOrders(args) {
@@ -75,6 +75,33 @@ async function getOrder(order_id, args) {
 	}
 }
 
+async function getActiveDeliveryOrdersForBusiness(business_id) {
+	try {
+		return await prisma.delivery_orders.findMany({
+			where: {
+				business_id: business_id,
+				status: {
+					notIn: [
+						DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+						DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
+						DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
+						DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
+						DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
+						DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
+					]
+				},
+			},
+			include: {
+				delivery_driver: true,
+				driver: true,
+				user: true,
+			}
+		});
+	} catch (e) {
+		console.error("Error fetching order:", e);
+		throw new Error(e.message);
+	}
+}
 
 async function getDeliveryOrderIfNotCompleted(user_id) {
 	try {
@@ -96,6 +123,21 @@ async function getDeliveryOrderIfNotCompleted(user_id) {
 				delivery_driver: true,
 				driver: true,
 				user: true,
+				business: {
+					select: {
+						name: true,
+						email: true,
+						telephone: true,
+						documents: {
+							where: {
+								document_type: DOCUMENT_TYPE.LOGO
+							},
+							include: {
+								files: true
+							}
+						}
+					}
+				}
 			}
 		});
 	} catch (e) {
@@ -722,5 +764,6 @@ module.exports = {
 	getAlreadySentOrdersByDeliveryDriverId,
 	getActiveOrdersByDeliveryDriverId,
 	connectOrderWithDriver,
+	getActiveDeliveryOrdersForBusiness,
 	getInProgressDeliveryOrdersCountForBusinessId
 };

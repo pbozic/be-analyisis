@@ -5,6 +5,7 @@ const BCRYPT_SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 12;
 
 async function userSeed() {
 	return new Promise(async (resolve, reject) => {
+		return reject("Seeding is disabled for production!");
 		console.log("Seeding users...");
 		const amountOfUsers = 5;
 		const users = [];

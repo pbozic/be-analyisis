@@ -1,0 +1,34 @@
+type: object
+properties:
+  delivery_order_sent_id:
+    type: string
+  order_id:
+    type: string
+  accepted:
+    type: boolean
+  location:
+    type: object
+  timeline:
+    type: object
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  order:
+    $ref: ./delivery_orders.yaml
+  delivery_driver_id:
+    type: string
+  delivery_driver:
+    $ref: ./delivery_drivers.yaml
+  driver_id:
+    type: string
+  driver:
+    $ref: ./drivers.yaml
+required:
+  - delivery_order_sent_id
+  - order_id
+  - accepted
+  - location
+  - timeline
+  - created_at
+  - updated_at

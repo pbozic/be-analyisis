@@ -1,0 +1,36 @@
+type: object
+properties:
+  credit_id:
+    type: string
+  user_id:
+    type: string
+  amount:
+    type: integer
+  description:
+    type: string
+  earned_at:
+    type: string
+  expires_at:
+    type: string
+  used_at:
+    type: string
+  taxi_order_id:
+    type: string
+  delivery_order_id:
+    type: string
+  referral_id:
+    type: string
+  user:
+    $ref: ./users.yaml
+  taxi_order:
+    $ref: ./taxi_orders.yaml
+  delivery_order:
+    $ref: ./delivery_orders.yaml
+  referral:
+    $ref: ./referrals.yaml
+required:
+  - credit_id
+  - user_id
+  - amount
+  - earned_at
+  - expires_at

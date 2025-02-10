@@ -173,7 +173,7 @@ async function me(req, res) {
 				child_users: { include:{child_user: true}},
 				parent_user: { include:{parent_user: true}},
 				referrals_made: true,
-				referral: { include: {referrer: true} }
+				referral: { include: {referrer: { select: { first_name: true, last_name: true } } } }
 			},
 		});
 		console.log("/me user: ",user?.user_id)
@@ -363,14 +363,14 @@ async function updateProfilePicture(req, res) {
 
 		// Create new document for profile picture
 		const document = await DocumentDao.createDocument(image.documentData);
-		console.log("files", image.files)
+		//console.log("files", image.files)
 		// Add files to the document and upload to S3
 		for (const file of image.files) {
 			let base64 = file.base64;
 			delete file.base64;
-			let fileData = await FileDao.addFileToDocument(document.document_id, file);
+			let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 			let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-			await S3Helper.SaveObject(key, base64, file.mime_type, { users: [userId] });
+			await S3Helper.SaveObject(key, base64, file.mime_type, { users: [userId] }, null, document.public);
 		}
 
 		// Link new document to user

@@ -1,0 +1,25 @@
+type: object
+properties:
+  wallet_transfer_history_id:
+    type: string
+  order_id:
+    type: string
+  amount:
+    type: number
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  success:
+    type: boolean
+  delivery_order:
+    $ref: ./delivery_orders.yaml
+  taxi_order:
+    $ref: ./taxi_orders.yaml
+required:
+  - wallet_transfer_history_id
+  - order_id
+  - amount
+  - created_at
+  - updated_at
+  - success

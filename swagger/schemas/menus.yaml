@@ -1,0 +1,20 @@
+type: object
+properties:
+  menu_id:
+    type: string
+  business_id:
+    type: string
+  active:
+    type: boolean
+  business:
+    $ref: ./business.yaml
+  categories:
+    type: array
+    items:
+      $ref: ./menu_categories.yaml
+  menu_categories_ordered:
+    type: object
+required:
+  - menu_id
+  - business_id
+  - active

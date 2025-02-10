@@ -1,0 +1,167 @@
+type: object
+properties:
+  user_id:
+    type: string
+  first_name:
+    type: string
+  last_name:
+    type: string
+  password:
+    type: string
+  email:
+    type: string
+  telephone:
+    type: string
+  telephone_code:
+    type: string
+  telephone_number:
+    type: string
+  date_of_birth:
+    type: string
+  created_at:
+    type: string
+  updated_at:
+    type: string
+  addresses:
+    type: array
+    items:
+      $ref: ./user_address.yaml
+  tokens:
+    type: array
+    items:
+      $ref: ./tokens.yaml
+  phone_verified:
+    type: boolean
+  notification_preferences:
+    type: object
+  taxi_preferences:
+    type: object
+  business_users:
+    type: array
+    items:
+      $ref: ./business_users.yaml
+  driver:
+    $ref: ./drivers.yaml
+  orders:
+    type: array
+    items:
+      $ref: ./taxi_orders.yaml
+  documents:
+    type: array
+    items:
+      $ref: ./documents.yaml
+  delivery_driver:
+    $ref: ./delivery_drivers.yaml
+  delivery_orders:
+    type: array
+    items:
+      $ref: ./delivery_orders.yaml
+  reviewable_id:
+    type: string
+  reviewable:
+    $ref: ./reviewable.yaml
+  reviews:
+    type: array
+    items:
+      $ref: ./reviews.yaml
+  review_complete:
+    type: boolean
+  one_signal_id:
+    type: string
+  stripe_customer_id:
+    type: string
+  wallet_balance:
+    type: number
+  transactions:
+    type: array
+    items:
+      $ref: ./transactions.yaml
+  reservations:
+    type: array
+    items:
+      $ref: ./reservations.yaml
+  transfer_preferences:
+    type: object
+  allergies_preferences:
+    type: object
+  spicy_preferences:
+    type: object
+  radio_preferences:
+    type: object
+  subscribed_to_daily_meals:
+    type: boolean
+  daily_meal_preferences:
+    type: object
+  details:
+    type: object
+  flag_changes:
+    type: array
+    items:
+      $ref: ./flag_history.yaml
+  taxi_push_notification_preferences:
+    type: object
+  transfer_push_notification_preferences:
+    type: object
+  delivery_push_notification_preferences:
+    type: object
+  spoken_languages:
+    type: object
+  lost_items:
+    type: array
+    items:
+      $ref: ./lost_items.yaml
+  daily_meal_day_preferences:
+    type: object
+  disabled:
+    type: boolean
+  active:
+    type: boolean
+  child_users:
+    type: array
+    items:
+      $ref: ./group_users.yaml
+  parent_user:
+    $ref: ./group_users.yaml
+  language:
+    type: string
+  wallet_funds:
+    type: array
+    items:
+      $ref: ./wallet_funds.yaml
+  apple_id:
+    type: string
+  google_id:
+    type: string
+  referral_code:
+    type: string
+  referrals_made:
+    type: array
+    items:
+      $ref: ./referrals.yaml
+  referral:
+    $ref: ./referrals.yaml
+  taxi_credits:
+    type: integer
+  delivery_credits:
+    type: integer
+  cashback:
+    type: array
+    items:
+      $ref: ./cashback.yaml
+  activated_at:
+    type: string
+required:
+  - user_id
+  - password
+  - telephone
+  - telephone_code
+  - telephone_number
+  - date_of_birth
+  - created_at
+  - updated_at
+  - phone_verified
+  - review_complete
+  - wallet_balance
+  - subscribed_to_daily_meals
+  - disabled
+  - active

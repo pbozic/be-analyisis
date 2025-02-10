@@ -1,0 +1,16 @@
+type: object
+properties:
+  promo_ads_category_id:
+    type: string
+  promo_ads_id:
+    type: string
+  categories_id:
+    type: string
+  promo_ad:
+    $ref: ./promo_ads.yaml
+  category:
+    $ref: ./categories.yaml
+required:
+  - promo_ads_category_id
+  - promo_ads_id
+  - categories_id
