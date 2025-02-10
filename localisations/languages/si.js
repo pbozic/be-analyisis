@@ -12,6 +12,10 @@ const   si = {
         completed: "Vaša vožnja je zaključena. Hvala, ker uporabljate našo storitev!",
         customerCanceled: "",
         vehicleTransferCompleted: "Prevoz vašega vozila je zaključen.",
+        lobby_added: "Dodani ste v sobo za naročila",
+        lobby_removed: "Odstranjeni ste iz sobe",
+        lobby_canceled: "Soba, v katero ste bili povabljeni, je bila preklicana",
+        lobby_completed: "Soba, v katero ste bili povabljeni, je bila zaključena"
     },
     DRIVER_NOTIFICATIONS: {
         offline: "Zdaj niste več prijavljeni, prosimo, odprite KlikniApp",
@@ -48,6 +52,10 @@ const   si = {
         driver: "Klikni Voznik",
         taxi: "Posodobitev Taksi Naročila",
         delivery: "Posodobitev Dostave",
+        lobby_added: "Dodani v sobo",
+        lobby_removed: "Odstranjeni iz sobe",
+        lobby_canceled: "Soba preklicana",
+        lobby_completed: "Soba zaključena"
     }
 }
 module.exports = si;

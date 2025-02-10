@@ -11,7 +11,11 @@ const it = {
         arrived: "Il tuo autista è arrivato.",
         completed: "Il tuo viaggio è stato completato. Grazie per aver utilizzato il nostro servizio!",
         customerCanceled: "",
-        vehicleTransferCompleted: "Il trasferimento del veicolo è stato completato."
+        vehicleTransferCompleted: "Il trasferimento del veicolo è stato completato.",
+        lobby_added: "Sei stato aggiunto a una lobby d'ordine",
+        lobby_removed: "Sei stato rimosso da una lobby",
+        lobby_canceled: "Una lobby a cui sei stato invitato è stata annullata",
+        lobby_completed: "Una lobby a cui sei stato invitato è stata completata"
     },
     DRIVER_NOTIFICATIONS: {
         offline: "Sei ora offline, per favore apri KlikniApp",
@@ -48,6 +52,10 @@ const it = {
         driver: "Autista Klikni",
         taxi: "Aggiornamento Corsa Taxi",
         delivery: "Aggiornamento Consegna",
+        lobby_added: "Aggiunto alla lobby",
+        lobby_removed: "Rimosso dalla lobby",
+        lobby_canceled: "Lobby annullata",
+        lobby_completed: "Lobby completata"
     }
 }
 module.exports = it;

@@ -12,6 +12,10 @@ const  en = {
         completed: "Your ride has been completed. Thank you for using our service!",
         customerCanceled: "",
         vehicleTransferCompleted: "Your vehicle transfer has been completed.",
+        lobby_added: "You have been added to an order lobby",
+        lobby_removed: "You have been removed from a lobby",
+        lobby_canceled: "A lobby you were invited to has been canceled",
+        lobby_completed: "A lobby you were invited to has been completed",
     },
     DRIVER_NOTIFICATIONS: {
         offline: "You are now offline, please open KlikniApp",
@@ -48,6 +52,10 @@ const  en = {
         driver: "Klikni Driver",
         taxi: "Taxi Order Update",
         delivery: "Delivery Order Update",
+        lobby_added: "Added To Lobby",
+        lobby_removed: "Removed From Lobby",
+        lobby_canceled: "Lobby Canceled",
+        lobby_completed: "Lobby completed",
     }
 }
 

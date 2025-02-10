@@ -12,6 +12,10 @@ const ru = {
         completed: "Ваша поездка завершена. Спасибо за использование нашего сервиса!",
         customerCanceled: "",
         vehicleTransferCompleted: "Трансфер вашего автомобиля завершен.",
+        lobby_added: "Вы были добавлены в комнату для заказа",
+        lobby_removed: "Вы были удалены из комнаты",
+        lobby_canceled: "Комната, в которую вас пригласили, была отменена",
+        lobby_completed: "Комната, в которую вас пригласили, была завершена"
     },
     DRIVER_NOTIFICATIONS: {
         offline: "Вы сейчас оффлайн, пожалуйста, откройте KlikniApp",
@@ -48,6 +52,10 @@ const ru = {
         driver: "Водитель Klikni",
         taxi: "Обновление Заказа Такси",
         delivery: "Обновление Доставки",
+        lobby_added: "Добавлен в комнату",
+        lobby_removed: "Удален из комнаты",
+        lobby_canceled: "Комната отменена",
+        lobby_completed: "Комната завершена"
     }
 }
 module.exports = ru;

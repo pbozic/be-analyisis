@@ -12,6 +12,10 @@ const  srb = {
         completed: "Vaša vožnja je završena. Hvala što koristite našu uslugu!",
         customerCanceled: "",
         vehicleTransferCompleted: "Vaš transfer vozila je završen.",
+        lobby_added: "Dodati ste u sobu za porudžbine",
+        lobby_removed: "Uklonjeni ste iz sobe",
+        lobby_canceled: "Soba u koju ste pozvani je otkazana",
+        lobby_completed: "Soba u koju ste pozvani je završena"
     },
     DRIVER_NOTIFICATIONS: {
         offline: "Sada ste offline, molimo otvorite KlikniApp",
@@ -39,15 +43,19 @@ const  srb = {
         delayed: "Narudžbina za dostavu je odložena od strane trgovca.",
     },
     HEADING: {
-        completed: 'Вожња Таксијем Завршена',
-        accepted: "Вожња Таксијем Прихваћена",
-        pending: "Нова Наруџба Таксија",
-        pending_delivery: "Нова наруџба за доставу",
-        scheduled_tomorrow: "Заказана Вожња Таксијем",
-        scheduled_hour: "Заказана Вожња Таксијем",
-        driver: "Кликни Возач",
-        taxi: "Ажурирање Вожње Таксијем",
-        delivery: "Ажурирање Доставе",
+        completed: "Vožnja Taksijem Završena",
+        accepted: "Vožnja Taksijem Prihvaćena",
+        pending: "Nova Narudžba Taksija",
+        pending_delivery: "Nova narudžba za dostavu",
+        scheduled_tomorrow: "Zakazana Vožnja Taksijem",
+        scheduled_hour: "Zakazana Vožnja Taksijem",
+        driver: "Klikni Vozač",
+        taxi: "Ažuriranje Vožnje Taksijem",
+        delivery: "Ažuriranje Dostave",
+        lobby_added: "Dodati u sobu",
+        lobby_removed: "Uklonjeni iz sobe",
+        lobby_canceled: "Soba otkazana",
+        lobby_completed: "Soba završena"
     }
 }
 module.exports = srb;

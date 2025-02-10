@@ -56,6 +56,7 @@ router.use("/documents", [authMiddleware], documentsRoutes);
 router.use("/menus", [authMiddleware], menusRoutes);
 router.use("/business-users", [authMiddleware], businessUserRoutes);
 router.use("/business-teams", [authMiddleware], businessTeamRoutes);
+router.use("/order_lobby", [authMiddleware], orderLobbyRoutes);
 router.use("/lost_items", lostItemsRoutes);
 router.use("/flags", [authMiddleware], flagRoutes);
 router.use("/google_maps", googleMaps);

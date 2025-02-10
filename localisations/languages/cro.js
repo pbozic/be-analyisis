@@ -12,6 +12,10 @@ const cro = {
         completed: "Vaša vožnja je završena. Hvala što koristite našu uslugu!",
         customerCanceled: "",
         vehicleTransferCompleted: "Vaš transfer vozila je završen.",
+        lobby_added: "Dodani ste u sobu za narudžbe",
+        lobby_removed: "Uklonjeni ste iz sobe",
+        lobby_canceled: "Soba u koju ste pozvani je otkazana",
+        lobby_completed: "Soba u koju ste pozvani je dovršena"
     },
     DRIVER_NOTIFICATIONS: {
         offline: "Sada ste offline, molimo otvorite KlikniApp",
@@ -48,6 +52,10 @@ const cro = {
         driver: "Klikni Vozač",
         taxi: "Ažuriranje Vožnje Taksijem",
         delivery: "Ažuriranje Dostave",
+        lobby_added: "Dodani u sobu",
+        lobby_removed: "Uklonjeni iz sobe",
+        lobby_canceled: "Soba otkazana",
+        lobby_completed: "Soba dovršena"
     }
 }
 module.exports = cro;

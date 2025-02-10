@@ -12,6 +12,10 @@ const  de = {
         completed: "Ihre Fahrt wurde abgeschlossen. Vielen Dank, dass Sie unseren Service nutzen!",
         customerCanceled: "",
         vehicleTransferCompleted: "Ihre Fahrzeugüberführung wurde abgeschlossen.",
+        lobby_added: "Du wurdest zu einer Bestell-Lobby hinzugefügt",
+        lobby_removed: "Du wurdest aus einer Lobby entfernt",
+        lobby_canceled: "Eine Lobby, zu der du eingeladen wurdest, wurde storniert",
+        lobby_completed: "Eine Lobby, zu der du eingeladen wurdest, wurde abgeschlossen"
     },
     DRIVER_NOTIFICATIONS: {
         offline: "Sie sind jetzt offline, bitte öffnen Sie KlikniApp",
@@ -48,6 +52,10 @@ const  de = {
         driver: "Klikni Fahrer",
         taxi: "Taxifahrt Update",
         delivery: "Lieferung Update",
+        lobby_added: "Zur Lobby hinzugefügt",
+        lobby_removed: "Aus der Lobby entfernt",
+        lobby_canceled: "Lobby storniert",
+        lobby_completed: "Lobby abgeschlossen"
     }
 }
 module.exports = de;
