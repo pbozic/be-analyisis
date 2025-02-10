@@ -1,5 +1,5 @@
 const prisma = require("../prisma/prisma");
-const { TAXI_ORDER_STATUS, DELIVERY_ORDER_STATUS } = require("../lib/constants");
+const { DOCUMENT_TYPE, DELIVERY_ORDER_STATUS } = require("../lib/constants");
 const gApi = require("../lib/gApis");
 
 async function getOrders(args) {
@@ -123,6 +123,21 @@ async function getDeliveryOrderIfNotCompleted(user_id) {
 				delivery_driver: true,
 				driver: true,
 				user: true,
+				business: {
+					select: {
+						name: true,
+						email: true,
+						telephone: true,
+						documents: {
+							where: {
+								document_type: DOCUMENT_TYPE.LOGO
+							},
+							include: {
+								files: true
+							}
+						}
+					}
+				}
 			}
 		});
 	} catch (e) {
