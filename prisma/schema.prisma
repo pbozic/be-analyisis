@@ -732,6 +732,8 @@ model categories {
   parent_categories_id  String? @db.Uuid
   parent_category     categories? @relation("sub_categories", fields: [parent_categories_id], references: [categories_id])
   sub_categories      categories[] @relation("sub_categories")
+  translatable_id     String @db.Uuid
+  translatable        translatable @relation(fields: [translatable_id], references: [translatable_id])
   words               words[]
   created_at          DateTime @default(now()) @db.Timestamptz(6)
   updated_at          DateTime @default(now()) @updatedAt @db.Timestamptz(6)
@@ -813,6 +815,8 @@ model words {
   translations Json?
   categories_id String @db.Uuid
   category    categories @relation(fields: [categories_id], references: [categories_id])
+  translatable_id String @db.Uuid
+  translatable    translatable @relation(fields: [translatable_id], references: [translatable_id])
   subscriptions word_buy[]
   created_at  DateTime @default(now()) @db.Timestamptz(6)
   updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(6)
@@ -893,6 +897,23 @@ model business_teams {
   business          business @relation("business_to_business_teams", fields: [business_id],references: [business_id])
 }
 
+model translatable {
+  translatable_id  String @id @default(uuid()) @db.Uuid
+  translations    translations[]
+  words           words[]
+  categories      categories[]
+}
+
+model translations {
+  translations_id  String @id @default(uuid()) @db.Uuid
+  translatable_id  String @db.Uuid
+  translatable    translatable @relation(fields: [translatable_id],references: [translatable_id])
+  language        String
+  translation     String
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+}
 
 enum PROMO_SERVICE_TYPES {
   TAXI

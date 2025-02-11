@@ -1,7 +1,10 @@
+const { language } = require('googleapis/build/src/apis/language');
 const prisma = require('../prisma');
 
 async function createWord(args) {
-    return await prisma.words.create({
+    let translations = args.translations;
+    let translatable = await prisma.translatable.create();
+    let word =  await prisma.words.create({
         data: {
             word: args.word,
             popularity: 0,
@@ -9,10 +12,29 @@ async function createWord(args) {
                 connect: {
                     category_id: args.category
                 }
+            },
+            translatable: {
+                connect: {
+                    translatable_id: translatable.translatable_id
+                }
             }
 
         },
     });
+    for (let translation of translations) {
+        await prisma.translations.create({
+            data: {
+                translation: translation.translation,
+                language: translation.language,
+                translatable: {
+                    connect: {
+                        translatable_id: translatable.translatable_id
+                    }
+                }
+            }
+        });
+    }
+    return word;
 }
 
 async function updateWord(id, args) {

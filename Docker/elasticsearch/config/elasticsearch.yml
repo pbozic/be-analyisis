@@ -1,0 +1,41 @@
+## Default Elasticsearch configuration from elasticsearch-docker.
+## from https://github.com/elastic/elasticsearch-docker/blob/master/build/elasticsearch/elasticsearch.yml
+#
+
+#cluster.name: "docker-cluster"
+cluster.name: "local-navibro"
+node.name: "local-navibro"
+
+# Set the bind address to a specific IP (IPv4 or IPv6):
+# _local_ Any loopback addresses on the system, for example 127.0.0.1
+# _site_ Any site-local addresses on the system, for example 192.168.0.1
+# _global_ Any globally-scoped addresses on the system, for example 8.8.8.8
+network.host: _site_
+
+#
+# Set a custom port for HTTP:
+#
+http.port: 9200
+transport.tcp.port: 9300
+
+# minimum_master_nodes need to be explicitly set when bound on a public IP
+# set to 1 to allow single node clusters
+# Details: https://github.com/elastic/elasticsearch/pull/17288
+# discovery.zen.minimum_master_nodes: 1
+
+## Use single node discovery in order to disable production mode and avoid bootstrap checks
+## see https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
+#
+discovery.type: single-node
+
+## Logs
+## Bootstrap
+bootstrap.memory_lock: true
+
+## X-Pack settings
+## see https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-xpack.html
+#
+xpack.license.self_generated.type: trial
+
+#xpack.security.enabled: false
+#xpack.security.enrollment.enabled: false
