@@ -36,9 +36,19 @@ async function deleteCategory(req, res) {
     }
 }
 
+async function getCategoryById(req, res) {
+    try {
+        const category = await CategoriesDao.getCategoryById(req.params.id);
+        res.status(200).json(category);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
 module.exports = {
     getCategories,
     createCategory,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    getCategoryById
 };
