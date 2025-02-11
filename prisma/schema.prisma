@@ -726,7 +726,6 @@ model categories {
   categories_id         String  @id @default(uuid()) @db.Uuid
   name                String
   description         String?
-  translations        Json?
   menu_categories     menu_categories_categories[]
   promo_ads_category  promo_ads_category[]
   parent_categories_id  String? @db.Uuid
@@ -812,7 +811,6 @@ model words {
   word_id     String  @id @default(uuid()) @db.Uuid
   word        String
   popularity  Int
-  translations Json?
   categories_id String @db.Uuid
   category    categories @relation(fields: [categories_id], references: [categories_id])
   translatable_id String @db.Uuid

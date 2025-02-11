@@ -135,12 +135,12 @@ async function createPromoBanner(args) {
             text: args.text,
             type: args.type,                  
             size: args.size,
-            promo_ads_id: args.promo_ads_id ? {
+            promo_ads: args.promo_ads_id ? {
                 connect: {
                     promo_ads_id: args.promo_ads_id
                 }
             } : null,
-            promo_sections_id: args.promo_sections_id ? {
+            promo_sections: args.promo_sections_id ? {
                 connect: {
                     promo_sections_id: args.promo_sections_id
                 }

@@ -7,7 +7,9 @@
 		"dev": "npx prisma db push && npx prisma generate && nodemon ./app.js",
 		"server": "nodemon ./app.js",
 		"prisma": "npx prisma db push && npx prisma generate",
-		"stripe": "stripe listen --skip-verify --forward-to localhost:3001/api/stripe/webhook"
+		"stripe": "stripe listen --skip-verify --forward-to localhost:3001/api/stripe/webhook",
+		"docker:up": "docker-compose --env-file .env -f ./Docker/docker-compose.yml up -d",
+		"docker:down": "docker-compose --env-file .env -f ./Docker/docker-compose.yml down"
 	},
 	"prisma": {
 		"schema": "./prisma/schema.prisma",
