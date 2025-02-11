@@ -31,6 +31,7 @@ const flagRoutes = require("./api/flags");
 const categoriesRoutes = require("./api/categories");
 const promoRoutes = require("./api/promo");
 const googleMaps = require("./api/googleMaps");
+const orderLobbyRoutes = require("./api/orderLobby");
 const {sendNotificationToUser} = require("../lib/oneSignal");
 const { auth } = require("googleapis/build/src/apis/drive");
 
