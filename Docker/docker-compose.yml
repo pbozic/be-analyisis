@@ -8,7 +8,7 @@ volumes:
     driver: local
 
 services:
-  navibro_elasticsearch:
+  klikni_elasticsearch:
     build:
       context: elasticsearch/
       args:
