@@ -40,7 +40,7 @@ async function getCategoryById(id) {
     return category;
 }
 
-async function createCategory(categoryData,translations,subcategories) {
+async function createCategory(categoryData,translations,subcategories, parent_categories_id) {
     let translatable = await prisma.translatable.create({data:{}});
     let category = await prisma.categories.create(
         {
@@ -54,11 +54,11 @@ async function createCategory(categoryData,translations,subcategories) {
                 sub_categories: {
                     connect: subcategories ? subcategories.map(subcat_id => ({ categories_id: subcat_id })) : []
                 },
-                ...(categoryData?.parent_categories_id
+                ...(parent_categories_id
                         ? {
                             parent_category: {
                                 connect: {
-                                    categories_id: categoryData?.parent_categories_id
+                                    categories_id: parent_categories_id
                                 }
                             }
                         } : {}
@@ -83,7 +83,7 @@ async function createCategory(categoryData,translations,subcategories) {
     return category;
 }
 
-async function updateCategory(id, categoryData, translations, subcategories) {
+async function updateCategory(id, categoryData, translations, subcategories,parent_categories_id) {
     return await prisma.$transaction(async (prisma) => {
         // Fetch the current translatable_id for this category
         const category = await prisma.categories.findUnique({
@@ -108,9 +108,9 @@ async function updateCategory(id, categoryData, translations, subcategories) {
         const updateData = { ...categoryData };
 
         // Handle parent category connection if provided
-        if (categoryData.parent_categories_id) {
+        if (parent_categories_id) {
             updateData.parent_category = {
-                connect: { categories_id: categoryData.parent_categories_id },
+                connect: { categories_id: parent_categories_id },
             };
         } else {
             updateData.parent_category = {
