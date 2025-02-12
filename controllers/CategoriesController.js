@@ -11,7 +11,8 @@ async function getCategories(req, res) {
 
 async function createCategory(req, res) {
     try {
-        const category = await CategoriesDao.createCategory(req.body);
+        const {categoryData,translations,subcategories} = req.body
+        const category = await CategoriesDao.createCategory(categoryData,translations,subcategories);
         res.status(201).json(category);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -20,7 +21,8 @@ async function createCategory(req, res) {
 
 async function updateCategory(req, res) {
     try {
-        const category = await CategoriesDao.updateCategory(req.params.id, req.body);
+        const {categoryData,translations,subcategories} = req.body
+        const category = await CategoriesDao.updateCategory(req.params.id, categoryData,translations,subcategories);
         res.status(200).json(category);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -30,7 +32,7 @@ async function updateCategory(req, res) {
 async function deleteCategory(req, res) {
     try {
         await CategoriesDao.deleteCategory(req.params.id);
-        res.status(204).end();
+        res.status(204).send();
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

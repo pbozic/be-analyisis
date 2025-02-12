@@ -40,24 +40,40 @@ async function getCategoryById(id) {
     return category;
 }
 
-async function createCategory(data) {
-    let translatable = await prisma.translatable.create();
-    let translations = data.translations;
-    let category = await prisma.categories.create({ 
-        ...data,
-        translatable: {
-            connect: { 
-                translatable_id: translatable.translatable_id
+async function createCategory(categoryData,translations,subcategories) {
+    let translatable = await prisma.translatable.create({data:{}});
+    let category = await prisma.categories.create(
+        {
+            data: {
+                ...categoryData,
+                translatable: {
+                    connect: {
+                        translatable_id: translatable.translatable_id
+                    }
+                },
+                sub_categories: {
+                    connect: subcategories ? subcategories.map(subcat_id => ({ categories_id: subcat_id })) : []
+                },
+                ...(categoryData?.parent_category_id
+                        ? {
+                            parent_category: {
+                                connect: {
+                                    categories_id: categoryData?.parent_category
+                                }
+                            }
+                        } : {}
+                )
             }
-        }
-    });
+        });
     let translats = [];
     for (let translation of translations) {
         let trans = await prisma.translations.create({
-            ...translation,
-            translatable: {
-                connect: {
-                    translatable_id: translatable.translatable_id
+            data: {
+                ...translation,
+                translatable: {
+                    connect: {
+                        translatable_id: translatable.translatable_id
+                    }
                 }
             }
         });
@@ -67,16 +83,52 @@ async function createCategory(data) {
     return category;
 }
 
-async function updateCategory(id, data) {
-    let translations = data.translations;
-    for (let translation of translations) 
-        await prisma.translations.update({ where: { translations_id: translation.translations_id }, data: {
-            translation: translation.translation,
-        } });
+async function updateCategory(id, categoryData, translations, subcategories) {
+    return await prisma.$transaction(async (prisma) => {
+        // Fetch the current translatable_id for this category
+        const category = await prisma.categories.findUnique({
+            where: { categories_id: id },
+            select: { translatable_id: true },
+        });
+        if (!category) throw new Error("Category not found");
 
+        for (let translation of translations) {
+            await prisma.translations.update({
+                where: {
+                    translatable_id: category.translatable_id,
+                    language: translation.language,
+                },
+                data: { translation: translation.translation },
+            });
+        }
 
-    return await prisma.categories.update({ where: { categories_id: id }, data });
+        // Prepare category update data
+        const updateData = { ...categoryData };
+
+        // Handle parent category connection if provided
+        if (categoryData.parent_categories_id) {
+            updateData.parent_category = {
+                connect: { categories_id: categoryData.parent_categories_id },
+            };
+        } else {
+            updateData.parent_category = {
+                disconnect: true, // Remove existing parent if no new one is provided
+            };
+        }
+
+        if (subcategories) {
+            updateData.sub_categories = {
+                set: subcategories.map((subId) => ({ categories_id: subId })), // Replace subcategories
+            };
+        }
+
+        return await prisma.categories.update({
+            where: { categories_id: id },
+            data: updateData,
+        });
+    });
 }
+
 
 async function deleteCategory(id) {
     let category = await prisma.categories.findUnique({ where: { categories_id: id } });
