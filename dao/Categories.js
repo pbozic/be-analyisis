@@ -42,26 +42,29 @@ async function getCategoryById(id) {
 
 async function createCategory(categoryData,translations,subcategories) {
     let translatable = await prisma.translatable.create({data:{}});
-    let category = await prisma.categories.create({
-        ...categoryData,
-        translatable: {
-            connect: { 
-                translatable_id: translatable.translatable_id
-            }
-        },
-        sub_categories: {
-            set: subcategories ? subcategories.map(subcat_id=>({categories_id:subcat_id})) : []
-        },
-        ...(categoryData?.parent_category_id
-            ? {
-                parent_category: {
+    let category = await prisma.categories.create(
+        {
+            data: {
+                ...categoryData,
+                translatable: {
                     connect: {
-                        categories_id: categoryData?.parent_category
+                        translatable_id: translatable.translatable_id
                     }
-                }
-            } : {}
-        )
-    });
+                },
+                sub_categories: {
+                    set: subcategories ? subcategories.map(subcat_id => ({ categories_id: subcat_id })) : []
+                },
+                ...(categoryData?.parent_category_id
+                        ? {
+                            parent_category: {
+                                connect: {
+                                    categories_id: categoryData?.parent_category
+                                }
+                            }
+                        } : {}
+                )
+            }
+        });
     let translats = [];
     for (let translation of translations) {
         let trans = await prisma.translations.create({
