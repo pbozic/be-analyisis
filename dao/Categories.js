@@ -41,7 +41,7 @@ async function getCategoryById(id) {
 }
 
 async function createCategory(categoryData,translations,subcategories) {
-    let translatable = await prisma.translatable.create();
+    let translatable = await prisma.translatable.create({data:{}});
     let category = await prisma.categories.create({
         ...categoryData,
         translatable: {
