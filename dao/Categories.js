@@ -95,8 +95,10 @@ async function updateCategory(id, categoryData, translations, subcategories) {
         for (let translation of translations) {
             await prisma.translations.update({
                 where: {
-                    translatable_id: category.translatable_id,
-                    language: translation.language,
+                    translationPair:{
+                        translatable_id: category.translatable_id,
+                        language: translation.language,
+                    }
                 },
                 data: { translation: translation.translation },
             });
