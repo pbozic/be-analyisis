@@ -52,7 +52,7 @@ async function createCategory(categoryData,translations,subcategories) {
                     }
                 },
                 sub_categories: {
-                    set: subcategories ? subcategories.map(subcat_id => ({ categories_id: subcat_id })) : []
+                    connect: subcategories ? subcategories.map(subcat_id => ({ categories_id: subcat_id })) : []
                 },
                 ...(categoryData?.parent_category_id
                         ? {
