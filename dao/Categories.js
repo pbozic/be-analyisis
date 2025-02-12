@@ -54,11 +54,11 @@ async function createCategory(categoryData,translations,subcategories) {
                 sub_categories: {
                     connect: subcategories ? subcategories.map(subcat_id => ({ categories_id: subcat_id })) : []
                 },
-                ...(categoryData?.parent_category_id
+                ...(categoryData?.parent_categories_id
                         ? {
                             parent_category: {
                                 connect: {
-                                    categories_id: categoryData?.parent_category
+                                    categories_id: categoryData?.parent_categories_id
                                 }
                             }
                         } : {}
