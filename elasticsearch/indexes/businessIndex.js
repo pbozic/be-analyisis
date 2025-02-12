@@ -1,0 +1,199 @@
+const esClient = require("../client");
+const prisma = require("../../prisma/prisma");
+
+async function createBusinessIndex() {
+    try {
+        const indexExists = await esClient.indices.exists({ index: 'business_index' });
+
+        if (indexExists) {
+            console.log("⚠️ Index 'business_index' already exists. Deleting...");
+            await esClient.indices.delete({ index: 'business_index' });
+        }
+
+        console.log("🚀 Creating business_index with optimized mappings...");
+
+        await esClient.indices.create({
+            index: 'business_index',
+            body: {
+                settings: {
+                    analysis: {
+                        analyzer: {
+                            custom_text_analyzer: {
+                                type: "standard",
+                                stopwords: "_english_"
+                            }
+                        }
+                    }
+                },
+                mappings: {
+                    properties: {
+                        business_id: { type: "keyword" },
+                        name: { type: "text", analyzer: "custom_text_analyzer" },
+                        description: { type: "text", analyzer: "custom_text_analyzer" },
+                        location: { type: "geo_point" }, // Allows geo-based queries
+                        popular: { type: "boolean" },
+                        new: { type: "boolean" },
+                        menus: {
+                            type: "nested",
+                            properties: {
+                                menu_category_name: {
+                                    type: "text",
+                                    analyzer: "custom_text_analyzer"
+                                },
+                                translations: {
+                                    type: "text",
+                                    analyzer: "custom_text_analyzer" // 🔥 Add translation support
+                                },
+                                menu_items: {
+                                    type: "nested",
+                                    properties: {
+                                        menu_item_id: { type: "keyword" },
+                                        name: { type: "text", analyzer: "custom_text_analyzer" },
+                                        translations: { type: "text", analyzer: "custom_text_analyzer" }, // 🔥 Handle translations
+                                        description: { type: "text", analyzer: "custom_text_analyzer" }
+                                    }
+                                }
+                            }
+                        },
+                        word_buys: {
+                            type: "nested",
+                            properties: {
+                                word_id: { type: "keyword" },
+                                word: { type: "text", analyzer: "custom_text_analyzer" },
+                                translations: { type: "text", analyzer: "custom_text_analyzer" },
+                                price: { type: "double" },
+                                expires_at: { type: "date" }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        console.log("✅ business_index created successfully.");
+    } catch (error) {
+        console.error("❌ Error creating business_index:", error);
+    }
+}
+
+async function indexBusinesses(business_id = null) {
+    try {
+        await createBusinessIndex();
+        console.log("🚀 Fetching businesses from database...");
+        
+        const whereClause = { type: "MERCHANT" };
+        if (business_id) {
+            whereClause.business_id = business_id;
+        }
+
+        const businesses = await prisma.business.findMany({
+            where: whereClause,
+            include: {
+                menus: {
+                    include: {
+                        categories: {
+                            include: {
+                                menu_items: true,
+                                menu_categories_catgeories: {
+                                    include: {
+                                        category: {
+                                            include: {
+                                                translatable: {
+                                                    include: {
+                                                        translations: true
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        console.log(`✅ Found ${businesses.length} businesses. Preparing data for indexing...`);
+
+        const bulkOps = [];
+
+        for (const business of businesses) {
+            console.log(JSON.parse(JSON.stringify(business)))
+            if (!business.menus || business.menus.length === 0) {
+                console.warn(`⚠️ Skipping ${business.name} (No menus found)`);
+                continue;
+            }
+
+            const doc = {
+                business_id: business.business_id,
+                name: business.name,
+                description: business.description,
+                popular: business.popular,
+                new: business.new,
+                menus: business.menus.map(menu => ({
+                    menu_category_name: menu.categories.flatMap(cat =>
+                        Object.values(cat.names).filter(value => value !== "")
+                    ),
+                    translations: menu.categories.flatMap(cat =>
+                        cat.menu_categories_catgeories.flatMap(rel =>
+                            rel.category.translatable?.translations.map(t => t.translation) || []
+                        )
+                    ),
+                    menu_items: menu.categories.flatMap(cat =>
+                        cat.menu_items.map(item => ({
+                            menu_item_id: item.menu_item_id,
+                            name: Object.values(item.names).filter(value => value !== ""),
+                            translations: item.menu_category?.menu_categories_catgeories.flatMap(rel =>
+                                rel.category.translatable?.translations.map(t => t.translation) || []
+                            ),
+                            description: Object.values(item.description).filter(value => value !== "")
+                        }))
+                    )
+                }))
+            };
+            
+            
+            console.log(JSON.stringify(doc))
+            
+            bulkOps.push(
+                { index: { _index: 'business_index', _id: business.business_id } },
+                doc
+            );
+        }
+        
+        if (bulkOps.length > 0) {
+            console.log(`📤 Sending ${bulkOps.length / 2} businesses to Elasticsearch...`);
+            const bulkResponse = await esClient.bulk({ refresh: true, body: bulkOps });
+
+            if (bulkResponse.errors) {
+                console.error("❌ Some bulk operations failed!");
+                const failedOps = [];
+
+                bulkResponse.items.forEach((item, index) => {
+                    const operation = Object.keys(item)[0]; // "index" or "update"
+                    const result = item[operation];
+                    if (result.error) {
+                        console.error(`🚨 Error in ${operation} at index ${index}:`, result.error);
+                        failedOps.push(bulkOps[index * 2]); // Retry failed operations
+                        failedOps.push(bulkOps[index * 2 + 1]);
+                    }
+                });
+
+                if (failedOps.length > 0) {
+                    console.log(`🔁 Retrying ${failedOps.length / 2} failed documents...`);
+                    await esClient.bulk({ refresh: true, body: failedOps });
+                }
+            } else {
+                console.log(`✅ Successfully indexed ${bulkOps.length / 2} businesses!`);
+            }
+        } else {
+            console.log("⚠️ No businesses to index.");
+        }
+    } catch (error) {
+        console.error("❌ Error indexing businesses:", error);
+    }
+}
+
+module.exports = indexBusinesses;
+
