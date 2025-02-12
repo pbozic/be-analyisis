@@ -13,7 +13,7 @@ async function lobbySocketOrNotification(user_id, event, order_lobby) {
 	if (userSocket) {
 		io.to(userSocket).emit(event, order_lobby);
 	} else {
-		const user = await UserDao.getUserById(user_id);
+		const user = await UserDao.getUserById(user_id,{select:{language:true}});
 		if (user) {
 			const l10nNotification = getLocalisedTexts("USER_NOTIFICATIONS", user);
 			const l10nHeading = getLocalisedTexts("HEADING", user);
@@ -63,7 +63,7 @@ async function deleteUserFromLobby(order_lobby_users_id, order_lobby, event="rem
 	const deleted_ol_user = await OrderLobbyUserDao.deleteOrderLobbyUserWithItems(order_lobby_users_id)
 	if(deleted_ol_user){
 		// emit to socket or send notification
-		await lobbySocketOrNotification(ol_user.user_id,event,order_lobby)
+		await lobbySocketOrNotification(deleted_ol_user.user_id,event,order_lobby)
 	}
 	return deleted_ol_user
 }
@@ -162,8 +162,8 @@ async function submitLobby(req, res) {
 		// Update the lobby status
 		await OrderLobbyDao.setOrderLobbyActive(order_lobbies_id,false)
 
-		for(const ol_user of order_lobby){
-			await lobbySocketOrNotification(ol_user.user_id,"lobby_completed" ,order_lobby)
+		for(const ol_user of order_lobby.order_lobby_users){
+			lobbySocketOrNotification(ol_user.user_id,"lobby_completed" ,order_lobby)
 		}
 		return res.status(201).json(order)
 	} catch (error) {
