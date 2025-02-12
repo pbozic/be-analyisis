@@ -68,10 +68,12 @@ async function createCategory(categoryData,translations,subcategories) {
     let translats = [];
     for (let translation of translations) {
         let trans = await prisma.translations.create({
-            ...translation,
-            translatable: {
-                connect: {
-                    translatable_id: translatable.translatable_id
+            data: {
+                ...translation,
+                translatable: {
+                    connect: {
+                        translatable_id: translatable.translatable_id
+                    }
                 }
             }
         });
