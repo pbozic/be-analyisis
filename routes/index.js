@@ -17,25 +17,7 @@ router.get('/emails/:template', (req, res) => {
         }
     )
 })
-router.get('/file/:file_name', (req, res) => {
-    fs.readFile('public/' + req.params.file_name, (err, data) => {
-        if (err) {
-            res.status(404).send("File not found")
-        } else {
-            res.send(data)
-        }
-    })
-});
-router.post('/file/:file_name', (req, res) => {
-    let json = req.body.json;  
-    fs.writeFile('public/' + req.params.file_name, json, (err) => {
-        if (err) {
-            res.status(500).send("Error writing file")
-        } else {
-            res.send("File written")
-        }
-    })
-});
+
 router.get('/reset-password/:token', AuthController.passwordResetForm);
 router.post('/reset-password/:token', joi(resetPasswordSchema), AuthController.passwordReset);
 router.get('/test/sms', async (req, res) => { 

@@ -190,5 +190,23 @@ router.get("/purchase-status/:sessionId", async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-
+router.get('/file/:file_name', (req, res) => {
+    fs.readFile('public/' + req.params.file_name, (err, data) => {
+        if (err) {
+            res.status(404).send("File not found")
+        } else {
+            res.send(data)
+        }
+    })
+});
+router.post('/file/:file_name', (req, res) => {
+    let json = req.body.json;  
+    fs.writeFile('public/' + req.params.file_name, json, (err) => {
+        if (err) {
+            res.status(500).send("Error writing file")
+        } else {
+            res.send("File written")
+        }
+    })
+});
 module.exports = router;

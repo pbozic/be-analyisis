@@ -75,7 +75,7 @@
 	"author": "Tadej Hiti",
 	"license": "ISC",
 	"devDependencies": {
-		"@faker-js/faker": "^8.4.1",
+		"@faker-js/faker": "^9.5.0",
 		"prettier-plugin-prisma": "^5.0.0",
 		"prisma": "^5.16.1"
 	}
