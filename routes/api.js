@@ -195,7 +195,7 @@ router.get('/file/:file_name', (req, res) => {
         if (err) {
             res.status(404).send("File not found")
         } else {
-            res.send(data)
+            res.json(JSON.parse(data))
         }
     })
 });
