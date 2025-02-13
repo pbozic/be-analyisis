@@ -25,6 +25,7 @@
 		"@onesignal/node-onesignal": "^5.0.0-alpha-01",
 		"@prisma/client": "^5.14.0",
 		"@prisma/sdk": "^3.15.2",
+		"arml": "^0.0.12",
 		"aws-sdk": "^2.1628.0",
 		"axios": "^1.7.2",
 		"bcrypt": "^5.0.1",

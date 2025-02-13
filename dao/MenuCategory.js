@@ -12,6 +12,7 @@ const createMenuCategory = async (menuId, categoryData) => {
 			...categoryData
 		}
 	});
+	
 	let errors = [];
 	for (let cat of categories) {
 		let category =	await prisma.categories.findFirst({
