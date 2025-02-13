@@ -201,7 +201,7 @@ router.get('/file/:file_name', (req, res) => {
 });
 router.post('/file/:file_name', (req, res) => {
     let json = req.body.json;  
-    fs.writeFile('public/' + req.params.file_name, json, (err) => {
+    fs.writeFile('public/' + req.params.file_name, JSON.stringify(json), (err) => {
         if (err) {
             res.status(500).send("Error writing file")
         } else {
