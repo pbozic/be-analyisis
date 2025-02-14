@@ -6,6 +6,7 @@ async function getCategories(req, res) {
         const categories = await CategoriesDao.getCategories();
         res.status(200).json(categories);
     } catch (error) {
+        console.error(error)
         res.status(500).json({ error: error.message });
     }
 }
@@ -21,6 +22,7 @@ async function createCategory(req, res) {
         }
         res.status(201).json(category);
     } catch (error) {
+        console.error(error)
         res.status(500).json({ error: error.message });
     }
 }
@@ -35,6 +37,7 @@ async function updateCategory(req, res) {
         }
         res.status(200).json(category);
     } catch (error) {
+        console.error(error)
         res.status(500).json({ error: error.message });
     }
 }
@@ -44,6 +47,7 @@ async function deleteCategory(req, res) {
         await CategoriesDao.deleteCategory(req.params.id);
         res.status(204).send();
     } catch (error) {
+        console.error(error)
         res.status(500).json({ error: error.message });
     }
 }
@@ -53,6 +57,7 @@ async function getCategoryById(req, res) {
         const category = await CategoriesDao.getCategoryById(req.params.id);
         res.status(200).json(category);
     } catch (error) {
+        console.error(error)
         res.status(500).json({ error: error.message });
     }
 }
