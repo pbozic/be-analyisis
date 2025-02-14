@@ -1,122 +1,64 @@
 const S3Helper = require('../../lib/s3');
-const relationMap = require('../../relationMap.json');
-function shouldGenerateS3Links(args, model) {
+function shouldGenerateS3Links(args) {
     // Check if args include nested structures with files: true
-    let relationsToCheck = [];
-    for (let rel in relationMap[model]) {
-        if (relationMap[model][rel] === "files") {
-            relationsToCheck.push(rel);
-        }
-    }
     for (let key in args) {
-        console.log("key", key);
-        if (relationMap[model][key] === "files")  return true;
         if (args[key] && typeof args[key] === 'object') {
-            const include = args[key]?.include; // Ensure 'include' is defined
-            if (include) {
-                console.log(" relationsToCheck.some(rel => rel in include)",  relationsToCheck.some(rel => rel in include));
-            }
-            
-            if (include && (include.files || relationsToCheck.some(rel => rel in include))) {
+            if (args[key].include?.files) {
                 return true;
-            } else if (shouldGenerateS3Links(args[key], model)) {
+            } else if (shouldGenerateS3Links(args[key])) {
                 return true;
             }
         }
     }
-    
     return false;
 }
 
-async function generateS3LinksRecursively(args, result, model, operation) {
-    if (!relationMap[model]) {
-        console.warn(`⚠ Warning: Model '${model}' not found in relationMap.`);
-        return result;
-    }
-
-    // Extract relations that reference "files"
-    const relationsToCheck = Object.keys(relationMap[model]).filter(
-        (rel) => relationMap[model][rel] === "files"
-    );
-
-    // Check if we should generate S3 links
-    const shouldGenerateLinks =
-        shouldGenerateS3Links(args, model)
-    if (shouldGenerateLinks) {
-       
+async function generateS3LinksRecursively(args, result) {
+    // Check if should generate S3 links based on args
+    if (shouldGenerateS3Links(args) || (result && Array.isArray(result) && result.some(doc => doc.files))) {
+        // If result is an array, process each document
         if (Array.isArray(result)) {
-            for (let res of result) {
-                if (res) {
-                    console.log("res", res);
-                    if (res.files) {
-                        res.files = await Promise.all(res.files.map(async (file) => {
-                            return {
-                                ...file,
-                                url: await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public),
-                            };
-                        }));
-                    }
-
-                    if (relationsToCheck.some(rel => Object.keys(res).includes(rel))) {
-                        for (let rel of relationsToCheck) {
-                            if (res[rel] && Array.isArray(res[rel])) {
-                                for (let f of res[rel]) {
-                                    f.url = await S3Helper.GetObject(S3Helper.getFileKey(f.file_id, f.mime_type), f.public);
-                                }
-                            } else if (res[rel]) {
-                                res[rel].url = await S3Helper.GetObject(S3Helper.getFileKey(res[rel].file_id, res[rel].mime_type), res[rel].public);
-                            }
-                        }
-                    }
-                   
+            for (let document of result) {
+                if (document && document.files) {
+                    document.files = await Promise.all(document.files.map(async (file) => {
+                        return {
+                            ...file,
+                            url: await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public),
+                        };
+                    }));
                 }
             }
-        } else if (result) {
-            console.log("result", result);
-            if (result.files) {
-                result.files = await Promise.all(result.files.map(async (file) => {
-                    return {
-                        ...file,
-                        url: await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public),
-                    };
-                }));
-            }
-            if (result && relationsToCheck.some(rel => Object.keys(result).includes(rel))) {
-                for (let rel of relationsToCheck) {
-                    if (result[rel] && Array.isArray(result[rel])) {
-                        for (let f of result[rel]) {
-                            f.url = await S3Helper.GetObject(S3Helper.getFileKey(f.file_id, f.mime_type), f.public);
-                        }
-                    } else if (result[rel]) {
-                        result[rel].url = await S3Helper.GetObject(S3Helper.getFileKey(result[rel].file_id, result[rel].mime_type), result[rel].public);
-                    }
-                }
-
-            }
+        } else if (result && result.files) {
+            // If result is a single document
+            result.files = await Promise.all(result.files.map(async (file) => {
+                return {
+                    ...file,
+                    url: await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public),
+                };
+            }));
         }
-        
     }
-    // Recursively process nested includes in args
+
+    // Recursively traverse nested includes in args
     if (args && typeof args === 'object') {
         for (let key in args) {
             if (args[key] && typeof args[key] === 'object') {
-                await generateS3LinksRecursively(args[key], null, model, operation);
+                await generateS3LinksRecursively(args[key], null); // No need to process results in args
             }
         }
     }
 
-    // Recursively process nested includes in result
+    // Recursively traverse nested includes in result
     if (result && typeof result === 'object') {
         for (let key in result) {
             if (result[key] && typeof result[key] === 'object') {
-                await generateS3LinksRecursively(null, result[key], model, operation);
+                await generateS3LinksRecursively(null, result[key]); // No need to process args in result
             }
         }
     }
 
     return result;
 }
-
 
 module.exports = {
     generateS3LinksRecursively
