@@ -1,18 +1,20 @@
 const { language } = require('googleapis/build/src/apis/language');
 const prisma = require('../prisma/prisma');
 
-async function createWord(args) {
-    let translations = args.translations;
+async function createWord(word, category_id, translations) {
+    // Create a new translatable record
     let translatable = await prisma.translatable.create({
         data: {}
     });
-    let word =  await prisma.words.create({
+
+    // Create the word with its relationships
+    let new_word = await prisma.words.create({
         data: {
-            word: args.word,
+            word: word,
             popularity: 0,
             category: {
                 connect: {
-                    category_id: args.category
+                    categories_id: category_id
                 }
             },
             translatable: {
@@ -20,11 +22,17 @@ async function createWord(args) {
                     translatable_id: translatable.translatable_id
                 }
             }
-
         },
+        include: {
+            translatable: true,
+            category: true
+        }
     });
+
+    // Create translations
+    let translats = [];
     for (let translation of translations) {
-        await prisma.translations.create({
+        let trans = await prisma.translations.create({
             data: {
                 translation: translation.translation,
                 language: translation.language,
@@ -35,17 +43,78 @@ async function createWord(args) {
                 }
             }
         });
+        translats.push(trans);
     }
-    return word;
+
+    // Attach translations to the response
+    new_word.translations = translats;
+    return new_word;
 }
 
-async function updateWord(id, args) {
-    return await prisma.words.update({
+async function updateWord(id, word, categories_id, translations) {
+    // First get the existing word to access its translatable_id
+    const existingWord = await prisma.words.findUnique({
         where: {
             word_id: id
         },
-        data: args
+        include: {
+            translatable: true
+        }
     });
+
+    if (!existingWord) {
+        throw new Error('Word not found');
+    }
+
+    // Update the word
+    const updatedWord = await prisma.words.update({
+        where: {
+            word_id: id
+        },
+        data: {
+            word,
+            ...(categories_id ? {
+                category: {
+                    connect: {
+                        categories_id: categories_id
+                    }
+                }
+            } : {})
+        },
+        include: {
+            category: true,
+            translatable: true
+        }
+    });
+
+    if (translations && translations.length > 0) {
+        // Delete existing translations
+        await prisma.translations.deleteMany({
+            where: {
+                translatable_id: existingWord.translatable_id
+            }
+        });
+
+        // Create new translations
+        let translats = [];
+        for (let translation of translations) {
+            let trans = await prisma.translations.create({
+                data: {
+                    translation: translation.translation,
+                    language: translation.language,
+                    translatable: {
+                        connect: {
+                            translatable_id: existingWord.translatable_id
+                        }
+                    }
+                }
+            });
+            translats.push(trans);
+        }
+        updatedWord.translations = translats;
+    }
+
+    return updatedWord;
 }
 
 async function deleteWord(id) {

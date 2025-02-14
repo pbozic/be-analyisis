@@ -3,7 +3,8 @@ const WordDao = require('../dao/Word');
 
 async function createWord(req, res) {
     try {
-        const result = await WordDao.createWord(req.body);
+        const {wordData,translations} = req.body
+        const result = await WordDao.createWord(wordData.word,wordData.categories_id,translations);
         res.status(201).json(result);
     } catch (error) {
         console.error('Error creating word:', error);
@@ -14,7 +15,8 @@ async function createWord(req, res) {
 async function updateWord(req, res) {
     try {
         const { id } = req.params;
-        const result = await WordDao.updateWord(id, req.body);
+        const {wordData,translations} = req.body
+        const result = await WordDao.updateWord(id, wordData.word,wordData.categories_id,translations);
         if (!result) {
             return res.status(404).json({ error: 'Word not found' });
         }
