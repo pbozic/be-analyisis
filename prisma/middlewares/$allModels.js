@@ -1,11 +1,11 @@
 const S3Helper = require('../../lib/s3');
-function shouldGenerateS3Links(args, result) {
+const relationMap = require('../../relationMap.json');
+function shouldGenerateS3Links(args, model) {
     // Check if args include nested structures with files: true
-    console.log(args);
-    console.log(result);
+    let isFiles = relationMap[model] === "files"; //relationMap[model] = icon
     for (let key in args) {
         if (args[key] && typeof args[key] === 'object') {
-            if (args[key].include?.files || args[key].include?.file) {
+            if (args[key].include?.files || args[key].include?.[relationMap[model]]) {
                 return true;
             } else if (shouldGenerateS3Links(args[key])) {
                 return true;
@@ -17,8 +17,7 @@ function shouldGenerateS3Links(args, result) {
 
 async function generateS3LinksRecursively(args, result, model, opeartion) {
     // Check if should generate S3 links based on args
-    if (model !== "categories") return
-    if (shouldGenerateS3Links(args, result) || (result && Array.isArray(result) && result.some(doc => doc.files))) {
+    if (shouldGenerateS3Links(args, model) || (result && Array.isArray(result) && result.some(doc => doc.files))) {
         // If result is an array, process each document
         if (Array.isArray(result)) {
             for (let document of result) {
