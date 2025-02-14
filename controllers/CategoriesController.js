@@ -33,7 +33,8 @@ async function updateCategory(req, res) {
         const {categoryData,translations,subcategories,parent_categories_id,iconFileData} = req.body
         const category = await CategoriesDao.updateCategory(req.params.id, categoryData,translations,subcategories,parent_categories_id,iconFileData);
         if(iconFileData){
-            await upsertFileOnS3Helper(user_id, category.icon, file_type, mime_type, iconFileData.base64)
+            const {file_type,mime_type, base64} = iconFileData
+            await upsertFileOnS3Helper(user_id, category.icon, file_type, mime_type, base64)
         }
         res.status(200).json(category);
     } catch (error) {
