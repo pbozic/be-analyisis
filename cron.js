@@ -7,23 +7,23 @@ const stripe = require("./lib/stripe");
 
 function startCronJobs() { 
     // Every minute
-    cron.schedule("* * * * *", TaxiHelpers.checkIfOrdersNeedSending);
-    cron.schedule("* * * * *", TaxiHelpers.searchAfter20Seconds);
-    cron.schedule("* * * * *", TaxiHelpers.searchAfter40Seconds);
-    cron.schedule("* * * * *", DeliveryHelpers.checkIfDeliveryOrdersNeedSending);
-    cron.schedule("* * * * *", DeliveryHelpers.checkIfRestaurantOrderIsPrepared);
-    cron.schedule("* * * * *", checkPingStatus);
-    cron.schedule("* * * * *", TaxiHelpers.revokeAcceptedOrdersFromDriverHandler);
-    cron.schedule("* * * * *", TaxiHelpers.scheduledOrdersNotificationsHandler);
-    cron.schedule("* * * * *", TaxiHelpers.closeScheduledOrders);
+    // cron.schedule("* * * * *", TaxiHelpers.checkIfOrdersNeedSending);
+    // cron.schedule("* * * * *", TaxiHelpers.searchAfter20Seconds);
+    // cron.schedule("* * * * *", TaxiHelpers.searchAfter40Seconds);
+    // cron.schedule("* * * * *", DeliveryHelpers.checkIfDeliveryOrdersNeedSending);
+    // cron.schedule("* * * * *", DeliveryHelpers.checkIfRestaurantOrderIsPrepared);
+    // cron.schedule("* * * * *", checkPingStatus);
+    // cron.schedule("* * * * *", TaxiHelpers.revokeAcceptedOrdersFromDriverHandler);
+    // cron.schedule("* * * * *", TaxiHelpers.scheduledOrdersNotificationsHandler);
+    // cron.schedule("* * * * *", TaxiHelpers.closeScheduledOrders);
 
-    // Every day at midnight - check for expired credits
-    cron.schedule("0 0 * * *", CashbackHelpers.handleCreditExpiration);
+    // // Every day at midnight - check for expired credits
+    // cron.schedule("0 0 * * *", CashbackHelpers.handleCreditExpiration);
 
-    // cron.schedule("0 10 * * *", CashbackHelpers.notifyUpcomingCreditExpirations);
+    // // cron.schedule("0 10 * * *", CashbackHelpers.notifyUpcomingCreditExpirations);
 
-    //Every 10 days
-    cron.schedule("0 0 */10 * *", stripe.payoutAvailableBalanceToBusinesses);
+    // //Every 10 days
+    // cron.schedule("0 0 */10 * *", stripe.payoutAvailableBalanceToBusinesses);
 
 }
 
