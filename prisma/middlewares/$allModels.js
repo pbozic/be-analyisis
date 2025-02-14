@@ -2,12 +2,21 @@ const S3Helper = require('../../lib/s3');
 const relationMap = require('../../relationMap.json');
 function shouldGenerateS3Links(args, model) {
     // Check if args include nested structures with files: true
-    let isFiles = relationMap[model] === "files"; //relationMap[model] = icon
+    let relationsToCheck = [];
+    for (let rel in relationMap[model]) {
+        if (relationMap[model][rel] === "files") {
+            relationsToCheck.push(rel);
+        }
+    }
+    if (model === "categories") {
+        console.log("args", args);
+        console.log("model map", relationMap[model]);
+    }
     for (let key in args) {
         if (args[key] && typeof args[key] === 'object') {
-            if (args[key].include?.files || args[key].include?.[relationMap[model]]) {
+            if (args[key].include?.files || relationsToCheck.some(rel => rel in args[key].include)) {
                 return true;
-            } else if (shouldGenerateS3Links(args[key])) {
+            } else if (shouldGenerateS3Links(args[key], model)) {
                 return true;
             }
         }
