@@ -1,5 +1,5 @@
 const { language } = require('googleapis/build/src/apis/language');
-const prisma = require('../prisma');
+const prisma = require('../prisma/prisma');
 
 async function createWord(args) {
     let translations = args.translations;
