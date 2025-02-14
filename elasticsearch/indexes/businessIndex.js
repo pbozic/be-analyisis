@@ -89,6 +89,8 @@ async function indexBusinesses(business_id = null) {
         const businesses = await prisma.business.findMany({
             where: whereClause,
             include: {
+                address: true,
+                delivery_address: true,
                 menus: {
                     include: {
                         categories: {
@@ -131,6 +133,7 @@ async function indexBusinesses(business_id = null) {
                 description: business.description,
                 popular: business.popular,
                 new: business.new,
+                location: business.delivery_address? { lat: parseFloat(business.delivery_address.latitude), lon: parseFloat(business.delivery_address.longitude) } : { lat: parseFloat(business.address.latitude), lon: parseFloat(usiness.address.longitude) },
                 menus: business.menus.map(menu => ({
                     menu_category_name: menu.categories.flatMap(cat =>
                         Object.values(cat.names).filter(value => value !== "")
