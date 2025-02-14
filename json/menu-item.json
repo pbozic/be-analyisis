@@ -1,0 +1,68 @@
+{
+    "category_id": "5c329ce2-4d1b-444b-961d-ff53c7889f35",
+    "data": {
+        "names": {
+            "si": "Burger 1",
+            "en": "Burger 1",
+            "it": "",
+            "ru": "",
+            "de": "",
+            "fr": "",
+            "es": "",
+            "bih": "",
+            "srb": "",
+            "cro": ""
+        },
+        "description": {
+            "si": "Bhrger 1",
+            "en": "",
+            "it": "",
+            "ru": "",
+            "de": "",
+            "fr": "",
+            "es": "",
+            "bih": "",
+            "srb": "",
+            "cro": ""
+        },
+        "price": 10,
+        "spicy_level": 1,
+        "unit_size": "1",
+        "sides": [
+            "51767622-09b9-42f3-a498-5cec609f313b"
+        ],
+        "extras": [
+            "d3ca5423-2ce9-4297-8640-c75632c8a809"
+        ],
+        "ingredients": [],
+        "availability": [
+            "MON",
+            "TUE",
+            "WED",
+            "THU",
+            "FRI",
+            "SAT",
+            "SUN"
+        ],
+        "allergens": [
+            "4",
+            "9"
+        ],
+        "business_id": "dc4282aa-75d6-4180-aa5d-1e122dbd3b34",
+        "discount": 0
+    },
+    "image": {
+        "documentData": {
+            "document_type": "MENU_ITEM_IMAGE"
+        },
+        "files": [
+            {
+                "url": "file:///data/user/0/host.exp.exponent/cache/DocumentPicker/ceba3413-2ebd-4936-930a-cf70ce0bf407.jpg",
+                "file_type": "IMAGE",
+                "mime_type": "image/jpeg",
+                "base64": ""
+            }
+        ]
+    },
+    "user_id": "91a4ac78-78f2-4bf7-9df8-3f45b4335de4"
+}

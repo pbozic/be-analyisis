@@ -34,7 +34,7 @@ const googleMaps = require("./api/googleMaps");
 const orderLobbyRoutes = require("./api/orderLobby");
 const {sendNotificationToUser} = require("../lib/oneSignal");
 const { auth } = require("googleapis/build/src/apis/drive");
-
+const fs = require('fs');
 router.use("/stripe", stripeRoutes);
 router.use("/admin", [authMiddleware, adminMiddleware], adminRoutes);
 router.use("/users", [authMiddleware], userRoutes);
@@ -190,5 +190,23 @@ router.get("/purchase-status/:sessionId", async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
-
+router.get('/file/:file_name', (req, res) => {
+    fs.readFile('public/' + req.params.file_name, (err, data) => {
+        if (err) {
+            res.status(404).send("File not found")
+        } else {
+            res.json(JSON.parse(data))
+        }
+    })
+});
+router.post('/file/:file_name', (req, res) => {
+    let json = req.body.json;  
+    fs.writeFile('public/' + req.params.file_name, JSON.stringify(json), (err) => {
+        if (err) {
+            res.status(500).send("Error writing file")
+        } else {
+            res.send("File written")
+        }
+    })
+});
 module.exports = router;

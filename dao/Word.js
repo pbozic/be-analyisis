@@ -3,7 +3,9 @@ const prisma = require('../prisma');
 
 async function createWord(args) {
     let translations = args.translations;
-    let translatable = await prisma.translatable.create();
+    let translatable = await prisma.translatable.create({
+        data: {}
+    });
     let word =  await prisma.words.create({
         data: {
             word: args.word,

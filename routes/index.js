@@ -5,6 +5,7 @@ const AuthController = require("../controllers/AuthController");
 const joi = require("../middleware/joi");
 const { resetPasswordSchema } = require("../joi/authSchemas");
 const { sendSMSVerification } = require('../lib/SMS');
+const fs = require('fs');
 router.get('/emails/:template', (req, res) => {
     res.render(
         'emails/' + req.params.template,
@@ -16,6 +17,7 @@ router.get('/emails/:template', (req, res) => {
         }
     )
 })
+
 router.get('/reset-password/:token', AuthController.passwordResetForm);
 router.post('/reset-password/:token', joi(resetPasswordSchema), AuthController.passwordReset);
 router.get('/test/sms', async (req, res) => { 

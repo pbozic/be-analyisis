@@ -25,6 +25,8 @@
 		"@onesignal/node-onesignal": "^5.0.0-alpha-01",
 		"@prisma/client": "^5.14.0",
 		"@prisma/sdk": "^3.15.2",
+		"@turf/turf": "^7.2.0",
+		"arml": "^0.0.12",
 		"aws-sdk": "^2.1628.0",
 		"axios": "^1.7.2",
 		"bcrypt": "^5.0.1",
@@ -74,7 +76,7 @@
 	"author": "Tadej Hiti",
 	"license": "ISC",
 	"devDependencies": {
-		"@faker-js/faker": "^8.4.1",
+		"@faker-js/faker": "^9.5.0",
 		"prettier-plugin-prisma": "^5.0.0",
 		"prisma": "^5.16.1"
 	}
