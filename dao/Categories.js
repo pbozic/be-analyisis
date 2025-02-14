@@ -84,11 +84,9 @@ async function createCategory(categoryData, translations, subcategories, parent_
                     ...(iconFileData ? {
                         icon: {
                             create: {
-                                data: {
-                                    file_type,
-                                    mime_type,
-                                    public
-                                }
+                                file_type,
+                                mime_type,
+                                public
                             }
                         }
                     }:{})
@@ -169,11 +167,9 @@ async function updateCategory(id, categoryData, translations, subcategories, par
                     }
                 } : {
                     create: {
-                        data: {
-                            file_type,
-                            mime_type,
-                            public: true
-                        }
+                        file_type,
+                        mime_type,
+                        public: true
                     }
                 }
             }
