@@ -27,52 +27,72 @@ function shouldGenerateS3Links(args, model) {
     return false;
 }
 
-async function generateS3LinksRecursively(args, result, model, opeartion) {
-    // Check if should generate S3 links based on args
-    if (shouldGenerateS3Links(args, model) || (result && Array.isArray(result) && result.some(doc => doc.files))) {
-        // If result is an array, process each document
+async function generateS3LinksRecursively(args, result, model, operation) {
+    if (!relationMap[model]) {
+        console.warn(`⚠ Warning: Model '${model}' not found in relationMap.`);
+        return result;
+    }
+
+    // Extract relations that reference "files"
+    const relationsToCheck = Object.keys(relationMap[model]).filter(
+        (rel) => relationMap[model][rel] === "files"
+    );
+
+    // Check if we should generate S3 links
+    const shouldGenerateLinks =
+        shouldGenerateS3Links(args, model) ||
+        (result && Array.isArray(result) && result.some(doc => doc?.files));
+
+    if (shouldGenerateLinks) {
         if (Array.isArray(result)) {
             for (let document of result) {
-                if (document && document.files) {
-                    document.files = await Promise.all(document.files.map(async (file) => {
-                        return {
+                for (const key in document) {
+                    // Replace relation keys with actual model names from relationMap
+                    const relatedModel = relationMap[model][key];
+                    if (relatedModel === "files" && document[key]) {
+                        document[key] = await Promise.all(document[key].map(async (file) => ({
                             ...file,
                             url: await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public),
-                        };
-                    }));
+                        })));
+                    }
                 }
             }
-        } else if (result && result.files) {
-            // If result is a single document
-            result.files = await Promise.all(result.files.map(async (file) => {
-                return {
-                    ...file,
-                    url: await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public),
-                };
-            }));
+        } else if (result && typeof result === 'object') {
+            for (const key in result) {
+                const relatedModel = relationMap[model][key];
+                if (relatedModel === "files" && result[key]) {
+                    result[key] = await Promise.all(result[key].map(async (file) => ({
+                        ...file,
+                        url: await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public),
+                    })));
+                }
+            }
         }
     }
 
-    // Recursively traverse nested includes in args
+    // Recursively process nested includes in args
     if (args && typeof args === 'object') {
         for (let key in args) {
             if (args[key] && typeof args[key] === 'object') {
-                await generateS3LinksRecursively(args[key], null); // No need to process results in args
+                const relatedModel = relationMap[model]?.[key] || key;
+                await generateS3LinksRecursively(args[key], null, relatedModel, operation);
             }
         }
     }
 
-    // Recursively traverse nested includes in result
+    // Recursively process nested includes in result
     if (result && typeof result === 'object') {
         for (let key in result) {
             if (result[key] && typeof result[key] === 'object') {
-                await generateS3LinksRecursively(null, result[key]); // No need to process args in result
+                const relatedModel = relationMap[model]?.[key] || key;
+                await generateS3LinksRecursively(null, result[key], relatedModel, operation);
             }
         }
     }
 
     return result;
 }
+
 
 module.exports = {
     generateS3LinksRecursively
