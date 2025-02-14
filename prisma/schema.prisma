@@ -237,7 +237,7 @@ model documents {
 
 model files {
   file_id     String     @id @default(uuid()) @db.Uuid
-  url         String
+  url         String?
   file_type   FILE_TYPE
   public      Boolean    @default(false)
   mime_type   String
