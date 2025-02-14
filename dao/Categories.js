@@ -60,7 +60,6 @@ async function createCategory(categoryData, translations, subcategories, parent_
         let translatable = await prisma.translatable.create({data:{}});
 
         const {file_type, mime_type} = iconFileData;
-        const public = iconFileData?.public || false;
 
         let category = await prisma.categories.create(
             {
@@ -88,7 +87,7 @@ async function createCategory(categoryData, translations, subcategories, parent_
                             create: {
                                 file_type,
                                 mime_type,
-                                public
+                                public:true
                             }
                         }
                     }:{})
