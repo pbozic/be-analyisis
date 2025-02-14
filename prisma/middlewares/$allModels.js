@@ -14,13 +14,16 @@ function shouldGenerateS3Links(args, model) {
     }
     for (let key in args) {
         if (args[key] && typeof args[key] === 'object') {
-            if (args[key].include?.files || relationsToCheck.some(rel => rel in args[key].include)) {
+            const include = args[key]?.include; // Ensure 'include' is defined
+    
+            if (include && (include.files || relationsToCheck.some(rel => rel in include))) {
                 return true;
             } else if (shouldGenerateS3Links(args[key], model)) {
                 return true;
             }
         }
     }
+    
     return false;
 }
 
