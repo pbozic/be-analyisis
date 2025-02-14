@@ -8,10 +8,6 @@ function shouldGenerateS3Links(args, model) {
             relationsToCheck.push(rel);
         }
     }
-    if (model === "categories") {
-        console.log("args", args, model);
-        console.log("model map", relationMap[model]);
-    }
     for (let key in args) {
         console.log("key", key);
         if (relationMap[model][key] === "files")  return true;
@@ -46,13 +42,12 @@ async function generateS3LinksRecursively(args, result, model, operation) {
     // Check if we should generate S3 links
     const shouldGenerateLinks =
         shouldGenerateS3Links(args, model)
-    console.log("shouldGenerateLinks", shouldGenerateLinks);
     if (shouldGenerateLinks) {
-        console.log(`Object.keys(result)`, Object.keys(result));
        
         if (Array.isArray(result)) {
             for (let res of result) {
                 if (res) {
+                    console.log("res", res);
                     if (res.files) {
                         res.files = await Promise.all(document.files.map(async (file) => {
                             return {
@@ -77,6 +72,7 @@ async function generateS3LinksRecursively(args, result, model, operation) {
                 }
             }
         } else if (result) {
+            console.log("result", result);
             if (result.files) {
                 result.files = await Promise.all(result.files.map(async (file) => {
                     return {
