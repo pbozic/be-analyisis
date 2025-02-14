@@ -126,15 +126,58 @@ async function deleteWord(id) {
 }
 
 async function getWordById(id) {
-    return await prisma.words.findUnique({
-        where: {
-            word_id: id
+    try {
+        let word = await prisma.words.findUnique({
+            where: {
+                word_id: id
+            },
+            include: {
+                translatable: {
+                    include: {
+                        translations: true
+                    }
+                },
+                category: true
+            }
+        });
+
+        if (!word) {
+            throw new Error('Word not found');
         }
-    });
+
+        word.translations = word.translatable.translations;
+        delete word.translatable;
+
+        return word;
+    } catch (error) {
+        console.error("Error getting word by ID:", error);
+        throw new Error("Failed to get word");
+    }
 }
 
 async function getAllWords() {
-    return await prisma.words.findMany();
+    try {
+        let words = await prisma.words.findMany({
+            include: {
+                translatable: {
+                    include: {
+                        translations: true
+                    }
+                },
+                category: true
+            }
+        });
+
+        for (let word of words) {
+            word.translations = word.translatable.translations;
+            delete word.translatable;
+        }
+
+        return words;
+    } catch (error) {
+        console.error("Error getting words:", error);
+        throw new Error("Failed to get words");
+    }
 }
 
 async function getAllWordsByCategory(category) {
