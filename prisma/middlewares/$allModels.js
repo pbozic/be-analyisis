@@ -94,21 +94,12 @@ async function generateS3LinksRecursively(args, result, model, operation) {
 
             }
         }
-        if (relationsToCheck.some(rel => Object.keys(result).includes(rel))) {
-            for (let rel of relationsToCheck) {
-                if (result[rel] && Array.isArray(result[rel])) {
-                    console.log("result[rel]", rel, result);
-                } else if (result[rel]) {
-                    console.log("result[rel]", rel, result);
-                }
-            }
-        }
+        
     }
     // Recursively process nested includes in args
     if (args && typeof args === 'object') {
         for (let key in args) {
             if (args[key] && typeof args[key] === 'object') {
-                const relatedModel = relationMap[model]?.[key] || key;
                 await generateS3LinksRecursively(args[key], null, model, operation);
             }
         }
@@ -118,7 +109,6 @@ async function generateS3LinksRecursively(args, result, model, operation) {
     if (result && typeof result === 'object') {
         for (let key in result) {
             if (result[key] && typeof result[key] === 'object') {
-                const relatedModel = relationMap[model]?.[key] || key;
                 await generateS3LinksRecursively(null, result[key], model, operation);
             }
         }
