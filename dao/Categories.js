@@ -8,7 +8,8 @@ async function getCategories() {
                     include: {
                         translations: true
                     }
-                }
+                },
+                icon: true
             }
         });
 
@@ -35,7 +36,8 @@ async function getCategoryById(id) {
                     include: {
                         translations: true
                     }
-                }
+                },
+                icon: true
             }
         });
 
