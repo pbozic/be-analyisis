@@ -18,7 +18,7 @@ const prisma = new PrismaClient({
 				if (args.include && args.include.user) {
 					result = removeSensitiveProperties(result);
 				}
-				result = await generateS3LinksRecursively(args, result);
+				result = await generateS3LinksRecursively(args, result, model, operation);
 				// Return the modified result
 				return result;
 			},
