@@ -9,7 +9,8 @@ async function getCategories() {
                         translations: true
                     }
                 },
-                icon: true
+                icon: true,
+                sub_categories: true
             }
         });
 
@@ -37,7 +38,8 @@ async function getCategoryById(id) {
                         translations: true
                     }
                 },
-                icon: true
+                icon: true,
+                sub_categories:true
             }
         });
 
