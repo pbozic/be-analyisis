@@ -1,4 +1,5 @@
 const CategoriesDao = require('../dao/Categories');
+const { upsertFileOnS3Helper } = require("./FilesController");
 
 async function getCategories(req, res) {
     try {
@@ -11,8 +12,13 @@ async function getCategories(req, res) {
 
 async function createCategory(req, res) {
     try {
-        const {categoryData,translations,subcategories,parent_categories_id} = req.body
-        const category = await CategoriesDao.createCategory(categoryData,translations,subcategories,parent_categories_id);
+        const user_id =  req.user.user_id
+        const {categoryData,translations,subcategories,parent_categories_id,iconFileData} = req.body
+        const category = await CategoriesDao.createCategory(categoryData,translations,subcategories,parent_categories_id,iconFileData);
+        if(iconFileData){
+            const {file_type,mime_type, base64} = iconFileData
+            await upsertFileOnS3Helper(user_id, category.icon, file_type,mime_type,base64)
+        }
         res.status(201).json(category);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -21,8 +27,12 @@ async function createCategory(req, res) {
 
 async function updateCategory(req, res) {
     try {
-        const {categoryData,translations,subcategories,parent_categories_id} = req.body
-        const category = await CategoriesDao.updateCategory(req.params.id, categoryData,translations,subcategories,parent_categories_id);
+        const user_id = req.user.user_id
+        const {categoryData,translations,subcategories,parent_categories_id,iconFileData} = req.body
+        const category = await CategoriesDao.updateCategory(req.params.id, categoryData,translations,subcategories,parent_categories_id,iconFileData);
+        if(iconFileData){
+            await upsertFileOnS3Helper(user_id, category.icon, file_type, mime_type, iconFileData.base64)
+        }
         res.status(200).json(category);
     } catch (error) {
         res.status(500).json({ error: error.message });

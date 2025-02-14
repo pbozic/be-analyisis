@@ -40,8 +40,12 @@ async function getCategoryById(id) {
     return category;
 }
 
-async function createCategory(categoryData,translations,subcategories, parent_categories_id) {
+async function createCategory(categoryData,translations,subcategories, parent_categories_id,iconFileData={}) {
     let translatable = await prisma.translatable.create({data:{}});
+
+    const {file_type,mime_type} = iconFileData
+    const public = iconFileData?.public || false
+
     let category = await prisma.categories.create(
         {
             data: {
@@ -62,9 +66,22 @@ async function createCategory(categoryData,translations,subcategories, parent_ca
                                 }
                             }
                         } : {}
-                )
-            }
+                ),
+                ...(iconFileData ? {
+                    icon: {
+                        create: {
+                            data: {
+                                file_type,
+                                mime_type,
+                                public
+                            }
+                        }
+                    }
+                }:{})
+            },
+            include:{icon:true}
         });
+
     let translats = [];
     for (let translation of translations) {
         let trans = await prisma.translations.create({
@@ -83,12 +100,12 @@ async function createCategory(categoryData,translations,subcategories, parent_ca
     return category;
 }
 
-async function updateCategory(id, categoryData, translations, subcategories,parent_categories_id) {
+async function updateCategory(id, categoryData, translations, subcategories,parent_categories_id,iconFileData=null) {
     return await prisma.$transaction(async (prisma) => {
         // Fetch the current translatable_id for this category
         const category = await prisma.categories.findUnique({
             where: { categories_id: id },
-            select: { translatable_id: true },
+            select: { translatable_id: true,icon_file_id:true}
         });
         if (!category) throw new Error("Category not found");
 
@@ -124,9 +141,34 @@ async function updateCategory(id, categoryData, translations, subcategories,pare
             };
         }
 
+
+        if(iconFileData){
+            const {file_type,mime_type} = iconFileData
+            updateData.icon = category.icon_file_id ? {
+                update: {
+                    data: {
+                        file_type,
+                        mime_type
+                    }
+                }
+            } : {
+                create: {
+                    data: {
+                        file_type,
+                        mime_type,
+                        public: true
+                    }
+                }
+            }
+
+        }
+
         return await prisma.categories.update({
             where: { categories_id: id },
             data: updateData,
+            include:{
+                icon:true
+            }
         });
     });
 }

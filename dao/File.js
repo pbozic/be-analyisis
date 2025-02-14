@@ -105,6 +105,34 @@ async function getFilesByDocumentId(document_id) {
 	});
 }
 
+async function createFile(file_type,mime_type,public=false) {
+	return await prisma.files.create({
+		data: {
+			file_type,
+			public,
+			mime_type
+		}
+	});
+}
+async function getFile(file_id) {
+	return await prisma.files.findUnique({
+		where: {
+			file_id: file_id
+		}
+	});
+}
+
+async function updateFileById(file_id,file_type,mime_type) {
+	return await prisma.files.update({
+		where:{
+			files_id:file_id,
+		},
+		data: {
+			file_type,
+			mime_type
+		}
+	});
+}
 
 module.exports = {
 	addFileToDocument,
@@ -112,5 +140,8 @@ module.exports = {
 	updateFileInDocument,
 	removeFileFromDocument,
 	removeAllFilesFromDocument,
-	getFilesByDocumentId
+	getFilesByDocumentId,
+	createFile,
+	updateFileById,
+	getFile,
 };
