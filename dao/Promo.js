@@ -127,8 +127,6 @@ async function getPromoSectionById(id) {
 async function getAllPromoSections() {
     const promo_sections = await prisma.promo_sections.findMany({
         include: {
-            promo_ads: true,
-            promo_banners: true,
             promo_sections_buy: true,
             translatable: {
                 include: {
@@ -152,8 +150,6 @@ async function getAllPromoSectionsByServiceType(type) {
             service_type: type
         },
         include: {
-            promo_ads: true,
-            promo_banners: true,
             promo_sections_buy: true,
             translatable: {
                 include: {
