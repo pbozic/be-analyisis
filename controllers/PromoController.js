@@ -86,7 +86,7 @@ function generateTiers(basePrice) {
 async function createPromoSection(req, res) {
     try {
         //TODO: create stripe product and pricing
-        console.info(JSON.stringify(req.body,nulll,2))
+        console.info(JSON.stringify(req.body,null,2))
         const { sectionData,translations } = req.body
         const prices = sectionData.prices
 

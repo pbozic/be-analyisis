@@ -15,6 +15,7 @@ async function createPromoSection(args,translations) {
             tag: args.tag,
             description: args.description,
             service_type: args.service_type,
+            canPurchase: args.canPurchase,
             translatable: {
                 connect: {
                     translatable_id: translatable.translatable_id
