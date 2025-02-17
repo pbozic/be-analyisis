@@ -106,7 +106,7 @@ async function handlePromoSectionBuy(session) {
 async function handleWebhook(req, res) {
 	let event;
 	try {
-		event = stripe.client.webhooks.constructEvent(req.body, req.headers["stripe-signature"], process.env.STRIPE_WEBHOOK_SECRET);
+		event = stripe.client.webhooks.constructEvent(req.rawBody, req.headers["stripe-signature"], process.env.STRIPE_WEBHOOK_SECRET);
 	} catch (err) {
 		console.error("Webhook signature verification failed.", err.message);
 		return res.status(400).send(`Webhook Error: ${err.message}`);
