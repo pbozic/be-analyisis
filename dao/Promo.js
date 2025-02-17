@@ -102,8 +102,6 @@ async function getPromoSectionById(id) {
         },
     
         include: {
-            promo_ads: true,
-            promo_banners: true,
             promo_section_buy: true,
             translatable: {
                 include: {
