@@ -86,7 +86,10 @@ function generateTiers(basePrice) {
 async function createPromoSection(req, res) {
     try {
         //TODO: create stripe product and pricing
-        let promoSection = await PromoDao.createPromoSection(req.body);
+        const { sectionData,translations } = req.body
+        const prices = sectionData.prices
+
+        let promoSection = await PromoDao.createPromoSection(sectionData,translations);
         if (!promoSection.canPurchase) {
             res.json(promoSection);
             return;
@@ -106,7 +109,6 @@ async function createPromoSection(req, res) {
                 stripe_product_id: product.id
             }
         )
-        let prices = req.body.prices;
 
         let t1Price = await stripe.client.createPrice({
             currency: 'eur',
@@ -191,8 +193,10 @@ async function createPromoSection(req, res) {
 
 async function updatePromoSection(req, res) {
     try {
+        const { sectionData,translations } = req.body
+
         let currentPromoSection = await PromoDao.getPromoSectionById(req.params.id);
-        const promoSection = await PromoDao.updatePromoSection(req.params.id, req.body);
+        const promoSection = await PromoDao.updatePromoSection(req.params.id, sectionData,translations);
         if (!promoSection.canPurchase) {
             res.json(promoSection);
             return;

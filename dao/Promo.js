@@ -1,25 +1,89 @@
 const { name } = require('ejs');
 const prisma = require('../prisma/prisma');
 const stripe = require('../lib/stripe');
+const { update } = require("../controllers/BusinessController");
 
-async function createPromoSection(args) {
-    return await prisma.promo_sections.create({
+async function createPromoSection(args,translations) {
+    // Create a new translatable record
+    let translatable = await prisma.translatable.create({
+        data: {}
+    });
+
+    const new_promo_section = await prisma.promo_sections.create({
         data: {
             name: args.name,
             tag: args.tag,
             description: args.description,
             service_type: args.service_type,
+            translatable: {
+                connect: {
+                    translatable_id: translatable.translatable_id
+                }
+            }
         },
     });
+
+    // Create translations
+    let translats = [];
+    for (let translation of translations) {
+        let trans = await prisma.translations.create({
+            data: {
+                translation: translation.translation,
+                language: translation.language,
+                translatable: {
+                    connect: {
+                        translatable_id: translatable.translatable_id
+                    }
+                }
+            }
+        });
+        translats.push(trans);
+    }
+
+    // Attach translations to the response
+    new_promo_section.translations = translats;
+    return new_promo_section
 }
 
-async function updatePromoSection(id, args) {
-    return await prisma.promo_sections.update({
+async function updatePromoSection(id, args,translations) {
+    const updated_promo_section = await prisma.promo_sections.update({
         where: {
             promo_sections_id: id
         },
-        data: args
+        data: args,
+        include:{
+            translatable:true
+        }
     });
+
+    if (translations && translations.length > 0) {
+        // Delete existing translations
+        await prisma.translations.deleteMany({
+            where: {
+                translatable_id: updated_promo_section.translatable_id
+            }
+        });
+
+        // Create new translations
+        let translats = [];
+        for (let translation of translations) {
+            let trans = await prisma.translations.create({
+                data: {
+                    translation: translation.translation,
+                    language: translation.language,
+                    translatable: {
+                        connect: {
+                            translatable_id: existingWord.translatable_id
+                        }
+                    }
+                }
+            });
+            translats.push(trans);
+        }
+        updated_promo_section.translations = translats;
+    }
+
+    return updated_promo_section
 }
 
 async function deletePromoSection(id) {
@@ -31,7 +95,7 @@ async function deletePromoSection(id) {
 }
 
 async function getPromoSectionById(id) {
-    return await prisma.promo_sections.findUnique({
+    const promo_section = await prisma.promo_sections.findUnique({
         where: {
             promo_sections_id: id
         },
@@ -39,23 +103,71 @@ async function getPromoSectionById(id) {
         include: {
             promo_ads: true,
             promo_banners: true,
-            promo_sections_buy: true
+            promo_sections_buy: true,
+            translatable: {
+                include: {
+                    translations: true
+                }
+            },
         }
-    
     });
+
+    if (!promo_section) {
+        throw new Error('Word not found');
+    }
+
+    promo_section.translations = promo_section.translatable.translations;
+    delete promo_section.translatable;
+
+    return promo_section;
     
 }
 
 async function getAllPromoSections() {
-    return await prisma.promo_sections.findMany();
+    const promo_sections = await prisma.promo_sections.findMany({
+        include: {
+            promo_ads: true,
+            promo_banners: true,
+            promo_sections_buy: true,
+            translatable: {
+                include: {
+                    translations: true
+                }
+            },
+        }
+    });
+    promo_sections.map((promo_section)=>{
+        promo_section.translations = promo_section.translatable.translations;
+        delete promo_section.translatable;
+
+        return promo_section;
+    })
+    return promo_sections
 }
 
 async function getAllPromoSectionsByServiceType(type) {
-    return await prisma.promo_sections.findMany({
+    const promo_sections = await prisma.promo_sections.findMany({
         where: {
             service_type: type
+        },
+        include: {
+            promo_ads: true,
+            promo_banners: true,
+            promo_sections_buy: true,
+            translatable: {
+                include: {
+                    translations: true
+                }
+            },
         }
     });
+    promo_sections.map((promo_section)=>{
+        promo_section.translations = promo_section.translatable.translations;
+        delete promo_section.translatable;
+
+        return promo_section;
+    })
+    return promo_sections
 }   
 
 async function createPromoAd(args) {

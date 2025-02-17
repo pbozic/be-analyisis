@@ -767,6 +767,8 @@ model promo_sections {
   service_type      PROMO_SERVICE_TYPES
   promo_section_buy promo_sections_buy[]
   promo_duration_days Int @default(30)
+  translatable_id String @db.Uuid
+  translatable    translatable @relation(fields: [translatable_id], references: [translatable_id])
 }
 
 model promo_banners {
@@ -904,10 +906,11 @@ model business_teams {
 }
 
 model translatable {
-  translatable_id  String @id @default(uuid()) @db.Uuid
+  translatable_id String @id @default(uuid()) @db.Uuid
   translations    translations[]
   words           words[]
   categories      categories[]
+  promo_sections  promo_sections[]
 }
 
 model translations {
