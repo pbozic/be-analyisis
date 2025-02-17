@@ -2,7 +2,7 @@ const WordDao = require('../dao/Word');
 const BusinessUserDao = require('../dao/BusinessUsers');
 const BusinessDao = require('../dao/Business');
 const stripe = require('../lib/stripe');
-const stripe = require('../lib/stripe');
+
 async function createWord(req, res) {
     try {
         const {wordData,translations} = req.body
