@@ -45,6 +45,7 @@
 		"express-fileupload": "^1.2.1",
 		"express-form-data": "^2.0.17",
 		"googleapis": "^70.0.0",
+		"haversine-distance": "^1.2.3",
 		"html-pdf": "^3.0.1",
 		"http-errors": "~1.6.3",
 		"jade": "~1.11.0",

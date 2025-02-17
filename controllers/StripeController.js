@@ -92,8 +92,26 @@ async function handleSessionCompleted(session) {
 	if (session.metadata.type === "promo_section") {
 		await handlePromoSectionBuy(session);
 	}
+    if (session.metadata.type === "word_buys") {
+        await handleWordBuysSubscription(session);
+    }
 }
+async function handleWordBuysSubscription(session) {
+    console.log("Handling word_buys subscription", session);
+    // Get new expiration date
+    const newExpiresAt = new Date(session.current_period_end * 1000);
 
+    // Update `expires_at` in all word_buys linked to this subscription
+    await prisma.word_buy.updateMany({
+        where: { stripe_subscription_id: session.id },
+        data: { expires_at: newExpiresAt },
+    });
+    await prisma.business.updateMany({
+        where: { word_buy_stripe_subscription_id: session.id },
+        data: { word_buy_stripe_subscription_id: null }
+    });
+    console.log("Updated expires_at for all word_buys in subscription:", session.id);
+}
 async function handlePromoSectionBuy(session) {
 	//TODO: Add the promo section buy to the database
 	// await PromoDao.createPromoSectionBuy({
@@ -229,7 +247,7 @@ async function handleWebhook(req, res) {
                 // Remove subscription ID from `word_buys` and set `deleted_at`
                 await prisma.word_buy.updateMany({
                     where: { stripe_subscription_id: subscription.id },
-                    data: { stripe_subscription_id: null, deleted_at: new Date() },
+                    data: { stripe_subscription_id: null },
                 });
 
                 // Also update business record to remove subscription

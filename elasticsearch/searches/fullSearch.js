@@ -4,7 +4,7 @@ const SCORING_WEIGHTS = {
 	bid_multiplier: 1, // Boost businesses bidding on words
 	popularity_boost: 1, // Boost for popular businesses
 	new_business_boost: 1, // Boost for new businesses
-	distance_scale: "100km", // Max distance for full score
+	distance_scale: "3km", // Max distance for full score
 	distance_decay: 0.5, // Distance decay factor
 };
 

@@ -77,6 +77,30 @@ async function createBusinessIndex() {
 }
 
 async function indexBusinesses(business_id = null) {
+    //TODO: 
+    //- Call this function on:
+    //  - App startup
+    //  - Business creation
+    //  - Business update
+    //  - Business deletion
+    //  - Menu creation
+    //  - Menu update
+    //  - Menu deletion
+    //  - Word buy creation
+    //  - Word buy update
+    //  - Word buy deletion
+    //  - Address update
+    //  - Delivery address update
+    //  - Business popularity change
+    //  - Business new status change
+    //  - Business location change
+    //  - Business description change
+    //  - Business name change
+    //  - Menu category name change
+    //  - Menu item name change
+    //  - Menu item description change
+    //  - Word update
+
     try {
         await createBusinessIndex();
         console.log("🚀 Fetching businesses from database...");
@@ -91,6 +115,24 @@ async function indexBusinesses(business_id = null) {
             include: {
                 address: true,
                 delivery_address: true,
+                word_buys: {
+                    where: {
+                        expires_at: {
+                            gt: new Date() // Only include word_buys where expires_at is greater than now
+                        }
+                    },
+                    include: {
+                        word: {
+                            include: {
+                                translatable: {
+                                    include: {
+                                        translations: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 menus: {
                     include: {
                         categories: {
