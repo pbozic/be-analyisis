@@ -34,7 +34,14 @@ app.set("view engine", "pug");
 
 app.use(logger("dev"));
 app.disable("etag")
-app.use(express.json({ limit: "512mb" }));
+app.use(
+    express.json({
+        verify: function(req, res, buf) {
+            req.rawBody = buf;
+        },
+		limit: "512mb" 
+    })
+);
 app.use(express.urlencoded({ limit: "512mb", extended: false }));
 
 app.use(

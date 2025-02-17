@@ -77,6 +77,30 @@ async function createBusinessIndex() {
 }
 
 async function indexBusinesses(business_id = null) {
+    //TODO: 
+    //- Call this function on:
+    //  - App startup
+    //  - Business creation
+    //  - Business update
+    //  - Business deletion
+    //  - Menu creation
+    //  - Menu update
+    //  - Menu deletion
+    //  - Word buy creation
+    //  - Word buy update
+    //  - Word buy deletion
+    //  - Address update
+    //  - Delivery address update
+    //  - Business popularity change
+    //  - Business new status change
+    //  - Business location change
+    //  - Business description change
+    //  - Business name change
+    //  - Menu category name change
+    //  - Menu item name change
+    //  - Menu item description change
+    //  - Word update
+
     try {
         await createBusinessIndex();
         console.log("🚀 Fetching businesses from database...");
@@ -89,6 +113,26 @@ async function indexBusinesses(business_id = null) {
         const businesses = await prisma.business.findMany({
             where: whereClause,
             include: {
+                address: true,
+                delivery_address: true,
+                word_buys: {
+                    where: {
+                        expires_at: {
+                            gt: new Date() // Only include word_buys where expires_at is greater than now
+                        }
+                    },
+                    include: {
+                        word: {
+                            include: {
+                                translatable: {
+                                    include: {
+                                        translations: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
                 menus: {
                     include: {
                         categories: {
@@ -131,6 +175,7 @@ async function indexBusinesses(business_id = null) {
                 description: business.description,
                 popular: business.popular,
                 new: business.new,
+                location: business.delivery_address? { lat: parseFloat(business.delivery_address.latitude), lon: parseFloat(business.delivery_address.longitude) } : { lat: parseFloat(business.address.latitude), lon: parseFloat(usiness.address.longitude) },
                 menus: business.menus.map(menu => ({
                     menu_category_name: menu.categories.flatMap(cat =>
                         Object.values(cat.names).filter(value => value !== "")
