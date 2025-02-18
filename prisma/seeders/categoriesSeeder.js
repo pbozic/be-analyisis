@@ -516,7 +516,7 @@ async function seedCategories() {
             console.error(`Error processing ${imagePath}:`, error);
 
         }
-
+        
         let categoryObj = {
             categoryData: {
                 name: category.name,
