@@ -199,9 +199,13 @@ async function deleteCategory(id) {
             throw new Error("Category not found");
         }
 
-        await prisma.words.updateMany({
+        await prisma.categories.update({
             where: { categories_id: category.categories_id },
-            data: { categories_id: null }  // Remove relation without deleting words
+            data: {
+                words: {
+                    disconnect: [] // Disconnect all related words
+                }
+            }
         });
         // await prisma.translations.deleteMany({ where: { translatable_id: category.translatable_id } });
         // await prisma.translatable.delete({ where: { translatable_id: category.translatable_id } });
