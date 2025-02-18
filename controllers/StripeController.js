@@ -7,6 +7,7 @@ const { io, UserSockets } = require("../socket");
 const stripe = require("../lib/stripe");
 const BusinessDao = require("../dao/Business");
 const PromoDao = require("../dao/Promo");
+const ProductDao = require("../dao/Product");
 async function handlePaymentIntentSuccess(paymentIntent) {
 	switch (paymentIntent.metadata.type) {
 		case "wallet_topup":
@@ -169,48 +170,82 @@ async function handleWebhook(req, res) {
 
 		/*** PRODUCT EVENTS ***/
 		case "product.created":
-			await StripeDao.createProduct({
-				name: data.name,
-				description: data.description || "",
-				stripe_product_id: data.id,
-			});
+            let product = await ProductDao.getProductByStripeId(data.id);
+            if (!product) {
+                product = await ProductDao.createProduct({
+                    name: data.name,
+                    description: data.description,
+                    stripe_product_id: data.id,
+                });
+            }
 			console.log(`Product added: ${data.name}`);
 			break;
 
 		case "product.updated":
-			await StripeDao.updateProductByStripeId(data.id, {
-				name: data.name,
-				description: data.description || "",
-			});
+            let updatedProduct = await ProductDao.getProductByStripeId(data.id);
+            if (!updatedProduct) {
+                updatedProduct = await ProductDao.createProduct({
+                    name: data.name,
+                    description: data.description,
+                    stripe_product_id: data.id,
+                });
+            } else {
+                updatedProduct = await ProductDao.updateProduct({
+                    name: data.name,
+                    description: data.description,
+                    stripe_product_id: data.id,
+                });
+            }
 			console.log(`Product updated: ${data.name}`);
 			break;
 
 		case "product.deleted":
-			await StripeDao.deleteProductByStripeId(data.id);
+			let deletedProduct = await ProductDao.getProductByStripeId(data.id);
+            if (deletedProduct) {
+                await ProductDao.deleteProduct(data.id);
+            }
 			console.log(`Product deleted: ${data.id}`);
 			break;
 
 		/*** PRICE EVENTS ***/
 		case "price.created":
-			await StripeDao.createPrice({
-				amount: data.unit_amount / 100,
-				currency: data.currency,
-				stripe_price_id: data.id,
-				stripe_product_id: data.product,
-			});
+			let price = await ProductDao.getPriceByStripeId(data.id);
+            if (!price) {
+                price = await ProductDao.createPrice({
+                    amount: data.unit_amount,
+                    currency: data.currency,
+                    stripe_price_id: data.id,
+                    stripe_product_id: data.product,
+                });
+            }
 			console.log(`Price added: ${data.unit_amount / 100} ${data.currency}`);
 			break;
 
 		case "price.updated":
-			await StripeDao.updatePriceByStripeId(data.id, {
-				amount: data.unit_amount / 100,
-				currency: data.currency,
-			});
+            let updatedPrice = await ProductDao.getPriceByStripeId(data.id);
+            if (!updatedPrice) {
+                updatedPrice = await ProductDao.createPrice({
+                    amount: data.unit_amount,
+                    currency: data.currency,
+                    stripe_price_id: data.id,
+                    stripe_product_id: data.product,
+                });
+            } else {
+                updatedPrice = await ProductDao.updatePrice({
+                    amount: data.unit_amount,
+                    currency: data.currency,
+                    stripe_price_id: data.id,
+                    stripe_product_id: data.product,
+                });
+            }
 			console.log(`Price updated: ${data.unit_amount / 100} ${data.currency}`);
 			break;
 
 		case "price.deleted":
-			await StripeDao.deletePriceByStripeId(data.id);
+            let deletedPrice = await ProductDao.getPriceByStripeId(data.id);
+            if (deletedPrice) {
+                await ProductDao.deletePrice(data.id);
+            }
 			console.log(`Price deleted: ${data.id}`);
 			break;
 		// ... handle other event types
