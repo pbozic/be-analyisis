@@ -739,7 +739,7 @@ model categories {
   parent_category     categories? @relation("sub_categories", fields: [parent_categories_id], references: [categories_id])
   sub_categories      categories[] @relation("sub_categories")
   translatable_id     String @db.Uuid
-  translatable        translatable @relation(fields: [translatable_id], references: [translatable_id])
+  translatable        translatable @relation(fields: [translatable_id], references: [translatable_id], onDelete: Cascade)
   words               words[]
   created_at          DateTime @default(now()) @db.Timestamptz(6)
   updated_at          DateTime @default(now()) @updatedAt @db.Timestamptz(6)
@@ -919,7 +919,7 @@ model translatable {
 model translations {
   translations_id  String @id @default(uuid()) @db.Uuid
   translatable_id  String @db.Uuid
-  translatable    translatable @relation(fields: [translatable_id],references: [translatable_id])
+  translatable    translatable @relation(fields: [translatable_id],references: [translatable_id], onDelete: Cascade)
   language        String
   translation     String
   created_at      DateTime @default(now()) @db.Timestamptz(6)
