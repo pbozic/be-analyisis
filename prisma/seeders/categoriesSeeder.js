@@ -535,6 +535,15 @@ async function seedCategories() {
 
         }
         try {
+            let categoryExists = await prisma.categories.findUnique({
+                where: {
+                    tag: categoryObj.categoryData.tag
+                }
+            });
+            if (categoryExists) {
+                console.log(`Category ${categoryExists.tag} already exists.`);
+                continue;
+            }
             const cat = await CategoriesDao.createCategory(categoryObj.categoryData, categoryObj.translations, categoryObj.subcategories, categoryObj.parent_categories_id, categoryObj.iconFileData);
             if(categoryObj.iconFileData){
                 const {file_type,mime_type, base64} = categoryObj.iconFileData
@@ -542,7 +551,7 @@ async function seedCategories() {
             }
             console.log(`Category ${cat.categories_id} created.`);
         } catch (error) {
-            console.error("Error creating category:", error);
+           
         }
         
        
