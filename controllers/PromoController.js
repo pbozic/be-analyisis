@@ -10,27 +10,14 @@ const discountRules = {
     6: 10,   // 10% discount for 5-6 units
     8: 15    // 15% discount for 7+ units (inf)
 };
-function generateTiers(basePrice) {
-    let tiers = [];
-    let prevUpTo = 0;
-  
-    for (const [maxQuantity, discountPercentage] of Object.entries(discountRules)) {
-      const discountedPrice = Math.round(basePrice * (1 - discountPercentage / 100)); // Apply discount
-      tiers.push({
-        up_to: parseInt(maxQuantity), // Convert to number
-        unit_amount: discountedPrice
-      });
-      prevUpTo = parseInt(maxQuantity);
+function getDiscountedPricePerQuantity(basePrice, quantity) {
+    let discount = 0;
+    for (let rule in discountRules) {
+        if (quantity >= rule) {
+            discount = discountRules[rule];
+        }
     }
-  
-    // Add the final "infinity" tier
-    const finalDiscount = Math.round(basePrice * (1 - discountRules[prevUpTo] / 100));
-    tiers.push({
-      up_to: 'inf',
-      unit_amount: finalDiscount
-    });
-  
-    return tiers;
+    return basePrice - (basePrice * discount / 100);
 }
 
 /**
@@ -88,108 +75,9 @@ async function createPromoSection(req, res) {
         //TODO: create stripe product and pricing
         console.info(JSON.stringify(req.body,null,2))
         const { sectionData,translations } = req.body
-        const prices = sectionData.prices
 
-        let promoSection = await PromoDao.createPromoSection(sectionData,translations);
-        if (!promoSection.canPurchase) {
-            res.json(promoSection);
-            return;
-        }
+        let promoSection = await PromoDao.createPromoSection(sectionData, translations);
         
-        let product = await stripe.client.products.create({
-            name: "promo_section_" + promoSection.promo_sections_id,
-            type: 'service',
-            metadata: {
-                promo_sections_id: promoSection.promo_sections_id
-            }
-        });
-        let localProduct = await ProductDao.createProduct(
-            {
-                name: "promo_section_" + promoSection.promo_sections_id,
-                currency: 'eur',
-                description: promoSection.description,
-                stripe_product_id: product.id
-            }
-        )
-
-        let t1Price = await stripe.client.prices.create({
-            currency: 'eur',
-            product: product.id,
-            tiers_mode: 'graduated',
-            billing_scheme: "tiered",
-            tiers: generateTiers(prices.t1Price),
-            metadata: {
-                promo_sections_id: promoSection.promo_sections_id,
-                tier: "1"
-            }
-
-        });
-        let localT1Price = await ProductDao.createPrice(
-            {
-                currency: 'eur',
-                stripe_price_id: t1Price.id,
-                stripe_product_id: product.id,
-                product: {
-                    connect: {
-                        local_product_id: localProduct.local_product_id
-                    }
-                },
-                tier: "1"
-            }
-        )
-        let t2Price = await stripe.client.prices.create({
-            currency: 'eur',
-            product: product.id,
-            tiers_mode: 'graduated',
-            billing_scheme: "tiered",
-            tiers: generateTiers(prices.t2Price),
-            metadata: {
-                promo_sections_id: promoSection.promo_sections_id,
-                tier: "2"
-            }
-
-        })
-        let localT2Price = await ProductDao.createPrice(
-            {
-                currency: 'eur',
-                stripe_price_id: t2Price.id,
-                stripe_product_id: product.id,
-                product: {
-                    connect: {
-                        local_product_id: localProduct.local_product_id
-                    }
-                },
-                 tier: "2"
-            }
-        )
-        let t3Price = await stripe.client.prices.create({
-            currency: 'eur',
-            product: product.id,
-            tiers_mode: 'graduated',
-            billing_scheme: "tiered",
-            tiers: generateTiers(prices.t3Price),
-            metadata: {
-                promo_sections_id: promoSection.promo_sections_id,
-                tier: "3"
-            }
-        })
-        let localT3Price = await ProductDao.createPrice(
-            {
-                currency: 'eur',
-                stripe_price_id: t3Price.id,
-                stripe_product_id: product.id,
-                product: {
-                    connect: {
-                        local_product_id: localProduct.local_product_id
-                    }
-                },
-                tier: "3"
-            }
-        )
-        promoSection = await PromoDao.updatePromoSection(promoSection.promo_sections_id, {
-            stripe_product_id: product.id
-        });
-
         res.json(promoSection);
     } catch (error) {
         console.error(error)
@@ -287,28 +175,32 @@ async function deletePromoSection(req, res) {
 async function getPromoSectionById(req, res) {
     try {
         const promoSection = await PromoDao.getPromoSectionById(req.params.id);
-        let product = await ProductDao.getProductByStripeId(promoSection.stripe_product_id);
-        let prices = await ProductDao.getPricesByProductId(product.local_product_id);
-
-        let priceMapObject = {
-            t1Price: prices.find(p => p.tier === "1").stripe_price_id || null,
-            t2Price: prices.find(p => p.tier === "2").stripe_price_id || null,
-            t3Price: prices.find(p => p.tier === "3").stripe_price_id || null
-        };
-        let priceObject = {
-            t1Price: await stripe.client.prices.retrieve(priceMapObject.t1Price),
-            t2Price: await stripe.client.prices.retrieve(priceMapObject.t2Price),
-            t3Price: await stripe.client.prices.retrieve(priceMapObject.t3Price)
-        }
-
-        console.log(priceObject);
-
-        res.json({
+        let result = {
             ...promoSection,
-            product: product,
-            prices: priceObject,
-            discountRules: discountRules
-        });
+        }
+        if (promoSection.stripe_product_id) {
+            let product = await ProductDao.getProductByStripeId(promoSection.stripe_product_id);
+            let prices = await ProductDao.getPricesByProductId(product.local_product_id);
+
+            let priceMapObject = {
+                t1Price: prices.find(p => p.tier === "1").stripe_price_id || null,
+                t2Price: prices.find(p => p.tier === "2").stripe_price_id || null,
+                t3Price: prices.find(p => p.tier === "3").stripe_price_id || null
+            };
+            let priceObject = {
+                t1Price: await stripe.client.prices.retrieve(priceMapObject.t1Price),
+                t2Price: await stripe.client.prices.retrieve(priceMapObject.t2Price),
+                t3Price: await stripe.client.prices.retrieve(priceMapObject.t3Price)
+            }
+
+            result = {
+                ...promoSection,
+                product: product,
+                prices: priceObject,
+                discountRules: discountRules
+            }
+        }
+        res.json(result);
     } catch (error) {
         console.error(error)
         res.status(500).json({ error: error.message });

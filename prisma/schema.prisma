@@ -764,6 +764,9 @@ model promo_sections {
   limits            Json?
   stripe_product_id String?
   canPurchase       Boolean
+  t1price           Float?
+  t2price           Float?
+  t3price           Float?
   service_type      PROMO_SERVICE_TYPES
   promo_section_buy promo_sections_buy[]
   promo_duration_days Int @default(30)

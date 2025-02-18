@@ -21,6 +21,7 @@ const createProduct = async (product) => {
                 name: product.name,
                 description: product.description,
                 stripe_product_id: product.stripe_product_id,
+                currency: product.currency || 'eur',
             }
         });
         return result;

@@ -194,13 +194,14 @@ async function updateCategory(id, categoryData, translations, subcategories, par
 async function deleteCategory(id) {
     try {
         let category = await prisma.categories.findUnique({ where: { categories_id: id } });
-
+        await prisma.translations.deleteMany({ where: { translatable_id: category.translatable_id } });
+        await prisma.translatable.delete({ where: { translatable_id: category.translatable_id } });
         if (!category) {
             throw new Error("Category not found");
         }
 
-        await prisma.translations.deleteMany({ where: { translatable_id: category.translatable_id } });
-        await prisma.translatable.delete({ where: { translatable_id: category.translatable_id } });
+       
+       
         return await prisma.categories.delete({ where: { categories_id: id } });
     } catch (error) {
         console.error("Error deleting category:", error);

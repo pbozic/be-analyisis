@@ -8,20 +8,25 @@ async function createPromoSection(args,translations) {
     let translatable = await prisma.translatable.create({
         data: {}
     });
-
-    const new_promo_section = await prisma.promo_sections.create({
-        data: {
-            name: args.name,
-            tag: args.tag,
-            description: args.description,
-            service_type: args.service_type,
-            canPurchase: args.canPurchase,
-            translatable: {
-                connect: {
-                    translatable_id: translatable.translatable_id
-                }
+    const sectionData = {
+        name: args.name,
+        tag: args.tag,
+        description: args.description,
+        service_type: args.service_type,
+        canPurchase: args.canPurchase,
+        translatable: {
+            connect: {
+                translatable_id: translatable.translatable_id
             }
-        },
+        }
+    }
+    if (args.canPurchase) {
+        sectionData.t1price = parseFloat(args.prices.t1price)
+        sectionData.t2price = parseFloat(args.prices.t2price)
+        sectionData.t3price = parseFloat(args.prices.t3price)
+    }
+    const new_promo_section = await prisma.promo_sections.create({
+        data: sectionData
     });
 
     // Create translations
@@ -325,22 +330,12 @@ async function createPromoSectionBuy(args) {
                     business_id: args.business_id
                 }
             },
-            stripe_subscription_id: args.stripe_subscription_id || null,
             tier: args.tier
         },
     });
 }
 
-async function addStripeSubToPromoSectionBuy(id, stripe_subscription_id) {
-    return await prisma.promo_sections_buy.update({
-        where: {
-            promo_sections_buy_id: id
-        },
-        data: {
-            stripe_subscription_id: stripe_subscription_id
-        }
-    });
-}
+
 
 async function getPromoSectionBuyById(id) {
     return await prisma.promo_sections_buy.findUnique({
@@ -380,14 +375,6 @@ async function getAllPromoSectionBuysByTier(tier) {
     });
 }
 
-async function getAllPromoSectionBuysByStripeSub(stripe_subscription_id) {
-    return await prisma.promo_sections_buy.findMany({
-        where: {
-            stripe_subscription_id: stripe_subscription_id
-        }
-    });
-}
-
 async function updatePromoSectionBuy(id, args) {
     return await prisma.promo_sections_buy.update({
         where: {
@@ -422,12 +409,10 @@ module.exports = {
     getAllPromoBannersByAd,
     getAllPromoBannersBySection,
     createPromoSectionBuy,
-    addStripeSubToPromoSectionBuy,
     getPromoSectionBuyById,
     getAllPromoSectionBuys,
     getAllPromoSectionBuysBySection,
     getAllPromoSectionBuysByBusiness,
     getAllPromoSectionBuysByTier,
-    getAllPromoSectionBuysByStripeSub,
     updatePromoSectionBuy
 }
