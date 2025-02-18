@@ -516,7 +516,7 @@ async function seedCategories() {
             console.error(`Error processing ${imagePath}:`, error);
 
         }
-        
+
         let categoryObj = {
             categoryData: {
                 name: category.name,
@@ -537,7 +537,10 @@ async function seedCategories() {
         try {
             let categoryExists = await prisma.categories.findUnique({
                 where: {
-                    tag: categoryObj.categoryData.tag
+                    tag_category_type: {
+                        tag: categoryObj.categoryData.tag,
+                        category_type: categoryObj.categoryData.category_type
+                    }
                 }
             });
             if (categoryExists) {

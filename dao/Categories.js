@@ -61,7 +61,10 @@ async function createCategory(categoryData, translations, subcategories, parent_
     try {
         let categoryExists = await prisma.categories.findUnique({
             where: {
-                tag: categoryData.tag
+                tag_category_type: {
+                    tag: categoryData.tag,
+                    category_type: categoryData.category_type
+                }
             }
         });
         if (categoryExists) {
@@ -69,7 +72,7 @@ async function createCategory(categoryData, translations, subcategories, parent_
         }
         let translatable = await prisma.translatable.create({data:{}});
 
-        const {file_type, mime_type} = iconFileData;
+        const {file_type, mime_type} = iconFileData || {};
 
         let category = await prisma.categories.create(
             {

@@ -730,7 +730,7 @@ model categories {
   categories_id         String  @id @default(uuid()) @db.Uuid
   name                String
   description         String?
-  tag                 String @unique
+  tag                 String
   icon_file_id        String? @db.Uuid
   icon                files? @relation(fields: [icon_file_id], references: [file_id])
   category_type       CATEGORY_TYPE
@@ -745,6 +745,8 @@ model categories {
   created_at          DateTime @default(now()) @db.Timestamptz(6)
   updated_at          DateTime @default(now()) @updatedAt @db.Timestamptz(6)
   deleted_at          DateTime? @db.Timestamptz(6)
+
+  @@unique([tag, category_type])
 }
 
 model menu_categories_categories {
@@ -930,7 +932,7 @@ model translations {
 }
 enum CATEGORY_TYPE {
   MENU
-  DAILY
+  CUISINE
 }
 enum PROMO_SERVICE_TYPES {
   TAXI
