@@ -89,38 +89,10 @@ async function updatePromoSection(req, res) {
     try {
         const { sectionData,translations } = req.body
 
-        let currentPromoSection = await PromoDao.getPromoSectionById(req.params.id);
         const promoSection = await PromoDao.updatePromoSection(req.params.id, sectionData,translations);
         if (!promoSection.canPurchase) {
             res.json(promoSection);
             return;
-        }
-        let needPriceUpdate = false;
-        if (currentPromoSection.prices.t1Price !== promoSection.prices.t1Price) {
-            needPriceUpdate = true;
-        }
-        if (currentPromoSection.prices.t2Price !== promoSection.prices.t2Price) {
-            needPriceUpdate = true;
-        }
-        if (currentPromoSection.prices.t3Price !== promoSection.prices.t3Price) {
-            needPriceUpdate = true;
-        }
-
-        if (needPriceUpdate) {
-            let product = await stripe.client.products.retrieve(currentPromoSection.stripe_product_id);
-            let prices = await stripe.client.prices.list({ product: product.id });
-            let t1Price = prices.data.find(price => price.metadata.tier === '1');
-            let t2Price = prices.data.find(price => price.metadata.tier === '2');
-            let t3Price = prices.data.find(price => price.metadata.tier === '3');
-            let updatedT1Price = await stripe.client.prices.update(t1Price.id, {
-                tiers: generateTiers(promoSection.prices.t1Price)
-            });
-            let updatedT2Price = await stripe.client.prices.update(t2Price.id, {
-                tiers: generateTiers(promoSection.prices.t2Price)
-            });
-            let updatedT3Price = await stripe.client.prices.update(t3Price.id, {
-                tiers: generateTiers(promoSection.prices.t3Price)
-            });
         }
         res.json(promoSection);
     } catch (error) {
