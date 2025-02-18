@@ -7,7 +7,7 @@ dotenv.config();
 const createProduct = async (product) => {
     // check if it exists
 
-    const isProduct = await prisma.local_product.findUnique({
+    const isProduct = await prisma.local_products.findUnique({
         where: {
             stripe_product_id: product.stripe_product_id,
         }
@@ -16,7 +16,7 @@ const createProduct = async (product) => {
         return isProduct;
     }
     try {
-        const result = await prisma.local_product.create({
+        const result = await prisma.local_products.create({
             data: {
                 name: product.name,
                 description: product.description,
@@ -32,7 +32,7 @@ const createProduct = async (product) => {
 
 const createPrice = async (price) => {
     try {
-        const price = await prisma.local_price.findUnique({
+        const price = await prisma.local_prices.findUnique({
             where: {
                 stripe_price_id: price.stripe_price_id,
             }
@@ -42,7 +42,7 @@ const createPrice = async (price) => {
             return price
         }
 
-        const result = await prisma.local_price.create({
+        const result = await prisma.local_prices.create({
             data: {
                 amount: price.amount,
                 currency: price.currency,
@@ -64,7 +64,7 @@ const createPrice = async (price) => {
 
 const getProductByStripeId = async (stripe_product_id) => {
     try {
-        const result = await prisma.local_product.findUnique({
+        const result = await prisma.local_products.findUnique({
             where: {
                 stripe_product_id: stripe_product_id
             }
@@ -78,7 +78,7 @@ const getProductByStripeId = async (stripe_product_id) => {
 
 const getPriceByStripeId = async (stripe_price_id) => {
     try {
-        const result = await prisma.local_price.findUnique({
+        const result = await prisma.local_prices.findUnique({
             where: {
                 stripe_price_id: stripe_price_id
             }
@@ -92,7 +92,7 @@ const getPriceByStripeId = async (stripe_price_id) => {
 
 const getProduct = async (product_id) => {
     try {
-        const result = await prisma.local_product.findUnique({
+        const result = await prisma.local_products.findUnique({
             where: {
                 local_product_id: product_id
             }
@@ -106,7 +106,7 @@ const getProduct = async (product_id) => {
 
 const getPrice = async (price_id) => {
     try {
-        const result = await prisma.local_price.findUnique({
+        const result = await prisma.local_prices.findUnique({
             where: {
                 local_price_id: price_id
             }
@@ -120,7 +120,7 @@ const getPrice = async (price_id) => {
 
 const updateProductByStripeId = async (stripe_product_id, product) => {
     try {
-        const result = await prisma.local_product.update({
+        const result = await prisma.local_products.update({
             where: {
                 stripe_product_id: stripe_product_id
             },
@@ -138,7 +138,7 @@ const updateProductByStripeId = async (stripe_product_id, product) => {
 
 const updatePriceByStripeId = async (stripe_price_id, price) => {
     try {
-        const result = await prisma.local_price.update({
+        const result = await prisma.local_prices.update({
             where: {
                 stripe_price_id: stripe_price_id
             },
@@ -156,7 +156,7 @@ const updatePriceByStripeId = async (stripe_price_id, price) => {
 
 const deleteProductByStripeId = async (stripe_product_id) => {
     try {
-        const result = await prisma.local_product.delete({
+        const result = await prisma.local_products.delete({
             where: {
                 stripe_product_id: stripe_product_id
             }
@@ -170,7 +170,7 @@ const deleteProductByStripeId = async (stripe_product_id) => {
 
 const deletePriceByStripeId = async (stripe_price_id) => {
     try {
-        const result = await prisma.local_price.delete({
+        const result = await prisma.local_prices.delete({
             where: {
                 stripe_price_id: stripe_price_id
             }
@@ -184,7 +184,7 @@ const deletePriceByStripeId = async (stripe_price_id) => {
 
 async function getPricesByProductId(product_id) {
     try {
-        const result = await prisma.local_price.findMany({
+        const result = await prisma.local_prices.findMany({
             where: {
                 local_product_id: product_id
             }
@@ -198,7 +198,7 @@ async function getPricesByProductId(product_id) {
 
 async function getPricesByStripeProductId(stripe_product_id) {
     try {
-        const result = await prisma.local_price.findMany({
+        const result = await prisma.local_prices.findMany({
             where: {
                 stripe_product_id: stripe_product_id
             }
