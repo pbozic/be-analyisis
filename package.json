@@ -10,7 +10,8 @@
 		"stripe": "stripe listen --skip-verify --forward-to localhost:3001/api/stripe/webhook",
 		"docker:up": "docker-compose --env-file .env -f ./Docker/docker-compose.yml up -d",
 		"docker:down": "docker-compose --env-file .env -f ./Docker/docker-compose.yml down",
-		"seed": "node prisma/seed.js"
+		"seed": "node prisma/seed.js",
+		"generate:business": "node lib/generateBusiness.js"
 	},
 	"prisma": {
 		"schema": "./prisma/schema.prisma",
