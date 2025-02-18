@@ -92,7 +92,7 @@ async function createCategory(categoryData, translations, subcategories, parent_
                                 }
                             } : {}
                     ),
-                    ...(iconFileData ? {
+                    ...((file_type && mime_type) ? {
                         icon: {
                             create: {
                                 file_type,
