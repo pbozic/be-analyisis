@@ -21,9 +21,9 @@ async function createPromoSection(args,translations) {
         }
     }
     if (args.canPurchase) {
-        sectionData.t1price = parseFloat(args.prices.t1price)
-        sectionData.t2price = parseFloat(args.prices.t2price)
-        sectionData.t3price = parseFloat(args.prices.t3price)
+        sectionData.t1price = parseFloat(args.t1price)
+        sectionData.t2price = parseFloat(args.t2price)
+        sectionData.t3price = parseFloat(args.t3price)
     }
     const new_promo_section = await prisma.promo_sections.create({
         data: sectionData
@@ -60,9 +60,9 @@ async function updatePromoSection(id, args,translations) {
         canPurchase: args.canPurchase,
     }
     if (args.canPurchase) {
-        sectionData.t1price = parseFloat(args.prices.t1price)
-        sectionData.t2price = parseFloat(args.prices.t2price)
-        sectionData.t3price = parseFloat(args.prices.t3price)
+        sectionData.t1price = parseFloat(args.t1price)
+        sectionData.t2price = parseFloat(args.t2price)
+        sectionData.t3price = parseFloat(args.t3price)
     }
     const updated_promo_section = await prisma.promo_sections.update({
         where: {

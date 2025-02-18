@@ -35,11 +35,10 @@ function getDiscountedPricePerQuantity(basePrice, quantity) {
  *   "description": "Description of the promo section",
  *   "service_type": "Service Type",
  *   "canPurchase": true,
- *   "prices": {
- *     "t1Price": 1000, // Base price for tier 1
- *     "t2Price": 2000, // Base price for tier 2
- *     "t3Price": 3000  // Base price for tier 3
- *   }
+ *   "t1Price": 1000, // Base price for tier 1
+ *   "t2Price": 2000, // Base price for tier 2
+ *   "t3Price": 3000  // Base price for tier 3
+ *   
  * }
  * @response 200 - Promo section created successfully
  * @responseContent {object} 200.application/json
@@ -50,21 +49,9 @@ function getDiscountedPricePerQuantity(basePrice, quantity) {
  *   "description": "Description of the promo section",
  *   "service_type": "Service Type",
  *   "canPurchase": true,
- *   "stripe_product_id": "prod_12345",
- *   "prices": {
- *     "t1Price": {
- *       "stripe_price_id": "price_12345",
- *       "tier": "1"
- *     },
- *     "t2Price": {
- *       "stripe_price_id": "price_67890",
- *       "tier": "2"
- *     },
- *     "t3Price": {
- *       "stripe_price_id": "price_abcde",
- *       "tier": "3"
- *     }
- *   }
+ *   "t1Price": 1000, // Base price for tier 1
+ *   "t2Price": 2000, // Base price for tier 2
+ *   "t3Price": 3000  // Base price for tier 3
  * }
  * @response 500 - Error creating new promo section
  * @prisma_model promo_sections
