@@ -95,7 +95,8 @@ async function createPromoSection(req, res) {
             res.json(promoSection);
             return;
         }
-        let product = await stripe.client.createProduct({
+        
+        let product = await stripe.client.products.create({
             name: "promo_section_" + promoSection.promo_sections_id,
             type: 'service',
             metadata: {
@@ -111,7 +112,7 @@ async function createPromoSection(req, res) {
             }
         )
 
-        let t1Price = await stripe.client.createPrice({
+        let t1Price = await stripe.client.prices.create({
             currency: 'eur',
             product: product.id,
             tiers_mode: 'graduated',
@@ -135,7 +136,7 @@ async function createPromoSection(req, res) {
                 tier: "1"
             }
         )
-        let t2Price = await stripe.client.createPrice({
+        let t2Price = await stripe.client.prices.create({
             currency: 'eur',
             product: product.id,
             tiers_mode: 'graduated',
@@ -159,7 +160,7 @@ async function createPromoSection(req, res) {
                  tier: "2"
             }
         )
-        let t3Price = await stripe.client.createPrice({
+        let t3Price = await stripe.client.prices.create({
             currency: 'eur',
             product: product.id,
             tiers_mode: 'graduated',
@@ -215,18 +216,18 @@ async function updatePromoSection(req, res) {
         }
 
         if (needPriceUpdate) {
-            let product = await stripe.client.retrieveProduct(currentPromoSection.stripe_product_id);
-            let prices = await stripe.client.listPrices({ product: product.id });
+            let product = await stripe.client.products.retrieve(currentPromoSection.stripe_product_id);
+            let prices = await stripe.client.prices.list({ product: product.id });
             let t1Price = prices.data.find(price => price.metadata.tier === '1');
             let t2Price = prices.data.find(price => price.metadata.tier === '2');
             let t3Price = prices.data.find(price => price.metadata.tier === '3');
-            let updatedT1Price = await stripe.client.updatePrice(t1Price.id, {
+            let updatedT1Price = await stripe.client.prices.update(t1Price.id, {
                 tiers: generateTiers(promoSection.prices.t1Price)
             });
-            let updatedT2Price = await stripe.client.updatePrice(t2Price.id, {
+            let updatedT2Price = await stripe.client.prices.update(t2Price.id, {
                 tiers: generateTiers(promoSection.prices.t2Price)
             });
-            let updatedT3Price = await stripe.client.updatePrice(t3Price.id, {
+            let updatedT3Price = await stripe.client.prices.update(t3Price.id, {
                 tiers: generateTiers(promoSection.prices.t3Price)
             });
         }
@@ -292,9 +293,9 @@ async function getPromoSectionById(req, res) {
             t3Price: prices.find(p => p.tier === "3").stripe_price_id || null
         };
         let priceObject = {
-            t1Price: await stripe.client.retrievePrice(priceMapObject.t1Price),
-            t2Price: await stripe.client.retrievePrice(priceMapObject.t2Price),
-            t3Price: await stripe.client.retrievePrice(priceMapObject.t3Price)
+            t1Price: await stripe.client.prices.retrieve(priceMapObject.t1Price),
+            t2Price: await stripe.client.prices.retrieve(priceMapObject.t2Price),
+            t3Price: await stripe.client.prices.retrieve(priceMapObject.t3Price)
         }
 
         console.log(priceObject);
