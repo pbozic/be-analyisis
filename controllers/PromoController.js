@@ -98,26 +98,7 @@ async function updatePromoSection(req, res) {
  * @pathParam {string} id - The ID of the promo section to delete
  * @response 200 - Promo section deleted successfully
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
- *   "promo_sections_id": 1,
- *   "description": "Description of the promo section",
- *   "canPurchase": true,
- *   "stripe_product_id": "prod_12345",
- *   "prices": {
- *     "t1Price": {
- *       "stripe_price_id": "price_12345",
- *       "tier": "1"
- *     },
- *     "t2Price": {
- *       "stripe_price_id": "price_67890",
- *       "tier": "2"
- *     },
- *     "t3Price": {
- *       "stripe_price_id": "price_abcde",
- *       "tier": "3"
- *     }
- *   }
- * }
+ * @responseExample 204.application/json 
  * @response 500 - Error deleting promo section
  */
 async function deletePromoSection(req, res) {
@@ -136,28 +117,7 @@ async function getPromoSectionById(req, res) {
         const promoSection = await PromoDao.getPromoSectionById(req.params.id);
         let result = {
             ...promoSection,
-        }
-        if (promoSection.stripe_product_id) {
-            let product = await ProductDao.getProductByStripeId(promoSection.stripe_product_id);
-            let prices = await ProductDao.getPricesByProductId(product.local_product_id);
-
-            let priceMapObject = {
-                t1Price: prices.find(p => p.tier === "1").stripe_price_id || null,
-                t2Price: prices.find(p => p.tier === "2").stripe_price_id || null,
-                t3Price: prices.find(p => p.tier === "3").stripe_price_id || null
-            };
-            let priceObject = {
-                t1Price: await stripe.client.prices.retrieve(priceMapObject.t1Price),
-                t2Price: await stripe.client.prices.retrieve(priceMapObject.t2Price),
-                t3Price: await stripe.client.prices.retrieve(priceMapObject.t3Price)
-            }
-
-            result = {
-                ...promoSection,
-                product: product,
-                prices: priceObject,
-                discountRules: discountRules
-            }
+            discountRules: discountRules
         }
         res.json(result);
     } catch (error) {
