@@ -4,13 +4,14 @@ const prisma = require("./prisma");
 const userSeed = require("./seeders/userSeeder");
 const allergernSeed = require("./seeders/alergenSeeder");
 const driverSeed = require("./seeders/driverSeeder");
-
+const categoriesSeed = require("./seeders/categoriesSeeder");
 async function main() {
 	if (process.env.ENVIRONMENT === "development") {
 		// await userSeed();
 		// await driverSeed();
 	}
 	await allergernSeed();
+	await categoriesSeed();
 }
 
 main()

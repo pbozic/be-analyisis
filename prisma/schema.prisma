@@ -730,6 +730,7 @@ model categories {
   categories_id         String  @id @default(uuid()) @db.Uuid
   name                String
   description         String?
+  tag                 String @unique
   icon_file_id        String? @db.Uuid
   icon                files? @relation(fields: [icon_file_id], references: [file_id])
   category_type       CATEGORY_TYPE

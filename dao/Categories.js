@@ -59,6 +59,14 @@ async function getCategoryById(id) {
 
 async function createCategory(categoryData, translations, subcategories, parent_categories_id, iconFileData={}) {
     try {
+        let categoryExists = await prisma.categories.findUnique({
+            where: {
+                tag: categoryData.tag
+            }
+        });
+        if (categoryExists) {
+            throw new Error("Category already exists");
+        }
         let translatable = await prisma.translatable.create({data:{}});
 
         const {file_type, mime_type} = iconFileData;
@@ -215,6 +223,7 @@ async function deleteCategory(id) {
         throw new Error("Failed to delete category: " + error.message);
     }
 }
+
 
 module.exports = {
     getCategories,

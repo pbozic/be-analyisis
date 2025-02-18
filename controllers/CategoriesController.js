@@ -15,10 +15,19 @@ async function createCategory(req, res) {
     try {
         const user_id =  req.user.user_id
         const {categoryData,translations,subcategories,parent_categories_id,iconFileData} = req.body
+        let tag = categoryData.name.replace(/\s/g, '-').toLowerCase()
+        for (let translation of translations) { 
+            if (translation.language === 'en') {
+                tag = translation.translation.replace(/\s/g, '-').toLowerCase()
+                break
+            }
+        }
+
+        categoryData.tag = tag;
         const category = await CategoriesDao.createCategory(categoryData,translations,subcategories,parent_categories_id,iconFileData);
         if(iconFileData){
             const {file_type,mime_type, base64} = iconFileData
-            await upsertFileOnS3Helper(user_id, category.icon, file_type,mime_type,base64)
+            await upsertFileOnS3Helper(null, category.icon, file_type,mime_type,base64)
         }
         res.status(201).json(category);
     } catch (error) {

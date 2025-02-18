@@ -129,7 +129,7 @@ async function getPromoSectionById(id) {
     });
 
     if (!promo_section) {
-        throw new Error('Word not found');
+        throw new Error('Promo Section not found');
     }
 
     promo_section.translations = promo_section.translatable.translations;
