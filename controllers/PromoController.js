@@ -116,6 +116,7 @@ async function createPromoSection(req, res) {
             currency: 'eur',
             product: product.id,
             tiers_mode: 'graduated',
+            billing_scheme: "tiered",
             tiers: generateTiers(prices.t1Price),
             metadata: {
                 promo_sections_id: promoSection.promo_sections_id,
@@ -140,6 +141,7 @@ async function createPromoSection(req, res) {
             currency: 'eur',
             product: product.id,
             tiers_mode: 'graduated',
+            billing_scheme: "tiered",
             tiers: generateTiers(prices.t2Price),
             metadata: {
                 promo_sections_id: promoSection.promo_sections_id,
@@ -164,6 +166,7 @@ async function createPromoSection(req, res) {
             currency: 'eur',
             product: product.id,
             tiers_mode: 'graduated',
+            billing_scheme: "tiered",
             tiers: generateTiers(prices.t3Price),
             metadata: {
                 promo_sections_id: promoSection.promo_sections_id,

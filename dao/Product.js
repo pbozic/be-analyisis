@@ -45,7 +45,7 @@ const createPrice = async (price) => {
         const result = await prisma.local_prices.create({
             data: {
                 amount: price.amount,
-                currency: price.currency,
+                currency: price.currency || 'eur',
                 stripe_price_id: price.stripe_price_id,
                 stripe_product_id: price.stripe_product_id,
                 product: {
@@ -144,7 +144,7 @@ const updatePriceByStripeId = async (stripe_price_id, price) => {
             },
             data: {
                 amount: price.amount,
-                currency: price.currency,
+                currency: price.currency || 'eur',
             }
         });
         return result;
