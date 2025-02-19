@@ -57,7 +57,7 @@ async function getCategoryById(id) {
     }
 }
 
-async function createCategory(categoryData, translations, subcategories, parent_categories_id, iconFileData={}) {
+async function createCategory(categoryData, translations, subcategories, words, parent_categories_id, iconFileData={}) {
     try {
         let categoryExists = await prisma.categories.findUnique({
             where: {

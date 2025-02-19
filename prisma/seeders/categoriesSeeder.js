@@ -547,7 +547,7 @@ async function seedCategories() {
                 console.log(`Category ${categoryExists.tag} already exists.`);
                 continue;
             }
-            const cat = await CategoriesDao.createCategory(categoryObj.categoryData, categoryObj.translations, categoryObj.subcategories, categoryObj.parent_categories_id, categoryObj.iconFileData);
+            const cat = await CategoriesDao.createCategory(categoryObj.categoryData, categoryObj.translations, categoryObj.subcategories, [], categoryObj.parent_categories_id, categoryObj.iconFileData);
             if(categoryObj.iconFileData){
                 const {file_type,mime_type, base64} = categoryObj.iconFileData
                 await upsertFileOnS3Helper(user_id, category.icon, file_type,mime_type,base64)

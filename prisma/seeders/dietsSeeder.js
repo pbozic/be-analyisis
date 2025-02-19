@@ -213,7 +213,7 @@ async function seedCategories() {
                 console.log(`Dietary option ${categoryExists.tag} already exists.`);
                 continue;
             }
-            const cat = await CategoriesDao.createCategory(categoryObj.categoryData, categoryObj.translations, categoryObj.subcategories, categoryObj.parent_categories_id, categoryObj.iconFileData);
+            const cat = await CategoriesDao.createCategory(categoryObj.categoryData, categoryObj.translations, categoryObj.subcategories, [], categoryObj.parent_categories_id, categoryObj.iconFileData);
             console.log(`Dietary option ${cat.categories_id} created.`);
             if(categoryObj.iconFileData){
                 const {file_type,mime_type, base64} = categoryObj.iconFileData

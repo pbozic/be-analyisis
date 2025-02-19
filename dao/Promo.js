@@ -91,7 +91,7 @@ async function updatePromoSection(id, args,translations) {
                     language: translation.language,
                     translatable: {
                         connect: {
-                            translatable_id: existingWord.translatable_id
+                            translatable_id: updated_promo_section.translatable_id
                         }
                     }
                 }

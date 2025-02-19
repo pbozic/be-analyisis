@@ -78,10 +78,10 @@ async function updatePromoSection(req, res) {
 
         const promoSection = await PromoDao.updatePromoSection(req.params.id, sectionData,translations);
         if (!promoSection.canPurchase) {
-            res.json(promoSection);
+            res.status(200).json(promoSection);
             return;
         }
-        res.json(promoSection);
+        res.status(200).json(promoSection);
     } catch (error) {
         console.error(error)
         res.status(500).json({ error: error.message });
