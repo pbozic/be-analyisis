@@ -75,6 +75,12 @@ const prisma = new PrismaClient({
 				return result;
 			}
 		},
+		promo_sections: {
+			async findMany({ args, query }) {
+				args.orderBy = args.orderBy ?? { order: 'asc' };
+				return query(args);
+			},
+		},
 	},
 	model: {
 		drivers: {

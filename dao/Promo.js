@@ -104,6 +104,22 @@ async function updatePromoSection(id, args,translations) {
     return updated_promo_section
 }
 
+async function reorderPromoSections(promo_sections_ids) {
+    try {
+        return await prisma.$transaction(
+            promo_sections_ids.map((promo_sections_id, index) =>
+                prisma.promo_sections.update({
+                    where: { promo_sections_id },
+                    data: { order: index },
+                })
+            )
+        );
+    } catch (error) {
+        throw error
+        console.error('Error updating promo sections order:', error);
+    }
+}
+
 async function deletePromoSection(id) {
     return await prisma.promo_sections.delete({
         where: {
@@ -400,6 +416,7 @@ async function updatePromoSectionBuy(id, args) {
 module.exports = {
     createPromoSection,
     updatePromoSection,
+    reorderPromoSections,
     deletePromoSection,
     getPromoSectionById,
     getAllPromoSections,

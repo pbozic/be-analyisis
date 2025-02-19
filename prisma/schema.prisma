@@ -770,6 +770,7 @@ model promo_sections {
   t1price           Float?
   t2price           Float?
   t3price           Float?
+  order             Int       @default(autoincrement())
   service_type      PROMO_SERVICE_TYPES
   promo_section_buy promo_sections_buy[]
   promo_duration_days Int @default(30)
