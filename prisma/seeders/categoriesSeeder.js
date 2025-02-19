@@ -3,6 +3,7 @@ const path = require("path");
 const prisma = require("../prisma");
 const { upsertFileOnS3Helper } = require("../../controllers/FilesController");
 const CategoriesDao = require("../../dao/Categories");
+const WordDao = require("../../dao/Word");
 let languages = {
     "en": {
         "fastFood": "Fast food",
@@ -532,7 +533,6 @@ async function seedCategories() {
             },
             parent_categories_id: null,
             subcategories: []
-
         }
         try {
             let categoryExists = await prisma.categories.findUnique({
@@ -541,20 +541,56 @@ async function seedCategories() {
                         tag: categoryObj.categoryData.tag,
                         category_type: categoryObj.categoryData.category_type
                     }
+                },
+                include: {
+                    icon:true
                 }
             });
+            let category_id = categoryExists?.categories_id
             if (categoryExists) {
                 console.log(`Category ${categoryExists.tag} already exists.`);
-                continue;
+            }else{
+                const cat = await CategoriesDao.createCategory(categoryObj.categoryData, categoryObj.translations, categoryObj.subcategories, [], categoryObj.parent_categories_id, categoryObj.iconFileData);
+                category_id = cat.categories_id
+                if(categoryObj.iconFileData){
+                    const {file_type,mime_type, base64} = categoryObj.iconFileData
+                    await upsertFileOnS3Helper(null, category.icon, file_type,mime_type,base64)
+                }
+                console.log(`Category ${cat.categories_id} created.`);
             }
-            const cat = await CategoriesDao.createCategory(categoryObj.categoryData, categoryObj.translations, categoryObj.subcategories, [], categoryObj.parent_categories_id, categoryObj.iconFileData);
-            if(categoryObj.iconFileData){
-                const {file_type,mime_type, base64} = categoryObj.iconFileData
-                await upsertFileOnS3Helper(user_id, category.icon, file_type,mime_type,base64)
+
+            let wordObj = {
+                wordData: {
+                    word: categoryObj.categoryData.name,
+                    categories_id: category_id,
+                },
+                translations: translations,
             }
-            console.log(`Category ${cat.categories_id} created.`);
+            let wordExists = await prisma.words.findUnique({
+                where: {
+                    word: wordObj.wordData.word
+                }
+            });
+            if (wordExists) {
+                let updatedWord = await prisma.words.update({
+                    where: {
+                        word: wordObj.wordData.word
+                    },
+                    data:{
+                        category:{
+                            connect:{
+                                categories_id:category_id
+                            }
+                        }
+                    }
+                });
+                console.log(`word ${wordExists.tag} already exists.`);
+            }else{
+                const word = await WordDao.createWord(wordObj.wordData.word,wordObj.wordData.categories_id,wordObj.translations);
+                console.log(`Word ${word.word_id} created.`);
+            }
         } catch (error) {
-           
+           console.log("Error creating category and word:",error)
         }
         
        
