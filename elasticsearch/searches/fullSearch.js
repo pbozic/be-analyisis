@@ -43,7 +43,7 @@ async function searchBusinesses(query, userLat, userLon, page = 1, pageSize = 10
                                     },
                                     {
                                         function_score: {
-                                            weight: 1,
+                                            weight: 2,
                                             query: {
                                                 nested: {
                                                     path: "menus.menu_items",
@@ -52,6 +52,27 @@ async function searchBusinesses(query, userLat, userLon, page = 1, pageSize = 10
                                                             query: query,
                                                             fields: [
                                                                 "menus.menu_items.name",         // Boost menu item names
+                                                            ],
+                                                            fuzziness: "AUTO"
+                                                        }
+                                                    },
+                                                    score_mode: "max"
+                                                }
+                                            },
+                                            boost_mode: "sum",
+                                            score_mode: "sum"
+                                        }
+                                    },
+                                    {
+                                        function_score: {
+                                            weight: 1,
+                                            query: {
+                                                nested: {
+                                                    path: "menus.menu_items",
+                                                    query: {
+                                                        multi_match: {
+                                                            query: query,
+                                                            fields: [     // Boost menu item names
                                                                 "menus.menu_items.description" // Slight boost for descriptions
                                                             ],
                                                             fuzziness: "AUTO"
@@ -86,7 +107,7 @@ async function searchBusinesses(query, userLat, userLon, page = 1, pageSize = 10
                                     },
                                     {
                                         function_score: {
-                                            weight: 10,
+                                            weight: 5,
                                             query: {
                                                 nested: {
                                                     path: "menus",

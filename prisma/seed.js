@@ -6,6 +6,8 @@ const allergernSeed = require("./seeders/alergenSeeder");
 const driverSeed = require("./seeders/driverSeeder");
 const categoriesSeed = require("./seeders/categoriesSeeder");
 const cuisinesSeed = require("./seeders/dietsSeeder");
+const promoSectionSeed = require("./seeders/promoSectionSeeder");
+
 async function main() {
 	if (process.env.ENVIRONMENT === "development") {
 		// await userSeed();
@@ -14,6 +16,7 @@ async function main() {
 	await allergernSeed();
 	await categoriesSeed();
 	await cuisinesSeed();
+	await promoSectionSeed();
 }
 
 main()

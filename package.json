@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"start": "node ./bin/www",
-		"dev": "npx prisma db push && npx prisma generate && nodemon ./app.js",
+		"dev": "npx prisma generate && npx prisma db push &&  nodemon ./app.js",
 		"server": "nodemon ./app.js",
 		"prisma": "npx prisma db push && npx prisma generate",
 		"stripe": "stripe listen --skip-verify --forward-to localhost:3001/api/stripe/webhook",
@@ -54,6 +54,7 @@
 		"joi": "^17.13.1",
 		"jsonwebtoken": "^9.0.2",
 		"jwk-to-pem": "^2.0.7",
+		"libphonenumber-js": "^1.11.20",
 		"mime-types": "^2.1.35",
 		"morgan": "~1.9.1",
 		"node-cron": "^3.0.3",

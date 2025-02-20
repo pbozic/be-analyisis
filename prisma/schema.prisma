@@ -776,22 +776,23 @@ model menu_categories_categories {
 }
 
 model promo_sections {
-  promo_sections_id   String               @id @default(uuid()) @db.Uuid
-  name                String
-  tag                 String
-  description         String?
-  prices              Json?
-  limits              Json?
-  stripe_product_id   String?
-  canPurchase         Boolean
-  t1price             Float?
-  t2price             Float?
-  t3price             Float?
-  service_type        PROMO_SERVICE_TYPES
-  promo_section_buy   promo_sections_buy[]
-  promo_duration_days Int                  @default(30)
-  translatable_id     String               @db.Uuid
-  translatable        translatable         @relation(fields: [translatable_id], references: [translatable_id])
+  promo_sections_id  String  @id @default(uuid()) @db.Uuid
+  name              String
+  tag               String
+  description       String?
+  prices            Json?
+  limits            Json?
+  stripe_product_id String?
+  canPurchase       Boolean
+  t1price           Float?
+  t2price           Float?
+  t3price           Float?
+  order             Int       @default(autoincrement())
+  service_type      PROMO_SERVICE_TYPES
+  promo_section_buy promo_sections_buy[]
+  promo_duration_days Int @default(30)
+  translatable_id String @db.Uuid
+  translatable    translatable @relation(fields: [translatable_id], references: [translatable_id])
 }
 
 model promo_banners {
@@ -838,12 +839,12 @@ model promo_ads_category {
 }
 
 model words {
-  word_id         String       @id @default(uuid()) @db.Uuid
-  word            String
-  popularity      Int
-  categories_id   String?      @db.Uuid
-  category        categories?  @relation(fields: [categories_id], references: [categories_id])
-  translatable_id String       @db.Uuid
+  word_id     String  @id @default(uuid()) @db.Uuid
+  word        String  @unique
+  popularity  Int     @default(0)
+  categories_id String? @db.Uuid
+  category    categories? @relation(fields: [categories_id], references: [categories_id])
+  translatable_id String @db.Uuid
   translatable    translatable @relation(fields: [translatable_id], references: [translatable_id])
   subscriptions   word_buy[]
   created_at      DateTime     @default(now()) @db.Timestamptz(6)

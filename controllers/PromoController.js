@@ -78,10 +78,22 @@ async function updatePromoSection(req, res) {
 
         const promoSection = await PromoDao.updatePromoSection(req.params.id, sectionData,translations);
         if (!promoSection.canPurchase) {
-            res.json(promoSection);
+            res.status(200).json(promoSection);
             return;
         }
-        res.json(promoSection);
+        res.status(200).json(promoSection);
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ error: error.message });
+    }
+}
+
+async function reorderPromoSections(req, res) {
+    try {
+        const { promo_sections_ids } = req.body
+
+        const promoSections = await PromoDao.reorderPromoSections(promo_sections_ids);
+        res.status(200).json(promoSections);
     } catch (error) {
         console.error(error)
         res.status(500).json({ error: error.message });
@@ -463,6 +475,7 @@ async function addStripeSubToPromoSectionBuy(req, res) {
 module.exports = {
     createPromoSection,
     updatePromoSection,
+    reorderPromoSections,
     deletePromoSection,
     getPromoSectionById,
     getAllPromoSections,

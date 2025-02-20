@@ -649,7 +649,7 @@ async function updateTelephone(req, res) {
 async function requestSMSVerification(req, res) {
 	try {
 		let token = await TokenDao.generateSMSVerificationToken(req.user);
-		await SMS.sendSMSVerification(req.user.telephone, token.token);
+		await SMS.sendSMSVerification(req.user.telephone, token.token, req.user.country_code);
 		console.log(token);
 		console.info(token)
 		if (token) {
