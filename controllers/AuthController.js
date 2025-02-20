@@ -180,7 +180,7 @@ async function register(req, res) {
 		const countryCode = postData.telephone_code;
 		const phoneNumber = postData.telephone_number;
 		//TODO: Adjust this for other country codes?
-		const normalizedPhoneNumber = countryCode === 'SI' && !phoneNumber.startsWith('0') ? '0' + phoneNumber : phoneNumber;
+		const normalizedPhoneNumber = await SMSHelper.getParsedPhoneNumber(postData.telephone, countryCode).number;
 		let userObj = {
 			...postData,
 			telephone_number: normalizedPhoneNumber,
