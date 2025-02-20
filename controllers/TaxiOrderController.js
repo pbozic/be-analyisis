@@ -5,11 +5,12 @@ const FlagDao = require("../dao/Flags");
 const BusinessUsersDao = require("../dao/BusinessUsers");
 const ReferralDao = require("../dao/Referrals");
 const CashbackDao = require("../dao/Cashback");
+const WalletFundsDao = require("../dao/WalletFunds");
 const { UserSockets, io } = require("../socket");
 const gApi = require("../lib/gApis");
 const TaxiHelper = require("../lib/taxiHelpers");
 const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE , CARGO_TRANSFER_FEE, ORDER_TYPE, CREDITS,
-	CASHBACK_SOURCE
+	CASHBACK_SOURCE, USER_ROLE
 } = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
 const { sendOrderNotifications } = require("../lib/notifications");
@@ -835,7 +836,7 @@ async function acceptOrder(req, res) {
 async function completeOrder(req, res) {
 	try {
 		let order = await TaxiOrderDao.completeOrder(req.body.order_id);
-		console.log("COMPLLETED", order);
+		console.log("COMPLLETED", order.order_id);
 		let driver = await DriverDao.getDriverById(order.driver_id);
 		let driver_business = await BusinessDao.getBusinessById(driver.business_id);
 
@@ -851,22 +852,20 @@ async function completeOrder(req, res) {
 			const l10nTextHeading = getLocalisedTexts("HEADING", order.user);
 			await sendNotificationToUser(l10nTextHeading?.completed, l10nText?.vehicleTransferCompleted, order.user_id);
 		} else {
-			const expiryDate = new Date();
-			expiryDate.setDate(expiryDate.getDate() + 30);
-			expiryDate.setHours(23, 59, 59, 999);
-			if (!user?.referral?.conditions_met) {
-				await ReferralDao.updateReferralConditionsMet(user.referral.referral_id, true);
-				//referrer
-				const referrer = await UsersDao.getUserById(user.referral?.referrer_user_id);
+			const orderingUser = !order.creating_user_id ? user : await UsersDao.getUserById(order.creating_user_id, {
+				include: { referral: true }
+			});
+			//TODO: update how we set referral conditions met!
+			if (!orderingUser?.referral?.conditions_met) {
+				await ReferralDao.updateReferralConditionsMet(orderingUser.referral.referral_id, true);
+
+				const referrer = await UsersDao.getUserById(orderingUser.referral?.referrer_user_id);
 				if (referrer) {
-					await CashbackDao.createCashback({
-						expires_at: expiryDate,
+					await WalletFundsDao.createCredit({
 						user: { connect: { user_id: referrer.user_id } },
 						amount: CREDITS.TAXI,
 						type: ORDER_TYPE.TAXI,
-						source: CASHBACK_SOURCE.REFERRAL,
-						description: `Referral bonus, because ${user.first_name} ${user.last_name} completed first taxi order`,
-						referral: { connect: { referral_id: user.referral.referral_id } }
+						referral: { connect: { referral_id: orderingUser.referral.referral_id } }
 					});
 					//TODO: send notification to user that he received credits for referral
 				} else {
@@ -883,23 +882,35 @@ async function completeOrder(req, res) {
 			const DRIVER_CUT_CENTS = Math.round(PRICE_CENTS * (1 - DRIVE_FEE));
 			const PLATFORM_CUT_CENTS = PRICE_CENTS - DRIVER_CUT_CENTS;
 
-			if (TOTAL_COST_CENTS >= CREDITS.MINIMUM_ORDER_AMOUNT * 100) {
+			if (TOTAL_COST_CENTS >= CREDITS.MINIMUM_ORDER_AMOUNT*100 && (orderingUser.user_role === USER_ROLE.PERSONAL)) {
 				let cashbackAmount = Math.min(
 					TOTAL_COST_CENTS * (CREDITS.TAXI_ORDER_CASHBACK_PERCENTAGE),
 					CREDITS.MAXIMUM_CASHBACK_TAXI_ORDER * 100
 				);
-				cashbackAmount = Math.round((cashbackAmount / 100) / CREDITS.CONVERSION_TAXI);
+				cashbackAmount = Number((cashbackAmount / 100).toFixed(2));
 				if (cashbackAmount > 0) {
-					await CashbackDao.createCashback({
-						expires_at: expiryDate,
-						user: { connect: { user_id: user.user_id } },
+					const cashback = await CashbackDao.createCashback({
+						//expires_at: expiryDate,
+						user: { connect: { user_id: orderingUser.user_id } },
 						amount: cashbackAmount,
 						type: ORDER_TYPE.TAXI,
 						source: CASHBACK_SOURCE.ORDER,
 						description: `Cashback for taxi order ${order.order_id}`,
 						taxi_order: { connect: { order_id: order.order_id } },
 					});
-					//TODO: Notify user about earned cashback
+					if (cashback) {
+						const pendingCashbacks = await CashbackDao.getPendingUserCashbackByType(orderingUser.user_id, ORDER_TYPE.TAXI);
+						if (pendingCashbacks?.length === CREDITS.TAXI_THRESHOLD) {
+							const totalAmount = pendingCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
+							if (totalAmount > 0) {
+								await WalletFundsDao.convertCashbacksToCredit({
+									user: { connect: { user_id: orderingUser.user_id } },
+									amount: totalAmount,
+									type: ORDER_TYPE.TAXI,
+								}, pendingCashbacks)
+							}
+						}
+					}
 				}
 			}
 
