@@ -770,6 +770,7 @@ model promo_sections {
   t1price           Float?
   t2price           Float?
   t3price           Float?
+  order             Int       @default(autoincrement())
   service_type      PROMO_SERVICE_TYPES
   promo_section_buy promo_sections_buy[]
   promo_duration_days Int @default(30)
@@ -824,8 +825,8 @@ model promo_ads_category {
 
 model words {
   word_id     String  @id @default(uuid()) @db.Uuid
-  word        String
-  popularity  Int
+  word        String  @unique
+  popularity  Int     @default(0)
   categories_id String? @db.Uuid
   category    categories? @relation(fields: [categories_id], references: [categories_id])
   translatable_id String @db.Uuid
