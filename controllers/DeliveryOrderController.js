@@ -7,7 +7,12 @@ const UsersDao = require("../dao/User");
 const gApi = require("../lib/gApis");
 const { UserSockets, io } = require("../socket");
 const stripe = require("../lib/stripe");
-const { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE, TAXI_ORDER_STATUS } = require("../lib/constants");
+const { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE, TAXI_ORDER_STATUS,
+	CREDITS,
+	PARENT_USER_TYPE,
+	ORDER_TYPE,
+	CASHBACK_SOURCE
+} = require("../lib/constants");
 const fs = require("fs");
 const Constants = require("../lib/constants");
 const { getUsers } = require("../dao/User");
@@ -22,6 +27,9 @@ const prisma = require("../prisma/prisma");
 const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
 const DriverDao = require("../dao/Driver");
 const { sendDeliveryOrderNotifications } = require("../lib/notifications");
+const CashbackDao = require("../dao/Cashback");
+const CreditsDao = require("../dao/Credits");
+const WalletFundsDao = require("../dao/WalletFunds");
 
 /**
  * GET /delivery/orders
@@ -571,6 +579,40 @@ async function completeOrder(req, res) {
 			? await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id)
 			: await DriverDao.getDriverById(order.driver_id);
 		let delivery_business = await BusinessDao.getBusinessById(driver.business_id);
+
+		const DELIVERY_COST_CENTS = Math.round(order.details.delivery_cost*100);
+		if (DELIVERY_COST_CENTS >= CREDITS.MINIMUM_ORDER_AMOUNT * 100) {
+			let cashbackAmount = Math.min(
+				DELIVERY_COST_CENTS * (CREDITS.DELIVERY_ORDER_CASHBACK_PERCENTAGE),
+				CREDITS.MAXIMUM_CASHBACK_DELIVERY_ORDER * 100
+			);
+			cashbackAmount = cashbackAmount / 100;
+			if (cashbackAmount > 0) {
+				const cashback = await CashbackDao.createCashback({
+					//expires_at: expiryDate,
+					user: { connect: { user_id: order.user_id } },
+					amount: cashbackAmount,
+					type: ORDER_TYPE.DELIVERY,
+					source: CASHBACK_SOURCE.ORDER,
+					description: `Cashback for delivery order ${order.order_id}`,
+					taxi_order: { connect: { order_id: order.order_id } },
+				});
+				if (cashback) {
+					const pendingCashbacks = await CashbackDao.getPendingUserCashbackByType(order.user_id, ORDER_TYPE.TAXI);
+					if (pendingCashbacks?.length === CREDITS.TAXI_THRESHOLD) {
+						const totalAmount = pendingCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
+						if (totalAmount > 0) {
+							await WalletFundsDao.convertCashbacksToCredit({
+								user: { connect: { user_id: order.user_id } },
+								amount: totalAmount,
+								type: ORDER_TYPE.TAXI,
+							}, pendingCashbacks)
+						}
+					}
+				}
+			}
+		}
+
 		if(order.payment.type==="CARD"){
 			const paymentIntent = await stripe.client.paymentIntents.retrieve(order.payment_intent_id);
 			const transferDelivery = stripe.splitCutFromPaymentIntent(
@@ -578,8 +620,7 @@ async function completeOrder(req, res) {
 				delivery_business.stripe_account_id,
 				order.details.delivery_cost
 			);
-		}else if(order.payment.type==="WALLET"){
-			const DELIVERY_COST_CENTS = Math.round(order.details.delivery_cost*100);
+		} else if(order.payment.type==="WALLET"){
 			console.info(order)
 			const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id,delivery_business.stripe_account_id, DELIVERY_COST_CENTS, order.order_id, "delivery");
 			// let walletTransfer = await prisma.wallet_transfer_history.create(
@@ -596,7 +637,6 @@ async function completeOrder(req, res) {
 			// 	}
 			// );
 		}
-
 
 		io.to("order_" + order.order_id).emit("order_completed__delivery", order);
 		io.emit("driver_available", driver);

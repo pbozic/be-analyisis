@@ -6,6 +6,7 @@ const router = express.Router();
 const CategoriesController = require("../../controllers/CategoriesController");
 
 router.get("/", CategoriesController.getCategories);
+router.get("/:category_type", CategoriesController.getCategoriesByType);
 router.post("/", CategoriesController.createCategory);
 router.patch("/:id", CategoriesController.updateCategory);
 router.delete("/:id", CategoriesController.deleteCategory);

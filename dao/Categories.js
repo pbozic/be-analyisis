@@ -26,6 +26,35 @@ async function getCategories() {
     }
 }
 
+async function getCategoriesByType(type) {
+    try {
+        let categories = await prisma.categories.findMany({
+            where: {
+                category_type: type
+            },
+            include: {
+                translatable: {
+                    include: {
+                        translations: true
+                    }
+                },
+                icon: true,
+                sub_categories: true
+            }
+        });
+
+        for (let category of categories) {
+            category.translations = category.translatable.translations;
+            delete category.translatable;
+        }
+
+        return categories;
+    } catch (error) {
+        console.error("Error getting categories:", error);
+        throw new Error("Failed to get categories");
+    }
+}
+
 async function getCategoryById(id) {
     try {
         let category = await prisma.categories.findUnique({
@@ -230,6 +259,7 @@ async function deleteCategory(id) {
 
 module.exports = {
     getCategories,
+    getCategoriesByType,
     createCategory,
     updateCategory,
     deleteCategory,

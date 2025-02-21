@@ -11,6 +11,16 @@ async function getCategories(req, res) {
     }
 }
 
+async function getCategoriesByType(req, res) {
+    try {
+        const category = await CategoriesDao.getCategoriesByType(req.params.category_type);
+        res.status(200).json(category);
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({ error: error.message });
+    }
+}
+
 async function createCategory(req, res) {
     try {
         const user_id =  req.user.user_id
@@ -74,6 +84,7 @@ async function getCategoryById(req, res) {
 
 module.exports = {
     getCategories,
+    getCategoriesByType,
     createCategory,
     updateCategory,
     deleteCategory,
