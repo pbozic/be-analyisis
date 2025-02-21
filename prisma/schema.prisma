@@ -924,6 +924,7 @@ model translations {
   translations_id  String @id @default(uuid()) @db.Uuid
   translatable_id  String @db.Uuid
   translatable    translatable @relation(fields: [translatable_id],references: [translatable_id], onDelete: Cascade)
+  field           String?
   language        String
   translation     String
   created_at      DateTime @default(now()) @db.Timestamptz(6)
