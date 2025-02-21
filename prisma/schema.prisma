@@ -566,6 +566,7 @@ model menu_items {
   availability     String[] // Array of availability -> ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
   business_id      String           @db.Uuid
   menu_category_id String?          @db.Uuid
+  daily_date       DateTime?        @db.Timestamptz(6)
   menu_category    menu_categories? @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id])
   documents        documents[]
 

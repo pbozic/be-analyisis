@@ -417,17 +417,21 @@ async function updateMenuItemsOrder(req, res) {
 async function createMenuItem(req, res) {
 	const { category_id, data, image, user_id } = req.body;
 	try {
-		const document = await DocumentDao.createDocument(image.documentData);
-		for (const file of image.files) {
-			let base64 = file.base64;
-			delete file.base64;
-			let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
-			let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-			await S3Helper.SaveObject(key, base64, file.mime_type, {}, file, document.public);
+		let document = null;
+		if (image.documentData) {
+			document = await DocumentDao.createDocument(image.documentData);
+			for (const file of image.files) {
+				let base64 = file.base64;
+				delete file.base64;
+				let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
+				let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+				await S3Helper.SaveObject(key, base64, file.mime_type, {}, file, document.public);
+			}
 		}
+		
 		const menuItem = await MenuItemDao.createMenuItem(category_id, data);
-
-		await DocumentDao.linkDocumentToMenuItem(document.document_id, menuItem.menu_item_id);
+		if (document)
+			await DocumentDao.linkDocumentToMenuItem(document.document_id, menuItem.menu_item_id);
 
 		res.status(201).json(menuItem);
 	} catch (e) {
