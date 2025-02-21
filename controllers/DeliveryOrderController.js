@@ -28,7 +28,6 @@ const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
 const DriverDao = require("../dao/Driver");
 const { sendDeliveryOrderNotifications } = require("../lib/notifications");
 const CashbackDao = require("../dao/Cashback");
-const CreditsDao = require("../dao/Credits");
 const WalletFundsDao = require("../dao/WalletFunds");
 
 /**

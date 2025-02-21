@@ -252,15 +252,18 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId) {
 
 async function getAvailableWalletBalance(userId) {
 	try {
-		const walletFunds = await prisma.wallet_funds.findMany({
+		const result = await prisma.wallet_funds.aggregate({
 			where: {
 				user_id: userId,
-				reserved_order: null
+				reserved_order: null,
+				type: null,
+			},
+			_sum: {
+				amount: true
 			}
 		});
-		const availableBalance = walletFunds.reduce((sum, fund) => sum + fund.amount, 0);
 
-		return availableBalance;
+		return result._sum.amount || 0;
 	} catch (error) {
 		console.error("Error retrieving available wallet balance:", error);
 		throw error;

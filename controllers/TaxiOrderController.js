@@ -905,7 +905,7 @@ async function completeOrder(req, res) {
 							if (totalAmount > 0) {
 								await WalletFundsDao.convertCashbacksToCredit({
 									user: { connect: { user_id: orderingUser.user_id } },
-									amount: totalAmount,
+									amount: Math.round(totalAmount*100),
 									type: ORDER_TYPE.TAXI,
 								}, pendingCashbacks)
 							}
