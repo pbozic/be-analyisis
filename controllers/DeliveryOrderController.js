@@ -11,7 +11,7 @@ const { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE, TAXI_ORDER_STATUS,
 	CREDITS,
 	PARENT_USER_TYPE,
 	ORDER_TYPE,
-	CASHBACK_SOURCE
+	CASHBACK_SOURCE, DRIVE_FEE
 } = require("../lib/constants");
 const fs = require("fs");
 const Constants = require("../lib/constants");
@@ -182,14 +182,12 @@ async function createOrder(req, res) {
 
 		const restaurant_acc = business.stripe_account_id
 		const pm_id = orderData.payment.payment_method_id
-		const TOTAL_PRICE = orderData.details.total_price
-		const DELIVERY_COST = orderData.details.delivery_cost
 
-		const INITIAL_DELIVERY_CUT = Math.round(orderData.details.delivery_cost*100);
-		const TOTAL_PRICE_CENTS = Math.round(orderData.details.total_price*100);
-		const INITIAL_MERCHANT_CUT = Math.round((TOTAL_PRICE_CENTS - INITIAL_DELIVERY_CUT) * (1 - RESTAURANT_FEE));
+		const INITIAL_DELIVERY_CUT = Math.round(orderData.details.delivery_cost*100 * (1-DRIVE_FEE));
+		const INITIAL_MERCHANT_CUT = Math.round(Math.round(orderData.details.sub_total_price*100) * (1-RESTAURANT_FEE));
+		const TOTAL_PRICE_CENTS = Math.round(orderData.details.total_price*100);//already includes delivery cost
 		const INITIAL_PLATFORM_CUT = (TOTAL_PRICE_CENTS-INITIAL_DELIVERY_CUT-INITIAL_MERCHANT_CUT);
-		const COMBINED_COST_CENTS = TOTAL_PRICE_CENTS//already includes delivery cost
+		const COMBINED_COST_CENTS = TOTAL_PRICE_CENTS
 
 		// Handle automatic credits spending
 		const reservedCredits = await WalletFundsHelpers.reserveCreditsForOrder(user.user_id, TOTAL_PRICE_CENTS, order.order_id, 'DELIVERY');
@@ -612,7 +610,7 @@ async function completeOrder(req, res) {
 			: await DriverDao.getDriverById(order.driver_id);
 		let delivery_business = await BusinessDao.getBusinessById(driver.business_id);
 
-		const INITIAL_DELIVERY_CUT = Math.round(order.details.delivery_cost*100);
+		const INITIAL_DELIVERY_CUT = Math.round(order.details.delivery_cost*100 * (1-DRIVE_FEE));
 
 		const remainingReservedCredits = await WalletFundsDao.getReservedCredits(order.user_id,order.order_id,"DELIVERY")
 		const CREDITS_AMOUNT_RESERVED = remainingReservedCredits.reduce((sum,wf)=>sum+wf.amount,0)
