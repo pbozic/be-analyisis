@@ -214,12 +214,13 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId) {
 		// Update the existing wallet fund entry
 		await subtractFunds(walletFund.wallet_funds_id, reserveAmount);
 
-		// Check if a wallet fund with the same charge_id and reserved_order exists
+		// Check if a wallet fund with the same charge_id and reserved_order and type exists
 		//TODO: maybe convert to findUnique?
 		const existingReservedFund = await prisma.wallet_funds.findFirst({
 			where: {
 				charge_id: walletFund.charge_id,
 				reserved_order: orderId,
+				type:walletFund.type
 			},
 		});
 
@@ -241,6 +242,7 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId) {
 					user_id: walletFund.user_id,
 					charge_id: walletFund.charge_id,
 					amount: reserveAmount,
+					type: walletFund.type,
 					reserved_order: orderId,
 				},
 			});
