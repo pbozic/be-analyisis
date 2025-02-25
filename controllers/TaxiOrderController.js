@@ -891,6 +891,12 @@ async function completeOrder(req, res) {
 
 			const PLATFORM_CREDIT_CUT_CENTS = Math.min(INITIAL_PLATFORM_CUT, CREDITS_AMOUNT_RESERVED);
 			const DRIVER_CREDIT_CUT_CENTS = (CREDITS_AMOUNT_RESERVED > PLATFORM_CREDIT_CUT_CENTS) ? CREDITS_AMOUNT_RESERVED-PLATFORM_CREDIT_CUT_CENTS : 0;
+			order.payment.credit_discount = CREDITS_AMOUNT_RESERVED
+			order.payment.credit_discount_details = {
+				taxi_driver:DRIVER_CREDIT_CUT_CENTS,
+				platform:PLATFORM_CREDIT_CUT_CENTS
+			}
+			order = await TaxiOrderDao.updateTaxiOrderPayment(order.order_id,order.payment);
 
 			const PLATFORM_CUT_CENTS = INITIAL_PLATFORM_CUT - PLATFORM_CREDIT_CUT_CENTS;
 			const DRIVER_CUT_CENTS = INITIAL_DRIVER_CUT - DRIVER_CREDIT_CUT_CENTS;

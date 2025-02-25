@@ -29,6 +29,7 @@ const DriverDao = require("../dao/Driver");
 const { sendDeliveryOrderNotifications } = require("../lib/notifications");
 const CashbackDao = require("../dao/Cashback");
 const WalletFundsDao = require("../dao/WalletFunds");
+const TaxiOrderDao = require("../dao/TaxiOrder");
 
 /**
  * GET /delivery/orders
@@ -202,6 +203,13 @@ async function createOrder(req, res) {
 		const remainingCreditsAfterMerchant = remainingCreditsAfterPlatform - MERCHANT_CREDIT_CUT_CENTS;
 
 		const DRIVER_CREDIT_CUT_CENTS = Math.min(INITIAL_DELIVERY_CUT, remainingCreditsAfterMerchant);
+		order.details.credit_discount = CREDITS_AMOUNT_RESERVED
+		order.details.credit_discount_details = {
+			delivery_driver:DRIVER_CREDIT_CUT_CENTS,
+			merchant:MERCHANT_CREDIT_CUT_CENTS,
+			platform:PLATFORM_CREDIT_CUT_CENTS
+		}
+		order = await DeliveryOrderDao.updateOrder(order.order_id,order);
 
 		const PLATFORM_CUT_CENTS = INITIAL_PLATFORM_CUT - PLATFORM_CREDIT_CUT_CENTS;
 		const MERCHANT_CUT_CENTS = INITIAL_MERCHANT_CUT - MERCHANT_CREDIT_CUT_CENTS;
