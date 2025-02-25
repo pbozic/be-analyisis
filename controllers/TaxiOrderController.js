@@ -21,6 +21,7 @@ const BusinessDao = require("../dao/Business");
 const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
 const { sendNotificationToUser } = require("../lib/oneSignal");
 const { getLocalisedTexts } = require("../localisations/languages");
+const { CREDIT_TYPE } = require("@prisma/client");
 
 /**
  * GET /taxi/order/{orderId}
@@ -879,8 +880,93 @@ async function completeOrder(req, res) {
 				|| order.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE + CARGO_TRANSFER_FEE.CARGO_FEE
 				: 0) * 100);
 			const TOTAL_COST_CENTS = PRICE_CENTS + EXTRAS_COST_CENTS;
-			const DRIVER_CUT_CENTS = Math.round(PRICE_CENTS * (1 - DRIVE_FEE));
-			const PLATFORM_CUT_CENTS = PRICE_CENTS - DRIVER_CUT_CENTS;
+
+			const INITIAL_PLATFORM_CUT = Math.round(PRICE_CENTS*DRIVE_FEE) + EXTRAS_COST_CENTS
+			const INITIAL_DRIVER_CUT = TOTAL_COST_CENTS-INITIAL_PLATFORM_CUT
+
+			//Handle automatic credits spending ~ use credits to pay platform cut first, to keep the driver cut mostly off stripe
+			const reservedCredits = await WalletFundsHelpers.reserveCreditsForOrder(user.user_id,TOTAL_COST_CENTS,order.order_id,'TAXI')
+			const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum,wf)=>sum+wf,0)
+			const DISCOUNTED_TOTAL_COST = TOTAL_COST_CENTS-CREDITS_AMOUNT_RESERVED
+
+			const PLATFORM_CREDIT_CUT_CENTS = Math.min(INITIAL_PLATFORM_CUT, CREDITS_AMOUNT_RESERVED);
+			const DRIVER_CREDIT_CUT_CENTS = (CREDITS_AMOUNT_RESERVED > PLATFORM_CREDIT_CUT_CENTS) ? CREDITS_AMOUNT_RESERVED-PLATFORM_CREDIT_CUT_CENTS : 0;
+
+			const PLATFORM_CUT_CENTS = INITIAL_PLATFORM_CUT - PLATFORM_CREDIT_CUT_CENTS;
+			const DRIVER_CUT_CENTS = INITIAL_DRIVER_CUT - DRIVER_CREDIT_CUT_CENTS;
+
+			if(PLATFORM_CUT_CENTS) {
+				const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, "platform", PLATFORM_CREDIT_CUT_CENTS, order.order_id, "taxi");
+			}
+			if(DRIVER_CUT_CENTS>0) {
+				const transferedCreditsDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, driver_business.stripe_account_id, DRIVER_CREDIT_CUT_CENTS, order.order_id, "taxi");
+			}
+
+			if (order.payment.type === "WALLET") {
+				// handle wallet payment
+				if (user.wallet_balance < (DISCOUNTED_TOTAL_COST / 100)) {
+					throw new Error("Insufficient funds");
+				}
+
+				await UsersDao.removeWalletBalance(order.user_id, (DISCOUNTED_TOTAL_COST / 100), order.order_id, "taxi");
+				const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(user.user_id, DISCOUNTED_TOTAL_COST, order.order_id);
+
+				order = await TaxiOrderDao.updateOrder(order.order_id, {
+					payment: {
+						...order.payment,
+						status: "PAID"
+					}
+				});
+
+				//Only transfer money to driver since we already have the wallet money?
+				// const transfer = await stripe.transferToConnectedAccount(DRIVER_CUT_AMOUNT, driver_business.stripe_account_id);
+				const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user.user_id, driver_business.stripe_account_id, DRIVER_CUT_CENTS, order.order_id, "taxi");
+				const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user.user_id, "platform", PLATFORM_CUT_CENTS, order.order_id, "taxi");
+			}
+			if (order.payment.type === "FAMILY_WALLET") {
+				// handle wallet payment
+				let has_parent_user = user.parent_user;
+				if (!has_parent_user) {
+					throw new Error("User has no family wallet");
+				}
+				let parent_user = user.parent_user.parent_user;
+				let is_businessUser = await BusinessUsersDao.getBusinessUserByUserId(parent_user.user_id);
+				let allowance = user.parent_user.allowance;
+				if (is_businessUser) {
+					allowance = allowance * 2;
+				}
+				// todo is parent business user?
+
+				if (allowance < (DISCOUNTED_TOTAL_COST / 100)) {
+					throw new Error("Insufficient allowance");
+				}
+				if (parent_user.wallet_balance < (DISCOUNTED_TOTAL_COST / 100)) {
+					throw new Error("Insufficient funds");
+				}
+
+				await UsersDao.removeWalletBalance(parent_user.user_id, DISCOUNTED_TOTAL_COST, order.order_id, "taxi");
+				const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(parent_user.user_id, DISCOUNTED_TOTAL_COST, order.order_id);
+
+				await prisma.group_users.update({
+					where: {
+						group_user_id: user.parent_user.group_user_id
+					},
+					data: {
+						allowance: user.parent_user.allowance - (DISCOUNTED_TOTAL_COST / 100)
+					}
+				});
+				order = await TaxiOrderDao.updateOrder(order.order_id, {
+					payment: {
+						...order.payment,
+						status: "PAID"
+					}
+				});
+
+				//Only transfer money to driver since we already have the wallet money?
+				const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(parent_user.user_id, driver_business.stripe_account_id, DRIVER_CUT_CENTS, order.order_id, "taxi");
+				const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(parent_user.user_id, "platform", PLATFORM_CUT_CENTS, order.order_id, "taxi");
+			}
+
 
 			if (TOTAL_COST_CENTS >= CREDITS.MINIMUM_ORDER_AMOUNT*100 && (orderingUser.user_role === USER_ROLE.PERSONAL)) {
 				let cashbackAmount = Math.min(
@@ -912,99 +998,6 @@ async function completeOrder(req, res) {
 						}
 					}
 				}
-			}
-
-			if (order.payment.type === "WALLET") {
-				// handle wallet payment
-				if (user.wallet_balance < (TOTAL_COST_CENTS / 100)) {
-					throw new Error("Insufficient funds");
-				}
-
-				await UsersDao.removeWalletBalance(order.user_id, (TOTAL_COST_CENTS / 100), order.order_id, "taxi");
-				const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(user.user_id, TOTAL_COST_CENTS, order.order_id);
-
-				order = await TaxiOrderDao.updateOrder(order.order_id, {
-					payment: {
-						...order.payment,
-						status: "PAID"
-					}
-				});
-
-				//Only transfer money to driver since we already have the wallet money?
-				// const transfer = await stripe.transferToConnectedAccount(DRIVER_CUT_AMOUNT, driver_business.stripe_account_id);
-				const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user.user_id, driver_business.stripe_account_id, DRIVER_CUT_CENTS, order.order_id, "taxi");
-				const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user.user_id, "platform", PLATFORM_CUT_CENTS, order.order_id, "taxi");
-				// await prisma.wallet_transfer_history.create(
-				// 	{
-				// 		data: {
-				// 			amount: DRIVER_CUT_CENTS,
-				// 			order: {
-				// 				connect: {
-				// 					order_id: order.order_id
-				// 				}
-				// 			},
-				// 			success: (transfersForDriver && transfersForDriver.length>0) ? true : false
-				//
-				// 		}
-				// 	}
-				// );
-			}
-			if (order.payment.type === "FAMILY_WALLET") {
-				// handle wallet payment
-				let has_parent_user = user.parent_user;
-				if (!has_parent_user) {
-					throw new Error("User has no family wallet");
-				}
-				let parent_user = user.parent_user.parent_user;
-				let is_businessUser = await BusinessUsersDao.getBusinessUserByUserId(parent_user.user_id);
-				let allowance = user.parent_user.allowance;
-				if (is_businessUser) {
-					allowance = allowance * 2;
-				}
-				// todo is parent business user?
-
-				if (allowance < (TOTAL_COST_CENTS / 100)) {
-					throw new Error("Insufficient allowance");
-				}
-				if (parent_user.wallet_balance < (TOTAL_COST_CENTS / 100)) {
-					throw new Error("Insufficient funds");
-				}
-
-				await UsersDao.removeWalletBalance(parent_user.user_id, TOTAL_COST_CENTS, order.order_id, "taxi");
-				const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(parent_user.user_id, TOTAL_COST_CENTS, order.order_id);
-
-				await prisma.group_users.update({
-					where: {
-						group_user_id: user.parent_user.group_user_id
-					},
-					data: {
-						allowance: user.parent_user.allowance - (TOTAL_COST_CENTS / 100)
-					}
-				});
-				order = await TaxiOrderDao.updateOrder(order.order_id, {
-					payment: {
-						...order.payment,
-						status: "PAID"
-					}
-				});
-
-				//Only transfer money to driver since we already have the wallet money?
-				const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(parent_user.user_id, driver_business.stripe_account_id, DRIVER_CUT_CENTS, order.order_id, "taxi");
-				const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(parent_user.user_id, "platform", PLATFORM_CUT_CENTS, order.order_id, "taxi");
-				// await prisma.wallet_transfer_history.create(
-				// 	{
-				// 		data: {
-				// 			amount: DRIVER_CUT_CENTS,
-				// 			order: {
-				// 				connect: {
-				// 					order_id: order.order_id
-				// 				}
-				// 			},
-				// 			success: (transfersForDriver && transfersForDriver.length>0) ? true : false
-				//
-				// 		}
-				// 	}
-				// );
 			}
 		}
 		// io.to("order_" + order.order_id).emit('order_status_change__taxi', order);

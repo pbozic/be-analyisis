@@ -75,14 +75,16 @@ async function createWalletFunds(user_id, charge_id, amount){
 }
  */
 
-async function getAvailableWalletFunds(userId) {
+async function getAvailableWalletFunds(userId,order_type) {
 	try {
 		const walletFunds = await prisma.wallet_funds.findMany({
 			where: {
 				user_id: userId,
-				reserved_order: null
+				reserved_order: null,
+				type:order_type,
 			},
 			orderBy: {
+				expires_at: { sort: 'asc', nulls: 'last' },
 				created_at: 'asc',
 			},
 		});
@@ -372,7 +374,23 @@ const getAvailableCredits = async (userId, type) => {
 			where: {
 				user_id: userId,
 				type: type,
-				status: CREDIT_STATUS.ACTIVE
+				status: CREDIT_STATUS.ACTIVE,
+				reserved_order: null,
+			}
+		});
+	} catch (error) {
+		throw error;
+	}
+}
+
+const getReservedCredits = async (userId, orderId, type) => {
+	try {
+		return await prisma.wallet_funds.findMany({
+			where: {
+				user_id: userId,
+				type: type,
+				// status: CREDIT_STATUS.ACTIVE,
+				reserved_order: orderId,
 			}
 		});
 	} catch (error) {
@@ -405,6 +423,7 @@ module.exports = {
 
 	createCredit,
 	getAvailableCredits,
+	getReservedCredits,
 	getExpiredCredits,
 	convertCashbacksToCredit,
 	expireOutdatedCredits,

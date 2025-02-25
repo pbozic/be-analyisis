@@ -184,46 +184,62 @@ async function createOrder(req, res) {
 		const TOTAL_PRICE = orderData.details.total_price
 		const DELIVERY_COST = orderData.details.delivery_cost
 
+		const INITIAL_DELIVERY_CUT = Math.round(orderData.details.delivery_cost*100);
+		const TOTAL_PRICE_CENTS = Math.round(orderData.details.total_price*100);
+		const INITIAL_MERCHANT_CUT = Math.round((TOTAL_PRICE_CENTS - INITIAL_DELIVERY_CUT) * (1 - RESTAURANT_FEE));
+		const INITIAL_PLATFORM_CUT = (TOTAL_PRICE_CENTS-INITIAL_DELIVERY_CUT-INITIAL_MERCHANT_CUT);
+		const COMBINED_COST_CENTS = TOTAL_PRICE_CENTS+INITIAL_DELIVERY_CUT
+
+		// Handle automatic credits spending
+		const reservedCredits = await WalletFundsHelpers.reserveCreditsForOrder(user.user_id, TOTAL_PRICE_CENTS, order.order_id, 'DELIVERY');
+		const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum, wf) => sum + wf, 0);
+		const DISCOUNTED_COMBINED_COST_CENTS = COMBINED_COST_CENTS - CREDITS_AMOUNT_RESERVED
+
+		const PLATFORM_CREDIT_CUT_CENTS = Math.min(INITIAL_PLATFORM_CUT, CREDITS_AMOUNT_RESERVED);
+		const remainingCreditsAfterPlatform = CREDITS_AMOUNT_RESERVED - PLATFORM_CREDIT_CUT_CENTS;
+
+		const MERCHANT_CREDIT_CUT_CENTS = Math.min(INITIAL_MERCHANT_CUT, remainingCreditsAfterPlatform);
+		const remainingCreditsAfterMerchant = remainingCreditsAfterPlatform - MERCHANT_CREDIT_CUT_CENTS;
+
+		const DRIVER_CREDIT_CUT_CENTS = Math.min(INITIAL_DELIVERY_CUT, remainingCreditsAfterMerchant);
+
+		const PLATFORM_CUT_CENTS = INITIAL_PLATFORM_CUT - PLATFORM_CREDIT_CUT_CENTS;
+		const MERCHANT_CUT_CENTS = INITIAL_MERCHANT_CUT - MERCHANT_CREDIT_CUT_CENTS;
+		const DRIVER_CUT_CENTS = INITIAL_DELIVERY_CUT - DRIVER_CREDIT_CUT_CENTS;
+
+		if (PLATFORM_CUT_CENTS) {
+			const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, "platform", PLATFORM_CREDIT_CUT_CENTS, order.order_id, "delivery");
+		}
+		if (MERCHANT_CUT_CENTS) {
+			const transferedCreditsMerchant = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, business.stripe_account_id, MERCHANT_CREDIT_CUT_CENTS, order.order_id, "delivery");
+		}
+		//any remaining reserved funds are meant for delivery driver and should be handled on order completion
+
+
 		if (order.payment.type === "CARD") {
 			payment_intent = await stripe.createSplitPayment(
 				customer_acc,
 				restaurant_acc,
 				order.order_id,
 				pm_id,
-				TOTAL_PRICE,
-				DELIVERY_COST,
+				DISCOUNTED_COMBINED_COST_CENTS,
+				MERCHANT_CUT_CENTS,
 				return_url
 			)
 
-			// payment_intent = await stripe.createPaymentIntentOnBehalf(
-			// 	orderData.details.total_price,
-			// 	orderData.details.delivery_earnings,
-			// 	orderData.payment.payment_method_id,
-			// 	user.stripe_customer_id,
-			// 	business.stripe_account_id,
-			// 	delivery_business.stripe_account_id,
-			// 	order.order_id,
-			// 	return_url
-			// );
 			orderData.payment_intent_id = payment_intent.id;
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				payment_intent_id: payment_intent.id
 			});
 		} else if (order.payment.type === "WALLET") {
-
-			const TOTAL_PRICE_CENTS = Math.round(orderData.details.total_price*100)
-			const DELIVERY_COST_CENTS = Math.round(orderData.details.delivery_cost*100)
-			const MERCHANT_CUT_CENTS = Math.round((TOTAL_PRICE_CENTS - DELIVERY_COST_CENTS) * (1 - RESTAURANT_FEE));
-			const PLATFORM_CUT_CENTS = (TOTAL_PRICE_CENTS-DELIVERY_COST_CENTS-MERCHANT_CUT_CENTS)
-
 			// handle wallet payment
 			try{
-				if (user.wallet_balance < TOTAL_PRICE_CENTS/100) {
+				if (user.wallet_balance < DISCOUNTED_COMBINED_COST_CENTS/100) {
 					throw new Error("Insufficient funds");
 				}
 
-				await UsersDao.removeWalletBalance(user_id, TOTAL_PRICE_CENTS/100, order.order_id);
-				const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(user_id, TOTAL_PRICE_CENTS,order.order_id);
+				await UsersDao.removeWalletBalance(user_id, DISCOUNTED_COMBINED_COST_CENTS/100, order.order_id);
+				const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(user_id, DISCOUNTED_COMBINED_COST_CENTS,order.order_id);
 			}catch (err) {
 				order = await DeliveryOrderDao.updateOrder(order.order_id, {
 					payment: {
@@ -579,62 +595,59 @@ async function completeOrder(req, res) {
 			: await DriverDao.getDriverById(order.driver_id);
 		let delivery_business = await BusinessDao.getBusinessById(driver.business_id);
 
-		const DELIVERY_COST_CENTS = Math.round(order.details.delivery_cost*100);
-		if (DELIVERY_COST_CENTS >= CREDITS.MINIMUM_ORDER_AMOUNT * 100) {
-			let cashbackAmount = Math.min(
-				DELIVERY_COST_CENTS * (CREDITS.DELIVERY_ORDER_CASHBACK_PERCENTAGE),
-				CREDITS.MAXIMUM_CASHBACK_DELIVERY_ORDER * 100
-			);
-			cashbackAmount = cashbackAmount / 100;
-			if (cashbackAmount > 0) {
-				const cashback = await CashbackDao.createCashback({
-					//expires_at: expiryDate,
-					user: { connect: { user_id: order.user_id } },
-					amount: cashbackAmount,
-					type: ORDER_TYPE.DELIVERY,
-					source: CASHBACK_SOURCE.ORDER,
-					description: `Cashback for delivery order ${order.order_id}`,
-					taxi_order: { connect: { order_id: order.order_id } },
-				});
-				if (cashback) {
-					const pendingCashbacks = await CashbackDao.getPendingUserCashbackByType(order.user_id, ORDER_TYPE.TAXI);
-					if (pendingCashbacks?.length === CREDITS.TAXI_THRESHOLD) {
-						const totalAmount = pendingCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
-						if (totalAmount > 0) {
-							await WalletFundsDao.convertCashbacksToCredit({
-								user: { connect: { user_id: order.user_id } },
-								amount: totalAmount,
-								type: ORDER_TYPE.TAXI,
-							}, pendingCashbacks)
-						}
-					}
-				}
-			}
-		}
+		const INITIAL_DELIVERY_CUT = Math.round(order.details.delivery_cost*100);
 
-		if(order.payment.type==="CARD"){
-			const paymentIntent = await stripe.client.paymentIntents.retrieve(order.payment_intent_id);
-			const transferDelivery = stripe.splitCutFromPaymentIntent(
-				paymentIntent,
-				delivery_business.stripe_account_id,
-				order.details.delivery_cost
-			);
-		} else if(order.payment.type==="WALLET"){
-			console.info(order)
-			const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id,delivery_business.stripe_account_id, DELIVERY_COST_CENTS, order.order_id, "delivery");
-			// let walletTransfer = await prisma.wallet_transfer_history.create(
-			// 	{
-			// 		data: {
-			// 			amount: DELIVERY_COST_CENTS,
-			// 			order: {
-			// 				connect: {
-			// 					order_id: order.order_id
-			// 				}
-			// 			},
-			// 			success: (transfersForDeliveryDriver && transfersForDeliveryDriver.length>0) ? true : false
-			// 		}
-			// 	}
-			// );
+		const remainingReservedCredits = await WalletFundsDao.getReservedCredits(order.user_id,order.order_id,"DELIVERY")
+		const CREDITS_AMOUNT_RESERVED = remainingReservedCredits.reduce((sum,wf)=>sum+wf,0)
+		const DELIVERY_CREDIT_CUT_CENTS = Math.min(INITIAL_DELIVERY_CUT, CREDITS_AMOUNT_RESERVED);
+		const transferCreditsDeliveryDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id,delivery_business.stripe_account_id,DELIVERY_CREDIT_CUT_CENTS,order.order_id,"delivery")
+
+		const DISCOUNTED_DELIVERY_COST_CENTS = INITIAL_DELIVERY_CUT - DELIVERY_CREDIT_CUT_CENTS
+
+		//TODO: move to order creation
+		// if (DELIVERY_COST_CENTS >= CREDITS.MINIMUM_ORDER_AMOUNT * 100) {
+		// 	let cashbackAmount = Math.min(
+		// 		DELIVERY_COST_CENTS * (CREDITS.DELIVERY_ORDER_CASHBACK_PERCENTAGE),
+		// 		CREDITS.MAXIMUM_CASHBACK_DELIVERY_ORDER * 100
+		// 	);
+		// 	cashbackAmount = cashbackAmount / 100;
+		// 	if (cashbackAmount > 0) {
+		// 		const cashback = await CashbackDao.createCashback({
+		// 			//expires_at: expiryDate,
+		// 			user: { connect: { user_id: order.user_id } },
+		// 			amount: cashbackAmount,
+		// 			type: ORDER_TYPE.DELIVERY,
+		// 			source: CASHBACK_SOURCE.ORDER,
+		// 			description: `Cashback for delivery order ${order.order_id}`,
+		// 			taxi_order: { connect: { order_id: order.order_id } },
+		// 		});
+		// 		if (cashback) {
+		// 			const pendingCashbacks = await CashbackDao.getPendingUserCashbackByType(order.user_id, ORDER_TYPE.TAXI);
+		// 			if (pendingCashbacks?.length === CREDITS.TAXI_THRESHOLD) {
+		// 				const totalAmount = pendingCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
+		// 				if (totalAmount > 0) {
+		// 					await WalletFundsDao.convertCashbacksToCredit({
+		// 						user: { connect: { user_id: order.user_id } },
+		// 						amount: totalAmount,
+		// 						type: ORDER_TYPE.TAXI,
+		// 					}, pendingCashbacks)
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// }
+		if(DISCOUNTED_DELIVERY_COST_CENTS>0) {
+			if (order.payment.type === "CARD") {
+				const paymentIntent = await stripe.client.paymentIntents.retrieve(order.payment_intent_id);
+				const transferDelivery = stripe.splitCutFromPaymentIntent(
+					paymentIntent,
+					delivery_business.stripe_account_id,
+					DISCOUNTED_DELIVERY_COST_CENTS
+				);
+			} else if (order.payment.type === "WALLET") {
+				console.info(order)
+				const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, delivery_business.stripe_account_id, DISCOUNTED_DELIVERY_COST_CENTS, order.order_id, "delivery");
+			}
 		}
 
 		io.to("order_" + order.order_id).emit("order_completed__delivery", order);
