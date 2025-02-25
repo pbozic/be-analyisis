@@ -193,7 +193,7 @@ async function createOrder(req, res) {
 
 		// Handle automatic credits spending
 		const reservedCredits = await WalletFundsHelpers.reserveCreditsForOrder(user.user_id, TOTAL_PRICE_CENTS, order.order_id, 'DELIVERY');
-		const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum, wf) => sum + wf, 0);
+		const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum, wf) => sum + wf.amount, 0);
 		const DISCOUNTED_COMBINED_COST_CENTS = COMBINED_COST_CENTS - CREDITS_AMOUNT_RESERVED
 
 		const PLATFORM_CREDIT_CUT_CENTS = Math.min(INITIAL_PLATFORM_CUT, CREDITS_AMOUNT_RESERVED);
@@ -209,6 +209,7 @@ async function createOrder(req, res) {
 			merchant:MERCHANT_CREDIT_CUT_CENTS,
 			platform:PLATFORM_CREDIT_CUT_CENTS
 		}
+		console.info(order.details)
 		order = await DeliveryOrderDao.updateOrder(order.order_id,order);
 
 		const PLATFORM_CUT_CENTS = INITIAL_PLATFORM_CUT - PLATFORM_CREDIT_CUT_CENTS;
@@ -606,7 +607,7 @@ async function completeOrder(req, res) {
 		const INITIAL_DELIVERY_CUT = Math.round(order.details.delivery_cost*100);
 
 		const remainingReservedCredits = await WalletFundsDao.getReservedCredits(order.user_id,order.order_id,"DELIVERY")
-		const CREDITS_AMOUNT_RESERVED = remainingReservedCredits.reduce((sum,wf)=>sum+wf,0)
+		const CREDITS_AMOUNT_RESERVED = remainingReservedCredits.reduce((sum,wf)=>sum+wf.amount,0)
 		const DELIVERY_CREDIT_CUT_CENTS = Math.min(INITIAL_DELIVERY_CUT, CREDITS_AMOUNT_RESERVED);
 		if(DELIVERY_CREDIT_CUT_CENTS>0){
 			const transferCreditsDeliveryDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id,delivery_business.stripe_account_id,DELIVERY_CREDIT_CUT_CENTS,order.order_id,"delivery")
