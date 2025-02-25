@@ -189,7 +189,7 @@ async function createOrder(req, res) {
 		const TOTAL_PRICE_CENTS = Math.round(orderData.details.total_price*100);
 		const INITIAL_MERCHANT_CUT = Math.round((TOTAL_PRICE_CENTS - INITIAL_DELIVERY_CUT) * (1 - RESTAURANT_FEE));
 		const INITIAL_PLATFORM_CUT = (TOTAL_PRICE_CENTS-INITIAL_DELIVERY_CUT-INITIAL_MERCHANT_CUT);
-		const COMBINED_COST_CENTS = TOTAL_PRICE_CENTS+INITIAL_DELIVERY_CUT
+		const COMBINED_COST_CENTS = TOTAL_PRICE_CENTS//already includes delivery cost
 
 		// Handle automatic credits spending
 		const reservedCredits = await WalletFundsHelpers.reserveCreditsForOrder(user.user_id, TOTAL_PRICE_CENTS, order.order_id, 'DELIVERY');
@@ -224,55 +224,63 @@ async function createOrder(req, res) {
 		}
 		//any remaining reserved funds are meant for delivery driver and should be handled on order completion
 
+		if(DISCOUNTED_COMBINED_COST_CENTS>0){
+			if (order.payment.type === "CARD") {
+				payment_intent = await stripe.createSplitPayment(
+					customer_acc,
+					restaurant_acc,
+					order.order_id,
+					pm_id,
+					DISCOUNTED_COMBINED_COST_CENTS,
+					MERCHANT_CUT_CENTS,
+					return_url
+				)
 
-		if (order.payment.type === "CARD") {
-			payment_intent = await stripe.createSplitPayment(
-				customer_acc,
-				restaurant_acc,
-				order.order_id,
-				pm_id,
-				DISCOUNTED_COMBINED_COST_CENTS,
-				MERCHANT_CUT_CENTS,
-				return_url
-			)
+				orderData.payment_intent_id = payment_intent.id;
+				order = await DeliveryOrderDao.updateOrder(order.order_id, {
+					payment_intent_id: payment_intent.id
+				});
+			} else if (order.payment.type === "WALLET") {
+				// handle wallet payment
+				try{
+					if (user.wallet_balance < DISCOUNTED_COMBINED_COST_CENTS/100) {
+						throw new Error("Insufficient funds");
+					}
 
-			orderData.payment_intent_id = payment_intent.id;
-			order = await DeliveryOrderDao.updateOrder(order.order_id, {
-				payment_intent_id: payment_intent.id
-			});
-		} else if (order.payment.type === "WALLET") {
-			// handle wallet payment
-			try{
-				if (user.wallet_balance < DISCOUNTED_COMBINED_COST_CENTS/100) {
-					throw new Error("Insufficient funds");
+					await UsersDao.removeWalletBalance(user_id, DISCOUNTED_COMBINED_COST_CENTS/100, order.order_id);
+					const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(user_id, DISCOUNTED_COMBINED_COST_CENTS,order.order_id);
+				}catch (err) {
+					order = await DeliveryOrderDao.updateOrder(order.order_id, {
+						payment: {
+							...order.payment,
+							status: 'UNPAID',
+						},
+						status: "CUSTOMER_PAYMENT_FAILED"
+					});
+					throw err
 				}
 
-				await UsersDao.removeWalletBalance(user_id, DISCOUNTED_COMBINED_COST_CENTS/100, order.order_id);
-				const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(user_id, DISCOUNTED_COMBINED_COST_CENTS,order.order_id);
-			}catch (err) {
 				order = await DeliveryOrderDao.updateOrder(order.order_id, {
 					payment: {
 						...order.payment,
-						status: 'UNPAID',
-					},
-					status: "CUSTOMER_PAYMENT_FAILED"
+						status: "PAID"
+					}
 				});
-				throw err
-			}
+				// let balance = await stripe.getBalance();
+				// console.log("balance", balance);
+				const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user_id,business.stripe_account_id, MERCHANT_CUT_CENTS, order.order_id,"delivery");
+				const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user_id,"platform", PLATFORM_CUT_CENTS, order.order_id,"delivery");
 
+			} else if (order.payment.type === "CASH") {
+				// io.to("orders_" + order.business_id).emit('new_order', order);
+			}
+		}else{
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				payment: {
 					...order.payment,
 					status: "PAID"
 				}
 			});
-			// let balance = await stripe.getBalance();
-			// console.log("balance", balance);
-			const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user_id,business.stripe_account_id, MERCHANT_CUT_CENTS, order.order_id,"delivery");
-			const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user_id,"platform", PLATFORM_CUT_CENTS, order.order_id,"delivery");
-			
-		} else if (order.payment.type === "CASH") {
-			// io.to("orders_" + order.business_id).emit('new_order', order);
 		}
 		console.info("order paid:", order);
 		io.to("orders_" + order.business_id).emit("new_order", order);
@@ -614,7 +622,7 @@ async function completeOrder(req, res) {
 		}
 
 		const DISCOUNTED_DELIVERY_COST_CENTS = INITIAL_DELIVERY_CUT - DELIVERY_CREDIT_CUT_CENTS
-
+		console.info({ delivery_credits:DELIVERY_CREDIT_CUT_CENTS, remaining_delivery_cost: DISCOUNTED_DELIVERY_COST_CENTS })
 		//TODO: move to order creation
 		// if (DELIVERY_COST_CENTS >= CREDITS.MINIMUM_ORDER_AMOUNT * 100) {
 		// 	let cashbackAmount = Math.min(

@@ -28,7 +28,7 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			break;
 		case "order_payment":
 			let order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
-			if (paymentIntent.metadata?.merchant_cut) {
+			if (paymentIntent.metadata?.merchant_cut > 0) {
 				const business = await BusinessDao.getBusinessById(order.details.business_id);
 				const transferRestaurant = await stripe.splitCutFromPaymentIntent(
 					paymentIntent,
