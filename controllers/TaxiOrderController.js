@@ -901,10 +901,10 @@ async function completeOrder(req, res) {
 			const PLATFORM_CUT_CENTS = INITIAL_PLATFORM_CUT - PLATFORM_CREDIT_CUT_CENTS;
 			const DRIVER_CUT_CENTS = INITIAL_DRIVER_CUT - DRIVER_CREDIT_CUT_CENTS;
 
-			if(PLATFORM_CUT_CENTS) {
+			if(PLATFORM_CREDIT_CUT_CENTS>0) {
 				const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, "platform", PLATFORM_CREDIT_CUT_CENTS, order.order_id, "taxi");
 			}
-			if(DRIVER_CUT_CENTS>0) {
+			if(DRIVER_CREDIT_CUT_CENTS>0) {
 				const transferedCreditsDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, driver_business.stripe_account_id, DRIVER_CREDIT_CUT_CENTS, order.order_id, "taxi");
 			}
 

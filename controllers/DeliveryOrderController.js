@@ -215,10 +215,10 @@ async function createOrder(req, res) {
 		const MERCHANT_CUT_CENTS = INITIAL_MERCHANT_CUT - MERCHANT_CREDIT_CUT_CENTS;
 		const DRIVER_CUT_CENTS = INITIAL_DELIVERY_CUT - DRIVER_CREDIT_CUT_CENTS;
 
-		if (PLATFORM_CUT_CENTS) {
+		if (PLATFORM_CREDIT_CUT_CENTS>0) {
 			const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, "platform", PLATFORM_CREDIT_CUT_CENTS, order.order_id, "delivery");
 		}
-		if (MERCHANT_CUT_CENTS) {
+		if (MERCHANT_CREDIT_CUT_CENTS>0) {
 			const transferedCreditsMerchant = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, business.stripe_account_id, MERCHANT_CREDIT_CUT_CENTS, order.order_id, "delivery");
 		}
 		//any remaining reserved funds are meant for delivery driver and should be handled on order completion
@@ -608,7 +608,9 @@ async function completeOrder(req, res) {
 		const remainingReservedCredits = await WalletFundsDao.getReservedCredits(order.user_id,order.order_id,"DELIVERY")
 		const CREDITS_AMOUNT_RESERVED = remainingReservedCredits.reduce((sum,wf)=>sum+wf,0)
 		const DELIVERY_CREDIT_CUT_CENTS = Math.min(INITIAL_DELIVERY_CUT, CREDITS_AMOUNT_RESERVED);
-		const transferCreditsDeliveryDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id,delivery_business.stripe_account_id,DELIVERY_CREDIT_CUT_CENTS,order.order_id,"delivery")
+		if(DELIVERY_CREDIT_CUT_CENTS>0){
+			const transferCreditsDeliveryDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id,delivery_business.stripe_account_id,DELIVERY_CREDIT_CUT_CENTS,order.order_id,"delivery")
+		}
 
 		const DISCOUNTED_DELIVERY_COST_CENTS = INITIAL_DELIVERY_CUT - DELIVERY_CREDIT_CUT_CENTS
 
