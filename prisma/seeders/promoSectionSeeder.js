@@ -138,13 +138,18 @@ const placeholder_promo_sections = [
 
 
 async function promoSectionSeed() {
+	const existing_promo_sections = await PromoDao.getAllPromoSections()
 	return new Promise(async (resolve, reject) => {
 		console.log("Seeding Promo Sections...");
 		let promisses = [];
 		for (let promo_section of placeholder_promo_sections) {
-			promisses.push(
-				PromoDao.createPromoSection(promo_section.sectionData, promo_section.translations)
-			);
+			if(!existing_promo_sections.find(ps=>ps.tag===promo_section.sectionData.tag)){
+				promisses.push(
+					PromoDao.createPromoSection(promo_section.sectionData, promo_section.translations)
+				);
+			}else{
+				console.log(`Promo section ${promo_section.tag} already exists!`)
+			}
 		}
 		try {
 			await Promise.all(promisses).then((values) => {

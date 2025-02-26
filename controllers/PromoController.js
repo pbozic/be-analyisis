@@ -160,7 +160,8 @@ async function getAllPromoSectionsByServiceType(req, res) {
 
 async function createPromoAd(req, res) {
     try {
-        const promoAd = await PromoDao.createPromoAd(req.body);
+        const {promoAdData, categories_ids, promo_banners_ids} = req.body
+        const promoAd = await PromoDao.createPromoAd(promoAdData, categories_ids, promo_banners_ids);
         res.json(promoAd);
     } catch (error) {
         console.error(error)
@@ -170,7 +171,9 @@ async function createPromoAd(req, res) {
 
 async function updatePromoAd(req, res) {
     try {
-        const promoAd = await PromoDao.updatePromoAd(req.params.id, req.body);
+        const {promoAdData, categories_ids, promo_banners_ids} = req.body
+
+        const promoAd = await PromoDao.updatePromoAd(req.params.id, promoAdData, categories_ids, promo_banners_ids);
         res.json(promoAd);
     } catch (error) {
         console.error(error)
@@ -230,7 +233,8 @@ async function getPromoAdsByCategory  (req, res) {
 
 async function createPromoBanner(req, res) {
     try {
-        const promoBanner = await PromoDao.createPromoBanner(req.body);
+        const {promoBannerData,imageFileData} = req.body
+        const promoBanner = await PromoDao.createPromoBanner(promoBannerData,imageFileData);
         res.json(promoBanner);
     } catch (error) {
         console.error(error)
@@ -240,7 +244,8 @@ async function createPromoBanner(req, res) {
 
 async function updatePromoBanner(req, res) {
     try {
-        const promoBanner = await PromoDao.updatePromoBanner(req.params.id, req.body);
+        const {promoBannerData,imageFileData} = req.body
+        const promoBanner = await PromoDao.updatePromoBanner(req.params.id, promoBannerData,imageFileData);
         res.json(promoBanner);
     } catch (error) {
         console.error(error)
@@ -307,16 +312,16 @@ async function getAllPromoBannersByAd(req, res) {
         res.status(500).json({ error: error.message });
     }
 }
-
-async function getAllPromoBannersBySection(req, res) {
-    try {
-        const promoBanners = await PromoDao.getAllPromoBannersBySection(req.params.section);
-        res.json(promoBanners);
-    } catch (error) {
-        console.error(error)
-        res.status(500).json({ error: error.message });
-    }
-}
+//
+// async function getAllPromoBannersBySection(req, res) {
+//     try {
+//         const promoBanners = await PromoDao.getAllPromoBannersBySection(req.params.section);
+//         res.json(promoBanners);
+//     } catch (error) {
+//         console.error(error)
+//         res.status(500).json({ error: error.message });
+//     }
+// }
 
 async function getPromoBannersByServiceType  (req, res) {
     try {
@@ -495,7 +500,7 @@ module.exports = {
     getAllPromoBannersByType,
     getAllPromoBannersBySize,
     getAllPromoBannersByAd,
-    getAllPromoBannersBySection,
+    // getAllPromoBannersBySection,
     getPromoBannersByServiceType,
     createPromoSectionBuy,
     updatePromoSectionBuy,

@@ -116,7 +116,7 @@ let languages = {
         modalTitle: 'Информация',
         modalDescription: "Когда выбрано 'И', мы покажем вам только рестораны со всеми выбранными диетическими опциями.\nКогда выбрано 'ИЛИ', мы покажем вам рестораны с любой из выбранных диетических опций.",
     },
-    slo: {
+    si: {
         title: "Sledite kakšnim posebnim prehranskim smernicam?",
         gallbladder: 'Žolčnik',
         glutenFree: 'Brezglutensko',
