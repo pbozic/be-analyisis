@@ -6,7 +6,7 @@ router.get('/', PromoController.getAllPromoBanners);
 router.get('/type/:type', PromoController.getAllPromoBannersByType);
 router.get('/size/:size', PromoController.getAllPromoBannersBySize);
 router.get('/ad/:ad', PromoController.getAllPromoBannersByAd);
-router.get('/section/:section', PromoController.getAllPromoBannersBySection);
+// router.get('/section/:section', PromoController.getAllPromoBannersBySection);
 router.get('/serviceType/:serviceType', PromoController.getPromoBannersByServiceType);
 router.post('/', PromoController.createPromoBanner);
 router.put('/:id', PromoController.updatePromoBanner);

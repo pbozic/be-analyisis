@@ -245,8 +245,6 @@ model documents {
   lost_items         lost_items?       @relation(fields: [lost_item_id], references: [lost_item_id])
   transaction_id     String?           @db.Uuid
   transactions       transactions?     @relation("Documents_transaction", fields: [transaction_id], references: [transaction_id])
-  promo_banners_id   String?           @db.Uuid
-  promo_banners      promo_banners?    @relation(fields: [promo_banners_id], references: [promo_banners_id])
 }
 
 model files {
@@ -260,6 +258,8 @@ model files {
   document_id String?      @db.Uuid
   documents   documents?   @relation(fields: [document_id], references: [document_id])
   categories  categories[]
+
+  promo_banners promo_banners[]
 }
 
 model tokens {
@@ -700,7 +700,7 @@ model wallet_funds {
   user_id           String         @db.Uuid
   referral_id       String?        @db.Uuid
   charge_id         String?
-  amount            Float
+  amount            Int
   reserved_order    String?        @db.Uuid
   reserved_business String?        @db.Uuid
   created_at        DateTime       @default(now()) @db.Timestamptz(6)
@@ -797,14 +797,16 @@ model promo_sections {
 }
 
 model promo_banners {
-  promo_banners_id     String      @id @default(uuid()) @db.Uuid
-  type                 String
-  size                 String?
-  title                String
-  text                 String
-  image                documents[]
-  promo_ads            promo_ads[]
-  promo_section_buy_id String      @db.Uuid
+  promo_banners_id       String  @id @default(uuid()) @db.Uuid
+  type                  String
+  size                  String?
+  title                 String
+  text                  String
+  promo_section_buy_id  String? @db.Uuid
+  file_id              String @db.Uuid
+  files                 files @relation(fields: [file_id], references: [file_id])
+  promo_ads_id             String? @db.Uuid
+  promo_ads                promo_ads? @relation(fields: [promo_ads_id], references: [promo_ads_id])
 }
 
 model promo_sections_buy {
@@ -824,11 +826,10 @@ model promo_ads {
   text         String
   tag          String
   service_type PROMO_SERVICE_TYPES
-  discount     Float                @default(0)
-  banner_id    String               @db.Uuid
-  banner       promo_banners        @relation(fields: [banner_id], references: [promo_banners_id])
+  discount     Float   @default(0)
+  banner       promo_banners[]
   categories   promo_ads_category[]
-  code         Int                  @unique @db.SmallInt
+  code         Int?                  @unique @db.SmallInt
 }
 
 model promo_ads_category {

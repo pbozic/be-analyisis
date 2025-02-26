@@ -198,48 +198,83 @@ async function getAllPromoSectionsByServiceType(type) {
     return promo_sections
 }   
 
-async function createPromoAd(args) {
+async function createPromoAd(promoAdData, categories_ids, promo_banners_ids) {
     return await prisma.promo_ads.create({
         data: {
-            promo_ads_id: args.promo_ads_id,
-            title: args.title,
-            text: args.text,
-            tag: args.tag,
-            service_type: args.service_type,
-            discount: args.discount || 0,
+            title: promoAdData.title,
+            text: promoAdData.text,
+            tag: promoAdData.title.toLowerCase().trim().replace(/\s+/g, "_"),
+            service_type: promoAdData.service_type,
+            discount: promoAdData?.discount || 0,
             categories: {
-                connect: args.categories.map((category) => {
-                    return {
-                        id: category
+                create: categories_ids ? categories_ids.map(cat_id => ({
+                    category: {
+                        connect: { categories_id: cat_id }
                     }
-                })
+                })) : []
+            },
+            banner: {
+                connect: promo_banners_ids ? promo_banners_ids.map(banner_id => ({
+                    promo_banners_id: banner_id
+                })) : []
             }
         }
     });
 }
 
-async function updatePromoAd(id, args) {
+async function updatePromoAd(id, promoAdData, categories_ids, promo_banners_ids) {
     return await prisma.promo_ads.update({
         where: {
             promo_ads_id: id
         },
-        data: args
+        data: {
+            title: promoAdData.title,
+            text: promoAdData.text,
+            tag: promoAdData.title.toLowerCase().trim().replace(/\s+/g, "_"),
+            service_type: promoAdData.service_type,
+            discount: promoAdData?.discount || 0,
+            categories: {
+                deleteMany: {}, // Clear existing relations
+                create: categories_ids ? categories_ids.map(cat_id => ({
+                    category: {
+                        connect: { categories_id: cat_id }
+                    }
+                })) : []
+            },
+            banner: {
+                set: promo_banners_ids ? promo_banners_ids.map(banner_id => ({
+                    promo_banners_id: banner_id
+                })) : []
+            }
+        }
     });
 }
 
 async function deletePromoAd(id) {
-    return await prisma.promo_ads.delete({
-        where: {
-            promo_ads_id: id
-        }
-    });
+    return await prisma.$transaction([
+        prisma.promo_ads_category.deleteMany({
+            where: {
+                promo_ads_id: id
+            }
+        }),
+        prisma.promo_ads.delete({
+            where: {
+                promo_ads_id: id
+            }
+        })
+    ]);
+
 }
 
 async function getPromoAdById(id) {
     return await prisma.promo_ads.findUnique({
         where: {
             promo_ads_id: id
-        }
+        },
+        include: {
+            categories: true,
+            banner:true
+        },
     });
 }
 
@@ -267,35 +302,75 @@ async function getAllPromoAdsByCategory(category) {
     });
 }
 
-async function createPromoBanner(args) {
+async function createPromoBanner(promoBannerData,imageFileData) {
+    const {file_type, mime_type} = imageFileData || {};
+
     return await prisma.promo_banners.create({
         data: {
-            promo_banner_id: args.promo_banner_id,
-            title: args.title,
-            text: args.text,
-            type: args.type,                  
-            size: args.size,
-            promo_ads: args.promo_ads_id ? {
-                connect: {
-                    promo_ads_id: args.promo_ads_id
+            title: promoBannerData.title,
+            text: promoBannerData.text,
+            type: promoBannerData.type,
+            size: promoBannerData.size || null,
+            ...(promoBannerData.promo_ads_id ?
+                {
+                    promo_ads:  {
+                        connect: {
+                            promo_ads_id: promoBannerData.promo_ads_id
+                        }
+                    }
+                } : {}),
+            ...((file_type && mime_type) ? {
+                files: {
+                    create: {
+                        file_type,
+                        mime_type,
+                        public:true
+                    }
                 }
-            } : null,
-            promo_sections: args.promo_sections_id ? {
-                connect: {
-                    promo_sections_id: args.promo_sections_id
-                }
-            } : null,
+            }:{})
         }
     });
 }
 
-async function updatePromoBanner(id, args) {
-    return await prisma.promo_banners.update({
-        where: {
-            promo_banners_id: id
-        },
-        data: args
-    });
+async function updatePromoBanner(id, promoBannerData, imageFileData) {
+    try {
+        return await prisma.$transaction(async (prisma) => {
+            const updateData = { ...promoBannerData };
+
+            if (promoBannerData.promo_ads_id) {
+                updateData.promo_ads = {
+                    connect: {
+                        promo_ads_id: promoBannerData.promo_ads_id
+                    }
+                };
+            } else {
+                updateData.promo_ads = {
+                    disconnect: true
+                };
+            }
+
+            if (imageFileData) {
+                const { file_type, mime_type } = imageFileData;
+                updateData.files = {
+                    create: {
+                        file_type,
+                        mime_type,
+                        public: true
+                    }
+                };
+            }
+
+            return await prisma.promo_banners.update({
+                where: {
+                    promo_banners_id: id
+                },
+                data: updateData
+            });
+        });
+    } catch (error) {
+        console.error("Error updating promo banner:", error);
+        throw new Error("Failed to update promo banner: " + error.message);
+    }
 }
 
 async function deletePromoBanner(id) {
@@ -315,7 +390,11 @@ async function getPromoBannerById(id) {
 }
 
 async function getAllPromoBanners() {
-    return await prisma.promo_banners.findMany();
+    return await prisma.promo_banners.findMany({
+        // include: {
+        //     files:true
+        // }
+    });
 }
 
 async function getAllPromoBannersByType(type) {
@@ -342,13 +421,13 @@ async function getAllPromoBannersByAd(ad) {
     });
 }
 
-async function getAllPromoBannersBySection(section) {
-    return await prisma.promo_banners.findMany({
-        where: {
-            promo_sections_id: section
-        }
-    });
-}
+// async function getAllPromoBannersBySection(section) {
+//     return await prisma.promo_banners.findMany({
+//         where: {
+//             promo_sections_id: section
+//         }
+//     });
+// }
 async function createPromoSectionBuy(args) {
     return await prisma.promo_sections_buy.create({
         data: {
@@ -436,7 +515,7 @@ module.exports = {
     getAllPromoBannersByType,
     getAllPromoBannersBySize,
     getAllPromoBannersByAd,
-    getAllPromoBannersBySection,
+    // getAllPromoBannersBySection,
     createPromoSectionBuy,
     getPromoSectionBuyById,
     getAllPromoSectionBuys,
