@@ -31,6 +31,12 @@ const CashbackDao = require("../dao/Cashback");
 const WalletFundsDao = require("../dao/WalletFunds");
 const TaxiOrderDao = require("../dao/TaxiOrder");
 
+const cropped_user_columns = {
+	first_name: true,
+	last_name: true,
+	user_id: true,
+};
+
 /**
  * GET /delivery/orders
  * @tag Delivery
@@ -539,7 +545,8 @@ async function acceptOrder(req, res) {
 		let order = await DeliveryOrderDao.getOrder(order_id, {
 			include: {
 				delivery_driver: true,
-				driver: true
+				driver: true,
+				user:{select:cropped_user_columns}
 			}
 		});
 		if ([DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED, DELIVERY_ORDER_STATUS.MERCHANT_CANCELED, DELIVERY_ORDER_STATUS.DELIVERY_CANCELED].includes(order.status)) {

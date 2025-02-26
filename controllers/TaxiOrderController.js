@@ -857,7 +857,7 @@ async function completeOrder(req, res) {
 				include: { referral: true }
 			});
 			//TODO: update how we set referral conditions met!
-			if (!orderingUser?.referral?.conditions_met) {
+			if (orderingUser?.referral && !orderingUser?.referral?.conditions_met) {
 				await ReferralDao.updateReferralConditionsMet(orderingUser.referral.referral_id, true);
 
 				const referrer = await UsersDao.getUserById(orderingUser.referral?.referrer_user_id);
