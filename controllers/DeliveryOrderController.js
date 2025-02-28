@@ -963,7 +963,7 @@ async function updateOrderStatus(req, res) {
 			}
 		}
 		//TODO: on reject order and card pay cancel the paymenIntent
-		if (req.body.status === DELIVERY_ORDER_STATUS.MERCHANT_REJECTED || req.body.status === DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED) {
+		if (req.body.status === DELIVERY_ORDER_STATUS.MERCHANT_REJECTED) {
 			if (order.payment.type === "CARD") {
 				await stripe.client.paymentIntents.cancel(order.payment_intent_id);
 				io.to("orders_" + order.business_id).emit("order_status_change__delivery", order);

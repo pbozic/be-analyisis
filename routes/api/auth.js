@@ -165,33 +165,109 @@ router.post('/login/google', async (req, res) => {
 	  res.status(500).send('Error during authentication');
 	}
   });
-  const verifyAppleToken = async (identityToken) => {
-	try {
-	  // Fetch Apple's public keys
-	  const response = await axios.get('https://appleid.apple.com/auth/keys');
-	  const applePublicKeys = response.data.keys;
-  
-	  // Decode the JWT header to get the key ID (kid)
-	  const decodedHeader = jwt.decode(identityToken, { complete: true }).header;
-	  const { kid } = decodedHeader;
-  
-	  // Find the corresponding public key based on the kid
-	  const applePublicKey = applePublicKeys.find(key => key.kid === kid);
-	  if (!applePublicKey) {
-		throw new Error('Apple public key not found.');
-	  }
-  
-	  // Convert the Apple public key to PEM format
-	  const pem = jwkToPem(applePublicKey);
-  
-	  // Verify the token using the public key
-	  const decoded = jwt.verify(identityToken, pem);
-	  console.log('Decoded token:', decoded);
-  
-	  return decoded;
-	} catch (error) {
-	  console.error('Error verifying Apple token:', error);
-	  throw error;
-	}
-  };
+  router.get('/login/apple', async (req, res) => {
+    const { code, state } = req.query;
+	console.log("Apple login web GET", code, state)
+    if (!code) {
+        return res.status(400).json({ error: "Missing authorization code" });
+    }
+
+    try {
+        // Exchange authorization code for access token
+        const tokenResponse = await axios.post("https://appleid.apple.com/auth/token", new URLSearchParams({
+            client_id: process.env.APPLE_SIGN_IN_CLIENT_ID,  // Your Apple Service ID
+            client_secret: generateAppleClientSecret(), // Generated Apple Client Secret
+            code: code,
+            grant_type: "authorization_code",
+            redirect_uri: process.env.APPLE_REDIRECT_URI,
+        }).toString(), {
+            headers: { "Content-Type": "application/x-www-form-urlencoded" }
+        });
+
+        const { id_token, access_token } = tokenResponse.data;
+
+        // Verify the Apple ID token (with web=true)
+        const decodedToken = await verifyAppleToken(id_token, true);
+        console.log("Verified Apple User:", decodedToken);
+
+        // Handle user authentication (check if user exists in DB)
+        const appleId = decodedToken.sub;  // Unique Apple user ID
+        const email = decodedToken.email; // Email (may be null for private relay emails)
+
+        // Check if user exists in DB
+        let user = await prisma.users.findUnique({
+            where: { apple_id: appleId },
+        });
+
+        if (user) {
+            // User exists, generate session/token & redirect to frontend
+            const jwtToken = generateJwtToken(user.user_id); // Your JWT generator function
+            return res.redirect(`https://mydomain.si/login-success?token=${jwtToken}`);
+        }
+
+        // If user does not exist, return authentication data
+        return res.redirect(`https://mydomain.si/signup?apple_id=${appleId}&email=${email}`);
+
+    } catch (error) {
+        console.error("Apple authentication error:", error.response?.data || error);
+        return res.status(500).json({ error: "Failed to authenticate with Apple" });
+    }
+});
+  const verifyAppleToken = async (identityToken, web = false) => {
+    try {
+        // Fetch Apple's public keys
+        const response = await axios.get('https://appleid.apple.com/auth/keys');
+        const applePublicKeys = response.data.keys;
+
+        // Decode JWT header to get the key ID (kid)
+        const decodedHeader = jwt.decode(identityToken, { complete: true });
+        if (!decodedHeader) throw new Error('Invalid Apple ID token.');
+
+        const { kid } = decodedHeader.header;
+
+        // Find the corresponding public key based on the `kid`
+        const applePublicKey = applePublicKeys.find(key => key.kid === kid);
+        if (!applePublicKey) throw new Error('Apple public key not found.');
+
+        // Convert the public key to PEM format
+        const pem = jwkToPem(applePublicKey);
+
+        // Define verification options
+        let verifyOptions = { algorithms: ['RS256'] };
+
+        if (web) {
+            // Additional verification for web authentication
+            verifyOptions.issuer = "https://appleid.apple.com";  // Ensure token is from Apple
+            verifyOptions.audience = process.env.APPLE_SIGN_IN_CLIENT_ID; // Your Apple Service/App ID
+        }
+
+        // Verify the JWT
+        const decoded = jwt.verify(identityToken, pem, verifyOptions);
+
+        console.log('Decoded Apple token:', decoded);
+        return decoded;
+    } catch (error) {
+        console.error('Error verifying Apple token:', error);
+        throw error;
+    }
+};
+const generateAppleClientSecret = () => {
+    const privateKey = fs.readFileSync(process.env.APPLE_P8_PATH, "utf8"); // Load from secure storage
+    const teamId = process.env.APPLE_TEAM_ID;
+    const clientId = process.env.APPLE_SIGN_IN_CLIENT_ID;
+    const keyId = process.env.APPLE_KEY_ID;
+
+    const token = jwt.sign({}, privateKey, {
+        algorithm: "ES256",
+        expiresIn: "180d", // 180 days expiry
+        audience: "https://appleid.apple.com",
+        issuer: teamId,
+        subject: clientId,
+        keyid: keyId,
+    });
+
+    console.log("New APPLE_CLIENT_SECRET:", token);
+    return token;
+};
+
 module.exports = router;

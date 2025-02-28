@@ -5,3 +5,5 @@
 .history
 /.expo
 .DS_Store
+mycert.*
+*.p8
