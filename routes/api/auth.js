@@ -18,7 +18,7 @@ const stripe = require("../../lib/stripe");
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const axios = require("axios");
 const jwkToPem = require('jwk-to-pem');
-
+const fs = require('fs');
 async function getUser(id, res) {
 	try {
 		let user = await UserDao.getUserById(id, {
