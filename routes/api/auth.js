@@ -195,13 +195,13 @@ router.post('/login/google', async (req, res) => {
         const email = decodedToken.email; // Email (may be null for private relay emails)
 
         // Check if user exists in DB
-        let user = await prisma.users.findUnique({
+        let user = await prisma.users.findFirst({
             where: { apple_id: appleId },
         });
 
         if (user) {
             // User exists, generate session/token & redirect to frontend
-            const jwtToken = generateJwtToken(user.user_id); // Your JWT generator function
+            const jwtToken = generateJwtToken(user[0].user_id); // Your JWT generator function
             return res.redirect(`https://mydomain.si/login-success?token=${jwtToken}`);
         }
 
