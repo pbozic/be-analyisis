@@ -665,18 +665,19 @@ async function updateDeliveryOrderTimeline(order_id, newTimelineEntries) {
 }
 
 async function updateOrder(order_id, order) {
-	delete order.user_id;
-	delete order.delivery_driver_id;
-	delete order.driver_id;
-	delete order.created_at
-	delete order.updated_at
-	delete order.business_id
-	delete order.delivery_driver
-	delete order.driver
-	delete order.user
+	let newOrder = {...order}
+	delete newOrder.user_id;
+	delete newOrder.delivery_driver_id;
+	delete newOrder.driver_id;
+	delete newOrder.created_at
+	delete newOrder.updated_at
+	delete newOrder.business_id
+	delete newOrder.delivery_driver
+	delete newOrder.driver
+	delete newOrder.user
 
-	if (order.last_sent_at && Object.keys(order.last_sent_at).length === 0) {
-		delete order.last_sent_at
+	if (newOrder.last_sent_at && Object.keys(newOrder.last_sent_at).length === 0) {
+		delete newOrder.last_sent_at
 	}
 
 	try {
@@ -685,7 +686,7 @@ async function updateOrder(order_id, order) {
 				order_id: order_id,
 			},
 			data: {
-				...order,
+				...newOrder,
 				updated_at: new Date(),
 			},
 			include: {
