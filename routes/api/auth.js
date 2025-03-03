@@ -198,18 +198,19 @@ router.post('/login/google', async (req, res) => {
         let user = await prisma.users.findFirst({
             where: { apple_id: appleId },
         });
-		let FRONT_END = process.env.FRONTEND_URL;
         if (user) {
             // User exists, generate session/token & redirect to frontend
             const jwtToken = generateJwtToken(user[0].user_id); // Your JWT generator function
-            return res.redirect(`${FRONT_END}/login-success?token=${jwtToken}`);
+            return res.redirect(`${process.env.FRONTEND_URL}/#register?token=${jwtToken}`);
         }
 
         // If user does not exist, return authentication data
-        return res.redirect(`${FRONT_END}/signup?apple_id=${appleId}&email=${email}`);
+        return res.redirect(`${process.env.FRONTEND_URL}/#register?apple_id=${appleId}&email=${email}`);
 
     } catch (error) {
-        console.error("Apple authentication error:", error.response?.data || error);
+		console.error("Apple authentication error:", error.response?.data || error);
+		return res.redirect(`${process.env.FRONTEND_URL}/#register?error="apple"`);
+       
         return res.status(500).json({ error: "Failed to authenticate with Apple" });
     }
 });
