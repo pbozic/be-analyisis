@@ -127,12 +127,17 @@ async function login(req, res) {
 			child_users: null,
 			parent_user: null
 		});
+		let profile = await DocumentDao.getDocumentsForUserByType(user.user_id, DOCUMENT_TYPE.PROFILE_PICTURE);
+
 		user = {
 			...user,
 			access_token,
 			refresh_token,
 			payment_methods
 		};
+		if (profile) {
+			user.profile_picture =  profile[0]?.files[0]?.url;
+		}
 		res.status(200).header("Authorization", access_token).json(user);
 	} catch (e) {
 		console.log(e);
