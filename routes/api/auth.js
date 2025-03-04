@@ -150,7 +150,7 @@ router.post('/login/apple', async (req, res) => {
 	}
 
 	// If user does not exist, return authentication data
-	return res.redirect(`${process.env.FRONTEND_URL}/#register?apple_id=${appleId}&email=${email}`);
+	return res.redirect(`${process.env.FRONTEND_URL}/#register?apple_id=${appleId}&email=${decodedToken.email}`);
 
 	} catch (error) {
 	  console.error('Apple token verification error:', error);
