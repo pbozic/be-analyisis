@@ -24,8 +24,8 @@ const { PrismaClient } = require("@prisma/client");
 const SMSHelper = require("../lib/SMS");
 const { parseTelephone } = require("../lib/helpersLib");
 const prisma = new PrismaClient();
+const { DOCUMENT_TYPE } = require("../lib/constants");
 require('dotenv').config();
-
 
 /**
  * POST /user/auth/scheduled_users
