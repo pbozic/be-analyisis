@@ -76,7 +76,7 @@ async function getUser(id, res) {
 			refresh_token,
 			payment_methods
 		};
-		return res.status(200).json(user);
+		return user
 	} catch (error) {
 		console.log(error)
 		return res.status(400).json({ error: "Error obtaining user information" });
@@ -136,12 +136,12 @@ router.post('/login/apple', async (req, res) => {
 	  });
   
 	  if (user.length > 0) {
+		let user = await getUser(user[0].user_id, res);
 		if (web) {
-			const jwtToken = generateJwtToken(user[0].user_id); // Your JWT generator function
-			return res.redirect(`${process.env.FRONTEND_URL}/#apple-login?jwt=${jwtToken}`);
+			return res.redirect(`${process.env.FRONTEND_URL}/#apple-login?jwt=${user.access_token}`);
 		  // If the user exists, generate a JWT token and return it
 		}
-		 return await getUser(user[0].user_id, res);
+		 return res.json(user);
 	  }
   
 	  // If the user does not exist, return the auth data (no JWT token)
