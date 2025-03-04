@@ -98,6 +98,7 @@ router.post("/reset-password", joi(resetPasswordRequestSchema), AuthController.r
 router.post('/login/apple', async (req, res) => {
 	const { token, jwt } = req.body;
   
+	console.log("Apple login POST", jwt, token)
 	try {
 	  // Decode the Apple ID token
 	  const decodedToken = await verifyAppleToken(jwt);
@@ -201,7 +202,7 @@ router.post('/login/google', async (req, res) => {
         if (user) {
             // User exists, generate session/token & redirect to frontend
             const jwtToken = generateJwtToken(user[0].user_id); // Your JWT generator function
-            return res.redirect(`${process.env.FRONTEND_URL}/#register?token=${jwtToken}`);
+            return res.redirect(`${process.env.FRONTEND_URL}/#register?jwt=${jwtToken}`);
         }
 
         // If user does not exist, return authentication data
