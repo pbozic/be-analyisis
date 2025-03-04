@@ -19,6 +19,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const axios = require("axios");
 const jwkToPem = require('jwk-to-pem');
 const fs = require('fs');
+const { Console } = require("console");
 async function getUser(id, res) {
 	try {
 		let user = await UserDao.getUserById(id, {
@@ -103,6 +104,7 @@ router.post('/login/apple', async (req, res) => {
 		let web = false;
 		let decodedToken;
 		if (code) {
+			console.log("Apple login POST web", code)
 			web = true;
 			const tokenResponse = await axios.post("https://appleid.apple.com/auth/token", new URLSearchParams({
 				client_id: process.env.APPLE_SIGN_IN_CLIENT_ID,  // Your Apple Service ID
@@ -120,6 +122,7 @@ router.post('/login/apple', async (req, res) => {
 			decodedToken = await verifyAppleToken(id_token, true);
 
 		} else {
+			console.log("Apple login POST web", jwt)
 			decodedToken = await verifyAppleToken(jwt);
 		}
 	  // Decode the Apple ID token
