@@ -136,7 +136,7 @@ router.post('/login/apple', async (req, res) => {
 	  });
   
 	  if (user.length > 0) {
-		let user = await getUser(user[0].user_id, res);
+		user = await getUser(user[0].user_id, res);
 		if (web) {
 			return res.redirect(`${process.env.FRONTEND_URL}/#apple-login?jwt=${user.access_token}`);
 		  // If the user exists, generate a JWT token and return it
