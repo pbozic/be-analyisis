@@ -100,8 +100,10 @@ router.post('/login/apple', async (req, res) => {
   
 	console.log("Apple login POST", jwt, token)
 	try {
+		let web = false;
 		let decodedToken;
 		if (code) {
+			web = true;
 			const tokenResponse = await axios.post("https://appleid.apple.com/auth/token", new URLSearchParams({
 				client_id: process.env.APPLE_SIGN_IN_CLIENT_ID,  // Your Apple Service ID
 				client_secret: generateAppleClientSecret(), // Generated Apple Client Secret
@@ -135,12 +137,24 @@ router.post('/login/apple', async (req, res) => {
 	  }
   
 	  // If the user does not exist, return the auth data (no JWT token)
-	  return res.json({
-		message: 'User not found',
-		email: decodedToken.email,
-	  });
+	  if (!web) {
+		return res.json({
+		  message: 'User not found',
+		  email: decodedToken.email,
+		});
+	  }
+	if (user.length > 0) {
+		// User exists, generate session/token & redirect to frontend
+		const jwtToken = generateJwtToken(user[0].user_id); // Your JWT generator function
+		return res.redirect(`${process.env.FRONTEND_URL}/#register?jwt=${jwtToken}`);
+	}
+
+	// If user does not exist, return authentication data
+	return res.redirect(`${process.env.FRONTEND_URL}/#register?apple_id=${appleId}&email=${email}`);
+
 	} catch (error) {
 	  console.error('Apple token verification error:', error);
+	  if (web) return res.redirect(`${process.env.FRONTEND_URL}/#register?error="apple"`);
 	  res.status(500).send('Error during authentication');
 	}
   });
