@@ -136,6 +136,11 @@ router.post('/login/apple', async (req, res) => {
 	  });
   
 	  if (user.length > 0) {
+		if (web) {
+			const jwtToken = generateJwtToken(user[0].user_id); // Your JWT generator function
+			return res.redirect(`${process.env.FRONTEND_URL}/#apple-login?jwt=${jwtToken}`);
+		  // If the user exists, generate a JWT token and return it
+		}
 		 return await getUser(user[0].user_id, res);
 	  }
   
@@ -148,8 +153,7 @@ router.post('/login/apple', async (req, res) => {
 	  }
 	if (user.length > 0) {
 		// User exists, generate session/token & redirect to frontend
-		const jwtToken = generateJwtToken(user[0].user_id); // Your JWT generator function
-		return res.redirect(`${process.env.FRONTEND_URL}/#register?jwt=${jwtToken}`);
+		
 	}
 
 	// If user does not exist, return authentication data
