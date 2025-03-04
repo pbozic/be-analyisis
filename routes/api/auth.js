@@ -122,7 +122,7 @@ router.post('/login/apple', async (req, res) => {
 			decodedToken = await verifyAppleToken(id_token, true);
 
 		} else {
-			console.log("Apple login POST web", jwt)
+			console.log("Apple login POST app", jwt)
 			decodedToken = await verifyAppleToken(jwt);
 		}
 	  // Decode the Apple ID token
