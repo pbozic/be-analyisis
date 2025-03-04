@@ -96,14 +96,34 @@ router.post("/update/scheduled_user", AuthController.updateScheduledUser);
 router.post("/refresh", joi(refreshSchema), AuthController.refreshToken);
 router.post("/reset-password", joi(resetPasswordRequestSchema), AuthController.requestPasswordReset);
 router.post('/login/apple', async (req, res) => {
-	const { token, jwt } = req.body;
+	const { token, jwt, code, state } = req.body;
   
 	console.log("Apple login POST", jwt, token)
 	try {
+		let decodedToken;
+		if (code) {
+			const tokenResponse = await axios.post("https://appleid.apple.com/auth/token", new URLSearchParams({
+				client_id: process.env.APPLE_SIGN_IN_CLIENT_ID,  // Your Apple Service ID
+				client_secret: generateAppleClientSecret(), // Generated Apple Client Secret
+				code: code,
+				grant_type: "authorization_code",
+				redirect_uri: process.env.APPLE_REDIRECT_URI,
+			}).toString(), {
+				headers: { "Content-Type": "application/x-www-form-urlencoded" }
+			});
+	
+			const { id_token, access_token } = tokenResponse.data;
+	
+			// Verify the Apple ID token (with web=true)
+			decodedToken = await verifyAppleToken(id_token, true);
+
+		} else {
+			decodedToken = await verifyAppleToken(jwt);
+		}
 	  // Decode the Apple ID token
-	  const decodedToken = await verifyAppleToken(jwt);
+	  
 	  console.log("Apple Decoded", decodedToken);
-	  const appleId = token;
+	  appleId = token || decodedToken.sub;
   
 	  // Check if the user already exists in the database
 	  let user = await prisma.users.findMany({
@@ -125,6 +145,52 @@ router.post('/login/apple', async (req, res) => {
 	}
   });
 
+
+  router.get('/login/apple', async (req, res) => {
+    const { code, state } = req.query;
+	console.log("Apple login web GET", code, state)
+    if (!code) {
+        return res.status(400).json({ error: "Missing authorization code" });
+    }
+
+    try {
+        // Exchange authorization code for access token
+        const tokenResponse = await axios.post("https://appleid.apple.com/auth/token", new URLSearchParams({
+			client_id: process.env.APPLE_SIGN_IN_CLIENT_ID,  // Your Apple Service ID
+			client_secret: generateAppleClientSecret(), // Generated Apple Client Secret
+			code: code,
+			grant_type: "authorization_code",
+			redirect_uri: process.env.APPLE_REDIRECT_URI,
+		}).toString(), {
+			headers: { "Content-Type": "application/x-www-form-urlencoded" }
+		});
+
+		const { id_token, access_token } = tokenResponse.data;
+
+		// Verify the Apple ID token (with web=true)
+		const decodedToken = await verifyAppleToken(id_token, true);
+		console.log("Verified Apple User:", decodedToken);
+
+        // Check if user exists in DB
+        let user = await prisma.users.findFirst({
+            where: { apple_id: appleId },
+        });
+        if (user) {
+            // User exists, generate session/token & redirect to frontend
+            const jwtToken = generateJwtToken(user[0].user_id); // Your JWT generator function
+            return res.redirect(`${process.env.FRONTEND_URL}/#register?jwt=${jwtToken}`);
+        }
+
+        // If user does not exist, return authentication data
+        return res.redirect(`${process.env.FRONTEND_URL}/#register?apple_id=${appleId}&email=${email}`);
+
+    } catch (error) {
+		console.error("Apple authentication error:", error.response?.data || error);
+		return res.redirect(`${process.env.FRONTEND_URL}/#register?error="apple"`);
+       
+        return res.status(500).json({ error: "Failed to authenticate with Apple" });
+    }
+});
 router.post('/login/google', async (req, res) => {
 	const { token } = req.body;
   
@@ -166,55 +232,6 @@ router.post('/login/google', async (req, res) => {
 	  res.status(500).send('Error during authentication');
 	}
   });
-  router.get('/login/apple', async (req, res) => {
-    const { code, state } = req.query;
-	console.log("Apple login web GET", code, state)
-    if (!code) {
-        return res.status(400).json({ error: "Missing authorization code" });
-    }
-
-    try {
-        // Exchange authorization code for access token
-        const tokenResponse = await axios.post("https://appleid.apple.com/auth/token", new URLSearchParams({
-            client_id: process.env.APPLE_SIGN_IN_CLIENT_ID,  // Your Apple Service ID
-            client_secret: generateAppleClientSecret(), // Generated Apple Client Secret
-            code: code,
-            grant_type: "authorization_code",
-            redirect_uri: process.env.APPLE_REDIRECT_URI,
-        }).toString(), {
-            headers: { "Content-Type": "application/x-www-form-urlencoded" }
-        });
-
-        const { id_token, access_token } = tokenResponse.data;
-
-        // Verify the Apple ID token (with web=true)
-        const decodedToken = await verifyAppleToken(id_token, true);
-        console.log("Verified Apple User:", decodedToken);
-
-        // Handle user authentication (check if user exists in DB)
-        const appleId = decodedToken.sub;  // Unique Apple user ID
-        const email = decodedToken.email; // Email (may be null for private relay emails)
-
-        // Check if user exists in DB
-        let user = await prisma.users.findFirst({
-            where: { apple_id: appleId },
-        });
-        if (user) {
-            // User exists, generate session/token & redirect to frontend
-            const jwtToken = generateJwtToken(user[0].user_id); // Your JWT generator function
-            return res.redirect(`${process.env.FRONTEND_URL}/#register?jwt=${jwtToken}`);
-        }
-
-        // If user does not exist, return authentication data
-        return res.redirect(`${process.env.FRONTEND_URL}/#register?apple_id=${appleId}&email=${email}`);
-
-    } catch (error) {
-		console.error("Apple authentication error:", error.response?.data || error);
-		return res.redirect(`${process.env.FRONTEND_URL}/#register?error="apple"`);
-       
-        return res.status(500).json({ error: "Failed to authenticate with Apple" });
-    }
-});
   const verifyAppleToken = async (identityToken, web = false) => {
     try {
         // Fetch Apple's public keys
