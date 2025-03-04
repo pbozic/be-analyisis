@@ -1,4 +1,4 @@
-const   si = {
+const   sl = {
     USER_NOTIFICATIONS: {
         scheduled_tomorrow: "Vaše taksi naročilo je načrtovano za jutri ob ",
         scheduled_hour: "Vaše taksi naročilo je načrtovano čez eno uro",
@@ -58,4 +58,4 @@ const   si = {
         lobby_completed: "Soba zaključena"
     }
 }
-module.exports = si;
+module.exports = sl;

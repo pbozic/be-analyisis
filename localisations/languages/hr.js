@@ -1,4 +1,4 @@
-const cro = {
+const hr = {
     USER_NOTIFICATIONS: {
         scheduled_tomorrow: "Vaša narudžba za taksi je zakazana za sutra u ",
         scheduled_hour: "Vaša narudžba za taksi je zakazana za sat vremena",
@@ -58,4 +58,4 @@ const cro = {
         lobby_completed: "Soba dovršena"
     }
 }
-module.exports = cro;
+module.exports = hr;
