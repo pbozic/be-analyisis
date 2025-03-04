@@ -6,13 +6,13 @@ const placeholder_promo_sections = [
 	{
 		translations: [
 			{ language: "EN", translation: "Featured Ads" },
-			{ language: "SI", translation: "Izpostavljeni oglasi" },
+			{ language: "SL", translation: "Izpostavljeni oglasi" },
 			{ language: "IT", translation: "Annunci in evidenza" },
 			{ language: "DE", translation: "Hervorgehobene Anzeigen" },
 			{ language: "ES", translation: "Anuncios destacados" },
-			{ language: "SRB", translation: "Istaknuti oglasi" },
-			{ language: "BIH", translation: "Istaknuti oglasi" },
-			{ language: "CRO", translation: "Istaknuti oglasi" },
+			{ language: "SR", translation: "Istaknuti oglasi" },
+			{ language: "BS", translation: "Istaknuti oglasi" },
+			{ language: "HR", translation: "Istaknuti oglasi" },
 			{ language: "FR", translation: "Annonces en vedette" },
 			{ language: "RU", translation: "Рекомендуемые объявления" }
 		],
@@ -32,13 +32,13 @@ const placeholder_promo_sections = [
 	{
 		translations: [
 			{ language: "EN", translation: "Premium Listings" },
-			{ language: "SI", translation: "Premium oglasi" },
+			{ language: "SL", translation: "Premium oglasi" },
 			{ language: "IT", translation: "Annunci premium" },
 			{ language: "DE", translation: "Premium-Anzeigen" },
 			{ language: "ES", translation: "Anuncios premium" },
-			{ language: "SRB", translation: "Premium oglasi" },
-			{ language: "BIH", translation: "Premium oglasi" },
-			{ language: "CRO", translation: "Premium oglasi" },
+			{ language: "SR", translation: "Premium oglasi" },
+			{ language: "BS", translation: "Premium oglasi" },
+			{ language: "HR", translation: "Premium oglasi" },
 			{ language: "FR", translation: "Annonces premium" },
 			{ language: "RU", translation: "Премиум-объявления" }
 		],
@@ -58,13 +58,13 @@ const placeholder_promo_sections = [
 	{
 		translations: [
 			{ language: "EN", translation: "Homepage Spotlight" },
-			{ language: "SI", translation: "Izpostavitev na domači strani" },
+			{ language: "SL", translation: "Izpostavitev na domači strani" },
 			{ language: "IT", translation: "Evidenza in homepage" },
 			{ language: "DE", translation: "Startseiten-Highlight" },
 			{ language: "ES", translation: "Destacado en la página principal" },
-			{ language: "SRB", translation: "Početna stran istaknut" },
-			{ language: "BIH", translation: "Početna stran istaknut" },
-			{ language: "CRO", translation: "Početna stran istaknut" },
+			{ language: "SR", translation: "Početna stran istaknut" },
+			{ language: "BS", translation: "Početna stran istaknut" },
+			{ language: "HR", translation: "Početna stran istaknut" },
 			{ language: "FR", translation: "Mise en avant sur la page d'accueil" },
 			{ language: "RU", translation: "Выделение на главной странице" }
 		],
@@ -84,13 +84,13 @@ const placeholder_promo_sections = [
 	{
 		translations: [
 			{ language: "EN", translation: "Social Media Boost" },
-			{ language: "SI", translation: "Družbeni mediji pospešitev" },
+			{ language: "SL", translation: "Družbeni mediji pospešitev" },
 			{ language: "IT", translation: "Boost sui social media" },
 			{ language: "DE", translation: "Social-Media-Boost" },
 			{ language: "ES", translation: "Impulso en redes sociales" },
-			{ language: "SRB", translation: "Povećanje društvenih mreža" },
-			{ language: "BIH", translation: "Povećanje društvenih mreža" },
-			{ language: "CRO", translation: "Povećanje društvenih mreža" },
+			{ language: "SR", translation: "Povećanje društvenih mreža" },
+			{ language: "BS", translation: "Povećanje društvenih mreža" },
+			{ language: "HR", translation: "Povećanje društvenih mreža" },
 			{ language: "FR", translation: "Boost sur les réseaux sociaux" },
 			{ language: "RU", translation: "Реклама в социальных сетях" }
 		],
@@ -110,13 +110,13 @@ const placeholder_promo_sections = [
 	{
 		translations: [
 			{ language: "EN", translation: "Urgent Label" },
-			{ language: "SI", translation: "Nujna oznaka" },
+			{ language: "SL", translation: "Nujna oznaka" },
 			{ language: "IT", translation: "Etichetta urgente" },
 			{ language: "DE", translation: "Dringendes Label" },
 			{ language: "ES", translation: "Etiqueta urgente" },
-			{ language: "SRB", translation: "Hitna oznaka" },
-			{ language: "BIH", translation: "Hitna oznaka" },
-			{ language: "CRO", translation: "Hitna oznaka" },
+			{ language: "SR", translation: "Hitna oznaka" },
+			{ language: "BS", translation: "Hitna oznaka" },
+			{ language: "HR", translation: "Hitna oznaka" },
 			{ language: "FR", translation: "Étiquette urgente" },
 			{ language: "RU", translation: "Срочная метка" }
 		],

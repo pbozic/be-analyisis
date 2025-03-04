@@ -4,7 +4,7 @@ const prisma = require("../prisma");
 const { upsertFileOnS3Helper } = require("../../controllers/FilesController");
 const CategoriesDao = require("../../dao/Categories");
 let languages = {
-    bih: {
+    bs: {
         title: "Slijedite li neke specifične dijetalne smjernice?",
         gallbladder: 'Žučna kesa',
         glutenFree: 'Bez glutena',
@@ -18,7 +18,7 @@ let languages = {
         modalTitle: 'Info',
         modalDescription: "Kada je odabrano 'I', prikazat ćemo vam samo restorane sa svim odabranim prehrambenim opcijama.\nKada je odabrano 'ILI', prikazat ćemo vam restorane s bilo kojom od odabranih prehrambenih opcija.",
     },
-    cro: {
+    hr: {
         title: "Slijedite li neke specifične dijetalne smjernice?",
         gallbladder: 'Žučna kesa',
         glutenFree: 'Bez glutena',
@@ -116,7 +116,7 @@ let languages = {
         modalTitle: 'Информация',
         modalDescription: "Когда выбрано 'И', мы покажем вам только рестораны со всеми выбранными диетическими опциями.\nКогда выбрано 'ИЛИ', мы покажем вам рестораны с любой из выбранных диетических опций.",
     },
-    si: {
+    sl: {
         title: "Sledite kakšnim posebnim prehranskim smernicam?",
         gallbladder: 'Žolčnik',
         glutenFree: 'Brezglutensko',
@@ -130,7 +130,7 @@ let languages = {
         modalTitle: 'Info',
         modalDescription: "Ko je izbrano 'IN', vam bomo pokazali samo restavracije z vsemi izbranimi prehranskimi možnostmi.\nKo je izbrano 'ALI', vam bomo pokazali restavracije s katerokoli izmed izbranih prehranskih možnosti.",
     },
-    srb: {
+    sr: {
         title: "Da li pratite neke specifične dijetetske smernice?",
         gallbladder: 'Žučna kesa',
         glutenFree: 'Bez glutena',

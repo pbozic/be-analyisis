@@ -2,28 +2,28 @@
     "category_id": "5c329ce2-4d1b-444b-961d-ff53c7889f35",
     "data": {
         "names": {
-            "si": "Burger 1",
+            "sl": "Burger 1",
             "en": "Burger 1",
             "it": "",
             "ru": "",
             "de": "",
             "fr": "",
             "es": "",
-            "bih": "",
-            "srb": "",
-            "cro": ""
+            "bs": "",
+            "sr": "",
+            "hr": ""
         },
         "description": {
-            "si": "Bhrger 1",
+            "sl": "Bhrger 1",
             "en": "",
             "it": "",
             "ru": "",
             "de": "",
             "fr": "",
             "es": "",
-            "bih": "",
-            "srb": "",
-            "cro": ""
+            "bs": "",
+            "sr": "",
+            "hr": ""
         },
         "price": 10,
         "spicy_level": 1,

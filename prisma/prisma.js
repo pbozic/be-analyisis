@@ -134,7 +134,7 @@ const prisma = new PrismaClient({
 							AND COALESCE(${requirements.language_it}, FALSE) = FALSE
 							AND COALESCE(${requirements.language_de}, FALSE) = FALSE
 							AND COALESCE(${requirements.language_es}, FALSE) = FALSE
-							AND COALESCE(${requirements.language_cro}, FALSE) = FALSE
+							AND COALESCE(${requirements.language_hr}, FALSE) = FALSE
 							AND COALESCE(${requirements.language_fr}, FALSE) = FALSE
 							AND COALESCE(${requirements.language_ru}, FALSE) = FALSE
 						) OR (
@@ -142,7 +142,7 @@ const prisma = new PrismaClient({
 							(COALESCE(${requirements.language_it}, FALSE) = TRUE AND (drivers.ride_requirements->'language_it')::BOOLEAN = TRUE) OR
 							(COALESCE(${requirements.language_de}, FALSE) = TRUE AND (drivers.ride_requirements->'language_de')::BOOLEAN = TRUE) OR
 							(COALESCE(${requirements.language_es}, FALSE) = TRUE AND (drivers.ride_requirements->'language_es')::BOOLEAN = TRUE) OR
-							(COALESCE(${requirements.language_cro}, FALSE) = TRUE AND (drivers.ride_requirements->'language_cro')::BOOLEAN = TRUE) OR
+							(COALESCE(${requirements.language_hr}, FALSE) = TRUE AND (drivers.ride_requirements->'language_cro')::BOOLEAN = TRUE) OR
 							(COALESCE(${requirements.language_fr}, FALSE) = TRUE AND (drivers.ride_requirements->'language_fr')::BOOLEAN = TRUE) OR
 							(COALESCE(${requirements.language_ru}, FALSE) = TRUE AND (drivers.ride_requirements->'language_ru')::BOOLEAN = TRUE)
 						)

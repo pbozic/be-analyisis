@@ -49,7 +49,7 @@ let languages = {
         "drinks": "Soft drinks",
         "kidsMeals": "Kids meals"
     },
-    "si": {
+    "sl": {
         "fastFood": "Hitra hrana",
         "pizza": "Pizza",
         "burger": "Burger",
@@ -225,7 +225,7 @@ let languages = {
         "drinks": "Bebidas",
         "kidsMeals": "Comidas para niños"
     },
-    "srb": {
+    "sr": {
         "fastFood": "Брза храна",
         "pizza": "Пица",
         "burger": "Пљескавица",
@@ -269,7 +269,7 @@ let languages = {
         "drinks": "Напици",
         "kidsMeals": "Оброци за децу"
     },
-    "bih": {
+    "bs": {
         "fastFood": "Brza hrana",
         "pizza": "Pizza",
         "burger": "Hamburger",
@@ -313,7 +313,7 @@ let languages = {
         "drinks": "Pića",
         "kidsMeals": "Obroci za djecu"
     },
-    "cro": {
+    "hr": {
         "fastFood": "Brza hrana",
         "pizza": "Pizza",
         "burger": "Hamburger",
