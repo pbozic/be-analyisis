@@ -8,6 +8,10 @@ const stripe = require("../lib/stripe");
 const BusinessDao = require("../dao/Business");
 const PromoDao = require("../dao/Promo");
 const ProductDao = require("../dao/Product");
+const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
+const { DELIVERY_ORDER_STATUS } = require("../lib/constants");
+const { calculateDeliveryOrderPaymentCuts } = require("../lib/deliveryHelpers");
+
 async function handlePaymentIntentSuccess(paymentIntent) {
 	switch (paymentIntent.metadata.type) {
 		case "wallet_topup":
@@ -28,27 +32,43 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			break;
 		case "order_payment":
 			let order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
+			const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id)
+
+			const {PLATFORM_CREDIT_CUT, MERCHANT_CREDIT_CUT} = calculateDeliveryOrderPaymentCuts(order)
+
 			if (paymentIntent.metadata?.merchant_cut > 0) {
-				const business = await BusinessDao.getBusinessById(order.details.business_id);
 				const transferRestaurant = await stripe.splitCutFromPaymentIntent(
 					paymentIntent,
-					business.stripe_account_id,
+					restaurant_stripe,
 					parseFloat(paymentIntent.metadata.merchant_cut),
 				);
 			}
+
+			if (PLATFORM_CREDIT_CUT>0) {
+				const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id, "platform", PLATFORM_CREDIT_CUT, order.order_id, "delivery");
+			}
+			if (MERCHANT_CREDIT_CUT>0) {
+				const transferedCreditsMerchant = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id, restaurant_stripe, MERCHANT_CREDIT_CUT, order.order_id, "delivery");
+			}
+			//any remaining reserved funds are meant for delivery driver and should be handled on order completion
+
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				payment: {
 					...order.payment,
 					status: "PAID",
 				},
-				// status: "CUSTOMER_PAYMENT_SUCCESSFUL"
 			});
+			order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL);
+			order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED);
+			order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.MERCHANT_PREPARING);
+			io.to("orders_" + order.business_id).emit("order_status_change_delivery", order);
 
 			console.log("PaymentIntent was successful!");
 			break;
 	}
 }
 async function handlePaymentIntentFaliure(paymentIntent) {
+	console.log("PaymentIntent failed!");
 	switch (paymentIntent.metadata.type) {
 		case "wallet_topup":
 			break;
@@ -59,10 +79,11 @@ async function handlePaymentIntentFaliure(paymentIntent) {
 					...order.payment,
 					status: "UNPAID",
 				},
-				status: "CUSTOMER_PAYMENT_FAILED",
 			});
+			order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED);
 			io.to("orders_" + order.business_id).emit("order_status_change_delivery", order);
-			console.log("PaymentIntent failed!");
+			await WalletFundsHelpers.releaseReservedWalletFundsForOrder(order.user_id,order.order_id)
+
 			break;
 	}
 }
@@ -132,7 +153,6 @@ async function handleWebhook(req, res) {
 	}
 	let data = event.data.object;
 	let paymentIntent;
-	let order;
 	console.log("WEBHOOK", event.type);
 	// Handle the event
 	switch (event.type) {
@@ -144,21 +164,6 @@ async function handleWebhook(req, res) {
 			paymentIntent = event.data.object;
 			console.log("FAIL", paymentIntent);
 			handlePaymentIntentFaliure(paymentIntent);
-			break;
-		case "payment_intent.amount_capturable_updated":
-			console.log("payment_intent.amount_capturable_updated");
-			paymentIntent = event.data.object;
-			order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
-			if (paymentIntent.amount === paymentIntent.amount_capturable) {
-				order = await DeliveryOrderDao.updateOrder(order.order_id, {
-					payment: {
-						...order.payment,
-						status: "PAID",
-					},
-					status: "CUSTOMER_PAYMENT_SUCCESSFUL",
-				});
-			}
-			io.to("orders_" + order.business_id).emit("new_order", order);
 			break;
 		case "charge.succeeded":
 			paymentIntent = event.data.object;

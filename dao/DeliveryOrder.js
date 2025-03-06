@@ -343,7 +343,7 @@ async function acceptOrder(order_id, delivery_driver_id) {
 					order_id
 				},
 				data: {
-					status: "DELIVERY_ACCEPTED",
+					status: DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,
 					delivery_driver: {
 						connect: {
 							delivery_driver_id: delivery_driver_id
@@ -377,7 +377,7 @@ async function acceptOrder(order_id, delivery_driver_id) {
 					order_id
 				},
 				data: {
-					status: "DELIVERY_ACCEPTED",
+					status: DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,
 					driver: {
 						connect: {
 							driver_id: delivery_driver_id
@@ -414,13 +414,43 @@ async function connectOrderWithDriver(order_id, delivery_driver_id) {
 
 async function updateOrderStatus(order_id, status) {
 	try {
-		return prisma.delivery_orders.update({
-			where: {
-				order_id
-			},
-			data: {
-				status
+		await prisma.$transaction(async (tx) => {
+			// Fetch the current timeline
+			const order = await tx.delivery_orders.findUnique({
+				where: {
+					order_id
+				},
+				select: {
+					timeline: true
+				}
+			});
+
+			if (!order) {
+				throw new Error(`Order with ID ${order_id} not found`);
 			}
+
+			// Append the new timeline entry to the existing timeline
+			const updatedTimeline = [
+				...order.timeline,
+				{
+					status: status,
+					order_id: order_id,
+					location: {
+						timestamp: new Date().toISOString()
+					}
+				}
+			];
+
+			// Update the status and timeline within a transaction
+			await tx.delivery_orders.update({
+				where: {
+					order_id
+				},
+				data: {
+					status,
+					timeline: updatedTimeline
+				}
+			});
 		});
 	} catch (e) {
 		throw new Error(e);
