@@ -5,7 +5,9 @@ const MenuController = require("../../controllers/MenuController");
 
 // Menu routes
 router.get("/business/:business_id", MenuController.getMenuByBusinessId);
+router.get("/menu/:business_id/:date", MenuController.getMenuByDate);
 router.post("/", MenuController.createMenu);
+router.post("/daily-meal", MenuController.createDailyMealMenu);
 router.delete("/:menu_id", MenuController.deleteMenu);
 router.patch("/active", MenuController.setActiveMenu);
 router.patch("/add-category-order", MenuController.addMenuCategoryIdToOrder);
@@ -31,6 +33,7 @@ router.patch("/menu-items/add-order", MenuController.addMenuItemIdToOrder);
 router.patch("/menu-items/remove-order", MenuController.removeMenuItemIdFromOrder);
 router.get("/menu-items/:category_id", MenuController.getMenuItemsByCategoryId);
 router.get("/menu-items/business/:business_id", MenuController.getMenuItemsByBusinessId);
+router.get("/menu-items/:business_id/:date", MenuController.getMenuItemsByDate);
 router.delete("/menu-items/:menu_item_id", MenuController.deleteMenuItem);
 router.patch("/menu-items", MenuController.updateMenuItem);
 router.patch("/menu-items/order", MenuController.updateMenuItemsOrder);

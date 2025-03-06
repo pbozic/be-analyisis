@@ -51,10 +51,11 @@ const removeMenuItemIdFromOrder = async (menu_category_id, menuItemIdToRemove) =
 	}
 }
 
-const getMenuItemsByBusinessId = async (business_id) => {
+const getMenuItemsByBusinessId = async (business_id, args) => {
 	return await prisma.menu_items.findMany({
 		where: {
 			business_id: business_id,
+			...args
 		},
 		include: {
 			menu_category: true,
