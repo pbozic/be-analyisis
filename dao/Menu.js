@@ -1,5 +1,5 @@
 const prisma = require('../prisma/prisma');
-
+const moment = require('moment');
 const createMenu = async (business_id, isDailyMeals) => {
 	return await prisma.menus.create({
 		data: {
@@ -10,10 +10,24 @@ const createMenu = async (business_id, isDailyMeals) => {
 	});
 };
 
-const getMenuByBusinessId = async (business_id) => {
+const getMenuByBusinessId = async (business_id, isDailyMeals = false, startDate = null) => {
+	let extraWhereArgs = {};
+	if (isDailyMeals) {
+		if (!startDate) {
+			startDate = new Date();
+		}
+		extraWhereArgs = {
+			date: {
+				gte: moment(startDate).toDate()
+			}
+		}
+	}
+
 	const menus = await prisma.menus.findMany({
 		where: {
 			business_id: business_id,
+			isDailyMeals: isDailyMeals,
+			...extraWhereArgs
 		},
 		include: {
 			categories: {
