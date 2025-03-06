@@ -11,10 +11,24 @@ const createMenu = async (business_id, isDailyMeal = false, date = null) => {
 	});
 };
 
-const getMenuByBusinessId = async (business_id) => {
+const getMenuByBusinessId = async (business_id, isDailyMeals = false, startDate = null) => {
+	let extraWhereArgs = {};
+	if (isDailyMeals) {
+		if (!startDate) {
+			startDate = new Date();
+		}
+		extraWhereArgs = {
+			date: {
+				gte: moment(startDate).startOf('day').toDate()
+			}
+		}
+	}
+
 	const menus = await prisma.menus.findMany({
 		where: {
 			business_id: business_id,
+			isDailyMeals: isDailyMeals,
+			...extraWhereArgs
 		},
 		include: {
 			categories: {

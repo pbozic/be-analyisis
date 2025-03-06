@@ -12,7 +12,7 @@ router.delete("/:menu_id", MenuController.deleteMenu);
 router.patch("/active", MenuController.setActiveMenu);
 router.patch("/add-category-order", MenuController.addMenuCategoryIdToOrder);
 router.patch("/remove-category-order", MenuController.removeMenuCategoryIdFromOrder);
-
+router.post("/daily/business/:business_id", MenuController.getDailyMenuByBusinessId);
 // Menu Category routes
 router.get("/menu-categories/:menu_id", MenuController.getMenuCategoriesByMenuId);
 router.post("/menu-categories/create", MenuController.createMenuCategory);

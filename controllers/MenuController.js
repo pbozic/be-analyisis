@@ -26,7 +26,26 @@ async function getMenuByBusinessId(req, res) {
 		res.status(400).json({ error: "Error obtaining menus", e });
 	}
 }
-
+/**
+ * POST /menus/daily/business/:business_id
+ * @tag Menu
+ * @summary Get menus by business ID
+ * @description Retrieves a list of menus for a specific business.
+ * @operationId getDailyMenuByBusinessId
+ * @pathParam {string} business_id - The ID of the business
+ * @response 200 - Successful operation, returns a list of menus
+ * @responseContent {Menu[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the menu list
+ */
+async function getDailyMenuByBusinessId(req, res) {
+	try {
+		const menus = await MenuDao.getMenuByBusinessId(req.params.business_id, true, req.body.start_date);
+		res.status(200).json(menus);
+	} catch (e) {
+		console.error("Error obtaining menus:", e);
+		res.status(400).json({ error: "Error obtaining menus", e });
+	}
+}
 /**
  * POST /menus
  * @tag Menu
@@ -41,9 +60,9 @@ async function getMenuByBusinessId(req, res) {
  * @response 400 - Error creating new menu
  */
 async function createMenu(req, res) {
-	const { business_id } = req.body;
+	const { business_id, is_daily_meals } = req.body;
 	try {
-		const menu = await MenuDao.createMenu(business_id);
+		const menu = await MenuDao.createMenu(business_id, is_daily_meals);
 		res.status(201).json(menu);
 	} catch (e) {
 		console.error("Error creating menu:", e);
@@ -810,5 +829,6 @@ module.exports = {
 	createDailyMealsMenu,
 	createDailyMealMenu,
 	getLastUploadedDailyMealsMenu,
-	deleteDocumentsAndFilesByDocumentId
+	deleteDocumentsAndFilesByDocumentId,
+	getDailyMenuByBusinessId
 };
