@@ -218,9 +218,13 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId) {
 		//TODO: maybe convert to findUnique?
 		const existingReservedFund = await prisma.wallet_funds.findFirst({
 			where: {
+				user_id:walletFund.user_id,
 				charge_id: walletFund.charge_id,
 				reserved_order: orderId,
-				type:walletFund.type
+				reserved_business: orderId,
+				expires_at: walletFund.expires_at,
+				referral_id: walletFund.referral_id,
+				type:walletFund.type,
 			},
 		});
 
@@ -239,11 +243,13 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId) {
 			// If it does not exist, create a new wallet fund entry
 			const newWalletFund = await prisma.wallet_funds.create({
 				data: {
-					user_id: walletFund.user_id,
+					user_id:walletFund.user_id,
 					charge_id: walletFund.charge_id,
-					amount: reserveAmount,
-					type: walletFund.type,
 					reserved_order: orderId,
+					expires_at: walletFund.expires_at,
+					referral_id: walletFund.referral_id,
+					type:walletFund.type,
+					amount: reserveAmount,
 				},
 			});
 			return newWalletFund;
@@ -253,6 +259,89 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId) {
 		throw error;
 	}
 }
+
+async function releaseFunds(walletFundsId, releaseAmount) {
+	try {
+		if(releaseAmount<=0){
+			throw new Error("Release amount must be greater than 0");
+		}
+		const walletFund = await prisma.wallet_funds.findUnique({
+			where: {
+				wallet_funds_id: walletFundsId,
+			},
+		});
+
+		if (!walletFund) {
+			throw new Error("Wallet fund entry not found");
+		}
+
+		if (walletFund.reserved_order===null &&  walletFund.reserved_business===null) {
+			throw new Error("Source wallet fund entry is not reserved");
+		}
+
+		if (walletFund.amount < releaseAmount) {
+			throw new Error("Insufficient funds");
+		}
+
+		const released_WF = await prisma.$transaction(async (tx) => {
+			await tx.wallet_funds.update({
+				where: {
+					wallet_funds_id: walletFundsId,
+				},
+				data: {
+					amount: walletFund.amount - releaseAmount,
+				},
+			});
+
+			console.info(`released ${amount} from WF:\n${JSON.stringify(walletFund,null,2)}. ` )
+
+			// Check if same wallet fund exists
+			const existingFund = await tx.wallet_funds.findFirst({
+				where: {
+					user_id:walletFund.user_id,
+					charge_id: walletFund.charge_id,
+					reserved_order: walletFund.order_id,
+					reserved_business: walletFund.reserved_business,
+					expires_at: walletFund.expires_at,
+					referral_id: walletFund.referral_id,
+					type:walletFund.type,
+				},
+			});
+
+			if (existingFund) {
+				// If it exists, update the existing entry
+				const updatedFund = await tx.wallet_funds.update({
+					where: {
+						wallet_funds_id: existingFund.wallet_funds_id,
+					},
+					data: {
+						amount: existingFund.amount + releaseAmount,
+					},
+				});
+				return updatedFund;
+			} else {
+				// If it does not exist, create a new wallet fund entry
+				const newWalletFund = await tx.wallet_funds.create({
+					data: {
+						user_id:walletFund.user_id,
+						charge_id: walletFund.charge_id,
+						reserved_order: null,
+						expires_at: walletFund.expires_at,
+						referral_id: walletFund.referral_id,
+						type:walletFund.type,
+						amount: releaseAmount,
+					},
+				});
+				return newWalletFund;
+			}
+		});
+
+	} catch (error) {
+		console.error("Error reserving funds:", error);
+		throw error;
+	}
+}
+
 
 async function getAvailableWalletBalance(userId) {
 	try {
@@ -422,6 +511,7 @@ module.exports = {
 	deleteWalletFunds,
 	subtractFunds,
 	reserveFunds,
+	releaseFunds,
 
 	createCredit,
 	getAvailableCredits,

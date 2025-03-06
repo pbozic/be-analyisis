@@ -711,6 +711,8 @@ model wallet_funds {
   referral          referrals?     @relation(fields: [referral_id], references: [referral_id])
   user              users          @relation("wallet_funds", fields: [user_id], references: [user_id])
   transactions      transactions[] @relation("wallet_funds_transaction")
+
+  @@unique([user_id,charge_id,reserved_order,reserved_business,type,status,referral_id,expires_at])
 }
 
 model local_products {
