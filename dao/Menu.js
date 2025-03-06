@@ -18,7 +18,7 @@ const getMenuByBusinessId = async (business_id, isDailyMeals = false, startDate 
 		}
 		extraWhereArgs = {
 			date: {
-				gte: moment(startDate).toDate()
+				gte: moment(startDate).startOf('day').toDate()
 			}
 		}
 	}
