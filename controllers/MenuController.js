@@ -41,9 +41,9 @@ async function getMenuByBusinessId(req, res) {
  * @response 400 - Error creating new menu
  */
 async function createMenu(req, res) {
-	const { business_id } = req.body;
+	const { business_id, is_daily_meals } = req.body;
 	try {
-		const menu = await MenuDao.createMenu(business_id);
+		const menu = await MenuDao.createMenu(business_id, is_daily_meals);
 		res.status(201).json(menu);
 	} catch (e) {
 		console.error("Error creating menu:", e);

@@ -535,13 +535,16 @@ async function acceptOrder(req, res) {
 	const { order_id, user } = req.body;
 	const delivery_driver_id = user?.delivery_driver?.delivery_driver_id || user?.driver?.driver_id
 	try {
-		//TODO: check if driver is online
+		//TODO: check if driver is on
+		// line
 		let order = await DeliveryOrderDao.getOrder(order_id, {
 			include: {
 				delivery_driver: true,
 				driver: true,
 			}
 		});
+
+
 		if ([DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED, DELIVERY_ORDER_STATUS.MERCHANT_CANCELED, DELIVERY_ORDER_STATUS.DELIVERY_CANCELED].includes(order.status)) {
 			return res.status(400).json({ error: `Order has been canceled: ${order.status}.`, errorType: "ERR_ORDER_ALREADY_CANCELED" });
 		} else if (![DELIVERY_ORDER_STATUS.PENDING, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING,

@@ -1,10 +1,11 @@
 const prisma = require('../prisma/prisma');
 
-const createMenu = async (business_id) => {
+const createMenu = async (business_id, isDailyMeals) => {
 	return await prisma.menus.create({
 		data: {
 			business_id: business_id,
 			active: true, // Assuming we want to create it as active by default
+			isDailyMeals: isDailyMeals
 		},
 	});
 };
