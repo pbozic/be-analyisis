@@ -240,8 +240,19 @@ const removeCategoryFromMenuCategory = async (menu_category_id, category_id) => 
 	});
 };
 
+const updateDailyMealMenuPrice = async (menu_category_id, price) => {
+	return await prisma.menu_categories.update({
+		where: {
+			menu_category_id: menu_category_id
+		},
+		data: {
+			price: price
+		}
+	});
+}
 
 module.exports = {
+	updateDailyMealMenuPrice,
 	createMenuCategory,
 	addMenuCategoryIdToOrder,
 	removeMenuCategoryIdFromOrder,

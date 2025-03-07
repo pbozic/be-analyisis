@@ -17,6 +17,7 @@ router.post("/daily/business/:business_id", MenuController.getDailyMenuByBusines
 router.get("/menu-categories/:menu_id", MenuController.getMenuCategoriesByMenuId);
 router.post("/menu-categories/create", MenuController.createMenuCategory);
 router.patch("/menu-categories/order", MenuController.updateMenuOrder);
+router.patch("/menu-categories/price", MenuController.updateDailyMealMenuPrice);
 router.delete("/menu-categories/:menu_category_id", MenuController.deleteMenuCategory);
 router.get("/menu-categories/business/:business_id", MenuController.getMenuCategoriesByBusinessId);
 

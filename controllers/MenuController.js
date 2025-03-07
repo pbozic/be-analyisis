@@ -798,7 +798,22 @@ const getMenuByDate = async (req, res) => {
 	}
 }
 
+const updateDailyMealMenuPrice = async (req, res) => {
+	const { menu_category_id, price } = req.body;
+	try {
+		const menu_category = await MenuCategoryDao.updateDailyMealMenuPrice(menu_category_id, price);
+		if (menu_category) {
+			const menu = await MenuDao.getMenuById(menu_category.menu_id);
+			res.status(200).json(menu);
+		}
+	} catch (e) {
+		console.error("Error updating menu price:", e);
+		res.status(400).json({ error: "Error updating menu price", e });
+	}
+}
+
 module.exports = {
+	updateDailyMealMenuPrice,
 	getMenuItemsByDate,
 	getMenuByDate,
 	getMenuByBusinessId,

@@ -1,4 +1,5 @@
 const prisma = require('../prisma/prisma');
+const moment = require('moment');
 
 const createMenu = async (business_id, isDailyMeal = false, date = null) => {
 	return await prisma.menus.create({
@@ -40,6 +41,11 @@ const getMenuByBusinessId = async (business_id, isDailyMeal = false, startDate =
 									files: true
 								}
 							}
+						}
+					},
+					menu_categories_catgeories: {
+						include: {
+							category: true
 						}
 					}
 				}
@@ -137,7 +143,28 @@ const getMenuByDate = async (business_id, date) => {
 	});
 };
 
+const getMenuById = async (menu_id) => {
+	return await prisma.menus.findUnique({
+		where: {
+			menu_id: menu_id
+		},
+		include: {
+			categories: {
+				include: {
+					menu_items: true,
+					menu_categories_catgeories: {
+						include: {
+							category: true
+						}
+					}
+				}
+			}
+		}
+	});
+}
+
 module.exports = {
+	getMenuById,
 	createMenu,
 	getMenuByBusinessId,
 	deleteMenu,
