@@ -3,6 +3,7 @@ const prisma = require("../prisma/prisma");
 const createMenuCategory = async (menuId, categoryData) => {
 	// Handle creating categories
 	let categories = categoryData.category_ids ? categoryData.category_ids : [];
+	delete categoryData.category_ids;
 	
 	let menu_category = await prisma.menu_categories.create({
 		data: {
@@ -125,7 +126,7 @@ const getMenuCategoriesByBusinessId = async (business_id) => {
 		where: {
 			business_id: business_id
 		},
-		include: {
+		/*include: {
 			menu_items: {
 				include: {
 					documents: {
@@ -135,11 +136,11 @@ const getMenuCategoriesByBusinessId = async (business_id) => {
 					}
 				}
 			}
-		}
+		}*/
 	});
 
 	// Sort menu items within each category based on the ordered JSON field
-	categories.forEach(category => {
+	/*categories.forEach(category => {
 		if (category.menu_items_ordered) {
 			try {
 				const orderedItemIds = JSON.parse(category.menu_items_ordered);
@@ -153,7 +154,7 @@ const getMenuCategoriesByBusinessId = async (business_id) => {
 			console.log('No menu_items_ordered for category', category.menu_category_id);
 			return category.menu_items;
 		}
-	});
+	});*/
 
 	return categories;
 };
@@ -239,8 +240,19 @@ const removeCategoryFromMenuCategory = async (menu_category_id, category_id) => 
 	});
 };
 
+const updateDailyMealMenuPrice = async (menu_category_id, price) => {
+	return await prisma.menu_categories.update({
+		where: {
+			menu_category_id: menu_category_id
+		},
+		data: {
+			price: price
+		}
+	});
+}
 
 module.exports = {
+	updateDailyMealMenuPrice,
 	createMenuCategory,
 	addMenuCategoryIdToOrder,
 	removeMenuCategoryIdFromOrder,

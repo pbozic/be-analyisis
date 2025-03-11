@@ -1,11 +1,13 @@
 const prisma = require('../prisma/prisma');
 const moment = require('moment');
-const createMenu = async (business_id, isDailyMeals) => {
+
+const createMenu = async (business_id, isDailyMeal = false, date = null) => {
 	return await prisma.menus.create({
 		data: {
 			business_id: business_id,
 			active: true, // Assuming we want to create it as active by default
-			isDailyMeals: isDailyMeals
+			isDailyMeal: isDailyMeal,
+			date: date,
 		},
 	});
 };
@@ -39,6 +41,11 @@ const getMenuByBusinessId = async (business_id, isDailyMeal = false, startDate =
 									files: true
 								}
 							}
+						}
+					},
+					menu_categories_catgeories: {
+						include: {
+							category: true
 						}
 					}
 				}
@@ -106,10 +113,62 @@ const updateMenuOrder = async (menu_id, orderedMenuCategoryIds) => {
 	});
 };
 
+const getMenuByDate = async (business_id, date) => {
+	const startOfDay = new Date(date);
+	startOfDay.setHours(0, 0, 0, 0);
+	const endOfDay = new Date(date);
+	endOfDay.setHours(23, 59, 59, 999);
+
+	return await prisma.menus.findFirst({
+		where: {
+			business_id: business_id,
+			isDailyMeal: true,
+			date: {
+				gte: startOfDay.toISOString(),
+				lte: endOfDay.toISOString()
+			}
+		},
+		include: {
+			categories: {
+				include: {
+					menu_items: true,
+					menu_categories_catgeories: {
+						include: {
+							category: true
+						}
+					}
+				}
+			}
+		},
+	});
+};
+
+const getMenuById = async (menu_id) => {
+	return await prisma.menus.findUnique({
+		where: {
+			menu_id: menu_id
+		},
+		include: {
+			categories: {
+				include: {
+					menu_items: true,
+					menu_categories_catgeories: {
+						include: {
+							category: true
+						}
+					}
+				}
+			}
+		}
+	});
+}
+
 module.exports = {
+	getMenuById,
 	createMenu,
 	getMenuByBusinessId,
 	deleteMenu,
 	setActiveMenu,
-	updateMenuOrder
+	updateMenuOrder,
+	getMenuByDate,
 };
