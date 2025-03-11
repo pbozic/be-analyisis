@@ -15,7 +15,7 @@ const prisma = require("../prisma/prisma");
 const BusinessUsersDao = require("../dao/BusinessUsers");
 const EmailHelper = require("../lib/emailSender");
 const { UserSockets, io } = require('../socket');
-const { indexBusinesses, categorySearch } = require("../lib/elasticSearch");
+const { indexBusinesses, categorySearch } = require("../elasticsearch");
 
 /**
  * GET /businesses

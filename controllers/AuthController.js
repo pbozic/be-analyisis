@@ -25,7 +25,7 @@ const SMSHelper = require("../lib/SMS");
 const { parseTelephone } = require("../lib/helpersLib");
 const prisma = new PrismaClient();
 const { DOCUMENT_TYPE } = require("../lib/constants");
-const { indexBusinesses } = require("../lib/elasticSearch");
+const { indexBusinesses } = require("../elasticsearch");
 require('dotenv').config();
 
 /**
