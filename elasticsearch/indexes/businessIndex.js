@@ -1,13 +1,18 @@
 const esClient = require("../client");
 const prisma = require("../../prisma/prisma");
 
-async function createBusinessIndex() {
+async function createBusinessIndex(force = false) {
     try {
         const indexExists = await esClient.indices.exists({ index: 'business_index' });
 
         if (indexExists) {
             console.log("⚠️ Index 'business_index' already exists. Deleting...");
-            await esClient.indices.delete({ index: 'business_index' });
+            if (force) {
+                await esClient.indices.delete({ index: 'business_index' });
+            } else {
+                console.log("🚫 Skipping index creation. Use --force to override.");
+                return;
+            }
         }
 
         console.log("🚀 Creating business_index with optimized mappings...");
@@ -36,6 +41,7 @@ async function createBusinessIndex() {
                         menus: {
                             type: "nested",
                             properties: {
+                                menu_category_id: { type: "keyword" },
                                 menu_category_name: {
                                     type: "text",
                                     analyzer: "custom_text_analyzer"
@@ -70,7 +76,7 @@ async function createBusinessIndex() {
             }
         });
 
-        console.log("✅ business_index created successfully.");
+        console.log(" business_index created successfully.");
     } catch (error) {
         console.error("❌ Error creating business_index:", error);
     }
@@ -102,7 +108,7 @@ async function indexBusinesses(business_id = null) {
     //  - Word update
 
     try {
-        await createBusinessIndex();
+        await createBusinessIndex(false);
         console.log("🚀 Fetching businesses from database...");
         
         const whereClause = { type: "MERCHANT" };
@@ -158,7 +164,7 @@ async function indexBusinesses(business_id = null) {
             }
         });
         
-        console.log(`✅ Found ${businesses.length} businesses. Preparing data for indexing...`);
+        console.log(` Found ${businesses.length} businesses. Preparing data for indexing...`);
 
         const bulkOps = [];
 
@@ -180,6 +186,7 @@ async function indexBusinesses(business_id = null) {
                     menu_category_name: menu.categories.flatMap(cat =>
                         Object.values(cat.names).filter(value => value !== "")
                     ),
+                    menu_category_id: menu.categories.map(cat => cat.menu_category_id),
                     translations: menu.categories.flatMap(cat =>
                         cat.menu_categories_catgeories.flatMap(rel =>
                             rel.category.translatable?.translations.map(t => t.translation) || []
@@ -202,8 +209,8 @@ async function indexBusinesses(business_id = null) {
             console.log(JSON.stringify(doc))
             
             bulkOps.push(
-                { index: { _index: 'business_index', _id: business.business_id } },
-                doc
+                { update: { _index: 'business_index', _id: business.business_id } }, // Use business_id as _id
+                { doc, doc_as_upsert: true } // Update if exists, create if not
             );
         }
         
@@ -230,7 +237,7 @@ async function indexBusinesses(business_id = null) {
                     await esClient.bulk({ refresh: true, body: failedOps });
                 }
             } else {
-                console.log(`✅ Successfully indexed ${bulkOps.length / 2} businesses!`);
+                console.log(` Successfully indexed ${bulkOps.length / 2} businesses!`);
             }
         } else {
             console.log("⚠️ No businesses to index.");

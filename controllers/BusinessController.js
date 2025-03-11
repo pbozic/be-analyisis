@@ -15,7 +15,7 @@ const prisma = require("../prisma/prisma");
 const BusinessUsersDao = require("../dao/BusinessUsers");
 const EmailHelper = require("../lib/emailSender");
 const { UserSockets, io } = require('../socket');
-
+const { indexBusinesses, categorySearch } = require("../lib/elasticSearch");
 
 /**
  * GET /businesses
@@ -59,6 +59,7 @@ async function listMerchantBusinesses(req, res) {
 	//TODO: elastic search
 	try {
 		const merchantBusinesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT);
+		
 		res.status(200).json(merchantBusinesses);
 	} catch (e) {
 		console.error("Error listing merchant businesses:", e);

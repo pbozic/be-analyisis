@@ -780,6 +780,7 @@ model promo_sections {
   promo_sections_id  String  @id @default(uuid()) @db.Uuid
   name              String
   tag               String
+  active            Boolean @default(true)
   description       String?
   prices            Json?
   limits            Json?
@@ -813,7 +814,7 @@ model promo_sections_buy {
   promo_sections_buy_id  String         @id @db.Uuid
   promo_sections_id      String         @db.Uuid
   promo_section          promo_sections @relation(fields: [promo_sections_id], references: [promo_sections_id])
-  stripe_subscription_id String
+  stripe_subscription_id String?
   business_id            String         @db.Uuid
   active_at              DateTime?
   expires_at             DateTime?
@@ -829,9 +830,12 @@ model promo_ads {
   discount     Float   @default(0)
   banner       promo_banners[]
   categories   promo_ads_category[]
+  active       Boolean @default(true)
   code         Int?                  @unique @db.SmallInt
+  created_at   DateTime              @default(now()) @db.Timestamptz(6)
+  active_at    DateTime?
+  active_until DateTime?
 }
-
 model promo_ads_category {
   promo_ads_category_id String     @id @default(uuid()) @db.Uuid
   promo_ads_id          String     @db.Uuid
@@ -849,6 +853,7 @@ model words {
   translatable_id String @db.Uuid
   translatable    translatable @relation(fields: [translatable_id], references: [translatable_id])
   subscriptions   word_buy[]
+  bundles         word_bundles[]
   created_at      DateTime     @default(now()) @db.Timestamptz(6)
   updated_at      DateTime     @default(now()) @updatedAt @db.Timestamptz(6)
 }
@@ -866,6 +871,14 @@ model word_buy {
   created_at             DateTime  @default(now()) @db.Timestamptz(6)
   updated_at             DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
   deleted_at             DateTime? @db.Timestamptz(6)
+}
+
+model word_bundles {
+  id          String  @id @default(uuid()) @db.Uuid
+  name        String
+  description String?
+  words       words[]
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
 }
 
 model order_lobbies {

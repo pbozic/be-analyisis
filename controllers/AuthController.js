@@ -25,6 +25,7 @@ const SMSHelper = require("../lib/SMS");
 const { parseTelephone } = require("../lib/helpersLib");
 const prisma = new PrismaClient();
 const { DOCUMENT_TYPE } = require("../lib/constants");
+const { indexBusinesses } = require("../lib/elasticSearch");
 require('dotenv').config();
 
 /**
@@ -845,7 +846,7 @@ async function registerMerchantService(req, res) {
 		const menu = await MenuDao.createMenu(business.business_id);
 
 		console.log("ACCOUNT STRIPE ONBOARDING LINK", accountLink.url)
-
+		indexBusinesses(business.business_id);
 		res.status(201).json({
 			message: "Merchant service business registered successfully",
 			business,
