@@ -68,7 +68,7 @@ model business {
   daily_users_sorted              Json?             @default("[]")
   daily_users_sorting_type        SORTING_TYPE      @default(AUTOMATIC)
   restaurant_overwhelmed          Boolean           @default(false)
-
+  promo_sections                  promo_sections_buy[]
   business_teams         business_teams[] @relation("business_to_business_teams")
   business_order_lobbies order_lobbies[]  @relation("business_to_lobby")
   activated_at           DateTime?
@@ -818,6 +818,7 @@ model promo_sections_buy {
   promo_section          promo_sections @relation(fields: [promo_sections_id], references: [promo_sections_id])
   stripe_subscription_id String?
   business_id            String         @db.Uuid
+  business               business       @relation(fields: [business_id], references: [business_id])
   active_at              DateTime?
   expires_at             DateTime?
   tier                   Int

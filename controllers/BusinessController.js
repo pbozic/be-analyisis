@@ -15,7 +15,7 @@ const prisma = require("../prisma/prisma");
 const BusinessUsersDao = require("../dao/BusinessUsers");
 const EmailHelper = require("../lib/emailSender");
 const { UserSockets, io } = require('../socket');
-const { indexBusinesses, categorySearch } = require("../elasticsearch");
+const { businessIndex, categorySearch, fullSearch } = require("../elasticsearch");
 
 /**
  * GET /businesses
@@ -43,7 +43,58 @@ async function listBusinesses(req, res) {
 		res.status(400).json({ error: "Error obtaining list of businesses..", e });
 	}
 }
+/**
+ * GET /businesses/search
+ * @tag Business
+ * @summary Get a list of businesses by query, location and categories
+ * @description Returns a list of businesses.
+ * @operationId getBusinessesSearch
+ * @response 200 - successful operation
+ * @responseContent {User[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the business list
+ * @responseContent {object} 400.application/json The error object
+ */
+async function searchBusinesses(req, res) {
+	try {
 
+
+		let esResults = await fullSearch(req.body.query || "", req.body.location.lat, req.body.location.long, req.body.categoryIds || [], req.body.radius, req.body.page, req.body.pageSize);
+		console.log("esResults", esResults);
+		let ids = esResults.map((result) => result.business_id);
+		let businesses = await BusinessDao.getBusinessesForSearchById(ids);
+		let businessesResult = [];
+		for (let business of businesses) {
+			let busRes = {
+				...business,
+				score: esResults.find((result) => result.business_id === business.business_id).score,
+			}
+			delete busRes.documents;
+			let logo, banner;
+			for (let doc of business.documents) {
+				if (doc.document_type === Constants.DOCUMENT_TYPE.LOGO) {
+					logo = doc.files[0].url;
+				}
+				if (doc.document_type === Constants.DOCUMENT_TYPE.BANNER) {
+					banner = doc.files[0].url;
+				}
+			}
+			busRes.logo = logo;
+			busRes.banner = banner;
+			businessesResult.push(busRes);
+		}
+		businessesResult.sort((a, b) => b.score - a.score);
+		if (businessesResult) {
+			res.status(200).json(businessesResult);
+		} else {
+			res.status(400).json({
+				error: "Error obtaining list of businesses..",
+				users: businessesResult,
+			});
+		}
+	} catch (e) {
+		res.status(400).json({ error: "Error obtaining list of businesses..", e: e.message });
+	}
+}
 /**
  * GET /businesses/merchant
  * @tag Business
@@ -58,6 +109,20 @@ async function listMerchantBusinesses(req, res) {
 
 	//TODO: elastic search
 	try {
+		// TODO: get promo sections with promo_section_buys with businesses
+		/* return [{
+			promo_section_id: 1,
+			tag: "promo_section_1",
+			name: "Promo Section 1",
+			translations: {
+				lng: "Translation",
+			},
+			businesses: [{
+				...business
+			}],
+
+		
+		}]*/
 		const merchantBusinesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT);
 		
 		res.status(200).json(merchantBusinesses);
@@ -272,6 +337,9 @@ async function update(req, res) {
 		if (business) {
 			if (req.socket)
 				req.socket.emit("updateBusiness", business);
+			if(business.type === Constants.BUSINESS_TYPE.MERCHANT){
+				businessIndex(business.business_id);
+			}
 			return res.status(200).json(business);
 		}
 		res.status(400).json({ error: "Error updating business information" });
@@ -297,7 +365,12 @@ async function update(req, res) {
 async function updateBusinessType(req, res) {
 	try {
 		let business = await BusinessDao.updateBusinessType(req.params.business_id, req.body.type);
-		if (business) return res.status(200).json(business);
+		if (business) {
+			if(business.type === Constants.BUSINESS_TYPE.MERCHANT){
+				businessIndex(business.business_id);
+			}
+			return res.status(200).json(business);
+		}
 		res.status(400).json({ error: "Error updating business type" });
 	} catch (e) {
 		console.error("Error updating business type:", e);
@@ -321,7 +394,12 @@ async function updateBusinessType(req, res) {
 async function updateIsBusinessUnit(req, res) {
 	try {
 		let business = await BusinessDao.updateIsBusinessUnit(req.params.business_id, req.body.is_business_unit);
-		if (business) return res.status(200).json(business);
+		if (business) {
+			if(business.type === Constants.BUSINESS_TYPE.MERCHANT){
+				businessIndex(business.business_id);
+			}
+			return res.status(200).json(business);
+		}
 		res.status(400).json({ error: "Error updating business unit status" });
 	} catch (e) {
 		console.error("Error updating business unit status:", e);
@@ -345,7 +423,13 @@ async function updateIsBusinessUnit(req, res) {
 async function updateBusinessGroupName(req, res) {
 	try {
 		let business = await BusinessDao.updateBusinessGroupName(req.params.business_id, req.body.business_group_name);
-		if (business) return res.status(200).json(business);
+		if (business) {
+			if(business.type === Constants.BUSINESS_TYPE.MERCHANT){
+				businessIndex(business.business_id);
+			}
+			return res.status(200).json(business);
+
+		}
 		res.status(400).json({ error: "Error updating business group name" });
 	} catch (e) {
 		console.error("Error updating business group name:", e);
@@ -370,7 +454,12 @@ async function updateBusinessGroupName(req, res) {
 async function updateBusinessEmail(req, res) {
 	try {
 		let business = await BusinessDao.updateBusinessEmail(req.params.business_id, req.body.email);
-		if (business) return res.status(200).json(business);
+		if (business) {
+			if(business.type === Constants.BUSINESS_TYPE.MERCHANT){
+				businessIndex(business.business_id);
+			}
+			return res.status(200).json(business);
+		}
 		res.status(400).json({ error: "Error updating business email" });
 	} catch (e) {
 		console.error("Error updating business email:", e);
@@ -395,7 +484,12 @@ async function updateBusinessEmail(req, res) {
 async function updateBusinessTelephone(req, res) {
 	try {
 		let business = await BusinessDao.updateBusinessTelephone(req.params.business_id, req.body.telephone, req.body.telephone_code, req.body.telephone_number);
-		if (business) return res.status(200).json(business);
+		if (business) {
+			if(business.type === Constants.BUSINESS_TYPE.MERCHANT){
+				businessIndex(business.business_id);
+			}
+			return res.status(200).json(business);
+		}
 		res.status(400).json({ error: "Error updating business telephone" });
 	} catch (e) {
 		console.error("Error updating business telephone:", e);
@@ -420,7 +514,12 @@ async function updateBusinessTelephone(req, res) {
 async function updateBusinessWorkingHours(req, res) {
 	try {
 		let business = await BusinessDao.updateBusinessWorkingHours(req.params.business_id, req.body.working_hours);
-		if (business) return res.status(200).json(business);
+		if (business) {
+			if(business.type === Constants.BUSINESS_TYPE.MERCHANT){
+				businessIndex(business.business_id);
+			}
+			return res.status(200).json(business);
+		}
 		res.status(400).json({ error: "Error updating business working hours" });
 	} catch (e) {
 		console.error("Error updating business working hours:", e);
@@ -478,7 +577,12 @@ async function updateRestaurantOverwhelmed(req, res) {
 async function updateBusinessIsNew(req, res) {
 	try {
 		let business = await BusinessDao.updateBusinessIsNew(req.params.business_id, req.body.new);
-		if (business) return res.status(200).json(business);
+		if (business) {
+			if(business.type === Constants.BUSINESS_TYPE.MERCHANT){
+				businessIndex(business.business_id);
+			}
+			return res.status(200).json(business);
+		}
 		res.status(400).json({ error: "Error updating business new status" });
 	} catch (e) {
 		console.error("Error updating business new status:", e);
@@ -503,7 +607,12 @@ async function updateBusinessIsNew(req, res) {
 async function updateBusinessIsPopular(req, res) {
 	try {
 		let business = await BusinessDao.updateBusinessIsPopular(req.params.business_id, req.body.popular);
-		if (business) return res.status(200).json(business);
+		if (business) {
+			if(business.type === Constants.BUSINESS_TYPE.MERCHANT){
+				businessIndex(business.business_id);
+			}
+			return res.status(200).json(business);
+		}
 		res.status(400).json({ error: "Error updating business popularity" });
 	} catch (e) {
 		console.error("Error updating business popularity:", e);
@@ -579,6 +688,9 @@ async function addBusinessAddress(req, res) {
 		const { business_id } = req.params;
 		const addressData = req.body;
 		const updatedBusiness = await BusinessDao.addBusinessAddress(business_id, addressData);
+		if(updatedBusiness.type === Constants.BUSINESS_TYPE.MERCHANT){
+			businessIndex(updatedBusiness.business_id);
+		}
 		res.status(200).json(updatedBusiness);
 	} catch (error) {
 		console.error("Error adding business address:", error);
@@ -603,6 +715,9 @@ async function addDeliveryAddress(req, res) {
 		const { business_id } = req.params;
 		const addressData = req.body;
 		const updatedBusiness = await BusinessDao.addDeliveryAddress(business_id, addressData);
+		if(updatedBusiness.type === Constants.BUSINESS_TYPE.MERCHANT){
+			businessIndex(updatedBusiness.business_id);
+		}
 		res.status(200).json(updatedBusiness);
 	} catch (error) {
 		console.error("Error adding delivery address:", error);
@@ -941,7 +1056,7 @@ async function getAllBusinessesEarnings(req, res) {
 	}
 
 	try {
-		const businesses = await BusinessDao.getBusinessesByType(BUSINESS_TYPE.MERCHANT);
+		const businesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT);
 		const earningsPromises = businesses.map(async (business) => {
 			const businessDeliveryOrders = await DeliveryOrderDao.getOrders({
 				where: {
@@ -1166,6 +1281,9 @@ async function editBusiness(req, res) {
 		}
 
         // Return the updated business details
+		if(updatedBusiness.type === Constants.BUSINESS_TYPE.MERCHANT){
+			businessIndex(updatedBusiness.business_id);
+		}
         res.status(200).json(updatedBusiness);
     } catch (error) {
         console.error("Error updating business:", error);
@@ -1297,6 +1415,7 @@ module.exports = {
 	editBusiness,
 	getBusinessStripeStatusByBusinessId,
 	generateBusinessStripeByBusinessId,
-	getBusynessFactorsBusinessIdList
+	getBusynessFactorsBusinessIdList,
+	searchBusinesses
 };
 

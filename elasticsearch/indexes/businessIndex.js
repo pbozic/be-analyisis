@@ -1,6 +1,6 @@
 const esClient = require("../client");
 const prisma = require("../../prisma/prisma");
-
+const Constants = require("../../lib/constants");
 async function createBusinessIndex(force = false) {
     try {
         const indexExists = await esClient.indices.exists({ index: 'business_index' });
@@ -38,6 +38,14 @@ async function createBusinessIndex(force = false) {
                         location: { type: "geo_point" }, // Allows geo-based queries
                         popular: { type: "boolean" },
                         new: { type: "boolean" },
+                        working_hours: { type: "object" },
+                        delivery_address: { type: "object" },
+                        address: { type: "object" },
+                        seats: { type: "integer" },
+                        restaurant_overwhelmed: { type: "boolean" },
+                        logo: { type: "text" },
+                        banner: { type: "text" },
+                        telephone: { type: "text" },
                         menus: {
                             type: "nested",
                             properties: {
@@ -108,7 +116,7 @@ async function indexBusinesses(business_id = null) {
     //  - Word update
 
     try {
-        await createBusinessIndex(false);
+        await createBusinessIndex(true);
         console.log("🚀 Fetching businesses from database...");
         
         const whereClause = { type: "MERCHANT" };
@@ -160,7 +168,17 @@ async function indexBusinesses(business_id = null) {
                             }
                         }
                     }
-                }
+                },
+                documents: {
+					include: {
+						files: true // Full nested objects
+					},
+					where: {
+						document_type: {
+							in: ['BANNER', 'LOGO']
+						}
+					}
+				}
             }
         });
         
@@ -174,13 +192,29 @@ async function indexBusinesses(business_id = null) {
                 console.warn(`⚠️ Skipping ${business.name} (No menus found)`);
                 continue;
             }
-
+            let logo, banner;
+            for (let doc of business.documents) {
+                if (doc.document_type === Constants.DOCUMENT_TYPE.LOGO) {
+                    logo = doc.files[0].url;
+                }
+                if (doc.document_type === Constants.DOCUMENT_TYPE.BANNER) {
+                    banner = doc.files[0].url;
+                }
+            }
             const doc = {
                 business_id: business.business_id,
                 name: business.name,
                 description: business.description,
                 popular: business.popular,
                 new: business.new,
+                working_hours: business.working_hours,
+                delivery_address: business.delivery_address,
+                address: business.address,
+                seats: business.seats,
+                restaurant_overwhelmed: business.restaurant_overwhelmed,
+                logo: logo,
+                banner: banner,
+                telephone: business.telephone,
                 location: business.delivery_address? { lat: parseFloat(business.delivery_address.latitude), lon: parseFloat(business.delivery_address.longitude) } : { lat: parseFloat(business.address.latitude), lon: parseFloat(usiness.address.longitude) },
                 menus: business.menus.map(menu => ({
                     menu_category_name: menu.categories.flatMap(cat =>
