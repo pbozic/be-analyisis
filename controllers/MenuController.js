@@ -393,7 +393,17 @@ async function deleteMenuCategory(req, res) {
 async function updateMenuCategory(req, res) {
 	const { menu_category_id, data } = req.body;
 	try {
+		const category_ids = data?.category_ids;
+		delete data?.category_ids;
 		const menuCategory = await MenuCategoryDao.updateMenuCategory(menu_category_id, data);
+		const categories_to_add = category_ids.filter(id => !menuCategory.menu_categories_catgeories?.map(c => c.categories_id).includes(id));
+		const categories_to_remove = menuCategory.menu_categories_catgeories?.map(c => c.categories_id).filter(id => category_ids.includes(id));
+		for (const c_id in categories_to_add) {
+			await MenuCategoryDao.addCategoryToMenuCategory(menu_category_id, c_id)
+		}
+		for (const c_id in categories_to_remove) {
+			await MenuCategoryDao.removeCategoryFromMenuCategory(menu_category_id, c_id)
+		}
 		businessIndex(menuCategory.business_id);
 		res.status(200).json(menuCategory);
 	} catch (e) {

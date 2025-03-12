@@ -126,7 +126,7 @@ const getMenuCategoriesByBusinessId = async (business_id) => {
 		where: {
 			business_id: business_id
 		},
-		/*include: {
+		include: {
 			menu_items: {
 				include: {
 					documents: {
@@ -135,12 +135,17 @@ const getMenuCategoriesByBusinessId = async (business_id) => {
 						}
 					}
 				}
+			},
+			menu_categories_catgeories: {
+				include: {
+					category: true
+				}
 			}
-		}*/
+		}
 	});
 
 	// Sort menu items within each category based on the ordered JSON field
-	/*categories.forEach(category => {
+	categories.forEach(category => {
 		if (category.menu_items_ordered) {
 			try {
 				const orderedItemIds = JSON.parse(category.menu_items_ordered);
@@ -154,7 +159,7 @@ const getMenuCategoriesByBusinessId = async (business_id) => {
 			console.log('No menu_items_ordered for category', category.menu_category_id);
 			return category.menu_items;
 		}
-	});*/
+	});
 
 	return categories;
 };
@@ -173,6 +178,13 @@ const updateMenuCategory = async (menu_category_id, data) => {
 			menu_category_id: menu_category_id,
 		},
 		data: data,
+		include: {
+			menu_categories_catgeories: {
+				include: {
+					category: true
+				}
+			}
+		}
 	});
 };
 
