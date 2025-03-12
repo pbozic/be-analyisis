@@ -259,7 +259,7 @@ async function refreshToken(req, res) {
 		delete decoded["exp"];
 		const access_token = generateAccessToken(decoded.user);
 		const refresh_token = generateRefreshToken(decoded.user);
-		let userDb = await UserDao.getUserById(user.user_id,
+		let userDb = await UserDao.getUserById(decoded.user.user_id,
 			{
 				include: {
 					addresses: true
