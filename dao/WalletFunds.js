@@ -75,6 +75,25 @@ async function createWalletFunds(user_id, charge_id, amount){
 }
  */
 
+async function createWalletFunds(user_id, amount_cents, charge_id=null, transaction_type="CREDIT") {
+	console.log("createWalletFunds ",user_id, amount_cents)
+	return await prisma.transactions.create({
+		data: {
+			user: { connect: { user_id: user_id } },
+			amount: amount_cents / 100,
+			type: transaction_type,
+			description: 'Added funds to wallet',
+			wallet_funds: {
+				create: {
+					charge_id: charge_id,
+					amount: amount_cents,
+					user: { connect: { user_id: user_id } },
+				},
+			},
+		}
+	});
+}
+
 async function getAvailableWalletFunds(userId,order_type) {
 	try {
 		const walletFunds = await prisma.wallet_funds.findMany({
@@ -284,14 +303,14 @@ async function releaseFunds(walletFundsId, releaseAmount) {
 		}
 
 		const released_WF = await prisma.$transaction(async (tx) => {
-			await tx.users.update({
-				where: { user_id: walletFund.user_id },
-				data: {
-					wallet_balance: {
-						increment: releaseAmount/100,
-					},
-				},
-			});
+			// await tx.users.update({
+			// 	where: { user_id: walletFund.user_id },
+			// 	data: {
+			// 		wallet_balance: {
+			// 			increment: releaseAmount/100,
+			// 		},
+			// 	},
+			// });
 			const amount_after_release = walletFund.amount - releaseAmount;
 			if(amount_after_release===0){
 				await tx.wallet_funds.delete({
@@ -379,6 +398,33 @@ async function getAvailableWalletBalance(userId) {
 		throw error;
 	}
 }
+
+async function getAvailableWalletBalanceGroupedByType(userId) {
+	try {
+		const result = await prisma.wallet_funds.groupBy({
+			by: ["type"], // Grouping by 'type'
+			where: {
+				user_id: userId,
+				reserved_order: null
+			},
+			_sum: {
+				amount: true
+			}
+		});
+
+		// Convert result into a key-value pair object
+		const balances = result.reduce((acc, row) => {
+			acc[row.type] = row._sum.amount || 0; // Store balance by type
+			return acc;
+		}, {});
+
+		return balances;
+	} catch (error) {
+		console.error("Error retrieving grouped wallet balance:", error);
+		throw error;
+	}
+}
+
 
 const { CREDIT_STATUS, CASHBACK_STATUS } = require('../lib/constants');
 
@@ -521,9 +567,10 @@ const getExpiredCredits = async (userId, type) => {
 }
 
 module.exports = {
-	// createWalletFunds,
+	createWalletFunds,
 	getAvailableWalletFunds,
 	getAvailableWalletBalance,
+	getAvailableWalletBalanceGroupedByType,
 	getReservedWalletFunds,
 	deleteWalletFunds,
 	subtractFunds,

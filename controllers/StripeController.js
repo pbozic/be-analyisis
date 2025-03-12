@@ -11,6 +11,7 @@ const ProductDao = require("../dao/Product");
 const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
 const { DELIVERY_ORDER_STATUS } = require("../lib/constants");
 const { calculateDeliveryOrderPaymentCuts } = require("../lib/deliveryHelpers");
+const WalletFundsDao = require("../dao/WalletFunds");
 
 async function handlePaymentIntentSuccess(paymentIntent) {
 	switch (paymentIntent.metadata.type) {
@@ -106,11 +107,10 @@ async function handleChargeUpdate(charge) {
 				console.info(charge_balance_transaction);
 				const amount_in_eur_cents = charge_balance_transaction.amount;
 
-				await UsersDao.addToWalletBalance(charge.metadata.user_id, amount_in_eur_cents, charge.id);
+				await WalletFundsDao.createWalletFunds(charge.metadata.user_id, amount_in_eur_cents, charge.id)//UsersDao.addToWalletBalance(charge.metadata.user_id, amount_in_eur_cents, charge.id);
 				if (UserSockets.get(charge.metadata.user_id)) {
-					let user = await UsersDao.getUserById(charge.metadata.user_id);
-					console.log("user", user.user_id);
-					UserSockets.get(user.user_id).emit("wallet_balance_change", user.wallet_balance);
+					const wallet_balance = await WalletFundsDao.getAvailableWalletBalance(charge.metadata.user_id);
+					UserSockets.get(charge.metadata.user_id).emit("wallet_balance_change", wallet_balance);
 				}
 			}
 			break;

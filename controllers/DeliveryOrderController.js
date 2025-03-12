@@ -17,7 +17,7 @@ const Constants = require("../lib/constants");
 const { getUsers } = require("../dao/User");
 const { delivery_orders } = require("@prisma/client");
 const { generateItemsFromPreferences, resendPendingOrdersToDeliveryDriver, sendActiveOrdersToDeliveryDriver,
-	revokeDeliveryOrderFromDrivers, calculateDeliveryOrderPaymentCuts, handlePaymentCleanup
+	revokeDeliveryOrderFromDrivers, calculateDeliveryOrderPaymentCuts, handlePaymentCleanup, handlePaymentRefund
 } = require("../lib/deliveryHelpers");
 const { sortLocationsByNearestNeighbor, todaysEarnings } = require("../lib/helpersLib");
 const { connect } = require("http2");
@@ -149,10 +149,11 @@ async function createOrder(req, res) {
 
 		let user = await UsersDao.getUserById(user_id);
 		const customer_acc = user.stripe_customer_id
+		const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user_id)
 
 		if (orderData.payment.type === "WALLET") {
 			const TOTAL_PRICE_CENT = Math.round(orderData.details.total_price * 100)
-			if (user.wallet_balance < TOTAL_PRICE_CENT / 100) {
+			if ((available_wallet_balances["DELIVERY"] + available_wallet_balances[null]) < TOTAL_PRICE_CENT / 100) {
 				throw new Error("Insufficient funds");
 
 			}
@@ -213,11 +214,11 @@ async function createOrder(req, res) {
 			} else if (order.payment.type === "WALLET") {
 				// handle wallet payment
 				try{
-					if (user.wallet_balance < DISCOUNTED_COMBINED_COST_CENTS/100) {
+					if (available_wallet_balances[null] < DISCOUNTED_COMBINED_COST_CENTS/100) {
 						throw new Error("Insufficient funds");
 					}
 
-					await UsersDao.removeWalletBalance(user_id, DISCOUNTED_COMBINED_COST_CENTS/100, order.order_id);
+					// await UsersDao.removeWalletBalance(user_id, DISCOUNTED_COMBINED_COST_CENTS/100, order.order_id);
 					const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(user_id, DISCOUNTED_COMBINED_COST_CENTS,order.order_id);
 				}catch (err) {
 					order = await DeliveryOrderDao.updateOrder(order.order_id, {
@@ -1049,6 +1050,12 @@ async function merchantAcceptOrder(req, res) {
 		let order = await DeliveryOrderDao.getOrder(order_id);
 		console.info("got into merchantAcceptOrder", JSON.stringify(order.payment_intent_id))
 		if (order.payment.type === "CARD") {
+			order = await DeliveryOrderDao.updateOrder(order.order_id, {
+				payment: {
+					...order.payment,
+					status: "IN_PAYMENT_PROCESSING",
+				},
+			});
 			// Status update happens elsewhere for CARD payments
 			await stripe.client.paymentIntents.capture(
 				order.payment_intent_id,
@@ -1251,6 +1258,41 @@ async function getDeliveryOrdersToday(req, res) {
 	}
 }
 
+/**
+ * POST /delivery/order/dispatcher_cancel
+ * @tag Delivery
+ * @summary Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
+ * @description Cancel and if necessary refund an order
+ * @operationId dispatcherCancel
+ * @response 200 - Successful operation. Returns the updated Order.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+async function dispatcherCancel(req,res){
+	const {order_id} = req.body
+	try {
+		const old_order = await DeliveryOrderDao.getOrder(order_id)
+		let new_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED)
+		//TODO: handle extras for socket on FE if needed.
+		io.to("order_" + new_order.order_id).emit("order_status_change__delivery", new_order);
+
+		if (old_order.status === DELIVERY_ORDER_STATUS.PENDING){
+			await handlePaymentCleanup(new_order)
+		}else{
+			await handlePaymentRefund(new_order)
+		}
+
+		//TODO: handle on FE if needed.
+		io.to("order_" + new_order.order_id).emit("order_canceled", new_order);
+
+		res.status(200).json(new_order)
+	} catch (e) {
+		console.error("Error canceling order", e);
+		res.status(500).json(e);
+	}
+}
+
+
 module.exports = {
 	getDeliveryOrders,
 	getDeliveryOrdersToday,
@@ -1262,6 +1304,7 @@ module.exports = {
 	cancelOrderDelivery,
 	completeOrder,
 	updateOrderStatus,
+	dispatcherCancel,
 	getCompletedDeliveryOrdersByDriverId,
 	updateDeliveryOrderTimeline,
 	addToDeliveryOrderTimeline,

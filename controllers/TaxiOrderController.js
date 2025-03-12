@@ -907,15 +907,16 @@ async function completeOrder(req, res) {
 			if(DRIVER_CREDIT_CUT_CENTS>0) {
 				const transferedCreditsDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, driver_business.stripe_account_id, DRIVER_CREDIT_CUT_CENTS, order.order_id, "taxi");
 			}
+			const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user_id)
 
 			if(DISCOUNTED_TOTAL_COST>0) {
 				if (order.payment.type === "WALLET") {
 					// handle wallet payment
-					if (user.wallet_balance < (DISCOUNTED_TOTAL_COST / 100)) {
+					if ((available_wallet_balances["TAXI"] + available_wallet_balances[null]) < (DISCOUNTED_TOTAL_COST / 100)) {
 						throw new Error("Insufficient funds");
 					}
 
-					await UsersDao.removeWalletBalance(order.user_id, (DISCOUNTED_TOTAL_COST / 100), order.order_id, "taxi");
+					// await UsersDao.removeWalletBalance(order.user_id, (DISCOUNTED_TOTAL_COST / 100), order.order_id, "taxi");
 					const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(user.user_id, DISCOUNTED_TOTAL_COST, order.order_id);
 
 					order = await TaxiOrderDao.updateOrder(order.order_id, {
@@ -937,6 +938,7 @@ async function completeOrder(req, res) {
 						throw new Error("User has no family wallet");
 					}
 					let parent_user = user.parent_user.parent_user;
+					const parent_available_wallet_balances = WalletFundsDao.getAvailableWalletBalanceGroupedByType(parent_user.user_id)
 					let is_businessUser = await BusinessUsersDao.getBusinessUserByUserId(parent_user.user_id);
 					let allowance = user.parent_user.allowance;
 					if (is_businessUser) {
@@ -947,11 +949,12 @@ async function completeOrder(req, res) {
 					if (allowance < (DISCOUNTED_TOTAL_COST / 100)) {
 						throw new Error("Insufficient allowance");
 					}
-					if (parent_user.wallet_balance < (DISCOUNTED_TOTAL_COST / 100)) {
+					//TODO: Should this allow usage of credits from parent?
+					if (parent_available_wallet_balances[null] < (DISCOUNTED_TOTAL_COST / 100)) {
 						throw new Error("Insufficient funds");
 					}
 
-					await UsersDao.removeWalletBalance(parent_user.user_id, DISCOUNTED_TOTAL_COST, order.order_id, "taxi");
+					// await UsersDao.removeWalletBalance(parent_user.user_id, DISCOUNTED_TOTAL_COST, order.order_id, "taxi");
 					const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(parent_user.user_id, DISCOUNTED_TOTAL_COST, order.order_id);
 
 					await prisma.group_users.update({

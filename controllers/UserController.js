@@ -1633,10 +1633,10 @@ async function updateWalletBalance(req, res) {
 	const { amount, documents } = req.body;
 
 	try {
-		let updatedUser = await UserDao.updateWalletBalance(user_id, amount, documents);
-
-		if (updatedUser) {
-			return res.status(200).json({ message: "Wallet balance updated successfully.", wallet_balance: updatedUser.wallet_balance });
+		let new_transaction = await UserDao.updateWalletBalance(user_id, amount, documents);
+		if (new_transaction) {
+			const wallet_balance = await WalletFundsDao.getAvailableWalletBalance(user_id)/100
+			return res.status(200).json({ message: "Wallet balance updated successfully.",wallet_balance});
 		}
 		res.status(400).json({ error: "Error updating wallet balance" });
 	} catch (e) {
