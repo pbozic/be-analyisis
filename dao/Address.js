@@ -23,8 +23,10 @@ async function deleteUserAddress(user_id, address_id) {
 	try {
 		return prisma.user_address.delete({
 			where: {
-				user_id: user_id,
-				address_id: address_id,
+				user_id_address_id: {
+					user_id,
+					address_id,
+				},
 			},
 		});
 	} catch (error) {

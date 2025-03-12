@@ -234,7 +234,7 @@ const addCategoryToMenuCategory = async (menu_category_id, category_id) => {
 				connect: { menu_category_id: menu_category_id }
 			},
 			category: {
-				connect: { category_id: category_id }
+				connect: { categories_id: category_id }
 			}
 		}
 	});
@@ -244,9 +244,9 @@ const addCategoryToMenuCategory = async (menu_category_id, category_id) => {
 const removeCategoryFromMenuCategory = async (menu_category_id, category_id) => {
 	return await prisma.menu_categories_categories.delete({
 		where: {
-			menu_category_id_category_id: {
-				menu_category_id: menu_category_id,
-				category_id: category_id
+			menu_categories_id_categories_id: {
+				menu_categories_id: menu_category_id,
+				categories_id: category_id
 			}
 		}
 	});
