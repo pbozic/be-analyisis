@@ -33,7 +33,7 @@ const handleAddressPivotTable = async (model, operation, args, query, result) =>
 					return user;
 				});
 			} else {
-				console.log("res", result);
+				//console.log("res", result);
 				let addresses = result.addresses.map((address) => {
 					return {
 						...address.address,

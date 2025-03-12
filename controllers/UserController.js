@@ -168,8 +168,8 @@ async function me(req, res) {
 				},
 				driver: true,
 				delivery_driver: true,
-				child_users: { include:{child_user: true}},
-				parent_user: { include:{parent_user: true}},
+				child_users: { include:{child_user: {select: {user_id: true, first_name: true, last_name: true}}, allowance: true}},
+				parent_user: { include:{parent_user: {select: {user_id: true, first_name: true, user_role: true}}, allowance: true}},
 				referrals_made: true,
 				referral: { include: {referrer: { select: { first_name: true, last_name: true } } } }
 			},
@@ -1491,10 +1491,10 @@ async function updateChildUserEnabledByGroupUserId(req, res) {
  * @response 400 - Error updating group user enabled status.
  */
 async function updateChildUserAllowanceByGroupUserId(req, res) {
-	const { group_user_id, value } = req.body
+	const { group_user_id, value, type } = req.body
 
 	try {
-		let group_user = await GroupDao.updateGroupUserAllowance(group_user_id, value);
+		let group_user = await GroupDao.updateGroupUserAllowance(group_user_id, value, type);
 		if (group_user) {
 			return res.status(200).json(group_user);
 		}
@@ -1591,18 +1591,20 @@ async function getFamilyWalletBalanceAndType(req, res) {
 	try {
 		let group_user = await GroupDao.getGroupUserByChildId(req.params.user_id);
 		if(group_user===null){
-			return res.status(200).json({ family_wallet_balance: 0, family_wallet_type: null });
+			return res.status(200).json({ parent_wallet_balance: 0, allowance: 0, family_wallet_type: null });
 		}else if (group_user) {
 			console.log(group_user);
 			if(group_user.enabled){
 				const parent_wallet_balance = await WalletFundsDao.getAvailableWalletBalance(group_user.parent_user.user_id);
 				return res.status(200).json({
-					family_wallet_balance: Math.min(group_user.allowance, parent_wallet_balance),
+					parent_wallet_balance: parent_wallet_balance,
+					allowance: group_user.allowance,
 					family_wallet_type: group_user.parent_user.user_role.startsWith('BUSINESS') ? "BUSINESS" : "FAMILY"
 				});
 			}else{
 				return res.status(200).json({
-					family_wallet_balance: 0,
+					parent_wallet_balance: 0,
+					allowance: 0,
 					family_wallet_type: group_user.parent_user.user_role.startsWith('BUSINESS') ? "BUSINESS" : "FAMILY"
 				});
 			}
