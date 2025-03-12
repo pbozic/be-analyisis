@@ -266,7 +266,7 @@ async function refreshToken(req, res) {
 				},
 			}
 		);
-		delete user["password"];
+		delete userDb["password"];
 		let user = {
 			...userDb,
 			access_token,
