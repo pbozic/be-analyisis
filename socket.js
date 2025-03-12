@@ -50,7 +50,7 @@ io.on("connection", (socket) => {
 	});
 
 	socket.onAnyOutgoing((eventName) => {
-		console.info("Socket emitted event:", eventName)
+		console.info("\x1b[35mSocket emitted event:", eventName,"\x1b[0m")
 	});
 
 	socket.on('error', (err) => {

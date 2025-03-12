@@ -1,6 +1,19 @@
 const prisma = require("../prisma/prisma");
 const { DOCUMENT_TYPE, DELIVERY_ORDER_STATUS } = require("../lib/constants");
 const gApi = require("../lib/gApis");
+/**
+ *
+ * @param {Object} timeline - the order timeline object with entries which must have status and timestamp and can have additional fields
+ * @param {String} status - the order status string to add to the timeline.
+ * @param {Object} entry_data - an object with additional fields to be put into the timeline entry. If these include status and timestamp, they will be overwritten.
+ */
+function addEntryToDeliveryOrderTimeline(timeline,status,entry_data) {
+	return [...timeline,{
+		...entry_data,
+		status: status,
+		timestamp: new Date().toISOString(),
+	}];
+}
 
 async function getOrders(args) {
 	try {
@@ -308,13 +321,14 @@ async function isOrderSent(order_id, driver) {
 	}
 }
 
-async function acceptOrder(order_id, delivery_driver_id) {
+async function acceptOrderDelivery(order, deliverer_id) {
+	const {order_id} = order
 	console.log("accept (delivery) order", order_id)
-	console.log("accept (delivery_id)", delivery_driver_id)
+	console.log("accept (delivery_id)", deliverer_id)
 	try {
 		const deliveryDriver = await prisma.delivery_drivers.findUnique({
 			where: {
-				delivery_driver_id: delivery_driver_id
+				delivery_driver_id: deliverer_id
 			}
 		});
 		if (deliveryDriver) {
@@ -322,7 +336,7 @@ async function acceptOrder(order_id, delivery_driver_id) {
 				where: {
 					delivery_order_sent_delivery_driver_unique: {
 						order_id,
-						delivery_driver_id: delivery_driver_id
+						delivery_driver_id: deliverer_id
 					}
 				},
 				data: {
@@ -332,7 +346,7 @@ async function acceptOrder(order_id, delivery_driver_id) {
 			console.log("delivery_order_sent", delivery_order_sent)
 			await prisma.delivery_drivers.update({
 				where: {
-					delivery_driver_id: delivery_driver_id
+					delivery_driver_id: deliverer_id
 				},
 				data: {
 					on_order: true
@@ -343,10 +357,10 @@ async function acceptOrder(order_id, delivery_driver_id) {
 					order_id
 				},
 				data: {
-					status: DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,
+					timeline: addEntryToDeliveryOrderTimeline(order.timeline,DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,{delivery_driver_id: deliverer_id}),
 					delivery_driver: {
 						connect: {
-							delivery_driver_id: delivery_driver_id
+							delivery_driver_id: deliverer_id
 						}
 					}
 				},
@@ -356,7 +370,7 @@ async function acceptOrder(order_id, delivery_driver_id) {
 				where: {
 					delivery_order_sent_driver_unique: {
 						order_id,
-						driver_id: delivery_driver_id
+						driver_id: deliverer_id
 					}
 				},
 				data: {
@@ -366,7 +380,7 @@ async function acceptOrder(order_id, delivery_driver_id) {
 			console.log("delivery_order_sent", delivery_order_sent)
 			await prisma.drivers.update({
 				where: {
-					driver_id: delivery_driver_id
+					driver_id: deliverer_id
 				},
 				data: {
 					on_order: true
@@ -377,10 +391,10 @@ async function acceptOrder(order_id, delivery_driver_id) {
 					order_id
 				},
 				data: {
-					status: DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,
+					timeline: addEntryToDeliveryOrderTimeline(order.timeline,DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,{driver_id: deliverer_id}),
 					driver: {
 						connect: {
-							driver_id: delivery_driver_id
+							driver_id: deliverer_id
 						}
 					}
 				},
@@ -414,7 +428,7 @@ async function connectOrderWithDriver(order_id, delivery_driver_id) {
 
 async function updateOrderStatus(order_id, status) {
 	try {
-		await prisma.$transaction(async (tx) => {
+		return await prisma.$transaction(async (tx) => {
 			// Fetch the current timeline
 			const order = await tx.delivery_orders.findUnique({
 				where: {
@@ -429,26 +443,23 @@ async function updateOrderStatus(order_id, status) {
 				throw new Error(`Order with ID ${order_id} not found`);
 			}
 
-			// Append the new timeline entry to the existing timeline
-			const updatedTimeline = [
-				...order.timeline,
-				{
-					status: status,
-					order_id: order_id,
-					location: {
-						timestamp: new Date().toISOString()
-					}
-				}
-			];
-
 			// Update the status and timeline within a transaction
-			await tx.delivery_orders.update({
+			return await tx.delivery_orders.update({
 				where: {
 					order_id
 				},
 				data: {
 					status,
-					timeline: updatedTimeline
+					timeline: addEntryToDeliveryOrderTimeline(
+						order.timeline,
+						status,
+						{
+							order_id: order_id,
+							location: {
+								timestamp: new Date().toISOString()
+							}
+						}
+					)
 				}
 			});
 		});
@@ -677,16 +688,43 @@ async function updateDeliveryOrderTimeline(order_id, newTimelineEntries) {
 			throw new Error(`Order with ID ${order_id} not found`);
 		}
 
-		// Append the new timeline entries to the existing timeline
-		const updatedTimeline = [...order.timeline, ...newTimelineEntries];
-
-		// Update the timeline field with the combined array
 		return await prisma.delivery_orders.update({
 			where: {
 				order_id
 			},
 			data: {
-				timeline: updatedTimeline
+				timeline: newTimelineEntries.reduce(
+					(previousTimeline, entry) => addEntryToDeliveryOrderTimeline(previousTimeline, entry.status, entry),
+					order.timeline
+				)
+			}
+		});
+	} catch (e) {
+		throw new Error(e);
+	}
+}
+async function addTimelineEntry(order_id, status, entry_data={}) {
+	try {
+		// Fetch the current timeline
+		const order = await prisma.delivery_orders.findUnique({
+			where: {
+				order_id
+			},
+			select: {
+				timeline: true
+			}
+		});
+
+		if (!order) {
+			throw new Error(`Order with ID ${order_id} not found`);
+		}
+
+		return await prisma.delivery_orders.update({
+			where: {
+				order_id
+			},
+			data: {
+				timeline: addEntryToDeliveryOrderTimeline(order.timeline,status,entry_data)
 			}
 		});
 	} catch (e) {
@@ -780,13 +818,14 @@ module.exports = {
 	createOrder,
 	createOrderSent,
 	isOrderSent,
-	acceptOrder,
+	acceptOrderDelivery,
 	acceptOrderSent,
 	getSentDeliveryDrivers,
 	updateOrderLastSentAt,
 	updateOrderStatus,
 	completeOrder,
 	updateDeliveryOrderTimeline,
+	addTimelineEntry,
 	getUserByDeliveryOrderId,
 	updateOrder,
 	updateOrderPickupTime,

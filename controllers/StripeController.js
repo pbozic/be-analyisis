@@ -34,7 +34,7 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			let order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
 			const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id)
 
-			const {PLATFORM_CREDIT_CUT, MERCHANT_CREDIT_CUT} = calculateDeliveryOrderPaymentCuts(order)
+			const {PLATFORM_CREDIT_CUT, MERCHANT_CREDIT_CUT} = await calculateDeliveryOrderPaymentCuts(order)
 
 			if (paymentIntent.metadata?.merchant_cut > 0) {
 				const transferRestaurant = await stripe.splitCutFromPaymentIntent(
@@ -61,7 +61,14 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL);
 			order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED);
 			order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.MERCHANT_PREPARING);
-			io.to("orders_" + order.business_id).emit("order_status_change_delivery", order);
+			if(paymentIntent?.metadata?.preparation_time){
+				order = await DeliveryOrderDao.updateOrderPickupTime(
+					order.order_id,
+					new Date(Date.now() + paymentIntent.metadata.preparation_time * 60000)
+				);
+				io.to("order_" + order.order_id).emit("order_pickup_time", order);
+			}
+			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
 
 			console.log("PaymentIntent was successful!");
 			break;
@@ -81,7 +88,7 @@ async function handlePaymentIntentFaliure(paymentIntent) {
 				},
 			});
 			order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED);
-			io.to("orders_" + order.business_id).emit("order_status_change_delivery", order);
+			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
 			await WalletFundsHelpers.releaseReservedWalletFundsForOrder(order.user_id,order.order_id)
 
 			break;
@@ -153,7 +160,7 @@ async function handleWebhook(req, res) {
 	}
 	let data = event.data.object;
 	let paymentIntent;
-	console.log("WEBHOOK", event.type);
+	console.info("WEBHOOK", event.type);
 	// Handle the event
 	switch (event.type) {
 		case "payment_intent.succeeded":

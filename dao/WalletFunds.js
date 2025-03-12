@@ -83,10 +83,10 @@ async function getAvailableWalletFunds(userId,order_type) {
 				reserved_order: null,
 				type:order_type,
 			},
-			orderBy: {
-				expires_at: { sort: 'asc', nulls: 'last' },
-				created_at: 'asc',
-			},
+			orderBy: [
+				{ expires_at: { sort: 'asc', nulls: 'last' } },
+				{ created_at: 'asc' }
+			],
 		});
 		return walletFunds;
 	} catch (error) {
@@ -284,16 +284,33 @@ async function releaseFunds(walletFundsId, releaseAmount) {
 		}
 
 		const released_WF = await prisma.$transaction(async (tx) => {
-			await tx.wallet_funds.update({
-				where: {
-					wallet_funds_id: walletFundsId,
-				},
+			await tx.users.update({
+				where: { user_id: walletFund.user_id },
 				data: {
-					amount: walletFund.amount - releaseAmount,
+					wallet_balance: {
+						increment: releaseAmount/100,
+					},
 				},
 			});
+			const amount_after_release = walletFund.amount - releaseAmount;
+			if(amount_after_release===0){
+				await tx.wallet_funds.delete({
+					where: {
+						wallet_funds_id: walletFundsId,
+					}
+				});
+			}else{
+				await tx.wallet_funds.update({
+					where: {
+						wallet_funds_id: walletFundsId,
+					},
+					data: {
+						amount: amount_after_release,
+					},
+				});
+			}
 
-			console.info(`released ${amount} from WF:\n${JSON.stringify(walletFund,null,2)}. ` )
+			console.info(`released ${releaseAmount} from WF:\n${JSON.stringify(walletFund,null,2)}. ` )
 
 			// Check if same wallet fund exists
 			const existingFund = await tx.wallet_funds.findFirst({
@@ -337,7 +354,7 @@ async function releaseFunds(walletFundsId, releaseAmount) {
 		});
 
 	} catch (error) {
-		console.error("Error reserving funds:", error);
+		console.error("Error releasing funds:", error);
 		throw error;
 	}
 }

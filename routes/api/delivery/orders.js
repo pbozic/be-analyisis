@@ -21,12 +21,15 @@ router.get("/order/:order_id", DeliveryOrderController.getOrder);
 router.get("/order/user/:order_id", DeliveryOrderController.getUserByDeliveryOrderId);
 router.post("/order", DeliveryOrderController.createOrder);
 router.post("/daily_meals", DeliveryOrderController.createDailyMeals);
+router.post("/order/merchant_accept", DeliveryOrderController.merchantAcceptOrder);
 router.post("/order/status", DeliveryOrderController.updateOrderStatus);
 router.post("/order/pickup_time", DeliveryOrderController.updateOrderPickupTime);
 router.post("/order/delivery_time", DeliveryOrderController.updateOrderDeliveryTime);
-router.post("/order/accept", DeliveryOrderController.acceptOrder);
+router.post("/order/accept", DeliveryOrderController.acceptOrderDelivery);
+router.post("/order/cancel_delivery", DeliveryOrderController.cancelOrderDelivery);
 router.post("/order/complete", DeliveryOrderController.completeOrder);
 router.post("/timeline", DeliveryOrderController.updateDeliveryOrderTimeline);
+router.post("/add_to_timeline", DeliveryOrderController.addToDeliveryOrderTimeline);
 router.post("/order/update", DeliveryOrderController.updateDeliveryOrder);
 
 module.exports = router;
