@@ -96,11 +96,11 @@ const getMenuCategoriesByMenuId = async (menu_id) => {
 							files: true
 						}
 					}
-				},
-				menu_categories_catgeories: {
-					include: {
-						category: true
-					}
+				}
+			},
+			menu_categories_catgeories: {
+				include: {
+					category: true
 				}
 			}
 		}
