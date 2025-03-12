@@ -938,7 +938,7 @@ async function completeOrder(req, res) {
 					}
 					let parent_user = user.parent_user.parent_user;
 					let is_businessUser = await BusinessUsersDao.getBusinessUserByUserId(parent_user.user_id);
-					let allowance = user.parent_user.allowance;
+					let allowance = user.parent_user.allowance?.amount_taxi;
 					if (is_businessUser) {
 						allowance = allowance * 2;
 					}
@@ -954,13 +954,17 @@ async function completeOrder(req, res) {
 					await UsersDao.removeWalletBalance(parent_user.user_id, DISCOUNTED_TOTAL_COST, order.order_id, "taxi");
 					const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(parent_user.user_id, DISCOUNTED_TOTAL_COST, order.order_id);
 
-					await prisma.group_users.update({
+					const updateData = {};
+					if (order.type === ORDER_TYPE.TAXI) {
+						updateData.amount_taxi = { decrement: (DISCOUNTED_TOTAL_COST / 100) }
+					} else {
+						updateData.amount_transfer = { decrement: (DISCOUNTED_TOTAL_COST / 100) }
+					}
+					await prisma.allowances.update({
 						where: {
 							group_user_id: user.parent_user.group_user_id
 						},
-						data: {
-							allowance: user.parent_user.allowance - (DISCOUNTED_TOTAL_COST / 100)
-						}
+						data: updateData
 					});
 					order = await TaxiOrderDao.updateOrder(order.order_id, {
 						payment: {

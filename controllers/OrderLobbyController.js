@@ -117,7 +117,7 @@ async function createLobby(req, res) {
 		const new_lobby = OrderLobbyDao.createOrderLobby({
 			lobby_name,
 			lobby_description,
-			business_id,
+			business: {connect: {business_id: business_id}},
 			restaurant_id,
 			creator_id: req.user.user_id
 		})
@@ -129,7 +129,7 @@ async function createLobby(req, res) {
 				lobby_users.push(user);
 			}
 		}
-		return res.status(201).json({ new_lobby,lobby_users })
+		return res.status(200).json({ new_lobby,lobby_users })
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}

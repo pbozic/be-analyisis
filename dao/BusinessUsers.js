@@ -41,9 +41,7 @@ const getBusinessUserByUserId = async (userId) => {
 								users: {
 									include:{
 										child_users: {
-											include:{
-												child_user: true,
-											}
+											include:{child_user: {select: {user_id: true, first_name: true, last_name: true}}, allowance: true}
 										},
 										parent_user: true,
 									}

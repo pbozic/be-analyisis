@@ -83,10 +83,10 @@ async function getAvailableWalletFunds(userId,order_type) {
 				reserved_order: null,
 				type:order_type,
 			},
-			orderBy: {
-				expires_at: { sort: 'asc', nulls: 'last' },
-				created_at: 'asc',
-			},
+			orderBy: [
+				{ expires_at: { sort: "asc", nulls: "last" } },
+				{ created_at: "asc" }
+			],
 		});
 		return walletFunds;
 	} catch (error) {

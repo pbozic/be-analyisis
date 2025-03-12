@@ -19,7 +19,7 @@ const getGroupUserByChildId = async (child_id) => {
 			where: {
 				child_user_id: child_id,
 			},
-			include: {parent_user:true}
+			include: {parent_user:true, allowance: true}
 		});
 	} catch (error) {
 		console.error("Error retrieving group_user by child_id:", error);
@@ -28,13 +28,22 @@ const getGroupUserByChildId = async (child_id) => {
 };
 
 const createGroupUser = async (group_user_data) => {
-	return await prisma.group_users.create({
+	const group_user = await prisma.group_users.create({
 		data: {
-			allowance:group_user_data.allowance,
 			parent_user: { connect: { user_id: group_user_data.parent_user_id } },
 			child_user:{ connect: { user_id: group_user_data.child_user_id } },
 		},
 	});
+	await prisma.allowances.create({
+		data: {
+			user: {
+				connect: {
+					group_user_id: group_user_id,
+				}
+			}
+		}
+	});
+	return group_user;
 }
 
 const deleteGroupUser = async (group_user_id) => {
@@ -55,18 +64,47 @@ const updateGroupUserEnabled = async (group_user_id,value) => {
 	});
 }
 
-const updateGroupUserAllowance = async (group_user_id,value) => {
-	return await prisma.group_users.update({
+const updateGroupUserAllowance = async (group_user_id, value, type) => {
+	const group_user = await prisma.group_users.findUnique({
 		where: {
 			group_user_id: group_user_id,
 		},
-		data: {
-			allowance: value,
-		},
+		include: {
+			allowance: true
+		}
 	});
+	const updateData = {};
+	if (type === 'Taxi') {
+		updateData.amount_taxi = value;
+	} else if (type === 'Transfer') {
+		updateData.amount_transfer = value;
+	} else if (type === 'Delivery') {
+		updateData.amount_delivery = value;
+	} else if (type === 'Any') {
+		updateData.amount_any = value;
+	}
+	let allowance = group_user?.allowance;
+	if (!allowance) {
+		await prisma.allowances.create({
+			data: {
+				user: {
+					connect: {
+						group_user_id: group_user_id,
+					}
+				},
+				...updateData
+			}
+		});
+	} else {
+		await prisma.allowances.update({
+			where: {
+				group_user_id: group_user_id,
+			},
+			data: updateData
+		});
+	}
+	return group_user;
 }
-
-
 
 module.exports = {
 	getGroupUsersByParentId,
