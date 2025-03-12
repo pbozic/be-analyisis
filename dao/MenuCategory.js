@@ -170,6 +170,21 @@ const getMenuCategoriesByBusinessId = async (business_id) => {
 };
 
 const deleteMenuCategory = async (menu_category_id) => {
+	const menu_category = await prisma.menu_categories.findUnique({
+		where: {
+			menu_category_id: menu_category_id
+		},
+		include: {
+			menu_categories_catgeories: true
+		}
+	});
+	if (menu_category.menu_categories_catgeories.length > 0) {
+		await prisma.menu_categories_categories.deleteMany({
+			where: {
+				menu_categories_id: menu_category_id
+			}
+		});
+	}
 	return await prisma.menu_categories.delete({
 		where: {
 			menu_category_id: menu_category_id
