@@ -115,12 +115,11 @@ async function handleWordBuysSubscription(session) {
 }
 async function handlePromoSectionBuy(session) {
 	//TODO: Add the promo section buy to the database
-	// await PromoDao.createPromoSectionBuy({
-	//     promo_sections_id: session.metadata.promo_sections_id,
-	//     business_id: session.metadata.business_id,
-	//     stripe_subscription_id: session.subscription,
-	//     tier: session.metadata.tier
-	// });
+	await PromoDao.createPromoSectionBuy({
+	    promo_sections_id: session.metadata.promo_sections_id,
+	    business_id: session.metadata.business_id,
+	    tier: session.metadata.tier
+	});
 }
 async function handleWebhook(req, res) {
 	let event;

@@ -251,7 +251,7 @@ async function refreshToken(req, res) {
 		return res.status(400).send("Access Denied. No refresh token provided.");
 	}
 
-	jwt.verify(refreshToken, process.env.JWT_TOKEN_SECRET, function (err, decoded) {
+	jwt.verify(refreshToken, process.env.JWT_TOKEN_SECRET, async function (err, decoded) {
 		if (err) {
 			return res.status(401).json({ error: "Access Denied. Token expired.", e: err });
 		}
@@ -259,9 +259,16 @@ async function refreshToken(req, res) {
 		delete decoded["exp"];
 		const access_token = generateAccessToken(decoded.user);
 		const refresh_token = generateRefreshToken(decoded.user);
-
+		let userDb = await UserDao.getUserById(user.user_id,
+			{
+				include: {
+					addresses: true
+				},
+			}
+		);
+		delete user["password"];
 		let user = {
-			...decoded,
+			...userDb,
 			access_token,
 			refresh_token,
 		};

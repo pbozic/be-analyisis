@@ -44,7 +44,7 @@ async function listBusinesses(req, res) {
 	}
 }
 /**
- * GET /businesses/search
+ * POST /businesses/search
  * @tag Business
  * @summary Get a list of businesses by query, location and categories
  * @description Returns a list of businesses.
@@ -58,37 +58,15 @@ async function searchBusinesses(req, res) {
 	try {
 
 
-		let esResults = await fullSearch(req.body.query || "", req.body.location.lat, req.body.location.long, req.body.categoryIds || [], req.body.radius, req.body.page, req.body.pageSize);
+		let esResults = await fullSearch(req.body.query || "", req.body.location.lat, req.body.location.long, req.body.categoryIds || [], req.body.radius, req.body.page, req.body.pageSize || 10);
 		console.log("esResults", esResults);
-		let ids = esResults.map((result) => result.business_id);
-		let businesses = await BusinessDao.getBusinessesForSearchById(ids);
-		let businessesResult = [];
-		for (let business of businesses) {
-			let busRes = {
-				...business,
-				score: esResults.find((result) => result.business_id === business.business_id).score,
-			}
-			delete busRes.documents;
-			let logo, banner;
-			for (let doc of business.documents) {
-				if (doc.document_type === Constants.DOCUMENT_TYPE.LOGO) {
-					logo = doc.files[0].url;
-				}
-				if (doc.document_type === Constants.DOCUMENT_TYPE.BANNER) {
-					banner = doc.files[0].url;
-				}
-			}
-			busRes.logo = logo;
-			busRes.banner = banner;
-			businessesResult.push(busRes);
-		}
-		businessesResult.sort((a, b) => b.score - a.score);
-		if (businessesResult) {
-			res.status(200).json(businessesResult);
+		esResults.sort((a, b) => b.score - a.score);
+		if (esResults) {
+			res.status(200).json(esResults);
 		} else {
 			res.status(400).json({
 				error: "Error obtaining list of businesses..",
-				users: businessesResult,
+				users: esResults,
 			});
 		}
 	} catch (e) {

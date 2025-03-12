@@ -21,9 +21,9 @@ async function createPromoSection(args,translations) {
         }
     }
     if (args.canPurchase) {
-        sectionData.t1price = parseFloat(args.t1price)
-        sectionData.t2price = parseFloat(args.t2price)
-        sectionData.t3price = parseFloat(args.t3price)
+        sectionData.t1price = parseInt(parseFloat(args.t1price) * 100)
+        sectionData.t2price = parseInt(parseFloat(args.t2price) * 100)
+        sectionData.t3price = parseInt(parseFloat(args.t3price) * 100)
     }
     const new_promo_section = await prisma.promo_sections.create({
         data: sectionData

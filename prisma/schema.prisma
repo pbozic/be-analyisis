@@ -154,6 +154,7 @@ model users {
   business_teams_id                      String?             @db.Uuid
   business_teams                         business_teams?     @relation("user_to_business_team", fields: [business_teams_id], references: [business_teams_id])
   order_lobby_users                      order_lobby_users[] @relation("user_to_OL_user")
+  promo_section_buys                     promo_sections_buy[]
 }
 
 model cashback {
@@ -801,9 +802,9 @@ model promo_sections {
   limits            Json?
   stripe_product_id String?
   canPurchase       Boolean
-  t1price           Float?
-  t2price           Float?
-  t3price           Float?
+  t1price           Int?
+  t2price           Int?
+  t3price           Int?
   order             Int       @default(autoincrement())
   service_type      PROMO_SERVICE_TYPES
   promo_section_buy promo_sections_buy[]
@@ -832,6 +833,8 @@ model promo_sections_buy {
   stripe_subscription_id String?
   business_id            String         @db.Uuid
   business               business       @relation(fields: [business_id], references: [business_id])
+  user_id               String          @db.Uuid
+  bought_by             users      @relation(fields: [user_id], references: [user_id])
   active_at              DateTime?
   expires_at             DateTime?
   tier                   Int

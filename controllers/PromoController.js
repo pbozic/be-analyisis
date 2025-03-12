@@ -333,9 +333,9 @@ async function getPromoBannersByServiceType  (req, res) {
     }
 }
 
-async function createCheckoutSession(req, res) {
+async function createCheckoutSessionForPromoBuy(req, res) {
     try {
-        const { promo_sections_id, stripe_price_id, duration } = req.body;
+        const { promo_sections_id, duration, tier } = req.body;
         const userId = req.user.id;
         // Fetch promo section details (optional)
         const promoSection = await prisma.promo_sections.findUnique({
@@ -346,27 +346,51 @@ async function createCheckoutSession(req, res) {
         if (!promoSection) {
             return res.status(404).json({ error: "Promo section not found" });
         }
-
+        let price = 0;
+        switch (tier) {
+            case 1:
+                price = promoSection.t1Price;
+                break;
+            case 2:
+                price = promoSection.t2Price;
+                break;
+            case 3:
+                price = promoSection.t3Price;
+                break;
+            default:
+                return res.status(400).json({ error: "Invalid tier" });
+        }
+        if (price === 0) {
+            return res.status(400).json({ error: "Something went wrong" });
+        }
         // Create Stripe Checkout Session
         const session = await stripe.checkout.sessions.create({
             customer: business.stripe_customer_id,  // Business customer ID
             payment_method_types: ['card'],
             line_items: [
                 {
-                    price: stripe_price_id, // Stripe price ID
-                    quantity: duration // Duration in months (e.g., 1, 2, 3...)
+                    price_data: {
+                        currency: 'eur',
+                        product_data: {
+                            name: promoSection.name, // ✅ Add custom name
+                            description: `Promo Section Tier: ${tier} for ${duration * 30} days` // ✅ Add custom description
+                        },
+                        unit_amount: price * 100 // Convert to cents
+                    },
+                    quantity: duration
                 }
             ],
             mode: 'payment', // One-time payment
-            success_url: `https://yourdomain.com/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `https://yourdomain.com/cancel`,
+            success_url: `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.FRONTEND_URL}/cancel`,
             metadata: {
                 user_id: userId,
                 promo_sections_id: promo_sections_id,
                 duration: duration,
                 promo_section_name: promoSection.name,
                 business_id: businessUser.business_id,
-                type: "promo_section"
+                type: "promo_section",
+                tier: tier
             }
         });
 
@@ -380,6 +404,9 @@ async function createCheckoutSession(req, res) {
 
 async function createPromoSectionBuy(req, res) {
    try {
+    let business_id = req.body.business_id;
+    let tier = req.body.tier;
+    let promo_section_id = req.body.promo_section_id;
      const promoSectionBuy = await PromoDao.createPromoSectionBuy(req.body);
      res.json(promoSectionBuy);
    } catch (error) {
@@ -511,5 +538,6 @@ module.exports = {
     getAllPromoSectionBuysByBusiness,
     getAllPromoSectionBuysByTier,
     getAllPromoSectionBuysByStripeSub,
-    addStripeSubToPromoSectionBuy
+    addStripeSubToPromoSectionBuy,
+    createCheckoutSessionForPromoBuy
 }

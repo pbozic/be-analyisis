@@ -554,7 +554,7 @@ async function seedCategories() {
                 category_id = cat.categories_id
                 if(categoryObj.iconFileData){
                     const {file_type,mime_type, base64} = categoryObj.iconFileData
-                    await upsertFileOnS3Helper(null, category.icon, file_type,mime_type,base64)
+                    await upsertFileOnS3Helper(null, cat.icon, file_type,mime_type,base64)
                 }
                 console.log(`Category ${cat.categories_id} created.`);
             }
