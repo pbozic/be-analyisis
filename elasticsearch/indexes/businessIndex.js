@@ -195,7 +195,7 @@ async function indexBusinesses(business_id = null) {
         const bulkOps = [];
 
         for (const business of businesses) {
-            console.log(JSON.parse(JSON.stringify(business)))
+           // console.log(JSON.parse(JSON.stringify(business)))
             if (!business.menus || business.menus.length === 0) {
                 console.warn(`⚠️ Skipping ${business.name} (No menus found)`);
                 continue;
@@ -210,6 +210,11 @@ async function indexBusinesses(business_id = null) {
                 }
             }
             fs.writeFileSync('business.json', JSON.stringify(business, null, 2))
+            for (let menu of business.menus) {
+                for (let category of menu.categories) {
+                   console.log("Category", category)
+                }
+            }
             const doc = {
                 business_id: business.business_id,
                 name: business.name,
@@ -229,7 +234,7 @@ async function indexBusinesses(business_id = null) {
                     menu_category_name: menu.categories.flatMap(cat =>
                         Object.values(cat.names).filter(value => value !== "")
                     ),
-                    menu_category_id: menu.categories.map(cat => cat.menu_categories_catgeories?.category?.categories_id),
+                    menu_category_id: menu.categories.map(cat => cat.menu_categories_catgeories?.category?.categories_id || ""),
                     translations: menu.categories.flatMap(cat =>
                         cat.menu_categories_catgeories.flatMap(rel =>
                             rel.category.translatable?.translations.map(t => t.translation) || []
@@ -252,7 +257,7 @@ async function indexBusinesses(business_id = null) {
             };
             
             
-            console.log(JSON.stringify(doc))
+            //console.log(JSON.stringify(doc))
             
             bulkOps.push(
                 { update: { _index: 'business_index', _id: business.business_id } }, // Use business_id as _id

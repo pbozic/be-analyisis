@@ -102,6 +102,23 @@ const getBusinessesForSearchById = async (business_id) => {
 							in: ['BANNER', 'LOGO']
 						}
 					}
+				},
+				menus: {
+					include: {
+						categories: {
+							include: {
+								menu_items: {
+									include: {
+										documents: {
+											include: {
+												files: true
+											}
+										}
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 		});

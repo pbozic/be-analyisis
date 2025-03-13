@@ -61,12 +61,13 @@ async function searchBusinesses(req, res) {
 		let esResults = await fullSearch(req.body.query || "", req.body.location.lat, req.body.location.long, req.body.categoryIds || [], req.body.radius, req.body.page, req.body.pageSize || 10);
 		console.log("esResults", esResults);
 		esResults.sort((a, b) => b.score - a.score);
-		if (esResults) {
-			res.status(200).json(esResults);
+		let businesses = await BusinessDao.getBusinessesForSearchById(esResults.map(b => b.business_id));
+		if (businesses) {
+			res.status(200).json(businesses);
 		} else {
 			res.status(400).json({
 				error: "Error obtaining list of businesses..",
-				users: esResults,
+				users: businesses,
 			});
 		}
 	} catch (e) {
