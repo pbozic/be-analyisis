@@ -11,7 +11,7 @@ const createMenuCategory = async (menuId, categoryData) => {
 				connect: { menu_id: menuId }
 			},
 			...categoryData
-		}
+		},
 	});
 	
 	let errors = [];
@@ -39,8 +39,17 @@ const createMenuCategory = async (menuId, categoryData) => {
 			}
 		});
 	}
-	
-	return menu_category;
+	let menu_categoryR = await prisma.menu_categories.findUnique({
+		where: { menu_category_id: menu_category.menu_category_id },
+		include: {
+			menu_categories_catgeories: {
+				include: {
+					category: true
+				}
+			}
+		}
+	});
+	return menu_categoryR;
 };
 
 const addMenuCategoryIdToOrder = async (menu_id, menuCategoryIdToAdd) => {

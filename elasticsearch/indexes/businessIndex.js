@@ -119,7 +119,7 @@ async function indexBusinesses(business_id = null) {
     //  - Word update
 
     try {
-        await createBusinessIndex(true);
+        await createBusinessIndex(false);
         console.log("🚀 Fetching businesses from database...");
         
         const whereClause = { type: "MERCHANT" };
@@ -209,10 +209,10 @@ async function indexBusinesses(business_id = null) {
                     banner = doc.files[0].url;
                 }
             }
-            fs.writeFileSync('business.json', JSON.stringify(business, null, 2))
+            //fs.writeFileSync('business.json', JSON.stringify(business, null, 2))
             for (let menu of business.menus) {
                 for (let category of menu.categories) {
-                   console.log("Category", category)
+                   console.log("Category", category.menu_categories_catgeories)
                 }
             }
             const doc = {
@@ -234,7 +234,10 @@ async function indexBusinesses(business_id = null) {
                     menu_category_name: menu.categories.flatMap(cat =>
                         Object.values(cat.names).filter(value => value !== "")
                     ),
-                    menu_category_id: menu.categories.map(cat => cat.menu_categories_catgeories?.category?.categories_id || ""),
+                    menu_category_id: menu.categories.map(cat => {
+                        console.log("cat", cat)
+                        return cat.menu_categories_catgeories?.category?.categories_id || ""
+                    }),
                     translations: menu.categories.flatMap(cat =>
                         cat.menu_categories_catgeories.flatMap(rel =>
                             rel.category.translatable?.translations.map(t => t.translation) || []
@@ -251,9 +254,11 @@ async function indexBusinesses(business_id = null) {
                         }))
                     )
                 })),
-                promo_sections: business.promo_sections.map(section => (
-                    section.promo_section.promo_section_id
-                )),
+                promo_sections: business.promo_sections.map(section => {
+                    return section.promo_section.promo_sections_id
+                }
+                    
+                ),
             };
             
             

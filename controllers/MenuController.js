@@ -161,7 +161,6 @@ async function setActiveMenu(req, res) {
  */
 async function createMenuCategory(req, res) {
 	const { menu_id, data } = req.body;
-	console.log(menu_id)
 	try {
 		const menuCategory = await MenuCategoryDao.createMenuCategory(menu_id, data);
 		businessIndex(menuCategory.business_id);

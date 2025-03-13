@@ -8,13 +8,14 @@ const SCORING_WEIGHTS = {
 	distance_decay: 0.5, // Distance decay factor
 };
 
-async function searchBusinesses(query, userLat, userLon, categoryIds = [], radius = null, page = 1, pageSize = 10) {
+async function searchBusinesses(query, userLat, userLon, categoryIds = [], radius = null, promoSectionId = null, page = 1, pageSize = 10) {
     try {
         const from = (page - 1) * pageSize;
         const queryWords = query ? query.split(" ").filter((word) => word.trim() !== "") : [];
         const hasQuery = queryWords.length > 0;
         const hasCategories = categoryIds.length > 0;
         const hasRadius = radius !== null;
+        const hasPromoSection = promoSectionId !== null;
 
         // Base Query
         const boolQuery = {
@@ -26,7 +27,14 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
             }
         };
 
-        //  Add Text Search Only If Query Exists
+        // Filter by promo section ID if provided
+        if (hasPromoSection) {
+            boolQuery.bool.filter.push({
+                terms: { promo_sections: [promoSectionId] } // Ensures only businesses with the given promo_section ID are included
+            });
+        }
+
+        // Add Text Search Only If Query Exists
         if (hasQuery) {
             boolQuery.bool.should.push(
                 {
@@ -106,23 +114,23 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
             );
         }
 
-        //  Add Category ID Filter If Provided
+        // Add Category ID Filter If Provided
         if (hasCategories) {
             boolQuery.bool.filter.push({
                 nested: {
                     path: "menus",
                     query: {
-                        terms: { "menus.menu_category_id": categoryIds } //  Filter by category IDs
+                        terms: { "menus.menu_category_id": categoryIds } // Filter by category IDs
                     }
                 }
             });
         }
 
-        //  Add Radius Filter If Provided
+        // Add Radius Filter If Provided
         if (hasRadius) {
             boolQuery.bool.filter.push({
                 geo_distance: {
-                    distance: `${radius}km`, //  Filters businesses within the given radius
+                    distance: `${radius}km`, // Filters businesses within the given radius
                     location: {
                         lat: userLat,
                         lon: userLon
@@ -131,7 +139,7 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
             });
         }
 
-        //  Function Scoring (Applies Always)
+        // Function Scoring (Applies Always)
         const functionScoreQuery = {
             function_score: {
                 query: boolQuery,
@@ -181,7 +189,7 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
             }
         };
 
-        //  Execute Search
+        // Execute Search
         const esResponse = await esClient.search({
             index: "business_index",
             body: {
@@ -189,7 +197,11 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
                 size: pageSize,
                 explain: false,
                 query: functionScoreQuery,
-                _source: ["business_id", "name", "description", "_score", "address", "delivery_address", "popular", "new", "working_hours", "seats", "restaurant_overwhelmed", "logo", "banner", "telephone"],
+                _source: [
+                    "business_id", "name", "description", "_score", "address", "delivery_address",
+                    "popular", "new", "working_hours", "seats", "restaurant_overwhelmed",
+                    "logo", "banner", "telephone", "promo_sections"
+                ],
                 sort: [{ _score: "desc" }]
             }
         });
@@ -210,14 +222,17 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
             restaurant_overwhelmed: hit._source.restaurant_overwhelmed,
             logo: hit._source.logo,
             banner: hit._source.banner,
-            telephone: hit._source.telephone
-            
+            telephone: hit._source.telephone,
+            promo_sections: hit._source.promo_sections
         }));
     } catch (error) {
         console.error("❌ Error in search:", error);
         return [];
     }
 }
+
+module.exports = searchBusinesses;
+
 
 module.exports = searchBusinesses;
 

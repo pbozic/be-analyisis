@@ -3,10 +3,10 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"start": "npx prisma generate && npx prisma migrate deploy &&  nodemon ./app.js",
-		"dev": "npx prisma generate && npx prisma migrate deploy &&  nodemon ./app.js",
+		"start": "npx prisma generate && npx prisma db push &&  nodemon ./app.js",
+		"dev": "npx prisma generate && npx prisma db push &&  nodemon ./app.js",
 		"server": "nodemon ./app.js",
-		"prisma": "npx prisma migrate deploy && npx prisma generate",
+		"prisma": "npx prisma  db push && npx prisma generate",
 		"stripe": "stripe listen --skip-verify --forward-to localhost:3001/api/stripe/webhook",
 		"docker:up": "docker-compose --env-file .env -f ./Docker/docker-compose.yml up -d",
 		"docker:down": "docker-compose --env-file .env -f ./Docker/docker-compose.yml down",

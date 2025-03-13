@@ -58,7 +58,7 @@ async function searchBusinesses(req, res) {
 	try {
 
 
-		let esResults = await fullSearch(req.body.query || "", req.body.location.lat, req.body.location.long, req.body.categoryIds || [], req.body.radius, req.body.page, req.body.pageSize || 10);
+		let esResults = await fullSearch(req.body.query || "", req.body.location.lat, req.body.location.long, req.body.categoryIds || [], req.body.radius, null, req.body.page, req.body.pageSize || 10);
 		console.log("esResults", esResults);
 		esResults.sort((a, b) => b.score - a.score);
 		let businesses = await BusinessDao.getBusinessesForSearchById(esResults.map(b => b.business_id));
@@ -109,9 +109,24 @@ async function listMerchantBusinesses(req, res) {
 
 		
 		}]*/
-		const merchantBusinesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT);
+		const promoSections = await prisma.promo_sections.findMany({
+			include: {
+				promo_section_buys: {
+					include: {
+						business: true
+					}
+				}
+			}
+		});
+
+		const businesses = promoSections.map(async (promoSection) => {
+			let esResults = await fullSearch("", req.body.location.lat, promoSereq.body.location.long, promoSereq.body.categoryIds || [], promoSereq.body.radius, promoSection.promo_sections_is, 1, 10);
+			return esResults
+		});
+
+		//const merchantBusinesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT);
 		
-		res.status(200).json(merchantBusinesses);
+		res.status(200).json(businesses);
 	} catch (e) {
 		console.error("Error listing merchant businesses:", e);
 		res.status(400).json({ error: "Error listing merchant businesses", e});
