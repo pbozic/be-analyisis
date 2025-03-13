@@ -133,15 +133,16 @@ async function getFile(file_id) {
 	}
 }
 
-async function updateFileById(file_id, file_type, mime_type) {
+async function updateFileById(file_id, file_type, mime_type, url) {
 	try {
 		return await prisma.files.update({
 			where: {
-				files_id: file_id
+				file_id: file_id
 			},
 			data: {
 				file_type,
-				mime_type
+				mime_type,
+				url
 			}
 		});
 	} catch (error) {
