@@ -62,12 +62,19 @@ async function searchBusinesses(req, res) {
 		console.log("esResults", esResults);
 		esResults.sort((a, b) => b.score - a.score);
 		let businesses = await BusinessDao.getBusinessesForSearchById(esResults.map(b => b.business_id));
-		if (businesses) {
-			res.status(200).json(businesses);
+		let results = esResults.map((esResult) => {
+			let business = businesses.find(b => b.business_id === esResult.business_id);
+			return {
+				...business,
+				...esResult
+			};
+		});
+		if (results) {
+			res.status(200).json(results);
 		} else {
 			res.status(400).json({
 				error: "Error obtaining list of businesses..",
-				users: businesses,
+				users: results,
 			});
 		}
 	} catch (e) {
