@@ -19,7 +19,7 @@ async function updateFileByIdHelper(updater_id,file_id,fileData) {
 
 async function upsertFileOnS3Helper(user_id,file,new_file_type,new_mime_type,new_base64){
 	let key = S3Helper.getFileKey(file.file_id, new_mime_type);
-	await S3Helper.SaveObject(key, new_base64, new_mime_type, { users: [user_id] }, null, file.public)
+	await S3Helper.SaveObject(key, new_base64, new_mime_type, { users: [user_id] }, file, file.public)
 }
 
 
