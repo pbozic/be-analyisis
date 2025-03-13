@@ -796,7 +796,7 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 			// 	DELIVERY_ORDER_STATUS.MERCHANT_DELAYED,
 			// 	DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP
 			// ].includes(order.status)) {
-			if(!order.timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP)){
+			if(!DELIVERY_ORDER_END_STATES.includes(order.status) && !order.timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP)){
 				pendingOrders.push(order);
 			}
 			console.info("Re-sending pending order: ", order.order_id, " to driver: ", driver_id);
@@ -1304,11 +1304,7 @@ async function dispatcherCancel(req,res){
 		new_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.FAIL)
 		io.to("order_" + new_order.order_id).emit("order_status_change__delivery", new_order);
 
-		if (old_order.status === DELIVERY_ORDER_STATUS.PENDING){
-			await handlePaymentCleanup(new_order)
-		}else{
-			await handlePaymentRefund(new_order)
-		}
+		await handlePaymentRefund(new_order)
 		//TODO: handle on FE if needed.
 		io.to("order_" + new_order.order_id).emit("order_canceled", new_order);
 
