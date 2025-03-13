@@ -609,7 +609,7 @@ async function getDriverEarnings(req, res) {
 		});
 		const deliveryOrders = await prisma.delivery_orders.findMany({
 			where: {
-				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				status: DELIVERY_ORDER_STATUS.SUCCESS,
 				driver_id: driver.driver_id,
 				updated_at: {
 					gte: new Date(start_date).toISOString(),
@@ -665,7 +665,7 @@ async function getAllDriversEarnings(req, res) {
 			});
 			const deliveryOrders = await prisma.delivery_orders.findMany({
 				where: {
-					status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+					status: DELIVERY_ORDER_STATUS.SUCCESS,
 					driver_id: driver.driver_id,
 					updated_at: {
 						gte: new Date(start_date).toISOString(),
@@ -704,7 +704,7 @@ async function getTotalEarnings(req, res) {
 		});
 		const delivery_orders = await prisma.delivery_orders.findMany({
 			where: {
-				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				status: DELIVERY_ORDER_STATUS.SUCCESS,
 				driver_id: {not: null}
 			}
 		});
@@ -746,7 +746,7 @@ async function getDriverTotalEarnings(req, res) {
 		});
 		const delivery_orders = await prisma.delivery_orders.findMany({
 			where: {
-				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				status: DELIVERY_ORDER_STATUS.SUCCESS,
 				driver_id: driver_id
 			}
 		});

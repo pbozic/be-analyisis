@@ -727,6 +727,8 @@ model wallet_funds {
   referral          referrals?     @relation(fields: [referral_id], references: [referral_id])
   user              users          @relation("wallet_funds", fields: [user_id], references: [user_id])
   transactions      transactions[] @relation("wallet_funds_transaction")
+
+  @@unique([user_id,charge_id,reserved_order,reserved_business,type,status,referral_id,expires_at])
 }
 
 model local_products {
@@ -1087,8 +1089,16 @@ enum TAXI_ORDER_STATUS {
 }
 
 enum DELIVERY_ORDER_STATUS {
-  // DELIVERY
+  // GENERAL
   PENDING
+  CUSTOMER_PAYMENT_FAILED
+  CUSTOMER_PAYMENT_SUCCESSFUL
+  CUSTOMER_PAYMENT_PENDING
+  DISPATCHER_CANCELED
+  ORDER_FINISHED_FAIL
+  ORDER_FINISHED_SUCCESS
+
+  // DELIVERY
   DELIVERY_ACCEPTED
   DELIVERY_REJECTED
   DELIVERY_CANCELED
@@ -1099,9 +1109,6 @@ enum DELIVERY_ORDER_STATUS {
   DELIVERY_DELIVERED
   DELIVERY_COMPLETED
   CUSTOMER_CANCELED
-  CUSTOMER_PAYMENT_FAILED
-  CUSTOMER_PAYMENT_SUCCESSFUL
-  CUSTOMER_PAYMENT_PENDING
 
   // MERCHANT
   MERCHANT_ACCEPTED
@@ -1112,6 +1119,7 @@ enum DELIVERY_ORDER_STATUS {
   MERCHANT_READY_FOR_PICKUP
   MERCHANT_REFUNDED
   MERCHANT_HIGH_DEMAND
+  CUSTOMER_PICKED_UP
 }
 
 enum VEHICLE_CATEGORY {

@@ -473,114 +473,114 @@ const createNewUser = async (user, hashPassword = false) => {
 // }
 
 
-/**
- * Adds a specified amount(in cents) to the user's wallet balance and records the transaction while creating wallet funds and ocnnecting the two.
- *
- * This function performs the following operations within a single transaction:
- * 1. Updates the user's wallet balance by incrementing it with the specified amount.
- * 2. Creates a new transaction record that logs the addition of funds to the wallet and created the wallet_funds.
- *
- * @param {string} user_id - The unique identifier of the user whose wallet balance is to be updated.
- * @param {number} amount_cents - The amount to be added to the wallet balance, specified in cents.
- * @param {string} charge_id - The identifier for the charge associated with this transaction.
- *
- * @returns {Promise<Object>} - A promise that resolves to the newly created transaction object.
- *
- * @throws {Error} - Throws an error if the prisma transaction fails, which can occur due to issues
- *                   such as invalid user ID, database connection problems, or other
- *                   unforeseen errors during the transaction process.
- */
-async function addToWalletBalance (user_id, amount_cents, charge_id) {
-	try {
-		return await prisma.$transaction(async (transaction) => {
-			// Update wallet balance
-			await transaction.users.update({
-			  where: { user_id: user_id },
-			  data: {
-				wallet_balance: {
-				  increment: amount_cents/100,
-				},
-			  },
-			});
-	  
-			// Record transaction
-			const newTransaction = await transaction.transactions.create({
-				data: {
-					user: { connect: { user_id: user_id } },
-					amount: amount_cents/100,
-					type: 'CREDIT',
-					description: 'Added funds to wallet',
-					wallet_funds: {
-						create: {
-							charge_id: charge_id,
-							amount: amount_cents,
-							user:{connect:{user_id:user_id}},
-						},
-					},
-				}
-			});
+// /**
+//  * Adds a specified amount(in cents) to the user's wallet balance and records the transaction while creating wallet funds and ocnnecting the two.
+//  *
+//  * This function performs the following operations within a single transaction:
+//  * 1. Updates the user's wallet balance by incrementing it with the specified amount.
+//  * 2. Creates a new transaction record that logs the addition of funds to the wallet and created the wallet_funds.
+//  *
+//  * @param {string} user_id - The unique identifier of the user whose wallet balance is to be updated.
+//  * @param {number} amount_cents - The amount to be added to the wallet balance, specified in cents.
+//  * @param {string} charge_id - The identifier for the charge associated with this transaction.
+//  *
+//  * @returns {Promise<Object>} - A promise that resolves to the newly created transaction object.
+//  *
+//  * @throws {Error} - Throws an error if the prisma transaction fails, which can occur due to issues
+//  *                   such as invalid user ID, database connection problems, or other
+//  *                   unforeseen errors during the transaction process.
+//  */
+// async function addToWalletBalance (user_id, amount_cents, charge_id) {
+// 	try {
+// 		return await prisma.$transaction(async (transaction) => {
+// 			// Update wallet balance
+// 			// await transaction.users.update({
+// 			//   where: { user_id: user_id },
+// 			//   data: {
+// 			// 	wallet_balance: {
+// 			// 	  increment: amount_cents/100,
+// 			// 	},
+// 			//   },
+// 			// });
+//
+// 			// Record transaction
+// 			const newTransaction = await transaction.transactions.create({
+// 				data: {
+// 					user: { connect: { user_id: user_id } },
+// 					amount: amount_cents/100,
+// 					type: 'CREDIT',
+// 					description: 'Added funds to wallet',
+// 					wallet_funds: {
+// 						create: {
+// 							charge_id: charge_id,
+// 							amount: amount_cents,
+// 							user:{connect:{user_id:user_id}},
+// 						},
+// 					},
+// 				}
+// 			});
+//
+// 		  	console.info('Funds added to wallet successfully');
+// 			return newTransaction
+// 		  });
+// 	} catch (error) {
+// 	  console.error('Error adding to wallet balance:', error);
+// 	  throw error;
+// 	}
+//   };
 
-		  	console.info('Funds added to wallet successfully');
-			return newTransaction
-		  });
-	} catch (error) {
-	  console.error('Error adding to wallet balance:', error);
-	  throw error;
-	}
-  };
-
-async function removeWalletBalance(userId, amountToSubtract, order_id, order_type = "delivery") {
-	try {
-		await prisma.$transaction(async (transaction) => {
-			// Check current balance
-			const user = await transaction.users.findUnique({ where: { user_id: userId } });
-			if (user.walletBalance < amountToSubtract) {
-			  throw new Error('Insufficient funds');
-			}
-	  
-			// Update wallet balance
-			await transaction.users.update({
-			  where: { user_id: userId },
-			  data: {
-				wallet_balance: {
-				  decrement: amountToSubtract,
-				},
-			  },
-			});
-			if (order_type == "delivery") {
-				//Record transaction
-				await transaction.transactions.create({
-					data: {
-							user: { connect: { user_id: userId } },
-							delivery_order: {
-								connect: { order_id: order_id },
-							},
-						amount: -amountToSubtract,
-						type: 'DEBIT',
-						description: 'Deducted funds from wallet balance',
-					},
-				});
-			} else {
-				await transaction.transactions.create({
-					data: {
-							user: { connect: { user_id: userId } },
-							taxi_order: {
-								connect: { order_id: order_id },
-							},
-						amount: -amountToSubtract,
-						type: 'DEBIT',
-						description: 'Deducted funds from wallet balance',
-					},
-				});
-			}
-			
-		  });
-		  console.log('Funds deducted from wallet successfully');
-		} catch (error) {
-		  console.error('Error subtracting from wallet balance:', error);
-		  throw error;
-		}
-}
+// async function removeWalletBalance(userId, amountToSubtract, order_id, order_type = "delivery") {
+// 	try {
+// 		await prisma.$transaction(async (transaction) => {
+// 			// Check current balance
+// 			const user = await transaction.users.findUnique({ where: { user_id: userId } });
+// 			if (user.walletBalance < amountToSubtract) {
+// 			  throw new Error('Insufficient funds');
+// 			}
+//
+// 			// Update wallet balance
+// 			await transaction.users.update({
+// 			  where: { user_id: userId },
+// 			  data: {
+// 				wallet_balance: {
+// 				  decrement: amountToSubtract,
+// 				},
+// 			  },
+// 			});
+// 			if (order_type == "delivery") {
+// 				//Record transaction
+// 				await transaction.transactions.create({
+// 					data: {
+// 							user: { connect: { user_id: userId } },
+// 							delivery_order: {
+// 								connect: { order_id: order_id },
+// 							},
+// 						amount: -amountToSubtract,
+// 						type: 'DEBIT',
+// 						description: 'Deducted funds from wallet balance',
+// 					},
+// 				});
+// 			} else {
+// 				await transaction.transactions.create({
+// 					data: {
+// 							user: { connect: { user_id: userId } },
+// 							taxi_order: {
+// 								connect: { order_id: order_id },
+// 							},
+// 						amount: -amountToSubtract,
+// 						type: 'DEBIT',
+// 						description: 'Deducted funds from wallet balance',
+// 					},
+// 				});
+// 			}
+//
+// 		  });
+// 		  console.log('Funds deducted from wallet successfully');
+// 		} catch (error) {
+// 		  console.error('Error subtracting from wallet balance:', error);
+// 		  throw error;
+// 		}
+// }
 
 async function deleteUserByUserId(userId) {
 	try {
@@ -597,15 +597,16 @@ async function deleteUserByUserId(userId) {
 
 const updateWalletBalance = async (userId, amount, documents) => {
 	try {
-		const newTransaction = await addToWalletBalance(userId,Math.round(amount*100),null)//await WalletFundsDao.createWalletFunds(userId,null,Math.round(amount*100));
-		const updatedUser = await prisma.users.update({
-			where: { user_id: userId },
-			data: {
-				wallet_balance: {
-					increment: amount,
-				},
-			},
-		});
+		const newTransaction = await WalletFundsDao.createWalletFunds(userId,Math.round(amount*100))
+		// const newTransaction = await addToWalletBalance(userId,Math.round(amount*100),null)//await WalletFundsDao.createWalletFunds(userId,null,Math.round(amount*100));
+		// const updatedUser = await prisma.users.update({
+		// 	where: { user_id: userId },
+		// 	data: {
+		// 		wallet_balance: {
+		// 			increment: amount,
+		// 		},
+		// 	},
+		// });
 
 		// const newTransaction = await prisma.transactions.create({
 		// 	data: {
@@ -638,7 +639,7 @@ const updateWalletBalance = async (userId, amount, documents) => {
 			}
 		}
 		console.log('Funds added to wallet successfully');
-		return updatedUser
+		return newTransaction
 	} catch (error) {
 		console.error("Error updating wallet balance:", error);
 		throw new Error(error);
@@ -758,8 +759,8 @@ module.exports = {
 	updateStripeCustomerId,
 	createNewUser,
 	getUserByResetToken,
-	addToWalletBalance,
-	removeWalletBalance,
+	// addToWalletBalance,
+	// removeWalletBalance,
 	// createWalletBalance,
 	updateUserDateOfBirth,
 	updateUserTelephoneVerified,

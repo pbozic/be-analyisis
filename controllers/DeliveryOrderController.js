@@ -1,6 +1,5 @@
 const DeliveryOrderDao = require("../dao/DeliveryOrder");
 const DeliveryDriverDao = require("../dao/DeliveryDriver");
-const DeliveryHelper = require("../lib/deliveryHelpers");
 const FlagDao = require("../dao/Flags");
 const BusinessDao = require("../dao/Business");
 const UsersDao = require("../dao/User");
@@ -11,14 +10,14 @@ const { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE, TAXI_ORDER_STATUS,
 	CREDITS,
 	PARENT_USER_TYPE,
 	ORDER_TYPE,
-	CASHBACK_SOURCE, DRIVE_FEE
+	CASHBACK_SOURCE, DRIVE_FEE, DELIVERY_ORDER_END_STATES
 } = require("../lib/constants");
 const fs = require("fs");
 const Constants = require("../lib/constants");
 const { getUsers } = require("../dao/User");
 const { delivery_orders } = require("@prisma/client");
 const { generateItemsFromPreferences, resendPendingOrdersToDeliveryDriver, sendActiveOrdersToDeliveryDriver,
-	revokeDeliveryOrderFromDrivers
+	revokeDeliveryOrderFromDrivers, calculateDeliveryOrderPaymentCuts, handlePaymentCleanup, handlePaymentRefund
 } = require("../lib/deliveryHelpers");
 const { sortLocationsByNearestNeighbor, todaysEarnings } = require("../lib/helpersLib");
 const { connect } = require("http2");
@@ -150,10 +149,11 @@ async function createOrder(req, res) {
 
 		let user = await UsersDao.getUserById(user_id);
 		const customer_acc = user.stripe_customer_id
+		const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user_id)
 
 		if (orderData.payment.type === "WALLET") {
 			const TOTAL_PRICE_CENT = Math.round(orderData.details.total_price * 100)
-			if (user.wallet_balance < TOTAL_PRICE_CENT / 100) {
+			if ((available_wallet_balances["DELIVERY"] + available_wallet_balances[null]) < TOTAL_PRICE_CENT / 100) {
 				throw new Error("Insufficient funds");
 
 			}
@@ -183,44 +183,17 @@ async function createOrder(req, res) {
 		const restaurant_acc = business.stripe_account_id
 		const pm_id = orderData.payment.payment_method_id
 
-		const INITIAL_DELIVERY_CUT = Math.round(orderData.details.delivery_cost*100 * (1-DRIVE_FEE));
-		const INITIAL_MERCHANT_CUT = Math.round(Math.round(orderData.details.sub_total_price*100) * (1-RESTAURANT_FEE));
-		const TOTAL_PRICE_CENTS = Math.round(orderData.details.total_price*100);//already includes delivery cost
-		const INITIAL_PLATFORM_CUT = (TOTAL_PRICE_CENTS-INITIAL_DELIVERY_CUT-INITIAL_MERCHANT_CUT);
-		const COMBINED_COST_CENTS = TOTAL_PRICE_CENTS
-
 		// Handle automatic credits spending
-		const reservedCredits = await WalletFundsHelpers.reserveCreditsForOrder(user.user_id, TOTAL_PRICE_CENTS, order.order_id, 'DELIVERY');
-		const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum, wf) => sum + wf.amount, 0);
-		const DISCOUNTED_COMBINED_COST_CENTS = COMBINED_COST_CENTS - CREDITS_AMOUNT_RESERVED
-
-		const PLATFORM_CREDIT_CUT_CENTS = Math.min(INITIAL_PLATFORM_CUT, CREDITS_AMOUNT_RESERVED);
-		const remainingCreditsAfterPlatform = CREDITS_AMOUNT_RESERVED - PLATFORM_CREDIT_CUT_CENTS;
-
-		const MERCHANT_CREDIT_CUT_CENTS = Math.min(INITIAL_MERCHANT_CUT, remainingCreditsAfterPlatform);
-		const remainingCreditsAfterMerchant = remainingCreditsAfterPlatform - MERCHANT_CREDIT_CUT_CENTS;
-
-		const DRIVER_CREDIT_CUT_CENTS = Math.min(INITIAL_DELIVERY_CUT, remainingCreditsAfterMerchant);
+		const TOTAL_PRICE_CENTS = Math.round(orderData.details.total_price*100);//already includes delivery cost
+		const CREDITS_AMOUNT_RESERVED = (await WalletFundsHelpers.reserveCreditsForOrder(user.user_id, TOTAL_PRICE_CENTS, order.order_id, 'DELIVERY')).reduce((sum, wf) => sum + wf.amount, 0);
+		const DISCOUNTED_COMBINED_COST_CENTS = TOTAL_PRICE_CENTS - CREDITS_AMOUNT_RESERVED
 		order.details.credit_discount = CREDITS_AMOUNT_RESERVED
-		order.details.credit_discount_details = {
-			delivery_driver:DRIVER_CREDIT_CUT_CENTS,
-			merchant:MERCHANT_CREDIT_CUT_CENTS,
-			platform:PLATFORM_CREDIT_CUT_CENTS
-		}
-		console.info(order.details)
 		order = await DeliveryOrderDao.updateOrder(order.order_id,order);
+		console.info(order.details)
 
-		const PLATFORM_CUT_CENTS = INITIAL_PLATFORM_CUT - PLATFORM_CREDIT_CUT_CENTS;
-		const MERCHANT_CUT_CENTS = INITIAL_MERCHANT_CUT - MERCHANT_CREDIT_CUT_CENTS;
-		const DRIVER_CUT_CENTS = INITIAL_DELIVERY_CUT - DRIVER_CREDIT_CUT_CENTS;
-
-		if (PLATFORM_CREDIT_CUT_CENTS>0) {
-			const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, "platform", PLATFORM_CREDIT_CUT_CENTS, order.order_id, "delivery");
-		}
-		if (MERCHANT_CREDIT_CUT_CENTS>0) {
-			const transferedCreditsMerchant = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, business.stripe_account_id, MERCHANT_CREDIT_CUT_CENTS, order.order_id, "delivery");
-		}
-		//any remaining reserved funds are meant for delivery driver and should be handled on order completion
+		const results = await calculateDeliveryOrderPaymentCuts(order)
+		console.info("calculateDeliveryOrderPaymentCuts results: ", JSON.stringify(results,null,2))
+		const {MERCHANT_CUT} = results
 
 		if(DISCOUNTED_COMBINED_COST_CENTS>0){
 			if (order.payment.type === "CARD") {
@@ -230,7 +203,7 @@ async function createOrder(req, res) {
 					order.order_id,
 					pm_id,
 					DISCOUNTED_COMBINED_COST_CENTS,
-					MERCHANT_CUT_CENTS,
+					MERCHANT_CUT,
 					return_url
 				)
 
@@ -241,11 +214,11 @@ async function createOrder(req, res) {
 			} else if (order.payment.type === "WALLET") {
 				// handle wallet payment
 				try{
-					if (user.wallet_balance < DISCOUNTED_COMBINED_COST_CENTS/100) {
+					if (available_wallet_balances[null] < DISCOUNTED_COMBINED_COST_CENTS/100) {
 						throw new Error("Insufficient funds");
 					}
 
-					await UsersDao.removeWalletBalance(user_id, DISCOUNTED_COMBINED_COST_CENTS/100, order.order_id);
+					// await UsersDao.removeWalletBalance(user_id, DISCOUNTED_COMBINED_COST_CENTS/100, order.order_id);
 					const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(user_id, DISCOUNTED_COMBINED_COST_CENTS,order.order_id);
 				}catch (err) {
 					order = await DeliveryOrderDao.updateOrder(order.order_id, {
@@ -253,36 +226,26 @@ async function createOrder(req, res) {
 							...order.payment,
 							status: 'UNPAID',
 						},
-						status: "CUSTOMER_PAYMENT_FAILED"
 					});
+					order = await DeliveryOrderDao.updateOrderStatus(order.order_id,DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED)
+					io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+					order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.FAIL);
+					io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
 					throw err
 				}
-
-				order = await DeliveryOrderDao.updateOrder(order.order_id, {
-					payment: {
-						...order.payment,
-						status: "PAID"
-					}
-				});
-				// let balance = await stripe.getBalance();
-				// console.log("balance", balance);
-				const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user_id,business.stripe_account_id, MERCHANT_CUT_CENTS, order.order_id,"delivery");
-				const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user_id,"platform", PLATFORM_CUT_CENTS, order.order_id,"delivery");
-
 			} else if (order.payment.type === "CASH") {
-				// io.to("orders_" + order.business_id).emit('new_order', order);
 			}
 		}else{
-			order = await DeliveryOrderDao.updateOrder(order.order_id, {
-				payment: {
-					...order.payment,
-					status: "PAID"
-				}
-			});
+			//commented because the paid status should only happen if the order is accepted by merchant
+			// order = await DeliveryOrderDao.updateOrder(order.order_id, {
+			// 	payment: {
+			// 		...order.payment,
+			// 		status: "PAID"
+			// 	}
+			// });
 		}
-		console.info("order paid:", order);
+		console.info("order created:", order);
 		io.to("orders_" + order.business_id).emit("new_order", order);
-		//DeliveryHelper.findDeliveryOrderDrivers(order); here we do not need to notify delivery drivers yet, because of the merchant order preparation time
 
 		res.status(200).json({
 			...order,
@@ -530,35 +493,46 @@ async function createDailyMeals(req, res) {
  * @responseContent {DeliveryOrder} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
-async function acceptOrder(req, res) {
+async function acceptOrderDelivery(req, res) {
 	//console.log("accept order user_id", req.body.user?.user_id);
 	const { order_id, user } = req.body;
-	const delivery_driver_id = user?.delivery_driver?.delivery_driver_id || user?.driver?.driver_id
+	const deliverer_id = user?.delivery_driver?.delivery_driver_id || user?.driver?.driver_id
 	try {
-		//TODO: check if driver is on
-		// line
 		let order = await DeliveryOrderDao.getOrder(order_id, {
 			include: {
 				delivery_driver: true,
 				driver: true,
 			}
 		});
+		let deliverer = user?.delivery_driver?.delivery_driver_id ?
+			await DeliveryDriverDao.getDeliveryDriverById(deliverer_id) :
+			await DriverDao.getDriverById(deliverer_id)
 
-
-		if ([DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED, DELIVERY_ORDER_STATUS.MERCHANT_CANCELED, DELIVERY_ORDER_STATUS.DELIVERY_CANCELED].includes(order.status)) {
+		if(!deliverer.online){
+			return res.status(400).json({ error: `You are offline!.`, errorType: "ERR_DRIVER_OFFLINE" });
+		}else if (
+			//TODO: handle dispatcher canceled.
+			[].includes(order.status)
+		) {
 			return res.status(400).json({ error: `Order has been canceled: ${order.status}.`, errorType: "ERR_ORDER_ALREADY_CANCELED" });
-		} else if (![DELIVERY_ORDER_STATUS.PENDING, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING,
-			DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED,
-			DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_DELAYED,
-			DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(order.status) ||
-			(order.driver?.driver_id && order.driver?.driver_id !== delivery_driver_id) ||
-			(order.delivery_driver?.delivery_driver_id && order.delivery_driver?.delivery_driver_id !== delivery_driver_id)) {
-			return res.status(400).json({ error: "Order is already accepted.", errorType: "ERR_ORDER_ALREADY_ACCEPTED" }); //TODO: handle status DELIVERY_REJECTED
+		} else if (
+			![
+				DELIVERY_ORDER_STATUS.MERCHANT_PREPARING,
+				DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP
+			].includes(order.status)
+		){
+			return res.status(400).json({ error: "Order cannot be accepted in this state.", errorType: "ERR_ORDER_UNACCEPTABLE" });
+		}else if(
+			(order.driver?.driver_id && order.driver?.driver_id !== deliverer_id) ||
+			(order.delivery_driver?.delivery_driver_id && order.delivery_driver?.delivery_driver_id !== deliverer_id)
+		) {
+			return res.status(400).json({ error: "Order is already accepted.", errorType: "ERR_ORDER_ALREADY_ACCEPTED" });
 		}
-		await DeliveryOrderDao.acceptOrder(order_id, delivery_driver_id);
+
+		await DeliveryOrderDao.acceptOrderDelivery(order, deliverer_id);
 		let driver;
 		if (order.delivery_driver?.delivery_driver_id) {
-			driver = await DeliveryDriverDao.getDeliveryDriverById(delivery_driver_id, {
+			driver = await DeliveryDriverDao.getDeliveryDriverById(deliverer_id, {
 				vehicles: {
 					include: {
 						vehicle_specification: true,
@@ -582,13 +556,73 @@ async function acceptOrder(req, res) {
 		console.log("order accepted", order);
 
 		io.to("order_" + order.order_id).emit("order_accepted__delivery", order);
-		io.emit("driver_unavailable", delivery_driver_id);
+		io.emit("driver_unavailable", deliverer_id);
 
 		await revokeDeliveryOrderFromDrivers(order.order_id);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
+	}
+}
+
+/**
+ * POST /delivery/order/cancel_delivery
+ * @tag Delivery
+ * @summary Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
+ * @description Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
+ * @operationId cancelDelivery
+ * @bodyDescription Request body must include order_id.
+ * @bodyContent {DeliveryOrderOptOutRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the updated order in the response body.
+ * @responseContent {DeliveryOrder} 200.application/json
+ * @response 400 - Bad request. Returns error message if the order delivery cannot be canceled.
+ * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
+ */
+async function cancelOrderDelivery(req, res) {
+	const { order_id } = req.body;
+	const user = req.user;
+	const deliverer_id = user?.delivery_driver?.delivery_driver_id || user?.driver?.driver_id;
+
+	try {
+		// 1. Condition check: Fetch the order and verify the driver and order status
+		let order = await DeliveryOrderDao.getOrder(order_id, {
+			include: {
+				delivery_driver: true,
+				driver: true,
+			}
+		});
+
+		if ((order.driver?.driver_id !== deliverer_id) && (order.delivery_driver?.delivery_driver_id !== deliverer_id)) {
+			return res.status(400).json({ error: "You are not authorized to cancel this order delivery.", errorType: "ERR_NOT_AUTHORIZED" });
+		}
+		if (![DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(order.status)) {
+			return res.status(400).json({ error: "Order delivery cannot be canceled in its current state.", errorType: "ERR_DELIVERY_CANNOT_BE_CANCELED" });
+		}
+
+		// 3. Remove driver from order
+		order = await DeliveryOrderDao.updateOrder(order_id, {
+			driver_id: null,
+			delivery_driver_id: null
+		});
+
+		// 4. Add DELIVERY_CANCELED to timeline
+		order = await DeliveryOrderDao.addTimelineEntry(
+			order.order_id,
+			DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
+			user?.delivery_driver ?
+				{delivery_driver_id: user?.delivery_driver?.delivery_driver_id} :
+				{driver_id: user.driver.driver_id}
+		)
+
+		// 5. Emit event to sockets with updated order
+		io.to("order_" + order.order_id).emit("order_delivery_canceled", order);
+
+		res.status(200).json(order);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json({ error: "Something went wrong...", errorType: "ERR_SERVER_ERROR" });
 	}
 }
 
@@ -611,15 +645,14 @@ async function completeOrder(req, res) {
 		let driver = order.delivery_driver_id
 			? await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id)
 			: await DriverDao.getDriverById(order.driver_id);
-		let delivery_business = await BusinessDao.getBusinessById(driver.business_id);
-
+		let delivery_business_stripe = await BusinessDao.getBusinessStripeByBusinessId(driver.business_id);
 		const INITIAL_DELIVERY_CUT = Math.round(order.details.delivery_cost*100 * (1-DRIVE_FEE));
 
 		const remainingReservedCredits = await WalletFundsDao.getReservedCredits(order.user_id,order.order_id,"DELIVERY")
 		const CREDITS_AMOUNT_RESERVED = remainingReservedCredits.reduce((sum,wf)=>sum+wf.amount,0)
 		const DELIVERY_CREDIT_CUT_CENTS = Math.min(INITIAL_DELIVERY_CUT, CREDITS_AMOUNT_RESERVED);
 		if(DELIVERY_CREDIT_CUT_CENTS>0){
-			const transferCreditsDeliveryDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id,delivery_business.stripe_account_id,DELIVERY_CREDIT_CUT_CENTS,order.order_id,"delivery")
+			const transferCreditsDeliveryDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id,delivery_business_stripe,DELIVERY_CREDIT_CUT_CENTS,order.order_id,"delivery")
 		}
 
 		const DISCOUNTED_DELIVERY_COST_CENTS = INITIAL_DELIVERY_CUT - DELIVERY_CREDIT_CUT_CENTS
@@ -661,15 +694,15 @@ async function completeOrder(req, res) {
 				const paymentIntent = await stripe.client.paymentIntents.retrieve(order.payment_intent_id);
 				const transferDelivery = stripe.splitCutFromPaymentIntent(
 					paymentIntent,
-					delivery_business.stripe_account_id,
+					delivery_business_stripe,
 					DISCOUNTED_DELIVERY_COST_CENTS
 				);
 			} else if (order.payment.type === "WALLET") {
 				console.info(order)
-				const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, delivery_business.stripe_account_id, DISCOUNTED_DELIVERY_COST_CENTS, order.order_id, "delivery");
+				const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, delivery_business_stripe, DISCOUNTED_DELIVERY_COST_CENTS, order.order_id, "delivery");
 			}
 		}
-
+		order = await DeliveryOrderDao.updateOrderStatus(order.order_id,DELIVERY_ORDER_STATUS.SUCCESS)
 		io.to("order_" + order.order_id).emit("order_completed__delivery", order);
 		io.emit("driver_available", driver);
 
@@ -698,7 +731,7 @@ async function getCompletedDeliveryOrdersByDriverId(req, res) {
 	try {
 		const completedOrders = await DeliveryOrderDao.getOrders({
 			where: {
-				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				status: DELIVERY_ORDER_STATUS.SUCCESS,
 				OR: [
 					{ delivery_driver_id: driver_id },
 					{ driver_id: driver_id }
@@ -733,15 +766,16 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 		const activeOrders = await DeliveryOrderDao.getOrders({
 			where: {
 				status: {
-					notIn: [
-						DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
-						DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
-						DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
-						DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
-						DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
-						DELIVERY_ORDER_STATUS.MERCHANT_REFUNDED,
-						DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
-					]
+					notIn: DELIVERY_ORDER_END_STATES
+					// notIn: [
+					// 	DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
+					// 	DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
+					// 	DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
+					// 	DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
+					// 	DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
+					// 	DELIVERY_ORDER_STATUS.MERCHANT_REFUNDED,
+					// 	DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
+					// ]
 				},
 				OR: [
 					{ delivery_driver_id: driver_id },
@@ -753,10 +787,16 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 		const sentOrders = await DeliveryOrderDao.getAlreadySentOrdersByDeliveryDriverId(driver_id);
 		for (let sentOrder of sentOrders) {
 			const order = await DeliveryOrderDao.getOrder(sentOrder.order.order_id);
-			if ([DELIVERY_ORDER_STATUS.PENDING, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING,
-				DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED,
-				DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_DELAYED,
-				DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(order.status)) {
+			// if ([
+			// 	DELIVERY_ORDER_STATUS.PENDING,
+			// 	DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING,
+			// 	DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL,
+			// 	DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED,
+			// 	DELIVERY_ORDER_STATUS.MERCHANT_PREPARING,
+			// 	DELIVERY_ORDER_STATUS.MERCHANT_DELAYED,
+			// 	DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP
+			// ].includes(order.status)) {
+			if(!DELIVERY_ORDER_END_STATES.includes(order.status) && !order.timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP)){
 				pendingOrders.push(order);
 			}
 			console.info("Re-sending pending order: ", order.order_id, " to driver: ", driver_id);
@@ -788,11 +828,8 @@ async function getCompletedDeliveryOrdersByUserId(req, res) {
 	try {
 		const completedOrders = await DeliveryOrderDao.getOrders({
 			where: {
-				OR: [
-					{ status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED },
-					{ status: DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP }
-				],
-				user_id: user_id
+				user_id: user_id,
+				status: DELIVERY_ORDER_STATUS.SUCCESS,
 			},
 			include: {
 				business: {
@@ -931,7 +968,7 @@ async function getCompletedDeliveryOrdersByBusinessId(req, res) {
 		const orders = await DeliveryOrderDao.getOrders({
 			where: {
 				business_id: business_id,
-				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
+				status: DELIVERY_ORDER_STATUS.SUCCESS
 			}
 		});
 		// console.log('business completed orders', orders)
@@ -957,27 +994,127 @@ async function getCompletedDeliveryOrdersByBusinessId(req, res) {
  */
 async function updateOrderStatus(req, res) {
 	try {
-		let order = await DeliveryOrderDao.updateOrderStatus(req.body.order_id, req.body.status);
+		let order = await DeliveryOrderDao.getOrder(req.body.order_id)
 
-		if (req.body.status === DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED) {
-			if (order.payment.type === "CARD") {
-				await stripe.client.paymentIntents.capture(order.payment_intent_id);
-				io.to("orders_" + order.business_id).emit("order_status_change__delivery", order);
-			}
-		}
-		//TODO: on reject order and card pay cancel the paymenIntent
+		// if (req.body.status === DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED) {
+		// 	if (order.payment.type === "CARD") {
+		// 		await stripe.client.paymentIntents.capture(order.payment_intent_id);
+		// 	}else if(order.payment.type === "WALLET"){
+		// 		const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id)
+		// 		const {PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT} = calculateDeliveryOrderPaymentCuts(order)
+		//
+		// 		const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id,restaurant_stripe, MERCHANT_CUT+MERCHANT_CREDIT_CUT, order.order_id,"delivery");
+		// 		const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id,"platform", PLATFORM_CUT + PLATFORM_CREDIT_CUT, order.order_id,"delivery");
+		//
+		// 		order = await DeliveryOrderDao.updateOrder(order.order_id, {
+		// 			payment: {
+		// 				...order.payment,
+		// 				status: "PAID"
+		// 			}
+		// 		});
+		// 	}
+		// }
 		if (req.body.status === DELIVERY_ORDER_STATUS.MERCHANT_REJECTED) {
-			if (order.payment.type === "CARD") {
-				await stripe.client.paymentIntents.cancel(order.payment_intent_id);
-				io.to("orders_" + order.business_id).emit("order_status_change__delivery", order);
-			}
+			await handlePaymentCleanup(order)
 		}
+
+		order = await DeliveryOrderDao.updateOrderStatus(req.body.order_id, req.body.status);
 		io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+
+		if([
+			DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED,
+			DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
+			DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED,
+		].includes(order.status)){
+			order = await DeliveryOrderDao.updateOrderStatus(req.body.order_id, DELIVERY_ORDER_STATUS.FAIL);
+			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+		}else if([
+			DELIVERY_ORDER_STATUS.CUSTOMER_PICKED_UP,
+			DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
+		].includes(order.status)){
+			order = await DeliveryOrderDao.updateOrderStatus(req.body.order_id, DELIVERY_ORDER_STATUS.SUCCESS);
+			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+		}
+
 		order = await DeliveryOrderDao.getOrder(req.body.order_id, { include: { user: true, driver: true, delivery_driver: true } });
 		sendDeliveryOrderNotifications(order.user, order.driver, order.user_id, order.driver_id, req.body.status);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * POST /delivery/order/merchant_accept
+ * @tag Delivery
+ * @summary Process a delivery order from PENDING status.
+ * @description Processes the order payment capture and moves the order to the next state accordingly.
+ * @operationId merchantAcceptOrder
+ * @bodyDescription Request body must include 'order_id' to identify the order.
+ * @bodyContent {ProcessOrderRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the processed order in the response body.
+ * @responseContent {DeliveryOrder} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ */
+async function merchantAcceptOrder(req, res) {
+	const { order_id, preparation_time } = req.body
+	try {
+
+		let order = await DeliveryOrderDao.getOrder(order_id);
+		console.info("got into merchantAcceptOrder", JSON.stringify(order.payment_intent_id))
+		if (order.payment.type === "CARD") {
+			order = await DeliveryOrderDao.updateOrder(order.order_id, {
+				payment: {
+					...order.payment,
+					status: "IN_PAYMENT_PROCESSING",
+				},
+			});
+			// Status update happens elsewhere for CARD payments
+			await stripe.client.paymentIntents.capture(
+				order.payment_intent_id,
+				{
+					metadata:{
+						preparation_time:preparation_time
+					}
+				}
+			);
+			console.log("Accepted order")
+			return res.status(200).json({message:"Accept successful, awaiting stripe handling."});
+		}
+
+		if (order.payment.type === "WALLET") {
+			const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
+			const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT } = await calculateDeliveryOrderPaymentCuts(order);
+
+			const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, restaurant_stripe, MERCHANT_CUT + MERCHANT_CREDIT_CUT, order.order_id, "delivery");
+			const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, "platform", PLATFORM_CUT + PLATFORM_CREDIT_CUT, order.order_id, "delivery");
+		}
+
+		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL);
+		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED);
+		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_PREPARING);
+		if(preparation_time){
+			order = await DeliveryOrderDao.updateOrderPickupTime(
+				order.order_id,
+				new Date(Date.now() + preparation_time * 60000)
+			);
+			io.to("order_" + order.order_id).emit("order_pickup_time", order);
+		}
+		// if(order.business_id){
+		// 	io.to("orders_" + order.business_id).emit("order_status_change__delivery", order);
+		// }
+		io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+		res.status(200).json(order);
+	} catch (e) {
+		console.log(e);
+		await handlePaymentCleanup(order_id);
+		let order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED);
+		io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+
+		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.FAIL);
+		io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
 		res.status(500).json(e);
 	}
 }
@@ -1059,6 +1196,33 @@ async function updateDeliveryOrderTimeline(req, res) {
 	}
 }
 
+
+/**
+ * POST /delivery/order/add_to_timeline
+ * @tag Delivery
+ * @summary Update a delivery order's timeline by appending an entry.
+ * @description Appends a new timeline entry with the given status and optional extra data in entry_data.
+ * @operationId updateDeliveryOrderTimeline
+ * @bodyDescription Request body must include 'order_id', and the new entry's status.
+ * @bodyContent {updateDeliveryOrderTimelineRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the updated order with the new timeline in the response body.
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ */
+async function addToDeliveryOrderTimeline(req, res) {
+	const { order_id, status, entry_data } = req.body;
+
+	try {
+		let order = await DeliveryOrderDao.addTimelineEntry(order_id, status, entry_data || {});
+		io.to("order_" + order.order_id).emit("order_timeline_change_delivery", order);
+		res.status(200).json(order);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
 /**
  * POST /delivery/order/update
  * @tag Taxi
@@ -1098,10 +1262,10 @@ async function updateDeliveryOrder(req, res) {
 async function getDeliveryOrdersToday(req, res) {
 	try {
 		const orders = await prisma.delivery_orders.findMany({
-			where: { status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED, created_at: { gte: new Date(new Date().setHours(0,0,0,0)) } }
+			where: { status: DELIVERY_ORDER_STATUS.SUCCESS, created_at: { gte: new Date(new Date().setHours(0,0,0,0)) } }
 		});
 		if (orders) {
-			return res.status(200).json({orders: orders.length, amount: todaysEarnings(orders, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED) });
+			return res.status(200).json({orders: orders.length, amount: todaysEarnings(orders, DELIVERY_ORDER_STATUS.SUCCESS) });
 		}
 	} catch (e) {
 		console.error("DeliveryOrderController", e);
@@ -1109,17 +1273,64 @@ async function getDeliveryOrdersToday(req, res) {
 	}
 }
 
+/**
+ * POST /delivery/order/dispatcher_cancel
+ * @tag Delivery
+ * @summary Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
+ * @description Cancel and if necessary refund an order
+ * @operationId dispatcherCancel
+ * @response 200 - Successful operation. Returns the updated Order.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+async function dispatcherCancel(req,res){
+	const {order_id} = req.body
+	try {
+		const old_order = await DeliveryOrderDao.getOrder(order_id)
+		if([
+			DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED,
+			DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
+			DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED,
+			DELIVERY_ORDER_STATUS.CUSTOMER_PICKED_UP,
+			DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+			...DELIVERY_ORDER_END_STATES
+		].includes(old_order.status)){
+			throw new Error("This order is not in a cancelable state.")
+		}
+		let new_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED)
+		//TODO: handle extras for socket on FE if needed.
+		io.to("order_" + new_order.order_id).emit("order_status_change__delivery", new_order);
+
+		new_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.FAIL)
+		io.to("order_" + new_order.order_id).emit("order_status_change__delivery", new_order);
+
+		await handlePaymentRefund(new_order)
+		//TODO: handle on FE if needed.
+		io.to("order_" + new_order.order_id).emit("order_canceled", new_order);
+
+		res.status(200).json(new_order)
+	} catch (e) {
+		console.error("Error canceling order", e);
+		res.status(500).json(e);
+	}
+}
+
+
 module.exports = {
 	getDeliveryOrders,
 	getDeliveryOrdersToday,
 	getActiveDeliveryOrders,
 	getOrder,
 	createOrder,
-	acceptOrder,
+	merchantAcceptOrder,
+	acceptOrderDelivery,
+	cancelOrderDelivery,
 	completeOrder,
 	updateOrderStatus,
+	dispatcherCancel,
 	getCompletedDeliveryOrdersByDriverId,
 	updateDeliveryOrderTimeline,
+	addToDeliveryOrderTimeline,
 	getUserByDeliveryOrderId,
 	updateOrderPickupTime,
 	getDeliveryOrdersByBusinessId,
