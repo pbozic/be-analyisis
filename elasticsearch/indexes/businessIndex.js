@@ -1,6 +1,7 @@
 const esClient = require("../client");
 const prisma = require("../../prisma/prisma");
 const Constants = require("../../lib/constants");
+const fs = require("fs");
 async function createBusinessIndex(force = false) {
     try {
         const indexExists = await esClient.indices.exists({ index: 'business_index' });
@@ -178,7 +179,12 @@ async function indexBusinesses(business_id = null) {
 							in: ['BANNER', 'LOGO']
 						}
 					}
-				}
+				},
+                promo_sections: {
+                    include: {
+                        promo_section: true
+                    }
+                }
             }
         });
         
@@ -201,6 +207,7 @@ async function indexBusinesses(business_id = null) {
                     banner = doc.files[0].url;
                 }
             }
+            fs.writeFileSync('business.json', JSON.stringify(business, null, 2))
             const doc = {
                 business_id: business.business_id,
                 name: business.name,
@@ -220,7 +227,7 @@ async function indexBusinesses(business_id = null) {
                     menu_category_name: menu.categories.flatMap(cat =>
                         Object.values(cat.names).filter(value => value !== "")
                     ),
-                    menu_category_id: menu.categories.map(cat => cat.menu_category_id.category.categories_id),
+                    menu_category_id: menu.categories.map(cat => cat.menu_categories_catgeories?.category?.categories_id),
                     translations: menu.categories.flatMap(cat =>
                         cat.menu_categories_catgeories.flatMap(rel =>
                             rel.category.translatable?.translations.map(t => t.translation) || []
@@ -236,7 +243,10 @@ async function indexBusinesses(business_id = null) {
                             description: Object.values(item.description).filter(value => value !== "")
                         }))
                     )
-                }))
+                })),
+                promo_sections: business.promo_sections.map(section => (
+                    section.promo_section.id
+                )),
             };
             
             
