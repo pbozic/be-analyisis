@@ -546,12 +546,10 @@ async function updateOrderDeliveryTime(order_id, delivery_time) {
 
 async function completeOrder(order_id) {
 	try {
-		let delivery_order = await prisma.delivery_orders.update({
+		await updateOrderStatus(order_id,DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED)
+		let delivery_order = await prisma.delivery_orders.findFirst({
 			where: {
 				order_id
-			},
-			data: {
-				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
 			},
 			include: {
 				business: {

@@ -228,9 +228,8 @@ async function createOrder(req, res) {
 						},
 					});
 					order = await DeliveryOrderDao.updateOrderStatus(order.order_id,DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED)
-					// if(order.business_id){
-					// 	io.to("orders_" + order.business_id).emit("order_status_change__delivery", order);
-					// }
+					io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+					order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.FAIL);
 					io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
 					throw err
 				}
@@ -704,7 +703,7 @@ async function completeOrder(req, res) {
 				const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, delivery_business_stripe, DISCOUNTED_DELIVERY_COST_CENTS, order.order_id, "delivery");
 			}
 		}
-
+		order = await DeliveryOrderDao.updateOrderStatus(order.order_id,DELIVERY_ORDER_STATUS.SUCCESS)
 		io.to("order_" + order.order_id).emit("order_completed__delivery", order);
 		io.emit("driver_available", driver);
 
@@ -1017,10 +1016,23 @@ async function updateOrderStatus(req, res) {
 		}
 
 		order = await DeliveryOrderDao.updateOrderStatus(req.body.order_id, req.body.status);
-		// if(order.business_id){
-		// 	io.to("orders_" + order.business_id).emit("order_status_change__delivery", order);
-		// }
 		io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+
+		if([
+			DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED,
+			DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
+			DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED,
+		].includes(req.order.status)){
+			order = await DeliveryOrderDao.updateOrderStatus(req.body.order_id, DELIVERY_ORDER_STATUS.FAIL);
+			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+		}else if([
+			DELIVERY_ORDER_STATUS.CUSTOMER_PICKED_UP,
+			DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
+		].includes(req.order.status)){
+			order = await DeliveryOrderDao.updateOrderStatus(req.body.order_id, DELIVERY_ORDER_STATUS.SUCCESS);
+			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+		}
+
 		order = await DeliveryOrderDao.getOrder(req.body.order_id, { include: { user: true, driver: true, delivery_driver: true } });
 		sendDeliveryOrderNotifications(order.user, order.driver, order.user_id, order.driver_id, req.body.status);
 		res.status(200).json(order);
@@ -1096,9 +1108,9 @@ async function merchantAcceptOrder(req, res) {
 		console.log(e);
 		await handlePaymentCleanup(order_id);
 		let order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED);
-		// if(order.business_id){
-		// 	io.to("orders_" + order.business_id).emit("order_status_change__delivery", order);
-		// }
+		io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+
+		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.FAIL);
 		io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
 		res.status(500).json(e);
 	}
@@ -1272,8 +1284,20 @@ async function dispatcherCancel(req,res){
 	const {order_id} = req.body
 	try {
 		const old_order = await DeliveryOrderDao.getOrder(order_id)
+		if([
+			DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED,
+			DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
+			DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED,
+			DELIVERY_ORDER_STATUS.CUSTOMER_PICKED_UP,
+			DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
+		].includes(old_order.status)){
+			throw new Error("This order is not in a cancelable state.")
+		}
 		let new_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED)
 		//TODO: handle extras for socket on FE if needed.
+		io.to("order_" + new_order.order_id).emit("order_status_change__delivery", new_order);
+
+		new_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.FAIL)
 		io.to("order_" + new_order.order_id).emit("order_status_change__delivery", new_order);
 
 		if (old_order.status === DELIVERY_ORDER_STATUS.PENDING){
@@ -1281,7 +1305,6 @@ async function dispatcherCancel(req,res){
 		}else{
 			await handlePaymentRefund(new_order)
 		}
-
 		//TODO: handle on FE if needed.
 		io.to("order_" + new_order.order_id).emit("order_canceled", new_order);
 
