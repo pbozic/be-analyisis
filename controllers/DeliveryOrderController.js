@@ -1064,30 +1064,35 @@ async function merchantAcceptOrder(req, res) {
 
 		let order = await DeliveryOrderDao.getOrder(order_id);
 		console.info("got into merchantAcceptOrder", JSON.stringify(order.payment_intent_id))
+		const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
+		const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT } = await calculateDeliveryOrderPaymentCuts(order);
+
 		if (order.payment.type === "CARD") {
-			order = await DeliveryOrderDao.updateOrder(order.order_id, {
-				payment: {
-					...order.payment,
-					status: "IN_PAYMENT_PROCESSING",
-				},
-			});
-			// Status update happens elsewhere for CARD payments
-			await stripe.client.paymentIntents.capture(
-				order.payment_intent_id,
-				{
-					metadata:{
-						preparation_time:preparation_time
+			if(Math.round(order.details.total_price*100)===order.details.credit_discount){
+				const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, restaurant_stripe, MERCHANT_CREDIT_CUT, order.order_id, "delivery");
+				const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, "platform", PLATFORM_CREDIT_CUT, order.order_id, "delivery");
+			}else{
+				order = await DeliveryOrderDao.updateOrder(order.order_id, {
+					payment: {
+						...order.payment,
+						status: "IN_PAYMENT_PROCESSING",
+					},
+				});
+				// Status update happens elsewhere for CARD payments
+				await stripe.client.paymentIntents.capture(
+					order.payment_intent_id,
+					{
+						metadata:{
+							preparation_time:preparation_time
+						}
 					}
-				}
-			);
-			console.log("Accepted order")
-			return res.status(200).json({message:"Accept successful, awaiting stripe handling."});
+				);
+				console.log("Accepted order")
+				return res.status(200).json({message:"Accept successful, awaiting stripe handling."});
+			}
 		}
 
 		if (order.payment.type === "WALLET") {
-			const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
-			const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT } = await calculateDeliveryOrderPaymentCuts(order);
-
 			const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, restaurant_stripe, MERCHANT_CUT + MERCHANT_CREDIT_CUT, order.order_id, "delivery");
 			const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, "platform", PLATFORM_CUT + PLATFORM_CREDIT_CUT, order.order_id, "delivery");
 		}
