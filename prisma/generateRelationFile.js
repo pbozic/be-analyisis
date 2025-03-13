@@ -22,7 +22,7 @@ async function generateRelationMap() {
 
     // Save to JSON file
     fs.writeFileSync('./relationMap.json', JSON.stringify(relationMap, null, 2));
-    console.log("✅ Relation map generated successfully!");
+    console.log(" Relation map generated successfully!");
     await prisma.$disconnect();
 }
 

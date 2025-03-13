@@ -25,6 +25,7 @@ const SMSHelper = require("../lib/SMS");
 const { parseTelephone } = require("../lib/helpersLib");
 const prisma = new PrismaClient();
 const { DOCUMENT_TYPE } = require("../lib/constants");
+const { businessIndex } = require("../elasticsearch");
 require('dotenv').config();
 
 /**
@@ -250,7 +251,7 @@ async function refreshToken(req, res) {
 		return res.status(400).send("Access Denied. No refresh token provided.");
 	}
 
-	jwt.verify(refreshToken, process.env.JWT_TOKEN_SECRET, function (err, decoded) {
+	jwt.verify(refreshToken, process.env.JWT_TOKEN_SECRET, async function (err, decoded) {
 		if (err) {
 			return res.status(401).json({ error: "Access Denied. Token expired.", e: err });
 		}
@@ -258,9 +259,16 @@ async function refreshToken(req, res) {
 		delete decoded["exp"];
 		const access_token = generateAccessToken(decoded.user);
 		const refresh_token = generateRefreshToken(decoded.user);
-
+		let userDb = await UserDao.getUserById(decoded.user.user_id,
+			{
+				include: {
+					addresses: true
+				},
+			}
+		);
+		delete userDb["password"];
 		let user = {
-			...decoded,
+			...userDb,
 			access_token,
 			refresh_token,
 		};
@@ -845,7 +853,7 @@ async function registerMerchantService(req, res) {
 		const menu = await MenuDao.createMenu(business.business_id);
 
 		console.log("ACCOUNT STRIPE ONBOARDING LINK", accountLink.url)
-
+		businessIndex(business.business_id);
 		res.status(201).json({
 			message: "Merchant service business registered successfully",
 			business,
@@ -921,6 +929,7 @@ async function registerBusiness(req, res) {
 
 		let businessUsers = [];
 		for (const userInfo of req.body.users) {
+			userInfo.user.data.date_of_birth = new Date(userInfo.user.data.date_of_birth);
 			const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userInfo.user, business.business_id);
 
 			let addresses = [];
@@ -931,7 +940,6 @@ async function registerBusiness(req, res) {
 					addresses.push(address);
 				}
 			}
-
 			businessUsers.push({ businessUser, addresses });
 		}
 

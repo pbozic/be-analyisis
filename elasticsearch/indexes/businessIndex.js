@@ -1,13 +1,18 @@
 const esClient = require("../client");
 const prisma = require("../../prisma/prisma");
-
-async function createBusinessIndex() {
+const Constants = require("../../lib/constants");
+async function createBusinessIndex(force = false) {
     try {
         const indexExists = await esClient.indices.exists({ index: 'business_index' });
 
         if (indexExists) {
             console.log("⚠️ Index 'business_index' already exists. Deleting...");
-            await esClient.indices.delete({ index: 'business_index' });
+            if (force) {
+                await esClient.indices.delete({ index: 'business_index' });
+            } else {
+                console.log("🚫 Skipping index creation. Use --force to override.");
+                return;
+            }
         }
 
         console.log("🚀 Creating business_index with optimized mappings...");
@@ -33,9 +38,18 @@ async function createBusinessIndex() {
                         location: { type: "geo_point" }, // Allows geo-based queries
                         popular: { type: "boolean" },
                         new: { type: "boolean" },
+                        working_hours: { type: "object" },
+                        delivery_address: { type: "object" },
+                        address: { type: "object" },
+                        seats: { type: "integer" },
+                        restaurant_overwhelmed: { type: "boolean" },
+                        logo: { type: "text" },
+                        banner: { type: "text" },
+                        telephone: { type: "text" },
                         menus: {
                             type: "nested",
                             properties: {
+                                menu_category_id: { type: "keyword" },
                                 menu_category_name: {
                                     type: "text",
                                     analyzer: "custom_text_analyzer"
@@ -70,7 +84,7 @@ async function createBusinessIndex() {
             }
         });
 
-        console.log("✅ business_index created successfully.");
+        console.log(" business_index created successfully.");
     } catch (error) {
         console.error("❌ Error creating business_index:", error);
     }
@@ -102,7 +116,7 @@ async function indexBusinesses(business_id = null) {
     //  - Word update
 
     try {
-        await createBusinessIndex();
+        await createBusinessIndex(true);
         console.log("🚀 Fetching businesses from database...");
         
         const whereClause = { type: "MERCHANT" };
@@ -154,11 +168,21 @@ async function indexBusinesses(business_id = null) {
                             }
                         }
                     }
-                }
+                },
+                documents: {
+					include: {
+						files: true // Full nested objects
+					},
+					where: {
+						document_type: {
+							in: ['BANNER', 'LOGO']
+						}
+					}
+				}
             }
         });
         
-        console.log(`✅ Found ${businesses.length} businesses. Preparing data for indexing...`);
+        console.log(` Found ${businesses.length} businesses. Preparing data for indexing...`);
 
         const bulkOps = [];
 
@@ -168,18 +192,35 @@ async function indexBusinesses(business_id = null) {
                 console.warn(`⚠️ Skipping ${business.name} (No menus found)`);
                 continue;
             }
-
+            let logo, banner;
+            for (let doc of business.documents) {
+                if (doc.document_type === Constants.DOCUMENT_TYPE.LOGO) {
+                    logo = doc.files[0].url;
+                }
+                if (doc.document_type === Constants.DOCUMENT_TYPE.BANNER) {
+                    banner = doc.files[0].url;
+                }
+            }
             const doc = {
                 business_id: business.business_id,
                 name: business.name,
                 description: business.description,
                 popular: business.popular,
                 new: business.new,
+                working_hours: business.working_hours,
+                delivery_address: business.delivery_address,
+                address: business.address,
+                seats: business.seats,
+                restaurant_overwhelmed: business.restaurant_overwhelmed,
+                logo: logo,
+                banner: banner,
+                telephone: business.telephone,
                 location: business.delivery_address? { lat: parseFloat(business.delivery_address.latitude), lon: parseFloat(business.delivery_address.longitude) } : { lat: parseFloat(business.address.latitude), lon: parseFloat(usiness.address.longitude) },
                 menus: business.menus.map(menu => ({
                     menu_category_name: menu.categories.flatMap(cat =>
                         Object.values(cat.names).filter(value => value !== "")
                     ),
+                    menu_category_id: menu.categories.map(cat => cat.menu_category_id.category.categories_id),
                     translations: menu.categories.flatMap(cat =>
                         cat.menu_categories_catgeories.flatMap(rel =>
                             rel.category.translatable?.translations.map(t => t.translation) || []
@@ -202,8 +243,8 @@ async function indexBusinesses(business_id = null) {
             console.log(JSON.stringify(doc))
             
             bulkOps.push(
-                { index: { _index: 'business_index', _id: business.business_id } },
-                doc
+                { update: { _index: 'business_index', _id: business.business_id } }, // Use business_id as _id
+                { doc, doc_as_upsert: true } // Update if exists, create if not
             );
         }
         
@@ -230,7 +271,7 @@ async function indexBusinesses(business_id = null) {
                     await esClient.bulk({ refresh: true, body: failedOps });
                 }
             } else {
-                console.log(`✅ Successfully indexed ${bulkOps.length / 2} businesses!`);
+                console.log(` Successfully indexed ${bulkOps.length / 2} businesses!`);
             }
         } else {
             console.log("⚠️ No businesses to index.");

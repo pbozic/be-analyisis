@@ -1,5 +1,6 @@
 const prisma = require("../prisma/prisma");
 const AddressDao = require('./Address');
+const DocumentDao = require('./Document');
 const Constants = require("../lib/constants");
 const { reorderMenusAndCategories } = require("../lib/businessHelpers"); // Assuming Address.js exports are imported as AddressDao
 
@@ -65,7 +66,51 @@ const getBusinessById = async (business_id) => {
 		throw new Error(error);
 	}
 };
-
+const getBusinessesForSearchById = async (business_id) => {
+	try {
+		if (!Array.isArray(business_id)) {
+			business_id = [business_id];
+		}
+		
+		return await prisma.business.findMany({
+			where: {
+				business_id: {
+					in: business_id
+				}
+			},
+			select: {
+				// ✅ Select specific fields from the root
+				business_id: true,
+				name: true,
+				description: true,
+				telephone: true,
+				working_hours: true,
+				seats: true,
+				minimum_order: true,
+				offers_daily_meals: true,
+				popular: true,
+				new: true,
+				restaurant_overwhelmed: true,
+				address: true, // Full object
+				delivery_address: true, // Full object
+				documents: {
+					include: {
+						files: true // Full nested objects
+					},
+					where: {
+						document_type: {
+							in: ['BANNER', 'LOGO']
+						}
+					}
+				}
+			}
+		});
+		
+	} catch (error) {
+		console.error("Error retrieving business for search:", error);
+		throw new Error(error);
+	}
+}
 const getBusinessByEmail = async (email) => {
 	try {
 		return await prisma.business.findUnique({
@@ -732,5 +777,6 @@ module.exports = {
 	getBusinessesByTypeMainInformation,
 	updateBusinessFinances,
 	getBusinessStripeByBusinessId,
-	getStripeIdsForAllBusinesses
+	getStripeIdsForAllBusinesses,
+	getBusinessesForSearchById
 };

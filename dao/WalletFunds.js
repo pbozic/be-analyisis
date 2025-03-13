@@ -378,7 +378,6 @@ async function releaseFunds(walletFundsId, releaseAmount) {
 	}
 }
 
-
 async function getAvailableWalletBalance(userId) {
 	try {
 		const result = await prisma.wallet_funds.aggregate({

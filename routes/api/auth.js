@@ -19,6 +19,7 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const axios = require("axios");
 const jwkToPem = require('jwk-to-pem');
 const fs = require('fs');
+const { Console } = require("console");
 async function getUser(id, res) {
 	try {
 		let user = await UserDao.getUserById(id, {
@@ -75,7 +76,7 @@ async function getUser(id, res) {
 			refresh_token,
 			payment_methods
 		};
-		return res.status(200).json(user);
+		return user
 	} catch (error) {
 		console.log(error)
 		return res.status(400).json({ error: "Error obtaining user information" });
@@ -103,6 +104,7 @@ router.post('/login/apple', async (req, res) => {
 		let web = false;
 		let decodedToken;
 		if (code) {
+			console.log("Apple login POST web", code)
 			web = true;
 			const tokenResponse = await axios.post("https://appleid.apple.com/auth/token", new URLSearchParams({
 				client_id: process.env.APPLE_SIGN_IN_CLIENT_ID,  // Your Apple Service ID
@@ -120,6 +122,7 @@ router.post('/login/apple', async (req, res) => {
 			decodedToken = await verifyAppleToken(id_token, true);
 
 		} else {
+			console.log("Apple login POST app", jwt)
 			decodedToken = await verifyAppleToken(jwt);
 		}
 	  // Decode the Apple ID token
@@ -133,7 +136,12 @@ router.post('/login/apple', async (req, res) => {
 	  });
   
 	  if (user.length > 0) {
-		 return await getUser(user[0].user_id, res);
+		user = await getUser(user[0].user_id, res);
+		if (web) {
+			return res.redirect(`${process.env.FRONTEND_URL}/#apple-login?jwt=${user.access_token}`);
+		  // If the user exists, generate a JWT token and return it
+		}
+		 return res.json(user);
 	  }
   
 	  // If the user does not exist, return the auth data (no JWT token)
@@ -145,8 +153,7 @@ router.post('/login/apple', async (req, res) => {
 	  }
 	if (user.length > 0) {
 		// User exists, generate session/token & redirect to frontend
-		const jwtToken = generateJwtToken(user[0].user_id); // Your JWT generator function
-		return res.redirect(`${process.env.FRONTEND_URL}/#register?jwt=${jwtToken}`);
+		
 	}
 
 	// If user does not exist, return authentication data

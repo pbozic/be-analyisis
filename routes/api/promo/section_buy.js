@@ -3,6 +3,7 @@ const router = express.Router();
 const PromoController = require('../../../controllers/PromoController');
 
 router.get('/', PromoController.getAllPromoSectionBuys);
+router.post('/request', PromoController.createCheckoutSessionForPromoBuy);
 router.get('/section/:section', PromoController.getAllPromoSectionBuysBySection);
 router.get('/business/:business_id', PromoController.getAllPromoSectionBuysByBusiness);
 router.get('/tier/:tier', PromoController.getAllPromoSectionBuysByTier);

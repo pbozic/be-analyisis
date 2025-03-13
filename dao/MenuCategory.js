@@ -3,6 +3,7 @@ const prisma = require("../prisma/prisma");
 const createMenuCategory = async (menuId, categoryData) => {
 	// Handle creating categories
 	let categories = categoryData.category_ids ? categoryData.category_ids : [];
+	delete categoryData.category_ids;
 	
 	let menu_category = await prisma.menu_categories.create({
 		data: {
@@ -96,6 +97,11 @@ const getMenuCategoriesByMenuId = async (menu_id) => {
 						}
 					}
 				}
+			},
+			menu_categories_catgeories: {
+				include: {
+					category: true
+				}
 			}
 		}
 	});
@@ -134,6 +140,11 @@ const getMenuCategoriesByBusinessId = async (business_id) => {
 						}
 					}
 				}
+			},
+			menu_categories_catgeories: {
+				include: {
+					category: true
+				}
 			}
 		}
 	});
@@ -159,6 +170,21 @@ const getMenuCategoriesByBusinessId = async (business_id) => {
 };
 
 const deleteMenuCategory = async (menu_category_id) => {
+	const menu_category = await prisma.menu_categories.findUnique({
+		where: {
+			menu_category_id: menu_category_id
+		},
+		include: {
+			menu_categories_catgeories: true
+		}
+	});
+	if (menu_category.menu_categories_catgeories.length > 0) {
+		await prisma.menu_categories_categories.deleteMany({
+			where: {
+				menu_categories_id: menu_category_id
+			}
+		});
+	}
 	return await prisma.menu_categories.delete({
 		where: {
 			menu_category_id: menu_category_id
@@ -172,6 +198,13 @@ const updateMenuCategory = async (menu_category_id, data) => {
 			menu_category_id: menu_category_id,
 		},
 		data: data,
+		include: {
+			menu_categories_catgeories: {
+				include: {
+					category: true
+				}
+			}
+		}
 	});
 };
 
@@ -221,7 +254,7 @@ const addCategoryToMenuCategory = async (menu_category_id, category_id) => {
 				connect: { menu_category_id: menu_category_id }
 			},
 			category: {
-				connect: { category_id: category_id }
+				connect: { categories_id: category_id }
 			}
 		}
 	});
@@ -231,16 +264,27 @@ const addCategoryToMenuCategory = async (menu_category_id, category_id) => {
 const removeCategoryFromMenuCategory = async (menu_category_id, category_id) => {
 	return await prisma.menu_categories_categories.delete({
 		where: {
-			menu_category_id_category_id: {
-				menu_category_id: menu_category_id,
-				category_id: category_id
+			menu_categories_id_categories_id: {
+				menu_categories_id: menu_category_id,
+				categories_id: category_id
 			}
 		}
 	});
 };
 
+const updateDailyMealMenuPrice = async (menu_category_id, price) => {
+	return await prisma.menu_categories.update({
+		where: {
+			menu_category_id: menu_category_id
+		},
+		data: {
+			price: price
+		}
+	});
+}
 
 module.exports = {
+	updateDailyMealMenuPrice,
 	createMenuCategory,
 	addMenuCategoryIdToOrder,
 	removeMenuCategoryIdFromOrder,
