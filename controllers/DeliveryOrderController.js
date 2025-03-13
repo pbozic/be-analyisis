@@ -1025,13 +1025,13 @@ async function updateOrderStatus(req, res) {
 			DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED,
 			DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
 			DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED,
-		].includes(req.order.status)){
+		].includes(order.status)){
 			order = await DeliveryOrderDao.updateOrderStatus(req.body.order_id, DELIVERY_ORDER_STATUS.FAIL);
 			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
 		}else if([
 			DELIVERY_ORDER_STATUS.CUSTOMER_PICKED_UP,
 			DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
-		].includes(req.order.status)){
+		].includes(order.status)){
 			order = await DeliveryOrderDao.updateOrderStatus(req.body.order_id, DELIVERY_ORDER_STATUS.SUCCESS);
 			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
 		}
