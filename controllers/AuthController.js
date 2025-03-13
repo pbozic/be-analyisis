@@ -440,7 +440,7 @@ async function registerTaxiService(req, res) {
 							S3Helper.SaveObject(key, base64, file.mime_type, {
 								users: [newUser.user_id],
 								businesses: [business.business_id]
-							}, file, document.public);
+							}, fileData, document.public);
 						}
 						await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 					}
@@ -460,7 +460,7 @@ async function registerTaxiService(req, res) {
 							S3Helper.SaveObject(key, base64, file.mime_type, {
 								users: [newUser.user_id],
 								businesses: [business.business_id]
-							}, file, document.public);
+							}, fileData, document.public);
 						}
 						await DocumentDao.linkDocumentToDriver(document.document_id, driver.driver_id);
 					}
@@ -496,7 +496,7 @@ async function registerTaxiService(req, res) {
 									S3Helper.SaveObject(key, base64, file.mime_type, {
 										users: [newUser.user_id],
 										businesses: [business.business_id]
-									}, file, document.public);
+									}, fileData, document.public);
 								}
 								await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
 							}
@@ -521,7 +521,7 @@ async function registerTaxiService(req, res) {
 					S3Helper.SaveObject(key, base64, file.mime_type, {
 						users: [newUser.user_id],
 						businesses: [business.business_id]
-					}, file, document.public);
+					}, fileData, document.public);
 				}
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
@@ -644,7 +644,7 @@ async function registerDeliveryService(req, res) {
 							delete file.base64;
 							let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-							S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id] }, file, document.public);
+							S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id] }, fileData, document.public);
 						}
 						await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 					}
@@ -662,7 +662,7 @@ async function registerDeliveryService(req, res) {
 							delete file.base64;
 							let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-							S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id] }, file, document.public);
+							S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id] }, fileData, document.public);
 						}
 						await DocumentDao.linkDocumentToDeliveryDriver(document.document_id, deliveryDriver.delivery_driver_id);
 					}
@@ -692,7 +692,7 @@ async function registerDeliveryService(req, res) {
 									delete file.base64;
 									let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 									let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-									S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id] }, file, document.public);
+									S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id] }, fileData, document.public);
 								}
 								await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
 							}
@@ -819,7 +819,7 @@ async function registerMerchantService(req, res) {
 					delete file.base64;
 					let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-					await S3Helper.SaveObject(key, base64, file.mime_type, { businesses: [business.business_id] }, null, document.public);
+					await S3Helper.SaveObject(key, base64, file.mime_type, { businesses: [business.business_id] }, fileData, document.public);
 				}
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
@@ -952,7 +952,7 @@ async function registerBusiness(req, res) {
 					delete file.base64;
 					let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-					await S3Helper.SaveObject(key, base64, file.mime_type, { businesses: [business.business_id] }, null, document.public);
+					await S3Helper.SaveObject(key, base64, file.mime_type, { businesses: [business.business_id] }, fileData, document.public);
 				}
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}

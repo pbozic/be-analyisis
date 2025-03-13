@@ -29,6 +29,7 @@ const getMenuByBusinessId = async (business_id, isDailyMeal = false, startDate =
 		where: {
 			business_id: business_id,
 			isDailyMeal: isDailyMeal,
+			active: true,
 			...extraWhereArgs
 		},
 		include: {

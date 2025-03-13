@@ -70,6 +70,8 @@ async function createBusinessIndex(force = false) {
                                 }
                             }
                         },
+                        promo_sections: { type: "keyword" },
+
                         word_buys: {
                             type: "nested",
                             properties: {
@@ -245,7 +247,7 @@ async function indexBusinesses(business_id = null) {
                     )
                 })),
                 promo_sections: business.promo_sections.map(section => (
-                    section.promo_section.id
+                    section.promo_section.promo_section_id
                 )),
             };
             

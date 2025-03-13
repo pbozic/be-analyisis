@@ -487,7 +487,7 @@ async function createMenuItem(req, res) {
 				delete file.base64;
 				let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 				let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-				await S3Helper.SaveObject(key, base64, file.mime_type, {}, file, document.public);
+				await S3Helper.SaveObject(key, base64, file.mime_type, {}, fileData, document.public);
 			}
 		}
 		
@@ -499,7 +499,7 @@ async function createMenuItem(req, res) {
 		res.status(201).json(menuItem);
 	} catch (e) {
 		console.error("Error creating menu item:", e);
-		res.status(400).json({ error: "Error creating menu item", e });
+		res.status(400).json({ error: "Error creating menu item", message: e.message });
 	}
 }
 
@@ -530,7 +530,7 @@ async function createDailyMealsMenu(req, res) {
 			delete file.base64;
 			let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 			let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-			await S3Helper.SaveObject(key, base64, file.mime_type, {}, file, document.public);
+			await S3Helper.SaveObject(key, base64, file.mime_type, {}, fileData, document.public);
 		}
 
 		await linkDocumentToBusiness(document.document_id, business_id);
@@ -636,7 +636,7 @@ async function updateMenuItem(req, res) {
 				delete file.base64;
 				let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 				let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-				await S3Helper.SaveObject(key, base64, file.mime_type, {}, file, document.public);
+				await S3Helper.SaveObject(key, base64, file.mime_type, {}, fileData, document.public);
 			}
 			//const menuItem = await MenuItemDao.updateMenuItem(menu_item_id, data);
 			await DocumentDao.linkDocumentToMenuItem(document.document_id, menuItem?.menu_item_id);

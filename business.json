@@ -1,20 +1,20 @@
 {
-  "business_id": "7f2dabef-2d7d-41ac-b6e1-8afb724b5fd0",
-  "address_id": "5920f697-c361-46e1-8422-e0381d764089",
-  "delivery_address_id": "5920f697-c361-46e1-8422-e0381d764089",
-  "finance_id": "4c3378d7-688c-4b90-a552-d217bdc3f841",
+  "business_id": "f3fbc652-2582-4c45-b279-188dfcb484fc",
+  "address_id": "cb09c8fe-f2d1-4979-bdf9-2783aeefd759",
+  "delivery_address_id": "cb09c8fe-f2d1-4979-bdf9-2783aeefd759",
+  "finance_id": "ab88cc5d-2f88-438f-9fa2-4b9eb2f2df5e",
   "type": "MERCHANT",
   "is_business_unit": false,
   "business_group_name": null,
-  "name": "Deckow Inc",
-  "description": "Intuitive actuating concept",
+  "name": "Stracke Inc",
+  "description": "Stand-alone zero defect application",
   "tax_id": "98733321",
   "registration_id": "33341",
-  "email": "Kavon_Walsh47@gmail.com",
-  "telephone": "+00022150582",
+  "email": "Letha_Stehr68@hotmail.com",
+  "telephone": "+00050609447",
   "telephone_code": "SI",
-  "telephone_number": "022150582",
-  "website_url": "https://favorite-hydrolyze.name/",
+  "telephone_number": "050609447",
+  "website_url": "https://shabby-understanding.biz",
   "working_hours": {
     "fri": [
       [
@@ -70,12 +70,12 @@
   "offers_daily_meals": false,
   "popular": true,
   "new": true,
-  "created_at": "2025-03-13T10:35:28.770Z",
-  "updated_at": "2025-03-13T10:35:33.028Z",
+  "created_at": "2025-03-13T13:02:14.792Z",
+  "updated_at": "2025-03-13T13:02:18.370Z",
   "parent_business_id": null,
   "reviewable_id": null,
-  "stripe_account_id": "acct_1R298JRRrSk6kj9Q",
-  "stripe_customer_id": "cus_Rw1ATOiijdv3yb",
+  "stripe_account_id": "acct_1R2BQLIOZTiUmKT7",
+  "stripe_customer_id": "cus_Rw3XEwkGmPMmLk",
   "word_buy_stripe_product_id": null,
   "word_buy_stripe_subscription_id": null,
   "daily_users_sorted": [],
@@ -84,10 +84,10 @@
   "activated_at": null,
   "sales_representative_id": null,
   "address": {
-    "address_id": "5920f697-c361-46e1-8422-e0381d764089",
-    "address": "873 Lois Junctions",
-    "latitude": "46.06495481774965",
-    "longitude": "14.605370419759678",
+    "address_id": "cb09c8fe-f2d1-4979-bdf9-2783aeefd759",
+    "address": "83450 Bedford Road",
+    "latitude": "46.044945466785975",
+    "longitude": "14.47113090284727",
     "street": null,
     "house_number": null,
     "city": null,
@@ -95,10 +95,10 @@
     "postal": null
   },
   "delivery_address": {
-    "address_id": "5920f697-c361-46e1-8422-e0381d764089",
-    "address": "873 Lois Junctions",
-    "latitude": "46.06495481774965",
-    "longitude": "14.605370419759678",
+    "address_id": "cb09c8fe-f2d1-4979-bdf9-2783aeefd759",
+    "address": "83450 Bedford Road",
+    "latitude": "46.044945466785975",
+    "longitude": "14.47113090284727",
     "street": null,
     "house_number": null,
     "city": null,
@@ -108,271 +108,28 @@
   "word_buys": [],
   "menus": [
     {
-      "menu_id": "9b4a53e3-f50a-4cca-9337-0c37e13286cb",
-      "business_id": "7f2dabef-2d7d-41ac-b6e1-8afb724b5fd0",
+      "menu_id": "c7c1d3f4-2e2b-420e-9178-d7d01bd41904",
+      "business_id": "f3fbc652-2582-4c45-b279-188dfcb484fc",
       "active": true,
       "menu_categories_ordered": null,
       "isDailyMeal": false,
       "date": null,
-      "categories": [
-        {
-          "menu_category_id": "d743ea61-f638-48c5-b796-1fbc99c289f3",
-          "names": {
-            "bs": "Indijski",
-            "de": "indisch",
-            "en": "Indian",
-            "es": "Indian",
-            "fr": "Indian",
-            "hr": "Indijanac",
-            "it": "Indian",
-            "ru": "Индийский",
-            "sl": "Indijanca",
-            "sr": "Индијски"
-          },
-          "description": {
-            "bs": "Indijska hrana",
-            "de": "Indisches Essen",
-            "en": "Indian Food",
-            "es": "Comida india",
-            "fr": "Nourriture indienne",
-            "hr": "Indijska hrana",
-            "it": "Cibo indiano",
-            "ru": "Индийская еда",
-            "sl": "Indijska hrana",
-            "sr": "Индијска храна"
-          },
-          "categories": [
-            "kosher"
-          ],
-          "business_id": "7f2dabef-2d7d-41ac-b6e1-8afb724b5fd0",
-          "menu_id": "9b4a53e3-f50a-4cca-9337-0c37e13286cb",
-          "order": null,
-          "price": null,
-          "menu_items_ordered": null,
-          "menu_items": [
-            {
-              "menu_item_id": "f12c84d9-9b89-4e2a-b971-a2b62ea6d526",
-              "names": {
-                "bs": "Kengur tikka masala",
-                "de": "Kangaroo Tikka Masala",
-                "en": "Kangaroo Tikka Masala",
-                "es": "Canguro tikka masala",
-                "fr": "Kangourou tikka masala",
-                "hr": "Kengaruo tikka masala",
-                "it": "Kangaroo Tikka Masala",
-                "ru": "Кенгуру Тикка Масала",
-                "sl": "Kangaroo tikka Masala",
-                "sr": "Кенгур тикка масала"
-              },
-              "image": null,
-              "description": {
-                "bs": "Uživajte u ukusu našeg blistavog kengur-kangaroo tikke masale, specijalno kreiranje kuhara napravljenog uz ručno odabrani mramorni kuhar za poboljšanje njegovih boganih, autentičnih okusa.",
-                "de": "Genießen Sie den Geschmack unseres auffälligen Kangaroo Kangaroo Tikka Masala, einer speziellen Kreation eines Küchenchefs aus handgepflücktem Marmorkochgeschirr, um seine reichen, authentischen Aromen zu verbessern.",
-                "en": "Savor the taste of our flashy Kangaroo Kangaroo Tikka Masala, a chef's special creation made with hand-picked Marble cookware to enhance its rich, authentic flavors.",
-                "es": "Saborea el sabor de nuestro llamativo canguro de canguro Tikka Masala, una creación especial del chef hecha con utensilios de cocina de mármol seleccionados para mejorar sus ricos y auténticos sabores.",
-                "fr": "Savourez le goût de notre Kangaroo Kangaroo Tikka Masala, une création spéciale d'un chef à base de ustensiles de cuisine en marbre cueillis à la main pour améliorer ses saveurs riches et authentiques.",
-                "hr": "Uživajte u ukusu našeg blještavog kenguroo kenguroo tikka masala, posebne kreacije kuhara napravljene od ručno odabranog mramornog posuđa kako bi poboljšali njegove bogate, autentične okuse.",
-                "it": "Assapora il gusto del nostro appariscente canguro Kangaroo Tikka Masala, la creazione speciale di uno chef realizzata con pentole in marmo raccolte a mano per migliorare i suoi sapori ricchi e autentici.",
-                "ru": "Отведите вкус нашего яркого кенгуру Кенгуру Тикка Масала, особого творения шеф-повара, сделанного из отобранной мраморной посуды, чтобы улучшить его богатые, подлинные ароматы.",
-                "sl": "Okusite okus našega bliskovitega kengurujskega kenguroo tikka Masala, kuharske posebne stvaritve, narejene z ročno izbrano marno kuhinjsko posodo, da izboljšajo njegove bogate, pristne okuse.",
-                "sr": "Уживајте у укусу нашег блиставог кенгура кенгура кенгура тикка масала, специјално креирање кувара направљеног са ручно изабраним мермерним посудом да би побољшао своје богате, аутентичне укусе."
-              },
-              "allergens": [
-                "4",
-                "9"
-              ],
-              "spicy_level": 2,
-              "unit_size": "1",
-              "price": 16.29,
-              "discount": 0,
-              "sides": [],
-              "extras": [],
-              "ingredients": [],
-              "availability": [
-                "MON",
-                "TUE",
-                "WED",
-                "THU",
-                "FRI",
-                "SAT",
-                "SUN"
-              ],
-              "business_id": "7f2dabef-2d7d-41ac-b6e1-8afb724b5fd0",
-              "menu_category_id": "d743ea61-f638-48c5-b796-1fbc99c289f3",
-              "daily_date": null
-            },
-            {
-              "menu_item_id": "065022b2-8c4d-4894-be63-d3585a82110c",
-              "names": {
-                "bs": "Goose Biryani",
-                "de": "Gänse Biryani",
-                "en": "Goose Biryani",
-                "es": "Ganso biryani",
-                "fr": "Oie biryani",
-                "hr": "Gooski biryani",
-                "it": "Goose Biryani",
-                "ru": "Гус бирьяни",
-                "sl": "Gos biryani",
-                "sr": "Гоосе Бириани"
-              },
-              "image": null,
-              "description": {
-                "bs": "Naša poznata guska Goose Biryani napravljena je praktičnom pažnjom, koristeći tajnu spoj neobičnih začina i svježih sastojaka koji svakog ugriza čine uživo.",
-                "de": "Unser berühmter Gänse -Gänse -Biryani wird mit praktischer Sorgfalt hergestellt, wobei eine geheime Mischung aus ungewöhnlichen Gewürzen und frischen Zutaten verwendet wird, die jeden Bissen zu einer Freude machen.",
-                "en": "Our famous Goose Goose Biryani is made with Practical care, using a secret blend of unusual spices and fresh ingredients that make every bite a delight.",
-                "es": "Nuestro famoso ganso biryani está hecho con atención práctica, utilizando una mezcla secreta de especias inusuales e ingredientes frescos que hacen que cada bocado sea una delicia.",
-                "fr": "Notre célèbre oie oie biryani est faite avec des soins pratiques, en utilisant un mélange secret d'épices inhabituelles et des ingrédients frais qui font de chaque morsure un plaisir.",
-                "hr": "Naš poznati guska guska biryani izrađen je s praktičnom skrbi, koristeći tajnu mješavinu neobičnih začina i svježih sastojaka koji svaki zalogaj čine oduševljenjem.",
-                "it": "La nostra famosa oca biryani è fatta con cura pratica, usando una miscela segreta di spezie insolite e ingredienti freschi che rendono ogni boccone una gioia.",
-                "ru": "Наш знаменитый гусиный гусиный бирьяни сделан с практической уходом, используя секретную смесь необычных специй и свежих ингредиентов, которые делают каждый укус радостным.",
-                "sl": "Naša znamenita gosja gosja biryani je narejena s praktično skrbnostjo, pri čemer uporablja skrivno mešanico nenavadnih začimb in svežih sestavin, zaradi katerih je vsak ugriz navdušen.",
-                "sr": "Наша позната гуска гуска Бириани је направљена са практичном негом, користећи тајну спој необичних зачина и свеже састојке који свако загризе ужитак."
-              },
-              "allergens": [
-                "4",
-                "9"
-              ],
-              "spicy_level": 1,
-              "unit_size": "1",
-              "price": 14.19,
-              "discount": 0,
-              "sides": [],
-              "extras": [],
-              "ingredients": [],
-              "availability": [
-                "MON",
-                "TUE",
-                "WED",
-                "THU",
-                "FRI",
-                "SAT",
-                "SUN"
-              ],
-              "business_id": "7f2dabef-2d7d-41ac-b6e1-8afb724b5fd0",
-              "menu_category_id": "d743ea61-f638-48c5-b796-1fbc99c289f3",
-              "daily_date": null
-            },
-            {
-              "menu_item_id": "fe047b96-1be1-4ab5-97cd-deea68fe6717",
-              "names": {
-                "bs": "Janjetina korma",
-                "de": "Lamm Korma",
-                "en": "Lamb Korma",
-                "es": "Cordero korma",
-                "fr": "Lamb Korma",
-                "hr": "Janjetina Korma",
-                "it": "Lamb Korma",
-                "ru": "Лэмб Корма",
-                "sl": "Jagnječ Korma",
-                "sr": "Јањетина Корма"
-              },
-              "image": null,
-              "description": {
-                "bs": "Naša poznata jagnjeća janjeća Korma napravljena je u ukusnoj njezi, koristeći tajnu mješavinu elegantnih začina i svježih sastojaka koji čine da svaki zagrize užitak.",
-                "de": "Unser berühmtes Lammlammkorma wird aus leckerer Sorgfalt hergestellt, wobei eine geheime Mischung aus eleganten Gewürzen und frischen Zutaten verwendet wird, die jeden Bissen zu einer Freude machen.",
-                "en": "Our famous Lamb Lamb Korma is made with Tasty care, using a secret blend of elegant spices and fresh ingredients that make every bite a delight.",
-                "es": "Nuestro famoso cordero de cordero Korma está hecho con un cuidado sabroso, utilizando una mezcla secreta de especias elegantes e ingredientes frescos que hacen que cada bocado sea una delicia.",
-                "fr": "Notre célèbre korma d'agneau d'agneau est fait avec des soins savoureux, en utilisant un mélange secret d'élégants épices et d'ingrédients frais qui font de chaque morsure un plaisir.",
-                "hr": "Naša poznata janjetina Korma napravljena je od ukusne njege, koristeći tajnu mješavinu elegantnih začina i svježih sastojaka koji svaki zalogaj čine oduševljenjem.",
-                "it": "Il nostro famoso agnello di agnello Korma è realizzato con gustosa cura, usando una miscela segreta di spezie eleganti e ingredienti freschi che rendono ogni boccone una delizia.",
-                "ru": "Наш знаменитый ягненка из ягненка изготовлена ​​из вкусной ухода, используя секретную смесь элегантных специй и свежих ингредиентов, которые делают каждый укус радостным.",
-                "sl": "Naša znamenita jagnjetina jagnjetina je narejena z okusno oskrbo, z uporabo skrivne mešanice elegantnih začimb in svežih sestavin, zaradi katerih je vsak ugriz navdušen.",
-                "sr": "Наша позната јањетина јањетина Корма је направљена са укусном негом, користећи тајну спој елегантних зачина и свеже састојке који свако загризе ужитак."
-              },
-              "allergens": [
-                "4",
-                "9"
-              ],
-              "spicy_level": 3,
-              "unit_size": "1",
-              "price": 19.39,
-              "discount": 0,
-              "sides": [],
-              "extras": [],
-              "ingredients": [],
-              "availability": [
-                "MON",
-                "TUE",
-                "WED",
-                "THU",
-                "FRI",
-                "SAT",
-                "SUN"
-              ],
-              "business_id": "7f2dabef-2d7d-41ac-b6e1-8afb724b5fd0",
-              "menu_category_id": "d743ea61-f638-48c5-b796-1fbc99c289f3",
-              "daily_date": null
-            },
-            {
-              "menu_item_id": "0ed646f6-d5eb-4239-aa40-361b229d033b",
-              "names": {
-                "bs": "Arline Biarani",
-                "de": "Arline Biarani",
-                "en": "Artichoke Biryani",
-                "es": "Arline Biarani",
-                "fr": "Arline biarani",
-                "hr": "Arline biarani",
-                "it": "Arline Biarani",
-                "ru": "АРЛИНЕЙ БИАРАНИ",
-                "sl": "Arline Biarani",
-                "sr": "Арлине Биарани"
-              },
-              "image": null,
-              "description": {
-                "bs": "Koristimo samo najsvježe artičoke u našem artičoku Biryani, pažljivo začinjene blatnim biljem i uparenom sa strane parenog povrća za zadovoljavajući blagovaonicu.",
-                "de": "Wir verwenden nur die frischeste Artischocken in unserer Artischocken Biryani, sorgfältig mit schlammigen Kräutern gewürzt und mit einer Seite gedämpftes Gemüse für ein zufriedenstellendes Esserlebnis gepaart.",
-                "en": "We use only the freshest Artichoke in our Artichoke Biryani, carefully seasoned with muddy herbs and paired with a side of steamed vegetables for a satisfying dining experience.",
-                "es": "Utilizamos solo la alcachofa más fresca en nuestro biryani de alcachofa, cuidadosamente sazonados con hierbas fangosas y combinadas con un lado de vegetales al vapor para una experiencia gastronómica satisfactoria.",
-                "fr": "Nous n'utilisons que l'artichaut le plus frais de notre artichauteur Biryani, soigneusement assaisonné d'herbes boueux et associé à un côté de légumes cuits à la vapeur pour une expérience culinaire satisfaisante.",
-                "hr": "Koristimo samo najsvježije artičoke u našem artičoku biryani, pažljivo začinjeni blatnjavim biljem i upareni s bočnim povrćem na pari za zadovoljavajući doživljaj blagovanja.",
-                "it": "Usiamo solo il carciofo più fresco nel nostro Biryani di carciofi, attentamente condito con erbe fangose ​​e abbinato a un lato di verdure al vapore per un'esperienza culinaria soddisfacente.",
-                "ru": "Мы используем только самый свежий артишок в нашем артишоке бирьяни, осторожно приправленном с грязными травами и в сочетании со стороной овощей для приготовления на пару для удовлетворяющего обеда.",
-                "sl": "V naši artičoki biryani uporabljamo le svežo artičoko, skrbno začinjeno z blatnimi zelišči in v paru s parjeno zelenjavo za zadovoljivo jedilno doživetje.",
-                "sr": "Ми користимо само најсвежији артичоке у нашем Артицхоке Бириани, пажљиво сезонским блатњавим биљем и упарени са стране пареног поврћа за задовољавајуће искуство трпезарија."
-              },
-              "allergens": [
-                "4",
-                "9"
-              ],
-              "spicy_level": 1,
-              "unit_size": "1",
-              "price": 24.38,
-              "discount": 0,
-              "sides": [],
-              "extras": [],
-              "ingredients": [],
-              "availability": [
-                "MON",
-                "TUE",
-                "WED",
-                "THU",
-                "FRI",
-                "SAT",
-                "SUN"
-              ],
-              "business_id": "7f2dabef-2d7d-41ac-b6e1-8afb724b5fd0",
-              "menu_category_id": "d743ea61-f638-48c5-b796-1fbc99c289f3",
-              "daily_date": null
-            }
-          ],
-          "menu_categories_catgeories": []
-        }
-      ]
+      "categories": []
     }
   ],
   "documents": [
     {
-      "document_id": "782a2d4a-48b6-4765-ba31-6b3907f9cf83",
+      "document_id": "a610145f-8459-4ac8-9dc9-6ac4e419a8b6",
       "document_type": "LOGO",
-      "created_at": "2025-03-13T10:35:29.889Z",
-      "updated_at": "2025-03-13T10:35:30.114Z",
+      "created_at": "2025-03-13T13:02:15.675Z",
+      "updated_at": "2025-03-13T13:02:15.964Z",
       "expiration_date": null,
       "issue_date": null,
       "additional_info": null,
       "public": true,
       "driver_id": null,
       "delivery_driver_id": null,
-      "business_id": "7f2dabef-2d7d-41ac-b6e1-8afb724b5fd0",
+      "business_id": "f3fbc652-2582-4c45-b279-188dfcb484fc",
       "user_id": null,
       "vehicle_id": null,
       "menu_item_id": null,
@@ -380,29 +137,29 @@
       "transaction_id": null,
       "files": [
         {
-          "file_id": "cb6ec867-2c7f-4c53-93b1-257276ac86f1",
-          "url": "https://s3.tebi.io/klikni-test/cb6ec867-2c7f-4c53-93b1-257276ac86f1.jpeg",
+          "file_id": "3f41e7c0-63c4-44bc-811e-836ff68a1dd1",
+          "url": "https://s3.tebi.io/klikni-test/3f41e7c0-63c4-44bc-811e-836ff68a1dd1.jpeg",
           "file_type": "IMAGE",
           "public": true,
           "mime_type": "image/jpeg",
-          "created_at": "2025-03-13T10:35:29.905Z",
-          "updated_at": "2025-03-13T10:35:29.905Z",
-          "document_id": "782a2d4a-48b6-4765-ba31-6b3907f9cf83"
+          "created_at": "2025-03-13T13:02:15.689Z",
+          "updated_at": "2025-03-13T13:02:15.962Z",
+          "document_id": "a610145f-8459-4ac8-9dc9-6ac4e419a8b6"
         }
       ]
     },
     {
-      "document_id": "839f0fc5-1421-4216-9667-516f0421e94c",
+      "document_id": "55cec360-ed61-47a5-a696-c87a7d508804",
       "document_type": "BANNER",
-      "created_at": "2025-03-13T10:35:30.116Z",
-      "updated_at": "2025-03-13T10:35:30.210Z",
+      "created_at": "2025-03-13T13:02:15.967Z",
+      "updated_at": "2025-03-13T13:02:16.058Z",
       "expiration_date": null,
       "issue_date": null,
       "additional_info": null,
       "public": true,
       "driver_id": null,
       "delivery_driver_id": null,
-      "business_id": "7f2dabef-2d7d-41ac-b6e1-8afb724b5fd0",
+      "business_id": "f3fbc652-2582-4c45-b279-188dfcb484fc",
       "user_id": null,
       "vehicle_id": null,
       "menu_item_id": null,
@@ -410,16 +167,17 @@
       "transaction_id": null,
       "files": [
         {
-          "file_id": "4ea6d18b-c0e8-4b11-9dca-ab996a2f6862",
-          "url": "https://s3.tebi.io/klikni-test/4ea6d18b-c0e8-4b11-9dca-ab996a2f6862.jpeg",
+          "file_id": "9c3bf952-17aa-4e7e-a5d7-79194820ac02",
+          "url": "https://s3.tebi.io/klikni-test/9c3bf952-17aa-4e7e-a5d7-79194820ac02.jpeg",
           "file_type": "IMAGE",
           "public": true,
           "mime_type": "image/jpeg",
-          "created_at": "2025-03-13T10:35:30.117Z",
-          "updated_at": "2025-03-13T10:35:30.117Z",
-          "document_id": "839f0fc5-1421-4216-9667-516f0421e94c"
+          "created_at": "2025-03-13T13:02:15.968Z",
+          "updated_at": "2025-03-13T13:02:16.055Z",
+          "document_id": "55cec360-ed61-47a5-a696-c87a7d508804"
         }
       ]
     }
-  ]
+  ],
+  "promo_sections": []
 }

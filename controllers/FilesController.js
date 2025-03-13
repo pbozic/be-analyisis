@@ -6,14 +6,14 @@ async function createFileHelper(owner_id,fileData) {
 	const public = fileData.public || false
 	const new_file = await FileDao.createFile(file_type,mime_type,public)
 	let key = S3Helper.getFileKey(new_file.file_id, new_file.mime_type);
-	await S3Helper.SaveObject(key, fileData.base64, new_file.mime_type, { users: [owner_id] }, null, new_file.public);
+	await S3Helper.SaveObject(key, fileData.base64, new_file.mime_type, { users: [owner_id] }, new_file, new_file.public);
 	return new_file
 }
 async function updateFileByIdHelper(updater_id,file_id,fileData) {
 	const {file_type,mime_type} = fileData
 	const updated_file = await FileDao.updateFileById(file_id,file_type,mime_type)
 	let key = S3Helper.getFileKey(updated_file.file_id, updated_file.mime_type);
-	await S3Helper.SaveObject(key, fileData.base64, updated_file.mime_type, { users: [updater_id] }, null,updated_file.public);
+	await S3Helper.SaveObject(key, fileData.base64, updated_file.mime_type, { users: [updater_id] }, updated_file,updated_file.public);
 	return updated_file
 }
 

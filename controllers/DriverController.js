@@ -302,7 +302,7 @@ async function editDriver(req, res) {
 						await S3Helper.SaveObject(key, base64, file.mime_type, {
 							users: [user_id],
 							businesses: [business_id],
-						}, file, existingDocument.public);
+						}, newFile, existingDocument.public);
 
 					} else {
 						const documentData = {
@@ -322,7 +322,7 @@ async function editDriver(req, res) {
 						await S3Helper.SaveObject(key, base64, file.mime_type, {
 							users: [user_id],
 							businesses: [business_id],
-						}, file, newDocument.public);
+						}, newFile, newDocument.public);
 
 						if (
 							document_type === DOCUMENT_TYPE.PROFILE_PICTURE ||

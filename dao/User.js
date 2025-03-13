@@ -634,7 +634,7 @@ const updateWalletBalance = async (userId, amount, documents) => {
 				const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
 				await S3Helper.SaveObject(key, base64, file.mime_type, {
 					users: [userId],
-				}, file, newDocument.public);
+				}, newFile, newDocument.public);
 			}
 		}
 		console.log('Funds added to wallet successfully');
