@@ -220,7 +220,7 @@ async function indexBusinesses(business_id = null) {
                     menu_category_name: menu.categories.flatMap(cat =>
                         Object.values(cat.names).filter(value => value !== "")
                     ),
-                    menu_category_id: menu.categories.map(cat => cat.menu_category_id),
+                    menu_category_id: menu.categories.map(cat => cat.menu_category_id.category.categories_id),
                     translations: menu.categories.flatMap(cat =>
                         cat.menu_categories_catgeories.flatMap(rel =>
                             rel.category.translatable?.translations.map(t => t.translation) || []
