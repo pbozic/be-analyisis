@@ -616,7 +616,7 @@ async function getDriverEarnings(req, res) {
 		const driverOrders = await DeliveryOrderDao.getOrders({
 			where: {
 				delivery_driver_id: delivery_driver_id,
-				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				status: DELIVERY_ORDER_STATUS.SUCCESS,
 				created_at: {
 					gte: new Date(start_date).toISOString(),
 					lte: new Date(end_date).toISOString()
@@ -660,7 +660,7 @@ async function getAllDriversEarnings(req, res) {
 			const driverOrders = await DeliveryOrderDao.getOrders({
 				where: {
 					delivery_driver_id: driver.delivery_driver_id,
-					status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+					status: DELIVERY_ORDER_STATUS.SUCCESS,
 					created_at: {
 						gte: new Date(start_date).toISOString(),
 						lte: new Date(end_date).toISOString()
@@ -691,9 +691,9 @@ async function getTotalEarnings(req, res) {
 	try {
 		const orders = await DeliveryOrderDao.getOrders({
 			where: {
-				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
+				status: DELIVERY_ORDER_STATUS.SUCCESS
 			}});
-		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED, true);
+		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.SUCCESS, true);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
 		console.error("Error retrieving all delivery drivers' total earnings:", error);
@@ -724,10 +724,10 @@ async function getDriverTotalEarnings(req, res) {
 	try {
 		const orders = await DeliveryOrderDao.getOrders({
 			where: {
-				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				status: DELIVERY_ORDER_STATUS.SUCCESS,
 				delivery_driver_id: delivery_driver_id
 			}});
-		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED, true, detailed);
+		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.SUCCESS, true, detailed);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
 		console.error("Error retrieving delivery driver's total earnings:", error);

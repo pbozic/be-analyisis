@@ -10,7 +10,7 @@ const { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE, TAXI_ORDER_STATUS,
 	CREDITS,
 	PARENT_USER_TYPE,
 	ORDER_TYPE,
-	CASHBACK_SOURCE, DRIVE_FEE
+	CASHBACK_SOURCE, DRIVE_FEE, DELIVERY_ORDER_END_STATES
 } = require("../lib/constants");
 const fs = require("fs");
 const Constants = require("../lib/constants");
@@ -518,7 +518,6 @@ async function acceptOrderDelivery(req, res) {
 		} else if (
 			![
 				DELIVERY_ORDER_STATUS.MERCHANT_PREPARING,
-				DELIVERY_ORDER_STATUS.MERCHANT_DELAYED,
 				DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP
 			].includes(order.status)
 		){
@@ -599,7 +598,7 @@ async function cancelOrderDelivery(req, res) {
 			return res.status(400).json({ error: "You are not authorized to cancel this order delivery.", errorType: "ERR_NOT_AUTHORIZED" });
 		}
 		if (![DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(order.status)) {
-			return res.status(400).json({ error: "Order delivery cannot be cenceled in its current state.", errorType: "ERR_DELIVERY_CANNOT_BE_CANCELED" });
+			return res.status(400).json({ error: "Order delivery cannot be canceled in its current state.", errorType: "ERR_DELIVERY_CANNOT_BE_CANCELED" });
 		}
 
 		// 3. Remove driver from order
@@ -732,7 +731,7 @@ async function getCompletedDeliveryOrdersByDriverId(req, res) {
 	try {
 		const completedOrders = await DeliveryOrderDao.getOrders({
 			where: {
-				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				status: DELIVERY_ORDER_STATUS.SUCCESS,
 				OR: [
 					{ delivery_driver_id: driver_id },
 					{ driver_id: driver_id }
@@ -767,15 +766,16 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 		const activeOrders = await DeliveryOrderDao.getOrders({
 			where: {
 				status: {
-					notIn: [
-						DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
-						DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
-						DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
-						DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
-						DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
-						DELIVERY_ORDER_STATUS.MERCHANT_REFUNDED,
-						DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
-					]
+					notIn: DELIVERY_ORDER_END_STATES
+					// notIn: [
+					// 	DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
+					// 	DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
+					// 	DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
+					// 	DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
+					// 	DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
+					// 	DELIVERY_ORDER_STATUS.MERCHANT_REFUNDED,
+					// 	DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
+					// ]
 				},
 				OR: [
 					{ delivery_driver_id: driver_id },
@@ -787,10 +787,16 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 		const sentOrders = await DeliveryOrderDao.getAlreadySentOrdersByDeliveryDriverId(driver_id);
 		for (let sentOrder of sentOrders) {
 			const order = await DeliveryOrderDao.getOrder(sentOrder.order.order_id);
-			if ([DELIVERY_ORDER_STATUS.PENDING, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING,
-				DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED,
-				DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_DELAYED,
-				DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(order.status)) {
+			// if ([
+			// 	DELIVERY_ORDER_STATUS.PENDING,
+			// 	DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING,
+			// 	DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL,
+			// 	DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED,
+			// 	DELIVERY_ORDER_STATUS.MERCHANT_PREPARING,
+			// 	DELIVERY_ORDER_STATUS.MERCHANT_DELAYED,
+			// 	DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP
+			// ].includes(order.status)) {
+			if(!order.timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP)){
 				pendingOrders.push(order);
 			}
 			console.info("Re-sending pending order: ", order.order_id, " to driver: ", driver_id);
@@ -822,11 +828,8 @@ async function getCompletedDeliveryOrdersByUserId(req, res) {
 	try {
 		const completedOrders = await DeliveryOrderDao.getOrders({
 			where: {
-				OR: [
-					{ status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED },
-					{ status: DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP }
-				],
-				user_id: user_id
+				user_id: user_id,
+				status: DELIVERY_ORDER_STATUS.SUCCESS,
 			},
 			include: {
 				business: {
@@ -965,7 +968,7 @@ async function getCompletedDeliveryOrdersByBusinessId(req, res) {
 		const orders = await DeliveryOrderDao.getOrders({
 			where: {
 				business_id: business_id,
-				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
+				status: DELIVERY_ORDER_STATUS.SUCCESS
 			}
 		});
 		// console.log('business completed orders', orders)
@@ -1259,10 +1262,10 @@ async function updateDeliveryOrder(req, res) {
 async function getDeliveryOrdersToday(req, res) {
 	try {
 		const orders = await prisma.delivery_orders.findMany({
-			where: { status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED, created_at: { gte: new Date(new Date().setHours(0,0,0,0)) } }
+			where: { status: DELIVERY_ORDER_STATUS.SUCCESS, created_at: { gte: new Date(new Date().setHours(0,0,0,0)) } }
 		});
 		if (orders) {
-			return res.status(200).json({orders: orders.length, amount: todaysEarnings(orders, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED) });
+			return res.status(200).json({orders: orders.length, amount: todaysEarnings(orders, DELIVERY_ORDER_STATUS.SUCCESS) });
 		}
 	} catch (e) {
 		console.error("DeliveryOrderController", e);
@@ -1289,7 +1292,8 @@ async function dispatcherCancel(req,res){
 			DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
 			DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED,
 			DELIVERY_ORDER_STATUS.CUSTOMER_PICKED_UP,
-			DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
+			DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+			...DELIVERY_ORDER_END_STATES
 		].includes(old_order.status)){
 			throw new Error("This order is not in a cancelable state.")
 		}
