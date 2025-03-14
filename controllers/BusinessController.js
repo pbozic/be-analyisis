@@ -179,6 +179,16 @@ async function listPromoSectionsWithMerchants(req, res) {
 			}
 			let esResults = await fullSearch("", req.body.location.lat, req.body.location.long, [], req.body.radius, promoSection.promo_sections_id, 1, 10);
 			promoSection.translations = translations;
+			let providerIds = esResults.map(r => r.business_id);
+			let providers = await BusinessDao.getBusinessesForSearchById(providerIds);
+			let result = [];
+			for (let provider of providers) {
+				let esResult = esResults.find(r => r.business_id === provider.business_id);
+				result.push({
+					...provider,
+					...esResult
+				});
+			}
 			promoSection.providers = esResults.sort((a, b) => b.score - a.score);
 			delete promoSection.translatable;
 		}
