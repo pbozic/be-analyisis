@@ -28,6 +28,7 @@ const handleAddressPivotTable = async (model, operation, args, query, result) =>
 							...address.address,
 							name: address.name,
 							icon: address.icon,
+							primary: address.primary,
 						};
 					});
 					return user;
@@ -39,6 +40,7 @@ const handleAddressPivotTable = async (model, operation, args, query, result) =>
 						...address.address,
 						name: address.name,
 						icon: address.icon,
+						primary: address.primary,
 					};
 				});
 				middlewareResult = {
