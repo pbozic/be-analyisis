@@ -8,6 +8,7 @@ const { reviewBusinessSchema } = require("../../joi/reviewSchemas");
 const BusinessController = require("../../controllers/BusinessController");
 const FinanceController = require("../../controllers/FinancesController");
 
+router.post("/businesses/sections/merchant", BusinessController.listPromoSectionsWithMerchants);
 router.get("/businesses/merchant", BusinessController.listMerchantBusinesses);
 router.get("/businesses/merchant/daily-meals", BusinessController.listMerchantBusinessesWithDailyMeals);
 router.get("/businesses/merchant/main", BusinessController.listMerchantBusinessesMainInfo);
