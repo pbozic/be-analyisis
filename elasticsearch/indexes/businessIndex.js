@@ -100,7 +100,7 @@ async function createBusinessIndex(force = false) {
     }
 }
 
-async function indexBusinesses(business_id = null) {
+async function indexBusinesses(business_id = null, force = false) {
     //TODO: 
     //- Call this function on:
     //  - App startup
@@ -126,7 +126,7 @@ async function indexBusinesses(business_id = null) {
     //  - Word update
 
     try {
-        await createBusinessIndex(false);
+        await createBusinessIndex(force);
         console.log("🚀 Fetching businesses from database...");
         
         const whereClause = { type: "MERCHANT" };
@@ -219,7 +219,7 @@ async function indexBusinesses(business_id = null) {
             //fs.writeFileSync('business.json', JSON.stringify(business, null, 2))
             for (let menu of business.menus) {
                 for (let category of menu.categories) {
-                   console.log("Category", category.menu_categories_catgeories)
+                   console.log("Category", category.menu_categories_catgeories.category)
                 }
             }
             const doc = {
@@ -242,8 +242,7 @@ async function indexBusinesses(business_id = null) {
                         Object.values(cat.names).filter(value => value !== "")
                     ),
                     menu_category_id: menu.categories.map(cat => {
-                        console.log("cat", cat)
-                        return cat.menu_categories_catgeories?.category?.categories_id || ""
+                        return cat.menu_categories_catgeories.map(c => c.category.categories_id)
                     }),
                     translations: menu.categories.flatMap(cat =>
                         cat.menu_categories_catgeories.flatMap(rel =>

@@ -116,8 +116,6 @@ async function listMerchantBusinesses(req, res) {
  * @response 400 - Error occurred while obtaining the merchant business list
  */
 async function listPromoSectionsWithMerchants(req, res) {
-
-	//TODO: elastic search
 	try {
 		
 		console.log("HI")
@@ -148,6 +146,7 @@ async function listPromoSectionsWithMerchants(req, res) {
 					...esResult
 				});
 			}
+			result.sort((a, b) => b.score - a.score);
 			promoSection.providers = result;
 			delete promoSection.translatable;
 		}
