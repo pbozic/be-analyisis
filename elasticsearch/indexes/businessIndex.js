@@ -70,7 +70,14 @@ async function createBusinessIndex(force = false) {
                                 }
                             }
                         },
-                        promo_sections: { type: "keyword" },
+                        promo_sections: { 
+                            type: "nested", 
+                            properties: { 
+                                promo_sections_id: { type: "keyword" }, 
+                                tier:  { type: "integer" }, 
+                                expires_at: { type: "date" } 
+                            } 
+                        },
 
                         word_buys: {
                             type: "nested",
@@ -255,7 +262,12 @@ async function indexBusinesses(business_id = null) {
                     )
                 })),
                 promo_sections: business.promo_sections.map(section => {
-                    return section.promo_section.promo_sections_id
+                    return {
+                        name: section.promo_section.name,
+                        promo_sections_id: section.promo_sections_id,
+                        tier: section.tier,
+                        expires_at: section.expires_at
+                    }
                 }
                     
                 ),

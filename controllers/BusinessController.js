@@ -179,7 +179,7 @@ async function listPromoSectionsWithMerchants(req, res) {
 			}
 			let esResults = await fullSearch("", req.body.location.lat, req.body.location.long, [], req.body.radius, promoSection.promo_sections_id, 1, 10);
 			promoSection.translations = translations;
-			promoSection.providers = esResults;
+			promoSection.providers = esResults.sort((a, b) => b.score - a.score);
 			delete promoSection.translatable;
 		}
 		

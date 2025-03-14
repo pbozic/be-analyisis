@@ -1,11 +1,16 @@
 const esClient = require("../client");
 
 const SCORING_WEIGHTS = {
-	bid_multiplier: 1, // Boost businesses bidding on words
-	popularity_boost: 1, // Boost for popular businesses
-	new_business_boost: 1, // Boost for new businesses
-	distance_scale: "3km", // Max distance for full score
-	distance_decay: 0.5, // Distance decay factor
+    bid_multiplier: 1, 
+    popularity_boost: 1, 
+    new_business_boost: 1, 
+    distance_scale: "3km", 
+    distance_decay: 0.5, 
+    promo_section_boosts: {
+        1: 2,    // Boost for businesses in promo section tier 1
+        2: 1.5,  // Boost for businesses in promo section tier 2
+        3: 1     // Boost for businesses in promo section tier 3
+    }
 };
 
 async function searchBusinesses(query, userLat, userLon, categoryIds = [], radius = null, promoSectionId = null, page = 1, pageSize = 10) {
@@ -27,119 +32,19 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
             }
         };
 
-        // Filter by promo section ID if provided
+        // **Filter by specific promo section**
         if (hasPromoSection) {
             boolQuery.bool.filter.push({
-                terms: { promo_sections: [promoSectionId] } // Ensures only businesses with the given promo_section ID are included
-            });
-        }
-
-        // Add Text Search Only If Query Exists
-        if (hasQuery) {
-            boolQuery.bool.should.push(
-                {
-                    function_score: {
-                        weight: 4,
-                        query: {
-                            multi_match: {
-                                query: query,
-                                fields: ["name", "description"],
-                                fuzziness: "AUTO"
-                            }
-                        },
-                        boost_mode: "sum",
-                        score_mode: "sum"
-                    }
-                },
-                {
-                    function_score: {
-                        weight: 2,
-                        query: {
-                            nested: {
-                                path: "menus.menu_items",
-                                query: {
-                                    multi_match: {
-                                        query: query,
-                                        fields: ["menus.menu_items.name"],
-                                        fuzziness: "AUTO"
-                                    }
-                                },
-                                score_mode: "max"
-                            }
-                        },
-                        boost_mode: "sum",
-                        score_mode: "sum"
-                    }
-                },
-                {
-                    function_score: {
-                        weight: 1,
-                        query: {
-                            nested: {
-                                path: "menus.menu_items",
-                                query: {
-                                    multi_match: {
-                                        query: query,
-                                        fields: ["menus.menu_items.description"],
-                                        fuzziness: "AUTO"
-                                    }
-                                },
-                                score_mode: "max"
-                            }
-                        },
-                        boost_mode: "sum",
-                        score_mode: "sum"
-                    }
-                },
-                {
-                    function_score: {
-                        weight: 3,
-                        query: {
-                            nested: {
-                                path: "word_buys",
-                                query: {
-                                    bool: {
-                                        should: queryWords.map((word) => ({
-                                            match: { "word_buys.word": word }
-                                        }))
-                                    }
-                                },
-                                score_mode: "sum"
-                            }
-                        },
-                        boost_mode: "sum",
-                        score_mode: "sum"
-                    }
-                }
-            );
-        }
-
-        // Add Category ID Filter If Provided
-        if (hasCategories) {
-            boolQuery.bool.filter.push({
                 nested: {
-                    path: "menus",
+                    path: "promo_sections",
                     query: {
-                        terms: { "menus.menu_category_id": categoryIds } // Filter by category IDs
+                        term: { "promo_sections.promo_sections_id": promoSectionId }
                     }
                 }
             });
         }
 
-        // Add Radius Filter If Provided
-        if (hasRadius) {
-            boolQuery.bool.filter.push({
-                geo_distance: {
-                    distance: `${radius}km`, // Filters businesses within the given radius
-                    location: {
-                        lat: userLat,
-                        lon: userLon
-                    }
-                }
-            });
-        }
-
-        // Function Scoring (Applies Always)
+        // **Function Scoring**
         const functionScoreQuery = {
             function_score: {
                 query: boolQuery,
@@ -173,7 +78,7 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
                         }
                     },
                     {
-                        // Distance-based scoring (if location provided)
+                        // Distance-based scoring
                         gauss: {
                             location: {
                                 origin: `${userLat},${userLon}`,
@@ -189,7 +94,40 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
             }
         };
 
-        // Execute Search
+        // **Apply Promo Section Tier Boost**
+        if (hasPromoSection) {
+            functionScoreQuery.function_score.functions.push({
+                filter: {
+                    nested: {
+                        path: "promo_sections",
+                        query: {
+                            term: { "promo_sections.promo_sections_id": promoSectionId }
+                        }
+                    }
+                },
+                script_score: {
+                    script: {
+                        source: `
+                            def tiers = params.boosts;
+                            def matchedTier = 1.0;
+                            for (promo in params._source.promo_sections) {
+                                if (promo.promo_sections_id == params.promoId) {
+                                    matchedTier = tiers.containsKey(promo.tier) ? tiers.get(promo.tier) : 1.0;
+                                    break;
+                                }
+                            }
+                            return matchedTier;
+                        `,
+                        params: {
+                            boosts: SCORING_WEIGHTS.promo_section_boosts,
+                            promoId: promoSectionId
+                        }
+                    }
+                }
+            });
+        }
+
+        // **Execute Search**
         const esResponse = await esClient.search({
             index: "business_index",
             body: {
@@ -232,8 +170,3 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
 }
 
 module.exports = searchBusinesses;
-
-
-module.exports = searchBusinesses;
-
-
