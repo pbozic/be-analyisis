@@ -7,7 +7,7 @@ async function indexMenus() {
         categories: {
           include: {
             menu_items: true,
-            menu_categories_catgeories: {
+            menu_categories_categories: {
               include: {
                 category: {
                   include: {
@@ -36,7 +36,7 @@ async function indexMenus() {
           menu_category_id: menuCategory.menu_category_id,
           menu_category_name: menuCategory.names, // Localized names
           description: menuCategory.description, // Localized descriptions
-          categories: menuCategory.menu_categories_catgeories.map(catLink => ({
+          categories: menuCategory.menu_categories_categories.map(catLink => ({
             category_id: catLink.category.categories_id,
             name: catLink.category.name,
             description: catLink.category.description,

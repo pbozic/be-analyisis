@@ -70,7 +70,14 @@ async function createBusinessIndex(force = false) {
                                 }
                             }
                         },
-                        promo_sections: { type: "keyword" },
+                        promo_sections: { 
+                            type: "nested", 
+                            properties: { 
+                                promo_sections_id: { type: "keyword" }, 
+                                tier:  { type: "integer" }, 
+                                expires_at: { type: "date" } 
+                            } 
+                        },
 
                         word_buys: {
                             type: "nested",
@@ -93,7 +100,7 @@ async function createBusinessIndex(force = false) {
     }
 }
 
-async function indexBusinesses(business_id = null) {
+async function indexBusinesses(business_id = null, force = false) {
     //TODO: 
     //- Call this function on:
     //  - App startup
@@ -119,7 +126,7 @@ async function indexBusinesses(business_id = null) {
     //  - Word update
 
     try {
-        await createBusinessIndex(true);
+        await createBusinessIndex(force);
         console.log("🚀 Fetching businesses from database...");
         
         const whereClause = { type: "MERCHANT" };
@@ -155,7 +162,7 @@ async function indexBusinesses(business_id = null) {
                         categories: {
                             include: {
                                 menu_items: true,
-                                menu_categories_catgeories: {
+                                menu_categories_categories: {
                                     include: {
                                         category: {
                                             include: {
@@ -209,12 +216,18 @@ async function indexBusinesses(business_id = null) {
                     banner = doc.files[0].url;
                 }
             }
-            fs.writeFileSync('business.json', JSON.stringify(business, null, 2))
+            //fs.writeFileSync('business.json', JSON.stringify(business, null, 2))
+            let categoriesIds = []
             for (let menu of business.menus) {
                 for (let category of menu.categories) {
-                   console.log("Category", category)
+                    if (category.menu_categories_categories.length > 0){
+                        for (let cat of category.menu_categories_categories) {
+                            categoriesIds.push(cat.category.categories_id)
+                        }
+                    }
                 }
             }
+            console.log(categoriesIds)
             const doc = {
                 business_id: business.business_id,
                 name: business.name,
@@ -234,9 +247,9 @@ async function indexBusinesses(business_id = null) {
                     menu_category_name: menu.categories.flatMap(cat =>
                         Object.values(cat.names).filter(value => value !== "")
                     ),
-                    menu_category_id: menu.categories.map(cat => cat.menu_categories_catgeories?.category?.categories_id || ""),
+                    menu_category_id: categoriesIds,
                     translations: menu.categories.flatMap(cat =>
-                        cat.menu_categories_catgeories.flatMap(rel =>
+                        cat.menu_categories_categories.flatMap(rel =>
                             rel.category.translatable?.translations.map(t => t.translation) || []
                         )
                     ),
@@ -244,16 +257,23 @@ async function indexBusinesses(business_id = null) {
                         cat.menu_items.map(item => ({
                             menu_item_id: item.menu_item_id,
                             name: Object.values(item.names).filter(value => value !== ""),
-                            translations: item.menu_category?.menu_categories_catgeories.flatMap(rel =>
+                            translations: item.menu_category?.menu_categories_categories.flatMap(rel =>
                                 rel.category.translatable?.translations.map(t => t.translation) || []
                             ),
                             description: Object.values(item.description).filter(value => value !== "")
                         }))
                     )
                 })),
-                promo_sections: business.promo_sections.map(section => (
-                    section.promo_section.promo_section_id
-                )),
+                promo_sections: business.promo_sections.map(section => {
+                    return {
+                        name: section.promo_section.name,
+                        promo_sections_id: section.promo_sections_id,
+                        tier: section.tier,
+                        expires_at: section.expires_at
+                    }
+                }
+                    
+                ),
             };
             
             

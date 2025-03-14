@@ -58,7 +58,7 @@ async function searchBusinesses(req, res) {
 	try {
 
 
-		let esResults = await fullSearch(req.body.query || "", req.body.location.lat, req.body.location.long, req.body.categoryIds || [], req.body.radius, req.body.page, req.body.pageSize || 10);
+		let esResults = await fullSearch(req.body.query || "", req.body.location.lat, req.body.location.long, req.body.categoryIds || [], req.body.radius, null, req.body.page, req.body.pageSize || 10);
 		console.log("esResults", esResults);
 		esResults.sort((a, b) => b.score - a.score);
 		let businesses = await BusinessDao.getBusinessesForSearchById(esResults.map(b => b.business_id));
@@ -95,29 +95,68 @@ async function listMerchantBusinesses(req, res) {
 
 	//TODO: elastic search
 	try {
-		// TODO: get promo sections with promo_section_buys with businesses
-		/* return [{
-			promo_section_id: 1,
-			tag: "promo_section_1",
-			name: "Promo Section 1",
-			translations: {
-				lng: "Translation",
-			},
-			businesses: [{
-				...business
-			}],
-
 		
-		}]*/
+
 		const merchantBusinesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT);
 		
 		res.status(200).json(merchantBusinesses);
 	} catch (e) {
 		console.error("Error listing merchant businesses:", e);
-		res.status(400).json({ error: "Error listing merchant businesses", e});
+		res.status(400).json({ error: "Error listing merchant businesses", m: e.message });
 	}
 }
-
+/**
+ * POST /businesses/sections/merchant
+ * @tag Business
+ * @summary List all merchant businesses grouped by promoSections
+ * @description Retrieves a list of all businesses classified as merchants.
+ * @operationId listMerchantBusinesses
+ * @response 200 - Successful operation, returns a list of merchant businesses
+ * @responseContent {Business[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the merchant business list
+ */
+async function listPromoSectionsWithMerchants(req, res) {
+	try {
+		
+		console.log("HI")
+		const promoSections = await prisma.promo_sections.findMany({
+				where: {},
+				include: {
+					translatable: {
+						include: {translations: true}
+						
+					}
+				}
+		});
+		console.log("promoSections", promoSections)
+		for (let promoSection of promoSections) {
+			let translations = {};
+			for (let translation of promoSection.translatable.translations) {
+				translations[translation.language] = translation.translation;
+			}
+			let esResults = await fullSearch("", req.body.location.lat, req.body.location.long, [], req.body.radius, promoSection.promo_sections_id, 1, 10);
+			promoSection.translations = translations;
+			let providerIds = esResults.map(r => r.business_id);
+			let providers = await BusinessDao.getBusinessesForSearchById(providerIds);
+			let result = [];
+			for (let provider of providers) {
+				let esResult = esResults.find(r => r.business_id === provider.business_id);
+				result.push({
+					...provider,
+					...esResult
+				});
+			}
+			result.sort((a, b) => b.score - a.score);
+			promoSection.providers = result;
+			delete promoSection.translatable;
+		}
+		
+		res.status(200).json(promoSections);
+	} catch (e) {
+		console.error("Error listing merchant businesses:", e);
+		res.status(400).json({ error: "Error listing merchant businesses", m: e.message });
+	}
+}
 /**
  * GET /businesses/merchant/daily-meals
  * @tag Business
@@ -1402,6 +1441,7 @@ module.exports = {
 	getBusinessStripeStatusByBusinessId,
 	generateBusinessStripeByBusinessId,
 	getBusynessFactorsBusinessIdList,
-	searchBusinesses
+	searchBusinesses,
+	listPromoSectionsWithMerchants
 };
 

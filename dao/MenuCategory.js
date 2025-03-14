@@ -11,7 +11,7 @@ const createMenuCategory = async (menuId, categoryData) => {
 				connect: { menu_id: menuId }
 			},
 			...categoryData
-		}
+		},
 	});
 	
 	let errors = [];
@@ -39,8 +39,17 @@ const createMenuCategory = async (menuId, categoryData) => {
 			}
 		});
 	}
-	
-	return menu_category;
+	let menu_categoryR = await prisma.menu_categories.findUnique({
+		where: { menu_category_id: menu_category.menu_category_id },
+		include: {
+			menu_categories_categories: {
+				include: {
+					category: true
+				}
+			}
+		}
+	});
+	return menu_categoryR;
 };
 
 const addMenuCategoryIdToOrder = async (menu_id, menuCategoryIdToAdd) => {
@@ -98,7 +107,7 @@ const getMenuCategoriesByMenuId = async (menu_id) => {
 					}
 				}
 			},
-			menu_categories_catgeories: {
+			menu_categories_categories: {
 				include: {
 					category: true
 				}
@@ -141,7 +150,7 @@ const getMenuCategoriesByBusinessId = async (business_id) => {
 					}
 				}
 			},
-			menu_categories_catgeories: {
+			menu_categories_categories: {
 				include: {
 					category: true
 				}
@@ -175,10 +184,10 @@ const deleteMenuCategory = async (menu_category_id) => {
 			menu_category_id: menu_category_id
 		},
 		include: {
-			menu_categories_catgeories: true
+			menu_categories_categories: true
 		}
 	});
-	if (menu_category.menu_categories_catgeories.length > 0) {
+	if (menu_category.menu_categories_categories.length > 0) {
 		await prisma.menu_categories_categories.deleteMany({
 			where: {
 				menu_categories_id: menu_category_id
@@ -199,7 +208,7 @@ const updateMenuCategory = async (menu_category_id, data) => {
 		},
 		data: data,
 		include: {
-			menu_categories_catgeories: {
+			menu_categories_categories: {
 				include: {
 					category: true
 				}

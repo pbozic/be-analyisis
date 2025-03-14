@@ -104,6 +104,10 @@ const getBusinessesForSearchById = async (business_id) => {
 					}
 				},
 				menus: {
+					where: {
+						active: true,
+						isDailyMeal: false
+					},
 					include: {
 						categories: {
 							include: {

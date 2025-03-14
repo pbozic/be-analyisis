@@ -71,7 +71,8 @@ model business {
   promo_sections                  promo_sections_buy[]
   business_teams          business_teams[] @relation("business_to_business_teams")
   business_order_lobbies  order_lobbies[]  @relation("business_to_lobby")
-  activated_at            DateTime?
+  first_activated_at            DateTime?
+  active                       Boolean           @default(false)
   sales_representative_id String?
 }
 
@@ -575,7 +576,7 @@ model menu_categories {
   order                      Int?
   price                      Float?
   menu_items_ordered         Json? // JSON field to store ordered menu item IDs
-  menu_categories_catgeories menu_categories_categories[]
+  menu_categories_categories menu_categories_categories[]
 
   @@unique([menu_category_id])
 }

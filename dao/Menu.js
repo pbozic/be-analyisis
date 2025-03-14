@@ -44,7 +44,7 @@ const getMenuByBusinessId = async (business_id, isDailyMeal = false, startDate =
 							}
 						}
 					},
-					menu_categories_catgeories: {
+					menu_categories_categories: {
 						include: {
 							category: true
 						}
@@ -133,7 +133,7 @@ const getMenuByDate = async (business_id, date) => {
 			categories: {
 				include: {
 					menu_items: true,
-					menu_categories_catgeories: {
+					menu_categories_categories: {
 						include: {
 							category: true
 						}
@@ -153,7 +153,7 @@ const getMenuById = async (menu_id) => {
 			categories: {
 				include: {
 					menu_items: true,
-					menu_categories_catgeories: {
+					menu_categories_categories: {
 						include: {
 							category: true
 						}

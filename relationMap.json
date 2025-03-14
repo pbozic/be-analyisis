@@ -170,7 +170,7 @@
   "menu_categories": {
     "menu_items": "menu_items",
     "menu": "menus",
-    "menu_categories_catgeories": "menu_categories_categories"
+    "menu_categories_categories": "menu_categories_categories"
   },
   "menu_items": {
     "menu_category": "menu_categories",
