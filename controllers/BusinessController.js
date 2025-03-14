@@ -95,52 +95,11 @@ async function listMerchantBusinesses(req, res) {
 
 	//TODO: elastic search
 	try {
-		// TODO: get promo sections with promo_section_buys with businesses
-		/* return [{
-			promo_section_id: 1,
-			tag: "promo_section_1",
-			name: "Promo Section 1",
-			translations: {
-				lng: "Translation",
-			},
-			businesses: [{
-				...business
-			}],
-
 		
-		}]*/
-		console.log("HI")
-		const promoSections = await prisma.promo_sections.findMany({
-				where: {},
-				include: {
-					translatable: {
-						include: {translations: true}
-						
-					}
-				}
-		});
-		console.log("promoSections", promoSections)
-		for (let promoSection of promoSections) {
-			let translations = {};
-			for (let translation of promoSection.translatable.translations) {
-				translations[translation.language] = translation.translation;
-			}
-			let esResults = await fullSearch("", req.body.location.lat, req.body.location.long, [], req.body.radius, promoSection.promo_sections_id, 1, 10);
-			promoSection.translations = translations;
-			promoSection.providers = esResults;
-			delete promoSection.translatable;
-		}
-		// const businesses = promoSections.map(async (promoSection) => {
-		// 	let esResults = await fullSearch("", req.body.location.lat, req.body.location.long,req.body.categoryIds || [], req.body.radius, promoSection.promo_sections_id, 1, 10);
-		// 	return {
-		// 		...promoSection,
-		// 		businesses: esResults
-		// 	}
-		// });
 
-		//const merchantBusinesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT);
+		const merchantBusinesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT);
 		
-		res.status(200).json(promoSections);
+		res.status(200).json(merchantBusinesses);
 	} catch (e) {
 		console.error("Error listing merchant businesses:", e);
 		res.status(400).json({ error: "Error listing merchant businesses", m: e.message });
@@ -189,7 +148,7 @@ async function listPromoSectionsWithMerchants(req, res) {
 					...esResult
 				});
 			}
-			promoSection.providers = esResults.sort((a, b) => b.score - a.score);
+			promoSection.providers = result;
 			delete promoSection.translatable;
 		}
 		

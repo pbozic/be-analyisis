@@ -10,7 +10,10 @@ const SCORING_WEIGHTS = {
         "1": 2.5, // Boost for businesses in promo section 1
         "2": 2,   // Boost for businesses in promo section 2
         "3": 1.5  // Boost for businesses in promo section 3
-    }
+    },
+    description_name_weight: 4, // Weight for matching name in description
+    menu_item_name_weight: 2, // Weight for matching menu items
+    menu_item_description_weight: 1, // Weight for matching menu item descriptions
 };
 
 async function searchBusinesses(query, userLat, userLon, categoryIds = [], radius = null, promoSectionId = null, page = 1, pageSize = 10) {
@@ -50,7 +53,7 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
             boolQuery.bool.should.push(
                 {
                     function_score: {
-                        weight: 4,
+                        weight: SCORING_WEIGHTS.description_name_weight,
                         query: {
                             multi_match: {
                                 query: query,
@@ -64,7 +67,7 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
                 },
                 {
                     function_score: {
-                        weight: 2,
+                        weight: SCORING_WEIGHTS.menu_item_name_weight,
                         query: {
                             nested: {
                                 path: "menus.menu_items",
@@ -84,7 +87,7 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
                 },
                 {
                     function_score: {
-                        weight: 1,
+                        weight: SCORING_WEIGHTS.menu_item_description_weight,
                         query: {
                             nested: {
                                 path: "menus.menu_items",
@@ -104,7 +107,7 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
                 },
                 {
                     function_score: {
-                        weight: 3,
+                        weight: SCORING_WEIGHTS.bid_multiplier,
                         query: {
                             nested: {
                                 path: "word_buys",
@@ -215,7 +218,6 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
                                     if (promo.promo_sections_id == params.promoId) {
                                         def tier = promo.tier;
                                         boostFactor = tiers[String.valueOf(tier)];
-
                                         break;
                                     }
                                 }
@@ -249,7 +251,7 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
             }
         });
 
-        console.log(JSON.stringify(esResponse, null, 4));
+        //console.log(JSON.stringify(esResponse, null, 4));
 
         return esResponse.hits.hits.map((hit) => {
             let scores = {
