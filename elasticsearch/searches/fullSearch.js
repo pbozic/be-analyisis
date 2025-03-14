@@ -171,14 +171,6 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
                         weight: SCORING_WEIGHTS.bid_multiplier
                     },
                     {
-                        // Boost based on popularity
-                        field_value_factor: {
-                            field: "popular",
-                            factor: SCORING_WEIGHTS.popularity_boost,
-                            missing: 0
-                        }
-                    },
-                    {
                         // Boost new businesses
                         field_value_factor: {
                             field: "new",

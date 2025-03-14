@@ -395,8 +395,8 @@ async function updateMenuCategory(req, res) {
 		const category_ids = data?.category_ids;
 		delete data?.category_ids;
 		const menuCategory = await MenuCategoryDao.updateMenuCategory(menu_category_id, data);
-		const categories_to_add = category_ids.filter(id => !menuCategory.menu_categories_catgeories?.map(c => c.categories_id).includes(id));
-		const categories_to_remove = menuCategory.menu_categories_catgeories?.map(c => c.categories_id).filter(id => !category_ids.includes(id));
+		const categories_to_add = category_ids.filter(id => !menuCategory.menu_categories_categories?.map(c => c.categories_id).includes(id));
+		const categories_to_remove = menuCategory.menu_categories_categories?.map(c => c.categories_id).filter(id => !category_ids.includes(id));
 		for (const c_id of categories_to_add) {
 			await MenuCategoryDao.addCategoryToMenuCategory(menu_category_id, c_id)
 		}

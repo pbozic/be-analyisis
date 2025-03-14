@@ -162,7 +162,7 @@ async function indexBusinesses(business_id = null, force = false) {
                         categories: {
                             include: {
                                 menu_items: true,
-                                menu_categories_catgeories: {
+                                menu_categories_categories: {
                                     include: {
                                         category: {
                                             include: {
@@ -217,11 +217,17 @@ async function indexBusinesses(business_id = null, force = false) {
                 }
             }
             //fs.writeFileSync('business.json', JSON.stringify(business, null, 2))
+            let categoriesIds = []
             for (let menu of business.menus) {
                 for (let category of menu.categories) {
-                   console.log("Category", category.menu_categories_catgeories.category)
+                    if (category.menu_categories_categories.length > 0){
+                        for (let cat of category.menu_categories_categories) {
+                            categoriesIds.push(cat.category.categories_id)
+                        }
+                    }
                 }
             }
+            console.log(categoriesIds)
             const doc = {
                 business_id: business.business_id,
                 name: business.name,
@@ -241,11 +247,9 @@ async function indexBusinesses(business_id = null, force = false) {
                     menu_category_name: menu.categories.flatMap(cat =>
                         Object.values(cat.names).filter(value => value !== "")
                     ),
-                    menu_category_id: menu.categories.map(cat => {
-                        return cat.menu_categories_catgeories.map(c => c.category.categories_id)
-                    }),
+                    menu_category_id: categoriesIds,
                     translations: menu.categories.flatMap(cat =>
-                        cat.menu_categories_catgeories.flatMap(rel =>
+                        cat.menu_categories_categories.flatMap(rel =>
                             rel.category.translatable?.translations.map(t => t.translation) || []
                         )
                     ),
@@ -253,7 +257,7 @@ async function indexBusinesses(business_id = null, force = false) {
                         cat.menu_items.map(item => ({
                             menu_item_id: item.menu_item_id,
                             name: Object.values(item.names).filter(value => value !== ""),
-                            translations: item.menu_category?.menu_categories_catgeories.flatMap(rel =>
+                            translations: item.menu_category?.menu_categories_categories.flatMap(rel =>
                                 rel.category.translatable?.translations.map(t => t.translation) || []
                             ),
                             description: Object.values(item.description).filter(value => value !== "")
