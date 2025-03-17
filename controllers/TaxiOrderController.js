@@ -1060,6 +1060,14 @@ async function updateOrderStatus(req, res) {
 		console.log("user console.log", user?.user_id);
 		console.log("Driver console.log", driver?.user?.user_id);
 		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO) sendOrderNotifications(user, driver.user, user_id, driver_id, req.body.status);
+		if (
+			order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO &&
+			!(
+				//only send "your driver is waiting for you" notification once in order lifespan
+				order.status===TAXI_ORDER_STATUS.TAXI_WAITING &&
+				order?.timeline?.some(entry=>entry.status===TAXI_ORDER_STATUS.TAXI_WAITING)
+			)
+		) sendOrderNotifications(user, driver.user, user_id, driver_id, req.body.status);
 
 		res.status(200).json(order);
 	} catch (e) {
