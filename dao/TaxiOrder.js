@@ -831,7 +831,7 @@ async function userActiveOrders(user_id) {
 
 async function getActiveOrderIdsForUser(user_id) {
     try {
-        const order_ids = await prisma.delivery_orders.findMany({
+        const order_ids = await prisma.taxi_orders.findMany({
             where: {
                 user_id: user_id,
                 status: {
