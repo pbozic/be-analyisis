@@ -120,9 +120,9 @@ async function getActiveDeliveryOrdersForBusiness(business_id) {
 	}
 }
 
-async function getDeliveryOrderIfNotCompleted(user_id) {
+async function getDeliveryOrdersIfNotCompleted(user_id) {
 	try {
-		return await prisma.delivery_orders.findFirst({
+		return await prisma.delivery_orders.findMany({
 			where: {
 				user_id: user_id,
 				status: {
@@ -818,6 +818,27 @@ async function getInProgressDeliveryOrdersCountForBusinessId(business_id) {
 	}
 }
 
+async function getActiveOrderIdsForUser(user_id) {
+	try {
+		const orders = await prisma.delivery_orders.findMany({
+			where: {
+				user_id: user_id,
+				status: {
+					notIn: DELIVERY_ORDER_END_STATES
+				},
+			},
+			select:{
+				order_id:true
+			}
+		});
+		// console.info("got order ids:", orders);
+		return orders.map(order=>order.order_id);
+	} catch (e) {
+		console.error("Error fetching orders:", e);
+		throw new Error(e.message);
+	}
+}
+
 
 module.exports = {
 	getOrders,
@@ -839,10 +860,11 @@ module.exports = {
 	updateOrder,
 	updateOrderPickupTime,
 	updateOrderDeliveryTime,
-	getDeliveryOrderIfNotCompleted,
+	getDeliveryOrdersIfNotCompleted,
 	getAlreadySentOrdersByDeliveryDriverId,
 	getActiveOrdersByDeliveryDriverId,
 	connectOrderWithDriver,
 	getActiveDeliveryOrdersForBusiness,
-	getInProgressDeliveryOrdersCountForBusinessId
+	getInProgressDeliveryOrdersCountForBusinessId,
+	getActiveOrderIdsForUser
 };

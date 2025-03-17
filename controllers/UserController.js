@@ -20,6 +20,7 @@ const { DOCUMENT_TYPE, TAXI_ORDER_STATUS, USER_ROLE, CREDITS, CASHBACK_SOURCE } 
 const { generateAccessToken, generateRefreshToken } = require("../lib/jwt");
 const { getOrders } = require("../dao/TaxiOrder");
 const TaxiOrderDao = require("../dao/TaxiOrder");
+const DeliveryOrderDao = require("../dao/DeliveryOrder");
 const { drive } = require("googleapis/build/src/apis/drive");
 const GroupDao = require("../dao/Group");
 const CashbackDao = require("../dao/Cashback");
@@ -1791,6 +1792,22 @@ async function getUserCredits(req, res) {
 	}
 }
 
+
+async function getMyActiveOrderIds(req, res) {
+	const user_id = req.user.user_id
+	try {
+		const delivery_order_ids = await DeliveryOrderDao.getActiveOrderIdsForUser(user_id)
+		const taxi_order_ids = await TaxiOrderDao.getActiveOrderIdsForUser(user_id)
+
+		return res.status(200).json({
+			taxi_order_ids,
+			delivery_order_ids
+		});
+	} catch (error) {
+		return res.status(400).json({ error: error.message || "Error fetching user active order ids" });
+	}
+}
+
 async function getReferral(req, res) {
 	try {
 		const referral = ReferralDao.getReferralByReferredUserId(req.user.user_id)
@@ -1857,4 +1874,5 @@ module.exports = {
 	requestPaymentIntent,
 	confirmPaymentIntent,
 	getUserCredits,
+	getMyActiveOrderIds
 };

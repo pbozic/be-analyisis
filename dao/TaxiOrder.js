@@ -827,7 +827,29 @@ async function userActiveOrders(user_id) {
     } catch (e) {
         throw new Error(e);
     }
-} 
+}
+
+async function getActiveOrderIdsForUser(user_id) {
+    try {
+        const orders = await prisma.taxi_orders.findMany({
+            where: {
+                user_id: user_id,
+                status: {
+                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.TAXI_REJECTED]
+                }
+            },
+            select:{
+                order_id:true
+            }
+        });
+        // console.info("got order ids:", orders);
+        return orders.map(order=>order.order_id);
+    } catch (e) {
+        console.error("Error fetching orders:", e);
+        throw new Error(e.message);
+    }
+}
+
 module.exports = {
     getOrder,
     getOrdersByDriverId,
@@ -853,5 +875,6 @@ module.exports = {
     getAlreadySentOrdersByDriverId,
     getActiveOrdersByDriverId,
     getAcceptedOrders,
-    userActiveOrders
+    userActiveOrders,
+    getActiveOrderIdsForUser
 };

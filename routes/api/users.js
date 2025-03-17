@@ -23,6 +23,7 @@ router.get("/personal", UserController.listPersonalUsers);
 router.get("/me", UserController.me);
 router.get("/me/ping", UserController.ping);
 router.get("/me/reviews", UserController.getMyReviews);
+router.get("/me/active_order_ids", UserController.getMyActiveOrderIds);
 router.get("/:user_id/reviews", UserController.getReviewsByUserId);
 router.get("/:user_id/wallet", UserController.getAvailableWalletBalance);
 router.get("/:user_id/family_wallet", UserController.getFamilyWalletBalanceAndType);
