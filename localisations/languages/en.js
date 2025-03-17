@@ -3,7 +3,7 @@ const  en = {
         scheduled_tomorrow: "Your taxi order is scheduled for tomorrow at ",
         scheduled_hour: "Your taxi order is scheduled in an hour",
         pending: "",
-        accepted: "Your taxi order has been accepted.",
+        accepted: "A driver has accepted your order and is on the way.",
         rejected: "Your taxi order has been rejected. A new driver will accept your request shortly.",
         canceled: "Your taxi order has been canceled.",
         waiting: "Your driver is waiting for you.",

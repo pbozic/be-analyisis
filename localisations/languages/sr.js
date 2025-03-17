@@ -3,7 +3,7 @@ const  sr = {
         scheduled_tomorrow: "Vaša narudžba za taksi je zakazana za sutra u ",
         scheduled_hour: "Vaša narudžba za taksi je zakazana za sat vremena",
         pending: '',
-        accepted: "Vaša narudžbina za taksi je prihvaćena.",
+        accepted: "Vozač je prihvatio vašu narudžbinu i dolazi.",
         rejected: "Vaša narudžbina za taksi je odbijena. Novi vozač će uskoro prihvatiti vaš zahtev.",
         canceled: "Vaša narudžbina za taksi je otkazana.",
         waiting: "Vaš vozač vas čeka.",

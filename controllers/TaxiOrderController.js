@@ -1059,9 +1059,13 @@ async function updateOrderStatus(req, res) {
 		let driver = await DriverDao.getDriverById(driver_id);
 		console.log("user console.log", user?.user_id);
 		console.log("Driver console.log", driver?.user?.user_id);
-		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO) sendOrderNotifications(user, driver.user, user_id, driver_id, req.body.status);
 		if (
 			order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO &&
+			order.status!==TAXI_ORDER_STATUS.TAXI_DRIVING &&//Dont send TAXI_DRIVING notification
+			// !(//only send "your driver is on his way" notification once in order lifespan
+			// 	order.status===TAXI_ORDER_STATUS.TAXI_DRIVING &&
+			// 	order?.timeline?.some(entry=>entry.status===TAXI_ORDER_STATUS.TAXI_DRIVING)
+			// ) &&
 			!(
 				//only send "your driver is waiting for you" notification once in order lifespan
 				order.status===TAXI_ORDER_STATUS.TAXI_WAITING &&

@@ -3,7 +3,7 @@ const  de = {
         scheduled_tomorrow: "Ihre Taxi-Bestellung ist für morgen um ",
         scheduled_hour: "Ihre Taxi-Bestellung ist in einer Stunde geplant",
         pending: '',
-        accepted: "Ihre Taxibestellung wurde angenommen.",
+        accepted: "Ein Fahrer hat Ihre Bestellung angenommen und ist unterwegs.",
         rejected: "Ihre Taxibestellung wurde abgelehnt. Ein neuer Fahrer wird Ihre Anfrage in Kürze annehmen.",
         canceled: "Ihre Taxibestellung wurde storniert.",
         waiting: "Ihr Fahrer wartet auf Sie.",
