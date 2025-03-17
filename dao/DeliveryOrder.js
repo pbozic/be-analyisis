@@ -826,10 +826,10 @@ async function getActiveOrderIdsForUser(user_id) {
 				status: {
 					notIn: DELIVERY_ORDER_END_STATES
 				},
-				select:{
-					order_id:true
-				}
 			},
+			select:{
+				order_id:true
+			}
 		});
 		// console.info("got order ids:", order_ids);
 		return order_ids;
