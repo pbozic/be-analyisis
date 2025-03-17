@@ -1772,7 +1772,7 @@ async function claimReward(req, res) {
 			return res.status(400).json({ error: "Error claiming reward" });
 		}
 
-		return res.status(200).json({ message: "Reward claimed successfully" });
+		return res.status(200).json(referral);
 	} catch (error) {
 		return res.status(400).json({ error: error.message || "Error claiming reward" });
 	}
@@ -1791,7 +1791,6 @@ async function getUserCredits(req, res) {
 		return res.status(400).json({ error: error.message || "Error fetching user credits" });
 	}
 }
-
 
 async function getMyActiveOrderIds(req, res) {
 	const user_id = req.user.user_id
