@@ -820,7 +820,7 @@ async function getInProgressDeliveryOrdersCountForBusinessId(business_id) {
 
 async function getActiveOrderIdsForUser(user_id) {
 	try {
-		const order_ids = await prisma.delivery_orders.findMany({
+		const orders = await prisma.delivery_orders.findMany({
 			where: {
 				user_id: user_id,
 				status: {
@@ -832,7 +832,7 @@ async function getActiveOrderIdsForUser(user_id) {
 			}
 		});
 		// console.info("got order ids:", order_ids);
-		return order_ids;
+		return orders.map(order=>order.order_id);
 	} catch (e) {
 		console.error("Error fetching orders:", e);
 		throw new Error(e.message);
