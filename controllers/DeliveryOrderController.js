@@ -1037,7 +1037,13 @@ async function updateOrderStatus(req, res) {
 		}
 
 		order = await DeliveryOrderDao.getOrder(req.body.order_id, { include: { user: true, driver: true, delivery_driver: true } });
-		sendDeliveryOrderNotifications(order.user, order.driver, order.user_id, order.driver_id, req.body.status);
+		let d;
+		if (order.driver) {
+			d = DriverDao.getDriverById(order.driver.driver_id);
+		} else if (order.delivery_driver) {
+			d = DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver.delivery_driver_id);
+		}
+		sendDeliveryOrderNotifications(order.user, d?.user, order.user_id, order.driver_id, req.body.status);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);

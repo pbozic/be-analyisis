@@ -73,5 +73,6 @@ router.get("/me/credits/:type", UserController.getUserCredits);
 router.patch("/me/claim-reward", UserController.claimReward);
 router.post("/me/redeem-referral-code", UserController.redeemReferralCode);
 router.get("/user/:code", UserController.getUserByReferralCode);
+router.get("/me/referral", UserController.getReferral);
 
 module.exports = router;

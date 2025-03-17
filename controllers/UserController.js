@@ -1791,7 +1791,18 @@ async function getUserCredits(req, res) {
 	}
 }
 
+async function getReferral(req, res) {
+	try {
+		const referral = ReferralDao.getReferralByReferredUserId(req.user.user_id)
+		if (!referral) return res.status(400).json({ error: 'Error fetching referral' });
+		return res.status(200).json(referral);
+	} catch (error) {
+		return res.status(400).json({ error: error.message || 'Error fetching referral' });
+	}
+}
+
 module.exports = {
+	getReferral,
 	claimReward,
 	redeemReferralCode,
 	getUserByReferralCode,
