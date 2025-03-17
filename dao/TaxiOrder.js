@@ -842,7 +842,7 @@ async function getActiveOrderIdsForUser(user_id) {
                 order_id:true
             }
         });
-        // console.info("got order ids:", order_ids);
+        // console.info("got order ids:", orders);
         return orders.map(order=>order.order_id);
     } catch (e) {
         console.error("Error fetching orders:", e);

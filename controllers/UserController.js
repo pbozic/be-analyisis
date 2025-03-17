@@ -1796,8 +1796,8 @@ async function getUserCredits(req, res) {
 async function getMyActiveOrderIds(req, res) {
 	const user_id = req.user.user_id
 	try {
-		const delivery_order_ids = DeliveryOrderDao.getActiveOrderIdsForUser(user_id)
-		const taxi_order_ids = TaxiOrderDao.getActiveOrderIdsForUser(user_id)
+		const delivery_order_ids = await DeliveryOrderDao.getActiveOrderIdsForUser(user_id)
+		const taxi_order_ids = await TaxiOrderDao.getActiveOrderIdsForUser(user_id)
 
 		return res.status(200).json({
 			taxi_order_ids,
