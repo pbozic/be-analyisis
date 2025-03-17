@@ -907,7 +907,7 @@ async function completeOrder(req, res) {
 			if(DRIVER_CREDIT_CUT_CENTS>0) {
 				const transferedCreditsDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, driver_business.stripe_account_id, DRIVER_CREDIT_CUT_CENTS, order.order_id, "taxi");
 			}
-			const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user_id)
+			const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user.user_id)
 
 			if(DISCOUNTED_TOTAL_COST>0) {
 				if (order.payment.type === "WALLET") {

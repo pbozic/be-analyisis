@@ -120,9 +120,9 @@ async function getActiveDeliveryOrdersForBusiness(business_id) {
 	}
 }
 
-async function getDeliveryOrderIfNotCompleted(user_id) {
+async function getDeliveryOrdersIfNotCompleted(user_id) {
 	try {
-		return await prisma.delivery_orders.findFirst({
+		return await prisma.delivery_orders.findMany({
 			where: {
 				user_id: user_id,
 				status: {
@@ -839,7 +839,7 @@ module.exports = {
 	updateOrder,
 	updateOrderPickupTime,
 	updateOrderDeliveryTime,
-	getDeliveryOrderIfNotCompleted,
+	getDeliveryOrdersIfNotCompleted,
 	getAlreadySentOrdersByDeliveryDriverId,
 	getActiveOrdersByDeliveryDriverId,
 	connectOrderWithDriver,

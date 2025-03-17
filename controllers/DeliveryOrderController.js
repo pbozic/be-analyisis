@@ -196,7 +196,7 @@ async function createOrder(req, res) {
 		const {MERCHANT_CUT} = results
 
 		if(DISCOUNTED_COMBINED_COST_CENTS>0){
-			if (order.payment.type === "CARD" || order.payment.type === "PLATFORM"
+			if (order.payment.type === "CARD" || order.payment.type === "PLATFORM") {
 				payment_intent = await stripe.createSplitPayment(
 					customer_acc,
 					restaurant_acc,
@@ -890,8 +890,8 @@ async function getActiveDeliveryOrdersByUserId(req, res) {
 	const { user_id } = req.params;
 
 	try {
-		const activeOrder = await DeliveryOrderDao.getDeliveryOrderIfNotCompleted(user_id);
-		res.status(200).json(activeOrder);
+		const activeOrders = await DeliveryOrderDao.getDeliveryOrdersIfNotCompleted(user_id);
+		res.status(200).json(activeOrders);
 	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
