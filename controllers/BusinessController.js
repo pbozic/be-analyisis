@@ -128,7 +128,6 @@ async function listPromoSectionsWithMerchants(req, res) {
 					}
 				}
 		});
-		console.log("promoSections", promoSections)
 		for (let promoSection of promoSections) {
 			let translations = {};
 			for (let translation of promoSection.translatable.translations) {

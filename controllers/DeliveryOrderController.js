@@ -196,7 +196,7 @@ async function createOrder(req, res) {
 		const {MERCHANT_CUT} = results
 
 		if(DISCOUNTED_COMBINED_COST_CENTS>0){
-			if (order.payment.type === "CARD") {
+			if (order.payment.type === "CARD" || order.payment.type === "PLATFORM"
 				payment_intent = await stripe.createSplitPayment(
 					customer_acc,
 					restaurant_acc,

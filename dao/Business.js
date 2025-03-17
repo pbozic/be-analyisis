@@ -384,8 +384,11 @@ const getFinanceRecordByBusinessId = async (business_id) => {
 	}
 };
 
-const updateBusiness = async (business_id, businessData) => {
+const updateBusiness = async (business_id, businessD) => {
 	try {
+		let businessData = {
+			...businessD,
+		}
 		delete businessData.business_id;
 		delete businessData.type;
 		delete businessData.is_business_unit;
