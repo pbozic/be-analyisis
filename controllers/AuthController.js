@@ -419,8 +419,11 @@ async function registerTaxiService(req, res) {
 					driverInfo.user.data.first_name + " " + driverInfo.user.data.last_name,
 					driverInfo.user.data.telephone,
 				);
+				const phoneNumber = driverInfo.user.data.telephone_number;
+				const normalizedPhoneNumber = await SMSHelper.getParsedPhoneNumber(driverInfo.user.data.telephone, driverInfo.user.data.telephone_code);
 				let userObj = {
 					...driverInfo.user.data,
+					telephone_number: normalizedPhoneNumber?.number || phoneNumber,
 					stripe_customer_id: stripeCustomer.id,
 				};
 				const newUser = await UserDao.createNewUser(userObj, true);
@@ -629,8 +632,11 @@ async function registerDeliveryService(req, res) {
 					deliveryDriverInfo.user.data.first_name + " " + deliveryDriverInfo.user.data.last_name,
 					deliveryDriverInfo.user.data.telephone,
 				);
+				const phoneNumber = deliveryDriverInfo.user.data.telephone_number;
+				const normalizedPhoneNumber = await SMSHelper.getParsedPhoneNumber(deliveryDriverInfo.user.data.telephone, deliveryDriverInfo.user.data.telephone_code);
 				let userObj = {
 					...deliveryDriverInfo.user.data,
+					telephone_number: normalizedPhoneNumber?.number || phoneNumber,
 					stripe_customer_id: stripeCustomer.id,
 				};
 				const newUser = await UserDao.createNewUser(userObj, true);
