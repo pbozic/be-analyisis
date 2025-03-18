@@ -1151,7 +1151,7 @@ async function cancelOrder(req, res) {
 		let driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
 		console.log("user console.log", user?.user_id);
 		console.log("Driver console.log", driver?.user?.user_id);
-		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO) sendOrderNotifications(user, driver.user, user_id, driver_id, status);
+		//if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO) sendOrderNotifications(user, driver.user, user_id, driver_id, status);
 
 		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
 
