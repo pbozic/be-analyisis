@@ -38,7 +38,7 @@ const createGroupUser = async (group_user_data) => {
 		data: {
 			user: {
 				connect: {
-					group_user_id: group_user_id,
+					group_user_id: group_user.group_user_id,
 				}
 			}
 		}
