@@ -18,6 +18,7 @@ const DocumentDao = require("../dao/Document");
 const { TAXI_ORDER_STATUS,DELIVERY_ORDER_STATUS, DOCUMENT_TYPE } = require("../lib/constants");
 const { createNewVehicle } = require("../dao/Vehicle");
 const { calculateTotalEarnings, calculateDriversEarnings } = require('../lib/helpersLib');
+const deliveryHelpers = require("../lib/deliveryHelpers");
 
 /**
  * GET /drivers
@@ -177,6 +178,10 @@ async function resendDelegatedOrdersToDriver(req, res) {
 		await taxiHelpers.resendPendingOrdersToDriver(driver);
 		// Send active orders to this driver
 		await taxiHelpers.sendActiveOrdersToDriver(driver);
+		// Send already sent orders to this driver
+		await deliveryHelpers.resendPendingOrdersToDeliveryDriver(driver);
+		// Send active orders to this driver
+		await deliveryHelpers.sendActiveOrdersToDeliveryDriver(driver);
 
 		// Return a 200 status
 		res.status(200).send();

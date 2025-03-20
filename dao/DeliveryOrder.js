@@ -188,11 +188,14 @@ async function getUserByDeliveryOrderId(order_id) {
 }
 
 
-async function getActiveOrdersByDeliveryDriverId(delivery_driver_id) {
+async function getActiveOrdersByDeliveryDriverId(deliverer_id) {
 	try {
 		return await prisma.delivery_orders.findMany({
 			where: {
-				delivery_driver_id: delivery_driver_id,
+				OR: [
+					{ delivery_driver_id: deliverer_id },
+					{ driver_id: deliverer_id }
+				],
 				status: {
 					notIn: DELIVERY_ORDER_END_STATES
 					// notIn: [
