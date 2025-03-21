@@ -103,27 +103,27 @@ const getBusinessesForSearchById = async (business_id) => {
 						}
 					}
 				},
-				menus: {
-					where: {
-						active: true,
-						isDailyMeal: false
-					},
-					include: {
-						categories: {
-							include: {
-								menu_items: {
-									include: {
-										documents: {
-											include: {
-												files: true
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
+				// menus: {
+				// 	where: {
+				// 		active: true,
+				// 		isDailyMeal: false
+				// 	},
+				// 	include: {
+				// 		categories: {
+				// 			include: {
+				// 				menu_items: {
+				// 					include: {
+				// 						documents: {
+				// 							include: {
+				// 								files: true
+				// 							}
+				// 						}
+				// 					}
+				// 				}
+				// 			}
+				// 		}
+				// 	}
+				// }
 			}
 		});
 		
