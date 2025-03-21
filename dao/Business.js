@@ -137,9 +137,7 @@ const getBusinessForSearchById = async (business_id) => {
 		
 		return await prisma.business.findUnique({
 			where: {
-				business_id: {
-					in: business_id
-				}
+				business_id: business_id
 			},
 			select: {
 				// ✅ Select specific fields from the root
