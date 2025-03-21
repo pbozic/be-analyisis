@@ -15,12 +15,12 @@ function shouldGenerateS3Links(args) {
 
 async function generateS3LinksRecursively(args, result) {
     // Check if should generate S3 links based on args
-    if (shouldGenerateS3Links(args) || (result && Array.isArray(result) && result.some(doc => doc.files))) {
+    if (shouldGenerateS3Links(args) || (result && Array.isArray(result) && result.some(doc => doc?.files))) {
         // If result is an array, process each document
         if (Array.isArray(result)) {
             for (let document of result) {
-                if (document && document.files) {
-                    document.files = await Promise.all(document.files.map(async (file) => {
+                if (document && document?.files) {
+                    document?.files = await Promise.all(document.files.map(async (file) => {
                         return {
                             ...file,
                             url: await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public),
