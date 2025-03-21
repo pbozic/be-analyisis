@@ -497,19 +497,19 @@ const expireOutdatedCredits = async () => {
 
 const findCreditsExpiringInDays = async (days) => {
 	try {
-		const startDate = new Date();
-		startDate.setHours(0, 0, 0, 0);
+		const endDateStart = new Date();
+		const endDateEnd = new Date();
+		endDateStart.setDate(endDateStart.getDate() + days);
+		endDateStart.setHours(0, 0, 0, 0);
+		endDateEnd.setDate(endDateEnd.getDate() + days);
+		endDateEnd.setHours(23, 59, 59, 999);
 
-		const endDate = new Date();
-		endDate.setDate(endDate.getDate() + days);
-		endDate.setHours(23, 59, 59, 999);
-
-		return prisma.cashback.findMany({
+		return prisma.wallet_funds.findMany({
 			where: {
 				status: CREDIT_STATUS.ACTIVE,
 				expires_at: {
-					gte: startDate,
-					lte: endDate
+					gte: endDateStart,
+					lte: endDateEnd
 				}
 			},
 			include: {
