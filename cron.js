@@ -26,7 +26,7 @@ function startCronJobs() {
     //Every 10 days
     cron.schedule("0 0 */10 * *", stripe.payoutAvailableBalanceToBusinesses);
 
-    cron.schedule("23 59 * * *", BusinessHelper.setNewBusinesses);
+    cron.schedule("59 23 * * *", BusinessHelper.setNewBusinesses);
 }
 
 module.exports = startCronJobs;
