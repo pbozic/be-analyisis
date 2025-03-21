@@ -248,7 +248,7 @@ async function indexBusinesses(business_id = null, force = false) {
                 location: business.delivery_address? { lat: parseFloat(business.delivery_address.latitude), lon: parseFloat(business.delivery_address.longitude) } : { lat: parseFloat(business.address.latitude), lon: parseFloat(usiness.address.longitude) },
                 menus: business.menus.map(menu => ({
                     menu_category_name: menu.categories.flatMap(cat => {
-                        console.log("cat", cat)
+                        if (!cat.names) return []
                         return  Object.values(cat.names).filter(value => value !== "") || []
                     }
                        
