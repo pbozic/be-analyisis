@@ -103,6 +103,67 @@ const getBusinessesForSearchById = async (business_id) => {
 						}
 					}
 				},
+				// menus: {
+				// 	where: {
+				// 		active: true,
+				// 		isDailyMeal: false
+				// 	},
+				// 	include: {
+				// 		categories: {
+				// 			include: {
+				// 				menu_items: {
+				// 					include: {
+				// 						documents: {
+				// 							include: {
+				// 								files: true
+				// 							}
+				// 						}
+				// 					}
+				// 				}
+				// 			}
+				// 		}
+				// 	}
+				// }
+			}
+		});
+		
+	} catch (error) {
+		console.error("Error retrieving business for search:", error);
+		throw new Error(error);
+	}
+}
+const getBusinessForSearchById = async (business_id) => {
+	try {
+		
+		return await prisma.business.findUnique({
+			where: {
+				business_id: business_id
+			},
+			select: {
+				// ✅ Select specific fields from the root
+				business_id: true,
+				name: true,
+				description: true,
+				telephone: true,
+				working_hours: true,
+				seats: true,
+				minimum_order: true,
+				offers_daily_meals: true,
+				popular: true,
+				new: true,
+				restaurant_overwhelmed: true,
+				address: true, // Full object
+				delivery_address: true, // Full object
+				documents: {
+					include: {
+						files: true // Full nested objects
+					},
+					where: {
+						document_type: {
+							in: ['BANNER', 'LOGO']
+						}
+					}
+				},
 				menus: {
 					where: {
 						active: true,
@@ -765,7 +826,43 @@ const getStripeIdsForAllBusinesses = async () => {
 		throw new Error(error);
 	}
 }
+async function activateBusiness(business_id) {
+	try {
+		// if activating first time first_activated_at will be set
+		let business = await prisma.business.findUnique({
+			where: { business_id },
+			select: { first_activated_at: true },
+		});
+		if (!business.first_activated_at) {
 
+			return await prisma.business.update({
+				where: { business_id },
+				data: { active: true, first_activated_at: new Date() },
+			});
+		} else {
+			return await prisma.business.update({
+				where: { business_id },
+				data: { active: true },
+			});
+		}
+
+	} catch (error) {
+		console.error("Error activating business:", error);
+		throw new Error(error);
+	}
+}
+
+async function deactivateBusiness(business_id) {
+	try {
+		return await prisma.business.update({
+			where: { business_id },
+			data: { active: false },
+		});
+	} catch (error) {
+		console.error("Error deactivating business:", error);
+		throw new Error(error);
+	}
+}
 module.exports = {
 	getBusinesses,
 	getBusinessById,
@@ -802,5 +899,8 @@ module.exports = {
 	updateBusinessFinances,
 	getBusinessStripeByBusinessId,
 	getStripeIdsForAllBusinesses,
-	getBusinessesForSearchById
+	getBusinessesForSearchById,
+	activateBusiness,
+	deactivateBusiness,
+	getBusinessForSearchById
 };

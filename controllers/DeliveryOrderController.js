@@ -531,7 +531,7 @@ async function acceptOrderDelivery(req, res) {
 			return res.status(400).json({ error: "Order is already accepted.", errorType: "ERR_ORDER_ALREADY_ACCEPTED" });
 		}
 
-		await DeliveryOrderDao.acceptOrderDelivery(order, deliverer_id);
+		order = await DeliveryOrderDao.acceptOrderDelivery(order, deliverer_id);
 		let driver;
 		if (order.delivery_driver?.delivery_driver_id) {
 			driver = await DeliveryDriverDao.getDeliveryDriverById(deliverer_id, {
@@ -1043,9 +1043,9 @@ async function updateOrderStatus(req, res) {
 
 		order = await DeliveryOrderDao.getOrder(req.body.order_id, { include: { user: true, driver: true, delivery_driver: true } });
 		let d;
-		if (order.driver) {
+		if (order.driver?.driver_id) {
 			d = DriverDao.getDriverById(order.driver.driver_id);
-		} else if (order.delivery_driver) {
+		} else if (order.delivery_driver?.delivery_driver_id) {
 			d = DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver.delivery_driver_id);
 		}
 		sendDeliveryOrderNotifications(order.user, d?.user, order.user_id, order.driver_id, req.body.status);

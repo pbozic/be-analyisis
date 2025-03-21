@@ -5,16 +5,16 @@ const PromoDao = require("../../dao/Promo");
 const placeholder_promo_sections = [
 	{
 		translations: [
-			{ language: "EN", translation: "Featured Ads" },
-			{ language: "SL", translation: "Izpostavljeni oglasi" },
-			{ language: "IT", translation: "Annunci in evidenza" },
-			{ language: "DE", translation: "Hervorgehobene Anzeigen" },
-			{ language: "ES", translation: "Anuncios destacados" },
-			{ language: "SR", translation: "Istaknuti oglasi" },
-			{ language: "BS", translation: "Istaknuti oglasi" },
-			{ language: "HR", translation: "Istaknuti oglasi" },
-			{ language: "FR", translation: "Annonces en vedette" },
-			{ language: "RU", translation: "Рекомендуемые объявления" }
+			{ language: "en", translation: "Featured Ads" },
+			{ language: "sl", translation: "Izpostavljeni oglasi" },
+			{ language: "it", translation: "Annunci in evidenza" },
+			{ language: "de", translation: "Hervorgehobene Anzeigen" },
+			{ language: "es", translation: "Anuncios destacados" },
+			{ language: "sr", translation: "Istaknuti oglasi" },
+			{ language: "bs", translation: "Istaknuti oglasi" },
+			{ language: "hr", translation: "Istaknuti oglasi" },
+			{ language: "fr", translation: "Annonces en vedette" },
+			{ language: "ru", translation: "Рекомендуемые объявления" }
 		],
 		sectionData: {
 			name: "Featured Ads",

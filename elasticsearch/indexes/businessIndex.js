@@ -2,6 +2,9 @@ const esClient = require("../client");
 const prisma = require("../../prisma/prisma");
 const Constants = require("../../lib/constants");
 const fs = require("fs");
+
+
+
 async function createBusinessIndex(force = false) {
     try {
         const indexExists = await esClient.indices.exists({ index: 'business_index' });
@@ -50,6 +53,8 @@ async function createBusinessIndex(force = false) {
                         menus: {
                             type: "nested",
                             properties: {
+                                isDailyMeal: { type: "boolean" },
+                                date: { type: "date" },
                                 menu_category_id: { type: "keyword" },
                                 menu_category_name: {
                                     type: "text",
@@ -197,7 +202,7 @@ async function indexBusinesses(business_id = null, force = false) {
             }
         });
         
-        console.log(` Found ${businesses.length} businesses. Preparing data for indexing...`);
+        console.log(`Found ${businesses.length} businesses. Preparing data for indexing...`);
 
         const bulkOps = [];
 
@@ -243,9 +248,16 @@ async function indexBusinesses(business_id = null, force = false) {
                 banner: banner,
                 telephone: business.telephone,
                 location: business.delivery_address? { lat: parseFloat(business.delivery_address.latitude), lon: parseFloat(business.delivery_address.longitude) } : { lat: parseFloat(business.address.latitude), lon: parseFloat(usiness.address.longitude) },
-                menus: business.menus.map(menu => ({
-                    menu_category_name: menu.categories.flatMap(cat =>
-                        Object.values(cat.names).filter(value => value !== "")
+                menus: business.menus.map(menu => {
+                    if (menu.isDailyMeal) {
+                    }
+                    let menu1 = {
+
+                    menu_category_name: menu.categories.flatMap(cat => {
+                        if (!cat.names) return []
+                        return  Object.values(cat.names).filter(value => value !== "") || []
+                    }
+                       
                     ),
                     menu_category_id: categoriesIds,
                     translations: menu.categories.flatMap(cat =>
@@ -263,7 +275,14 @@ async function indexBusinesses(business_id = null, force = false) {
                             description: Object.values(item.description).filter(value => value !== "")
                         }))
                     )
-                })),
+                }
+                if (menu.isDailyMeal) {
+                    menu1.isDailyMeal = true,
+                    menu1.date = menu.date
+                }
+                return menu1
+
+            }),
                 promo_sections: business.promo_sections.map(section => {
                     return {
                         name: section.promo_section.name,

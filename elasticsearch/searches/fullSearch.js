@@ -16,7 +16,7 @@ const SCORING_WEIGHTS = {
     menu_item_description_weight: 1, // Weight for matching menu item descriptions
 };
 
-async function searchBusinesses(query, userLat, userLon, categoryIds = [], radius = null, promoSectionId = null, page = 1, pageSize = 10) {
+async function searchBusinesses(query, userLat, userLon, categoryIds = [], radius = null, filterOperator = "OR",isDailyMealSearch = false, promoSectionId = null, page = 1, pageSize = 10) {
     try {
         const from = (page - 1) * pageSize;
         const queryWords = query ? query.split(" ").filter((word) => word.trim() !== "") : [];
@@ -34,7 +34,46 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
                 must_not: []
             }
         };
-
+        if (typeof isDailyMealSearch === "boolean") {
+            if (isDailyMealSearch) {
+                // Only daily meals with a date >= today
+                const now = new Date();
+                const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+                const todayISOString = todayStart.toISOString();
+        
+                boolQuery.bool.filter.push({
+                    nested: {
+                        path: "menus",
+                        query: {
+                            bool: {
+                                must: [
+                                    { term: { "menus.isDailyMeal": true } },
+                                    {
+                                        range: {
+                                            "menus.date": { gte: todayISOString }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                });
+            } else {
+                // Only non-daily meals (or where isDailyMeal is not true / missing)
+                boolQuery.bool.filter.push({
+                    nested: {
+                        path: "menus",
+                        query: {
+                            bool: {
+                                must_not: [
+                                    { term: { "menus.isDailyMeal": true } }
+                                ]
+                            }
+                        }
+                    }
+                });
+            }
+        }
         // **Filter by promo section ID if provided**
         if (hasPromoSection) {
             boolQuery.bool.filter.push({
@@ -130,14 +169,29 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
 
         // **Filter by category ID (if provided)**
         if (hasCategories) {
-            boolQuery.bool.filter.push({
-                nested: {
-                    path: "menus",
-                    query: {
-                        terms: { "menus.menu_category_id": categoryIds }
+            if (filterOperator === "AND") {
+                // All categories must match
+                categoryIds.forEach(categoryId => {
+                    boolQuery.bool.filter.push({
+                        nested: {
+                            path: "menus",
+                            query: {
+                                term: { "menus.menu_category_id": categoryId }
+                            }
+                        }
+                    });
+                });
+            } else {
+                // OR: Any of the categories can match
+                boolQuery.bool.filter.push({
+                    nested: {
+                        path: "menus",
+                        query: {
+                            terms: { "menus.menu_category_id": categoryIds }
+                        }
                     }
-                }
-            });
+                });
+            }
         }
 
         // **Filter by radius (if provided)**
