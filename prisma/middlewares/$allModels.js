@@ -20,7 +20,7 @@ async function generateS3LinksRecursively(args, result) {
         if (Array.isArray(result)) {
             for (let document of result) {
                 if (document && document?.files) {
-                    document?.files = await Promise.all(document.files.map(async (file) => {
+                    document.files = await Promise.all(document.files.map(async (file) => {
                         return {
                             ...file,
                             url: await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public),
