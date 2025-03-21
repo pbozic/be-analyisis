@@ -529,7 +529,7 @@ async function acceptOrderDelivery(req, res) {
 			return res.status(400).json({ error: "Order is already accepted.", errorType: "ERR_ORDER_ALREADY_ACCEPTED" });
 		}
 
-		await DeliveryOrderDao.acceptOrderDelivery(order, deliverer_id);
+		order = await DeliveryOrderDao.acceptOrderDelivery(order, deliverer_id);
 		let driver;
 		if (order.delivery_driver?.delivery_driver_id) {
 			driver = await DeliveryDriverDao.getDeliveryDriverById(deliverer_id, {
