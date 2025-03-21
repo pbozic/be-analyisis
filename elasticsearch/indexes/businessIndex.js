@@ -53,6 +53,8 @@ async function createBusinessIndex(force = false) {
                         menus: {
                             type: "nested",
                             properties: {
+                                isDailyMeal: { type: "boolean" },
+                                date: { type: "date" },
                                 menu_category_id: { type: "keyword" },
                                 menu_category_name: {
                                     type: "text",
@@ -246,7 +248,11 @@ async function indexBusinesses(business_id = null, force = false) {
                 banner: banner,
                 telephone: business.telephone,
                 location: business.delivery_address? { lat: parseFloat(business.delivery_address.latitude), lon: parseFloat(business.delivery_address.longitude) } : { lat: parseFloat(business.address.latitude), lon: parseFloat(usiness.address.longitude) },
-                menus: business.menus.map(menu => ({
+                menus: business.menus.map(menu => {
+                    if (menu.isDailyMeal) {
+                    }
+                    let menu1 = {
+
                     menu_category_name: menu.categories.flatMap(cat => {
                         if (!cat.names) return []
                         return  Object.values(cat.names).filter(value => value !== "") || []
@@ -269,7 +275,14 @@ async function indexBusinesses(business_id = null, force = false) {
                             description: Object.values(item.description).filter(value => value !== "")
                         }))
                     )
-                })),
+                }
+                if (menu.isDailyMeal) {
+                    menu1.isDailyMeal = true,
+                    menu1.date = menu.date
+                }
+                return menu1
+
+            }),
                 promo_sections: business.promo_sections.map(section => {
                     return {
                         name: section.promo_section.name,
