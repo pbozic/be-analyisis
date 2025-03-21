@@ -16,11 +16,15 @@ const openapi = require("openapi-comment-parser");
 const { app, server } = require('./server');
 const { io } = require('./socket'); // This initializes the socket.io server even if the io variable is not used in this file
 const CustomConsole = require('./lib/logger');
+const compression = require('compression');
 const customConsole = new CustomConsole(console, { 
 	showSourceLocation: process.env.LOGGING_SHOW_TRACE === 'true'
 });
 global.console = customConsole;
-
+app.use(compression({
+	level: 6, // 1 (fastest, less compression) to 9 (slowest, most compression)
+	threshold: 10 * 1024, // Only compress responses bigger than 10KB
+  }));
 // listen to port 3001
 const port = process.env.PORT || 3001;
 
