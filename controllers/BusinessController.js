@@ -187,7 +187,7 @@ async function listPromoSectionsWithMerchants(req, res) {
 			for (let translation of promoSection.translatable.translations) {
 				translations[translation.language] = translation.translation;
 			}
-			let esResults = await fullSearch("", req.body.location.lat, req.body.location.long, [], req.body.radius, req.body.filterOperator ||"OR", promoSection.promo_sections_id, 1, 10);
+			let esResults = await fullSearch("", req.body.location.lat, req.body.location.long, [], req.body.radius, req.body.filterOperator ||"OR", req.body.isDailyMealSearch || false, promoSection.promo_sections_id, 1, 10);
 			promoSection.translations = translations;
 			let providerIds = esResults.map(r => r.business_id);
 			let providers = await BusinessDao.getBusinessesForSearchById(providerIds);
