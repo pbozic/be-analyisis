@@ -2,6 +2,9 @@ const esClient = require("../client");
 const prisma = require("../../prisma/prisma");
 const Constants = require("../../lib/constants");
 const fs = require("fs");
+
+
+
 async function createBusinessIndex(force = false) {
     try {
         const indexExists = await esClient.indices.exists({ index: 'business_index' });
@@ -197,7 +200,7 @@ async function indexBusinesses(business_id = null, force = false) {
             }
         });
         
-        console.log(` Found ${businesses.length} businesses. Preparing data for indexing...`);
+        console.log(`Found ${businesses.length} businesses. Preparing data for indexing...`);
 
         const bulkOps = [];
 

@@ -11,7 +11,8 @@
 		"docker:up": "docker-compose --env-file .env -f ./Docker/docker-compose.yml up -d",
 		"docker:down": "docker-compose --env-file .env -f ./Docker/docker-compose.yml down",
 		"seed": "node prisma/seed.js",
-		"generate:business": "node lib/generateBusnisses.js"
+		"generate:business": "node lib/generateBusnisses.js",
+		"es-tunnel": "ssh -L 19200:localhost:9200 KlikniLive"
 	},
 	"prisma": {
 		"schema": "./prisma/schema.prisma",

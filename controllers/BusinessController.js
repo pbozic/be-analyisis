@@ -16,7 +16,61 @@ const BusinessUsersDao = require("../dao/BusinessUsers");
 const EmailHelper = require("../lib/emailSender");
 const { UserSockets, io } = require('../socket');
 const { businessIndex, categorySearch, fullSearch } = require("../elasticsearch");
+/**
+ * POST /business/activate
+ * @tag Business
+ * @summary Activate a business
+ * @description Activates a business.
+ * @operationId activateBusiness
+ * @response 200 - successful operation
+ * @responseContent {User[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the business list
+ * @responseContent {object} 400.application/json The error object
+ */
 
+async function activateBusiness(req, res) {
+	try {
+		const business = await BusinessDao.activateBusiness(req.body.business_id);
+		if (business) {
+			res.status(200).json(business);
+		} else {
+			res.status(400).json({
+				error: "Error activating business..",
+				users: business,
+			});
+		}
+	} catch (e) {
+		res.status(400).json({ error: "Error activating business..", e });
+	}
+}
+
+/**
+ * POST /business/deactivate
+ * @tag Business
+ * @summary Deactivate a business
+ * @description Deactivates a business.
+ * @operationId deactivateBusiness
+ * @response 200 - successful operation
+ * @responseContent {User[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the business list
+ * @responseContent {object} 400.application/json The error object
+ */
+
+async function deactivateBusiness(req, res) {
+	try {
+		const business = await BusinessDao.deactivateBusiness(req.body.business_id);
+		if (business) {
+			res.status(200).json(business);
+		} else {
+			res.status(400).json({
+				error: "Error activating business..",
+				users: business,
+			});
+		}
+	} catch (e) {
+		res.status(400).json({ error: "Error activating business..", e });
+	}
+}
 /**
  * GET /businesses
  * @tag Business
@@ -262,6 +316,41 @@ async function getBusinessById(req, res) {
 	}
 }
 
+/**
+ * GET /business/search/:business_id
+ * @tag Business
+ * @summary Get a business for search by ID
+ * @description Retrieves detailed information about a specific business by its ID.
+ * @operationId getBusinessForSearchById
+ * @pathParam {string} business_id - The ID of the business to retrieve
+ * @response 200 - Successful operation, returns detailed business information
+ * @responseContent {Business} 200.application/json
+ * @response 404 - Business not found
+ * @response 400 - Error retrieving business information
+ */
+async function getBusinessForSearchById(req, res) {
+	try {
+		const business = await BusinessDao.getBusinessForSearchById(req.params.business_id);
+		let logo, banner;
+		for (let d of business.documents) {
+			if (d.document_type === "LOGO") {
+				logo = d.files[0].url;
+			} else if (d.document_type === "BANNER") {
+				banner = d.files[0].url;
+			}
+		}
+		business.logo = logo;
+		business.banner = banner;
+		if (business) {
+			res.status(200).json(business);
+		} else {
+			res.status(404).json({ error: "Business not found" });
+		}
+	} catch (e) {
+		console.error("Error retrieving business:", e);
+		res.status(400).json({ error: "Error retrieving business information", e });
+	}
+}
 /**
  * GET /business/parent/:business_id
  * @tag Business
@@ -1441,6 +1530,9 @@ module.exports = {
 	generateBusinessStripeByBusinessId,
 	getBusynessFactorsBusinessIdList,
 	searchBusinesses,
-	listPromoSectionsWithMerchants
+	listPromoSectionsWithMerchants,
+	activateBusiness,
+	deactivateBusiness,
+	getBusinessForSearchById
 };
 

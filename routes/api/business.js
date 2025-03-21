@@ -17,6 +17,7 @@ router.get("/businesses/taxi/main", BusinessController.listTransferBusinessesMai
 router.get("/businesses/busyness", BusinessController.getBusynessFactorsBusinessIdList);
 
 router.get("/:business_id", BusinessController.getBusinessById);
+router.get("/search/:business_id", BusinessController.getBusinessForSearchById);
 router.get("/:business_id/reviews", BusinessController.getBusinessReviewsById);
 router.post("/search", BusinessController.searchBusinesses);
 router.get("/search", BusinessController.getBusinessesByNameSearch);
@@ -30,6 +31,8 @@ router.get("/earnings/:business_id/total", BusinessController.getBusinessTotalEa
 
 router.post("/register", BusinessController.createNewBusiness);
 router.post("/review", joi(reviewBusinessSchema), BusinessController.reviewBusiness);
+router.post("/activate", BusinessController.activateBusiness);
+router.post("/deactivate", BusinessController.deactivateBusiness);
 router.post("/address/add", BusinessController.addBusinessAddress);
 router.post("/delivery-address/add", BusinessController.addDeliveryAddress);
 
