@@ -55,7 +55,15 @@ const ru = {
         lobby_added: "Добавлен в комнату",
         lobby_removed: "Удален из комнаты",
         lobby_canceled: "Комната отменена",
-        lobby_completed: "Комната завершена"
+        lobby_completed: "Комната завершена",
+        creditExpiry: "Ваши кредиты",
+        referral: "Награда за приглашение",
+    },
+    CREDIT_NOTIFICATIONS: {
+        creditExpiry: "Ваши кредиты истекут через 7 дней",
+    },
+    REFERRAL_NOTIFICATIONS: {
+        referral: "Ваша награда за приглашение зачислена на ваш счет",
     }
 }
 module.exports = ru;

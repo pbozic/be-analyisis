@@ -25,10 +25,12 @@ const {RESTAURANT_FEE} = require('../lib/constants');
 const prisma = require("../prisma/prisma");
 const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
 const DriverDao = require("../dao/Driver");
-const { sendDeliveryOrderNotifications } = require("../lib/notifications");
+const { sendDeliveryOrderNotifications, sendReferralNotifications } = require("../lib/notifications");
 const CashbackDao = require("../dao/Cashback");
 const WalletFundsDao = require("../dao/WalletFunds");
 const TaxiOrderDao = require("../dao/TaxiOrder");
+const ReferralDao = require("../dao/Referrals");
+const { handleReferral } = require("../lib/referralHelper");
 
 /**
  * GET /delivery/orders
@@ -689,6 +691,9 @@ async function completeOrder(req, res) {
 		// 		}
 		// 	}
 		// }
+
+		await handleReferral(order.user_id);
+
 		if(DISCOUNTED_DELIVERY_COST_CENTS>0) {
 			if (order.payment.type === "CARD") {
 				const paymentIntent = await stripe.client.paymentIntents.retrieve(order.payment_intent_id);

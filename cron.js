@@ -19,8 +19,7 @@ function startCronJobs() {
 
     // Every day at midnight - check for expired credits
     cron.schedule("0 0 * * *", WalletFundsHelper.handleCreditExpiration);
-
-    // cron.schedule("0 10 * * *", CashbackHelpers.notifyUpcomingCreditExpirations);
+    cron.schedule("0 9 * * *", WalletFundsHelper.notifyUpcomingCreditExpirations);
 
     //Every 10 days
     cron.schedule("0 0 */10 * *", stripe.payoutAvailableBalanceToBusinesses);

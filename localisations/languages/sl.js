@@ -55,7 +55,15 @@ const   sl = {
         lobby_added: "Dodani v sobo",
         lobby_removed: "Odstranjeni iz sobe",
         lobby_canceled: "Soba preklicana",
-        lobby_completed: "Soba zaključena"
+        lobby_completed: "Soba zaključena",
+        creditExpiry: "Dobroimetje",
+        referral: "Nagrada",
+    },
+    CREDIT_NOTIFICATIONS: {
+        creditExpiry: "Vaše dobroimetje poteče čez 7 dni",
+    },
+    REFERRAL_NOTIFICATIONS: {
+        referral: "Vaša nagrada za priporočilo je bila dodana v vaš račun",
     }
 }
 module.exports = sl;
