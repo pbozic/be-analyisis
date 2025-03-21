@@ -40,7 +40,7 @@ async function resendDelegatedOrdersToDeliveryDriver(req, res) {
 		}
 
 		// Send already sent orders to this driver
-		// await resendPendingOrdersToDeliveryDriver(driver);
+		await resendPendingOrdersToDeliveryDriver(driver);
 		// Send active orders to this driver
 		await sendActiveOrdersToDeliveryDriver(driver);
 
