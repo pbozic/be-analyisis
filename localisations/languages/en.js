@@ -56,6 +56,14 @@ const  en = {
         lobby_removed: "Removed From Lobby",
         lobby_canceled: "Lobby Canceled",
         lobby_completed: "Lobby completed",
+        creditExpiry: "Your Credits",
+        referral: "Referral Reward",
+    },
+    CREDIT_NOTIFICATIONS: {
+        creditExpiry: "Your credits will expire in 7 days",
+    },
+    REFERRAL_NOTIFICATIONS: {
+        referral: "Your referral reward has been added to your account",
     }
 }
 

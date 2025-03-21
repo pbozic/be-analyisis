@@ -55,7 +55,15 @@ const es = {
         lobby_added: "Añadido al lobby",
         lobby_removed: "Eliminado del lobby",
         lobby_canceled: "Lobby cancelado",
-        lobby_completed: "Lobby completado"
+        lobby_completed: "Lobby completado",
+        creditExpiry: "Tus créditos",
+        referral: "Recompensa por referido",
+    },
+    CREDIT_NOTIFICATIONS: {
+        creditExpiry: "Tus créditos caducarán en 7 días",
+    },
+    REFERRAL_NOTIFICATIONS: {
+        referral: "Tu recompensa por referido ha sido acreditada en tu cuenta",
     }
 }
 module.exports = es;

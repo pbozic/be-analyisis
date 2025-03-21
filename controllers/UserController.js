@@ -1721,20 +1721,25 @@ async function redeemReferralCode(req, res) {
 		// First check if user already has a referral
 		const existingReferral = await ReferralDao.getReferralByReferredUserId(user_id);
 		if (existingReferral) {
-			return res.status(400).json({ error: "User has already redeemed a referral code" });
+			return res.status(400).json({ errorCustom: "User has already redeemed a referral code" });
 		}
 		// Find the referrer by their referral code
 		const referrer = await UserDao.getUserByReferralCode(referral_code);
 		if (!referrer) {
-			return res.status(400).json({ error: "Invalid referral code" });
+			return res.status(400).json({ errorCustom: "Invalid referral code" });
+		}
+		// Prevent referral by user referrals
+		const referrerReferral = await ReferralDao.getReferralByReferredUserId(referrer.user_id);
+		if (referrerReferral?.referrer_user_id === user_id) {
+			return res.status(400).json({ errorCustom: "Cannot get referred by one of your referrals" })
 		}
 		// Prevent self-referral
 		if (referrer.user_id === user_id) {
-			return res.status(400).json({ error: "Cannot use own referral code" });
+			return res.status(400).json({ errorCustom: "Cannot use own referral code" });
 		}
 		// Referrer can only refer up to 10 people
 		if (referrer.referrals_made?.length >= 10) {
-			return res.status(400).json({ error: "This user has already referred 10 people" });
+			return res.status(400).json({ errorCustom: "This user has already referred 10 people" });
 		}
 		const referral = await ReferralDao.createReferral(referrer.user_id, user_id, referral_code);
 

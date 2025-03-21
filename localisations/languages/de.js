@@ -55,7 +55,15 @@ const  de = {
         lobby_added: "Zur Lobby hinzugefügt",
         lobby_removed: "Aus der Lobby entfernt",
         lobby_canceled: "Lobby storniert",
-        lobby_completed: "Lobby abgeschlossen"
+        lobby_completed: "Lobby abgeschlossen",
+        creditExpiry: "Ihr Guthaben",
+        referral: "Empfehlungsprämie",
+    },
+    CREDIT_NOTIFICATIONS: {
+        creditExpiry: "Ihr Guthaben läuft in 7 Tagen ab",
+    },
+    REFERRAL_NOTIFICATIONS: {
+        referral: "Ihre Empfehlungsprämie wurde Ihrem Konto gutgeschrieben",
     }
 }
 module.exports = de;

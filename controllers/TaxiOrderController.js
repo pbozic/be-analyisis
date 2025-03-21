@@ -13,7 +13,7 @@ const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE , CARGO_TR
 	CASHBACK_SOURCE, USER_ROLE
 } = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
-const { sendOrderNotifications } = require("../lib/notifications");
+const { sendOrderNotifications, sendReferralNotifications } = require("../lib/notifications");
 const { sleep, range, calculatePrivateDriverFee, todaysEarnings } = require("../lib/helpersLib");
 const prisma = require("../prisma/prisma");
 const stripe = require("../lib/stripe");
@@ -22,6 +22,7 @@ const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
 const { sendNotificationToUser } = require("../lib/oneSignal");
 const { getLocalisedTexts } = require("../localisations/languages");
 const { CREDIT_TYPE } = require("@prisma/client");
+const { handleReferral } = require("../lib/referralHelper");
 
 /**
  * GET /taxi/order/{orderId}
@@ -422,7 +423,14 @@ async function createOrderHelper(req, res, orderData) {
 			let seats_Adults = prefs.adults;
 			let seats_ChildrenUnder140 = prefs.children_under_140;
 			let total_seats = seats_Adults + seats_ChildrenUnder140;
-			let num_orders = Math.ceil((total_seats) / VEHICLE_CAPACITY[prefs.vehicle_class]);
+			// TODO: calculate capacity based on vehicle_category (PREMIUM has more seats?)
+			// TODO: also handle class ANY
+			let num_orders;
+			if (prefs.vehicle_class === VEHICLE_CLASS.ANY) {
+				num_orders = 1;
+			} else {
+				num_orders = Math.ceil((total_seats) / VEHICLE_CAPACITY[prefs.vehicle_class]);
+			}
 			console.log("num_orders", num_orders);
 			let start_num_orders = num_orders;
 			const user_id = orderData.user_id;
@@ -537,7 +545,7 @@ async function createOrderHelper(req, res, orderData) {
 				...orderData,
 				user: {
 					connect: {
-						user_id: !user_id ? req.user.user_id : user_id
+						user_id: req.user.user_id
 					}
 				}
 			});
@@ -842,37 +850,14 @@ async function completeOrder(req, res) {
 		let driver_business = await BusinessDao.getBusinessById(driver.business_id);
 
 		io.emit("driver_available", driver);
-		let user = await UsersDao.getUserById(order.user_id, {
-			include: {
-				parent_user: { include: { parent_user: true } },
-				referral: true,
-			}
-		});
+		let user = order.user;
 		if (order.type === ORDER_TYPE.VEHICLE_TRANSFER_COMBO) {
 			const l10nText = getLocalisedTexts("USER_NOTIFICATIONS", order.user)
 			const l10nTextHeading = getLocalisedTexts("HEADING", order.user);
 			await sendNotificationToUser(l10nTextHeading?.completed, l10nText?.vehicleTransferCompleted, order.user_id);
 		} else {
-			const orderingUser = !order.creating_user_id ? user : await UsersDao.getUserById(order.creating_user_id, {
-				include: { referral: true }
-			});
-			//TODO: update how we set referral conditions met!
-			if (orderingUser?.referral && !orderingUser?.referral?.conditions_met) {
-				await ReferralDao.updateReferralConditionsMet(orderingUser.referral.referral_id, true);
-
-				const referrer = await UsersDao.getUserById(orderingUser.referral?.referrer_user_id);
-				if (referrer) {
-					await WalletFundsDao.createCredit({
-						user: { connect: { user_id: referrer.user_id } },
-						amount: CREDITS.TAXI,
-						type: ORDER_TYPE.TAXI,
-						referral: { connect: { referral_id: orderingUser.referral.referral_id } }
-					});
-					//TODO: send notification to user that he received credits for referral
-				} else {
-					console.error("The referrer was not found and couldn't be given Taxi credits");
-				}
-			}
+			const orderingUser = !order.creating_user_id ? user : await UsersDao.getUserById(order.creating_user_id);
+			await handleReferral(orderingUser.user_id);
 
 			//CALCULATE IN CENTS
 			const PRICE_CENTS = Math.round(parseFloat(order.payment.price) * 100)
@@ -1151,7 +1136,7 @@ async function cancelOrder(req, res) {
 		let driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
 		console.log("user console.log", user?.user_id);
 		console.log("Driver console.log", driver?.user?.user_id);
-		//if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO) sendOrderNotifications(user, driver.user, user_id, driver_id, status);
+		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO) sendOrderNotifications(user, driver?.user, user_id, driver_id, status);
 
 		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
 

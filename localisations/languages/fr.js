@@ -55,7 +55,15 @@ const fr = {
         lobby_added: "Ajouté au lobby",
         lobby_removed: "Retiré du lobby",
         lobby_canceled: "Lobby annulé",
-        lobby_completed: "Lobby terminé"
+        lobby_completed: "Lobby terminé",
+        creditExpiry: "Vos crédits",
+        referral: "Récompense de parrainage",
+    },
+    CREDIT_NOTIFICATIONS: {
+        creditExpiry: "Vos crédits expireront dans 7 jours",
+    },
+    REFERRAL_NOTIFICATIONS: {
+        referral: "Votre récompense de parrainage a été créditée sur votre compte",
     }
 }
 module.exports = fr;
