@@ -247,8 +247,11 @@ async function indexBusinesses(business_id = null, force = false) {
                 telephone: business.telephone,
                 location: business.delivery_address? { lat: parseFloat(business.delivery_address.latitude), lon: parseFloat(business.delivery_address.longitude) } : { lat: parseFloat(business.address.latitude), lon: parseFloat(usiness.address.longitude) },
                 menus: business.menus.map(menu => ({
-                    menu_category_name: menu.categories.flatMap(cat =>
-                        Object.values(cat.names).filter(value => value !== "")
+                    menu_category_name: menu.categories.flatMap(cat => {
+                        console.log("cat", cat)
+                        return  Object.values(cat.names).filter(value => value !== "") || []
+                    }
+                       
                     ),
                     menu_category_id: categoriesIds,
                     translations: menu.categories.flatMap(cat =>
