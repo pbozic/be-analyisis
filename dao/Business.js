@@ -172,6 +172,11 @@ const getBusinessForSearchById = async (business_id) => {
 					include: {
 						categories: {
 							include: {
+								menu_categories_categories: {
+									include: {
+										category: true
+									}
+								},
 								menu_items: {
 									include: {
 										documents: {
