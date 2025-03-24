@@ -166,8 +166,7 @@ const getBusinessForSearchById = async (business_id) => {
 				},
 				menus: {
 					where: {
-						active: true,
-						isDailyMeal: false
+						active: true
 					},
 					include: {
 						categories: {

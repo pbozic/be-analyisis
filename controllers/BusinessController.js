@@ -341,6 +341,8 @@ async function getBusinessForSearchById(req, res) {
 		}
 		business.logo = logo;
 		business.banner = banner;
+		business.menu = business.menus.find(m => m.isDailyMeal === false);
+		business.dailyMenu = business.menus.find(m => m.isDailyMeal === true);
 		if (business) {
 			res.status(200).json(business);
 		} else {
