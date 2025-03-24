@@ -343,6 +343,7 @@ async function getBusinessForSearchById(req, res) {
 		business.banner = banner;
 		business.menu = business.menus.find(m => m.isDailyMeal === false);
 		business.dailyMenu = business.menus.find(m => m.isDailyMeal === true);
+		business.menus = null;
 		if (business) {
 			res.status(200).json(business);
 		} else {
