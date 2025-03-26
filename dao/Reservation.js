@@ -1,5 +1,5 @@
 const prisma = require("../prisma/prisma");
-const { TAXI_ORDER_STATUS } = require("../lib/constants");
+const { TAXI_ORDER_STATUS, DOCUMENT_TYPE } = require("../lib/constants");
 
 const getReservations = async (args) => {
 	try {
@@ -39,8 +39,19 @@ async function getReservationIfNotCompleted(user_id) {
 			},
 			include: {
 				business: {
-					include: {
-						address: true
+					select: {
+						name: true,
+						email: true,
+						telephone: true,
+						address: true,
+						documents: {
+							where: {
+								document_type: DOCUMENT_TYPE.LOGO
+							},
+							include: {
+								files: true
+							}
+						}
 					}
 				}
 			}
