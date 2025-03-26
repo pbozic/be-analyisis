@@ -509,6 +509,9 @@ async function updateOrderPickupTime(order_id, pickup_time) {
 			},
 			data: {
 				details: updatedDetails,
+			},
+			include: {
+				user: true,
 			}
 		});
 	} catch (e) {

@@ -393,13 +393,7 @@ async function registerTaxiService(req, res) {
 				}
 			}
 		}
-		if (req.body.finances) {
-			const existingFinances = await FinancesDao.getFinancesByAccountNumber(req.body.finances.account_number);
-			if (existingFinances) {
-				console.error('This account number already exists.');
-				return res.status(400).json({ error: 'This account number is already in use.' });
-			}
-		}
+
 		let stripeCustomer = await stripe.createCustomer(
 			req.body.business.email,
 			req.body.business.name,
@@ -541,11 +535,11 @@ async function registerTaxiService(req, res) {
 			onboardLink: accountLink.url
 		});
 
-		let finances = {};
+		/*let finances = {};
 		if (req.body.finances) {
 			finances = await FinancesDao.addFinances(req.body.finances);
 			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
-		}
+		}*/
 
 		let businessAddress = {}
 		if (req.body.addresses) {
@@ -604,13 +598,6 @@ async function registerDeliveryService(req, res) {
 					console.error('Driver with this phone number already exists.');
 					return res.status(400).json({ error: `Driver with this phone number already exists.` });
 				}
-			}
-		}
-		if (req.body.finances) {
-			const existingFinances = await FinancesDao.getFinancesByAccountNumber(req.body.finances.account_number);
-			if (existingFinances) {
-				console.error('This account number already exists.');
-				return res.status(400).json({ error: 'This account number is already in use.' });
 			}
 		}
 
@@ -711,11 +698,11 @@ async function registerDeliveryService(req, res) {
 			}
 		}
 
-		let finances = {};
+		/*let finances = {};
 		if (req.body.finances) {
 			finances = await FinancesDao.addFinances(req.body.finances);
 			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
-		}
+		}*/
 
 		let businessAddress = {}
 		if (req.body.addresses) {
@@ -776,13 +763,6 @@ async function registerMerchantService(req, res) {
 				}
 			}
 		}
-		if (req.body.finances) {
-			const existingFinances = await FinancesDao.getFinancesByAccountNumber(req.body.finances.account_number);
-			if (existingFinances) {
-				console.error('This account number already exists.');
-				return res.status(400).json({ error: 'This account number is already in use.' });
-			}
-		}
 
 		let stripeCustomer = await stripe.createCustomer(
 			req.body.business.email,
@@ -840,11 +820,11 @@ async function registerMerchantService(req, res) {
             title: "Stripe Onboarding",
             onboardLink: accountLink.url
         });
-		let finances = {};
-		if (req.body.finances) {
-			finances = await FinancesDao.addFinances(req.body.finances);
-			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
-		}
+		// let finances = {};
+		// if (req.body.finances) {
+		// 	finances = await FinancesDao.addFinances(req.body.finances);
+		// 	await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
+		// }
 
 		let businessAddress = {};
 		if (req.body.addresses && req.body.addresses.business) {
@@ -911,13 +891,6 @@ async function registerBusiness(req, res) {
 				}
 			}
 		}
-		if (req.body.finances) {
-			const existingFinances = await FinancesDao.getFinancesByAccountNumber(req.body.finances.account_number);
-			if (existingFinances) {
-				console.error('This account number already exists.');
-				return res.status(400).json({ error: 'This account number is already in use.' });
-			}
-		}
 
 		let stripeCustomer = await stripe.createCustomer(
 			req.body.business.email,
@@ -964,11 +937,11 @@ async function registerBusiness(req, res) {
 			}
 		}
 
-		let finances = {};
-		if (req.body.finances) {
-			finances = await FinancesDao.addFinances(req.body.finances);
-			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
-		}
+		// let finances = {};
+		// if (req.body.finances) {
+		// 	finances = await FinancesDao.addFinances(req.body.finances);
+		// 	await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
+		// }
 
 		let businessAddress = {};
 		if (req.body.addresses && req.body.addresses.business) {
