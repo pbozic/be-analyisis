@@ -873,7 +873,7 @@ async function getCompletedDeliveryOrdersByUserId(req, res) {
 		const completedOrders = await DeliveryOrderDao.getOrders({
 			where: {
 				user_id: user_id,
-				status: DELIVERY_ORDER_STATUS.SUCCESS,
+				status: {in:DELIVERY_ORDER_END_STATES},
 			},
 			include: {
 				business: {
