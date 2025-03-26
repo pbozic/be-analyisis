@@ -122,7 +122,7 @@ async function getActiveDeliveryOrdersForBusiness(business_id) {
 
 async function getDeliveryOrdersIfNotCompleted(user_id) {
 	try {
-		return await prisma.delivery_orders.findMany({
+		let orders = await prisma.delivery_orders.findMany({
 			where: {
 				user_id: user_id,
 				status: {
@@ -149,7 +149,7 @@ async function getDeliveryOrdersIfNotCompleted(user_id) {
 						telephone: true,
 						documents: {
 							where: {
-								document_type: DOCUMENT_TYPE.LOGO
+								document_type: { in: [DOCUMENT_TYPE.LOGO, DOCUMENT_TYPE.BANNER] }
 							},
 							include: {
 								files: true
@@ -159,6 +159,22 @@ async function getDeliveryOrdersIfNotCompleted(user_id) {
 				}
 			}
 		});
+
+		for(let order of orders){
+			let logo = null;
+			let banner = null;
+			for (let d of order?.business?.documents) {
+				if (d.document_type === "LOGO") {
+					logo = d.files[0].url;
+				} else if (d.document_type === "BANNER") {
+					banner = d.files[0].url;
+				}
+			}
+			order.business.logo = logo;
+			order.business.banner = banner;
+			delete order.business.documents;
+		}
+		return orders
 	} catch (e) {
 		console.error("Error fetching order:", e);
 		throw new Error(e.message);

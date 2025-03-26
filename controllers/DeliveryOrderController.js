@@ -270,7 +270,7 @@ async function createOrder(req, res) {
 					}
 				}
 			}
-			)
+		)
 		if(order){
 			let logo = null;
 			let banner = null;
