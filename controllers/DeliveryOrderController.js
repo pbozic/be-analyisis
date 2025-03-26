@@ -284,7 +284,6 @@ async function createOrder(req, res) {
 			order.business.logo = logo;
 			order.business.banner = banner;
 			delete order.business.documents;
-			return order;
 		}
 		console.info("order created:", order);
 		io.to("orders_" + order.business_id).emit("new_order", order);
