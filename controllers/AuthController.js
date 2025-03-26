@@ -94,9 +94,9 @@ async function login(req, res) {
 						ride_requirements: true,
 						user_id: true,
 						transfer_requirements: true,
-						handles_taxi_orders: true,
-						handles_transfer_orders: true,
-						handles_delivery_orders: true,
+						taxi_orders_toggled: true,
+						transfer_orders_toggled: true,
+						delivery_orders_toggled: true,
 					}
 				},
 				delivery_driver: {
