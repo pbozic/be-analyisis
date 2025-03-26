@@ -40,6 +40,7 @@ async function getReservationIfNotCompleted(user_id) {
 			include: {
 				business: {
 					select: {
+						business_id:true,
 						name: true,
 						email: true,
 						telephone: true,
@@ -104,6 +105,7 @@ const createReservation = async (reservationData) => {
 			include: {
 				business: {
 					select: {
+						business_id:true,
 						name: true,
 						email: true,
 						telephone: true,
