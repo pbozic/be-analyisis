@@ -246,6 +246,46 @@ async function createOrder(req, res) {
 			// 	}
 			// });
 		}
+
+		order = await DeliveryOrderDao.getOrder(
+			order.order_id,
+			{
+				include: {
+					business: {
+						select: {
+							business_id: true,
+							name: true,
+							email: true,
+							telephone: true,
+							address: true,
+							documents: {
+								where: {
+									document_type: { in: [DOCUMENT_TYPE.LOGO, DOCUMENT_TYPE.BANNER] }
+								},
+								include: {
+									files: true
+								}
+							}
+						}
+					}
+				}
+			}
+			)
+		if(order){
+			let logo = null;
+			let banner = null;
+			for (let d of order?.business?.documents) {
+				if (d.document_type === "LOGO") {
+					logo = d.files[0].url;
+				} else if (d.document_type === "BANNER") {
+					banner = d.files[0].url;
+				}
+			}
+			order.business.logo = logo;
+			order.business.banner = banner;
+			delete order.business.documents;
+			return order;
+		}
 		console.info("order created:", order);
 		io.to("orders_" + order.business_id).emit("new_order", order);
 
