@@ -39,9 +39,6 @@ async function getReservationIfNotCompleted(user_id) {
 			},
 			include: {
 				business: {
-					include:{
-						address: true
-					},
 					select: {
 						name: true,
 						email: true,
