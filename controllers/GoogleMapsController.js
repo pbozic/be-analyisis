@@ -98,6 +98,9 @@ async function getPlacePredictions(req, res) {
 				};
 			});
 			return res.status(200).json({ predictions });
+		} else if (data.status === "ZERO_RESULTS") {
+			console.error('No predictions found:', data.status);
+			return res.status(200).json([]);
 		} else {
 			return res.status(500).json({ error: 'No predictions found' });
 		}

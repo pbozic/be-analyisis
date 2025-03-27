@@ -173,16 +173,7 @@ const getBusinessForSearchById = async (business_id) => {
 							include: {
 								menu_categories_categories: {
 									include: {
-										category: {
-											include: {
-												icon: true,
-												translatable: {
-													include: {
-														translations: true
-													}
-												},
-											}
-										}
+										category: true
 									}
 								},
 								menu_items: {
@@ -200,15 +191,6 @@ const getBusinessForSearchById = async (business_id) => {
 				}
 			}
 		});
-		for (const menu of business.menus || []) {
-			for (const category of menu.categories || []) {
-				for (const mcc of category.menu_categories_categories || []) {
-					const { translatable } = mcc.category;
-					mcc.category.translations = translatable?.translations || [];
-					delete mcc.category.translatable; // optional: remove nested key
-				}
-			}
-		}
 		return business
 	} catch (error) {
 		console.error("Error retrieving business for search:", error);
