@@ -934,7 +934,7 @@ async function setPrimaryAddress(req, res) {
 	try {
 		let userAddress = await AddressDao.setPrimaryUserAddress(req.user.user_id, req.params.address_id);
 		if (userAddress) {
-			return res.status(200).json({ error: "Primary address set." });
+			return res.status(200).json({ message: "Primary address set." });
 		}
 		res.status(400).json({ error: "Error setting primary address" });
 	} catch (e) {
