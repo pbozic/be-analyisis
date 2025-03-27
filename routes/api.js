@@ -209,4 +209,16 @@ router.post('/file/:file_name', (req, res) => {
         }
     })
 });
+
+router.put('/file/:file_name', (req, res) => {
+    let json = req.body.json;
+    fs.writeFile('public/' + req.params.file_name, JSON.stringify(json), (err) => {
+        if (err) {
+            res.status(500).send("Error writing file")
+        } else {
+            res.send("File written")
+        }
+    })
+});
+
 module.exports = router;

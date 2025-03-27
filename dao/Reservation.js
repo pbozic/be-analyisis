@@ -1,5 +1,5 @@
 const prisma = require("../prisma/prisma");
-const { TAXI_ORDER_STATUS } = require("../lib/constants");
+const { TAXI_ORDER_STATUS, DOCUMENT_TYPE } = require("../lib/constants");
 
 const getReservations = async (args) => {
 	try {
@@ -22,7 +22,7 @@ async function getReservationIfNotCompleted(user_id) {
 		const now=new Date();
 		const twoHoursBeforeNow = new Date(now.getTime() - 2 * 60 * 60 * 1000);
 
-		return await prisma.reservations.findFirst({
+		const reservation = await prisma.reservations.findFirst({
 			orderBy: [
 					{
 						datetime: 'asc',
@@ -39,12 +39,41 @@ async function getReservationIfNotCompleted(user_id) {
 			},
 			include: {
 				business: {
-					include: {
-						address: true
+					select: {
+						business_id:true,
+						name: true,
+						email: true,
+						telephone: true,
+						address: true,
+						documents: {
+							where: {
+								document_type: { in:[DOCUMENT_TYPE.LOGO,DOCUMENT_TYPE.BANNER] }
+							},
+							include: {
+								files: true
+							}
+						}
 					}
 				}
 			}
 		});
+		if(reservation){
+			let logo = null;
+			let banner = null;
+			for (let d of reservation?.business?.documents) {
+				if (d.document_type === "LOGO") {
+					logo = d.files[0].url;
+				} else if (d.document_type === "BANNER") {
+					banner = d.files[0].url;
+				}
+			}
+			reservation.business.logo = logo;
+			reservation.business.banner = banner;
+			delete reservation.business.documents;
+			return reservation;
+		}else{
+			return null
+		}
 	} catch (e) {
 		console.error("Error fetching reservation:", e);
 		throw new Error(e.message);
@@ -71,9 +100,46 @@ const getReservationById = async (reservation_id) => {
 
 const createReservation = async (reservationData) => {
 	try {
-		return await prisma.reservations.create({
+		const reservation = await prisma.reservations.create({
 			data: reservationData,
+			include: {
+				business: {
+					select: {
+						business_id:true,
+						name: true,
+						email: true,
+						telephone: true,
+						address: true,
+						documents: {
+							where: {
+								document_type: { in:[DOCUMENT_TYPE.LOGO,DOCUMENT_TYPE.BANNER] }
+							},
+							include: {
+								files: true
+							}
+						}
+					}
+				}
+			}
 		});
+
+		if(reservation){
+			let logo = null;
+			let banner = null;
+			for (let d of reservation?.business?.documents) {
+				if (d.document_type === "LOGO") {
+					logo = d.files[0].url;
+				} else if (d.document_type === "BANNER") {
+					banner = d.files[0].url;
+				}
+			}
+			reservation.business.logo = logo;
+			reservation.business.banner = banner;
+			delete reservation.business.documents;
+			return reservation;
+		}else{
+			return null
+		}
 	} catch (error) {
 		console.error("Error creating reservation:", error);
 		throw new Error(error);
