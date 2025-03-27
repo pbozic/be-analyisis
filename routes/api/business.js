@@ -16,6 +16,11 @@ router.get("/businesses/taxi", BusinessController.listTransferBusinesses);
 router.get("/businesses/taxi/main", BusinessController.listTransferBusinessesMainInfo);
 router.get("/businesses/busyness", BusinessController.getBusynessFactorsBusinessIdList);
 
+router.get("/favorites/:type", BusinessController.getFavoriteBusinesses);
+router.post("/favorites", BusinessController.addBusinessToFavorites);
+router.delete("/favorites", BusinessController.removeBusinessFromFavorites);
+
+
 router.get("/:business_id", BusinessController.getBusinessById);
 router.get("/search/:business_id", BusinessController.getBusinessForSearchById);
 router.get("/:business_id/reviews", BusinessController.getBusinessReviewsById);
