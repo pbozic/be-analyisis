@@ -991,12 +991,12 @@ model translations {
 }
 
 model user_favorite_businesses {
-  user_favorite_businesses  String        @id @default(uuid()) @db.Uuid
-  user_id                   String        @db.Uuid
-  business_id               String        @db.Uuid
-  business_type             BUSINESS_TYPE
-  created_at                DateTime      @default(now()) @db.Timestamptz(6)
-  updated_at                DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
+  user_favorite_businesses_id   String          @id @default(uuid()) @db.Uuid
+  user_id                       String          @db.Uuid
+  business_id                   String          @db.Uuid
+  business_type                 BUSINESS_TYPE
+  created_at                    DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at                    DateTime        @default(now()) @updatedAt @db.Timestamptz(6)
 
 
   users                     users         @relation("user_favorite_businesses_to_user", fields: [user_id], references: [user_id])
