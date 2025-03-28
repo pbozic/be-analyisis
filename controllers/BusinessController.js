@@ -1543,16 +1543,16 @@ async function addBusinessToFavorites(req, res) {
 
 async function removeBusinessFromFavorites(req, res) {
 	try {
-		const {business_id, type} = req.body
+		const {user_favorite_businesses_id} = req.body
 		const {user_id} = req?.user
 
-		const user_favorites = await UserFavoriteBusinessDao.getFavoriteBusinesses(user_id,type)
-		const favorited_entry = user_favorites.find((fav)=>fav.business_id===business_id)
+		const user_favorites = await UserFavoriteBusinessDao.getFavoriteBusinesses(user_id)
+		const favorited_entry = user_favorites.find((fav)=>fav.user_favorite_businesses_id===user_favorite_businesses_id)
 		if(!favorited_entry){
 			return res.status(400).json({ message: 'Business not favorited for given type.' });
 		}
 
-		const removed_entry = await UserFavoriteBusinessDao.removeFavoriteBusiness(user_id,favorited_entry.business_id,favorited_entry.business_type)
+		const removed_entry = await UserFavoriteBusinessDao.removeFavoriteBusiness(user_favorite_businesses_id)
 
 		res.status(200).json(removed_entry);
 	} catch (error) {
