@@ -1002,6 +1002,7 @@ model user_favorite_businesses {
   users                     users         @relation("user_favorite_businesses_to_user", fields: [user_id], references: [user_id])
   businesses                business      @relation("user_favorite_businesses_to_business", fields: [business_id], references: [business_id])
 
+  @@unique(name: "user_typed_favorite", [user_id, business_id, business_type])
   @@index([user_id, business_type])
 }
 

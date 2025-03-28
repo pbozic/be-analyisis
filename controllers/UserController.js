@@ -172,7 +172,8 @@ async function me(req, res) {
 				child_users: { include:{child_user: {select: {user_id: true, first_name: true, last_name: true}}, allowance: true}},
 				parent_user: { include:{parent_user: {select: {user_id: true, first_name: true, user_role: true}}, allowance: true}},
 				referrals_made: true,
-				referral: { include: {referrer: { select: { first_name: true, last_name: true } } } }
+				referral: { include: {referrer: { select: { first_name: true, last_name: true } } } },
+				user_favorite_businesses: true
 			},
 		});
 		console.log("/me user: ",user?.user_id)
