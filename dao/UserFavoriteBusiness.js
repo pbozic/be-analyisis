@@ -5,8 +5,8 @@ const addFavoriteBusiness = async (user_id, business_id, business_type) => {
 	try {
 		return await prisma.user_favorite_businesses.create({
 			data: {
-				user: { connect: { user_id: user_id } },
-				business: { connect: { business_id: business_id } },
+				users: { connect: { user_id: user_id } },
+				businesses: { connect: { business_id: business_id } },
 				business_type,
 			},
 		});
@@ -45,22 +45,8 @@ const getFavoriteBusinesses = async (user_id, business_type = null) => {
 		return await prisma.user_favorite_businesses.findMany({
 			where: whereClause,
 			include: {
-				business: true,
+				businesses: true,
 			},
-		});
-	} catch (error) {
-		console.error("Error retrieving favorite businesses:", error);
-		throw new Error(error);
-	}
-};
-
-// Get many favorite businesses by type for a user
-const isFavoriteBusiness = async (user_id, business_id) => {
-	try {
-		return await prisma.user_favorite_businesses.findFirst({
-			where: {
-				user_id
-			}
 		});
 	} catch (error) {
 		console.error("Error retrieving favorite businesses:", error);
@@ -72,5 +58,4 @@ module.exports = {
 	addFavoriteBusiness,
 	removeFavoriteBusiness,
 	getFavoriteBusinesses,
-	isFavoriteBusiness
 };
