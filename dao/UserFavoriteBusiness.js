@@ -17,12 +17,13 @@ const addFavoriteBusiness = async (user_id, business_id, business_type) => {
 };
 
 // Remove a favorite business for a user
-const removeFavoriteBusiness = async (user_id, business_id) => {
+const removeFavoriteBusiness = async (user_id, business_id, business_type) => {
 	try {
 		return await prisma.user_favorite_businesses.delete({
 			where: {
 				user_id,
 				business_id,
+				business_type
 			},
 		});
 	} catch (error) {
