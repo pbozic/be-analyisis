@@ -117,6 +117,18 @@ async function getBusinessesByIds(req, res) {
 		console.log("business_ids:,",business_ids)
 		let businesses = await BusinessDao.getBusinessesForSearchById(business_ids);
 		if (businesses) {
+			businesses.forEach((business)=>{
+				let logo, banner;
+				for (let d of business.documents) {
+					if (d.document_type === "LOGO") {
+						logo = d.files[0].url;
+					} else if (d.document_type === "BANNER") {
+						banner = d.files[0].url;
+					}
+				}
+				business.logo = logo;
+				business.banner = banner;
+			})
 			res.status(200).json(businesses);
 		} else {
 			res.status(400).json({
