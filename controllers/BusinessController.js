@@ -98,6 +98,35 @@ async function listBusinesses(req, res) {
 		res.status(400).json({ error: "Error obtaining list of businesses..", e });
 	}
 }
+
+
+/**
+ * POST /businesses
+ * @tag Business
+ * @summary Get a list of businesses business_ids
+ * @description Returns a list of businesses.
+ * @operationId getBusinessesByIds
+ * @response 200 - successful operation
+ * @responseContent {User[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the business list
+ * @responseContent {object} 400.application/json The error object
+ */
+async function getBusinessesByIds(req, res) {
+	try {
+		const { business_ids } = req.body
+		let businesses = await BusinessDao.getBusinessesForSearchById(business_ids);
+		if (businesses) {
+			res.status(200).json(businesses);
+		} else {
+			res.status(400).json({
+				error: "Error obtaining list of businesses..",
+			});
+		}
+	} catch (e) {
+		res.status(400).json({ error: "Error obtaining list of businesses..", e: e.message });
+	}
+}
+
 /**
  * POST /businesses/search
  * @tag Business
@@ -1587,6 +1616,7 @@ module.exports = {
 	getBusinessStripeStatusByBusinessId,
 	generateBusinessStripeByBusinessId,
 	getBusynessFactorsBusinessIdList,
+	getBusinessesByIds,
 	searchBusinesses,
 	listPromoSectionsWithMerchants,
 	activateBusiness,
