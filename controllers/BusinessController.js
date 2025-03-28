@@ -101,7 +101,7 @@ async function listBusinesses(req, res) {
 
 
 /**
- * POST /businesses
+ * POST /businesses/ids
  * @tag Business
  * @summary Get a list of businesses business_ids
  * @description Returns a list of businesses.
@@ -114,6 +114,7 @@ async function listBusinesses(req, res) {
 async function getBusinessesByIds(req, res) {
 	try {
 		const { business_ids } = req.body
+		console.log("business_ids:,",business_ids)
 		let businesses = await BusinessDao.getBusinessesForSearchById(business_ids);
 		if (businesses) {
 			res.status(200).json(businesses);
