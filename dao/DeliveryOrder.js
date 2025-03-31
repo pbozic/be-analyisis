@@ -384,7 +384,7 @@ async function acceptOrderDelivery(order, deliverer_id) {
 					order_id
 				},
 				data: {
-					timeline: addEntryToDeliveryOrderTimeline(order.timeline,DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,{delivery_driver_id: deliverer_id}),
+					timeline: addEntryToDeliveryOrderTimeline(order.timeline,DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,{driver_id: deliverer_id}),
 					delivery_driver: {
 						connect: {
 							delivery_driver_id: deliverer_id
