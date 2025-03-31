@@ -34,46 +34,46 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
                 must_not: []
             }
         };
-        if (typeof isDailyMealSearch === "boolean") {
-            if (isDailyMealSearch) {
-                // Only daily meals with a date >= today
-                const now = new Date();
-                const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-                const todayISOString = todayStart.toISOString();
+        // if (typeof isDailyMealSearch === "boolean") {
+        //     if (isDailyMealSearch) {
+        //         // Only daily meals with a date >= today
+        //         const now = new Date();
+        //         const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+        //         const todayISOString = todayStart.toISOString();
         
-                boolQuery.bool.filter.push({
-                    nested: {
-                        path: "menus",
-                        query: {
-                            bool: {
-                                must: [
-                                    { term: { "menus.isDailyMeal": true } },
-                                    {
-                                        range: {
-                                            "menus.date": { gte: todayISOString }
-                                        }
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                });
-            } else {
-                // Only non-daily meals (or where isDailyMeal is not true / missing)
-                boolQuery.bool.filter.push({
-                    nested: {
-                        path: "menus",
-                        query: {
-                            bool: {
-                                must_not: [
-                                    { term: { "menus.isDailyMeal": true } }
-                                ]
-                            }
-                        }
-                    }
-                });
-            }
-        }
+        //         boolQuery.bool.filter.push({
+        //             nested: {
+        //                 path: "menus",
+        //                 query: {
+        //                     bool: {
+        //                         must: [
+        //                             { term: { "menus.isDailyMeal": true } },
+        //                             {
+        //                                 range: {
+        //                                     "menus.date": { gte: todayISOString }
+        //                                 }
+        //                             }
+        //                         ]
+        //                     }
+        //                 }
+        //             }
+        //         });
+        //     } else {
+        //         // Only non-daily meals (or where isDailyMeal is not true / missing)
+        //         boolQuery.bool.filter.push({
+        //             nested: {
+        //                 path: "menus",
+        //                 query: {
+        //                     bool: {
+        //                         must_not: [
+        //                             { term: { "menus.isDailyMeal": true } }
+        //                         ]
+        //                     }
+        //                 }
+        //             }
+        //         });
+        //     }
+        // }
         // **Filter by promo section ID if provided**
         if (hasPromoSection) {
             boolQuery.bool.filter.push({
