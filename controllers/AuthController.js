@@ -425,7 +425,6 @@ async function registerTaxiService(req, res) {
 				// Handle user documents
 				if (driverInfo.user.documents) {
 					for (const doc of driverInfo.user.documents) {
-
 						const document = await DocumentDao.createDocument(doc.documentData);
 						for (const file of doc.files) {
 							let base64 = file.base64;
@@ -501,7 +500,6 @@ async function registerTaxiService(req, res) {
 						vehicles.push(vehicle);
 					}
 				}
-
 				drivers.push({ driver, vehicles, addresses });
 			}
 		}
@@ -550,7 +548,6 @@ async function registerTaxiService(req, res) {
 			message: "Taxi service business registered successfully",
 			business,
 			drivers,
-			finances,
 			businessAddress,
 			// accountLink
 		});
@@ -713,7 +710,6 @@ async function registerDeliveryService(req, res) {
 			message: "Delivery service business registered successfully",
 			business,
 			deliveryDrivers,
-			finances,
 			businessAddress
 		});
 	} catch (error) {
@@ -844,7 +840,6 @@ async function registerMerchantService(req, res) {
 			message: "Merchant service business registered successfully",
 			business,
 			businessUsers,
-			finances,
 			businessAddress,
 			deliveryAddress,
 			menu
@@ -952,7 +947,6 @@ async function registerBusiness(req, res) {
 			message: "Business registered successfully",
 			business,
 			businessUsers,
-			finances,
 			businessAddress
 		});
 	} catch (error) {
