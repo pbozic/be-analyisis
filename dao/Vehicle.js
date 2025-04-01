@@ -78,12 +78,16 @@ const updateVehicle = async (vehicle_id, vehicleData) => {
 
 const assignVehicleToDriver = async (vehicleId, driverId) => {
 	try {
-		return await prisma.vehicles.update({
-			where: { vehicle_id: vehicleId },
+		return await prisma.vehicle_drivers.create({
 			data: {
 				driver: {
 					connect: {
 						driver_id: driverId
+					}
+				},
+				vehicle: {
+					connect: {
+						vehicle_id: vehicleId,
 					}
 				}
 			},

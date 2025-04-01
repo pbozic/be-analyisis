@@ -361,7 +361,7 @@ model drivers {
   updated_at               DateTime                   @default(now()) @updatedAt @db.Timestamptz(6)
   user_id                  String?                    @unique @db.Uuid
   user                     users?                     @relation(fields: [user_id], references: [user_id])
-  vehicles                 vehicles[]
+  vehicles                 vehicle_drivers[]
   orders                   taxi_orders[]
   received_orders          taxi_order_sent[]
   delivery_orders          delivery_orders[]
@@ -383,9 +383,25 @@ model drivers {
   partner_cash_balance     Float?                     @default(0)
 }
 
+model vehicle_drivers {
+  vehicle_drivers_id String   @id @unique @default(uuid()) @db.Uuid
+  vehicle_id         String   @db.Uuid
+  driver_id          String   @db.Uuid
+  can_drive          Boolean  @default(true)
+  created_at         DateTime @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  vehicle            vehicles @relation(fields: [vehicle_id], references: [vehicle_id])
+  driver             drivers  @relation(fields: [driver_id], references: [driver_id])
+
+  @@unique([vehicle_id, driver_id])
+  @@index([driver_id, can_drive])
+  @@index([vehicle_id, can_drive])
+}
+
 model vehicles {
   vehicle_id               String                  @id @unique @default(uuid()) @db.Uuid
   business_id              String?                 @db.Uuid
+  vehicle_drivers_id       String?                 @db.Uuid
   active                   Boolean?                @default(true)
   class                    VEHICLE_CLASS?
   category                 VEHICLE_CATEGORY?
@@ -395,9 +411,8 @@ model vehicles {
   license_plate            String?
   created_at               DateTime                @default(now()) @db.Timestamptz(6)
   updated_at               DateTime                @default(now()) @updatedAt @db.Timestamptz(6)
-  driver_id                String?                 @db.Uuid
-  driver                   drivers?                @relation(fields: [driver_id], references: [driver_id])
   documents                documents[]
+  drivers                  vehicle_drivers[]
   delivery_driver_id       String?                 @db.Uuid
   delivery_driver          delivery_drivers?       @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
   vehicle_specification_id String?                 @unique @db.Uuid
@@ -801,25 +816,25 @@ model menu_categories_categories {
 }
 
 model promo_sections {
-  promo_sections_id   String               @id @default(uuid()) @db.Uuid
-  name                String
-  tag                 String
-  active              Boolean              @default(true)
-  description         String?
-  prices              Json?
-  limits              Json?
-  stripe_product_id   String?
-  canPurchase         Boolean
-  t1price             Int?
-  t2price             Int?
-  t3price             Int?
-  order               Int                  @default(autoincrement())
-  service_type        PROMO_SERVICE_TYPES
-  promo_section_buy   promo_sections_buy[]
-  promo_duration_days Int                  @default(30)
-  translatable_id     String               @db.Uuid
-  translatable        translatable         @relation(fields: [translatable_id], references: [translatable_id])
-  display_cards_per_page   Int?            @default(4)
+  promo_sections_id      String               @id @default(uuid()) @db.Uuid
+  name                   String
+  tag                    String
+  active                 Boolean              @default(true)
+  description            String?
+  prices                 Json?
+  limits                 Json?
+  stripe_product_id      String?
+  canPurchase            Boolean
+  t1price                Int?
+  t2price                Int?
+  t3price                Int?
+  order                  Int                  @default(autoincrement())
+  service_type           PROMO_SERVICE_TYPES
+  promo_section_buy      promo_sections_buy[]
+  promo_duration_days    Int                  @default(30)
+  translatable_id        String               @db.Uuid
+  translatable           translatable         @relation(fields: [translatable_id], references: [translatable_id])
+  display_cards_per_page Int?                 @default(4)
 }
 
 model promo_banners {
