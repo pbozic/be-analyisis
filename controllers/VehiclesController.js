@@ -267,7 +267,7 @@ async function updateVehicle(req, res) {
 }
 
 /**
- * PATCH /vehicles/driver/assign/
+ * POST /vehicles/driver/assign/
  * @tag Vehicles
  * @summary Assign a vehicle to a driver
  * @description Assigns an existing vehicle to a driver by updating the vehicle's driver_id.
@@ -278,7 +278,7 @@ async function updateVehicle(req, res) {
  * @response 400 - Error assigning vehicle to driver
  */
 async function assignVehicleToDriver(req, res) {
-	const { vehicle_id, driver_id } = req.params;
+	const { vehicle_id, driver_id } = req.body;
 	try {
 		const updatedVehicle = await VehicleDao.assignVehicleToDriver(vehicle_id, driver_id);
 		res.status(200).json(updatedVehicle);
