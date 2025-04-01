@@ -21,18 +21,18 @@ model finances {
 }
 
 model business {
-  business_id                     String            @id @unique @default(uuid()) @db.Uuid
-  address_id                      String?           @db.Uuid
-  delivery_address_id             String?           @db.Uuid
-  finance_id                      String?           @db.Uuid
+  business_id                     String               @id @unique @default(uuid()) @db.Uuid
+  address_id                      String?              @db.Uuid
+  delivery_address_id             String?              @db.Uuid
+  finance_id                      String?              @db.Uuid
   type                            BUSINESS_TYPE
-  is_business_unit                Boolean           @default(false)
+  is_business_unit                Boolean              @default(false)
   business_group_name             String? // if part of any holding or other business group
   name                            String
   description                     String?
   tax_id                          String
   registration_id                 String
-  email                           String            @unique
+  email                           String               @unique
   telephone                       String?
   telephone_code                  String
   telephone_number                String
@@ -40,24 +40,24 @@ model business {
   working_hours                   Json?
   seats                           Int?
   minimum_order                   Int
-  offers_daily_meals              Boolean           @default(false)
-  popular                         Boolean           @default(true)
-  new                             Boolean           @default(false)
-  created_at                      DateTime          @default(now()) @db.Timestamptz(6)
-  updated_at                      DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
-  address                         addresses?        @relation(name: "address", fields: [address_id], references: [address_id])
-  delivery_address                addresses?        @relation(name: "delivery_address", fields: [delivery_address_id], references: [address_id])
-  finances                        finances?         @relation(fields: [finance_id], references: [finance_id])
+  offers_daily_meals              Boolean              @default(false)
+  popular                         Boolean              @default(true)
+  new                             Boolean              @default(false)
+  created_at                      DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at                      DateTime             @default(now()) @updatedAt @db.Timestamptz(6)
+  address                         addresses?           @relation(name: "address", fields: [address_id], references: [address_id])
+  delivery_address                addresses?           @relation(name: "delivery_address", fields: [delivery_address_id], references: [address_id])
+  finances                        finances?            @relation(fields: [finance_id], references: [finance_id])
   business_users                  business_users[]
   documents                       documents[]
-  parent_business_id              String?           @db.Uuid
-  parent_business                 business?         @relation("parent_business", fields: [parent_business_id], references: [business_id])
-  child_businesses                business[]        @relation("parent_business")
+  parent_business_id              String?              @db.Uuid
+  parent_business                 business?            @relation("parent_business", fields: [parent_business_id], references: [business_id])
+  child_businesses                business[]           @relation("parent_business")
   taxi_orders                     taxi_orders[]
   delivery_orders                 delivery_orders[]
   menus                           menus[]
-  reviewable_id                   String?           @db.Uuid
-  reviewable                      reviewable?       @relation(fields: [reviewable_id], references: [reviewable_id])
+  reviewable_id                   String?              @db.Uuid
+  reviewable                      reviewable?          @relation(fields: [reviewable_id], references: [reviewable_id])
   stripe_account_id               String?
   stripe_customer_id              String?
   word_buy_stripe_product_id      String?
@@ -65,17 +65,17 @@ model business {
   word_buy_stripe_subscription_id String?
   word_buys                       word_buy[]
   reservations                    reservations[]
-  daily_users_sorted              Json?             @default("[]")
-  daily_users_sorting_type        SORTING_TYPE      @default(AUTOMATIC)
-  restaurant_overwhelmed          Boolean           @default(false)
+  daily_users_sorted              Json?                @default("[]")
+  daily_users_sorting_type        SORTING_TYPE         @default(AUTOMATIC)
+  restaurant_overwhelmed          Boolean              @default(false)
   promo_sections                  promo_sections_buy[]
-  business_teams                  business_teams[] @relation("business_to_business_teams")
-  business_order_lobbies          order_lobbies[]  @relation("business_to_lobby")
+  business_teams                  business_teams[]     @relation("business_to_business_teams")
+  business_order_lobbies          order_lobbies[]      @relation("business_to_lobby")
   first_activated_at              DateTime?
-  active                          Boolean           @default(false)
+  active                          Boolean              @default(false)
   sales_representative_id         String?
 
-  user_favorite_businesses        user_favorite_businesses[] @relation("user_favorite_businesses_to_business")
+  user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_business")
 }
 
 model business_users {
@@ -93,22 +93,23 @@ model business_users {
 }
 
 model users {
-  user_id                                String              @id @unique @default(uuid()) @db.Uuid
+  user_id                                String               @id @unique @default(uuid()) @db.Uuid
   first_name                             String?
   last_name                              String?
   password                               String
   gender                                 GENDER?
   email                                  String?
-  telephone                              String              @unique
+  telephone                              String               @unique
   telephone_code                         String
   telephone_number                       String
-  date_of_birth                          DateTime            @db.Date
-  created_at                             DateTime            @default(now()) @db.Timestamptz(6)
-  updated_at                             DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
-  user_role                              USER_ROLES          @default(PERSONAL)
+  date_of_birth                          DateTime             @db.Date
+  created_at                             DateTime             @default(now()) @db.Timestamptz(6)
+  updated_at                             DateTime             @default(now()) @updatedAt @db.Timestamptz(6)
+  user_role                              USER_ROLES           @default(PERSONAL)
+  second_role                            USER_ROLES?
   addresses                              user_address[]
   tokens                                 tokens[]
-  phone_verified                         Boolean             @default(false)
+  phone_verified                         Boolean              @default(false)
   notification_preferences               Json?
   taxi_preferences                       Json?
   business_users                         business_users[]
@@ -117,20 +118,20 @@ model users {
   documents                              documents[]
   delivery_driver                        delivery_drivers?
   delivery_orders                        delivery_orders[]
-  reviewable_id                          String?             @db.Uuid
-  reviewable                             reviewable?         @relation(fields: [reviewable_id], references: [reviewable_id])
-  reviews                                reviews[]           @relation("review_author")
-  review_complete                        Boolean             @default(true)
+  reviewable_id                          String?              @db.Uuid
+  reviewable                             reviewable?          @relation(fields: [reviewable_id], references: [reviewable_id])
+  reviews                                reviews[]            @relation("review_author")
+  review_complete                        Boolean              @default(true)
   one_signal_id                          String?
   stripe_customer_id                     String?
-  wallet_balance                         Float               @default(0)
+  wallet_balance                         Float                @default(0)
   transactions                           transactions[]
   reservations                           reservations[]
   transfer_preferences                   Json?
   allergies_preferences                  Json?
   spicy_preferences                      Json?
   radio_preferences                      Json?
-  subscribed_to_daily_meals              Boolean             @default(false)
+  subscribed_to_daily_meals              Boolean              @default(false)
   daily_meal_preferences                 Json?
   details                                Json?
   flag_changes                           flag_history[]
@@ -139,27 +140,27 @@ model users {
   delivery_push_notification_preferences Json?
   spoken_languages                       Json?
   lost_items                             lost_items[]
-  daily_meal_day_preferences             Json?               @default("[]")
-  disabled                               Boolean             @default(false)
-  active                                 Boolean             @default(true)
-  child_users                            group_users[]       @relation("parent_user")
-  parent_user                            group_users?        @relation("child_user")
-  language                               String?             @default("en")
-  wallet_funds                           wallet_funds[]      @relation("wallet_funds")
+  daily_meal_day_preferences             Json?                @default("[]")
+  disabled                               Boolean              @default(false)
+  active                                 Boolean              @default(true)
+  child_users                            group_users[]        @relation("parent_user")
+  parent_user                            group_users?         @relation("child_user")
+  language                               String?              @default("en")
+  wallet_funds                           wallet_funds[]       @relation("wallet_funds")
   apple_id                               String?
   google_id                              String?
-  referral_code                          String?             @unique @default(dbgenerated("upper(\"substring\"(md5((random())::text), 1, 6))")) @db.Char(6)
-  referrals_made                         referrals[]         @relation("referrer")
-  referral                               referrals?          @relation("referred")
+  referral_code                          String?              @unique @default(dbgenerated("upper(\"substring\"(md5((random())::text), 1, 6))")) @db.Char(6)
+  referrals_made                         referrals[]          @relation("referrer")
+  referral                               referrals?           @relation("referred")
   //credits                                credits[]
   cashback                               cashback[]
   activated_at                           DateTime?
-  business_teams_id                      String?             @db.Uuid
-  business_teams                         business_teams?     @relation("user_to_business_team", fields: [business_teams_id], references: [business_teams_id])
-  order_lobby_users                      order_lobby_users[] @relation("user_to_OL_user")
+  business_teams_id                      String?              @db.Uuid
+  business_teams                         business_teams?      @relation("user_to_business_team", fields: [business_teams_id], references: [business_teams_id])
+  order_lobby_users                      order_lobby_users[]  @relation("user_to_OL_user")
   promo_section_buys                     promo_sections_buy[]
 
-  user_favorite_businesses               user_favorite_businesses[] @relation("user_favorite_businesses_to_user")
+  user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_user")
 }
 
 model cashback {
@@ -733,7 +734,7 @@ model wallet_funds {
   user              users          @relation("wallet_funds", fields: [user_id], references: [user_id])
   transactions      transactions[] @relation("wallet_funds_transaction")
 
-  @@unique([user_id,charge_id,reserved_order,reserved_business,type,status,referral_id,expires_at])
+  @@unique([user_id, charge_id, reserved_order, reserved_business, type, status, referral_id, expires_at])
 }
 
 model local_products {
@@ -800,24 +801,24 @@ model menu_categories_categories {
 }
 
 model promo_sections {
-  promo_sections_id  String  @id @default(uuid()) @db.Uuid
-  name              String
-  tag               String
-  active            Boolean @default(true)
-  description       String?
-  prices            Json?
-  limits            Json?
-  stripe_product_id String?
-  canPurchase       Boolean
-  t1price           Int?
-  t2price           Int?
-  t3price           Int?
-  order             Int       @default(autoincrement())
-  service_type      PROMO_SERVICE_TYPES
-  promo_section_buy promo_sections_buy[]
-  promo_duration_days Int @default(30)
-  translatable_id String @db.Uuid
-  translatable    translatable @relation(fields: [translatable_id], references: [translatable_id])
+  promo_sections_id   String               @id @default(uuid()) @db.Uuid
+  name                String
+  tag                 String
+  active              Boolean              @default(true)
+  description         String?
+  prices              Json?
+  limits              Json?
+  stripe_product_id   String?
+  canPurchase         Boolean
+  t1price             Int?
+  t2price             Int?
+  t3price             Int?
+  order               Int                  @default(autoincrement())
+  service_type        PROMO_SERVICE_TYPES
+  promo_section_buy   promo_sections_buy[]
+  promo_duration_days Int                  @default(30)
+  translatable_id     String               @db.Uuid
+  translatable        translatable         @relation(fields: [translatable_id], references: [translatable_id])
   display_cards_per_page   Int?
 }
 
@@ -841,8 +842,8 @@ model promo_sections_buy {
   stripe_subscription_id String?
   business_id            String         @db.Uuid
   business               business       @relation(fields: [business_id], references: [business_id])
-  user_id                String?          @db.Uuid
-  bought_by              users?      @relation(fields: [user_id], references: [user_id])
+  user_id                String?        @db.Uuid
+  bought_by              users?         @relation(fields: [user_id], references: [user_id])
   active_at              DateTime?
   expires_at             DateTime?
   tier                   Int
@@ -857,12 +858,13 @@ model promo_ads {
   discount     Float                @default(0)
   banner       promo_banners[]
   categories   promo_ads_category[]
-  active       Boolean @default(true)
-  code         Int?                  @unique @db.SmallInt
-  created_at   DateTime              @default(now()) @db.Timestamptz(6)
+  active       Boolean              @default(true)
+  code         Int?                 @unique @db.SmallInt
+  created_at   DateTime             @default(now()) @db.Timestamptz(6)
   active_at    DateTime?
   active_until DateTime?
 }
+
 model promo_ads_category {
   promo_ads_category_id String     @id @default(uuid()) @db.Uuid
   promo_ads_id          String     @db.Uuid
@@ -872,17 +874,17 @@ model promo_ads_category {
 }
 
 model words {
-  word_id         String       @id @default(uuid()) @db.Uuid
-  word            String       @unique
-  popularity      Int          @default(0)
-  categories_id   String?      @db.Uuid
-  category        categories?  @relation(fields: [categories_id], references: [categories_id])
-  translatable_id String       @db.Uuid
-  translatable    translatable @relation(fields: [translatable_id], references: [translatable_id])
+  word_id         String         @id @default(uuid()) @db.Uuid
+  word            String         @unique
+  popularity      Int            @default(0)
+  categories_id   String?        @db.Uuid
+  category        categories?    @relation(fields: [categories_id], references: [categories_id])
+  translatable_id String         @db.Uuid
+  translatable    translatable   @relation(fields: [translatable_id], references: [translatable_id])
   subscriptions   word_buy[]
   bundles         word_bundles[]
-  created_at      DateTime     @default(now()) @db.Timestamptz(6)
-  updated_at      DateTime     @default(now()) @updatedAt @db.Timestamptz(6)
+  created_at      DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
 }
 
 model word_buy {
@@ -901,7 +903,7 @@ model word_buy {
 }
 
 model word_bundles {
-  id          String  @id @default(uuid()) @db.Uuid
+  id          String   @id @default(uuid()) @db.Uuid
   name        String
   description String?
   words       words[]
@@ -992,16 +994,15 @@ model translations {
 }
 
 model user_favorite_businesses {
-  user_favorite_businesses_id   String          @id @default(uuid()) @db.Uuid
-  user_id                       String          @db.Uuid
-  business_id                   String          @db.Uuid
-  business_type                 BUSINESS_TYPE
-  created_at                    DateTime        @default(now()) @db.Timestamptz(6)
-  updated_at                    DateTime        @default(now()) @updatedAt @db.Timestamptz(6)
+  user_favorite_businesses_id String        @id @default(uuid()) @db.Uuid
+  user_id                     String        @db.Uuid
+  business_id                 String        @db.Uuid
+  business_type               BUSINESS_TYPE
+  created_at                  DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at                  DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
 
-
-  users                     users         @relation("user_favorite_businesses_to_user", fields: [user_id], references: [user_id])
-  businesses                business      @relation("user_favorite_businesses_to_business", fields: [business_id], references: [business_id])
+  users      users    @relation("user_favorite_businesses_to_user", fields: [user_id], references: [user_id])
+  businesses business @relation("user_favorite_businesses_to_business", fields: [business_id], references: [business_id])
 
   @@unique(name: "user_typed_favorite", [user_id, business_id, business_type])
   @@index([user_id, business_type])
