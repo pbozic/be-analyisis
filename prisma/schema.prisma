@@ -819,7 +819,7 @@ model promo_sections {
   promo_duration_days Int                  @default(30)
   translatable_id     String               @db.Uuid
   translatable        translatable         @relation(fields: [translatable_id], references: [translatable_id])
-  display_cards_per_page   Int?
+  display_cards_per_page   Int?            @default(4)
 }
 
 model promo_banners {
