@@ -648,6 +648,33 @@ async function updateMenuItem(req, res) {
 	}
 }
 
+
+/**
+ * PATCH /menus/menu-items/is_enabled
+ * @tag MenuItem
+ * @summary Update a menu item enabled field
+ * @description Updates a menu item by its ID.
+ * @operationId updateMenuItem
+ * @pathParam {string} menu_item_id - The ID of the menu item to update
+ * @bodyDescription The new menu item enabled field value
+ * @bodyContent {MenuItemUpdateRequest} application/json
+ * @bodyRequired
+ * @response 200 - Menu item updated successfully
+ * @responseContent {MenuItem} 200.application/json
+ * @response 400 - Error updating menu item
+ */
+async function updateMenuItemEnabled(req, res) {
+	const { menu_item_id, is_enabled } = req.body;
+	try {
+		const menuItem = await MenuItemDao.updateMenuItem(menu_item_id, {is_enabled:is_enabled});
+		businessIndex(menuItem.business_id);
+		res.status(200).json(menuItem);
+	} catch (e) {
+		console.error("Error updating menu item:", e);
+		res.status(400).json({ error: "Error updating menu item", e });
+	}
+}
+
 /**
  * PATCH /menus/menu-items/price
  * @tag MenuItem
@@ -871,5 +898,6 @@ module.exports = {
 	createDailyMealMenu,
 	getLastUploadedDailyMealsMenu,
 	deleteDocumentsAndFilesByDocumentId,
-	getDailyMenuByBusinessId
+	getDailyMenuByBusinessId,
+	updateMenuItemEnabled
 };

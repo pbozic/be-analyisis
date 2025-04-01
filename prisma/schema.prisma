@@ -620,6 +620,7 @@ model menu_items {
   daily_date       DateTime?        @db.Timestamptz(6)
   menu_category    menu_categories? @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id])
   documents        documents[]
+  is_enabled       Boolean          @default(true)
 
   @@unique([menu_item_id])
 }
