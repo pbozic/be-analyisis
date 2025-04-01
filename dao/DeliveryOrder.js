@@ -34,7 +34,11 @@ async function getOrders(args) {
 						user: true,
 						vehicles: {
 							include: {
-								vehicle_specification: true
+								vehicle: {
+									include: {
+										vehicle_specification: true,
+									},
+								}
 							}
 						},
 					}
