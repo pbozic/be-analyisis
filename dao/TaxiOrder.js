@@ -854,8 +854,10 @@ async function getAcceptedOrders() {
                             }
                         },
                         vehicles: {
-                            include: {
-                                vehicle_specification: true,
+                            vehicle: {
+                                include: {
+                                    vehicle_specification: true,
+                                },
                             }
                         }
                     }
