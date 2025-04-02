@@ -39,6 +39,28 @@ async function listDrivers(req, res) {
 		res.status(400).json({ error: "Error listing drivers", detail: error.message });
 	}
 }
+
+/**
+ * GET /drivers/business/:business_id
+ * @tag Drivers
+ * @summary Get a list of drivers for business
+ * @description Returns a list of drivers along with their user and vehicle information.
+ * @operationId getDrivers
+ * @response 200 - Successful operation, returns a list of drivers
+ * @responseContent {Driver[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the driver list
+ */
+async function getDriversByBusinessId(req, res) {
+	const businessId = req.params.business_id;
+	try {
+		const drivers = await DriverDao.getDrivers({ where: { business_id: businessId } });
+		res.status(200).json(drivers);
+	} catch (error) {
+		console.error("Error obtaining drivers:", error);
+		res.status(400).json({ error: "Error obtaining drivers", detail: error.message });
+	}
+}
+
 /**
  * GET /drivers/full
  * @tag Drivers
@@ -830,6 +852,7 @@ async function toggleDriverOrders(req, res) {
 }
 
 module.exports = {
+	getDriversByBusinessId,
 	setDriverHandle,
 	toggleDriverOrders,
 	listDrivers,
