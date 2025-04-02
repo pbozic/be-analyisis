@@ -1406,9 +1406,11 @@ async function dispatcherRevoke(req,res){
 			}else if(old_order.delivery_driver?.location){
 				new_location = old_order.delivery_driver.location
 			}
-			if(!(new_location?.coordinates?.latitude && new_location?.coordinates?.longitude)){
+			if(!new_location || !(new_location?.coordinates?.latitude && new_location?.coordinates?.longitude)){
 				throw new Error("The current driver does not have a well defined location.")
 			}
+			const new_address = await gApi.addressFromCoordinates(new_location?.coordinates?.latitude, new_location?.coordinates?.longitude)
+			new_location.address = `Previous Driver Location ${new_address ? '('+new_address+')' : '(use navigation)'}`
 
 			await DeliveryOrderDao.removeDriverFromOrder(old_order.order_id)
 			await DeliveryOrderDao.updateOrder(old_order.order_id,{pickup_location:new_location})
