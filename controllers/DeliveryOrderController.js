@@ -1385,16 +1385,39 @@ async function dispatcherRevoke(req,res){
 	const dispatcher_user_id = req.user.user_id
 	try {
 		const old_order = await DeliveryOrderDao.getOrder(order_id, {include:{driver:true,delivery_driver:true}})
-		if(![
+		let updated_order = null
+		if([
 			DELIVERY_ORDER_STATUS.MERCHANT_PREPARING,
 			DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP,
+			].includes(old_order.status)
+		){
+			await DeliveryOrderDao.removeDriverFromOrder(old_order.order_id)
+			await DeliveryOrderDao.addTimelineEntry(old_order.order_id, DELIVERY_ORDER_STATUS.DISPATCHER_REVOKED, { dispatcher:dispatcher_user_id })
+			updated_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, old_order.status)
+
+		}else if([
 			DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP,
 			DELIVERY_ORDER_STATUS.DELIVERY_IN_DELIVERY,
-		].includes(old_order.status)){
+			].includes(old_order.status)
+		){
+			let new_location = null
+			if(old_order.driver?.location){
+				new_location = old_order.driver.location
+			}else if(old_order.delivery_driver?.location){
+				new_location = old_order.delivery_driver.location
+			}
+			if(!(new_location?.coordinates?.latitude && new_location?.coordinates?.longtitude)){
+				throw new Error("The current driver does not have a well defined location.")
+			}
+
+			await DeliveryOrderDao.removeDriverFromOrder(old_order.order_id)
+			await DeliveryOrderDao.updateOrder(old_order.order_id,{pickup_location:new_location})
+			await DeliveryOrderDao.addTimelineEntry(old_order.order_id, DELIVERY_ORDER_STATUS.DISPATCHER_REVOKED, { dispatcher:dispatcher_user_id })
+			updated_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP)
+		}else{
 			throw new Error("This order is not in a reassignable state.")
 		}
 
-		let updated_order = await DeliveryOrderDao.removeDriverFromOrder(old_order.order_id)
 		if (old_order.driver){
 			if (UserSockets.get(old_order.driver.user_id)) {
 				UserSockets.get(old_order.driver.user_id).emit('order_revoked__delivery', order_id);
@@ -1406,9 +1429,6 @@ async function dispatcherRevoke(req,res){
 			}
 		}
 
-		updated_order = await DeliveryOrderDao.addTimelineEntry(old_order.order_id, DELIVERY_ORDER_STATUS.DISPATCHER_REVOKED, { dispatcher:dispatcher_user_id })
-
-		updated_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP)
 		//TODO: handle extras for socket on FE if needed.
 		io.to("order_" + updated_order.order_id).emit("order_status_change__delivery", updated_order);
 
