@@ -358,13 +358,12 @@ async function editDriver(req, res) {
 							console.log(file?.document_type)
 							await linkDocumentToDriver(newDocument.document_id, driver_id);
 						}
-
 					}
 				}
 			}
 		}
 
-		res.status(200).json({ updatedDriver, updatedUser, updatedAddress, updatedVehicle, files });
+		res.status(200).json({ updatedDriver, updatedUser, updatedAddress, files });
 	} catch (error) {
 		console.error("Error editing driver:", error);
 		res.status(400).json({ error: "Error editing driver", detail: error.message });
