@@ -19,6 +19,8 @@ const { TAXI_ORDER_STATUS,DELIVERY_ORDER_STATUS, DOCUMENT_TYPE } = require("../l
 const { createNewVehicle } = require("../dao/Vehicle");
 const { calculateTotalEarnings, calculateDriversEarnings } = require('../lib/helpersLib');
 const deliveryHelpers = require("../lib/deliveryHelpers");
+const stripe = require("../lib/stripe");
+const SMSHelper = require("../lib/SMS");
 
 /**
  * GET /drivers
@@ -253,7 +255,7 @@ async function updateDriver(req, res) {
  * @response 400 - Error updating driver
  */
 async function editDriver(req, res) {
-	const { user, driver, vehicle, documents, files, address } = req.body;
+	const { user, driver, documents, files, address } = req.body;
 
 	const business_id = driver?.business_id;
 	delete driver?.business_id;
@@ -262,7 +264,6 @@ async function editDriver(req, res) {
 	const user_id = user?.user_id;
 	delete user?.user_id;
 
-	let vehicle_id;
 	let updatedAddress
 
 	try {
@@ -283,16 +284,6 @@ async function editDriver(req, res) {
 				delete doc.document_id;
 				await updateDocumentByDocumentId(documentId, doc);
 			}
-		}
-		let updatedVehicle;
-		if (vehicle?.vehicle_id) {
-			vehicle_id = vehicle?.vehicle_id
-			delete vehicle?.vehicle_id
-			updatedVehicle = await VehicleDao.updateVehicle(vehicle_id, vehicle)
-		} else if ( Object.keys(vehicle).length !== 0) {
-			const response = await VehicleDao.createNewVehicle({...vehicle, business_id: business_id});
-			vehicle_id = response?.vehicle_id
-			await VehicleDao.assignVehicleToDriver(vehicle_id, driver_id);
 		}
 
 		if (files && files.length > 0) {
@@ -357,24 +348,6 @@ async function editDriver(req, res) {
 							document_type === DOCUMENT_TYPE.PASSPORT
 						) {
 							await linkDocumentToUser(newDocument.document_id, user_id);
-						} else if (
-							document_type === DOCUMENT_TYPE.VEHICLE_REGISTRATION ||
-							document_type === DOCUMENT_TYPE.VEHICLE_INSURANCE ||
-							document_type === DOCUMENT_TYPE.VEHICLE_TECHNICAL_INSPECTION
-						) {
-							if (vehicle_id) {
-								await linkDocumentToVehicle(newDocument.document_id, vehicle_id);
-							} else {
-								const newVehicle = await createNewVehicle({
-									make: '',
-									model: '',
-									color: '',
-									class: 'SEDAN',
-									category: 'STANDARD',
-								});
-								await VehicleDao.assignVehicleToDriver(newVehicle.vehicle_id, driver_id);
-								await linkDocumentToVehicle(newDocument.document_id, newVehicle.vehicle_id);
-							}
 						} else if (
 							document_type === DOCUMENT_TYPE.DRIVING_LICENSE ||
 							document_type === DOCUMENT_TYPE.TAXI_LICENCE ||
@@ -544,15 +517,64 @@ async function updateDriverOnlineStatus(req, res) {
  */
 async function createDriver(req, res) {
 	try {
-		const userData = req.body.user;
-		const driverData = req.body.driver;
+		let stripeCustomer = await stripe.createCustomer(
+			req.body.user.data.email,
+			req.body.user.data.first_name + " " + req.body.user.data.last_name,
+			req.body.user.data.telephone,
+		);
+		const phoneNumber = req.body.user.data.telephone_number;
+		const normalizedPhoneNumber = await SMSHelper.getParsedPhoneNumber(req.body.user.data.telephone, req.body.user.data.telephone_code);
+		let userObj = {
+			...req.body.user.data,
+			telephone_number: normalizedPhoneNumber?.number || phoneNumber,
+			stripe_customer_id: stripeCustomer.id,
+		};
+		const newUser = await UserDao.createNewUser(userObj, true);
 
-		const driverCreated = await DriverDao.createNewDriver(driverData, userData);
-		if (!driverCreated) {
+		// Handle user documents
+		if (req.body.user.documents) {
+			for (const doc of req.body.user.documents) {
+				const document = await DocumentDao.createDocument(doc.documentData);
+				for (const file of doc.files) {
+					let base64 = file.base64;
+					delete file.base64;
+					let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
+
+					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+
+					S3Helper.SaveObject(key, base64, file.mime_type, {
+						users: [newUser.user_id],
+						businesses: [business.business_id]
+					}, fileData, document.public);
+				}
+				await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
+			}
+		}
+
+		const driverData = { ...req.body.driver.data, business_id: business.business_id };
+		const driver = await DriverDao.createNewDriver(driverData, newUser);
+		// Handle taxi documents
+		if (req.body.driver.documents) {
+			for (const doc of req.body.driver.documents) {
+				const document = await DocumentDao.createDocument(doc.documentData);
+				for (const file of doc.files) {
+					let base64 = file.base64;
+					delete file.base64;
+					let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
+					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+					S3Helper.SaveObject(key, base64, file.mime_type, {
+						users: [newUser.user_id],
+						businesses: [business.business_id]
+					}, fileData, document.public);
+				}
+				await DocumentDao.linkDocumentToDriver(document.document_id, driver.driver_id);
+			}
+		}
+		if (!driver) {
 			return res.status(400).json({ error: "Failed to create new driver" });
 		}
 
-		res.status(201).json(driverCreated);
+		res.status(201).json(driver);
 	} catch (error) {
 		console.error("Error creating new driver:", error);
 		res.status(400).json({ error: "Error creating new driver", detail: error.message });
