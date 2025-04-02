@@ -1406,7 +1406,7 @@ async function dispatcherRevoke(req,res){
 			}else if(old_order.delivery_driver?.location){
 				new_location = old_order.delivery_driver.location
 			}
-			if(!(new_location?.coordinates?.latitude && new_location?.coordinates?.longtitude)){
+			if(!(new_location?.coordinates?.latitude && new_location?.coordinates?.longitude)){
 				throw new Error("The current driver does not have a well defined location.")
 			}
 
