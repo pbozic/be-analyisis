@@ -537,6 +537,7 @@ async function createDriver(req, res) {
 				for (const file of doc.files) {
 					let base64 = file.base64;
 					delete file.base64;
+					delete file.name;
 					let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 
 					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
@@ -559,6 +560,7 @@ async function createDriver(req, res) {
 				for (const file of doc.files) {
 					let base64 = file.base64;
 					delete file.base64;
+					delete file.name;
 					let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
 					S3Helper.SaveObject(key, base64, file.mime_type, {

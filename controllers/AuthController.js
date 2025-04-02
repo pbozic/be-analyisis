@@ -479,7 +479,7 @@ async function registerTaxiService(req, res) {
 		if (Array.isArray(req.body.vehicles) && req.body.vehicles.length) {
 			for (const vehicleInfo of req.body.vehicles) {
 				const vehicle = await VehicleDao.createNewVehicle({
-					...vehicleInfo?.data,
+					...vehicleInfo?.vehicle_information,
 					business_id: business.business_id
 				});
 				if (Array.isArray(vehicleInfo.drivers) && vehicleInfo.drivers.length) {
