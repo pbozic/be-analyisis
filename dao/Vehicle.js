@@ -42,7 +42,7 @@ const getVehicleById = async (vehicle_id, args) => {
 			},
 			include: {
 				vehicle_specification: true,
-				documents: false,
+				documents: true,
 			},
 			...args,
 		});

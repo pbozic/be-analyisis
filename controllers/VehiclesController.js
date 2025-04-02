@@ -244,7 +244,7 @@ async function createVehicle(req, res) {
 }
 
 /**
- * PATCH /vehicles/
+ * PATCH /vehicles/:vehicle_id
  * @tag Vehicles
  * @summary Update a vehicle
  * @description Updates an existing vehicle's details and specifications.
