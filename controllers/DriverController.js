@@ -543,14 +543,14 @@ async function createDriver(req, res) {
 
 					S3Helper.SaveObject(key, base64, file.mime_type, {
 						users: [newUser.user_id],
-						businesses: [business.business_id]
+						businesses: [req.body.driver.data.business_id]
 					}, fileData, document.public);
 				}
 				await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 			}
 		}
 
-		const driverData = { ...req.body.driver.data, business_id: business.business_id };
+		const driverData = { ...req.body.driver.data };
 		const driver = await DriverDao.createNewDriver(driverData, newUser);
 		// Handle taxi documents
 		if (req.body.driver.documents) {
@@ -563,7 +563,7 @@ async function createDriver(req, res) {
 					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
 					S3Helper.SaveObject(key, base64, file.mime_type, {
 						users: [newUser.user_id],
-						businesses: [business.business_id]
+						businesses: [req.body.driver.data.business_id]
 					}, fileData, document.public);
 				}
 				await DocumentDao.linkDocumentToDriver(document.document_id, driver.driver_id);
