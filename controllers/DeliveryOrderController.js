@@ -1370,6 +1370,55 @@ async function dispatcherCancel(req,res){
 	}
 }
 
+/**
+ * POST /delivery/order/dispatcher_revoke
+ * @tag Delivery
+ * @summary Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
+ * @description Cancel and if necessary refund an order
+ * @operationId dispatcherCancel
+ * @response 200 - Successful operation. Returns the updated Order.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+async function dispatcherRevoke(req,res){
+	const {order_id} = req.body
+	const dispatcher_user_id = req.user.user_id
+	try {
+		const old_order = await DeliveryOrderDao.getOrder(order_id, {include:{driver:true,delivery_driver:true}})
+		if(![
+			DELIVERY_ORDER_STATUS.MERCHANT_PREPARING,
+			DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP,
+			DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP,
+			DELIVERY_ORDER_STATUS.DELIVERY_IN_DELIVERY,
+		].includes(old_order.status)){
+			throw new Error("This order is not in a reassignable state.")
+		}
+
+		let updated_order = await DeliveryOrderDao.removeDriverFromOrder(old_order.order_id)
+		if (old_order.driver){
+			if (UserSockets.get(old_order.driver.user_id)) {
+				UserSockets.get(old_order.driver.user_id).emit('order_revoked__delivery', order_id);
+			}
+		}
+		if (old_order.delivery_driver){
+			if (UserSockets.get(old_order.delivery_driver.user_id)) {
+				UserSockets.get(old_order.delivery_driver.user_id).emit('order_revoked__delivery', order_id);
+			}
+		}
+
+		updated_order = await DeliveryOrderDao.addTimelineEntry(old_order.order_id, DELIVERY_ORDER_STATUS.DISPATCHER_REVOKED, { dispatcher:dispatcher_user_id })
+
+		updated_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP)
+		//TODO: handle extras for socket on FE if needed.
+		io.to("order_" + updated_order.order_id).emit("order_status_change__delivery", updated_order);
+
+		res.status(200).json(updated_order)
+	} catch (e) {
+		console.error("Error canceling order", e);
+		res.status(500).json(e);
+	}
+}
+
 
 module.exports = {
 	getDeliveryOrders,
@@ -1383,6 +1432,7 @@ module.exports = {
 	completeOrder,
 	updateOrderStatus,
 	dispatcherCancel,
+	dispatcherRevoke,
 	getCompletedDeliveryOrdersByDriverId,
 	updateDeliveryOrderTimeline,
 	addToDeliveryOrderTimeline,

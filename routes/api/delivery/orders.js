@@ -23,6 +23,7 @@ router.post("/order", DeliveryOrderController.createOrder);
 router.post("/daily_meals", DeliveryOrderController.createDailyMeals);
 router.post("/order/merchant_accept", DeliveryOrderController.merchantAcceptOrder);
 router.post("/order/dispatcher_cancel", DeliveryOrderController.dispatcherCancel);
+router.post("/order/dispatcher_revoke", DeliveryOrderController.dispatcherRevoke);
 router.post("/order/status", DeliveryOrderController.updateOrderStatus);
 router.post("/order/pickup_time", DeliveryOrderController.updateOrderPickupTime);
 router.post("/order/delivery_time", DeliveryOrderController.updateOrderDeliveryTime);
