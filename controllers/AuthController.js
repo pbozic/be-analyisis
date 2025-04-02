@@ -488,7 +488,7 @@ async function registerTaxiService(req, res) {
 						await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver?.driver_id);
 					}
 				} else {
-					await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, drivers[0]?.driver_id)
+					await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, drivers[0]?.driver?.driver_id)
 				}
 				// Handle vehicle documents
 				if (vehicleInfo.documents) {
