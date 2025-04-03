@@ -76,7 +76,7 @@ model business {
   sales_representative_id         String?
 
   user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_business")
-  scoring_points scoring_points[] @relation("scoring_points_to_business")
+  scoring_points           scoring_points[]           @relation("scoring_points_to_business")
 }
 
 model business_users {
@@ -162,7 +162,7 @@ model users {
   promo_section_buys                     promo_sections_buy[]
 
   user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_user")
-  scoring_points scoring_points[] @relation("scoring_points_to_user")
+  scoring_points           scoring_points[]           @relation("scoring_points_to_user")
 }
 
 model cashback {
@@ -403,7 +403,6 @@ model vehicle_drivers {
 model vehicles {
   vehicle_id               String                  @id @unique @default(uuid()) @db.Uuid
   business_id              String?                 @db.Uuid
-  vehicle_drivers_id       String?                 @db.Uuid
   active                   Boolean?                @default(true)
   class                    VEHICLE_CLASS?
   category                 VEHICLE_CATEGORY?
@@ -1031,20 +1030,20 @@ model user_favorite_businesses {
 }
 
 model scoring_points {
-  scoring_points_id       String          @id @default(uuid()) @db.Uuid
-  business_id             String          @db.Uuid
-  user_id                 String          @db.Uuid
-  delivery_order_id       String          @db.Uuid
-  taxi_order_id           String          @db.Uuid
-  points                  Int
-  isPenalty               Boolean
-  seconds                 Int
-  reason                  String
+  scoring_points_id String  @id @default(uuid()) @db.Uuid
+  business_id       String  @db.Uuid
+  user_id           String  @db.Uuid
+  delivery_order_id String  @db.Uuid
+  taxi_order_id     String  @db.Uuid
+  points            Int
+  isPenalty         Boolean
+  seconds           Int
+  reason            String
 
-  users      users    @relation("scoring_points_to_user", fields: [user_id], references: [user_id])
-  businesses business @relation("scoring_points_to_business", fields: [business_id], references: [business_id])
-  delivery_orders   delivery_orders?    @relation("scoring_points_to_delivery_order", fields: [delivery_order_id], references: [order_id])
-  taxi_orders   taxi_orders?    @relation("scoring_points_to_taxi_order", fields: [taxi_order_id], references: [order_id])
+  users           users            @relation("scoring_points_to_user", fields: [user_id], references: [user_id])
+  businesses      business         @relation("scoring_points_to_business", fields: [business_id], references: [business_id])
+  delivery_orders delivery_orders? @relation("scoring_points_to_delivery_order", fields: [delivery_order_id], references: [order_id])
+  taxi_orders     taxi_orders?     @relation("scoring_points_to_taxi_order", fields: [taxi_order_id], references: [order_id])
 }
 
 enum CATEGORY_TYPE {

@@ -4,6 +4,15 @@ const DocumentDao = require("../dao/Document");
 const FileDao = require("../dao/File");
 const S3Helper = require("../lib/s3");
 const DriverDao = require("../dao/Driver");
+const {
+	updateDocumentByDocumentId,
+	findDocumentByTypeAndDriverId,
+	createDocument,
+	linkDocumentToUser,
+	linkDocumentToDriver, getDocumentsForVehicleByType
+} = require("../dao/Document");
+const { updateFileInDocument, addFileToDocument } = require("../dao/File");
+const { DOCUMENT_TYPE } = require("../lib/constants");
 
 // List all vehicles
 /**
@@ -295,12 +304,54 @@ async function createVehicle(req, res) {
  * @response 400 - Error updating vehicle
  */
 async function updateVehicle(req, res) {
+	const { vehicle_id } = req.params.vehicle_id;
 	try {
-		const updatedVehicle = await VehicleDao.updateVehicle(req.params.vehicle_id, req.body);
-		res.status(200).json(updatedVehicle);
+		const vehicle = await VehicleDao.updateVehicle(vehicle_id, req.body.vehicle_information);
+		if (vehicle) {
+			if (req.body.documents &&  req.body.documents.length > 0) {
+				for (const doc of  req.body.documents) {
+					const documentId = doc.document_id;
+					delete doc.document_id;
+					await updateDocumentByDocumentId(documentId, doc);
+					for (const file of doc.files) {
+						if (!file?.file_id) {
+							const existingDocument = await getDocumentsForVehicleByType(vehicle_id, file.document_type);
+							if (existingDocument) {
+								const base64 = file.base64;
+								delete file.base64;
+								delete file.document_type;
+								delete file.name;
+								const newFile = await addFileToDocument(existingDocument.document_id, file, existingDocument.public);
+
+								const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
+								await S3Helper.SaveObject(key, base64, file.mime_type, {
+									users: [],
+									businesses: [vehicle.business_id],
+								}, newFile, existingDocument.public);
+							}
+						}
+					}
+				}
+			}
+			if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
+				const currentDrivers = await VehicleDao.getVehicleDriversByVehicleId(vehicle.vehicle_id)
+				const currentDriverIds = currentDrivers.map(d => d.driver_id);
+				const newDriverIds = req.body.drivers.map(d => d.driver_id);
+
+				await VehicleDao.unAssignVehicleFromDrivers(vehicle.vehicle_id, newDriverIds);
+				for (const driver of req.body.drivers) {
+					if (!currentDriverIds.includes(driver.driver_id)) {
+						await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver.driver_id);
+					}
+				}
+			}
+			res.status(200).json(vehicle);
+		} else {
+			res.status(400).json({ error: "Error updating vehicle" });
+		}
 	} catch (error) {
 		console.error("Error updating vehicle:", error);
-		res.status(400).json({ error: "Error updating vehicle", detail: error.message });
+		res.status(400).json({ error: error.message });
 	}
 }
 
