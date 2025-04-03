@@ -304,7 +304,7 @@ async function createVehicle(req, res) {
  * @response 400 - Error updating vehicle
  */
 async function updateVehicle(req, res) {
-	const { vehicle_id } = req.body.vehicle_id;
+	const vehicle_id = req.body.vehicle_id;
 	try {
 		const vehicle = await VehicleDao.updateVehicle(vehicle_id, req.body.vehicle_information);
 		if (vehicle) {
@@ -334,14 +334,14 @@ async function updateVehicle(req, res) {
 				}
 			}
 			if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
-				const currentDrivers = await VehicleDao.getVehicleDriversByVehicleId(vehicle.vehicle_id)
+				const currentDrivers = await VehicleDao.getVehicleDriversByVehicleId(vehicle_id)
 				const currentDriverIds = currentDrivers.map(d => d.driver_id);
 				const newDriverIds = req.body.drivers.map(d => d.driver_id);
 
-				await VehicleDao.unAssignVehicleFromDrivers(vehicle.vehicle_id, newDriverIds);
+				await VehicleDao.unAssignVehicleFromDrivers(vehicle_id, newDriverIds);
 				for (const driver of req.body.drivers) {
 					if (!currentDriverIds.includes(driver.driver_id)) {
-						await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver.driver_id);
+						await VehicleDao.assignVehicleToDriver(vehicle_id, driver.driver_id);
 					}
 				}
 			}
