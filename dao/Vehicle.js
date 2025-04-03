@@ -24,8 +24,28 @@ const getVehiclesByBusiness = async (businessId) => {
 				business_id: businessId,
 			},
 			include: {
-				vehicle_specification: true,
-				documents: false,
+				vehicle_drivers: {
+					include: {
+						driver: {
+							include: {
+								user: {
+									select: {
+										first_name: true,
+										last_name: true,
+									}
+								}
+							},
+							select: {
+								driver_id: true,
+							}
+						}
+					}
+				},
+				documents: {
+					include: {
+						files: true
+					}
+				},
 			},
 		});
 	} catch (error) {
