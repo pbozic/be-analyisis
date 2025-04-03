@@ -1,5 +1,9 @@
 require("dotenv").config();
 const VehicleDao = require("../dao/Vehicle");
+const DocumentDao = require("../dao/Document");
+const FileDao = require("../dao/File");
+const S3Helper = require("../lib/s3");
+const DriverDao = require("../dao/Driver");
 
 // List all vehicles
 /**
@@ -235,11 +239,45 @@ async function getVehiclesOfDriverByClassAndCategory(req, res) {
  */
 async function createVehicle(req, res) {
 	try {
-		const newVehicle = await VehicleDao.createNewVehicle(req.body);
-		res.status(201).json(newVehicle);
+		const vehicle = await VehicleDao.createNewVehicle(req.body.vehicle_information);
+		if (vehicle) {
+			if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
+				for (const d of req.body?.drivers) {
+					await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, d.driver_id);
+				}
+			// 	TODO: maybe assign to all drivers of business if none selected
+			// } else {
+			// 	const drivers = await DriverDao.getDrivers({ where: { business_id: vehicle.business_id } });
+			// 	for (const d of drivers) {
+			// 		await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, d.driver_id)
+			// 	}
+			}
+
+			if (req.body.documents) {
+				for (const doc of req.body.documents) {
+					const document = await DocumentDao.createDocument(doc.documentData);
+					for (const file of doc.files) {
+						let base64 = file.base64;
+						delete file.base64;
+						delete file.name;
+						delete file.document_type;
+						let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
+						let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+						S3Helper.SaveObject(key, base64, file.mime_type, {
+							users: [],
+							businesses: [vehicle.business_id]
+						}, fileData, document.public);
+					}
+					await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
+				}
+			}
+			res.status(200).json(vehicle);
+		} else {
+			res.status(400).json({ error: "Error creating new vehicle" });
+		}
 	} catch (error) {
 		console.error("Error creating new vehicle:", error);
-		res.status(400).json({ error: "Error creating new vehicle", detail: error.message });
+		res.status(400).json({ error: error.message });
 	}
 }
 
