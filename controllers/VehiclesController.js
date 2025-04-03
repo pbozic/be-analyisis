@@ -291,7 +291,7 @@ async function createVehicle(req, res) {
 }
 
 /**
- * PATCH /vehicles/:vehicle_id
+ * PATCH /vehicles
  * @tag Vehicles
  * @summary Update a vehicle
  * @description Updates an existing vehicle's details and specifications.
@@ -304,7 +304,7 @@ async function createVehicle(req, res) {
  * @response 400 - Error updating vehicle
  */
 async function updateVehicle(req, res) {
-	const { vehicle_id } = req.params.vehicle_id;
+	const { vehicle_id } = req.body.vehicle_id;
 	try {
 		const vehicle = await VehicleDao.updateVehicle(vehicle_id, req.body.vehicle_information);
 		if (vehicle) {
