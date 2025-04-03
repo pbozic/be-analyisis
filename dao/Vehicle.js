@@ -34,9 +34,6 @@ const getVehiclesByBusiness = async (businessId) => {
 										last_name: true,
 									}
 								}
-							},
-							select: {
-								driver_id: true,
 							}
 						}
 					}
