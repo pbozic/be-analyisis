@@ -24,7 +24,7 @@ const getVehiclesByBusiness = async (businessId) => {
 				business_id: businessId,
 			},
 			include: {
-				vehicle_drivers: {
+				drivers: {
 					include: {
 						driver: {
 							include: {
