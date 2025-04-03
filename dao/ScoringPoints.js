@@ -1,6 +1,6 @@
 const prisma = require("../prisma/prisma");
 
-async function createScoringPoints(business_id, user_id, delivery_order_id, taxi_order_id, points, isPenalty, seconds, reason) {
+async function createScoringPoints(business_id, user_id, delivery_order_id, taxi_order_id, points, isPenalty, reason) {
 	try {
 		const newScoringPoints = await prisma.scoring_points.create({
 			data: {
@@ -10,7 +10,6 @@ async function createScoringPoints(business_id, user_id, delivery_order_id, taxi
 				taxi_order: taxi_order_id ? { connect: { order_id: taxi_order_id } } : undefined,
 				points: points,
 				isPenalty: isPenalty,
-				seconds: seconds,
 				reason: reason
 			}
 		});
@@ -32,7 +31,8 @@ async function getScoringPointsById(scoring_points_id) {
 				users: true,
 				businesses: true,
 				delivery_orders: true,
-				taxi_orders: true
+				taxi_orders: true,
+				late_events: true
 			}
 		});
 		return scoringPoints;
@@ -55,12 +55,37 @@ async function getScoringPointsByUserId(user_id) {
 				users: true,
 				businesses: true,
 				delivery_orders: true,
-				taxi_orders: true
+				taxi_orders: true,
+				late_events: true
 			}
 		});
 		return scoringPoints;
 	} catch (error) {
 		console.error("Error retrieving scoring points by user ID:", error);
+		throw error;
+	}
+}
+
+async function getScoringPointsByBusinessId(business_id) {
+	try {
+		const scoringPoints = await prisma.scoring_points.findMany({
+			where: {
+				business_id: business_id
+			},
+			orderBy: {
+				delivery_order_id: 'asc'
+			},
+			include: {
+				users: true,
+				businesses: true,
+				delivery_orders: true,
+				taxi_orders: true,
+				late_events: true
+			}
+		});
+		return scoringPoints;
+	} catch (error) {
+		console.error("Error retrieving scoring points by busienss ID:", error);
 		throw error;
 	}
 }
@@ -76,7 +101,8 @@ async function updateScoringPoints(scoring_points_id, data) {
 				users: true,
 				businesses: true,
 				delivery_orders: true,
-				taxi_orders: true
+				taxi_orders: true,
+				late_events: true
 			}
 		});
 		console.info("Updated scoring points: ", updatedScoringPoints);
@@ -105,6 +131,7 @@ module.exports = {
 	createScoringPoints,
 	getScoringPointsById,
 	getScoringPointsByUserId,
+	getScoringPointsByBusinessId,
 	updateScoringPoints,
 	deleteScoringPoints
 }

@@ -10,7 +10,7 @@ const { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE, TAXI_ORDER_STATUS,
 	CREDITS,
 	PARENT_USER_TYPE,
 	ORDER_TYPE,
-	CASHBACK_SOURCE, DRIVE_FEE, DELIVERY_ORDER_END_STATES
+	CASHBACK_SOURCE, DRIVE_FEE, DELIVERY_ORDER_END_STATES, SCORING_POINTS_REASON
 } = require("../lib/constants");
 const fs = require("fs");
 const Constants = require("../lib/constants");
@@ -31,6 +31,9 @@ const WalletFundsDao = require("../dao/WalletFunds");
 const TaxiOrderDao = require("../dao/TaxiOrder");
 const ReferralDao = require("../dao/Referrals");
 const { handleReferral } = require("../lib/referralHelper");
+const ScoringPointsDao = require("../dao/ScoringPoints");
+const LateEventsDao = require("../dao/LateEvents");
+const moment = require('moment');
 
 /**
  * GET /delivery/orders
@@ -686,6 +689,22 @@ async function completeOrder(req, res) {
 		let driver = order.delivery_driver_id
 			? await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id)
 			: await DriverDao.getDriverById(order.driver_id);
+
+		//assign penalties for being late
+		const timeline_delivered_timestamp = order.timeline.findLast(entry => entry.status === DELIVERY_ORDER_STATUS.DELIVERY_DELIVERED)?.timestamp;
+
+		if(timeline_delivered_timestamp && order.details?.customer_expected_delivery_at){
+			const late_seconds = moment(order.details.customer_expected_delivery_at).diff(moment(timeline_delivered_timestamp), 'seconds')
+			console.log(`Order was ${late_seconds} seconds ${late_seconds > 0 ? 'late' : 'early or on time'}.`);
+			let allowed_leeway = (60*30)
+
+			if(late_seconds>allowed_leeway){
+				await LateEventsDao.createLateEvent(order.business_id,driver.user_id, order.order_id,null, late_seconds-allowed_leeway)
+			}
+		}else{
+			await ScoringPointsDao.createScoringPoints(order.business_id,driver.user_id, order.order_id,null,0,false, SCORING_POINTS_REASON.INSUFFICIENT_DATA)
+		}
+
 		let delivery_business_stripe = await BusinessDao.getBusinessStripeByBusinessId(driver.business_id);
 		const INITIAL_DELIVERY_CUT = Math.round(order.details.delivery_cost*100 * (1-DRIVE_FEE));
 
@@ -1192,6 +1211,19 @@ async function updateOrderPickupTime(req, res) {
 	try {
 		let order = await DeliveryOrderDao.updateOrderPickupTime(order_id, pickup_time);
 		io.to("order_" + order.order_id).emit("order_pickup_time", order);
+		const totalDelay = order.timeline.reduce((sum, entry) => {
+			if (entry.status === 'MERCHANT_DELAYED') {
+				return sum + (entry.delay || 0);
+			}
+			return sum;
+		}, 0);
+		if(totalDelay>120){
+			const exising_penalty = await ScoringPointsDao.getScoringPointsByBusinessId(order.business_id).find(sp=>sp.order_id===order.order_id && sp.reason===SCORING_POINTS_REASON.LARGE_DELAY)
+			if(!exising_penalty){
+				//Assuming only merchant makes this api call so we can user req.user.user_id
+				await ScoringPointsDao.createScoringPoints(order.business_id,req.user.user_id,order.order_id,null,1,true,SCORING_POINTS_REASON.LARGE_DELAY)
+			}
+		}
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);

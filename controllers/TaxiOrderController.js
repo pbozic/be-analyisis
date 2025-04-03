@@ -10,7 +10,7 @@ const { UserSockets, io } = require("../socket");
 const gApi = require("../lib/gApis");
 const TaxiHelper = require("../lib/taxiHelpers");
 const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE , CARGO_TRANSFER_FEE, ORDER_TYPE, CREDITS,
-	CASHBACK_SOURCE, USER_ROLE
+	CASHBACK_SOURCE, USER_ROLE, SCORING_POINTS_REASON
 } = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
 const { sendOrderNotifications, sendReferralNotifications } = require("../lib/notifications");
@@ -23,6 +23,9 @@ const { sendNotificationToUser } = require("../lib/oneSignal");
 const { getLocalisedTexts } = require("../localisations/languages");
 const { CREDIT_TYPE } = require("@prisma/client");
 const { handleReferral } = require("../lib/referralHelper");
+const ScoringPointsDao = require("../dao/ScoringPoints");
+const LateEventsDao = require("../dao/LateEvents");
+const moment = require('moment');
 
 /**
  * GET /taxi/order/{orderId}
@@ -853,6 +856,28 @@ async function completeOrder(req, res) {
 		let driver = await DriverDao.getDriverById(order.driver_id);
 		let driver_business = await BusinessDao.getBusinessById(driver.business_id);
 
+		//assign penalties for being late
+		const timeline_first_waiting_timestamp = order.timeline.find(entry => entry.status === TAXI_ORDER_STATUS.TAXI_WAITING)?.location?.timestamp;
+		const timeline_accept_timestamp = order.timeline.find(entry => entry.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED)?.location?.timestamp;
+
+		const estimated_pickup_timestamp = order.estimates?.pickup_time
+		if(estimated_pickup_timestamp && timeline_accept_timestamp && timeline_first_waiting_timestamp){
+			const expected_travel_seconds_to_pickup = moment(timeline_accept_timestamp).diff(moment(estimated_pickup_timestamp), 'seconds')
+			const late_seconds = moment(estimated_pickup_timestamp).diff(moment(timeline_first_waiting_timestamp), 'seconds')
+			console.log(`pickup was ${late_seconds} seconds ${late_seconds > 0 ? 'late' : 'early or on time'}.`);
+
+			let allowed_leeway = order.is_scheduled
+				? (60*10)
+				: Math.max(expected_travel_seconds_to_pickup,(60*5))
+
+			if(late_seconds > allowed_leeway){
+				await LateEventsDao.createLateEvent(order.business_id,driver.user_id, null, order.order_id, late_seconds-allowed_leeway)
+			}
+		}else{
+			await ScoringPointsDao.createScoringPoints(order.business_id,driver.user_id,null,order.order_id,0,false, SCORING_POINTS_REASON.INSUFFICIENT_DATA)
+		}
+
+
 		io.emit("driver_available", driver);
 		let user = order.user;
 		if (order.type === ORDER_TYPE.VEHICLE_TRANSFER_COMBO) {
@@ -1138,6 +1163,9 @@ async function cancelOrder(req, res) {
 		let driver_id = order?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
 		let driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
+		if(res.user.user_id===driver.user_id){
+			await ScoringPointsDao.createScoringPoints(driver.business_id,req.user.user_id,null,order.order_id,1,true,SCORING_POINTS_REASON.CANCELED)
+		}
 		console.log("user console.log", user?.user_id);
 		console.log("Driver console.log", driver?.user?.user_id);
 		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO) sendOrderNotifications(user, driver?.user, user_id, driver_id, status);
@@ -1253,6 +1281,7 @@ async function rejectOrder(req, res) {
 
 		if (req.user.driver && req.user.driver.driver_id) {
 			await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, req.user.driver.driver_id);
+			await ScoringPointsDao.createScoringPoints(driver.business_id,req.user.user_id,null,order.order_id,1,true,SCORING_POINTS_REASON.REJECTED)
 			let order_sent = await prisma.taxi_order_sent.findUnique({
 				where: {
 					taxi_order_sent_driver_unique: {

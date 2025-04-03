@@ -77,6 +77,8 @@ model business {
 
   user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_business")
   scoring_points scoring_points[] @relation("scoring_points_to_business")
+
+  late_events late_events[] @relation("late_events_to_business")
 }
 
 model business_users {
@@ -163,6 +165,8 @@ model users {
 
   user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_user")
   scoring_points scoring_points[] @relation("scoring_points_to_user")
+
+  late_events late_events[] @relation("late_events_to_user")
 }
 
 model cashback {
@@ -502,6 +506,8 @@ model taxi_orders {
   cashback                 cashback[]
 
   scoring_points scoring_points[] @relation("scoring_points_to_taxi_order")
+
+  late_events late_events[] @relation("late_events_to_taxi_order")
 }
 
 model taxi_order_sent {
@@ -557,6 +563,8 @@ model delivery_orders {
   order_lobbies                     order_lobbies?                      @relation("origin_lobby")
 
   scoring_points scoring_points[] @relation("scoring_points_to_delivery_order")
+
+  late_events late_events[] @relation("late_events_to_delivery_order")
 }
 
 model delivery_order_sent {
@@ -1034,18 +1042,36 @@ model scoring_points {
   scoring_points_id       String          @id @default(uuid()) @db.Uuid
   business_id             String          @db.Uuid
   user_id                 String          @db.Uuid
-  delivery_order_id       String          @db.Uuid
-  taxi_order_id           String          @db.Uuid
+  delivery_order_id       String?          @db.Uuid
+  taxi_order_id           String?          @db.Uuid
   points                  Int
   isPenalty               Boolean
-  seconds                 Int
-  reason                  String
+  reason                  SCORING_POINTS_REASON
+  expiration_date         DateTime?
 
-  users      users    @relation("scoring_points_to_user", fields: [user_id], references: [user_id])
-  businesses business @relation("scoring_points_to_business", fields: [business_id], references: [business_id])
+  users      users?    @relation("scoring_points_to_user", fields: [user_id], references: [user_id])
+  businesses business? @relation("scoring_points_to_business", fields: [business_id], references: [business_id])
   delivery_orders   delivery_orders?    @relation("scoring_points_to_delivery_order", fields: [delivery_order_id], references: [order_id])
   taxi_orders   taxi_orders?    @relation("scoring_points_to_taxi_order", fields: [taxi_order_id], references: [order_id])
+  late_events late_events[] @relation("late_events_to_scoring_points")
 }
+
+model late_events {
+  late_events_id          String          @id @default(uuid()) @db.Uuid
+  business_id             String          @db.Uuid
+  user_id                 String          @db.Uuid
+  delivery_order_id       String?          @db.Uuid
+  taxi_order_id           String?          @db.Uuid
+  scoring_points_id       String?          @db.Uuid
+  seconds                 Int
+
+  users      users?    @relation("late_events_to_user", fields: [user_id], references: [user_id])
+  businesses business @relation("late_events_to_business", fields: [business_id], references: [business_id])
+  delivery_orders   delivery_orders?    @relation("late_events_to_delivery_order", fields: [delivery_order_id], references: [order_id])
+  taxi_orders   taxi_orders?    @relation("late_events_to_taxi_order", fields: [taxi_order_id], references: [order_id])
+  scoring_points scoring_points?   @relation("late_events_to_scoring_points", fields: [scoring_points_id], references: [scoring_points_id])
+}
+
 
 enum CATEGORY_TYPE {
   MENU
@@ -1274,4 +1300,13 @@ enum CREDIT_STATUS {
 enum CREDIT_TYPE {
   TAXI
   DELIVERY
+}
+
+enum SCORING_POINTS_REASON {
+  REJECTED
+  CANCELED
+  AUTO_REJECTED
+  LATE
+  LARGE_DELAY
+  INSUFFICIENT_DATA
 }
