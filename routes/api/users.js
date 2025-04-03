@@ -76,4 +76,8 @@ router.post("/me/redeem-referral-code", UserController.redeemReferralCode);
 router.get("/user/:code", UserController.getUserByReferralCode);
 router.get("/me/referral", UserController.getReferral);
 
+router.patch("/me/marketing-notifications", UserController.updateMarketingNotifications)
+router.patch("/me/ads-personalization", UserController.updateAdsPersonalization)
+router.patch("/me/newsletter", UserController.updateNewsletter)
+
 module.exports = router;

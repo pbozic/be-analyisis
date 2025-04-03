@@ -1823,6 +1823,42 @@ async function getReferral(req, res) {
 	}
 }
 
+async function updateMarketingNotifications(req, res) {
+	try {
+		const user = await UserDao.updateUserMarketingNotifications(req.user.user_id, req.body.data);
+		if (user) {
+			return res.status(200).json(user);
+		}
+		res.status(400).json({ error: "Error setting marketing notifications" });
+	} catch (err) {
+		return res.status(400).json({ error: err.message || 'Error setting marketing notifications' });
+	}
+}
+
+async function updateAdsPersonalization(req, res) {
+	try {
+		const user = await UserDao.updateUserAdsPersonalization(req.user.user_id, req.body.data);
+		if (user) {
+			return res.status(200).json(user);
+		}
+		res.status(400).json({ error: "Error setting ads personalization" });
+	} catch (err) {
+		return res.status(400).json({ error: err.message || 'Error setting ads personalization' });
+	}
+}
+
+async function updateNewsletter(req, res) {
+	try {
+		const user = await UserDao.updateUserNewsletter(req.user.user_id, req.body.data);
+		if (user) {
+			return res.status(200).json(user);
+		}
+		res.status(400).json({ error: "Error setting newsletter" });
+	} catch (err) {
+		return res.status(400).json({ error: err.message || 'Error setting newsletter' });
+	}
+}
+
 module.exports = {
 	getReferral,
 	claimReward,
@@ -1879,5 +1915,8 @@ module.exports = {
 	requestPaymentIntent,
 	confirmPaymentIntent,
 	getUserCredits,
-	getMyActiveOrderIds
+	getMyActiveOrderIds,
+	updateMarketingNotifications,
+	updateAdsPersonalization,
+	updateNewsletter,
 };

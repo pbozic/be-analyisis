@@ -743,6 +743,51 @@ const addCredits = async (user_id, updateData) => {
 	}
 }
 
+const updateUserMarketingNotifications = async (user_id, data) => {
+	try {
+		return prisma.users.update({
+			where: {
+				user_id: user_id
+			},
+			data: {
+				allow_marketing_push_notifications: data,
+			}
+		});
+	} catch (err) {
+		return new Error(err);
+	}
+}
+
+const updateUserAdsPersonalization = async (user_id, data) => {
+	try {
+		return prisma.users.update({
+			where: {
+				user_id: user_id
+			},
+			data: {
+				allow_ads_personalization: data,
+			}
+		});
+	} catch (err) {
+		return new Error(err);
+	}
+}
+
+const updateUserNewsletter = async (user_id, data) => {
+	try {
+		return prisma.users.update({
+			where: {
+				user_id: user_id
+			},
+			data: {
+				allow_newsletter: data,
+			}
+		});
+	} catch (err) {
+		return new Error(err);
+	}
+}
+
 module.exports = {
 	getUsers,
 	getUserByReferralCode,
@@ -783,4 +828,7 @@ module.exports = {
 	updateUserActive,
 	wipeUserPersonalData,
 	addCredits,
+	updateUserMarketingNotifications,
+	updateUserAdsPersonalization,
+	updateUserNewsletter,
 };

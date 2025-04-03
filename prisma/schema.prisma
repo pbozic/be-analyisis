@@ -162,6 +162,9 @@ model users {
   business_teams                         business_teams?      @relation("user_to_business_team", fields: [business_teams_id], references: [business_teams_id])
   order_lobby_users                      order_lobby_users[]  @relation("user_to_OL_user")
   promo_section_buys                     promo_sections_buy[]
+  allow_marketing_push_notifications     Boolean?
+  allow_ads_personalization              Boolean?
+  allow_newsletter                       Boolean?
 
   user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_user")
   scoring_points scoring_points[] @relation("scoring_points_to_user")
@@ -407,7 +410,6 @@ model vehicle_drivers {
 model vehicles {
   vehicle_id               String                  @id @unique @default(uuid()) @db.Uuid
   business_id              String?                 @db.Uuid
-  vehicle_drivers_id       String?                 @db.Uuid
   active                   Boolean?                @default(true)
   class                    VEHICLE_CLASS?
   category                 VEHICLE_CATEGORY?
