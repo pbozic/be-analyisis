@@ -311,25 +311,19 @@ async function updateVehicle(req, res) {
 			if (req.body.documents &&  req.body.documents.length > 0) {
 				for (const doc of  req.body.documents) {
 					const documentId = doc.document_id;
-					delete doc.document_id;
-					await updateDocumentByDocumentId(documentId, doc);
+					const updatedDoc = await updateDocumentByDocumentId(documentId, doc.documentData);
 					for (const file of doc.files) {
-						if (!file?.file_id) {
-							const existingDocument = await getDocumentsForVehicleByType(vehicle_id, file.document_type);
-							if (existingDocument) {
-								const base64 = file.base64;
-								delete file.base64;
-								delete file.document_type;
-								delete file.name;
-								const newFile = await addFileToDocument(existingDocument.document_id, file, existingDocument.public);
+						const base64 = file.base64;
+						delete file.base64;
+						delete file.document_type;
+						delete file.name;
+						const newFile = await addFileToDocument(updatedDoc.document_id, file, updatedDoc.public);
 
-								const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
-								await S3Helper.SaveObject(key, base64, file.mime_type, {
-									users: [],
-									businesses: [vehicle.business_id],
-								}, newFile, existingDocument.public);
-							}
-						}
+						const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
+						await S3Helper.SaveObject(key, base64, file.mime_type, {
+							users: [],
+							businesses: [vehicle.business_id],
+						}, newFile, updatedDoc.public);
 					}
 				}
 			}
