@@ -4,10 +4,10 @@ async function createScoringPoints(business_id, user_id, delivery_order_id, taxi
 	try {
 		const newScoringPoints = await prisma.scoring_points.create({
 			data: {
-				business: { connect: { business_id: business_id } },
-				user: { connect: { user_id: user_id } },
-				delivery_order: delivery_order_id ? { connect: { order_id: delivery_order_id } } : undefined,
-				taxi_order: taxi_order_id ? { connect: { order_id: taxi_order_id } } : undefined,
+				businesses: { connect: { business_id: business_id } },
+				users: { connect: { user_id: user_id } },
+				delivery_orders: delivery_order_id ? { connect: { order_id: delivery_order_id } } : undefined,
+				taxi_orders: taxi_order_id ? { connect: { order_id: taxi_order_id } } : undefined,
 				points: points,
 				isPenalty: isPenalty,
 				reason: reason
