@@ -58,7 +58,20 @@ const getVehicleById = async (vehicle_id, args) => {
 				vehicle_id: vehicle_id,
 			},
 			include: {
-				vehicle_specification: true,
+				drivers: {
+					include: {
+						driver: {
+							include: {
+								user: {
+									select: {
+										first_name: true,
+										last_name: true,
+									}
+								}
+							}
+						}
+					}
+				},
 				documents: {
 					include: {
 						files: true
