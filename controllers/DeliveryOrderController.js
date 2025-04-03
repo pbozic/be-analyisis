@@ -1218,8 +1218,9 @@ async function updateOrderPickupTime(req, res) {
 			return sum;
 		}, 0);
 		if(totalDelay>120){
-			const exising_penalty = await ScoringPointsDao.getScoringPointsByBusinessId(order.business_id)?.find(sp=>sp.order_id===order.order_id && sp.reason===SCORING_POINTS_REASON.LARGE_DELAY)
-			if(!exising_penalty){
+			const exising_penalties = await ScoringPointsDao.getScoringPointsByBusinessId(order.business_id)
+			const already_penalized_order = exising_penalties?.find(sp=>sp.order_id===order.order_id && sp.reason===SCORING_POINTS_REASON.LARGE_DELAY)
+			if(!already_penalized_order){
 				//Assuming only merchant makes this api call so we can user req.user.user_id
 				await ScoringPointsDao.createScoringPoints(order.business_id,req.user.user_id,order.order_id,null,1,true,SCORING_POINTS_REASON.LARGE_DELAY)
 			}
