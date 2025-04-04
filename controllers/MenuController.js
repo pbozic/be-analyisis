@@ -479,7 +479,7 @@ async function createMenuItem(req, res) {
 	const { category_id, data, image, user_id } = req.body;
 	try {
 		let document = null;
-		if (image?.documentData && !image?.document_id) {
+		if (image?.documentData) {
 			document = await DocumentDao.createDocument(image.documentData);
 			let files = image.files;
 			if (image?.document_id) {
