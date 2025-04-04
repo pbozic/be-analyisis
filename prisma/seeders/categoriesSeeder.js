@@ -47,7 +47,8 @@ let languages = {
         "wine": "Wine",
         "cocktail": "Cocktails",
         "drinks": "Soft drinks",
-        "kidsMeals": "Kids meals"
+        "kidsMeals": "Kids meals",
+        "studentMeals": "Student meals",
     },
     "sl": {
         "fastFood": "Hitra hrana",
@@ -91,7 +92,8 @@ let languages = {
         "wine": "Vino",
         "cocktail": "Koktajli",
         "drinks": "Brezalkoholne pijače",
-        "kidsMeals": "Otroški obroki"
+        "kidsMeals": "Otroški obroki",
+        "studentMeals": "Študentski obroki",
     },
     "it": {
         "fastFood": "Fast food",
@@ -135,7 +137,8 @@ let languages = {
         "wine": "Vino",
         "cocktail": "Cocktail",
         "drinks": "Bevande analcoliche",
-        "kidsMeals": "Pasti per bambini"
+        "kidsMeals": "Pasti per bambini",
+        "studentMeals": "Pasti per studenti",
     },
     "de": {
         "fastFood": "Schnellimbiss",
@@ -179,7 +182,8 @@ let languages = {
         "wine": "Wein",
         "cocktail": "Cocktails",
         "drinks": "Alkoholfreie Getränke",
-        "kidsMeals": "Kindergerichte"
+        "kidsMeals": "Kindergerichte",
+        "studentMeals": "Studentenmahlzeiten",
     },
     "es": {
         "fastFood": "Comida rápida",
@@ -223,7 +227,8 @@ let languages = {
         "wine": "Vino",
         "cocktail": "Cóctel",
         "drinks": "Bebidas",
-        "kidsMeals": "Comidas para niños"
+        "kidsMeals": "Comidas para niños",
+        "studentMeals": "Comidas para estudiantes",
     },
     "sr": {
         "fastFood": "Брза храна",
@@ -267,7 +272,8 @@ let languages = {
         "wine": "Вино",
         "cocktail": "Коктел",
         "drinks": "Напици",
-        "kidsMeals": "Оброци за децу"
+        "kidsMeals": "Оброци за децу",
+        "studentMeals": "Студентски оброци",
     },
     "bs": {
         "fastFood": "Brza hrana",
@@ -311,7 +317,8 @@ let languages = {
         "wine": "Vino",
         "cocktail": "Koktel",
         "drinks": "Pića",
-        "kidsMeals": "Obroci za djecu"
+        "kidsMeals": "Obroci za djecu",
+        "studentMeals": "Studentski obroci",
     },
     "hr": {
         "fastFood": "Brza hrana",
@@ -355,7 +362,8 @@ let languages = {
         "wine": "Vino",
         "cocktail": "Koktel",
         "drinks": "Pića",
-        "kidsMeals": "Obroci za djecu"
+        "kidsMeals": "Obroci za djecu",
+        "studentMeals": "Studentski obroci",
     },
     "fr": {
         "fastFood": "Fast-food",
@@ -399,7 +407,8 @@ let languages = {
         "wine": "Vin",
         "cocktail": "Cocktail",
         "drinks": "Boissons",
-        "kidsMeals": "Repas pour enfants"
+        "kidsMeals": "Repas pour enfants",
+        "studentMeals": "Repas étudiants",
     },
     "ru": {
         "fastFood": "Фаст-фуд",
@@ -443,7 +452,8 @@ let languages = {
         "wine": "Вино",
         "cocktail": "Коктейль",
         "drinks": "Напитки",
-        "kidsMeals": "Детские обеды"
+        "kidsMeals": "Детские обеды",
+        "studentMeals": "Студенческие обеды",
     }
 }
 
@@ -490,6 +500,7 @@ let CATEGORIES_FULL = {
     cocktail: {key:'cocktail',tag: 'cocktail', source: './icons/cocktail.png', name: 'Cocktails'},
     drinks: {key:'drinks',tag: 'soft-drinks', source: './icons/drinks.png', name: 'Soft drinks'},
     kidsMeals: {key:'kidsMeals',tag: 'kids-meals', source: './icons/kids-meals.png', name: 'Kids meals'},
+    studentMeals: {key:'studentMeals',tag: 'student-meals', source: './icons/kids-meals.png', name: 'Student meals'},
 }
 
 async function seedCategories() {
