@@ -1163,7 +1163,7 @@ async function cancelOrder(req, res) {
 		let driver_id = order?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
 		let driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
-		if(res.user.user_id===driver.user_id){
+		if(res.user.user_id===driver?.user?.user_id){
 			await ScoringPointsDao.createScoringPoints(driver.business_id,req.user.user_id,null,order.order_id,1,true,SCORING_POINTS_REASON.CANCELED)
 		}
 		console.log("user console.log", user?.user_id);
