@@ -17,7 +17,8 @@ const Constants = require("../lib/constants");
 const { getUsers } = require("../dao/User");
 const { delivery_orders } = require("@prisma/client");
 const { generateItemsFromPreferences, resendPendingOrdersToDeliveryDriver, sendActiveOrdersToDeliveryDriver,
-	revokeDeliveryOrderFromDrivers, calculateDeliveryOrderPaymentCuts, handlePaymentCleanup, handlePaymentRefund
+	revokeDeliveryOrderFromDrivers, calculateDeliveryOrderPaymentCuts, handlePaymentCleanup, handlePaymentRefund,
+	verifyOrderCosts
 } = require("../lib/deliveryHelpers");
 const { sortLocationsByNearestNeighbor, todaysEarnings } = require("../lib/helpersLib");
 const { connect } = require("http2");
@@ -140,6 +141,10 @@ async function createOrder(req, res) {
 	const { orderBody, user_id, return_url } = req.body;
 	console.info("CREATE DELIVERY ORDER: ", req.body );
 	try {
+
+		const isValidOrder = await verifyOrderCosts(orderBody)
+		if(!isValidOrder) throw new Error("Invalid order data!");
+
 		let orderData = {
 			...orderBody,
 			status: DELIVERY_ORDER_STATUS.PENDING
