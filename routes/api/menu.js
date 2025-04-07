@@ -40,7 +40,7 @@ router.patch("/menu-items", MenuController.updateMenuItem);
 router.patch("/menu-items/is_enabled", MenuController.updateMenuItemEnabled);
 router.patch("/menu-items/order", MenuController.updateMenuItemsOrder);
 router.patch("/menu-items/price", MenuController.updateMenuItemPrice);
-router.post("/menu_items/extras-sides/:business_id}", MenuController.getMenuItemsByIds);
+router.post("/menu-items/extras-sides/:business_id", MenuController.getMenuItemsByIds);
 router.post("/menu-items/category/:category_id", MenuController.addMenuItemMenuCategory);
 router.delete("/menu-items/category/:category_id", MenuController.addMenuItemMenuCategory);
 
