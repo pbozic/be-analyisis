@@ -14,7 +14,7 @@ function startCronJobs() {
     cron.schedule("* * * * *", DeliveryHelpers.checkIfDeliveryOrdersNeedSending);
     cron.schedule("* * * * *", DeliveryHelpers.checkIfRestaurantOrderIsPrepared);
     cron.schedule("* * * * *", DeliveryHelpers.autoRejectDeliveryOrders);
-    //cron.schedule("* * * * *", checkPingStatus);
+    cron.schedule("* * * * *", checkPingStatus);
     cron.schedule("* * * * *", TaxiHelpers.revokeAcceptedOrdersFromDriverHandler);
     cron.schedule("* * * * *", TaxiHelpers.scheduledOrdersNotificationsHandler);
     cron.schedule("* * * * *", TaxiHelpers.closeScheduledOrders);
