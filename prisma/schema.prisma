@@ -1043,7 +1043,7 @@ model user_favorite_businesses {
 model scoring_points {
   scoring_points_id       String          @id @default(uuid()) @db.Uuid
   business_id             String          @db.Uuid
-  user_id                 String          @db.Uuid
+  user_id                 String?          @db.Uuid
   delivery_order_id       String?          @db.Uuid
   taxi_order_id           String?          @db.Uuid
   points                  Int

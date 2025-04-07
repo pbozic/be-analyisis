@@ -12,9 +12,6 @@ ALTER TABLE "vehicles" DROP CONSTRAINT "vehicles_driver_id_fkey";
 ALTER TABLE "vehicles" DROP COLUMN "driver_id",
 ADD COLUMN     "vehicle_drivers_id" UUID;
 
--- DropTable
-DROP TABLE "scoring_points";
-
 -- CreateTable
 CREATE TABLE "vehicle_drivers" (
     "vehicle_drivers_id" UUID NOT NULL,
