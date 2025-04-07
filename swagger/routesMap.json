@@ -1,0 +1,2466 @@
+[
+  {
+    "path": "\\users\\",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "listUsers",
+    "line": 40,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\personal",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "listPersonalUsers",
+    "line": 77,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "me",
+    "line": 161,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\ping",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "ping",
+    "line": 1061,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\reviews",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "getMyReviews",
+    "line": 1099,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\:user_id\\reviews",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "getReviewsByUserId",
+    "line": 1186,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\:user_id\\wallet",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "getAvailableWalletBalance",
+    "line": 1570,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\:user_id\\family_wallet",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "getFamilyWalletBalanceAndType",
+    "line": 1592,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\:user_id\\transactions",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "getTransactions",
+    "line": 1650,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\:user_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "getUserById",
+    "line": 118,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\:user_id\\wallet",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "updateWalletBalance",
+    "line": 1633,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me",
+    "method": "patch",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\password",
+    "method": "patch",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\email",
+    "method": "patch",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\profile_picture",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "updateProfilePicture",
+    "line": 354,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\taxi-preferences",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "updateUserTaxiPreferences",
+    "line": 399,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\notification-preferences",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "updateUserNotificationPreferences",
+    "line": 424,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\taxi-push-notification-preferences",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "updateUserTaxiPushNotifications",
+    "line": 449,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\transfer-push-notification-preferences",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "updateUserTransferPushNotifications",
+    "line": 474,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\delivery-push-notification-preferences",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "updateUserDeliveryPushNotifications",
+    "line": 499,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\spicy-preferences",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "updateUserSpicyPreferences",
+    "line": 524,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\transfer-preferences",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "updateUserTransferPreferences",
+    "line": 549,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\radio-preferences",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "updateUserRadioPreferences",
+    "line": 574,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\allergies-preferences",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "updateUserAllergiesPreferences",
+    "line": 599,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\phone",
+    "method": "patch",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\oneSignalId",
+    "method": "post",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\address",
+    "method": "post",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\address\\:address_id",
+    "method": "delete",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "deleteAddress",
+    "line": 744,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\address\\:address_id",
+    "method": "patch",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\address\\:address_id\\primary",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "setPrimaryAddress",
+    "line": 934,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\verify\\phone",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "requestSMSVerification",
+    "line": 651,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\verify\\phone",
+    "method": "post",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\review",
+    "method": "post",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\payment-sheet",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "getPaymentSheetCredentials",
+    "line": 1003,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\requestToAddFunds",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "requestToAddFundsToWallet",
+    "line": 1016,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\scheduled_orders",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "getSelfScheduledOrders",
+    "line": 1084,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\delete\\:user_id",
+    "method": "delete",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "softDeleteUserByUserId",
+    "line": 852,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\delete\\:user_id",
+    "method": "delete",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "deleteUserByUserId",
+    "line": 765,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\update_user",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "updateUserByUserId",
+    "line": 251,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\disabled\\:user_id",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "updateUserDisabledByUserId",
+    "line": 825,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\active\\:user_id",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "updateUserActiveByUserId",
+    "line": 798,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\disabled",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "disableMe",
+    "line": 880,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\group_user\\register-child",
+    "method": "post",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\group_user\\status\\",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "updateChildUserEnabledByGroupUserId",
+    "line": 1463,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\group_user\\allowance\\",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "updateChildUserAllowanceByGroupUserId",
+    "line": 1495,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\group_user\\allowance",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "updateChildUserAllowanceByGroupUserId",
+    "line": 1495,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\group_user\\delete\\:group_user_id",
+    "method": "delete",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "deleteChildUserByGroupUserId",
+    "line": 1521,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\request-payment-intent",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "requestPaymentIntent",
+    "line": 1031,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\confirm-payment-intent",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "confirmPaymentIntent",
+    "line": 1047,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\claim-reward",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "claimReward",
+    "line": 1746,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\me\\redeem-referral-code",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "redeemReferralCode",
+    "line": 1715,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\users\\user\\:code",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\UserController.js",
+    "function": "getUserByReferralCode",
+    "line": 1692,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "getDeliveryOrders",
+    "line": 37,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\today",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "getDeliveryOrdersToday",
+    "line": 1021,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\active",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "getActiveDeliveryOrders",
+    "line": 58,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\:business_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "getDeliveryOrdersByBusinessId",
+    "line": 829,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\active\\:user_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "getActiveDeliveryOrdersByUserId",
+    "line": 782,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\active\\:business_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "getActiveDeliveryOrdersByBusinessId",
+    "line": 805,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\active\\driver\\:driver_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "getActiveDeliveryOrdersByDriverId",
+    "line": 659,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\completed\\:driver_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "getCompletedDeliveryOrdersByDriverId",
+    "line": 624,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\completed\\user\\:user_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "getCompletedDeliveryOrdersByUserId",
+    "line": 715,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\completed\\business\\:business_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "getCompletedDeliveryOrdersByBusinessId",
+    "line": 858,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\order\\:order_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "getOrder",
+    "line": 79,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\order\\user\\:order_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "getUserByDeliveryOrderId",
+    "line": 100,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\order",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "createOrder",
+    "line": 127,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\daily_meals",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "createDailyMeals",
+    "line": 269,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\order\\status",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "updateOrderStatus",
+    "line": 888,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\order\\pickup_time",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "updateOrderPickupTime",
+    "line": 921,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\order\\delivery_time",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "updateOrderDeliveryTime",
+    "line": 946,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\order\\accept",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "acceptOrder",
+    "line": 495,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\order\\complete",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "completeOrder",
+    "line": 567,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\timeline",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "updateDeliveryOrderTimeline",
+    "line": 972,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery\\orders\\order\\update",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryOrderController.js",
+    "function": "updateDeliveryOrder",
+    "line": 972,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "getTaxiOrders",
+    "line": 262,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\today",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "getTaxiOrdersToday",
+    "line": 1591,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\order\\:order_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "getOrder",
+    "line": 36,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\order\\:order_id\\available-drivers",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "getDriversForOrder",
+    "line": 1522,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\orders\\pagination\\",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "getTaxiOrdersWithPagination",
+    "line": 1555,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\orders\\completed\\:driver_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "getCompletedTaxiOrders",
+    "line": 178,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\orders\\completed\\user\\:user_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "getCompletedTaxiOrdersByUserId",
+    "line": 299,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\orders\\completed\\business\\:business_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "getCompletedTaxiOrdersByBusinessId",
+    "line": 328,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\orders\\rejected\\:driver_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "getRejectedTaxiOrders",
+    "line": 234,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\orders\\canceled\\:driver_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "getCanceledTaxiOrders",
+    "line": 206,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\orders\\canceled\\user\\:user_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "getCanceledTaxiOrdersByUserId",
+    "line": 363,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\orders\\active\\driver\\:driver_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "getActiveTaxiOrdersByDriverId",
+    "line": 138,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\orders\\active\\:user_id\\:type",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "getActiveTaxiOrders",
+    "line": 60,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\order",
+    "method": "post",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\orders\\scheduled_orders",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "getScheduledOrders",
+    "line": 1486,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\orders\\scheduled_orders\\user\\:user_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "getScheduledOrdersByUserId",
+    "line": 1503,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\dispatch-order",
+    "method": "post",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\order\\status",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "updateOrderStatus",
+    "line": 1025,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\order\\route",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "updateTaxiOrderRoute",
+    "line": 1312,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\order\\preferences",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "updateTaxiOrderPreferences",
+    "line": 1058,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\order\\pickup_location",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "updateTaxiOrderPickupLocation",
+    "line": 1336,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\order\\delivery_location",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "updateTaxiOrderDeliveryLocation",
+    "line": 1360,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\order\\complete_route",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "updateCompleteTaxiRoute",
+    "line": 1384,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\order\\accept",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "acceptOrder",
+    "line": 745,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\order\\complete",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "completeOrder",
+    "line": 835,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\order\\cancel",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "cancelOrder",
+    "line": 1103,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\order\\timeline",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "updateTaxiOrderTimeline",
+    "line": 1411,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\order\\payment",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "updateTaxiOrderPayment",
+    "line": 1438,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\order\\append_driver",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "appendTaxiDriver",
+    "line": 1464,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\order\\reject",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "rejectOrder",
+    "line": 1201,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\grouped_order\\cancel",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "cancelGroupedOrderByParentId",
+    "line": 1605,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\taxi\\grouped_order\\reject",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\TaxiOrderController.js",
+    "function": "rejectGroupedOrderByParentId",
+    "line": 1670,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\businesses\\merchant",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "listMerchantBusinesses",
+    "line": 57,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\businesses\\merchant\\daily-meals",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "listMerchantBusinessesWithDailyMeals",
+    "line": 79,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\businesses\\merchant\\main",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "listMerchantBusinessesMainInfo",
+    "line": 99,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\businesses\\taxi",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "listTransferBusinesses",
+    "line": 119,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\businesses\\taxi\\main",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "listTransferBusinessesMainInfo",
+    "line": 119,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\businesses\\busyness",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "getBusynessFactorsBusinessIdList",
+    "line": 1228,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\:business_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "getBusinessById",
+    "line": 161,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\:business_id\\reviews",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "getBusinessReviewsById",
+    "line": 1023,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\search",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "getBusinessesByNameSearch",
+    "line": 549,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\parent",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "getParentBusiness",
+    "line": 187,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\stripe\\:business_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "getBusinessStripeStatusByBusinessId",
+    "line": 1175,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\earnings\\all",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "getAllBusinessesEarnings",
+    "line": 935,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\earnings\\total",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "getTotalEarnings",
+    "line": 976,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\earnings\\:business_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "getBusinessEarnings",
+    "line": 890,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\earnings\\:business_id\\total",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "getBusinessTotalEarnings",
+    "line": 1002,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\register",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "createNewBusiness",
+    "line": 235,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\review",
+    "method": "post",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\address\\add",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "addBusinessAddress",
+    "line": 576,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\delivery-address\\add",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "addDeliveryAddress",
+    "line": 600,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\scheduled_users\\sorting",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "manualSortScheduledUsers",
+    "line": 837,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\scheduled_users\\sorting\\type",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "addScheduledUserSortingType",
+    "line": 863,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "update",
+    "line": 266,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\edit",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "editBusiness",
+    "line": 1131,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\type",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "updateBusinessType",
+    "line": 296,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\business-unit",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "updateIsBusinessUnit",
+    "line": 320,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\business-group-name",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "updateBusinessGroupName",
+    "line": 344,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\email",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "updateBusinessEmail",
+    "line": 369,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\telephone",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "updateBusinessTelephone",
+    "line": 394,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\workingHours",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "updateBusinessWorkingHours",
+    "line": 419,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\restaurant-overwhelmed\\:business_id",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "updateRestaurantOverwhelmed",
+    "line": 443,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\new\\:business_id",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "updateBusinessIsNew",
+    "line": 477,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\popular\\:business_id",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "updateBusinessIsPopular",
+    "line": 502,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\parent\\update",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "updateParentBusinessId",
+    "line": 626,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\parent\\remove",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "removeParentBusinessId",
+    "line": 715,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\address",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "updateBusinessAddress",
+    "line": 650,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\delivery-address",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "updateBusinessDeliveryAddress",
+    "line": 674,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\stripe\\generate\\:business_id",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "generateBusinessStripeByBusinessId",
+    "line": 1190,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\paymentIntent",
+    "method": "post",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business\\:business_id",
+    "method": "delete",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessController.js",
+    "function": "deleteBusiness",
+    "line": 694,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "listDrivers",
+    "line": 32,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\full",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "listDriversFull",
+    "line": 51,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\online",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "listOnlineDrivers",
+    "line": 71,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\available",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "getAvailableDrivers",
+    "line": 81,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\unavailable",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "getUnavailableDrivers",
+    "line": 91,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\orders",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "resendDelegatedOrdersToDriver",
+    "line": 167,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\:driver_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "getDriverById",
+    "line": 113,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\:driver_id\\location",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "getDriverLocation",
+    "line": 139,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\:driver_id\\history_location",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "getDriverHistoryLocations",
+    "line": 558,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\earnings\\all",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "getAllDriversEarnings",
+    "line": 646,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\earnings\\total",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "getTotalEarnings",
+    "line": 698,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\earnings\\:driver_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "getDriverEarnings",
+    "line": 590,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\earnings\\:driver_id\\total",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "getDriverTotalEarnings",
+    "line": 732,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\update\\:driver_id",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "updateDriver",
+    "line": 202,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\edit",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "editDriver",
+    "line": 228,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\ride_requirements",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "updateDriverRideRequirements",
+    "line": 454,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\location",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "updateDriverLocation",
+    "line": 387,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\online",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "updateDriverOnlineStatus",
+    "line": 481,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\:driver_id\\toggle_orders",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "toggleDriverOrders",
+    "line": 806,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\:driver_id\\:action\\:type",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "setDriverHandle",
+    "line": 775,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\create",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "createDriver",
+    "line": 518,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\drivers\\sos",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DriverController.js",
+    "function": "handleSosAlert",
+    "line": 535,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery_drivers\\",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryDriverController.js",
+    "function": "listDeliveryDrivers",
+    "line": 227,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery_drivers\\orders\\:user_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryDriverController.js",
+    "function": "resendDelegatedOrdersToDeliveryDriver",
+    "line": 33,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery_drivers\\online",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryDriverController.js",
+    "function": "listOnlineDeliveryDrivers",
+    "line": 247,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery_drivers\\available",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryDriverController.js",
+    "function": "getAvailableDeliveryDrivers",
+    "line": 267,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery_drivers\\daily-meals",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryDriverController.js",
+    "function": "listDeliveryDriversWithDailyMeals",
+    "line": 287,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery_drivers\\user\\:user_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryDriverController.js",
+    "function": "getDeliveryDriverByUserId",
+    "line": 387,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery_drivers\\:delivery_driver_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryDriverController.js",
+    "function": "getDeliveryDriverById",
+    "line": 311,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery_drivers\\:delivery_driver_id\\location",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryDriverController.js",
+    "function": "getDeliveryDriverLocation",
+    "line": 413,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery_drivers\\earnings\\all",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryDriverController.js",
+    "function": "getAllDriversEarnings",
+    "line": 650,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery_drivers\\earnings\\total",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryDriverController.js",
+    "function": "getTotalEarnings",
+    "line": 690,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery_drivers\\earnings\\:delivery_driver_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryDriverController.js",
+    "function": "getDriverEarnings",
+    "line": 606,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery_drivers\\earnings\\:delivery_driver_id\\total",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryDriverController.js",
+    "function": "getDriverTotalEarnings",
+    "line": 716,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery_drivers\\edit",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryDriverController.js",
+    "function": "editDeliveryDriver",
+    "line": 69,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery_drivers\\update\\:delivery_driver_id",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryDriverController.js",
+    "function": "updateDeliveryDriver",
+    "line": 444,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery_drivers\\location",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryDriverController.js",
+    "function": "updateDeliveryDriverLocation",
+    "line": 470,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery_drivers\\online",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryDriverController.js",
+    "function": "updateDeliveryDriverOnlineStatus",
+    "line": 543,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\delivery_drivers\\create",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DeliveryDriverController.js",
+    "function": "createDeliveryDriver",
+    "line": 575,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\vehicles\\",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\VehiclesController.js",
+    "function": "listVehicles",
+    "line": 14,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\vehicles\\business\\:businessId",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\VehiclesController.js",
+    "function": "listVehiclesByBusiness",
+    "line": 34,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\vehicles\\:vehicle_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\VehiclesController.js",
+    "function": "getVehicleById",
+    "line": 56,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\vehicles\\class\\:vehicleClass",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\VehiclesController.js",
+    "function": "getVehiclesByClass",
+    "line": 103,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\vehicles\\category\\:vehicleCategory",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\VehiclesController.js",
+    "function": "getVehiclesByCategory",
+    "line": 124,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\vehicles\\class\\:vehicleClass\\category\\:vehicleCategory",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\VehiclesController.js",
+    "function": "getVehiclesByClassAndCategory",
+    "line": 146,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\vehicles\\driver\\:driver_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\VehiclesController.js",
+    "function": "getVehiclesByDriverId",
+    "line": 82,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\vehicles\\driver\\:driver_id\\class\\:vehicleClass",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\VehiclesController.js",
+    "function": "getVehiclesOfDriverByClass",
+    "line": 168,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\vehicles\\driver\\:driver_id\\category\\:vehicleCategory",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\VehiclesController.js",
+    "function": "getVehiclesOfDriverByCategory",
+    "line": 190,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\vehicles\\driver\\:driver_id\\class\\:vehicleClass\\category\\:vehicleCategory",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\VehiclesController.js",
+    "function": "getVehiclesOfDriverByClassAndCategory",
+    "line": 213,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\vehicles\\create",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\VehiclesController.js",
+    "function": "createVehicle",
+    "line": 236,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\vehicles\\",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\VehiclesController.js",
+    "function": "updateVehicle",
+    "line": 259,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\vehicles\\driver\\assign\\",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\VehiclesController.js",
+    "function": "assignVehicleToDriver",
+    "line": 280,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\vehicles\\driver\\unassign",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\VehiclesController.js",
+    "function": "removeVehicleFromDriver",
+    "line": 301,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\vehicles\\:vehicle_id",
+    "method": "delete",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\VehiclesController.js",
+    "function": "deleteVehicle",
+    "line": 323,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\finances\\:finance_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\FinancesController.js",
+    "function": "getFinanceRecordById",
+    "line": 39,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\finances\\business\\:business_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\FinancesController.js",
+    "function": "getFinanceRecordByBusinessId",
+    "line": 65,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\finances\\create",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\FinancesController.js",
+    "function": "createNewFinanceRecord",
+    "line": 17,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\finances\\:finance_id",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\FinancesController.js",
+    "function": "updateFinanceRecord",
+    "line": 93,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\finances\\:finance_id\\account_number",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\FinancesController.js",
+    "function": "updateAccountNumber",
+    "line": 116,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\finances\\:finance_id\\bank_name",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\FinancesController.js",
+    "function": "updateBankName",
+    "line": 142,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\finances\\:finance_id\\payment_preferences",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\FinancesController.js",
+    "function": "updatePaymentPreferences",
+    "line": 168,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\finances\\:finance_id",
+    "method": "delete",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\FinancesController.js",
+    "function": "deleteFinanceRecord",
+    "line": 191,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "listDocuments",
+    "line": 16,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\:documentId",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "getDocumentById",
+    "line": 37,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\users\\:userId",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "getDocumentsForUser",
+    "line": 64,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\businesses\\:businessId",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "getDocumentsForBusiness",
+    "line": 86,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\deliveryPersons\\:deliveryPersonId",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "getDocumentsForDeliveryPerson",
+    "line": 108,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\drivers\\:driver_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "getDocumentsForDriver",
+    "line": 130,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\vehicles\\:vehicleId",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "getDocumentsForVehicle",
+    "line": 152,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\type\\:documentType",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "getDocumentsByDocumentType",
+    "line": 174,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\business\\:business_id\\type\\:document_type",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "getDocumentsForBusinessByDocumentType",
+    "line": 197,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\user\\type\\:document_type",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "getDocumentsForUserByDocumentType",
+    "line": 219,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\drivers\\:driverId\\type\\:documentType",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "getDocumentsForDriverByDocumentType",
+    "line": 242,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\deliveryPersons\\:deliveryPersonId\\type\\:documentType",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "getDocumentsForDeliveryPersonByDocumentType",
+    "line": 265,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\vehicles\\:vehicleId\\type\\:documentType",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "getDocumentsForVehicleByDocumentType",
+    "line": 288,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\create\\user\\:user_id",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "createUserDocument",
+    "line": 312,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\create\\business\\:business_id",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "createBusinessDocument",
+    "line": 340,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\create\\driver\\:driver_id",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "createDriverDocument",
+    "line": 368,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\create\\vehicle\\:vehicle_id",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "createVehicleDocument",
+    "line": 396,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\create\\delivery_driver\\:delivery_driver_id",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "createDeliveryPersonDocument",
+    "line": 422,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\expirationDate",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "updateDocumentExpirationDate",
+    "line": 456,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\issueDate",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "updateDocumentIssueDate",
+    "line": 481,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\files",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "updateDocumentFiles",
+    "line": 506,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\additionalInfo",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\DocumentsController.js",
+    "function": "updateDocumentAdditionalInfo",
+    "line": 531,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\documents\\files\\:field\\:id",
+    "method": "delete",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\business\\:business_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "getMenuByBusinessId",
+    "line": 20,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "createMenu",
+    "line": 43,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\:menu_id",
+    "method": "delete",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "deleteMenu",
+    "line": 64,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\active",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "setActiveMenu",
+    "line": 89,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\add-category-order",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "addMenuCategoryIdToOrder",
+    "line": 187,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\remove-category-order",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "removeMenuCategoryIdFromOrder",
+    "line": 211,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-categories\\:menu_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "getMenuCategoriesByMenuId",
+    "line": 255,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-categories\\create",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "createMenuCategory",
+    "line": 114,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-categories\\order",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "updateMenuOrder",
+    "line": 367,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-categories\\:menu_category_id",
+    "method": "delete",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "deleteMenuCategory",
+    "line": 317,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-categories\\business\\:business_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "getMenuCategoriesByBusinessId",
+    "line": 276,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-categories",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "updateMenuCategory",
+    "line": 342,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-categories\\add",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "addMenuCategory",
+    "line": 187,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-categories\\remove",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "removeMenuCategory",
+    "line": 211,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\daily-meals-menu\\:business_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "getLastUploadedDailyMealsMenu",
+    "line": 492,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\daily-meals-menu\\create",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "createDailyMealsMenu",
+    "line": 453,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-items\\create",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "createMenuItem",
+    "line": 417,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-items\\add-order",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "addMenuItemIdToOrder",
+    "line": 139,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-items\\remove-order",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "removeMenuItemIdFromOrder",
+    "line": 163,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-items\\:category_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "getMenuItemsByCategoryId",
+    "line": 234,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-items\\business\\:business_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "getMenuItemsByBusinessId",
+    "line": 297,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-items\\:menu_item_id",
+    "method": "delete",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "deleteMenuItem",
+    "line": 533,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-items",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "updateMenuItem",
+    "line": 393,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-items\\order",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "updateMenuItemsOrder",
+    "line": 393,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-items\\price",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "updateMenuItemPrice",
+    "line": 599,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-items\\category\\:category_id",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "addMenuItemMenuCategory",
+    "line": 624,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-items\\category\\:category_id",
+    "method": "delete",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "addMenuItemMenuCategory",
+    "line": 624,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-items\\category\\add",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "addMenuItemMenuCategory",
+    "line": 624,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\menus\\menu-items\\category\\remove",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\MenuController.js",
+    "function": "removeMenuItemFromCategory",
+    "line": 647,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business-users\\",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessUsersController.js",
+    "function": "getAllBusinessUsers",
+    "line": 17,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business-users\\:user_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessUsersController.js",
+    "function": "getBusinessUserByUserId",
+    "line": 38,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business-users\\business\\:business_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessUsersController.js",
+    "function": "getBusinessUsersByBusinessId",
+    "line": 60,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business-users\\type\\:type",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessUsersController.js",
+    "function": "getBusinessUsersByBusinessType",
+    "line": 82,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business-users\\business\\group_user\\:business_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessUsersController.js",
+    "function": "getBusinessGroupsByBusinessId",
+    "line": 248,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business-users\\business\\:business_id\\company-role\\:company_role",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessUsersController.js",
+    "function": "getAllBusinessUsersForBusinessByCompanyRole",
+    "line": 105,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business-users\\",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessUsersController.js",
+    "function": "createBusinessUser",
+    "line": 129,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business-users\\address\\operating",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessUsersController.js",
+    "function": "addOperatingAddress",
+    "line": 173,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business-users\\company-role",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessUsersController.js",
+    "function": "updateCompanyRole",
+    "line": 202,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business-users\\online",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessUsersController.js",
+    "function": "updateBusinessUserOnlineStatus",
+    "line": 226,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\business-users\\:business_users_id",
+    "method": "delete",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\BusinessUsersController.js",
+    "function": "removeBusinessUser",
+    "line": 149,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\flags\\",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\FlagsController.js",
+    "function": "getFlags",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\flags\\:flag_id",
+    "method": "get",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\FlagsController.js",
+    "function": "getFlagById",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\flags\\",
+    "method": "post",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\FlagsController.js",
+    "function": "createFlag",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\flags\\:flag_id",
+    "method": "patch",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\FlagsController.js",
+    "function": "updateFlag",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\flags\\:flag_id",
+    "method": "delete",
+    "controller": "C:\\Users\\Primzy\\Documents\\www\\klikni-be\\controllers\\FlagsController.js",
+    "function": "deleteFlag",
+    "line": -1,
+    "auth": true,
+    "documented": false
+  },
+  {
+    "path": "\\test\\s3",
+    "method": "get",
+    "line": -1,
+    "auth": false,
+    "documented": false
+  },
+  {
+    "path": "\\test\\s3",
+    "method": "post",
+    "line": -1,
+    "auth": false,
+    "documented": false
+  },
+  {
+    "path": "\\test\\notification",
+    "method": "post",
+    "line": -1,
+    "auth": false,
+    "documented": false
+  },
+  {
+    "path": "\\purchase-status\\:sessionId",
+    "method": "get",
+    "line": -1,
+    "auth": false,
+    "documented": false
+  }
+]

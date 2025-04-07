@@ -425,7 +425,6 @@ async function registerTaxiService(req, res) {
 				// Handle user documents
 				if (driverInfo.user.documents) {
 					for (const doc of driverInfo.user.documents) {
-
 						const document = await DocumentDao.createDocument(doc.documentData);
 						for (const file of doc.files) {
 							let base64 = file.base64;
@@ -472,37 +471,43 @@ async function registerTaxiService(req, res) {
 				// 		addresses.push(address);
 				// 	}
 				// }
+				drivers.push({ driver, addresses });
+			}
+		}
 
-				let vehicles = [];
-				if (Array.isArray(driverInfo.vehicles) && driverInfo.vehicles.length) {
-					for (const vehicleInfo of driverInfo.vehicles) {
-						const vehicle = await VehicleDao.createNewVehicle({
-							...vehicleInfo?.data,
-							business_id: business.business_id
-						});
-						await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver.driver_id);
-						// Handle vehicle documents
-						if (vehicleInfo.documents) {
-							for (const doc of vehicleInfo.documents) {
-								const document = await DocumentDao.createDocument(doc.documentData);
-								for (const file of doc.files) {
-									let base64 = file.base64;
-									delete file.base64;
-									let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
-									let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-									S3Helper.SaveObject(key, base64, file.mime_type, {
-										users: [newUser.user_id],
-										businesses: [business.business_id]
-									}, fileData, document.public);
-								}
-								await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
-							}
+		let vehicles = [];
+		if (Array.isArray(req.body.vehicles) && req.body.vehicles.length) {
+			for (const vehicleInfo of req.body.vehicles) {
+				const vehicle = await VehicleDao.createNewVehicle({
+					...vehicleInfo?.vehicle_information,
+					business_id: business.business_id
+				});
+				if (Array.isArray(vehicleInfo.drivers) && vehicleInfo.drivers.length) {
+					for (const email of vehicleInfo?.drivers) {
+						const driver = drivers.find(d => d.email === email);
+						await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver?.driver_id);
+					}
+				} else {
+					await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, drivers[0]?.driver?.driver_id)
+				}
+				// Handle vehicle documents
+				if (vehicleInfo.documents) {
+					for (const doc of vehicleInfo.documents) {
+						const document = await DocumentDao.createDocument(doc.documentData);
+						for (const file of doc.files) {
+							let base64 = file.base64;
+							delete file.base64;
+							let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
+							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+							S3Helper.SaveObject(key, base64, file.mime_type, {
+								users: [],
+								businesses: [business.business_id]
+							}, fileData, document.public);
 						}
-						vehicles.push(vehicle);
+						await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
 					}
 				}
-
-				drivers.push({ driver, vehicles, addresses });
+				vehicles.push(vehicle);
 			}
 		}
 
@@ -516,7 +521,7 @@ async function registerTaxiService(req, res) {
 					let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
 					S3Helper.SaveObject(key, base64, file.mime_type, {
-						users: [newUser.user_id],
+						users: [],
 						businesses: [business.business_id]
 					}, fileData, document.public);
 				}
@@ -550,7 +555,7 @@ async function registerTaxiService(req, res) {
 			message: "Taxi service business registered successfully",
 			business,
 			drivers,
-			finances,
+			vehicles,
 			businessAddress,
 			// accountLink
 		});
@@ -713,7 +718,6 @@ async function registerDeliveryService(req, res) {
 			message: "Delivery service business registered successfully",
 			business,
 			deliveryDrivers,
-			finances,
 			businessAddress
 		});
 	} catch (error) {
@@ -844,7 +848,6 @@ async function registerMerchantService(req, res) {
 			message: "Merchant service business registered successfully",
 			business,
 			businessUsers,
-			finances,
 			businessAddress,
 			deliveryAddress,
 			menu
@@ -952,7 +955,6 @@ async function registerBusiness(req, res) {
 			message: "Business registered successfully",
 			business,
 			businessUsers,
-			finances,
 			businessAddress
 		});
 	} catch (error) {

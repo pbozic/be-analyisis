@@ -1,5 +1,18 @@
 require("dotenv").config();
 const VehicleDao = require("../dao/Vehicle");
+const DocumentDao = require("../dao/Document");
+const FileDao = require("../dao/File");
+const S3Helper = require("../lib/s3");
+const DriverDao = require("../dao/Driver");
+const {
+	updateDocumentByDocumentId,
+	findDocumentByTypeAndDriverId,
+	createDocument,
+	linkDocumentToUser,
+	linkDocumentToDriver, getDocumentsForVehicleByType
+} = require("../dao/Document");
+const { updateFileInDocument, addFileToDocument } = require("../dao/File");
+const { DOCUMENT_TYPE } = require("../lib/constants");
 
 // List all vehicles
 /**
@@ -235,16 +248,50 @@ async function getVehiclesOfDriverByClassAndCategory(req, res) {
  */
 async function createVehicle(req, res) {
 	try {
-		const newVehicle = await VehicleDao.createNewVehicle(req.body);
-		res.status(201).json(newVehicle);
+		const vehicle = await VehicleDao.createNewVehicle(req.body.vehicle_information);
+		if (vehicle) {
+			if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
+				for (const d of req.body?.drivers) {
+					await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, d.driver_id);
+				}
+			// 	TODO: maybe assign to all drivers of business if none selected
+			// } else {
+			// 	const drivers = await DriverDao.getDrivers({ where: { business_id: vehicle.business_id } });
+			// 	for (const d of drivers) {
+			// 		await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, d.driver_id)
+			// 	}
+			}
+
+			if (req.body.documents) {
+				for (const doc of req.body.documents) {
+					const document = await DocumentDao.createDocument(doc.documentData);
+					for (const file of doc.files) {
+						let base64 = file.base64;
+						delete file.base64;
+						delete file.name;
+						delete file.document_type;
+						let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
+						let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+						S3Helper.SaveObject(key, base64, file.mime_type, {
+							users: [],
+							businesses: [vehicle.business_id]
+						}, fileData, document.public);
+					}
+					await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
+				}
+			}
+			res.status(200).json(vehicle);
+		} else {
+			res.status(400).json({ error: "Error creating new vehicle" });
+		}
 	} catch (error) {
 		console.error("Error creating new vehicle:", error);
-		res.status(400).json({ error: "Error creating new vehicle", detail: error.message });
+		res.status(400).json({ error: error.message });
 	}
 }
 
 /**
- * PATCH /vehicles/
+ * PATCH /vehicles
  * @tag Vehicles
  * @summary Update a vehicle
  * @description Updates an existing vehicle's details and specifications.
@@ -257,17 +304,55 @@ async function createVehicle(req, res) {
  * @response 400 - Error updating vehicle
  */
 async function updateVehicle(req, res) {
+	const vehicle_id = req.body.vehicle_id;
 	try {
-		const updatedVehicle = await VehicleDao.updateVehicle(req.params.vehicle_id, req.body);
-		res.status(200).json(updatedVehicle);
+		const vehicle = await VehicleDao.updateVehicle(vehicle_id, req.body.vehicle_information);
+		if (vehicle) {
+			if (req.body.documents &&  req.body.documents.length > 0) {
+				for (const doc of  req.body.documents) {
+					const documentId = doc.document_id;
+					const updatedDoc = await updateDocumentByDocumentId(documentId, doc.documentData);
+					for (const file of doc.files) {
+						if (updatedDoc.document_id !== file.document_id) {
+							const base64 = file.base64;
+							delete file.base64;
+							delete file.document_type;
+							delete file.name;
+							const newFile = await addFileToDocument(updatedDoc.document_id, file, updatedDoc.public);
+
+							const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
+							await S3Helper.SaveObject(key, base64, file.mime_type, {
+								users: [],
+								businesses: [vehicle.business_id],
+							}, newFile, updatedDoc.public);
+						}
+					}
+				}
+			}
+			if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
+				const currentDrivers = await VehicleDao.getVehicleDriversByVehicleId(vehicle_id)
+				const currentDriverIds = currentDrivers.map(d => d.driver_id);
+				const newDriverIds = req.body.drivers.map(d => d.driver_id);
+
+				await VehicleDao.unAssignVehicleFromDrivers(vehicle_id, newDriverIds);
+				for (const driver of req.body.drivers) {
+					if (!currentDriverIds.includes(driver.driver_id)) {
+						await VehicleDao.assignVehicleToDriver(vehicle_id, driver.driver_id);
+					}
+				}
+			}
+			res.status(200).json(vehicle);
+		} else {
+			res.status(400).json({ error: "Error updating vehicle" });
+		}
 	} catch (error) {
 		console.error("Error updating vehicle:", error);
-		res.status(400).json({ error: "Error updating vehicle", detail: error.message });
+		res.status(400).json({ error: error.message });
 	}
 }
 
 /**
- * PATCH /vehicles/driver/assign/
+ * POST /vehicles/driver/assign/
  * @tag Vehicles
  * @summary Assign a vehicle to a driver
  * @description Assigns an existing vehicle to a driver by updating the vehicle's driver_id.
@@ -278,7 +363,7 @@ async function updateVehicle(req, res) {
  * @response 400 - Error assigning vehicle to driver
  */
 async function assignVehicleToDriver(req, res) {
-	const { vehicle_id, driver_id } = req.params;
+	const { vehicle_id, driver_id } = req.body;
 	try {
 		const updatedVehicle = await VehicleDao.assignVehicleToDriver(vehicle_id, driver_id);
 		res.status(200).json(updatedVehicle);

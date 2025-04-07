@@ -34,7 +34,11 @@ async function getOrders(args) {
 						user: true,
 						vehicles: {
 							include: {
-								vehicle_specification: true
+								vehicle: {
+									include: {
+										vehicle_specification: true,
+									},
+								}
 							}
 						},
 					}
@@ -384,7 +388,7 @@ async function acceptOrderDelivery(order, deliverer_id) {
 					order_id
 				},
 				data: {
-					timeline: addEntryToDeliveryOrderTimeline(order.timeline,DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,{delivery_driver_id: deliverer_id}),
+					timeline: addEntryToDeliveryOrderTimeline(order.timeline,DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,{driver_id: deliverer_id}),
 					delivery_driver: {
 						connect: {
 							delivery_driver_id: deliverer_id
@@ -861,6 +865,24 @@ async function getActiveOrderIdsForUser(user_id) {
 	}
 }
 
+async function removeDriverFromOrder(order_id) {
+	try {
+		const order = await prisma.delivery_orders.update({
+			where: {
+				order_id: order_id,
+			},
+			data: {
+				delivery_driver_id: null,
+				driver_id: null
+			}
+		});
+		return order;
+	} catch (e) {
+		console.error("Error removing driver from order:", e);
+		throw new Error(e.message);
+	}
+}
+
 
 module.exports = {
 	getOrders,
@@ -888,5 +910,6 @@ module.exports = {
 	connectOrderWithDriver,
 	getActiveDeliveryOrdersForBusiness,
 	getInProgressDeliveryOrdersCountForBusinessId,
-	getActiveOrderIdsForUser
+	getActiveOrderIdsForUser,
+	removeDriverFromOrder
 };

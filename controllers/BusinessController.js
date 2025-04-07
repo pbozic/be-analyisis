@@ -16,6 +16,7 @@ const BusinessUsersDao = require("../dao/BusinessUsers");
 const EmailHelper = require("../lib/emailSender");
 const { UserSockets, io } = require('../socket');
 const { businessIndex, categorySearch, fullSearch } = require("../elasticsearch");
+const UserFavoriteBusinessDao = require("../dao/UserFavoriteBusiness");
 /**
  * POST /business/activate
  * @tag Business
@@ -97,6 +98,48 @@ async function listBusinesses(req, res) {
 		res.status(400).json({ error: "Error obtaining list of businesses..", e });
 	}
 }
+
+
+/**
+ * POST /businesses/ids
+ * @tag Business
+ * @summary Get a list of businesses business_ids
+ * @description Returns a list of businesses.
+ * @operationId getBusinessesByIds
+ * @response 200 - successful operation
+ * @responseContent {User[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the business list
+ * @responseContent {object} 400.application/json The error object
+ */
+async function getBusinessesByIds(req, res) {
+	try {
+		const { business_ids } = req.body
+		console.log("business_ids:,",business_ids)
+		let businesses = await BusinessDao.getBusinessesForSearchById(business_ids);
+		if (businesses) {
+			businesses.forEach((business)=>{
+				let logo, banner;
+				for (let d of business.documents) {
+					if (d.document_type === "LOGO") {
+						logo = d.files[0].url;
+					} else if (d.document_type === "BANNER") {
+						banner = d.files[0].url;
+					}
+				}
+				business.logo = logo;
+				business.banner = banner;
+			})
+			res.status(200).json(businesses);
+		} else {
+			res.status(400).json({
+				error: "Error obtaining list of businesses..",
+			});
+		}
+	} catch (e) {
+		res.status(400).json({ error: "Error obtaining list of businesses..", e: e.message });
+	}
+}
+
 /**
  * POST /businesses/search
  * @tag Business
@@ -112,7 +155,7 @@ async function searchBusinesses(req, res) {
 	try {
 
 
-		let esResults = await fullSearch(req.body.query || "", req.body.location.lat, req.body.location.long, req.body.categoryIds || [], req.body.radius, req.body.filterOperator, null, req.body.page, req.body.pageSize || 10);
+		let esResults = await fullSearch(req.body.query || "", req.body.location.lat, req.body.location.long, req.body.categoryIds || [], req.body.radius, req.body.filterOperator, req.body.isDailyMeal, null, req.body.page, req.body.pageSize || 10);
 		console.log("esResults", esResults);
 		esResults.sort((a, b) => b.score - a.score);
 		let businesses = await BusinessDao.getBusinessesForSearchById(esResults.map(b => b.business_id));
@@ -1489,6 +1532,60 @@ async function getBusynessFactorsBusinessIdList(req, res) {
 	}
 }
 
+async function addBusinessToFavorites(req, res) {
+	try {
+		const {business_id, type} = req.body
+		const {user_id} = req?.user
+
+		const business = await BusinessDao.getBusinessById(business_id)
+		if(!business){
+			return res.status(400).json({ message: 'Business not found.' });
+		}
+		if(![ business.type ].includes(type)){// made as array for future upgrade to array business.types
+			return res.status(400).json({ message: 'Business does not have the given type.' });
+		}
+
+		const new_entry = await UserFavoriteBusinessDao.addFavoriteBusiness(user_id,business_id,type)
+
+		res.status(200).json(new_entry);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: 'Internal Server Error while adding Business to Favorites' });
+	}
+}
+
+async function removeBusinessFromFavorites(req, res) {
+	try {
+		const {user_favorite_businesses_id} = req.body
+		const {user_id} = req?.user
+
+		const user_favorites = await UserFavoriteBusinessDao.getFavoriteBusinesses(user_id)
+		const favorited_entry = user_favorites.find((fav)=>fav.user_favorite_businesses_id===user_favorite_businesses_id)
+		if(!favorited_entry){
+			return res.status(400).json({ message: 'Business not favorited for given type.' });
+		}
+
+		const removed_entry = await UserFavoriteBusinessDao.removeFavoriteBusiness(user_favorite_businesses_id)
+
+		res.status(200).json(removed_entry);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: 'Internal Server Error while adding Business to Favorites' });
+	}
+}
+
+async function getFavoriteBusinesses(req, res) {
+	try {
+		const {user_id} = req?.user
+		const business_type = req.params?.type || null
+		const favorited_businesses = await UserFavoriteBusinessDao.getFavoriteBusinesses(user_id,business_type)
+		res.status(200).json(favorited_businesses);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: 'Internal Server Error while adding Business to Favorites' });
+	}
+}
+
 module.exports = {
 	listBusinesses,
 	listTransferBusinesses,
@@ -1532,10 +1629,14 @@ module.exports = {
 	getBusinessStripeStatusByBusinessId,
 	generateBusinessStripeByBusinessId,
 	getBusynessFactorsBusinessIdList,
+	getBusinessesByIds,
 	searchBusinesses,
 	listPromoSectionsWithMerchants,
 	activateBusiness,
 	deactivateBusiness,
-	getBusinessForSearchById
+	getBusinessForSearchById,
+	addBusinessToFavorites,
+	removeBusinessFromFavorites,
+	getFavoriteBusinesses
 };
 

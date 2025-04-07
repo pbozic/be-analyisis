@@ -172,7 +172,8 @@ async function me(req, res) {
 				child_users: { include:{child_user: {select: {user_id: true, first_name: true, last_name: true}}, allowance: true}},
 				parent_user: { include:{parent_user: {select: {user_id: true, first_name: true, user_role: true}}, allowance: true}},
 				referrals_made: true,
-				referral: { include: {referrer: { select: { first_name: true, last_name: true } } } }
+				referral: { include: {referrer: { select: { first_name: true, last_name: true } } } },
+				user_favorite_businesses: true
 			},
 		});
 		console.log("/me user: ",user?.user_id)
@@ -1822,6 +1823,42 @@ async function getReferral(req, res) {
 	}
 }
 
+async function updateMarketingNotifications(req, res) {
+	try {
+		const user = await UserDao.updateUserMarketingNotifications(req.user.user_id, req.body.data);
+		if (user) {
+			return res.status(200).json(user);
+		}
+		res.status(400).json({ error: "Error setting marketing notifications" });
+	} catch (err) {
+		return res.status(400).json({ error: err.message || 'Error setting marketing notifications' });
+	}
+}
+
+async function updateAdsPersonalization(req, res) {
+	try {
+		const user = await UserDao.updateUserAdsPersonalization(req.user.user_id, req.body.data);
+		if (user) {
+			return res.status(200).json(user);
+		}
+		res.status(400).json({ error: "Error setting ads personalization" });
+	} catch (err) {
+		return res.status(400).json({ error: err.message || 'Error setting ads personalization' });
+	}
+}
+
+async function updateNewsletter(req, res) {
+	try {
+		const user = await UserDao.updateUserNewsletter(req.user.user_id, req.body.data);
+		if (user) {
+			return res.status(200).json(user);
+		}
+		res.status(400).json({ error: "Error setting newsletter" });
+	} catch (err) {
+		return res.status(400).json({ error: err.message || 'Error setting newsletter' });
+	}
+}
+
 module.exports = {
 	getReferral,
 	claimReward,
@@ -1878,5 +1915,8 @@ module.exports = {
 	requestPaymentIntent,
 	confirmPaymentIntent,
 	getUserCredits,
-	getMyActiveOrderIds
+	getMyActiveOrderIds,
+	updateMarketingNotifications,
+	updateAdsPersonalization,
+	updateNewsletter,
 };

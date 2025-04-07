@@ -37,6 +37,7 @@ router.get("/menu-items/business/:business_id", MenuController.getMenuItemsByBus
 router.get("/menu-items/:business_id/:date", MenuController.getMenuItemsByDate);
 router.delete("/menu-items/:menu_item_id", MenuController.deleteMenuItem);
 router.patch("/menu-items", MenuController.updateMenuItem);
+router.patch("/menu-items/is_enabled", MenuController.updateMenuItemEnabled);
 router.patch("/menu-items/order", MenuController.updateMenuItemsOrder);
 router.patch("/menu-items/price", MenuController.updateMenuItemPrice);
 

@@ -8,6 +8,7 @@ const { reviewBusinessSchema } = require("../../joi/reviewSchemas");
 const BusinessController = require("../../controllers/BusinessController");
 const FinanceController = require("../../controllers/FinancesController");
 
+router.post("/businesses/ids", BusinessController.getBusinessesByIds);
 router.post("/businesses/sections/merchant", BusinessController.listPromoSectionsWithMerchants);
 router.get("/businesses/merchant", BusinessController.listMerchantBusinesses);
 router.get("/businesses/merchant/daily-meals", BusinessController.listMerchantBusinessesWithDailyMeals);
@@ -15,6 +16,11 @@ router.get("/businesses/merchant/main", BusinessController.listMerchantBusinesse
 router.get("/businesses/taxi", BusinessController.listTransferBusinesses);
 router.get("/businesses/taxi/main", BusinessController.listTransferBusinessesMainInfo);
 router.get("/businesses/busyness", BusinessController.getBusynessFactorsBusinessIdList);
+
+router.get("/favorites/:type", BusinessController.getFavoriteBusinesses);
+router.post("/favorites", BusinessController.addBusinessToFavorites);
+router.delete("/favorites", BusinessController.removeBusinessFromFavorites);
+
 
 router.get("/:business_id", BusinessController.getBusinessById);
 router.get("/search/:business_id", BusinessController.getBusinessForSearchById);

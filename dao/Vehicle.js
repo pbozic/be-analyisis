@@ -24,8 +24,25 @@ const getVehiclesByBusiness = async (businessId) => {
 				business_id: businessId,
 			},
 			include: {
-				vehicle_specification: true,
-				documents: false,
+				drivers: {
+					include: {
+						driver: {
+							include: {
+								user: {
+									select: {
+										first_name: true,
+										last_name: true,
+									}
+								}
+							}
+						}
+					}
+				},
+				documents: {
+					include: {
+						files: true
+					}
+				},
 			},
 		});
 	} catch (error) {
@@ -41,8 +58,25 @@ const getVehicleById = async (vehicle_id, args) => {
 				vehicle_id: vehicle_id,
 			},
 			include: {
-				vehicle_specification: true,
-				documents: false,
+				drivers: {
+					include: {
+						driver: {
+							include: {
+								user: {
+									select: {
+										first_name: true,
+										last_name: true,
+									}
+								}
+							}
+						}
+					}
+				},
+				documents: {
+					include: {
+						files: true
+					},
+				},
 			},
 			...args,
 		});
@@ -75,15 +109,40 @@ const updateVehicle = async (vehicle_id, vehicleData) => {
 	}
 };
 
+const getVehicleDriversByVehicleId = async (vehicle_id) => {
+	return await prisma.vehicle_drivers.findMany({
+		where: {
+			vehicle_id: vehicle_id
+		},
+		select: {
+			driver_id: true
+		}
+	});
+}
+
+const unAssignVehicleFromDrivers = async (vehicle_id, newDriverIds) => {
+	await prisma.vehicle_drivers.deleteMany({
+		where: {
+			vehicle_id: vehicle_id,
+			driver_id: {
+				notIn: newDriverIds
+			}
+		}
+	});
+}
 
 const assignVehicleToDriver = async (vehicleId, driverId) => {
 	try {
-		return await prisma.vehicles.update({
-			where: { vehicle_id: vehicleId },
+		return await prisma.vehicle_drivers.create({
 			data: {
 				driver: {
 					connect: {
 						driver_id: driverId
+					}
+				},
+				vehicle: {
+					connect: {
+						vehicle_id: vehicleId,
 					}
 				}
 			},
@@ -299,5 +358,7 @@ module.exports = {
 	getVehiclesOfDriverByClass,
 	getVehiclesOfDriverByCategory,
 	getVehiclesOfDriverByClassAndCategory,
-	assignVehicleToDeliveryDriver
+	getVehicleDriversByVehicleId,
+	unAssignVehicleFromDrivers,
+	assignVehicleToDeliveryDriver,
 };

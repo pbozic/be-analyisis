@@ -13,6 +13,7 @@ function startCronJobs() {
     cron.schedule("* * * * *", TaxiHelpers.searchAfter40Seconds);
     cron.schedule("* * * * *", DeliveryHelpers.checkIfDeliveryOrdersNeedSending);
     cron.schedule("* * * * *", DeliveryHelpers.checkIfRestaurantOrderIsPrepared);
+    cron.schedule("* * * * *", DeliveryHelpers.autoRejectDeliveryOrders);
     //cron.schedule("* * * * *", checkPingStatus);
     cron.schedule("* * * * *", TaxiHelpers.revokeAcceptedOrdersFromDriverHandler);
     cron.schedule("* * * * *", TaxiHelpers.scheduledOrdersNotificationsHandler);
@@ -21,6 +22,7 @@ function startCronJobs() {
     // Every day at midnight - check for expired credits
     cron.schedule("0 0 * * *", WalletFundsHelper.handleCreditExpiration);
     cron.schedule("0 9 * * *", WalletFundsHelper.notifyUpcomingCreditExpirations);
+    cron.schedule("0 0 * * *", BusinessHelper.aggregateScoringPoints);
 
     //Every 10 days
     cron.schedule("0 0 */10 * *", stripe.payoutAvailableBalanceToBusinesses);

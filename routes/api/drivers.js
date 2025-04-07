@@ -18,6 +18,7 @@ router.get("/earnings/all", DriverController.getAllDriversEarnings);
 router.get("/earnings/total", DriverController.getTotalEarnings);
 router.get("/earnings/:driver_id", DriverController.getDriverEarnings);
 router.get("/earnings/:driver_id/total", DriverController.getDriverTotalEarnings);
+router.get("/business/:business_id", DriverController.getDriversByBusinessId);
 
 router.patch("/update/:driver_id", DriverController.updateDriver);
 router.patch("/edit", DriverController.editDriver);

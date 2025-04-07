@@ -10,7 +10,7 @@ const { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE, TAXI_ORDER_STATUS,
 	CREDITS,
 	PARENT_USER_TYPE,
 	ORDER_TYPE,
-	CASHBACK_SOURCE, DRIVE_FEE, DELIVERY_ORDER_END_STATES
+	CASHBACK_SOURCE, DRIVE_FEE, DELIVERY_ORDER_END_STATES, SCORING_POINTS_REASON
 } = require("../lib/constants");
 const fs = require("fs");
 const Constants = require("../lib/constants");
@@ -31,6 +31,9 @@ const WalletFundsDao = require("../dao/WalletFunds");
 const TaxiOrderDao = require("../dao/TaxiOrder");
 const ReferralDao = require("../dao/Referrals");
 const { handleReferral } = require("../lib/referralHelper");
+const ScoringPointsDao = require("../dao/ScoringPoints");
+const LateEventsDao = require("../dao/LateEvents");
+const moment = require('moment');
 
 /**
  * GET /delivery/orders
@@ -686,6 +689,22 @@ async function completeOrder(req, res) {
 		let driver = order.delivery_driver_id
 			? await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id)
 			: await DriverDao.getDriverById(order.driver_id);
+
+		//assign penalties for being late
+		const timeline_delivered_timestamp = order.timeline.findLast(entry => entry.status === DELIVERY_ORDER_STATUS.DELIVERY_DELIVERED)?.timestamp;
+
+		if(timeline_delivered_timestamp && order.details?.customer_expected_delivery_at){
+			const late_seconds = moment(order.details.customer_expected_delivery_at).diff(moment(timeline_delivered_timestamp), 'seconds')
+			console.log(`Order was ${late_seconds} seconds ${late_seconds > 0 ? 'late' : 'early or on time'}.`);
+			let allowed_leeway = (60*30)
+
+			if(late_seconds>allowed_leeway){
+				await LateEventsDao.createLateEvent(order.business_id,driver.user_id, order.order_id,null, late_seconds-allowed_leeway)
+			}
+		}else{
+			await ScoringPointsDao.createScoringPoints(order.business_id,driver.user_id, order.order_id,null,0,false, SCORING_POINTS_REASON.INSUFFICIENT_DATA)
+		}
+
 		let delivery_business_stripe = await BusinessDao.getBusinessStripeByBusinessId(driver.business_id);
 		const INITIAL_DELIVERY_CUT = Math.round(order.details.delivery_cost*100 * (1-DRIVE_FEE));
 
@@ -1192,6 +1211,20 @@ async function updateOrderPickupTime(req, res) {
 	try {
 		let order = await DeliveryOrderDao.updateOrderPickupTime(order_id, pickup_time);
 		io.to("order_" + order.order_id).emit("order_pickup_time", order);
+		const totalDelay = order.timeline.reduce((sum, entry) => {
+			if (entry.status === 'MERCHANT_DELAYED') {
+				return sum + (entry.delay || 0);
+			}
+			return sum;
+		}, 0);
+		if(totalDelay>120){
+			const exising_penalties = await ScoringPointsDao.getScoringPointsByBusinessId(order.business_id)
+			const already_penalized_order = exising_penalties?.find(sp=>sp.delivery_order_id===order.order_id && sp.reason===SCORING_POINTS_REASON.LARGE_DELAY)
+			if(!already_penalized_order){
+				//Assuming only merchant makes this api call so we can user req.user.user_id
+				await ScoringPointsDao.createScoringPoints(order.business_id,req.user.user_id,order.order_id,null,1,true,SCORING_POINTS_REASON.LARGE_DELAY)
+			}
+		}
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);
@@ -1370,6 +1403,77 @@ async function dispatcherCancel(req,res){
 	}
 }
 
+/**
+ * POST /delivery/order/dispatcher_revoke
+ * @tag Delivery
+ * @summary Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
+ * @description Cancel and if necessary refund an order
+ * @operationId dispatcherCancel
+ * @response 200 - Successful operation. Returns the updated Order.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+async function dispatcherRevoke(req,res){
+	const {order_id} = req.body
+	const dispatcher_user_id = req.user.user_id
+	try {
+		const old_order = await DeliveryOrderDao.getOrder(order_id, {include:{driver:true,delivery_driver:true}})
+		let updated_order = null
+		if([
+			DELIVERY_ORDER_STATUS.MERCHANT_PREPARING,
+			DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP,
+			].includes(old_order.status)
+		){
+			await DeliveryOrderDao.removeDriverFromOrder(old_order.order_id)
+			await DeliveryOrderDao.addTimelineEntry(old_order.order_id, DELIVERY_ORDER_STATUS.DISPATCHER_REVOKED, { dispatcher:dispatcher_user_id })
+			updated_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, old_order.status)
+
+		}else if([
+			DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP,
+			DELIVERY_ORDER_STATUS.DELIVERY_IN_DELIVERY,
+			].includes(old_order.status)
+		){
+			let new_location = null
+			if(old_order.driver?.location){
+				new_location = old_order.driver.location
+			}else if(old_order.delivery_driver?.location){
+				new_location = old_order.delivery_driver.location
+			}
+			if(!new_location || !(new_location?.coordinates?.latitude && new_location?.coordinates?.longitude)){
+				throw new Error("The current driver does not have a well defined location.")
+			}
+			const new_address = await gApi.addressFromCoordinates(new_location?.coordinates?.latitude, new_location?.coordinates?.longitude)
+			new_location.address = `Previous Driver Location ${new_address ? '('+new_address+')' : '(use navigation)'}`
+
+			await DeliveryOrderDao.removeDriverFromOrder(old_order.order_id)
+			await DeliveryOrderDao.updateOrder(old_order.order_id,{pickup_location:new_location})
+			await DeliveryOrderDao.addTimelineEntry(old_order.order_id, DELIVERY_ORDER_STATUS.DISPATCHER_REVOKED, { dispatcher:dispatcher_user_id })
+			updated_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP)
+		}else{
+			throw new Error("This order is not in a reassignable state.")
+		}
+
+		if (old_order.driver){
+			if (UserSockets.get(old_order.driver.user_id)) {
+				UserSockets.get(old_order.driver.user_id).emit('order_revoked__delivery', order_id);
+			}
+		}
+		if (old_order.delivery_driver){
+			if (UserSockets.get(old_order.delivery_driver.user_id)) {
+				UserSockets.get(old_order.delivery_driver.user_id).emit('order_revoked__delivery', order_id);
+			}
+		}
+
+		//TODO: handle extras for socket on FE if needed.
+		io.to("order_" + updated_order.order_id).emit("order_status_change__delivery", updated_order);
+
+		res.status(200).json(updated_order)
+	} catch (e) {
+		console.error("Error canceling order", e);
+		res.status(500).json(e);
+	}
+}
+
 
 module.exports = {
 	getDeliveryOrders,
@@ -1383,6 +1487,7 @@ module.exports = {
 	completeOrder,
 	updateOrderStatus,
 	dispatcherCancel,
+	dispatcherRevoke,
 	getCompletedDeliveryOrdersByDriverId,
 	updateDeliveryOrderTimeline,
 	addToDeliveryOrderTimeline,
