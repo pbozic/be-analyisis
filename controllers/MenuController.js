@@ -870,7 +870,26 @@ const updateDailyMealMenuPrice = async (req, res) => {
 	}
 }
 
+const getMenuItemsByIds = async (req, res) => {
+	try {
+		const menuItems = await MenuItemDao.getMenuItemsByBusinessId(req.params.business_id, {
+			menu_item_id: {
+				in: req.body
+			}
+		});
+		if (menuItems) {
+			res.status(200).json(menuItems);
+		} else {
+			res.status(400).json({ error: "Error fetching menu items" });
+		}
+	} catch (e) {
+		console.error("Error fetching menu items:", e);
+		res.status(400).json({ error: "Error fetching menu items", e });
+	}
+}
+
 module.exports = {
+	getMenuItemsByIds,
 	updateDailyMealMenuPrice,
 	getMenuItemsByDate,
 	getMenuByDate,
