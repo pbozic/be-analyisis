@@ -874,7 +874,7 @@ const getMenuItemsByIds = async (req, res) => {
 	try {
 		const menuItems = await MenuItemDao.getMenuItemsByBusinessId(req.params.business_id, {
 			menu_item_id: {
-				in: req.body
+				in: req.body.ids
 			}
 		});
 		if (menuItems) {
