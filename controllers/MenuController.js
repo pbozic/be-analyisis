@@ -483,7 +483,7 @@ async function createMenuItem(req, res) {
 			document = await DocumentDao.createDocument(image.documentData);
 			let files = image.files;
 			if (image?.document_id) {
-				const doc = await DocumentDao.getDocumentById(image.document_id);
+				const doc = await FileDao.getFilesByDocumentId(image.document_id);
 				files = doc.files;
 			}
 			for (const file of files) {
