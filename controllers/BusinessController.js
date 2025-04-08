@@ -1589,6 +1589,11 @@ async function getFavoriteBusinesses(req, res) {
 async function getScheduledUsersByBusinessId(req, res) {
 	try {
 		const users = await BusinessDao.getScheduledUsersByBusinessId(req.params.business_id);
+		if (users) {
+			return res.status(200).json(users);
+		} else {
+			return res.status(400).json({ error: "No users found for the given business ID" });
+		}
 	} catch (e) {
 		console.error("Error getting daily meal users by business ID:", e);
 		res.status(400).json({ error: "Error getting daily meal users by business ID", e });
