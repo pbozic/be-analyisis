@@ -1586,7 +1586,17 @@ async function getFavoriteBusinesses(req, res) {
 	}
 }
 
+async function getScheduledUsersByBusinessId(req, res) {
+	try {
+		const users = await BusinessDao.getScheduledUsersByBusinessId(req.params.business_id);
+	} catch (e) {
+		console.error("Error getting daily meal users by business ID:", e);
+		res.status(400).json({ error: "Error getting daily meal users by business ID", e });
+	}
+}
+
 module.exports = {
+	getScheduledUsersByBusinessId,
 	listBusinesses,
 	listTransferBusinesses,
 	listMerchantBusinesses,
