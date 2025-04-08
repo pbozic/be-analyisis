@@ -1,4 +1,6 @@
 const prisma = require("../prisma/prisma");
+const { CREDIT_STATUS, CASHBACK_STATUS, FUNDS_TYPE, SERVICE_TYPE} = require('../lib/constants');
+
 /*
 async function createWalletFunds(user_id, charge_id, amount){
 	try {
@@ -88,6 +90,7 @@ async function createWalletFunds(user_id, amount_cents, charge_id=null, transact
 					charge_id: charge_id,
 					amount: amount_cents,
 					user: { connect: { user_id: user_id } },
+					type: FUNDS_TYPE.FUNDS
 				},
 			},
 		}
@@ -146,7 +149,7 @@ async function deleteWalletFunds(wallet_funds_id) {
 	}
 }
 
-async function subtractFunds(walletFundsId, amount, order_id=null,order_type=null) {
+async function subtractFunds(walletFundsId, amount, order_id=null,service_type=null) {
 	try {
 		if(amount<=0){
 			throw new Error("Subtract amount must be greater than 0");
@@ -177,17 +180,23 @@ async function subtractFunds(walletFundsId, amount, order_id=null,order_type=nul
 			});
 
 			console.info(`subtracted ${amount} from WF:\n${JSON.stringify(walletFund,null,2)}. ` )
+			let order_connect_obj = {}
+			switch (service_type) {
+				case SERVICE_TYPE.TAXI:
+					order_connect_obj = {taxi_order: { connect: { order_id: order_id } }}
+					break
+				case SERVICE_TYPE.DELIVERY:
+					order_connect_obj = {delivery_order: { connect: { order_id: order_id } }}
+					break
+			}
+
 			if(walletFund.reserved_order !== null){
 				await tx.transactions.create({
 					data: {
 						user: { connect: { user_id: updated_WF.user_id } },
 						amount: -amount/100,
 						type: 'DEBIT',
-						...(
-							(order_type==="delivery") ?
-							{delivery_order: { connect: { order_id: order_id } }} :
-							{taxi_order: { connect: { order_id: order_id } }}
-						),
+						...order_connect_obj,
 						description: 'Subtracted funds from wallet',
 						wallet_funds: { connect: { wallet_funds_id: updated_WF.wallet_funds_id } },
 					}
@@ -384,7 +393,7 @@ async function getAvailableWalletBalance(userId) {
 			where: {
 				user_id: userId,
 				reserved_order: null,
-				type: null,
+				type: FUNDS_TYPE.FUNDS,
 			},
 			_sum: {
 				amount: true
@@ -425,7 +434,6 @@ async function getAvailableWalletBalanceGroupedByType(userId) {
 }
 
 
-const { CREDIT_STATUS, CASHBACK_STATUS } = require('../lib/constants');
 
 const createCredit = async (data) => {
 	try {
@@ -536,12 +544,14 @@ const getAvailableCredits = async (userId, type) => {
 	}
 }
 
-const getReservedCredits = async (userId, orderId, type) => {
+const getReservedCredits = async (userId, orderId) => {
 	try {
 		return await prisma.wallet_funds.findMany({
 			where: {
 				user_id: userId,
-				type: type,
+				NOT: {
+					type:FUNDS_TYPE.FUNDS
+				},
 				// status: CREDIT_STATUS.ACTIVE,
 				reserved_order: orderId,
 			}

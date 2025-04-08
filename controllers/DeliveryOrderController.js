@@ -10,7 +10,7 @@ const { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE, TAXI_ORDER_STATUS,
 	CREDITS,
 	PARENT_USER_TYPE,
 	ORDER_TYPE,
-	CASHBACK_SOURCE, DRIVE_FEE, DELIVERY_ORDER_END_STATES, SCORING_POINTS_REASON
+	CASHBACK_SOURCE, DRIVE_FEE, DELIVERY_ORDER_END_STATES, SCORING_POINTS_REASON, FUNDS_TYPE, SERVICE_TYPE
 } = require("../lib/constants");
 const fs = require("fs");
 const Constants = require("../lib/constants");
@@ -195,7 +195,7 @@ async function createOrder(req, res) {
 
 		// Handle automatic credits spending
 		const TOTAL_PRICE_CENTS = Math.round(orderData.details.total_price*100);//already includes delivery cost
-		const CREDITS_AMOUNT_RESERVED = (await WalletFundsHelpers.reserveCreditsForOrder(user.user_id, TOTAL_PRICE_CENTS, order.order_id, 'DELIVERY')).reduce((sum, wf) => sum + wf.amount, 0);
+		const CREDITS_AMOUNT_RESERVED = (await WalletFundsHelpers.reserveCreditsForOrder(user.user_id, TOTAL_PRICE_CENTS, order.order_id, FUNDS_TYPE.CREDITS_DELIVERY)).reduce((sum, wf) => sum + wf.amount, 0);
 		const DISCOUNTED_COMBINED_COST_CENTS = TOTAL_PRICE_CENTS - CREDITS_AMOUNT_RESERVED
 		order.details.credit_discount = CREDITS_AMOUNT_RESERVED
 		order = await DeliveryOrderDao.updateOrder(order.order_id,order);
@@ -713,11 +713,11 @@ async function completeOrder(req, res) {
 		let delivery_business_stripe = await BusinessDao.getBusinessStripeByBusinessId(driver.business_id);
 		const INITIAL_DELIVERY_CUT = Math.round(order.details.delivery_cost*100 * (1-DRIVE_FEE));
 
-		const remainingReservedCredits = await WalletFundsDao.getReservedCredits(order.user_id,order.order_id,"DELIVERY")
+		const remainingReservedCredits = await WalletFundsDao.getReservedCredits(order.user_id,order.order_id)
 		const CREDITS_AMOUNT_RESERVED = remainingReservedCredits.reduce((sum,wf)=>sum+wf.amount,0)
 		const DELIVERY_CREDIT_CUT_CENTS = Math.min(INITIAL_DELIVERY_CUT, CREDITS_AMOUNT_RESERVED);
 		if(DELIVERY_CREDIT_CUT_CENTS>0){
-			const transferCreditsDeliveryDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id,delivery_business_stripe,DELIVERY_CREDIT_CUT_CENTS,order.order_id,"delivery")
+			const transferCreditsDeliveryDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id,delivery_business_stripe,DELIVERY_CREDIT_CUT_CENTS,order.order_id,SERVICE_TYPE.DELIVERY)
 		}
 
 		const DISCOUNTED_DELIVERY_COST_CENTS = INITIAL_DELIVERY_CUT - DELIVERY_CREDIT_CUT_CENTS
@@ -767,7 +767,7 @@ async function completeOrder(req, res) {
 				);
 			} else if (order.payment.type === "WALLET") {
 				console.info(order)
-				const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, delivery_business_stripe, DISCOUNTED_DELIVERY_COST_CENTS, order.order_id, "delivery");
+				const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, delivery_business_stripe, DISCOUNTED_DELIVERY_COST_CENTS, order.order_id, SERVICE_TYPE.DELIVERY);
 			}
 		}
 		order = await DeliveryOrderDao.updateOrderStatus(order.order_id,DELIVERY_ORDER_STATUS.SUCCESS)
@@ -1143,8 +1143,8 @@ async function merchantAcceptOrder(req, res) {
 
 		if (order.payment.type === "CARD") {
 			if(Math.round(order.details.total_price*100)===order.details.credit_discount){
-				const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, restaurant_stripe, MERCHANT_CREDIT_CUT, order.order_id, "delivery");
-				const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, "platform", PLATFORM_CREDIT_CUT, order.order_id, "delivery");
+				const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, restaurant_stripe, MERCHANT_CREDIT_CUT, order.order_id, SERVICE_TYPE.DELIVERY);
+				const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, "platform", PLATFORM_CREDIT_CUT, order.order_id, SERVICE_TYPE.DELIVERY);
 			}else{
 				order = await DeliveryOrderDao.updateOrder(order.order_id, {
 					payment: {
@@ -1167,8 +1167,8 @@ async function merchantAcceptOrder(req, res) {
 		}
 
 		if (order.payment.type === "WALLET") {
-			const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, restaurant_stripe, MERCHANT_CUT + MERCHANT_CREDIT_CUT, order.order_id, "delivery");
-			const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, "platform", PLATFORM_CUT + PLATFORM_CREDIT_CUT, order.order_id, "delivery");
+			const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, restaurant_stripe, MERCHANT_CUT + MERCHANT_CREDIT_CUT, order.order_id, SERVICE_TYPE.DELIVERY);
+			const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, "platform", PLATFORM_CUT + PLATFORM_CREDIT_CUT, order.order_id, SERVICE_TYPE.DELIVERY);
 		}
 
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL);

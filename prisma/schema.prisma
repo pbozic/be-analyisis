@@ -760,7 +760,7 @@ model wallet_funds {
   created_at        DateTime       @default(now()) @db.Timestamptz(6)
   updated_at        DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
   expires_at        DateTime?      @db.Timestamptz(6)
-  type              CREDIT_TYPE?
+  type              FUNDS_TYPE
   status            CREDIT_STATUS? @default(ACTIVE)
   referral          referrals?     @relation(fields: [referral_id], references: [referral_id])
   user              users          @relation("wallet_funds", fields: [user_id], references: [user_id])
@@ -1299,9 +1299,12 @@ enum CREDIT_STATUS {
   EXPIRED
 }
 
-enum CREDIT_TYPE {
-  TAXI
-  DELIVERY
+enum FUNDS_TYPE {
+  FUNDS
+  CREDITS_ANY
+  CREDITS_TAXI
+  CREDITS_TRANSFER
+  CREDITS_DELIVERY
 }
 
 enum SCORING_POINTS_REASON {

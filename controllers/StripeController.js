@@ -9,7 +9,7 @@ const BusinessDao = require("../dao/Business");
 const PromoDao = require("../dao/Promo");
 const ProductDao = require("../dao/Product");
 const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
-const { DELIVERY_ORDER_STATUS } = require("../lib/constants");
+const { DELIVERY_ORDER_STATUS, FUNDS_TYPE, SERVICE_TYPE } = require("../lib/constants");
 const { calculateDeliveryOrderPaymentCuts } = require("../lib/deliveryHelpers");
 const WalletFundsDao = require("../dao/WalletFunds");
 
@@ -46,10 +46,10 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			}
 
 			if (PLATFORM_CREDIT_CUT>0) {
-				const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id, "platform", PLATFORM_CREDIT_CUT, order.order_id, "delivery");
+				const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id, "platform", PLATFORM_CREDIT_CUT, order.order_id, SERVICE_TYPE.DELIVERY);
 			}
 			if (MERCHANT_CREDIT_CUT>0) {
-				const transferedCreditsMerchant = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id, restaurant_stripe, MERCHANT_CREDIT_CUT, order.order_id, "delivery");
+				const transferedCreditsMerchant = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id, restaurant_stripe, MERCHANT_CREDIT_CUT, order.order_id, SERVICE_TYPE.DELIVERY);
 			}
 			//any remaining reserved funds are meant for delivery driver and should be handled on order completion
 

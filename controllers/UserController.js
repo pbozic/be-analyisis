@@ -16,7 +16,7 @@ const SMS = require("../lib/SMS");
 const stripe = require("../lib/stripe");
 const S3Helper = require("../lib/s3");
 const { User } = require("@onesignal/node-onesignal");
-const { DOCUMENT_TYPE, TAXI_ORDER_STATUS, USER_ROLE, CREDITS, CASHBACK_SOURCE } = require("../lib/constants");
+const { DOCUMENT_TYPE, TAXI_ORDER_STATUS, USER_ROLE, CREDITS, CASHBACK_SOURCE, FUNDS_TYPE } = require("../lib/constants");
 const { generateAccessToken, generateRefreshToken } = require("../lib/jwt");
 const { getOrders } = require("../dao/TaxiOrder");
 const TaxiOrderDao = require("../dao/TaxiOrder");
@@ -1769,7 +1769,7 @@ async function claimReward(req, res) {
 			expires_at: expiryDate,
 			user: { connect: { user_id: req.user.user_id } },
 			amount: CREDITS.TAXI,
-			type: 'TAXI', // we add taxi credits on referral
+			type: FUNDS_TYPE.CREDITS_ANY, // we add taxi credits on referral
 			referral: { connect: { referral_id: referral_id } }
 		});
 

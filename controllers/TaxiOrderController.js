@@ -10,7 +10,7 @@ const { UserSockets, io } = require("../socket");
 const gApi = require("../lib/gApis");
 const TaxiHelper = require("../lib/taxiHelpers");
 const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE , CARGO_TRANSFER_FEE, ORDER_TYPE, CREDITS,
-	CASHBACK_SOURCE, USER_ROLE, SCORING_POINTS_REASON
+	CASHBACK_SOURCE, USER_ROLE, SCORING_POINTS_REASON, FUNDS_TYPE, SERVICE_TYPE
 } = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
 const { sendOrderNotifications, sendReferralNotifications } = require("../lib/notifications");
@@ -21,7 +21,6 @@ const BusinessDao = require("../dao/Business");
 const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
 const { sendNotificationToUser } = require("../lib/oneSignal");
 const { getLocalisedTexts } = require("../localisations/languages");
-const { CREDIT_TYPE } = require("@prisma/client");
 const { handleReferral } = require("../lib/referralHelper");
 const ScoringPointsDao = require("../dao/ScoringPoints");
 const LateEventsDao = require("../dao/LateEvents");
@@ -899,7 +898,7 @@ async function completeOrder(req, res) {
 			const INITIAL_DRIVER_CUT = TOTAL_COST_CENTS-INITIAL_PLATFORM_CUT
 
 			//Handle automatic credits spending ~ use credits to pay platform cut first, to keep the driver cut mostly off stripe
-			const reservedCredits = await WalletFundsHelpers.reserveCreditsForOrder(user.user_id,TOTAL_COST_CENTS,order.order_id,'TAXI')
+			const reservedCredits = await WalletFundsHelpers.reserveCreditsForOrder(user.user_id,TOTAL_COST_CENTS,order.order_id,FUNDS_TYPE.CREDITS_TAXI)
 			const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum,wf)=>sum+wf.amount,0)
 			const DISCOUNTED_TOTAL_COST = TOTAL_COST_CENTS-CREDITS_AMOUNT_RESERVED
 
@@ -916,10 +915,10 @@ async function completeOrder(req, res) {
 			const DRIVER_CUT_CENTS = INITIAL_DRIVER_CUT - DRIVER_CREDIT_CUT_CENTS;
 
 			if(PLATFORM_CREDIT_CUT_CENTS>0) {
-				const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, "platform", PLATFORM_CREDIT_CUT_CENTS, order.order_id, "taxi");
+				const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, "platform", PLATFORM_CREDIT_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
 			}
 			if(DRIVER_CREDIT_CUT_CENTS>0) {
-				const transferedCreditsDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, driver_business.stripe_account_id, DRIVER_CREDIT_CUT_CENTS, order.order_id, "taxi");
+				const transferedCreditsDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, driver_business.stripe_account_id, DRIVER_CREDIT_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
 			}
 			const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user.user_id)
 
@@ -942,8 +941,8 @@ async function completeOrder(req, res) {
 
 					//Only transfer money to driver since we already have the wallet money?
 					// const transfer = await stripe.transferToConnectedAccount(DRIVER_CUT_AMOUNT, driver_business.stripe_account_id);
-					const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user.user_id, driver_business.stripe_account_id, DRIVER_CUT_CENTS, order.order_id, "taxi");
-					const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user.user_id, "platform", PLATFORM_CUT_CENTS, order.order_id, "taxi");
+					const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user.user_id, driver_business.stripe_account_id, DRIVER_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
+					const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user.user_id, "platform", PLATFORM_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
 				}
 				if (order.payment.type === "FAMILY_WALLET") {
 					// handle wallet payment
@@ -991,8 +990,8 @@ async function completeOrder(req, res) {
 					});
 
 					//Only transfer money to driver since we already have the wallet money?
-					const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(parent_user.user_id, driver_business.stripe_account_id, DRIVER_CUT_CENTS, order.order_id, "taxi");
-					const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(parent_user.user_id, "platform", PLATFORM_CUT_CENTS, order.order_id, "taxi");
+					const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(parent_user.user_id, driver_business.stripe_account_id, DRIVER_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
+					const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(parent_user.user_id, "platform", PLATFORM_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
 				}
 			}else{
 				order = await TaxiOrderDao.updateOrder(order.order_id, {
