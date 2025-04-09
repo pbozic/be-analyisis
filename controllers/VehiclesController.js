@@ -1,18 +1,13 @@
 require("dotenv").config();
+const prisma = require("../prisma/prisma");
 const VehicleDao = require("../dao/Vehicle");
 const DocumentDao = require("../dao/Document");
 const FileDao = require("../dao/File");
 const S3Helper = require("../lib/s3");
-const DriverDao = require("../dao/Driver");
 const {
 	updateDocumentByDocumentId,
-	findDocumentByTypeAndDriverId,
-	createDocument,
-	linkDocumentToUser,
-	linkDocumentToDriver, getDocumentsForVehicleByType
 } = require("../dao/Document");
-const { updateFileInDocument, addFileToDocument } = require("../dao/File");
-const { DOCUMENT_TYPE } = require("../lib/constants");
+const { addFileToDocument } = require("../dao/File");
 
 // List all vehicles
 /**
@@ -367,11 +362,22 @@ async function assignVehiclesToDriver(req, res) {
 	try {
 		if (Array.isArray(vehicles) && vehicles.length > 0) {
 			for (const vehicle of vehicles) {
-				const updatedVehicle = await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver_id);
-				if (!updatedVehicle) {
-					console.error(`Error assigning vehicle ${vehicle.vehicle_id} to driver ${driver_id}`);
+				const existingAssignment = await prisma.vehicle_drivers.findFirst({
+					where: {
+						vehicle_id: vehicle.vehicle_id,
+						driver_id: driver_id,
+						can_drive: true
+					}
+				});
+				if (!existingAssignment) {
+					const updatedVehicle = await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver_id);
+					if (!updatedVehicle) {
+						console.error(`Error assigning vehicle ${vehicle.vehicle_id} to driver ${driver_id}`);
+					}
 				}
 			}
+		} else {
+			res.status(400).json({ error: "Vehicles should be a non-empty array" });
 		}
 		res.status(200).json({ message: "Vehicles assigned successfully" });
 	} catch (err) {
