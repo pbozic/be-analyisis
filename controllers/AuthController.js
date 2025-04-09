@@ -102,7 +102,20 @@ async function login(req, res) {
 								vehicle_drivers_id:true,
 								vehicle_id:true,
 								can_drive:true,
-								vehicle: true,
+								vehicle: {
+									select: {
+										vehicle_id: true,
+										business_id: true,
+										active: true,
+										class: true,
+										category: true,
+										make: true,
+										model: true,
+										color: true,
+										license_plate: true,
+										current_driver: true
+									}
+								},
 							}
 						},
 						last_used_vehicle_id: true,
