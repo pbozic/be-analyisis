@@ -607,7 +607,7 @@ async function setDriverCurrentVehicle(driver_id, vehicle_id) {
 		return await prisma.drivers.update({
 			where: { driver_id: driver_id },
 			data: {
-				last_used_vehicle: vehicle_id,
+				last_used_vehicle_id: vehicle_id,
 				current_vehicle: {
 					disconnect: true,
 					connect: { vehicle_id },

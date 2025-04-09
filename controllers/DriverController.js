@@ -913,9 +913,9 @@ async function setCurrentVehicle(req, res) {
 		}
 		const driver_vehicle = driver.vehicles.find(v => v.vehicle_id === vehicle_id);
 		const vehicle = driver_vehicle?.vehicle_id ? await VehicleDao.getVehicleById(vehicle_id) : null
-		console.log(JSON.stringify(driver,null,2))
-		console.log(JSON.stringify(driver_vehicle,null,2))
-		console.log(JSON.stringify(vehicle,null,2))
+		// console.log(JSON.stringify(driver,null,2))
+		// console.log(JSON.stringify(driver_vehicle,null,2))
+		// console.log(JSON.stringify(vehicle,null,2))
 		if(!driver_vehicle?.can_drive || vehicle?.current_driver!==null){
 			return res.status(400).json({
 				driver: driver,
