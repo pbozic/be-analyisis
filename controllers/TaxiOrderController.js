@@ -761,8 +761,14 @@ async function createDispatchOrder(req, res) {
 async function acceptOrder(req, res) {
 	const { order_id, user } = req.body;
 	try {
+		let driver = await DriverDao.getDriverById(user.driver.driver_id);
+		if(!driver.online){
+			return res.status(400).json({ error: "Driver is offline.", errorType:"ERR_DRIVER_OFFLINE" });
+		}else if(driver.on_order){
+			return res.status(400).json({ error: "Driver is already on order.", errorType:"ERR_DRIVER_ON_ORDER" });
+		}
+
 		let order = await TaxiOrderDao.getOrder(order_id);
-		//TODO: check if driver is online
 		if (order.status === TAXI_ORDER_STATUS.CUSTOMER_CANCELED) {
 			return res.status(400).json({ error: "Order has been canceled by customer.", errorType:"ERR_ORDER_ALREADY_CANCELED" });
 		} else if (order.status !== TAXI_ORDER_STATUS.PENDING) {
@@ -778,7 +784,6 @@ async function acceptOrder(req, res) {
 		await TaxiOrderDao.acceptOrder(order_id, user);
 
 
-		let driver = await DriverDao.getDriverById(user.driver.driver_id);
 		//TODO: how to handle multiple vehicles on driver -> only one is active at a time of driving by the driver
 		driver.vehicle = driver.vehicles[0];
 		order.driver = driver;
