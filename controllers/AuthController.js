@@ -388,7 +388,7 @@ async function passwordReset(req, res) {
  * @response 400 - Error registering taxi service
  */
 async function registerTaxiService(req, res) {
-	// fs.writeFileSync('taxi-service.json', JSON.stringify(req.body, null, 2));
+	fs.writeFileSync('taxi-service.json', JSON.stringify(req.body, null, 2));
 	try {
 		if (req.body.business) {
 			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.business.email);
