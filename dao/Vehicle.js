@@ -72,6 +72,7 @@ const getVehicleById = async (vehicle_id, args) => {
 						}
 					}
 				},
+				current_driver: true,
 				documents: {
 					include: {
 						files: true
