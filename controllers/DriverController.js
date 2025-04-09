@@ -483,7 +483,7 @@ async function updateDriverOnlineStatus(req, res) {
 	try {
 		const driver = await DriverDao.getDriverById(driver_id)
 		if(driver.online===online){
-			res.status(200).json(driver)
+			return res.status(200).json(driver)
 		}
 		if(online && !driver.current_vehicle) {
 			throw new Error("Driver current vehicle not set")
