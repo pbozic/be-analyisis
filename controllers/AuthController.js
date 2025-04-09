@@ -97,6 +97,14 @@ async function login(req, res) {
 						taxi_orders_toggled: true,
 						transfer_orders_toggled: true,
 						delivery_orders_toggled: true,
+						vehicles: {
+							select: {
+								vehicle_drivers_id:true,
+								vehicle_id:true,
+								can_drive:true,
+								vehicle: true,
+							}
+						}
 					}
 				},
 				delivery_driver: {
