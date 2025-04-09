@@ -17,7 +17,7 @@ const stripe = require("../lib/stripe");
 const S3Helper = require("../lib/s3");
 const { User } = require("@onesignal/node-onesignal");
 const { DOCUMENT_TYPE, TAXI_ORDER_STATUS, USER_ROLE, CREDITS, CASHBACK_SOURCE, FUNDS_TYPE, SERVICE_TYPE_TO_FUNDS_TYPE,
-	SERVICE_TYPE
+	CASHBACK_TYPE
 } = require("../lib/constants");
 const { generateAccessToken, generateRefreshToken } = require("../lib/jwt");
 const { getOrders } = require("../dao/TaxiOrder");
@@ -1801,7 +1801,7 @@ async function getUserCredits(req, res) {
 		const { user_id } = req.user;
 		const availableCredits = await WalletFundsDao.getAvailableCredits(user_id, SERVICE_TYPE_TO_FUNDS_TYPE[service_type]);
 		const expiredCredits = await WalletFundsDao.getExpiredCredits(user_id, SERVICE_TYPE_TO_FUNDS_TYPE[service_type]);
-		const cashbacks = Object.keys(SERVICE_TYPE).includes(service_type.toUpperCase())
+		const cashbacks = Object.keys(CASHBACK_TYPE).includes(service_type.toUpperCase())
 			? await CashbackDao.getPendingUserCashbackByType(user_id, service_type) : [];
 		return res.status(200).json({availableCredits: availableCredits, expiredCredits: expiredCredits, cashbacks: cashbacks});
 	} catch (error) {
