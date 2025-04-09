@@ -105,6 +105,7 @@ async function login(req, res) {
 								vehicle: true,
 							}
 						},
+						last_used_vehicle_id: true,
 						current_vehicle: true
 					}
 				},
