@@ -354,22 +354,29 @@ async function updateVehicle(req, res) {
 /**
  * POST /vehicles/driver/assign/
  * @tag Vehicles
- * @summary Assign a vehicle to a driver
- * @description Assigns an existing vehicle to a driver by updating the vehicle's driver_id.
- * @pathParam {string} vehicle_id - The ID of the vehicle to assign
- * @pathParam {string} driver_id - The ID of the driver to whom the vehicle is being assigned
+ * @summary Assign vehicles to a driver
+ * @description Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
+ * @bodyContent {string} vehicles - The vehicles to assign
+ * @bodyContent {string} driver_id - The ID of the driver to whom the vehicle is being assigned
  * @response 200 - Vehicle assigned successfully
  * @responseContent {Vehicle} 200.application/json
- * @response 400 - Error assigning vehicle to driver
+ * @response 400 - Error assigning vehicles to driver
  */
-async function assignVehicleToDriver(req, res) {
-	const { vehicle_id, driver_id } = req.body;
+async function assignVehiclesToDriver(req, res) {
+	const { vehicles, driver_id } = req.body;
 	try {
-		const updatedVehicle = await VehicleDao.assignVehicleToDriver(vehicle_id, driver_id);
-		res.status(200).json(updatedVehicle);
-	} catch (error) {
-		console.error("Error assigning vehicle to driver:", error);
-		res.status(400).json({ error: "Error assigning vehicle to driver", detail: error.message });
+		if (Array.isArray(vehicles) && vehicles.length > 0) {
+			for (const vehicle of vehicles) {
+				const updatedVehicle = await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver_id);
+				if (!updatedVehicle) {
+					console.error(`Error assigning vehicle ${vehicle.vehicle_id} to driver ${driver_id}`);
+				}
+			}
+		}
+		res.status(200).json({ message: "Vehicles assigned successfully" });
+	} catch (err) {
+		console.error("Error assigning vehicles to driver:", err);
+		res.status(400).json({ error: "Error assigning vehicles to driver", err });
 	}
 }
 
@@ -378,19 +385,21 @@ async function assignVehicleToDriver(req, res) {
  * @tag Vehicles
  * @summary Remove a vehicle from a driver
  * @description Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
- * @pathParam {string} vehicle_id - The ID of the vehicle to disassociate
+ * @bodyContent {string} vehicle_id - The ID of the vehicle to unassign
+ * @bodyContent {string} driver_id - The ID of the driver to unassign
  * @response 200 - Vehicle disassociated successfully
  * @responseContent {Vehicle} 200.application/json
  * @response 400 - Error removing vehicle from driver
  */
 async function removeVehicleFromDriver(req, res) {
-	const { vehicle_id } = req.params;
+	const { vehicle_id, driver_id } = req.body;
 	try {
-		const updatedVehicle = await VehicleDao.removeVehicleFromDriver(vehicle_id);
-		res.status(200).json(updatedVehicle);
-	} catch (error) {
-		console.error("Error removing vehicle from driver:", error);
-		res.status(400).json({ error: "Error removing vehicle from driver", detail: error.message });
+		const updatedVehicle = await VehicleDao.removeVehicleFromDriver(vehicle_id, driver_id);
+		if (updatedVehicle) res.status(200).json(updatedVehicle);
+		res.status(400).json({ error: "Error removing vehicle from driver" });
+	} catch (err) {
+		console.error("Error removing vehicle from driver:", err);
+		res.status(400).json({ error: "Error removing vehicle from driver", err });
 	}
 }
 
@@ -430,7 +439,7 @@ module.exports = {
 	getVehiclesByClassAndCategory,
 	createVehicle,
 	updateVehicle,
-	assignVehicleToDriver,
+	assignVehiclesToDriver,
 	removeVehicleFromDriver,
 	deleteVehicle,
 };
