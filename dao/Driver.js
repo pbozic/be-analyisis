@@ -131,6 +131,7 @@ const getDriverById = async (driver_id) => {
 										files: true,
 									}
 								},
+								current_driver:true,
 							},
 						}
 					}
