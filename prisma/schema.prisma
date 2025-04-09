@@ -163,9 +163,9 @@ model users {
   business_teams                         business_teams?      @relation("user_to_business_team", fields: [business_teams_id], references: [business_teams_id])
   order_lobby_users                      order_lobby_users[]  @relation("user_to_OL_user")
   promo_section_buys                     promo_sections_buy[]
-  allow_marketing_push_notifications     Boolean?
-  allow_ads_personalization              Boolean?
-  allow_newsletter                       Boolean?
+  allow_marketing_push_notifications     Boolean?             @default(false)
+  allow_ads_personalization              Boolean?             @default(false)
+  allow_newsletter                       Boolean?             @default(false)
 
   user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_user")
   scoring_points           scoring_points[]           @relation("scoring_points_to_user")
@@ -372,6 +372,7 @@ model drivers {
   user_id                  String?                    @unique @db.Uuid
   user                     users?                     @relation(fields: [user_id], references: [user_id])
   vehicles                 vehicle_drivers[]
+  current_vehicle_id       String?                    @db.Uuid
   orders                   taxi_orders[]
   received_orders          taxi_order_sent[]
   delivery_orders          delivery_orders[]
