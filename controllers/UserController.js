@@ -173,7 +173,11 @@ async function me(req, res) {
 					include: {
 						vehicles: {
 							include: {
-								vehicle:true
+								vehicle: {
+									include: {
+										current_driver: true
+									}
+								}
 							}
 						},
 						current_vehicle: true
