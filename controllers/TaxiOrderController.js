@@ -280,7 +280,8 @@ async function getTaxiOrders(req, res) {
 									},
 								}
 							}
-						}
+						},
+						current_vehicle: true
 					}
 				}
 			}
@@ -1624,7 +1625,7 @@ async function getTaxiOrdersWithPagination(req, res) {
 				skip: skip,
 				where,
 				orderBy: orderBy ? orderBy : { created_at: 'desc' },
-				include: { user: true, driver: { include: {	user: true, vehicles: true } } },
+				include: { user: true, driver: { include: {	user: true, vehicles: true, current_vehicle: true} } }
 			}),
 			prisma.taxi_orders.count({
 				where // Ensure the count matches the filtered results

@@ -104,7 +104,8 @@ async function login(req, res) {
 								can_drive:true,
 								vehicle: true,
 							}
-						}
+						},
+						current_vehicle: true
 					}
 				},
 				delivery_driver: {

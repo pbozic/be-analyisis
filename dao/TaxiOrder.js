@@ -26,7 +26,8 @@ async function getOrders(args) {
                                     },
                                 }
                             }
-                        }
+                        },
+                        current_vehicle: true
                     }
                 }
             }
@@ -72,7 +73,8 @@ async function getOrder(order_id) {
                                     },
                                 }
                             }
-                        }
+                        },
+                        current_vehicle: true
                     }
                 },
                 grouped_orders: true,
@@ -116,7 +118,8 @@ async function getTaxiOrdersIfNotCompleted(user_id, type) {
                                     },
                                 }
                             }
-                        }
+                        },
+                        current_vehicle: true
                     }
                 },
                 grouped_orders: true,
@@ -166,7 +169,8 @@ async function getActiveOrdersByDriverId(driver_id) {
                                     },
                                 }
                             }
-                        }
+                        },
+                        current_vehicle: true
                     }
                 },
                 grouped_orders: true,
@@ -208,7 +212,8 @@ async function getOrdersByDriverId(driver_id, args) {
                                     },
                                 }
                             }
-                        }
+                        },
+                        current_vehicle: true
                     }
                 },
             }
@@ -341,7 +346,8 @@ async function acceptOrder(order_id, user) {
                                     },
                                 }
                             }
-                        }
+                        },
+                        current_vehicle: true
                     }
                 },
             }
@@ -381,7 +387,8 @@ async function updateOrderStatus(order_id, status) {
                                     },
                                 }
                             }
-                        }
+                        },
+                        current_vehicle: true
                     }
                 },
             }
@@ -421,7 +428,8 @@ async function completeOrder(order_id) {
                                     },
                                 }
                             }
-                        }
+                        },
+                        current_vehicle: true
                     }
                 },
             }
@@ -471,7 +479,8 @@ async function cancelOrder(order_id, status, cancellation_reason) {
                                     },
                                 }
                             }
-                        }
+                        },
+                        current_vehicle: true
                     }
                 },
             }
@@ -541,7 +550,8 @@ async function cancelVehicleTransferOrder(user_id, status, cancellation_reason) 
                                     },
                                 }
                             }
-                        }
+                        },
+                        current_vehicle: true
                     }
                 },
             }
@@ -705,7 +715,8 @@ async function updateCompleteTaxiRoute(order_id, route) {
                                     },
                                 }
                             }
-                        }
+                        },
+                        current_vehicle: true
                     }
                 },
             }
@@ -760,7 +771,8 @@ async function updateTaxiOrderTimeline(order_id, newTimelineEntries) {
                                     },
                                 }
                             }
-                        }
+                        },
+                        current_vehicle: true
                     }
                 },
             }
@@ -823,7 +835,8 @@ async function updateOrder(order_id, order) {
                                     },
                                 }
                             }
-                        }
+                        },
+                        current_vehicle: true
                     }
                 },
             }
@@ -861,7 +874,8 @@ async function getAcceptedOrders() {
                                     },
                                 }
                             }
-                        }
+                        },
+                        current_vehicle: true
                     }
                 },
             }

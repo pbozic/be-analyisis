@@ -481,6 +481,14 @@ async function updateDriverOnlineStatus(req, res) {
 	const { driver_id, online } = req.body;
 
 	try {
+		const driver = await DriverDao.getDriverById(driver_id)
+		if(driver.online===online){
+			res.status(200).json(driver)
+		}
+		if(online && driver.current_vehicle) {
+			throw new Error("Driver current vehicle not set")
+		}
+
 		const updatedDriver = await DriverDao.updateDriverOnlineStatus(driver_id, online);
 
 		if (online) {
@@ -876,6 +884,51 @@ async function toggleDriverOrders(req, res) {
 	}
 }
 
+/**
+ * PATCH /drivers/:driver_id/set_current_vehicle
+ * @tag Drivers
+ * @summary Set driver's current vehicle
+ * @description This endpoint sets the current vehicle for a specific driver. It first checks that the vehicle belongs to the driver. If a vehicle was previously assigned, it will be disconnected. The request body should contain the new vehicle ID to assign.
+ * @operationId setDriverCurrentVehicle
+ * @pathParam {string} driver_id - The ID of the driver
+ * @bodyContent {Object} application/json
+ * @bodyRequired
+ * @response 200 - Driver vehicle updated successfully
+ * @responseContent {Object} 200.application/json
+ * @response 404 - Driver or vehicle not found
+ * @response 400 - Invalid vehicle ID or error setting vehicle
+ */
+async function setCurrentVehicle(req, res) {
+	const { driver_id } = req.params;
+	const { vehicle_id } = req.body;
+
+	if (!vehicle_id) {
+		return res.status(400).json({ error: 'vehicle_id is required in the request body.' });
+	}
+
+	try {
+		const driver = await DriverDao.getDriverById(driver_id);
+		if (!driver) {
+			return res.status(404).json({ error: 'Driver not found.' });
+		}
+		const driver_vehicle = driver.vehicles.some(v => v.vehicle_id === vehicle_id);
+		if (!driver_vehicle?.can_drive && !driver_vehicle?.vehicle?.current_driver) {
+			return res.status(400).json({
+				driver: driver,
+				error: 'Driver can not drive the specified vehicle.',
+				error_code: 'ERR_VEHICLE_UNAVAILABLE'
+			});
+		}
+
+		const updatedDriver = await DriverDao.setDriverCurrentVehicle(driver_id, vehicle_id);
+		res.status(200).json(updatedDriver);
+	} catch (error) {
+		console.error('Failed to set driver current vehicle:', error);
+		res.status(400).json({ error: 'Error setting driver current vehicle.' });
+	}
+}
+
+
 module.exports = {
 	getDriversByBusinessId,
 	setDriverHandle,
@@ -899,5 +952,6 @@ module.exports = {
 	getDriverEarnings,
 	getAllDriversEarnings,
 	getTotalEarnings,
-	getDriverTotalEarnings
+	getDriverTotalEarnings,
+	setCurrentVehicle,
 };

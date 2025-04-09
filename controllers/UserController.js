@@ -174,6 +174,7 @@ async function me(req, res) {
 								vehicle:true
 							}
 						},
+						current_vehicle: true
 					},
 				},
 				delivery_driver: true,
