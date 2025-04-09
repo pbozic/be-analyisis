@@ -485,7 +485,7 @@ async function updateDriverOnlineStatus(req, res) {
 		if(driver.online===online){
 			res.status(200).json(driver)
 		}
-		if(online && driver.current_vehicle) {
+		if(online && !driver.current_vehicle) {
 			throw new Error("Driver current vehicle not set")
 		}
 
