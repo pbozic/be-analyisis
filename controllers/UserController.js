@@ -168,7 +168,13 @@ async function me(req, res) {
 					},
 				},
 				driver: {
-					vehicles:{vehicle:true},
+					include: {
+						vehicles: {
+							include: {
+								vehicle:true
+							}
+						},
+					},
 				},
 				delivery_driver: true,
 				child_users: { include:{child_user: {select: {user_id: true, first_name: true, last_name: true}}, allowance: true}},
