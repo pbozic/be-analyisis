@@ -21,9 +21,9 @@ const vehicleInformationSchema = Joi.object({
 	year: Joi.string(),
 	class: Joi.string(),
 	category: Joi.string(),
-	insurance_number: Joi.string(),
-	insurance_expiration_date: Joi.date().iso(),
-	insurance_file: Joi.array().items(insuranceFileSchema),
+	insurance_number: Joi.string().optional(),
+	insurance_expiration_date: Joi.date().optional(),
+	insurance_file: Joi.array().items(insuranceFileSchema).optional(),
 });
 
 // Vehicle schema
