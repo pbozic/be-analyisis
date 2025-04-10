@@ -10,7 +10,7 @@ const { UserSockets, io } = require("../socket");
 const gApi = require("../lib/gApis");
 const TaxiHelper = require("../lib/taxiHelpers");
 const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE , CARGO_TRANSFER_FEE, ORDER_TYPE, CREDITS,
-	CASHBACK_SOURCE, USER_ROLE, SCORING_POINTS_REASON, FUNDS_TYPE, SERVICE_TYPE
+	CASHBACK_SOURCE, USER_ROLE, SCORING_POINTS_REASON, FUNDS_TYPE, SERVICE_TYPE, VEHICLE_CATEGORY
 } = require("../lib/constants");
 const { User } = require("@onesignal/node-onesignal");
 const { sendOrderNotifications, sendReferralNotifications } = require("../lib/notifications");
