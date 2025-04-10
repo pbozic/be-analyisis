@@ -21,6 +21,8 @@ const { calculateTotalEarnings, calculateDriversEarnings } = require('../lib/hel
 const deliveryHelpers = require("../lib/deliveryHelpers");
 const stripe = require("../lib/stripe");
 const SMSHelper = require("../lib/SMS");
+const { sendNotificationToUser } = require("../lib/oneSignal");
+const { getLocalisedTexts } = require("../localisations/languages");
 
 /**
  * GET /drivers
@@ -901,12 +903,23 @@ async function sendComeToWorkNotification(req, res) {
 	if (!region) {
 		return res.status(400).json({ error: "Missing required parameter: region" });
 	}
-
+	
 	try {
-		
+		let drivers = await DriverDao.getDrivers({
+			where: {
+				online: false
+			}
+		});
+
+		for (let driver of drivers) {
+			const l10nTextDriver = getLocalisedTexts("DRIVER_NOTIFICATIONS", driver.user);
+			const l10nTextHeadingDriver = getLocalisedTexts("HEADING", driver.user);
+			sendNotificationToUser(l10nTextHeadingDriver.driver, l10nTextDriver.comeToWork, driver.user_id);
+		}
+		res.status(200).json({ message: "Notifications sent out successfully" });
 	} catch (error) {
-		console.error("Error sending notification:", error);
-		res.status(400).json({ error: "Error sending notification", detail: error.message });
+		console.error("Error sending notifications:", error);
+		res.status(400).json({ error: "Error sending notifications", detail: error.message });
 	}
 }
 /**

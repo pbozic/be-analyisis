@@ -29,6 +29,7 @@ const  en = {
         arrived: "You have arrived at the pickup location.",
         completed: "",
         customerCanceled: "The customer has canceled the order.",
+        comeToWork: "Please come to work.",
     },
     DELIVERY_NOTIFICATIONS: {
         accepted: "Your delivery order has been accepted.",

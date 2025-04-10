@@ -29,6 +29,7 @@ const es = {
         arrived: "Ha llegado al lugar de recogida.",
         completed: "",
         customerCanceled: "El cliente ha cancelado el pedido.",
+        comeToWork: "Por favor ven a trabajar.",
     },
     DELIVERY_NOTIFICATIONS: {
         accepted: "Su pedido de entrega ha sido aceptado.",

@@ -29,6 +29,7 @@ const  sr = {
         arrived: "Stigli ste na mesto preuzimanja.",
         completed: "",
         customerCanceled: "Kupac je otkazao narudžbinu.",
+        comeToWork: "Molimo vas da dođete na posao.",
     },
     DELIVERY_NOTIFICATIONS: {
         accepted: "Vaša narudžbina za dostavu je prihvaćena.",

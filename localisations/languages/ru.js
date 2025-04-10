@@ -29,6 +29,7 @@ const ru = {
         arrived: "Вы прибыли на место посадки.",
         completed: "",
         customerCanceled: "Клиент отменил заказ.",
+        comeToWork: "Пожалуйста, приходите на работу.",
     },
     DELIVERY_NOTIFICATIONS: {
         accepted: "Ваш заказ на доставку принят.",

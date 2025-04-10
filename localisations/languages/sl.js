@@ -29,6 +29,7 @@ const   sl = {
         arrived: "Prišli ste na mesto prevzema.",
         completed: "",
         customerCanceled: "Stranka je preklicala naročilo.",
+        comeToWork: "Prosim, pridite na delo.",
     },
     DELIVERY_NOTIFICATIONS: {
         accepted: "Vaše naročilo je bilo sprejeto.",

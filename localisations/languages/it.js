@@ -29,6 +29,7 @@ const it = {
         arrived: "Sei arrivato al punto di raccolta.",
         completed: "",
         customerCanceled: "Il cliente ha annullato l'ordine.",
+        comeToWork: "Per favore vieni a lavorare.",
     },
     DELIVERY_NOTIFICATIONS: {
         accepted: "Il tuo ordine di consegna è stato accettato.",

@@ -28,7 +28,7 @@ router.patch("/online", DriverController.updateDriverOnlineStatus);
 router.patch("/:driver_id/toggle_orders", DriverController.toggleDriverOrders);
 router.patch("/:driver_id/set_current_vehicle", DriverController.setCurrentVehicle);
 router.patch("/:driver_id/:action/:type", DriverController.setDriverHandle);
-
+router.post("/come_to_work", DriverController.sendComeToWorkNotification);
 router.post("/create", DriverController.createDriver);
 router.post("/sos", DriverController.handleSosAlert);
 

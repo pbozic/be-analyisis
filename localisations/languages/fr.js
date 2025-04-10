@@ -29,6 +29,7 @@ const fr = {
         arrived: "Vous êtes arrivé au point de rendez-vous.",
         completed: "",
         customerCanceled: "Le client a annulé la commande.",
+        comeToWork: "Veuillez venir travailler.",
     },
     DELIVERY_NOTIFICATIONS: {
         accepted: "Votre commande de livraison a été acceptée.",

@@ -29,6 +29,7 @@ const  de = {
         arrived: "Sie sind am Abholort angekommen.",
         completed: "",
         customerCanceled: "Der Kunde hat die Bestellung storniert.",
+        comeToWork: "Bitte kommen Sie zur Arbeit.",
     },
     DELIVERY_NOTIFICATIONS: {
         accepted: "Ihre Lieferbestellung wurde angenommen.",
