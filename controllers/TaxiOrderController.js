@@ -789,9 +789,7 @@ async function acceptOrder(req, res) {
 		}
 		await TaxiOrderDao.acceptOrder(order_id, user);
 
-
-		//TODO: how to handle multiple vehicles on driver -> only one is active at a time of driving by the driver
-		driver.vehicle = driver.vehicles[0];
+		driver.vehicle = driver.current_vehicle;
 		order.driver = driver;
 
 		const {

@@ -352,7 +352,7 @@ async function isOrderSent(order_id, driver) {
 	}
 }
 
-async function acceptOrderDelivery(order, deliverer_id) {
+async function acceptOrderDelivery(order, deliverer_id, vehicle_id) {
 	const {order_id} = order
 	console.log("accept (delivery) order", order_id)
 	console.log("accept (delivery_id)", deliverer_id)
@@ -393,6 +393,11 @@ async function acceptOrderDelivery(order, deliverer_id) {
 						connect: {
 							delivery_driver_id: deliverer_id
 						}
+					},
+					vehicle: {
+						connect: {
+							vehicle_id: vehicle_id
+						}
 					}
 				},
 			});
@@ -426,6 +431,11 @@ async function acceptOrderDelivery(order, deliverer_id) {
 					driver: {
 						connect: {
 							driver_id: deliverer_id
+						}
+					},
+					vehicle: {
+						connect: {
+							vehicle_id: vehicle_id
 						}
 					}
 				},

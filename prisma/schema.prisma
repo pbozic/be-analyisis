@@ -372,7 +372,7 @@ model drivers {
   user_id                  String?                    @unique @db.Uuid
   user                     users?                     @relation(fields: [user_id], references: [user_id])
   vehicles                 vehicle_drivers[]
-  current_vehicle_id       String?                    @db.Uuid @unique
+  current_vehicle_id       String?                    @unique @db.Uuid
   last_used_vehicle_id     String?                    @db.Uuid
   orders                   taxi_orders[]
   received_orders          taxi_order_sent[]
@@ -394,7 +394,8 @@ model drivers {
   delivery_orders_toggled  Boolean?                   @default(false)
   partner_cash_balance     Float?                     @default(0)
   come_to_work_last_sent_at DateTime?                  @db.Timestamptz(6)
-  current_vehicle          vehicles?                  @relation("driver_current_vehicle", fields: [current_vehicle_id],references: [vehicle_id])
+
+  current_vehicle vehicles? @relation("driver_current_vehicle", fields: [current_vehicle_id], references: [vehicle_id])
 }
 
 model vehicle_drivers {
@@ -413,25 +414,26 @@ model vehicle_drivers {
 }
 
 model vehicles {
-  vehicle_id                    String                  @id @unique @default(uuid()) @db.Uuid
-  business_id                   String?                 @db.Uuid
-  active                        Boolean?                @default(true)
-  class                         VEHICLE_CLASS?
-  category                      VEHICLE_CATEGORY?
-  make                          String?
-  model                         String?
-  color                         String?
-  license_plate                 String?
-  created_at                    DateTime                @default(now()) @db.Timestamptz(6)
-  updated_at                    DateTime                @default(now()) @updatedAt @db.Timestamptz(6)
-  documents                     documents[]
-  drivers                       vehicle_drivers[]
-  delivery_driver_id            String?                 @db.Uuid
-  delivery_driver               delivery_drivers?       @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
-  vehicle_specification_id      String?                 @unique @db.Uuid
-  vehicle_specification         vehicle_specifications? @relation(fields: [vehicle_specification_id], references: [vehicle_specification_id])
-
-  current_driver                 drivers?                @relation("driver_current_vehicle")
+  vehicle_id               String                  @id @unique @default(uuid()) @db.Uuid
+  business_id              String?                 @db.Uuid
+  active                   Boolean?                @default(true)
+  class                    VEHICLE_CLASS?
+  category                 VEHICLE_CATEGORY?
+  make                     String?
+  model                    String?
+  color                    String?
+  license_plate            String?
+  created_at               DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime                @default(now()) @updatedAt @db.Timestamptz(6)
+  documents                documents[]
+  drivers                  vehicle_drivers[]
+  delivery_driver_id       String?                 @db.Uuid
+  delivery_driver          delivery_drivers?       @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
+  vehicle_specification_id String?                 @unique @db.Uuid
+  vehicle_specification    vehicle_specifications? @relation(fields: [vehicle_specification_id], references: [vehicle_specification_id])
+  taxi_orders              taxi_orders[]
+  delivery_orders          delivery_orders[]
+  current_driver           drivers?                @relation("driver_current_vehicle")
 }
 
 model vehicle_specifications {
@@ -477,6 +479,7 @@ model taxi_orders {
   order_id                 String                     @id @default(uuid()) @db.Uuid
   user_id                  String                     @db.Uuid
   driver_id                String?                    @db.Uuid
+  vehicle_id               String?                    @db.Uuid
   route                    Json
   pickup_location          Json
   delivery_location        Json?
@@ -491,6 +494,7 @@ model taxi_orders {
   business_id              String?                    @db.Uuid
   business                 business?                  @relation(fields: [business_id], references: [business_id])
   driver                   drivers?                   @relation(fields: [driver_id], references: [driver_id])
+  vehicle                  vehicles?                  @relation(fields: [vehicle_id], references: [vehicle_id])
   user                     users?                     @relation(fields: [user_id], references: [user_id])
   history                  taxi_order_sent[]
   telephone                String?
@@ -555,6 +559,8 @@ model delivery_orders {
   updated_at                        DateTime                            @default(now()) @updatedAt @db.Timestamptz(6)
   user                              users?                              @relation(fields: [user_id], references: [user_id])
   history                           delivery_order_sent[]
+  vehicle_id                        String?                             @db.Uuid
+  vehicle                           vehicles?                           @relation(fields: [vehicle_id], references: [vehicle_id])
   delivery_driver_id                String?                             @db.Uuid
   delivery_driver                   delivery_drivers?                   @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
   driver_id                         String?                             @db.Uuid

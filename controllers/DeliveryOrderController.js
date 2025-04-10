@@ -577,8 +577,8 @@ async function acceptOrderDelivery(req, res) {
 		) {
 			return res.status(400).json({ error: "Order is already accepted.", errorType: "ERR_ORDER_ALREADY_ACCEPTED" });
 		}
-
-		order = await DeliveryOrderDao.acceptOrderDelivery(order, deliverer_id);
+		const vehicle = deliverer.current_vehicle || deliverer.vehicles[0]
+		order = await DeliveryOrderDao.acceptOrderDelivery(order, deliverer_id, vehicle?.vehicle_id);
 		let driver;
 		if (order.delivery_driver?.delivery_driver_id) {
 			driver = await DeliveryDriverDao.getDeliveryDriverById(deliverer_id, {
@@ -588,8 +588,7 @@ async function acceptOrderDelivery(req, res) {
 					}
 				}
 			});
-			//TODO: how to handle multiple vehicles on driver -> check which vehicle has its field active, that's it, one active vehicle per delivery driver
-			driver.vehicle = driver.vehicles[0];
+			driver.vehicle = vehicle;
 			order.driver = driver;
 		}
 		/*let { result } = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, order.delivery_location.coordinates, "driving", new Date());
