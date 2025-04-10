@@ -1068,6 +1068,9 @@ model scoring_points {
   reason            SCORING_POINTS_REASON
   expiration_date   DateTime?
 
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
   users           users?           @relation("scoring_points_to_user", fields: [user_id], references: [user_id])
   businesses      business?        @relation("scoring_points_to_business", fields: [business_id], references: [business_id])
   delivery_orders delivery_orders? @relation("scoring_points_to_delivery_order", fields: [delivery_order_id], references: [order_id])
@@ -1083,6 +1086,9 @@ model late_events {
   taxi_order_id     String? @db.Uuid
   scoring_points_id String? @db.Uuid
   seconds           Int
+
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   users           users?           @relation("late_events_to_user", fields: [user_id], references: [user_id])
   businesses      business         @relation("late_events_to_business", fields: [business_id], references: [business_id])
