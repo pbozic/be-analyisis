@@ -473,7 +473,7 @@ async function createOrderHelper(req, res, orderData) {
 				orderData.preferences.children_under_140 = children_under_140;
 				
 				if (parentOrderId) {
-					if (orderData.driver && !start_num_orders > 1) {
+					if (orderData.driver && start_num_orders === 1) {
 						let driver = orderData.driver;
 						orderData.driver = null;
 						console.log("ORDER DATA DRIVER", orderData.driver);
@@ -511,7 +511,7 @@ async function createOrderHelper(req, res, orderData) {
 						});
 					}
 				} else {
-					if (orderData.driver && !start_num_orders > 1) {
+					if (orderData.driver && start_num_orders === 1) {
 						let driver = orderData.driver;
 						orderData.driver = null;
 						console.log("ORDER DATA DRIVER", orderData.driver);
