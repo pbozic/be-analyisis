@@ -14,19 +14,19 @@ const newDriverSchema = Joi.object({
 	driver: Joi.object({
 		data: Joi.object({
 			working_hours: Joi.object(
-				Object.keys(WORKING_HOURS).reduce((acc, key) => {
+				WORKING_HOURS.reduce((acc, key) => {
 					acc[key] = Joi.array().items(Joi.array().items(Joi.string().pattern(/^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/).required())).optional();
 					return acc;
 				}, {})
 			).required(),
 			ride_requirements: Joi.object(
-				Object.keys(TAXI_REQUIREMENTS).reduce((acc, key) => {
+				TAXI_REQUIREMENTS.reduce((acc, key) => {
 					acc[key] = Joi.boolean().required();
 					return acc;
 				}, {})
 			).required(),
 			transfer_requirements: Joi.object(
-				Object.keys(TRANSFER_REQUIREMENTS).reduce((acc, key) => {
+				TRANSFER_REQUIREMENTS.reduce((acc, key) => {
 					acc[key] = Joi.boolean().required();
 					return acc;
 				}, {})
