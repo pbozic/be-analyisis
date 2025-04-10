@@ -1,7 +1,7 @@
 var express = require("express");
 const router = express.Router();
 const AuthController = require("../../../controllers/AuthController");
-const { registerTaxiBusinessSchema } = require("../../../joi/authSchemas");
+const { registerTaxiBusinessSchema } = require("../../../joi/taxiSchemas");
 
 const joi = require("../../../middleware/joi");
 
