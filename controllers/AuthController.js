@@ -1079,7 +1079,6 @@ async function getMunicipalitiesWithLicenseRequirements(req, res) {
 				requires_license: true
 			},
 			select: {
-				id: true,
 				name: true
 			}
 		});
