@@ -703,7 +703,7 @@ async function completeOrder(req, res) {
 			let allowed_leeway = (60*30)
 
 			if(late_seconds>allowed_leeway){
-				await LateEventsDao.createLateEvent(order.business_id,driver.user_id, order.order_id,null, late_seconds-allowed_leeway)
+				await LateEventsDao.createLateEvent(driver.business_id,driver.user_id, order.order_id,null, late_seconds-allowed_leeway)
 			}
 		}else{
 			await ScoringPointsDao.createScoringPoints(order.business_id,driver.user_id, order.order_id,null,0,false, SCORING_POINTS_REASON.INSUFFICIENT_DATA)

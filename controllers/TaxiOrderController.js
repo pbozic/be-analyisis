@@ -885,7 +885,7 @@ async function completeOrder(req, res) {
 				: Math.max(expected_travel_seconds_to_pickup,(60*5))
 
 			if(late_seconds > allowed_leeway){
-				await LateEventsDao.createLateEvent(order.business_id,driver.user_id, null, order.order_id, late_seconds-allowed_leeway)
+				await LateEventsDao.createLateEvent(driver.business_id,driver.user_id, null, order.order_id, late_seconds-allowed_leeway)
 			}
 		}else{
 			await ScoringPointsDao.createScoringPoints(order.business_id,driver.user_id,null,order.order_id,0,false, SCORING_POINTS_REASON.INSUFFICIENT_DATA)
