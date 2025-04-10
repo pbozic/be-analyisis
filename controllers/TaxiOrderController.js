@@ -475,7 +475,7 @@ async function createOrderHelper(req, res, orderData) {
 				if (parentOrderId) {
 					if (orderData.driver && !start_num_orders > 1) {
 						let driver = orderData.driver;
-						delete orderData.driver;
+						orderData.driver = null;
 						order = await TaxiOrderDao.createOrder({
 							...orderData,
 							user: {
@@ -512,7 +512,7 @@ async function createOrderHelper(req, res, orderData) {
 				} else {
 					if (orderData.driver && !start_num_orders > 1) {
 						let driver = orderData.driver;
-						delete orderData.driver;
+						orderData.driver = null;
 						order = await TaxiOrderDao.createOrder({
 							...orderData,
 							user: {
