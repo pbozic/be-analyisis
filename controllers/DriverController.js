@@ -898,13 +898,18 @@ async function toggleDriverOrders(req, res) {
  * @response 404 - Problem sending notification
  * @response 400 - Problem sending notification
  */
+let isSendingComeToWorkNotification = false;
 async function sendComeToWorkNotification(req, res) {
 	const { region } = req.body;
 	if (!region) {
 		return res.status(400).json({ error: "Missing required parameter: region" });
 	}
-	
+
 	try {
+		if (isSendingComeToWorkNotification) {
+			return res.status(400).json({ error: "Already sending notifications" });
+		}
+		isSendingComeToWorkNotification = true;
 		let drivers = await DriverDao.getDrivers({
 			where: {
 				online: false
@@ -912,14 +917,20 @@ async function sendComeToWorkNotification(req, res) {
 		});
 
 		for (let driver of drivers) {
-			const l10nTextDriver = getLocalisedTexts("DRIVER_NOTIFICATIONS", driver.user);
-			const l10nTextHeadingDriver = getLocalisedTexts("HEADING", driver.user);
-			sendNotificationToUser(l10nTextHeadingDriver.driver, l10nTextDriver.comeToWork, driver.user_id);
+			if (!driver.come_to_work_last_sent_at || moment(driver.come_to_work_last_sent_at).isBefore(moment().subtract(3, "hours"))) {
+				//TODO: early hours what to do?
+				const l10nTextDriver = getLocalisedTexts("DRIVER_NOTIFICATIONS", driver.user);
+				const l10nTextHeadingDriver = getLocalisedTexts("HEADING", driver.user);
+				sendNotificationToUser(l10nTextHeadingDriver.driver, l10nTextDriver.comeToWork, driver.user_id);
+				DriverDao.updateDriver(driver.driver_id, { come_to_work_last_sent_at: new Date() });
+			}
 		}
 		res.status(200).json({ message: "Notifications sent out successfully" });
 	} catch (error) {
 		console.error("Error sending notifications:", error);
 		res.status(400).json({ error: "Error sending notifications", detail: error.message });
+	} finally {
+		isSendingComeToWorkNotification = false;
 	}
 }
 /**
