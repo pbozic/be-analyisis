@@ -2,11 +2,8 @@ const UserDao = require("../dao/User");
 const { generateAccessToken, generateRefreshToken } = require("../lib/jwt");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { post } = require("../routes/api/users");
-const ReviewDao = require("../dao/Review");
 const TokenDao = require("../dao/Token");
 const BusinessDao = require("../dao/Business");
-const FinancesDao = require("../dao/Finances");
 const AddressDao = require("../dao/Address");
 const DriverDao = require("../dao/Driver");
 const VehicleDao = require("../dao/Vehicle");
@@ -16,14 +13,10 @@ const BusinessUsersDao = require("../dao/BusinessUsers");
 const FileDao = require("../dao/File");
 const S3Helper = require("../lib/s3");
 const EmailHelper = require("../lib/emailSender");
-const { S3 } = require("aws-sdk");
 const fs = require('fs');
 const stripe = require("../lib/stripe");
 const MenuDao = require('../dao/Menu');
-const { PrismaClient } = require("@prisma/client");
 const SMSHelper = require("../lib/SMS");
-const { parseTelephone } = require("../lib/helpersLib");
-const prisma = new PrismaClient();
 const { DOCUMENT_TYPE } = require("../lib/constants");
 const { businessIndex } = require("../elasticsearch");
 require('dotenv').config();
@@ -68,7 +61,7 @@ async function getScheduledUsers(req, res) {
  * @response 500 - Server error. Returns error message "Error something went wrong.." if any exception is encountered during execution.
  */
 async function login(req, res) {
-	console.info("Login request ",req);
+	console.info("Login request ", req);
 	let postData = req.body;
 	try {
 		let user = await UserDao.getUserByEmailOrTelephone(postData.email.toLowerCase(), {
