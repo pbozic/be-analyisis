@@ -15,7 +15,7 @@ const newDriverSchema = Joi.object({
 		data: Joi.object({
 			working_hours: Joi.object(
 				WORKING_HOURS.reduce((acc, key) => {
-					acc[key] = Joi.array().items(Joi.array().items(Joi.string().pattern(/^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/).required())).optional();
+					acc[key] = [Joi.array().items(Joi.array().items(Joi.string().pattern(/^([0-1]?[0-9]|2[0-3]):([0-5][0-9])$/).required())).optional(), Joi.allow(null)];
 					return acc;
 				}, {})
 			).required(),
