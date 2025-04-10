@@ -1074,7 +1074,7 @@ async function updateScheduledUser(req, res) {
 
 async function getMunicipalitiesWithLicenseRequirements(req, res) {
 	try {
-		let municipalities = await prisma.municipality.findMany({
+		let municipalities = await prisma.municipalities.findMany({
 			where: {
 				requires_license: true
 			}
