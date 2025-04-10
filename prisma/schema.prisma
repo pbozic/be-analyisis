@@ -80,6 +80,8 @@ model business {
   scoring_points           scoring_points[]           @relation("scoring_points_to_business")
 
   late_events late_events[] @relation("late_events_to_business")
+  fiscal_device         fiscal_devices?          @relation(fields: [fiscal_devices_id], references: [fiscal_devices_id])
+  fiscal_devices_id String @db.Uuid
 }
 
 model business_users {
@@ -1099,6 +1101,14 @@ model municipalities {
   @@index([name])
   @@index([gis_sifra])
   @@index([eid_obcina])
+}
+
+model fiscal_devices {
+  fiscal_devices_id String   @id @default(uuid()) @db.Uuid
+  name              String
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  businesses        business[]
 }
 enum CATEGORY_TYPE {
   MENU

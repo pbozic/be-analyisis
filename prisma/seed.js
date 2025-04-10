@@ -3,7 +3,7 @@ require("dotenv").config();
 const prisma = require("./prisma");
 const userSeed = require("./seeders/userSeeder");
 const allergernSeed = require("./seeders/alergenSeeder");
-const driverSeed = require("./seeders/driverSeeder");
+const fiscalDevicesSeeder = require("./seeders/fiscalDevicesSeeder");
 const categoriesSeed = require("./seeders/categoriesSeeder");
 const cuisinesSeed = require("./seeders/dietsSeeder");
 const promoSectionSeed = require("./seeders/promoSectionSeeder");
@@ -19,6 +19,7 @@ async function main() {
 	await cuisinesSeed();
 	await promoSectionSeed();
 	await municipalitiesSeeder();
+	await fiscalDevicesSeeder();
 }
 
 main()
