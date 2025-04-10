@@ -323,6 +323,11 @@ async function acceptOrder(order_id, user) {
                     connect: {
                         driver_id: user.driver.driver_id
                     }
+                },
+                vehicle: {
+                    connect: {
+                        vehicle_id: user.driver.current_vehicle.vehicle_id
+                    }
                 }
             },
             include: {
