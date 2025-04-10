@@ -1087,7 +1087,7 @@ model late_events {
   scoring_points  scoring_points?  @relation("late_events_to_scoring_points", fields: [scoring_points_id], references: [scoring_points_id])
 }
 model municipalities {
-  municipality_id  String   @id @default(uuid()) @db.Uuid
+  municipalities_id  String   @id @default(uuid()) @db.Uuid
   name             String
   geojson          Json    @db.Json
   requires_license Boolean @default(false)
