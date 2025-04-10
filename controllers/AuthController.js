@@ -19,6 +19,7 @@ const MenuDao = require('../dao/Menu');
 const SMSHelper = require("../lib/SMS");
 const { DOCUMENT_TYPE } = require("../lib/constants");
 const { businessIndex } = require("../elasticsearch");
+const prisma = require("../prisma/prisma");
 require('dotenv').config();
 
 /**
@@ -1071,6 +1072,20 @@ async function updateScheduledUser(req, res) {
 
 }
 
+async function getMunicipalitiesWithLicenseRequirements(req, res) {
+	try {
+		let municipalities = await prisma.municipality.findMany({
+			where: {
+				requires_license: true
+			}
+		});
+		res.status(200).json(municipalities);
+	} catch (e) {
+		console.log(e);
+		res.status(400).json({ error: "Error fetching municipalities", e });
+	}
+}
+
 module.exports = {
 	login,
 	register,
@@ -1084,5 +1099,6 @@ module.exports = {
 	registerBusiness,
 	createScheduledUser,
 	getScheduledUsers,
-	updateScheduledUser
+	updateScheduledUser,
+	getMunicipalitiesWithLicenseRequirements
 };

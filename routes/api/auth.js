@@ -95,6 +95,7 @@ router.post("/register", joi(registerSchema), AuthController.register);
 router.post("/create/scheduled_user", AuthController.createScheduledUser);
 router.post("/update/scheduled_user", AuthController.updateScheduledUser);
 router.post("/refresh", joi(refreshSchema), AuthController.refreshToken);
+router.get("/municipalities", AuthController.getMunicipalitiesWithLicenseRequirements);
 router.post("/reset-password", joi(resetPasswordRequestSchema), AuthController.requestPasswordReset);
 router.post('/login/apple', async (req, res) => {
 	const { token, jwt, code, state } = req.body;
