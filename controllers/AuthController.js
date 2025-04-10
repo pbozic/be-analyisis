@@ -97,6 +97,29 @@ async function login(req, res) {
 						taxi_orders_toggled: true,
 						transfer_orders_toggled: true,
 						delivery_orders_toggled: true,
+						vehicles: {
+							select: {
+								vehicle_drivers_id:true,
+								vehicle_id:true,
+								can_drive:true,
+								vehicle: {
+									select: {
+										vehicle_id: true,
+										business_id: true,
+										active: true,
+										class: true,
+										category: true,
+										make: true,
+										model: true,
+										color: true,
+										license_plate: true,
+										current_driver: true
+									}
+								},
+							}
+						},
+						last_used_vehicle_id: true,
+						current_vehicle: true
 					}
 				},
 				delivery_driver: {
@@ -122,11 +145,21 @@ async function login(req, res) {
 			...user,
 			child_users: null,
 			parent_user: null,
+			driver: {
+				...user.driver,
+				vehicles: null,
+				current_vehicle: null
+			},
 		});
 		const refresh_token = generateRefreshToken({
 			...user,
 			child_users: null,
-			parent_user: null
+			parent_user: null,
+			driver: {
+				...user.driver,
+				vehicles: null,
+				current_vehicle: null
+			}
 		});
 		let profile = await DocumentDao.getDocumentsForUserByType(user.user_id, DOCUMENT_TYPE.PROFILE_PICTURE);
 
@@ -365,7 +398,7 @@ async function passwordReset(req, res) {
  * @response 400 - Error registering taxi service
  */
 async function registerTaxiService(req, res) {
-	// fs.writeFileSync('taxi-service.json', JSON.stringify(req.body, null, 2));
+	fs.writeFileSync('taxi-service.json', JSON.stringify(req.body, null, 2));
 	try {
 		if (req.body.business) {
 			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.business.email);

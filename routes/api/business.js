@@ -42,6 +42,7 @@ router.post("/deactivate", BusinessController.deactivateBusiness);
 router.post("/address/add", BusinessController.addBusinessAddress);
 router.post("/delivery-address/add", BusinessController.addDeliveryAddress);
 
+router.get("/daily-meal-users/:business_id", BusinessController.getScheduledUsersByBusinessId);
 router.post("/scheduled_users/sorting", BusinessController.manualSortScheduledUsers);
 router.post("/scheduled_users/sorting/type", BusinessController.addScheduledUserSortingType);
 

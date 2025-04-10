@@ -72,6 +72,7 @@ const getVehicleById = async (vehicle_id, args) => {
 						}
 					}
 				},
+				current_driver: true,
 				documents: {
 					include: {
 						files: true
@@ -171,14 +172,12 @@ const assignVehicleToDeliveryDriver = async (vehicleId, driverId) => {
 	}
 };
 
-const removeVehicleFromDriver = async (vehicleId) => {
+const removeVehicleFromDriver = async (vehicleId, driverId) => {
 	try {
-		return await prisma.vehicles.update({
-			where: { vehicle_id: vehicleId },
+		return await prisma.vehicle_drivers.update({
+			where: { vehicle_id: vehicleId, driver_id: driverId },
 			data: {
-				driver: {
-					disconnect: true
-				}
+				can_drive: false,
 			},
 		});
 	} catch (error) {

@@ -18,6 +18,7 @@ const getDrivers = async (args) => {
 						}
 					}
 				},
+				current_vehicle:true,
 				documents: false,
 			},
 		});
@@ -49,7 +50,7 @@ const getDriversFull = async (args) => {
 						}
 					}
 				},
-				
+				current_vehicle:true,
 			},
 		});
 	} catch (error) {
@@ -75,6 +76,7 @@ const getOnlineDrivers = async (args) => {
 						}
 					}
 				},
+				current_vehicle:true,
 			},
 		});
 	} catch (error) {
@@ -129,10 +131,12 @@ const getDriverById = async (driver_id) => {
 										files: true,
 									}
 								},
+								current_driver:true,
 							},
 						}
 					}
 				},
+				current_vehicle:true,
 				documents: {
 					include: {
 						files: true,
@@ -163,6 +167,7 @@ const getDriverByUserId = async (user_id) => {
 						}
 					}
 				},
+				current_vehicle:true,
 				documents: false,
 			},
 		});
@@ -189,9 +194,15 @@ const getDriverLocation = async (driver_id) => {
 
 const updateDriverOnlineStatus = async (driver_id, isOnline) => {
 	try {
+		// Only disconnect current_vehicle if going offline
+		const vehicleUpdate = isOnline ? {} : { current_vehicle: { disconnect: true } };
+
 		return await prisma.drivers.update({
 			where: { driver_id },
-			data: { online: isOnline },
+			data: {
+				online: isOnline,
+				...vehicleUpdate,
+			},
 			include: {
 				user: true,
 				vehicles: {
@@ -203,6 +214,7 @@ const updateDriverOnlineStatus = async (driver_id, isOnline) => {
 						}
 					}
 				},
+				current_vehicle:true,
 			},
 		});
 	} catch (error) {
@@ -247,6 +259,7 @@ const updateDriverLocation = async (driver_id, location) => {
 						}
 					}
 				},
+				current_vehicle:true,
 			},
 		});
 	} catch (error) {
@@ -306,6 +319,7 @@ const updateDriver = async (driver_id, updateData) => {
 						}
 					}
 				},
+				current_vehicle:true,
 			},
 		});
 	} catch (error) {
@@ -372,6 +386,7 @@ const getAvailableDrivers = async () => {
 						}
 					}
 				},
+				current_vehicle:true
 			},
 		});
 	} catch (error) {
@@ -391,6 +406,7 @@ const getUnavailableDrivers = async () => {
 						vehicle_specification: true,
 					},
 				},
+				current_vehicle:true
 			},
 		});
 	} catch (error) {
@@ -586,6 +602,40 @@ async function toggleDriverOrders(driver_id, types) {
 	}
 }
 
+async function setDriverCurrentVehicle(driver_id, vehicle_id) {
+	try {
+		return await prisma.drivers.update({
+			where: { driver_id: driver_id },
+			data: {
+				last_used_vehicle_id: vehicle_id,
+				current_vehicle: {
+					disconnect: true,
+					connect: { vehicle_id },
+				},
+			},
+		});
+	} catch (error) {
+		console.error("Error setting driver's current vehicle:", error);
+		throw new Error(error);
+	}
+}
+
+async function clearDriverCurrentVehicle(driver_id) {
+	try {
+		return await prisma.drivers.update({
+			where: { driver_id: driver_id },
+			data: {
+				current_vehicle: {
+					disconnect: true,
+				},
+			},
+		});
+	} catch (error) {
+		console.error("Error clearing driver's current vehicle:", error);
+		throw new Error(error);
+	}
+}
+
 module.exports = {
 	setDriverHandle,
 	toggleDriverOrders,
@@ -605,5 +655,6 @@ module.exports = {
 	getDriversFull,
 	getUnavailableDrivers,
 	getDriverLocations,
-	getDriverLocationsWithPerformance
+	getDriverLocationsWithPerformance,
+	setDriverCurrentVehicle,
 };

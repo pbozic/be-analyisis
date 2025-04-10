@@ -51,6 +51,16 @@ const removeMenuItemIdFromOrder = async (menu_category_id, menuItemIdToRemove) =
 	}
 }
 
+const getMenuItemsByIds = async (menu_item_ids) => {
+	return await prisma.menu_items.findMany({
+		where: {
+			menu_item_id: {
+				in:menu_item_ids
+			},
+		},
+	});
+};
+
 const getMenuItemsByBusinessId = async (business_id, args) => {
 	return await prisma.menu_items.findMany({
 		where: {
@@ -139,6 +149,7 @@ module.exports = {
 	createMenuItem,
 	addMenuItemIdToOrder,
 	removeMenuItemIdFromOrder,
+	getMenuItemsByIds,
 	getMenuItemsByCategoryId,
 	getMenuItemsByBusinessId,
 	deleteMenuItem,

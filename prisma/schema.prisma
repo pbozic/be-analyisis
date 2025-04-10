@@ -41,6 +41,7 @@ model business {
   seats                           Int?
   minimum_order                   Int
   offers_daily_meals              Boolean              @default(false)
+  offers_daily_meals_on_weekend   Boolean              @default(false)
   popular                         Boolean              @default(true)
   new                             Boolean              @default(false)
   created_at                      DateTime             @default(now()) @db.Timestamptz(6)
@@ -76,7 +77,7 @@ model business {
   sales_representative_id         String?
 
   user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_business")
-  scoring_points scoring_points[] @relation("scoring_points_to_business")
+  scoring_points           scoring_points[]           @relation("scoring_points_to_business")
 
   late_events late_events[] @relation("late_events_to_business")
 }
@@ -162,12 +163,12 @@ model users {
   business_teams                         business_teams?      @relation("user_to_business_team", fields: [business_teams_id], references: [business_teams_id])
   order_lobby_users                      order_lobby_users[]  @relation("user_to_OL_user")
   promo_section_buys                     promo_sections_buy[]
-  allow_marketing_push_notifications     Boolean?
-  allow_ads_personalization              Boolean?
-  allow_newsletter                       Boolean?
+  allow_marketing_push_notifications     Boolean?             @default(false)
+  allow_ads_personalization              Boolean?             @default(false)
+  allow_newsletter                       Boolean?             @default(false)
 
   user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_user")
-  scoring_points scoring_points[] @relation("scoring_points_to_user")
+  scoring_points           scoring_points[]           @relation("scoring_points_to_user")
 
   late_events late_events[] @relation("late_events_to_user")
 }
@@ -371,6 +372,8 @@ model drivers {
   user_id                  String?                    @unique @db.Uuid
   user                     users?                     @relation(fields: [user_id], references: [user_id])
   vehicles                 vehicle_drivers[]
+  current_vehicle_id       String?                    @db.Uuid @unique
+  last_used_vehicle_id     String?                    @db.Uuid
   orders                   taxi_orders[]
   received_orders          taxi_order_sent[]
   delivery_orders          delivery_orders[]
@@ -390,6 +393,8 @@ model drivers {
   transfer_orders_toggled  Boolean?                   @default(false)
   delivery_orders_toggled  Boolean?                   @default(false)
   partner_cash_balance     Float?                     @default(0)
+
+  current_vehicle          vehicles?                  @relation("driver_current_vehicle", fields: [current_vehicle_id],references: [vehicle_id])
 }
 
 model vehicle_drivers {
@@ -408,23 +413,25 @@ model vehicle_drivers {
 }
 
 model vehicles {
-  vehicle_id               String                  @id @unique @default(uuid()) @db.Uuid
-  business_id              String?                 @db.Uuid
-  active                   Boolean?                @default(true)
-  class                    VEHICLE_CLASS?
-  category                 VEHICLE_CATEGORY?
-  make                     String?
-  model                    String?
-  color                    String?
-  license_plate            String?
-  created_at               DateTime                @default(now()) @db.Timestamptz(6)
-  updated_at               DateTime                @default(now()) @updatedAt @db.Timestamptz(6)
-  documents                documents[]
-  drivers                  vehicle_drivers[]
-  delivery_driver_id       String?                 @db.Uuid
-  delivery_driver          delivery_drivers?       @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
-  vehicle_specification_id String?                 @unique @db.Uuid
-  vehicle_specification    vehicle_specifications? @relation(fields: [vehicle_specification_id], references: [vehicle_specification_id])
+  vehicle_id                    String                  @id @unique @default(uuid()) @db.Uuid
+  business_id                   String?                 @db.Uuid
+  active                        Boolean?                @default(true)
+  class                         VEHICLE_CLASS?
+  category                      VEHICLE_CATEGORY?
+  make                          String?
+  model                         String?
+  color                         String?
+  license_plate                 String?
+  created_at                    DateTime                @default(now()) @db.Timestamptz(6)
+  updated_at                    DateTime                @default(now()) @updatedAt @db.Timestamptz(6)
+  documents                     documents[]
+  drivers                       vehicle_drivers[]
+  delivery_driver_id            String?                 @db.Uuid
+  delivery_driver               delivery_drivers?       @relation(fields: [delivery_driver_id], references: [delivery_driver_id])
+  vehicle_specification_id      String?                 @unique @db.Uuid
+  vehicle_specification         vehicle_specifications? @relation(fields: [vehicle_specification_id], references: [vehicle_specification_id])
+
+  current_driver                 drivers?                @relation("driver_current_vehicle")
 }
 
 model vehicle_specifications {
@@ -760,7 +767,7 @@ model wallet_funds {
   created_at        DateTime       @default(now()) @db.Timestamptz(6)
   updated_at        DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
   expires_at        DateTime?      @db.Timestamptz(6)
-  type              CREDIT_TYPE?
+  type              FUNDS_TYPE
   status            CREDIT_STATUS? @default(ACTIVE)
   referral          referrals?     @relation(fields: [referral_id], references: [referral_id])
   user              users          @relation("wallet_funds", fields: [user_id], references: [user_id])
@@ -1041,39 +1048,38 @@ model user_favorite_businesses {
 }
 
 model scoring_points {
-  scoring_points_id       String          @id @default(uuid()) @db.Uuid
-  business_id             String          @db.Uuid
-  user_id                 String          @db.Uuid
-  delivery_order_id       String?          @db.Uuid
-  taxi_order_id           String?          @db.Uuid
-  points                  Int
-  isPenalty               Boolean
-  reason                  SCORING_POINTS_REASON
-  expiration_date         DateTime?
+  scoring_points_id String                @id @default(uuid()) @db.Uuid
+  business_id       String                @db.Uuid
+  user_id           String?               @db.Uuid
+  delivery_order_id String?               @db.Uuid
+  taxi_order_id     String?               @db.Uuid
+  points            Int
+  isPenalty         Boolean
+  reason            SCORING_POINTS_REASON
+  expiration_date   DateTime?
 
-  users      users?    @relation("scoring_points_to_user", fields: [user_id], references: [user_id])
-  businesses business? @relation("scoring_points_to_business", fields: [business_id], references: [business_id])
-  delivery_orders   delivery_orders?    @relation("scoring_points_to_delivery_order", fields: [delivery_order_id], references: [order_id])
-  taxi_orders   taxi_orders?    @relation("scoring_points_to_taxi_order", fields: [taxi_order_id], references: [order_id])
-  late_events late_events[] @relation("late_events_to_scoring_points")
+  users           users?           @relation("scoring_points_to_user", fields: [user_id], references: [user_id])
+  businesses      business?        @relation("scoring_points_to_business", fields: [business_id], references: [business_id])
+  delivery_orders delivery_orders? @relation("scoring_points_to_delivery_order", fields: [delivery_order_id], references: [order_id])
+  taxi_orders     taxi_orders?     @relation("scoring_points_to_taxi_order", fields: [taxi_order_id], references: [order_id])
+  late_events     late_events[]    @relation("late_events_to_scoring_points")
 }
 
 model late_events {
-  late_events_id          String          @id @default(uuid()) @db.Uuid
-  business_id             String          @db.Uuid
-  user_id                 String          @db.Uuid
-  delivery_order_id       String?          @db.Uuid
-  taxi_order_id           String?          @db.Uuid
-  scoring_points_id       String?          @db.Uuid
-  seconds                 Int
+  late_events_id    String  @id @default(uuid()) @db.Uuid
+  business_id       String  @db.Uuid
+  user_id           String  @db.Uuid
+  delivery_order_id String? @db.Uuid
+  taxi_order_id     String? @db.Uuid
+  scoring_points_id String? @db.Uuid
+  seconds           Int
 
-  users      users?    @relation("late_events_to_user", fields: [user_id], references: [user_id])
-  businesses business @relation("late_events_to_business", fields: [business_id], references: [business_id])
-  delivery_orders   delivery_orders?    @relation("late_events_to_delivery_order", fields: [delivery_order_id], references: [order_id])
-  taxi_orders   taxi_orders?    @relation("late_events_to_taxi_order", fields: [taxi_order_id], references: [order_id])
-  scoring_points scoring_points?   @relation("late_events_to_scoring_points", fields: [scoring_points_id], references: [scoring_points_id])
+  users           users?           @relation("late_events_to_user", fields: [user_id], references: [user_id])
+  businesses      business         @relation("late_events_to_business", fields: [business_id], references: [business_id])
+  delivery_orders delivery_orders? @relation("late_events_to_delivery_order", fields: [delivery_order_id], references: [order_id])
+  taxi_orders     taxi_orders?     @relation("late_events_to_taxi_order", fields: [taxi_order_id], references: [order_id])
+  scoring_points  scoring_points?  @relation("late_events_to_scoring_points", fields: [scoring_points_id], references: [scoring_points_id])
 }
-
 
 enum CATEGORY_TYPE {
   MENU
@@ -1279,6 +1285,7 @@ enum LOST_FOUND_STATUS {
 enum CASHBACK_TYPE {
   TAXI
   DELIVERY
+  TRANSFER
 }
 
 enum CASHBACK_SOURCE {
@@ -1299,9 +1306,12 @@ enum CREDIT_STATUS {
   EXPIRED
 }
 
-enum CREDIT_TYPE {
-  TAXI
-  DELIVERY
+enum FUNDS_TYPE {
+  FUNDS
+  CREDITS_ANY
+  CREDITS_TAXI
+  CREDITS_TRANSFER
+  CREDITS_DELIVERY
 }
 
 enum SCORING_POINTS_REASON {

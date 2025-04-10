@@ -483,7 +483,7 @@ async function createMenuItem(req, res) {
 			document = await DocumentDao.createDocument(image.documentData);
 			let files = image.files;
 			if (image?.document_id) {
-				const doc = await DocumentDao.getDocumentById(image.document_id);
+				const doc = await FileDao.getFilesByDocumentId(image.document_id);
 				files = doc.files;
 			}
 			for (const file of files) {
@@ -870,7 +870,26 @@ const updateDailyMealMenuPrice = async (req, res) => {
 	}
 }
 
+const getMenuItemsByIds = async (req, res) => {
+	try {
+		const menuItems = await MenuItemDao.getMenuItemsByBusinessId(req.params.business_id, {
+			menu_item_id: {
+				in: req.body.ids
+			}
+		});
+		if (menuItems) {
+			res.status(200).json(menuItems);
+		} else {
+			res.status(400).json({ error: "Error fetching menu items" });
+		}
+	} catch (e) {
+		console.error("Error fetching menu items:", e);
+		res.status(400).json({ error: "Error fetching menu items", e });
+	}
+}
+
 module.exports = {
+	getMenuItemsByIds,
 	updateDailyMealMenuPrice,
 	getMenuItemsByDate,
 	getMenuByDate,

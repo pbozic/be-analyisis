@@ -500,7 +500,7 @@ let CATEGORIES_FULL = {
     cocktail: {key:'cocktail',tag: 'cocktail', source: './icons/cocktail.png', name: 'Cocktails'},
     drinks: {key:'drinks',tag: 'soft-drinks', source: './icons/drinks.png', name: 'Soft drinks'},
     kidsMeals: {key:'kidsMeals',tag: 'kids-meals', source: './icons/kids-meals.png', name: 'Kids meals'},
-    studentMeals: {key:'studentMeals',tag: 'student-meals', source: './icons/kids-meals.png', name: 'Student meals'},
+    studentMeals: {key:'studentMeals',tag: 'student-meals', source: './icons/icon-student.png', name: 'Student meals'},
 }
 
 async function seedCategories() {

@@ -26,6 +26,7 @@ router.patch("/ride_requirements", DriverController.updateDriverRideRequirements
 router.patch("/location", DriverController.updateDriverLocation);
 router.patch("/online", DriverController.updateDriverOnlineStatus);
 router.patch("/:driver_id/toggle_orders", DriverController.toggleDriverOrders);
+router.patch("/:driver_id/set_current_vehicle", DriverController.setCurrentVehicle);
 router.patch("/:driver_id/:action/:type", DriverController.setDriverHandle);
 
 router.post("/create", DriverController.createDriver);

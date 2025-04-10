@@ -867,7 +867,43 @@ async function deactivateBusiness(business_id) {
 		throw new Error(error);
 	}
 }
+
+const getScheduledUsersByBusinessId = async (businessId) => {
+	try {
+		const business = await prisma.business.findUnique({
+			where: {
+				business_id: businessId,
+				offers_daily_meals: true
+			}
+		});
+
+		if (!business) {
+			throw new Error('Business not found or does not offer daily meals');
+		}
+
+		return await prisma.users.findMany({
+			where: {
+				subscribed_to_daily_meals: true,
+				user_id: {
+					in: business.daily_users_sorted || []
+				}
+			},
+			include: {
+				addresses: {
+					include: {
+						address: true
+					}
+				}
+			}
+		});
+	} catch (error) {
+		console.error("Error fetching scheduled users:", error);
+		throw error;
+	}
+};
+
 module.exports = {
+	getScheduledUsersByBusinessId,
 	getBusinesses,
 	getBusinessById,
 	getBusinessByEmail,
