@@ -121,7 +121,7 @@ async function login(req, res) {
 		const access_token = generateAccessToken({
 			...user,
 			child_users: null,
-			parent_user: null
+			parent_user: null,
 		});
 		const refresh_token = generateRefreshToken({
 			...user,
@@ -464,13 +464,7 @@ async function registerTaxiService(req, res) {
 
 				//Handle addresses of the driver
 				let addresses = []
-				// if (driverInfo.user.addresses) {
-				// 	for (const addressInfo of driverInfo.user.addresses) {
-				// 		const address = await AddressDao.addAddress(addressInfo)
-				// 		await AddressDao.addUserAddress(newUser.user_id, address.address_id);
-				// 		addresses.push(address);
-				// 	}
-				// }
+
 				drivers.push({ driver, addresses });
 			}
 		}

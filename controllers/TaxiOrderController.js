@@ -434,7 +434,12 @@ async function createOrderHelper(req, res, orderData) {
 			// TODO: also handle class ANY
 			let num_orders;
 			if (prefs.vehicle_class === VEHICLE_CLASS.ANY) {
-				num_orders = 1;
+				if (total_seats > 4) {
+					let defaultNumSeats = prefs.vehicle_category === VEHICLE_CATEGORY.STANDARD ? 4 : 3;
+					num_orders = Math.ceil((total_seats) / defaultNumSeats);
+				} else {
+					num_orders = 1;
+				}
 			} else {
 				num_orders = Math.ceil((total_seats) / VEHICLE_CAPACITY[prefs.vehicle_class]);
 			}
@@ -468,7 +473,7 @@ async function createOrderHelper(req, res, orderData) {
 				orderData.preferences.children_under_140 = children_under_140;
 
 				if (parentOrderId) {
-					if (orderData.driver) {
+					if (orderData.driver && !start_num_orders > 1) {
 						order = await TaxiOrderDao.createOrder({
 							...orderData,
 							user: {
@@ -503,7 +508,7 @@ async function createOrderHelper(req, res, orderData) {
 						});
 					}
 				} else {
-					if (orderData.driver) {
+					if (orderData.driver && !start_num_orders > 1) {
 						order = await TaxiOrderDao.createOrder({
 							...orderData,
 							user: {

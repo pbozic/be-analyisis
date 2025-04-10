@@ -104,7 +104,7 @@ const prisma = new PrismaClient({
 				const drivers = await prisma.$queryRaw`
 					SELECT drivers.*, vehicles.*
 					FROM drivers
-					JOIN vehicles ON vehicles.driver_id = drivers.driver_id
+					JOIN vehicles ON vehicles.vehicle_id = drivers.current_vehicle_id
 					WHERE drivers.online = true
 					AND drivers.on_order = false
 					AND ST_DWithin(

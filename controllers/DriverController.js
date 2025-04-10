@@ -875,7 +875,32 @@ async function toggleDriverOrders(req, res) {
 		res.status(400).json({ error: "Error toggling driver orders", detail: error.message });
 	}
 }
+/**
+ * POST /drivers/come_to_work
+ * @tag Drivers
+ * @summary Send notifications for drivers to come to work
+ * @description This endpoint allows sending a "come to work" notifications to all drivers who are currently offline.
+ * @operationId comeToWorkDrivers
+ * @bodyContent {Object} application/json
+ * @bodyRequired
+ * @response 200 - Notification sent out successfully
+ * @responseContent {Object} 200.application/json
+ * @response 404 - Problem sending notification
+ * @response 400 - Problem sending notification
+ */
+async function sendComeToWorkNotification(req, res) {
+	const { region } = req.body;
+	if (!region) {
+		return res.status(400).json({ error: "Missing required parameter: region" });
+	}
 
+	try {
+		
+	} catch (error) {
+		console.error("Error sending notification:", error);
+		res.status(400).json({ error: "Error sending notification", detail: error.message });
+	}
+}
 module.exports = {
 	getDriversByBusinessId,
 	setDriverHandle,
@@ -899,5 +924,6 @@ module.exports = {
 	getDriverEarnings,
 	getAllDriversEarnings,
 	getTotalEarnings,
-	getDriverTotalEarnings
+	getDriverTotalEarnings,
+	sendComeToWorkNotification
 };
