@@ -1077,6 +1077,10 @@ async function getMunicipalitiesWithLicenseRequirements(req, res) {
 		let municipalities = await prisma.municipalities.findMany({
 			where: {
 				requires_license: true
+			},
+			select: {
+				id: true,
+				name: true
 			}
 		});
 		res.status(200).json(municipalities);
