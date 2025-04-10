@@ -872,12 +872,12 @@ async function completeOrder(req, res) {
 
 		//assign penalties for being late
 		const timeline_first_waiting_timestamp = order.timeline.find(entry => entry.status === TAXI_ORDER_STATUS.TAXI_WAITING)?.location?.timestamp;
-		const timeline_accept_timestamp = order.timeline.find(entry => entry.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED)?.location?.timestamp;
+		const timeline_accept_timestamp = order.timeline.findLast(entry => entry.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED)?.location?.timestamp;
 
 		const estimated_pickup_timestamp = order.estimates?.pickup_time
 		if(estimated_pickup_timestamp && timeline_accept_timestamp && timeline_first_waiting_timestamp){
-			const expected_travel_seconds_to_pickup = moment(timeline_accept_timestamp).diff(moment(estimated_pickup_timestamp), 'seconds')
-			const late_seconds = moment(estimated_pickup_timestamp).diff(moment(timeline_first_waiting_timestamp), 'seconds')
+			const expected_travel_seconds_to_pickup = moment(estimated_pickup_timestamp).diff(moment(timeline_accept_timestamp), 'seconds')
+			const late_seconds = moment(timeline_first_waiting_timestamp).diff(moment(estimated_pickup_timestamp), 'seconds')
 			console.log(`pickup was ${late_seconds} seconds ${late_seconds > 0 ? 'late' : 'early or on time'}.`);
 
 			let allowed_leeway = order.is_scheduled

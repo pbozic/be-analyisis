@@ -698,7 +698,7 @@ async function completeOrder(req, res) {
 		const timeline_delivered_timestamp = order.timeline.findLast(entry => entry.status === DELIVERY_ORDER_STATUS.DELIVERY_DELIVERED)?.timestamp;
 
 		if(timeline_delivered_timestamp && order.details?.customer_expected_delivery_at){
-			const late_seconds = moment(order.details.customer_expected_delivery_at).diff(moment(timeline_delivered_timestamp), 'seconds')
+			const late_seconds = moment(timeline_delivered_timestamp).diff(moment(order.details.customer_expected_delivery_at), 'seconds')
 			console.log(`Order was ${late_seconds} seconds ${late_seconds > 0 ? 'late' : 'early or on time'}.`);
 			let allowed_leeway = (60*30)
 
