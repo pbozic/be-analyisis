@@ -1,6 +1,10 @@
 const Joi = require("joi").extend(require('@joi/date'));
 
 const prisma = require("../prisma/prisma");
+const { newBusinessSchema } = require("./businessSchemas");
+const { addressSchema } = require("./addressSchemas");
+const { newDriverSchema } = require("./driverSchemas");
+const { newVehicleSchema } = require("./vehicleSchemas");
 
 const loginSchema = Joi.object({
 	email: Joi.string().required(),
@@ -143,12 +147,21 @@ const resetPasswordSchema = Joi.object({
 	confirm_password: Joi.ref("password"),
 });
 
+const registerTaxiBusinessSchema = Joi.object({
+	business: newBusinessSchema,
+	addresses: Joi.object({
+		business: addressSchema.required(),
+	}),
+	drivers: Joi.array().items(newDriverSchema),
+	vehicles: Joi.array().items(newVehicleSchema)
+});
+
 module.exports = {
 	loginSchema,
 	registerSchema,
 	refreshSchema,
 	resetPasswordSchema,
 	resetPasswordRequestSchema,
-	registerChildSchema
-	
+	registerChildSchema,
+	registerTaxiBusinessSchema,
 };

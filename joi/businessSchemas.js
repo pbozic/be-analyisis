@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const prisma = require("../prisma/prisma");
 
 const updateSchema = Joi.object({
 	user_id: Joi.string(),
@@ -68,6 +69,44 @@ const paymentIntentSchema = Joi.object({
 	payment_method: Joi.string().required(),
 	user_id: Joi.string().required(),
 });
+
+const newBusinessSchema = Joi.object({
+	type: Joi.string(),
+	is_business_unit: Joi.boolean(),
+	name: Joi.string(),
+	description: Joi.string(),
+	tax_id: Joi.string(),
+	registration_id: Joi.string(),
+	email: Joi.string()
+		.email()
+		.optional()
+		.external(async (email, helpers) => {
+			console.log("helpers", helpers.error);
+			let isEmailInUse;
+			try {
+				isEmailInUse = await prisma.business.findFirst({
+					where: {
+						email: email.toLowerCase(),
+					},
+				});
+				console.log(isEmailInUse)
+			} catch (error) {
+				console.log(error)
+			}
+
+			if (isEmailInUse) {
+				throw new Error("Account with this email already exists.");
+			}
+
+			return email;
+		}),
+	telephone: Joi.string(),
+	telephone_code: Joi.string(),
+	telephone_number: Joi.string(),
+	website_url: Joi.string(),
+	minimum_order: Joi.number().integer().optional()
+});
+
 module.exports = {
 	updateSchema,
 	verifyPhoneSchema,
@@ -77,4 +116,5 @@ module.exports = {
 	addAddressSchema,
 	paymentIntentSchema,
 	editAddressSchema,
+	newBusinessSchema,
 };
