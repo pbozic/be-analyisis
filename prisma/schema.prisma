@@ -1096,7 +1096,6 @@ model municipalities {
   feature_id       String? 
   created_at       DateTime @default(now()) @db.Timestamptz(6)
   updated_at       DateTime @default(now()) @updatedAt @db.Timestamptz(6)
-  geom_generated   Unsupported("geometry")?
   @@index([name])
   @@index([gis_sifra])
   @@index([eid_obcina])
