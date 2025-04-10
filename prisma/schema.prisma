@@ -81,7 +81,7 @@ model business {
 
   late_events late_events[] @relation("late_events_to_business")
   fiscal_device         fiscal_devices?          @relation(fields: [fiscal_devices_id], references: [fiscal_devices_id])
-  fiscal_devices_id String @db.Uuid
+  fiscal_devices_id     String? @db.Uuid
 }
 
 model business_users {
