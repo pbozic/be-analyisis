@@ -474,6 +474,8 @@ async function createOrderHelper(req, res, orderData) {
 
 				if (parentOrderId) {
 					if (orderData.driver && !start_num_orders > 1) {
+						let driver = orderData.driver;
+						delete orderData.driver;
 						order = await TaxiOrderDao.createOrder({
 							...orderData,
 							user: {
@@ -488,7 +490,7 @@ async function createOrderHelper(req, res, orderData) {
 							},
 							driver: {
 								connect: {
-									driver_id: orderData.driver.driver_id
+									driver_id: driver.driver_id
 								}
 							}
 						});
@@ -509,6 +511,8 @@ async function createOrderHelper(req, res, orderData) {
 					}
 				} else {
 					if (orderData.driver && !start_num_orders > 1) {
+						let driver = orderData.driver;
+						delete orderData.driver;
 						order = await TaxiOrderDao.createOrder({
 							...orderData,
 							user: {
@@ -518,7 +522,7 @@ async function createOrderHelper(req, res, orderData) {
 							},
 							driver: {
 								connect: {
-									driver_id: orderData.driver.driver_id
+									driver_id: driver.driver_id
 								}
 							}
 						});
