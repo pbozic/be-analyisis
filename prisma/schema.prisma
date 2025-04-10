@@ -396,7 +396,7 @@ model drivers {
   delivery_orders_toggled  Boolean?                   @default(false)
   partner_cash_balance     Float?                     @default(0)
   come_to_work_last_sent_at DateTime?                  @db.Timestamptz(6)
-
+  driver_municipalities    driver_municipalities[]
   current_vehicle vehicles? @relation("driver_current_vehicle", fields: [current_vehicle_id], references: [vehicle_id])
 }
 
@@ -1098,6 +1098,7 @@ model municipalities {
   feature_id       String? 
   created_at       DateTime @default(now()) @db.Timestamptz(6)
   updated_at       DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  driver_municipalities        driver_municipalities[]
   @@index([name])
   @@index([gis_sifra])
   @@index([eid_obcina])
@@ -1110,6 +1111,21 @@ model fiscal_devices {
   updated_at        DateTime @default(now()) @updatedAt @db.Timestamptz(6)
   businesses        business[]
 }
+
+model driver_municipalities {
+  driver_municipalities_id String   @id @default(uuid()) @db.Uuid
+  driver_id                String   @db.Uuid
+  municipalities_id        String   @db.Uuid
+  created_at               DateTime @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  drivers         drivers     @relation(fields: [driver_id], references: [driver_id])
+  municipalities  municipalities @relation(fields: [municipalities_id], references: [municipalities_id])
+
+  @@unique([driver_id, municipalities_id])
+  @@index([driver_id])
+}
+
 enum CATEGORY_TYPE {
   MENU
   CUISINE

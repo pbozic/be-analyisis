@@ -636,6 +636,36 @@ async function clearDriverCurrentVehicle(driver_id) {
 	}
 }
 
+const addDriverMunicipalities = async (driver_id, municipalities) => {
+	try {
+		for (let municipality of municipalities) {
+			const exists = await prisma.driver_municipalities.findFirst({
+				where: {
+					driver_id: driver_id,
+					municipality_id: municipality,
+				},
+			});
+			
+			if (exists) continue;
+
+			return await prisma.driver_municipalities.create({
+				data: {
+					driver: {
+						connect: { driver_id: driver_id },
+					},
+					municipality: {
+						connect: { municipality_id: municipality },
+					},
+				},
+			});
+		}
+		
+	} catch (error) {
+		console.error("Error adding municipalities to driver:", error);
+		throw new Error(error);
+	}
+}
+
 module.exports = {
 	setDriverHandle,
 	toggleDriverOrders,
@@ -657,4 +687,5 @@ module.exports = {
 	getDriverLocations,
 	getDriverLocationsWithPerformance,
 	setDriverCurrentVehicle,
+	addDriverMunicipalities
 };

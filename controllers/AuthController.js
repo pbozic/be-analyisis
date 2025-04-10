@@ -471,6 +471,8 @@ async function registerTaxiService(req, res) {
 
 				const driverData = { ...driverInfo.driver.data, business_id: business.business_id };
 				const driver = await DriverDao.createNewDriver(driverData, newUser);
+				const regions = driverInfo.driver.regions || [];
+				await DriverDao.addDriverMunicipalities(driver.driver_id, regions);
 				// Handle taxi documents
 				if (driverInfo.driver.documents) {
 					for (const doc of driverInfo.driver.documents) {
