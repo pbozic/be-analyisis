@@ -13,14 +13,15 @@ const documentDataSchema = Joi.object({
 	additional_info: Joi.object().optional()
 });
 
-const expirableDocumentsArraySchema = Joi.object({
+const expirableDocumentsArraySchema = Joi.array().items({
 	documentData: documentDataSchemaExpirable.required(),
 	files: Joi.array().items(fileSchema).required()
-})
-const documentsArraySchema = Joi.object({
+}).required()
+
+const documentsArraySchema = Joi.array().items({
 	documentData: documentDataSchema.required(),
 	files: Joi.array().items(fileSchema).required()
-})
+}).required()
 
 module.exports = {
 	expirableDocumentsArraySchema,
