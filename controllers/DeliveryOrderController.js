@@ -195,7 +195,7 @@ async function createOrder(req, res) {
 
 		// Handle automatic credits spending
 		const TOTAL_PRICE_CENTS = Math.round(orderData.details.total_price*100);//already includes delivery cost
-		const CREDITS_AMOUNT_RESERVED = (await WalletFundsHelpers.reserveCreditsForOrder(user.user_id, TOTAL_PRICE_CENTS, order.order_id, FUNDS_TYPE.CREDITS_DELIVERY)).reduce((sum, wf) => sum + wf.amount, 0);
+		const CREDITS_AMOUNT_RESERVED = orderData?.allow_credits_usage ? (await WalletFundsHelpers.reserveCreditsForOrder(user.user_id, TOTAL_PRICE_CENTS, order.order_id, FUNDS_TYPE.CREDITS_DELIVERY)).reduce((sum, wf) => sum + wf.amount, 0) : [];
 		const DISCOUNTED_COMBINED_COST_CENTS = TOTAL_PRICE_CENTS - CREDITS_AMOUNT_RESERVED
 		order.details.credit_discount = CREDITS_AMOUNT_RESERVED
 		order = await DeliveryOrderDao.updateOrder(order.order_id,order);

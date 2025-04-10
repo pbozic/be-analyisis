@@ -519,6 +519,7 @@ model taxi_orders {
   parent_user_type         String?                    @default("")
   creating_user_id         String?                    @db.Uuid
   cashback                 cashback[]
+  allow_credits_usage      Boolean                    @default(false)
 
   scoring_points scoring_points[] @relation("scoring_points_to_taxi_order")
 
@@ -578,6 +579,7 @@ model delivery_orders {
   delivery_driver_history_locations delivery_driver_history_locations[]
   cashback                          cashback[]
   order_lobbies                     order_lobbies?                      @relation("origin_lobby")
+  allow_credits_usage               Boolean                             @default(false)
 
   scoring_points scoring_points[] @relation("scoring_points_to_delivery_order")
 

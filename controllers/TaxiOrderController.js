@@ -913,7 +913,7 @@ async function completeOrder(req, res) {
 			const INITIAL_DRIVER_CUT = TOTAL_COST_CENTS-INITIAL_PLATFORM_CUT
 
 			//Handle automatic credits spending ~ use credits to pay platform cut first, to keep the driver cut mostly off stripe
-			const reservedCredits = await WalletFundsHelpers.reserveCreditsForOrder(user.user_id,TOTAL_COST_CENTS,order.order_id,FUNDS_TYPE.CREDITS_TAXI)
+			const reservedCredits = order.allow_credits_usage ? await WalletFundsHelpers.reserveCreditsForOrder(user.user_id,TOTAL_COST_CENTS,order.order_id,FUNDS_TYPE.CREDITS_TAXI) : []
 			const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum,wf)=>sum+wf.amount,0)
 			const DISCOUNTED_TOTAL_COST = TOTAL_COST_CENTS-CREDITS_AMOUNT_RESERVED
 
