@@ -471,11 +471,12 @@ async function createOrderHelper(req, res, orderData) {
 
 				orderData.preferences.adults = adults;
 				orderData.preferences.children_under_140 = children_under_140;
-
+				
 				if (parentOrderId) {
 					if (orderData.driver && !start_num_orders > 1) {
 						let driver = orderData.driver;
 						orderData.driver = null;
+						console.log("ORDER DATA DRIVER", orderData.driver);
 						order = await TaxiOrderDao.createOrder({
 							...orderData,
 							user: {
@@ -513,6 +514,7 @@ async function createOrderHelper(req, res, orderData) {
 					if (orderData.driver && !start_num_orders > 1) {
 						let driver = orderData.driver;
 						orderData.driver = null;
+						console.log("ORDER DATA DRIVER", orderData.driver);
 						order = await TaxiOrderDao.createOrder({
 							...orderData,
 							user: {
