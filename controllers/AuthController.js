@@ -144,12 +144,22 @@ async function login(req, res) {
 		const access_token = generateAccessToken({
 			...user,
 			child_users: null,
-			parent_user: null
+			parent_user: null,
+			driver: {
+				...user.driver,
+				vehicles: null,
+				current_vehicle: null
+			}
 		});
 		const refresh_token = generateRefreshToken({
 			...user,
 			child_users: null,
-			parent_user: null
+			parent_user: null,
+			driver: {
+				...user.driver,
+				vehicles: null,
+				current_vehicle: null
+			}
 		});
 		let profile = await DocumentDao.getDocumentsForUserByType(user.user_id, DOCUMENT_TYPE.PROFILE_PICTURE);
 
