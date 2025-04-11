@@ -272,18 +272,10 @@ async function getTaxiOrders(req, res) {
 				driver: {
 					include: {
 						user: true,
-						vehicles: {
-							include: {
-								vehicle: {
-									include: {
-										vehicle_specification: true,
-									},
-								}
-							}
-						},
 						current_vehicle: true
 					}
-				}
+				},
+				vehicle: true,
 			}
 		});
 		// console.tag("TaxiOrderController","taxi orders", orders);
@@ -1634,7 +1626,7 @@ async function getTaxiOrdersWithPagination(req, res) {
 				skip: skip,
 				where,
 				orderBy: orderBy ? orderBy : { created_at: 'desc' },
-				include: { user: true, driver: { include: {	user: true, vehicles: true, current_vehicle: true} } }
+				include: { user: true, vehicle: true, driver: { include: {	user: true, current_vehicle: true} } }
 			}),
 			prisma.taxi_orders.count({
 				where // Ensure the count matches the filtered results

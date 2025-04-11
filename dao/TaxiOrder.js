@@ -18,18 +18,10 @@ async function getOrders(args) {
                                 }
                             }
                         },
-                        vehicles: {
-                            include: {
-                                vehicle: {
-                                    include: {
-                                        vehicle_specification: true,
-                                    },
-                                }
-                            }
-                        },
                         current_vehicle: true
                     }
-                }
+                },
+                vehicle: true,
             }
         };
 
