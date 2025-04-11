@@ -1753,7 +1753,7 @@ async function rejectGroupedOrderByParentId(req,res){
 
 			//sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
 			if (order.driver_id === req.user.driver.driver_id) {
-				await TaxiOrderDao.updateOrder(order_id, {
+				order = await TaxiOrderDao.updateOrder(order_id, {
 					status: TAXI_ORDER_STATUS.PENDING,
 					last_sent_at: null,
 					cancellation_reason: reason
@@ -1785,8 +1785,8 @@ async function rejectGroupedOrderByParentId(req,res){
 			}
 
 
-			io.to("order_" + order_id).emit("order_status_change__taxi", rejected_order);
-			io.to("order_" + order_id).emit("order_rejected__taxi", rejected_order);
+			io.to("order_" + order_id).emit("order_status_change__taxi", order);
+			io.to("order_" + order_id).emit("order_rejected__taxi", order);
 			if(driver && req.user.driver.driver_id === driver.driver_id){
 				const user = await UsersDao.getUserById(user_id);
 				sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
