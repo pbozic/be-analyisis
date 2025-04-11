@@ -1790,7 +1790,7 @@ async function rejectGroupedOrderByParentId(req,res){
 			if(driver && req.user.driver.driver_id === driver.driver_id){
 				const user = await UsersDao.getUserById(user_id);
 				sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
-				rejected_order = await TaxiOrderDao.updateOrder(order_id, {
+				await TaxiOrderDao.updateOrder(order_id, {
 					driver: {
 						disconnect: true
 					}
