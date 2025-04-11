@@ -1496,7 +1496,9 @@ async function generateBusinessStripeByBusinessId(req,res){
 			onboardLink: accountLink.url
 		});
 
-		res.status(200).json(stripe_account)
+		res.status(200).render("stripeOnboardingEmailSent", {
+			businessEmail: business.email
+		});
 	}catch (error) {
 		console.error("Error generating stripe account for business:", error);
 		throw new Error(error);
