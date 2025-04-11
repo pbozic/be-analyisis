@@ -1743,8 +1743,8 @@ async function rejectGroupedOrderByParentId(req,res){
 	try {
 		let parent_order = await TaxiOrderDao.getOrder(parent_order_id);
 		console.info(parent_order.grouped_orders)
-
-		for (let order of parent_order.grouped_orders) {
+		let orders = [...parent_order.grouped_orders, parent_order]
+		for (let order of orders) {
 			console.info("TaxiOrderController", "REJECTING CHILD ORDER", order);
 
 			const { order_id, user_id, driver_id } = order
@@ -1752,10 +1752,13 @@ async function rejectGroupedOrderByParentId(req,res){
 			const driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
 
 			//sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
-			await TaxiOrderDao.updateOrder(order_id, {
-				status: TAXI_ORDER_STATUS.PENDING,
-				last_sent_at: null
-			});
+			if (order.driver_id === req.user.driver.driver_id) {
+				await TaxiOrderDao.updateOrder(order_id, {
+					status: TAXI_ORDER_STATUS.PENDING,
+					last_sent_at: null,
+					cancellation_reason: reason
+				});
+			}
 
 			if (req.user.driver && req.user.driver.driver_id) {
 				await TaxiHelper.revokeTaxiOrderFromDriver(order_id, req.user.driver.driver_id);
@@ -1780,7 +1783,6 @@ async function rejectGroupedOrderByParentId(req,res){
 				}
 
 			}
-			let rejected_order = await TaxiOrderDao.cancelOrder(order_id, TAXI_ORDER_STATUS.PENDING, reason);
 
 
 			io.to("order_" + order_id).emit("order_status_change__taxi", rejected_order);
@@ -1795,71 +1797,6 @@ async function rejectGroupedOrderByParentId(req,res){
 				});
 				io.emit("driver_available", driver);
 			}
-
-			let userActiveOrders = await TaxiOrderDao.userActiveOrders(rejected_order.user_id);
-			let pending = true;
-			for (let or of userActiveOrders) {
-				if (or.status !== TAXI_ORDER_STATUS.PENDING) {
-					pending = false;
-				}
-			}
-			if (pending) {
-				if (UserSockets.get(user_id)) {
-					console.log("EMITTING order_restart_search");
-					UserSockets.get(user_id).emit("order_restart_search", rejected_order);
-				}
-			}
-		}
-
-		console.info("TaxiOrderController", "REJECTING PARENT ORDER", parent_order);
-		const { order_id, user_id, driver_id } = parent_order
-		//
-		const driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
-
-		//
-		await TaxiOrderDao.updateOrder(order_id, {
-			status: TAXI_ORDER_STATUS.PENDING,
-			last_sent_at: null
-		});
-
-		if (req.user.driver && req.user.driver.driver_id) {
-			await TaxiHelper.revokeTaxiOrderFromDriver(order_id, req.user.driver.driver_id);
-			let order_sent = await prisma.taxi_order_sent.findUnique({
-				where: {
-					taxi_order_sent_driver_unique: {
-						order_id,
-						driver_id: req.user.driver.driver_id
-					}
-				}
-			});
-
-			console.log("REJECT " + order_sent.taxi_order_sent_id);
-			if (order_sent.taxi_order_sent_id) {
-				await prisma.taxi_order_sent.update({
-					where: {
-						taxi_order_sent_id: order_sent.taxi_order_sent_id
-					},
-					data: {
-						rejected: true
-					}
-				});
-			}
-
-		}
-		let rejected_order = await TaxiOrderDao.cancelOrder(order_id, TAXI_ORDER_STATUS.PENDING, reason);
-
-
-		io.to("order_" + order_id).emit("order_status_change__taxi", rejected_order);
-		io.to("order_" + order_id).emit("order_rejected__taxi", rejected_order);
-		if(driver && req.user.driver.driver_id === driver.driver_id){
-			const user = await UsersDao.getUserById(user_id);
-			sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
-			rejected_order = await TaxiOrderDao.updateOrder(order_id, {
-				driver: {
-					disconnect: true
-				}
-			});
-			io.emit("driver_available", driver);
 		}
 
 		let userActiveOrders = await TaxiOrderDao.userActiveOrders(user_id);
