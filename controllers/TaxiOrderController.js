@@ -1850,7 +1850,7 @@ async function rejectGroupedOrderByParentId(req,res){
 
 		io.to("order_" + order_id).emit("order_status_change__taxi", rejected_order);
 		io.to("order_" + order_id).emit("order_rejected__taxi", rejected_order);
-		if(driver){
+		if(driver && req.user.driver.driver_id === driver.driver_id){
 			rejected_order = await TaxiOrderDao.updateOrder(order_id, {
 				driver: {
 					disconnect: true
