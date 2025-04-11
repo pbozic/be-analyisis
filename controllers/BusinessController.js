@@ -1488,7 +1488,7 @@ async function generateBusinessStripeByBusinessId(req,res){
 		}
 
 
-		let accountLink = await stripe.getAccountLinks(stripe_account.id);
+		let accountLink = await stripe.getAccountLinks(stripe_account.id, business.business_id);
 		// send email to business user with account link
 		EmailHelper.sendEmailTemplate("Stripe Onboarding", "stripeOnboarding", business.email,  {
 			name: business.name,
