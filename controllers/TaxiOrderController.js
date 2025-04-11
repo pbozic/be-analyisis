@@ -1794,7 +1794,7 @@ async function rejectGroupedOrderByParentId(req,res){
 
 			io.to("order_" + order_id).emit("order_status_change__taxi", rejected_order);
 			io.to("order_" + order_id).emit("order_rejected__taxi", rejected_order);
-			if(driver){
+			if(driver && req.user.driver.driver_id === driver.driver_id){
 				rejected_order = await TaxiOrderDao.updateOrder(order_id, {
 					driver: {
 						disconnect: true
@@ -1883,6 +1883,50 @@ async function rejectGroupedOrderByParentId(req,res){
 		}
 
 		res.status(200).json([parent_order_id,...parent_order.grouped_orders.map(order => order.order_id)]);
+	} catch (e) {
+		console.errorTag("TaxiOrderController", e);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * GET /taxi/orders/today
+ * @tag Taxi
+ * @summary Splits Van order into multiple smaller orders
+ * @description If we cant find a Van driver, we offer the user to split his order into multiple smaller orders.
+ * @operationId splitVanOrder
+ * @response 200 - Successful operation. Returns a list of all taxi orders created.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+async function splitVanOrder(req, res){
+	const { order_id, info } = req.body;
+	console.info("TaxiOrderController", "SPLIT VAN ORDER", req.body);
+	try {
+		let order = await TaxiOrderDao.getOrder(order_id);
+		
+		if (order.preferences?.vehicle_class === VEHICLE_CLASS.VAN) {
+			if (order.parent_order_id) {
+				order = await TaxiOrderDao.getOrder(order.parent_order_id);
+			}
+			if (order.grouped_orders.length > 0) {
+				let num_people = 0;
+				for (let or of order.grouped_orders) {
+					if (or.status === TAXI_ORDER_STATUS.PENDING || or.status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
+						let seats_Adults = or.prefs.adults;
+						let seats_ChildrenUnder140 = or.prefs.children_under_140;
+						let total_seats = seats_Adults + seats_ChildrenUnder140;
+						num_people += total_seats;
+					}
+					
+				}
+			} else {
+
+			}
+
+			
+		}
+		res.status(200).json(order);
 	} catch (e) {
 		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
