@@ -1748,10 +1748,10 @@ async function rejectGroupedOrderByParentId(req,res){
 			console.info("TaxiOrderController", "REJECTING CHILD ORDER", order);
 
 			const { order_id, user_id, driver_id } = order
-			const user = await UsersDao.getUserById(user_id);
+			//const user = await UsersDao.getUserById(user_id);
 			const driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
 
-			sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
+			//sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
 			await TaxiOrderDao.updateOrder(order_id, {
 				status: TAXI_ORDER_STATUS.PENDING,
 				last_sent_at: null
@@ -1812,10 +1812,10 @@ async function rejectGroupedOrderByParentId(req,res){
 
 		console.info("TaxiOrderController", "REJECTING PARENT ORDER", parent_order);
 		const { order_id, user_id, driver_id } = parent_order
-		const user = await UsersDao.getUserById(user_id);
+		//const user = await UsersDao.getUserById(user_id);
 		const driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
 
-		sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
+		//sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
 		await TaxiOrderDao.updateOrder(order_id, {
 			status: TAXI_ORDER_STATUS.PENDING,
 			last_sent_at: null
