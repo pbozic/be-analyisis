@@ -1768,8 +1768,7 @@ async function rejectGroupedOrderByParentId(req,res){
 					}
 				});
 
-				console.log("REJECT " + order_sent.taxi_order_sent_id);
-				if (order_sent.taxi_order_sent_id) {
+				if (order_sent?.taxi_order_sent_id) {
 					await prisma.taxi_order_sent.update({
 						where: {
 							taxi_order_sent_id: order_sent.taxi_order_sent_id
