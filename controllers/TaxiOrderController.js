@@ -1799,7 +1799,7 @@ async function rejectGroupedOrderByParentId(req,res){
 			}
 		}
 
-		let userActiveOrders = await TaxiOrderDao.userActiveOrders(user_id);
+		let userActiveOrders = await TaxiOrderDao.userActiveOrders(parent_order.user_id);
 		let pending = true;
 		for (let or of userActiveOrders) {
 			if (or.status !== TAXI_ORDER_STATUS.PENDING) {
@@ -1807,14 +1807,15 @@ async function rejectGroupedOrderByParentId(req,res){
 			}
 		}
 		console.log("pending", pending);
+		let rejected_order = await TaxiOrderDao.getOrder(parent_order_id)
 		if (pending) {
-			if (UserSockets.get(user_id)) {
+			if (UserSockets.get(parent_order.user_id)) {
 				console.log("EMITTING order_restart_search");
-				UserSockets.get(user_id).emit("order_restart_search", rejected_order);
+				UserSockets.get(parent_order.user_id).emit("order_restart_search", rejected_order);
 			}
 		}
 
-		res.status(200).json([parent_order_id,...parent_order.grouped_orders.map(order => order.order_id)]);
+		res.status(200).json(orders.map(order => order.order_id));
 	} catch (e) {
 		console.errorTag("TaxiOrderController", e);
 		res.status(500).json(e);
