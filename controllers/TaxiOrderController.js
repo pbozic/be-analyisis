@@ -1295,7 +1295,7 @@ async function rejectOrder(req, res) {
 
 		if (req.user.driver && req.user.driver.driver_id) {
 			await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, req.user.driver.driver_id);
-			await ScoringPointsDao.createScoringPoints(driver.business_id,req.user.user_id,null,order.order_id,1,true,SCORING_POINTS_REASON.REJECTED)
+			await ScoringPointsDao.createScoringPoints(req.user.driver.business_id,req.user.user_id,null,order.order_id,1,true,SCORING_POINTS_REASON.REJECTED)
 			let order_sent = await prisma.taxi_order_sent.findUnique({
 				where: {
 					taxi_order_sent_driver_unique: {
