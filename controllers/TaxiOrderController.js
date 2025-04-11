@@ -1787,6 +1787,8 @@ async function rejectGroupedOrderByParentId(req,res){
 			io.to("order_" + order_id).emit("order_status_change__taxi", rejected_order);
 			io.to("order_" + order_id).emit("order_rejected__taxi", rejected_order);
 			if(driver && req.user.driver.driver_id === driver.driver_id){
+				const user = await UsersDao.getUserById(user_id);
+				sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
 				rejected_order = await TaxiOrderDao.updateOrder(order_id, {
 					driver: {
 						disconnect: true
@@ -1812,10 +1814,10 @@ async function rejectGroupedOrderByParentId(req,res){
 
 		console.info("TaxiOrderController", "REJECTING PARENT ORDER", parent_order);
 		const { order_id, user_id, driver_id } = parent_order
-		//const user = await UsersDao.getUserById(user_id);
+		//
 		const driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
 
-		//sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
+		//
 		await TaxiOrderDao.updateOrder(order_id, {
 			status: TAXI_ORDER_STATUS.PENDING,
 			last_sent_at: null
@@ -1851,6 +1853,8 @@ async function rejectGroupedOrderByParentId(req,res){
 		io.to("order_" + order_id).emit("order_status_change__taxi", rejected_order);
 		io.to("order_" + order_id).emit("order_rejected__taxi", rejected_order);
 		if(driver && req.user.driver.driver_id === driver.driver_id){
+			const user = await UsersDao.getUserById(user_id);
+			sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
 			rejected_order = await TaxiOrderDao.updateOrder(order_id, {
 				driver: {
 					disconnect: true
