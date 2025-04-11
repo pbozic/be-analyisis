@@ -529,12 +529,29 @@ const findCreditsExpiringInDays = async (days) => {
 	}
 }
 
-const getAvailableCredits = async (userId, type) => {
+const getAvailableCreditsByType = async (userId, type) => {
 	try {
 		return await prisma.wallet_funds.findMany({
 			where: {
 				user_id: userId,
 				type: type,
+				status: CREDIT_STATUS.ACTIVE,
+				reserved_order: null,
+			}
+		});
+	} catch (error) {
+		throw error;
+	}
+}
+
+const getAvailableCreditsForOrder = async (userId, type) => {
+	try {
+		return await prisma.wallet_funds.findMany({
+			where: {
+				user_id: userId,
+				type: {
+					in: [type, FUNDS_TYPE.CREDITS_ANY]
+				},
 				status: CREDIT_STATUS.ACTIVE,
 				reserved_order: null,
 			}
@@ -587,7 +604,8 @@ module.exports = {
 	releaseFunds,
 
 	createCredit,
-	getAvailableCredits,
+	getAvailableCreditsByType,
+	getAvailableCreditsForOrder,
 	getReservedCredits,
 	getExpiredCredits,
 	convertCashbacksToCredit,

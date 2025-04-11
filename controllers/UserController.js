@@ -1803,7 +1803,7 @@ async function getUserCredits(req, res) {
 	try {
 		const { service_type } = req.params;
 		const { user_id } = req.user;
-		const availableCredits = await WalletFundsDao.getAvailableCredits(user_id, SERVICE_TYPE_TO_FUNDS_TYPE[service_type]);
+		const availableCredits = await WalletFundsDao.getAvailableCreditsByType(user_id, SERVICE_TYPE_TO_FUNDS_TYPE[service_type]);
 		const expiredCredits = await WalletFundsDao.getExpiredCredits(user_id, SERVICE_TYPE_TO_FUNDS_TYPE[service_type]);
 		const cashbacks = Object.keys(CASHBACK_TYPE).includes(service_type.toUpperCase())
 			? await CashbackDao.getPendingUserCashbackByType(user_id, service_type) : [];
