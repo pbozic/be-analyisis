@@ -1503,6 +1503,45 @@ async function generateBusinessStripeByBusinessId(req,res){
 	}
 }
 
+async function onboardingEnd(req, res) {
+	try {
+		const business_id = req.params.business_id;
+		const business = await BusinessDao.getBusinessById(business_id);
+
+		if (!business || !business.stripe_account_id) {
+			return res.status(404).render("stripeOnboardingIncomplete", {
+				message: "We couldn’t find a valid Stripe account for this business.",
+			});
+		}
+
+		const stripe_account = await stripe.client.accounts.retrieve(business.stripe_account_id);
+		const current_reqs = stripe_account?.requirements?.currently_due || [];
+		const eventual_reqs = stripe_account?.requirements?.eventually_due || [];
+
+		const isComplete = stripe_account.details_submitted &&
+			current_reqs.length === 0 &&
+			eventual_reqs.length === 0;
+
+		if (isComplete) {
+			return res.render("stripeOnboardingSuccess", {
+				businessName: business.name,
+			});
+		} else {
+			return res.render("stripeOnboardingIncomplete", {
+				message: "There are still steps remaining in your onboarding process.",
+				retryLink: `https://api.klikni-web.eu/api/stripe/generate/${business_id}`
+			});
+		}
+	} catch (error) {
+		console.error("Stripe onboarding return URL error:", error);
+		return res.status(500).render("stripeOnboardingIncomplete", {
+			message: "An unexpected error occurred. Please try again later."
+		});
+	}
+}
+
+
+
 async function getBusynessFactorsBusinessIdList(req, res) {
 	const { business_ids } = req.query;
 	if (!business_ids) {
@@ -1652,6 +1691,7 @@ module.exports = {
 	getBusinessForSearchById,
 	addBusinessToFavorites,
 	removeBusinessFromFavorites,
-	getFavoriteBusinesses
+	getFavoriteBusinesses,
+	onboardingEnd
 };
 
