@@ -35,6 +35,7 @@ const createOrderSchema = Joi.object({
 	parent_user_type: Joi.string().allow(null).optional(),
 	creating_user_id: Joi.string().allow(null).optional(),
 	vehicle_transfer_order: Joi.object().allow(null).optional(),
+	allow_credits_usage: Joi.boolean().required()
 });
 
 module.exports = {
