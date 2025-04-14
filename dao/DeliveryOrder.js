@@ -287,7 +287,7 @@ async function createOrder(order, user_id) {
 	try {
 		return prisma.delivery_orders.create({
 			data: {
-				...order,
+				...orderData,
 				user: {
 					connect: {
 						user_id: user_id,
