@@ -1786,8 +1786,9 @@ async function rejectGroupedOrderByParentId(req,res){
 
 
 			io.to("order_" + order_id).emit("order_status_change__taxi", order);
-			io.to("order_" + order_id).emit("order_rejected__taxi", order);
+			
 			if(driver && req.user.driver.driver_id === driver.driver_id){
+				io.to("order_" + order_id).emit("order_rejected__taxi", order);
 				const user = await UsersDao.getUserById(user_id);
 				sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
 				await TaxiOrderDao.updateOrder(order_id, {

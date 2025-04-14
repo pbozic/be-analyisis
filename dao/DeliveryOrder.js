@@ -282,6 +282,8 @@ async function getOrdersByDeliveryDriverId(delivery_driver_id) {
 }
 
 async function createOrder(order, user_id) {
+	let orderData = {...order}
+	delete orderData.user_id;
 	try {
 		return prisma.delivery_orders.create({
 			data: {
