@@ -42,10 +42,9 @@ const getPendingUserCashbackByType = async (user_id, type) => {
 				status: CASHBACK_STATUS.PENDING,
 				type: type,
 			},
-			/*include: {
-				taxi_order: type === CASHBACK_TYPE.TAXI,
-				delivery_order: type === CASHBACK_TYPE.DELIVERY,
-			},*/
+			orderBy: {
+				earned_at: 'asc'
+			}
 		});
 	} catch (error) {
 		throw error;

@@ -1027,8 +1027,9 @@ async function completeOrder(req, res) {
 						taxi_order: { connect: { order_id: order.order_id } },
 					});
 					if (cashback) {
+						const thresh = CREDITS.TAXI_THRESHOLD;
 						const pendingCashbacks = await CashbackDao.getPendingUserCashbackByType(orderingUser.user_id, ORDER_TYPE.TAXI);
-						if (pendingCashbacks?.length === CREDITS.TAXI_THRESHOLD) {
+						if (pendingCashbacks?.length === thresh) {
 							const totalAmount = pendingCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
 							if (totalAmount > 0) {
 								await WalletFundsDao.convertCashbacksToCredit({
@@ -1036,6 +1037,20 @@ async function completeOrder(req, res) {
 									amount: Math.round(totalAmount*100),
 									type: FUNDS_TYPE.CREDITS_TAXI,
 								}, pendingCashbacks)
+							}
+						} else if (pendingCashbacks?.length > thresh) {
+							const groups = Math.floor(pendingCashbacks.length / thresh);
+							for (let i = 0; i < groups; i++) {
+								const startIndex = i * thresh;
+								const groupCashbacks = pendingCashbacks.slice(startIndex, startIndex + thresh);
+								const totalAmount = groupCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
+								if (totalAmount > 0) {
+									await WalletFundsDao.convertCashbacksToCredit({
+										user: { connect: { user_id: orderingUser.user_id } },
+										amount: Math.round(totalAmount * 100),
+										type: FUNDS_TYPE.CREDITS_TAXI,
+									}, groupCashbacks);
+								}
 							}
 						}
 					}
