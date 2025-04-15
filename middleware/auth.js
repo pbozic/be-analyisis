@@ -1,7 +1,7 @@
 require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const { UserSockets } = require("../socket");
-
+const { asyncLocalStorage } = require('../lib/logger');
 const authMiddleware = (req, res, next) => {
 	const authHeader = req.headers["authorization"];
 
@@ -15,6 +15,13 @@ const authMiddleware = (req, res, next) => {
 		const decoded = jwt.verify(token, process.env.JWT_TOKEN_SECRET);
 		req.user = decoded.user;
 		req.socket = UserSockets.get(decoded.user_id);
+		const userId = extractUserId(req); // Your logic
+		const routePath = req.route?.path || req.originalUrl;
+	  
+		asyncLocalStorage.run({ userId, routePath }, () => {
+		  req.userId = userId;
+		  next();
+		});
 		next();
 	} catch (error) {
 		console.log(error)

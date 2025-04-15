@@ -1,0 +1,17 @@
+# Module: postgresql
+# Docs: https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-module-postgresql.html
+
+- module: postgresql
+  log:
+    enabled: true
+
+    # Path to PostgreSQL logs (bind this into the container if needed)
+    var.paths:
+      - /var/log/postgresql/*.log
+
+    # Log format: "stderr" or "csvlog"
+    # Use "stderr" if your PostgreSQL logs look like: 2024-01-01 10:00:00 [LOG] ...
+    var.format: stderr
+
+    # Optionally set timezone if your logs are not UTC
+    # var.timezone: "UTC"

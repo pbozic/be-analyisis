@@ -17,15 +17,26 @@ const { app, server } = require('./server');
 const { io } = require('./socket'); // This initializes the socket.io server even if the io variable is not used in this file
 const CustomConsole = require('./lib/logger');
 const compression = require('compression');
-const apm = require('elastic-apm-node').start({
-	serviceName: 'Klikni Server',
-	serverUrl: 'http://localhost:8200',  // APM Server URL
-	environment: process.env.NODE_ENV || 'development',
-});
-const customConsole = new CustomConsole(console, { 
-	showSourceLocation: process.env.LOGGING_SHOW_TRACE === 'true'
-});
-global.console = customConsole;
+const { asyncLocalStorage, log } = require('./lib/logger');
+const util = require('util');
+// const apm = require('elastic-apm-node').start({
+// 	serviceName: 'Klikni Server',
+// 	serverUrl: 'http://localhost:8200',  // APM Server URL
+// 	environment: process.env.NODE_ENV || 'development',
+// });
+function makePinoConsoleOverride(level = 'info') {
+	return (...args) => {
+		const formatted = util.format(...args);
+		log[level](formatted);
+	};
+}
+  
+console.log = makePinoConsoleOverride('info');
+console.info = makePinoConsoleOverride('info');
+console.warn = makePinoConsoleOverride('warn');
+console.error = makePinoConsoleOverride('error');
+console.debug = makePinoConsoleOverride('debug');
+
 app.use(compression({
 	level: 6, // 1 (fastest, less compression) to 9 (slowest, most compression)
 	threshold: 10 * 1024, // Only compress responses bigger than 10KB
@@ -64,7 +75,13 @@ app.use(fileUploadLib());
 app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, "public")));
-
+app.use((req, res, next) => {
+	const store = asyncLocalStorage.getStore();
+	if (store) {
+	  store.routePath = req.route?.path || req.originalUrl;
+	}
+	next();
+  });
 const spec = openapi();
 
 app.use("/v1/api-docs", swaggerUi.serve, swaggerUi.setup(spec, { explorer: true }));

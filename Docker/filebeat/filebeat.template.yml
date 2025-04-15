@@ -23,10 +23,24 @@ filebeat.inputs:
           overwrite_keys: true
 
 
-output.elasticsearch:
-  hosts: ["http://${ELASTICSEARCH_HOSTS}"]
-  username: "${ELASTICSEARCH_USERNAME}"
-  password: "${ELASTICSEARCH_PASSWORD}"
+output.logstash:
+  hosts: ["logstash:5044"]
 
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      hints.enabled: true
+      templates:
+        - condition:
+            contains:
+              docker.container.name: "node-app"
+          config:
+            - type: container
+              paths:
+                - /var/lib/docker/containers/${data.docker.container.id}/*.log
+              processors:
+                - add_docker_metadata: ~
+              tags: ["node", "pino"]
+              
 setup.kibana:
   host: "http://kibana:5601"
