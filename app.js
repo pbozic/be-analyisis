@@ -24,18 +24,59 @@ const util = require('util');
 // 	serverUrl: 'http://localhost:8200',  // APM Server URL
 // 	environment: process.env.NODE_ENV || 'development',
 // });
-function makePinoConsoleOverride(level = 'info') {
-	return (...args) => {
-		const formatted = util.format(...args);
-		log[level](formatted);
-	};
-}
+console.log = (...args) => {
+	const msg = args
+	  .map(arg =>
+		typeof arg === 'string'
+		  ? arg
+		  : typeof arg === 'object'
+			? JSON.stringify(arg, null, 2)
+			: String(arg)
+	  )
+	  .join(' ');
+	log.info(msg);
+  };
   
-console.log = makePinoConsoleOverride('info');
-console.info = makePinoConsoleOverride('info');
-console.warn = makePinoConsoleOverride('warn');
-console.error = makePinoConsoleOverride('error');
-console.debug = makePinoConsoleOverride('debug');
+  console.info = console.log;
+  
+  console.warn = (...args) => {
+	const msg = args
+	  .map(arg =>
+		typeof arg === 'string'
+		  ? arg
+		  : typeof arg === 'object'
+			? JSON.stringify(arg, null, 2)
+			: String(arg)
+	  )
+	  .join(' ');
+	log.warn(msg);
+  };
+  
+  console.error = (...args) => {
+	const msg = args
+	  .map(arg =>
+		typeof arg === 'string'
+		  ? arg
+		  : typeof arg === 'object'
+			? JSON.stringify(arg, null, 2)
+			: String(arg)
+	  )
+	  .join(' ');
+	log.error(msg);
+  };
+  
+  console.debug = (...args) => {
+	const msg = args
+	  .map(arg =>
+		typeof arg === 'string'
+		  ? arg
+		  : typeof arg === 'object'
+			? JSON.stringify(arg, null, 2)
+			: String(arg)
+	  )
+	  .join(' ');
+	log.debug(msg);
+  };
 
 app.use(compression({
 	level: 6, // 1 (fastest, less compression) to 9 (slowest, most compression)
