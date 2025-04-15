@@ -1422,8 +1422,24 @@ async function dispatcherCancel(req,res){
 		let driver;
 		if (old_order.driver_id) {
 			driver = await DriverDao.getDriverById(old_order.driver_id);
+			await prisma.drivers.update({
+				where: {
+					driver_id: driver.driver_id
+				},
+				data: {
+					on_order: false
+				}
+			});
 		} else if (old_order.delivery_driver_id) {
 			driver = await DeliveryDriverDao.getDeliveryDriverById(old_order.delivery_driver_id);
+			await prisma.delivery_drivers.update({
+				where: {
+					driver_id: driver.delivery_driver_id
+				},
+				data: {
+					on_order: false
+				}
+			});
 		}
 		sendDeliveryOrderNotifications(old_order.user, driver?.user, old_order.user_id, driver?.user_id, new_order.status);
 		//TODO: handle extras for socket on FE if needed.
