@@ -1495,15 +1495,15 @@ async function updateChildUserEnabledByGroupUserId(req, res) {
 }
 
 /**
- * PATCH /users/me/group_user/status
+ * PATCH /users/me/group_user/allowance
  * @tag Users
- * @summary Updates the enabled field of the given child_user_id
- * @description This endpoint is used to update enabled field of the given child_user_id
- * @operationId updateChildUser
- * @bodyDescription The child's group_user_id and value to set for the child user's enabled field
- * @bodyContent {group_user_id,value}
+ * @summary Updates the allowance of the given child_user_id for the given service_type
+ * @description This endpoint is used to update the allowance of the given child_user_id for the given service_type
+ * @operationId updateChildUserAllowance
+ * @bodyDescription The child's group_user_id and value to set for the child user's allowance for the given service type
+ * @bodyContent { group_user_id, value, type }
  * @bodyRequired
- * @response 200 - User updated successfully. Returns the updated group_user.
+ * @response 200 - User allowance updated successfully. Returns the updated group_user.
  * @responseContent {group_user} 200.application/json
  * @response 400 - Error updating group user enabled status.
  */
@@ -1515,10 +1515,10 @@ async function updateChildUserAllowanceByGroupUserId(req, res) {
 		if (group_user) {
 			return res.status(200).json(group_user);
 		}
-		res.status(400).json({ error: "Error updating group user enabled status" });
+		res.status(400).json({ error: "Error updating group user allowance" });
 	} catch (e) {
 		console.log(e)
-		res.status(400).json({ error: "Error updating group user enabled status", e });
+		res.status(400).json({ error: "Error updating group user allowance", e });
 	}
 }
 
