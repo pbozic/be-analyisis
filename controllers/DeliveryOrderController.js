@@ -1125,7 +1125,7 @@ async function updateOrderStatus(req, res) {
 			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
 		}
 
-		order = await DeliveryOrderDao.getOrder(req.body.order_id);
+		order = await DeliveryOrderDao.getOrder(req.body.order_id, {include: {user: true}});
 		let d;
 		if (order.driver_id) {
 			d = await DriverDao.getDriverById(order.driver_id);
@@ -1157,7 +1157,8 @@ async function merchantAcceptOrder(req, res) {
 	const { order_id, preparation_time } = req.body
 	try {
 
-		let order = await DeliveryOrderDao.getOrder(order_id);
+		let order = await DeliveryOrderDao.getOrder(order_id, {include: {user: true}});
+		const user = order?.user;
 		console.info("got into merchantAcceptOrder", JSON.stringify(order.payment_intent_id))
 		const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
 		const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT } = await calculateDeliveryOrderPaymentCuts(order);
@@ -1194,7 +1195,7 @@ async function merchantAcceptOrder(req, res) {
 
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL);
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED);
-		sendDeliveryOrderNotifications(order.user, null, order.user_id, null, order.status);
+		sendDeliveryOrderNotifications(user, null, order.user_id, null, order.status);
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_PREPARING);
 		if(preparation_time){
 			order = await DeliveryOrderDao.updateOrderPickupTime(order.order_id, preparation_time);
@@ -1406,7 +1407,7 @@ async function getDeliveryOrdersToday(req, res) {
 async function dispatcherCancel(req,res){
 	const {order_id} = req.body
 	try {
-		const old_order = await DeliveryOrderDao.getOrder(order_id)
+		const old_order = await DeliveryOrderDao.getOrder(order_id, {include: {user: true}})
 		if([
 			DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED,
 			DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
@@ -1420,9 +1421,9 @@ async function dispatcherCancel(req,res){
 		let new_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED)
 		let driver;
 		if (old_order.driver_id) {
-			driver = DriverDao.getDriverById(old_order.driver_id);
-		} else {
-			driver = DeliveryDriverDao.getDeliveryDriverById(old_order.delivery_driver_id);
+			driver = await DriverDao.getDriverById(old_order.driver_id);
+		} else if (old_order.delivery_driver_id) {
+			driver = await DeliveryDriverDao.getDeliveryDriverById(old_order.delivery_driver_id);
 		}
 		sendDeliveryOrderNotifications(old_order.user, driver?.user, old_order.user_id, driver?.user_id, new_order.status);
 		//TODO: handle extras for socket on FE if needed.
