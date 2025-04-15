@@ -1018,7 +1018,6 @@ async function completeOrder(req, res) {
 				cashbackAmount = Number((cashbackAmount / 100).toFixed(2));
 				if (cashbackAmount > 0) {
 					const cashback = await CashbackDao.createCashback({
-						//expires_at: expiryDate,
 						user: { connect: { user_id: orderingUser.user_id } },
 						amount: cashbackAmount,
 						type: ORDER_TYPE.TAXI,
@@ -1030,6 +1029,9 @@ async function completeOrder(req, res) {
 						const thresh = CREDITS.TAXI_THRESHOLD;
 						const pendingCashbacks = await CashbackDao.getPendingUserCashbackByType(orderingUser.user_id, ORDER_TYPE.TAXI);
 						if (pendingCashbacks?.length === thresh) {
+							const expiryDate = new Date();
+							expiryDate.setDate(expiryDate.getDate() + 30);
+							expiryDate.setHours(23, 59, 59, 999);
 							const totalAmount = pendingCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
 							if (totalAmount > 0) {
 								await WalletFundsDao.convertCashbacksToCredit({
@@ -1043,6 +1045,9 @@ async function completeOrder(req, res) {
 							for (let i = 0; i < groups; i++) {
 								const startIndex = i * thresh;
 								const groupCashbacks = pendingCashbacks.slice(startIndex, startIndex + thresh);
+								const expiryDate = new Date(groupCashbacks[thresh-1]?.updated_at);
+								expiryDate.setDate(expiryDate.getDate() + 30);
+								expiryDate.setHours(23, 59, 59, 999);
 								const totalAmount = groupCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
 								if (totalAmount > 0) {
 									await WalletFundsDao.convertCashbacksToCredit({
