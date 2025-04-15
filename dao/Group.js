@@ -1,4 +1,5 @@
 const prisma = require("../prisma/prisma");
+const { SERVICE_TYPE } = require("../lib/constants");
 
 const getGroupUsersByParentId = async (parent_id) => {
 	try {
@@ -65,44 +66,32 @@ const updateGroupUserEnabled = async (group_user_id,value) => {
 }
 
 const updateGroupUserAllowance = async (group_user_id, value, type) => {
-	const group_user = await prisma.group_users.findUnique({
-		where: {
-			group_user_id: group_user_id,
-		},
-		include: {
-			allowance: true
-		}
-	});
 	const updateData = {};
-	if (type === 'Taxi') {
-		updateData.amount_taxi = value;
-	} else if (type === 'Transfer') {
-		updateData.amount_transfer = value;
-	} else if (type === 'Delivery') {
-		updateData.amount_delivery = value;
-	} else if (type === 'Any') {
-		updateData.amount_any = value;
+	switch (type) {
+		case SERVICE_TYPE.TAXI:
+			updateData.amount_taxi = value;
+			break
+		case SERVICE_TYPE.TRANSFER:
+			updateData.amount_transfer = value;
+			break
+		case SERVICE_TYPE.DELIVERY:
+			updateData.amount_delivery = value;
+			break
+		case SERVICE_TYPE.ANY:
+			updateData.amount_any = value;
+			break
+		default:
+			throw new Error("Invalid allowance type given")
 	}
-	let allowance = group_user?.allowance;
-	if (!allowance) {
-		await prisma.allowances.create({
-			data: {
-				user: {
-					connect: {
-						group_user_id: group_user_id,
-					}
-				},
-				...updateData
-			}
-		});
-	} else {
-		await prisma.allowances.update({
-			where: {
-				group_user_id: group_user_id,
-			},
-			data: updateData
-		});
-	}
+	await prisma.allowances.upsert({
+		where: { group_user_id },
+		update: updateData,
+		create: { group_user_id, ...updateData }
+	});
+	const group_user = await prisma.group_users.findUnique({
+		where: { group_user_id },
+		include: { allowance: true }
+	});
 	return group_user;
 }
 
