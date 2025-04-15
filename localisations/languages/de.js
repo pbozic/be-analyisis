@@ -36,6 +36,9 @@ const  de = {
         ready_for_pickup: "",
         canceled: "Ihre Lieferbestellung wurde storniert.",
         delayed: "",
+        rejected: "Ihre Lieferbestellung wurde abgelehnt.",
+        inDelivery: "Ihre Lieferung ist auf dem Weg zu Ihnen.",
+        completed: "Ihre Lieferbestellung wurde abgeschlossen."
     },
     DELIVERY_DRIVER_NOTIFICATIONS: {
         accepted: "Sie haben eine neue Lieferbestellung.",

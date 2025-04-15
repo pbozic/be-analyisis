@@ -10,7 +10,7 @@ const { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE, TAXI_ORDER_STATUS,
 	CREDITS,
 	PARENT_USER_TYPE,
 	ORDER_TYPE,
-	CASHBACK_SOURCE, DRIVE_FEE, DELIVERY_ORDER_END_STATES, SCORING_POINTS_REASON, FUNDS_TYPE, SERVICE_TYPE
+	CASHBACK_SOURCE, DRIVE_FEE, DELIVERY_ORDER_END_STATES, SCORING_POINTS_REASON, FUNDS_TYPE, SERVICE_TYPE, USER_ROLE
 } = require("../lib/constants");
 const fs = require("fs");
 const Constants = require("../lib/constants");
@@ -721,38 +721,59 @@ async function completeOrder(req, res) {
 
 		const DISCOUNTED_DELIVERY_COST_CENTS = INITIAL_DELIVERY_CUT - DELIVERY_CREDIT_CUT_CENTS
 		console.info({ delivery_credits:DELIVERY_CREDIT_CUT_CENTS, remaining_delivery_cost: DISCOUNTED_DELIVERY_COST_CENTS })
-		//TODO: move to order creation
-		// if (DELIVERY_COST_CENTS >= CREDITS.MINIMUM_ORDER_AMOUNT * 100) {
-		// 	let cashbackAmount = Math.min(
-		// 		DELIVERY_COST_CENTS * (CREDITS.DELIVERY_ORDER_CASHBACK_PERCENTAGE),
-		// 		CREDITS.MAXIMUM_CASHBACK_DELIVERY_ORDER * 100
-		// 	);
-		// 	cashbackAmount = cashbackAmount / 100;
-		// 	if (cashbackAmount > 0) {
-		// 		const cashback = await CashbackDao.createCashback({
-		// 			//expires_at: expiryDate,
-		// 			user: { connect: { user_id: order.user_id } },
-		// 			amount: cashbackAmount,
-		// 			type: ORDER_TYPE.DELIVERY,
-		// 			source: CASHBACK_SOURCE.ORDER,
-		// 			description: `Cashback for delivery order ${order.order_id}`,
-		// 			taxi_order: { connect: { order_id: order.order_id } },
-		// 		});
-		// 		if (cashback) {
-		// 			const pendingCashbacks = await CashbackDao.getPendingUserCashbackByType(order.user_id, ORDER_TYPE.TAXI);
-		// 			if (pendingCashbacks?.length === CREDITS.TAXI_THRESHOLD) {
-		// 				const totalAmount = pendingCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
-		// 				if (totalAmount > 0) {
-		// 					await WalletFundsDao.convertCashbacksToCredit({
-		// 						user: { connect: { user_id: order.user_id } },
-		// 						amount: totalAmount,
-		// 						type: ORDER_TYPE.TAXI,
-		// 					}, pendingCashbacks)
-		// 				}
-		// 			}
-		// 		}
-		// 	}
-		// }
+
+		const DELIVERY_COST_CENTS = order.details.total_price * 100;
+		if (DELIVERY_COST_CENTS >= CREDITS.MINIMUM_ORDER_AMOUNT * 100) {
+			let cashbackAmount = Math.min(
+				DELIVERY_COST_CENTS * (CREDITS.DELIVERY_ORDER_CASHBACK_PERCENTAGE),
+				CREDITS.MAXIMUM_CASHBACK_DELIVERY_ORDER * 100
+			);
+			cashbackAmount = cashbackAmount / 100;
+			if (cashbackAmount > 0) {
+				const cashback = await CashbackDao.createCashback({
+					user: { connect: { user_id: order.user_id } },
+					amount: cashbackAmount,
+					type: ORDER_TYPE.DELIVERY,
+					source: CASHBACK_SOURCE.ORDER,
+					description: `Cashback for delivery order ${order.order_id}`,
+					delivery_order: { connect: { order_id: order.order_id } },
+				});
+				if (cashback) {
+					const thresh = CREDITS.DELIVERY_THRESHOLD;
+					const pendingCashbacks = await CashbackDao.getPendingUserCashbackByType(order.user_id, ORDER_TYPE.DELIVERY);
+					if (pendingCashbacks?.length === thresh) {
+						const expiryDate = new Date();
+						expiryDate.setDate(expiryDate.getDate() + 30);
+						expiryDate.setHours(23, 59, 59, 999);
+						const totalAmount = pendingCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
+						if (totalAmount > 0) {
+							await WalletFundsDao.convertCashbacksToCredit({
+								user: { connect: { user_id: order.user_id } },
+								amount: totalAmount,
+								type: ORDER_TYPE.DELIVERY,
+							}, pendingCashbacks, expiryDate)
+						}
+					} else if (pendingCashbacks?.length > thresh) {
+						const groups = Math.floor(pendingCashbacks.length / thresh);
+						for (let i = 0; i < groups; i++) {
+							const startIndex = i * thresh;
+							const groupCashbacks = pendingCashbacks.slice(startIndex, startIndex + thresh);
+							const expiryDate = new Date(groupCashbacks[thresh-1]?.updated_at);
+							expiryDate.setDate(expiryDate.getDate() + 30);
+							expiryDate.setHours(23, 59, 59, 999);
+							const totalAmount = groupCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
+							if (totalAmount > 0) {
+								await WalletFundsDao.convertCashbacksToCredit({
+									user: { connect: { user_id: order.user_id } },
+									amount: Math.round(totalAmount * 100),
+									type: FUNDS_TYPE.CREDITS_DELIVERY,
+								}, groupCashbacks, expiryDate);
+							}
+						}
+					}
+				}
+			}
+		}
 
 		await handleReferral(order.user_id);
 
@@ -769,6 +790,7 @@ async function completeOrder(req, res) {
 				const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id, delivery_business_stripe, DISCOUNTED_DELIVERY_COST_CENTS, order.order_id, SERVICE_TYPE.DELIVERY);
 			}
 		}
+		sendDeliveryOrderNotifications(order.user, null, order.user_id, null, order.status);
 		order = await DeliveryOrderDao.updateOrderStatus(order.order_id,DELIVERY_ORDER_STATUS.SUCCESS)
 		io.to("order_" + order.order_id).emit("order_completed__delivery", order);
 		io.emit("driver_available", driver);
@@ -1103,14 +1125,14 @@ async function updateOrderStatus(req, res) {
 			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
 		}
 
-		order = await DeliveryOrderDao.getOrder(req.body.order_id, { include: { user: true, driver: true, delivery_driver: true } });
+		order = await DeliveryOrderDao.getOrder(req.body.order_id, {include: {user: true}});
 		let d;
-		if (order.driver?.driver_id) {
-			d = DriverDao.getDriverById(order.driver.driver_id);
-		} else if (order.delivery_driver?.delivery_driver_id) {
-			d = DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver.delivery_driver_id);
+		if (order.driver_id) {
+			d = await DriverDao.getDriverById(order.driver_id);
+		} else if (order.delivery_driver_id) {
+			d = await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id);
 		}
-		sendDeliveryOrderNotifications(order.user, d?.user, order.user_id, order.driver_id, req.body.status);
+		sendDeliveryOrderNotifications(order.user, d?.user, order.user_id, d?.user_id, req.body.status);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);
@@ -1135,7 +1157,8 @@ async function merchantAcceptOrder(req, res) {
 	const { order_id, preparation_time } = req.body
 	try {
 
-		let order = await DeliveryOrderDao.getOrder(order_id);
+		let order = await DeliveryOrderDao.getOrder(order_id, {include: {user: true}});
+		const user = order?.user;
 		console.info("got into merchantAcceptOrder", JSON.stringify(order.payment_intent_id))
 		const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
 		const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT } = await calculateDeliveryOrderPaymentCuts(order);
@@ -1172,12 +1195,10 @@ async function merchantAcceptOrder(req, res) {
 
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL);
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED);
+		sendDeliveryOrderNotifications(user, null, order.user_id, null, order.status);
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_PREPARING);
 		if(preparation_time){
-			order = await DeliveryOrderDao.updateOrderPickupTime(
-				order.order_id,
-				new Date(Date.now() + preparation_time * 60000)
-			);
+			order = await DeliveryOrderDao.updateOrderPickupTime(order.order_id, preparation_time);
 			io.to("order_" + order.order_id).emit("order_pickup_time", order);
 		}
 		// if(order.business_id){
@@ -1216,11 +1237,19 @@ async function updateOrderPickupTime(req, res) {
 		let order = await DeliveryOrderDao.updateOrderPickupTime(order_id, pickup_time);
 		io.to("order_" + order.order_id).emit("order_pickup_time", order);
 		const totalDelay = order.timeline.reduce((sum, entry) => {
-			if (entry.status === 'MERCHANT_DELAYED') {
+			if (entry.status === DELIVERY_ORDER_STATUS.MERCHANT_DELAYED) {
 				return sum + (entry.delay || 0);
 			}
 			return sum;
 		}, 0);
+		let d;
+		if (order.driver_id) {
+			d = await DriverDao.getDriverById(order.driver_id);
+		} else if (order.delivery_driver_id) {
+			d = await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id);
+		}
+		sendDeliveryOrderNotifications(null, d?.user, null, d.user_id, DELIVERY_ORDER_STATUS.MERCHANT_DELAYED);
+
 		if(totalDelay>120){
 			const exising_penalties = await ScoringPointsDao.getScoringPointsByBusinessId(order.business_id)
 			const already_penalized_order = exising_penalties?.find(sp=>sp.delivery_order_id===order.order_id && sp.reason===SCORING_POINTS_REASON.LARGE_DELAY)
@@ -1378,7 +1407,7 @@ async function getDeliveryOrdersToday(req, res) {
 async function dispatcherCancel(req,res){
 	const {order_id} = req.body
 	try {
-		const old_order = await DeliveryOrderDao.getOrder(order_id)
+		const old_order = await DeliveryOrderDao.getOrder(order_id, {include: {user: true}})
 		if([
 			DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED,
 			DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
@@ -1390,6 +1419,13 @@ async function dispatcherCancel(req,res){
 			throw new Error("This order is not in a cancelable state.")
 		}
 		let new_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED)
+		let driver;
+		if (old_order.driver_id) {
+			driver = await DriverDao.getDriverById(old_order.driver_id);
+		} else if (old_order.delivery_driver_id) {
+			driver = await DeliveryDriverDao.getDeliveryDriverById(old_order.delivery_driver_id);
+		}
+		sendDeliveryOrderNotifications(old_order.user, driver?.user, old_order.user_id, driver?.user_id, new_order.status);
 		//TODO: handle extras for socket on FE if needed.
 		io.to("order_" + new_order.order_id).emit("order_status_change__delivery", new_order);
 

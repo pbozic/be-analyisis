@@ -36,6 +36,9 @@ const it = {
         ready_for_pickup: "",
         canceled: "Il tuo ordine di consegna è stato annullato.",
         delayed: "",
+        rejected: "Il tuo ordine di consegna è stato rifiutato.",
+        inDelivery: "Il tuo ordine è in fase di consegna.",
+        completed: "Il tuo ordine di consegna è stato completato."
     },
     DELIVERY_DRIVER_NOTIFICATIONS: {
         accepted: "Hai un nuovo ordine di consegna.",

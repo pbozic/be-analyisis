@@ -36,6 +36,9 @@ const ru = {
         ready_for_pickup: "",
         canceled: "Ваш заказ на доставку отменен.",
         delayed: "",
+        rejected: "Ваш заказ на доставку был отклонен.",
+        inDelivery: "Ваш заказ доставляется.",
+        completed: "Ваш заказ на доставку выполнен."
     },
     DELIVERY_DRIVER_NOTIFICATIONS: {
         accepted: "У вас новый заказ на доставку.",

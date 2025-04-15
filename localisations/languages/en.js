@@ -36,6 +36,9 @@ const  en = {
         ready_for_pickup: "",
         canceled: "Your delivery order has been canceled.",
         delayed: "",
+        rejected: "Your delivery order has been rejected.",
+        inDelivery: "Your delivery order is being delivered to you.",
+        completed: "Your delivery order has been completed.",
     },
     DELIVERY_DRIVER_NOTIFICATIONS: {
         accepted: "You have a new delivery order.",

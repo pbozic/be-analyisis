@@ -451,12 +451,9 @@ const createCredit = async (data) => {
 	}
 }
 
-const convertCashbacksToCredit = async (data, pendingCashbacks) => {
+const convertCashbacksToCredit = async (data, pendingCashbacks, expiryDate) => {
 	try {
 		return await prisma.$transaction(async (tx) => {
-			const expiryDate = new Date();
-			expiryDate.setDate(expiryDate.getDate() + 30);
-			expiryDate.setHours(23, 59, 59, 999);
 			const credit = await tx.wallet_funds.create({
 				data: {
 					...data,
