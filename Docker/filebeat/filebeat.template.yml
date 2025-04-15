@@ -1,0 +1,32 @@
+filebeat.inputs:
+  - type: log
+    enabled: true
+    paths:
+      - ~/.pm2/logs/*-out.log
+      - ~/.pm2/logs/*-error.log
+    exclude_files: ['\.gz$']
+    fields_under_root: true
+    fields:
+      service.type: "pm2"
+    multiline.pattern: '^\['
+    multiline.negate: true
+    multiline.match: after
+    processors:
+      - dissect:
+          tokenizer: "~/.pm2/logs/%{pm2_app}-%{log_type}.log"
+          field: "log.file.path"
+          target_prefix: ""
+
+      - decode_json_fields:
+          fields: ["message"]
+          target: ""
+          overwrite_keys: true
+
+
+output.elasticsearch:
+  hosts: ["http://${ELASTICSEARCH_HOSTS}"]
+  username: "${ELASTICSEARCH_USERNAME}"
+  password: "${ELASTICSEARCH_PASSWORD}"
+
+setup.kibana:
+  host: "http://kibana:5601"

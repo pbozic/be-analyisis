@@ -1,0 +1,20 @@
+# apm-server.template.yml
+
+apm-server:
+  host: "0.0.0.0:8200"
+
+# Elasticsearch output settings
+output.elasticsearch:
+  hosts: ["${ELASTICSEARCH_HOSTS}"]  # Elasticsearch URL
+  username: "apm_system"
+  password: "${ELASTIC_PASSWORD}"
+
+kibana:
+  host: "http://kibana:5601"
+
+logging:
+  level: info
+  to_files: true
+  files:
+    path: "/var/log/apm-server"
+    keepfiles: 7

@@ -17,6 +17,11 @@ const { app, server } = require('./server');
 const { io } = require('./socket'); // This initializes the socket.io server even if the io variable is not used in this file
 const CustomConsole = require('./lib/logger');
 const compression = require('compression');
+const apm = require('elastic-apm-node').start({
+	serviceName: 'Klikni Server',
+	serverUrl: 'http://localhost:8200',  // APM Server URL
+	environment: process.env.NODE_ENV || 'development',
+});
 const customConsole = new CustomConsole(console, { 
 	showSourceLocation: process.env.LOGGING_SHOW_TRACE === 'true'
 });

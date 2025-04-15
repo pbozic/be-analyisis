@@ -72,7 +72,7 @@ const getBusinessesForSearchById = async (business_id) => {
 			business_id = [business_id];
 		}
 		
-		return await prisma.business.findMany({
+		let business = await prisma.business.findMany({
 			where: {
 				business_id: {
 					in: business_id
@@ -126,7 +126,7 @@ const getBusinessesForSearchById = async (business_id) => {
 				// }
 			}
 		});
-		
+		return business
 	} catch (error) {
 		console.error("Error retrieving business for search:", error);
 		throw new Error(error);
@@ -191,6 +191,13 @@ const getBusinessForSearchById = async (business_id) => {
 				}
 			}
 		});
+		for (let menu of business.menus) {
+			let order = menu.menu_categories_ordered;
+			if (order) {
+				order = order.split(",").map(String);
+				menu.categories = order.map((id) => menu.categories.find((cat) => cat.category_id === id));
+			}
+		}
 		return business
 	} catch (error) {
 		console.error("Error retrieving business for search:", error);
