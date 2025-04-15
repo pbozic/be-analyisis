@@ -236,7 +236,9 @@ router.post('/login/google', async (req, res) => {
 	  
 	  if (user.length > 0) {
 		// If the user exists, generate a JWT token and return it
-		return await getUser(user[0].user_id, res);
+		let user = await getUser(user[0].user_id, res);
+		res.json(user);
+		return;
 	  }
   
 	  // If the user does not exist, return the auth data (no JWT token)
