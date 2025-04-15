@@ -24,59 +24,41 @@ const util = require('util');
 // 	serverUrl: 'http://localhost:8200',  // APM Server URL
 // 	environment: process.env.NODE_ENV || 'development',
 // });
-console.log = (...args) => {
-	const msg = args
-	  .map(arg =>
-		typeof arg === 'string'
-		  ? arg
-		  : typeof arg === 'object'
-			? JSON.stringify(arg, null, 2)
-			: String(arg)
-	  )
-	  .join(' ');
-	log.info(msg);
-  };
+
+const isDev = process.env.NODE_ENV !== 'production';
+function formatArg(arg) {
+	if (typeof arg === 'string') return arg;
+	if (typeof arg === 'object') return isDev ? JSON.stringify(arg, null, 2) : arg;
+	return String(arg);
+  }
   
-  console.info = console.log;
+  function makeConsoleOverride(level = 'info') {
+	return (...args) => {
+	  if (isDev) {
+		// Pretty: string log (like native console.log)
+		const msg = args.map(formatArg).join(' ');
+		log[level](msg);
+	  } else {
+		// Structured: key-value log
+		const structuredLog = {};
+		args.forEach((arg, index) => {
+		  if (typeof arg === 'object' && arg !== null) {
+			Object.assign(structuredLog, arg); // Merge object fields
+		  } else {
+			structuredLog[`arg${index}`] = arg;
+		  }
+		});
+		log[level](structuredLog);
+	  }
+	};
+  }
   
-  console.warn = (...args) => {
-	const msg = args
-	  .map(arg =>
-		typeof arg === 'string'
-		  ? arg
-		  : typeof arg === 'object'
-			? JSON.stringify(arg, null, 2)
-			: String(arg)
-	  )
-	  .join(' ');
-	log.warn(msg);
-  };
-  
-  console.error = (...args) => {
-	const msg = args
-	  .map(arg =>
-		typeof arg === 'string'
-		  ? arg
-		  : typeof arg === 'object'
-			? JSON.stringify(arg, null, 2)
-			: String(arg)
-	  )
-	  .join(' ');
-	log.error(msg);
-  };
-  
-  console.debug = (...args) => {
-	const msg = args
-	  .map(arg =>
-		typeof arg === 'string'
-		  ? arg
-		  : typeof arg === 'object'
-			? JSON.stringify(arg, null, 2)
-			: String(arg)
-	  )
-	  .join(' ');
-	log.debug(msg);
-  };
+  // Override console methods
+  console.log = makeConsoleOverride('info');
+  console.info = makeConsoleOverride('info');
+  console.warn = makeConsoleOverride('warn');
+  console.error = makeConsoleOverride('error');
+  console.debug = makeConsoleOverride('debug');
 
 app.use(compression({
 	level: 6, // 1 (fastest, less compression) to 9 (slowest, most compression)
