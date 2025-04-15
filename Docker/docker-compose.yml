@@ -14,7 +14,7 @@ services:
     environment:
       - ELASTIC_USERNAME=${ELASTIC_USERNAME}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      - ES_JAVA_OPTS=-Xms512m -Xmx1g  # ✅ set min and max heap size
+      - ES_JAVA_OPTS=-Xms1g -Xmx2g  # ✅ set min and max heap size
     ports:
       - "127.0.0.1:9200:9200"
     ulimits:
@@ -27,10 +27,10 @@ services:
       resources:
         limits:
           cpus: "0.6"  # Limit Elasticsearch to use a maximum of 50% of one CPU core
-          memory: 1g  # ✅ hard limit at Docker level
+          memory: 2g  # ✅ hard limit at Docker level
         reservations:
           cpus: "0.2"  # Reserve 20% of one CPU core for Elasticsearch
-          memory: 512m
+          memory: 1g
   kibana:
     image: docker.elastic.co/kibana/kibana:8.17.1
     container_name: kibana
@@ -39,6 +39,8 @@ services:
       ELASTICSEARCH_HOSTS: "http://klikni_elasticsearch:9200"
       ELASTICSEARCH_USERNAME: "${KIBANA_USERNAME}"
       ELASTICSEARCH_PASSWORD: "${KIBANA_PASSWORD}"
+      SERVER_BASEPATH: "/kibana"
+      SERVER_REWRITEBASEPATH: true
     ports:
       - "127.0.0.1:5601:5601"
     networks:
@@ -51,6 +53,7 @@ services:
     volumes:
       - shared-init-status:/init-status
       - ./kibana/wait-for-init.sh:/wait-for-init.sh:ro
+      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
     entrypoint: ["/bin/sh", "/wait-for-init.sh"]
     
   filebeat:
