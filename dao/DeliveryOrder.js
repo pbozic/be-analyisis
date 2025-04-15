@@ -608,7 +608,8 @@ async function completeOrder(order_id) {
 							}
 						}
 					}
-				}
+				},
+				user: true
 			}
 		});
 		let orders = await prisma.delivery_orders.findMany({
