@@ -3,7 +3,7 @@
 echo "⏳ Waiting for Elasticsearch to be ready..."
 mkdir -p /init-status
 rm -f /init-status/init-complete.lock
-MAX_RETRIES=20
+MAX_RETRIES=2000
 RETRIES=0
 
 while true; do
