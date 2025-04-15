@@ -36,6 +36,9 @@ const  sr = {
         ready_for_pickup: "",
         canceled: "Vaša narudžbina za dostavu je otkazana.",
         delayed: "",
+        rejected: "Vaša narudžba za dostavu je odbijena.",
+        inDelivery: "Vaša narudžba se dostavlja.",
+        completed: "Vaša narudžba za dostavu je završena."
     },
     DELIVERY_DRIVER_NOTIFICATIONS: {
         accepted: "Imate novu narudžbinu za dostavu.",
