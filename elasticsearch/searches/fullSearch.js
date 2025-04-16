@@ -293,7 +293,7 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
                       filter: [
                         { term: { active: true } } // 🔥 this actually works now!
                       ],
-                     // must: functionScoreQuery // your function_score stays here
+                    must: functionScoreQuery // your function_score stays here
                     }
                   },
                 _source: [
