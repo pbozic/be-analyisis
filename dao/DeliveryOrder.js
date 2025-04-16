@@ -390,6 +390,13 @@ async function acceptOrderDelivery(order, deliverer_id, vehicle_id) {
 					on_order: true
 				}
 			});
+			const vehicleData = vehicle_id ? {
+				vehicle: {
+					connect: {
+						vehicle_id: vehicle_id
+					}
+				}
+			} : {};
 			return prisma.delivery_orders.update({
 				where: {
 					order_id
@@ -401,11 +408,7 @@ async function acceptOrderDelivery(order, deliverer_id, vehicle_id) {
 							delivery_driver_id: deliverer_id
 						}
 					},
-					vehicle: {
-						connect: {
-							vehicle_id: vehicle_id
-						}
-					}
+					...vehicleData
 				},
 			});
 		} else {
