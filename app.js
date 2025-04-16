@@ -19,46 +19,21 @@ const CustomConsole = require('./lib/logger');
 const compression = require('compression');
 const { asyncLocalStorage, log } = require('./lib/logger');
 const util = require('util');
+const flatted = require('flatted');
 // const apm = require('elastic-apm-node').start({
 // 	serviceName: 'Klikni Server',
 // 	serverUrl: 'http://localhost:8200',  // APM Server URL
 // 	environment: process.env.NODE_ENV || 'development',
 // });
 
-const isDev = process.env.NODE_ENV !== 'production';
-function formatArg(arg) {
-	if (typeof arg === 'string') return arg;
-	if (typeof arg === 'object') return isDev ? JSON.stringify(arg, null, 2) : arg;
-	return String(arg);
-  }
+
   
-  function makeConsoleOverride(level = 'info') {
-	return (...args) => {
-	  if (isDev) {
-		// Pretty: string log (like native console.log)
-		const msg = args.map(formatArg).join(' ');
-		log[level](msg);
-	  } else {
-		// Structured: key-value log
-		const structuredLog = {};
-		args.forEach((arg, index) => {
-		  if (typeof arg === 'object' && arg !== null) {
-			Object.assign(structuredLog, arg); // Merge object fields
-		  } else {
-			structuredLog[`arg${index}`] = arg;
-		  }
-		});
-		log[level](structuredLog);
-	  }
-	};
-  }
-  
-  // Override console methods
-//   console.log = makeConsoleOverride('info');
-//   console.info = makeConsoleOverride('info');
-//   console.warn = makeConsoleOverride('warn');
-//   console.error = makeConsoleOverride('error');
-//   console.debug = makeConsoleOverride('debug');
+//   // Override console methods
+  console.log = log.info;
+  console.info = log.info;
+  console.warn = log.warn;
+  console.error = log.error;
+  console.debug = log.debug;
   console.socket = console.log
 app.use(compression({
 	level: 6, // 1 (fastest, less compression) to 9 (slowest, most compression)

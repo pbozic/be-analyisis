@@ -973,7 +973,8 @@ async function registerBusiness(req, res) {
 		if (req.body.addresses && req.body.addresses.business) {
 			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
 		}
-
+		// TODO: select user to login,
+		
 		res.status(201).json({
 			message: "Business registered successfully",
 			business,

@@ -90,7 +90,7 @@ model business_users {
   company_role         COMPANY_ROLE @default(DIRECTOR)
   created_at           DateTime     @default(now()) @db.Timestamptz(6)
   updated_at           DateTime     @default(now()) @updatedAt @db.Timestamptz(6)
-  user_id              String       @db.Uuid
+  user_id              String       @db.Uuid @unique
   users                users?       @relation(fields: [user_id], references: [user_id])
   business_id          String       @db.Uuid
   business             business?    @relation(fields: [business_id], references: [business_id])
