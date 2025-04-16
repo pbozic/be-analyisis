@@ -18,11 +18,10 @@ const authMiddleware = (req, res, next) => {
 		const userId = decoded.user.user_id; // Your logic
 		const routePath = req.route?.path || req.originalUrl;
 	  
-		// asyncLocalStorage.run({ userId, routePath }, () => {
-		//   req.userId = userId;
-		//   next();
-		// });
-		next();
+		asyncLocalStorage.run({ userId, routePath }, () => {
+		  req.userId = userId;
+		  next();
+		});
 	} catch (error) {
 		console.log(error)
 		return res.status(401).json({ error: "Access Denied. Token expired.", e: error });
