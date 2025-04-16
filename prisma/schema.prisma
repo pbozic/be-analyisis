@@ -96,6 +96,8 @@ model business_users {
   business             business?    @relation(fields: [business_id], references: [business_id])
   operating_address_id String?      @db.Uuid
   operating_address    addresses?   @relation("business_users_operating_address", fields: [operating_address_id], references: [address_id])
+
+  @@unique([user_id, business_id], name: "uniqueBusinessUser")
 }
 
 model users {
