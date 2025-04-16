@@ -54,11 +54,11 @@ function formatArg(arg) {
   }
   
   // Override console methods
-  console.log = makeConsoleOverride('info');
-  console.info = makeConsoleOverride('info');
-  console.warn = makeConsoleOverride('warn');
-  console.error = makeConsoleOverride('error');
-  console.debug = makeConsoleOverride('debug');
+//   console.log = makeConsoleOverride('info');
+//   console.info = makeConsoleOverride('info');
+//   console.warn = makeConsoleOverride('warn');
+//   console.error = makeConsoleOverride('error');
+//   console.debug = makeConsoleOverride('debug');
 
 app.use(compression({
 	level: 6, // 1 (fastest, less compression) to 9 (slowest, most compression)
