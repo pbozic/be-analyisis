@@ -191,13 +191,13 @@ const getBusinessForSearchById = async (business_id) => {
 				}
 			}
 		});
-		for (let menu of business.menus) {
-			let order = menu.menu_categories_ordered;
-			if (order) {
-				order = order.split(",").map(String);
-				menu.categories = order.map((id) => menu.categories.find((cat) => cat.category_id === id));
-			}
-		}
+		// for (let menu of business.menus) {
+		// 	let order = menu.menu_categories_ordered;
+		// 	if (order) {
+		// 		order = order.split(",").map(String);
+		// 		menu.categories = order.map((id) => menu.categories.find((cat) => cat.category_id === id));
+		// 	}
+		// }
 		return business
 	} catch (error) {
 		console.error("Error retrieving business for search:", error);
