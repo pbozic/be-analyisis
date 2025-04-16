@@ -17,10 +17,12 @@ const authMiddleware = (req, res, next) => {
 		req.socket = UserSockets.get(decoded.user_id);
 		const userId = decoded.user.user_id; // Your logic
 		const routePath = req.route?.path || req.originalUrl;
-	  
+		
 		asyncLocalStorage.run({ userId, routePath }, () => {
-		  req.userId = userId;
 		  next();
+		}).catch((error) => {
+			console.log(error);
+			next();	
 		});
 	} catch (error) {
 		console.log(error)
