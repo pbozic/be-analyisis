@@ -15,14 +15,14 @@ const authMiddleware = (req, res, next) => {
 		const decoded = jwt.verify(token, process.env.JWT_TOKEN_SECRET);
 		req.user = decoded.user;
 		req.socket = UserSockets.get(decoded.user_id);
-		const userId = decoded.user.user_id; // Your logic
-		const routePath = req.route?.path || req.originalUrl;
+		// const userId = decoded.user.user_id; // Your logic
+		// const routePath = req.route?.path || req.originalUrl;
 		
+		next();
+		// asyncLocalStorage.run({ userId, routePath }, () => {
 		
-		asyncLocalStorage.run({ userId, routePath }, () => {
-		
-		 next();
-		})
+		//  
+		// })
 	} catch (error) {
 		console.log(error)
 		return res.status(401).json({ error: "Access Denied. Token expired.", e: error });
