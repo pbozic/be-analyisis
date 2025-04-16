@@ -34,6 +34,7 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
                 must_not: []
             }
         };
+        boolQuery.bool.filter.push({ term: { active: true } });
         // if (typeof isDailyMealSearch === "boolean") {
         //     if (isDailyMealSearch) {
         //         // Only daily meals with a date >= today
@@ -206,7 +207,7 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
                 }
             });
         }
-        boolQuery.bool.filter.push({ term: { active: true } });
+       
         // **Function Scoring (Maintains All Other Scoring)**
         const functionScoreQuery = {
             function_score: {
@@ -287,7 +288,14 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
                 from,
                 size: pageSize,
                 explain: true,
-                query: functionScoreQuery,
+                query: {
+                    bool: {
+                      filter: [
+                        { term: { active: true } } // 🔥 this actually works now!
+                      ],
+                      must: functionScoreQuery // your function_score stays here
+                    }
+                  },
                 _source: [
                     "business_id", "name", "description", "_score", "address", "delivery_address",
                     "popular", "new", "working_hours", "seats", "restaurant_overwhelmed",
