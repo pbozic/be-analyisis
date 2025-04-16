@@ -59,7 +59,7 @@ function formatArg(arg) {
 //   console.warn = makeConsoleOverride('warn');
 //   console.error = makeConsoleOverride('error');
 //   console.debug = makeConsoleOverride('debug');
-
+  console.socket = console.log;
 app.use(compression({
 	level: 6, // 1 (fastest, less compression) to 9 (slowest, most compression)
 	threshold: 10 * 1024, // Only compress responses bigger than 10KB
