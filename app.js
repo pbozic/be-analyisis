@@ -99,10 +99,10 @@ app.use(cookieParser());
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use((req, res, next) => {
-	const store = asyncLocalStorage.getStore();
-	if (store) {
-	  store.routePath = req.route?.path || req.originalUrl;
-	}
+	// const store = asyncLocalStorage.getStore();
+	// if (store) {
+	//   store.routePath = req.route?.path || req.originalUrl;
+	// }
 	next();
   });
 const spec = openapi();

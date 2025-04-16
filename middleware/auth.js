@@ -18,10 +18,10 @@ const authMiddleware = (req, res, next) => {
 		const userId = extractUserId(req); // Your logic
 		const routePath = req.route?.path || req.originalUrl;
 	  
-		asyncLocalStorage.run({ userId, routePath }, () => {
-		  req.userId = userId;
-		  next();
-		});
+		// asyncLocalStorage.run({ userId, routePath }, () => {
+		//   req.userId = userId;
+		//   next();
+		// });
 		next();
 	} catch (error) {
 		console.log(error)
