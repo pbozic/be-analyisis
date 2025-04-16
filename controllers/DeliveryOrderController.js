@@ -758,7 +758,7 @@ async function completeOrder(req, res) {
 						for (let i = 0; i < groups; i++) {
 							const startIndex = i * thresh;
 							const groupCashbacks = pendingCashbacks.slice(startIndex, startIndex + thresh);
-							const expiryDate = new Date(groupCashbacks[thresh-1]?.updated_at);
+							const expiryDate = new Date(groupCashbacks[thresh-1]?.earned_at);
 							expiryDate.setDate(expiryDate.getDate() + 30);
 							expiryDate.setHours(23, 59, 59, 999);
 							const totalAmount = groupCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
