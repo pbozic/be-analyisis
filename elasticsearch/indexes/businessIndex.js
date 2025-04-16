@@ -41,6 +41,7 @@ async function createBusinessIndex(force = false) {
                         description: { type: "text", analyzer: "custom_text_analyzer" },
                         location: { type: "geo_point" }, // Allows geo-based queries
                         popular: { type: "boolean" },
+                        active: { type: "boolean" },
                         new: { type: "boolean" },
                         working_hours: { type: "object" },
                         delivery_address: { type: "object" },
@@ -236,6 +237,7 @@ async function indexBusinesses(business_id = null, force = false) {
             const doc = {
                 business_id: business.business_id,
                 name: business.name,
+                active: business.active,
                 description: business.description,
                 popular: business.popular,
                 new: business.new,

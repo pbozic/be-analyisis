@@ -206,7 +206,7 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
                 }
             });
         }
-
+        boolQuery.bool.filter.push({ term: { active: true } });
         // **Function Scoring (Maintains All Other Scoring)**
         const functionScoreQuery = {
             function_score: {
