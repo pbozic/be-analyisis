@@ -16,6 +16,7 @@ services:
         - ./modules.d/nginx.yml:/usr/share/filebeat/modules.d/nginx.yml:ro
         - /var/lib/docker/containers/:/var/lib/docker/containers:ro
         - /var/log/nginx:/var/log/nginx:ro
+        - /var/run/docker.sock:/var/run/docker.sock:ro
       entrypoint: ["/usr/local/bin/entrypoint.sh"]
       command: ["-e", "--strict.perms=false", "-d", "*"]
       networks:

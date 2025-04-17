@@ -1,9 +1,6 @@
 services:
   klikni_elasticsearch:
-    build:
-      context: ./
-      args:
-        ELASTIC_VERSION: "8.17.1"
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.1
     restart: unless-stopped
     env_file:
       - ../../.env

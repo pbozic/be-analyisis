@@ -5,6 +5,8 @@ services:
     restart: unless-stopped
     depends_on:
       - klikni_elasticsearch
+    env_file:
+      - ../../.env
     ports:
       - "5044:5044"
       - "9600:9600"
@@ -12,10 +14,12 @@ services:
       - ELASTIC_USERNAME=${ELASTIC_USERNAME}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
     volumes:
-      - ./pipeline:/usr/share/logstash/pipeline
-      - ./config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
       - ./entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
+      - ./pipeline/logstash.template.conf:/usr/share/logstash/pipeline/logstash.template.conf:ro
+      - ./config/logstash.template.yml:/usr/share/logstash/config/logstash.template.yml:ro
+      - shared-init-status:/init-status
+      
     entrypoint: ["/usr/local/bin/entrypoint.sh"]
-    command: ["-e", "--strict.perms=false", "-d", "*"]
+    command: ["--config.reload.automatic"]
     networks:
       - shared_network
