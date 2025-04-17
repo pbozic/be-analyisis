@@ -1263,7 +1263,7 @@ async function updateOrderPickupTime(req, res) {
 		}
 		res.status(200).json(order);
 	} catch (e) {
-		console.log(e);
+		console.log("Error updating order pickup time", e);
 		res.status(500).json(e);
 	}
 }
