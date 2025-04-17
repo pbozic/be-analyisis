@@ -347,6 +347,7 @@ async function listTransferBusinesses(req, res) {
  */
 async function getBusinessById(req, res) {
 	try {
+		console.log("getBusinessById", req.params.business_id)
 		const business = await BusinessDao.getBusinessById(req.params.business_id);
 		if (business) {
 			res.status(200).json(business);

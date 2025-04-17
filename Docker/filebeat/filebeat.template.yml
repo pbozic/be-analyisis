@@ -37,7 +37,7 @@ filebeat.autodiscover:
           config:
             - type: container
               paths:
-                - /var/lib/docker/containers/${data.docker.container.id}/*.log
+                - /var/lib/docker/containers/*/*.log
               processors:
                 - add_docker_metadata: ~
               tags: ["node", "pino"]
