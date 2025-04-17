@@ -750,7 +750,7 @@ async function completeOrder(req, res) {
 							await WalletFundsDao.convertCashbacksToCredit({
 								user: { connect: { user_id: order.user_id } },
 								amount: totalAmount,
-								type: ORDER_TYPE.DELIVERY,
+								type: FUNDS_TYPE.CREDITS_DELIVERY,
 							}, pendingCashbacks, expiryDate)
 						}
 					} else if (pendingCashbacks?.length > thresh) {
