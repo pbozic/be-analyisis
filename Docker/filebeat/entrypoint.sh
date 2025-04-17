@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "📄 Generating filebeat.yml from template using shell substitution..."
 

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "📄 Generating logstash.conf from template using env substitution..."
 
@@ -6,4 +6,4 @@ echo "📄 Generating logstash.conf from template using env substitution..."
 eval "echo \"$(cat /usr/share/logstash/pipeline/logstash.template.conf)\"" > /usr/share/logstash/pipeline/logstash.conf
 
 echo "🚀 Starting Logstash..."
-exec /usr/local/bin/docker-entrypoint
+exec logstash "$@"

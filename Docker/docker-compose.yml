@@ -1,172 +1,51 @@
-
 services:
+  # Include services from partials
   klikni_elasticsearch:
-    build:
-      context: elasticsearch/
-      args:
-        ELASTIC_VERSION: "8.17.1"
-    restart: unless-stopped
-    env_file:
-      - ../.env
-    volumes:
-      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-      - ./elasticsearch/scripts:/usr/share/elasticsearch/scripts
-    environment:
-      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      - ES_JAVA_OPTS=-Xms1g -Xmx2g  # ✅ set min and max heap size
-    ports:
-      - "127.0.0.1:9200:9200"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    networks:
-      - shared_network
-    deploy:
-      resources:
-        limits:
-          cpus: "0.6"  # Limit Elasticsearch to use a maximum of 50% of one CPU core
-          memory: 2g  # ✅ hard limit at Docker level
-        reservations:
-          cpus: "0.2"  # Reserve 20% of one CPU core for Elasticsearch
-          memory: 1g
+    extends:
+      file: ./elasticsearch/docker-compose.elasticsearch.partial.yml
+      service: klikni_elasticsearch
+
   kibana:
-    image: docker.elastic.co/kibana/kibana:8.17.1
-    container_name: kibana
-    restart: unless-stopped
-    environment:
-      ELASTICSEARCH_HOSTS: "http://klikni_elasticsearch:9200"
-      ELASTICSEARCH_USERNAME: "${KIBANA_USERNAME}"
-      ELASTICSEARCH_PASSWORD: "${KIBANA_PASSWORD}"
-      SERVER_BASEPATH: "/kibana"
-      SERVER_REWRITEBASEPATH: "true"
-    ports:
-      - "127.0.0.1:5601:5601"
-    networks:
-      - shared_network
-    depends_on:
-      - klikni_elasticsearch
-      - init
-    env_file:
-      - ../.env
-    volumes:
-      - shared-init-status:/init-status
-      - ./kibana/wait-for-init.sh:/wait-for-init.sh:ro
-      - ./kibana/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
-    entrypoint: ["/bin/sh", "/wait-for-init.sh"]
-    
-  filebeat:
-    image: docker.elastic.co/beats/filebeat:8.17.1
-    container_name: filebeat
-    user: root
-    restart: unless-stopped
-    env_file:
-      - ../.env
-    environment:
-      - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOSTS}
-      - ELASTICSEARCH_USERNAME=${FILEBEAT_USERNAME}
-      - ELASTICSEARCH_PASSWORD=${FILEBEAT_PASSWORD}
-    volumes:
-      - ./filebeat/filebeat.template.yml:/usr/share/filebeat/filebeat.template.yml:ro
-      - ./filebeat/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
-      - ./filebeat/modules.d/nginx.yml:/usr/share/filebeat/modules.d/nginx.yml:ro
-      - /var/lib/docker/containers/:/var/lib/docker/containers:ro
-      - /var/log/nginx:/var/log/nginx:ro
-    entrypoint: ["/usr/local/bin/entrypoint.sh"]
-    command: ["-e", "--strict.perms=false", "-d", "*"]
-    networks:
-      - shared_network
-  init:
-    image: bash:5.1
-    volumes:
-      - ./elasticsearch/scripts/init.sh:/init.sh:ro
-      - shared-init-status:/init-status
-    env_file:
-      - ../.env
-    depends_on:
-      - klikni_elasticsearch
-    entrypoint: ["sh", "-c", "rm -f /init-status/init-complete.lock && apk add --no-cache bash curl && bash /init.sh"]
-    networks:
-      - shared_network
-      
-  filebeat_setup:
-    image: docker.elastic.co/beats/filebeat:8.17.1
-    container_name: filebeat_setup
-    user: root
-    depends_on:
-      - klikni_elasticsearch
-      - kibana
-    env_file:
-      - ../.env
-    volumes:
-      - ./filebeat/filebeat.template.yml:/usr/share/filebeat/filebeat.template.yml:ro
-      - ./filebeat/modules.d/nginx.yml:/usr/share/filebeat/modules.d/nginx.yml:ro
-      - ./filebeat/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
-      - ./filebeat/wait-for-it.sh:/usr/local/bin/wait-for-it.sh:ro
-    entrypoint: ["/usr/local/bin/wait-for-it.sh", "kibana", "5601", "--", "/usr/local/bin/entrypoint.sh"]
-    command: ["setup", "--dashboards", "-e"]
-    networks:
-      - shared_network
-  logstash:
-    image: docker.elastic.co/logstash/logstash:8.17.1
-    container_name: logstash
-    restart: unless-stopped
-    depends_on:
-      - klikni_elasticsearch
-    ports:
-      - "5044:5044"
-      - "9600:9600"
-    environment:
-      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-    volumes:
-      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
-      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      - ./logstash/entrypoint.sh:/usr/local/bin/custom-entrypoint.sh:ro
-    entrypoint: ["/bin/sh", "/usr/local/bin/custom-entrypoint.sh"]
-    networks:
-      - shared_network
+    extends:
+      file: ./kibana/docker-compose.kibana.partial.yml
+      service: kibana
+
   node-app:
-    build:
-      context: ../            # 👈 your app lives here (above Docker/)
-      dockerfile: Docker/node_app/Dockerfile
-    container_name: node-app
-    ports:
-      - "3001:3001"
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-    networks:
-      - shared_network
-  # apm-server:
-  #   image: docker.elastic.co/apm/apm-server:8.17.1
-  #   container_name: apm-server
-  #   env_file:
-  #     - ../.env
-  #   environment:
-  #     - ELASTICSEARCH_HOSTS=http://klikni_elasticsearch:9200
-  #     - ELASTICSEARCH_USERNAME=${ELASTIC_USERNAME}
-  #     - ELASTICSEARCH_PASSWORD=${ELASTIC_PASSWORD}
-  #     - KIBANA_HOST=http://kibana:5601
-  #   ports:
-  #     - "8200:8200"  # Default APM Server port
-  #   networks:
-  #     - shared_network
-  #   depends_on:
-  #     - klikni_elasticsearch
-  #   volumes:
-  #     - ./apm/apm-server.template.yml:/usr/share/apm-server/apm-server.template.yml:ro
-  #     - ./apm/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
-  #     - shared-init-status:/init-status
-  #   entrypoint: ["/usr/local/bin/entrypoint.sh"]
-  #   command: ["-e", "--strict.perms=false", "-d", "*"]
+    extends:
+      file: ./node-app/docker-compose.node-app.partial.yml
+      service: node-app
+
+  filebeat:
+    extends:
+      file: ./filebeat/docker-compose.filebeat.partial.yml
+      service: filebeat
+  filebeat-setup:
+    extends:
+      file: ./filebeat/docker-compose.filebeat-setup.partial.yml
+      service: filebeat-setup
+  init:
+    extends:
+      file: ./elasticsearch/docker-compose.init.partial.yml
+      service: init
+  logstash:
+    extends:
+      file: ./logstash/docker-compose.logstash.partial.yml
+      service: logstash
+  postgres:
+    extends:
+      file: ./postgres/docker-compose.postgres.partial.yml
+      service: postgres
+  redis:
+    extends:
+      file: ./redis/docker-compose.redis.partial.yml
+      service: redis
+
 networks:
   shared_network:
     driver: bridge
+
 volumes:
-  dbdata:
+  shared-init-status:
     driver: local
-  shared-init-status:  # ✅ Add this line
+  redis-data:
+  dbdata:

@@ -1,0 +1,22 @@
+services:
+  filebeat:
+      image: docker.elastic.co/beats/filebeat:8.17.1
+      container_name: filebeat
+      user: root
+      restart: unless-stopped
+      env_file:
+        - ../../.env
+      environment:
+        - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOSTS}
+        - ELASTICSEARCH_USERNAME=${FILEBEAT_USERNAME}
+        - ELASTICSEARCH_PASSWORD=${FILEBEAT_PASSWORD}
+      volumes:
+        - ./filebeat.template.yml:/usr/share/filebeat/filebeat.template.yml:ro
+        - ./entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
+        - ./modules.d/nginx.yml:/usr/share/filebeat/modules.d/nginx.yml:ro
+        - /var/lib/docker/containers/:/var/lib/docker/containers:ro
+        - /var/log/nginx:/var/log/nginx:ro
+      entrypoint: ["/usr/local/bin/entrypoint.sh"]
+      command: ["-e", "--strict.perms=false", "-d", "*"]
+      networks:
+        - shared_network

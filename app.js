@@ -26,15 +26,47 @@ const flatted = require('flatted');
 // 	environment: process.env.NODE_ENV || 'development',
 // });
 
-
+const isDev = process.env.NODE_ENV !== 'production';
+function formatArg(arg) {
+	if (typeof arg === 'string') return arg;
+	if (typeof arg === 'object') return isDev ? flatted.stringify(arg, null, 2) : JSON.stringify(arg);
+	return String(arg);
+  }
   
-//   // Override console methods
-  console.log = log.info;
-  console.info = log.info;
-  console.warn = log.warn;
-  console.error = log.error;
-  console.debug = log.debug;
-  console.socket = console.log
+  function makeConsoleOverride(level = 'info') {
+	return (...args) => {
+	  const formattedArgs = args.map(formatArg); // Format all args as strings
+	  
+	  if (isDev) {
+		// Pretty print: handle all args as a single message (joined)
+		const msg = formattedArgs.join(' ');  // Join all arguments into one string
+		log[level](...args);  // Log as a single message
+	  } else {
+		// Structured log (JSON-like format)
+		const structuredLog = {};
+		args.forEach((arg, index) => {
+		  if (typeof arg === 'object' && arg !== null) {
+			Object.assign(structuredLog, arg); // Merge object fields
+		  } else {
+			structuredLog[`arg${index}`] = arg;
+		  }
+		});
+		log[level](structuredLog);
+	  }
+	};
+  }
+  
+  // Override console methods
+  console.log = makeConsoleOverride('info');
+  console.info = makeConsoleOverride('info');
+  console.warn = makeConsoleOverride('warn');
+  console.error = makeConsoleOverride('error');
+  console.debug = makeConsoleOverride('debug');
+  
+  // Optional: Add a custom console.socket method
+  console.socket = console.log;
+  
+  
 app.use(compression({
 	level: 6, // 1 (fastest, less compression) to 9 (slowest, most compression)
 	threshold: 10 * 1024, // Only compress responses bigger than 10KB

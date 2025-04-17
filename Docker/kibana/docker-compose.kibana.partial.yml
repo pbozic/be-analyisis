@@ -1,0 +1,31 @@
+services:
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.17.1
+    container_name: kibana
+    restart: unless-stopped
+    environment:
+      ELASTICSEARCH_HOSTS: "http://klikni_elasticsearch:9200"
+      ELASTICSEARCH_USERNAME: "${KIBANA_USERNAME}"
+      ELASTICSEARCH_PASSWORD: "${KIBANA_PASSWORD}"
+      SERVER_BASEPATH: "/kibana"
+      SERVER_REWRITEBASEPATH: "true"
+    ports:
+      - "127.0.0.1:5601:5601"
+    networks:
+      - shared_network
+    depends_on:
+      - klikni_elasticsearch
+      - init
+    env_file:
+      - ../../.env
+    volumes:
+      - shared-init-status:/init-status
+      - ./wait-for-init.sh:/wait-for-init.sh:ro
+      - ./kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+    entrypoint: ["/bin/sh", "/wait-for-init.sh"]
+volumes:
+  shared-init-status:
+    driver: local
+networks:
+  shared_network:
+    driver: bridge

@@ -1,0 +1,13 @@
+services:
+  init:
+    image: bash:5.1
+    volumes:
+      - ./scripts/init.sh:/init.sh:ro
+      - shared-init-status:/init-status
+    env_file:
+      - ../../.env
+    depends_on:
+      - klikni_elasticsearch
+    entrypoint: ["sh", "-c", "rm -f /init-status/init-complete.lock && apk add --no-cache bash curl && bash /init.sh"]
+    networks:
+      - shared_network
