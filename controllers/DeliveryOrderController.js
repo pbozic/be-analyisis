@@ -1251,7 +1251,7 @@ async function updateOrderPickupTime(req, res) {
 		} else if (order.delivery_driver_id) {
 			d = await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id);
 		}
-		sendDeliveryOrderNotifications(null, d?.user, null, d.user_id, DELIVERY_ORDER_STATUS.MERCHANT_DELAYED);
+		sendDeliveryOrderNotifications(null, d?.user, null, d?.user_id, DELIVERY_ORDER_STATUS.MERCHANT_DELAYED);
 
 		if(totalDelay>120){
 			const exising_penalties = await ScoringPointsDao.getScoringPointsByBusinessId(order.business_id)
@@ -1263,7 +1263,7 @@ async function updateOrderPickupTime(req, res) {
 		}
 		res.status(200).json(order);
 	} catch (e) {
-		console.log("Error updating order pickup time", e);
+		console.log("Error updating order pickup time", e.message);
 		res.status(500).json(e);
 	}
 }
