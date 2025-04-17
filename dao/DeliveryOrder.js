@@ -32,18 +32,11 @@ async function getOrders(args) {
 				driver: {
 					include: {
 						user: true,
-						vehicles: {
-							include: {
-								vehicle: {
-									include: {
-										vehicle_specification: true,
-									},
-								}
-							}
-						},
+						current_vehicle: true,
 					}
 				},
 				user: true,
+				business: true,
 			},
 			...args,
 		});
