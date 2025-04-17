@@ -1418,7 +1418,8 @@ async function dispatcherCancel(req,res){
 		].includes(old_order.status)){
 			throw new Error("This order is not in a cancelable state.")
 		}
-		let new_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED)
+		let new_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED);
+		new_order = await DeliveryOrderDao.updateOrderStatus(new_order.order_id, DELIVERY_ORDER_STATUS.FAIL);
 		let driver;
 		if (old_order.driver_id) {
 			driver = await DriverDao.getDriverById(old_order.driver_id);
