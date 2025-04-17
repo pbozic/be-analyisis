@@ -791,7 +791,7 @@ async function completeOrder(req, res) {
 			}
 		}
 		sendDeliveryOrderNotifications(order.user, null, order.user_id, null, order.status);
-		order = await DeliveryOrderDao.updateOrderStatus(order.order_id,DELIVERY_ORDER_STATUS.SUCCESS)
+		// order = await DeliveryOrderDao.updateOrderStatus(order.order_id,DELIVERY_ORDER_STATUS.SUCCESS)
 		io.to("order_" + order.order_id).emit("order_completed__delivery", order);
 		io.emit("driver_available", driver);
 
@@ -936,6 +936,9 @@ async function getCompletedDeliveryOrdersByUserId(req, res) {
 				},
 				delivery_driver: true,
 				driver: true
+			},
+			orderBy: {
+				updated_at: 'desc'
 			}
 		});
 

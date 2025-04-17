@@ -306,6 +306,9 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
 			where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
 				user_id: user_id
+			},
+			orderBy: {
+				updated_at: 'desc'
 			}
 		});
 		res.status(200).json(completedOrders);
