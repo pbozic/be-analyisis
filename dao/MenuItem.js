@@ -58,6 +58,17 @@ const getMenuItemsByIds = async (menu_item_ids) => {
 				in:menu_item_ids
 			},
 		},
+		include: {
+			menu_category: {
+				include: {
+					menu_categories_categories: {
+						include: {
+							category: true
+						}
+					}
+				}
+			}
+		}
 	});
 };
 
