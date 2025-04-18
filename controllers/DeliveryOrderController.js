@@ -1081,8 +1081,9 @@ async function getCompletedDeliveryOrdersByBusinessId(req, res) {
  */
 async function updateOrderStatus(req, res) {
 	try {
-		let order = await DeliveryOrderDao.getOrder(req.body.order_id)
-
+		let order = await DeliveryOrderDao.getOrder(req.body.order_id, {include: {user: true}});
+		let user;
+		if (order) user = order.user;
 		// if (req.body.status === DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED) {
 		// 	if (order.payment.type === "CARD") {
 		// 		await stripe.client.paymentIntents.capture(order.payment_intent_id);
@@ -1123,14 +1124,13 @@ async function updateOrderStatus(req, res) {
 			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
 		}
 
-		order = await DeliveryOrderDao.getOrder(req.body.order_id, {include: {user: true}});
 		let d;
 		if (order.driver_id) {
 			d = await DriverDao.getDriverById(order.driver_id);
 		} else if (order.delivery_driver_id) {
 			d = await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id);
 		}
-		sendDeliveryOrderNotifications(order.user, d?.user, order.user_id, d?.user_id, req.body.status);
+		sendDeliveryOrderNotifications(user, d?.user, user?.user_id, d?.user_id, req.body.status);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);
