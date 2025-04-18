@@ -45,7 +45,7 @@ async function getOrder(req, res) {
 		const order = await TaxiOrderDao.getOrder(order_id);
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -86,9 +86,9 @@ async function getActiveTaxiOrders(req, res) {
 						new Date()
 					);
 
-					console.tag("TaxiOrderController", "ROES:", result, result?.rows[0], result?.rows[0]?.elements[0]);
-					console.tag("TaxiOrderController", "ROES DISTANCE:", distance);
-					console.tag("TaxiOrderController", "ROES DURATION:", duration);
+					console.log("ROES:", result, result?.rows[0], result?.rows[0]?.elements[0]);
+					console.log("ROES DISTANCE:", distance);
+					console.log("ROES DURATION:", duration);
 
 					if (result && result.rows && result.rows[0] && result.rows[0].elements && result.rows[0].elements[0]) {
 						activeOrder.estimates.pickup_time_in_seconds = result.rows[0].elements[0].duration.value;
@@ -101,7 +101,7 @@ async function getActiveTaxiOrders(req, res) {
 							estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + duration);
 							activeOrder.estimates.pickup_time = estimatedPickupTime;
 						}
-						console.errorTag("Invalid response structure from distanceBetweenTwoPoints");
+						console.log("Invalid response structure from distanceBetweenTwoPoints");
 						activeOrder.estimates.pickup_time_in_seconds = -1;
 						activeOrder.estimates.pickup_time = null;
 					}
@@ -163,7 +163,7 @@ async function getActiveTaxiOrdersByDriverId(req, res) {
 		});
 
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json({ message: "Error something went wrong..." });
 	}
 }
@@ -192,7 +192,7 @@ async function getCompletedTaxiOrders(req, res) {
 		});
 		res.status(200).json(completedOrders);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -220,7 +220,7 @@ async function getCanceledTaxiOrders(req, res) {
 		});
 		res.status(200).json(canceledOrders);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -248,7 +248,7 @@ async function getRejectedTaxiOrders(req, res) {
 		});
 		res.status(200).json(rejectedOrders);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -278,10 +278,10 @@ async function getTaxiOrders(req, res) {
 				vehicle: true,
 			}
 		});
-		// console.tag("TaxiOrderController","taxi orders", orders);
+		// console.log("taxi orders", orders);
 		res.status(200).json(orders);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -313,7 +313,7 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
 		});
 		res.status(200).json(completedOrders);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -348,7 +348,7 @@ async function getCompletedTaxiOrdersByBusinessId(req, res) {
 		});
 		res.status(200).json(completedOrders);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -377,7 +377,7 @@ async function getCanceledTaxiOrdersByUserId(req, res) {
 		});
 		res.status(200).json(completedOrders);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -588,7 +588,7 @@ async function createOrderHelper(req, res, orderData) {
 		}
 		return order;
 	} catch (error) {
-		console.errorTag("TaxiOrderController", error);
+		console.log("TaxiOrderController", error);
 		res.status(500).json(error);
 	}
 }
@@ -631,7 +631,7 @@ async function createOrder(req, res) {
 
 
 		let order = await createOrderHelper(req, res, orderData);
-		//console.tag("TaxiOrderController","create taxi order", order)
+		//console.log("create taxi order", order)
 
 		const userSocket = UserSockets.get(order.user_id);
 		console.log("userSocket: ", userSocket);
@@ -643,7 +643,7 @@ async function createOrder(req, res) {
 		}
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -665,7 +665,7 @@ function getDayIndex(dayName) {
 
 async function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
 	try {
-		console.tag("TaxiOrderController", "rd", repeatDuration);
+		console.log("rd", repeatDuration);
 		const orders = [];
 		const currentDate = new Date();
 
@@ -717,7 +717,7 @@ async function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuratio
 
 		return orders; // Return generated orders
 	} catch (error) {
-		console.errorTag("TaxiOrderController", error);
+		console.log("TaxiOrderController", error);
 		throw new Error(error);
 	}
 
@@ -747,7 +747,7 @@ async function createDispatchOrder(req, res) {
 		let order = await createOrderHelper(req, res, orderData);
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -799,9 +799,9 @@ async function acceptOrder(req, res) {
 			duration
 		} = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, driver.location.coordinates, "driving", new Date());
 
-		console.tag("TaxiOrderController", "ROES:", result, result?.rows[0], result?.rows[0]?.elements[0]);
-		console.tag("TaxiOrderController", "ROES DISTANCE:", distance);
-		console.tag("TaxiOrderController", "ROES DURATION:", duration);
+		console.log("ROES:", result, result?.rows[0], result?.rows[0]?.elements[0]);
+		console.log("ROES DISTANCE:", distance);
+		console.log("ROES DURATION:", duration);
 
 		if (!order.estimates)
 			order.estimates = {};
@@ -817,7 +817,7 @@ async function acceptOrder(req, res) {
 				estimatedPickupTime.setSeconds(estimatedPickupTime.getSeconds() + duration);
 				order.estimates.pickup_time = estimatedPickupTime;
 			}
-			console.errorTag("Invalid response structure from distanceBetweenTwoPoints");
+			console.log("Invalid response structure from distanceBetweenTwoPoints");
 			order.estimates.pickup_time_in_seconds = -1;
 			order.estimates.pickup_time = null;
 		}
@@ -829,7 +829,7 @@ async function acceptOrder(req, res) {
 
 		let userSocket = UserSockets.get(order.user_id);
 		console.log("LALA, user_id", order.user_id);
-		console.tag("TaxiOrderController", "order accepted", order);
+		console.log("order accepted", order);
 		if (userSocket) {
 			io.to("order_" + order.order_id).emit("order_accepted__taxi", order);
 			io.emit("driver_unavailable", order.driver_id);
@@ -840,7 +840,7 @@ async function acceptOrder(req, res) {
 		await TaxiHelper.revokeTaxiOrderFromOtherDrivers(order.order_id, user.driver.driver_id);
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1068,12 +1068,12 @@ async function completeOrder(req, res) {
 		// io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
 		io.to("order_" + order.order_id).emit("order_completed__taxi", order);
 
-		console.tag("TaxiOrderController", "order_completed__taxi ", req.body.order_id);
+		console.log("order_completed__taxi ", req.body.order_id);
 		//io.emit("driver_available", driver);
 
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1118,7 +1118,7 @@ async function updateOrderStatus(req, res) {
 
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1163,7 +1163,7 @@ async function updateTaxiOrderPreferences(req, res) {
 
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json({ message: "Server error", error: e });
 	}
 }
@@ -1264,7 +1264,7 @@ async function cancelOrder(req, res) {
 		console.info("TaxiOrderController", "order_status_change__taxi", "order_cancelled__taxi");
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1373,10 +1373,10 @@ async function rejectOrder(req, res) {
 			}
 		}
 
-		console.tag("TaxiOrderController", "order_status_change__taxi", "order_rejected__taxi");
+		console.log("order_status_change__taxi", "order_rejected__taxi");
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1400,7 +1400,7 @@ async function updateTaxiOrderRoute(req, res) {
 		io.to("order_" + order.order_id).emit("order_route_change", order);
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1424,7 +1424,7 @@ async function updateTaxiOrderPickupLocation(req, res) {
 		io.to("order_" + order.order_id).emit("order_pickup_location_change", order);
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1448,7 +1448,7 @@ async function updateTaxiOrderDeliveryLocation(req, res) {
 		io.to("order_" + order.order_id).emit("order_delivery_location_change", order);
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1474,7 +1474,7 @@ async function updateCompleteTaxiRoute(req, res) {
 		io.to("order_" + order.order_id).emit("order_complete_route_change", order);
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1502,7 +1502,7 @@ async function updateTaxiOrderTimeline(req, res) {
 		io.to("order_" + order.order_id).emit("order_timeline_change", order);
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1528,7 +1528,7 @@ async function updateTaxiOrderPayment(req, res) {
 		io.to("order_" + order.order_id).emit("order_payment_change__taxi", order);
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1580,7 +1580,7 @@ async function getScheduledOrders(req, res) {
 		console.info(orders.length, "scheduled orders");
 		res.status(200).json(orders);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1682,7 +1682,7 @@ async function getTaxiOrdersToday(req, res) {
 			return res.status(200).json({orders: orders.length, amount: todaysEarnings(orders, TAXI_ORDER_STATUS.TAXI_COMPLETED) });
 		}
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1747,7 +1747,7 @@ async function cancelGroupedOrderByParentId(req,res){
 		}
 		res.status(200).json([parent_order_id,...parent_order.grouped_orders.map(order => order.order_id)]);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1841,7 +1841,7 @@ async function rejectGroupedOrderByParentId(req,res){
 
 		res.status(200).json(orders.map(order => order.order_id));
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }
@@ -1885,7 +1885,7 @@ async function splitVanOrder(req, res){
 		}
 		res.status(200).json(order);
 	} catch (e) {
-		console.errorTag("TaxiOrderController", e);
+		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
 	}
 }

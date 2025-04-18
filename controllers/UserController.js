@@ -1193,7 +1193,7 @@ async function getMyReviews(req, res) {
 		res.status(200).json(reviews);
 	}
 	catch (e) {
-		console.errorTag("UserController", e);
+		console.log("UserController", e);
 		res.status(500).json(e);
 	}
 }
