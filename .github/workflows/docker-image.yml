@@ -1,0 +1,28 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - production  # or master or whatever branch triggers your deployment
+
+jobs:
+  deploy:
+    name: Deploy to Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo (just to use the files in this action)
+        uses: actions/checkout@v3
+
+      - name: SSH & Deploy
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            cd ~/backend/klikni-be
+            git pull origin production
+            docker-compose --env-file .env -f ./Docker/docker-compose.yml -f ./node-app/docker-compose.node-app.partial.yml build node-app
+            docker-compose --env-file .env -f ./Docker/docker-compose.yml -f ./node-app/docker-compose.node-app.partial.yml up -d node-app
