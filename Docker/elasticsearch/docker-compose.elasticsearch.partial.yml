@@ -7,10 +7,12 @@ services:
     volumes:
       - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
       - ./scripts:/usr/share/elasticsearch/scripts
+      - es-data:/usr/share/elasticsearch/data
     environment:
       - ELASTIC_USERNAME=${ELASTIC_USERNAME}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - ES_JAVA_OPTS=-Xms1g -Xmx2g
+      - discovery.type=single-node
     ports:
       - "127.0.0.1:9200:9200"
     ulimits:

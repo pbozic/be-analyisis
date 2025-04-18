@@ -14,6 +14,10 @@ echo "✅ Init done. Starting Kibana..."
 echo "📄 Generating logstash.conf from template using env substitution..."
 substitute_env /usr/share/logstash/pipeline/logstash.template.conf > /usr/share/logstash/pipeline/logstash.conf
 substitute_env /usr/share/logstash/config/logstash.template.yml > /usr/share/logstash/config/logstash.yml
+echo "🔍 Dumping rendered logstash.conf:"
+cat /usr/share/logstash/pipeline/logstash.conf
 
+echo "🔍 Dumping rendered logstash.yml:"
+cat /usr/share/logstash/config/logstash.yml
 echo "🚀 Starting Logstash..."
 exec logstash "$@"

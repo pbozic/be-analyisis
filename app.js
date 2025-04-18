@@ -112,9 +112,9 @@ app.use((req, res, next) => {
 	// }
 	next();
   });
-const spec = openapi();
+//const spec = openapi();
 
-app.use("/v1/api-docs", swaggerUi.serve, swaggerUi.setup(spec, { explorer: true }));
+//app.use("/v1/api-docs", swaggerUi.serve, swaggerUi.setup(spec, { explorer: true }));
 
 app.use(mainRouter);
 app.use(REST_API_ENDPOINT, apiRouter);

@@ -10,10 +10,7 @@ services:
       file: ./kibana/docker-compose.kibana.partial.yml
       service: kibana
 
-  node-app:
-    extends:
-      file: ./node-app/docker-compose.node-app.partial.yml
-      service: node-app
+  
 
   filebeat:
     extends:
@@ -39,6 +36,24 @@ services:
     extends:
       file: ./redis/docker-compose.redis.partial.yml
       service: redis
+  node-app:
+    build:
+      context: ../
+      dockerfile: ./Docker/node-app/Dockerfile
+    container_name: node-app
+    ports:
+      - "3001:3001"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    depends_on:
+      - postgres
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - shared_network
 
 networks:
   shared_network:
@@ -49,3 +64,4 @@ volumes:
     driver: local
   redis-data:
   dbdata:
+  es-data:

@@ -1,0 +1,26 @@
+FROM node:20-slim
+
+# System deps for Prisma + Node
+RUN apt-get update && \
+    apt-get install -y openssl libssl-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# App root
+WORKDIR /app
+COPY . .
+# Cache deps early
+COPY package*.json ./
+RUN npm install
+
+# Optional: install nodemon for hot reload
+RUN npm install --save-dev nodemon
+
+# Prisma needs the DATABASE_URL at build-time for generate
+ARG DATABASE_URL
+ENV DATABASE_URL=$DATABASE_URL
+
+# Add app source (volume will override in dev anyway)
+
+
+# Hot reload dev entry point
+CMD ["npm", "run", "start"]
