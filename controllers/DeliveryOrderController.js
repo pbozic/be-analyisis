@@ -15,22 +15,17 @@ const { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE, TAXI_ORDER_STATUS,
 const fs = require("fs");
 const Constants = require("../lib/constants");
 const { getUsers } = require("../dao/User");
-const { delivery_orders } = require("@prisma/client");
-const { generateItemsFromPreferences, resendPendingOrdersToDeliveryDriver, sendActiveOrdersToDeliveryDriver,
+const { generateItemsFromPreferences,
 	revokeDeliveryOrderFromDrivers, calculateDeliveryOrderPaymentCuts, handlePaymentCleanup, handlePaymentRefund,
 	verifyOrderCosts
 } = require("../lib/deliveryHelpers");
 const { sortLocationsByNearestNeighbor, todaysEarnings } = require("../lib/helpersLib");
-const { connect } = require("http2");
-const {RESTAURANT_FEE} = require('../lib/constants');
 const prisma = require("../prisma/prisma");
 const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
 const DriverDao = require("../dao/Driver");
-const { sendDeliveryOrderNotifications, sendReferralNotifications } = require("../lib/notifications");
+const { sendDeliveryOrderNotifications } = require("../lib/notifications");
 const CashbackDao = require("../dao/Cashback");
 const WalletFundsDao = require("../dao/WalletFunds");
-const TaxiOrderDao = require("../dao/TaxiOrder");
-const ReferralDao = require("../dao/Referrals");
 const { handleReferral } = require("../lib/referralHelper");
 const ScoringPointsDao = require("../dao/ScoringPoints");
 const LateEventsDao = require("../dao/LateEvents");
@@ -1444,6 +1439,7 @@ async function dispatcherCancel(req,res){
 				}
 			});
 		}
+		revokeDeliveryOrderFromDrivers(new_order.order_id)
 		sendDeliveryOrderNotifications(old_order.user, driver?.user, old_order.user_id, driver?.user_id, new_order.status);
 		//TODO: handle extras for socket on FE if needed.
 		io.to("order_" + new_order.order_id).emit("order_status_change__delivery", new_order);
