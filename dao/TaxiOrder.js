@@ -218,8 +218,18 @@ async function getOrdersByDriverId(driver_id, args) {
 
 async function createOrder(order) {
     try {
-        return prisma.taxi_orders.create({
-            data: order,
+        return await prisma.$transaction(async (prisma) => {
+            const lastOrder = await prisma.taxi_orders.findFirst({
+                orderBy: { created_at: 'desc' },
+                select: { order_number: true }
+            });
+            const order_number = lastOrder ? (lastOrder.order_number+1)%10000 : 0;
+            return await prisma.taxi_orders.create({
+                data: {
+                    ...order,
+                    order_number: order_number,
+                },
+            });
         });
     } catch (e) {
         throw new Error(e);

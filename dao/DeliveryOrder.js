@@ -276,27 +276,30 @@ async function getOrdersByDeliveryDriverId(delivery_driver_id) {
 
 async function createOrder(order, user_id) {
 	let orderData = {...order}
-	// delete orderData.user_id;
-	// delete orderData.vehicle_id;
-	// delete orderData.delivery_driver_id
-	// delete orderData.driver_id;
-	// delete orderData.business_id;
-	// delete orderData.paymentIntent;
 	try {
-		return prisma.delivery_orders.create({
-			data: {
-				...orderData,
-				user: {
-					connect: {
-						user_id: user_id,
+		return await prisma.$transaction(async (prisma) => {
+			const lastOrder = await prisma.delivery_orders.findFirst({
+				where: { business_id: orderData.details.business_id },
+				orderBy: { created_at: 'desc' },
+				select: { order_number: true }
+			});
+			const order_number = lastOrder ? (lastOrder.order_number + 1) % 10000 : 0;
+			return prisma.delivery_orders.create({
+				data: {
+					...orderData,
+					order_number: order_number,
+					user: {
+						connect: {
+							user_id: user_id,
+						},
 					},
-				},
-				business: {
-					connect: {
-						business_id: order.details.business_id
+					business: {
+						connect: {
+							business_id: order.details.business_id
+						}
 					}
-				}
-			},
+				},
+			});
 		});
 	} catch (e) {
 		throw new Error(e);
