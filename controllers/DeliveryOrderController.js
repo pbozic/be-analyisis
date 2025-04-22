@@ -168,8 +168,9 @@ async function createOrder(req, res) {
 				throw new Error("Missing stripe_customer_id");
 			}
 		}
-		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
+		const order_number = business.delivery_orders?.length > 0 ? business.delivery_orders.length%1000 : 0;
+		let order = await DeliveryOrderDao.createOrder({...orderData, order_number: order_number}, user_id);
 		// let delivery_business = await BusinessDao.getBusinessById(orderData?.delivery_driver?.business_id);
 		orderData.telephone = user.telephone;
 		let payment_intent;

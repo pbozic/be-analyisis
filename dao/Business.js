@@ -57,8 +57,8 @@ const getBusinessById = async (business_id) => {
 				parent_business: true,
 				child_businesses: true,
 				documents: false,
-				taxi_orders: false,
-				delivery_orders: false,
+				taxi_orders: true,
+				delivery_orders: true,
 			},
 		});
 	} catch (error) {
