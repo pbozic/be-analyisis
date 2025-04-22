@@ -1,41 +1,50 @@
+include:
+  - ./elasticsearch/docker-compose.elasticsearch.partial.yml
+  - ./kibana/docker-compose.kibana.partial.yml
+  - ./filebeat/docker-compose.filebeat.partial.yml
+  - ./filebeat/docker-compose.filebeat-setup.partial.yml
+  - ./elasticsearch/docker-compose.init.partial.yml
+  - ./logstash/docker-compose.logstash.partial.yml
+  - ./postgres/docker-compose.postgres.partial.yml
+  - ./redis/docker-compose.redis.partial.yml
+
+
 services:
-  # Include services from partials
-  klikni_elasticsearch:
-    extends:
-      file: ./elasticsearch/docker-compose.elasticsearch.partial.yml
-      service: klikni_elasticsearch
+  # # Include services from partials
+  # klikni_elasticsearch:
+  #   extends:
+  #     file: ./elasticsearch/docker-compose.elasticsearch.partial.yml
+  #     service: klikni_elasticsearch
 
-  kibana:
-    extends:
-      file: ./kibana/docker-compose.kibana.partial.yml
-      service: kibana
+  # kibana:
+  #   extends:
+  #     file: ./kibana/docker-compose.kibana.partial.yml
+  #     service: kibana
 
-  
-
-  filebeat:
-    extends:
-      file: ./filebeat/docker-compose.filebeat.partial.yml
-      service: filebeat
-  filebeat-setup:
-    extends:
-      file: ./filebeat/docker-compose.filebeat-setup.partial.yml
-      service: filebeat-setup
-  init:
-    extends:
-      file: ./elasticsearch/docker-compose.init.partial.yml
-      service: init
-  logstash:
-    extends:
-      file: ./logstash/docker-compose.logstash.partial.yml
-      service: logstash
-  postgres:
-    extends:
-      file: ./postgres/docker-compose.postgres.partial.yml
-      service: postgres
-  redis:
-    extends:
-      file: ./redis/docker-compose.redis.partial.yml
-      service: redis
+  # filebeat:
+  #   extends:
+  #     file: ./filebeat/docker-compose.filebeat.partial.yml
+  #     service: filebeat
+  # filebeat-setup:
+  #   extends:
+  #     file: ./filebeat/docker-compose.filebeat-setup.partial.yml
+  #     service: filebeat-setup
+  # init:
+  #   extends:
+  #     file: ./elasticsearch/docker-compose.init.partial.yml
+  #     service: init
+  # logstash:
+  #   extends:
+  #     file: ./logstash/docker-compose.logstash.partial.yml
+  #     service: logstash
+  # postgres:
+  #   extends:
+  #     file: ./postgres/docker-compose.postgres.partial.yml
+  #     service: postgres
+  # redis:
+  #   extends:
+  #     file: ./redis/docker-compose.redis.partial.yml
+  #     service: redis
   node-app:
     build:
       context: ../
