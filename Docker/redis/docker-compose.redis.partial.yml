@@ -8,7 +8,10 @@ services:
     ports:
       - "6379:6379"
     volumes:
+      - ./entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
+      - ./redis.template.conf:/usr/local/etc/redis/redis.template.conf
       - redis-data:/data
     networks:
       - shared_network
-    command: ["redis-server", "--appendonly", "yes"]
+    entrypoint: ["/usr/local/bin/entrypoint.sh"]
+    command: ["/usr/local/etc/redis/redis.conf"]
