@@ -14,9 +14,6 @@ services:
       - "127.0.0.1:5601:5601"
     networks:
       - shared_network
-    depends_on:
-      - klikni_elasticsearch
-      - init
     env_file:
       - ../../.env
     volumes:
