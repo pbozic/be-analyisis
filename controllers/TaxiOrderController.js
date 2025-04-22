@@ -414,7 +414,7 @@ async function createOrderHelper(req, res, orderData) {
 			is_repeat = true;
 		}
 		orderData.is_scheduled = is_scheduled;
-		orderData.route = orderData.map(r_i=>({...r_i,id:randomUUID()}))
+		orderData.route = orderData.route.map(r_i=>({...r_i,id:randomUUID()}))
 		let order;
 		let ordersData = [];
 		if (is_repeat) {
@@ -591,7 +591,8 @@ async function createOrderHelper(req, res, orderData) {
 		return order;
 	} catch (error) {
 		console.log("TaxiOrderController", error);
-		res.status(500).json(error);
+		throw new Error("Error in createOrderHelper!")
+		// res.status(500).json(error);
 	}
 }
 
