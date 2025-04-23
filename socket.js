@@ -1,7 +1,10 @@
 const { Server } = require("socket.io");
 const { server } = require("./server");
+const redis = require("./lib/redis");
+const { createAdapter } = require('@socket.io/redis-adapter');
 const UserSockets = new Map(); // Store user ID to socket mapping
 const jwt = require("jsonwebtoken");
+const subClient = redis.duplicate();
 
 const io = new Server(
 	server, 
@@ -11,6 +14,14 @@ const io = new Server(
 		}
 	}
 );
+
+async function initRedis() {
+	await subClient.connect();
+	
+	io.adapter(createAdapter(redis, subClient));
+	await restoreUserSockets(io);
+}
+initRedis().catch(console.error);
 
 io.use((socket, next) => {
 	let token = socket.handshake.auth.token || (socket.handshake.headers["authorization"] && socket.handshake.headers["authorization"].split(" ")[1]);
@@ -25,27 +36,37 @@ io.use((socket, next) => {
 			existingSocket.disconnect(true);
 		}
 		UserSockets.set(data.user.user_id, socket);
+		SocketStore.addSocket(data.user.user_id, socket);
 		console.socket("socket connected: ", data.user.user_id);
 		next();
 	});
 });
 
-io.on("connection", (socket) => {
+io.on("connection", async (socket) => {
 	console.socket("a user connected");
+	const rooms = await SocketStore.getRoomsForUser(socket.user.user_id);
+	for (const room of rooms) {
+		socket.join(room);
+		console.socket(`Rejoined ${room} for user ${socket.user.user_id}`);
+	}
+
 	socket.on("test_rec", (msg) => {
 		console.socket("message: " + msg);
 		io.emit("chat message", msg);
 	});
-	socket.on("disconnect", (reason) => {
+	socket.on("disconnect", async (reason) => {
 		UserSockets.delete(socket.user.user_id);
+		await SocketStore.removeSocket(userId, socket.id);
 		console.socket(`user ${socket.user.user_id} disconnected, Reason: ${reason}`);
 	});
-	socket.on('joinRoom', (roomName) => {
+	socket.on('joinRoom', async (roomName) => {
 		socket.join(roomName);
+		await SocketStore.addUserToRoom(userId, room);
 		console.socket(`Socket ${socket.id} for user ${socket.user.user_id} joined room ${roomName}`);
 	});
-	socket.on('leaveRoom', (roomName) => {
+	socket.on('leaveRoom', async (roomName) => {
 		socket.leave(roomName);
+		await SocketStore.removeUserFromRoom(userId, room);
 		console.socket(`Socket ${socket.id} for user ${socket.user.user_id} left room ${roomName}`);
 	});
 
@@ -59,7 +80,63 @@ io.on("connection", (socket) => {
 });
 
 
+const SocketStore = {
+  async addSocket(userId, socket) {
+    UserSockets.set(userId, socket);
+    await redis.sAdd(`user_sockets:${userId}`, socket.id);
+    await redis.set(`socket_user:${socket.id}`, userId);
+  },
+
+  async removeSocket(userId, socketId) {
+    UserSockets.delete(userId); // optional if single socket
+    await redis.sRem(`user_sockets:${userId}`, socketId);
+    await redis.del(`socket_user:${socketId}`);
+  },
+
+  async addUserToRoom(userId, roomName) {
+    await redis.sAdd(`user_rooms:${userId}`, roomName);
+    await redis.sAdd(`room_users:${roomName}`, userId);
+  },
+
+  async removeUserFromRoom(userId, roomName) {
+    await redis.sRem(`user_rooms:${userId}`, roomName);
+    await redis.sRem(`room_users:${roomName}`, userId);
+  },
+
+  async getUserSocketIds(userId) {
+    return await redis.sMembers(`user_sockets:${userId}`);
+  },
+
+  async getUserIdBySocketId(socketId) {
+    return await redis.get(`socket_user:${socketId}`);
+  },
+
+  async getRoomsForUser(userId) {
+    return await redis.sMembers(`user_rooms:${userId}`);
+  },
+
+  async getUsersInRoom(roomName) {
+    return await redis.sMembers(`room_users:${roomName}`);
+  }
+};
+async function restoreUserSockets(io) {
+	const keys = await redis.keys("user_sockets:*");
+  
+	for (const key of keys) {
+	  const userId = key.split(":")[1];
+	  const socketIds = await redis.sMembers(key);
+  
+	  for (const socketId of socketIds) {
+		const socket = io.sockets.sockets.get(socketId);
+		if (socket) {
+		  UserSockets.set(userId, socket);
+		  console.log(`Rehydrated socket ${socketId} for user ${userId}`);
+		}
+	  }
+	}
+  }
 module.exports = {
 	io,
-	UserSockets
+	UserSockets,
+	SocketStore
 };
