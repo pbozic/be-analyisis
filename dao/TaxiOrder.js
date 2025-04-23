@@ -292,8 +292,8 @@ async function getAlreadySentOrdersByDriverId(driver_id) {
     }
 }
 
-async function acceptOrder(order_id, user) {
-    console.log("acceptOrder", order_id)
+async function acceptOrder(order, user) {
+    const order_id = order.order_id;
     try {
         let taxi_order_sent = await prisma.taxi_order_sent.update({
             where: {
@@ -312,7 +312,7 @@ async function acceptOrder(order_id, user) {
                 driver_id: user.driver.driver_id
             },
             data: {
-                on_order: true
+                on_order: !order.is_scheduled
             }
         });
         return prisma.taxi_orders.update({
