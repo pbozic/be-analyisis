@@ -12,6 +12,7 @@ alias d="npm run d --"
 alias dnpm="npm run d -- npm"
 alias dnpx="npm run d -- npx"
 `,
+
   powershell: `
 # 🚀 Docker Dev Aliases
 function d { npm run d -- $args }
@@ -53,6 +54,25 @@ if (process.platform === "win32") {
   if (appendIfMissing(profile, aliases.powershell, "function d {")) {
     modifiedFile = "$PROFILE (PowerShell)";
   }
+
+  // 🧠 Add WSL config if missing
+  const wslconfigPath = path.join(home, ".wslconfig");
+  if (!fs.existsSync(wslconfigPath)) {
+    const wslConfigContent = `
+[wsl2]
+memory=4GB
+processors=4
+swap=2GB
+localhostForwarding=true
+    `.trim();
+
+    fs.writeFileSync(wslconfigPath, wslConfigContent, "utf8");
+    console.log(`✅ Created .wslconfig at ${wslconfigPath}`);
+    console.log(`🌀 Run 'wsl --shutdown' to apply new WSL limits.`);
+  } else {
+    console.log(`ℹ️ .wslconfig already exists at ${wslconfigPath}`);
+  }
+
 } else {
   const shellFiles = [".bashrc", ".zshrc"];
   for (const file of shellFiles) {

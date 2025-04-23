@@ -8,7 +8,7 @@ include:
   # - ./filebeat/docker-compose.filebeat-setup.partial.yml
   - ./elasticsearch/docker-compose.init.partial.yml
   # - ./logstash/docker-compose.logstash.partial.yml
-  # - ./postgres/docker-compose.postgres.partial.yml
+  - ./postgres/docker-compose.postgres.partial.yml
   - ./redis/docker-compose.redis.partial.yml
 
 
@@ -57,8 +57,8 @@ services:
       - "3001:3001"
     environment:
       - DATABASE_URL=${DATABASE_URL}
-    # depends_on:
-    #   - postgres
+    depends_on:
+      - postgres
     logging:
       driver: json-file
       options:
