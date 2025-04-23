@@ -126,12 +126,6 @@ const updateMenuOrder = async (menu_id, orderedMenuCategoryIds) => {
 			throw new Error(`Invalid category IDs for menu ${menu_id}: ${invalidIds.join(', ')}`);
 		}
 
-		await tx.menus.update({
-			where: { menu_id },
-			data: {
-				menu_categories_ordered: orderedMenuCategoryIds,
-			},
-		});
 
 		const updatePromises = orderedMenuCategoryIds.map((id, index) =>
 			tx.menu_categories.update({
@@ -139,8 +133,15 @@ const updateMenuOrder = async (menu_id, orderedMenuCategoryIds) => {
 				data: { menu_order_index: index },
 			})
 		);
-
 		await Promise.all(updatePromises);
+
+		return await tx.menus.update({
+			where: { menu_id },
+			data: {
+				menu_categories_ordered: orderedMenuCategoryIds,
+			},
+		});
+
 	});
 };
 
