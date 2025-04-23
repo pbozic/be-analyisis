@@ -3,12 +3,12 @@ x-bake:
 
 include:
   - ./elasticsearch/docker-compose.elasticsearch.partial.yml
-  - ./kibana/docker-compose.kibana.partial.yml
-  - ./filebeat/docker-compose.filebeat.partial.yml
-  - ./filebeat/docker-compose.filebeat-setup.partial.yml
+  # - ./kibana/docker-compose.kibana.partial.yml
+  # - ./filebeat/docker-compose.filebeat.partial.yml
+  # - ./filebeat/docker-compose.filebeat-setup.partial.yml
   - ./elasticsearch/docker-compose.init.partial.yml
-  - ./logstash/docker-compose.logstash.partial.yml
-  - ./postgres/docker-compose.postgres.partial.yml
+  # - ./logstash/docker-compose.logstash.partial.yml
+  # - ./postgres/docker-compose.postgres.partial.yml
   - ./redis/docker-compose.redis.partial.yml
 
 
