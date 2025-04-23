@@ -1,16 +1,24 @@
 FROM node:20-slim
 
-# System deps for Prisma + Node
-RUN apt-get update && \
-    apt-get install -y openssl libssl-dev && \
-    rm -rf /var/lib/apt/lists/*
-
+# System deps for Prisma + Node canvas
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    libcairo2-dev \
+    libjpeg-dev \
+    libpango1.0-dev \
+    libgif-dev \
+    librsvg2-dev \
+    libssl-dev \
+    openssl \
+    && rm -rf /var/lib/apt/lists/*
 # App root
 WORKDIR /app
 COPY . .
 # Cache deps early
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 # Optional: install nodemon for hot reload
 RUN npm install --save-dev nodemon
