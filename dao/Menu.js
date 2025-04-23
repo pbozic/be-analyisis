@@ -34,8 +34,14 @@ const getMenuByBusinessId = async (business_id, isDailyMeal = false, startDate =
 		},
 		include: {
 			categories: {
+				orderBy:{
+					menu_order_index:'asc'
+				},
 				include: {
 					menu_items: {
+						orderBy:{
+							menu_category_order_index:'asc'
+						},
 						include: {
 							documents: {
 								include: {
