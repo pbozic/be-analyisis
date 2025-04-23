@@ -23,3 +23,8 @@ services:
     command: ["--config.reload.automatic"]
     networks:
       - shared_network
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512m

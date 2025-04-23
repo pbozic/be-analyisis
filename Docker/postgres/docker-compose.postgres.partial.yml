@@ -13,3 +13,8 @@ services:
       - dbdata:/var/lib/postgresql/data
     networks:
       - shared_network
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512m

@@ -15,3 +15,8 @@ services:
       - shared_network
     entrypoint: ["/usr/local/bin/entrypoint.sh"]
     command: ["/usr/local/etc/redis/redis.conf"]
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512m
