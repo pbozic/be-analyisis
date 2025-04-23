@@ -104,15 +104,40 @@ const setActiveMenu = async (menu_id, active) => {
 };
 
 const updateMenuOrder = async (menu_id, orderedMenuCategoryIds) => {
-	return await prisma.menus.update({
-		where: {
-			menu_id: menu_id
-		},
-		data: {
-			menu_categories_ordered: orderedMenuCategoryIds
+	return await prisma.$transaction(async (tx) => {
+		const validCategories = await tx.menu_categories.findMany({
+			where: {
+				menu_id,
+				menu_category_id: { in: orderedMenuCategoryIds },
+			},
+			select: { menu_category_id: true },
+		});
+
+		const validIds = validCategories.map(cat => cat.menu_category_id);
+
+		const invalidIds = orderedMenuCategoryIds.filter(id => !validIds.includes(id));
+		if (invalidIds.length > 0) {
+			throw new Error(`Invalid category IDs for menu ${menu_id}: ${invalidIds.join(', ')}`);
 		}
+
+		await tx.menus.update({
+			where: { menu_id },
+			data: {
+				menu_categories_ordered: orderedMenuCategoryIds,
+			},
+		});
+
+		const updatePromises = orderedMenuCategoryIds.map((id, index) =>
+			tx.menu_categories.update({
+				where: { menu_category_id: id },
+				data: { menu_order_index: index },
+			})
+		);
+
+		await Promise.all(updatePromises);
 	});
 };
+
 
 const getMenuByDate = async (business_id, date) => {
 	const startOfDay = new Date(date);

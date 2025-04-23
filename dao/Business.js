@@ -170,6 +170,9 @@ const getBusinessForSearchById = async (business_id) => {
 					},
 					include: {
 						categories: {
+							orderBy:{
+								menu_order_index:'asc'
+							},
 							include: {
 								menu_categories_categories: {
 									include: {
@@ -177,6 +180,9 @@ const getBusinessForSearchById = async (business_id) => {
 									}
 								},
 								menu_items: {
+									orderBy:{
+										menu_category_order_index:'asc'
+									},
 									include: {
 										documents: {
 											include: {

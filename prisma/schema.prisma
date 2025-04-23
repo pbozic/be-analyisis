@@ -630,6 +630,7 @@ model menu_categories {
   price                      Float?
   menu_items_ordered         Json? // JSON field to store ordered menu item IDs
   menu_categories_categories menu_categories_categories[]
+  menu_order_index           Int?
 
   @@unique([menu_category_id])
 }
@@ -654,6 +655,7 @@ model menu_items {
   menu_category    menu_categories? @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id])
   documents        documents[]
   is_enabled       Boolean          @default(true)
+  menu_category_order_index           Int?
 
   @@unique([menu_item_id])
 }
