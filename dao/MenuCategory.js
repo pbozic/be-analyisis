@@ -68,6 +68,7 @@ const addMenuCategoryIdToOrder = async (menu_id, menuCategoryIdToAdd) => {
 			});
 		}
 	} catch (error) {
+
 		console.error("Error adding menu category ID to order:", error);
 		throw error;
 	}
@@ -234,12 +235,6 @@ const updateMenuItemsOrder = async (menu_category_id, ordered_menu_items_ids) =>
 			throw new Error(`Invalid menu_item IDs for category ${menu_category_id}: ${invalidIds.join(', ')}`);
 		}
 
-		await tx.menu_categories.update({
-			where: { menu_category_id },
-			data: {
-				menu_items_ordered: ordered_menu_items_ids,
-			},
-		});
 
 		const updatePromises = ordered_menu_items_ids.map((id, index) =>
 			tx.menu_items.update({
@@ -249,6 +244,12 @@ const updateMenuItemsOrder = async (menu_category_id, ordered_menu_items_ids) =>
 		);
 
 		await Promise.all(updatePromises);
+		return await tx.menu_categories.update({
+			where: { menu_category_id },
+			data: {
+				menu_items_ordered: ordered_menu_items_ids,
+			},
+		});
 	});
 };
 
