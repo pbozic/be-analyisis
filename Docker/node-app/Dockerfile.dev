@@ -10,7 +10,7 @@ WORKDIR /app
 COPY . .
 # Cache deps early
 COPY package*.json ./
-RUN npm install
+RUN npm ci
 
 # Optional: install nodemon for hot reload
 RUN npm install --save-dev nodemon

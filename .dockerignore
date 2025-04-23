@@ -3,3 +3,4 @@ Docker
 npm-debug.log
 .env
 dist
+.dockerignore
