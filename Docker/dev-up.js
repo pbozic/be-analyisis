@@ -9,7 +9,7 @@ const script = isWin
   : path.join(__dirname, 'dev-up.sh');
 
 try {
-  execSync(script, { stdio: 'inherit', shell: true });
+  execSync(`\"${script}\"`, { stdio: 'inherit', shell: true });
 } catch (err) {
   console.error('❌ Failed to run dev script:', err.message);
   process.exit(1);
