@@ -792,7 +792,7 @@ async function acceptOrder(req, res) {
 				await TaxiOrderDao.createOrderSent(order.order_id, user.driver);
 			}
 		}
-		await TaxiOrderDao.acceptOrder(order_id, user);
+		await TaxiOrderDao.acceptOrder(order, user);
 
 		driver.vehicle = driver.current_vehicle;
 		order.driver = driver;
@@ -1104,8 +1104,17 @@ async function updateOrderStatus(req, res) {
 		let driver_id = order?.driver?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
 		let driver = await DriverDao.getDriverById(driver_id);
-		console.log("user console.log", user?.user_id);
-		console.log("Driver console.log", driver?.user?.user_id);
+		if (order.is_scheduled && !driver.on_order) {
+			await prisma.drivers.update({
+				where: {
+					driver_id: driver_id
+				},
+				data: {
+					on_order: true
+				}
+			});
+		}
+
 		if (
 			order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO &&
 			order.status!==TAXI_ORDER_STATUS.TAXI_DRIVING &&//Dont send TAXI_DRIVING notification
