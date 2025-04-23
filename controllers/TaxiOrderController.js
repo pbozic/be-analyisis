@@ -1589,6 +1589,24 @@ async function getScheduledOrders(req, res) {
 	}
 }
 
+async function getAcceptedScheduledOrders(req, res) {
+	try {
+		const orders = await TaxiOrderDao.getOrders({
+			where: {
+				is_scheduled: true,
+				driver_id: req.params.driver_id,
+				status: TAXI_ORDER_STATUS.TAXI_ACCEPTED
+			}
+		});
+
+		console.info(orders.length, "scheduled orders");
+		res.status(200).json(orders);
+	} catch (e) {
+		console.log("TaxiOrderController", e);
+		res.status(500).json(e);
+	}
+}
+
 async function getScheduledOrdersByUserId(req, res) {
 	const { user_id } = req.params;
 	try {
@@ -1925,6 +1943,7 @@ module.exports = {
 	appendTaxiDriver,
 	getScheduledOrders,
 	getDriversForOrder,
+	getAcceptedScheduledOrders,
 	getScheduledOrdersByUserId,
 	getTaxiOrdersWithPagination
 };

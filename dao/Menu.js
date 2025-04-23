@@ -34,8 +34,14 @@ const getMenuByBusinessId = async (business_id, isDailyMeal = false, startDate =
 		},
 		include: {
 			categories: {
+				orderBy:{
+					menu_order_index:'asc'
+				},
 				include: {
 					menu_items: {
+						orderBy:{
+							menu_category_order_index:'asc'
+						},
 						include: {
 							documents: {
 								include: {
@@ -54,32 +60,32 @@ const getMenuByBusinessId = async (business_id, isDailyMeal = false, startDate =
 		},
 	});
 
-	menus.forEach(menu => {
-		if (menu.menu_categories_ordered) {
-			const orderedCategoryIds = JSON.parse(menu.menu_categories_ordered);
-			// Sort categories based on the order of IDs in orderedCategoryIds
-			menu.categories.sort((a, b) => {
-				return orderedCategoryIds.indexOf(a.menu_category_id) - orderedCategoryIds.indexOf(b.menu_category_id);
-			});
-		} else {
-			console.log('No menu_categories_ordered for menu', menu.menu_id);
-			return menu.categories
-		}
-
-		// Sort menu items within each category
-		menu.categories.forEach(category => {
-			if (category.menu_items_ordered) {
-				const orderedItemIds = JSON.parse(category.menu_items_ordered);
-				// Sort items based on the order of IDs in orderedItemIds
-				category.menu_items.sort((a, b) => {
-					return orderedItemIds.indexOf(a.menu_item_id) - orderedItemIds.indexOf(b.menu_item_id);
-				});
-			} else {
-				console.log('No menu_items_ordered for category', category.menu_category_id);
-				return category.menu_items
-			}
-		});
-	});
+	// menus.forEach(menu => {
+	// 	if (menu.menu_categories_ordered) {
+	// 		const orderedCategoryIds = JSON.parse(menu.menu_categories_ordered);
+	// 		// Sort categories based on the order of IDs in orderedCategoryIds
+	// 		menu.categories.sort((a, b) => {
+	// 			return orderedCategoryIds.indexOf(a.menu_category_id) - orderedCategoryIds.indexOf(b.menu_category_id);
+	// 		});
+	// 	} else {
+	// 		console.log('No menu_categories_ordered for menu', menu.menu_id);
+	// 		return menu.categories
+	// 	}
+	//
+	// 	// Sort menu items within each category
+	// 	menu.categories.forEach(category => {
+	// 		if (category.menu_items_ordered) {
+	// 			const orderedItemIds = JSON.parse(category.menu_items_ordered);
+	// 			// Sort items based on the order of IDs in orderedItemIds
+	// 			category.menu_items.sort((a, b) => {
+	// 				return orderedItemIds.indexOf(a.menu_item_id) - orderedItemIds.indexOf(b.menu_item_id);
+	// 			});
+	// 		} else {
+	// 			console.log('No menu_items_ordered for category', category.menu_category_id);
+	// 			return category.menu_items
+	// 		}
+	// 	});
+	// });
 
 	return menus
 };
@@ -104,15 +110,40 @@ const setActiveMenu = async (menu_id, active) => {
 };
 
 const updateMenuOrder = async (menu_id, orderedMenuCategoryIds) => {
-	return await prisma.menus.update({
-		where: {
-			menu_id: menu_id
-		},
-		data: {
-			menu_categories_ordered: orderedMenuCategoryIds
+	return await prisma.$transaction(async (tx) => {
+		const validCategories = await tx.menu_categories.findMany({
+			where: {
+				menu_id,
+				menu_category_id: { in: orderedMenuCategoryIds },
+			},
+			select: { menu_category_id: true },
+		});
+
+		const validIds = validCategories.map(cat => cat.menu_category_id);
+
+		const invalidIds = orderedMenuCategoryIds.filter(id => !validIds.includes(id));
+		if (invalidIds.length > 0) {
+			throw new Error(`Invalid category IDs for menu ${menu_id}: ${invalidIds.join(', ')}`);
 		}
+
+		await tx.menus.update({
+			where: { menu_id },
+			data: {
+				menu_categories_ordered: orderedMenuCategoryIds,
+			},
+		});
+
+		const updatePromises = orderedMenuCategoryIds.map((id, index) =>
+			tx.menu_categories.update({
+				where: { menu_category_id: id },
+				data: { menu_order_index: index },
+			})
+		);
+
+		await Promise.all(updatePromises);
 	});
 };
+
 
 const getMenuByDate = async (business_id, date) => {
 	const startOfDay = new Date(date);

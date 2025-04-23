@@ -218,15 +218,40 @@ const updateMenuCategory = async (menu_category_id, data) => {
 };
 
 const updateMenuItemsOrder = async (menu_category_id, ordered_menu_items_ids) => {
-	return await prisma.menu_categories.update({
-		where: {
-			menu_category_id: menu_category_id
-		},
-		data: {
-			menu_items_ordered: ordered_menu_items_ids
+	return await prisma.$transaction(async (tx) => {
+		const validItems = await tx.menu_items.findMany({
+			where: {
+				menu_category_id,
+				menu_item_id: { in: ordered_menu_items_ids },
+			},
+			select: { menu_item_id: true },
+		});
+
+		const validIds = validItems.map(item => item.menu_item_id);
+		const invalidIds = ordered_menu_items_ids.filter(id => !validIds.includes(id));
+
+		if (invalidIds.length > 0) {
+			throw new Error(`Invalid menu_item IDs for category ${menu_category_id}: ${invalidIds.join(', ')}`);
 		}
+
+		await tx.menu_categories.update({
+			where: { menu_category_id },
+			data: {
+				menu_items_ordered: ordered_menu_items_ids,
+			},
+		});
+
+		const updatePromises = ordered_menu_items_ids.map((id, index) =>
+			tx.menu_items.update({
+				where: { menu_item_id: id },
+				data: { menu_category_order_index: index },
+			})
+		);
+
+		await Promise.all(updatePromises);
 	});
 };
+
 
 const addCategoryToMenu = async (menu_id, menu_category_id) => {
 	return await prisma.menu_categories.update({
