@@ -7,7 +7,9 @@ MAX_RETRIES=2000
 RETRIES=0
 
 while true; do
-  STATUS=$(curl -s -o /dev/null -w "%{http_code}" -u "elastic:${ELASTIC_PASSWORD}" http://klikni_elasticsearch:9200)
+  STATUS=$(curl -s -o /dev/null -w "%{http_code}" -u "elastic:${ELASTIC_PASSWORD}" \
+    http://klikni_elasticsearch:9200/_security/_authenticate)
+  # Check if the status is 200 or 401 (unauthorized)
   echo "Status: $STATUS"
   if [ "$STATUS" -eq 200 ] || [ "$STATUS" -eq 401 ]; then
     break

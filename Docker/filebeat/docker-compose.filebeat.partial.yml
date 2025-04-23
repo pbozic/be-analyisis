@@ -21,3 +21,8 @@ services:
       command: ["-e", "--strict.perms=false", "-d", "*"]
       networks:
         - shared_network
+      deploy:
+        resources:
+          limits:
+            cpus: "0.5"
+            memory: 512m

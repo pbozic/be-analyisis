@@ -60,12 +60,10 @@ io.on("connection", async (socket) => {
 		console.socket(`user ${socket.user.user_id} disconnected, Reason: ${reason}`);
 	});
 	socket.on('joinRoom', async (roomName) => {
-		socket.join(roomName);
 		await SocketStore.addUserToRoom(userId, room);
 		console.socket(`Socket ${socket.id} for user ${socket.user.user_id} joined room ${roomName}`);
 	});
 	socket.on('leaveRoom', async (roomName) => {
-		socket.leave(roomName);
 		await SocketStore.removeUserFromRoom(userId, room);
 		console.socket(`Socket ${socket.id} for user ${socket.user.user_id} left room ${roomName}`);
 	});
@@ -94,13 +92,33 @@ const SocketStore = {
   },
 
   async addUserToRoom(userId, roomName) {
-    await redis.sAdd(`user_rooms:${userId}`, roomName);
-    await redis.sAdd(`room_users:${roomName}`, userId);
+	const socketIds = await this.getUserSocketIds(userId);
+	for (const socketId of socketIds) {
+	  const socket = io.sockets.sockets.get(socketId);
+	  if (socket) {
+		socket.join(roomName);
+	  }
+	}
+  
+	await redis.sAdd(`user_rooms:${userId}`, roomName);
+	await redis.sAdd(`room_users:${roomName}`, userId);
   },
 
   async removeUserFromRoom(userId, roomName) {
-    await redis.sRem(`user_rooms:${userId}`, roomName);
-    await redis.sRem(`room_users:${roomName}`, userId);
+	// Get all socket IDs for the user
+	const socketIds = await this.getUserSocketIds(userId);
+  
+	// Leave the room with each socket
+	for (const socketId of socketIds) {
+	  const socket = io.sockets.sockets.get(socketId);
+	  if (socket) {
+		socket.leave(roomName);
+	  }
+	}
+  
+	// Remove from Redis
+	await redis.sRem(`user_rooms:${userId}`, roomName);
+	await redis.sRem(`room_users:${roomName}`, userId);
   },
 
   async getUserSocketIds(userId) {
