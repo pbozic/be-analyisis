@@ -128,7 +128,21 @@ async function getAllBusinessUsersForBusinessByCompanyRole(req, res) {
  */
 async function createBusinessUser(req, res) {
     try {
-        const businessUser = await BusinessUsersDao.createBusinessUser(req.body.userData, req.body.business_id);
+        let userData = req.body.userData;
+        const businessUser = await BusinessUsersDao.createBusinessUser(userData, req.body.business_id);
+
+        let personal_address = null;
+        if (userData.address) {
+            personal_address = await AddressDao.addAddress(userData.address);
+            await AddressDao.addUserAddress(businessUser.user_id, personal_address.address_id);
+        }
+        let operating_address = null;
+        if (userData.operating_address) {
+            operating_address = await AddressDao.addAddress(userData.operating_address);
+            await AddressDao.addUserAddress(businessUser.user_id, operating_address.address_id);
+        }
+        await BusinessUsersDao.updateBusinessUser(businessUser.business_users_id, {operating_address_id: operating_address.address_id});
+
         res.status(201).json(businessUser);
     } catch (error) {
         console.error("Error creating a business user:", error);
