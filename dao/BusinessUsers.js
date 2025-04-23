@@ -41,7 +41,7 @@ const getBusinessUserByUserId = async (userId) => {
 								users: {
 									include:{
 										child_users: {
-											include:{child_user: {select: {user_id: true, first_name: true, last_name: true}}, allowance: true}
+											include:{child_user: {select: {user_id: true, first_name: true, last_name: true, email: true, telephone: true}}, allowance: true}
 										},
 										parent_user: true,
 									}
@@ -131,6 +131,7 @@ const createBusinessUser = async (userData, business_id) => {
 			userData.data.telephone,
 		);
 
+		userData.data.date_of_birth = new Date(userData.data.date_of_birth);
 		const userObj={
 			...userData.data,
 			stripe_customer_id:stripeCustomer.id,

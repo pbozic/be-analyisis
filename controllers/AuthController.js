@@ -934,7 +934,7 @@ async function registerBusiness(req, res) {
 
 		let businessUsers = [];
 		for (const userInfo of req.body.users) {
-			userInfo.user.data.date_of_birth = new Date(userInfo.user.data.date_of_birth);
+			// userInfo.user.data.date_of_birth = new Date(userInfo.user.data.date_of_birth); //Moved inside the createBusinessUser
 			const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userInfo.user, business.business_id);
 
 			let addresses = [];
