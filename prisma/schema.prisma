@@ -114,7 +114,6 @@ model users {
   created_at                             DateTime             @default(now()) @db.Timestamptz(6)
   updated_at                             DateTime             @default(now()) @updatedAt @db.Timestamptz(6)
   user_role                              USER_ROLES           @default(PERSONAL)
-  second_role                            USER_ROLES?
   user_roles                             user_roles[]
   addresses                              user_address[]
   tokens                                 tokens[]

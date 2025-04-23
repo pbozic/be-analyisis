@@ -539,6 +539,8 @@ async function createDriver(req, res) {
 			stripe_customer_id: stripeCustomer.id,
 		};
 		const newUser = await UserDao.createNewUser(userObj, true);
+		const userRoles = req.body.user.data.user_roles || [{role: newUser.user_role || 'DRIVER', primary: true}];
+		await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
 
 		// Handle user documents
 		if (req.body.user.documents) {

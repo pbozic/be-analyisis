@@ -1448,6 +1448,9 @@ async function registerChildUser(req, res) {
 		let user = await UserDao.createNewUser(userObj);
 		delete user["password"];
 
+		const userRoles = user_data.user_roles || [{role: userRole, primary: true}];
+		await UserDao.linkRolesToUser(user?.user_id, userRoles);
+
 		//create and connect group_user entry
 		const group_user_data = {
 			parent_user_id: parent_user_id,

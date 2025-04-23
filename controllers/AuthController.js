@@ -233,6 +233,8 @@ async function register(req, res) {
 		delete userObj["confirm_password"];
 		delete userObj.referral_code;
 		let user = await UserDao.createNewUser(userObj);
+		const userRoles = postData.user_roles || [{role: userRole, primary: true}];
+		await UserDao.linkRolesToUser(user?.user_id, userRoles);
 		user = await UserDao.getUserById(user.user_id,
 			{
 				include: {
@@ -448,6 +450,8 @@ async function registerTaxiService(req, res) {
 					stripe_customer_id: stripeCustomer.id,
 				};
 				const newUser = await UserDao.createNewUser(userObj, true);
+				const userRoles = driverInfo.user.data.user_roles || [{role: driverInfo.user.data.user_role || 'DRIVER', primary: true}];
+				await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
 
 				// Handle user documents
 				if (driverInfo.user.documents) {
@@ -655,6 +659,8 @@ async function registerDeliveryService(req, res) {
 					stripe_customer_id: stripeCustomer.id,
 				};
 				const newUser = await UserDao.createNewUser(userObj, true);
+				const userRoles = deliveryDriverInfo.user.data.user_roles || [{role: deliveryDriverInfo.user.data.user_role || 'DELIVERY_DRIVER', primary: true}];
+				await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
 
 				// Handle user documents
 				if (deliveryDriverInfo.user?.documents) {
@@ -810,6 +816,8 @@ async function registerMerchantService(req, res) {
 		for (const userInfo of req.body.users) {
 			// userInfo.user.data.password = "lalaland1";
 			const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userInfo.user, business.business_id);
+			const userRoles = userInfo.user.user_roles || [{role: userInfo.user.user_role || 'BUSINESS_USER', primary: true}];
+			await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
 
 			let addresses = [];
 			if (userInfo.user.addresses) {
@@ -936,6 +944,8 @@ async function registerBusiness(req, res) {
 		for (const userInfo of req.body.users) {
 			// userInfo.user.data.date_of_birth = new Date(userInfo.user.data.date_of_birth); //Moved inside the createBusinessUser
 			const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userInfo.user, business.business_id);
+			const userRoles = userInfo.user.user_roles || [{role: userInfo.user.user_role || 'BUSINESS_USER', primary: true}];
+			await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
 
 			let addresses = [];
 			if (userInfo.user.addresses) {

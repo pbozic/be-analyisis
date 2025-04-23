@@ -788,6 +788,27 @@ const updateUserNewsletter = async (user_id, data) => {
 	}
 }
 
+const linkRolesToUser = async (user_id, roles) => {
+	try {
+		if (Array.isArray(roles)) {
+			for (let role of roles) {
+				prisma.user_roles.create({
+					data: {
+						...role,
+						user: {
+							connect: {
+								user_id: user_id,
+							}
+						}
+					}
+				})
+			}
+		}
+	} catch (err) {
+		return new Error(err);
+	}
+}
+
 module.exports = {
 	getUsers,
 	getUserByReferralCode,
@@ -831,4 +852,5 @@ module.exports = {
 	updateUserMarketingNotifications,
 	updateUserAdsPersonalization,
 	updateUserNewsletter,
+	linkRolesToUser,
 };
