@@ -115,6 +115,7 @@ model users {
   updated_at                             DateTime             @default(now()) @updatedAt @db.Timestamptz(6)
   user_role                              USER_ROLES           @default(PERSONAL)
   second_role                            USER_ROLES?
+  user_roles                             user_roles[]
   addresses                              user_address[]
   tokens                                 tokens[]
   phone_verified                         Boolean              @default(false)
@@ -175,6 +176,14 @@ model users {
   scoring_points           scoring_points[]           @relation("scoring_points_to_user")
 
   late_events late_events[] @relation("late_events_to_user")
+}
+
+model user_roles {
+  user_roles_id String     @id @unique @default(uuid()) @db.Uuid
+  user_id       String     @db.Uuid
+  user          users      @relation(fields: [user_id], references: [user_id])
+  role          USER_ROLES @default(PERSONAL)
+  primary       Boolean?   @default(false)
 }
 
 model cashback {
@@ -636,26 +645,26 @@ model menu_categories {
 }
 
 model menu_items {
-  menu_item_id     String           @id @default(uuid()) @db.Uuid
-  names            Json // l10n names
-  image            String?
-  description      Json // l10n descriptions
-  allergens        String[]
-  spicy_level      Int
-  unit_size        String
-  price            Float            @default(0)
-  discount         Float?
-  sides            String[] // Optional, for sides
-  extras           String[] // Optional, for extras, inside are menu_ids
-  ingredients      Json // Includes allergen and multilingual names
-  availability     String[] // Array of availability -> ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
-  business_id      String           @db.Uuid
-  menu_category_id String?          @db.Uuid
-  daily_date       DateTime?        @db.Timestamptz(6)
-  menu_category    menu_categories? @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id])
-  documents        documents[]
-  is_enabled       Boolean          @default(true)
-  menu_category_order_index           Int?
+  menu_item_id              String           @id @default(uuid()) @db.Uuid
+  names                     Json // l10n names
+  image                     String?
+  description               Json // l10n descriptions
+  allergens                 String[]
+  spicy_level               Int
+  unit_size                 String
+  price                     Float            @default(0)
+  discount                  Float?
+  sides                     String[] // Optional, for sides
+  extras                    String[] // Optional, for extras, inside are menu_ids
+  ingredients               Json // Includes allergen and multilingual names
+  availability              String[] // Array of availability -> ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+  business_id               String           @db.Uuid
+  menu_category_id          String?          @db.Uuid
+  daily_date                DateTime?        @db.Timestamptz(6)
+  menu_category             menu_categories? @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id])
+  documents                 documents[]
+  is_enabled                Boolean          @default(true)
+  menu_category_order_index Int?
 
   @@unique([menu_item_id])
 }
