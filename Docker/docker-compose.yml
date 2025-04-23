@@ -1,3 +1,6 @@
+x-bake:
+  use-bake: true
+
 include:
   - ./elasticsearch/docker-compose.elasticsearch.partial.yml
   - ./kibana/docker-compose.kibana.partial.yml
