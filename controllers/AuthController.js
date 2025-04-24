@@ -125,6 +125,8 @@ async function login(req, res) {
 				},
 				child_users: { include:{child_user: true}},
 				parent_user: { include:{parent_user: true}},
+				referrals_made: true,
+				referral: { include: {referrer: { select: { first_name: true, last_name: true } } } },
 			},
 		});
 		if (user.disabled) return res.status(400).json({ error: "Account is disabled." });
@@ -136,6 +138,7 @@ async function login(req, res) {
 		delete user["password"];
 		const access_token = generateAccessToken({
 			...user,
+			referrals_made: null,
 			child_users: null,
 			parent_user: null,
 			driver: {
@@ -146,6 +149,7 @@ async function login(req, res) {
 		});
 		const refresh_token = generateRefreshToken({
 			...user,
+			referrals_made: null,
 			child_users: null,
 			parent_user: null,
 			driver: {
