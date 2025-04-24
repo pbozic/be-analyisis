@@ -56,15 +56,15 @@ io.on("connection", async (socket) => {
 	});
 	socket.on("disconnect", async (reason) => {
 		UserSockets.delete(socket.user.user_id);
-		await SocketStore.removeSocket(userId, socket.id);
+		await SocketStore.removeSocket(socket.user.user_id, socket.id);
 		console.socket(`user ${socket.user.user_id} disconnected, Reason: ${reason}`);
 	});
 	socket.on('joinRoom', async (roomName) => {
-		await SocketStore.addUserToRoom(userId, room);
+		await SocketStore.addUserToRoom(socket.user.user_id, room);
 		console.socket(`Socket ${socket.id} for user ${socket.user.user_id} joined room ${roomName}`);
 	});
 	socket.on('leaveRoom', async (roomName) => {
-		await SocketStore.removeUserFromRoom(userId, room);
+		await SocketStore.removeUserFromRoom(socket.user.user_id, room);
 		console.socket(`Socket ${socket.id} for user ${socket.user.user_id} left room ${roomName}`);
 	});
 
