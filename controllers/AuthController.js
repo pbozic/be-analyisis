@@ -453,7 +453,8 @@ async function registerTaxiService(req, res) {
 				delete userObj.user_roles;
 				const newUser = await UserDao.createNewUser(userObj, true);
 				const userRoles = driverInfo.user.data.user_roles || [{role: driverInfo.user.data.user_role || 'DRIVER', primary: true}];
-				await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
+				const result = await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
+				console.log("User roles linked:", result);
 
 				// Handle user documents
 				if (driverInfo.user.documents) {

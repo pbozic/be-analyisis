@@ -791,8 +791,9 @@ const updateUserNewsletter = async (user_id, data) => {
 const linkRolesToUser = async (user_id, roles) => {
 	try {
 		if (Array.isArray(roles)) {
+			let user_roles = [];
 			for (let role of roles) {
-				prisma.user_roles.create({
+				const user_role = prisma.user_roles.create({
 					data: {
 						...role,
 						user: {
@@ -801,8 +802,10 @@ const linkRolesToUser = async (user_id, roles) => {
 							}
 						}
 					}
-				})
+				});
+				user_roles.push(user_role);
 			}
+			return user_roles;
 		}
 	} catch (err) {
 		return new Error(err);
