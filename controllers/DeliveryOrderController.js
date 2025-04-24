@@ -880,10 +880,13 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 			// 	DELIVERY_ORDER_STATUS.MERCHANT_DELAYED,
 			// 	DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP
 			// ].includes(order.status)) {
+
 			if(!DELIVERY_ORDER_END_STATES.includes(order.status) && !order.timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP)){
 				pendingOrders.push(order);
 			}
-			console.info("Re-sending pending order: ", order.order_id, " to driver: ", driver_id);
+			console.info("Re-sending pending order: ", order.order_id, " to driver: ", driver_id, 
+				"-", order.status
+			);
 		}
 		res.status(200).json({
 			active: activeOrders,
