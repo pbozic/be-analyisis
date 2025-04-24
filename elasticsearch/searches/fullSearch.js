@@ -209,46 +209,47 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
         }
        
         // **Function Scoring (Maintains All Other Scoring)**
-        const functionScoreQuery = {
+        let functionScoreQuery = {
             function_score: {
                 query: boolQuery,
-                functions: [
-                    {
-                        // Boost for businesses bidding on searched words
-                        filter: {
-                            nested: {
-                                path: "word_buys",
-                                query: {
-                                    exists: { field: "word_buys.word" }
-                                }
-                            }
-                        },
-                        weight: SCORING_WEIGHTS.bid_multiplier
-                    },
-                    {
-                        // Boost new businesses
-                        field_value_factor: {
-                            field: "new",
-                            factor: SCORING_WEIGHTS.new_business_boost,
-                            missing: 0
-                        }
-                    },
-                    {
-                        // Distance-based scoring
-                        gauss: {
-                            location: {
-                                origin: `${userLat},${userLon}`,
-                                scale: SCORING_WEIGHTS.distance_scale,
-                                decay: SCORING_WEIGHTS.distance_decay
-                            }
-                        },
-                        weight: 5
-                    }
-                ],
+                functions: [],
                 score_mode: "sum",
-                boost_mode: "sum"
+                boost_mode: "sum",
             }
-        };
+        }
+        if (userLat && userLon) {
+            functionScoreQuery.function_score.functions = [{
+                // Boost for businesses bidding on searched words
+                filter: {
+                    nested: {
+                        path: "word_buys",
+                        query: {
+                            exists: { field: "word_buys.word" }
+                        }
+                    }
+                },
+                weight: SCORING_WEIGHTS.bid_multiplier
+            },
+            {
+                // Boost new businesses
+                field_value_factor: {
+                    field: "new",
+                    factor: SCORING_WEIGHTS.new_business_boost,
+                    missing: 0
+                }
+            },
+            {
+                // Distance-based scoring
+                gauss: {
+                    location: {
+                        origin: `${userLat},${userLon}`,
+                        scale: SCORING_WEIGHTS.distance_scale,
+                        decay: SCORING_WEIGHTS.distance_decay
+                    }
+                },
+                weight: 5
+            }]
+        }
 
         // **Apply Promo Section Tier Boost (Only for Matched Section)**
         if (hasPromoSection) {
