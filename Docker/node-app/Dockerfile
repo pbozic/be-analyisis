@@ -10,13 +10,13 @@
     ARG DATABASE_URL
     ENV DATABASE_URL=${DATABASE_URL}
     WORKDIR /app
-    
+    COPY . .
     # Install dependencies
     COPY package*.json ./
     RUN npm ci
     
     # Copy app files
-    COPY . .
+   
     
     # Generate Prisma client
     RUN npm run prisma

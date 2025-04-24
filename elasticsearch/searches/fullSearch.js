@@ -212,32 +212,32 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
         let functionScoreQuery = {
             function_score: {
                 query: boolQuery,
-                functions: [],
+                functions: [{
+                    // Boost for businesses bidding on searched words
+                    filter: {
+                        nested: {
+                            path: "word_buys",
+                            query: {
+                                exists: { field: "word_buys.word" }
+                            }
+                        }
+                    },
+                    weight: SCORING_WEIGHTS.bid_multiplier
+                },
+                {
+                    // Boost new businesses
+                    field_value_factor: {
+                        field: "new",
+                        factor: SCORING_WEIGHTS.new_business_boost,
+                        missing: 0
+                    }
+                }],
                 score_mode: "sum",
                 boost_mode: "sum",
             }
         }
         if (userLat && userLon) {
-            functionScoreQuery.function_score.functions = [{
-                // Boost for businesses bidding on searched words
-                filter: {
-                    nested: {
-                        path: "word_buys",
-                        query: {
-                            exists: { field: "word_buys.word" }
-                        }
-                    }
-                },
-                weight: SCORING_WEIGHTS.bid_multiplier
-            },
-            {
-                // Boost new businesses
-                field_value_factor: {
-                    field: "new",
-                    factor: SCORING_WEIGHTS.new_business_boost,
-                    missing: 0
-                }
-            },
+            functionScoreQuery.function_score.functions.push(
             {
                 // Distance-based scoring
                 gauss: {
@@ -248,7 +248,7 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
                     }
                 },
                 weight: 5
-            }]
+            })
         }
 
         // **Apply Promo Section Tier Boost (Only for Matched Section)**

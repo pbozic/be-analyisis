@@ -6,7 +6,7 @@ const BusinessUsersDao = require("../dao/BusinessUsers");
 const ReferralDao = require("../dao/Referrals");
 const CashbackDao = require("../dao/Cashback");
 const WalletFundsDao = require("../dao/WalletFunds");
-const { UserSockets, io } = require("../socket");
+const { UserSockets, io, SocketStore } = require("../socket");
 const gApi = require("../lib/gApis");
 const TaxiHelper = require("../lib/taxiHelpers");
 const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE , CARGO_TRANSFER_FEE, ORDER_TYPE, CREDITS,
@@ -635,6 +635,7 @@ async function createOrder(req, res) {
 
 
 		let order = await createOrderHelper(req, res, orderData);
+		SocketStore.addUserToRoom(req.user.user_id, "order_" + order.order_id);
 		//console.log("create taxi order", order)
 
 		const userSocket = UserSockets.get(order.user_id);
