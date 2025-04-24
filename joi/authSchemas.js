@@ -14,7 +14,7 @@ const registerSchema = Joi.object({
 			role: Joi.string(),
 			primary: Joi.boolean().optional(),
 		})
-	).optional(),
+	).optional().allow(null),
 	first_name: Joi.string().required(),
 	last_name: Joi.string().required(),
 	email: Joi.string()
@@ -81,7 +81,7 @@ const registerChildSchema = Joi.object({
 			role: Joi.string(),
 			primary: Joi.boolean().optional(),
 		})
-	).optional(),
+	).optional().allow(null),
 	first_name: Joi.string().required(),
 	last_name: Joi.string().required(),
 	email: Joi.string()

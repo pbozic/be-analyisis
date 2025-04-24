@@ -13,7 +13,7 @@ const updateSchema = Joi.object({
 			role: Joi.string(),
 			primary: Joi.boolean().optional(),
 		})
-	).optional(),
+	).optional().allow(null),
 	addresses: Joi.array().items(
 		Joi.object({
 			address_id: Joi.string(),
