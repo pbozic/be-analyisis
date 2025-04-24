@@ -53,6 +53,7 @@ services:
       context: ../
       dockerfile: ./Docker/node-app/Dockerfile
     container_name: node-app
+    platform: linux/amd64
     ports:
       - "3001:3001"
     environment:

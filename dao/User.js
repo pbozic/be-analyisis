@@ -788,6 +788,30 @@ const updateUserNewsletter = async (user_id, data) => {
 	}
 }
 
+const linkRolesToUser = async (user_id, roles) => {
+	try {
+		if (Array.isArray(roles)) {
+			let user_roles = [];
+			for (let role of roles) {
+				const user_role = prisma.user_roles.create({
+					data: {
+						...role,
+						user: {
+							connect: {
+								user_id: user_id,
+							}
+						}
+					}
+				});
+				user_roles.push(user_role);
+			}
+			return await Promise.all(user_roles);
+		}
+	} catch (err) {
+		return new Error(err);
+	}
+}
+
 module.exports = {
 	getUsers,
 	getUserByReferralCode,
@@ -831,4 +855,5 @@ module.exports = {
 	updateUserMarketingNotifications,
 	updateUserAdsPersonalization,
 	updateUserNewsletter,
+	linkRolesToUser,
 };

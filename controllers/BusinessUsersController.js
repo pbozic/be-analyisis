@@ -1,6 +1,7 @@
 const BusinessUsersDao = require("../dao/BusinessUsers");
 const AddressDao = require("../dao/Address");
 const GroupDao = require("../dao/Group");
+const UserDao = require("../dao/User");
 
 
 /**
@@ -129,7 +130,9 @@ async function getAllBusinessUsersForBusinessByCompanyRole(req, res) {
 async function createBusinessUser(req, res) {
     try {
         let userData = req.body.userData;
-        const businessUser = await BusinessUsersDao.createBusinessUser(userData, req.body.business_id);
+        const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userData, req.body.business_id);
+        const userRoles = req.body.userData.user_roles || [{role: req.body.userData.user_role || 'PERSONAL', primary: true}];
+        await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
 
         let personal_address = null;
         if (userData.address) {

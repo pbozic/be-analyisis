@@ -9,7 +9,12 @@ const loginSchema = Joi.object({
 
 const registerSchema = Joi.object({
 	user_role: Joi.string(),
-	second_role: Joi.string().optional(),
+	user_roles: Joi.array().items(
+		Joi.object({
+			role: Joi.string(),
+			primary: Joi.boolean().optional(),
+		})
+	).optional().allow(null),
 	first_name: Joi.string().required(),
 	last_name: Joi.string().required(),
 	email: Joi.string()
@@ -71,6 +76,12 @@ const registerSchema = Joi.object({
 const registerChildSchema = Joi.object({
 	// user_data: registerSchema, // Require the register schema
 	user_role: Joi.string(),
+	user_roles: Joi.array().items(
+		Joi.object({
+			role: Joi.string(),
+			primary: Joi.boolean().optional(),
+		})
+	).optional().allow(null),
 	first_name: Joi.string().required(),
 	last_name: Joi.string().required(),
 	email: Joi.string()
