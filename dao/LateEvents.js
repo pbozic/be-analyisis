@@ -8,8 +8,7 @@ async function createLateEvent(business_id, user_id, delivery_order_id, taxi_ord
 				users: { connect: { user_id: user_id } },
 				delivery_orders: delivery_order_id ? { connect: { order_id: delivery_order_id } } : undefined,
 				taxi_orders: taxi_order_id ? { connect: { order_id: taxi_order_id } } : undefined,
-				seconds: seconds,
-				scoring_points: null // Initially null until aggregated
+				seconds: seconds
 			}
 		});
 		console.info("Created late event: ", newLateEvent);
