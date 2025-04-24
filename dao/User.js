@@ -805,7 +805,7 @@ const linkRolesToUser = async (user_id, roles) => {
 				});
 				user_roles.push(user_role);
 			}
-			return user_roles;
+			return await Promise.all(user_roles);
 		}
 	} catch (err) {
 		return new Error(err);
