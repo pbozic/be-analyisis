@@ -62,7 +62,6 @@ async function getScheduledUsers(req, res) {
  * @response 500 - Server error. Returns error message "Error something went wrong.." if any exception is encountered during execution.
  */
 async function login(req, res) {
-	console.info("Login request ", req);
 	let postData = req.body;
 	try {
 		let user = await UserDao.getUserByEmailOrTelephone(postData.email.toLowerCase(), {
