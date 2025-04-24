@@ -817,10 +817,10 @@ async function registerMerchantService(req, res) {
 
 		let businessUsers = [];
 		for (const userInfo of req.body.users) {
-			const userRoles = userInfo.user.user_roles || [{role: userInfo.user.user_role || 'BUSINESS_USER', primary: true}];
 			const userObj = userInfo.user;
-			delete userObj.user_roles;
+			delete userObj.data.user_roles;
 			const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id);
+			const userRoles = userInfo.user.data.user_roles || [{role: userInfo.user.user_role || 'BUSINESS_USER', primary: true}];
 			await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
 
 			let addresses = [];
@@ -946,10 +946,10 @@ async function registerBusiness(req, res) {
 
 		let businessUsers = [];
 		for (const userInfo of req.body.users) {
-			const userRoles = userInfo.user.user_roles || [{role: userInfo.user.user_role || 'BUSINESS_USER', primary: true}];
 			const userObj = userInfo.user;
-			delete userObj.user_roles;
+			delete userObj.data.user_roles;
 			const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id);
+			const userRoles = userInfo.user.data.user_roles || [{role: userInfo.user.user_role || 'BUSINESS_USER', primary: true}];
 			await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
 
 			let addresses = [];
