@@ -60,11 +60,11 @@ io.on("connection", async (socket) => {
 		console.socket(`user ${socket.user.user_id} disconnected, Reason: ${reason}`);
 	});
 	socket.on('joinRoom', async (roomName) => {
-		await SocketStore.addUserToRoom(socket.user.user_id, room);
+		await SocketStore.addUserToRoom(socket.user.user_id, roomName);
 		console.socket(`Socket ${socket.id} for user ${socket.user.user_id} joined room ${roomName}`);
 	});
 	socket.on('leaveRoom', async (roomName) => {
-		await SocketStore.removeUserFromRoom(socket.user.user_id, room);
+		await SocketStore.removeUserFromRoom(socket.user.user_id, roomName);
 		console.socket(`Socket ${socket.id} for user ${socket.user.user_id} left room ${roomName}`);
 	});
 
