@@ -1445,6 +1445,7 @@ async function registerChildUser(req, res) {
 			}
 		};
 		delete userObj["confirm_password"];
+		delete userObj.user_roles;
 		let user = await UserDao.createNewUser(userObj);
 		delete user["password"];
 
