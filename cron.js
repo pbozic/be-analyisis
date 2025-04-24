@@ -18,8 +18,6 @@ function startCronJobs() {
     cron.schedule("* * * * *", TaxiHelpers.revokeAcceptedOrdersFromDriverHandler);
     cron.schedule("* * * * *", TaxiHelpers.scheduledOrdersNotificationsHandler);
     cron.schedule("* * * * *", TaxiHelpers.closeScheduledOrders);
-    //TODO: remove after test aggregateScoringPoints every minute:
-    cron.schedule("* * * * *", BusinessHelper.aggregateScoringPoints);
 
     // Every day at midnight - check for expired credits
     cron.schedule("0 0 * * *", WalletFundsHelper.handleCreditExpiration);
