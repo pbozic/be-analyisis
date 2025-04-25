@@ -1,4 +1,5 @@
 const prisma = require("../prisma/prisma");
+const { TAXI_ORDER_STATUS, DELIVERY_ORDER_STATUS } = require("../lib/constants");
 
 const createReferral = async (referrerUserId, referredUserId, referralCode) => {
 	try {
@@ -71,7 +72,20 @@ const getReferralByReferredUserId = async (referredUserId) => {
 			},
 			include: {
 				referrer: true,
-				referred: true
+				referred: {
+					include: {
+						taxi_orders: {
+							where: {
+								status: TAXI_ORDER_STATUS.TAXI_COMPLETED
+							}
+						},
+						delivery_orders: {
+							where: {
+								status: DELIVERY_ORDER_STATUS.SUCCESS
+							}
+						},
+					}
+				}
 			}
 		});
 	} catch (error) {

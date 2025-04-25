@@ -1017,7 +1017,6 @@ async function completeOrder(req, res) {
 				});
 			}
 
-
 			if (TOTAL_COST_CENTS >= CREDITS.MINIMUM_ORDER_AMOUNT*100 && (orderingUser.user_role === USER_ROLE.PERSONAL)) {
 				let cashbackAmount = Math.min(
 					TOTAL_COST_CENTS * (CREDITS.TAXI_ORDER_CASHBACK_PERCENTAGE),
@@ -1034,7 +1033,7 @@ async function completeOrder(req, res) {
 						taxi_order: { connect: { order_id: order.order_id } },
 					});
 					if (cashback) {
-						const thresh = CREDITS.TAXI_THRESHOLD;
+						const thresh = CREDITS.CASHBACK_THRESHOLD_TAXI;
 						const pendingCashbacks = await CashbackDao.getPendingUserCashbackByType(orderingUser.user_id, ORDER_TYPE.TAXI);
 						if (pendingCashbacks?.length === thresh) {
 							const expiryDate = new Date();

@@ -734,7 +734,7 @@ async function completeOrder(req, res) {
 					delivery_order: { connect: { order_id: order.order_id } },
 				});
 				if (cashback) {
-					const thresh = CREDITS.DELIVERY_THRESHOLD;
+					const thresh = CREDITS.CASHBACK_THRESHOLD_DELIVERY;
 					const pendingCashbacks = await CashbackDao.getPendingUserCashbackByType(order.user_id, ORDER_TYPE.DELIVERY);
 					if (pendingCashbacks?.length === thresh) {
 						const expiryDate = new Date();
