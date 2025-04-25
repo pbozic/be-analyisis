@@ -729,8 +729,8 @@ async function completeOrder(req, res) {
 		});
 		if (cashback) {
 			const pendingCashbacks = await CashbackDao.getPendingUserCashbackByType(order.user_id, ORDER_TYPE.DELIVERY);
-			if (pendingCashbacks?.length >= CREDITS.CASHBACK_CONVERSION_DELIVERY) {
-				const baskets = pendingCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
+			const baskets = pendingCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
+			if (baskets >= CREDITS.CASHBACK_CONVERSION_DELIVERY) {
 				const remainder = baskets % CREDITS.CASHBACK_CONVERSION_DELIVERY;
 				if (remainder > 0) {
 					await CashbackDao.createCashback({

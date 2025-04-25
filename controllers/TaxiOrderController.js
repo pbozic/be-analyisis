@@ -1029,8 +1029,8 @@ async function completeOrder(req, res) {
 				});
 				if (cashback) {
 					const pendingCashbacks = await CashbackDao.getPendingUserCashbackByType(orderingUser.user_id, ORDER_TYPE.TAXI);
-					if (pendingCashbacks?.length >= CREDITS.CASHBACK_CONVERSION_TAXI) {
-						const wheels = pendingCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
+					const wheels = pendingCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
+					if (wheels >= CREDITS.CASHBACK_CONVERSION_TAXI) {
 						const remainder = wheels % CREDITS.CASHBACK_CONVERSION_TAXI;
 						if (remainder > 0) {
 							await CashbackDao.createCashback({
