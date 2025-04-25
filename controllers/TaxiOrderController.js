@@ -1018,7 +1018,7 @@ async function completeOrder(req, res) {
 			}
 
 			if (orderingUser.user_role === USER_ROLE.PERSONAL) {
-				let cashbackAmount = TOTAL_COST_CENTS >= CREDITS.CASHBACK_THRESHOLD_TAXI ? Math.floor(TOTAL_COST_CENTS/10) : 1;
+				let cashbackAmount = TOTAL_COST_CENTS >= CREDITS.CASHBACK_THRESHOLD_TAXI ? Math.floor(TOTAL_COST_CENTS/100) : 1;
 				const cashback = await CashbackDao.createCashback({
 					user: { connect: { user_id: orderingUser.user_id } },
 					amount: cashbackAmount,

@@ -718,7 +718,7 @@ async function completeOrder(req, res) {
 		console.info({ delivery_credits:DELIVERY_CREDIT_CUT_CENTS, remaining_delivery_cost: DISCOUNTED_DELIVERY_COST_CENTS })
 
 		const DELIVERY_COST_CENTS = order.details.total_price * 100;
-		let cashbackAmount = DELIVERY_COST_CENTS >= CREDITS.CASHBACK_THRESHOLD_DELIVERY ? Math.floor(DELIVERY_COST_CENTS/10) : 1;
+		let cashbackAmount = DELIVERY_COST_CENTS >= CREDITS.CASHBACK_THRESHOLD_DELIVERY ? Math.floor(DELIVERY_COST_CENTS/100) : 1;
 		const cashback = await CashbackDao.createCashback({
 			user: { connect: { user_id: order.user_id } },
 			amount: cashbackAmount,
