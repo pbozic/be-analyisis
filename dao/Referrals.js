@@ -72,20 +72,7 @@ const getReferralByReferredUserId = async (referredUserId) => {
 			},
 			include: {
 				referrer: true,
-				referred: {
-					include: {
-						taxi_orders: {
-							where: {
-								status: TAXI_ORDER_STATUS.TAXI_COMPLETED
-							}
-						},
-						delivery_orders: {
-							where: {
-								status: DELIVERY_ORDER_STATUS.SUCCESS
-							}
-						},
-					}
-				}
+				referred: true
 			}
 		});
 	} catch (error) {
