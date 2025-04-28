@@ -48,8 +48,9 @@ router.use("/merchant/reservations", reservationsMerchantRoutes);
 router.use("/delivery/orders", [authMiddleware], deliveryRoutes);
 router.use("/taxi", [authMiddleware], taxiRoutes);
 router.use("/business/auth", authBusinessRoutes);
-router.use("/business", [authMiddleware], businessRoutes);
 router.use("/business/search", searchRoutes);
+router.use("/business", [authMiddleware], businessRoutes);
+
 //router.use("/business", businessRoutes);
 router.use("/drivers", [authMiddleware], driverRoutes);
 router.use("/delivery_drivers", [authMiddleware], deliveryDriverRoutes);
