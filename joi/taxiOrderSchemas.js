@@ -1,6 +1,7 @@
 const Joi = require("joi");
 const addressSchema = Joi.object({
 	address: Joi.string().required(),
+	id: Joi.string().optional(),
 	coordinates: Joi.object({
 		latitude: Joi.number().required(),
 		longitude: Joi.number().required(),
