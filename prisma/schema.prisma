@@ -1118,10 +1118,13 @@ model municipalities {
   created_at            DateTime                @default(now()) @db.Timestamptz(6)
   updated_at            DateTime                @default(now()) @updatedAt @db.Timestamptz(6)
   driver_municipalities driver_municipalities[]
-
+  settlements           settlements[]
+  weather_data          weather_data[]
+  geom_generated    Unsupported("geometry")? @default(dbgenerated("st_setsrid(st_geomfromgeojson((geojson)::text), 4326)"))
   @@index([name])
   @@index([gis_sifra])
   @@index([eid_obcina])
+  @@index([geom_generated], name: "municipalities_geom_generated_idx", type: Gist)
 }
 
 model fiscal_devices {
@@ -1144,6 +1147,72 @@ model driver_municipalities {
 
   @@unique([driver_id, municipalities_id])
   @@index([driver_id])
+}
+model settlements {
+  settlement_id String     @id @default(uuid()) @db.Uuid
+  name           String
+  municipalities_id String   @db.Uuid
+  eid_naselje   String?
+  feature_id    String?
+  geojson        Json       @db.Json
+  created_at     DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
+  municipality   municipalities @relation(fields: [municipalities_id], references: [municipalities_id])
+  weather_data   weather_data[]
+  geom_generated    Unsupported("geometry")? @default(dbgenerated("st_setsrid(st_geomfromgeojson((geojson)::text), 4326)"))
+  @@index([name])
+  @@index([eid_naselje])
+  @@index([feature_id])
+  @@index([geom_generated], name: "settlements_geom_generated_idx", type: Gist)
+}
+
+model weather_data {
+  weather_data_id     String        @id @default(uuid()) @db.Uuid
+  time_epoch          BigInt
+  time                DateTime
+  temp_c              Float
+  is_day              Boolean
+  condition_text      String
+  condition_icon      String
+  condition_code      Int
+  wind_kph            Float
+  wind_degree         Int
+  wind_dir            String
+  pressure_mb         Float
+  precip_mm           Float
+  snow_cm             Float
+  humidity            Int
+  cloud               Int
+  feelslike_c         Float
+  windchill_c         Float
+  heatindex_c         Float
+  dewpoint_c          Float
+  will_it_rain        Boolean
+  chance_of_rain      Int
+  will_it_snow        Boolean
+  chance_of_snow      Int
+  vis_km              Float
+  gust_kph            Float
+  uv                  Float
+  icon                String
+  created_at          DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
+
+  municipalities_id   String?       @db.Uuid
+  municipality        municipalities? @relation(fields: [municipalities_id], references: [municipalities_id])
+
+  settlement_id      String?       @db.Uuid
+  settlement          settlements?  @relation(fields: [settlement_id], references: [settlement_id])
+
+  @@unique([time_epoch, settlement_id], name: "time_epoch_settlement_id")
+  @@index([time_epoch])
+  @@index([municipalities_id])
+  @@index([settlement_id])
+  @@index([settlement_id, time])
+  @@index([settlement_id, time_epoch])
+  @@index([municipalities_id, time_epoch])
+  @@index([municipalities_id, time])
+
 }
 
 enum CATEGORY_TYPE {

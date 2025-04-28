@@ -8,7 +8,7 @@ const categoriesSeed = require("./seeders/categoriesSeeder");
 const cuisinesSeed = require("./seeders/dietsSeeder");
 const promoSectionSeed = require("./seeders/promoSectionSeeder");
 const municipalitiesSeeder = require("./seeders/municipalitiesSeeder");
-
+const settlementSeeder = require("./seeders/settlementSeeder");
 async function main() {
 	if (process.env.ENVIRONMENT === "development") {
 		// await userSeed();
@@ -20,6 +20,7 @@ async function main() {
 	await promoSectionSeed();
 	await municipalitiesSeeder();
 	await fiscalDevicesSeeder();
+	await settlementSeeder();
 }
 
 main()

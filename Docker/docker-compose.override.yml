@@ -5,6 +5,9 @@ services:
       dockerfile: ./Docker/node-app/Dockerfile.dev
     volumes:
       - ../:/app
+      - ../.env:/app/.env   # mount local .env into container
       - /app/node_modules  # prevent host overwrite
+    env_file:
+      - /app/.env   # and tell Docker Compose to load it
     environment:
       - NODE_ENV=development

@@ -3,6 +3,7 @@ const TaxiHelpers = require("./lib/taxiHelpers");
 const DeliveryHelpers = require("./lib/deliveryHelpers");
 const WalletFundsHelper = require("./lib/WalletFundsHelpers");
 const BusinessHelper = require("./lib/businessHelpers");
+const { getSettlementsWeatherForecast } = require("./lib/weatherHelpers");
 const { checkPingStatus } = require("./lib/driverHelpers");
 const stripe = require("./lib/stripe");
 
@@ -23,7 +24,7 @@ function startCronJobs() {
     cron.schedule("0 0 * * *", WalletFundsHelper.handleCreditExpiration);
     cron.schedule("0 9 * * *", WalletFundsHelper.notifyUpcomingCreditExpirations);
     cron.schedule("0 0 * * *", BusinessHelper.aggregateScoringPoints);
-
+    cron.schedule("* */1 * * *", getSettlementsWeatherForecast);
     //Every 10 days
     cron.schedule("0 0 */10 * *", stripe.payoutAvailableBalanceToBusinesses);
 

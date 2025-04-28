@@ -23,10 +23,9 @@ router.delete("/favorites", BusinessController.removeBusinessFromFavorites);
 
 
 router.get("/:business_id", BusinessController.getBusinessById);
-router.get("/search/:business_id", BusinessController.getBusinessForSearchById);
+
 router.get("/:business_id/reviews", BusinessController.getBusinessReviewsById);
-router.post("/search", BusinessController.searchBusinesses);
-router.get("/search", BusinessController.getBusinessesByNameSearch);
+
 router.get("/parent", BusinessController.getParentBusiness);
 router.get("/stripe/:business_id", BusinessController.getBusinessStripeStatusByBusinessId);
 
