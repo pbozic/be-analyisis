@@ -3,7 +3,7 @@ dotenv.config();
 
 const DeliveryOrderDao = require("../dao/DeliveryOrder");
 const UsersDao = require("../dao/User");
-const { io, UserSockets } = require("../socket");
+const { io, UserSockets, SocketStore } = require("../socket");
 const stripe = require("../lib/stripe");
 const BusinessDao = require("../dao/Business");
 const PromoDao = require("../dao/Promo");
@@ -92,6 +92,7 @@ async function handlePaymentIntentFaliure(paymentIntent) {
 			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
 			order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.FAIL);
 			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+			SocketStore.removeUserFromRoom(order.user_id,`order_${order.order_id}`)
 			await WalletFundsHelpers.releaseReservedWalletFundsForOrder(order.user_id,order.order_id)
 
 			break;

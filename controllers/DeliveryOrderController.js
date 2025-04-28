@@ -4,7 +4,7 @@ const FlagDao = require("../dao/Flags");
 const BusinessDao = require("../dao/Business");
 const UsersDao = require("../dao/User");
 const gApi = require("../lib/gApis");
-const { UserSockets, io } = require("../socket");
+const { UserSockets, io, SocketStore } = require("../socket");
 const stripe = require("../lib/stripe");
 const { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE, TAXI_ORDER_STATUS,
 	CREDITS,
@@ -170,6 +170,7 @@ async function createOrder(req, res) {
 		}
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
 		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
+		SocketStore.addUserToRoom(user_id,`order_${order.order_id}`)
 		// let delivery_business = await BusinessDao.getBusinessById(orderData?.delivery_driver?.business_id);
 		orderData.telephone = user.telephone;
 		let payment_intent;
@@ -502,6 +503,10 @@ async function createDailyMeals(req, res) {
 
 			await DeliveryOrderDao.createOrderSent(order.order_id, delivery_driver);
 			await DeliveryOrderDao.connectOrderWithDriver(order.order_id, delivery_driver.delivery_driver_id);
+
+			SocketStore.addUserToRoom(order.user_id,`order_${order.order_id}`)
+			SocketStore.addUserToRoom(delivery_driver.user_id,`order_${order.order_id}`)
+
 			orders.push(order);
 			scheduledMealsRoute.push(userAddress)
 		}
@@ -598,6 +603,7 @@ async function acceptOrderDelivery(req, res) {
 		});*/
 		console.log("order accepted", order);
 
+		SocketStore.addUserToRoom(deliverer.user_id, `order_${order.order_id}`)
 		io.to("order_" + order.order_id).emit("order_accepted__delivery", order);
 		io.emit("driver_unavailable", deliverer_id);
 
@@ -627,6 +633,7 @@ async function cancelOrderDelivery(req, res) {
 	const { order_id } = req.body;
 	const user = req.user;
 	const deliverer_id = user?.delivery_driver?.delivery_driver_id || user?.driver?.driver_id;
+	let deliverer = null;
 
 	try {
 		// 1. Condition check: Fetch the order and verify the driver and order status
@@ -636,6 +643,7 @@ async function cancelOrderDelivery(req, res) {
 				driver: true,
 			}
 		});
+		deliverer = order.delivery_driver || order.driver || null
 
 		if ((order.driver?.driver_id !== deliverer_id) && (order.delivery_driver?.delivery_driver_id !== deliverer_id)) {
 			return res.status(400).json({ error: "You are not authorized to cancel this order delivery.", errorType: "ERR_NOT_AUTHORIZED" });
@@ -661,6 +669,8 @@ async function cancelOrderDelivery(req, res) {
 
 		// 5. Emit event to sockets with updated order
 		io.to("order_" + order.order_id).emit("order_delivery_canceled", order);
+		SocketStore.removeUserFromRoom(order.user_id,`order_${order.order_id}`)
+		SocketStore.removeUserFromRoom(req.user?.user_id,`order_${order.order_id}`)
 
 		res.status(200).json(order);
 	} catch (e) {
@@ -774,7 +784,8 @@ async function completeOrder(req, res) {
 		// order = await DeliveryOrderDao.updateOrderStatus(order.order_id,DELIVERY_ORDER_STATUS.SUCCESS)
 		io.to("order_" + order.order_id).emit("order_completed__delivery", order);
 		io.emit("driver_available", driver);
-
+		SocketStore.removeUserFromRoom(order.user_id,`order_${order.order_id}`)
+		SocketStore.removeUserFromRoom(driver.user_id,`order_${order.order_id}`)
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);
@@ -1438,6 +1449,9 @@ async function dispatcherCancel(req,res){
 		//TODO: handle on FE if needed.
 		io.to("order_" + new_order.order_id).emit("order_canceled", new_order);
 
+		SocketStore.removeUserFromRoom(new_order.user_id,`order_${new_order.order_id}`)
+		SocketStore.removeUserFromRoom(driver.user_id,`order_${new_order.order_id}`)
+
 		res.status(200).json(new_order)
 	} catch (e) {
 		console.error("Error canceling order", e);
@@ -1499,11 +1513,13 @@ async function dispatcherRevoke(req,res){
 			if (UserSockets.get(old_order.driver.user_id)) {
 				UserSockets.get(old_order.driver.user_id).emit('order_revoked__delivery', order_id);
 			}
+			SocketStore.removeUserFromRoom(old_order.driver.user_id,`order_${old_order.order_id}`)
 		}
 		if (old_order.delivery_driver){
 			if (UserSockets.get(old_order.delivery_driver.user_id)) {
 				UserSockets.get(old_order.delivery_driver.user_id).emit('order_revoked__delivery', order_id);
 			}
+			SocketStore.removeUserFromRoom(old_order.delivery_driver.user_id,`order_${old_order.order_id}`)
 		}
 
 		//TODO: handle extras for socket on FE if needed.

@@ -841,6 +841,8 @@ async function acceptOrder(req, res) {
 
 			console.log("userSocket", userSocket);
 		}
+		SocketStore.addUserToRoom(driver.user_id,`order_${order.order_id}`)
+
 		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO) sendOrderNotifications(order?.user, driver?.user, order.user_id, driver.driver_id, TAXI_ORDER_STATUS.TAXI_ACCEPTED)
 		await TaxiHelper.revokeTaxiOrderFromOtherDrivers(order.order_id, user.driver.driver_id);
 		res.status(200).json(order);
@@ -865,10 +867,13 @@ async function acceptOrder(req, res) {
  */
 async function completeOrder(req, res) {
 	try {
+
 		let order = await TaxiOrderDao.completeOrder(req.body.order_id);
 		console.log("COMPLLETED", order.order_id);
 		let driver = await DriverDao.getDriverById(order.driver_id);
 		let driver_business = await BusinessDao.getBusinessById(driver.business_id);
+		SocketStore.removeUserFromRoom(req.user.user_id, "order_" + order.order_id);
+		SocketStore.removeUserFromRoom(driver.user_id, "order_" + order.order_id);
 
 		//assign penalties for being late
 		const timeline_first_waiting_timestamp = order.timeline.find(entry => entry.status === TAXI_ORDER_STATUS.TAXI_WAITING)?.location?.timestamp;
@@ -1244,6 +1249,7 @@ async function cancelOrder(req, res) {
 				await TaxiHelper.revokeTaxiOrderFromDrivers(vehicle_transfer_order.order_id);
 				io.to("order_" + vehicle_transfer_order.order_id).emit("order_status_change__taxi", vehicle_transfer_order);
 				io.to("order_" + vehicle_transfer_order.order_id).emit("order_cancelled__taxi", vehicle_transfer_order);
+				SocketStore.removeUserFromRoom(driver?.user_id,`order_${order_id}`)
 			}
 		}
 		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);
@@ -1257,9 +1263,11 @@ async function cancelOrder(req, res) {
 			});
 
 			io.emit("driver_available", driver);
+			SocketStore.removeUserFromRoom(driver?.user_id,`order_${order_id}`)
 		}
 		io.to("order_" + order.order_id).emit("order_status_change__taxi", order);
 		io.to("order_" + order.order_id).emit("order_cancelled__taxi", order);
+		SocketStore.removeUserFromRoom(order?.user_id,`order_${order_id}`)
 
 		console.info("TaxiOrderController", "order_status_change__taxi", "order_cancelled__taxi");
 		res.status(200).json(order);
@@ -1307,7 +1315,7 @@ async function rejectOrder(req, res) {
 			});
 		}
 
-
+		SocketStore.removeUserFromRoom(driver?.user_id,`order_${order_id}`)
 		if (req.user.driver && req.user.driver.driver_id) {
 			await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, req.user.driver.driver_id);
 			await ScoringPointsDao.createScoringPoints(req.user.driver.business_id,req.user.user_id,null,order.order_id,1,true,SCORING_POINTS_REASON.REJECTED)
@@ -1735,7 +1743,10 @@ async function cancelGroupedOrderByParentId(req,res){
 
 			io.to("order_" + order_id).emit("order_status_change__taxi", canceled_order);
 			io.to("order_" + order_id).emit("order_cancelled__taxi", canceled_order);
+			SocketStore.removeUserFromRoom(user_id,`order_${order_id}`)
+
 			if(driver){
+				SocketStore.removeUserFromRoom(driver.user_id,`order_${order_id}`)
 				await TaxiOrderDao.updateOrder(order_id, {
 					driver: {
 						disconnect: true
@@ -1755,7 +1766,10 @@ async function cancelGroupedOrderByParentId(req,res){
 
 		io.to("order_" + order_id).emit("order_status_change__taxi", canceled_order);
 		io.to("order_" + order_id).emit("order_cancelled__taxi", canceled_order);
+		SocketStore.removeUserFromRoom(user_id,`order_${order_id}`)
+
 		if(driver){
+			SocketStore.removeUserFromRoom(driver.user_id,`order_${order_id}`)
 			await TaxiOrderDao.updateOrder(order_id, {
 				driver: {
 					disconnect: true
@@ -1837,6 +1851,7 @@ async function rejectGroupedOrderByParentId(req,res){
 						disconnect: true
 					}
 				});
+				SocketStore.removeUserFromRoom(driver?.user_id,`order_${order_id}`)
 				io.emit("driver_available", driver);
 			}
 		}
