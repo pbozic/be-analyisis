@@ -1,4 +1,5 @@
 const prisma = require("../prisma/prisma");
+const { TAXI_ORDER_STATUS, DELIVERY_ORDER_STATUS } = require("../lib/constants");
 
 const createReferral = async (referrerUserId, referredUserId, referralCode) => {
 	try {

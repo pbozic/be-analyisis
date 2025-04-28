@@ -1787,7 +1787,7 @@ async function claimReward(req, res) {
 		await WalletFundsDao.createCredit({
 			expires_at: expiryDate,
 			user: { connect: { user_id: req.user.user_id } },
-			amount: CREDITS.TAXI,
+			amount: CREDITS.REFERRAL,
 			type: FUNDS_TYPE.CREDITS_ANY, // we add taxi credits on referral
 			referral: { connect: { referral_id: referral_id } }
 		});

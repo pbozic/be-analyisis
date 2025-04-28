@@ -1017,54 +1017,40 @@ async function completeOrder(req, res) {
 				});
 			}
 
+			if (orderingUser.user_role === USER_ROLE.PERSONAL) {
+				let cashbackAmount = TOTAL_COST_CENTS >= CREDITS.CASHBACK_THRESHOLD_TAXI ? Math.floor(TOTAL_COST_CENTS/100) : 1;
+				const cashback = await CashbackDao.createCashback({
+					user: { connect: { user_id: orderingUser.user_id } },
+					amount: cashbackAmount,
+					type: ORDER_TYPE.TAXI,
+					source: CASHBACK_SOURCE.ORDER,
+					description: `Cashback for taxi order ${order.order_id}`,
+					taxi_order: { connect: { order_id: order.order_id } },
+				});
+				if (cashback) {
+					const pendingCashbacks = await CashbackDao.getPendingUserCashbackByType(orderingUser.user_id, ORDER_TYPE.TAXI);
+					const wheels = pendingCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
+					if (wheels >= CREDITS.CASHBACK_CONVERSION_TAXI) {
+						const remainder = wheels % CREDITS.CASHBACK_CONVERSION_TAXI;
+						if (remainder > 0) {
+							await CashbackDao.createCashback({
+								user: { connect: { user_id: orderingUser.user_id } },
+								amount: remainder,
+								type: ORDER_TYPE.TAXI,
+								source: CASHBACK_SOURCE.CONVERSION,
+								description: `Cashback remainder after conversion to credit`
+							});
+						}
 
-			if (TOTAL_COST_CENTS >= CREDITS.MINIMUM_ORDER_AMOUNT*100 && (orderingUser.user_role === USER_ROLE.PERSONAL)) {
-				let cashbackAmount = Math.min(
-					TOTAL_COST_CENTS * (CREDITS.TAXI_ORDER_CASHBACK_PERCENTAGE),
-					CREDITS.MAXIMUM_CASHBACK_TAXI_ORDER * 100
-				);
-				cashbackAmount = Number((cashbackAmount / 100).toFixed(2));
-				if (cashbackAmount > 0) {
-					const cashback = await CashbackDao.createCashback({
-						user: { connect: { user_id: orderingUser.user_id } },
-						amount: cashbackAmount,
-						type: ORDER_TYPE.TAXI,
-						source: CASHBACK_SOURCE.ORDER,
-						description: `Cashback for taxi order ${order.order_id}`,
-						taxi_order: { connect: { order_id: order.order_id } },
-					});
-					if (cashback) {
-						const thresh = CREDITS.TAXI_THRESHOLD;
-						const pendingCashbacks = await CashbackDao.getPendingUserCashbackByType(orderingUser.user_id, ORDER_TYPE.TAXI);
-						if (pendingCashbacks?.length === thresh) {
-							const expiryDate = new Date();
-							expiryDate.setDate(expiryDate.getDate() + 30);
-							expiryDate.setHours(23, 59, 59, 999);
-							const totalAmount = pendingCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
-							if (totalAmount > 0) {
-								await WalletFundsDao.convertCashbacksToCredit({
-									user: { connect: { user_id: orderingUser.user_id } },
-									amount: Math.round(totalAmount*100),
-									type: FUNDS_TYPE.CREDITS_TAXI,
-								}, pendingCashbacks)
-							}
-						} else if (pendingCashbacks?.length > thresh) {
-							const groups = Math.floor(pendingCashbacks.length / thresh);
-							for (let i = 0; i < groups; i++) {
-								const startIndex = i * thresh;
-								const groupCashbacks = pendingCashbacks.slice(startIndex, startIndex + thresh);
-								const expiryDate = new Date(groupCashbacks[thresh-1]?.earned_at);
-								expiryDate.setDate(expiryDate.getDate() + 30);
-								expiryDate.setHours(23, 59, 59, 999);
-								const totalAmount = groupCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
-								if (totalAmount > 0) {
-									await WalletFundsDao.convertCashbacksToCredit({
-										user: { connect: { user_id: orderingUser.user_id } },
-										amount: Math.round(totalAmount * 100),
-										type: FUNDS_TYPE.CREDITS_TAXI,
-									}, groupCashbacks);
-								}
-							}
+						const expiryDate = new Date();
+						expiryDate.setDate(expiryDate.getDate() + 30);
+						expiryDate.setHours(23, 59, 59, 999);
+						if (wheels > 0) {
+							await WalletFundsDao.convertCashbacksToCredit({
+								user: { connect: { user_id: orderingUser.user_id } },
+								amount: 100,
+								type: FUNDS_TYPE.CREDITS_TAXI,
+							}, pendingCashbacks)
 						}
 					}
 				}
