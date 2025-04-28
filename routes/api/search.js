@@ -4,6 +4,7 @@ const BusinessController = require("../../controllers/BusinessController");
 
 router.get("/:business_id", BusinessController.getBusinessForSearchById);
 router.post("/sections/merchant", BusinessController.listPromoSectionsWithMerchants);
+router.post("/menu-items/extras-sides/:business_id", MenuController.getMenuItemsByIds);
 router.post("/", BusinessController.searchBusinesses);
 router.get("/", BusinessController.getBusinessesByNameSearch);
 
