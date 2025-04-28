@@ -22,6 +22,7 @@ function startCronJobs() {
 
     // Every day at midnight - check for expired credits
     cron.schedule("0 0 * * *", WalletFundsHelper.handleCreditExpiration);
+    cron.schedule("0 0 * * *", DeliveryHelpers.releaseWFForFailedOrders);
     cron.schedule("0 9 * * *", WalletFundsHelper.notifyUpcomingCreditExpirations);
     cron.schedule("0 0 * * *", BusinessHelper.aggregateScoringPoints);
     cron.schedule("* */1 * * *", getSettlementsWeatherForecast);

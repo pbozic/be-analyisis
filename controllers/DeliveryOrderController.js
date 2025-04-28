@@ -721,7 +721,7 @@ async function completeOrder(req, res) {
 		let cashbackAmount = DELIVERY_COST_CENTS >= CREDITS.CASHBACK_THRESHOLD_DELIVERY ? Math.floor(DELIVERY_COST_CENTS/100) : 1;
 		const cashback = await CashbackDao.createCashback({
 			user: { connect: { user_id: order.user_id } },
-			amount: cashbackAmount,
+			amount: Math.round(cashbackAmount),
 			type: ORDER_TYPE.DELIVERY,
 			source: CASHBACK_SOURCE.ORDER,
 			description: `Cashback for delivery order ${order.order_id}`,
@@ -735,7 +735,7 @@ async function completeOrder(req, res) {
 				if (remainder > 0) {
 					await CashbackDao.createCashback({
 						user: { connect: { user_id: order.user_id } },
-						amount: remainder,
+						amount: Math.round(remainder),
 						type: ORDER_TYPE.DELIVERY,
 						source: CASHBACK_SOURCE.CONVERSION,
 						description: `Cashback remainder after conversion to credit`

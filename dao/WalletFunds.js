@@ -135,6 +135,25 @@ async function getReservedWalletFunds(userId,order_id) {
 	}
 }
 
+async function getAllReservedWalletFunds() {
+	try {
+		const walletFunds = await prisma.wallet_funds.findMany({
+			where: {
+				reserved_order:{
+					not: null
+				}
+			},
+			orderBy: {
+				created_at: 'asc',
+			},
+		});
+		return walletFunds;
+	} catch (error) {
+		console.error("Error retrieving all reserved wallet funds:", error);
+		throw error;
+	}
+}
+
 async function deleteWalletFunds(wallet_funds_id) {
 	try {
 		await prisma.wallet_funds.delete({
@@ -595,6 +614,7 @@ module.exports = {
 	getAvailableWalletBalance,
 	getAvailableWalletBalanceGroupedByType,
 	getReservedWalletFunds,
+	getAllReservedWalletFunds,
 	deleteWalletFunds,
 	subtractFunds,
 	reserveFunds,
