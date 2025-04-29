@@ -135,7 +135,23 @@ const SocketStore = {
 
   async getUsersInRoom(roomName) {
     return await redis.sMembers(`room_users:${roomName}`);
-  }
+  },
+	async closeRoom(roomName) {
+		try {
+			const joinedUsers = await this.getUsersInRoom(roomName);
+			await Promise.all(joinedUsers.map(userId =>
+				this.removeUserFromRoom(userId, roomName).catch(err => {
+					console.error(`Failed to remove user ${userId} from room ${roomName}:`, err);
+				})
+			));
+			await redis.del(`room_users:${roomName}`);
+
+		} catch (err) {
+			console.error(`Failed to close room ${roomName}:`, err);
+		}
+	}
+
+
 };
 async function restoreUserSockets(io) {
 	const keys = await redis.keys("user_sockets:*");
