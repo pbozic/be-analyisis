@@ -57,11 +57,11 @@ function formatArg(arg) {
   }
   
   // Override console methods
-  console.log = makeConsoleOverride('info');
-  console.info = makeConsoleOverride('info');
-  console.warn = makeConsoleOverride('warn');
-  console.error = makeConsoleOverride('error');
-  console.debug = makeConsoleOverride('debug');
+//   console.log = makeConsoleOverride('info');
+//   console.info = makeConsoleOverride('info');
+//   console.warn = makeConsoleOverride('warn');
+//   console.error = makeConsoleOverride('error');
+//   console.debug = makeConsoleOverride('debug');
   
   // Optional: Add a custom console.socket method
   console.socket = console.log;
