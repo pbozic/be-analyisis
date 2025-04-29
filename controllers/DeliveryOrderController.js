@@ -30,6 +30,7 @@ const { handleReferral } = require("../lib/referralHelper");
 const ScoringPointsDao = require("../dao/ScoringPoints");
 const LateEventsDao = require("../dao/LateEvents");
 const moment = require('moment');
+const BusinessHelpers = require("../lib/businessHelpers");
 
 /**
  * GET /delivery/orders
@@ -170,7 +171,6 @@ async function createOrder(req, res) {
 		}
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
 		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
-		SocketStore.addUserToRoom(user_id,`order_${order.order_id}`)
 		// let delivery_business = await BusinessDao.getBusinessById(orderData?.delivery_driver?.business_id);
 		orderData.telephone = user.telephone;
 		let payment_intent;
@@ -302,6 +302,8 @@ async function createOrder(req, res) {
 			delete order.business.documents;
 		}
 		console.info("order created:", order);
+		SocketStore.addUserToRoom(user_id,`order_${order.order_id}`);
+		BusinessHelpers.joinAllBusinessUsersToRoom(order.business_id,`order_${order.order_id}`)
 		io.to("orders_" + order.business_id).emit("new_order", order);
 
 		res.status(200).json({
@@ -796,8 +798,7 @@ async function completeOrder(req, res) {
 		// order = await DeliveryOrderDao.updateOrderStatus(order.order_id,DELIVERY_ORDER_STATUS.SUCCESS)
 		io.to("order_" + order.order_id).emit("order_completed__delivery", order);
 		io.emit("driver_available", driver);
-		SocketStore.removeUserFromRoom(order.user_id,`order_${order.order_id}`)
-		SocketStore.removeUserFromRoom(driver.user_id,`order_${order.order_id}`)
+		SocketStore.closeRoom(`order_${order.order_id}`)
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);
@@ -1222,6 +1223,7 @@ async function merchantAcceptOrder(req, res) {
 
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.FAIL);
 		io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+		SocketStore.closeRoom(`order_${order.order_id}`)
 		res.status(500).json(e);
 	}
 }
@@ -1461,9 +1463,7 @@ async function dispatcherCancel(req,res){
 		//TODO: handle on FE if needed.
 		io.to("order_" + new_order.order_id).emit("order_canceled", new_order);
 
-		SocketStore.removeUserFromRoom(new_order.user_id,`order_${new_order.order_id}`)
-		SocketStore.removeUserFromRoom(driver.user_id,`order_${new_order.order_id}`)
-
+		SocketStore.closeRoom(`order_${new_order.order_id}`)
 		res.status(200).json(new_order)
 	} catch (e) {
 		console.error("Error canceling order", e);
