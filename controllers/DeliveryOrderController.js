@@ -302,9 +302,8 @@ async function createOrder(req, res) {
 			delete order.business.documents;
 		}
 		console.info("order created:", order);
-		await BusinessHelpers.joinAllBusinessUsersToRoom(order.business_id,`order_${order.order_id}`)
 		SocketStore.addUserToRoom(user_id,`order_${order.order_id}`);
-		BusinessHelpers.joinAllBusinessUsersToRoom(order.business_id)
+		BusinessHelpers.joinAllBusinessUsersToRoom(order.business_id,`order_${order.order_id}`)
 		io.to("orders_" + order.business_id).emit("new_order", order);
 
 		res.status(200).json({
