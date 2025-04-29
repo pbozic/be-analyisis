@@ -71,6 +71,8 @@ services:
 networks:
   shared_network:
     driver: bridge
+  backendnet:
+    driver: bridge
 
 volumes:
   shared-init-status:

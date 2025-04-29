@@ -134,7 +134,7 @@ app.use(function (err, req, res, next) {
 	res.render("error");
 });
 
-server.listen(port, () => {
+server.listen(port, "0.0.0.0", () => {
 	console.log("server listening on: " + port);
 
 	//precacheDataExport(app).then(r => console.log("pre-caching done"));

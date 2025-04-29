@@ -180,8 +180,20 @@ async function createOrder(req, res) {
 			let distanceKm = distanceM / 1000;
 			order.details.distance = distanceKm;
 			order.details.duration = result.rows[0].elements[0].duration.value;
+
+			if (order.scheduled?.time && order.scheduled?.date) {
+				order.details.customer_expected_delivery_at = new Date(order.scheduled.time);
+				order.details.ready_for_pickup_at = new Date(new Date(order.scheduled.time).getTime() - order.details.duration*1000).toISOString().slice(0,-1);
+			}
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				details: order.details
+			});
+		} else if (order.scheduled?.time && order.scheduled?.date) {
+			order = await DeliveryOrderDao.updateOrder(order.order_id, {
+				details: {
+					...order.details,
+					ready_for_pickup_at: order.scheduled?.time
+				}
 			});
 		}
 		console.log("stripeCustomer", user.stripe_customer_id);
