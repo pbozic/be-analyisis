@@ -71,11 +71,7 @@ async function getReservationsByBusinessId(req, res) {
 				user: true,
 			},
 		});
-		if (reservations.length > 0) {
-			res.status(200).json(reservations);
-		} else {
-			res.status(404).json({ error: "No reservations found for this business" });
-		}
+		res.status(200).json(reservations);
 	} catch (error) {
 		console.error("Error retrieving reservations by business ID:", error);
 		res.status(400).json({ error: "Error retrieving reservations by business ID", detail: error.message });
