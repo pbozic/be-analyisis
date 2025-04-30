@@ -3,7 +3,6 @@ const DriverDao = require("../dao/Driver");
 const UsersDao = require("../dao/User");
 const FlagDao = require("../dao/Flags");
 const BusinessUsersDao = require("../dao/BusinessUsers");
-const ReferralDao = require("../dao/Referrals");
 const CashbackDao = require("../dao/Cashback");
 const WalletFundsDao = require("../dao/WalletFunds");
 const { UserSockets, io, SocketStore } = require("../socket");
@@ -12,11 +11,9 @@ const TaxiHelper = require("../lib/taxiHelpers");
 const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE , CARGO_TRANSFER_FEE, ORDER_TYPE, CREDITS,
 	CASHBACK_SOURCE, USER_ROLE, SCORING_POINTS_REASON, FUNDS_TYPE, SERVICE_TYPE, VEHICLE_CATEGORY
 } = require("../lib/constants");
-const { User } = require("@onesignal/node-onesignal");
-const { sendOrderNotifications, sendReferralNotifications } = require("../lib/notifications");
-const { sleep, range, calculatePrivateDriverFee, todaysEarnings } = require("../lib/helpersLib");
+const { sendOrderNotifications } = require("../lib/notifications");
+const { range, todaysEarnings } = require("../lib/helpersLib");
 const prisma = require("../prisma/prisma");
-const stripe = require("../lib/stripe");
 const BusinessDao = require("../dao/Business");
 const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
 const { sendNotificationToUser } = require("../lib/oneSignal");
@@ -1248,7 +1245,6 @@ async function cancelOrder(req, res) {
 					io.emit("driver_available", driver);
 				}
 				await TaxiHelper.revokeTaxiOrderFromDrivers(vehicle_transfer_order.order_id);
-				io.to("order_" + vehicle_transfer_order.order_id).emit("order_status_change__taxi", vehicle_transfer_order);
 				io.to("order_" + vehicle_transfer_order.order_id).emit("order_cancelled__taxi", vehicle_transfer_order);
 				SocketStore.removeUserFromRoom(driver?.user_id,`order_${order_id}`)
 			}
@@ -1266,11 +1262,9 @@ async function cancelOrder(req, res) {
 			io.emit("driver_available", driver);
 			SocketStore.removeUserFromRoom(driver?.user_id,`order_${order_id}`)
 		}
-		io.to("order_" + order.order_id).emit("order_status_change__taxi", order);
 		io.to("order_" + order.order_id).emit("order_cancelled__taxi", order);
 		SocketStore.removeUserFromRoom(order?.user_id,`order_${order_id}`)
 
-		console.info("TaxiOrderController", "order_status_change__taxi", "order_cancelled__taxi");
 		res.status(200).json(order);
 	} catch (e) {
 		console.log("TaxiOrderController", e);
@@ -1665,9 +1659,9 @@ async function getDriversForOrder(req, res) {
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getTaxiOrdersWithPagination(req, res) {
-	const { where, orderBy } = req.query;
-	const page = req.query.page ? parseInt(req.query.page) : 1;
-	const take = req.query.take ? parseInt(req.query.take) : 8;
+	const { where, orderBy } = req.body;
+	const page = req.body.page ? parseInt(req.body.page) : 1;
+	const take = req.body.take ? parseInt(req.body.take) : 8;
 	try {
 		const skip = (page-1)*take;
 		const [data, total] = await Promise.all([
@@ -1676,7 +1670,7 @@ async function getTaxiOrdersWithPagination(req, res) {
 				skip: skip,
 				where,
 				orderBy: orderBy ? orderBy : { created_at: 'desc' },
-				include: { user: true, vehicle: true, driver: { include: {	user: true, current_vehicle: true} } }
+				include: { user: true, vehicle: true, driver: { include: { user: true } } }
 			}),
 			prisma.taxi_orders.count({
 				where // Ensure the count matches the filtered results
