@@ -1247,7 +1247,6 @@ async function cancelOrder(req, res) {
 					io.emit("driver_available", driver);
 				}
 				await TaxiHelper.revokeTaxiOrderFromDrivers(vehicle_transfer_order.order_id);
-				io.to("order_" + vehicle_transfer_order.order_id).emit("order_status_change__taxi", vehicle_transfer_order);
 				io.to("order_" + vehicle_transfer_order.order_id).emit("order_cancelled__taxi", vehicle_transfer_order);
 				SocketStore.removeUserFromRoom(driver?.user_id,`order_${order_id}`)
 			}
@@ -1265,11 +1264,9 @@ async function cancelOrder(req, res) {
 			io.emit("driver_available", driver);
 			SocketStore.removeUserFromRoom(driver?.user_id,`order_${order_id}`)
 		}
-		io.to("order_" + order.order_id).emit("order_status_change__taxi", order);
 		io.to("order_" + order.order_id).emit("order_cancelled__taxi", order);
 		SocketStore.removeUserFromRoom(order?.user_id,`order_${order_id}`)
 
-		console.info("TaxiOrderController", "order_status_change__taxi", "order_cancelled__taxi");
 		res.status(200).json(order);
 	} catch (e) {
 		console.log("TaxiOrderController", e);
