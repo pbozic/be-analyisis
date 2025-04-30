@@ -1657,8 +1657,8 @@ async function createScoringPointsHandler(req, res) {
 			return res.status(401).json({ error: 'User not authenticated' });
 		}
 
-		const business = await BusinessUsersDao.getBusinessUserByUserId(user_id)
-		const { business_id } = business
+		const user_with_drivers = await UserDao.getUserById(user_id,{include:{driver:true,delivery_driver:true}})
+		const business_id = user_with_drivers?.driver?.business_id || user_with_drivers?.delivery_driver?.business_id || null
 
 
 		if (!business_id) {
