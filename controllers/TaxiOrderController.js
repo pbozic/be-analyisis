@@ -3,7 +3,6 @@ const DriverDao = require("../dao/Driver");
 const UsersDao = require("../dao/User");
 const FlagDao = require("../dao/Flags");
 const BusinessUsersDao = require("../dao/BusinessUsers");
-const ReferralDao = require("../dao/Referrals");
 const CashbackDao = require("../dao/Cashback");
 const WalletFundsDao = require("../dao/WalletFunds");
 const { UserSockets, io, SocketStore } = require("../socket");
@@ -12,11 +11,9 @@ const TaxiHelper = require("../lib/taxiHelpers");
 const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE , CARGO_TRANSFER_FEE, ORDER_TYPE, CREDITS,
 	CASHBACK_SOURCE, USER_ROLE, SCORING_POINTS_REASON, FUNDS_TYPE, SERVICE_TYPE, VEHICLE_CATEGORY
 } = require("../lib/constants");
-const { User } = require("@onesignal/node-onesignal");
-const { sendOrderNotifications, sendReferralNotifications } = require("../lib/notifications");
-const { sleep, range, calculatePrivateDriverFee, todaysEarnings } = require("../lib/helpersLib");
+const { sendOrderNotifications } = require("../lib/notifications");
+const { range, todaysEarnings } = require("../lib/helpersLib");
 const prisma = require("../prisma/prisma");
-const stripe = require("../lib/stripe");
 const BusinessDao = require("../dao/Business");
 const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
 const { sendNotificationToUser } = require("../lib/oneSignal");
@@ -84,7 +81,8 @@ async function getActiveTaxiOrders(req, res) {
 						activeOrder.pickup_location.coordinates,
 						driver.location.coordinates,
 						"driving",
-						new Date()
+						new Date(),
+						"best_guess"
 					);
 
 					console.log("ROES:", result, result?.rows[0], result?.rows[0]?.elements[0]);
@@ -802,7 +800,7 @@ async function acceptOrder(req, res) {
 			result,
 			distance,
 			duration
-		} = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, driver.location.coordinates, "driving", new Date());
+		} = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, driver.location.coordinates, "driving", new Date(), "best_guess");
 
 		console.log("ROES:", result, result?.rows[0], result?.rows[0]?.elements[0]);
 		console.log("ROES DISTANCE:", distance);
@@ -1661,9 +1659,9 @@ async function getDriversForOrder(req, res) {
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getTaxiOrdersWithPagination(req, res) {
-	const { where, orderBy } = req.query;
-	const page = req.query.page ? parseInt(req.query.page) : 1;
-	const take = req.query.take ? parseInt(req.query.take) : 8;
+	const { where, orderBy } = req.body;
+	const page = req.body.page ? parseInt(req.body.page) : 1;
+	const take = req.body.take ? parseInt(req.body.take) : 8;
 	try {
 		const skip = (page-1)*take;
 		const [data, total] = await Promise.all([
@@ -1672,7 +1670,7 @@ async function getTaxiOrdersWithPagination(req, res) {
 				skip: skip,
 				where,
 				orderBy: orderBy ? orderBy : { created_at: 'desc' },
-				include: { user: true, vehicle: true, driver: { include: {	user: true, current_vehicle: true} } }
+				include: { user: true, vehicle: true, driver: { include: { user: true } } }
 			}),
 			prisma.taxi_orders.count({
 				where // Ensure the count matches the filtered results
@@ -1919,7 +1917,19 @@ async function splitVanOrder(req, res){
 		res.status(500).json(e);
 	}
 }
-
+async function calculateTransferPrice (req, res) {
+	const { pickup_location, delivery_location, departure_time  } = req.body;
+	try {
+		let priceData = await TaxiHelper.calculateTransferRidePrice(pickup_location, delivery_location, departure_time);
+		if (!priceData) {
+			return res.status(400).json({ message: "Price could not be calculated" });
+		}
+		res.status(200).json(price);
+	} catch (e) {
+		console.log("TaxiOrderController", e);
+		res.status(500).json(e);
+	}
+}
 module.exports = {
 	getTaxiOrders,
 	getTaxiOrdersToday,
@@ -1953,5 +1963,6 @@ module.exports = {
 	getDriversForOrder,
 	getAcceptedScheduledOrders,
 	getScheduledOrdersByUserId,
-	getTaxiOrdersWithPagination
+	getTaxiOrdersWithPagination,
+	calculateTransferPrice
 };

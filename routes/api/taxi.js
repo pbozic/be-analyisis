@@ -11,7 +11,7 @@ router.get("/", TaxiOrderController.getTaxiOrders);
 router.get("/today", TaxiOrderController.getTaxiOrdersToday);
 router.get("/order/:order_id", TaxiOrderController.getOrder);
 router.get("/order/:order_id/available-drivers", TaxiOrderController.getDriversForOrder);
-router.get("/orders/pagination/", TaxiOrderController.getTaxiOrdersWithPagination);
+router.post("/orders/pagination/", TaxiOrderController.getTaxiOrdersWithPagination);
 router.get("/orders/completed/:driver_id", TaxiOrderController.getCompletedTaxiOrders);
 router.get("/orders/completed/user/:user_id", TaxiOrderController.getCompletedTaxiOrdersByUserId);
 router.get("/orders/completed/business/:business_id", TaxiOrderController.getCompletedTaxiOrdersByBusinessId);
@@ -40,5 +40,6 @@ router.post("/order/append_driver", TaxiOrderController.appendTaxiDriver);
 router.post("/order/reject", TaxiOrderController.rejectOrder);
 router.post("/grouped_order/cancel", TaxiOrderController.cancelGroupedOrderByParentId);
 router.post("/grouped_order/reject", TaxiOrderController.rejectGroupedOrderByParentId);
+router.post("/calculate_transfer_price", TaxiOrderController.calculateTransferPrice);
 
 module.exports = router;

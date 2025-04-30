@@ -33,6 +33,7 @@ const promoRoutes = require("./api/promo");
 const googleMaps = require("./api/googleMaps");
 const orderLobbyRoutes = require("./api/orderLobby");
 const searchRoutes = require("./api/search");
+const overwatchRoutes = require("./api/overwatch");
 const {sendNotificationToUser} = require("../lib/oneSignal");
 const { auth } = require("googleapis/build/src/apis/drive");
 const fs = require('fs');
@@ -50,7 +51,7 @@ router.use("/taxi", [authMiddleware], taxiRoutes);
 router.use("/business/auth", authBusinessRoutes);
 router.use("/business/search", searchRoutes);
 router.use("/business", [authMiddleware], businessRoutes);
-
+router.use("/overwatch", overwatchRoutes);
 //router.use("/business", businessRoutes);
 router.use("/drivers", [authMiddleware], driverRoutes);
 router.use("/delivery_drivers", [authMiddleware], deliveryDriverRoutes);
