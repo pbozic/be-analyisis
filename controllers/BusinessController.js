@@ -1646,7 +1646,7 @@ async function getScheduledUsersByBusinessId(req, res) {
 
 async function createScoringPointsHandler(req, res) {
 	try {
-		const { reason, points } = req.body;
+		const { reason, points, taxi_order_id, delivery_order_id } = req.body;
 
 		if (!SCORING_POINTS_REASON.includes(reason) || typeof points !== 'number' || points <= 0) {
 			return res.status(400).json({ error: 'Invalid reason or points' });
@@ -1668,8 +1668,8 @@ async function createScoringPointsHandler(req, res) {
 		const scoringPoint = await ScoringPointsDao.createScoringPoints(
 			business_id,
 			user_id,
-			null, // delivery_order_id
-			null, // taxi_order_id
+			delivery_order_id,
+			taxi_order_id,
 			points,
 			true,
 			reason
