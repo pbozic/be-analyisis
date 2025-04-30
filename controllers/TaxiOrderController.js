@@ -84,7 +84,8 @@ async function getActiveTaxiOrders(req, res) {
 						activeOrder.pickup_location.coordinates,
 						driver.location.coordinates,
 						"driving",
-						new Date()
+						new Date(),
+						"best_guess"
 					);
 
 					console.log("ROES:", result, result?.rows[0], result?.rows[0]?.elements[0]);
@@ -802,7 +803,7 @@ async function acceptOrder(req, res) {
 			result,
 			distance,
 			duration
-		} = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, driver.location.coordinates, "driving", new Date());
+		} = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, driver.location.coordinates, "driving", new Date(), "best_guess");
 
 		console.log("ROES:", result, result?.rows[0], result?.rows[0]?.elements[0]);
 		console.log("ROES DISTANCE:", distance);
@@ -1922,7 +1923,19 @@ async function splitVanOrder(req, res){
 		res.status(500).json(e);
 	}
 }
-
+async function calculateTransferPrice (req, res) {
+	const { pickup_location, delivery_location, departure_time  } = req.body;
+	try {
+		let priceData = await TaxiHelper.calculateTransferRidePrice(pickup_location, delivery_location, departure_time);
+		if (!priceData) {
+			return res.status(400).json({ message: "Price could not be calculated" });
+		}
+		res.status(200).json(price);
+	} catch (e) {
+		console.log("TaxiOrderController", e);
+		res.status(500).json(e);
+	}
+}
 module.exports = {
 	getTaxiOrders,
 	getTaxiOrdersToday,
@@ -1956,5 +1969,6 @@ module.exports = {
 	getDriversForOrder,
 	getAcceptedScheduledOrders,
 	getScheduledOrdersByUserId,
-	getTaxiOrdersWithPagination
+	getTaxiOrdersWithPagination,
+	calculateTransferPrice
 };

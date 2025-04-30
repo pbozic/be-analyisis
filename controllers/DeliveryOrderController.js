@@ -175,7 +175,7 @@ async function createOrder(req, res) {
 		orderData.telephone = user.telephone;
 		let payment_intent;
 		if (order.details.type === "delivery") {
-			let { result } = await gApi.distanceBetweenTwoPoints(order.delivery_location.coordinates, order.pickup_location.coordinates, "driving", new Date());
+			let { result } = await gApi.distanceBetweenTwoPoints(order.delivery_location.coordinates, order.pickup_location.coordinates, "driving", new Date(), "best_guess");
 			let distanceM = result.rows[0].elements[0].distance.value;
 			let distanceKm = distanceM / 1000;
 			order.details.distance = distanceKm;
@@ -454,7 +454,7 @@ async function createDailyMeals(req, res) {
 				? generateItemsFromPreferences(user.daily_meal_preferences, { price: 0, discount: 0 })
 				: generateItemsFromPreferences({ normal: { amount: 1 }, substitution: { amount: 0 } }, { price: 0, discount: 0 });
 
-			let { result } = await gApi.distanceBetweenTwoPoints(delivery_driver.location.coordinates, userAddress.coordinates, "driving", new Date());
+			let { result } = await gApi.distanceBetweenTwoPoints(delivery_driver.location.coordinates, userAddress.coordinates, "driving", new Date(), "best_guess");
 			const durationValue = result.rows[0].elements[0].duration.value;
 
 			// Calculate expected delivery time based on cumulative time

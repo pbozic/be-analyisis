@@ -40,5 +40,6 @@ router.post("/order/append_driver", TaxiOrderController.appendTaxiDriver);
 router.post("/order/reject", TaxiOrderController.rejectOrder);
 router.post("/grouped_order/cancel", TaxiOrderController.cancelGroupedOrderByParentId);
 router.post("/grouped_order/reject", TaxiOrderController.rejectGroupedOrderByParentId);
+router.post("/calculate_transfer_price", TaxiOrderController.calculateTransferPrice);
 
 module.exports = router;

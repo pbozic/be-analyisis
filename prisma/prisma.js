@@ -83,6 +83,33 @@ const prisma = new PrismaClient({
 		},
 	},
 	model: {
+		settlements: {
+			async getSettlementFromLatLng({ latitude, longitude }) {
+				const settlement = await prisma.$queryRaw`
+					SELECT *
+					FROM settlements
+					WHERE ST_Intersects(
+						geom_generated,
+						ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)
+					)
+					LIMIT 1;
+				`;
+				return settlement[0] || null;
+			},
+			async checkIfTwoPointsAreInSameSettlement(point1, point2) {
+				const settlement = await prisma.$queryRaw`
+					SELECT *
+					FROM settlements
+					WHERE ST_Intersects(geom_generated, ST_SetSRID(ST_MakePoint(${point1.longitude}, ${point1.latitude}), 4326))
+					INTERSECT
+					SELECT *
+					FROM settlements
+					WHERE ST_Intersects(geom_generated, ST_SetSRID(ST_MakePoint(${point2.longitude}, ${point2.latitude}), 4326))
+				`;
+
+				return settlement[0] || null;
+			}
+		},
 		drivers: {
 			async inRadius(point, radiusInMeters, requirements, vehicleFilters) { 
 				console.log("vehicle filters", vehicleFilters)
