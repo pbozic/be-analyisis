@@ -35,8 +35,8 @@ io.use((socket, next) => {
 			// Disconnect the old socket
 			existingSocket.disconnect(true);
 		}
-		UserSockets.set(data.user.user_id, socket);
-		SocketStore.addSocket(data.user.user_id, socket);
+		UserSockets.set(data.user.user_id, socket.id);
+		SocketStore.addSocket(data.user.user_id, socket.id);
 		console.socket("socket connected: ", data.user.user_id);
 		next();
 	});
@@ -80,7 +80,7 @@ io.on("connection", async (socket) => {
 
 const SocketStore = {
   async addSocket(userId, socket) {
-    UserSockets.set(userId, socket);
+    UserSockets.set(userId, socket.id);
     await redis.sAdd(`user_sockets:${userId}`, socket.id);
     await redis.set(`socket_user:${socket.id}`, userId);
   },
