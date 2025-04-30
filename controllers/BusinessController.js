@@ -9,7 +9,7 @@ const UserDao = require("../dao/User");
 const DriverDao = require("../dao/Driver");
 const DeliveryDriverDao = require("../dao/DeliveryDriver");
 const DeliveryOrderDao = require("../dao/DeliveryOrder");
-const { BUSINESS_TYPE, DELIVERY_ORDER_STATUS } = require("../lib/constants");
+const { BUSINESS_TYPE, DELIVERY_ORDER_STATUS, SCORING_POINTS_REASON } = require("../lib/constants");
 const { calculateBusinessEarnings, calculateTotalEarnings } = require("../lib/helpersLib");
 const prisma = require("../prisma/prisma");
 const BusinessUsersDao = require("../dao/BusinessUsers");
@@ -17,6 +17,8 @@ const EmailHelper = require("../lib/emailSender");
 const { UserSockets, io } = require('../socket');
 const { businessIndex, categorySearch, fullSearch } = require("../elasticsearch");
 const UserFavoriteBusinessDao = require("../dao/UserFavoriteBusiness");
+const ScoringPointsDao = require("../dao/ScoringPoints")
+
 /**
  * POST /business/activate
  * @tag Business
@@ -1642,6 +1644,44 @@ async function getScheduledUsersByBusinessId(req, res) {
 	}
 }
 
+async function createScoringPointsHandler(req, res) {
+	try {
+		const { reason, points } = req.body;
+
+		if (!SCORING_POINTS_REASON.includes(reason) || typeof points !== 'number' || points <= 0) {
+			return res.status(400).json({ error: 'Invalid reason or points' });
+		}
+
+		const user_id = req.user?.user_id;
+		if (!user_id) {
+			return res.status(401).json({ error: 'User not authenticated' });
+		}
+
+		const business_id =
+			req.driver?.business_id ||
+			req.delivery_driver?.business_id;
+
+		if (!business_id) {
+			return res.status(400).json({ error: 'Business ID is required' });
+		}
+
+		const scoringPoint = await ScoringPointsDao.createScoringPoints(
+			business_id,
+			user_id,
+			null, // delivery_order_id
+			null, // taxi_order_id
+			points,
+			true,
+			reason
+		);
+
+		return res.status(201).json(scoringPoint);
+	} catch (error) {
+		console.error('Error in createScoringPointsHandler:', error);
+		return res.status(500).json({ error: 'Internal server error' });
+	}
+}
+
 module.exports = {
 	getScheduledUsersByBusinessId,
 	listBusinesses,
@@ -1695,6 +1735,7 @@ module.exports = {
 	addBusinessToFavorites,
 	removeBusinessFromFavorites,
 	getFavoriteBusinesses,
-	onboardingEnd
+	onboardingEnd,
+	createScoringPointsHandler
 };
 

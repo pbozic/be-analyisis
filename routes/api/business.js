@@ -63,5 +63,6 @@ router.patch("/delivery-address", BusinessController.updateBusinessDeliveryAddre
 router.patch("/stripe/generate/:business_id", BusinessController.generateBusinessStripeByBusinessId);
 router.post("/paymentIntent", joi(paymentIntentSchema), BusinessController.createPaymentIntent);
 router.delete("/:business_id", BusinessController.deleteBusiness);
+router.post("/scoring_points", BusinessController.createScoringPointsHandler);
 
 module.exports = router;
