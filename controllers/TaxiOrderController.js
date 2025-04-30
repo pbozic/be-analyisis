@@ -3,7 +3,6 @@ const DriverDao = require("../dao/Driver");
 const UsersDao = require("../dao/User");
 const FlagDao = require("../dao/Flags");
 const BusinessUsersDao = require("../dao/BusinessUsers");
-const ReferralDao = require("../dao/Referrals");
 const CashbackDao = require("../dao/Cashback");
 const WalletFundsDao = require("../dao/WalletFunds");
 const { UserSockets, io, SocketStore } = require("../socket");
@@ -12,11 +11,9 @@ const TaxiHelper = require("../lib/taxiHelpers");
 const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE , CARGO_TRANSFER_FEE, ORDER_TYPE, CREDITS,
 	CASHBACK_SOURCE, USER_ROLE, SCORING_POINTS_REASON, FUNDS_TYPE, SERVICE_TYPE, VEHICLE_CATEGORY
 } = require("../lib/constants");
-const { User } = require("@onesignal/node-onesignal");
-const { sendOrderNotifications, sendReferralNotifications } = require("../lib/notifications");
-const { sleep, range, calculatePrivateDriverFee, todaysEarnings } = require("../lib/helpersLib");
+const { sendOrderNotifications } = require("../lib/notifications");
+const { range, todaysEarnings } = require("../lib/helpersLib");
 const prisma = require("../prisma/prisma");
-const stripe = require("../lib/stripe");
 const BusinessDao = require("../dao/Business");
 const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
 const { sendNotificationToUser } = require("../lib/oneSignal");
