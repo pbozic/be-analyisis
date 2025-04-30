@@ -1648,7 +1648,7 @@ async function createScoringPointsHandler(req, res) {
 	try {
 		const { reason, points, taxi_order_id, delivery_order_id } = req.body;
 
-		if (!SCORING_POINTS_REASON.includes(reason) || typeof points !== 'number' || points <= 0) {
+		if (!Object.keys(SCORING_POINTS_REASON).includes(reason) || typeof points !== 'number' || points <= 0) {
 			return res.status(400).json({ error: 'Invalid reason or points' });
 		}
 
