@@ -814,6 +814,40 @@ async function completeOrder(req, res) {
 }
 
 /**
+ * GET /delivery/orders/driver/:driver_id
+ * @tag Delivery
+ * @summary Get completed delivery orders.
+ * @description This fetches all completed orders for a specific driver.
+ * @operationId getCompletedDeliveryOrdersByDriverId
+ * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
+ * @response 200 - Successful operation. Returns a list of completed orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+async function getDeliveryOrdersByDriverId(req, res) {
+	const { driver_id } = req.params;
+
+	try {
+		const orders = await DeliveryOrderDao.getOrders({
+			where: {
+				OR: [
+					{ delivery_driver_id: driver_id },
+					{ driver_id: driver_id }
+				]
+			},
+			include: {
+				business: true,
+				user: true,
+			}
+		});
+		res.status(200).json(orders);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+
+/**
  * GET /delivery/orders/completed
  * @tag Delivery
  * @summary Get completed delivery orders.
@@ -1565,6 +1599,7 @@ module.exports = {
 	updateOrderStatus,
 	dispatcherCancel,
 	dispatcherRevoke,
+	getDeliveryOrdersByDriverId,
 	getCompletedDeliveryOrdersByDriverId,
 	updateDeliveryOrderTimeline,
 	addToDeliveryOrderTimeline,

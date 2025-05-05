@@ -168,6 +168,34 @@ async function getActiveTaxiOrdersByDriverId(req, res) {
 }
 
 /**
+ * GET /taxi/orders/driver/:driver_id
+ * @tag Taxi
+ * @summary Get completed taxi orders.
+ * @description This fetches all completed orders for a specific driver.
+ * @operationId getCompletedTaxiOrders
+ * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
+ * @response 200 - Successful operation. Returns a list of completed orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+
+async function getTaxiOrdersByDriverId(req, res) {
+	const { driver_id } = req.params;
+
+	try {
+		const orders = await TaxiOrderDao.getOrders({
+			where: {
+				driver_id: driver_id
+			}
+		});
+		res.status(200).json(orders);
+	} catch (e) {
+		console.log("TaxiOrderController", e);
+		res.status(500).json(e);
+	}
+}
+
+/**
  * GET /taxi/orders/completed
  * @tag Taxi
  * @summary Get completed taxi orders.
@@ -1934,6 +1962,7 @@ module.exports = {
 	getTaxiOrders,
 	getTaxiOrdersToday,
 	getOrder,
+	getTaxiOrdersByDriverId,
 	getCompletedTaxiOrders,
 	getCanceledTaxiOrders,
 	getRejectedTaxiOrders,
