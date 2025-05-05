@@ -30,7 +30,7 @@ async function getOrdersWithPagination(req, res) {
 				skip: skip,
 				where,
 				orderBy: orderBy ? orderBy : { created_at: 'desc' },
-				include: { user: true, vehicle: true, driver: { include: { user: true } } }
+				include: { user: true, vehicle: true, driver: { include: { user: true } }, business: true }
 			}),
 			model.count({
 				where // Ensure the count matches the filtered results
