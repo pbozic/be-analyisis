@@ -2,7 +2,8 @@ const prisma = require("../prisma/prisma");
 const AddressDao = require('./Address');
 const DocumentDao = require('./Document');
 const Constants = require("../lib/constants");
-const { reorderMenusAndCategories } = require("../lib/businessHelpers"); // Assuming Address.js exports are imported as AddressDao
+const { reorderMenusAndCategories } = require("../lib/businessHelpers");
+const { ACCOUNT_ACTIONS_REASON, ACCOUNT_ACTIONS } = require("../lib/constants"); // Assuming Address.js exports are imported as AddressDao
 
 const getBusinesses = async (args) => {
 	try {
@@ -843,41 +844,64 @@ const getStripeIdsForAllBusinesses = async () => {
 		throw new Error(error);
 	}
 }
-async function activateBusiness(business_id) {
+
+async function activateBusiness( business_id, action_creator_user_id, reason ) {
 	try {
-		// if activating first time first_activated_at will be set
-		let business = await prisma.business.findUnique({
-			where: { business_id },
-			select: { first_activated_at: true },
+		return await prisma.$transaction(async (tx) => {
+			const business = await tx.business.findUnique({
+				where: { business_id },
+				select: { first_activated_at: true },
+			});
+
+			const updateData = { active: true };
+			if (!business.first_activated_at) {
+				updateData.first_activated_at = new Date();
+			}
+
+			const updatedBusiness = await tx.business.update({
+				where: { business_id },
+				data: updateData,
+			});
+
+			await tx.account_actions.create({
+				data: {
+					business: { connect: { business_id } },
+					action_creator: { connect: { user_id: action_creator_user_id } },
+					reason: reason,
+					action: ACCOUNT_ACTIONS.UNSUSPEND,
+				},
+			});
+
+			return updatedBusiness;
 		});
-		if (!business.first_activated_at) {
-
-			return await prisma.business.update({
-				where: { business_id },
-				data: { active: true, first_activated_at: new Date() },
-			});
-		} else {
-			return await prisma.business.update({
-				where: { business_id },
-				data: { active: true },
-			});
-		}
-
 	} catch (error) {
 		console.error("Error activating business:", error);
-		throw new Error(error);
+		throw new Error("Failed to activate business");
 	}
 }
 
-async function deactivateBusiness(business_id) {
+async function deactivateBusiness(business_id, action_creator_user_id, reason) {
 	try {
-		return await prisma.business.update({
-			where: { business_id },
-			data: { active: false },
+		return await prisma.$transaction(async (tx) => {
+			const updatedBusiness = await tx.business.update({
+				where: { business_id },
+				data: { active: false },
+			});
+
+			await tx.account_actions.create({
+				data: {
+					business: { connect: { business_id } },
+					action_creator: { connect: { user_id: action_creator_user_id } },
+					reason: reason,
+					action: ACCOUNT_ACTIONS.SUSPEND,
+				},
+			});
+
+			return updatedBusiness;
 		});
 	} catch (error) {
 		console.error("Error deactivating business:", error);
-		throw new Error(error);
+		throw new Error("Failed to deactivate business");
 	}
 }
 

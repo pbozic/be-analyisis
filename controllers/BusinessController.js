@@ -9,7 +9,7 @@ const UserDao = require("../dao/User");
 const DriverDao = require("../dao/Driver");
 const DeliveryDriverDao = require("../dao/DeliveryDriver");
 const DeliveryOrderDao = require("../dao/DeliveryOrder");
-const { BUSINESS_TYPE, DELIVERY_ORDER_STATUS, SCORING_POINTS_REASON } = require("../lib/constants");
+const { BUSINESS_TYPE, DELIVERY_ORDER_STATUS, SCORING_POINTS_REASON, ACCOUNT_ACTIONS_REASON } = require("../lib/constants");
 const { calculateBusinessEarnings, calculateTotalEarnings } = require("../lib/helpersLib");
 const prisma = require("../prisma/prisma");
 const BusinessUsersDao = require("../dao/BusinessUsers");
@@ -33,7 +33,14 @@ const ScoringPointsDao = require("../dao/ScoringPoints")
 
 async function activateBusiness(req, res) {
 	try {
-		const business = await BusinessDao.activateBusiness(req.body.business_id);
+		if(!req.user.user_id){
+			throw new Error("Missing creator user_id.")
+		}
+		const {business_id,reason} = req.body
+		if(!business_id || !Object.values(ACCOUNT_ACTIONS_REASON).includes(reason)){
+			throw new Error("Missing business_id or invalid reason.")
+		}
+		const business = await BusinessDao.activateBusiness(business_id,req.user.user_id,reason);
 		if (business) {
 			res.status(200).json(business);
 		} else {
@@ -61,12 +68,19 @@ async function activateBusiness(req, res) {
 
 async function deactivateBusiness(req, res) {
 	try {
-		const business = await BusinessDao.deactivateBusiness(req.body.business_id);
+		if(!req.user.user_id){
+			throw new Error("Missing creator user_id.")
+		}
+		const {business_id,reason} = req.body
+		if(!business_id || !Object.values(ACCOUNT_ACTIONS_REASON).includes(reason)){
+			throw new Error("Missing business_id or invalid reason.")
+		}
+		const business = await BusinessDao.deactivateBusiness(business_id,req.user.user_id,reason);
 		if (business) {
 			res.status(200).json(business);
 		} else {
 			res.status(400).json({
-				error: "Error activating business..",
+				error: "Error deactivating business..",
 				users: business,
 			});
 		}

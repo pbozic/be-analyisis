@@ -82,6 +82,8 @@ model business {
   late_events       late_events[]   @relation("late_events_to_business")
   fiscal_device     fiscal_devices? @relation(fields: [fiscal_devices_id], references: [fiscal_devices_id])
   fiscal_devices_id String?         @db.Uuid
+
+  account_actions account_actions[]
 }
 
 model business_users {
@@ -175,6 +177,9 @@ model users {
   scoring_points           scoring_points[]           @relation("scoring_points_to_user")
 
   late_events late_events[] @relation("late_events_to_user")
+
+  account_actions account_actions[] @relation("action_to_affected_user")
+  created_account_actions account_actions[] @relation("action_to_creator")
 }
 
 model user_roles {
@@ -1215,6 +1220,48 @@ model weather_data {
   @@index([settlement_id, time_epoch])
   @@index([municipalities_id, time_epoch])
   @@index([municipalities_id, time])
+}
+
+model account_actions {
+  account_action_id      String                 @id @unique @default(uuid()) @db.Uuid
+  business_id            String?                @db.Uuid
+  user_id                String?                @db.Uuid
+  created_at             DateTime               @default(now()) @db.Timestamptz(6)
+  action_creator_user_id String                 @db.Uuid
+
+  reason                 ACCOUNT_ACTIONS_REASON
+  action                 ACCOUNT_ACTIONS
+
+  business               business?              @relation(fields: [business_id], references: [business_id])
+  user                   users?                 @relation("action_to_affected_user", fields: [user_id], references: [user_id])
+  action_creator         users?                 @relation("action_to_creator", fields: [action_creator_user_id], references: [user_id])
+}
+
+enum ACCOUNT_ACTIONS {
+    SUSPEND
+    UNSUSPEND
+    BAN
+    UNBAN
+    DELETE
+    CREATE
+}
+
+enum ACCOUNT_ACTIONS_REASON {
+  SUSPICIOUS_BEHAVIOUR
+  VIOLATION_OF_TERMS
+  SPAMMING_OR_SCAMMING
+  HATE_SPEECH_OR_ABUSE
+  IMPERSONATION
+  PAYMENT_FRAUD
+  SELF_DISABLE
+
+  APPEAL_APPROVED
+  MANUAL_REVIEW_CLEAR
+  SYSTEM_ERROR_CORRECTION
+  USER_VERIFIED
+  BUSINESS_VERIFIED
+  TERMS_ACCEPTED
+  TEMPORARY_BAN_EXPIRED
 }
 
 enum CATEGORY_TYPE {

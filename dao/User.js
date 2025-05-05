@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const { createDocument, linkDocumentToTransaction } = require("./Document");
 const { addFileToDocument } = require("./File");
 const S3Helper = require("../lib/s3");
-const { USER_ROLE } = require("../lib/constants");
+const { USER_ROLE, ACCOUNT_ACTIONS } = require("../lib/constants");
 const WalletFundsDao = require("../dao/WalletFunds");
 
 const getUsers = async (args) => {
@@ -303,18 +303,28 @@ const updateUserDateOfBirth = async (user_id, dateOfBirth) => {
 	}
 };
 
-const updateUserDisabled = async (user_id, disabled) => {
+const updateUserDisabled = async (user_id, disabled, action_creator_user_id, reason) => {
 	try {
-		return prisma.users.update({
-			where: {
-				user_id: user_id,
-			},
-			data: {
-				disabled: disabled,
-			},
+		return await prisma.$transaction(async (tx) => {
+			const updatedUser = await tx.users.update({
+				where: { user_id },
+				data: { disabled },
+			});
+
+			await tx.account_actions.create({
+				data: {
+					user: { connect: { user_id } },
+					action_creator: { connect: { user_id: action_creator_user_id } },
+					reason,
+					action: disabled ? ACCOUNT_ACTIONS.SUSPEND : ACCOUNT_ACTIONS.UNSUSPEND,
+				},
+			});
+
+			return updatedUser;
 		});
 	} catch (error) {
-		return new Error(error);
+		console.error("Error updating user disabled status:", error);
+		throw new Error("Failed to update user status");
 	}
 };
 
@@ -700,18 +710,28 @@ const wipeUserPersonalData = async (user_id) => {
 	}
 };
 
-const updateUserActive = async (user_id, active) => {
+const updateUserActive = async (user_id, active, action_creator_user_id, reason) => {
 	try {
-		return prisma.users.update({
-			where: {
-				user_id: user_id,
-			},
-			data: {
-				active: active,
-			},
+		return await prisma.$transaction(async (tx) => {
+			const updatedUser = await tx.users.update({
+				where: { user_id },
+				data: { active },
+			});
+
+			await tx.account_actions.create({
+				data: {
+					user: { connect: { user_id } },
+					action_creator: { connect: { user_id: action_creator_user_id } },
+					action: active ? ACCOUNT_ACTIONS.UNSUSPEND : ACCOUNT_ACTIONS.SUSPEND,
+					reason,
+				},
+			});
+
+			return updatedUser;
 		});
 	} catch (error) {
-		return new Error(error);
+		console.error("Error updating user active status:", error);
+		throw new Error("Failed to update user active status");
 	}
 };
 

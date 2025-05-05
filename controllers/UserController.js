@@ -17,7 +17,7 @@ const stripe = require("../lib/stripe");
 const S3Helper = require("../lib/s3");
 const { User } = require("@onesignal/node-onesignal");
 const { DOCUMENT_TYPE, TAXI_ORDER_STATUS, USER_ROLE, CREDITS, CASHBACK_SOURCE, FUNDS_TYPE, SERVICE_TYPE_TO_FUNDS_TYPE,
-	CASHBACK_TYPE
+	CASHBACK_TYPE, ACCOUNT_ACTIONS_REASON
 } = require("../lib/constants");
 const { generateAccessToken, generateRefreshToken } = require("../lib/jwt");
 const { getOrders } = require("../dao/TaxiOrder");
@@ -812,9 +812,15 @@ async function deleteUserByUserId(req, res) {
  */
 async function updateUserActiveByUserId(req, res) {
 	const { user_id } = req.params;
-	const { active } = req.body
+	const { active,reason } = req.body
 	try {
-		const updatedUser = await UserDao.updateUserActive(user_id,active);
+		if(!req.user.user_id){
+			throw new Error("Missing creator user_id.")
+		}
+		if(!user_id || !Object.values(ACCOUNT_ACTIONS_REASON).includes(reason)){
+			throw new Error("Missing user_id or invalid reason.")
+		}
+		const updatedUser = await UserDao.updateUserActive(user_id,active,req.user.user_id, reason);
 		return res.status(200).json({
 			message: "User active field updated successfully.",
 			user: updatedUser,
@@ -839,9 +845,15 @@ async function updateUserActiveByUserId(req, res) {
  */
 async function updateUserDisabledByUserId(req, res) {
 	const { user_id} = req.params;
-	const { disabled } = req.body
+	const { disabled, reason } = req.body
 	try {
-		const disabledUser = await UserDao.updateUserDisabled(user_id,disabled);
+		if(!req.user.user_id){
+			throw new Error("Missing creator user_id.")
+		}
+		if(!user_id || !Object.values(ACCOUNT_ACTIONS_REASON).includes(reason)){
+			throw new Error("Missing user_id or invalid reason.")
+		}
+		const disabledUser = await UserDao.updateUserDisabled(user_id,disabled,req.user.user_id,reason);
 
 		return res.status(200).json({
 			message: "User disabled field updated successfully.",
@@ -865,9 +877,16 @@ async function updateUserDisabledByUserId(req, res) {
  * @response 400 - Error soft deleting user.
  */
 async function softDeleteUserByUserId(req, res) {
-	const {user_id} = req.params;
+	const { user_id} = req.params;
+	const { reason } = req.body
 	try {
-		const disabledUser = await UserDao.updateUserDisabled(user_id,true);
+		if(!req.user.user_id){
+			throw new Error("Missing creator user_id.")
+		}
+		if(!user_id || !Object.values(ACCOUNT_ACTIONS_REASON).includes(reason)){
+			throw new Error("Missing user_id or invalid reason.")
+		}
+		const disabledUser = await UserDao.updateUserDisabled(user_id,true, req.user.user_id,reason);
 		const wipedUser = await UserDao.wipeUserPersonalData(user_id);
 		return res.status(200).json({
 			message: "User \"soft delete\" successful.",
@@ -894,7 +913,7 @@ async function softDeleteUserByUserId(req, res) {
  */
 async function disableMe(req, res) {
 	try {
-		let disabledUser = await UserDao.updateUserDisabled(req.user.user_id, true);
+		let disabledUser = await UserDao.updateUserDisabled(req.user.user_id, true,req.user.user_id,ACCOUNT_ACTIONS_REASON.SELF_DISABLE);
 		if (disabledUser) return res.status(200).json({
 			message: "User disabled successfully.",
 			user: disabledUser
