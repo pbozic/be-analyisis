@@ -33,7 +33,7 @@ const moment = require('moment');
 const BusinessHelpers = require("../lib/businessHelpers");
 
 /**
- * GET /delivery/orders
+ * GET /delivery/orders/:daily_meals
  * @tag Delivery
  * @summary Get all delivery orders.
  * @description This fetches all delivery orders.

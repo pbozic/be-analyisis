@@ -7,7 +7,7 @@ const {
 const joi = require("../../../middleware/joi");
 const DeliveryOrderController = require("../../../controllers/DeliveryOrderController");
 
-router.get("/", DeliveryOrderController.getDeliveryOrders);
+router.get("/:daily_meals", DeliveryOrderController.getDeliveryOrders);
 router.get("/today", DeliveryOrderController.getDeliveryOrdersToday);
 router.get("/active", DeliveryOrderController.getActiveDeliveryOrders);
 router.get("/:business_id", DeliveryOrderController.getDeliveryOrdersByBusinessId);
