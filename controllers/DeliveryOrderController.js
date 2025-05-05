@@ -44,8 +44,12 @@ const BusinessHelpers = require("../lib/businessHelpers");
  */
 
 async function getDeliveryOrders(req, res) {
+	const { is_daily_meal } = req.params;
+	let where = {};
+	where.is_daily_meal = !!is_daily_meal;
+
 	try {
-		const orders = await DeliveryOrderDao.getOrders({});
+		const orders = await DeliveryOrderDao.getOrders(where);
 		res.status(200).json(orders);
 	} catch (e) {
 		console.log(e);
