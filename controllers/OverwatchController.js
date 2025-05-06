@@ -21,6 +21,8 @@ async function getOrdersWithPagination(req, res) {
 	const page = req.body.page ? parseInt(req.body.page) : 1;
 	const take = req.body.take ? parseInt(req.body.take) : 8;
 
+	let includeObj = { user: true, vehicle: true, driver: { include: { user: true } }, business: true }
+	if (service === SERVICE_TYPE.DELIVERY) includeObj.delivery_driver = { include: { user: true } }
 	const model = service === SERVICE_TYPE.DELIVERY ? prisma.delivery_orders : prisma.taxi_orders;
 	try {
 		const skip = (page-1)*take;
@@ -30,7 +32,7 @@ async function getOrdersWithPagination(req, res) {
 				skip: skip,
 				where,
 				orderBy: orderBy ? orderBy : { created_at: 'desc' },
-				include: { user: true, vehicle: true, driver: { include: { user: true } }, business: true }
+				include: includeObj,
 			}),
 			model.count({
 				where // Ensure the count matches the filtered results

@@ -838,6 +838,8 @@ async function getDeliveryOrdersByDriverId(req, res) {
 			include: {
 				business: true,
 				user: true,
+				driver: { include: { user: true } },
+				delivery_driver: { include: { user: true } },
 			}
 		});
 		res.status(200).json(orders);
