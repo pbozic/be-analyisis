@@ -1,11 +1,12 @@
 const Joi = require("joi");
 const addressSchema = Joi.object({
-	address: Joi.string().required(),
 	id: Joi.string().optional(),
+	address: Joi.string().required(),
 	coordinates: Joi.object({
 		latitude: Joi.number().required(),
 		longitude: Joi.number().required(),
 	}).required(),
+	locked: Joi.boolean().optional()
 });
 
 const deliveryLocationSchema = Joi.object({

@@ -440,7 +440,7 @@ async function createOrderHelper(req, res, orderData) {
 			is_repeat = true;
 		}
 		orderData.is_scheduled = is_scheduled;
-		orderData.route = orderData.route.map(r_i=>({...r_i,id:randomUUID()}))
+		orderData.route = orderData.route.map(r_i=>({...r_i,id:randomUUID(), locked:false}))
 		orderData.route[0] = {...orderData.route[0],locked:true}
 		let order;
 		let ordersData = [];
