@@ -24,7 +24,8 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
         const hasQuery = queryWords.length > 0;
         const hasCategories = categoryIds.length > 0;
         const hasPromoSection = promoSectionId !== null;
-        const radius_limited = Math.min(radius, MAX_DELIVERY_RADIUS_KM)
+        const radius_limited = radius ? Math.min(radius, MAX_DELIVERY_RADIUS_KM) : MAX_DELIVERY_RADIUS_KM;
+             
 
         // Base Query
         const boolQuery = {
