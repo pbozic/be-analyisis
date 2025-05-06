@@ -67,6 +67,65 @@ const getBusinessById = async (business_id) => {
 		throw new Error(error);
 	}
 };
+
+const getBusinessAdminDataById = async (business_id) => {
+	try {
+		return await prisma.business.findUnique({
+			where: {
+				business_id: business_id,
+			},
+			include: {
+				address: true,
+				delivery_address: true,
+				finances: true,
+				business_users: {
+					include: {
+						users: {
+							include:{
+								child_users: { include:{child_user: true}},
+								parent_user: { include:{parent_user: true}},
+							}
+						},
+					},
+				},
+				parent_business: true,
+				child_businesses: true,
+				documents: false,
+				taxi_orders: false,
+				delivery_orders: false,
+
+				word_buy_stripe_product:{
+					include: {
+						prices:true
+					}
+				},
+				word_buys: {
+					include:{
+						word:{
+							include:{
+								categories:true,
+								word_bundles:true
+							}
+						}
+					}
+				},
+				promo_sections:{
+					include: {
+						promo_section:{
+							include: {
+								promo_section:true
+							}
+						}
+					}
+				},
+			},
+		});
+	} catch (error) {
+		console.error("Error retrieving business:", error);
+		throw new Error(error);
+	}
+};
+
 const getBusinessesForSearchById = async (business_id) => {
 	try {
 		if (!Array.isArray(business_id)) {
@@ -979,5 +1038,6 @@ module.exports = {
 	getBusinessesForSearchById,
 	activateBusiness,
 	deactivateBusiness,
-	getBusinessForSearchById
+	getBusinessForSearchById,
+	getBusinessAdminDataById
 };

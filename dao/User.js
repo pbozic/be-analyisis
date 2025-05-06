@@ -463,6 +463,7 @@ const createNewUser = async (user, hashPassword = false) => {
 			include: {
 				child_users: true,
 				parent_user: true,
+				user_roles:true,
 			}
 		});
 	} catch (error) {

@@ -377,6 +377,33 @@ async function getBusinessById(req, res) {
 }
 
 /**
+ * GET /admin/business/:business_id
+ * @tag Business
+ * @summary Get a business by ID including admin data
+ * @description Retrieves detailed information about a specific business by its ID, including data an admin can see.
+ * @operationId getBusinessAdminDataById
+ * @pathParam {string} business_id - The ID of the business to retrieve
+ * @response 200 - Successful operation, returns detailed business information
+ * @responseContent {Business} 200.application/json
+ * @response 404 - Business not found
+ * @response 400 - Error retrieving business information
+ */
+async function getBusinessAdminDataById(req, res) {
+	try {
+		console.log("getBusinessAdminDataById", req.params.business_id)
+		const business = await BusinessDao.getBusinessAdminDataById(req.params.business_id);
+		if (business) {
+			res.status(200).json(business);
+		} else {
+			res.status(404).json({ error: "Business not found" });
+		}
+	} catch (e) {
+		console.error("Error retrieving business:", e);
+		res.status(400).json({ error: "Error retrieving business information", e });
+	}
+}
+
+/**
  * GET /business/search/:business_id
  * @tag Business
  * @summary Get a business for search by ID
@@ -1707,6 +1734,7 @@ module.exports = {
 	update,
 	createNewBusiness,
 	getBusinessById,
+	getBusinessAdminDataById,
 	getParentBusiness,
 	getChildBusinesses,
 	getBusinessesByGroupName,
