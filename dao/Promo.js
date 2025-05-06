@@ -429,17 +429,25 @@ async function getAllPromoBannersByAd(ad) {
 //     });
 // }
 async function createPromoSectionBuy(args) {
-    return await prisma.promo_sections_buy.create({
-        data: {
-            promo_sections_id: args.promo_sections_id,
-            business: {
-                connect: {
-                    business_id: args.business_id
-                }
-            },
-            tier: args.tier
+    const data = {
+        promo_sections_id: args.promo_sections_id,
+        business: {
+            connect: {
+                business_id: args.business_id
+            }
         },
-    });
+        tier: args.tier,
+    };
+
+    if (args.active_at) {
+        data.active_at = args.active_at;
+    }
+
+    if (args.expires_at) {
+        data.expires_at = args.expires_at;
+    }
+
+    return await prisma.promo_sections_buy.create({ data });
 }
 
 
