@@ -1,4 +1,5 @@
 const esClient = require("../client");
+const { MAX_DELIVERY_RADIUS_KM } = require("../../lib/constants");
 
 const SCORING_WEIGHTS = {
     bid_multiplier: 1, // Boost businesses bidding on words
@@ -22,8 +23,8 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
         const queryWords = query ? query.split(" ").filter((word) => word.trim() !== "") : [];
         const hasQuery = queryWords.length > 0;
         const hasCategories = categoryIds.length > 0;
-        const hasRadius = radius !== null;
         const hasPromoSection = promoSectionId !== null;
+        const radius_limited = Math.min(radius,MAX_DELIVERY_RADIUS_KM)
 
         // Base Query
         const boolQuery = {
@@ -195,18 +196,16 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
             }
         }
 
-        // **Filter by radius (if provided)**
-        if (hasRadius) {
-            boolQuery.bool.filter.push({
-                geo_distance: {
-                    distance: `${radius}km`,
-                    location: {
-                        lat: userLat,
-                        lon: userLon
-                    }
+        // **Filter by radius limited to max delivery radius**
+        boolQuery.bool.filter.push({
+            geo_distance: {
+                distance: `${radius_limited}km`,
+                location: {
+                    lat: userLat,
+                    lon: userLon
                 }
-            });
-        }
+            }
+        });
        
         // **Function Scoring (Maintains All Other Scoring)**
         let functionScoreQuery = {
