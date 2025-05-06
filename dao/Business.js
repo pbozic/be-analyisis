@@ -111,11 +111,7 @@ const getBusinessAdminDataById = async (business_id) => {
 				},
 				promo_sections:{
 					include: {
-						promo_section:{
-							include: {
-								promo_section:true
-							}
-						}
+						promo_section:true
 					}
 				},
 			},
