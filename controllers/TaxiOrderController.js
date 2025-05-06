@@ -442,6 +442,12 @@ async function createOrderHelper(req, res, orderData) {
 		orderData.is_scheduled = is_scheduled;
 		orderData.route = orderData.route.map(r_i=>({...r_i,id:randomUUID(), locked:false}))
 		orderData.route[0] = {...orderData.route[0],locked:true}
+		if(orderData.pickup_location){
+			orderData.pickup_location = { address:orderData.pickup_location.address, coordinates: orderData.pickup_location.coordinates }
+		}
+		if(orderData.delivery_location){
+			orderData.delivery_location = { address:orderData.delivery_location.address, coordinates: orderData.delivery_location.coordinates }
+		}
 		let order;
 		let ordersData = [];
 		if (is_repeat) {

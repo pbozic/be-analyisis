@@ -10,12 +10,13 @@ const addressSchema = Joi.object({
 });
 
 const deliveryLocationSchema = Joi.object({
-	address: Joi.string().allow(null),
 	id: Joi.string().optional(),
+	address: Joi.string().allow(null),
 	coordinates: Joi.object({
 		latitude: Joi.number().allow(null),
 		longitude: Joi.number().allow(null),
-	}).allow(null)
+	}).allow(null),
+	locked: Joi.boolean().optional()
 }).allow(null);
 
 const createOrderSchema = Joi.object({
