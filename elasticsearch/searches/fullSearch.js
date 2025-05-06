@@ -17,7 +17,7 @@ const SCORING_WEIGHTS = {
     menu_item_description_weight: 1, // Weight for matching menu item descriptions
 };
 
-async function searchBusinesses(query, userLat, userLon, categoryIds = [], radius = null, filterOperator = "OR",isDailyMealSearch = false, promoSectionId = null, page = 1, pageSize = 10) {
+async function searchBusinesses(query, userLat = 46.0660617, userLon = 14.5098111, categoryIds = [], radius = null, filterOperator = "OR",isDailyMealSearch = false, promoSectionId = null, page = 1, pageSize = 10) {
     try {
         const from = (page - 1) * pageSize;
         const queryWords = query ? query.split(" ").filter((word) => word.trim() !== "") : [];
