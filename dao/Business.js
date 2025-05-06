@@ -103,7 +103,7 @@ const getBusinessAdminDataById = async (business_id) => {
 					include:{
 						word:{
 							include:{
-								categories:true,
+								category:true,
 								word_bundles:true
 							}
 						}
