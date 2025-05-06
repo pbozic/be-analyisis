@@ -688,11 +688,11 @@ async function updateCompleteTaxiRoute(order_id, route) {
     try {
         const data = {
             route: route,
-            pickup_location: route[0],
+            pickup_location: { address:route[0].address, coordinates: route[0].coordinates },
         };
 
         if (route.length > 1) {
-            data.delivery_location = route[route.length - 1];
+            data.delivery_location = { address:route[route.length - 1].address, coordinates: route[route.length - 1].coordinates };
         }
 
         return prisma.taxi_orders.update({
