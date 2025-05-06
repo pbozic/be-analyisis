@@ -430,10 +430,14 @@ async function getAllPromoBannersByAd(ad) {
 // }
 async function createPromoSectionBuy(args) {
     const data = {
-        promo_sections_id: args.promo_sections_id,
         business: {
             connect: {
                 business_id: args.business_id
+            }
+        },
+        promo_section: {
+            connect: {
+                promo_sections_id: args.promo_sections_id
             }
         },
         tier: args.tier,
