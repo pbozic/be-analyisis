@@ -24,13 +24,13 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
         const hasQuery = queryWords.length > 0;
         const hasCategories = categoryIds.length > 0;
         const hasPromoSection = promoSectionId !== null;
-        const radius_limited = Math.min(radius,MAX_DELIVERY_RADIUS_KM)
+        const radius_limited = Math.min(radius, MAX_DELIVERY_RADIUS_KM)
 
         // Base Query
         const boolQuery = {
             bool: {
                 must: [],
-                filter: [],
+                filter: [ { term: { active: true } }],
                 should: [],
                 must_not: []
             }
@@ -288,14 +288,7 @@ async function searchBusinesses(query, userLat, userLon, categoryIds = [], radiu
                 from,
                 size: pageSize,
                 explain: true,
-                query: {
-                    bool: {
-                      filter: [
-                        { term: { active: true } } // 🔥 this actually works now!
-                      ],
-                    must: functionScoreQuery // your function_score stays here
-                    }
-                  },
+                query: functionScoreQuery,
                 _source: [
                     "business_id", "name", "description", "_score", "address", "delivery_address",
                     "popular", "new", "working_hours", "seats", "restaurant_overwhelmed",
