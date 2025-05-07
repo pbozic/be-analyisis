@@ -214,7 +214,7 @@ async function getAllPromoAds(req, res) {
 
 async function getPromoAdsByServiceType  (req, res) {
     try {
-        const promoAds = await PromoDao.getPromoAdsByServiceType(req.params.type);
+        const promoAds = await PromoDao.getAllPromoAdsByServiceType(req.params.type);
         res.json(promoAds);
     } catch (error) {
         console.error(error)
@@ -224,7 +224,7 @@ async function getPromoAdsByServiceType  (req, res) {
 
 async function getPromoAdsByCategory  (req, res) {
     try {
-        const promoAds = await PromoDao.getPromoAdsByCategory(req.params.category);
+        const promoAds = await PromoDao.getAllPromoAdsByCategory(req.params.category);
         res.json(promoAds);
     } catch (error) {
         console.error(error)
