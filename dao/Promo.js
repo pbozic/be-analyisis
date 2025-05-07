@@ -279,13 +279,30 @@ async function getPromoAdById(id) {
 }
 
 async function getAllPromoAds() {
-    return await prisma.promo_ads.findMany();
+    return await prisma.promo_ads.findMany({
+        include: {
+            categories: true,
+            banner: {
+                include: {
+                    files: true,
+                }
+            }
+        }
+    });
 }
 
 async function getAllPromoAdsByServiceType(type) {
     return await prisma.promo_ads.findMany({
         where: {
             service_type: type
+        },
+        include: {
+            categories: true,
+            banner: {
+                include: {
+                    files: true,
+                }
+            }
         }
     });
 }
@@ -296,6 +313,14 @@ async function getAllPromoAdsByCategory(category) {
             categories: {
                 some: {
                     categories_id: category
+                }
+            }
+        },
+        include: {
+            categories: true,
+            banner: {
+                include: {
+                    files: true,
                 }
             }
         }
@@ -391,9 +416,14 @@ async function getPromoBannerById(id) {
 
 async function getAllPromoBanners() {
     return await prisma.promo_banners.findMany({
-        // include: {
-        //     files:true
-        // }
+        include: {
+            files:true,
+            promo_ads:{
+                include:{
+                    categories:true
+                }
+            }
+        }
     });
 }
 
@@ -401,6 +431,14 @@ async function getAllPromoBannersByType(type) {
     return await prisma.promo_banners.findMany({
         where: {
             type: type
+        },
+        include: {
+            files:true,
+            promo_ads:{
+                include:{
+                    categories:true
+                }
+            }
         }
     });
 }
@@ -409,6 +447,14 @@ async function getAllPromoBannersBySize(size) {
     return await prisma.promo_banners.findMany({
         where: {
             size: size
+        },
+        include: {
+            files:true,
+            promo_ads:{
+                include:{
+                    categories:true
+                }
+            }
         }
     });
 }
@@ -417,6 +463,14 @@ async function getAllPromoBannersByAd(ad) {
     return await prisma.promo_banners.findMany({
         where: {
             promo_ads_id: ad
+        },
+        include: {
+            files:true,
+            promo_ads:{
+                include:{
+                    categories:true
+                }
+            }
         }
     });
 }
