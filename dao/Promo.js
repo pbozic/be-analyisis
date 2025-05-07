@@ -361,6 +361,7 @@ async function updatePromoBanner(id, promoBannerData, imageFileData) {
     try {
         return await prisma.$transaction(async (prisma) => {
             const updateData = { ...promoBannerData };
+            delete updateData.promo_ads_id;
 
             if (promoBannerData.promo_ads_id) {
                 updateData.promo_ads = {
