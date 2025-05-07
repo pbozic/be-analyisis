@@ -353,6 +353,9 @@ async function createPromoBanner(promoBannerData,imageFileData) {
                     }
                 }
             }:{})
+        },
+        include:{
+            files:true
         }
     });
 }
@@ -390,7 +393,10 @@ async function updatePromoBanner(id, promoBannerData, imageFileData) {
                 where: {
                     promo_banners_id: id
                 },
-                data: updateData
+                data: updateData,
+                include:{
+                    files:true
+                }
             });
         });
     } catch (error) {

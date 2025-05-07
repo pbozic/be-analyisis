@@ -236,8 +236,8 @@ async function createPromoBanner(req, res) {
     try {
         const {promoBannerData,imageFileData} = req.body
         const promoBanner = await PromoDao.createPromoBanner(promoBannerData,imageFileData);
-        const file = promoBanner.files
         if(imageFileData?.base64){
+            const file = promoBanner.files
             const key = S3Helper.getFileKey(file.file_id, file.mime_type);
             await S3Helper.SaveObject(key, imageFileData.base64, file.mime_type, {}, file, file.public);
         }
@@ -253,6 +253,7 @@ async function updatePromoBanner(req, res) {
         const {promoBannerData,imageFileData} = req.body
         const promoBanner = await PromoDao.updatePromoBanner(req.params.id, promoBannerData,imageFileData);
         if(imageFileData?.base64){
+            const file = promoBanner.files
             const key = S3Helper.getFileKey(file.file_id, file.mime_type);
             await S3Helper.SaveObject(key, imageFileData.base64, file.mime_type, {}, file, file.public);
         }
