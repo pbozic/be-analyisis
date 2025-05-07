@@ -20,22 +20,37 @@ async function generateS3LinksRecursively(args, result) {
         if (Array.isArray(result)) {
             for (let document of result) {
                 if (document && document?.files) {
-                    document.files = await Promise.all(document.files.map(async (file) => {
-                        return {
-                            ...file,
-                            url: await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public),
+                    if (Array.isArray(document.files)) {
+                        document.files = await Promise.all(document.files.map(async (file) => {
+                            return {
+                                ...file,
+                                url: await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public),
+                            };
+                        }));
+                    }else{
+                        document.files = {
+                            ...document.files,
+                            url: await S3Helper.GetObject(S3Helper.getFileKey(document.files.file_id, document.files.mime_type), document.files.public),
                         };
-                    }));
+                    }
                 }
             }
         } else if (result && result.files) {
-            // If result is a single document
-            result.files = await Promise.all(result.files.map(async (file) => {
-                return {
-                    ...file,
-                    url: await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public),
+
+            if (Array.isArray(result.files)) {
+                // If result is a single document
+                result.files = await Promise.all(result.files.map(async (file) => {
+                    return {
+                        ...file,
+                        url: await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public),
+                    };
+                }));
+            }else{
+                result.files = {
+                    ...result.files,
+                    url: await S3Helper.GetObject(S3Helper.getFileKey(result.files.file_id, result.files.mime_type), result.files.public),
                 };
-            }));
+            }
         }
     }
 
