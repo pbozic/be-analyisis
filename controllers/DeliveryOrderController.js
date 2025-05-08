@@ -22,7 +22,7 @@ const {
 	SCORING_POINTS_REASON,
 	FUNDS_TYPE,
 	SERVICE_TYPE,
-	USER_ROLE,
+	USER_ROLE, MAX_DELIVERY_RADIUS_KM,
 } = require("../lib/constants");
 const fs = require("fs");
 const Constants = require("../lib/constants");
@@ -47,6 +47,7 @@ const ScoringPointsDao = require("../dao/ScoringPoints");
 const LateEventsDao = require("../dao/LateEvents");
 const moment = require("moment");
 const BusinessHelpers = require("../lib/businessHelpers");
+const Helpers = require("../lib/helpersLib.js");
 const uuidv4 = require("uuid").v4;
 /**
  * GET /delivery/orders/:daily_meals
@@ -162,11 +163,28 @@ async function createOrder(req, res) {
 	try {
 		const isValidOrder = await verifyOrderCosts(orderBody);
 		if (!isValidOrder) throw new Error("Invalid order data!");
-
 		let orderData = {
 			...orderBody,
 			status: DELIVERY_ORDER_STATUS.PENDING,
 		};
+
+		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
+		if(!business){
+			throw new Error("Business not found!")
+		}
+		if(orderData.details.type==="delivery"){
+			const distance = Helpers.haversineDistance(
+				orderData.delivery_location.coordinates,
+				{
+					latitude: business.delivery_address?.latitude,
+					longitude: business.delivery_address?.longitude
+				}
+			)
+			if(distance && distance>MAX_DELIVERY_RADIUS_KM){
+				throw new Error("Distance out of delivery range!")
+			}
+		}
+
 		let user_id = req.user.user_id;
 		let flags = await FlagDao.getFlags();
 		let falgsObj = {};
@@ -190,7 +208,6 @@ async function createOrder(req, res) {
 				throw new Error("Missing stripe_customer_id");
 			}
 		}
-		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
 		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 		// let delivery_business = await BusinessDao.getBusinessById(orderData?.delivery_driver?.business_id);
 		orderData.telephone = user.telephone;
