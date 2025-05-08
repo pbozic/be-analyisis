@@ -23,7 +23,7 @@ router.patch("/edit", DeliveryDriverController.editDeliveryDriver);
 router.patch("/update/:delivery_driver_id", DeliveryDriverController.updateDeliveryDriver);
 router.patch("/location", DeliveryDriverController.updateDeliveryDriverLocation);
 router.patch("/online", DeliveryDriverController.updateDeliveryDriverOnlineStatus);
-
+router.post("/daily_meals/business", DeliveryDriverController.assignBusinessForDailyMealsToDriver);
 router.post("/create", DeliveryDriverController.createDeliveryDriver);
 
 module.exports = router;

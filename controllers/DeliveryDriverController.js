@@ -735,6 +735,23 @@ async function getDriverTotalEarnings(req, res) {
 	}
 }
 
+async function assignBusinessForDailyMealsToDriver(req, res) {
+	const { delivery_driver_id, business_id } = req.body;
+	try {
+		const driver = await DeliveryDriverDao.getDeliveryDriverById(delivery_driver_id);
+		if (!driver) {
+			return res.status(404).json({ error: "Driver not found" });
+		}
+		await DeliveryDriverDao.updateDeliveryDriver(delivery_driver_id, { daily_meals_business: {
+			connect: { business_id: business_id }
+		} });
+		res.status(200).json({ message: "Business assigned for daily meals" });
+	} catch (error) {
+		console.error("Error assigning business for daily meals to driver:", error);
+		res.status(400).json({ error: "Error assigning business for daily meals to driver", detail: error.message });
+	}
+}
+
 module.exports = {
 	listDeliveryDrivers,
 	listOnlineDeliveryDrivers,
@@ -752,5 +769,6 @@ module.exports = {
 	getDriverEarnings,
 	getAllDriversEarnings,
 	getTotalEarnings,
-	getDriverTotalEarnings
+	getDriverTotalEarnings,
+	assignBusinessForDailyMealsToDriver
 };

@@ -78,11 +78,11 @@ model business {
 
   user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_business")
   scoring_points           scoring_points[]           @relation("scoring_points_to_business")
-
+  daily_meal_drivers       delivery_drivers[]      
   late_events       late_events[]   @relation("late_events_to_business")
   fiscal_device     fiscal_devices? @relation(fields: [fiscal_devices_id], references: [fiscal_devices_id])
   fiscal_devices_id String?         @db.Uuid
-
+  daily_meals_subscribers daily_meals_subscriptions[]
   account_actions account_actions[]
 }
 
@@ -175,6 +175,9 @@ model users {
 
   user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_user")
   scoring_points           scoring_points[]           @relation("scoring_points_to_user")
+
+  daily_meals_subscriptions daily_meals_subscriptions[]
+
 
   late_events late_events[] @relation("late_events_to_user")
 
@@ -375,6 +378,8 @@ model delivery_drivers {
   regions                           String[]
   delivery_driver_history_locations delivery_driver_history_locations[]
   partner_cash_balance              Float?                              @default(0)
+  daily_meal_business_id            String?                             @db.Uuid
+  daily_meal_business               business?                           @relation(fields: [daily_meal_business_id], references: [business_id])
 }
 
 model drivers {
@@ -626,6 +631,7 @@ model menus {
   menu_categories_ordered Json? // JSON field to store ordered category IDs
   isDailyMeal             Boolean           @default(false)
   date                    DateTime?         @db.Timestamptz(6)
+  daily_meal_subscribers   daily_meals_subscriptions[]
 
   @@unique([menu_id])
 }
@@ -644,6 +650,7 @@ model menu_categories {
   menu_items_ordered         Json? // JSON field to store ordered menu item IDs
   menu_categories_categories menu_categories_categories[]
   menu_order_index           Int?
+  daily_meal_subscribers      daily_meals_subscriptions[]
 
   @@unique([menu_category_id])
 }
@@ -788,6 +795,7 @@ model wallet_funds {
   charge_id         String?
   amount            Int
   reserved_order    String?        @db.Uuid
+  reserved_daily_meals_subscription String? @db.Uuid
   reserved_business String?        @db.Uuid
   created_at        DateTime       @default(now()) @db.Timestamptz(6)
   updated_at        DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
@@ -1235,6 +1243,27 @@ model account_actions {
   business               business?              @relation(fields: [business_id], references: [business_id])
   user                   users?                 @relation("action_to_affected_user", fields: [user_id], references: [user_id])
   action_creator         users?                 @relation("action_to_creator", fields: [action_creator_user_id], references: [user_id])
+}
+
+model daily_meals_subscriptions {
+  daily_meals_subscriptions_id  String     @id @default(uuid()) @db.Uuid
+  grouped_id                    String     @db.Uuid
+  user_id                       String     @db.Uuid
+  business_id                   String     @db.Uuid
+  menu_id                       String     @db.Uuid
+  address_id                    String     @db.Uuid
+  menu_categories_id            String     @db.Uuid
+  created_at                    DateTime   @default(now()) @db.Timestamptz(6)
+  updated_at                    DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
+  date                          DateTime   @db.Timestamptz(6)
+  quantity                      Int        @default(1)
+  order_created                 DateTime?
+  restaurant_comment            String?
+  courier_comment               String?
+  menu_category                 menu_categories @relation(fields: [menu_categories_id], references: [menu_category_id])
+  user                        users      @relation(fields: [user_id], references: [user_id])
+  business                   business   @relation(fields: [business_id], references: [business_id])
+  menu                       menus      @relation(fields: [menu_id], references: [menu_id])
 }
 
 enum ACCOUNT_ACTIONS {
