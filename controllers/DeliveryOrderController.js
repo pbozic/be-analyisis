@@ -1752,6 +1752,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 		console.info("createDailyMealsSubscriptionPaymentIntent calculateDeliveryOrderPaymentCuts results: ", JSON.stringify(results, null, 2));
 		const { MERCHANT_CUT } = results;
 		if (DISCOUNTED_COMBINED_COST_CENTS === 0) return res.status(200).json({ status: "Success", groupedId: groupedId });
+		let payment_intent = null;
 		if (payment_type === "CARD" || payment_type === "PLATFORM") {
 			payment_intent = await stripe.createSplitPayment(
 				customer_acc,
