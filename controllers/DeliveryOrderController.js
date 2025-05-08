@@ -1808,21 +1808,20 @@ async function dailyMealsSubscriptionPayment(req, res) {
 	}
 }
 async function createDailyMealsSubscription(req, res) {
-	const { daysData, details, grouped_id } = req.body;
+	const { daysData, details, grouped_id, delivery_location } = req.body;
 	try {
 		const user_id = req.user.user_id;
-		const address = await AddressDao.getAddress({
+		const address = await AddressDao.addAddress({
 			address: delivery_location.address,
 			latitude: delivery_location.coordinates.latitude,
 			longitude: delivery_location.coordinates.longitude,
 		});
 
 		for (const day of daysData) {
-
 			let menu = day.menu;
 			let date = new Date(day.date);
 			date.setHours(10, 0, 0);
-			const men_cat = MenuCategoryDao.getMenuCategoryById(menu_category_id);
+			const men_cat = MenuCategoryDao.getMenuCategoryById(menu.menu_category_id);
 			const business_id = details.business_id
 			for (let menuTag of Object.keys(menu)) {
 				const menuData = menu[menuTag];
@@ -1831,12 +1830,11 @@ async function createDailyMealsSubscription(req, res) {
 					grouped_id,
 					user_id,
 					business_id,
-					menu_id,
+					men_cat.menu_id,
 					address.address_id,
 					men_cat.menu_category_id,
 					day.commentCourier,
 					day.commentRestaurant,
-					courier_comment,
 					date,
 					menuData.people
 				);
