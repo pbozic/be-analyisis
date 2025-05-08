@@ -979,6 +979,16 @@ async function getDailyMealsSubscriptionByBusinessId(business_id, start_date = n
 				address: true,
 				menu: true,
 				category: true,
+				user: {
+					include: {
+						first_name: true,
+						last_name: true,
+						telephone: true,
+						email: true,
+						daily_meal_preferences: true,
+						daily_meal_day_preferences: true,
+					}
+				}
 			}
 		});
 	} catch (e) {
@@ -1001,6 +1011,14 @@ async function getDailyMealsSubscriptionByUserId(user_id, start_date = new Date(
 				address: true,
 				menu: true,
 				category: true,
+				business: {
+					include: {
+						business_group_name: true,
+						name: true,
+						telephone: true,
+						email: true,
+					}
+				}
 			}
 		});
 	} catch (e) {

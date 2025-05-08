@@ -1868,7 +1868,7 @@ async function createDailyMealsSubscription(req, res) {
 	}
 }
 async function getDailyMealsSubscriptionsByUserId(req, res) {
-	const { user_id, start_date } = req.params;
+	const { user_id, start_date } = req.body;
 	try {
 		const dailyMeals = await DeliveryOrderDao.getDailyMealsSubscriptionByUserId(user_id, start_date);
 		res.status(200).json(dailyMeals);
@@ -1878,7 +1878,7 @@ async function getDailyMealsSubscriptionsByUserId(req, res) {
 	}
 }
 async function getDailyMealsSubscriptionsByBusinessId(req, res) {
-	const { business_id, start_date } = req.params;
+	const { business_id, start_date } = req.body;
 	try {
 		const dailyMeals = await DeliveryOrderDao.getDailyMealsSubscriptionByBusinessId(business_id, start_date);
 		res.status(200).json(dailyMeals);
