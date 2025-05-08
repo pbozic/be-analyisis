@@ -1723,7 +1723,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 		if (!customer_acc) {
 			throw new Error("User does not have a stripe customer account.");
 		}
-		const TOTAL_PRICE_CENTS = Math.round(amount * 100); //already includes delivery cost
+		const TOTAL_PRICE_CENTS = Math.round(total_price * 100); //already includes delivery cost
 		const CREDITS_AMOUNT_RESERVED = allow_credits_usage
 			? (
 					await WalletFundsHelpers.reserveCreditsForOrder(
