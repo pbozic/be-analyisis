@@ -978,7 +978,7 @@ async function getDailyMealsSubscriptionByBusinessId(business_id, start_date = n
 			include: {
 				address: true,
 				menu: true,
-				category: true,
+				menu_category: true,
 				user: {
 					select: {
 						first_name: true,
@@ -1010,7 +1010,7 @@ async function getDailyMealsSubscriptionByUserId(user_id, start_date = new Date(
 			include: {
 				address: true,
 				menu: true,
-				category: true,
+				menu_category: true,
 				business: {
 					select: {
 						business_group_name: true,
