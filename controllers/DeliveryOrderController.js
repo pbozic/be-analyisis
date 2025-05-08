@@ -22,7 +22,8 @@ const {
 	SCORING_POINTS_REASON,
 	FUNDS_TYPE,
 	SERVICE_TYPE,
-	USER_ROLE, MAX_DELIVERY_RADIUS_KM,
+	USER_ROLE,
+	MAX_DELIVERY_RADIUS_KM,
 } = require("../lib/constants");
 const fs = require("fs");
 const Constants = require("../lib/constants");
@@ -180,7 +181,7 @@ async function createOrder(req, res) {
 					longitude: business.delivery_address?.longitude
 				}
 			)
-			if(distance && distance>MAX_DELIVERY_RADIUS_KM){
+			if(distance && distance > MAX_DELIVERY_RADIUS_KM){
 				throw new Error("Distance out of delivery range!")
 			}
 		}

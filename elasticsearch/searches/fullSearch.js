@@ -1,5 +1,5 @@
 const esClient = require("../client");
-const { MAX_DELIVERY_RADIUS_KM } = require("../../lib/constants");
+const { ES_RADIUS_LIMIT_KM } = require("../../lib/constants");
 
 const SCORING_WEIGHTS = {
     bid_multiplier: 1, // Boost businesses bidding on words
@@ -24,7 +24,7 @@ async function searchBusinesses(query, userLat = 46.0660617, userLon = 14.509811
         const hasQuery = queryWords.length > 0;
         const hasCategories = categoryIds.length > 0;
         const hasPromoSection = promoSectionId !== null;
-        const radius_limited = radius ? Math.min(radius, MAX_DELIVERY_RADIUS_KM) : MAX_DELIVERY_RADIUS_KM;
+        const radius_limited = radius ? Math.min(radius, ES_RADIUS_LIMIT_KM) : ES_RADIUS_LIMIT_KM;
              
 
         // Base Query
