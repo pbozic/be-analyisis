@@ -434,7 +434,8 @@ async function getAvailableWalletBalanceGroupedByType(userId) {
 			by: ["type"], // Grouping by 'type'
 			where: {
 				user_id: userId,
-				reserved_order: null
+				reserved_order: null,
+				reserved_daily_meals_subscription: null,
 			},
 			_sum: {
 				amount: true
@@ -453,8 +454,6 @@ async function getAvailableWalletBalanceGroupedByType(userId) {
 		throw error;
 	}
 }
-
-
 
 const createCredit = async (data) => {
 	try {
