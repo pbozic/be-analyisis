@@ -1804,7 +1804,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 	}
 }
 async function createDailyMealsSubscription(req, res) {
-	const { daysData, details, payment, commentCourier, commentRestaurant } = req.body;
+	const { daysData, details, grouped_id } = req.body;
 	try {
 		const user_id = req.user.user_id;
 		const address = await AddressDao.getAddress({
