@@ -103,6 +103,7 @@ async function getAvailableWalletFunds(userId,order_type) {
 			where: {
 				user_id: userId,
 				reserved_order: null,
+				reserved_daily_meals_subscription: null,
 				type:order_type,
 			},
 			orderBy: [
@@ -141,7 +142,10 @@ async function getAllReservedWalletFunds() {
 			where: {
 				reserved_order:{
 					not: null
-				}
+				},
+				reserved_daily_meals_subscription: {
+					not: null
+				},
 			},
 			orderBy: {
 				created_at: 'asc',
@@ -392,6 +396,7 @@ async function releaseFunds(walletFundsId, releaseAmount) {
 						user_id:walletFund.user_id,
 						charge_id: walletFund.charge_id,
 						reserved_order: null,
+						reserved_daily_meals_subscription: null,
 						expires_at: walletFund.expires_at,
 						referral_id: walletFund.referral_id,
 						type:walletFund.type,
@@ -414,6 +419,7 @@ async function getAvailableWalletBalance(userId) {
 			where: {
 				user_id: userId,
 				reserved_order: null,
+				reserved_daily_meals_subscription: null,
 				type: FUNDS_TYPE.FUNDS,
 			},
 			_sum: {
@@ -554,6 +560,7 @@ const getAvailableCreditsByType = async (userId, type) => {
 				type: type,
 				status: CREDIT_STATUS.ACTIVE,
 				reserved_order: null,
+				reserved_daily_meals_subscription: null,
 			}
 		});
 	} catch (error) {
@@ -571,6 +578,7 @@ const getAvailableCreditsForOrder = async (userId, type) => {
 				},
 				status: CREDIT_STATUS.ACTIVE,
 				reserved_order: null,
+				reserved_daily_meals_subscription: null,
 			}
 		});
 	} catch (error) {
