@@ -1696,7 +1696,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 	try {
 		let groupedId = uuidv4();
 		let hasUuid = false;
-		const TOTAL_PRICE_CENT = Math.round(amount * 100);
+		const TOTAL_PRICE_CENT = Math.round(total_price * 100);
 
 		while (!hasUuid) {
 			const sub = await prisma.daily_meals_subscriptions.findFirst({
@@ -1781,7 +1781,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 
 				// await UsersDao.removeWalletBalance(user_id, DISCOUNTED_COMBINED_COST_CENTS/100, order.order_id);
 				await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
-					user_id,
+					user.user_id,
 					DISCOUNTED_COMBINED_COST_CENTS,
 					groupedId,
 					"daily_meals_subscription",
@@ -1794,7 +1794,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 				throw new Error("Insufficient funds");
 			}
 		}
-		if (order.payment.type === "CASH") {
+		if (payment_type === "CASH") {
 			throw new Error("CASH payments are not allowed for this order type.");
 		}
 	
