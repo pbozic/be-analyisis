@@ -1819,20 +1819,19 @@ async function createDailyMealsSubscription(req, res) {
 
 		for (const day of daysData) {
 			let menu = day.menu;
-			let date = new Date(day.date);
-			date.setHours(10, 0, 0);
-			const men_cat = MenuCategoryDao.getMenuCategoryById(menu.menu_category_id);
-			const business_id = details.business_id
 			for (let menuTag of Object.keys(menu)) {
+				let date = new Date(menu[menuTag].date);
+				date.setHours(10, 0, 0);
 				const menuData = menu[menuTag];
-				
+				const business_id = details.business_id || menuData.business_id
+
 				await DeliveryOrderDao.createDailyMealsSubscription(
 					grouped_id,
 					user_id,
 					business_id,
-					men_cat.menu_id,
+					menuData.menu_id,
 					address.address_id,
-					men_cat.menu_category_id,
+					menuData.menu_category_id,
 					day.commentCourier,
 					day.commentRestaurant,
 					date,
