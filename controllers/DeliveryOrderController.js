@@ -1764,8 +1764,11 @@ async function dailyMealsSubscriptionPayment(req, res) {
 				return_url,
 				"daily_meals_subscription_payment",
 			);
-			if (payment_intent.error) {
-				throw new Error(payment_intent.error.message);
+			if (!payment_intent) {
+				throw new Error("Payment intent creation failed.");
+			}
+			if (payment_intent?.error) {
+				throw new Error(payment_intent?.error.message);
 			}
 			return res.status(200).json({
 				status: "Success",
