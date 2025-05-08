@@ -42,6 +42,9 @@ async function activateBusiness(req, res) {
 		}
 		const business = await BusinessDao.activateBusiness(business_id,req.user.user_id,reason);
 		if (business) {
+			if(business.type === Constants.BUSINESS_TYPE.MERCHANT){
+				businessIndex(business.business_id);
+			}
 			res.status(200).json(business);
 		} else {
 			res.status(400).json({
@@ -77,6 +80,9 @@ async function deactivateBusiness(req, res) {
 		}
 		const business = await BusinessDao.deactivateBusiness(business_id,req.user.user_id,reason);
 		if (business) {
+			if(business.type === Constants.BUSINESS_TYPE.MERCHANT){
+				businessIndex(business.business_id);
+			}
 			res.status(200).json(business);
 		} else {
 			res.status(400).json({
