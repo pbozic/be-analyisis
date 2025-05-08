@@ -1694,6 +1694,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 	const { total_price, delivery_cost, sub_total_price, business_id } = details;
 	const { payment_type, payment_method_id } = payment;
 	try {
+		let user = await UsersDao.getUserById(req.user.user_id);
 		let groupedId = uuidv4();
 		let hasUuid = false;
 		const TOTAL_PRICE_CENT = Math.round(total_price * 100);
@@ -1710,6 +1711,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 				groupedId = uuidv4();
 			}
 		}
+		const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user?.user_id);
 		if (payment_type === "WALLET") {
 			if (available_wallet_balances["DELIVERY"] + available_wallet_balances[null] < TOTAL_PRICE_CENT / 100) {
 				throw new Error("Insufficient funds");
@@ -1718,7 +1720,6 @@ async function dailyMealsSubscriptionPayment(req, res) {
 		const business = await BusinessDao.getBusinessById(business_id)
 		const restaurant_acc = business.stripe_account_id;
 		const pm_id = payment_method_id;
-		let user = await UsersDao.getUserById(req.user.user_id);
 		const customer_acc = user.stripe_customer_id;
 		if (!customer_acc) {
 			throw new Error("User does not have a stripe customer account.");
@@ -1764,6 +1765,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 				return_url,
 				"daily_meals_subscription_payment",
 			);
+
 			if (!payment_intent) {
 				throw new Error("Payment intent creation failed.");
 			}
