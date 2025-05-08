@@ -18,12 +18,12 @@ const addMenuItemIdToOrder = async (menu_category_id, menuItemIdToAdd) => {
 			select: { menu_items_ordered: true }
 		});
 
-		let orderedItems = category.menu_items_ordered ? JSON.parse(category.menu_items_ordered) : [];
+		let orderedItems = category.menu_items_ordered ? category.menu_items_ordered : [];
 		if (!orderedItems.includes(menuItemIdToAdd)) {
 			orderedItems.push(menuItemIdToAdd);
 			return await prisma.menu_categories.update({
 				where: { menu_category_id: menu_category_id },
-				data: { menu_items_ordered: JSON.stringify(orderedItems) }
+				data: { menu_items_ordered: orderedItems }
 			});
 		}
 	} catch (error) {
@@ -39,11 +39,11 @@ const removeMenuItemIdFromOrder = async (menu_category_id, menuItemIdToRemove) =
 			select: { menu_items_ordered: true }
 		});
 
-		let orderedItems = category.menu_items_ordered ? JSON.parse(category.menu_items_ordered) : [];
+		let orderedItems = category.menu_items_ordered ? category.menu_items_ordered : [];
 		orderedItems = orderedItems.filter(id => id !== menuItemIdToRemove);
 		return await prisma.menu_categories.update({
 			where: { menu_category_id: menu_category_id },
-			data: { menu_items_ordered: JSON.stringify(orderedItems) }
+			data: { menu_items_ordered: orderedItems }
 		});
 	} catch (error) {
 		console.error("Error removing menu item ID from order:", error);

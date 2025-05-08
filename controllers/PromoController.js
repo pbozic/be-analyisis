@@ -4,6 +4,7 @@ const ProductDao = require('../dao/Product');
 const BusinessUsersDao = require('../dao/BusinessUsers');
 const BusinessDao = require('../dao/Business');
 const stripe = require('../lib/stripe');
+const S3Helper = require("../lib/s3");
 const discountRules = {
     2: 0,    // 0% discount (Full price for 1-2 units)
     4: 5,    // 5% discount for 3-4 units
@@ -213,7 +214,7 @@ async function getAllPromoAds(req, res) {
 
 async function getPromoAdsByServiceType  (req, res) {
     try {
-        const promoAds = await PromoDao.getPromoAdsByServiceType(req.params.type);
+        const promoAds = await PromoDao.getAllPromoAdsByServiceType(req.params.type);
         res.json(promoAds);
     } catch (error) {
         console.error(error)
@@ -223,7 +224,7 @@ async function getPromoAdsByServiceType  (req, res) {
 
 async function getPromoAdsByCategory  (req, res) {
     try {
-        const promoAds = await PromoDao.getPromoAdsByCategory(req.params.category);
+        const promoAds = await PromoDao.getAllPromoAdsByCategory(req.params.category);
         res.json(promoAds);
     } catch (error) {
         console.error(error)
@@ -235,6 +236,11 @@ async function createPromoBanner(req, res) {
     try {
         const {promoBannerData,imageFileData} = req.body
         const promoBanner = await PromoDao.createPromoBanner(promoBannerData,imageFileData);
+        if(imageFileData?.base64){
+            const file = promoBanner.files
+            const key = S3Helper.getFileKey(file.file_id, file.mime_type);
+            await S3Helper.SaveObject(key, imageFileData.base64, file.mime_type, {}, file, file.public);
+        }
         res.json(promoBanner);
     } catch (error) {
         console.error(error)
@@ -246,6 +252,11 @@ async function updatePromoBanner(req, res) {
     try {
         const {promoBannerData,imageFileData} = req.body
         const promoBanner = await PromoDao.updatePromoBanner(req.params.id, promoBannerData,imageFileData);
+        if(imageFileData?.base64){
+            const file = promoBanner.files
+            const key = S3Helper.getFileKey(file.file_id, file.mime_type);
+            await S3Helper.SaveObject(key, imageFileData.base64, file.mime_type, {}, file, file.public);
+        }
         res.json(promoBanner);
     } catch (error) {
         console.error(error)

@@ -279,13 +279,30 @@ async function getPromoAdById(id) {
 }
 
 async function getAllPromoAds() {
-    return await prisma.promo_ads.findMany();
+    return await prisma.promo_ads.findMany({
+        include: {
+            categories: true,
+            banner: {
+                include: {
+                    files: true,
+                }
+            }
+        }
+    });
 }
 
 async function getAllPromoAdsByServiceType(type) {
     return await prisma.promo_ads.findMany({
         where: {
             service_type: type
+        },
+        include: {
+            categories: true,
+            banner: {
+                include: {
+                    files: true,
+                }
+            }
         }
     });
 }
@@ -296,6 +313,14 @@ async function getAllPromoAdsByCategory(category) {
             categories: {
                 some: {
                     categories_id: category
+                }
+            }
+        },
+        include: {
+            categories: true,
+            banner: {
+                include: {
+                    files: true,
                 }
             }
         }
@@ -328,6 +353,9 @@ async function createPromoBanner(promoBannerData,imageFileData) {
                     }
                 }
             }:{})
+        },
+        include:{
+            files:true
         }
     });
 }
@@ -336,6 +364,7 @@ async function updatePromoBanner(id, promoBannerData, imageFileData) {
     try {
         return await prisma.$transaction(async (prisma) => {
             const updateData = { ...promoBannerData };
+            delete updateData.promo_ads_id;
 
             if (promoBannerData.promo_ads_id) {
                 updateData.promo_ads = {
@@ -364,7 +393,10 @@ async function updatePromoBanner(id, promoBannerData, imageFileData) {
                 where: {
                     promo_banners_id: id
                 },
-                data: updateData
+                data: updateData,
+                include:{
+                    files:true
+                }
             });
         });
     } catch (error) {
@@ -391,9 +423,14 @@ async function getPromoBannerById(id) {
 
 async function getAllPromoBanners() {
     return await prisma.promo_banners.findMany({
-        // include: {
-        //     files:true
-        // }
+        include: {
+            files:true,
+            promo_ads:{
+                include:{
+                    categories:true
+                }
+            }
+        }
     });
 }
 
@@ -401,6 +438,14 @@ async function getAllPromoBannersByType(type) {
     return await prisma.promo_banners.findMany({
         where: {
             type: type
+        },
+        include: {
+            files:true,
+            promo_ads:{
+                include:{
+                    categories:true
+                }
+            }
         }
     });
 }
@@ -409,6 +454,14 @@ async function getAllPromoBannersBySize(size) {
     return await prisma.promo_banners.findMany({
         where: {
             size: size
+        },
+        include: {
+            files:true,
+            promo_ads:{
+                include:{
+                    categories:true
+                }
+            }
         }
     });
 }
@@ -417,6 +470,14 @@ async function getAllPromoBannersByAd(ad) {
     return await prisma.promo_banners.findMany({
         where: {
             promo_ads_id: ad
+        },
+        include: {
+            files:true,
+            promo_ads:{
+                include:{
+                    categories:true
+                }
+            }
         }
     });
 }
@@ -429,17 +490,29 @@ async function getAllPromoBannersByAd(ad) {
 //     });
 // }
 async function createPromoSectionBuy(args) {
-    return await prisma.promo_sections_buy.create({
-        data: {
-            promo_sections_id: args.promo_sections_id,
-            business: {
-                connect: {
-                    business_id: args.business_id
-                }
-            },
-            tier: args.tier
+    const data = {
+        business: {
+            connect: {
+                business_id: args.business_id
+            }
         },
-    });
+        promo_section: {
+            connect: {
+                promo_sections_id: args.promo_sections_id
+            }
+        },
+        tier: args.tier,
+    };
+
+    if (args.active_at) {
+        data.active_at = args.active_at;
+    }
+
+    if (args.expires_at) {
+        data.expires_at = args.expires_at;
+    }
+
+    return await prisma.promo_sections_buy.create({ data });
 }
 
 

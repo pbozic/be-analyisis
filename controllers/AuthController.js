@@ -127,6 +127,7 @@ async function login(req, res) {
 				parent_user: { include:{parent_user: true}},
 				referrals_made: true,
 				referral: { include: {referrer: { select: { first_name: true, last_name: true } } } },
+				user_roles:true,
 			},
 		});
 		if (user.disabled) return res.status(400).json({ error: "Account is disabled." });
@@ -295,7 +296,8 @@ async function refreshToken(req, res) {
 		let userDb = await UserDao.getUserById(decoded.user.user_id,
 			{
 				include: {
-					addresses: true
+					addresses: true,
+					user_roles:true,
 				},
 			}
 		);

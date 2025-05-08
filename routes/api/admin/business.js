@@ -9,5 +9,6 @@ router.get("/merchants", BusinessController.listMerchantBusinesses);
 router.get("/transfers", BusinessController.listTransferBusinesses);
 router.get("/business_group_name", BusinessController.getBusinessesByGroupName);
 router.get("/children/:parent_business_id", BusinessController.getChildBusinesses);
+router.get("/:business_id", BusinessController.getBusinessAdminDataById);
 
 module.exports = router;

@@ -59,12 +59,12 @@ const addMenuCategoryIdToOrder = async (menu_id, menuCategoryIdToAdd) => {
 			select: { menu_categories_ordered: true }
 		});
 
-		let orderedCategories = menu.menu_categories_ordered ? JSON.parse(menu.menu_categories_ordered) : [];
+		let orderedCategories = menu.menu_categories_ordered ? menu.menu_categories_ordered : [];
 		if (!orderedCategories.includes(menuCategoryIdToAdd)) {
 			orderedCategories.push(menuCategoryIdToAdd);
 			return await prisma.menus.update({
 				where: { menu_id: menu_id },
-				data: { menu_categories_ordered: JSON.stringify(orderedCategories) }
+				data: { menu_categories_ordered: orderedCategories }
 			});
 		}
 	} catch (error) {
@@ -81,11 +81,11 @@ const removeMenuCategoryIdFromOrder = async (menu_id, menuCategoryIdToRemove) =>
 			select: { menu_categories_ordered: true }
 		});
 
-		let orderedCategories = menu.menu_categories_ordered ? JSON.parse(menu.menu_categories_ordered) : [];
+		let orderedCategories = menu.menu_categories_ordered ? menu.menu_categories_ordered : [];
 		orderedCategories = orderedCategories.filter(id => id !== menuCategoryIdToRemove);
 		return await prisma.menus.update({
 			where: { menu_id: menu_id },
-			data: { menu_categories_ordered: JSON.stringify(orderedCategories) }
+			data: { menu_categories_ordered: orderedCategories }
 		});
 	} catch (error) {
 		console.error("Error removing menu category ID from order:", error);
@@ -120,7 +120,7 @@ const getMenuCategoriesByMenuId = async (menu_id) => {
 	categories.forEach(category => {
 		if (category.menu_items_ordered) {
 			try {
-				const orderedItemIds = JSON.parse(category.menu_items_ordered);
+				const orderedItemIds = category.menu_items_ordered;
 				category.menu_items.sort((a, b) => {
 					return orderedItemIds.indexOf(a.menu_item_id) - orderedItemIds.indexOf(b.menu_item_id);
 				});
@@ -163,7 +163,7 @@ const getMenuCategoriesByBusinessId = async (business_id) => {
 	categories.forEach(category => {
 		if (category.menu_items_ordered) {
 			try {
-				const orderedItemIds = JSON.parse(category.menu_items_ordered);
+				const orderedItemIds = category.menu_items_ordered;
 				category.menu_items.sort((a, b) => {
 					return orderedItemIds.indexOf(a.menu_item_id) - orderedItemIds.indexOf(b.menu_item_id);
 				});
