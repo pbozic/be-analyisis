@@ -965,13 +965,15 @@ async function createDailyMealsSubscription(grouped_id, user_id, business_id, me
 		throw new Error(e.message);
 	}
 }
-async function getDailyMealsSubscriptionByBusinessId(business_id, start_date = new Date(new Date().setHours(0, 0, 0, 0))) {
+async function getDailyMealsSubscriptionByBusinessId(business_id, start_date) {
+	const dateToUse = start_date ? new Date(start_date) : new Date();
+	const normalizedDate = new Date(dateToUse.setHours(0, 0, 0, 0));
 	try {
 		return await prisma.daily_meals_subscriptions.findMany({
 			where: {
 				business_id: business_id,
 				date: {
-					gte: start_date
+					gte: normalizedDate
 				},
 				order_created: null,
 			},
@@ -989,7 +991,10 @@ async function getDailyMealsSubscriptionByBusinessId(business_id, start_date = n
 						daily_meal_day_preferences: true,
 					}
 				}
-			}
+			},
+			orderBy: {
+				date: 'asc'
+			},
 		});
 	} catch (e) {
 		console.error("Error fetching orders:", e);
@@ -997,7 +1002,9 @@ async function getDailyMealsSubscriptionByBusinessId(business_id, start_date = n
 	}
 }
 
-async function getDailyMealsSubscriptionByUserId(user_id, start_date = new Date(new Date().setHours(0, 0, 0, 0))) {
+async function getDailyMealsSubscriptionByUserId(user_id, start_date) {
+	const dateToUse = start_date ? new Date(start_date) : new Date();
+	const normalizedDate = new Date(dateToUse.setHours(0, 0, 0, 0));
 	try {
 		return await prisma.daily_meals_subscriptions.findMany({
 			where: {
@@ -1019,7 +1026,10 @@ async function getDailyMealsSubscriptionByUserId(user_id, start_date = new Date(
 						email: true,
 					}
 				}
-			}
+			},
+			orderBy: {
+				date: 'asc'
+			},
 		});
 	} catch (e) {
 		console.error("Error fetching orders:", e);
