@@ -980,7 +980,15 @@ async function getDailyMealsSubscriptionByBusinessId(business_id, start_date) {
 			include: {
 				address: true,
 				menu: true,
-				menu_category: true,
+				menu_category: {
+					include: {
+						menu_categories_categories: {
+							include: {
+								category: true,
+							}
+						}
+					}
+				},
 				user: {
 					select: {
 						first_name: true,
@@ -1010,14 +1018,22 @@ async function getDailyMealsSubscriptionByUserId(user_id, start_date) {
 			where: {
 				user_id: user_id,
 				date: {
-					gte: start_date
+					gte: normalizedDate
 				},
 				order_created: null,
 			},
 			include: {
 				address: true,
 				menu: true,
-				menu_category: true,
+				menu_category: {
+					include: {
+						menu_categories_categories: {
+							include: {
+								category: true,
+							}
+						}
+					}
+				},
 				business: {
 					select: {
 						business_group_name: true,
