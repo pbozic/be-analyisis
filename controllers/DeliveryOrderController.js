@@ -1820,7 +1820,7 @@ async function createDailyMealsSubscription(req, res) {
 		for (const day of daysData) {
 			let menu = day.menu;
 			for (let menuTag of Object.keys(menu)) {
-				let date = new Date(menu.date);
+				let date = new Date(day.date);
 				date.setHours(10, 0, 0);
 				const menuData = menu[menuTag];
 				const business_id = details.business_id || menuData.business_id
