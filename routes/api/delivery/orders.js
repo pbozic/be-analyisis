@@ -21,7 +21,12 @@ router.get("/completed/business/:business_id", DeliveryOrderController.getComple
 router.get("/order/:order_id", DeliveryOrderController.getOrder);
 router.get("/order/user/:order_id", DeliveryOrderController.getUserByDeliveryOrderId);
 router.post("/order", DeliveryOrderController.createOrder);
+router.post("/daily_meals/subscription/payment", DeliveryOrderController.dailyMealsSubscriptionPayment);
+router.post("/daily_meals/subscription", DeliveryOrderController.createDailyMealsSubscription);
+router.post("/daily_meals/user", DeliveryOrderController.getDailyMealsSubscriptionsByUserId);
+router.post("/daily_meals/business", DeliveryOrderController.getDailyMealsSubscriptionsByBusinessId);
 router.post("/daily_meals", DeliveryOrderController.createDailyMeals);
+
 router.post("/order/merchant_accept", DeliveryOrderController.merchantAcceptOrder);
 router.post("/order/dispatcher_cancel", DeliveryOrderController.dispatcherCancel);
 router.post("/order/dispatcher_revoke", DeliveryOrderController.dispatcherRevoke);

@@ -1,6 +1,7 @@
 const prisma = require("../prisma/prisma");
 const { DOCUMENT_TYPE, DELIVERY_ORDER_STATUS,DELIVERY_ORDER_END_STATES } = require("../lib/constants");
 const gApi = require("../lib/gApis");
+const { cloudprofiler_v2 } = require("googleapis");
 /**
  *
  * @param {Object} timeline - the order timeline object with entries which must have status and timestamp and can have additional fields
@@ -899,8 +900,114 @@ async function removeDriverFromOrder(order_id) {
 		throw new Error(e.message);
 	}
 }
+async function getDailyMealSubscriptionsByBusinessId(business_id) {
+	try {
+		return await prisma.daily_meals_subscriptions.findMany({
+			where: {
+				business_id: business_id,
+				date: {
+					gte: new Date(new Date().setHours(0, 0, 0, 0)),
+					lte: new Date(new Date().setHours(23, 59, 59, 999))
+				},
+				order_created: null,
+			},
+			include: {
+				address: true,
+				menu: true,
+				category: true,
+			}
+		});
+	} catch (e) {
+		console.error("Error fetching orders:", e);
+		throw new Error(e.message);
+	}
+}
 
+async function createDailyMealsSubscription(grouped_id, user_id, business_id, menu_id, address_id, menu_category_id, commentCourier, commentRestaurant, date, quantity) {
 
+	try {
+		return await prisma.daily_meals_subscriptions.create({
+			data: {
+				grouped_id,
+				courier_comment: commentCourier,
+				restaurant_comment: commentRestaurant,
+				date,
+				quantity,
+				user: {
+					connect: {
+						user_id: user_id
+					}
+				},
+				address: {
+					connect: {
+						address_id: address_id
+					}
+				},
+				menu: {
+					connect: {
+						menu_id: menu_id
+					}
+				},
+				business: {
+					connect: {
+						business_id: business_id
+					}
+				},
+				menu_category: {
+					connect: {
+						menu_category_id: menu_category_id
+					}
+				}
+			}
+		});
+	} catch (e) {
+		console.error("Error creating daily meals subscription:", e);
+		throw new Error(e.message);
+	}
+}
+async function getDailyMealsSubscriptionByBusinessId(business_id, start_date = new Date(new Date().setHours(0, 0, 0, 0))) {
+	try {
+		return await prisma.daily_meals_subscriptions.findMany({
+			where: {
+				business_id: business_id,
+				date: {
+					gte: start_date
+				},
+				order_created: null,
+			},
+			include: {
+				address: true,
+				menu: true,
+				category: true,
+			}
+		});
+	} catch (e) {
+		console.error("Error fetching orders:", e);
+		throw new Error(e.message);
+	}
+}
+
+async function getDailyMealsSubscriptionByUserId(user_id, start_date = new Date(new Date().setHours(0, 0, 0, 0))) {
+	try {
+		return await prisma.daily_meals_subscriptions.findMany({
+			where: {
+				user_id: user_id,
+				date: {
+					gte: start_date
+				},
+				order_created: null,
+			},
+			include: {
+				address: true,
+				menu: true,
+				category: true,
+			}
+		});
+	} catch (e) {
+		console.error("Error fetching orders:", e);
+		throw new Error(e.message);
+	}
+}
 module.exports = {
 	getOrders,
 	getActiveDeliveryOrders,
@@ -928,5 +1035,9 @@ module.exports = {
 	getActiveDeliveryOrdersForBusiness,
 	getInProgressDeliveryOrdersCountForBusinessId,
 	getActiveOrderIdsForUser,
-	removeDriverFromOrder
+	removeDriverFromOrder,
+	getDailyMealSubscriptionsByBusinessId,
+	createDailyMealsSubscription,
+	getDailyMealsSubscriptionByBusinessId,
+	getDailyMealsSubscriptionByUserId,
 };

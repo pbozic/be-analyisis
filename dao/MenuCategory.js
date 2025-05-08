@@ -317,7 +317,21 @@ const updateDailyMealMenuPrice = async (menu_category_id, price) => {
 		}
 	});
 }
-
+const getMenuCategoryById = async (menu_category_id) => {
+	return await prisma.menu_categories.findUnique({
+		where: {
+			menu_category_id: menu_category_id
+		},
+		include: {
+			menu_items: true,
+			menu_categories_categories: {
+				include: {
+					category: true
+				}
+			}
+		}
+	});
+};
 module.exports = {
 	updateDailyMealMenuPrice,
 	createMenuCategory,
@@ -332,4 +346,5 @@ module.exports = {
 	updateMenuItemsOrder,
 	addCategoryToMenuCategory,
 	removeCategoryFromMenuCategory,
+	getMenuCategoryById
 };
