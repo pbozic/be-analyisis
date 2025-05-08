@@ -76,14 +76,14 @@ model business {
   active                          Boolean              @default(false)
   sales_representative_id         String?
 
-  user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_business")
-  scoring_points           scoring_points[]           @relation("scoring_points_to_business")
-  daily_meal_drivers       delivery_drivers[]      
-  late_events       late_events[]   @relation("late_events_to_business")
-  fiscal_device     fiscal_devices? @relation(fields: [fiscal_devices_id], references: [fiscal_devices_id])
-  fiscal_devices_id String?         @db.Uuid
-  daily_meals_subscribers daily_meals_subscriptions[]
-  account_actions account_actions[]
+  user_favorite_businesses user_favorite_businesses[]  @relation("user_favorite_businesses_to_business")
+  scoring_points           scoring_points[]            @relation("scoring_points_to_business")
+  daily_meal_drivers       delivery_drivers[]
+  late_events              late_events[]               @relation("late_events_to_business")
+  fiscal_device            fiscal_devices?             @relation(fields: [fiscal_devices_id], references: [fiscal_devices_id])
+  fiscal_devices_id        String?                     @db.Uuid
+  daily_meals_subscribers  daily_meals_subscriptions[]
+  account_actions          account_actions[]
 }
 
 model business_users {
@@ -178,10 +178,9 @@ model users {
 
   daily_meals_subscriptions daily_meals_subscriptions[]
 
-
   late_events late_events[] @relation("late_events_to_user")
 
-  account_actions account_actions[] @relation("action_to_affected_user")
+  account_actions         account_actions[] @relation("action_to_affected_user")
   created_account_actions account_actions[] @relation("action_to_creator")
 }
 
@@ -325,7 +324,7 @@ model tokens {
 }
 
 model addresses {
-  address_id                  String           @id @default(uuid()) @db.Uuid
+  address_id                  String                      @id @default(uuid()) @db.Uuid
   address                     String
   latitude                    String
   longitude                   String
@@ -335,9 +334,10 @@ model addresses {
   country                     String?
   postal                      String?
   users                       user_address[]
-  businesses                  business[]       @relation(name: "address")
-  businesses_delivery_address business[]       @relation(name: "delivery_address")
-  business_users              business_users[] @relation("business_users_operating_address")
+  businesses                  business[]                  @relation(name: "address")
+  businesses_delivery_address business[]                  @relation(name: "delivery_address")
+  business_users              business_users[]            @relation("business_users_operating_address")
+  daily_meals_subscriptions   daily_meals_subscriptions[]
 
   @@unique([address, latitude, longitude], name: "uniqueAddressIdentifier")
 }
@@ -623,15 +623,15 @@ model delivery_order_sent {
 }
 
 model menus {
-  menu_id                 String            @id @default(uuid()) @db.Uuid
-  business_id             String            @db.Uuid
-  active                  Boolean           @default(true)
-  business                business          @relation(fields: [business_id], references: [business_id])
+  menu_id                 String                      @id @default(uuid()) @db.Uuid
+  business_id             String                      @db.Uuid
+  active                  Boolean                     @default(true)
+  business                business                    @relation(fields: [business_id], references: [business_id])
   categories              menu_categories[]
   menu_categories_ordered Json? // JSON field to store ordered category IDs
-  isDailyMeal             Boolean           @default(false)
-  date                    DateTime?         @db.Timestamptz(6)
-  daily_meal_subscribers   daily_meals_subscriptions[]
+  isDailyMeal             Boolean                     @default(false)
+  date                    DateTime?                   @db.Timestamptz(6)
+  daily_meal_subscribers  daily_meals_subscriptions[]
 
   @@unique([menu_id])
 }
@@ -650,7 +650,7 @@ model menu_categories {
   menu_items_ordered         Json? // JSON field to store ordered menu item IDs
   menu_categories_categories menu_categories_categories[]
   menu_order_index           Int?
-  daily_meal_subscribers      daily_meals_subscriptions[]
+  daily_meal_subscribers     daily_meals_subscriptions[]
 
   @@unique([menu_category_id])
 }
@@ -789,22 +789,22 @@ model wallet_transfer_history {
 }
 
 model wallet_funds {
-  wallet_funds_id   String         @id @unique @default(uuid()) @db.Uuid
-  user_id           String         @db.Uuid
-  referral_id       String?        @db.Uuid
-  charge_id         String?
-  amount            Int
-  reserved_order    String?        @db.Uuid
-  reserved_daily_meals_subscription String? @db.Uuid
-  reserved_business String?        @db.Uuid
-  created_at        DateTime       @default(now()) @db.Timestamptz(6)
-  updated_at        DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
-  expires_at        DateTime?      @db.Timestamptz(6)
-  type              FUNDS_TYPE
-  status            CREDIT_STATUS? @default(ACTIVE)
-  referral          referrals?     @relation(fields: [referral_id], references: [referral_id])
-  user              users          @relation("wallet_funds", fields: [user_id], references: [user_id])
-  transactions      transactions[] @relation("wallet_funds_transaction")
+  wallet_funds_id                   String         @id @unique @default(uuid()) @db.Uuid
+  user_id                           String         @db.Uuid
+  referral_id                       String?        @db.Uuid
+  charge_id                         String?
+  amount                            Int
+  reserved_order                    String?        @db.Uuid
+  reserved_daily_meals_subscription String?        @db.Uuid
+  reserved_business                 String?        @db.Uuid
+  created_at                        DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at                        DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
+  expires_at                        DateTime?      @db.Timestamptz(6)
+  type                              FUNDS_TYPE
+  status                            CREDIT_STATUS? @default(ACTIVE)
+  referral                          referrals?     @relation(fields: [referral_id], references: [referral_id])
+  user                              users          @relation("wallet_funds", fields: [user_id], references: [user_id])
+  transactions                      transactions[] @relation("wallet_funds_transaction")
 
   @@unique([user_id, charge_id, reserved_order, reserved_business, type, status, referral_id, expires_at])
 }
@@ -1231,48 +1231,49 @@ model weather_data {
 }
 
 model account_actions {
-  account_action_id      String                 @id @unique @default(uuid()) @db.Uuid
-  business_id            String?                @db.Uuid
-  user_id                String?                @db.Uuid
-  created_at             DateTime               @default(now()) @db.Timestamptz(6)
-  action_creator_user_id String                 @db.Uuid
+  account_action_id      String   @id @unique @default(uuid()) @db.Uuid
+  business_id            String?  @db.Uuid
+  user_id                String?  @db.Uuid
+  created_at             DateTime @default(now()) @db.Timestamptz(6)
+  action_creator_user_id String   @db.Uuid
 
-  reason                 ACCOUNT_ACTIONS_REASON
-  action                 ACCOUNT_ACTIONS
+  reason ACCOUNT_ACTIONS_REASON
+  action ACCOUNT_ACTIONS
 
-  business               business?              @relation(fields: [business_id], references: [business_id])
-  user                   users?                 @relation("action_to_affected_user", fields: [user_id], references: [user_id])
-  action_creator         users?                 @relation("action_to_creator", fields: [action_creator_user_id], references: [user_id])
+  business       business? @relation(fields: [business_id], references: [business_id])
+  user           users?    @relation("action_to_affected_user", fields: [user_id], references: [user_id])
+  action_creator users?    @relation("action_to_creator", fields: [action_creator_user_id], references: [user_id])
 }
 
 model daily_meals_subscriptions {
-  daily_meals_subscriptions_id  String     @id @default(uuid()) @db.Uuid
-  grouped_id                    String     @db.Uuid
-  user_id                       String     @db.Uuid
-  business_id                   String     @db.Uuid
-  menu_id                       String     @db.Uuid
-  address_id                    String     @db.Uuid
-  menu_categories_id            String     @db.Uuid
-  created_at                    DateTime   @default(now()) @db.Timestamptz(6)
-  updated_at                    DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
-  date                          DateTime   @db.Timestamptz(6)
-  quantity                      Int        @default(1)
-  order_created                 DateTime?
-  restaurant_comment            String?
-  courier_comment               String?
-  menu_category                 menu_categories @relation(fields: [menu_categories_id], references: [menu_category_id])
-  user                        users      @relation(fields: [user_id], references: [user_id])
-  business                   business   @relation(fields: [business_id], references: [business_id])
-  menu                       menus      @relation(fields: [menu_id], references: [menu_id])
+  daily_meals_subscriptions_id String          @id @default(uuid()) @db.Uuid
+  grouped_id                   String          @db.Uuid
+  user_id                      String          @db.Uuid
+  business_id                  String          @db.Uuid
+  menu_id                      String          @db.Uuid
+  address_id                   String          @db.Uuid
+  menu_categories_id           String          @db.Uuid
+  created_at                   DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at                   DateTime        @default(now()) @updatedAt @db.Timestamptz(6)
+  date                         DateTime        @db.Timestamptz(6)
+  quantity                     Int             @default(1)
+  order_created                DateTime?
+  restaurant_comment           String?
+  courier_comment              String?
+  menu_category                menu_categories @relation(fields: [menu_categories_id], references: [menu_category_id])
+  user                         users           @relation(fields: [user_id], references: [user_id])
+  business                     business        @relation(fields: [business_id], references: [business_id])
+  menu                         menus           @relation(fields: [menu_id], references: [menu_id])
+  address                      addresses       @relation(fields: [address_id], references: [address_id])
 }
 
 enum ACCOUNT_ACTIONS {
-    SUSPEND
-    UNSUSPEND
-    BAN
-    UNBAN
-    DELETE
-    CREATE
+  SUSPEND
+  UNSUSPEND
+  BAN
+  UNBAN
+  DELETE
+  CREATE
 }
 
 enum ACCOUNT_ACTIONS_REASON {
