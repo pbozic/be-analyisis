@@ -173,6 +173,47 @@ async function getActiveOrdersByDriverId(driver_id) {
         throw new Error(e.message);
     }
 }
+async function getDeliveryOrdersByDriverId(driver_id, args) {
+    try {
+        const whereClause = {
+            driver_id: driver_id,
+            ...args
+        }
+
+        return await prisma.delivery_orders.findMany({
+            where: whereClause,
+            include: {
+                user: true,
+                driver: {
+                    include: {
+                        user: {
+                            include: {
+                                documents: {
+                                    include: {
+                                        files: true,
+                                    }
+                                }
+                            }
+                        },
+                        vehicles: {
+                            include: {
+                                vehicle: {
+                                    include: {
+                                        vehicle_specification: true,
+                                    },
+                                }
+                            }
+                        },
+                        current_vehicle: true
+                    }
+                },
+            }
+        });
+    } catch (e) {
+        console.error("Error getting orders by driver ID:", e);
+        throw new Error(e);
+    }
+}
 
 async function getOrdersByDriverId(driver_id, args) {
     try {
@@ -953,5 +994,6 @@ module.exports = {
     getActiveOrdersByDriverId,
     getAcceptedOrders,
     userActiveOrders,
-    getActiveOrderIdsForUser
+    getActiveOrderIdsForUser,
+    getDeliveryOrdersByDriverId
 };
