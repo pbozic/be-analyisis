@@ -177,7 +177,7 @@ async function searchBusinesses(req, res) {
 	try {
 
 
-		let esResults = await fullSearch(req.body.query || "", req.body.location.lat, req.body.location.long, req.body.categoryIds || [], req.body.radius, req.body.filterOperator, req.body.isDailyMeal, null, req.body.page, req.body.pageSize || 10);
+		let esResults = await fullSearch(req.body.query || "", req.body.location.lat, req.body.location.long, req.body.categoryIds || [], req.body.radius, req.body.filterOperator, req.body.isDailyMealSearch, null, req.body.page, req.body.pageSize || 10);
 		console.log("esResults", esResults);
 		esResults.sort((a, b) => b.score - a.score);
 		let businesses = await BusinessDao.getBusinessesForSearchById(esResults.map(b => b.business_id));
