@@ -86,7 +86,6 @@ const SocketStore = {
   },
 
   async removeSocket(userId, socketId) {
-    UserSockets.delete(userId); // optional if single socket
     await redis.sRem(`user_sockets:${userId}`, socketId);
     await redis.del(`socket_user:${socketId}`);
   },
