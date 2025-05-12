@@ -354,6 +354,32 @@ model user_address {
   @@id([user_id, address_id])
 }
 
+model driver_activity_settings {
+  driver_activity_settings_id String   @id @default(uuid()) @db.Uuid
+  first_offline_lockout       Int      @default(30) // Default 30 minutes
+  second_offline_lockout      Int      @default(120) // Default 2 hours
+  online_timeout              Int      @default(120) // Default 2 hours
+  created_at                  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at                  DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  active                      Boolean  @default(true)
+}
+
+model driver_activity_logs {
+  driver_activity_log_id String        @id @default(uuid()) @db.Uuid
+  driver_id              String        @db.Uuid
+  activity_type          ACTIVITY_TYPE
+  started_at             DateTime      @default(now()) @db.Timestamptz(6)
+  ended_at               DateTime?     @db.Timestamptz(6)
+  timeout_at             DateTime?     @db.Timestamptz(6)
+  lockout_until          DateTime?     @db.Timestamptz(6)
+
+  driver drivers @relation(fields: [driver_id], references: [driver_id])
+
+  @@index([driver_id, activity_type])
+  @@index([started_at])
+  @@index([ended_at])
+}
+
 model delivery_drivers {
   delivery_driver_id                String                              @id @default(uuid()) @db.Uuid
   online                            Boolean?                            @default(false)
@@ -418,6 +444,7 @@ model drivers {
   come_to_work_last_sent_at DateTime?                  @db.Timestamptz(6)
   driver_municipalities     driver_municipalities[]
   current_vehicle           vehicles?                  @relation("driver_current_vehicle", fields: [current_vehicle_id], references: [vehicle_id])
+  activity_logs             driver_activity_logs[]
 }
 
 model vehicle_drivers {
@@ -1536,4 +1563,10 @@ enum SCORING_POINTS_REASON {
   LATE
   LARGE_DELAY
   INSUFFICIENT_DATA
+}
+
+enum ACTIVITY_TYPE {
+  ONLINE
+  OFFLINE
+  LOCKED_OUT
 }

@@ -15,7 +15,7 @@ const { updateFileInDocument, addFileToDocument } = require("../dao/File");
 const FileDao = require("../dao/File");
 const S3Helper = require("../lib/s3");
 const DocumentDao = require("../dao/Document");
-const { TAXI_ORDER_STATUS,DELIVERY_ORDER_STATUS, DOCUMENT_TYPE } = require("../lib/constants");
+const { TAXI_ORDER_STATUS,DELIVERY_ORDER_STATUS, DOCUMENT_TYPE, ACTIVITY_TYPE } = require("../lib/constants");
 const { createNewVehicle } = require("../dao/Vehicle");
 const { calculateTotalEarnings, calculateDriversEarnings } = require('../lib/helpersLib');
 const deliveryHelpers = require("../lib/deliveryHelpers");
@@ -485,13 +485,93 @@ async function updateDriverOnlineStatus(req, res) {
 
 	try {
 		const driver = await DriverDao.getDriverById(driver_id)
-		if(driver.online===online){
+		if (driver.online===online) {
 			return res.status(200).json(driver)
 		}
-		if(online && !driver.current_vehicle) {
+		if (online && !driver.current_vehicle) {
 			throw new Error("Driver current vehicle not set")
 		}
+		const latestLog = await prisma.driver_activity_logs.findFirst({
+			where: {
+				driver_id,
+				ended_at: null
+			},
+			orderBy: {
+				started_at: 'desc'
+			}
+		});
+		const latestOfflineLog = await prisma.driver_activity_logs.findFirst({
+			where: {
+				driver_id,
+				activity_type: ACTIVITY_TYPE.OFFLINE,
+			},
+			orderBy: {
+				started_at: 'desc'
+			}
+		});
 
+		const settings = await prisma.driver_activity_settings.findFirst({ where: { active: true } });
+		if (settings) {
+			const timeoutAt = new Date(Date.now() + (settings?.online_timeout) * 60 * 1000);
+			if (latestLog?.activity_type === ACTIVITY_TYPE.LOCKED_OUT && latestLog?.lockout_until > new Date()) {
+				return res.status(400).json({ driver, errorMsg: "LOCKED_OUT" });
+			}
+
+			if (online) {
+				await prisma.driver_activity_logs.create({
+					data: {
+						driver: {
+							connect: {
+								driver_id: driver_id,
+							}
+						},
+						activity_type: ACTIVITY_TYPE.ONLINE,
+						timeout_at: timeoutAt
+					}
+				});
+				if (latestOfflineLog) {
+					await prisma.driver_activity_logs.update({
+						where: { driver_activity_log_id: latestOfflineLog.driver_activity_log_id },
+						data: { ended_at: new Date() }
+					});
+				}
+			} else {
+				if (latestLog) {
+					await prisma.driver_activity_logs.update({
+						where: { driver_activity_log_id: latestLog.driver_activity_log_id },
+						data: { ended_at: new Date() }
+					});
+				}
+
+				const lockout_until = latestOfflineLog?.timeout_at && latestOfflineLog.timeout_at > new Date()
+					? new Date(Date.now() + (settings?.first_offline_lockout) * 60 * 1000)
+						: new Date(Date.now() + (settings?.second_offline_lockout) * 60 * 1000);
+
+				await prisma.driver_activity_logs.create({
+					data: {
+						driver: {
+							connect: {
+								driver_id: driver_id,
+							}
+						},
+						activity_type: ACTIVITY_TYPE.OFFLINE,
+						timeout_at: timeoutAt
+					}
+				});
+
+				await prisma.driver_activity_logs.create({
+					data: {
+						driver: {
+							connect: {
+								driver_id: driver_id,
+							}
+						},
+						activity_type: ACTIVITY_TYPE.LOCKED_OUT,
+						lockout_until
+					}
+				});
+			}
+		}
 		const updatedDriver = await DriverDao.updateDriverOnlineStatus(driver_id, online);
 
 		if (online) {

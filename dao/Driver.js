@@ -120,7 +120,6 @@ const getDriverById = async (driver_id) => {
 						},	
 					}
 				},
-				
 				vehicles: {
 					include: {
 						vehicle: {
@@ -130,18 +129,18 @@ const getDriverById = async (driver_id) => {
 									include: {
 										files: true,
 									}
-								},
-								current_driver:true,
-							},
+								}
+							}
 						}
 					}
 				},
-				current_vehicle:true,
+				current_vehicle: true,
 				documents: {
 					include: {
 						files: true,
 					}
 				},
+				activity_logs: true,
 			},
 		});
 	} catch (error) {
