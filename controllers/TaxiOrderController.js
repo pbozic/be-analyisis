@@ -74,9 +74,6 @@ async function getActiveTaxiOrders(req, res) {
 				if (activeOrder && activeOrder.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED) {
 					const driver = activeOrder.driver;
 
-					// Assuming only one vehicle is active at a time
-					driver.vehicle = driver.vehicles[0];
-
 					const { result, distance, duration } = await gApi.distanceBetweenTwoPoints(
 						activeOrder.pickup_location.coordinates,
 						driver.location.coordinates,
@@ -604,15 +601,6 @@ async function cleanedCreateOrderHelper(orderData){
 		console.log("parentOrderId", firstOrderId);
 		console.log("fetched grouped_orders", order.grouped_orders);
 
-		if(cleanedOrderDataArray[0].is_scheduled){
-			await TaxiHelper.findTaxiOrderDrivers(order);
-			if (order.grouped_orders && order.grouped_orders.length > 0) {
-				for (let or of order.grouped_orders) {
-					console.log("Sending Grouped Order: " + or.order_id);
-					await TaxiHelper.findTaxiOrderDrivers(or);
-				}
-			}
-		}
 
 		if (order && order.preferences.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
 			await generateVehicleTransferOrder(orderData)
