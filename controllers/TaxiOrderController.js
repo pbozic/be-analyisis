@@ -409,6 +409,224 @@ async function getCanceledTaxiOrdersByUserId(req, res) {
 	}
 }
 
+
+function preprocessOrderData(orderData){
+	const cleanedOrderData = {
+		// user_id: orderData.user_id,
+		// driver_id: orderData.driver.driver_id,
+		// driver: orderData.driver,
+		// vehicle_id: orderData.vehicle_id,
+		route: orderData.route,
+		pickup_location: orderData.pickup_location,
+		delivery_location: orderData.delivery_location,
+		payment: orderData.payment,
+		estimates: orderData.estimates,
+		preferences: orderData.preferences,
+		status: orderData.status,
+		business_id: orderData.business_id,
+		telephone: orderData.telephone,
+		first_name: orderData.first_name,
+		last_name: orderData.last_name,
+		type: orderData.type,
+		subtype: orderData.subtype,
+		flags: orderData.flags,
+		cargo_preferences: orderData.cargo_preferences,
+		customer_note: orderData.customer_note,
+		parent_user_type: orderData.parent_user_type,
+		creating_user_id: orderData.creating_user_id,
+		allow_credits_usage: orderData.allow_credits_usage,
+	}
+
+	const prefs = cleanedOrderData.preferences;
+	const is_repeat = !!prefs.repeat_ride && !prefs.repeat_ride.some(item => item.value === "do_not_repeat");
+
+
+	if (prefs.vehicle_class === VEHICLE_CLASS.CARGO_VAN) {
+		cleanedOrderData.payment = {
+			...cleanedOrderData.payment,
+			extras: {
+				price: CARGO_TRANSFER_FEE.CARGO_FEE + cleanedOrderData.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE,
+				type: 'CARGO_TRANSFER_FEE'
+			}
+		}
+	}
+	cleanedOrderData.is_scheduled = prefs.departure_date != null;
+	cleanedOrderData.route = cleanedOrderData.route.map(r_i=>({...r_i,id:randomUUID(), locked:false}))
+	cleanedOrderData.route[0] = {...cleanedOrderData.route[0],locked:true}
+	if(cleanedOrderData.pickup_location){
+		cleanedOrderData.pickup_location = { address:cleanedOrderData.pickup_location.address, coordinates: cleanedOrderData.pickup_location.coordinates }
+	}
+	if(cleanedOrderData.delivery_location){
+		cleanedOrderData.delivery_location = { address:cleanedOrderData.delivery_location.address, coordinates: cleanedOrderData.delivery_location.coordinates }
+	}
+
+	let orderDataArray = [];
+	if (is_repeat) {
+		orderDataArray = generateOrdersForRepeatOrder(cleanedOrderData, prefs.repeat_ride, prefs.repeat_duration.length > 0 ? prefs.repeat_duration[0].value : 0);
+	} else {
+		orderDataArray.push(cleanedOrderData);
+	}
+
+	return orderDataArray
+}
+
+async function generateVehicleTransferOrder(orderData){
+	let vehicleTransferOrderData = orderData.vehicle_transfer_order;
+	vehicleTransferOrderData = {
+		...vehicleTransferOrderData,
+		status: "PENDING",
+		telephone: orderData.telephone,
+		first_name: orderData.first_name,
+		last_name: orderData.last_name,
+		is_scheduled: !!orderData.preferences?.departure_date
+	};
+	const vehicle_transfer_order = await TaxiOrderDao.createOrder({
+		...vehicleTransferOrderData,
+		user: {
+			connect: {
+				user_id: orderData.user_id,
+			}
+		}
+	});
+	await TaxiHelper.findTaxiOrderDrivers(vehicle_transfer_order);
+
+	return vehicle_transfer_order
+}
+
+function subdivideOrder(vehicle_class,vehicle_category, n_adults, n_children ){
+	let splits = []
+	let num_orders;
+	let unassigned_adults = n_adults;
+	let unassigned_children = n_children;
+	let total_seats = unassigned_adults + unassigned_children;
+	if (vehicle_class === VEHICLE_CLASS.ANY) {
+		if (total_seats > 4) {
+			let defaultNumSeats = vehicle_category === VEHICLE_CATEGORY.STANDARD ? 4 : 3;
+			num_orders = Math.ceil((total_seats) / defaultNumSeats);
+		} else {
+			num_orders = 1;
+		}
+	} else {
+		num_orders = Math.ceil((total_seats) / VEHICLE_CAPACITY[vehicle_class]);
+	}
+
+	console.log("num_orders", num_orders);
+	for (let i = 0; i < num_orders; i++) {
+		let availableSeats = VEHICLE_CAPACITY[vehicle_class];
+		let adults_seated = 0;
+		let children_seated = 0;
+
+		for (let i = 0; i < availableSeats; i++) {
+			if (unassigned_adults > 0) {
+				adults_seated++;
+				unassigned_adults--;
+			} else if (unassigned_children > 0) {
+				children_seated++;
+				unassigned_children--;
+			} else {
+				break;
+			}
+		}
+
+		splits.push({
+			adults_seated,
+			children_seated
+		})
+	}
+
+	return splits
+}
+
+async function makeOrder(cleanOrderData, userId,  parentOrderId, driverId){
+	const orderPayload = {
+		...cleanOrderData,
+		user: {
+			connect: {
+				user_id: userId
+			}
+		}
+	};
+
+	if (parentOrderId) {
+		orderPayload.parent_order = {
+			connect: {
+				order_id: parentOrderId
+			}
+		};
+	}
+
+	if (driverId) {
+		orderPayload.driver = {
+			connect: {
+				driver_id: driverId
+			}
+		};
+	}
+
+	const order = await TaxiOrderDao.createOrder(orderPayload);
+	return order;
+}
+
+async function buildOrder(cleanOrderData, userId, parentOrderId, driverId){
+	const {vehicle_class,vehicle_category,adults,children_under_140} = cleanOrderData.preferences
+	const splits = subdivideOrder(vehicle_class,vehicle_category,adults,children_under_140)
+
+	let firstOrderId = parentOrderId
+	for (let i = 0; i < splits.length; i++) {
+		const { adults_seated, children_seated } = splits[i];
+		cleanOrderData.preferences.adults = adults_seated;
+		cleanOrderData.preferences.children_under_140 = children_seated;
+		const order = await makeOrder(cleanOrderData, userId,  parentOrderId, driverId)
+		if(!firstOrderId){
+			firstOrderId = order.order_id
+		}
+	}
+	return firstOrderId
+}
+
+
+async function cleanedCreateOrderHelper(orderData){
+	try{
+		const user_id = orderData.user_id
+		const driver_id = orderData?.driver_id || orderData?.driver?.driver_id
+		console.log("ORDER DATA DRIVER", orderData.driver);
+		const cleanedOrderDataArray = preprocessOrderData(orderData)
+
+		let firstOrderId = null;
+		for(const cleanOrderData of cleanedOrderDataArray){
+			firstOrderId = await buildOrder(cleanOrderData, user_id, firstOrderId ,driver_id)
+		}
+
+		const order = await TaxiOrderDao.getOrder(firstOrderId, {
+			include: {
+				grouped_orders: true
+			}
+		});
+		console.log("parentOrderId", firstOrderId);
+		console.log("fetched grouped_orders", order.grouped_orders);
+
+		if(cleanedOrderDataArray[0].is_scheduled){
+			await TaxiHelper.findTaxiOrderDrivers(order);
+			if (order.grouped_orders && order.grouped_orders.length > 0) {
+				for (let or of order.grouped_orders) {
+					console.log("Sending Grouped Order: " + or.order_id);
+					await TaxiHelper.findTaxiOrderDrivers(or);
+				}
+			}
+		}
+
+		if (order && order.preferences.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
+			await generateVehicleTransferOrder(orderData)
+		}
+
+		return order;
+	} catch (error) {
+		console.error("TaxiOrderController", error);
+		throw new Error("Error in cleanedCreateOrderHelper!")
+	}
+}
+
+
 async function createOrderHelper(req, res, orderData) {
 	try {
 		let prefs = orderData.preferences;
@@ -456,6 +674,7 @@ async function createOrderHelper(req, res, orderData) {
 			ordersData.push(orderData);
 		}
 		let parentOrderId = null;
+		const user_id = orderData.user_id;
 		for (let orderData of ordersData) {
 			let seats_Adults = prefs.adults;
 			let seats_ChildrenUnder140 = prefs.children_under_140;
@@ -475,7 +694,6 @@ async function createOrderHelper(req, res, orderData) {
 			}
 			console.log("num_orders", num_orders);
 			let start_num_orders = num_orders;
-			const user_id = orderData.user_id;
 			delete orderData.user_id;
 			while (num_orders > 0) {
 				let availableSeats = VEHICLE_CAPACITY[prefs.vehicle_class];
@@ -666,7 +884,7 @@ async function createOrder(req, res) {
 		orderData.flags = flagsObj;
 
 
-		let order = await createOrderHelper(req, res, orderData);
+		let order = await cleanedCreateOrderHelper(orderData);
 		SocketStore.addUserToRoom(req.user.user_id, "order_" + order.order_id);
 		//console.log("create taxi order", order)
 
@@ -700,7 +918,7 @@ function getDayIndex(dayName) {
 	return daysOfWeek[dayName]; // Return the index of the day
 }
 
-async function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
+function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
 	try {
 		console.log("rd", repeatDuration);
 		const orders = [];
@@ -781,7 +999,7 @@ async function createDispatchOrder(req, res) {
 			user_id: req.user.user_id,
 			telephone: req.body.telephone
 		};
-		let order = await createOrderHelper(req, res, orderData);
+		let order = await cleanedCreateOrderHelper(orderData);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log("TaxiOrderController", e);
@@ -1958,7 +2176,7 @@ async function calculateTransferPrice (req, res) {
 		if (!priceData) {
 			return res.status(400).json({ message: "Price could not be calculated" });
 		}
-		res.status(200).json(price);
+		res.status(200).json(priceData);
 	} catch (e) {
 		console.log("TaxiOrderController", e);
 		res.status(500).json(e);
