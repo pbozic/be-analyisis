@@ -1045,7 +1045,7 @@ async function setCurrentVehicle(req, res) {
 			return res.status(404).json({ error: 'Driver not found.' });
 		}
 		if(driver.current_vehicle_id===vehicle_id){
-			res.status(200).json(driver);
+			return res.status(200).json(driver);
 		}
 		const driver_vehicle = driver.vehicles.find(v => v.vehicle_id === vehicle_id);
 		const vehicle = driver_vehicle?.vehicle_id ? await VehicleDao.getVehicleById(vehicle_id) : null
