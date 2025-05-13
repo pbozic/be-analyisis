@@ -1968,7 +1968,7 @@ async function splitVanOrder(req, res){
 async function calculateTransferPrice (req, res) {
 	const { pickup_location, delivery_location, departure_time  } = req.body;
 	try {
-		let priceData = await TaxiHelper.calculateTransferRidePrice(pickup_location, delivery_location, departure_time);
+		let priceData = await TaxiHelper.calculateTransferRidePrice(pickup_location.coordinates, delivery_location.coordinates, departure_time);
 		if (!priceData) {
 			return res.status(400).json({ message: "Price could not be calculated" });
 		}
