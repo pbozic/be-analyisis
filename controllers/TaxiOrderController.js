@@ -23,6 +23,7 @@ const ScoringPointsDao = require("../dao/ScoringPoints");
 const LateEventsDao = require("../dao/LateEvents");
 const moment = require('moment');
 const { randomUUID } = require("crypto");
+const { createAndStorePaymentIntent, validatePaymentIntent } = require("../lib/stripe");
 
 /**
  * GET /taxi/order/{orderId}
@@ -580,6 +581,24 @@ async function buildOrder(cleanOrderData, userId, parentOrderId, driverId){
 	return firstOrderId
 }
 
+async function requestTransferOrderPrice(req,res) {
+	try{
+		//TODO: update to use route
+		const { route, pickup_location, delivery_location, vehicle_category  } = req.body;
+		let priceData = await TaxiHelper.calculateTransferRidePrice(pickup_location.coordinates, delivery_location.coordinates, vehicle_category);
+		let stored_pi_data = null
+		if(priceData.price>25){
+			stored_pi_data = await createAndStorePaymentIntent(priceData.price)
+		}
+		let data = stored_pi_data
+			? { price: priceData.price, distance: priceData.distance, stored_pi_data }
+			: {price: priceData.price, distance: priceData.distance}
+		res.status(200).json(data)
+	}catch (e) {
+		console.error(e)
+		res.status(500)
+	}
+}
 
 async function cleanedCreateOrderHelper(orderData){
 	try{
@@ -610,227 +629,6 @@ async function cleanedCreateOrderHelper(orderData){
 	} catch (error) {
 		console.error("TaxiOrderController", error);
 		throw new Error("Error in cleanedCreateOrderHelper!")
-	}
-}
-
-
-async function createOrderHelper(req, res, orderData) {
-	try {
-		let prefs = orderData.preferences;
-		if (prefs.vehicle_class === VEHICLE_CLASS.CARGO_VAN) {
-			orderData.payment = {
-				...orderData.payment,
-				extras: {
-					price: CARGO_TRANSFER_FEE.CARGO_FEE + orderData.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE,
-					type: 'CARGO_TRANSFER_FEE'
-				}
-			}
-		}
-		let vehicleTransferOrderData = orderData.vehicle_transfer_order;
-		delete orderData.vehicle_transfer_order;
-		vehicleTransferOrderData = {
-			...vehicleTransferOrderData,
-			status: "PENDING",
-			telephone: orderData.telephone || req.user.telephone,
-			first_name: orderData.first_name || req.user.first_name,
-			last_name: orderData.last_name || req.user.last_name,
-			is_scheduled: !!orderData.preferences?.departure_date
-		};
-
-		let is_scheduled = prefs.departure_date != null;
-		let is_repeat = false;
-		if (prefs.repeat_ride && prefs.repeat_ride.some(item => item.value === "do_not_repeat")) {
-			is_repeat = false;
-		} else if (prefs.repeat_ride) {
-			is_repeat = true;
-		}
-		orderData.is_scheduled = is_scheduled;
-		orderData.route = orderData.route.map(r_i=>({...r_i,id:randomUUID(), locked:false}))
-		orderData.route[0] = {...orderData.route[0],locked:true}
-		if(orderData.pickup_location){
-			orderData.pickup_location = { address:orderData.pickup_location.address, coordinates: orderData.pickup_location.coordinates }
-		}
-		if(orderData.delivery_location){
-			orderData.delivery_location = { address:orderData.delivery_location.address, coordinates: orderData.delivery_location.coordinates }
-		}
-		let order;
-		let ordersData = [];
-		if (is_repeat) {
-			ordersData = await generateOrdersForRepeatOrder(orderData, prefs.repeat_ride, prefs.repeat_duration.length > 0 ? prefs.repeat_duration[0].value : 0);
-		} else {
-			ordersData.push(orderData);
-		}
-		let parentOrderId = null;
-		const user_id = orderData.user_id;
-		for (let orderData of ordersData) {
-			let seats_Adults = prefs.adults;
-			let seats_ChildrenUnder140 = prefs.children_under_140;
-			let total_seats = seats_Adults + seats_ChildrenUnder140;
-			// TODO: calculate capacity based on vehicle_category (PREMIUM has more seats?)
-			// TODO: also handle class ANY
-			let num_orders;
-			if (prefs.vehicle_class === VEHICLE_CLASS.ANY) {
-				if (total_seats > 4) {
-					let defaultNumSeats = prefs.vehicle_category === VEHICLE_CATEGORY.STANDARD ? 4 : 3;
-					num_orders = Math.ceil((total_seats) / defaultNumSeats);
-				} else {
-					num_orders = 1;
-				}
-			} else {
-				num_orders = Math.ceil((total_seats) / VEHICLE_CAPACITY[prefs.vehicle_class]);
-			}
-			console.log("num_orders", num_orders);
-			let start_num_orders = num_orders;
-			delete orderData.user_id;
-			while (num_orders > 0) {
-				let availableSeats = VEHICLE_CAPACITY[prefs.vehicle_class];
-				let adults = 0;
-				let children_under_140 = 0;
-
-				for (let i of range(availableSeats)) {
-					if (availableSeats === 0) {
-						break;
-					}
-					if (seats_Adults > 0) {
-						adults += 1;
-						seats_Adults -= 1;
-						availableSeats -= 1;
-					} else if (seats_ChildrenUnder140 > 0) {
-						children_under_140 += 1;
-						seats_ChildrenUnder140 -= 1;
-						availableSeats -= 1;
-					} else {
-						break;
-					}
-				}
-
-				orderData.preferences.adults = adults;
-				orderData.preferences.children_under_140 = children_under_140;
-				
-				if (parentOrderId) {
-					if (orderData.driver && start_num_orders === 1) {
-						let driver = orderData.driver;
-						orderData.driver = null;
-						console.log("ORDER DATA DRIVER", orderData.driver);
-						order = await TaxiOrderDao.createOrder({
-							...orderData,
-							user: {
-								connect: {
-									user_id: !user_id ? req.user.user_id : user_id
-								}
-							},
-							parent_order: {
-								connect: {
-									order_id: parentOrderId
-								}
-							},
-							driver: {
-								connect: {
-									driver_id: driver.driver_id
-								}
-							}
-						});
-					} else {
-						order = await TaxiOrderDao.createOrder({
-							...orderData,
-							user: {
-								connect: {
-									user_id: !user_id ? req.user.user_id : user_id
-								}
-							},
-							parent_order: {
-								connect: {
-									order_id: parentOrderId
-								}
-							}
-						});
-					}
-				} else {
-					if (orderData.driver && start_num_orders === 1) {
-						let driver = orderData.driver;
-						orderData.driver = null;
-						console.log("ORDER DATA DRIVER", orderData.driver);
-						order = await TaxiOrderDao.createOrder({
-							...orderData,
-							user: {
-								connect: {
-									user_id: !user_id ? req.user.user_id : user_id
-								}
-							},
-							driver: {
-								connect: {
-									driver_id: driver.driver_id
-								}
-							}
-						});
-					} else {
-						order = await TaxiOrderDao.createOrder({
-							...orderData,
-							user: {
-								connect: {
-									user_id: !user_id ? req.user.user_id : user_id
-								}
-							}
-						});
-					}
-				}
-
-				if (num_orders === start_num_orders) {
-					parentOrderId = order.order_id;
-				}
-
-				num_orders -= 1;
-			}
-		}
-		console.log("parentOrderId", parentOrderId);
-		if (parentOrderId) {
-			order = await TaxiOrderDao.getOrder(parentOrderId, {
-				include: {
-					grouped_orders: true
-				}
-			});
-			console.log("fetching grouped_orders", order.grouped_orders);
-		}
-		if (!order) {
-			console.info("Final order is empty!");
-			delete orderData.user_id;
-			order = await TaxiOrderDao.createOrder({
-				...orderData,
-				user: {
-					connect: {
-						user_id: req.user.user_id
-					}
-				}
-			});
-			console.info("Final order created", order);
-		}
-		if (!is_scheduled) {
-			await TaxiHelper.findTaxiOrderDrivers(order);
-			if (order.grouped_orders && order.grouped_orders.length > 0) {
-				for (let or of order.grouped_orders) {
-					console.log("Sending Grouped Order: " + or.order_id);
-					await TaxiHelper.findTaxiOrderDrivers(or);
-				}
-			}
-		}
-		if (prefs.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER && vehicleTransferOrderData) {
-			if (order) {
-				const vehicle_transfer_order = await TaxiOrderDao.createOrder({
-					...vehicleTransferOrderData,
-					user: {
-						connect: {
-							user_id: order.user_id || req.user.user_id,
-						}
-					}
-				});
-				await TaxiHelper.findTaxiOrderDrivers(vehicle_transfer_order);
-			}
-		}
-		return order;
-	} catch (error) {
-		console.log("TaxiOrderController", error);
-		throw new Error("Error in createOrderHelper!")
-		// res.status(500).json(error);
 	}
 }
 
@@ -870,6 +668,17 @@ async function createOrder(req, res) {
 		});
 		orderData.flags = flagsObj;
 
+		if(orderData.type==="TRANSFER"){
+			const { pickup_location, delivery_location, preferences,payment_intent_id,payment_intent_logs_id  } = orderData;
+			let pi = null
+			if(payment_intent_id){
+				pi = await validatePaymentIntent(payment_intent_id,payment_intent_logs_id)
+			}
+			let {price} = await TaxiHelper.calculateTransferRidePrice(pickup_location.coordinates, delivery_location.coordinates, preferences.vehicle_category)
+			if(price !== orderData.price || (pi && price!==pi?.amount_received)){
+				throw new Error("Price mismatch")
+			}
+		}
 
 		let order = await cleanedCreateOrderHelper(orderData);
 		SocketStore.addUserToRoom(req.user.user_id, "order_" + order.order_id);
@@ -2204,5 +2013,6 @@ module.exports = {
 	getAcceptedScheduledOrders,
 	getScheduledOrdersByUserId,
 	getTaxiOrdersWithPagination,
-	calculateTransferPrice
+	calculateTransferPrice,
+	requestTransferOrderPrice,
 };

@@ -727,6 +727,12 @@ model transactions {
   wallet_funds wallet_funds? @relation("wallet_funds_transaction", fields: [wallet_fund_id], references: [wallet_funds_id])
 }
 
+model payment_intent_logs {
+  payment_intent_logs_id String   @id @default(uuid())
+  stripe_id         String   @unique
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+}
+
 enum TRANSACTION_TYPE {
   DEBIT
   CREDIT

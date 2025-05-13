@@ -21,6 +21,7 @@ router.get("/orders/canceled/user/:user_id", TaxiOrderController.getCanceledTaxi
 router.get("/orders/active/driver/:driver_id", TaxiOrderController.getActiveTaxiOrdersByDriverId);
 router.get("/orders/active/:user_id/:type", TaxiOrderController.getActiveTaxiOrders);
 router.get("/orders/driver/:driver_id", TaxiOrderController.getTaxiOrdersByDriverId);
+router.post("/transfer_price", TaxiOrderController.requestTransferOrderPrice);
 router.post("/order", joi(createOrderSchema), TaxiOrderController.createOrder);
 router.get("/orders/scheduled_orders", TaxiOrderController.getScheduledOrders);
 router.get("/orders/scheduled_orders/driver/:driver_id", TaxiOrderController.getAcceptedScheduledOrders);
