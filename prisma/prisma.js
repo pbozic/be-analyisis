@@ -98,7 +98,7 @@ const prisma = new PrismaClient({
 			},
 			async checkIfTwoPointsAreInSameSettlement(point1, point2) {
 				const settlement = await prisma.$queryRaw`
-					SELECT settlement_id, name ,municipalities_id, eid_naselje  ,feature_id,created_at   ,updated_at   ,municipality ,weather_data ,geom_generated    
+					SELECT settlement_id, name, municipalities_id, eid_naselje, feature_id,created_at, updated_at, geom_generated    
 					FROM settlements
 					WHERE ST_Intersects(geom_generated, ST_SetSRID(ST_MakePoint(${point1.longitude}, ${point1.latitude}), 4326))
 					INTERSECT
