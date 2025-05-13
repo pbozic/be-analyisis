@@ -181,7 +181,11 @@ async function me(req, res) {
 							}
 						},
 						current_vehicle: true,
-						activity_logs: true,
+						activity_logs: {
+							orderBy: {
+								started_at: 'desc',
+							}
+						},
 					},
 				},
 				delivery_driver: true,
