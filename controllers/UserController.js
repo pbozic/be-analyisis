@@ -180,7 +180,8 @@ async function me(req, res) {
 								}
 							}
 						},
-						current_vehicle: true
+						current_vehicle: true,
+						activity_logs: true,
 					},
 				},
 				delivery_driver: true,

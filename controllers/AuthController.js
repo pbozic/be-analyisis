@@ -112,7 +112,8 @@ async function login(req, res) {
 							}
 						},
 						last_used_vehicle_id: true,
-						current_vehicle: true
+						current_vehicle: true,
+						activity_logs: true,
 					}
 				},
 				delivery_driver: {
@@ -145,7 +146,8 @@ async function login(req, res) {
 			driver: {
 				...user.driver,
 				vehicles: null,
-				current_vehicle: null
+				current_vehicle: null,
+				activity_logs: null,
 			},
 		});
 		const refresh_token = generateRefreshToken({
@@ -156,7 +158,8 @@ async function login(req, res) {
 			driver: {
 				...user.driver,
 				vehicles: null,
-				current_vehicle: null
+				current_vehicle: null,
+				activity_logs: null,
 			}
 		});
 		let profile = await DocumentDao.getDocumentsForUserByType(user.user_id, DOCUMENT_TYPE.PROFILE_PICTURE);
