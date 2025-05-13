@@ -588,7 +588,7 @@ async function requestTransferOrderPrice(req,res) {
 		let priceData = await TaxiHelper.calculateTransferRidePrice(pickup_location.coordinates, delivery_location.coordinates, vehicle_category);
 		let stored_pi_data = null
 		if(priceData.price>25){
-			stored_pi_data = await createAndStorePaymentIntent(priceData.price)
+			stored_pi_data = await createAndStorePaymentIntent(priceData.price*100)
 		}
 		let data = stored_pi_data
 			? { price: priceData.price, distance: priceData.distance, stored_pi_data }
