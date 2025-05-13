@@ -592,7 +592,7 @@ async function requestTransferOrderPrice(req,res) {
 		}
 		let data = stored_pi_data
 			? { price: priceData.price, distance: priceData.distance, stored_pi_data }
-			: {price: priceData.price, distance: priceData.distance}
+			: { price: priceData.price, distance: priceData.distance }
 		res.status(200).json(data)
 	}catch (e) {
 		console.error(e)
