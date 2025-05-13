@@ -1,0 +1,59 @@
+doctype html
+html(lang="sl")
+  head
+    meta(charset="UTF-8")
+    title Order Confirmation
+    style.
+      body { font-family: sans-serif; font-size: 12px; }
+      h1 { font-size: 18px; }
+      table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+      th, td { border: 1px solid #ccc; padding: 4px; text-align: left; }
+      .right { text-align: right; }
+
+  body
+    h1 Order confirmation ##{orderNumber}
+
+    p
+      | Order ID: #{orderId}
+      br
+      | Customer: #{customer}
+      br
+      | Venue: #{venue}
+      br
+      | Order type: #{orderType}
+      br
+      | Delivery time: #{deliveryTime}
+      br
+      | Payment: #{paymentMethod}
+
+    h2 Items
+
+    table
+      thead
+        tr
+          th Item
+          th VAT %
+          th Qty
+          th Unit Price (€)
+          th Total (€)
+      tbody
+        each item in items
+          tr
+            td #{item.name}
+            td #{item.vat}
+            td #{item.quantity}
+            td.right #{item.unitPrice.toFixed(2)}
+            td.right #{item.total.toFixed(2)}
+
+    p.right(style="font-weight: bold; margin-top: 10px")
+      | Total: #{total.toFixed(2)} €
+
+    h3 Seller Info
+    p
+      | SPAR SLOVENIJA d.o.o - Grocery
+      br
+      | Business ID: 5571693
+      br
+      | VAT ID: SI32156782
+      br
+      | Letališka cesta 26, 1000 Ljubljana, SVN
