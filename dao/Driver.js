@@ -218,6 +218,11 @@ const updateDriverOnlineStatus = async (driver_id, isOnline) => {
 					}
 				},
 				current_vehicle:true,
+				activity_logs: {
+					orderBy: {
+						started_at: 'desc'
+					}
+				}
 			},
 		});
 	} catch (error) {
