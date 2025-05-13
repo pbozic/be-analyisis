@@ -588,11 +588,11 @@ async function requestTransferOrderPrice(req,res) {
 		let priceData = await TaxiHelper.calculateTransferRidePrice(pickup_location.coordinates, delivery_location.coordinates, vehicle_category);
 		let stored_pi_data = null
 		if(priceData.price>25){
-			stored_pi_data = await createAndStorePaymentIntent(priceData.price)
+			stored_pi_data = await createAndStorePaymentIntent(priceData.price*100)
 		}
 		let data = stored_pi_data
 			? { price: priceData.price, distance: priceData.distance, stored_pi_data }
-			: {price: priceData.price, distance: priceData.distance}
+			: { price: priceData.price, distance: priceData.distance }
 		res.status(200).json(data)
 	}catch (e) {
 		console.error(e)
@@ -1968,7 +1968,7 @@ async function splitVanOrder(req, res){
 async function calculateTransferPrice (req, res) {
 	const { pickup_location, delivery_location, departure_time  } = req.body;
 	try {
-		let priceData = await TaxiHelper.calculateTransferRidePrice(pickup_location, delivery_location, departure_time);
+		let priceData = await TaxiHelper.calculateTransferRidePrice(pickup_location.coordinates, delivery_location.coordinates, departure_time);
 		if (!priceData) {
 			return res.status(400).json({ message: "Price could not be calculated" });
 		}

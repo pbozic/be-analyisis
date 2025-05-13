@@ -547,8 +547,8 @@ async function updateDriverOnlineStatus(req, res) {
 				}
 
 				const lockout_until = latestOfflineLog?.timeout_at && latestOfflineLog.timeout_at > new Date()
-					? new Date(Date.now() + (settings?.first_offline_lockout) * 60 * 1000)
-						: new Date(Date.now() + (settings?.second_offline_lockout) * 60 * 1000);
+					? new Date(Date.now() + (settings?.second_offline_lockout) * 60 * 1000)
+						: new Date(Date.now() + (settings?.first_offline_lockout) * 60 * 1000);
 
 				await prisma.driver_activity_logs.create({
 					data: {
