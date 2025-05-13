@@ -46,6 +46,50 @@ async function getOrdersWithPagination(req, res) {
 	}
 }
 
+/**
+ * PATCH /api/overwatch/drivers/activity/settings
+ * @tag DriverSettings
+ * @summary Update driver activity settings
+ * @description Updates existing driver activity settings or creates new ones if they don't exist
+ * @operationId updateDriverActivitySettings
+ * @prisma_model driver_activity_settings
+ * @bodyContent {
+ *   "first_offline_lockout": 30,
+ *   "second_offline_lockout": 120,
+ *   "online_timeout": 120,
+ *   "active": true
+ * } application/json
+ * @bodyRequired
+ * @response 200 - Settings updated successfully
+ * @responseContent {object} 200.application/json
+ * @response 400 - Invalid request data
+ * @response 500 - Server error while updating settings
+ */
+async function setDriversActivitySettings(req, res) {
+	const data = {
+		first_offline_lockout: req.body.first_offline_lockout || 30,
+		second_offline_lockout: req.body.second_offline_lockout || 120,
+		online_timeout: req.body.online_timeout || 120,
+		active: !!req.body.active,
+	};
+	const settings_id = req.body.driver_activity_settings_id;
+
+	try {
+		const settings = await prisma.driver_activity_settings.upsert({
+			where: {
+				driver_activity_settings_id: settings_id || '00000000-0000-0000-0000-000000000000'
+			},
+			update: data,
+			create: data,
+		});
+
+		return res.json(settings);
+	} catch (error) {
+		return res.status(500).json({ error: error.message });
+	}
+}
+
 module.exports = {
 	getOrdersWithPagination,
+	setDriversActivitySettings
 }
