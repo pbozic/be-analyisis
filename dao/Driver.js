@@ -140,7 +140,11 @@ const getDriverById = async (driver_id) => {
 						files: true,
 					}
 				},
-				activity_logs: true,
+				activity_logs: {
+					orderBy: {
+						started_at: 'desc'
+					}
+				},
 			},
 		});
 	} catch (error) {
