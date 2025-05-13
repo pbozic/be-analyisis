@@ -510,7 +510,10 @@ async function updateDriverOnlineStatus(req, res) {
 			}
 		});
 
-		const settings = await prisma.driver_activity_settings.findFirst({ where: { active: true } });
+		const settings = await prisma.driver_activity_settings.findFirst({
+			where: { active: true },
+			orderBy: { created_at: 'desc' }
+		});
 		if (settings) {
 			const timeoutAt = new Date(Date.now() + (settings?.online_timeout) * 60 * 1000);
 			if (latestLog?.activity_type === ACTIVITY_TYPE.LOCKED_OUT && latestLog?.lockout_until > new Date()) {

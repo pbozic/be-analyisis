@@ -89,7 +89,24 @@ async function setDriversActivitySettings(req, res) {
 	}
 }
 
+async function getDriversActivitySettings(req, res) {
+	try {
+		const settings = await prisma.driver_activity_settings.findFirst({
+			where: {
+				active: true
+			},
+			orderBy: {
+				created_at: 'desc'
+			}
+		});
+		return res.json(settings);
+	} catch (error) {
+		return res.status(500).json({ error: error.message });
+	}
+}
+
 module.exports = {
 	getOrdersWithPagination,
-	setDriversActivitySettings
+	getDriversActivitySettings,
+	setDriversActivitySettings,
 }
