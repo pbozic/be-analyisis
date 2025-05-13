@@ -1,5 +1,59 @@
 # Klikni Backend
 
+## Run Using Docker (recommended)
+
+We provide a complete set of scripts to manage the entire development environment using Docker. These commands are defined in the `package.json` and abstract the `docker compose` logic for simplicity.
+
+### Available Commands
+
+#### `npm run docker:up`
+Starts all the required containers defined in `./Docker/docker-compose.yml`.  
+This includes the app server (`node-app`), PostgreSQL, Redis, Elasticsearch, and more.  
+It uses `./Docker/dev-up.js` to handle environment pre-checks or bootstrapping logic.
+
+#### `npm run docker:down`
+Stops and removes all running containers but **keeps named volumes** (like your PostgreSQL data).
+
+#### `npm run docker:down:full`
+Stops and removes all running containers **including volumes and orphan containers**.  
+This will wipe any persisted data in the volumes — use with caution.
+
+#### `npm run docker:build`
+Alias for `docker:up`. Re-triggers the full container build via `./Docker/dev-up.js`.
+
+#### `npm run node:logs`
+Streams logs from the `node-app` container.  
+Useful to debug backend issues or observe live console output.
+
+#### `npm run node:restart`
+Restarts the `node-app` container without affecting the database or other services.
+
+#### `npm run node:recreate`
+Recreates the `node-app` container.  
+Use this if you changed dependencies, Dockerfile, or environment variables and need a fresh instance.
+
+#### `npm run node:down`
+Stops and removes only the `node-app` container (leaves other containers running).
+
+---
+
+### 🔧 Dev Tools: `dnpm` and `dnpx`
+
+These are helper commands for running `npm` and `npx` **inside the Docker container**, not on your local machine.
+
+Use:
+
+```bash
+npm run dnpm <command>
+npm run dnpx <command> 
+```
+
+```bash
+npm run dnpm install lodash
+npm run dnpx prisma studio
+```
+
+This ensures the commands execute inside the running node-app container, matching the actual runtime environment.
 ## Run the app
 - Make sure to install the dependencies described in the [dependencies chapter](#dependencies)
 - Make sure to set the .env variables described in the [.env chapter](#.env)
@@ -10,9 +64,6 @@ This command runs **npx prisma db push** and **npx prisma generate** and then st
 ```npm run server``` 
 This command only starts the nodemon instance (**nodemon ./app.js**) that runs the express server
 
-
-## Dependencies
-### nodemon
 1. To install nodemon, run the following command in your terminal:
 ```bash
     npm install -g nodemon

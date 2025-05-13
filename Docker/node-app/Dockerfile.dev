@@ -1,7 +1,7 @@
-FROM node:20-slim
+FROM node:20-bullseye
 
-# System deps for Prisma + Node canvas
-RUN apt-get update && apt-get install -y \
+# Install system dependencies for Prisma, canvas, and wkhtmltopdf
+RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     make \
     g++ \
@@ -12,23 +12,40 @@ RUN apt-get update && apt-get install -y \
     librsvg2-dev \
     libssl-dev \
     openssl \
-    && rm -rf /var/lib/apt/lists/*
-# App root
+    fontconfig \
+    libfreetype6 \
+    libxrender1 \
+    libxext6 \
+    fonts-dejavu-core fonts-liberation \
+    curl \
+    ca-certificates \
+    xz-utils \
+ && rm -rf /var/lib/apt/lists/*
+
+# Install wkhtmltopdf for Bullseye (0.12.6-1 is the latest stable for Bullseye)
+RUN curl -L -o wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.bullseye_amd64.deb && \
+    apt-get update && apt-get install -y ./wkhtmltox.deb && \
+    rm wkhtmltox.deb
+
+# Set working directory
 WORKDIR /app
-COPY . .
-# Cache deps early
+
+# Copy package.json and lock file first for better cache
 COPY package*.json ./
+COPY setup-aliases.js install-wkhtmltopdf.js ./
+# Install app dependencies
 RUN npm ci
 
-# Optional: install nodemon for hot reload
+# (Optional) Install nodemon for development
+# Comment this out if you're building a production image
 RUN npm install --save-dev nodemon
 
-# Prisma needs the DATABASE_URL at build-time for generate
+# Copy rest of the app
+COPY . .
+
+# Prisma environment setup for code generation
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
 
-# Add app source (volume will override in dev anyway)
-
-
-# Hot reload dev entry point
+# Run dev server
 CMD ["npm", "run", "start"]
