@@ -63,10 +63,7 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED);
 			order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.MERCHANT_PREPARING);
 			if(paymentIntent?.metadata?.preparation_time){
-				order = await DeliveryOrderDao.updateOrderPickupTime(
-					order.order_id,
-					new Date(Date.now() + paymentIntent.metadata.preparation_time * 60000)
-				);
+				order = await DeliveryOrderDao.updateOrderPickupTime(order.order_id, paymentIntent.metadata.preparation_time);
 				io.to("order_" + order.order_id).emit("order_pickup_time", order);
 			}
 			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
