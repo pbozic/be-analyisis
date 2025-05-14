@@ -1,6 +1,5 @@
 const prisma = require("../prisma/prisma");
-const { DELIVERY_ORDER_STATUS, TAXI_ORDER_STATUS, ORDER_TYPE, ORDER_SUBTYPE } = require("../lib/constants");
-const { not } = require("joi");
+const { TIME_LIMIT, TAXI_ORDER_STATUS, ORDER_TYPE, ORDER_SUBTYPE } = require("../lib/constants");
 async function getOrders(args) {
     try {
         const mergedArgs = {
@@ -124,6 +123,11 @@ async function getTaxiOrdersIfNotCompleted(user_id, type) {
 }
 
 async function getActiveOrdersByDriverId(driver_id) {
+    const thirtyMinutesInMs = TIME_LIMIT.START_DRIVE*60000;
+    const currentTime = new Date();
+    const timezoneOffset = currentTime.getTimezoneOffset()*60000;
+    const comparisonTime = new Date(currentTime.getTime() - timezoneOffset + thirtyMinutesInMs).toISOString().slice(0,-1);
+
     try {
         return await prisma.taxi_orders.findMany({
             where: {
@@ -131,6 +135,20 @@ async function getActiveOrdersByDriverId(driver_id) {
                 status: {
                     notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.PENDING, TAXI_ORDER_STATUS.TAXI_REJECTED]
                 },
+                OR: [
+                    { is_scheduled: false },
+                    {
+                        AND: [
+                            { is_scheduled: true },
+                            {
+                                preferences: {
+                                    path: ['departure_time'],
+                                    lte: comparisonTime
+                                }
+                            }
+                        ]
+                    }
+                ]
             },
             include: {
                 user: {
