@@ -1315,8 +1315,7 @@ async function merchantAcceptOrder(req, res) {
 						preparation_time: preparation_time,
 					},
 				});
-				console.log("Accepted order");
-				return res.status(200).json({ message: "Accept successful, awaiting stripe handling." });
+				return res.status(200).json(order);
 			}
 		}
 
