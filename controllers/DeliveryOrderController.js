@@ -1272,14 +1272,7 @@ async function updateOrderStatus(req, res) {
 async function merchantAcceptOrder(req, res) {
 	const { order_id, preparation_time } = req.body;
 	try {
-		let order;
-		if (preparation_time) {
-			order = await DeliveryOrderDao.updateOrderPickupTime(order_id, preparation_time);
-			io.to("order_" + order.order_id).emit("order_pickup_time", order);
-		} else {
-			console.error("Preparation time must be set");
-			return res.status(400).json(order_id);
-		}
+		let order = await DeliveryOrderDao.getOrder(order_id, { include: { user: true } });
 		const user = order?.user;
 		console.info("got into merchantAcceptOrder", JSON.stringify(order.payment_intent_id));
 		const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
@@ -1340,6 +1333,10 @@ async function merchantAcceptOrder(req, res) {
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED);
 		sendDeliveryOrderNotifications(user, null, order.user_id, null, order.status);
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_PREPARING);
+		if (preparation_time) {
+			order = await DeliveryOrderDao.updateOrderPickupTime(order.order_id, preparation_time);
+			io.to("order_" + order.order_id).emit("order_pickup_time", order);
+		}
 		// if(order.business_id){
 		// 	io.to("orders_" + order.business_id).emit("order_status_change__delivery", order);
 		// }
