@@ -297,10 +297,6 @@ const updateDriverLocationHistory = async (driver_id, location, status, order_id
 			...(order_id ? { order: { connect: { order_id: order_id } } } : {})
 		};
 
-		if (status !== null && status !== undefined) {
-			data.status = status;
-		}
-
 		return await prisma.driver_history_locations.create({ data });
 	} catch (error) {
 		console.error("Error updating driver's location history:", error);
