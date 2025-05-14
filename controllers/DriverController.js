@@ -24,6 +24,7 @@ const SMSHelper = require("../lib/SMS");
 const { sendNotificationToUser } = require("../lib/oneSignal");
 const { getLocalisedTexts } = require("../localisations/languages");
 const moment = require("moment");
+const { handleDriverStatusChange } = require("../lib/driverHelpers");
 /**
  * GET /drivers
  * @tag Drivers
@@ -500,80 +501,16 @@ async function updateDriverOnlineStatus(req, res) {
 				started_at: 'desc'
 			}
 		});
-		const latestOfflineLog = await prisma.driver_activity_logs.findFirst({
-			where: {
-				driver_id,
-				activity_type: ACTIVITY_TYPE.OFFLINE,
-			},
-			orderBy: {
-				started_at: 'desc'
-			}
-		});
-
 		const settings = await prisma.driver_activity_settings.findFirst({
 			where: { active: true },
 			orderBy: { created_at: 'desc' }
 		});
 		if (settings) {
-			const timeoutAt = new Date(Date.now() + (settings?.online_timeout) * 60 * 1000);
 			if (latestLog?.activity_type === ACTIVITY_TYPE.LOCKED_OUT && latestLog?.lockout_until > new Date()) {
 				return res.status(400).json({ driver, errorMsg: "LOCKED_OUT" });
 			}
 
-			if (online) {
-				await prisma.driver_activity_logs.create({
-					data: {
-						driver: {
-							connect: {
-								driver_id: driver_id,
-							}
-						},
-						activity_type: ACTIVITY_TYPE.ONLINE,
-						timeout_at: timeoutAt
-					}
-				});
-				if (latestOfflineLog) {
-					await prisma.driver_activity_logs.update({
-						where: { driver_activity_log_id: latestOfflineLog.driver_activity_log_id },
-						data: { ended_at: new Date() }
-					});
-				}
-			} else {
-				if (latestLog) {
-					await prisma.driver_activity_logs.update({
-						where: { driver_activity_log_id: latestLog.driver_activity_log_id },
-						data: { ended_at: new Date() }
-					});
-				}
-
-				const lockout_until = latestOfflineLog?.timeout_at && latestOfflineLog.timeout_at > new Date()
-					? new Date(Date.now() + (settings?.second_offline_lockout) * 60 * 1000)
-						: new Date(Date.now() + (settings?.first_offline_lockout) * 60 * 1000);
-
-				await prisma.driver_activity_logs.create({
-					data: {
-						driver: {
-							connect: {
-								driver_id: driver_id,
-							}
-						},
-						activity_type: ACTIVITY_TYPE.OFFLINE,
-						timeout_at: timeoutAt
-					}
-				});
-
-				await prisma.driver_activity_logs.create({
-					data: {
-						driver: {
-							connect: {
-								driver_id: driver_id,
-							}
-						},
-						activity_type: ACTIVITY_TYPE.LOCKED_OUT,
-						lockout_until
-					}
-				});
-			}
+			await handleDriverStatusChange(driver_id, online, latestLog, settings);
 		}
 		const updatedDriver = await DriverDao.updateDriverOnlineStatus(driver_id, online);
 

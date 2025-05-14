@@ -751,7 +751,7 @@ function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
 					year: "numeric"
 				}).format(orderDate);
 
-				const formattedDepartureTime = orderDate.toISOString();
+				const formattedDepartureTime = orderDate.toISOString().slice(0,-1);
 
 				// Generate an order for this day
 				let order = {
