@@ -1274,7 +1274,7 @@ async function merchantAcceptOrder(req, res) {
 	try {
 		let order;
 		if (preparation_time) {
-			order = await DeliveryOrderDao.updateOrderPickupTime(order.order_id, preparation_time);
+			order = await DeliveryOrderDao.updateOrderPickupTime(order_id, preparation_time);
 			io.to("order_" + order.order_id).emit("order_pickup_time", order);
 		} else {
 			console.error("Preparation time must be set");
