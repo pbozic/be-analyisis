@@ -818,18 +818,18 @@ async function createOrder(req, res) {
 		if(orderData.type===ORDER_TYPE.TRANSFER_PRIVATE){
 			const { pickup_location, delivery_location, preferences } = orderData;
 			let {price} = await TaxiHelper.calculateTransferRidePrice(pickup_location.coordinates, delivery_location.coordinates, preferences.vehicle_category)
-			if(price !== orderData.price){
-				console.error(`Price mismatch, got ${orderData.price}, calculated ${price}`)
+			if(price !== orderData.payment.price){
+				console.error(`Price mismatch, got ${orderData.payment.price}, calculated ${price}`)
 				throw new Error("Price mismatch")
 			}
-			if(orderData.price>=25){
+			if(orderData.payment.price>=25){
 				orderData.status = TAXI_ORDER_STATUS.AWAITING_PAYMENT
 
 				if(VEHICLE_CAPACITY[orderData.preferences.vehicle_class] < orderData.preferences.adults+orderData.preferences.children_under_140){
 					throw new Error("Number of requested seats exceeds vehicle capacity!")
 				}
 
-				if(!!prefs.repeat_ride && !prefs.repeat_ride.some(item => item.value === "do_not_repeat")){
+				if(!!orderData.preferences.repeat_ride && !orderData.preferences.repeat_ride.some(item => item.value === "do_not_repeat")){
 					throw new Error(`Repeating orders not allowed for transfer orders above ${25}€!`)
 				}
 
