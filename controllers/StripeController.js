@@ -9,9 +9,11 @@ const BusinessDao = require("../dao/Business");
 const PromoDao = require("../dao/Promo");
 const ProductDao = require("../dao/Product");
 const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
-const { DELIVERY_ORDER_STATUS, FUNDS_TYPE, SERVICE_TYPE } = require("../lib/constants");
+const { DELIVERY_ORDER_STATUS, FUNDS_TYPE, SERVICE_TYPE, ORDER_TYPE, TAXI_ORDER_STATUS } = require("../lib/constants");
 const { calculateDeliveryOrderPaymentCuts } = require("../lib/deliveryHelpers");
 const WalletFundsDao = require("../dao/WalletFunds");
+const TaxiOrderDao = require("../dao/TaxiOrder");
+const { calculateTransferOrderPaymentCuts } = require("../lib/taxiHelpers");
 
 async function handlePaymentIntentSuccess(paymentIntent) {
 	switch (paymentIntent.metadata.type) {
@@ -32,26 +34,27 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			// }
 			break;
 		case "order_payment":
-			let order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
-			const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id)
+			if(paymentIntent.metadata.order_type===ORDER_TYPE.DELIVERY){
+				let order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
+				const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id)
 
-			const {PLATFORM_CREDIT_CUT, MERCHANT_CREDIT_CUT} = await calculateDeliveryOrderPaymentCuts(order)
+				const {PLATFORM_CREDIT_CUT, MERCHANT_CREDIT_CUT} = await calculateDeliveryOrderPaymentCuts(order)
 
-			if (paymentIntent.metadata?.merchant_cut > 0) {
-				const transferRestaurant = await stripe.splitCutFromPaymentIntent(
-					paymentIntent,
-					restaurant_stripe,
-					parseFloat(paymentIntent.metadata.merchant_cut),
-				);
-			}
+				if (paymentIntent.metadata?.merchant_cut > 0) {
+					const transferRestaurant = await stripe.splitCutFromPaymentIntent(
+						paymentIntent,
+						restaurant_stripe,
+						parseFloat(paymentIntent.metadata.merchant_cut),
+					);
+				}
 
-			if (PLATFORM_CREDIT_CUT>0) {
-				const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id, "platform", PLATFORM_CREDIT_CUT, order.order_id, SERVICE_TYPE.DELIVERY);
-			}
-			if (MERCHANT_CREDIT_CUT>0) {
-				const transferedCreditsMerchant = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id, restaurant_stripe, MERCHANT_CREDIT_CUT, order.order_id, SERVICE_TYPE.DELIVERY);
-			}
-			//any remaining reserved funds are meant for delivery driver and should be handled on order completion
+				if (PLATFORM_CREDIT_CUT>0) {
+					const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id, "platform", PLATFORM_CREDIT_CUT, order.order_id, SERVICE_TYPE.DELIVERY);
+				}
+				if (MERCHANT_CREDIT_CUT>0) {
+					const transferedCreditsMerchant = await WalletFundsHelpers.transferReservedCreditsForOrder(order.user_id, restaurant_stripe, MERCHANT_CREDIT_CUT, order.order_id, SERVICE_TYPE.DELIVERY);
+				}
+				//any remaining reserved funds are meant for delivery driver and should be handled on order completion
 
 			order = await DeliveryOrderDao.updateOrder(order.order_id, {
 				payment: {
@@ -68,6 +71,20 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			// }
 			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
 
+			}else if(paymentIntent.metadata.order_type===ORDER_TYPE.TRANSFER_PRIVATE){
+				let order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
+				//any reserved funds are meant to be transfered on order completion
+
+				order = await DeliveryOrderDao.updateOrder(order.order_id, {
+					payment: {
+						...order.payment,
+						status: "PAID",
+					},
+				});
+				order = await DeliveryOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.PENDING);
+
+				io.to("order_" + order.order_id).emit("order_status_change__taxi", order);
+			}
 			console.log("PaymentIntent was successful!");
 			break;
 	}
@@ -78,19 +95,37 @@ async function handlePaymentIntentFaliure(paymentIntent) {
 		case "wallet_topup":
 			break;
 		case "order_payment":
-			let order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
-			order = await DeliveryOrderDao.updateOrder(order.order_id, {
-				payment: {
-					...order.payment,
-					status: "UNPAID",
-				},
-			});
-			order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED);
-			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
-			order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.FAIL);
-			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
-			SocketStore.closeRoom(`order_${order.order_id}`)
-			await WalletFundsHelpers.releaseReservedWalletFundsForOrder(order.user_id,order.order_id)
+			let order
+			switch (paymentIntent.metadata.order_type) {
+				case ORDER_TYPE.DELIVERY:
+					order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
+					order = await DeliveryOrderDao.updateOrder(order.order_id, {
+						payment: {
+							...order.payment,
+							status: "UNPAID",
+						},
+					});
+					order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED);
+					io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+					order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.FAIL);
+					io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+					SocketStore.closeRoom(`order_${order.order_id}`)
+					await WalletFundsHelpers.releaseReservedWalletFundsForOrder(order.user_id,order.order_id)
+					break;
+				case ORDER_TYPE.TRANSFER_PRIVATE:
+					order = await TaxiOrderDao.getOrder(paymentIntent.metadata.order_id);
+					order = await DeliveryOrderDao.updateOrder(order.order_id, {
+						payment: {
+							...order.payment,
+							status: "UNPAID",
+						},
+					});
+					order = await DeliveryOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.CUSTOMER_CANCELED);
+					io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+					SocketStore.closeRoom(`order_${order.order_id}`)
+					await WalletFundsHelpers.releaseReservedWalletFundsForOrder(order.user_id,order.order_id)
+					break;
+			}
 
 			break;
 	}

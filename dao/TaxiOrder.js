@@ -85,7 +85,12 @@ async function getTaxiOrdersIfNotCompleted(user_id, type) {
                 user_id: user_id,
                 subtype: ORDER_SUBTYPE.CREATED_BY_USER,
                 status: {
-                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED, TAXI_ORDER_STATUS.TAXI_REJECTED] // Exclude both completed and pending orders
+                    notIn: [
+                        TAXI_ORDER_STATUS.TAXI_CANCELED,
+                        TAXI_ORDER_STATUS.TAXI_COMPLETED,
+                        TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+                        TAXI_ORDER_STATUS.TAXI_REJECTED
+                    ]
                 },
             },
             include: {
@@ -133,7 +138,14 @@ async function getActiveOrdersByDriverId(driver_id) {
             where: {
                 driver_id: driver_id,
                 status: {
-                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.PENDING, TAXI_ORDER_STATUS.TAXI_REJECTED]
+                    notIn: [
+                        TAXI_ORDER_STATUS.TAXI_CANCELED,
+                        TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+                        TAXI_ORDER_STATUS.TAXI_COMPLETED,
+                        TAXI_ORDER_STATUS.PENDING,
+                        TAXI_ORDER_STATUS.TAXI_REJECTED,
+                        TAXI_ORDER_STATUS.AWAITING_PAYMENT,
+                    ]
                 },
                 OR: [
                     { is_scheduled: false },
@@ -916,7 +928,14 @@ async function getAcceptedOrders() {
         return prisma.taxi_orders.findMany({
             where: {
                 status: {
-                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.PENDING, TAXI_ORDER_STATUS.TAXI_REJECTED] // Exclude both completed and pending orders
+                    notIn: [
+                        TAXI_ORDER_STATUS.TAXI_CANCELED,
+                        TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+                        TAXI_ORDER_STATUS.TAXI_COMPLETED,
+                        TAXI_ORDER_STATUS.PENDING,
+                        TAXI_ORDER_STATUS.TAXI_REJECTED,
+                        TAXI_ORDER_STATUS.AWAITING_PAYMENT
+                    ] // Exclude both completed and pending orders
                 }
             },
             include: {
@@ -956,7 +975,13 @@ async function userActiveOrders(user_id) {
             where: {
                 user_id,
                 status: {
-                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.TAXI_REJECTED] // Exclude both completed and pending orders
+                    notIn: [
+                        TAXI_ORDER_STATUS.TAXI_CANCELED,
+                        TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+                        TAXI_ORDER_STATUS.TAXI_COMPLETED,
+                        TAXI_ORDER_STATUS.TAXI_REJECTED,
+                        TAXI_ORDER_STATUS.AWAITING_PAYMENT//TODO: Should we consider AWAIITING_PAYMENT as active order in the user's eyes?
+                    ] // Exclude both completed and pending orders
                 }
             },
         });
@@ -971,7 +996,13 @@ async function getActiveOrderIdsForUser(user_id) {
             where: {
                 user_id: user_id,
                 status: {
-                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.TAXI_REJECTED]
+                    notIn: [
+                        TAXI_ORDER_STATUS.TAXI_CANCELED,
+                        TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+                        TAXI_ORDER_STATUS.TAXI_COMPLETED,
+                        TAXI_ORDER_STATUS.TAXI_REJECTED,
+                        TAXI_ORDER_STATUS.AWAITING_PAYMENT//TODO: Should we consider AWAIITING_PAYMENT as active order in the user's eyes?
+                    ]
                 }
             },
             select:{

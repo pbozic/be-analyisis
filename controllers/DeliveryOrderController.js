@@ -318,14 +318,6 @@ async function createOrder(req, res) {
 				}
 			} else if (order.payment.type === "CASH") {
 			}
-		} else {
-			//commented because the paid status should only happen if the order is accepted by merchant
-			// order = await DeliveryOrderDao.updateOrder(order.order_id, {
-			// 	payment: {
-			// 		...order.payment,
-			// 		status: "PAID"
-			// 	}
-			// });
 		}
 
 		order = await DeliveryOrderDao.getOrder(order.order_id, {
