@@ -2,6 +2,7 @@ const { file } = require("googleapis/build/src/apis/file");
 const prisma= require("../prisma/prisma");
 const UserDao = require("./User");
 const { calculateDistance, calculateTimeDifference } = require("../lib/helpersLib");
+const { TAXI_ORDER_STATUS } = require("../lib/constants");
 
 const getDrivers = async (args) => {
 	try {
@@ -276,7 +277,8 @@ const updateDriverLocation = async (driver_id, location) => {
 	}
 };
 
-const updateDriverLocationHistory = async (driver_id, location, status, order_id) => {
+const updateDriverLocationHistory = async (driver_id, location, status, order_id, type) => {
+	const taxiOrder = !!type;
 	try {
 		const locationData = {
 			name: location?.name ?? null,
@@ -294,7 +296,8 @@ const updateDriverLocationHistory = async (driver_id, location, status, order_id
 					driver_id: driver_id
 				}
 			},
-			...(order_id ? { order: { connect: { order_id: order_id } } } : {})
+			...(order_id && taxiOrder ? { order: { connect: { order_id: order_id } } } :
+				order_id && !taxiOrder ? { delivery_order: { connect: { order_id: order_id } } } : {})
 		};
 
 		return await prisma.driver_history_locations.create({ data });
