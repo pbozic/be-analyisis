@@ -819,6 +819,7 @@ async function createOrder(req, res) {
 			const { pickup_location, delivery_location, preferences } = orderData;
 			let {price} = await TaxiHelper.calculateTransferRidePrice(pickup_location.coordinates, delivery_location.coordinates, preferences.vehicle_category)
 			if(price !== orderData.price){
+				console.error(`Price mismatch, got ${orderData.price}, calculated ${price}`)
 				throw new Error("Price mismatch")
 			}
 			if(orderData.price>=25){
