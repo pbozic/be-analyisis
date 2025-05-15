@@ -588,14 +588,7 @@ async function requestTransferOrderPrice(req,res) {
 		//TODO: update to use route
 		const { route, pickup_location, delivery_location, vehicle_category  } = req.body;
 		let priceData = await TaxiHelper.calculateTransferRidePrice(pickup_location.coordinates, delivery_location.coordinates, vehicle_category);
-		let stored_pi_data = null
-		if(priceData.price>25){
-			stored_pi_data = await createAndStorePaymentIntent(Math.round(priceData.price*100))
-		}
-		let data = stored_pi_data
-			? { price: priceData.price, distance: priceData.distance, stored_pi_data }
-			: { price: priceData.price, distance: priceData.distance }
-		res.status(200).json(data)
+		res.status(200).json(priceData)
 	}catch (e) {
 		console.error(e)
 		res.status(500)
