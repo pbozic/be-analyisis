@@ -8,3 +8,4 @@
 mycert.*
 *.p8
 /bin
+.DS_Store

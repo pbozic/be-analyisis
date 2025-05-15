@@ -47,7 +47,8 @@ const getBusinessUserByUserId = async (userId) => {
 									}
 								}
 							}
-						}
+						},
+						business_clients: true
 					}
 				},
 			},

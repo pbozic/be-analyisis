@@ -889,7 +889,8 @@ async function createOrder(req, res) {
 		let payment_intent = orderData.status===TAXI_ORDER_STATUS.AWAITING_PAYMENT ? await handlePaymentForTransferOrder(order,return_url) : null;
 		console.info("ORDER: ", order)
 		console.info("PAYMENT_INTENT: ", payment_intent)
-		SocketStore.addUserToRoom(req.user.user_id, "order_" + order.order_id);
+
+		if (!order?.creating_user_id) SocketStore.addUserToRoom(req.user.user_id, "order_" + order.order_id);
 		//console.log("create taxi order", order)
 
 		const userSocket = UserSockets.get(order.user_id);
