@@ -2055,7 +2055,7 @@ async function requestData(req, res) {
 								public: true
 							}
 						},
-						driver_activity_logs: {
+						activity_logs: {
 							select: {
 								driver_activity_log_id: true,
 								activity_type: true,
