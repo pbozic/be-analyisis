@@ -4,27 +4,49 @@ html(lang="sl")
     meta(charset="UTF-8")
     title Order Confirmation
     style.
-      body { font-family: sans-serif; font-size: 12px; }
-      h1 { font-size: 18px; }
-      table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-      th, td { border: 1px solid #ccc; padding: 4px; text-align: left; }
-      .right { text-align: right; }
+      body {
+        font-family: sans-serif;
+        font-size: 12px;
+        color: #000;
+        background: #fff;
+        padding: 20px;
+      }
+      h1, h2 {
+        font-size: 16px;
+        margin: 0 0 10px 0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+      th, td {
+        border: 1px solid #ccc;
+        padding: 6px;
+        text-align: left;
+      }
+      .right { text-align: right; font-variant-numeric: tabular-nums; }
+      .footer { margin-top: 30px; font-size: 11px; }
 
   body
-    h1 Order confirmation ##{orderNumber}
+    h1 Order confirmation ##{order.order_number}
 
+    h2 Order details
     p
-      | Order ID: #{orderId}
+      | Customer: #{order.user.first_name} #{order.user.last_name}
       br
-      | Customer: #{customer}
+      | Order ID: #{order.order_id}
       br
-      | Venue: #{venue}
+      | Venue: #{order.business.name}
       br
-      | Order type: #{orderType}
+      | Order type: #{order.details.type.charAt(0).toUpperCase() + order.details.type.slice(1)}
       br
-      | Delivery time: #{deliveryTime}
-      br
-      | Payment: #{paymentMethod}
+      | Delivery time: #{new Date(order.details.customer_expected_delivery_at).toLocaleString('sl-SI')}
+
+    h2 Payment method
+    p
+      | #{order.payment.type === 'CASH' ? 'Cash' : order.payment.type.replace('_', ' ')}  
+      | #{order.details.total_price.toFixed(2)} €
 
     h2 Items
 
@@ -33,27 +55,38 @@ html(lang="sl")
         tr
           th Item
           th VAT %
-          th Qty
-          th Unit Price (€)
-          th Total (€)
+          th Quantity
+          th Gross unit price (€)
+          th Price (€)
       tbody
-        each item in items
+        each item in order.items
           tr
-            td #{item.name}
-            td #{item.vat}
+            td #{item.names.sl || item.names.en}
+            td #{item.vat ? item.vat.toFixed(2) : 9.50.toFixed(2)}%
             td #{item.quantity}
-            td.right #{item.unitPrice.toFixed(2)}
-            td.right #{item.total.toFixed(2)}
+            td.right #{item.price.toFixed(2)}
+            td.right #{(item.price * item.quantity).toFixed(2)}
+
+        // Add delivery row
+        tr
+          td Delivery
+          td 9.50%
+          td 1
+          td.right #{order.details.delivery_cost.toFixed(2)}
+          td.right #{order.details.delivery_cost.toFixed(2)}
+
 
     p.right(style="font-weight: bold; margin-top: 10px")
-      | Total: #{total.toFixed(2)} €
+      | Total in EUR (incl. VAT): #{order.details.total_price.toFixed(2)} €
 
-    h3 Seller Info
+    h2 Seller details
     p
-      | SPAR SLOVENIJA d.o.o - Grocery
+      | #{order.business.name}
       br
-      | Business ID: 5571693
+      | Business ID: #{order.business.registration_id}
       br
-      | VAT ID: SI32156782
+      | VAT ID: #{order.business.tax_id}
       br
-      | Letališka cesta 26, 1000 Ljubljana, SVN
+      | Address: #{order.business.address || order.details.provider_address}
+
+    p.footer This document is digitally signed.
