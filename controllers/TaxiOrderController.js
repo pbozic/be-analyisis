@@ -562,7 +562,7 @@ async function makeOrder(cleanOrderData, userId,  parentOrderId, driverId, busin
 	}
 
 	if (businessUserId) {
-		orderPayload.business_user = {
+		orderPayload.business_users = {
 			connect: {
 				business_users_id: businessUserId
 			}
@@ -570,7 +570,7 @@ async function makeOrder(cleanOrderData, userId,  parentOrderId, driverId, busin
 	}
 
 	if (businessClientId) {
-		orderPayload.business_user = {
+		orderPayload.business_clients = {
 			connect: {
 				business_clients_id: businessClientId
 			}
