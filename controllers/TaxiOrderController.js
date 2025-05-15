@@ -1129,6 +1129,7 @@ async function completeOrder(req, res) {
 		}else{
 			const orderingUser = !order.creating_user_id ? user : await UsersDao.getUserById(order.creating_user_id);
 			await handleReferral(orderingUser.user_id);
+			let TOTAL_COST_CENTS = 0;
 
 			if(order.type===ORDER_TYPE.TRANSFER_PRIVATE && order.payment.price>=25){
 				//Handle expensive transfer payments
@@ -1138,7 +1139,7 @@ async function completeOrder(req, res) {
 					DRIVER_CUT,
 					PLATFORM_CUT
 				} = calculateTransferOrderPaymentCuts(order)
-
+				TOTAL_COST_CENTS = DRIVER_CREDIT_CUT + PLATFORM_CREDIT_CUT + DRIVER_CUT + PLATFORM_CUT
 				if(PLATFORM_CREDIT_CUT>0) {
 					const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, "platform", PLATFORM_CREDIT_CUT, order.order_id, SERVICE_TYPE.TAXI);
 				}
@@ -1189,7 +1190,7 @@ async function completeOrder(req, res) {
 				const EXTRAS_COST_CENTS = Math.round(parseFloat([VEHICLE_CLASS.PRIVATE_DRIVER, VEHICLE_CLASS.CARGO_VAN].includes(order.preferences?.vehicle_class) ? order.payment.extras?.price
 					|| order.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE + CARGO_TRANSFER_FEE.CARGO_FEE
 					: 0) * 100);
-				const TOTAL_COST_CENTS = PRICE_CENTS + EXTRAS_COST_CENTS;
+				TOTAL_COST_CENTS = PRICE_CENTS + EXTRAS_COST_CENTS;
 
 				const INITIAL_PLATFORM_CUT = Math.round(PRICE_CENTS*DRIVE_FEE) + EXTRAS_COST_CENTS
 				const INITIAL_DRIVER_CUT = TOTAL_COST_CENTS-INITIAL_PLATFORM_CUT
