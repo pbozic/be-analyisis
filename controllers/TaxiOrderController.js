@@ -755,6 +755,7 @@ async function handlePaymentForTransferOrder(order,return_url){
 					{},
 					return_url,
 				);
+				console.info("payment_intent",payment_intent)
 
 				order = await TaxiOrderDao.updateTaxiOrderPayment(order.order_id, {
 					...order.payment,
@@ -853,8 +854,9 @@ async function createOrder(req, res) {
 
 		let order = await cleanedCreateOrderHelper(orderData);
 		//TODO: payment management for order
-		let payment_intent = orderData.status===TAXI_ORDER_STATUS.AWAITING_PAYMENT ? handlePaymentForTransferOrder(order,return_url) : null;
-
+		let payment_intent = orderData.status===TAXI_ORDER_STATUS.AWAITING_PAYMENT ? await handlePaymentForTransferOrder(order,return_url) : null;
+		console.info("ORDER: ", order)
+		console.info("PAYMENT_INTENT: ", payment_intent)
 		SocketStore.addUserToRoom(req.user.user_id, "order_" + order.order_id);
 		//console.log("create taxi order", order)
 
