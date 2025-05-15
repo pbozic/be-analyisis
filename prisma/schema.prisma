@@ -76,30 +76,51 @@ model business {
   active                          Boolean              @default(false)
   sales_representative_id         String?
 
-  user_favorite_businesses user_favorite_businesses[]  @relation("user_favorite_businesses_to_business")
-  scoring_points           scoring_points[]            @relation("scoring_points_to_business")
-  daily_meal_drivers       delivery_drivers[]
-  late_events              late_events[]               @relation("late_events_to_business")
-  fiscal_device            fiscal_devices?             @relation(fields: [fiscal_devices_id], references: [fiscal_devices_id])
-  fiscal_devices_id        String?                     @db.Uuid
-  daily_meals_subscribers  daily_meals_subscriptions[]
-  account_actions          account_actions[]
+  user_favorite_businesses    user_favorite_businesses[]  @relation("user_favorite_businesses_to_business")
+  scoring_points              scoring_points[]            @relation("scoring_points_to_business")
+  daily_meal_drivers          delivery_drivers[]
+  late_events                 late_events[]               @relation("late_events_to_business")
+  fiscal_device               fiscal_devices?             @relation(fields: [fiscal_devices_id], references: [fiscal_devices_id])
+  fiscal_devices_id           String?                     @db.Uuid
+  daily_meals_subscribers     daily_meals_subscriptions[]
+  account_actions             account_actions[]
+  business_clients            business_clients[]
+  purchase_order_limit_amount Float?
 }
 
 model business_users {
-  business_users_id    String       @id @default(uuid()) @db.Uuid
-  online               Boolean?     @default(false)
-  company_role         COMPANY_ROLE @default(DIRECTOR)
-  created_at           DateTime     @default(now()) @db.Timestamptz(6)
-  updated_at           DateTime     @default(now()) @updatedAt @db.Timestamptz(6)
-  user_id              String       @unique @db.Uuid
-  users                users?       @relation(fields: [user_id], references: [user_id])
-  business_id          String       @db.Uuid
-  business             business?    @relation(fields: [business_id], references: [business_id])
-  operating_address_id String?      @db.Uuid
-  operating_address    addresses?   @relation("business_users_operating_address", fields: [operating_address_id], references: [address_id])
+  business_users_id    String        @id @default(uuid()) @db.Uuid
+  online               Boolean?      @default(false)
+  company_role         COMPANY_ROLE  @default(DIRECTOR)
+  created_at           DateTime      @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
+  user_id              String        @unique @db.Uuid
+  users                users?        @relation(fields: [user_id], references: [user_id])
+  business_id          String        @db.Uuid
+  business             business?     @relation(fields: [business_id], references: [business_id])
+  operating_address_id String?       @db.Uuid
+  operating_address    addresses?    @relation("business_users_operating_address", fields: [operating_address_id], references: [address_id])
+  allowance            allowances?
+  taxi_orders          taxi_orders[]
 
   @@unique([user_id, business_id], name: "uniqueBusinessUser")
+}
+
+model business_clients {
+  business_clients_id String    @id @default(uuid()) @db.Uuid
+  online              Boolean?  @default(false)
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+  business_id         String    @db.Uuid
+  business            business? @relation(fields: [business_id], references: [business_id])
+
+  first_name       String?
+  last_name        String?
+  email            String?
+  telephone        String
+  telephone_code   String
+  telephone_number String
+  taxi_orders      taxi_orders[]
 }
 
 model users {
@@ -257,15 +278,21 @@ model group_users {
 }
 
 model allowances {
-  allowance_id    String      @id @default(uuid()) @db.Uuid
-  group_user_id   String      @unique @db.Uuid
-  amount_taxi     Float       @default(0)
-  amount_transfer Float       @default(0)
-  amount_delivery Float       @default(0)
-  amount_any      Float       @default(0)
-  created_at      DateTime    @default(now()) @db.Timestamptz(6)
-  updated_at      DateTime    @default(now()) @updatedAt @db.Timestamptz(6)
-  user            group_users @relation(fields: [group_user_id], references: [group_user_id], onDelete: Cascade)
+  allowance_id                   String          @id @default(uuid()) @db.Uuid
+  group_user_id                  String?         @unique @db.Uuid
+  business_users_id              String?         @unique @db.Uuid
+  amount_taxi_wallet             Float           @default(0)
+  amount_transfer_wallet         Float           @default(0)
+  amount_delivery_wallet         Float           @default(0)
+  amount_any_wallet              Float           @default(0)
+  amount_taxi_purchase_order     Float?
+  amount_transfer_purchase_order Float?
+  amount_delivery_purchase_order Float?
+  amount_any_purchase_order      Float?
+  created_at                     DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at                     DateTime        @default(now()) @updatedAt @db.Timestamptz(6)
+  user                           group_users?    @relation(fields: [group_user_id], references: [group_user_id], onDelete: Cascade)
+  business_user                  business_users? @relation(fields: [business_users_id], references: [business_users_id], onDelete: Cascade)
 }
 
 model documents {
@@ -527,6 +554,8 @@ model allergens {
 model taxi_orders {
   order_id                 String                     @id @default(uuid()) @db.Uuid
   user_id                  String                     @db.Uuid
+  business_users_id        String?                    @db.Uuid
+  business_clients_id      String?                    @db.Uuid
   driver_id                String?                    @db.Uuid
   vehicle_id               String?                    @db.Uuid
   route                    Json
@@ -545,6 +574,8 @@ model taxi_orders {
   driver                   drivers?                   @relation(fields: [driver_id], references: [driver_id])
   vehicle                  vehicles?                  @relation(fields: [vehicle_id], references: [vehicle_id])
   user                     users?                     @relation(fields: [user_id], references: [user_id])
+  business_users           business_users?            @relation(fields: [business_users_id], references: [business_users_id])
+  business_clients         business_clients?          @relation(fields: [business_clients_id], references: [business_clients_id])
   history                  taxi_order_sent[]
   telephone                String?
   first_name               String?

@@ -9,7 +9,7 @@ const { UserSockets, io, SocketStore } = require("../socket");
 const gApi = require("../lib/gApis");
 const TaxiHelper = require("../lib/taxiHelpers");
 const { TAXI_ORDER_STATUS, VEHICLE_CAPACITY, VEHICLE_CLASS, DRIVE_FEE , CARGO_TRANSFER_FEE, ORDER_TYPE, CREDITS,
-	CASHBACK_SOURCE, USER_ROLE, SCORING_POINTS_REASON, FUNDS_TYPE, SERVICE_TYPE, VEHICLE_CATEGORY
+	CASHBACK_SOURCE, USER_ROLE, SCORING_POINTS_REASON, FUNDS_TYPE, SERVICE_TYPE, VEHICLE_CATEGORY, ORDER_SUBTYPE
 } = require("../lib/constants");
 const { sendOrderNotifications } = require("../lib/notifications");
 const { range, todaysEarnings } = require("../lib/helpersLib");
@@ -803,6 +803,9 @@ async function createOrder(req, res) {
 			telephone: req.body?.telephone || req.user.telephone,
 			is_scheduled: req.body.preferences?.departure_date
 		};
+		if (orderData.subType === ORDER_SUBTYPE.CREATED_BY_BUSINESS) {
+			//TODO: handle business created order
+		}
 
 		console.info("USER TELEPHONE", orderData.telephone);
 		console.info("USER ID", orderData.user_id);
