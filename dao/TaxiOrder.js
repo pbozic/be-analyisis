@@ -89,7 +89,9 @@ async function getTaxiOrdersIfNotCompleted(user_id, type) {
                         TAXI_ORDER_STATUS.TAXI_CANCELED,
                         TAXI_ORDER_STATUS.TAXI_COMPLETED,
                         TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
-                        TAXI_ORDER_STATUS.TAXI_REJECTED
+                        TAXI_ORDER_STATUS.TAXI_REJECTED,
+                        //TODO: Should exclude status AWAITING_PAYMENT or not?
+                        TAXI_ORDER_STATUS.AWAITING_PAYMENT,
                     ]
                 },
             },
