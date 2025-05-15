@@ -56,32 +56,32 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 				}
 				//any remaining reserved funds are meant for delivery driver and should be handled on order completion
 
-			order = await DeliveryOrderDao.updateOrder(order.order_id, {
-				payment: {
-					...order.payment,
-					status: "PAID",
-				},
-			});
-			order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL);
-			order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED);
-			order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.MERCHANT_PREPARING);
-			// if(paymentIntent?.metadata?.preparation_time){
-			// 	order = await DeliveryOrderDao.updateOrderPickupTime(order.order_id, paymentIntent.metadata.preparation_time);
-			// 	io.to("order_" + order.order_id).emit("order_pickup_time", order);
-			// }
-			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
-
-			}else if(paymentIntent.metadata.order_type===ORDER_TYPE.TRANSFER_PRIVATE){
-				let order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
-				//any reserved funds are meant to be transfered on order completion
-
 				order = await DeliveryOrderDao.updateOrder(order.order_id, {
 					payment: {
 						...order.payment,
 						status: "PAID",
 					},
 				});
-				order = await DeliveryOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.PENDING);
+				order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL);
+				order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED);
+				order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.MERCHANT_PREPARING);
+				// if(paymentIntent?.metadata?.preparation_time){
+				// 	order = await DeliveryOrderDao.updateOrderPickupTime(order.order_id, paymentIntent.metadata.preparation_time);
+				// 	io.to("order_" + order.order_id).emit("order_pickup_time", order);
+				// }
+				io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+
+			}else if(paymentIntent.metadata.order_type===ORDER_TYPE.TRANSFER_PRIVATE){
+				let order = await TaxiOrderDao.getOrder(paymentIntent.metadata.order_id);
+				//any reserved funds are meant to be transfered on order completion
+
+				order = await TaxiOrderDao.updateOrder(order.order_id, {
+					payment: {
+						...order.payment,
+						status: "PAID",
+					},
+				});
+				order = await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.PENDING);
 
 				io.to("order_" + order.order_id).emit("order_status_change__taxi", order);
 			}
