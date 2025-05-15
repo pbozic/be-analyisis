@@ -1839,9 +1839,12 @@ async function updateTaxiOrderTimeline(req, res) {
  */
 async function updateTaxiOrderPayment(req, res) {
 	const { order_id, payment } = req.body;
-
 	try {
-		let order = await TaxiOrderDao.updateTaxiOrderPayment(order_id, payment);
+		let order = await TaxiOrderDao.getOrder(order_id)
+		if(order.payment.status==="PAID"){
+			throw new Error("Cant update paid payment.")
+		}
+		order = await TaxiOrderDao.updateTaxiOrderPayment(order_id, payment);
 		io.to("order_" + order.order_id).emit("order_payment_change__taxi", order);
 		res.status(200).json(order);
 	} catch (e) {
