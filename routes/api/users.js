@@ -14,7 +14,7 @@ const {
 	oneSignalIdSchema
 } = require("../../joi/userSchemas");
 const {reviewUserSchema} = require("../../joi/reviewSchemas");
-const { registerChildSchema } = require("../../joi/authSchemas");
+const { registerChildSchema  } = require("../../joi/authSchemas");
 
 const router = express.Router();
 
@@ -79,5 +79,7 @@ router.get("/me/referral", UserController.getReferral);
 router.patch("/me/marketing-notifications", UserController.updateMarketingNotifications)
 router.patch("/me/ads-personalization", UserController.updateAdsPersonalization)
 router.patch("/me/newsletter", UserController.updateNewsletter)
+
+router.post("/me/request-data", UserController.requestData);
 
 module.exports = router;
