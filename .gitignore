@@ -8,3 +8,5 @@
 mycert.*
 *.p8
 /bin
+*.p12
+*.pdf
