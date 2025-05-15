@@ -535,7 +535,7 @@ function subdivideOrder(vehicle_class,vehicle_category, n_adults, n_children ){
 	return splits
 }
 
-async function makeOrder(cleanOrderData, userId,  parentOrderId, driverId){
+async function makeOrder(cleanOrderData, userId,  parentOrderId, driverId, businessUserId, businessClientId){
 	const orderPayload = {
 		...cleanOrderData,
 		user: {
@@ -561,11 +561,27 @@ async function makeOrder(cleanOrderData, userId,  parentOrderId, driverId){
 		};
 	}
 
+	if (businessUserId) {
+		orderPayload.business_users = {
+			connect: {
+				business_users_id: businessUserId
+			}
+		}
+	}
+
+	if (businessClientId) {
+		orderPayload.business_clients = {
+			connect: {
+				business_clients_id: businessClientId
+			}
+		}
+	}
+
 	const order = await TaxiOrderDao.createOrder(orderPayload);
 	return order;
 }
 
-async function buildOrder(cleanOrderData, userId, parentOrderId, driverId){
+async function buildOrder(cleanOrderData, userId, parentOrderId, driverId, businessUserId, businessClientId){
 	const {vehicle_class,vehicle_category,adults,children_under_140} = cleanOrderData.preferences
 	const splits = subdivideOrder(vehicle_class,vehicle_category,adults,children_under_140)
 
@@ -574,7 +590,7 @@ async function buildOrder(cleanOrderData, userId, parentOrderId, driverId){
 		const { adults_seated, children_seated } = splits[i];
 		cleanOrderData.preferences.adults = adults_seated;
 		cleanOrderData.preferences.children_under_140 = children_seated;
-		const order = await makeOrder(cleanOrderData, userId,  parentOrderId, driverId)
+		const order = await makeOrder(cleanOrderData, userId,  parentOrderId, driverId, businessUserId, businessClientId)
 		if(!firstOrderId){
 			firstOrderId = order.order_id
 		}
@@ -596,14 +612,16 @@ async function requestTransferOrderPrice(req,res) {
 
 async function cleanedCreateOrderHelper(orderData){
 	try{
-		const user_id = orderData.user_id
-		const driver_id = orderData?.driver_id || orderData?.driver?.driver_id
+		const user_id = orderData.user_id;
+		const driver_id = orderData?.driver_id || orderData?.driver?.driver_id;
+		const businessUserId = orderData.business_user?.business_users_id;
+		const businessClientId = orderData.business_client?.business_clients_id;
 		console.log("ORDER DATA DRIVER", orderData.driver);
 		const cleanedOrderDataArray = preprocessOrderData(orderData)
 
 		let firstOrderId = null;
 		for(const cleanOrderData of cleanedOrderDataArray){
-			firstOrderId = await buildOrder(cleanOrderData, user_id, firstOrderId ,driver_id)
+			firstOrderId = await buildOrder(cleanOrderData, user_id, firstOrderId, driver_id, businessUserId, businessClientId)
 		}
 
 		const order = await TaxiOrderDao.getOrder(firstOrderId, {
@@ -796,14 +814,14 @@ async function createOrder(req, res) {
 			is_scheduled: req.body.preferences?.departure_date
 		};
 
-		let businessClient;
+		let business_client;
 		if (orderData.subtype === ORDER_SUBTYPE.CREATED_BY_BUSINESS) {
 			console.log("PAYMENT", orderData?.payment);
 			console.log("BUSINESS USER:", orderData?.business_user);
 			console.log("BUSINESS CLIENT:", orderData?.business_client);
 
-			businessClient = orderData?.business_client;
-			await prisma.business_clients.create({
+			const businessClient = orderData?.business_client;
+			business_client = await prisma.business_clients.create({
 				data: {
 					first_name: businessClient.first_name,
 					last_name: businessClient.last_name,
@@ -819,6 +837,8 @@ async function createOrder(req, res) {
 				}
 			})
 		}
+		orderData.business_client = business_client;
+
 		console.info("USER TELEPHONE", orderData.telephone);
 		console.info("USER ID", orderData.user_id);
 
