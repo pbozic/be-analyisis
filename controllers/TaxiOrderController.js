@@ -701,11 +701,8 @@ async function handlePaymentForTransferOrder(order,return_url){
 						status: "PAID"
 					}
 				});
+				order = await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.PENDING);
 
-				// //Only transfer money to driver since we already have the wallet money?
-				// // const transfer = await stripe.transferToConnectedAccount(DRIVER_CUT_AMOUNT, driver_business.stripe_account_id);
-				// const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user.user_id, driver_business.stripe_account_id, DRIVER_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
-				// const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(user.user_id, "platform", PLATFORM_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
 			}
 			if (order.payment.type === "FAMILY_WALLET") {
 				// handle wallet payment
@@ -751,9 +748,8 @@ async function handlePaymentForTransferOrder(order,return_url){
 						status: "PAID"
 					}
 				});
+				order = await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.PENDING);
 
-				// const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(parent_user.user_id, driver_business.stripe_account_id, DRIVER_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
-				// const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(parent_user.user_id, "platform", PLATFORM_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
 			}
 			if (order.payment.type === "CARD" || order.payment.type === "PLATFORM") {
 				payment_intent = await stripe.createSplittablePayment(
@@ -776,9 +772,10 @@ async function handlePaymentForTransferOrder(order,return_url){
 			order = await TaxiOrderDao.updateOrder(order.order_id, {
 				payment: {
 					...order.payment,
-					status: "PAID"
-				}
+					status: "PAID",
+				},
 			});
+			order = await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.PENDING);
 		}
 		return payment_intent
 	}catch (e) {
@@ -892,7 +889,8 @@ async function createOrder(req, res) {
 		let payment_intent = orderData.status===TAXI_ORDER_STATUS.AWAITING_PAYMENT ? await handlePaymentForTransferOrder(order,return_url) : null;
 		console.info("ORDER: ", order)
 		console.info("PAYMENT_INTENT: ", payment_intent)
-		SocketStore.addUserToRoom(req.user.user_id, "order_" + order.order_id);
+
+		if (!order?.creating_user_id) SocketStore.addUserToRoom(req.user.user_id, "order_" + order.order_id);
 		//console.log("create taxi order", order)
 
 		const userSocket = UserSockets.get(order.user_id);
