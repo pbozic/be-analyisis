@@ -206,6 +206,28 @@ async function handleWebhook(req, res) {
 			console.log("FAIL", paymentIntent);
 			handlePaymentIntentFaliure(paymentIntent);
 			break;
+		case "payment_intent.amount_capturable_updated":
+			paymentIntent = event.data.object;
+
+			const {
+				amount_capturable,
+				metadata: { order_id, order_type } = {},
+			} = paymentIntent;
+
+			// Check if conditions are met
+			if (
+				amount_capturable > 0 &&
+				order_id &&
+				order_type === "TRANSFER_PRIVATE"
+			) {
+				try {
+					await stripe.client.paymentIntents.capture(paymentIntent.id);
+					console.log(`Captured PaymentIntent for order ${order_id}`);
+				} catch (err) {
+					console.error(`Failed to capture PaymentIntent ${paymentIntent.id}:`, err);
+				}
+			}
+			break;
 		case "charge.succeeded":
 			paymentIntent = event.data.object;
 			break;
