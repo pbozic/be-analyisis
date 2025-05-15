@@ -455,6 +455,7 @@ const createNewUser = async (user, hashPassword = false) => {
 				email,
 				password: hash,
 			};
+			delete newUser.confirm_password
 		}
 
 		// Create the user with the potentially hashed password

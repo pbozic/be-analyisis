@@ -1,6 +1,5 @@
 const prisma = require("../prisma/prisma");
-const { DELIVERY_ORDER_STATUS, TAXI_ORDER_STATUS, ORDER_TYPE, ORDER_SUBTYPE } = require("../lib/constants");
-const { not } = require("joi");
+const { TIME_LIMIT, TAXI_ORDER_STATUS, ORDER_TYPE, ORDER_SUBTYPE } = require("../lib/constants");
 async function getOrders(args) {
     try {
         const mergedArgs = {
@@ -86,7 +85,14 @@ async function getTaxiOrdersIfNotCompleted(user_id, type) {
                 user_id: user_id,
                 subtype: ORDER_SUBTYPE.CREATED_BY_USER,
                 status: {
-                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED, TAXI_ORDER_STATUS.TAXI_REJECTED] // Exclude both completed and pending orders
+                    notIn: [
+                        TAXI_ORDER_STATUS.TAXI_CANCELED,
+                        TAXI_ORDER_STATUS.TAXI_COMPLETED,
+                        TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+                        TAXI_ORDER_STATUS.TAXI_REJECTED,
+                        //TODO: Should exclude status AWAITING_PAYMENT or not?
+                        TAXI_ORDER_STATUS.AWAITING_PAYMENT,
+                    ]
                 },
             },
             include: {
@@ -124,13 +130,39 @@ async function getTaxiOrdersIfNotCompleted(user_id, type) {
 }
 
 async function getActiveOrdersByDriverId(driver_id) {
+    const thirtyMinutesInMs = TIME_LIMIT.START_DRIVE*60000;
+    const currentTime = new Date();
+    const timezoneOffset = currentTime.getTimezoneOffset()*60000;
+    const comparisonTime = new Date(currentTime.getTime() - timezoneOffset + thirtyMinutesInMs).toISOString().slice(0,-1);
+
     try {
         return await prisma.taxi_orders.findMany({
             where: {
                 driver_id: driver_id,
                 status: {
-                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.PENDING, TAXI_ORDER_STATUS.TAXI_REJECTED]
+                    notIn: [
+                        TAXI_ORDER_STATUS.TAXI_CANCELED,
+                        TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+                        TAXI_ORDER_STATUS.TAXI_COMPLETED,
+                        TAXI_ORDER_STATUS.PENDING,
+                        TAXI_ORDER_STATUS.TAXI_REJECTED,
+                        TAXI_ORDER_STATUS.AWAITING_PAYMENT,
+                    ]
                 },
+                OR: [
+                    { is_scheduled: false },
+                    {
+                        AND: [
+                            { is_scheduled: true },
+                            {
+                                preferences: {
+                                    path: ['departure_time'],
+                                    lte: comparisonTime
+                                }
+                            }
+                        ]
+                    }
+                ]
             },
             include: {
                 user: {
@@ -898,7 +930,14 @@ async function getAcceptedOrders() {
         return prisma.taxi_orders.findMany({
             where: {
                 status: {
-                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.PENDING, TAXI_ORDER_STATUS.TAXI_REJECTED] // Exclude both completed and pending orders
+                    notIn: [
+                        TAXI_ORDER_STATUS.TAXI_CANCELED,
+                        TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+                        TAXI_ORDER_STATUS.TAXI_COMPLETED,
+                        TAXI_ORDER_STATUS.PENDING,
+                        TAXI_ORDER_STATUS.TAXI_REJECTED,
+                        TAXI_ORDER_STATUS.AWAITING_PAYMENT
+                    ] // Exclude both completed and pending orders
                 }
             },
             include: {
@@ -938,7 +977,13 @@ async function userActiveOrders(user_id) {
             where: {
                 user_id,
                 status: {
-                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.TAXI_REJECTED] // Exclude both completed and pending orders
+                    notIn: [
+                        TAXI_ORDER_STATUS.TAXI_CANCELED,
+                        TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+                        TAXI_ORDER_STATUS.TAXI_COMPLETED,
+                        TAXI_ORDER_STATUS.TAXI_REJECTED,
+                        TAXI_ORDER_STATUS.AWAITING_PAYMENT//TODO: Should we consider AWAIITING_PAYMENT as active order in the user's eyes?
+                    ] // Exclude both completed and pending orders
                 }
             },
         });
@@ -953,7 +998,13 @@ async function getActiveOrderIdsForUser(user_id) {
             where: {
                 user_id: user_id,
                 status: {
-                    notIn: [TAXI_ORDER_STATUS.TAXI_CANCELED, TAXI_ORDER_STATUS.CUSTOMER_CANCELED, TAXI_ORDER_STATUS.TAXI_COMPLETED, TAXI_ORDER_STATUS.TAXI_REJECTED]
+                    notIn: [
+                        TAXI_ORDER_STATUS.TAXI_CANCELED,
+                        TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+                        TAXI_ORDER_STATUS.TAXI_COMPLETED,
+                        TAXI_ORDER_STATUS.TAXI_REJECTED,
+                        TAXI_ORDER_STATUS.AWAITING_PAYMENT//TODO: Should we consider AWAIITING_PAYMENT as active order in the user's eyes?
+                    ]
                 }
             },
             select:{

@@ -812,7 +812,8 @@ async function updateOrder(order_id, order) {
 			},
 			include: {
 				delivery_driver: true,
-				driver: true
+				driver: true,
+				user: true,
 			},
 		});
 	} catch (e) {
