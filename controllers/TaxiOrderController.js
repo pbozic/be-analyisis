@@ -440,7 +440,6 @@ function preprocessOrderData(orderData){
 	const prefs = cleanedOrderData.preferences;
 	const is_repeat = !!prefs.repeat_ride && !prefs.repeat_ride.some(item => item.value === "do_not_repeat");
 
-
 	if (prefs.vehicle_class === VEHICLE_CLASS.CARGO_VAN) {
 		cleanedOrderData.payment = {
 			...cleanedOrderData.payment,
@@ -796,10 +795,30 @@ async function createOrder(req, res) {
 			telephone: req.body?.telephone || req.user.telephone,
 			is_scheduled: req.body.preferences?.departure_date
 		};
-		if (orderData.subType === ORDER_SUBTYPE.CREATED_BY_BUSINESS) {
-			//TODO: handle business created order
-		}
 
+		let businessClient;
+		if (orderData.subtype === ORDER_SUBTYPE.CREATED_BY_BUSINESS) {
+			console.log("PAYMENT", orderData?.payment);
+			console.log("BUSINESS USER:", orderData?.business_user);
+			console.log("BUSINESS CLIENT:", orderData?.business_client);
+
+			businessClient = orderData?.business_client;
+			await prisma.business_clients.create({
+				data: {
+					first_name: businessClient.first_name,
+					last_name: businessClient.last_name,
+					telephone: businessClient.telephone,
+					telephone_number: businessClient.telephone_number,
+					telephone_code: businessClient.telephone_code,
+					email: businessClient.email,
+					business: {
+						connect: {
+							business_id: orderData?.business_user?.business_id,
+						}
+					}
+				}
+			})
+		}
 		console.info("USER TELEPHONE", orderData.telephone);
 		console.info("USER ID", orderData.user_id);
 
