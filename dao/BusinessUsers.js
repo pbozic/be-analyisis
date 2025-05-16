@@ -216,7 +216,7 @@ const updateAllowance = async (business_users_id, wallet, purchase_order, type) 
 		update: updateData,
 		create: { business_users_id, ...updateData }
 	});
-	const business_user = await prisma.group_users.findUnique({
+	const business_user = await prisma.business_users.findUnique({
 		where: { business_users_id },
 		include: { allowance: true }
 	});
