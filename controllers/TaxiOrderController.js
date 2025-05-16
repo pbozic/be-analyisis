@@ -598,8 +598,8 @@ async function buildOrder(cleanOrderData, userId, parentOrderId, driverId, busin
 async function requestTransferOrderPrice(req,res) {
 	try{
 		//TODO: update to use route
-		const { route, pickup_location, delivery_location, vehicle_category  } = req.body;
-		let priceData = await TaxiHelper.calculateTransferRidePrice(pickup_location.coordinates, delivery_location.coordinates, vehicle_category);
+		const { route, vehicle_category  } = req.body;
+		let priceData = await TaxiHelper.calculateTransferRidePrice(route, vehicle_category);
 		res.status(200).json(priceData)
 	}catch (e) {
 		console.error(e)
