@@ -4,10 +4,10 @@
 .env
 .history
 /.expo
-.DS_Store
 mycert.*
 *.p8
 /bin
 *.p12
 *.pdf
 .DS_Store
+*.DS_Store
