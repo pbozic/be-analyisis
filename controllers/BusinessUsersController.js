@@ -3,7 +3,6 @@ const AddressDao = require("../dao/Address");
 const GroupDao = require("../dao/Group");
 const UserDao = require("../dao/User");
 
-
 /**
  * GET /business-users
  * @tag BusinessUsers
@@ -282,6 +281,34 @@ async function getBusinessGroupsByBusinessId(req, res) {
     }
 }
 
+/**
+ * PATCH /business_users/allowance
+ * @tag BusinessUsers
+ * @summary Updates the allowance of the given child_user_id for the given service_type
+ * @description This endpoint is used to update the allowance of the given child_user_id for the given service_type
+ * @operationId updateChildUserAllowance
+ * @bodyDescription The child's group_user_id and value to set for the child user's allowance for the given service type
+ * @bodyContent { business_users_id, value, type }
+ * @bodyRequired
+ * @response 200 - User allowance updated successfully. Returns the updated group_user.
+ * @responseContent {business_user} 200.application/json
+ * @response 400 - Error updating group user enabled status.
+ */
+async function setAllowance(req, res) {
+    const { business_users_id, wallet, purchase_order, type } = req.body;
+
+    try {
+        let business_user = await BusinessUsersDao.updateAllowance(business_users_id, wallet, purchase_order, type);
+        if (business_user) {
+            return res.status(200).json(business_user);
+        }
+        res.status(400).json({ error: "Error updating business user allowance" });
+    } catch (e) {
+        console.log(e);
+        res.status(400).json({ error: "Error updating business user allowance", e });
+    }
+}
+
 module.exports = {
     updateCompanyRole,
     getAllBusinessUsersForBusinessByCompanyRole,
@@ -293,6 +320,7 @@ module.exports = {
     addOperatingAddress,
     removeBusinessUser,
     updateBusinessUserOnlineStatus,
-    getBusinessGroupsByBusinessId
+    getBusinessGroupsByBusinessId,
+    setAllowance,
 };
 

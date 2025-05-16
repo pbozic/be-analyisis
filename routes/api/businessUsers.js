@@ -13,6 +13,7 @@ router.get("/business/:business_id/company-role/:company_role", BusinessUsersCon
 router.post("/", BusinessUsersController.createBusinessUser);
 router.post("/address/operating", BusinessUsersController.addOperatingAddress);
 
+router.patch("/allowance", BusinessUsersController.setAllowance);
 router.patch("/company-role", BusinessUsersController.updateCompanyRole);
 router.patch("/online", BusinessUsersController.updateBusinessUserOnlineStatus);
 

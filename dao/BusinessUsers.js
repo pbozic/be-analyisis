@@ -1,18 +1,14 @@
 const prisma = require("../prisma/prisma");
 const UserDao = require("./User");
 const stripe = require("../lib/stripe");
+const { SERVICE_TYPE } = require("../lib/constants");
 
 const getAllBusinessUsers = async () => {
 	try {
 		return await prisma.business_users.findMany({
 			include: {
-				users: {
-					include:{
-						child_users: true,
-						parent_user: true,
-					}
-				}, // Assuming you want to include details of the user
-				business: true, // Assuming you want to include details of the business
+				users: true,
+				business: true,
 			},
 		});
 	} catch (error) {
@@ -28,29 +24,23 @@ const getBusinessUserByUserId = async (userId) => {
 				user_id: userId,
 			},
 			include: {
-				// users: {
-				// 	include:{
-				// 		child_users: true,
-				// 		parent_user: true,
-				// 	}
-				// },
 				business: {
 					include:{
 						business_users:{
-							include:{
-								users: {
-									include:{
-										child_users: {
-											include:{child_user: {select: {user_id: true, first_name: true, last_name: true, email: true, telephone: true}}, allowance: true}
-										},
-										parent_user: true,
-									}
+							where: {
+								user_id: {
+									not: userId
 								}
+							},
+							include:{
+								users: true,
+								allowance: true,
 							}
 						},
 						business_clients: true
 					}
 				},
+				allowance: true,
 			},
 		});
 	} catch (error) {
@@ -64,12 +54,7 @@ const getBusinessUsersByBusinessId = async (business_id) => {
 		return await prisma.business_users.findMany({
 			where: { business_id },
 			include: {
-				users: {
-					include:{
-						child_users: true,
-						parent_user: true,
-					}
-				}
+				users: true
 			}
 		});
 	} catch (error) {
@@ -85,12 +70,7 @@ const getBusinessUsersByBusinessType = async (type) => {
 			include: {
 				business_users: {
 					include: {
-						users: {
-							include:{
-								child_users: true,
-								parent_user: true,
-							}
-						}
+						users: true
 					}
 				}
 			}
@@ -109,12 +89,7 @@ const getAllBusinessUsersForBusinessByCompanyRole = async (business_id, company_
 				company_role
 			},
 			include: {
-				users: {
-					include:{
-						child_users: true,
-						parent_user: true,
-					}
-				}
+				users: true,
 			}
 		});
 	} catch (error) {
@@ -216,8 +191,39 @@ const updateBusinessUserOnlineStatus = async (business_users_id, online) => {
 	}
 };
 
-
-
+const updateAllowance = async (business_users_id, wallet, purchase_order, type) => {
+	const updateData = {};
+	switch (type) {
+		case SERVICE_TYPE.TAXI:
+			updateData.amount_taxi_wallet = wallet;
+			updateData.amount_taxi_purchase_order = purchase_order;
+			break
+		case SERVICE_TYPE.TRANSFER:
+			updateData.amount_transfer_wallet = wallet;
+			updateData.amount_transfer_purchase_order = purchase_order;
+			break
+		case SERVICE_TYPE.DELIVERY:
+			updateData.amount_delivery_wallet = wallet;
+			updateData.amount_delivery_purchase_order = purchase_order;
+			break
+		case SERVICE_TYPE.ANY:
+			updateData.amount_any_wallet = wallet;
+			updateData.amount_any_purchase_order = purchase_order;
+			break
+		default:
+			throw new Error("Invalid allowance type given")
+	}
+	await prisma.allowances.upsert({
+		where: { business_users_id },
+		update: updateData,
+		create: { business_users_id, ...updateData }
+	});
+	const business_user = await prisma.business_users.findUnique({
+		where: { business_users_id },
+		include: { allowance: true }
+	});
+	return business_user;
+}
 
 module.exports = {
 	getAllBusinessUsers,
@@ -230,5 +236,6 @@ module.exports = {
 	updateBusinessUser,
 	updateCompanyRole,
 	addOperatingAddress,
-	updateBusinessUserOnlineStatus
+	updateBusinessUserOnlineStatus,
+	updateAllowance,
 };

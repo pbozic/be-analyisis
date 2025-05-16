@@ -69,16 +69,16 @@ const updateGroupUserAllowance = async (group_user_id, value, type) => {
 	const updateData = {};
 	switch (type) {
 		case SERVICE_TYPE.TAXI:
-			updateData.amount_taxi = value;
+			updateData.amount_taxi_wallet = value;
 			break
 		case SERVICE_TYPE.TRANSFER:
-			updateData.amount_transfer = value;
+			updateData.amount_transfer_wallet = value;
 			break
 		case SERVICE_TYPE.DELIVERY:
-			updateData.amount_delivery = value;
+			updateData.amount_delivery_wallet = value;
 			break
 		case SERVICE_TYPE.ANY:
-			updateData.amount_any = value;
+			updateData.amount_any_wallet = value;
 			break
 		default:
 			throw new Error("Invalid allowance type given")
@@ -88,11 +88,10 @@ const updateGroupUserAllowance = async (group_user_id, value, type) => {
 		update: updateData,
 		create: { group_user_id, ...updateData }
 	});
-	const group_user = await prisma.group_users.findUnique({
+	return await prisma.group_users.findUnique({
 		where: { group_user_id },
 		include: { allowance: true }
 	});
-	return group_user;
 }
 
 module.exports = {

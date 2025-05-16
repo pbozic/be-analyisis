@@ -357,16 +357,13 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
-
 async function getCompletedTaxiOrdersByBusinessId(req, res) {
 	const { business_id } = req.params;
 
 	try {
-		const businessUsers = await BusinessUsersDao.getBusinessUsersByBusinessId(business_id);
-		const userIds = businessUsers.flatMap(businessUser => [
-			businessUser.user_id,
-			...businessUser.users?.child_users?.map(child => child.child_user_id)
-		]);
+		const business = await BusinessDao.getBusinessById(business_id);
+		let userIds = business.business_users?.map(businessUser => businessUser.user_id) || [];
+		userIds = [...userIds, ...(business.business_clients?.map(client => client.user_id) || [])];
 
 		const completedOrders = await TaxiOrderDao.getOrders({
 			where: {
@@ -601,8 +598,8 @@ async function buildOrder(cleanOrderData, userId, parentOrderId, driverId, busin
 async function requestTransferOrderPrice(req,res) {
 	try{
 		//TODO: update to use route
-		const { route, pickup_location, delivery_location, vehicle_category  } = req.body;
-		let priceData = await TaxiHelper.calculateTransferRidePrice(pickup_location.coordinates, delivery_location.coordinates, vehicle_category);
+		const { route, vehicle_category  } = req.body;
+		let priceData = await TaxiHelper.calculateTransferRidePrice(route, vehicle_category);
 		res.status(200).json(priceData)
 	}catch (e) {
 		console.error(e)
@@ -812,27 +809,27 @@ async function createOrder(req, res) {
 		};
 
 		let business_client;
-		if (orderData.subtype === ORDER_SUBTYPE.CREATED_BY_BUSINESS) {
-			console.log("PAYMENT", orderData?.payment);
-			console.log("BUSINESS USER:", orderData?.business_user);
-			console.log("BUSINESS CLIENT:", orderData?.business_client);
-
+		if (orderData.subtype === ORDER_SUBTYPE.CREATED_BY_BUSINESS && orderData?.business_user) {
 			const businessClient = orderData?.business_client;
-			business_client = await prisma.business_clients.create({
-				data: {
-					first_name: businessClient.first_name,
-					last_name: businessClient.last_name,
-					telephone: businessClient.telephone,
-					telephone_number: businessClient.telephone_number,
-					telephone_code: businessClient.telephone_code,
-					email: businessClient.email,
-					business: {
-						connect: {
-							business_id: orderData?.business_user?.business_id,
+			if (!businessClient.business_clients_id && businessClient.telephone) {
+				business_client = await prisma.business_clients.create({
+					data: {
+						first_name: businessClient.first_name,
+						last_name: businessClient.last_name,
+						telephone: businessClient.telephone,
+						telephone_number: businessClient.telephone_number,
+						telephone_code: businessClient.telephone_code,
+						email: businessClient.email,
+						business: {
+							connect: {
+								business_id: orderData?.business_user?.business_id,
+							}
 						}
 					}
-				}
-			})
+				})
+			} else {
+				business_client = businessClient
+			}
 		}
 		orderData.business_client = business_client;
 
@@ -849,8 +846,8 @@ async function createOrder(req, res) {
 
 		orderData.status = TAXI_ORDER_STATUS.PENDING
 		if(orderData.type===ORDER_TYPE.TRANSFER_PRIVATE){
-			const { pickup_location, delivery_location, preferences } = orderData;
-			let {price} = await TaxiHelper.calculateTransferRidePrice(pickup_location.coordinates, delivery_location.coordinates, preferences.vehicle_category)
+			const { route, preferences } = orderData;
+			let {price} = await TaxiHelper.calculateTransferRidePrice(route, preferences.vehicle_category)
 			if(price !== orderData.payment.price){
 				console.error(`Price mismatch, got ${orderData.payment.price}, calculated ${price}`)
 				throw new Error("Price mismatch")
@@ -894,7 +891,7 @@ async function createOrder(req, res) {
 		//console.log("create taxi order", order)
 
 		const userSocket = UserSockets.get(order.user_id);
-		if (userSocket && order.creating_user_id) {
+		if (userSocket && order.creating_user_id!==order.user_id) {
 			console.log("userSocket exists!");
 			io.emit('child_order_created__taxi', {
 				...order
@@ -1124,13 +1121,10 @@ async function acceptOrder(req, res) {
  */
 async function completeOrder(req, res) {
 	try {
+		let order = await TaxiOrderDao.getOrder(req.body.order_id)
 
-		let order = await TaxiOrderDao.completeOrder(req.body.order_id);
-		console.log("COMPLLETED", order.order_id);
 		let driver = await DriverDao.getDriverById(order.driver_id);
 		let driver_business = await BusinessDao.getBusinessById(driver.business_id);
-		SocketStore.removeUserFromRoom(req.user.user_id, "order_" + order.order_id);
-		SocketStore.removeUserFromRoom(driver.user_id, "order_" + order.order_id);
 
 		//assign penalties for being late
 		const timeline_first_waiting_timestamp = order.timeline.find(entry => entry.status === TAXI_ORDER_STATUS.TAXI_WAITING)?.location?.timestamp;
@@ -1160,9 +1154,10 @@ async function completeOrder(req, res) {
 			const l10nText = getLocalisedTexts("USER_NOTIFICATIONS", order.user)
 			const l10nTextHeading = getLocalisedTexts("HEADING", order.user);
 			await sendNotificationToUser(l10nTextHeading?.completed, l10nText?.vehicleTransferCompleted, order.user_id);
+			order = await TaxiOrderDao.completeOrder(req.body.order_id);
+
 		}else{
 			const orderingUser = !order.creating_user_id ? user : await UsersDao.getUserById(order.creating_user_id);
-			await handleReferral(orderingUser.user_id);
 			let TOTAL_COST_CENTS = 0;
 
 			if(order.type===ORDER_TYPE.TRANSFER_PRIVATE && order.payment.price>=25){
@@ -1172,7 +1167,7 @@ async function completeOrder(req, res) {
 					PLATFORM_CREDIT_CUT,
 					DRIVER_CUT,
 					PLATFORM_CUT
-				} = calculateTransferOrderPaymentCuts(order)
+				} = await calculateTransferOrderPaymentCuts(order)
 				TOTAL_COST_CENTS = DRIVER_CREDIT_CUT + PLATFORM_CREDIT_CUT + DRIVER_CUT + PLATFORM_CUT
 				if(PLATFORM_CREDIT_CUT>0) {
 					const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, "platform", PLATFORM_CREDIT_CUT, order.order_id, SERVICE_TYPE.TAXI);
@@ -1195,7 +1190,7 @@ async function completeOrder(req, res) {
 							"platform",
 							PLATFORM_CUT,
 							order.order_id,
-							SERVICE_TYPE.DELIVERY,
+							SERVICE_TYPE.TAXI,
 						);
 					}
 					if (DRIVER_CUT > 0) {
@@ -1204,7 +1199,7 @@ async function completeOrder(req, res) {
 							driver_business.stripe_account_id,
 							DRIVER_CUT,
 							order.order_id,
-							SERVICE_TYPE.DELIVERY,
+							SERVICE_TYPE.TAXI,
 						);
 					}
 				}else if (order.payment.type === "FAMILY_WALLET") {
@@ -1372,10 +1367,12 @@ async function completeOrder(req, res) {
 					}
 				}
 			}
+			order = await TaxiOrderDao.completeOrder(req.body.order_id);
+			await handleReferral(orderingUser.user_id);
 		}
 		// io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
 		io.to("order_" + order.order_id).emit("order_completed__taxi", order);
-
+		SocketStore.closeRoom("order_" + order.order_id)
 		console.log("order_completed__taxi ", req.body.order_id);
 		//io.emit("driver_available", driver);
 
@@ -1839,9 +1836,12 @@ async function updateTaxiOrderTimeline(req, res) {
  */
 async function updateTaxiOrderPayment(req, res) {
 	const { order_id, payment } = req.body;
-
 	try {
-		let order = await TaxiOrderDao.updateTaxiOrderPayment(order_id, payment);
+		let order = await TaxiOrderDao.getOrder(order_id)
+		if(order.payment.status==="PAID"){
+			throw new Error("Cant update paid payment.")
+		}
+		order = await TaxiOrderDao.updateTaxiOrderPayment(order_id, payment);
 		io.to("order_" + order.order_id).emit("order_payment_change__taxi", order);
 		res.status(200).json(order);
 	} catch (e) {
