@@ -1172,7 +1172,7 @@ async function completeOrder(req, res) {
 					PLATFORM_CREDIT_CUT,
 					DRIVER_CUT,
 					PLATFORM_CUT
-				} = calculateTransferOrderPaymentCuts(order)
+				} = await calculateTransferOrderPaymentCuts(order)
 				TOTAL_COST_CENTS = DRIVER_CREDIT_CUT + PLATFORM_CREDIT_CUT + DRIVER_CUT + PLATFORM_CUT
 				if(PLATFORM_CREDIT_CUT>0) {
 					const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, "platform", PLATFORM_CREDIT_CUT, order.order_id, SERVICE_TYPE.TAXI);
