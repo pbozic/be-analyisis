@@ -33,7 +33,8 @@ const getBusinessUserByUserId = async (userId) => {
 								}
 							},
 							include:{
-								users: true
+								users: true,
+								allowance: true,
 							}
 						},
 						business_clients: true
