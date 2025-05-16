@@ -809,27 +809,27 @@ async function createOrder(req, res) {
 		};
 
 		let business_client;
-		if (orderData.subtype === ORDER_SUBTYPE.CREATED_BY_BUSINESS) {
-			console.log("PAYMENT", orderData?.payment);
-			console.log("BUSINESS USER:", orderData?.business_user);
-			console.log("BUSINESS CLIENT:", orderData?.business_client);
-
+		if (orderData.subtype === ORDER_SUBTYPE.CREATED_BY_BUSINESS && orderData?.business_user) {
 			const businessClient = orderData?.business_client;
-			business_client = await prisma.business_clients.create({
-				data: {
-					first_name: businessClient.first_name,
-					last_name: businessClient.last_name,
-					telephone: businessClient.telephone,
-					telephone_number: businessClient.telephone_number,
-					telephone_code: businessClient.telephone_code,
-					email: businessClient.email,
-					business: {
-						connect: {
-							business_id: orderData?.business_user?.business_id,
+			if (!businessClient.business_clients_id && businessClient.telephone) {
+				business_client = await prisma.business_clients.create({
+					data: {
+						first_name: businessClient.first_name,
+						last_name: businessClient.last_name,
+						telephone: businessClient.telephone,
+						telephone_number: businessClient.telephone_number,
+						telephone_code: businessClient.telephone_code,
+						email: businessClient.email,
+						business: {
+							connect: {
+								business_id: orderData?.business_user?.business_id,
+							}
 						}
 					}
-				}
-			})
+				})
+			} else {
+				business_client = businessClient
+			}
 		}
 		orderData.business_client = business_client;
 
