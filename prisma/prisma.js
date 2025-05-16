@@ -6,6 +6,8 @@ const { handleHidePassword, alwaysAddWalletBalance, handleWalletBalance } = requ
 const { handleS3LinkForFiles } = require("./middlewares/file");
 const { handleS3LinkForDocuments } = require("./middlewares/documents");
 const {generateS3LinksRecursively } = require("./middlewares/$allModels")
+import turf from '@turf/turf';
+
 const prisma = new PrismaClient({
 	log: ['warn', 'error'],
 }).$extends({
@@ -90,7 +92,7 @@ const prisma = new PrismaClient({
 					FROM settlements
 					WHERE ST_Intersects(
 						geom_generated,
-						ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)
+						ST_SetSRID(ST_MakePoint(${longitude}, ${latitude}), 4326)
 					)
 					LIMIT 1;
 				`;
@@ -108,6 +110,31 @@ const prisma = new PrismaClient({
 				`;
 
 				return settlement[0] || null;
+			},
+			async checkIfAllPointsAreInSameSettlement(points) {
+				if (points.length < 2) throw new Error("At least two points are required.");
+
+				const [first, ...rest] = points;
+
+				const [settlement] = await prisma.$queryRaw`
+					SELECT settlement_id, name, geojson
+					FROM settlements
+					WHERE ST_Intersects(
+					  geom_generated,
+					  ST_SetSRID(ST_MakePoint(${first.longitude}, ${first.latitude}), 4326)
+					)
+					LIMIT 1;
+		  		`;
+
+				if (!settlement) return null;
+
+				const polygon = turf.polygon(settlement.geojson.coordinates);
+				const allInside = rest.every(({ longitude, latitude }) => {
+					const pt = turf.point([longitude, latitude]);
+					return turf.booleanPointInPolygon(pt, polygon);
+				});
+
+				return allInside ? settlement : null;
 			}
 		},
 		drivers: {
