@@ -811,7 +811,7 @@ async function createOrder(req, res) {
 		let business_client;
 		if (orderData.subtype === ORDER_SUBTYPE.CREATED_BY_BUSINESS && orderData?.business_user) {
 			const businessClient = orderData?.business_client;
-			if (!businessClient.business_clients_id && businessClient.telephone) {
+			if (!businessClient?.business_clients_id && businessClient?.telephone) {
 				business_client = await prisma.business_clients.create({
 					data: {
 						first_name: businessClient.first_name,
