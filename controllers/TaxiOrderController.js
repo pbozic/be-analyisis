@@ -357,16 +357,13 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
-
 async function getCompletedTaxiOrdersByBusinessId(req, res) {
 	const { business_id } = req.params;
 
 	try {
-		const businessUsers = await BusinessUsersDao.getBusinessUsersByBusinessId(business_id);
-		const userIds = businessUsers.flatMap(businessUser => [
-			businessUser.user_id,
-			...businessUser.users?.child_users?.map(child => child.child_user_id)
-		]);
+		const business = await BusinessDao.getBusinessById(business_id);
+		let userIds = business.business_users?.map(businessUser => businessUser.user_id) || [];
+		userIds = [...userIds, ...(business.business_clients?.map(client => client.user_id) || [])];
 
 		const completedOrders = await TaxiOrderDao.getOrders({
 			where: {

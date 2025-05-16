@@ -47,14 +47,10 @@ const getBusinessById = async (business_id) => {
 				finances: true,
 				business_users: {
 					include: {
-						users: {
-							include:{
-								child_users: { include:{child_user: true}},
-								parent_user: { include:{parent_user: true}},
-							}
-						},
+						users: true,
 					},
 				},
+				business_clients: true,
 				parent_business: true,
 				child_businesses: true,
 				documents: false,
