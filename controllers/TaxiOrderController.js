@@ -1192,7 +1192,7 @@ async function completeOrder(req, res) {
 							"platform",
 							PLATFORM_CUT,
 							order.order_id,
-							SERVICE_TYPE.DELIVERY,
+							SERVICE_TYPE.TAXI,
 						);
 					}
 					if (DRIVER_CUT > 0) {
@@ -1201,7 +1201,7 @@ async function completeOrder(req, res) {
 							driver_business.stripe_account_id,
 							DRIVER_CUT,
 							order.order_id,
-							SERVICE_TYPE.DELIVERY,
+							SERVICE_TYPE.TAXI,
 						);
 					}
 				}else if (order.payment.type === "FAMILY_WALLET") {
