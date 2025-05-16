@@ -1,6 +1,7 @@
 const prisma = require("../prisma/prisma");
 const UserDao = require("./User");
 const stripe = require("../lib/stripe");
+const { SERVICE_TYPE } = require("../lib/constants");
 
 const getAllBusinessUsers = async () => {
 	try {
@@ -188,6 +189,40 @@ const updateBusinessUserOnlineStatus = async (business_users_id, online) => {
 	}
 };
 
+const updateAllowance = async (business_users_id, wallet, purchase_order, type) => {
+	const updateData = {};
+	switch (type) {
+		case SERVICE_TYPE.TAXI:
+			updateData.amount_taxi_wallet = wallet;
+			updateData.amount_taxi_purchase_order = purchase_order;
+			break
+		case SERVICE_TYPE.TRANSFER:
+			updateData.amount_transfer_wallet = wallet;
+			updateData.amount_transfer_purchase_order = purchase_order;
+			break
+		case SERVICE_TYPE.DELIVERY:
+			updateData.amount_delivery_wallet = wallet;
+			updateData.amount_delivery_purchase_order = purchase_order;
+			break
+		case SERVICE_TYPE.ANY:
+			updateData.amount_any_wallet = wallet;
+			updateData.amount_any_purchase_order = purchase_order;
+			break
+		default:
+			throw new Error("Invalid allowance type given")
+	}
+	await prisma.allowances.upsert({
+		where: { business_users_id },
+		update: updateData,
+		create: { business_users_id, ...updateData }
+	});
+	const business_user = await prisma.group_users.findUnique({
+		where: { business_users_id },
+		include: { allowance: true }
+	});
+	return business_user;
+}
+
 module.exports = {
 	getAllBusinessUsers,
 	getBusinessUserByUserId,
@@ -199,5 +234,6 @@ module.exports = {
 	updateBusinessUser,
 	updateCompanyRole,
 	addOperatingAddress,
-	updateBusinessUserOnlineStatus
+	updateBusinessUserOnlineStatus,
+	updateAllowance,
 };
