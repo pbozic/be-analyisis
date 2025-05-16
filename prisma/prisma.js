@@ -6,7 +6,7 @@ const { handleHidePassword, alwaysAddWalletBalance, handleWalletBalance } = requ
 const { handleS3LinkForFiles } = require("./middlewares/file");
 const { handleS3LinkForDocuments } = require("./middlewares/documents");
 const {generateS3LinksRecursively } = require("./middlewares/$allModels")
-import turf from '@turf/turf';
+const turf = require('@turf/turf');
 
 const prisma = new PrismaClient({
 	log: ['warn', 'error'],
