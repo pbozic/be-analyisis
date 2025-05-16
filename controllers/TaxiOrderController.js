@@ -1121,13 +1121,10 @@ async function acceptOrder(req, res) {
  */
 async function completeOrder(req, res) {
 	try {
+		let order = await TaxiOrderDao.getOrder(req.body.order_id)
 
-		let order = await TaxiOrderDao.completeOrder(req.body.order_id);
-		console.log("COMPLLETED", order.order_id);
 		let driver = await DriverDao.getDriverById(order.driver_id);
 		let driver_business = await BusinessDao.getBusinessById(driver.business_id);
-		SocketStore.removeUserFromRoom(req.user.user_id, "order_" + order.order_id);
-		SocketStore.removeUserFromRoom(driver.user_id, "order_" + order.order_id);
 
 		//assign penalties for being late
 		const timeline_first_waiting_timestamp = order.timeline.find(entry => entry.status === TAXI_ORDER_STATUS.TAXI_WAITING)?.location?.timestamp;
@@ -1157,9 +1154,10 @@ async function completeOrder(req, res) {
 			const l10nText = getLocalisedTexts("USER_NOTIFICATIONS", order.user)
 			const l10nTextHeading = getLocalisedTexts("HEADING", order.user);
 			await sendNotificationToUser(l10nTextHeading?.completed, l10nText?.vehicleTransferCompleted, order.user_id);
+			order = await TaxiOrderDao.completeOrder(req.body.order_id);
+
 		}else{
 			const orderingUser = !order.creating_user_id ? user : await UsersDao.getUserById(order.creating_user_id);
-			await handleReferral(orderingUser.user_id);
 			let TOTAL_COST_CENTS = 0;
 
 			if(order.type===ORDER_TYPE.TRANSFER_PRIVATE && order.payment.price>=25){
@@ -1369,10 +1367,12 @@ async function completeOrder(req, res) {
 					}
 				}
 			}
+			order = await TaxiOrderDao.completeOrder(req.body.order_id);
+			await handleReferral(orderingUser.user_id);
 		}
 		// io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
 		io.to("order_" + order.order_id).emit("order_completed__taxi", order);
-
+		SocketStore.closeRoom("order_" + order.order_id)
 		console.log("order_completed__taxi ", req.body.order_id);
 		//io.emit("driver_available", driver);
 
