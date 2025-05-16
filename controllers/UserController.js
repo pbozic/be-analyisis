@@ -2076,7 +2076,8 @@ async function requestData(req, res) {
 						driver_history_locations: {
 							select: {
 								driver_history_location_id: true,
-								order_id: true,
+								taxi_order_id: true,
+								delivery_order_id: true,
 								status: true,
 								location: true,
 								created_at: true,
@@ -2178,7 +2179,7 @@ async function requestData(req, res) {
 						delivery_driver_history_locations: {
 							select: {
 								delivery_driver_history_location_id: true,
-								order_id: true,
+								delivery_order_id: true,
 								status: true,
 								location: true,
 								created_at: true,
@@ -2381,38 +2382,39 @@ async function requestData(req, res) {
 								license_plate: true
 							}
 						},
-						delivery_driver: {
-							select: {
-								delivery_driver_id: true,
-								user_id: true // Only include the essential identifiers
-							}
-						},
-						driver: {
-							select: {
-								driver_id: true,
-								user_id: true // Only include the essential identifiers
-							}
-						},
+						//we dont need to include the driver or delivery_driver details for the order
+						// delivery_driver: {
+						// 	select: {
+						// 		delivery_driver_id: true,
+						// 		user_id: true // Only include the essential identifiers
+						// 	}
+						// },
+						// driver: {
+						// 	select: {
+						// 		driver_id: true,
+						// 		user_id: true // Only include the essential identifiers
+						// 	}
+						// },
 						business: {
 							select: {
 								business_id: true,
 								name: true,
-								type: true
+								// type: true
 							}
 						},
-						history: {
-							select: {
-								delivery_order_sent_id: true,
-								order_id: true,
-								delivery_driver_id: true,
-								driver_id: true,
-								accepted: true,
-								location: true,
-								timeline: true,
-								created_at: true,
-								updated_at: true
-							}
-						},
+						// history: { //we dont need to include the history for this order
+						// 	select: {
+						// 		delivery_order_sent_id: true,
+						// 		order_id: true,
+						// 		delivery_driver_id: true,
+						// 		driver_id: true,
+						// 		accepted: true,
+						// 		location: true,
+						// 		timeline: true,
+						// 		created_at: true,
+						// 		updated_at: true
+						// 	}
+						// },
 						transactions: {
 							select: {
 								transaction_id: true,
@@ -2776,6 +2778,22 @@ async function requestData(req, res) {
 
 			if (userData) {
 				delete userData.password; // Ensure password is not sent
+				
+				// Simplify delivery order items to only include essential items data (only slovenian translation, not all of them)
+				if (userData.delivery_orders) {
+					userData.delivery_orders.forEach(order => {
+						if (order.items && Array.isArray(order.items)) {
+							order.items = order.items.map(item => ({
+								menu_item_id: item.menu_item_id,
+								price: item.price,
+								quantity: item.quantity,
+								discount: item.discount,
+								image: item.image,
+								name: item.names?.sl || "",
+							}));
+						}
+					});
+				}
 
 				return res.status(200).json(userData);
 			} else {
