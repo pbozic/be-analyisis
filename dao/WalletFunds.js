@@ -346,6 +346,7 @@ async function releaseFunds(walletFundsId, releaseAmount) {
 			// 	},
 			// });
 			const amount_after_release = walletFund.amount - releaseAmount;
+			console.log(walletFund.amount, releaseAmount,walletFund.amount - releaseAmount)
 			if(amount_after_release===0){
 				await tx.wallet_funds.delete({
 					where: {
@@ -353,14 +354,14 @@ async function releaseFunds(walletFundsId, releaseAmount) {
 					}
 				});
 			}else{
-				await tx.wallet_funds.update({
+				console.info("update response:",await tx.wallet_funds.update({
 					where: {
 						wallet_funds_id: walletFundsId,
 					},
 					data: {
 						amount: amount_after_release,
 					},
-				});
+				}));
 			}
 
 			console.info(`released ${releaseAmount} from WF:\n${JSON.stringify(walletFund,null,2)}. ` )
