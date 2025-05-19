@@ -61,14 +61,10 @@ async function getUser(id, res) {
 		}
 		delete user["password"];
 		const access_token = generateAccessToken({
-			...user,
-			child_users: null,
-			parent_user: null
+			user_id: user.user_id,
 		});
 		const refresh_token = generateRefreshToken({
-			...user,
-			child_users: null,
-			parent_user: null
+			user_id: user.user_id,
 		});
 		user = {
 			...user,
@@ -199,7 +195,7 @@ router.post('/login/apple', async (req, res) => {
         });
         if (user) {
             // User exists, generate session/token & redirect to frontend
-            const jwtToken = generateJwtToken(user[0].user_id); // Your JWT generator function
+            const jwtToken = generateAccessToken(user[0].user_id); // Your JWT generator function
             return res.redirect(`${process.env.FRONTEND_URL}/#register?jwt=${jwtToken}`);
         }
 
