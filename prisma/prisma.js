@@ -157,65 +157,50 @@ const prisma = new PrismaClient({
 						${radiusInMeters}
 					)
 			
-					-- Ride requirements with proper fallback for missing JSON fields
-					AND (COALESCE(${requirements.traveling_with_pet}, FALSE) = FALSE 
-						 OR COALESCE((drivers.ride_requirements->>'traveling_with_pet')::BOOLEAN, FALSE) = ${requirements.traveling_with_pet})
-			
-					AND (COALESCE(${requirements.child_seat}, FALSE) = FALSE 
-						 OR COALESCE((drivers.ride_requirements->>'child_seat')::BOOLEAN, FALSE) = ${requirements.child_seat})
-			
-					AND (COALESCE(${requirements.wheelchair_accessibility}, FALSE) = FALSE 
-						 OR COALESCE((drivers.ride_requirements->>'wheelchair_accessibility')::BOOLEAN, FALSE) = ${requirements.wheelchair_accessibility})
-			
-					AND (COALESCE(${requirements.air_conditioning}, FALSE) = FALSE 
-						 OR COALESCE((drivers.ride_requirements->>'air_conditioning')::BOOLEAN, FALSE) = ${requirements.air_conditioning})
-			
-					AND (COALESCE(${requirements.quiet_ride}, FALSE) = FALSE 
-						 OR COALESCE((drivers.ride_requirements->>'quiet_ride')::BOOLEAN, FALSE) = ${requirements.quiet_ride})
-			
-					AND (COALESCE(${requirements.luggage}, FALSE) = FALSE 
-						 OR COALESCE((drivers.ride_requirements->>'luggage')::BOOLEAN, FALSE) = ${requirements.luggage})
-			
-					-- Vehicle filters
+					-- Class filter (allow all unless specified)
 					AND (
-						(
-							COALESCE(${vehicleFilters.class}, '') = '' 
-							AND vehicles.class::TEXT NOT IN ('MINIVAN', 'MINIBUS', 'BUS', 'CARGO_VAN')
-						)
+						${vehicleFilters.class} = '' 
 						OR vehicles.class::TEXT = ${vehicleFilters.class.toUpperCase()}
 					)
 			
+					-- Category filter
 					AND (
-						COALESCE(${vehicleFilters.category}, '') = '' 
-						OR LOWER(vehicles.category::TEXT) = LOWER(${vehicleFilters.category})
+						${vehicleFilters.category} = '' 
+						OR vehicles.category::TEXT = ${vehicleFilters.category.toUpperCase()}
 					)
 			
-					-- Language requirements (match at least one if any are specified)
+					-- Ride requirement filters with COALESCE to avoid NULL
+					AND COALESCE((drivers.ride_requirements->>'child_seats')::BOOLEAN, FALSE) = ${requirements.child_seats}
+					AND COALESCE((drivers.ride_requirements->>'traveling_with_pet')::BOOLEAN, FALSE) = ${requirements.traveling_with_pet}
+					AND COALESCE((drivers.ride_requirements->>'wheelchair_accessibility')::BOOLEAN, FALSE) = ${requirements.wheelchair_accessibility}
+					AND COALESCE((drivers.ride_requirements->>'air_conditioning')::BOOLEAN, FALSE) = ${requirements.air_conditioning}
+					AND COALESCE((drivers.ride_requirements->>'quiet_ride')::BOOLEAN, FALSE) = ${requirements.quiet_ride}
+					AND COALESCE((drivers.ride_requirements->>'luggage')::BOOLEAN, FALSE) = ${requirements.luggage}
+			
+					-- Language filter
 					AND (
-						-- None specified → pass all
-						(
-							COALESCE(${requirements.language_en}, FALSE) = FALSE
-							AND COALESCE(${requirements.language_it}, FALSE) = FALSE
-							AND COALESCE(${requirements.language_de}, FALSE) = FALSE
-							AND COALESCE(${requirements.language_es}, FALSE) = FALSE
-							AND COALESCE(${requirements.language_hr}, FALSE) = FALSE
-							AND COALESCE(${requirements.language_fr}, FALSE) = FALSE
-							AND COALESCE(${requirements.language_ru}, FALSE) = FALSE
-						)
-						OR (
-							(COALESCE(${requirements.language_en}, FALSE) = TRUE AND COALESCE((drivers.ride_requirements->>'language_en')::BOOLEAN, FALSE) = TRUE) OR
-							(COALESCE(${requirements.language_it}, FALSE) = TRUE AND COALESCE((drivers.ride_requirements->>'language_it')::BOOLEAN, FALSE) = TRUE) OR
-							(COALESCE(${requirements.language_de}, FALSE) = TRUE AND COALESCE((drivers.ride_requirements->>'language_de')::BOOLEAN, FALSE) = TRUE) OR
-							(COALESCE(${requirements.language_es}, FALSE) = TRUE AND COALESCE((drivers.ride_requirements->>'language_es')::BOOLEAN, FALSE) = TRUE) OR
-							(COALESCE(${requirements.language_hr}, FALSE) = TRUE AND COALESCE((drivers.ride_requirements->>'language_cro')::BOOLEAN, FALSE) = TRUE) OR
-							(COALESCE(${requirements.language_fr}, FALSE) = TRUE AND COALESCE((drivers.ride_requirements->>'language_fr')::BOOLEAN, FALSE) = TRUE) OR
-							(COALESCE(${requirements.language_ru}, FALSE) = TRUE AND COALESCE((drivers.ride_requirements->>'language_ru')::BOOLEAN, FALSE) = TRUE)
-						)
-					);
+					(${requirements.language_en} = FALSE AND
+					${requirements.language_it} = FALSE AND
+					${requirements.language_de} = FALSE AND
+					${requirements.language_es} = FALSE AND
+					${requirements.language_fr} = FALSE AND
+					${requirements.language_ru} = FALSE AND
+					${requirements.language_cro} = FALSE)
+					OR (
+						(${requirements.language_en} = TRUE AND COALESCE((drivers.ride_requirements->>'language_en')::BOOLEAN, FALSE) = TRUE) OR
+						(${requirements.language_it} = TRUE AND COALESCE((drivers.ride_requirements->>'language_it')::BOOLEAN, FALSE) = TRUE) OR
+						(${requirements.language_de} = TRUE AND COALESCE((drivers.ride_requirements->>'language_de')::BOOLEAN, FALSE) = TRUE) OR
+						(${requirements.language_es} = TRUE AND COALESCE((drivers.ride_requirements->>'language_es')::BOOLEAN, FALSE) = TRUE) OR
+						(${requirements.language_fr} = TRUE AND COALESCE((drivers.ride_requirements->>'language_fr')::BOOLEAN, FALSE) = TRUE) OR
+						(${requirements.language_ru} = TRUE AND COALESCE((drivers.ride_requirements->>'language_ru')::BOOLEAN, FALSE) = TRUE) OR
+						(${requirements.language_cro} = TRUE AND COALESCE((drivers.ride_requirements->>'language_cro')::BOOLEAN, FALSE) = TRUE)
+					)
+					)
 				`;
 			
 				return drivers;
 			}
+			
 			
 		}
 	}
