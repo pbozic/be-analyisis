@@ -2180,7 +2180,7 @@ async function requestData(req, res) {
 						delivery_driver_history_locations: {
 							select: {
 								delivery_driver_history_location_id: true,
-								delivery_order_id: true,
+								order_id: true,
 								status: true,
 								location: true,
 								created_at: true,

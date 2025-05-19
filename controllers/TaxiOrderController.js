@@ -777,6 +777,7 @@ async function handlePaymentForTransferOrder(order,return_url){
 		return payment_intent
 	}catch (e) {
 		await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.CUSTOMER_CANCELED)
+		await TaxiHelper.handlePaymentRefund(order.order_id, order.user_id, order.payment, order?.cargo_preferences?.additional_workers, order?.preferences?.vehicle_class, true)
 		throw new Error("Error when handling payment: ",e)
 	}
 }
@@ -1506,6 +1507,7 @@ async function cancelOrder(req, res) {
 		let driver_id = order?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
 		let driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
+		const skip_cancellation_fee = order.type === "TAXI" || req.user.user_id !== order?.user_id
 		if(req.user.user_id===driver?.user?.user_id){
 			await ScoringPointsDao.createScoringPoints(driver.business_id,req.user.user_id,null,order.order_id,1,true,SCORING_POINTS_REASON.CANCELED)
 		}
@@ -1561,7 +1563,7 @@ async function cancelOrder(req, res) {
 			}
 		}
 		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);
-
+		await TaxiHelper.handlePaymentRefund(order.order_id, order.user_id, order.payment, order?.cargo_preferences?.additional_workers, order?.preferences?.vehicle_class,skip_cancellation_fee)
 		if (order.driver_id) {
 			let driver = await DriverDao.getDriverById(order.driver_id);
 			await TaxiOrderDao.updateOrder(order_id, {
@@ -2038,6 +2040,7 @@ async function cancelGroupedOrderByParentId(req,res){
 
 		let parent_order = await TaxiOrderDao.getOrder(parent_order_id);
 		console.info(parent_order.grouped_orders)
+		const skip_cancellation_fee = order.type === "TAXI" || req.user.user_id !== order?.user_id
 
 		for (let order of parent_order.grouped_orders) {
 			console.info("TaxiOrderController", "CANCELLING CHILD ORDER", order);
@@ -2049,6 +2052,7 @@ async function cancelGroupedOrderByParentId(req,res){
 			sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
 			await TaxiHelper.revokeTaxiOrderFromDrivers(order_id);
 			const canceled_order = await TaxiOrderDao.cancelOrder(order_id, STATUS, reason);
+			await TaxiHelper.handlePaymentRefund(order.order_id, order.user_id, order.payment, order?.cargo_preferences?.additional_workers, order?.preferences?.vehicle_class,skip_cancellation_fee)
 
 			io.to("order_" + order_id).emit("order_status_change__taxi", canceled_order);
 			io.to("order_" + order_id).emit("order_cancelled__taxi", canceled_order);
