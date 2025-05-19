@@ -161,8 +161,8 @@ const prisma = new PrismaClient({
 					AND (COALESCE(${requirements.traveling_with_pet}, FALSE) = FALSE 
 						 OR COALESCE((drivers.ride_requirements->>'traveling_with_pet')::BOOLEAN, FALSE) = ${requirements.traveling_with_pet})
 			
-					AND (COALESCE(${requirements.child_seat}, FALSE) = FALSE 
-						 OR COALESCE((drivers.ride_requirements->>'child_seat')::BOOLEAN, FALSE) = ${requirements.child_seat})
+					AND (COALESCE(${requirements.child_seats}, FALSE) = FALSE 
+						 OR COALESCE((drivers.ride_requirements->>'child_seats')::BOOLEAN, FALSE) = ${requirements.child_seats})
 			
 					AND (COALESCE(${requirements.wheelchair_accessibility}, FALSE) = FALSE 
 						 OR COALESCE((drivers.ride_requirements->>'wheelchair_accessibility')::BOOLEAN, FALSE) = ${requirements.wheelchair_accessibility})
@@ -198,7 +198,7 @@ const prisma = new PrismaClient({
 							AND COALESCE(${requirements.language_it}, FALSE) = FALSE
 							AND COALESCE(${requirements.language_de}, FALSE) = FALSE
 							AND COALESCE(${requirements.language_es}, FALSE) = FALSE
-							AND COALESCE(${requirements.language_hr}, FALSE) = FALSE
+							AND COALESCE(${requirements.language_cro}, FALSE) = FALSE
 							AND COALESCE(${requirements.language_fr}, FALSE) = FALSE
 							AND COALESCE(${requirements.language_ru}, FALSE) = FALSE
 						)
@@ -207,7 +207,7 @@ const prisma = new PrismaClient({
 							(COALESCE(${requirements.language_it}, FALSE) = TRUE AND COALESCE((drivers.ride_requirements->>'language_it')::BOOLEAN, FALSE) = TRUE) OR
 							(COALESCE(${requirements.language_de}, FALSE) = TRUE AND COALESCE((drivers.ride_requirements->>'language_de')::BOOLEAN, FALSE) = TRUE) OR
 							(COALESCE(${requirements.language_es}, FALSE) = TRUE AND COALESCE((drivers.ride_requirements->>'language_es')::BOOLEAN, FALSE) = TRUE) OR
-							(COALESCE(${requirements.language_hr}, FALSE) = TRUE AND COALESCE((drivers.ride_requirements->>'language_cro')::BOOLEAN, FALSE) = TRUE) OR
+							(COALESCE(${requirements.language_cro}, FALSE) = TRUE AND COALESCE((drivers.ride_requirements->>'language_cro')::BOOLEAN, FALSE) = TRUE) OR
 							(COALESCE(${requirements.language_fr}, FALSE) = TRUE AND COALESCE((drivers.ride_requirements->>'language_fr')::BOOLEAN, FALSE) = TRUE) OR
 							(COALESCE(${requirements.language_ru}, FALSE) = TRUE AND COALESCE((drivers.ride_requirements->>'language_ru')::BOOLEAN, FALSE) = TRUE)
 						)
