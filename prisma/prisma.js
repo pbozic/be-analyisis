@@ -157,27 +157,6 @@ const prisma = new PrismaClient({
 						${radiusInMeters}
 					)
 			
-					-- Class filter (allow all unless specified)
-					AND (
-						${vehicleFilters.class} = '' 
-						OR vehicles.class::TEXT = ${vehicleFilters.class.toUpperCase()}
-					)
-			
-					-- Category filter
-					AND (
-						${vehicleFilters.category} = '' 
-						OR vehicles.category::TEXT = ${vehicleFilters.category.toUpperCase()}
-					)
-			
-					-- Ride requirement filters with COALESCE to avoid NULL
-					AND COALESCE((drivers.ride_requirements->>'child_seats')::BOOLEAN, FALSE) = ${requirements.child_seats}
-					AND COALESCE((drivers.ride_requirements->>'traveling_with_pet')::BOOLEAN, FALSE) = ${requirements.traveling_with_pet}
-					AND COALESCE((drivers.ride_requirements->>'wheelchair_accessibility')::BOOLEAN, FALSE) = ${requirements.wheelchair_accessibility}
-					AND COALESCE((drivers.ride_requirements->>'air_conditioning')::BOOLEAN, FALSE) = ${requirements.air_conditioning}
-					AND COALESCE((drivers.ride_requirements->>'quiet_ride')::BOOLEAN, FALSE) = ${requirements.quiet_ride}
-					AND COALESCE((drivers.ride_requirements->>'luggage')::BOOLEAN, FALSE) = ${requirements.luggage}
-			
-					-- Language filter
 					
 				`;
 			

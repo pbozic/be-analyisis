@@ -143,28 +143,10 @@ async function login(req, res) {
 		}
 		delete user["password"];
 		const access_token = generateAccessToken({
-			...user,
-			referrals_made: null,
-			child_users: null,
-			parent_user: null,
-			driver: {
-				...user.driver,
-				vehicles: null,
-				current_vehicle: null,
-				activity_logs: null,
-			},
+			user_id: user.user_id,
 		});
 		const refresh_token = generateRefreshToken({
-			...user,
-			referrals_made: null,
-			child_users: null,
-			parent_user: null,
-			driver: {
-				...user.driver,
-				vehicles: null,
-				current_vehicle: null,
-				activity_logs: null,
-			}
+			user_id: user.user_id,
 		});
 		let profile = await DocumentDao.getDocumentsForUserByType(user.user_id, DOCUMENT_TYPE.PROFILE_PICTURE);
 
@@ -255,8 +237,12 @@ async function register(req, res) {
 			}
 		);
 		delete user["password"];
-		const access_token = generateAccessToken(user);
-		const refresh_token = generateRefreshToken(user);
+		const access_token = generateAccessToken({
+			user_id: user.user_id,
+		});
+		const refresh_token = generateRefreshToken({
+			user_id: user.user_id,
+		});
 
 		user = {
 			...user,
@@ -298,8 +284,12 @@ async function refreshToken(req, res) {
 		}
 		delete decoded["iat"];
 		delete decoded["exp"];
-		const access_token = generateAccessToken(decoded.user);
-		const refresh_token = generateRefreshToken(decoded.user);
+		const access_token = generateAccessToken({
+			user_id: decoded.user.user_id,
+		});
+		const refresh_token = generateRefreshToken({
+			user_id: decoded.user.user_id,
+		});
 		let userDb = await UserDao.getUserById(decoded.user.user_id,
 			{
 				include: {
