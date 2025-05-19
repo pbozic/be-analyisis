@@ -992,7 +992,7 @@ async function userActiveOrders(user_id) {
     }
 }
 
-async function getActiveOrderIdsForUser(user_id) {
+async function getActiveOrderIdsForUser(user_id, scheduled = true) {
     try {
         const orders = await prisma.taxi_orders.findMany({
             where: {
@@ -1005,7 +1005,8 @@ async function getActiveOrderIdsForUser(user_id) {
                         TAXI_ORDER_STATUS.TAXI_REJECTED,
                         TAXI_ORDER_STATUS.AWAITING_PAYMENT//TODO: Should we consider AWAIITING_PAYMENT as active order in the user's eyes?
                     ]
-                }
+                },
+                scheduled: scheduled
             },
             select:{
                 order_id:true

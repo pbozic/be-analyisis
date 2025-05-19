@@ -1876,10 +1876,11 @@ async function getMyActiveOrderIds(req, res) {
 	const user_id = req.user.user_id;
 	try {
 		const delivery_order_ids = await DeliveryOrderDao.getActiveOrderIdsForUser(user_id);
-		const taxi_order_ids = await TaxiOrderDao.getActiveOrderIdsForUser(user_id);
-
+		const scheduled_taxi_order_ids = await TaxiOrderDao.getActiveOrderIdsForUser(user_id, true);
+		const non_scheduled_taxi_order_ids = await TaxiOrderDao.getNonScheduledActiveOrderIdsForUser(user_id, false);
 		return res.status(200).json({
-			taxi_order_ids,
+			scheduled_taxi_order_ids,
+			non_scheduled_taxi_order_ids,
 			delivery_order_ids
 		});
 	} catch (error) {
