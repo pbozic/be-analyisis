@@ -1006,7 +1006,7 @@ async function getActiveOrderIdsForUser(user_id, scheduled = true) {
                         TAXI_ORDER_STATUS.AWAITING_PAYMENT//TODO: Should we consider AWAIITING_PAYMENT as active order in the user's eyes?
                     ]
                 },
-                scheduled: scheduled
+                is_scheduled: scheduled
             },
             select:{
                 order_id:true
