@@ -1178,12 +1178,14 @@ async function completeOrder(req, res) {
 				}
 
 				if (order.payment.type === "CARD" || order.payment.type === "PLATFORM") {
-					const paymentIntent = await stripe.client.paymentIntents.retrieve(order.payment.payment_intent_id);
-					const transferDelivery = stripe.splitCutFromPaymentIntent(
-						paymentIntent,
-						driver_business.stripe_account_id,
-						DRIVER_CUT,
-					);
+					if(order.payment.payment_intent_id){
+						const paymentIntent = await stripe.client.paymentIntents.retrieve(order.payment.payment_intent_id);
+						const transferDriver = stripe.splitCutFromPaymentIntent(
+							paymentIntent,
+							driver_business.stripe_account_id,
+							DRIVER_CUT,
+						);
+					}
 				} else if (order.payment.type === "WALLET") {
 					if (PLATFORM_CUT > 0) {
 						const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
