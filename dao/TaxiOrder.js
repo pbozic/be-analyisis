@@ -94,6 +94,9 @@ async function getTaxiOrdersIfNotCompleted(user_id, type) {
                         TAXI_ORDER_STATUS.AWAITING_PAYMENT,
                     ]
                 },
+                creating_user_id: {
+                    not: user_id
+                }
             },
             include: {
                 user: true,
