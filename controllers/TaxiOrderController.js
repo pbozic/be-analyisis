@@ -799,13 +799,13 @@ async function createOrder(req, res) {
 	try {
 		const { return_url } = req.body
 		delete req.body.return_url
-
+		let user = await UsersDao.getUserById(req.user.user_id);
 		let orderData = {
 			...req.body,
-			user_id: req.body?.user_id || req.user.user_id,
-			first_name: req.body?.first_name || req.user.first_name,
-			last_name: req.body?.last_name || req.user.last_name,
-			telephone: req.body?.telephone || req.user.telephone,
+			user_id: req.body?.user_id || user.user_id,
+			first_name: req.body?.first_name || user.first_name,
+			last_name: req.body?.last_name || user.last_name,
+			telephone: req.body?.telephone || user.telephone,
 			is_scheduled: req.body.preferences?.departure_date
 		};
 
@@ -1613,6 +1613,7 @@ async function rejectOrder(req, res) {
 		let driver_id = order?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
 		let driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
+		let userDriver = await DriverDao.getDriverByUserId(req.user.user_id);
 		console.log("user console.log", user?.user_id);
 		console.log("Driver console.log", driver?.user?.user_id);
 		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO) sendOrderNotifications(user, driver?.user, user_id, driver_id, status);
@@ -1626,14 +1627,14 @@ async function rejectOrder(req, res) {
 		}
 
 		SocketStore.removeUserFromRoom(driver?.user_id,`order_${order_id}`)
-		if (req.user.driver && req.user.driver.driver_id) {
-			await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, req.user.driver.driver_id);
-			await ScoringPointsDao.createScoringPoints(req.user.driver.business_id,req.user.user_id,null,order.order_id,1,true,SCORING_POINTS_REASON.REJECTED)
+		if (userDriver && userDriver.driver_id) {
+			await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, userDriver.driver_id);
+			await ScoringPointsDao.createScoringPoints(userDriver.business_id,req.user.user_id,null,order.order_id,1,true,SCORING_POINTS_REASON.REJECTED)
 			let order_sent = await prisma.taxi_order_sent.findUnique({
 				where: {
 					taxi_order_sent_driver_unique: {
 						order_id,
-						driver_id: req.user.driver.driver_id
+						driver_id: userDriver.driver_id
 					}
 				}
 			});
@@ -2120,9 +2121,9 @@ async function rejectGroupedOrderByParentId(req,res){
 			const { order_id, user_id, driver_id } = order
 			//const user = await UsersDao.getUserById(user_id);
 			const driver = (driver_id) ? await DriverDao.getDriverById(driver_id) : null;
-
+			const userDriver = await DriverDao.getDriverByUserId(req.user.user_id);
 			//sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
-			if (order.driver_id === req.user.driver.driver_id) {
+			if (order.driver_id === userDriver.driver_id) {
 				order = await TaxiOrderDao.updateOrder(order_id, {
 					status: TAXI_ORDER_STATUS.PENDING,
 					last_sent_at: null,
@@ -2130,13 +2131,13 @@ async function rejectGroupedOrderByParentId(req,res){
 				});
 			}
 
-			if (req.user.driver && req.user.driver.driver_id) {
-				await TaxiHelper.revokeTaxiOrderFromDriver(order_id, req.user.driver.driver_id);
+			if (userDriver && userDriver.driver_id) {
+				await TaxiHelper.revokeTaxiOrderFromDriver(order_id, userDriver.driver_id);
 				let order_sent = await prisma.taxi_order_sent.findUnique({
 					where: {
 						taxi_order_sent_driver_unique: {
 							order_id,
-							driver_id: req.user.driver.driver_id
+							driver_id: userDriver.driver_id
 						}
 					}
 				});
@@ -2157,7 +2158,7 @@ async function rejectGroupedOrderByParentId(req,res){
 
 			io.to("order_" + order_id).emit("order_status_change__taxi", order);
 			
-			if(driver && req.user.driver.driver_id === driver.driver_id){
+			if(driver && userDriver.driver_id === driver.driver_id){
 				io.to("order_" + order_id).emit("order_rejected__taxi", order);
 				const user = await UsersDao.getUserById(user_id);
 				sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
