@@ -684,11 +684,12 @@ async function updateTelephone(req, res) {
 async function requestSMSVerification(req, res) {
 	try {
 		let token = await TokenDao.generateSMSVerificationToken(req.user);
-		await SMS.sendSMSVerification(req.user.telephone, token.token, req.user.country_code);
+		let user = await UserDao.getUserById(req.user.user_id);
+		await SMS.sendSMSVerification(user.telephone, token.token, user.country_code);
 		console.log(token);
 		console.info(token);
 		if (token) {
-			return res.status(200).json({ message: "Token sent", telephone: req.user.telephone });
+			return res.status(200).json({ message: "Token sent", telephone: user.telephone });
 		}
 
 		res.status(400).json({ error: "Error obtaining user information" });
@@ -1079,7 +1080,8 @@ async function requestToAddFundsToWallet(req, res) {
 			return res.status(400).json({ error: "Error requesting to add funds to wallet: Invalid parameters!" });
 		}
 		// Create a Payment Method to handle the transaction
-		let paymentIntent = await stripe.createPaymentIntentForWallet(Math.round(amount * 100), currency, payment_method_id, req.user.stripe_customer_id, req.user.user_id, return_url);
+		let user = await UserDao.getUserById(req.user.user_id);
+		let paymentIntent = await stripe.createPaymentIntentForWallet(Math.round(amount * 100), currency, payment_method_id, user.stripe_customer_id, user.user_id, return_url);
 		// const newWalletFunds = await WalletFundsDao.createWalletFunds(req.user.user_id,paymentIntent.latest_charge, amount * 100);
 		res.status(200).json(paymentIntent);
 	} catch (error) {
@@ -1095,7 +1097,8 @@ async function requestPaymentIntent(req, res) {
 			return res.status(400).json({ error: "Error requesting payment intent: Invalid parameters!" });
 		}
 		// Create a Payment Method to handle the transaction
-		let paymentIntent = await stripe.createPaymentIntentForPlatform(Math.round(amount * 100), currency, req.user.stripe_customer_id, {
+		let user = await UserDao.getUserById(req.user.user_id);
+		let paymentIntent = await stripe.createPaymentIntentForPlatform(Math.round(amount * 100), currency, user.stripe_customer_id, {
 			user_id: req.user.user_id,
 			type: "wallet_topup"
 		});

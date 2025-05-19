@@ -347,7 +347,7 @@ async function getPromoBannersByServiceType  (req, res) {
 async function createCheckoutSessionForPromoBuy(req, res) {
     try {
         const { promo_sections_id, duration, tier } = req.body;
-        const userId = req.user.id;
+        const userId = req.user.user_id;
         // Fetch promo section details (optional)
         const promoSection = await prisma.promo_sections.findUnique({
             where: { promo_sections_id: promo_sections_id }
