@@ -1686,7 +1686,7 @@ async function rejectOrder(req, res) {
 		}
 		console.log("pending", pending);
 		if (pending) {
-			if (UserSockets.get(order.user_id) && order.ordering_user_id !== order.user_id) {
+			if (UserSockets.get(order.user_id) && order.creating_user_id !== order.user_id) {
 				console.log("EMITTING order_restart_search");
 				UserSockets.get(order.user_id).emit("order_restart_search", order);
 			}
@@ -2182,7 +2182,7 @@ async function rejectGroupedOrderByParentId(req,res){
 		console.log("pending", pending);
 		let rejected_order = await TaxiOrderDao.getOrder(parent_order_id)
 		if (pending) {
-			if (UserSockets.get(parent_order.user_id) && order.ordering_user_id !== order.user_id) {
+			if (UserSockets.get(parent_order.user_id) && parent_order.creating_user_id !== parent_order.user_id) {
 				console.log("EMITTING order_restart_search");
 				UserSockets.get(parent_order.user_id).emit("order_restart_search", rejected_order);
 			}
