@@ -259,6 +259,7 @@ async function updateDriver(req, res) {
  */
 async function editDriver(req, res) {
 	const { user, driver, documents, files, address } = req.body;
+	console.log("editDriver", req.body)
 
 	const business_id = driver?.business_id;
 	delete driver?.business_id;

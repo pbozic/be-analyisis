@@ -359,6 +359,7 @@ async function updateVehicle(req, res) {
  */
 async function assignVehiclesToDriver(req, res) {
 	const { vehicles, driver_id } = req.body;
+	console.log("assignVehiclesToDriver", req.body)
 	try {
 		if (Array.isArray(vehicles) && vehicles.length > 0) {
 			for (const vehicle of vehicles) {
