@@ -986,7 +986,8 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 
 			if (
 				!DELIVERY_ORDER_END_STATES.includes(order.status) &&
-				!order.timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP)
+				!order.timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP) &&
+				!order.driver_id
 			) {
 				pendingOrders.push(order);
 				console.info("Re-sending pending order: ", order.order_id, " to driver: ", driver_id);
