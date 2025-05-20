@@ -1022,9 +1022,10 @@ const getPurchaseOrderLimit = async (business_id) => {
 				payment: true
 			}
 		});
+		console.log("THIS MONTH ORDERS: ", taxiOrders?.length);
 		const totalTaxiOrders = taxiOrders.reduce((acc, order) => acc + order.payment.price, 0);
 		if (business.purchase_order_limit_amount > 0) {
-			return totalTaxiOrders >= business.purchase_order_limit_amount ? 0 : business.purchase_order_limit_amount - totalTaxiOrders;
+			return totalTaxiOrders > business.purchase_order_limit_amount ? business.purchase_order_limit_amount - totalTaxiOrders : 0;
 		} else {
 			return 0;
 		}

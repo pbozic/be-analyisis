@@ -69,7 +69,7 @@ async function getActiveTaxiOrders(req, res) {
 
 	try {
 		const activeOrders = await TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, type);
-		console.log(`ACTIVE ${type} ORDERS: `, activeOrders?.length);
+
 		if (activeOrders) {
 			// Iterate over the list of active orders
 			for (let i = 0; i < activeOrders.length; i++) {
