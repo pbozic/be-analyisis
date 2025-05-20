@@ -951,7 +951,7 @@ async function getCompletedDeliveryOrdersByDriverId(req, res) {
  */
 async function getActiveDeliveryOrdersByDriverId(req, res) {
 	const { driver_id } = req.params;
-
+	console.log("getActiveDeliveryOrdersByDriverId", driver_id);
 	try {
 		const activeOrders = await DeliveryOrderDao.getOrders({
 			where: {
