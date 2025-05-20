@@ -1012,8 +1012,8 @@ const getPurchaseOrderLimit = async (business_id) => {
 			}
 		});
 		const totalTaxiOrders = taxiOrders.reduce((acc, order) => acc + order.payment.price, 0);
-		if (business.purchase_order_limit > 0) {
-			return totalTaxiOrders >= business.purchase_order_limit ? 0 : business.purchase_order_limit - totalTaxiOrders;
+		if (business.purchase_order_limit_amount > 0) {
+			return totalTaxiOrders >= business.purchase_order_limit_amount ? 0 : business.purchase_order_limit_amount - totalTaxiOrders;
 		} else {
 			return 0;
 		}
