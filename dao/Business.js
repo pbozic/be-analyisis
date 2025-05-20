@@ -996,7 +996,7 @@ const getPurchaseOrderLimit = async (business_id) => {
 	try {
 		const business = await prisma.business.findUnique({
 			where: { business_id },
-			select: { purchase_order_limit: true },
+			select: { purchase_order_limit_amount: true },
 		});
 		// get all taxi orders for this business (this month) and check if the limit is reached
 		const taxiOrders = await prisma.taxi_orders.findMany({
