@@ -69,7 +69,7 @@ async function getActiveTaxiOrders(req, res) {
 
 	try {
 		const activeOrders = await TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, type);
-
+		console.log(`ACTIVE ${type} ORDERS: `, activeOrders?.length);
 		if (activeOrders) {
 			// Iterate over the list of active orders
 			for (let i = 0; i < activeOrders.length; i++) {
@@ -894,7 +894,7 @@ async function createOrder(req, res) {
 		const userSocket = UserSockets.get(order.user_id);
 		if (userSocket && (order.creating_user_id && order.creating_user_id!==order.user_id)) {
 			console.log("userSocket exists!");
-			io.emit('child_order_created__taxi', {
+			userSocket.emit('child_order_created__taxi', {
 				...order
 			});
 		}
@@ -1215,7 +1215,7 @@ async function completeOrder(req, res) {
 					}
 				}
 
-			}else{
+			} else {
 				//handle regular payments
 				//CALCULATE IN CENTS
 				const PRICE_CENTS = Math.round(parseFloat(order.payment.price) * 100)

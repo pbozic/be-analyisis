@@ -21,7 +21,7 @@ router.get("/favorites/:type", BusinessController.getFavoriteBusinesses);
 router.post("/favorites", BusinessController.addBusinessToFavorites);
 router.delete("/favorites", BusinessController.removeBusinessFromFavorites);
 
-
+router.get('/purchase_order_limit/:business_id', BusinessController.getPurchaseOrderLimit);
 router.get("/:business_id", BusinessController.getBusinessById);
 
 router.get("/:business_id/reviews", BusinessController.getBusinessReviewsById);

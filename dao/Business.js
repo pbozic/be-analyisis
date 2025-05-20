@@ -992,6 +992,48 @@ const getScheduledUsersByBusinessId = async (businessId) => {
 	}
 };
 
+const getPurchaseOrderLimit = async (business_id) => {
+	try {
+		const business = await prisma.business.findUnique({
+			where: { business_id },
+			include: { business_users: true, business_clients: true },
+		});
+		// get all taxi orders for this business (this month) and check if the limit is reached
+		const taxiOrders = await prisma.taxi_orders.findMany({
+			where: {
+				updated_at: {
+					gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+					lte: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+				},
+				OR: [
+					{
+						business_clients_id: {
+							in: business.business_clients.map(client => client.business_clients_id)
+						}
+					},
+					{
+						business_users_id: {
+							in: business.business_users.map(user => user.business_users_id)
+						}
+					}
+				],
+			},
+			select: {
+				payment: true
+			}
+		});
+		const totalTaxiOrders = taxiOrders.reduce((acc, order) => acc + order.payment.price, 0);
+		if (business.purchase_order_limit_amount > 0) {
+			return totalTaxiOrders >= business.purchase_order_limit_amount ? 0 : business.purchase_order_limit_amount - totalTaxiOrders;
+		} else {
+			return 0;
+		}
+	} catch (error) {
+		console.error("Error retrieving purchase order limit:", error);
+		throw new Error(error);
+	}
+}
+
 module.exports = {
 	getScheduledUsersByBusinessId,
 	getBusinesses,
@@ -1033,5 +1075,6 @@ module.exports = {
 	activateBusiness,
 	deactivateBusiness,
 	getBusinessForSearchById,
-	getBusinessAdminDataById
+	getBusinessAdminDataById,
+	getPurchaseOrderLimit,
 };

@@ -94,9 +94,10 @@ async function getTaxiOrdersIfNotCompleted(user_id, type) {
                         TAXI_ORDER_STATUS.AWAITING_PAYMENT,
                     ]
                 },
-                creating_user_id: {
-                    not: user_id
-                }
+                OR: [
+                    { creating_user_id: null },
+                    { creating_user_id: { not: user_id } }
+                ]
             },
             include: {
                 user: true,
@@ -1010,9 +1011,10 @@ async function getActiveOrderIdsForUser(user_id, scheduled = true) {
                     ]
                 },
                 is_scheduled: scheduled,
-                creating_user_id: {
-                    not: user_id
-                }
+                OR: [
+                    { creating_user_id: null },
+                    { creating_user_id: { not: user_id } }
+                ]
             },
             select:{
                 order_id:true

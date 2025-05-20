@@ -1729,6 +1729,25 @@ async function createScoringPointsHandler(req, res) {
 	}
 }
 
+async function getPurchaseOrderLimit(req, res) {
+	const { business_id } = req.params;
+	if (!business_id) {
+		return res.status(400).json({ error: 'Business ID is required' });
+	}
+
+	try {
+		const purchaseOrderLimit = await BusinessDao.getPurchaseOrderLimit(business_id);
+		if (purchaseOrderLimit >= 0) {
+			return res.status(200).json(purchaseOrderLimit);
+		} else {
+			return res.status(400).json({ error: 'Purchase order limit not found' });
+		}
+	} catch (error) {
+		console.error('Error in getPurchaseOrderLimit:', error);
+		return res.status(500).json({ error: 'Internal server error' });
+	}
+}
+
 module.exports = {
 	getScheduledUsersByBusinessId,
 	listBusinesses,
@@ -1784,6 +1803,7 @@ module.exports = {
 	removeBusinessFromFavorites,
 	getFavoriteBusinesses,
 	onboardingEnd,
-	createScoringPointsHandler
+	createScoringPointsHandler,
+	getPurchaseOrderLimit,
 };
 
