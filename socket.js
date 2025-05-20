@@ -79,15 +79,34 @@ io.on("connection", async (socket) => {
 
 
 const SocketStore = {
-  async addSocket(userId, socket) {
-    UserSockets.set(userId, socket);
-    await redis.sAdd(`user_sockets:${userId}`, socket.id);
-    await redis.set(`socket_user:${socket.id}`, userId);
-  },
+	async addSocket(userId, socket) {
+		if (!userId || !socket?.id) {
+		  console.error('Invalid userId or socket');
+		  return;
+		}
+	  
+		try {
+		  UserSockets.set(userId, socket);
+	  
+		  await Promise.all([
+			redis.sAdd(`user_sockets:${userId}`, socket.id),
+			redis.set(`socket_user:${socket.id}`, userId)
+		  ]);
+		} catch (err) {
+		  console.error(`Failed to add socket for user ${userId}:`, err);
+		}
+	},
 
   async removeSocket(userId, socketId) {
-    await redis.sRem(`user_sockets:${userId}`, socketId);
-    await redis.del(`socket_user:${socketId}`);
+	console.log(`Removing socket ${socketId} for user ${userId}`);
+	try {
+	  await Promise.all([
+		redis.sRem(`user_sockets:${userId}`, socketId),
+		redis.del(`socket_user:${socketId}`)
+	  ]);
+	} catch (err) {
+	  console.error(`Failed to remove socket for user ${userId}:`, err);
+	}
   },
 
   async addUserToRoom(userId, roomName) {
