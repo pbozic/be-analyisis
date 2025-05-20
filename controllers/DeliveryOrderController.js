@@ -1279,7 +1279,7 @@ async function merchantAcceptOrder(req, res) {
 		const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT } =
 			await calculateDeliveryOrderPaymentCuts(order);
 
-		if (order.payment.type === "CARD") {
+		if (order.payment.type === "CARD" || order.payment.type === "PLATFORM") {
 			if (Math.round(order.details.total_price * 100) === order.details.credit_discount) {
 				const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 					order.user_id,
@@ -1312,7 +1312,7 @@ async function merchantAcceptOrder(req, res) {
 			}
 		}
 
-		if (order.payment.type === "WALLET") {
+		else if (order.payment.type === "WALLET") {
 			const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 				order.user_id,
 				restaurant_stripe,
@@ -1327,6 +1327,9 @@ async function merchantAcceptOrder(req, res) {
 				order.order_id,
 				SERVICE_TYPE.DELIVERY,
 			);
+		} else {
+			// TODO: reject
+			throw new Error("Payment type not supported");
 		}
 
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL);
