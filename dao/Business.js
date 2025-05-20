@@ -1014,6 +1014,8 @@ const getPurchaseOrderLimit = async (business_id) => {
 		const totalTaxiOrders = taxiOrders.reduce((acc, order) => acc + order.payment.price, 0);
 		if (business.purchase_order_limit > 0) {
 			return totalTaxiOrders >= business.purchase_order_limit ? 0 : business.purchase_order_limit - totalTaxiOrders;
+		} else {
+			return 0;
 		}
 	} catch (error) {
 		console.error("Error retrieving purchase order limit:", error);

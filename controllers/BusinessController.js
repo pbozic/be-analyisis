@@ -1737,7 +1737,7 @@ async function getPurchaseOrderLimit(req, res) {
 
 	try {
 		const purchaseOrderLimit = await BusinessDao.getPurchaseOrderLimit(business_id);
-		if (purchaseOrderLimit) {
+		if (purchaseOrderLimit >= 0) {
 			return res.status(200).json(purchaseOrderLimit);
 		} else {
 			return res.status(400).json({ error: 'Purchase order limit not found' });
