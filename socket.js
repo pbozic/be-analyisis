@@ -80,6 +80,7 @@ io.on("connection", async (socket) => {
 
 const SocketStore = {
 	async addSocket(userId, socket) {
+		console.log(`Adding socket ${socket?.id} for user ${userId}`);
 		if (!userId || !socket?.id) {
 		  console.error('Invalid userId or socket');
 		  return;
