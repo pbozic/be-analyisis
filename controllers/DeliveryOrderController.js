@@ -1,14 +1,18 @@
-const DeliveryOrderDao = require("../dao/DeliveryOrder");
-const DeliveryDriverDao = require("../dao/DeliveryDriver");
-const FlagDao = require("../dao/Flags");
-const BusinessDao = require("../dao/Business");
-const AddressDao = require("../dao/Address");
-const UsersDao = require("../dao/User");
-const MenuDao = require("../dao/Menu");
-const MenuCategoryDao = require("../dao/MenuCategory");
-const gApi = require("../lib/gApis");
-const { UserSockets, io, SocketStore } = require("../socket");
-const stripe = require("../lib/stripe");
+const fs = require('fs');
+
+const moment = require('moment');
+
+const DeliveryOrderDao = require('../dao/DeliveryOrder');
+const DeliveryDriverDao = require('../dao/DeliveryDriver');
+const FlagDao = require('../dao/Flags');
+const BusinessDao = require('../dao/Business');
+const AddressDao = require('../dao/Address');
+const UsersDao = require('../dao/User');
+const MenuDao = require('../dao/Menu');
+const MenuCategoryDao = require('../dao/MenuCategory');
+const gApi = require('../lib/gApis');
+const { UserSockets, io, SocketStore } = require('../socket');
+const stripe = require('../lib/stripe');
 const {
 	DELIVERY_ORDER_STATUS,
 	DOCUMENT_TYPE,
@@ -24,10 +28,9 @@ const {
 	SERVICE_TYPE,
 	USER_ROLE,
 	MAX_DELIVERY_RADIUS_KM,
-} = require("../lib/constants");
-const fs = require("fs");
-const Constants = require("../lib/constants");
-const { getUsers } = require("../dao/User");
+} = require('../lib/constants');
+const Constants = require('../lib/constants');
+const { getUsers } = require('../dao/User');
 const {
 	generateItemsFromPreferences,
 	revokeDeliveryOrderFromDrivers,
@@ -35,21 +38,21 @@ const {
 	handlePaymentCleanup,
 	handlePaymentRefund,
 	verifyOrderCosts,
-} = require("../lib/deliveryHelpers");
-const { sortLocationsByNearestNeighbor, todaysEarnings } = require("../lib/helpersLib");
-const prisma = require("../prisma/prisma");
-const WalletFundsHelpers = require("../lib/WalletFundsHelpers");
-const DriverDao = require("../dao/Driver");
-const { sendDeliveryOrderNotifications } = require("../lib/notifications");
-const CashbackDao = require("../dao/Cashback");
-const WalletFundsDao = require("../dao/WalletFunds");
-const { handleReferral } = require("../lib/referralHelper");
-const ScoringPointsDao = require("../dao/ScoringPoints");
-const LateEventsDao = require("../dao/LateEvents");
-const moment = require("moment");
-const BusinessHelpers = require("../lib/businessHelpers");
-const Helpers = require("../lib/helpersLib.js");
-const uuidv4 = require("uuid").v4;
+} = require('../lib/deliveryHelpers');
+const { sortLocationsByNearestNeighbor, todaysEarnings } = require('../lib/helpersLib');
+const prisma = require('../prisma/prisma');
+const WalletFundsHelpers = require('../lib/WalletFundsHelpers');
+const DriverDao = require('../dao/Driver');
+const { sendDeliveryOrderNotifications } = require('../lib/notifications');
+const CashbackDao = require('../dao/Cashback');
+const WalletFundsDao = require('../dao/WalletFunds');
+const { handleReferral } = require('../lib/referralHelper');
+const ScoringPointsDao = require('../dao/ScoringPoints');
+const LateEventsDao = require('../dao/LateEvents');
+const BusinessHelpers = require('../lib/businessHelpers');
+const Helpers = require('../lib/helpersLib.js');
+
+const uuidv4 = require('uuid').v4;
 /**
  * GET /delivery/orders/:daily_meals
  * @tag Delivery
@@ -138,10 +141,10 @@ async function getUserByDeliveryOrderId(req, res) {
 		if (user) {
 			res.json(user);
 		} else {
-			res.status(404).send("User not found for this order");
+			res.status(404).send('User not found for this order');
 		}
 	} catch (error) {
-		res.status(500).send("Failed to fetch user data");
+		res.status(500).send('Failed to fetch user data');
 	}
 }
 
@@ -160,29 +163,26 @@ async function getUserByDeliveryOrderId(req, res) {
  */
 async function createOrder(req, res) {
 	const { orderBody, user_id, return_url } = req.body;
-	console.info("CREATE DELIVERY ORDER: ", req.body);
+	console.info('CREATE DELIVERY ORDER: ', req.body);
 	try {
 		const isValidOrder = await verifyOrderCosts(orderBody);
-		if (!isValidOrder) throw new Error("Invalid order data!");
+		if (!isValidOrder) throw new Error('Invalid order data!');
 		let orderData = {
 			...orderBody,
 			status: DELIVERY_ORDER_STATUS.PENDING,
 		};
 
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
-		if(!business){
-			throw new Error("Business not found!")
+		if (!business) {
+			throw new Error('Business not found!');
 		}
-		if(orderData.details.type==="delivery"){
-			const distance = Helpers.haversineDistance(
-				orderData.delivery_location.coordinates,
-				{
-					latitude: business.delivery_address?.latitude,
-					longitude: business.delivery_address?.longitude
-				}
-			)
-			if(distance && distance > MAX_DELIVERY_RADIUS_KM){
-				throw new Error("Distance out of delivery range!")
+		if (orderData.details.type === 'delivery') {
+			const distance = Helpers.haversineDistance(orderData.delivery_location.coordinates, {
+				latitude: business.delivery_address?.latitude,
+				longitude: business.delivery_address?.longitude,
+			});
+			if (distance && distance > MAX_DELIVERY_RADIUS_KM) {
+				throw new Error('Distance out of delivery range!');
 			}
 		}
 
@@ -198,28 +198,28 @@ async function createOrder(req, res) {
 		const customer_acc = user.stripe_customer_id;
 		const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user_id);
 
-		if (orderData.payment.type === "WALLET") {
+		if (orderData.payment.type === 'WALLET') {
 			const TOTAL_PRICE_CENT = Math.round(orderData.details.total_price * 100);
-			if (available_wallet_balances["DELIVERY"] + available_wallet_balances[null] < TOTAL_PRICE_CENT / 100) {
-				throw new Error("Insufficient funds");
+			if (available_wallet_balances['DELIVERY'] + available_wallet_balances[null] < TOTAL_PRICE_CENT / 100) {
+				throw new Error('Insufficient funds');
 			}
 		}
-		if (orderData.payment.type === "CARD") {
+		if (orderData.payment.type === 'CARD') {
 			if (!customer_acc) {
-				throw new Error("Missing stripe_customer_id");
+				throw new Error('Missing stripe_customer_id');
 			}
 		}
 		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
 		// let delivery_business = await BusinessDao.getBusinessById(orderData?.delivery_driver?.business_id);
 		orderData.telephone = user.telephone;
 		let payment_intent;
-		if (order.details.type === "delivery") {
+		if (order.details.type === 'delivery') {
 			let { result } = await gApi.distanceBetweenTwoPoints(
 				order.delivery_location.coordinates,
 				order.pickup_location.coordinates,
-				"driving",
+				'driving',
 				new Date(),
-				"best_guess",
+				'best_guess'
 			);
 			let distanceM = result.rows[0].elements[0].distance.value;
 			let distanceKm = distanceM / 1000;
@@ -229,7 +229,7 @@ async function createOrder(req, res) {
 			if (order.scheduled?.time && order.scheduled?.date) {
 				order.details.customer_expected_delivery_at = new Date(order.scheduled.time);
 				order.details.ready_for_pickup_at = new Date(
-					new Date(order.scheduled.time).getTime() - order.details.duration * 1000,
+					new Date(order.scheduled.time).getTime() - order.details.duration * 1000
 				)
 					.toISOString()
 					.slice(0, -1);
@@ -245,7 +245,7 @@ async function createOrder(req, res) {
 				},
 			});
 		}
-		console.log("stripeCustomer", user.stripe_customer_id);
+		console.log('stripeCustomer', user.stripe_customer_id);
 
 		const restaurant_acc = business.stripe_account_id;
 		const pm_id = orderData.payment.payment_method_id;
@@ -258,7 +258,7 @@ async function createOrder(req, res) {
 						user.user_id,
 						TOTAL_PRICE_CENTS,
 						order.order_id,
-						FUNDS_TYPE.CREDITS_DELIVERY,
+						FUNDS_TYPE.CREDITS_DELIVERY
 					)
 				).reduce((sum, wf) => sum + wf.amount, 0)
 			: 0;
@@ -268,11 +268,11 @@ async function createOrder(req, res) {
 		console.info(order.details);
 
 		const results = await calculateDeliveryOrderPaymentCuts(order);
-		console.info("calculateDeliveryOrderPaymentCuts results: ", JSON.stringify(results, null, 2));
+		console.info('calculateDeliveryOrderPaymentCuts results: ', JSON.stringify(results, null, 2));
 		const { MERCHANT_CUT } = results;
 
 		if (DISCOUNTED_COMBINED_COST_CENTS > 0) {
-			if (order.payment.type === "CARD" || order.payment.type === "PLATFORM") {
+			if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
 				payment_intent = await stripe.createSplitPayment(
 					customer_acc,
 					restaurant_acc,
@@ -280,44 +280,46 @@ async function createOrder(req, res) {
 					pm_id,
 					DISCOUNTED_COMBINED_COST_CENTS,
 					MERCHANT_CUT,
-					return_url,
+					return_url
 				);
 
 				orderData.payment_intent_id = payment_intent.id;
 				order = await DeliveryOrderDao.updateOrder(order.order_id, {
 					payment_intent_id: payment_intent.id,
 				});
-			} else if (order.payment.type === "WALLET") {
+			} else if (order.payment.type === 'WALLET') {
 				// handle wallet payment
 				try {
 					if (available_wallet_balances[null] < DISCOUNTED_COMBINED_COST_CENTS / 100) {
-						throw new Error("Insufficient funds");
+						throw new Error('Insufficient funds');
 					}
 
 					// await UsersDao.removeWalletBalance(user_id, DISCOUNTED_COMBINED_COST_CENTS/100, order.order_id);
 					const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
 						user_id,
 						DISCOUNTED_COMBINED_COST_CENTS,
-						order.order_id,
+						order.order_id
 					);
 				} catch (err) {
 					order = await DeliveryOrderDao.updateOrder(order.order_id, {
 						payment: {
 							...order.payment,
-							status: "UNPAID",
+							status: 'UNPAID',
 						},
 					});
 					order = await DeliveryOrderDao.updateOrderStatus(
 						order.order_id,
-						DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED,
+						DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED
 					);
-					io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+					io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 					order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.FAIL);
-					io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+					io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 					throw err;
 				}
-			} else if (order.payment.type === "CASH") {
 			}
+			// else if (order.payment.type === 'CASH') {
+
+			// }
 		}
 
 		order = await DeliveryOrderDao.getOrder(order.order_id, {
@@ -344,21 +346,23 @@ async function createOrder(req, res) {
 		if (order) {
 			let logo = null;
 			let banner = null;
-			for (let d of order?.business?.documents) {
-				if (d.document_type === "LOGO") {
-					logo = d.files[0].url;
-				} else if (d.document_type === "BANNER") {
-					banner = d.files[0].url;
+			if (Array.isArray(order?.business?.documents)) {
+				for (let d of order.business.documents) {
+					if (d.document_type === 'LOGO') {
+						logo = d.files[0].url;
+					} else if (d.document_type === 'BANNER') {
+						banner = d.files[0].url;
+					}
 				}
 			}
 			order.business.logo = logo;
 			order.business.banner = banner;
 			delete order.business.documents;
 		}
-		console.info("order created:", order);
+		console.info('order created:', order);
 		SocketStore.addUserToRoom(user_id, `order_${order.order_id}`);
 		BusinessHelpers.joinAllBusinessUsersToRoom(order.business_id, `order_${order.order_id}`);
-		io.to("orders_" + order.business_id).emit("new_order", order);
+		io.to('orders_' + order.business_id).emit('new_order', order);
 
 		res.status(200).json({
 			...order,
@@ -383,12 +387,12 @@ async function createOrder(req, res) {
 async function createDailyMeals(req, res) {
 	const { user_id, delivery_driver } = req.body;
 
-	console.info("DELIVERY DRIVER", user_id, delivery_driver);
+	console.info('DELIVERY DRIVER', user_id, delivery_driver);
 
 	const userSocket = UserSockets.get(user_id);
 	if (!userSocket) {
-		console.info("User is not connected to the socket");
-		return res.status(400).json({ message: "User is not connected to the socket." });
+		console.info('User is not connected to the socket');
+		return res.status(400).json({ message: 'User is not connected to the socket.' });
 	}
 
 	try {
@@ -401,15 +405,17 @@ async function createDailyMeals(req, res) {
 		const deliveryDriver = await DeliveryDriverDao.getDeliveryDriverById(delivery_driver.delivery_driver_id);
 		const business = await BusinessDao.getBusinessById(delivery_driver.daily_meals_business_id);
 		if (!business) {
-			return res.status(404).json({ message: "Business not found." });
+			return res.status(404).json({ message: 'Business not found.' });
 		}
 		if (!deliveryDriver) {
-			return res.status(404).json({ message: "Delivery driver not found." });
+			return res.status(404).json({ message: 'Delivery driver not found.' });
 		}
-		const subscriptions = await DeliveryOrderDao.getDailyMealSubscriptionsByBusinessId(delivery_driver.daily_meals_business_id)
+		const subscriptions = await DeliveryOrderDao.getDailyMealSubscriptionsByBusinessId(
+			delivery_driver.daily_meals_business_id
+		);
 
 		if (!subscriptions) {
-			return res.status(404).json({ message: "No subscriptions found." });
+			return res.status(404).json({ message: 'No subscriptions found.' });
 		}
 
 		const providerAddress = {
@@ -421,7 +427,7 @@ async function createDailyMeals(req, res) {
 		};
 
 		let sortedUserAddresses = [];
-		if (provider.daily_users_sorting_type === "MANUAL") {
+		if (provider.daily_users_sorting_type === 'MANUAL') {
 			// Manual sorting based on provider.daily_users_sorted
 			const userMap = new Map(subscriptions.map((sub) => [sub.daily_meals_subscription_id, sub]));
 			sortedUserAddresses = provider.daily_users_sorted
@@ -429,16 +435,16 @@ async function createDailyMeals(req, res) {
 				.filter((sub) => sub !== undefined)
 				.map((sub) => sub.address);
 
-			console.info("sortedUserAddresses MANUAL", sortedUserAddresses);
-			console.info("sortedUserAddresses MANUAL", sortedUserAddresses[0].address);
+			console.info('sortedUserAddresses MANUAL', sortedUserAddresses);
+			console.info('sortedUserAddresses MANUAL', sortedUserAddresses[0].address);
 		} else {
 			// Automatic sorting by nearest neighbor
 			sortedUserAddresses = sortLocationsByNearestNeighbor([
 				providerAddress,
 				...subscriptions.map((sub) => sub.address),
 			]).slice(1);
-			console.info("sortedUserAddresses AUTOMATIC", sortedUserAddresses);
-			console.info("sortedUserAddresses AUTOMATIC", sortedUserAddresses[0].address);
+			console.info('sortedUserAddresses AUTOMATIC', sortedUserAddresses);
+			console.info('sortedUserAddresses AUTOMATIC', sortedUserAddresses[0].address);
 		}
 
 		const orders = [];
@@ -455,21 +461,21 @@ async function createDailyMeals(req, res) {
 				? generateItemsFromPreferences(user.daily_meal_preferences, { price: 0, discount: 0 })
 				: generateItemsFromPreferences(
 						{ normal: { amount: 1 }, substitution: { amount: 0 } },
-						{ price: 0, discount: 0 },
+						{ price: 0, discount: 0 }
 					);
 
 			let { result } = await gApi.distanceBetweenTwoPoints(
 				delivery_driver.location.coordinates,
 				userAddress.coordinates,
-				"driving",
+				'driving',
 				new Date(),
-				"best_guess",
+				'best_guess'
 			);
 			const durationValue = result.rows[0].elements[0].duration.value;
 
 			// Calculate expected delivery time based on cumulative time
 			const customerExpectedDeliveryAt = new Date(
-				new Date().getTime() + cumulativeTime * 1000 + durationValue * 1000 + 5 * 60 * 1000,
+				new Date().getTime() + cumulativeTime * 1000 + durationValue * 1000 + 5 * 60 * 1000
 			);
 			cumulativeTime += durationValue;
 			const readyForPickupAt = new Date().toISOString();
@@ -478,7 +484,7 @@ async function createDailyMeals(req, res) {
 				is_daily_meal: true,
 				items: dailyMealItems,
 				details: {
-					type: "delivery",
+					type: 'delivery',
 					sub_total_price: 0,
 					total_price: 0,
 					discount_savings: 0,
@@ -494,10 +500,10 @@ async function createDailyMeals(req, res) {
 					daily_meal_delivery_order: i + 1, // Add sorted order number (1-based index)
 				},
 				payment: {
-					status: "SUCCESSFUL",
-					type: "ALREADY PAID",
+					status: 'SUCCESSFUL',
+					type: 'ALREADY PAID',
 					cash: {
-						type: "CHANGE_NOT_NEEDED",
+						type: 'CHANGE_NOT_NEEDED',
 						amount: 0,
 					},
 					date: new Date().toISOString(),
@@ -522,7 +528,7 @@ async function createDailyMeals(req, res) {
 					...orderData,
 					status: DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP,
 				},
-				user.user_id,
+				user.user_id
 			);
 
 			await DeliveryOrderDao.createOrderSent(order.order_id, delivery_driver);
@@ -541,7 +547,7 @@ async function createDailyMeals(req, res) {
 			delivery_timeline: [],
 		});
 
-		userSocket.emit("daily_meals", {
+		userSocket.emit('daily_meals', {
 			orders: orders,
 			scheduled_meals_route: scheduledMealsRoute,
 		});
@@ -549,7 +555,7 @@ async function createDailyMeals(req, res) {
 		res.status(200).json(orders);
 	} catch (error) {
 		console.error(error);
-		res.status(500).json({ message: "Something went wrong with creating daily meals..." });
+		res.status(500).json({ message: 'Something went wrong with creating daily meals...' });
 	}
 }
 
@@ -582,29 +588,29 @@ async function acceptOrderDelivery(req, res) {
 			: await DriverDao.getDriverById(deliverer_id);
 
 		if (!deliverer.online) {
-			return res.status(400).json({ error: `You are offline!.`, errorType: "ERR_DRIVER_OFFLINE" });
+			return res.status(400).json({ error: `You are offline!.`, errorType: 'ERR_DRIVER_OFFLINE' });
 		} else if (
 			//TODO: handle dispatcher canceled.
 			[].includes(order.status)
 		) {
 			return res
 				.status(400)
-				.json({ error: `Order has been canceled: ${order.status}.`, errorType: "ERR_ORDER_ALREADY_CANCELED" });
+				.json({ error: `Order has been canceled: ${order.status}.`, errorType: 'ERR_ORDER_ALREADY_CANCELED' });
 		} else if (
 			![DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(
-				order.status,
+				order.status
 			)
 		) {
 			return res
 				.status(400)
-				.json({ error: "Order cannot be accepted in this state.", errorType: "ERR_ORDER_UNACCEPTABLE" });
+				.json({ error: 'Order cannot be accepted in this state.', errorType: 'ERR_ORDER_UNACCEPTABLE' });
 		} else if (
 			(order.driver?.driver_id && order.driver?.driver_id !== deliverer_id) ||
 			(order.delivery_driver?.delivery_driver_id && order.delivery_driver?.delivery_driver_id !== deliverer_id)
 		) {
 			return res
 				.status(400)
-				.json({ error: "Order is already accepted.", errorType: "ERR_ORDER_ALREADY_ACCEPTED" });
+				.json({ error: 'Order is already accepted.', errorType: 'ERR_ORDER_ALREADY_ACCEPTED' });
 		}
 		const vehicle = deliverer.current_vehicle || deliverer.vehicles[0];
 		order = await DeliveryOrderDao.acceptOrderDelivery(order, deliverer_id, vehicle?.vehicle_id);
@@ -630,11 +636,11 @@ async function acceptOrderDelivery(req, res) {
 		order = await DeliveryOrderDao.updateOrder(order.order_id, {
 			details: order.details
 		});*/
-		console.log("order accepted", order);
+		console.log('order accepted', order);
 
 		SocketStore.addUserToRoom(deliverer.user_id, `order_${order.order_id}`);
-		io.to("order_" + order.order_id).emit("order_accepted__delivery", order);
-		io.emit("driver_unavailable", deliverer_id);
+		io.to('order_' + order.order_id).emit('order_accepted__delivery', order);
+		io.emit('driver_unavailable', deliverer_id);
 
 		await revokeDeliveryOrderFromDrivers(order.order_id);
 		res.status(200).json(order);
@@ -675,24 +681,20 @@ async function cancelOrderDelivery(req, res) {
 		deliverer = order.delivery_driver || order.driver || null;
 
 		if (order.driver?.driver_id !== deliverer_id && order.delivery_driver?.delivery_driver_id !== deliverer_id) {
-			return res
-				.status(400)
-				.json({
-					error: "You are not authorized to cancel this order delivery.",
-					errorType: "ERR_NOT_AUTHORIZED",
-				});
+			return res.status(400).json({
+				error: 'You are not authorized to cancel this order delivery.',
+				errorType: 'ERR_NOT_AUTHORIZED',
+			});
 		}
 		if (
 			![DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(
-				order.status,
+				order.status
 			)
 		) {
-			return res
-				.status(400)
-				.json({
-					error: "Order delivery cannot be canceled in its current state.",
-					errorType: "ERR_DELIVERY_CANNOT_BE_CANCELED",
-				});
+			return res.status(400).json({
+				error: 'Order delivery cannot be canceled in its current state.',
+				errorType: 'ERR_DELIVERY_CANNOT_BE_CANCELED',
+			});
 		}
 
 		// 3. Remove driver from order
@@ -707,18 +709,18 @@ async function cancelOrderDelivery(req, res) {
 			DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
 			user?.delivery_driver
 				? { delivery_driver_id: user?.delivery_driver?.delivery_driver_id }
-				: { driver_id: user.driver.driver_id },
+				: { driver_id: user.driver.driver_id }
 		);
 
 		// 5. Emit event to sockets with updated order
-		io.to("order_" + order.order_id).emit("order_delivery_canceled", order);
+		io.to('order_' + order.order_id).emit('order_delivery_canceled', order);
 		SocketStore.removeUserFromRoom(order.user_id, `order_${order.order_id}`);
 		SocketStore.removeUserFromRoom(req.user?.user_id, `order_${order.order_id}`);
 
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);
-		res.status(500).json({ error: "Something went wrong...", errorType: "ERR_SERVER_ERROR" });
+		res.status(500).json({ error: 'Something went wrong...', errorType: 'ERR_SERVER_ERROR' });
 	}
 }
 
@@ -744,15 +746,15 @@ async function completeOrder(req, res) {
 
 		//assign penalties for being late
 		const timeline_delivered_timestamp = order.timeline.findLast(
-			(entry) => entry.status === DELIVERY_ORDER_STATUS.DELIVERY_DELIVERED,
+			(entry) => entry.status === DELIVERY_ORDER_STATUS.DELIVERY_DELIVERED
 		)?.timestamp;
 
 		if (timeline_delivered_timestamp && order.details?.customer_expected_delivery_at) {
 			const late_seconds = moment(timeline_delivered_timestamp).diff(
 				moment(order.details.customer_expected_delivery_at),
-				"seconds",
+				'seconds'
 			);
-			console.log(`Order was ${late_seconds} seconds ${late_seconds > 0 ? "late" : "early or on time"}.`);
+			console.log(`Order was ${late_seconds} seconds ${late_seconds > 0 ? 'late' : 'early or on time'}.`);
 			let allowed_leeway = 60 * 30;
 
 			if (late_seconds > allowed_leeway) {
@@ -761,7 +763,7 @@ async function completeOrder(req, res) {
 					driver.user_id,
 					order.order_id,
 					null,
-					late_seconds - allowed_leeway,
+					late_seconds - allowed_leeway
 				);
 			}
 		} else {
@@ -772,7 +774,7 @@ async function completeOrder(req, res) {
 				null,
 				0,
 				false,
-				SCORING_POINTS_REASON.INSUFFICIENT_DATA,
+				SCORING_POINTS_REASON.INSUFFICIENT_DATA
 			);
 		}
 
@@ -788,7 +790,7 @@ async function completeOrder(req, res) {
 				delivery_business_stripe,
 				DELIVERY_CREDIT_CUT_CENTS,
 				order.order_id,
-				SERVICE_TYPE.DELIVERY,
+				SERVICE_TYPE.DELIVERY
 			);
 		}
 
@@ -834,7 +836,7 @@ async function completeOrder(req, res) {
 							amount: 100,
 							type: FUNDS_TYPE.CREDITS_DELIVERY,
 						},
-						pendingCashbacks,
+						pendingCashbacks
 					);
 				}
 			}
@@ -843,28 +845,28 @@ async function completeOrder(req, res) {
 		await handleReferral(order.user_id);
 
 		if (DISCOUNTED_DELIVERY_COST_CENTS > 0) {
-			if (order.payment.type === "CARD") {
+			if (order.payment.type === 'CARD') {
 				const paymentIntent = await stripe.client.paymentIntents.retrieve(order.payment_intent_id);
 				const transferDelivery = stripe.splitCutFromPaymentIntent(
 					paymentIntent,
 					delivery_business_stripe,
-					DISCOUNTED_DELIVERY_COST_CENTS,
+					DISCOUNTED_DELIVERY_COST_CENTS
 				);
-			} else if (order.payment.type === "WALLET") {
+			} else if (order.payment.type === 'WALLET') {
 				console.info(order);
 				const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 					order.user_id,
 					delivery_business_stripe,
 					DISCOUNTED_DELIVERY_COST_CENTS,
 					order.order_id,
-					SERVICE_TYPE.DELIVERY,
+					SERVICE_TYPE.DELIVERY
 				);
 			}
 		}
 		sendDeliveryOrderNotifications(order.user, null, order.user_id, null, order.status);
 		// order = await DeliveryOrderDao.updateOrderStatus(order.order_id,DELIVERY_ORDER_STATUS.SUCCESS)
-		io.to("order_" + order.order_id).emit("order_completed__delivery", order);
-		io.emit("driver_available", driver);
+		io.to('order_' + order.order_id).emit('order_completed__delivery', order);
+		io.emit('driver_available', driver);
 		SocketStore.closeRoom(`order_${order.order_id}`);
 		res.status(200).json(order);
 	} catch (e) {
@@ -918,7 +920,7 @@ async function getDeliveryOrdersByDriverId(req, res) {
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getCompletedDeliveryOrdersByDriverId(req, res) {
-	console.log("get completed orders");
+	console.log('get completed orders');
 	const { driver_id } = req.params;
 
 	try {
@@ -951,7 +953,7 @@ async function getCompletedDeliveryOrdersByDriverId(req, res) {
  */
 async function getActiveDeliveryOrdersByDriverId(req, res) {
 	const { driver_id } = req.params;
-	console.log("getActiveDeliveryOrdersByDriverId", driver_id);
+	console.log('getActiveDeliveryOrdersByDriverId', driver_id);
 	try {
 		const activeOrders = await DeliveryOrderDao.getOrders({
 			where: {
@@ -990,7 +992,7 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 				!order.driver_id
 			) {
 				pendingOrders.push(order);
-				console.info("Re-sending pending order: ", order.order_id, " to driver: ", driver_id);
+				console.info('Re-sending pending order: ', order.order_id, ' to driver: ', driver_id);
 			}
 		}
 		res.status(200).json({
@@ -1041,7 +1043,7 @@ async function getCompletedDeliveryOrdersByUserId(req, res) {
 				driver: true,
 			},
 			orderBy: {
-				updated_at: "desc",
+				updated_at: 'desc',
 			},
 		});
 
@@ -1217,7 +1219,7 @@ async function updateOrderStatus(req, res) {
 		}
 
 		order = await DeliveryOrderDao.updateOrderStatus(req.body.order_id, req.body.status);
-		io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 
 		if (
 			[
@@ -1227,12 +1229,12 @@ async function updateOrderStatus(req, res) {
 			].includes(order.status)
 		) {
 			order = await DeliveryOrderDao.updateOrderStatus(req.body.order_id, DELIVERY_ORDER_STATUS.FAIL);
-			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+			io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 		} else if (
 			[DELIVERY_ORDER_STATUS.CUSTOMER_PICKED_UP, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED].includes(order.status)
 		) {
 			order = await DeliveryOrderDao.updateOrderStatus(req.body.order_id, DELIVERY_ORDER_STATUS.SUCCESS);
-			io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+			io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 		}
 
 		let d;
@@ -1268,38 +1270,38 @@ async function merchantAcceptOrder(req, res) {
 		let order;
 		if (preparation_time) {
 			order = await DeliveryOrderDao.updateOrderPickupTime(order_id, preparation_time);
-			io.to("order_" + order.order_id).emit("order_pickup_time", order);
+			io.to('order_' + order.order_id).emit('order_pickup_time', order);
 		} else {
-			console.error("Preparation time must be set");
+			console.error('Preparation time must be set');
 			return res.status(400).json(order_id);
 		}
 		const user = order?.user;
-		console.info("got into merchantAcceptOrder", JSON.stringify(order.payment_intent_id));
+		console.info('got into merchantAcceptOrder', JSON.stringify(order.payment_intent_id));
 		const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
 		const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT } =
 			await calculateDeliveryOrderPaymentCuts(order);
 
-		if (order.payment.type === "CARD" || order.payment.type === "PLATFORM") {
+		if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
 			if (Math.round(order.details.total_price * 100) === order.details.credit_discount) {
 				const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 					order.user_id,
 					restaurant_stripe,
 					MERCHANT_CREDIT_CUT,
 					order.order_id,
-					SERVICE_TYPE.DELIVERY,
+					SERVICE_TYPE.DELIVERY
 				);
 				const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 					order.user_id,
-					"platform",
+					'platform',
 					PLATFORM_CREDIT_CUT,
 					order.order_id,
-					SERVICE_TYPE.DELIVERY,
+					SERVICE_TYPE.DELIVERY
 				);
 			} else {
 				order = await DeliveryOrderDao.updateOrder(order.order_id, {
 					payment: {
 						...order.payment,
-						status: "IN_PAYMENT_PROCESSING",
+						status: 'IN_PAYMENT_PROCESSING',
 					},
 				});
 				// Status update happens elsewhere for CARD payments
@@ -1310,26 +1312,24 @@ async function merchantAcceptOrder(req, res) {
 				});
 				return res.status(200).json(order);
 			}
-		}
-
-		else if (order.payment.type === "WALLET") {
+		} else if (order.payment.type === 'WALLET') {
 			const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 				order.user_id,
 				restaurant_stripe,
 				MERCHANT_CUT + MERCHANT_CREDIT_CUT,
 				order.order_id,
-				SERVICE_TYPE.DELIVERY,
+				SERVICE_TYPE.DELIVERY
 			);
 			const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 				order.user_id,
-				"platform",
+				'platform',
 				PLATFORM_CUT + PLATFORM_CREDIT_CUT,
 				order.order_id,
-				SERVICE_TYPE.DELIVERY,
+				SERVICE_TYPE.DELIVERY
 			);
 		} else {
 			// TODO: reject
-			throw new Error("Payment type not supported");
+			throw new Error('Payment type not supported');
 		}
 
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL);
@@ -1339,16 +1339,16 @@ async function merchantAcceptOrder(req, res) {
 		// if(order.business_id){
 		// 	io.to("orders_" + order.business_id).emit("order_status_change__delivery", order);
 		// }
-		io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);
 		await handlePaymentCleanup(order_id);
 		let order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED);
-		io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.FAIL);
-		io.to("order_" + order.order_id).emit("order_status_change__delivery", order);
+		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 		SocketStore.closeRoom(`order_${order.order_id}`);
 		res.status(500).json(e);
 	}
@@ -1371,7 +1371,7 @@ async function updateOrderPickupTime(req, res) {
 	const { order_id, pickup_time } = req.body;
 	try {
 		let order = await DeliveryOrderDao.updateOrderPickupTime(order_id, pickup_time);
-		io.to("order_" + order.order_id).emit("order_pickup_time", order);
+		io.to('order_' + order.order_id).emit('order_pickup_time', order);
 		const totalDelay = order.timeline.reduce((sum, entry) => {
 			if (entry.status === DELIVERY_ORDER_STATUS.MERCHANT_DELAYED) {
 				return sum + (entry.delay || 0);
@@ -1389,7 +1389,7 @@ async function updateOrderPickupTime(req, res) {
 		if (totalDelay > 120) {
 			const exising_penalties = await ScoringPointsDao.getScoringPointsByBusinessId(order.business_id);
 			const already_penalized_order = exising_penalties?.find(
-				(sp) => sp.delivery_order_id === order.order_id && sp.reason === SCORING_POINTS_REASON.LARGE_DELAY,
+				(sp) => sp.delivery_order_id === order.order_id && sp.reason === SCORING_POINTS_REASON.LARGE_DELAY
 			);
 			if (!already_penalized_order) {
 				//Assuming only merchant makes this api call so we can user req.user.user_id
@@ -1400,13 +1400,13 @@ async function updateOrderPickupTime(req, res) {
 					null,
 					1,
 					true,
-					SCORING_POINTS_REASON.LARGE_DELAY,
+					SCORING_POINTS_REASON.LARGE_DELAY
 				);
 			}
 		}
 		res.status(200).json(order);
 	} catch (e) {
-		console.log("Error updating order pickup time", e.message);
+		console.log('Error updating order pickup time', e.message);
 		res.status(500).json(e);
 	}
 }
@@ -1428,7 +1428,7 @@ async function updateOrderDeliveryTime(req, res) {
 	const { order_id, delivery_time } = req.body;
 	try {
 		let order = await DeliveryOrderDao.updateOrderDeliveryTime(order_id, delivery_time);
-		io.to("order_" + order.order_id).emit("order_delivery_time", order);
+		io.to('order_' + order.order_id).emit('order_delivery_time', order);
 
 		res.status(200).json(order);
 	} catch (e) {
@@ -1455,7 +1455,7 @@ async function updateDeliveryOrderTimeline(req, res) {
 
 	try {
 		let order = await DeliveryOrderDao.updateDeliveryOrderTimeline(order_id, timeline);
-		io.to("order_" + order.order_id).emit("order_timeline_change_delivery", order);
+		io.to('order_' + order.order_id).emit('order_timeline_change_delivery', order);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);
@@ -1481,7 +1481,7 @@ async function addToDeliveryOrderTimeline(req, res) {
 
 	try {
 		let order = await DeliveryOrderDao.addTimelineEntry(order_id, status, entry_data || {});
-		io.to("order_" + order.order_id).emit("order_timeline_change_delivery", order);
+		io.to('order_' + order.order_id).emit('order_timeline_change_delivery', order);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);
@@ -1539,7 +1539,7 @@ async function getDeliveryOrdersToday(req, res) {
 				.json({ orders: orders.length, amount: todaysEarnings(orders, DELIVERY_ORDER_STATUS.SUCCESS) });
 		}
 	} catch (e) {
-		console.error("DeliveryOrderController", e);
+		console.error('DeliveryOrderController', e);
 		res.status(500).json(e);
 	}
 }
@@ -1568,11 +1568,11 @@ async function dispatcherCancel(req, res) {
 				...DELIVERY_ORDER_END_STATES,
 			].includes(old_order.status)
 		) {
-			throw new Error("This order is not in a cancelable state.");
+			throw new Error('This order is not in a cancelable state.');
 		}
 		let new_order = await DeliveryOrderDao.updateOrderStatus(
 			old_order.order_id,
-			DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED,
+			DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED
 		);
 		let driver;
 		if (old_order.driver_id) {
@@ -1602,22 +1602,22 @@ async function dispatcherCancel(req, res) {
 			driver?.user,
 			old_order.user_id,
 			driver?.user_id,
-			new_order.status,
+			new_order.status
 		);
 		//TODO: handle extras for socket on FE if needed.
-		io.to("order_" + new_order.order_id).emit("order_status_change__delivery", new_order);
+		io.to('order_' + new_order.order_id).emit('order_status_change__delivery', new_order);
 
 		new_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.FAIL);
-		io.to("order_" + new_order.order_id).emit("order_status_change__delivery", new_order);
+		io.to('order_' + new_order.order_id).emit('order_status_change__delivery', new_order);
 
 		await handlePaymentRefund(new_order);
 		//TODO: handle on FE if needed.
-		io.to("order_" + new_order.order_id).emit("order_canceled", new_order);
+		io.to('order_' + new_order.order_id).emit('order_canceled', new_order);
 
 		SocketStore.closeRoom(`order_${new_order.order_id}`);
 		res.status(200).json(new_order);
 	} catch (e) {
-		console.error("Error canceling order", e);
+		console.error('Error canceling order', e);
 		res.status(500).json(e);
 	}
 }
@@ -1642,7 +1642,7 @@ async function dispatcherRevoke(req, res) {
 		let updated_order = null;
 		if (
 			[DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(
-				old_order.status,
+				old_order.status
 			)
 		) {
 			await DeliveryOrderDao.removeDriverFromOrder(old_order.order_id);
@@ -1652,7 +1652,7 @@ async function dispatcherRevoke(req, res) {
 			updated_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, old_order.status);
 		} else if (
 			[DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP, DELIVERY_ORDER_STATUS.DELIVERY_IN_DELIVERY].includes(
-				old_order.status,
+				old_order.status
 			)
 		) {
 			let new_location = null;
@@ -1662,13 +1662,13 @@ async function dispatcherRevoke(req, res) {
 				new_location = old_order.delivery_driver.location;
 			}
 			if (!new_location || !(new_location?.coordinates?.latitude && new_location?.coordinates?.longitude)) {
-				throw new Error("The current driver does not have a well defined location.");
+				throw new Error('The current driver does not have a well defined location.');
 			}
 			const new_address = await gApi.addressFromCoordinates(
 				new_location?.coordinates?.latitude,
-				new_location?.coordinates?.longitude,
+				new_location?.coordinates?.longitude
 			);
-			new_location.address = `Previous Driver Location ${new_address ? "(" + new_address + ")" : "(use navigation)"}`;
+			new_location.address = `Previous Driver Location ${new_address ? '(' + new_address + ')' : '(use navigation)'}`;
 
 			await DeliveryOrderDao.removeDriverFromOrder(old_order.order_id);
 			await DeliveryOrderDao.updateOrder(old_order.order_id, { pickup_location: new_location });
@@ -1677,31 +1677,31 @@ async function dispatcherRevoke(req, res) {
 			});
 			updated_order = await DeliveryOrderDao.updateOrderStatus(
 				old_order.order_id,
-				DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP,
+				DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP
 			);
 		} else {
-			throw new Error("This order is not in a reassignable state.");
+			throw new Error('This order is not in a reassignable state.');
 		}
 
 		if (old_order.driver) {
 			if (UserSockets.get(old_order.driver.user_id)) {
-				UserSockets.get(old_order.driver.user_id).emit("order_revoked__delivery", order_id);
+				UserSockets.get(old_order.driver.user_id).emit('order_revoked__delivery', order_id);
 			}
 			SocketStore.removeUserFromRoom(old_order.driver.user_id, `order_${old_order.order_id}`);
 		}
 		if (old_order.delivery_driver) {
 			if (UserSockets.get(old_order.delivery_driver.user_id)) {
-				UserSockets.get(old_order.delivery_driver.user_id).emit("order_revoked__delivery", order_id);
+				UserSockets.get(old_order.delivery_driver.user_id).emit('order_revoked__delivery', order_id);
 			}
 			SocketStore.removeUserFromRoom(old_order.delivery_driver.user_id, `order_${old_order.order_id}`);
 		}
 
 		//TODO: handle extras for socket on FE if needed.
-		io.to("order_" + updated_order.order_id).emit("order_status_change__delivery", updated_order);
+		io.to('order_' + updated_order.order_id).emit('order_status_change__delivery', updated_order);
 
 		res.status(200).json(updated_order);
 	} catch (e) {
-		console.error("Error canceling order", e);
+		console.error('Error canceling order', e);
 		res.status(500).json(e);
 	}
 }
@@ -1728,17 +1728,17 @@ async function dailyMealsSubscriptionPayment(req, res) {
 			}
 		}
 		const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user?.user_id);
-		if (payment_type === "WALLET") {
-			if (available_wallet_balances["DELIVERY"] + available_wallet_balances[null] < TOTAL_PRICE_CENT / 100) {
-				throw new Error("Insufficient funds");
+		if (payment_type === 'WALLET') {
+			if (available_wallet_balances['DELIVERY'] + available_wallet_balances[null] < TOTAL_PRICE_CENT / 100) {
+				throw new Error('Insufficient funds');
 			}
 		}
-		const business = await BusinessDao.getBusinessById(business_id)
+		const business = await BusinessDao.getBusinessById(business_id);
 		const restaurant_acc = business.stripe_account_id;
 		const pm_id = payment_method_id;
 		const customer_acc = user.stripe_customer_id;
 		if (!customer_acc) {
-			throw new Error("User does not have a stripe customer account.");
+			throw new Error('User does not have a stripe customer account.');
 		}
 		const TOTAL_PRICE_CENTS = Math.round(total_price * 100); //already includes delivery cost
 		const CREDITS_AMOUNT_RESERVED = allow_credits_usage
@@ -1748,7 +1748,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 						TOTAL_PRICE_CENTS,
 						groupedId,
 						FUNDS_TYPE.CREDITS_DELIVERY,
-						"daily_meals_subscription",
+						'daily_meals_subscription'
 					)
 				).reduce((sum, wf) => sum + wf.amount, 0)
 			: 0;
@@ -1761,44 +1761,47 @@ async function dailyMealsSubscriptionPayment(req, res) {
 					total_price: total_price,
 					delivery_cost: delivery_cost,
 					sub_total_price: sub_total_price,
-
 				},
 			},
-			"daily_meals_subscription",
+			'daily_meals_subscription'
 		);
-		console.info("createDailyMealsSubscriptionPaymentIntent calculateDeliveryOrderPaymentCuts results: ", JSON.stringify(results, null, 2));
+		console.info(
+			'createDailyMealsSubscriptionPaymentIntent calculateDeliveryOrderPaymentCuts results: ',
+			JSON.stringify(results, null, 2)
+		);
 		const { MERCHANT_CUT } = results;
-		if (DISCOUNTED_COMBINED_COST_CENTS === 0) return res.status(200).json({ status: "Success", groupedId: groupedId });
+		if (DISCOUNTED_COMBINED_COST_CENTS === 0)
+			return res.status(200).json({ status: 'Success', groupedId: groupedId });
 		let payment_intent = null;
-		if (payment_type === "CARD" || payment_type === "PLATFORM") {
+		if (payment_type === 'CARD' || payment_type === 'PLATFORM') {
 			payment_intent = await stripe.createSplitPayment(
 				customer_acc,
-				restaurant_acc, 
+				restaurant_acc,
 				groupedId,
 				pm_id,
 				DISCOUNTED_COMBINED_COST_CENTS,
 				MERCHANT_CUT,
 				return_url,
-				"daily_meals_subscription_payment",
+				'daily_meals_subscription_payment'
 			);
 
 			if (!payment_intent) {
-				throw new Error("Payment intent creation failed.");
+				throw new Error('Payment intent creation failed.');
 			}
 			if (payment_intent?.error) {
 				throw new Error(payment_intent?.error.message);
 			}
 			return res.status(200).json({
-				status: "Success",
+				status: 'Success',
 				grouped_id: groupedId,
 				payment_intent: payment_intent,
 			});
-		} 
-		if (payment_type === "WALLET") {
+		}
+		if (payment_type === 'WALLET') {
 			// handle wallet payment
 			try {
 				if (available_wallet_balances[null] < DISCOUNTED_COMBINED_COST_CENTS / 100) {
-					throw new Error("Insufficient funds");
+					throw new Error('Insufficient funds');
 				}
 
 				// await UsersDao.removeWalletBalance(user_id, DISCOUNTED_COMBINED_COST_CENTS/100, order.order_id);
@@ -1806,22 +1809,21 @@ async function dailyMealsSubscriptionPayment(req, res) {
 					user.user_id,
 					DISCOUNTED_COMBINED_COST_CENTS,
 					groupedId,
-					"daily_meals_subscription",
+					'daily_meals_subscription'
 				);
 				return res.status(200).json({
-					status: "Success",
+					status: 'Success',
 					grouped_id: groupedId,
 				});
 			} catch (err) {
-				throw new Error("Insufficient funds");
+				throw new Error('Insufficient funds');
 			}
 		}
-		if (payment_type === "CASH") {
-			throw new Error("CASH payments are not allowed for this order type.");
+		if (payment_type === 'CASH') {
+			throw new Error('CASH payments are not allowed for this order type.');
 		}
-	
 	} catch (e) {
-		console.error("Error creating daily meals subscription payment intent", e);
+		console.error('Error creating daily meals subscription payment intent', e);
 		res.status(500).json(e);
 	}
 }
@@ -1841,7 +1843,7 @@ async function createDailyMealsSubscription(req, res) {
 				let date = new Date(day.date);
 				date.setHours(10, 0, 0);
 				const menuData = menu[menuTag];
-				const business_id = details.business_id || menuData.business_id
+				const business_id = details.business_id || menuData.business_id;
 
 				await DeliveryOrderDao.createDailyMealsSubscription(
 					grouped_id,
@@ -1858,7 +1860,7 @@ async function createDailyMealsSubscription(req, res) {
 			}
 		}
 		res.status(200).json({
-			status: "Success",
+			status: 'Success',
 		});
 	} catch (e) {
 		console.log(e);

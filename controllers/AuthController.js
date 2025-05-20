@@ -1,25 +1,27 @@
-const UserDao = require("../dao/User");
-const { generateAccessToken, generateRefreshToken } = require("../lib/jwt");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const TokenDao = require("../dao/Token");
-const BusinessDao = require("../dao/Business");
-const AddressDao = require("../dao/Address");
-const DriverDao = require("../dao/Driver");
-const VehicleDao = require("../dao/Vehicle");
-const DocumentDao = require("../dao/Document");
-const DeliveryDriverDao = require("../dao/DeliveryDriver");
-const BusinessUsersDao = require("../dao/BusinessUsers");
-const FileDao = require("../dao/File");
-const S3Helper = require("../lib/s3");
-const EmailHelper = require("../lib/emailSender");
 const fs = require('fs');
-const stripe = require("../lib/stripe");
+
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const UserDao = require('../dao/User');
+const { generateAccessToken, generateRefreshToken } = require('../lib/jwt');
+const TokenDao = require('../dao/Token');
+const BusinessDao = require('../dao/Business');
+const AddressDao = require('../dao/Address');
+const DriverDao = require('../dao/Driver');
+const VehicleDao = require('../dao/Vehicle');
+const DocumentDao = require('../dao/Document');
+const DeliveryDriverDao = require('../dao/DeliveryDriver');
+const BusinessUsersDao = require('../dao/BusinessUsers');
+const FileDao = require('../dao/File');
+const S3Helper = require('../lib/s3');
+const EmailHelper = require('../lib/emailSender');
+const stripe = require('../lib/stripe');
 const MenuDao = require('../dao/Menu');
-const SMSHelper = require("../lib/SMS");
-const { DOCUMENT_TYPE } = require("../lib/constants");
-const { businessIndex } = require("../elasticsearch");
-const prisma = require("../prisma/prisma");
+const SMSHelper = require('../lib/SMS');
+const { DOCUMENT_TYPE } = require('../lib/constants');
+const { businessIndex } = require('../elasticsearch');
+const prisma = require('../prisma/prisma');
 require('dotenv').config();
 
 /**
@@ -39,8 +41,7 @@ async function getScheduledUsers(req, res) {
 	try {
 		let users = await UserDao.getScheduledUsers();
 		res.status(200).json(users);
-	}
-	catch (e) {
+	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
@@ -70,9 +71,9 @@ async function login(req, res) {
 			},
 		});
 		console.log(user);
-		if (!user) return res.status(400).json({ error: "Wrong email / password combination.." });
+		if (!user) return res.status(400).json({ error: 'Wrong email / password combination..' });
 		let correctPw = await bcrypt.compare(postData.password, user.password);
-		if (!correctPw) return res.status(400).json({ error: "Wrong email / password combination.." });
+		if (!correctPw) return res.status(400).json({ error: 'Wrong email / password combination..' });
 		user = await UserDao.getUserByEmailOrTelephone(postData.email.toLowerCase(), {
 			include: {
 				addresses: {
@@ -92,9 +93,9 @@ async function login(req, res) {
 						delivery_orders_toggled: true,
 						vehicles: {
 							select: {
-								vehicle_drivers_id:true,
-								vehicle_id:true,
-								can_drive:true,
+								vehicle_drivers_id: true,
+								vehicle_id: true,
+								can_drive: true,
 								vehicle: {
 									select: {
 										vehicle_id: true,
@@ -106,42 +107,42 @@ async function login(req, res) {
 										model: true,
 										color: true,
 										license_plate: true,
-										current_driver: true
-									}
+										current_driver: true,
+									},
 								},
-							}
+							},
 						},
 						last_used_vehicle_id: true,
 						current_vehicle: true,
 						activity_logs: {
 							orderBy: {
-								started_at: "desc",
-							}
+								started_at: 'desc',
+							},
 						},
-					}
+					},
 				},
 				delivery_driver: {
 					select: {
 						delivery_driver_id: true,
 						delivers_daily_meals: true,
 						business_id: true,
-						user_id: true
-					}
+						user_id: true,
+					},
 				},
-				child_users: { include:{child_user: true}},
-				parent_user: { include:{parent_user: true}},
+				child_users: { include: { child_user: true } },
+				parent_user: { include: { parent_user: true } },
 				referrals_made: true,
-				referral: { include: {referrer: { select: { first_name: true, last_name: true } } } },
-				user_roles:true,
+				referral: { include: { referrer: { select: { first_name: true, last_name: true } } } },
+				user_roles: true,
 			},
 		});
-		if (user.disabled) return res.status(400).json({ error: "Account is disabled." });
-		if (!user.active) return res.status(400).json({ error: "Account is inactive." });
-		let payment_methods = []
+		if (user.disabled) return res.status(400).json({ error: 'Account is disabled.' });
+		if (!user.active) return res.status(400).json({ error: 'Account is inactive.' });
+		let payment_methods = [];
 		if (user.stripe_customer_id) {
 			payment_methods = await stripe.getPaymentMethods(user.stripe_customer_id);
 		}
-		delete user["password"];
+		delete user['password'];
 		const access_token = generateAccessToken({
 			user_id: user.user_id,
 		});
@@ -154,12 +155,12 @@ async function login(req, res) {
 			...user,
 			access_token,
 			refresh_token,
-			payment_methods
+			payment_methods,
 		};
 		if (profile) {
-			user.profile_picture =  profile[0]?.files[0]?.url;
+			user.profile_picture = profile[0]?.files[0]?.url;
 		}
-		res.status(200).header("Authorization", access_token).json(user);
+		res.status(200).header('Authorization', access_token).json(user);
 	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
@@ -183,27 +184,26 @@ async function login(req, res) {
 async function register(req, res) {
 	let postData = req.body;
 	try {
-		if (!postData.email)
-		{
-			postData.email = "";
+		if (!postData.email) {
+			postData.email = '';
 		}
 		postData.email = postData.email.toLowerCase();
 		let UserExistsPhone = await UserDao.getUserByTelephone(postData.telephone);
 		if (UserExistsPhone) {
-			return res.status(400).json({ error: "Telephone already in use!" });
+			return res.status(400).json({ error: 'Telephone already in use!' });
 		}
 		let UserExistsEmail = await UserDao.getUserByEmail(postData.email);
 		if (UserExistsEmail) {
-			return res.status(400).json({ error: "Email already in use!" });
+			return res.status(400).json({ error: 'Email already in use!' });
 		}
 		let hash = await bcrypt.hash(postData.password, Number(process.env.BCRYPT_SALT_ROUNDS));
 		let stripeCustomer = await stripe.createCustomer(
 			postData.email,
-			postData.first_name + " " + postData.last_name,
-			postData.telephone,
+			postData.first_name + ' ' + postData.last_name,
+			postData.telephone
 		);
-		const userRole = postData.user_role || "PERSONAL";
-		const userRoles = postData.user_roles || [{role: userRole, primary: true}];
+		const userRole = postData.user_role || 'PERSONAL';
+		const userRoles = postData.user_roles || [{ role: userRole, primary: true }];
 		delete postData.user_roles;
 		const countryCode = postData.telephone_code;
 		const phoneNumber = postData.telephone_number;
@@ -217,26 +217,22 @@ async function register(req, res) {
 			user_role: userRole,
 			stripe_customer_id: stripeCustomer.id,
 			reviewable: {
-				create: {
-					
-				},
+				create: {},
 			},
 			apple_id: postData.apple_id || null,
 			google_id: postData.google_id || null,
 		};
-		
-		delete userObj["confirm_password"];
+
+		delete userObj['confirm_password'];
 		delete userObj.referral_code;
 		let user = await UserDao.createNewUser(userObj);
 		await UserDao.linkRolesToUser(user?.user_id, userRoles);
-		user = await UserDao.getUserById(user.user_id,
-			{
-				include: {
-					addresses: true
-				},
-			}
-		);
-		delete user["password"];
+		user = await UserDao.getUserById(user.user_id, {
+			include: {
+				addresses: true,
+			},
+		});
+		delete user['password'];
 		const access_token = generateAccessToken({
 			user_id: user.user_id,
 		});
@@ -249,10 +245,10 @@ async function register(req, res) {
 			access_token,
 			refresh_token,
 		};
-		res.status(200).header("Authorization", access_token).json(user);
+		res.status(200).header('Authorization', access_token).json(user);
 	} catch (e) {
-		console.log(e)
-		res.status(400).json({ error: "Error something went wrong..", e });
+		console.log(e);
+		res.status(400).json({ error: 'Error something went wrong..', e });
 	}
 }
 
@@ -275,36 +271,34 @@ async function register(req, res) {
 async function refreshToken(req, res) {
 	const refreshToken = req.body.refresh_token;
 	if (!refreshToken) {
-		return res.status(400).send("Access Denied. No refresh token provided.");
+		return res.status(400).send('Access Denied. No refresh token provided.');
 	}
 
 	jwt.verify(refreshToken, process.env.JWT_TOKEN_SECRET, async function (err, decoded) {
 		if (err) {
-			return res.status(401).json({ error: "Access Denied. Token expired.", e: err });
+			return res.status(401).json({ error: 'Access Denied. Token expired.', e: err });
 		}
-		delete decoded["iat"];
-		delete decoded["exp"];
+		delete decoded['iat'];
+		delete decoded['exp'];
 		const access_token = generateAccessToken({
 			user_id: decoded.user.user_id,
 		});
 		const refresh_token = generateRefreshToken({
 			user_id: decoded.user.user_id,
 		});
-		let userDb = await UserDao.getUserById(decoded.user.user_id,
-			{
-				include: {
-					addresses: true,
-					user_roles:true,
-				},
-			}
-		);
-		delete userDb["password"];
+		let userDb = await UserDao.getUserById(decoded.user.user_id, {
+			include: {
+				addresses: true,
+				user_roles: true,
+			},
+		});
+		delete userDb['password'];
 		let user = {
 			...userDb,
 			access_token,
 			refresh_token,
 		};
-		res.status(200).header("Authorization", access_token).json(user);
+		res.status(200).header('Authorization', access_token).json(user);
 	});
 }
 /**
@@ -321,24 +315,29 @@ async function refreshToken(req, res) {
  */
 async function requestPasswordReset(req, res) {
 	try {
-		let user = req.body.email ? await UserDao.getUserByEmailOrTelephone(req.body.email) : await UserDao.getUserByEmailOrTelephone(req.body.telephone);
+		let user = req.body.email
+			? await UserDao.getUserByEmailOrTelephone(req.body.email)
+			: await UserDao.getUserByEmailOrTelephone(req.body.telephone);
 		let token = await TokenDao.generatePaswordResetToken(user);
 		if (req.body.email && user.email) {
 			let settings = {
 				name: user.first_name,
-				title: "Password Reset Request",
-				resetLink: process.env.LINK_BASE_URL + '/reset-password/' + token.token
+				title: 'Password Reset Request',
+				resetLink: process.env.LINK_BASE_URL + '/reset-password/' + token.token,
 			};
-			EmailHelper.sendEmailTemplate("Password Reset Request", "passwordReset", user.email, settings);
+			EmailHelper.sendEmailTemplate('Password Reset Request', 'passwordReset', user.email, settings);
 		} else if (req.body.telephone && user.telephone) {
-			await SMSHelper.sendSMSPasswordReset(user.telephone, "Your password reset link is: " + process.env.LINK_BASE_URL + '/reset-password/' + token.token);
+			await SMSHelper.sendSMSPasswordReset(
+				user.telephone,
+				'Your password reset link is: ' + process.env.LINK_BASE_URL + '/reset-password/' + token.token
+			);
 		} else {
-			res.status(400).send("Error obtaining user email or telephone");
+			res.status(400).send('Error obtaining user email or telephone');
 		}
-		res.status(200).send("Password reset request processed. A token is sent to the user if the account is found.");
+		res.status(200).send('Password reset request processed. A token is sent to the user if the account is found.');
 	} catch (e) {
-		console.log(e)
-		res.status(400).json({ error: "Error obtaining user information", e });
+		console.log(e);
+		res.status(400).json({ error: 'Error obtaining user information', e });
 	}
 }
 
@@ -348,12 +347,12 @@ async function passwordResetForm(req, res) {
 		let tkn = await UserDao.getUserByResetToken(token);
 		console.log(tkn);
 		if (!tkn && !tkn.users) {
-			return res.status(400).send("Invalid or expired token");
+			return res.status(400).send('Invalid or expired token');
 		}
-		res.render("resetPasswordForm", { token });
+		res.render('resetPasswordForm', { token });
 	} catch (error) {
-		console.error("Error fetching user by reset token:", error);
-		res.status(500).send("Internal Server Error");
+		console.error('Error fetching user by reset token:', error);
+		res.status(500).send('Internal Server Error');
 	}
 }
 
@@ -365,10 +364,13 @@ async function passwordReset(req, res) {
 	try {
 		let user = await UserDao.getUserByResetToken(token);
 		if (!user) {
-			return res.status(400).send("Invalid or expired token");
+			return res.status(400).send('Invalid or expired token');
 		}
 		if (!passwordPattern.test(password)) {
-			return res.render('resetPasswordForm', { token, error: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number' });
+			return res.render('resetPasswordForm', {
+				token,
+				error: 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number',
+			});
 		} else if (password !== confirmPassword) {
 			return res.render('resetPasswordForm', { token, error: 'Passwords do not match' });
 		}
@@ -377,8 +379,7 @@ async function passwordReset(req, res) {
 		let tokenObj = await TokenDao.getPasswordToken(token);
 		await TokenDao.updateToken(tokenObj.token_id, { active: false });
 		res.status(200).render('passwordResetSuccess'); // Render the success template
-	}
-	catch (e) {
+	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
@@ -429,7 +430,7 @@ async function registerTaxiService(req, res) {
 		let stripeCustomer = await stripe.createCustomer(
 			req.body.business.email,
 			req.body.business.name,
-			req.body.business.telephone,
+			req.body.business.telephone
 		);
 		const business = await BusinessDao.createNewBusiness({
 			...req.body.business,
@@ -442,11 +443,14 @@ async function registerTaxiService(req, res) {
 			for (const driverInfo of req.body.drivers) {
 				let stripeCustomer = await stripe.createCustomer(
 					driverInfo.user.data.email,
-					driverInfo.user.data.first_name + " " + driverInfo.user.data.last_name,
-					driverInfo.user.data.telephone,
+					driverInfo.user.data.first_name + ' ' + driverInfo.user.data.last_name,
+					driverInfo.user.data.telephone
 				);
 				const phoneNumber = driverInfo.user.data.telephone_number;
-				const normalizedPhoneNumber = await SMSHelper.getParsedPhoneNumber(driverInfo.user.data.telephone, driverInfo.user.data.telephone_code);
+				const normalizedPhoneNumber = await SMSHelper.getParsedPhoneNumber(
+					driverInfo.user.data.telephone,
+					driverInfo.user.data.telephone_code
+				);
 				let userObj = {
 					...driverInfo.user.data,
 					telephone_number: normalizedPhoneNumber?.number || phoneNumber,
@@ -454,9 +458,11 @@ async function registerTaxiService(req, res) {
 				};
 				delete userObj.user_roles;
 				const newUser = await UserDao.createNewUser(userObj, true);
-				const userRoles = driverInfo.user.data.user_roles || [{role: driverInfo.user.data.user_role || 'DRIVER', primary: true}];
+				const userRoles = driverInfo.user.data.user_roles || [
+					{ role: driverInfo.user.data.user_role || 'DRIVER', primary: true },
+				];
 				const result = await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
-				console.log("User roles linked:", result);
+				console.log('User roles linked:', result);
 
 				// Handle user documents
 				if (driverInfo.user.documents) {
@@ -469,10 +475,17 @@ async function registerTaxiService(req, res) {
 
 							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
 
-							S3Helper.SaveObject(key, base64, file.mime_type, {
-								users: [newUser.user_id],
-								businesses: [business.business_id]
-							}, fileData, document.public);
+							S3Helper.SaveObject(
+								key,
+								base64,
+								file.mime_type,
+								{
+									users: [newUser.user_id],
+									businesses: [business.business_id],
+								},
+								fileData,
+								document.public
+							);
 						}
 						await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 					}
@@ -491,17 +504,24 @@ async function registerTaxiService(req, res) {
 							delete file.base64;
 							let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-							S3Helper.SaveObject(key, base64, file.mime_type, {
-								users: [newUser.user_id],
-								businesses: [business.business_id]
-							}, fileData, document.public);
+							S3Helper.SaveObject(
+								key,
+								base64,
+								file.mime_type,
+								{
+									users: [newUser.user_id],
+									businesses: [business.business_id],
+								},
+								fileData,
+								document.public
+							);
 						}
 						await DocumentDao.linkDocumentToDriver(document.document_id, driver.driver_id);
 					}
 				}
 
 				//Handle addresses of the driver
-				let addresses = []
+				let addresses = [];
 
 				drivers.push({ driver, addresses });
 			}
@@ -512,15 +532,15 @@ async function registerTaxiService(req, res) {
 			for (const vehicleInfo of req.body.vehicles) {
 				const vehicle = await VehicleDao.createNewVehicle({
 					...vehicleInfo?.vehicle_information,
-					business_id: business.business_id
+					business_id: business.business_id,
 				});
 				if (Array.isArray(vehicleInfo.drivers) && vehicleInfo.drivers.length) {
-					for (const email of vehicleInfo?.drivers) {
-						const driver = drivers.find(d => d.email === email);
+					for (const email of vehicleInfo.drivers) {
+						const driver = drivers.find((d) => d.email === email);
 						await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver?.driver_id);
 					}
 				} else {
-					await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, drivers[0]?.driver?.driver_id)
+					await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, drivers[0]?.driver?.driver_id);
 				}
 				// Handle vehicle documents
 				if (vehicleInfo.documents) {
@@ -531,10 +551,17 @@ async function registerTaxiService(req, res) {
 							delete file.base64;
 							let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-							S3Helper.SaveObject(key, base64, file.mime_type, {
-								users: [],
-								businesses: [business.business_id]
-							}, fileData, document.public);
+							S3Helper.SaveObject(
+								key,
+								base64,
+								file.mime_type,
+								{
+									users: [],
+									businesses: [business.business_id],
+								},
+								fileData,
+								document.public
+							);
 						}
 						await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
 					}
@@ -552,10 +579,17 @@ async function registerTaxiService(req, res) {
 					delete file.base64;
 					let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-					S3Helper.SaveObject(key, base64, file.mime_type, {
-						users: [],
-						businesses: [business.business_id]
-					}, fileData, document.public);
+					S3Helper.SaveObject(
+						key,
+						base64,
+						file.mime_type,
+						{
+							users: [],
+							businesses: [business.business_id],
+						},
+						fileData,
+						document.public
+					);
 				}
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
@@ -566,10 +600,10 @@ async function registerTaxiService(req, res) {
 
 		let accountLink = await stripe.getAccountLinks(stripeAccount.id, business.business_id);
 		// send email to business user with account link
-		EmailHelper.sendEmailTemplate("Stripe Onboarding", "stripeOnboarding", business.email,  {
+		EmailHelper.sendEmailTemplate('Stripe Onboarding', 'stripeOnboarding', business.email, {
 			name: business.name,
-			title: "Stripe Onboarding",
-			onboardLink: accountLink.url
+			title: 'Stripe Onboarding',
+			onboardLink: accountLink.url,
 		});
 
 		/*let finances = {};
@@ -578,13 +612,13 @@ async function registerTaxiService(req, res) {
 			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
 		}*/
 
-		let businessAddress = {}
+		let businessAddress = {};
 		if (req.body.addresses) {
 			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
 		}
 
 		res.status(201).json({
-			message: "Taxi service business registered successfully",
+			message: 'Taxi service business registered successfully',
 			business,
 			drivers,
 			vehicles,
@@ -592,8 +626,8 @@ async function registerTaxiService(req, res) {
 			// accountLink
 		});
 	} catch (error) {
-		console.error("Error registering taxi service:", error);
-		res.status(400).json({ error: "Error registering taxi service", detail: error.message });
+		console.error('Error registering taxi service:', error);
+		res.status(400).json({ error: 'Error registering taxi service', detail: error.message });
 	}
 }
 
@@ -641,7 +675,7 @@ async function registerDeliveryService(req, res) {
 		let stripeCustomer = await stripe.createCustomer(
 			req.body.business.email,
 			req.body.business.name,
-			req.body.business.telephone,
+			req.body.business.telephone
 		);
 		const business = await BusinessDao.createNewBusiness({
 			...req.body.business,
@@ -653,11 +687,14 @@ async function registerDeliveryService(req, res) {
 			for (const deliveryDriverInfo of req.body.deliveryDrivers) {
 				let stripeCustomer = await stripe.createCustomer(
 					deliveryDriverInfo.user.data.email,
-					deliveryDriverInfo.user.data.first_name + " " + deliveryDriverInfo.user.data.last_name,
-					deliveryDriverInfo.user.data.telephone,
+					deliveryDriverInfo.user.data.first_name + ' ' + deliveryDriverInfo.user.data.last_name,
+					deliveryDriverInfo.user.data.telephone
 				);
 				const phoneNumber = deliveryDriverInfo.user.data.telephone_number;
-				const normalizedPhoneNumber = await SMSHelper.getParsedPhoneNumber(deliveryDriverInfo.user.data.telephone, deliveryDriverInfo.user.data.telephone_code);
+				const normalizedPhoneNumber = await SMSHelper.getParsedPhoneNumber(
+					deliveryDriverInfo.user.data.telephone,
+					deliveryDriverInfo.user.data.telephone_code
+				);
 				let userObj = {
 					...deliveryDriverInfo.user.data,
 					telephone_number: normalizedPhoneNumber?.number || phoneNumber,
@@ -665,7 +702,9 @@ async function registerDeliveryService(req, res) {
 				};
 				delete userObj.user_roles;
 				const newUser = await UserDao.createNewUser(userObj, true);
-				const userRoles = deliveryDriverInfo.user.data.user_roles || [{role: deliveryDriverInfo.user.data.user_role || 'DELIVERY_DRIVER', primary: true}];
+				const userRoles = deliveryDriverInfo.user.data.user_roles || [
+					{ role: deliveryDriverInfo.user.data.user_role || 'DELIVERY_DRIVER', primary: true },
+				];
 				await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
 
 				// Handle user documents
@@ -677,7 +716,14 @@ async function registerDeliveryService(req, res) {
 							delete file.base64;
 							let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-							S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id] }, fileData, document.public);
+							S3Helper.SaveObject(
+								key,
+								base64,
+								file.mime_type,
+								{ users: [newUser.user_id], businesses: [business.business_id] },
+								fileData,
+								document.public
+							);
 						}
 						await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 					}
@@ -695,9 +741,19 @@ async function registerDeliveryService(req, res) {
 							delete file.base64;
 							let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-							S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id] }, fileData, document.public);
+							S3Helper.SaveObject(
+								key,
+								base64,
+								file.mime_type,
+								{ users: [newUser.user_id], businesses: [business.business_id] },
+								fileData,
+								document.public
+							);
 						}
-						await DocumentDao.linkDocumentToDeliveryDriver(document.document_id, deliveryDriver.delivery_driver_id);
+						await DocumentDao.linkDocumentToDeliveryDriver(
+							document.document_id,
+							deliveryDriver.delivery_driver_id
+						);
 					}
 				}
 
@@ -714,8 +770,14 @@ async function registerDeliveryService(req, res) {
 				let vehicles = [];
 				if (Array.isArray(deliveryDriverInfo.vehicles) && deliveryDriverInfo.vehicles.length) {
 					for (const vehicleInfo of deliveryDriverInfo.vehicles) {
-						const vehicle = await VehicleDao.createNewVehicle({ ...vehicleInfo?.data, business_id: business.business_id });
-						await VehicleDao.assignVehicleToDeliveryDriver(vehicle.vehicle_id, deliveryDriver.delivery_driver_id);
+						const vehicle = await VehicleDao.createNewVehicle({
+							...vehicleInfo?.data,
+							business_id: business.business_id,
+						});
+						await VehicleDao.assignVehicleToDeliveryDriver(
+							vehicle.vehicle_id,
+							deliveryDriver.delivery_driver_id
+						);
 						// Handle vehicle documents
 						if (vehicleInfo.documents) {
 							for (const doc of vehicleInfo.documents) {
@@ -723,9 +785,20 @@ async function registerDeliveryService(req, res) {
 								for (const file of doc.files) {
 									let base64 = file.base64;
 									delete file.base64;
-									let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
+									let fileData = await FileDao.addFileToDocument(
+										document.document_id,
+										file,
+										document.public
+									);
 									let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-									S3Helper.SaveObject(key, base64, file.mime_type, { users: [newUser.user_id], businesses: [business.business_id] }, fileData, document.public);
+									S3Helper.SaveObject(
+										key,
+										base64,
+										file.mime_type,
+										{ users: [newUser.user_id], businesses: [business.business_id] },
+										fileData,
+										document.public
+									);
 								}
 								await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
 							}
@@ -744,20 +817,20 @@ async function registerDeliveryService(req, res) {
 			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
 		}*/
 
-		let businessAddress = {}
+		let businessAddress = {};
 		if (req.body.addresses) {
 			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
 		}
 
 		res.status(201).json({
-			message: "Delivery service business registered successfully",
+			message: 'Delivery service business registered successfully',
 			business,
 			deliveryDrivers,
-			businessAddress
+			businessAddress,
 		});
 	} catch (error) {
-		console.error("Error registering delivery service:", error);
-		res.status(400).json({ error: "Error registering delivery service", detail: error.message });
+		console.error('Error registering delivery service:', error);
+		res.status(400).json({ error: 'Error registering delivery service', detail: error.message });
 	}
 }
 
@@ -806,7 +879,7 @@ async function registerMerchantService(req, res) {
 		let stripeCustomer = await stripe.createCustomer(
 			req.body.business.email,
 			req.body.business.name,
-			req.body.business.telephone,
+			req.body.business.telephone
 		);
 		const business = await BusinessDao.createNewBusiness({
 			...req.body.business.data,
@@ -815,7 +888,7 @@ async function registerMerchantService(req, res) {
 
 		// Ensure at least one business user data is provided & created
 		if (!Array.isArray(req.body.users) || !req.body.users.length) {
-			return res.status(400).json({ error: "At least one business user must be provided." });
+			return res.status(400).json({ error: 'At least one business user must be provided.' });
 		}
 
 		let businessUsers = [];
@@ -823,7 +896,9 @@ async function registerMerchantService(req, res) {
 			const userObj = userInfo.user;
 			delete userObj.data.user_roles;
 			const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id);
-			const userRoles = userInfo.user.data.user_roles || [{role: userInfo.user.user_role || 'BUSINESS_USER', primary: true}];
+			const userRoles = userInfo.user.data.user_roles || [
+				{ role: userInfo.user.user_role || 'BUSINESS_USER', primary: true },
+			];
 			await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
 
 			let addresses = [];
@@ -847,7 +922,14 @@ async function registerMerchantService(req, res) {
 					delete file.base64;
 					let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-					await S3Helper.SaveObject(key, base64, file.mime_type, { businesses: [business.business_id] }, fileData, document.public);
+					await S3Helper.SaveObject(
+						key,
+						base64,
+						file.mime_type,
+						{ businesses: [business.business_id] },
+						fileData,
+						document.public
+					);
 				}
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
@@ -857,11 +939,11 @@ async function registerMerchantService(req, res) {
 
 		let accountLink = await stripe.getAccountLinks(stripeAccount.id, business.business_id);
 		// send email to business user with account link
-		EmailHelper.sendEmailTemplate("Stripe Onboarding", "stripeOnboarding", business.email,  {
-            name: business.name,
-            title: "Stripe Onboarding",
-            onboardLink: accountLink.url
-        });
+		EmailHelper.sendEmailTemplate('Stripe Onboarding', 'stripeOnboarding', business.email, {
+			name: business.name,
+			title: 'Stripe Onboarding',
+			onboardLink: accountLink.url,
+		});
 		// let finances = {};
 		// if (req.body.finances) {
 		// 	finances = await FinancesDao.addFinances(req.body.finances);
@@ -880,19 +962,19 @@ async function registerMerchantService(req, res) {
 
 		const menu = await MenuDao.createMenu(business.business_id);
 
-		console.log("ACCOUNT STRIPE ONBOARDING LINK", accountLink.url)
+		console.log('ACCOUNT STRIPE ONBOARDING LINK', accountLink.url);
 		businessIndex(business.business_id);
 		res.status(201).json({
-			message: "Merchant service business registered successfully",
+			message: 'Merchant service business registered successfully',
 			business,
 			businessUsers,
 			businessAddress,
 			deliveryAddress,
-			menu
+			menu,
 		});
 	} catch (error) {
-		console.error("Error registering merchant service:", error);
-		res.status(400).json({ error: "Error registering merchant service", detail: error.message });
+		console.error('Error registering merchant service:', error);
+		res.status(400).json({ error: 'Error registering merchant service', detail: error.message });
 	}
 }
 
@@ -922,7 +1004,11 @@ async function registerBusiness(req, res) {
 				console.info('User data:', driverInfo);
 				const existingDriverEmail = await UserDao.getUserByEmail(driverInfo.user.data.email);
 				if (existingDriverEmail) {
-					console.error('User with this email already exists.', driverInfo.user.data.email,existingDriverEmail);
+					console.error(
+						'User with this email already exists.',
+						driverInfo.user.data.email,
+						existingDriverEmail
+					);
 					return res.status(400).json({ error: `User with this email already exists.` });
 				}
 				const existingDriverPhone = await UserDao.getUserByTelephone(driverInfo.user.data.telephone);
@@ -936,7 +1022,7 @@ async function registerBusiness(req, res) {
 		let stripeCustomer = await stripe.createCustomer(
 			req.body.business.email,
 			req.body.business.name,
-			req.body.business.telephone,
+			req.body.business.telephone
 		);
 		const business = await BusinessDao.createNewBusiness({
 			...req.body.business.data,
@@ -944,7 +1030,7 @@ async function registerBusiness(req, res) {
 		});
 		// Ensure at least one business user data is provided & created
 		if (!Array.isArray(req.body.users) || !req.body.users.length) {
-			return res.status(400).json({ error: "At least one business user must be provided." });
+			return res.status(400).json({ error: 'At least one business user must be provided.' });
 		}
 
 		let businessUsers = [];
@@ -952,7 +1038,9 @@ async function registerBusiness(req, res) {
 			const userObj = userInfo.user;
 			delete userObj.data.user_roles;
 			const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id);
-			const userRoles = userInfo.user.data.user_roles || [{role: userInfo.user.user_role || 'BUSINESS_USER', primary: true}];
+			const userRoles = userInfo.user.data.user_roles || [
+				{ role: userInfo.user.user_role || 'BUSINESS_USER', primary: true },
+			];
 			await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
 
 			let addresses = [];
@@ -975,7 +1063,14 @@ async function registerBusiness(req, res) {
 					delete file.base64;
 					let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-					await S3Helper.SaveObject(key, base64, file.mime_type, { businesses: [business.business_id] }, fileData, document.public);
+					await S3Helper.SaveObject(
+						key,
+						base64,
+						file.mime_type,
+						{ businesses: [business.business_id] },
+						fileData,
+						document.public
+					);
 				}
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
@@ -992,16 +1087,16 @@ async function registerBusiness(req, res) {
 			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
 		}
 		// TODO: select user to login,
-		
+
 		res.status(201).json({
-			message: "Business registered successfully",
+			message: 'Business registered successfully',
 			business,
 			businessUsers,
-			businessAddress
+			businessAddress,
 		});
 	} catch (error) {
-		console.error("Error registering business:", error);
-		res.status(400).json({ error: "Error registering business", detail: error.message });
+		console.error('Error registering business:', error);
+		res.status(400).json({ error: 'Error registering business', detail: error.message });
 	}
 }
 
@@ -1019,11 +1114,14 @@ async function registerBusiness(req, res) {
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function createScheduledUser(req, res) {
-	const { data, addresses } = req.body
+	const { data, addresses } = req.body;
 	try {
-		let user = await UserDao.createNewUser({
-			...data,
-		}, true);
+		let user = await UserDao.createNewUser(
+			{
+				...data,
+			},
+			true
+		);
 
 		let addressList = [];
 		if (addresses) {
@@ -1034,14 +1132,12 @@ async function createScheduledUser(req, res) {
 			}
 		}
 
-		res.status(200).json({user,addresses: addressList});
-	}
-	catch (e) {
+		res.status(200).json({ user, addresses: addressList });
+	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
 }
-
 
 /**
  * PATCH /update/scheduled_user
@@ -1057,10 +1153,10 @@ async function createScheduledUser(req, res) {
  * @response 400 - Error updating user information.
  */
 async function updateScheduledUser(req, res) {
-	const {user_id, data, addresses} = req.body
-	const pass = data?.password
-	delete data?.password
-	let updatedData = data ? {...data} : {}
+	const { user_id, data, addresses } = req.body;
+	const pass = data?.password;
+	delete data?.password;
+	let updatedData = data ? { ...data } : {};
 
 	try {
 		if (pass && pass !== '') {
@@ -1087,27 +1183,26 @@ async function updateScheduledUser(req, res) {
 			return res.status(200).json({ user, addresses: addressList });
 		}
 	} catch (e) {
-		console.log(e)
-		res.status(400).json({ error: "Error updating user information", e });
+		console.log(e);
+		res.status(400).json({ error: 'Error updating user information', e });
 	}
-
 }
 
 async function getMunicipalitiesWithLicenseRequirements(req, res) {
 	try {
 		let municipalities = await prisma.municipalities.findMany({
 			where: {
-				requires_license: true
+				requires_license: true,
 			},
 			select: {
 				municipalities_id: true,
-				name: true
-			}
+				name: true,
+			},
 		});
 		res.status(200).json(municipalities);
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error fetching municipalities", e });
+		res.status(400).json({ error: 'Error fetching municipalities', e });
 	}
 }
 
@@ -1125,5 +1220,5 @@ module.exports = {
 	createScheduledUser,
 	getScheduledUsers,
 	updateScheduledUser,
-	getMunicipalitiesWithLicenseRequirements
+	getMunicipalitiesWithLicenseRequirements,
 };

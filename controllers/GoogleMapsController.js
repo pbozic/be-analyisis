@@ -76,14 +76,14 @@ async function getPlacePredictions(req, res) {
 			`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(inputText)}&location=${location}&radius=${radius}&components=country:${country}&key=${process.env.GOOGLE_API_KEY}&language=sl`
 		);
 		const data = response.data;
-		console.log(data)
+		console.log(data);
 		if (!response.status === 200) {
 			console.error('Failed to fetch data:', response.status, response.statusText);
 			return res.status(500).json({ error: 'Failed to fetch predictions' });
 		}
 
-		if (data.status === "OK") {
-			const predictions = data.predictions.map(prediction => {
+		if (data.status === 'OK') {
+			const predictions = data.predictions.map((prediction) => {
 				const addressComponents = prediction.description.split(', ');
 				addressComponents.pop(); // remove the last element (country)
 
@@ -94,13 +94,13 @@ async function getPlacePredictions(req, res) {
 
 				return {
 					...prediction,
-					description: addressWithoutCountryAndPostalCode
+					description: addressWithoutCountryAndPostalCode,
 				};
 			});
 			return res.status(200).json({ predictions });
-		} else if (data.status === "ZERO_RESULTS") {
+		} else if (data.status === 'ZERO_RESULTS') {
 			console.error('No predictions found:', data.status);
-			return res.status(200).json({predictions: []});
+			return res.status(200).json({ predictions: [] });
 		} else {
 			return res.status(500).json({ error: 'No predictions found' });
 		}
@@ -110,9 +110,7 @@ async function getPlacePredictions(req, res) {
 	}
 }
 
-
-
 module.exports = {
 	geocodeAddress,
-	getPlacePredictions
+	getPlacePredictions,
 };

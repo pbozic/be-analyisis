@@ -1,6 +1,7 @@
 // schemas/vehicles.js
 const Joi = require('joi');
-const { documentsArraySchema } = require("./documentSchemas");
+
+const { documentsArraySchema } = require('./documentSchemas');
 
 // Insurance file schema
 const insuranceFileSchema = Joi.object({
@@ -8,7 +9,7 @@ const insuranceFileSchema = Joi.object({
 	uri: Joi.string().uri(),
 	name: Joi.string(),
 	size: Joi.number().integer(),
-	base64: Joi.string()
+	base64: Joi.string(),
 });
 
 // Vehicle information schema
@@ -31,10 +32,10 @@ const newVehicleSchema = Joi.object({
 	data: Joi.object({
 		vehicle_information: vehicleInformationSchema,
 		documents: documentsArraySchema.required(),
-		drivers: Joi.array().items(Joi.string().email())  // Driver emails
-	})
+		drivers: Joi.array().items(Joi.string().email()), // Driver emails
+	}),
 });
 
 module.exports = {
-	newVehicleSchema
+	newVehicleSchema,
 };

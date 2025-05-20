@@ -1,4 +1,4 @@
-const prisma = require("../prisma/prisma");
+const prisma = require('../prisma/prisma');
 
 // Get all vehicles
 const getVehicles = async (args) => {
@@ -11,7 +11,7 @@ const getVehicles = async (args) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving vehicles:", error);
+		console.error('Error retrieving vehicles:', error);
 		throw new Error(error);
 	}
 };
@@ -32,21 +32,21 @@ const getVehiclesByBusiness = async (businessId) => {
 									select: {
 										first_name: true,
 										last_name: true,
-									}
-								}
-							}
-						}
-					}
+									},
+								},
+							},
+						},
+					},
 				},
 				documents: {
 					include: {
-						files: true
-					}
+						files: true,
+					},
 				},
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving vehicles by business:", error);
+		console.error('Error retrieving vehicles by business:', error);
 		throw new Error(error);
 	}
 };
@@ -66,23 +66,23 @@ const getVehicleById = async (vehicle_id, args) => {
 									select: {
 										first_name: true,
 										last_name: true,
-									}
-								}
-							}
-						}
-					}
+									},
+								},
+							},
+						},
+					},
 				},
 				current_driver: true,
 				documents: {
 					include: {
-						files: true
+						files: true,
 					},
 				},
 			},
 			...args,
 		});
 	} catch (error) {
-		console.error("Error retrieving vehicle:", error);
+		console.error('Error retrieving vehicle:', error);
 		throw new Error(error);
 	}
 };
@@ -93,7 +93,7 @@ const createNewVehicle = async (vehicle) => {
 			data: vehicle,
 		});
 	} catch (error) {
-		console.error("Error creating new vehicle:", error);
+		console.error('Error creating new vehicle:', error);
 		throw new Error(error);
 	}
 };
@@ -105,7 +105,7 @@ const updateVehicle = async (vehicle_id, vehicleData) => {
 			data: vehicleData,
 		});
 	} catch (error) {
-		console.error("Error updating vehicle:", error);
+		console.error('Error updating vehicle:', error);
 		throw new Error(error);
 	}
 };
@@ -113,24 +113,24 @@ const updateVehicle = async (vehicle_id, vehicleData) => {
 const getVehicleDriversByVehicleId = async (vehicle_id) => {
 	return await prisma.vehicle_drivers.findMany({
 		where: {
-			vehicle_id: vehicle_id
+			vehicle_id: vehicle_id,
 		},
 		select: {
-			driver_id: true
-		}
+			driver_id: true,
+		},
 	});
-}
+};
 
 const unAssignVehicleFromDrivers = async (vehicle_id, newDriverIds) => {
 	await prisma.vehicle_drivers.deleteMany({
 		where: {
 			vehicle_id: vehicle_id,
 			driver_id: {
-				notIn: newDriverIds
-			}
-		}
+				notIn: newDriverIds,
+			},
+		},
 	});
-}
+};
 
 const assignVehicleToDriver = async (vehicleId, driverId) => {
 	try {
@@ -138,18 +138,18 @@ const assignVehicleToDriver = async (vehicleId, driverId) => {
 			data: {
 				driver: {
 					connect: {
-						driver_id: driverId
-					}
+						driver_id: driverId,
+					},
 				},
 				vehicle: {
 					connect: {
 						vehicle_id: vehicleId,
-					}
-				}
+					},
+				},
 			},
 		});
 	} catch (error) {
-		console.error("Error assigning vehicle to driver:", error);
+		console.error('Error assigning vehicle to driver:', error);
 		throw new Error(error);
 	}
 };
@@ -161,13 +161,13 @@ const assignVehicleToDeliveryDriver = async (vehicleId, driverId) => {
 			data: {
 				delivery_driver: {
 					connect: {
-						delivery_driver_id: driverId
-					}
-				}
+						delivery_driver_id: driverId,
+					},
+				},
 			},
 		});
 	} catch (error) {
-		console.error("Error assigning vehicle to delivery driver:", error);
+		console.error('Error assigning vehicle to delivery driver:', error);
 		throw new Error(error);
 	}
 };
@@ -181,7 +181,7 @@ const removeVehicleFromDriver = async (vehicleId, driverId) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error removing vehicle from driver:", error);
+		console.error('Error removing vehicle from driver:', error);
 		throw new Error(error);
 	}
 };
@@ -196,7 +196,7 @@ const getVehiclesByDriverId = async (driver_id) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving vehicles for driver:", error);
+		console.error('Error retrieving vehicles for driver:', error);
 		throw new Error(error);
 	}
 };
@@ -207,7 +207,7 @@ const deleteVehicle = async (vehicle_id) => {
 			where: { vehicle_id },
 		});
 	} catch (error) {
-		console.error("Error deleting vehicle:", error);
+		console.error('Error deleting vehicle:', error);
 		throw new Error(error);
 	}
 };
@@ -227,7 +227,7 @@ const getVehiclesByClass = async (vehicleClass) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving vehicles by class:", error);
+		console.error('Error retrieving vehicles by class:', error);
 		throw new Error(error);
 	}
 };
@@ -247,7 +247,7 @@ const getVehiclesByCategory = async (vehicleCategory) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving vehicles by category:", error);
+		console.error('Error retrieving vehicles by category:', error);
 		throw new Error(error);
 	}
 };
@@ -258,10 +258,7 @@ const getVehiclesByClassAndCategory = async (vehicleClass, vehicleCategory) => {
 		return await prisma.vehicles.findMany({
 			where: {
 				vehicle_specification: {
-					AND: [
-						{ class: vehicleClass },
-						{ category: vehicleCategory },
-					],
+					AND: [{ class: vehicleClass }, { category: vehicleCategory }],
 				},
 			},
 			include: {
@@ -270,7 +267,7 @@ const getVehiclesByClassAndCategory = async (vehicleClass, vehicleCategory) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving vehicles by class and category:", error);
+		console.error('Error retrieving vehicles by class and category:', error);
 		throw new Error(error);
 	}
 };
@@ -291,7 +288,7 @@ const getVehiclesOfDriverByClass = async (driverId, vehicleClass) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving vehicles of driver by class:", error);
+		console.error('Error retrieving vehicles of driver by class:', error);
 		throw new Error(error);
 	}
 };
@@ -312,7 +309,7 @@ const getVehiclesOfDriverByCategory = async (driverId, vehicleCategory) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving vehicles of driver by category:", error);
+		console.error('Error retrieving vehicles of driver by category:', error);
 		throw new Error(error);
 	}
 };
@@ -324,10 +321,7 @@ const getVehiclesOfDriverByClassAndCategory = async (driverId, vehicleClass, veh
 			where: {
 				driver_id: driverId,
 				vehicle_specification: {
-					AND: [
-						{ class: vehicleClass },
-						{ category: vehicleCategory },
-					],
+					AND: [{ class: vehicleClass }, { category: vehicleCategory }],
 				},
 			},
 			include: {
@@ -336,7 +330,7 @@ const getVehiclesOfDriverByClassAndCategory = async (driverId, vehicleClass, veh
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving vehicles of driver by class and category:", error);
+		console.error('Error retrieving vehicles of driver by class and category:', error);
 		throw new Error(error);
 	}
 };

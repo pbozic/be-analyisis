@@ -1,5 +1,6 @@
-const prisma = require('../prisma/prisma');
 const moment = require('moment');
+
+const prisma = require('../prisma/prisma');
 
 const createMenu = async (business_id, isDailyMeal = false, date = null) => {
 	return await prisma.menus.create({
@@ -20,9 +21,9 @@ const getMenuByBusinessId = async (business_id, isDailyMeal = false, startDate =
 		}
 		extraWhereArgs = {
 			date: {
-				gte: moment(startDate).startOf('day').toDate()
-			}
-		}
+				gte: moment(startDate).startOf('day').toDate(),
+			},
+		};
 	}
 
 	const menus = await prisma.menus.findMany({
@@ -30,33 +31,33 @@ const getMenuByBusinessId = async (business_id, isDailyMeal = false, startDate =
 			business_id: business_id,
 			isDailyMeal: isDailyMeal,
 			active: true,
-			...extraWhereArgs
+			...extraWhereArgs,
 		},
 		include: {
 			categories: {
-				orderBy:{
-					menu_order_index:'asc'
+				orderBy: {
+					menu_order_index: 'asc',
 				},
 				include: {
 					menu_items: {
-						orderBy:{
-							menu_category_order_index:'asc'
+						orderBy: {
+							menu_category_order_index: 'asc',
 						},
 						include: {
 							documents: {
 								include: {
-									files: true
-								}
-							}
-						}
+									files: true,
+								},
+							},
+						},
 					},
 					menu_categories_categories: {
 						include: {
-							category: true
-						}
-					}
-				}
-			}
+							category: true,
+						},
+					},
+				},
+			},
 		},
 	});
 
@@ -87,7 +88,7 @@ const getMenuByBusinessId = async (business_id, isDailyMeal = false, startDate =
 	// 	});
 	// });
 
-	return menus
+	return menus;
 };
 
 const deleteMenu = async (menu_id) => {
@@ -119,13 +120,12 @@ const updateMenuOrder = async (menu_id, orderedMenuCategoryIds) => {
 			select: { menu_category_id: true },
 		});
 
-		const validIds = validCategories.map(cat => cat.menu_category_id);
+		const validIds = validCategories.map((cat) => cat.menu_category_id);
 
-		const invalidIds = orderedMenuCategoryIds.filter(id => !validIds.includes(id));
+		const invalidIds = orderedMenuCategoryIds.filter((id) => !validIds.includes(id));
 		if (invalidIds.length > 0) {
 			throw new Error(`Invalid category IDs for menu ${menu_id}: ${invalidIds.join(', ')}`);
 		}
-
 
 		const updatePromises = orderedMenuCategoryIds.map((id, index) =>
 			tx.menu_categories.update({
@@ -141,10 +141,8 @@ const updateMenuOrder = async (menu_id, orderedMenuCategoryIds) => {
 				menu_categories_ordered: orderedMenuCategoryIds,
 			},
 		});
-
 	});
 };
-
 
 const getMenuByDate = async (business_id, date) => {
 	const startOfDay = new Date(date);
@@ -158,8 +156,8 @@ const getMenuByDate = async (business_id, date) => {
 			isDailyMeal: true,
 			date: {
 				gte: startOfDay.toISOString(),
-				lte: endOfDay.toISOString()
-			}
+				lte: endOfDay.toISOString(),
+			},
 		},
 		include: {
 			categories: {
@@ -167,11 +165,11 @@ const getMenuByDate = async (business_id, date) => {
 					menu_items: true,
 					menu_categories_categories: {
 						include: {
-							category: true
-						}
-					}
-				}
-			}
+							category: true,
+						},
+					},
+				},
+			},
 		},
 	});
 };
@@ -179,7 +177,7 @@ const getMenuByDate = async (business_id, date) => {
 const getMenuById = async (menu_id) => {
 	return await prisma.menus.findUnique({
 		where: {
-			menu_id: menu_id
+			menu_id: menu_id,
 		},
 		include: {
 			categories: {
@@ -187,14 +185,14 @@ const getMenuById = async (menu_id) => {
 					menu_items: true,
 					menu_categories_categories: {
 						include: {
-							category: true
-						}
-					}
-				}
-			}
-		}
+							category: true,
+						},
+					},
+				},
+			},
+		},
 	});
-}
+};
 
 module.exports = {
 	getMenuById,

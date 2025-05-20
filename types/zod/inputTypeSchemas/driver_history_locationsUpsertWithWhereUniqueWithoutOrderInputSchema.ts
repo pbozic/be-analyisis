@@ -1,0 +1,16 @@
+import type { Prisma } from '@prisma/client';
+
+import { z } from 'zod';
+import { driver_history_locationsWhereUniqueInputSchema } from './driver_history_locationsWhereUniqueInputSchema';
+import { driver_history_locationsUpdateWithoutOrderInputSchema } from './driver_history_locationsUpdateWithoutOrderInputSchema';
+import { driver_history_locationsUncheckedUpdateWithoutOrderInputSchema } from './driver_history_locationsUncheckedUpdateWithoutOrderInputSchema';
+import { driver_history_locationsCreateWithoutOrderInputSchema } from './driver_history_locationsCreateWithoutOrderInputSchema';
+import { driver_history_locationsUncheckedCreateWithoutOrderInputSchema } from './driver_history_locationsUncheckedCreateWithoutOrderInputSchema';
+
+export const driver_history_locationsUpsertWithWhereUniqueWithoutOrderInputSchema: z.ZodType<Prisma.driver_history_locationsUpsertWithWhereUniqueWithoutOrderInput> = z.object({
+  where: z.lazy(() => driver_history_locationsWhereUniqueInputSchema),
+  update: z.union([ z.lazy(() => driver_history_locationsUpdateWithoutOrderInputSchema),z.lazy(() => driver_history_locationsUncheckedUpdateWithoutOrderInputSchema) ]),
+  create: z.union([ z.lazy(() => driver_history_locationsCreateWithoutOrderInputSchema),z.lazy(() => driver_history_locationsUncheckedCreateWithoutOrderInputSchema) ]),
+}).strict();
+
+export default driver_history_locationsUpsertWithWhereUniqueWithoutOrderInputSchema;

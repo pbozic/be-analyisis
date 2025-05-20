@@ -1,9 +1,9 @@
-const prisma = require("../prisma/prisma");
+const prisma = require('../prisma/prisma');
 const AddressDao = require('./Address');
 const DocumentDao = require('./Document');
-const Constants = require("../lib/constants");
-const { reorderMenusAndCategories } = require("../lib/businessHelpers");
-const { ACCOUNT_ACTIONS_REASON, ACCOUNT_ACTIONS } = require("../lib/constants"); // Assuming Address.js exports are imported as AddressDao
+const Constants = require('../lib/constants');
+const { reorderMenusAndCategories } = require('../lib/businessHelpers');
+const { ACCOUNT_ACTIONS_REASON, ACCOUNT_ACTIONS } = require('../lib/constants'); // Assuming Address.js exports are imported as AddressDao
 
 const getBusinesses = async (args) => {
 	try {
@@ -15,10 +15,10 @@ const getBusinesses = async (args) => {
 				business_users: {
 					include: {
 						users: {
-							include:{
-								child_users:  { include:{child_user: true}},
-								parent_user:  { include:{parent_user: true}},
-							}
+							include: {
+								child_users: { include: { child_user: true } },
+								parent_user: { include: { parent_user: true } },
+							},
 						},
 					},
 				},
@@ -30,7 +30,7 @@ const getBusinesses = async (args) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving businesses:", error);
+		console.error('Error retrieving businesses:', error);
 		throw new Error(error);
 	}
 };
@@ -59,7 +59,7 @@ const getBusinessById = async (business_id) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving business:", error);
+		console.error('Error retrieving business:', error);
 		throw new Error(error);
 	}
 };
@@ -77,10 +77,10 @@ const getBusinessAdminDataById = async (business_id) => {
 				business_users: {
 					include: {
 						users: {
-							include:{
-								child_users: { include:{child_user: true}},
-								parent_user: { include:{parent_user: true}},
-							}
+							include: {
+								child_users: { include: { child_user: true } },
+								parent_user: { include: { parent_user: true } },
+							},
 						},
 					},
 				},
@@ -90,30 +90,30 @@ const getBusinessAdminDataById = async (business_id) => {
 				taxi_orders: false,
 				delivery_orders: false,
 
-				word_buy_stripe_product:{
+				word_buy_stripe_product: {
 					include: {
-						prices:true
-					}
+						prices: true,
+					},
 				},
 				word_buys: {
-					include:{
-						word:{
-							include:{
-								category:true,
-								bundles:true
-							}
-						}
-					}
-				},
-				promo_sections:{
 					include: {
-						promo_section:true
-					}
+						word: {
+							include: {
+								category: true,
+								bundles: true,
+							},
+						},
+					},
+				},
+				promo_sections: {
+					include: {
+						promo_section: true,
+					},
 				},
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving business:", error);
+		console.error('Error retrieving business:', error);
 		throw new Error(error);
 	}
 };
@@ -123,12 +123,12 @@ const getBusinessesForSearchById = async (business_id) => {
 		if (!Array.isArray(business_id)) {
 			business_id = [business_id];
 		}
-		
+
 		let business = await prisma.business.findMany({
 			where: {
 				business_id: {
-					in: business_id
-				}
+					in: business_id,
+				},
 			},
 			select: {
 				// ✅ Select specific fields from the root
@@ -148,13 +148,13 @@ const getBusinessesForSearchById = async (business_id) => {
 				delivery_address: true, // Full object
 				documents: {
 					include: {
-						files: true // Full nested objects
+						files: true, // Full nested objects
 					},
 					where: {
 						document_type: {
-							in: ['BANNER', 'LOGO']
-						}
-					}
+							in: ['BANNER', 'LOGO'],
+						},
+					},
 				},
 				// menus: {
 				// 	where: {
@@ -177,20 +177,19 @@ const getBusinessesForSearchById = async (business_id) => {
 				// 		}
 				// 	}
 				// }
-			}
+			},
 		});
-		return business
+		return business;
 	} catch (error) {
-		console.error("Error retrieving business for search:", error);
+		console.error('Error retrieving business for search:', error);
 		throw new Error(error);
 	}
-}
+};
 const getBusinessForSearchById = async (business_id) => {
 	try {
-		
 		let business = await prisma.business.findUnique({
 			where: {
-				business_id: business_id
+				business_id: business_id,
 			},
 			select: {
 				// ✅ Select specific fields from the root
@@ -210,46 +209,46 @@ const getBusinessForSearchById = async (business_id) => {
 				delivery_address: true, // Full object
 				documents: {
 					include: {
-						files: true // Full nested objects
+						files: true, // Full nested objects
 					},
 					where: {
 						document_type: {
-							in: ['BANNER', 'LOGO']
-						}
-					}
+							in: ['BANNER', 'LOGO'],
+						},
+					},
 				},
 				menus: {
 					where: {
-						active: true
+						active: true,
 					},
 					include: {
 						categories: {
-							orderBy:{
-								menu_order_index:'asc'
+							orderBy: {
+								menu_order_index: 'asc',
 							},
 							include: {
 								menu_categories_categories: {
 									include: {
-										category: true
-									}
+										category: true,
+									},
 								},
 								menu_items: {
-									orderBy:{
-										menu_category_order_index:'asc'
+									orderBy: {
+										menu_category_order_index: 'asc',
 									},
 									include: {
 										documents: {
 											include: {
-												files: true
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+												files: true,
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 		});
 		// for (let menu of business.menus) {
 		// 	let order = menu.menu_categories_ordered;
@@ -258,12 +257,12 @@ const getBusinessForSearchById = async (business_id) => {
 		// 		menu.categories = order.map((id) => menu.categories.find((cat) => cat.category_id === id));
 		// 	}
 		// }
-		return business
+		return business;
 	} catch (error) {
-		console.error("Error retrieving business for search:", error);
+		console.error('Error retrieving business for search:', error);
 		throw new Error(error);
 	}
-}
+};
 const getBusinessByEmail = async (email) => {
 	try {
 		return await prisma.business.findUnique({
@@ -276,10 +275,10 @@ const getBusinessByEmail = async (email) => {
 				business_users: {
 					include: {
 						users: {
-							include:{
-								child_users: { include:{child_user: true}},
-								parent_user: { include:{parent_user: true}},
-							}
+							include: {
+								child_users: { include: { child_user: true } },
+								parent_user: { include: { parent_user: true } },
+							},
 						},
 					},
 				},
@@ -291,7 +290,7 @@ const getBusinessByEmail = async (email) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving business by email:", error);
+		console.error('Error retrieving business by email:', error);
 		throw new Error(error);
 	}
 };
@@ -308,10 +307,10 @@ const getBusinessByTelephone = async (telephone_number) => {
 				business_users: {
 					include: {
 						users: {
-							include:{
-								child_users: { include:{child_user: true}},
-								parent_user: { include:{parent_user: true}},
-							}
+							include: {
+								child_users: { include: { child_user: true } },
+								parent_user: { include: { parent_user: true } },
+							},
 						},
 					},
 				},
@@ -323,7 +322,7 @@ const getBusinessByTelephone = async (telephone_number) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving business by telephone:", error);
+		console.error('Error retrieving business by telephone:', error);
 		throw new Error(error);
 	}
 };
@@ -343,10 +342,10 @@ const getBusinessesByNameSearch = async (search) => {
 				business_users: {
 					include: {
 						users: {
-							include:{
-								child_users: { include:{child_user: true}},
-								parent_user: { include:{parent_user: true}},
-							}
+							include: {
+								child_users: { include: { child_user: true } },
+								parent_user: { include: { parent_user: true } },
+							},
 						},
 					},
 				},
@@ -358,7 +357,7 @@ const getBusinessesByNameSearch = async (search) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving businesses by name:", error);
+		console.error('Error retrieving businesses by name:', error);
 		throw new Error(error);
 	}
 };
@@ -378,10 +377,10 @@ const getBusinessesByGroupName = async (search) => {
 				business_users: {
 					include: {
 						users: {
-							include:{
-								child_users: { include:{child_user: true}},
-								parent_user: { include:{parent_user: true}},
-							}
+							include: {
+								child_users: { include: { child_user: true } },
+								parent_user: { include: { parent_user: true } },
+							},
 						},
 					},
 				},
@@ -393,7 +392,7 @@ const getBusinessesByGroupName = async (search) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving businesses by group name:", error);
+		console.error('Error retrieving businesses by group name:', error);
 		throw new Error(error);
 	}
 };
@@ -409,64 +408,64 @@ const getBusinessesByTypeMainInformation = async (type) => {
 		console.error(`Error retrieving businesses by type ${type}:`, error);
 		throw new Error(error);
 	}
-}
+};
 
 const getBusinessesByType = async (type, args = {}) => {
-    try {
-        const includeOptions = {
-            address: true,
+	try {
+		const includeOptions = {
+			address: true,
 			delivery_address: true,
 			finances: true,
-            business_users: {
-                include: {
-                    users: {
+			business_users: {
+				include: {
+					users: {
 						include: {
-							child_users: { include:{child_user: true}},
-							parent_user: { include:{parent_user: true}},
-						}
+							child_users: { include: { child_user: true } },
+							parent_user: { include: { parent_user: true } },
+						},
 					},
-                },
-            },
-            parent_business: true,
-            child_businesses: true,
-            documents: false,
-            taxi_orders: false,
-            delivery_orders: false,
-        };
-        if (type === Constants.BUSINESS_TYPE.MERCHANT) {
-            includeOptions.menus = {
-                include: {
-                    categories: {
-                        include: {
-                            menu_items: {
-                                include: {
-                                    documents: {
-                                        include: {
-                                            files: true
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            };
-        }
+				},
+			},
+			parent_business: true,
+			child_businesses: true,
+			documents: false,
+			taxi_orders: false,
+			delivery_orders: false,
+		};
+		if (type === Constants.BUSINESS_TYPE.MERCHANT) {
+			includeOptions.menus = {
+				include: {
+					categories: {
+						include: {
+							menu_items: {
+								include: {
+									documents: {
+										include: {
+											files: true,
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			};
+		}
 
-        const businesses = await prisma.business.findMany({
-            where: {
-                type: type,
-                ...args,
-            },
-            include: includeOptions
-        });
+		const businesses = await prisma.business.findMany({
+			where: {
+				type: type,
+				...args,
+			},
+			include: includeOptions,
+		});
 
-        // Before returning, sort menus, and menu categories if applicable
-        return reorderMenusAndCategories(businesses);
-    } catch (error) {
-        console.error(`Error retrieving businesses by type ${type}:`, error);
-        throw new Error(error);
-    }
+		// Before returning, sort menus, and menu categories if applicable
+		return reorderMenusAndCategories(businesses);
+	} catch (error) {
+		console.error(`Error retrieving businesses by type ${type}:`, error);
+		throw new Error(error);
+	}
 };
 
 const getParentBusiness = async (business_id) => {
@@ -477,7 +476,7 @@ const getParentBusiness = async (business_id) => {
 		});
 		return business.parent_business;
 	} catch (error) {
-		console.error("Error retrieving parent business:", error);
+		console.error('Error retrieving parent business:', error);
 		throw new Error(error);
 	}
 };
@@ -488,7 +487,7 @@ const getChildBusinesses = async (parent_business_id) => {
 			where: { parent_business_id },
 		});
 	} catch (error) {
-		console.error("Error retrieving child businesses:", error);
+		console.error('Error retrieving child businesses:', error);
 		throw new Error(error);
 	}
 };
@@ -502,16 +501,16 @@ const getFinanceRecordByBusinessId = async (business_id) => {
 			},
 		});
 		if (!businessWithFinance) {
-			console.log("Business not found");
+			console.log('Business not found');
 			return null;
 		}
 		if (!businessWithFinance.finances) {
-			console.log("No finance record found for the specified business");
+			console.log('No finance record found for the specified business');
 			return null;
 		}
 		return businessWithFinance.finances;
 	} catch (error) {
-		console.error("Error retrieving finance record by business ID:", error);
+		console.error('Error retrieving finance record by business ID:', error);
 		throw new Error(error);
 	}
 };
@@ -520,7 +519,7 @@ const updateBusiness = async (business_id, businessD) => {
 	try {
 		let businessData = {
 			...businessD,
-		}
+		};
 		delete businessData.business_id;
 		delete businessData.type;
 		delete businessData.is_business_unit;
@@ -541,38 +540,38 @@ const updateBusiness = async (business_id, businessD) => {
 			data: { ...businessData },
 		});
 	} catch (error) {
-		console.error("Error updating business:", error);
+		console.error('Error updating business:', error);
 		throw new Error(error);
 	}
 };
 
 const updateBusinessFinances = async (business_id, financesData) => {
-    try {
-        // First, retrieve the finance record associated with the business
-        const business = await prisma.business.findUnique({
-            where: { business_id },
-            select: { finance_id: true }, // Select only the finance_id
-        });
+	try {
+		// First, retrieve the finance record associated with the business
+		const business = await prisma.business.findUnique({
+			where: { business_id },
+			select: { finance_id: true }, // Select only the finance_id
+		});
 
-        if (!business || !business.finance_id) {
-            throw new Error('No finance record found for the specified business');
-        }
+		if (!business || !business.finance_id) {
+			throw new Error('No finance record found for the specified business');
+		}
 
-        // Use the upsert method to handle finance creation or retrieval
-        const updatedFinances = await prisma.finances.update({
-            where: {
-                finance_id: business.finance_id, // Use the finance_id to find the record
-            },
-            data: {
-                ...financesData, // Update the existing finance record with new data
-            },
-        });
+		// Use the upsert method to handle finance creation or retrieval
+		const updatedFinances = await prisma.finances.update({
+			where: {
+				finance_id: business.finance_id, // Use the finance_id to find the record
+			},
+			data: {
+				...financesData, // Update the existing finance record with new data
+			},
+		});
 
-        return updatedFinances; // Return the updated finance record
-    } catch (error) {
-        console.error("Error updating business finances:", error);
-        throw new Error(error);
-    }
+		return updatedFinances; // Return the updated finance record
+	} catch (error) {
+		console.error('Error updating business finances:', error);
+		throw new Error(error);
+	}
 };
 
 const updateBusinessType = async (business_id, type) => {
@@ -582,7 +581,7 @@ const updateBusinessType = async (business_id, type) => {
 			data: { type },
 		});
 	} catch (error) {
-		console.error("Error updating business type:", error);
+		console.error('Error updating business type:', error);
 		throw new Error(error);
 	}
 };
@@ -594,7 +593,7 @@ const updateIsBusinessUnit = async (business_id, is_business_unit) => {
 			data: { is_business_unit },
 		});
 	} catch (error) {
-		console.error("Error updating is_business_unit:", error);
+		console.error('Error updating is_business_unit:', error);
 		throw new Error(error);
 	}
 };
@@ -606,7 +605,7 @@ const updateBusinessGroupName = async (business_id, business_group_name) => {
 			data: { business_group_name },
 		});
 	} catch (error) {
-		console.error("Error updating business group name:", error);
+		console.error('Error updating business group name:', error);
 		throw new Error(error);
 	}
 };
@@ -618,7 +617,7 @@ const updateBusinessEmail = async (business_id, email) => {
 			data: { email },
 		});
 	} catch (error) {
-		console.error("Error updating business email:", error);
+		console.error('Error updating business email:', error);
 		throw new Error(error);
 	}
 };
@@ -630,7 +629,7 @@ const updateBusinessTelephone = async (business_id, telephone, telephone_code, t
 			data: { telephone, telephone_code, telephone_number },
 		});
 	} catch (error) {
-		console.error("Error updating business telephone:", error);
+		console.error('Error updating business telephone:', error);
 		throw new Error(error);
 	}
 };
@@ -642,17 +641,18 @@ const updateBusinessWorkingHours = async (business_id, working_hours) => {
 			data: { working_hours },
 		});
 	} catch (error) {
-		console.error("Error updating business working hours:", error);
+		console.error('Error updating business working hours:', error);
 		throw new Error(error);
 	}
-};const updateRestaurantOverwhelmed = async (business_id, restaurant_overwhelmed) => {
+};
+const updateRestaurantOverwhelmed = async (business_id, restaurant_overwhelmed) => {
 	try {
 		return await prisma.business.update({
 			where: { business_id },
 			data: { restaurant_overwhelmed },
 		});
 	} catch (error) {
-		console.error("Error updating business overwhelmed:", error);
+		console.error('Error updating business overwhelmed:', error);
 		throw new Error(error);
 	}
 };
@@ -663,7 +663,7 @@ const updateBusinessIsNew = async (business_id, isNew) => {
 			data: { new: isNew }, // Use 'new' property directly since 'new' is a reserved keyword in JavaScript, hence 'isNew' parameter name
 		});
 	} catch (error) {
-		console.error("Error updating business new status:", error);
+		console.error('Error updating business new status:', error);
 		throw new Error(error);
 	}
 };
@@ -674,11 +674,10 @@ const updateBusinessIsPopular = async (business_id, popular) => {
 			data: { popular },
 		});
 	} catch (error) {
-		console.error("Error updating business popularity:", error);
+		console.error('Error updating business popularity:', error);
 		throw new Error(error);
 	}
 };
-
 
 const createNewBusiness = async (business) => {
 	try {
@@ -686,7 +685,7 @@ const createNewBusiness = async (business) => {
 			data: business,
 		});
 	} catch (error) {
-		console.error("Error creating new business:", error);
+		console.error('Error creating new business:', error);
 		throw new Error(error);
 	}
 };
@@ -697,7 +696,7 @@ const deleteBusiness = async (business_id) => {
 			where: { business_id },
 		});
 	} catch (error) {
-		console.error("Error deleting business:", error);
+		console.error('Error deleting business:', error);
 		throw new Error(error);
 	}
 };
@@ -709,7 +708,7 @@ const updateParentBusiness = async (business_id, parent_business_id) => {
 			data: { parent_business_id },
 		});
 	} catch (error) {
-		console.error("Error updating parent business:", error);
+		console.error('Error updating parent business:', error);
 		throw new Error(error);
 	}
 };
@@ -721,7 +720,7 @@ const removeParentBusiness = async (business_id) => {
 			data: { parent_business_id: null },
 		});
 	} catch (error) {
-		console.error("Error removing child business:", error);
+		console.error('Error removing child business:', error);
 		throw new Error(error);
 	}
 };
@@ -747,13 +746,13 @@ const addBusinessAddress = async (business_id, addressData) => {
 			data: {
 				address: {
 					connect: {
-						address_id: addressToUse.address_id
-					}
-				}
-			}
+						address_id: addressToUse.address_id,
+					},
+				},
+			},
 		});
 	} catch (error) {
-		console.error("Error adding business address:", error);
+		console.error('Error adding business address:', error);
 		throw new Error(error);
 	}
 };
@@ -779,13 +778,13 @@ const addDeliveryAddress = async (business_id, addressData) => {
 			data: {
 				delivery_address: {
 					connect: {
-						address_id: addressToUse.address_id
-					}
-				}
-			}
+						address_id: addressToUse.address_id,
+					},
+				},
+			},
 		});
 	} catch (error) {
-		console.error("Error adding delivery address:", error);
+		console.error('Error adding delivery address:', error);
 		throw new Error(error);
 	}
 };
@@ -801,7 +800,7 @@ async function updateBusinessAddress(business_id, address) {
 			data: { address_id: updatedAddress.address_id },
 		});
 	} catch (error) {
-		console.error("Error updating business address:", error);
+		console.error('Error updating business address:', error);
 		throw new Error(error);
 	}
 }
@@ -818,7 +817,7 @@ async function updateBusinessDeliveryAddress(business_id, deliveryAddress) {
 			data: { delivery_address_id: updatedDeliveryAddress.address_id },
 		});
 	} catch (error) {
-		console.error("Error updating business delivery address:", error);
+		console.error('Error updating business delivery address:', error);
 		throw new Error(error);
 	}
 }
@@ -830,7 +829,7 @@ const removeBusinessDeliveryAddress = async (business_id) => {
 			data: { delivery_address_id: null },
 		});
 	} catch (error) {
-		console.error("Error removing business delivery address:", error);
+		console.error('Error removing business delivery address:', error);
 		throw new Error(error);
 	}
 };
@@ -842,7 +841,7 @@ const addScheduledUserSortingType = async (type) => {
 			data: { daily_users_sorting_type: type },
 		});
 	} catch (error) {
-		console.error("Error updating scheduled users sorting type:", error);
+		console.error('Error updating scheduled users sorting type:', error);
 		throw new Error(error);
 	}
 };
@@ -854,7 +853,7 @@ const manualSortScheduledUsers = async (sorted_users = []) => {
 			data: { daily_users_sorted: [...sorted_users] },
 		});
 	} catch (error) {
-		console.error("Error updating sorted scheduled users:", error);
+		console.error('Error updating sorted scheduled users:', error);
 		throw new Error(error);
 	}
 };
@@ -866,13 +865,13 @@ const getBusinessStripeByBusinessId = async (business_id) => {
 				business_id: business_id,
 			},
 			select: {
-				business_id:true,
-				stripe_account_id:true
-			}
+				business_id: true,
+				stripe_account_id: true,
+			},
 		});
 		return business_data.stripe_account_id;
 	} catch (error) {
-		console.error("Error retrieving business stripe ID:", error);
+		console.error('Error retrieving business stripe ID:', error);
 		throw new Error(error);
 	}
 };
@@ -889,16 +888,16 @@ const getStripeIdsForAllBusinesses = async () => {
 		return await prisma.business.findMany({
 			select: {
 				business_id: true,
-				stripe_account_id: true
-			}
+				stripe_account_id: true,
+			},
 		});
 	} catch (error) {
-		console.error("Error fetching Stripe IDs for businesses:", error);
+		console.error('Error fetching Stripe IDs for businesses:', error);
 		throw new Error(error);
 	}
-}
+};
 
-async function activateBusiness( business_id, action_creator_user_id, reason ) {
+async function activateBusiness(business_id, action_creator_user_id, reason) {
 	try {
 		return await prisma.$transaction(async (tx) => {
 			const business = await tx.business.findUnique({
@@ -928,8 +927,8 @@ async function activateBusiness( business_id, action_creator_user_id, reason ) {
 			return updatedBusiness;
 		});
 	} catch (error) {
-		console.error("Error activating business:", error);
-		throw new Error("Failed to activate business");
+		console.error('Error activating business:', error);
+		throw new Error('Failed to activate business');
 	}
 }
 
@@ -953,8 +952,8 @@ async function deactivateBusiness(business_id, action_creator_user_id, reason) {
 			return updatedBusiness;
 		});
 	} catch (error) {
-		console.error("Error deactivating business:", error);
-		throw new Error("Failed to deactivate business");
+		console.error('Error deactivating business:', error);
+		throw new Error('Failed to deactivate business');
 	}
 }
 
@@ -963,8 +962,8 @@ const getScheduledUsersByBusinessId = async (businessId) => {
 		const business = await prisma.business.findUnique({
 			where: {
 				business_id: businessId,
-				offers_daily_meals: true
-			}
+				offers_daily_meals: true,
+			},
 		});
 
 		if (!business) {
@@ -975,19 +974,19 @@ const getScheduledUsersByBusinessId = async (businessId) => {
 			where: {
 				subscribed_to_daily_meals: true,
 				user_id: {
-					in: business.daily_users_sorted || []
-				}
+					in: business.daily_users_sorted || [],
+				},
 			},
 			include: {
 				addresses: {
 					include: {
-						address: true
-					}
-				}
-			}
+						address: true,
+					},
+				},
+			},
 		});
 	} catch (error) {
-		console.error("Error fetching scheduled users:", error);
+		console.error('Error fetching scheduled users:', error);
 		throw error;
 	}
 };
@@ -1008,31 +1007,31 @@ const getPurchaseOrderLimit = async (business_id) => {
 				OR: [
 					{
 						business_clients_id: {
-							in: business.business_clients.map(client => client.business_clients_id)
-						}
+							in: business.business_clients.map((client) => client.business_clients_id),
+						},
 					},
 					{
 						business_users_id: {
-							in: business.business_users.map(user => user.business_users_id)
-						}
-					}
+							in: business.business_users.map((user) => user.business_users_id),
+						},
+					},
 				],
 			},
 			select: {
-				payment: true
-			}
+				payment: true,
+			},
 		});
 		const totalTaxiOrders = taxiOrders.reduce((acc, order) => acc + (parseFloat(order.payment.price) || 0), 0);
-		console.log("Total taxi orders:", totalTaxiOrders);
+		console.log('Total taxi orders:', totalTaxiOrders);
 		if (business.purchase_order_limit_amount > 0) {
 			return Math.max(0, business.purchase_order_limit_amount - totalTaxiOrders);
 		}
 		return 0;
 	} catch (error) {
-		console.error("Error retrieving purchase order limit:", error);
+		console.error('Error retrieving purchase order limit:', error);
 		throw error;
 	}
-}
+};
 
 module.exports = {
 	getScheduledUsersByBusinessId,

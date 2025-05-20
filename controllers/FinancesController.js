@@ -1,6 +1,6 @@
-require("dotenv").config();
-const FinanceDao = require("../dao/Finances");
-const BusinessDao = require("../dao/Business");
+require('dotenv').config();
+const FinanceDao = require('../dao/Finances');
+const BusinessDao = require('../dao/Business');
 
 /**
  * POST /finances/create
@@ -19,8 +19,8 @@ async function createNewFinanceRecord(req, res) {
 		const financeRecord = await FinanceDao.addFinances(req.body);
 		res.status(201).json(financeRecord);
 	} catch (e) {
-		console.error("Error creating new finance record:", e);
-		res.status(400).json({ error: "Error creating new finance record", detail: e.message });
+		console.error('Error creating new finance record:', e);
+		res.status(400).json({ error: 'Error creating new finance record', detail: e.message });
 	}
 }
 
@@ -42,11 +42,11 @@ async function getFinanceRecordById(req, res) {
 		if (financeRecord) {
 			res.status(200).json(financeRecord);
 		} else {
-			res.status(404).json({ error: "Finance record not found" });
+			res.status(404).json({ error: 'Finance record not found' });
 		}
 	} catch (error) {
-		console.error("Error retrieving finance record:", error);
-		res.status(400).json({ error: "Error retrieving finance record", detail: error.message });
+		console.error('Error retrieving finance record:', error);
+		res.status(400).json({ error: 'Error retrieving finance record', detail: error.message });
 	}
 }
 
@@ -69,11 +69,11 @@ async function getFinanceRecordByBusinessId(req, res) {
 		if (financeRecord) {
 			res.status(200).json(financeRecord);
 		} else {
-			res.status(404).json({ error: "Finance record not found for the specified business" });
+			res.status(404).json({ error: 'Finance record not found for the specified business' });
 		}
 	} catch (e) {
-		console.error("Error retrieving finance record for the business:", e);
-		res.status(400).json({ error: "Error retrieving finance record for the business", detail: e.message });
+		console.error('Error retrieving finance record for the business:', e);
+		res.status(400).json({ error: 'Error retrieving finance record for the business', detail: e.message });
 	}
 }
 
@@ -95,8 +95,8 @@ async function updateFinanceRecord(req, res) {
 		const updatedFinanceRecord = await FinanceDao.updateFinances(req.params.finance_id, req.body);
 		res.status(200).json(updatedFinanceRecord);
 	} catch (error) {
-		console.error("Error updating finance record:", error);
-		res.status(400).json({ error: "Error updating finance record", detail: error.message });
+		console.error('Error updating finance record:', error);
+		res.status(400).json({ error: 'Error updating finance record', detail: error.message });
 	}
 }
 
@@ -121,8 +121,8 @@ async function updateAccountNumber(req, res) {
 		const updatedFinanceRecord = await FinanceDao.updateAccountNumber(finance_id, account_number);
 		res.status(200).json(updatedFinanceRecord);
 	} catch (error) {
-		console.error("Error updating account number:", error);
-		res.status(400).json({ error: "Error updating account number", detail: error.message });
+		console.error('Error updating account number:', error);
+		res.status(400).json({ error: 'Error updating account number', detail: error.message });
 	}
 }
 
@@ -147,8 +147,8 @@ async function updateBankName(req, res) {
 		const updatedFinanceRecord = await FinanceDao.updateBankName(finance_id, bank_name);
 		res.status(200).json(updatedFinanceRecord);
 	} catch (error) {
-		console.error("Error updating bank name:", error);
-		res.status(400).json({ error: "Error updating bank name", detail: error.message });
+		console.error('Error updating bank name:', error);
+		res.status(400).json({ error: 'Error updating bank name', detail: error.message });
 	}
 }
 
@@ -173,8 +173,8 @@ async function updatePaymentPreferences(req, res) {
 		const updatedFinanceRecord = await FinanceDao.updatePaymentPreferences(finance_id, payment_preferences);
 		res.status(200).json(updatedFinanceRecord);
 	} catch (error) {
-		console.error("Error updating payment preferences:", error);
-		res.status(400).json({ error: "Error updating payment preferences", detail: error.message });
+		console.error('Error updating payment preferences:', error);
+		res.status(400).json({ error: 'Error updating payment preferences', detail: error.message });
 	}
 }
 
@@ -191,10 +191,10 @@ async function updatePaymentPreferences(req, res) {
 async function deleteFinanceRecord(req, res) {
 	try {
 		await FinanceDao.deleteFinances(req.params.finance_id);
-		res.status(200).json({ message: "Finance record deleted successfully" });
+		res.status(200).json({ message: 'Finance record deleted successfully' });
 	} catch (error) {
-		console.error("Error deleting finance record:", error);
-		res.status(400).json({ error: "Error deleting finance record", detail: error.message });
+		console.error('Error deleting finance record:', error);
+		res.status(400).json({ error: 'Error deleting finance record', detail: error.message });
 	}
 }
 

@@ -1,7 +1,7 @@
-const BusinessUsersDao = require("../dao/BusinessUsers");
-const AddressDao = require("../dao/Address");
-const GroupDao = require("../dao/Group");
-const UserDao = require("../dao/User");
+const BusinessUsersDao = require('../dao/BusinessUsers');
+const AddressDao = require('../dao/Address');
+const GroupDao = require('../dao/Group');
+const UserDao = require('../dao/User');
 
 /**
  * GET /business-users
@@ -15,13 +15,13 @@ const UserDao = require("../dao/User");
  * @responseContent {object} 400.application/json The error object
  */
 async function getAllBusinessUsers(req, res) {
-    try {
-        const businessUsers = await BusinessUsersDao.getAllBusinessUsers();
-        res.status(200).json(businessUsers);
-    } catch (error) {
-        console.error("Error retrieving all business users:", error);
-        res.status(400).json({ error: "Error retrieving all business users", detail: error.message });
-    }
+	try {
+		const businessUsers = await BusinessUsersDao.getAllBusinessUsers();
+		res.status(200).json(businessUsers);
+	} catch (error) {
+		console.error('Error retrieving all business users:', error);
+		res.status(400).json({ error: 'Error retrieving all business users', detail: error.message });
+	}
 }
 
 /**
@@ -36,13 +36,13 @@ async function getAllBusinessUsers(req, res) {
  * @responseContent {object} 400.application/json The error object
  */
 async function getBusinessUserByUserId(req, res) {
-    try {
-        const businessUser = await BusinessUsersDao.getBusinessUserByUserId(req.params.user_id);
-        res.status(200).json(businessUser);
-    } catch (error) {
-        console.error("Error retrieving business user:", error);
-        res.status(400).json({ error: "Error retrieving business user", detail: error.message });
-    }
+	try {
+		const businessUser = await BusinessUsersDao.getBusinessUserByUserId(req.params.user_id);
+		res.status(200).json(businessUser);
+	} catch (error) {
+		console.error('Error retrieving business user:', error);
+		res.status(400).json({ error: 'Error retrieving business user', detail: error.message });
+	}
 }
 
 /**
@@ -58,13 +58,13 @@ async function getBusinessUserByUserId(req, res) {
  * @responseContent {object} 400.application/json The error object
  */
 async function getBusinessUsersByBusinessId(req, res) {
-    try {
-        const businessUsers = await BusinessUsersDao.getBusinessUsersByBusinessId(req.params.business_id);
-        res.status(200).json(businessUsers);
-    } catch (error) {
-        console.error("Error retrieving business users by business ID:", error);
-        res.status(400).json({ error: "Error retrieving business users by business ID", detail: error.message });
-    }
+	try {
+		const businessUsers = await BusinessUsersDao.getBusinessUsersByBusinessId(req.params.business_id);
+		res.status(200).json(businessUsers);
+	} catch (error) {
+		console.error('Error retrieving business users by business ID:', error);
+		res.status(400).json({ error: 'Error retrieving business users by business ID', detail: error.message });
+	}
 }
 
 /**
@@ -80,13 +80,13 @@ async function getBusinessUsersByBusinessId(req, res) {
  * @responseContent {object} 400.application/json The error object
  */
 async function getBusinessUsersByBusinessType(req, res) {
-    try {
-        const businessUsers = await BusinessUsersDao.getBusinessUsersByBusinessType(req.params.type);
-        res.status(200).json(businessUsers);
-    } catch (error) {
-        console.error("Error retrieving business users by business type:", error);
-        res.status(400).json({ error: "Error retrieving business users by business type", detail: error.message });
-    }
+	try {
+		const businessUsers = await BusinessUsersDao.getBusinessUsersByBusinessType(req.params.type);
+		res.status(200).json(businessUsers);
+	} catch (error) {
+		console.error('Error retrieving business users by business type:', error);
+		res.status(400).json({ error: 'Error retrieving business users by business type', detail: error.message });
+	}
 }
 
 /**
@@ -103,14 +103,17 @@ async function getBusinessUsersByBusinessType(req, res) {
  * @responseContent {object} 400.application/json The error object
  */
 async function getAllBusinessUsersForBusinessByCompanyRole(req, res) {
-    try {
-        const { business_id, company_role } = req.params;
-        const businessUsers = await BusinessUsersDao.getAllBusinessUsersForBusinessByCompanyRole(business_id, company_role);
-        res.status(200).json(businessUsers);
-    } catch (error) {
-        console.error("Error retrieving business users by company role:", error);
-        res.status(400).json({ error: "Error retrieving business users by company role", detail: error.message });
-    }
+	try {
+		const { business_id, company_role } = req.params;
+		const businessUsers = await BusinessUsersDao.getAllBusinessUsersForBusinessByCompanyRole(
+			business_id,
+			company_role
+		);
+		res.status(200).json(businessUsers);
+	} catch (error) {
+		console.error('Error retrieving business users by company role:', error);
+		res.status(400).json({ error: 'Error retrieving business users by company role', detail: error.message });
+	}
 }
 
 /**
@@ -127,29 +130,33 @@ async function getAllBusinessUsersForBusinessByCompanyRole(req, res) {
  * @response 400 - Error creating business user.
  */
 async function createBusinessUser(req, res) {
-    try {
-        let userData = req.body.userData;
-        const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userData, req.body.business_id);
-        const userRoles = req.body.userData.user_roles || [{role: req.body.userData.user_role || 'PERSONAL', primary: true}];
-        await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
+	try {
+		let userData = req.body.userData;
+		const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userData, req.body.business_id);
+		const userRoles = req.body.userData.user_roles || [
+			{ role: req.body.userData.user_role || 'PERSONAL', primary: true },
+		];
+		await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
 
-        let personal_address = null;
-        if (userData.address) {
-            personal_address = await AddressDao.addAddress(userData.address);
-            await AddressDao.addUserAddress(businessUser.user_id, personal_address.address_id);
-        }
-        let operating_address = null;
-        if (userData.operating_address) {
-            operating_address = await AddressDao.addAddress(userData.operating_address);
-            await AddressDao.addUserAddress(businessUser.user_id, operating_address.address_id);
-        }
-        await BusinessUsersDao.updateBusinessUser(businessUser.business_users_id, {operating_address_id: operating_address.address_id});
+		let personal_address = null;
+		if (userData.address) {
+			personal_address = await AddressDao.addAddress(userData.address);
+			await AddressDao.addUserAddress(businessUser.user_id, personal_address.address_id);
+		}
+		let operating_address = null;
+		if (userData.operating_address) {
+			operating_address = await AddressDao.addAddress(userData.operating_address);
+			await AddressDao.addUserAddress(businessUser.user_id, operating_address.address_id);
+		}
+		await BusinessUsersDao.updateBusinessUser(businessUser.business_users_id, {
+			operating_address_id: operating_address.address_id,
+		});
 
-        res.status(201).json(businessUser);
-    } catch (error) {
-        console.error("Error creating a business user:", error);
-        res.status(400).json({ error: "Error creating a business user", detail: error.message });
-    }
+		res.status(201).json(businessUser);
+	} catch (error) {
+		console.error('Error creating a business user:', error);
+		res.status(400).json({ error: 'Error creating a business user', detail: error.message });
+	}
 }
 
 /**
@@ -163,13 +170,13 @@ async function createBusinessUser(req, res) {
  * @response 400 - Error removing business user.
  */
 async function removeBusinessUser(req, res) {
-    try {
-        await BusinessUsersDao.removeBusinessUser(req.params.business_users_id);
-        res.status(200).json({ message: "Business user removed successfully." });
-    } catch (error) {
-        console.error("Error removing a business user:", error);
-        res.status(400).json({ error: "Error removing a business user", detail: error.message });
-    }
+	try {
+		await BusinessUsersDao.removeBusinessUser(req.params.business_users_id);
+		res.status(200).json({ message: 'Business user removed successfully.' });
+	} catch (error) {
+		console.error('Error removing a business user:', error);
+		res.status(400).json({ error: 'Error removing a business user', detail: error.message });
+	}
 }
 
 /**
@@ -187,20 +194,23 @@ async function removeBusinessUser(req, res) {
  * @response 400 - Error adding address.
  */
 async function addOperatingAddress(req, res) {
-    try {
-        console.log("addOperatingAddress", req.body);
-        let address = await AddressDao.addAddress(req.body);
-        console.log("address", address);
-        let businessUserAddress = await BusinessUsersDao.addOperatingAddress(req.params.business_users_id, address.address_id);
-        console.log("businessUserAddress", businessUserAddress);
-        if (businessUserAddress) {
-            return res.status(200).json(businessUserAddress);
-        }
-        res.status(400).json({ error: "Error adding address" });
-    } catch (e) {
-        console.log(e);
-        res.status(400).json({ error: "Error adding address", detail: e.message });
-    }
+	try {
+		console.log('addOperatingAddress', req.body);
+		let address = await AddressDao.addAddress(req.body);
+		console.log('address', address);
+		let businessUserAddress = await BusinessUsersDao.addOperatingAddress(
+			req.params.business_users_id,
+			address.address_id
+		);
+		console.log('businessUserAddress', businessUserAddress);
+		if (businessUserAddress) {
+			return res.status(200).json(businessUserAddress);
+		}
+		res.status(400).json({ error: 'Error adding address' });
+	} catch (e) {
+		console.log(e);
+		res.status(400).json({ error: 'Error adding address', detail: e.message });
+	}
 }
 
 /**
@@ -216,15 +226,15 @@ async function addOperatingAddress(req, res) {
  * @response 400 - Error updating company role
  */
 async function updateCompanyRole(req, res) {
-    try {
-        const { business_users_id } = req.params;
-        const { company_role } = req.body;
-        const updatedBusinessUser = await BusinessUsersDao.updateCompanyRole(business_users_id, company_role);
-        res.status(200).json(updatedBusinessUser);
-    } catch (error) {
-        console.error("Error updating company role:", error);
-        res.status(400).json({ error: "Error updating company role", detail: error.message });
-    }
+	try {
+		const { business_users_id } = req.params;
+		const { company_role } = req.body;
+		const updatedBusinessUser = await BusinessUsersDao.updateCompanyRole(business_users_id, company_role);
+		res.status(200).json(updatedBusinessUser);
+	} catch (error) {
+		console.error('Error updating company role:', error);
+		res.status(400).json({ error: 'Error updating company role', detail: error.message });
+	}
 }
 
 /**
@@ -240,14 +250,14 @@ async function updateCompanyRole(req, res) {
  * @response 400 - Error updating company role
  */
 async function updateBusinessUserOnlineStatus(req, res) {
-    try {
-        const { business_users_id, online  } = req.body;
-        const updatedBusinessUser = await BusinessUsersDao.updateBusinessUserOnlineStatus(business_users_id, online);
-        res.status(200).json(updatedBusinessUser);
-    } catch (error) {
-        console.error("Error updating online status:", error);
-        res.status(400).json({ error: "Error updating business user online status", detail: error.message });
-    }
+	try {
+		const { business_users_id, online } = req.body;
+		const updatedBusinessUser = await BusinessUsersDao.updateBusinessUserOnlineStatus(business_users_id, online);
+		res.status(200).json(updatedBusinessUser);
+	} catch (error) {
+		console.error('Error updating online status:', error);
+		res.status(400).json({ error: 'Error updating business user online status', detail: error.message });
+	}
 }
 
 /**
@@ -262,23 +272,23 @@ async function updateBusinessUserOnlineStatus(req, res) {
  * @response 400 - Error occurred while obtaining the menu list
  */
 async function getBusinessGroupsByBusinessId(req, res) {
-    try {
-        const businessUsers = await BusinessUsersDao.getBusinessUsersByBusinessId(req.params.business_id);
-        const nested_groupUsers = [];
-        for(const business_user in businessUsers){
-            const group_users = await GroupDao.getGroupUsersByParentId(business_user.user_id);
-            if(group_users.length > 0){
-                nested_groupUsers.push({
-                    user_id: business_user.user_id,
-                    child_users: group_users
-                });
-            }
-        }
-        res.status(200).json(nested_groupUsers);
-    } catch (e) {
-        console.error("Error obtaining group_users for business", e );
-        res.status(400).json({ error: "Error obtaining group_users for business", e });
-    }
+	try {
+		const businessUsers = await BusinessUsersDao.getBusinessUsersByBusinessId(req.params.business_id);
+		const nested_groupUsers = [];
+		for (const business_user in businessUsers) {
+			const group_users = await GroupDao.getGroupUsersByParentId(business_user.user_id);
+			if (group_users.length > 0) {
+				nested_groupUsers.push({
+					user_id: business_user.user_id,
+					child_users: group_users,
+				});
+			}
+		}
+		res.status(200).json(nested_groupUsers);
+	} catch (e) {
+		console.error('Error obtaining group_users for business', e);
+		res.status(400).json({ error: 'Error obtaining group_users for business', e });
+	}
 }
 
 /**
@@ -295,32 +305,31 @@ async function getBusinessGroupsByBusinessId(req, res) {
  * @response 400 - Error updating group user enabled status.
  */
 async function setAllowance(req, res) {
-    const { business_users_id, wallet, purchase_order, type } = req.body;
+	const { business_users_id, wallet, purchase_order, type } = req.body;
 
-    try {
-        let business_user = await BusinessUsersDao.updateAllowance(business_users_id, wallet, purchase_order, type);
-        if (business_user) {
-            return res.status(200).json(business_user);
-        }
-        res.status(400).json({ error: "Error updating business user allowance" });
-    } catch (e) {
-        console.log(e);
-        res.status(400).json({ error: "Error updating business user allowance", e });
-    }
+	try {
+		let business_user = await BusinessUsersDao.updateAllowance(business_users_id, wallet, purchase_order, type);
+		if (business_user) {
+			return res.status(200).json(business_user);
+		}
+		res.status(400).json({ error: 'Error updating business user allowance' });
+	} catch (e) {
+		console.log(e);
+		res.status(400).json({ error: 'Error updating business user allowance', e });
+	}
 }
 
 module.exports = {
-    updateCompanyRole,
-    getAllBusinessUsersForBusinessByCompanyRole,
-    getAllBusinessUsers,
-    getBusinessUserByUserId,
-    getBusinessUsersByBusinessId,
-    getBusinessUsersByBusinessType,
-    createBusinessUser,
-    addOperatingAddress,
-    removeBusinessUser,
-    updateBusinessUserOnlineStatus,
-    getBusinessGroupsByBusinessId,
-    setAllowance,
+	updateCompanyRole,
+	getAllBusinessUsersForBusinessByCompanyRole,
+	getAllBusinessUsers,
+	getBusinessUserByUserId,
+	getBusinessUsersByBusinessId,
+	getBusinessUsersByBusinessType,
+	createBusinessUser,
+	addOperatingAddress,
+	removeBusinessUser,
+	updateBusinessUserOnlineStatus,
+	getBusinessGroupsByBusinessId,
+	setAllowance,
 };
-

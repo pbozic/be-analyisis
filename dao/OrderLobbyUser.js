@@ -1,4 +1,4 @@
-const prisma = require("../prisma/prisma");
+const prisma = require('../prisma/prisma');
 
 const cropped_user_columns = {
 	first_name: true,
@@ -18,17 +18,17 @@ async function createOrderLobbyUser(user_id, order_lobbies_id, limit) {
 		data: {
 			limit,
 			users: {
-				connect: { user_id }
+				connect: { user_id },
 			},
 			order_lobbies: {
-				connect: { order_lobbies_id }
-			}
+				connect: { order_lobbies_id },
+			},
 		},
 		include: {
 			users: {
-				select: cropped_user_columns
-			}
-		}
+				select: cropped_user_columns,
+			},
+		},
 	});
 }
 
@@ -42,9 +42,9 @@ async function getOrderLobbyUsersInOrderLobby(order_lobbies_id) {
 		where: { order_lobbies_id },
 		include: {
 			users: {
-				select: cropped_user_columns
-			}
-		}
+				select: cropped_user_columns,
+			},
+		},
 	});
 }
 
@@ -60,9 +60,9 @@ async function updateOrderLobbyUserLimit(order_lobby_users_id, newLimit) {
 		data: { limit: newLimit },
 		include: {
 			users: {
-				select: cropped_user_columns
-			}
-		}
+				select: cropped_user_columns,
+			},
+		},
 	});
 }
 
@@ -79,8 +79,8 @@ async function deleteOrderLobbyUserWithItems(order_lobby_users_id) {
 			where: { order_lobby_users_id },
 			select: {
 				user_id: true,
-				order_lobbies_id: true
-			}
+				order_lobbies_id: true,
+			},
 		});
 
 		if (!lobbyUser) {
@@ -90,16 +90,13 @@ async function deleteOrderLobbyUserWithItems(order_lobby_users_id) {
 		// Delete all items belonging to this user in the lobby
 		await tx.order_lobby_items.deleteMany({
 			where: {
-				AND: [
-					{ user_id: lobbyUser.user_id },
-					{ order_lobbies_id: lobbyUser.order_lobbies_id }
-				]
-			}
+				AND: [{ user_id: lobbyUser.user_id }, { order_lobbies_id: lobbyUser.order_lobbies_id }],
+			},
 		});
 
 		// Delete the order lobby user
 		const deletedUser = await tx.order_lobby_users.delete({
-			where: { order_lobby_users_id }
+			where: { order_lobby_users_id },
 		});
 
 		return deletedUser;
@@ -110,5 +107,5 @@ module.exports = {
 	createOrderLobbyUser,
 	getOrderLobbyUsersInOrderLobby,
 	updateOrderLobbyUserLimit,
-	deleteOrderLobbyUserWithItems
+	deleteOrderLobbyUserWithItems,
 };

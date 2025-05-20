@@ -1,4 +1,4 @@
-const prisma = require("../prisma/prisma");
+const prisma = require('../prisma/prisma');
 
 const reportFoundItem = async (foundItemData, user) => {
 	try {
@@ -6,18 +6,17 @@ const reportFoundItem = async (foundItemData, user) => {
 			data: {
 				...foundItemData,
 				user: {
-					connect: { user_id: user.user_id }
-				}
+					connect: { user_id: user.user_id },
+				},
 			},
 		});
 	} catch (error) {
-		console.error("Error adding found item:", error);
-		throw new Error("Error adding found item");
+		console.error('Error adding found item:', error);
+		throw new Error('Error adding found item');
 	}
 };
 
-
-const deleteFoundItem = async ( lost_item_id ) => {
+const deleteFoundItem = async (lost_item_id) => {
 	try {
 		// Disconnect the user from the lost item
 		// await prisma.lost_items.update({
@@ -29,7 +28,7 @@ const deleteFoundItem = async ( lost_item_id ) => {
 			where: { lost_item_id },
 		});
 	} catch (error) {
-		console.error("Error deleting found item:", error);
+		console.error('Error deleting found item:', error);
 		throw new Error(error);
 	}
 };
@@ -43,12 +42,12 @@ const getLostItems = async () => {
 						files: true,
 					},
 				},
-				user: true
+				user: true,
 			},
 		});
 	} catch (error) {
-		console.error("Error fetching lost items with documents and files:", error);
-		throw new Error("Could not retrieve lost items");
+		console.error('Error fetching lost items with documents and files:', error);
+		throw new Error('Could not retrieve lost items');
 	}
 };
 
@@ -59,8 +58,8 @@ const updateLostItem = async (lost_item_id, updateData) => {
 			data: updateData,
 		});
 	} catch (error) {
-		console.error("Error updating lost item:", error);
-		throw new Error("Error updating lost item");
+		console.error('Error updating lost item:', error);
+		throw new Error('Error updating lost item');
 	}
 };
 
@@ -68,5 +67,5 @@ module.exports = {
 	reportFoundItem,
 	deleteFoundItem,
 	getLostItems,
-	updateLostItem
+	updateLostItem,
 };

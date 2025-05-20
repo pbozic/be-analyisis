@@ -1,10 +1,10 @@
-var express = require("express");
+var express = require('express');
+
 const router = express.Router();
-const AuthController = require("../../../controllers/AuthController");
-const { loginSchema, registerSchema, refreshSchema, resetPasswordSchema } = require("../../../joi/authSchemas");
+const AuthController = require('../../../controllers/AuthController');
+const { loginSchema, registerSchema, refreshSchema, resetPasswordSchema } = require('../../../joi/authSchemas');
+const joi = require('../../../middleware/joi');
 
-const joi = require("../../../middleware/joi");
-
-router.post("/register", AuthController.registerMerchantService);
+router.post('/register', AuthController.registerMerchantService);
 
 module.exports = router;

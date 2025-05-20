@@ -1,9 +1,9 @@
-var express = require("express");
+var express = require('express');
 
 const router = express.Router();
-const joi = require("../../../middleware/joi");
-const VehiclesController = require("../../../controllers/VehiclesController");
+const joi = require('../../../middleware/joi');
+const VehiclesController = require('../../../controllers/VehiclesController');
 
-router.get("/", VehiclesController.listVehicles);
+router.get('/', VehiclesController.listVehicles);
 
 module.exports = router;

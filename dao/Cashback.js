@@ -6,7 +6,7 @@ const createCashback = async (data) => {
 		return await prisma.cashback.create({
 			data: {
 				...data,
-			}
+			},
 		});
 	} catch (error) {
 		console.error('Error creating cashback:', error);
@@ -25,14 +25,14 @@ const getUserCashbackHistory = async (user_id) => {
 				delivery_order: true,
 			},
 			orderBy: {
-				earned_at: 'desc'
-			}
+				earned_at: 'desc',
+			},
 		});
 	} catch (error) {
 		console.error('Error fetching user cashback history:', error);
 		throw error;
 	}
-}
+};
 
 const getPendingUserCashbackByType = async (user_id, type) => {
 	try {
@@ -47,16 +47,17 @@ const getPendingUserCashbackByType = async (user_id, type) => {
 				delivery_order: true,
 			},
 			orderBy: {
-				earned_at: 'asc'
-			}
+				earned_at: 'asc',
+			},
 		});
 	} catch (error) {
+		console.error('Error fetching pending user cashback by type:', error);
 		throw error;
 	}
-}
+};
 
 module.exports = {
 	createCashback,
 	getUserCashbackHistory,
 	getPendingUserCashbackByType,
-}
+};

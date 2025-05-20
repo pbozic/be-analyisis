@@ -1,5 +1,6 @@
-var express = require("express");
-const { geocodeAddress, getPlacePredictions } = require("../../controllers/GoogleMapsController");
+var express = require('express');
+
+const { geocodeAddress, getPlacePredictions } = require('../../controllers/GoogleMapsController');
 const router = express.Router();
 
 router.get('/autocomplete', getPlacePredictions);

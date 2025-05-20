@@ -1,0 +1,5 @@
+import { z } from 'zod';
+
+export const UsersScalarFieldEnumSchema = z.enum(['user_id','first_name','last_name','password','gender','email','telephone','telephone_code','telephone_number','date_of_birth','created_at','updated_at','user_role','phone_verified','notification_preferences','taxi_preferences','reviewable_id','review_complete','one_signal_id','stripe_customer_id','wallet_balance','transfer_preferences','allergies_preferences','spicy_preferences','radio_preferences','subscribed_to_daily_meals','daily_meal_preferences','details','taxi_push_notification_preferences','transfer_push_notification_preferences','delivery_push_notification_preferences','spoken_languages','daily_meal_day_preferences','disabled','active','language','apple_id','google_id','referral_code','activated_at','business_teams_id','allow_marketing_push_notifications','allow_ads_personalization','allow_newsletter']);
+
+export default UsersScalarFieldEnumSchema;

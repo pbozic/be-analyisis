@@ -1,8 +1,14 @@
 // server.js
-const express = require('express');
 const http = require('http');
 
-const app = express();
+const app = require('./app');
+const { setupSocket } = require('./socket');
+
+const port = process.env.PORT || 3001;
 const server = http.createServer(app);
 
-module.exports = { app, server };
+setupSocket(server);
+
+server.listen(port, '0.0.0.0', () => {
+	console.log('server listening on: ' + port);
+});

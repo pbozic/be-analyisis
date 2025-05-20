@@ -1,0 +1,41 @@
+import type { Prisma } from '@prisma/client';
+
+import { z } from 'zod';
+import { StringFieldUpdateOperationsInputSchema } from './StringFieldUpdateOperationsInputSchema';
+import { NullableStringFieldUpdateOperationsInputSchema } from './NullableStringFieldUpdateOperationsInputSchema';
+import { NullableBoolFieldUpdateOperationsInputSchema } from './NullableBoolFieldUpdateOperationsInputSchema';
+import { VEHICLE_CLASSSchema } from './VEHICLE_CLASSSchema';
+import { NullableEnumVEHICLE_CLASSFieldUpdateOperationsInputSchema } from './NullableEnumVEHICLE_CLASSFieldUpdateOperationsInputSchema';
+import { VEHICLE_CATEGORYSchema } from './VEHICLE_CATEGORYSchema';
+import { NullableEnumVEHICLE_CATEGORYFieldUpdateOperationsInputSchema } from './NullableEnumVEHICLE_CATEGORYFieldUpdateOperationsInputSchema';
+import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateOperationsInputSchema';
+import { documentsUpdateManyWithoutVehiclesNestedInputSchema } from './documentsUpdateManyWithoutVehiclesNestedInputSchema';
+import { vehicle_driversUpdateManyWithoutVehicleNestedInputSchema } from './vehicle_driversUpdateManyWithoutVehicleNestedInputSchema';
+import { delivery_driversUpdateOneWithoutVehiclesNestedInputSchema } from './delivery_driversUpdateOneWithoutVehiclesNestedInputSchema';
+import { vehicle_specificationsUpdateOneWithoutVehicleNestedInputSchema } from './vehicle_specificationsUpdateOneWithoutVehicleNestedInputSchema';
+import { taxi_ordersUpdateManyWithoutVehicleNestedInputSchema } from './taxi_ordersUpdateManyWithoutVehicleNestedInputSchema';
+import { delivery_ordersUpdateManyWithoutVehicleNestedInputSchema } from './delivery_ordersUpdateManyWithoutVehicleNestedInputSchema';
+import { driversUpdateOneWithoutCurrent_vehicleNestedInputSchema } from './driversUpdateOneWithoutCurrent_vehicleNestedInputSchema';
+
+export const vehiclesUpdateInputSchema: z.ZodType<Prisma.vehiclesUpdateInput> = z.object({
+  vehicle_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
+  business_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  active: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  class: z.union([ z.lazy(() => VEHICLE_CLASSSchema),z.lazy(() => NullableEnumVEHICLE_CLASSFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  category: z.union([ z.lazy(() => VEHICLE_CATEGORYSchema),z.lazy(() => NullableEnumVEHICLE_CATEGORYFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  make: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  model: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  color: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  license_plate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
+  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
+  documents: z.lazy(() => documentsUpdateManyWithoutVehiclesNestedInputSchema).optional(),
+  drivers: z.lazy(() => vehicle_driversUpdateManyWithoutVehicleNestedInputSchema).optional(),
+  delivery_driver: z.lazy(() => delivery_driversUpdateOneWithoutVehiclesNestedInputSchema).optional(),
+  vehicle_specification: z.lazy(() => vehicle_specificationsUpdateOneWithoutVehicleNestedInputSchema).optional(),
+  taxi_orders: z.lazy(() => taxi_ordersUpdateManyWithoutVehicleNestedInputSchema).optional(),
+  delivery_orders: z.lazy(() => delivery_ordersUpdateManyWithoutVehicleNestedInputSchema).optional(),
+  current_driver: z.lazy(() => driversUpdateOneWithoutCurrent_vehicleNestedInputSchema).optional()
+}).strict();
+
+export default vehiclesUpdateInputSchema;

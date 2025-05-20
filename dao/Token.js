@@ -1,11 +1,12 @@
-const prisma = require("../prisma/prisma");
-const crypto = require("crypto");
+const crypto = require('crypto');
+
+const prisma = require('../prisma/prisma');
 async function getPasswordToken(token) {
 	try {
 		return prisma.tokens.findFirst({
 			where: {
 				token,
-				type: "PASSWORD_RESET",
+				type: 'PASSWORD_RESET',
 			},
 		});
 	} catch (e) {
@@ -18,7 +19,7 @@ async function getActiveSMSToken(user) {
 			where: {
 				active: true,
 				user_id: user.user_id,
-				type: "PHONE_VERIFICATION",
+				type: 'PHONE_VERIFICATION',
 			},
 		});
 	} catch (e) {
@@ -42,7 +43,7 @@ const saveSMSToken = async (token) => {
 		await prisma.tokens.updateMany({
 			where: {
 				user_id: token.user_id,
-				type: "PHONE_VERIFICATION",
+				type: 'PHONE_VERIFICATION',
 			},
 			data: {
 				active: false,
@@ -52,7 +53,7 @@ const saveSMSToken = async (token) => {
 			data: {
 				...token,
 				active: true,
-				type: "PHONE_VERIFICATION",
+				type: 'PHONE_VERIFICATION',
 			},
 		});
 	} catch (e) {
@@ -64,7 +65,7 @@ const savePasswordResetToken = async (token) => {
 		await prisma.tokens.updateMany({
 			where: {
 				user_id: token.user_id,
-				type: "PASSWORD_RESET",
+				type: 'PASSWORD_RESET',
 			},
 			data: {
 				active: false,
@@ -74,7 +75,7 @@ const savePasswordResetToken = async (token) => {
 			data: {
 				...token,
 				active: true,
-				type: "PASSWORD_RESET",
+				type: 'PASSWORD_RESET',
 			},
 		});
 	} catch (e) {
@@ -85,9 +86,9 @@ const savePasswordResetToken = async (token) => {
 async function generateSMSVerificationToken(user) {
 	let tokenObj = {
 		user_id: user.user_id,
-		token: (Math.floor(Math. random() * (999999 - 100000 + 1)) + 100000).toString(),
-		type: "PHONE_VERIFICATION",
-		expires_at: new Date(Date.now() + (3600000 * 2)), // 10 minutes from now
+		token: (Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000).toString(),
+		type: 'PHONE_VERIFICATION',
+		expires_at: new Date(Date.now() + 3600000 * 2), // 10 minutes from now
 	};
 	let token = await saveSMSToken(tokenObj);
 	// TODO: send SMS
@@ -95,9 +96,8 @@ async function generateSMSVerificationToken(user) {
 }
 
 async function generatePaswordResetToken(user) {
-	
-	const tokenHash = crypto.randomBytes(20).toString('hex');
-	const resetTokenExpires = Date.now() + (3600000 * 24); // 1 hour from now
+	let tokenHash = crypto.randomBytes(20).toString('hex');
+	const resetTokenExpires = Date.now() + 3600000 * 24; // 1 hour from now
 	let existsToken = await prisma.tokens.findUnique({
 		where: {
 			token: tokenHash,
@@ -114,7 +114,7 @@ async function generatePaswordResetToken(user) {
 	let tokenObj = {
 		user_id: user.user_id,
 		token: tokenHash,
-		type: "PASSWORD_RESET",
+		type: 'PASSWORD_RESET',
 		expires_at: new Date(resetTokenExpires),
 	};
 	let token = await savePasswordResetToken(tokenObj);
@@ -129,5 +129,5 @@ module.exports = {
 	savePasswordResetToken,
 	generateSMSVerificationToken,
 	generatePaswordResetToken,
-	getPasswordToken
+	getPasswordToken,
 };

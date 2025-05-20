@@ -1,8 +1,9 @@
-const { file } = require("googleapis/build/src/apis/file");
-const prisma= require("../prisma/prisma");
-const UserDao = require("./User");
-const { calculateDistance, calculateTimeDifference } = require("../lib/helpersLib");
-const { TAXI_ORDER_STATUS } = require("../lib/constants");
+const { file } = require('googleapis/build/src/apis/file');
+
+const prisma = require('../prisma/prisma');
+const UserDao = require('./User');
+const { calculateDistance, calculateTimeDifference } = require('../lib/helpersLib');
+const { TAXI_ORDER_STATUS } = require('../lib/constants');
 
 const getDrivers = async (args) => {
 	try {
@@ -16,15 +17,15 @@ const getDrivers = async (args) => {
 							include: {
 								vehicle_specification: true,
 							},
-						}
-					}
+						},
+					},
 				},
-				current_vehicle:true,
+				current_vehicle: true,
 				documents: false,
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving drivers:", error);
+		console.error('Error retrieving drivers:', error);
 		throw new Error(error);
 	}
 };
@@ -33,14 +34,14 @@ const getDriversFull = async (args) => {
 		return await prisma.drivers.findMany({
 			...args,
 			include: {
-				user:{ 
+				user: {
 					include: {
 						documents: {
 							include: {
 								files: true,
-							}
+							},
 						},
-					}
+					},
 				},
 				vehicles: {
 					include: {
@@ -48,14 +49,14 @@ const getDriversFull = async (args) => {
 							include: {
 								vehicle_specification: true,
 							},
-						}
-					}
+						},
+					},
 				},
-				current_vehicle:true,
+				current_vehicle: true,
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving drivers:", error);
+		console.error('Error retrieving drivers:', error);
 		throw new Error(error);
 	}
 };
@@ -64,7 +65,7 @@ const getOnlineDrivers = async (args) => {
 		return await prisma.drivers.findMany({
 			where: {
 				online: true,
-				...args
+				...args,
 			},
 			include: {
 				user: true,
@@ -74,14 +75,14 @@ const getOnlineDrivers = async (args) => {
 							include: {
 								vehicle_specification: true,
 							},
-						}
-					}
+						},
+					},
 				},
-				current_vehicle:true,
+				current_vehicle: true,
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving online drivers:", error);
+		console.error('Error retrieving online drivers:', error);
 		throw new Error(error);
 	}
 };
@@ -103,7 +104,7 @@ const getDriverById = async (driver_id) => {
 						documents: {
 							include: {
 								files: true,
-							}
+							},
 						},
 						business_users: {
 							include: {
@@ -112,14 +113,13 @@ const getDriverById = async (driver_id) => {
 										documents: {
 											include: {
 												files: true,
-											}
+											},
 										},
-									}
-								
-								}
-							}
-						},	
-					}
+									},
+								},
+							},
+						},
+					},
 				},
 				vehicles: {
 					include: {
@@ -129,27 +129,27 @@ const getDriverById = async (driver_id) => {
 								documents: {
 									include: {
 										files: true,
-									}
-								}
-							}
-						}
-					}
+									},
+								},
+							},
+						},
+					},
 				},
 				current_vehicle: true,
 				documents: {
 					include: {
 						files: true,
-					}
+					},
 				},
 				activity_logs: {
 					orderBy: {
-						started_at: 'desc'
-					}
+						started_at: 'desc',
+					},
 				},
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving driver:", error);
+		console.error('Error retrieving driver:', error);
 		throw new Error(error);
 	}
 };
@@ -168,15 +168,15 @@ const getDriverByUserId = async (user_id) => {
 							include: {
 								vehicle_specification: true,
 							},
-						}
-					}
+						},
+					},
 				},
-				current_vehicle:true,
+				current_vehicle: true,
 				documents: false,
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving driver by user ID:", error);
+		console.error('Error retrieving driver by user ID:', error);
 		throw new Error(error);
 	}
 };
@@ -215,15 +215,15 @@ const updateDriverOnlineStatus = async (driver_id, isOnline) => {
 							include: {
 								vehicle_specification: true,
 							},
-						}
-					}
+						},
+					},
 				},
-				current_vehicle:true,
+				current_vehicle: true,
 				activity_logs: {
 					orderBy: {
-						started_at: 'desc'
-					}
-				}
+						started_at: 'desc',
+					},
+				},
 			},
 		});
 	} catch (error) {
@@ -265,10 +265,10 @@ const updateDriverLocation = async (driver_id, location) => {
 							include: {
 								vehicle_specification: true,
 							},
-						}
-					}
+						},
+					},
 				},
-				current_vehicle:true,
+				current_vehicle: true,
 			},
 		});
 	} catch (error) {
@@ -293,11 +293,14 @@ const updateDriverLocationHistory = async (driver_id, location, status, order_id
 			location: locationData,
 			driver: {
 				connect: {
-					driver_id: driver_id
-				}
+					driver_id: driver_id,
+				},
 			},
-			...(order_id && taxiOrder ? { order: { connect: { order_id: order_id } } } :
-				order_id && !taxiOrder ? { delivery_order: { connect: { order_id: order_id } } } : {})
+			...(order_id && taxiOrder
+				? { order: { connect: { order_id: order_id } } }
+				: order_id && !taxiOrder
+					? { delivery_order: { connect: { order_id: order_id } } }
+					: {}),
 		};
 
 		return await prisma.driver_history_locations.create({ data });
@@ -306,7 +309,6 @@ const updateDriverLocationHistory = async (driver_id, location, status, order_id
 		throw new Error(error);
 	}
 };
-
 
 const updateDriver = async (driver_id, updateData) => {
 	try {
@@ -323,14 +325,14 @@ const updateDriver = async (driver_id, updateData) => {
 							include: {
 								vehicle_specification: true,
 							},
-						}
-					}
+						},
+					},
 				},
-				current_vehicle:true,
+				current_vehicle: true,
 			},
 		});
 	} catch (error) {
-		console.error("Error updating driver:", error);
+		console.error('Error updating driver:', error);
 		throw new Error(error);
 	}
 };
@@ -341,7 +343,7 @@ const createNewDriver = async (driverData, userData) => {
 		if (!userData?.user_id) {
 			newUser = await UserDao.createNewUser(userData);
 			if (!newUser) {
-				throw new Error("Failed to create user for new driver", userData);
+				throw new Error('Failed to create user for new driver', userData);
 			}
 		}
 
@@ -359,7 +361,7 @@ const createNewDriver = async (driverData, userData) => {
 			...driverData,
 			location: locationData,
 			user_id: newUser.user_id,
-			last_ping_at: new Date()
+			last_ping_at: new Date(),
 		};
 
 		const newDriver = await prisma.drivers.create({
@@ -369,11 +371,10 @@ const createNewDriver = async (driverData, userData) => {
 		// Include the user data in the returned driver data
 		return {
 			...newDriver,
-			user: newUser
+			user: newUser,
 		};
-
 	} catch (error) {
-		console.error("Error creating new driver:", error);
+		console.error('Error creating new driver:', error);
 		throw new Error(error.message); // Adjust error handling as needed
 	}
 };
@@ -390,17 +391,17 @@ const getAvailableDrivers = async () => {
 							include: {
 								vehicle_specification: true,
 							},
-						}
-					}
+						},
+					},
 				},
-				current_vehicle:true
+				current_vehicle: true,
 			},
 		});
 	} catch (error) {
-		console.error("Error getting available drivers:", error);
+		console.error('Error getting available drivers:', error);
 		throw new Error(error);
 	}
-}
+};
 
 const getUnavailableDrivers = async () => {
 	try {
@@ -413,40 +414,40 @@ const getUnavailableDrivers = async () => {
 						vehicle_specification: true,
 					},
 				},
-				current_vehicle:true
+				current_vehicle: true,
 			},
 		});
 	} catch (error) {
-		console.error("Error getting available drivers:", error);
+		console.error('Error getting available drivers:', error);
 		throw new Error(error);
 	}
-}
+};
 
 const getBusinessByDriverId = async (driver_id) => {
-    try {
-        // Step 1: Get the business_id from the drivers model
-        const driver = await prisma.drivers.findUnique({
-            where: { driver_id },
-            select: { business_id: true }
-        });
+	try {
+		// Step 1: Get the business_id from the drivers model
+		const driver = await prisma.drivers.findUnique({
+			where: { driver_id },
+			select: { business_id: true },
+		});
 
-        if (!driver || !driver.business_id) {
-            throw new Error("Business not found for the given driver ID");
-        }
+		if (!driver || !driver.business_id) {
+			throw new Error('Business not found for the given driver ID');
+		}
 
-        // Step 2: Get the business details using the business_id
-        const business = await prisma.business.findUnique({
-            where: { business_id: driver.business_id }
-        });
-        if (!business) {
-            throw new Error("Business not found for the given business ID");
-        }
+		// Step 2: Get the business details using the business_id
+		const business = await prisma.business.findUnique({
+			where: { business_id: driver.business_id },
+		});
+		if (!business) {
+			throw new Error('Business not found for the given business ID');
+		}
 
-        return business;
-    } catch (error) {
-        console.error("Error retrieving business by driver ID:", error);
-        throw error;
-    }
+		return business;
+	} catch (error) {
+		console.error('Error retrieving business by driver ID:', error);
+		throw error;
+	}
 };
 async function getDriverLocations(driverId, startTime, endTime) {
 	try {
@@ -531,8 +532,10 @@ async function getDriverLocationsWithPerformance(driverId, startTime, endTime) {
 
 			// Calculate distance between the previous and current location
 			const distance = calculateDistance(
-				previousLocation.latitude, previousLocation.longitude,
-				currentCoordinates.latitude, currentCoordinates.longitude
+				previousLocation.latitude,
+				previousLocation.longitude,
+				currentCoordinates.latitude,
+				currentCoordinates.longitude
 			);
 
 			// Calculate time taken between the previous and current location
@@ -543,7 +546,7 @@ async function getDriverLocationsWithPerformance(driverId, startTime, endTime) {
 
 			// Assume a threshold speed, e.g., normal speed = 50 km/h (0.83 km/min)
 			const normalSpeed = 0.5; // 30 km/h in km/min
-			const performance_score =  normalSpeed / speed
+			const performance_score = normalSpeed / speed;
 
 			totalScore += performance_score;
 
@@ -584,7 +587,7 @@ async function setDriverHandle(driver_id, action, type) {
 			updateData.handles_delivery_orders = isEnableAction;
 			break;
 		default:
-			throw new Error("Invalid type for toggling driver handle field");
+			throw new Error('Invalid type for toggling driver handle field');
 	}
 
 	return await prisma.drivers.update({
@@ -604,7 +607,7 @@ async function toggleDriverOrders(driver_id, types) {
 			},
 		});
 	} catch (error) {
-		console.error("Error toggling driver orders:", error);
+		console.error('Error toggling driver orders:', error);
 		throw new Error(error);
 	}
 }
@@ -652,7 +655,7 @@ const addDriverMunicipalities = async (driver_id, municipalities) => {
 					municipality_id: municipality,
 				},
 			});
-			
+
 			if (exists) continue;
 
 			return await prisma.driver_municipalities.create({
@@ -666,12 +669,11 @@ const addDriverMunicipalities = async (driver_id, municipalities) => {
 				},
 			});
 		}
-		
 	} catch (error) {
-		console.error("Error adding municipalities to driver:", error);
+		console.error('Error adding municipalities to driver:', error);
 		throw new Error(error);
 	}
-}
+};
 
 module.exports = {
 	setDriverHandle,
@@ -694,5 +696,5 @@ module.exports = {
 	getDriverLocations,
 	getDriverLocationsWithPerformance,
 	setDriverCurrentVehicle,
-	addDriverMunicipalities
+	addDriverMunicipalities,
 };

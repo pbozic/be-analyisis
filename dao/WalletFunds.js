@@ -1,5 +1,5 @@
-const prisma = require("../prisma/prisma");
-const { CREDIT_STATUS, CASHBACK_STATUS, FUNDS_TYPE, SERVICE_TYPE} = require('../lib/constants');
+const prisma = require('../prisma/prisma');
+const { CREDIT_STATUS, CASHBACK_STATUS, FUNDS_TYPE, SERVICE_TYPE } = require('../lib/constants');
 
 /*
 async function createWalletFunds(user_id, charge_id, amount){
@@ -77,8 +77,8 @@ async function createWalletFunds(user_id, charge_id, amount){
 }
  */
 
-async function createWalletFunds(user_id, amount_cents, charge_id=null, transaction_type="CREDIT") {
-	console.log("createWalletFunds ",user_id, amount_cents)
+async function createWalletFunds(user_id, amount_cents, charge_id = null, transaction_type = 'CREDIT') {
+	console.log('createWalletFunds ', user_id, amount_cents);
 	return await prisma.transactions.create({
 		data: {
 			user: { connect: { user_id: user_id } },
@@ -90,35 +90,32 @@ async function createWalletFunds(user_id, amount_cents, charge_id=null, transact
 					charge_id: charge_id,
 					amount: amount_cents,
 					user: { connect: { user_id: user_id } },
-					type: FUNDS_TYPE.FUNDS
+					type: FUNDS_TYPE.FUNDS,
 				},
 			},
-		}
+		},
 	});
 }
 
-async function getAvailableWalletFunds(userId,order_type) {
+async function getAvailableWalletFunds(userId, order_type) {
 	try {
 		const walletFunds = await prisma.wallet_funds.findMany({
 			where: {
 				user_id: userId,
 				reserved_order: null,
 				reserved_daily_meals_subscription: null,
-				type:order_type,
+				type: order_type,
 			},
-			orderBy: [
-				{ expires_at: { sort: 'asc', nulls: 'last' } },
-				{ created_at: 'asc' }
-			],
+			orderBy: [{ expires_at: { sort: 'asc', nulls: 'last' } }, { created_at: 'asc' }],
 		});
 		return walletFunds;
 	} catch (error) {
-		console.error("Error retrieving available wallet funds:", error);
+		console.error('Error retrieving available wallet funds:', error);
 		throw error;
 	}
 }
 
-async function getReservedWalletFunds(userId,order_id) {
+async function getReservedWalletFunds(userId, order_id) {
 	try {
 		const walletFunds = await prisma.wallet_funds.findMany({
 			where: {
@@ -131,7 +128,7 @@ async function getReservedWalletFunds(userId,order_id) {
 		});
 		return walletFunds;
 	} catch (error) {
-		console.error("Error retrieving reserved wallet funds:", error);
+		console.error('Error retrieving reserved wallet funds:', error);
 		throw error;
 	}
 }
@@ -140,11 +137,11 @@ async function getAllReservedWalletFunds() {
 	try {
 		const walletFunds = await prisma.wallet_funds.findMany({
 			where: {
-				reserved_order:{
-					not: null
+				reserved_order: {
+					not: null,
 				},
 				reserved_daily_meals_subscription: {
-					not: null
+					not: null,
 				},
 			},
 			orderBy: {
@@ -153,7 +150,7 @@ async function getAllReservedWalletFunds() {
 		});
 		return walletFunds;
 	} catch (error) {
-		console.error("Error retrieving all reserved wallet funds:", error);
+		console.error('Error retrieving all reserved wallet funds:', error);
 		throw error;
 	}
 }
@@ -172,10 +169,10 @@ async function deleteWalletFunds(wallet_funds_id) {
 	}
 }
 
-async function subtractFunds(walletFundsId, amount, order_id=null,service_type=null) {
+async function subtractFunds(walletFundsId, amount, order_id = null, service_type = null) {
 	try {
-		if(amount<=0){
-			throw new Error("Subtract amount must be greater than 0");
+		if (amount <= 0) {
+			throw new Error('Subtract amount must be greater than 0');
 		}
 
 		const walletFund = await prisma.wallet_funds.findUnique({
@@ -185,11 +182,12 @@ async function subtractFunds(walletFundsId, amount, order_id=null,service_type=n
 		});
 
 		if (!walletFund) {
-			throw new Error("Wallet fund entry not found");
+			throw new Error('Wallet fund entry not found');
 		}
 
-		if (walletFund.amount < amount) { // Updated to use amount
-			throw new Error("Insufficient funds");
+		if (walletFund.amount < amount) {
+			// Updated to use amount
+			throw new Error('Insufficient funds');
 		}
 
 		let updatedWalletFund = await prisma.$transaction(async (tx) => {
@@ -202,47 +200,47 @@ async function subtractFunds(walletFundsId, amount, order_id=null,service_type=n
 				},
 			});
 
-			console.info(`subtracted ${amount} from WF:\n${JSON.stringify(walletFund,null,2)}. ` )
-			let order_connect_obj = {}
+			console.info(`subtracted ${amount} from WF:\n${JSON.stringify(walletFund, null, 2)}. `);
+			let order_connect_obj = {};
 			switch (service_type) {
 				case SERVICE_TYPE.TAXI:
-					order_connect_obj = {taxi_order: { connect: { order_id: order_id } }}
-					break
+					order_connect_obj = { taxi_order: { connect: { order_id: order_id } } };
+					break;
 				case SERVICE_TYPE.DELIVERY:
-					order_connect_obj = {delivery_order: { connect: { order_id: order_id } }}
-					break
+					order_connect_obj = { delivery_order: { connect: { order_id: order_id } } };
+					break;
 			}
 
-			if(walletFund.reserved_order !== null){
+			if (walletFund.reserved_order !== null) {
 				await tx.transactions.create({
 					data: {
 						user: { connect: { user_id: updated_WF.user_id } },
-						amount: -amount/100,
+						amount: -amount / 100,
 						type: 'DEBIT',
 						...order_connect_obj,
 						description: 'Subtracted funds from wallet',
 						wallet_funds: { connect: { wallet_funds_id: updated_WF.wallet_funds_id } },
-					}
+					},
 				});
 			}
 
 			return updated_WF;
 		});
-		if(updatedWalletFund.amount===0){
+		if (updatedWalletFund.amount === 0) {
 			updatedWalletFund = await deleteWalletFunds(updatedWalletFund.wallet_funds_id);
 		}
 
 		return updatedWalletFund;
 	} catch (error) {
-		console.error("Error subtracting funds:", error);
+		console.error('Error subtracting funds:', error);
 		throw error;
 	}
 }
 
-async function reserveFunds(walletFundsId, reserveAmount, orderId, orderType = "order") {
+async function reserveFunds(walletFundsId, reserveAmount, orderId, orderType = 'order') {
 	try {
-		if(reserveAmount<=0){
-			throw new Error("Reserve amount must be greater than 0");
+		if (reserveAmount <= 0) {
+			throw new Error('Reserve amount must be greater than 0');
 		}
 		const walletFund = await prisma.wallet_funds.findUnique({
 			where: {
@@ -251,15 +249,15 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId, orderType = "
 		});
 
 		if (!walletFund) {
-			throw new Error("Wallet fund entry not found");
+			throw new Error('Wallet fund entry not found');
 		}
 
 		if (walletFund.reserved_order !== null) {
-			throw new Error("Source wallet fund entry already reserved");
+			throw new Error('Source wallet fund entry already reserved');
 		}
 
 		if (walletFund.amount < reserveAmount) {
-			throw new Error("Insufficient funds");
+			throw new Error('Insufficient funds');
 		}
 
 		// Update the existing wallet fund entry
@@ -269,14 +267,14 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId, orderType = "
 		//TODO: maybe convert to findUnique?
 		const existingReservedFund = await prisma.wallet_funds.findFirst({
 			where: {
-				user_id:walletFund.user_id,
+				user_id: walletFund.user_id,
 				charge_id: walletFund.charge_id,
-				...(orderType === "order" ? { reserved_order: orderId } : {}),
-				...(orderType === "daily_meals_subscription" ? { reserved_daily_meals_subscription: orderId } : {}),
+				...(orderType === 'order' ? { reserved_order: orderId } : {}),
+				...(orderType === 'daily_meals_subscription' ? { reserved_daily_meals_subscription: orderId } : {}),
 				reserved_business: orderId,
 				expires_at: walletFund.expires_at,
 				referral_id: walletFund.referral_id,
-				type:walletFund.type,
+				type: walletFund.type,
 			},
 		});
 
@@ -295,28 +293,28 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId, orderType = "
 			// If it does not exist, create a new wallet fund entry
 			const newWalletFund = await prisma.wallet_funds.create({
 				data: {
-					user_id:walletFund.user_id,
+					user_id: walletFund.user_id,
 					charge_id: walletFund.charge_id,
-					...(orderType === "order" ? { reserved_order: orderId } : {}),
-					...(orderType === "daily_meals_subscription" ? { reserved_daily_meals_subscription: orderId } : {}),
+					...(orderType === 'order' ? { reserved_order: orderId } : {}),
+					...(orderType === 'daily_meals_subscription' ? { reserved_daily_meals_subscription: orderId } : {}),
 					expires_at: walletFund.expires_at,
 					referral_id: walletFund.referral_id,
-					type:walletFund.type,
+					type: walletFund.type,
 					amount: reserveAmount,
 				},
 			});
 			return newWalletFund;
 		}
 	} catch (error) {
-		console.error("Error reserving funds:", error);
+		console.error('Error reserving funds:', error);
 		throw error;
 	}
 }
 
 async function releaseFunds(walletFundsId, releaseAmount) {
 	try {
-		if(releaseAmount<=0){
-			throw new Error("Release amount must be greater than 0");
+		if (releaseAmount <= 0) {
+			throw new Error('Release amount must be greater than 0');
 		}
 		const walletFund = await prisma.wallet_funds.findUnique({
 			where: {
@@ -325,15 +323,15 @@ async function releaseFunds(walletFundsId, releaseAmount) {
 		});
 
 		if (!walletFund) {
-			throw new Error("Wallet fund entry not found");
+			throw new Error('Wallet fund entry not found');
 		}
 
-		if (walletFund.reserved_order===null &&  walletFund.reserved_business===null) {
-			throw new Error("Source wallet fund entry is not reserved");
+		if (walletFund.reserved_order === null && walletFund.reserved_business === null) {
+			throw new Error('Source wallet fund entry is not reserved');
 		}
 
 		if (walletFund.amount < releaseAmount) {
-			throw new Error("Insufficient funds");
+			throw new Error('Insufficient funds');
 		}
 
 		const released_WF = await prisma.$transaction(async (tx) => {
@@ -346,36 +344,39 @@ async function releaseFunds(walletFundsId, releaseAmount) {
 			// 	},
 			// });
 			const amount_after_release = walletFund.amount - releaseAmount;
-			console.log(walletFund.amount, releaseAmount,walletFund.amount - releaseAmount)
-			if(amount_after_release===0){
+			console.log(walletFund.amount, releaseAmount, walletFund.amount - releaseAmount);
+			if (amount_after_release === 0) {
 				await tx.wallet_funds.delete({
 					where: {
 						wallet_funds_id: walletFundsId,
-					}
+					},
 				});
-			}else{
-				console.info("update response:",await tx.wallet_funds.update({
-					where: {
-						wallet_funds_id: walletFundsId,
-					},
-					data: {
-						amount: amount_after_release,
-					},
-				}));
+			} else {
+				console.info(
+					'update response:',
+					await tx.wallet_funds.update({
+						where: {
+							wallet_funds_id: walletFundsId,
+						},
+						data: {
+							amount: amount_after_release,
+						},
+					})
+				);
 			}
 
-			console.info(`released ${releaseAmount} from WF:\n${JSON.stringify(walletFund,null,2)}. ` )
+			console.info(`released ${releaseAmount} from WF:\n${JSON.stringify(walletFund, null, 2)}. `);
 
 			// Check if same wallet fund exists
 			const existingFund = await tx.wallet_funds.findFirst({
 				where: {
-					user_id:walletFund.user_id,
+					user_id: walletFund.user_id,
 					charge_id: walletFund.charge_id,
 					reserved_order: walletFund.order_id,
 					reserved_business: walletFund.reserved_business,
 					expires_at: walletFund.expires_at,
 					referral_id: walletFund.referral_id,
-					type:walletFund.type,
+					type: walletFund.type,
 				},
 			});
 
@@ -394,22 +395,21 @@ async function releaseFunds(walletFundsId, releaseAmount) {
 				// If it does not exist, create a new wallet fund entry
 				const newWalletFund = await tx.wallet_funds.create({
 					data: {
-						user_id:walletFund.user_id,
+						user_id: walletFund.user_id,
 						charge_id: walletFund.charge_id,
 						reserved_order: null,
 						reserved_daily_meals_subscription: null,
 						expires_at: walletFund.expires_at,
 						referral_id: walletFund.referral_id,
-						type:walletFund.type,
+						type: walletFund.type,
 						amount: releaseAmount,
 					},
 				});
 				return newWalletFund;
 			}
 		});
-
 	} catch (error) {
-		console.error("Error releasing funds:", error);
+		console.error('Error releasing funds:', error);
 		throw error;
 	}
 }
@@ -424,13 +424,13 @@ async function getAvailableWalletBalance(userId) {
 				type: FUNDS_TYPE.FUNDS,
 			},
 			_sum: {
-				amount: true
-			}
+				amount: true,
+			},
 		});
 
 		return result._sum.amount || 0;
 	} catch (error) {
-		console.error("Error retrieving available wallet balance:", error);
+		console.error('Error retrieving available wallet balance:', error);
 		throw error;
 	}
 }
@@ -438,15 +438,15 @@ async function getAvailableWalletBalance(userId) {
 async function getAvailableWalletBalanceGroupedByType(userId) {
 	try {
 		const result = await prisma.wallet_funds.groupBy({
-			by: ["type"], // Grouping by 'type'
+			by: ['type'], // Grouping by 'type'
 			where: {
 				user_id: userId,
 				reserved_order: null,
 				reserved_daily_meals_subscription: null,
 			},
 			_sum: {
-				amount: true
-			}
+				amount: true,
+			},
 		});
 
 		// Convert result into a key-value pair object
@@ -457,7 +457,7 @@ async function getAvailableWalletBalanceGroupedByType(userId) {
 
 		return balances;
 	} catch (error) {
-		console.error("Error retrieving grouped wallet balance:", error);
+		console.error('Error retrieving grouped wallet balance:', error);
 		throw error;
 	}
 }
@@ -471,12 +471,13 @@ const createCredit = async (data) => {
 			data: {
 				...data,
 				expires_at: expiryDate,
-			}
+			},
 		});
 	} catch (error) {
+		console.error('Error creating credit:', error);
 		throw error;
 	}
-}
+};
 
 const convertCashbacksToCredit = async (data, pendingCashbacks, expiryDate) => {
 	try {
@@ -485,25 +486,26 @@ const convertCashbacksToCredit = async (data, pendingCashbacks, expiryDate) => {
 				data: {
 					...data,
 					expires_at: expiryDate,
-				}
+				},
 			});
 			await tx.cashback.updateMany({
 				where: {
 					cashback_id: {
-						in: pendingCashbacks.map(cb => cb.cashback_id)
-					}
+						in: pendingCashbacks.map((cb) => cb.cashback_id),
+					},
 				},
 				data: {
 					status: CASHBACK_STATUS.CONVERTED,
 					converted_at: new Date(),
-				}
+				},
 			});
 			return credit;
 		});
 	} catch (error) {
+		console.error('Error converting cashbacks to credit:', error);
 		throw error;
 	}
-}
+};
 
 const expireOutdatedCredits = async () => {
 	const now = new Date();
@@ -514,12 +516,12 @@ const expireOutdatedCredits = async () => {
 			where: {
 				status: CREDIT_STATUS.ACTIVE,
 				expires_at: {
-					lt: now
-				}
+					lt: now,
+				},
 			},
 			data: {
-				status: CREDIT_STATUS.EXPIRED
-			}
+				status: CREDIT_STATUS.EXPIRED,
+			},
 		});
 	} catch (error) {
 		console.error('Error expiring credits:', error);
@@ -541,17 +543,18 @@ const findCreditsExpiringInDays = async (days) => {
 				status: CREDIT_STATUS.ACTIVE,
 				expires_at: {
 					gte: endDateStart,
-					lte: endDateEnd
-				}
+					lte: endDateEnd,
+				},
 			},
 			include: {
-				user: true
-			}
+				user: true,
+			},
 		});
 	} catch (error) {
+		console.error('Error finding credits expiring in days:', error);
 		throw error;
 	}
-}
+};
 
 const getAvailableCreditsByType = async (userId, type) => {
 	try {
@@ -562,12 +565,13 @@ const getAvailableCreditsByType = async (userId, type) => {
 				status: CREDIT_STATUS.ACTIVE,
 				reserved_order: null,
 				reserved_daily_meals_subscription: null,
-			}
+			},
 		});
 	} catch (error) {
+		console.error('Error retrieving available credits by type:', error);
 		throw error;
 	}
-}
+};
 
 const getAvailableCreditsForOrder = async (userId, type) => {
 	try {
@@ -575,36 +579,38 @@ const getAvailableCreditsForOrder = async (userId, type) => {
 			where: {
 				user_id: userId,
 				type: {
-					in: [type, FUNDS_TYPE.CREDITS_ANY]
+					in: [type, FUNDS_TYPE.CREDITS_ANY],
 				},
 				status: CREDIT_STATUS.ACTIVE,
 				reserved_order: null,
 				reserved_daily_meals_subscription: null,
-			}
+			},
 		});
 	} catch (error) {
+		console.error('Error retrieving available credits for order:', error);
 		throw error;
 	}
-}
+};
 
-const getReservedCredits = async (userId, orderId, orderType = "order") => {
+const getReservedCredits = async (userId, orderId, orderType = 'order') => {
 	try {
 		return await prisma.wallet_funds.findMany({
 			where: {
 				user_id: userId,
 				NOT: {
-					type:FUNDS_TYPE.FUNDS
+					type: FUNDS_TYPE.FUNDS,
 				},
 				// status: CREDIT_STATUS.ACTIVE,
-				...(orderType === "order" ? { reserved_order: orderId } : {}),
-				...(orderType === "daily_meals_subscription" ? { reserved_daily_meals_subscription: orderId } : {}),
+				...(orderType === 'order' ? { reserved_order: orderId } : {}),
+				...(orderType === 'daily_meals_subscription' ? { reserved_daily_meals_subscription: orderId } : {}),
 				reserved_order: orderId,
-			}
+			},
 		});
 	} catch (error) {
+		console.error('Error retrieving reserved credits:', error);
 		throw error;
 	}
-}
+};
 
 const getExpiredCredits = async (userId, type) => {
 	try {
@@ -612,13 +618,14 @@ const getExpiredCredits = async (userId, type) => {
 			where: {
 				user_id: userId,
 				type: type,
-				status: CREDIT_STATUS.EXPIRED
-			}
+				status: CREDIT_STATUS.EXPIRED,
+			},
 		});
 	} catch (error) {
+		console.error('Error retrieving expired credits:', error);
 		throw error;
 	}
-}
+};
 
 module.exports = {
 	createWalletFunds,
@@ -640,4 +647,4 @@ module.exports = {
 	convertCashbacksToCredit,
 	expireOutdatedCredits,
 	findCreditsExpiringInDays,
-}
+};

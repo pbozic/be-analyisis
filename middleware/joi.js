@@ -10,10 +10,10 @@ const joiValidate = (schema) => {
 			if (!req.value) {
 				req.value = {};
 			}
-			req.value["body"] = result;
+			req.value['body'] = result;
 			next();
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 			return res.status(400).json({
 				error: error.message,
 			});

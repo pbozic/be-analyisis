@@ -6,7 +6,7 @@ const createMenuItem = async (categoryId, menuItemData) => {
 			menu_category: {
 				connect: { menu_category_id: categoryId },
 			},
-			...menuItemData
+			...menuItemData,
 		},
 	});
 };
@@ -15,7 +15,7 @@ const addMenuItemIdToOrder = async (menu_category_id, menuItemIdToAdd) => {
 	try {
 		const category = await prisma.menu_categories.findUnique({
 			where: { menu_category_id: menu_category_id },
-			select: { menu_items_ordered: true }
+			select: { menu_items_ordered: true },
 		});
 
 		let orderedItems = category.menu_items_ordered ? category.menu_items_ordered : [];
@@ -23,39 +23,39 @@ const addMenuItemIdToOrder = async (menu_category_id, menuItemIdToAdd) => {
 			orderedItems.push(menuItemIdToAdd);
 			return await prisma.menu_categories.update({
 				where: { menu_category_id: menu_category_id },
-				data: { menu_items_ordered: orderedItems }
+				data: { menu_items_ordered: orderedItems },
 			});
 		}
 	} catch (error) {
-		console.error("Error adding menu item ID to order:", error);
+		console.error('Error adding menu item ID to order:', error);
 		throw error;
 	}
-}
+};
 
-const removeMenuItemIdFromOrder = async (menu_category_id, menuItemIdToRemove) =>  {
+const removeMenuItemIdFromOrder = async (menu_category_id, menuItemIdToRemove) => {
 	try {
 		const category = await prisma.menu_categories.findUnique({
 			where: { menu_category_id: menu_category_id },
-			select: { menu_items_ordered: true }
+			select: { menu_items_ordered: true },
 		});
 
 		let orderedItems = category.menu_items_ordered ? category.menu_items_ordered : [];
-		orderedItems = orderedItems.filter(id => id !== menuItemIdToRemove);
+		orderedItems = orderedItems.filter((id) => id !== menuItemIdToRemove);
 		return await prisma.menu_categories.update({
 			where: { menu_category_id: menu_category_id },
-			data: { menu_items_ordered: orderedItems }
+			data: { menu_items_ordered: orderedItems },
 		});
 	} catch (error) {
-		console.error("Error removing menu item ID from order:", error);
+		console.error('Error removing menu item ID from order:', error);
 		throw error;
 	}
-}
+};
 
 const getMenuItemsByIds = async (menu_item_ids) => {
 	return await prisma.menu_items.findMany({
 		where: {
 			menu_item_id: {
-				in:menu_item_ids
+				in: menu_item_ids,
 			},
 		},
 		include: {
@@ -63,12 +63,12 @@ const getMenuItemsByIds = async (menu_item_ids) => {
 				include: {
 					menu_categories_categories: {
 						include: {
-							category: true
-						}
-					}
-				}
-			}
-		}
+							category: true,
+						},
+					},
+				},
+			},
+		},
 	});
 };
 
@@ -76,17 +76,17 @@ const getMenuItemsByBusinessId = async (business_id, args) => {
 	return await prisma.menu_items.findMany({
 		where: {
 			business_id: business_id,
-			...args
+			...args,
 		},
 		include: {
 			menu_category: true,
 			documents: {
 				include: {
-					files: true
-				}
-			}
+					files: true,
+				},
+			},
 		},
-	})
+	});
 };
 
 const getMenuItemsByCategoryId = async (categoryId) => {

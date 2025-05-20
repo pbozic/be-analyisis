@@ -19,14 +19,14 @@ async function setOrderLobbyUserLimit(req, res) {
 		if (!order_lobby_users_id) {
 			return res.status(400).json({
 				success: false,
-				error: 'Order lobby user ID is required'
+				error: 'Order lobby user ID is required',
 			});
 		}
 
 		if (limit === undefined || limit === null || isNaN(limit)) {
 			return res.status(400).json({
 				success: false,
-				error: 'Valid limit value is required'
+				error: 'Valid limit value is required',
 			});
 		}
 
@@ -34,17 +34,16 @@ async function setOrderLobbyUserLimit(req, res) {
 
 		return res.status(200).json({
 			success: true,
-			data: updatedUser
+			data: updatedUser,
 		});
-
 	} catch (error) {
 		return res.status(500).json({
 			success: false,
-			error: error.message
+			error: error.message,
 		});
 	}
 }
 
 module.exports = {
-	setOrderLobbyUserLimit
+	setOrderLobbyUserLimit,
 };

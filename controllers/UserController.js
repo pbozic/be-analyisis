@@ -1,32 +1,40 @@
-require("dotenv").config();
-const bcrypt = require("bcrypt");
-const prisma = require("../prisma/prisma");
-const UserDao = require("../dao/User");
-const BusinessUsersDao = require("../dao/BusinessUsers");
-const TokenDao = require("../dao/Token");
-const ReviewDao = require("../dao/Review");
-const AddressDao = require("../dao/Address");
-const DocumentDao = require("../dao/Document");
-const FileDao = require("../dao/File");
-const DeliveryDriverDao = require("../dao/DeliveryDriver");
-const DriverDao = require("../dao/Driver");
-const WalletFundsDao = require("../dao/WalletFunds");
-const ReferralDao = require("../dao/Referrals");
-const SMS = require("../lib/SMS");
-const stripe = require("../lib/stripe");
-const S3Helper = require("../lib/s3");
-const { User } = require("@onesignal/node-onesignal");
+require('dotenv').config();
+const bcrypt = require('bcrypt');
+const { User } = require('@onesignal/node-onesignal');
+const { drive } = require('googleapis/build/src/apis/drive');
+
+const prisma = require('../prisma/prisma');
+const UserDao = require('../dao/User');
+const BusinessUsersDao = require('../dao/BusinessUsers');
+const TokenDao = require('../dao/Token');
+const ReviewDao = require('../dao/Review');
+const AddressDao = require('../dao/Address');
+const DocumentDao = require('../dao/Document');
+const FileDao = require('../dao/File');
+const DeliveryDriverDao = require('../dao/DeliveryDriver');
+const DriverDao = require('../dao/Driver');
+const WalletFundsDao = require('../dao/WalletFunds');
+const ReferralDao = require('../dao/Referrals');
+const SMS = require('../lib/SMS');
+const stripe = require('../lib/stripe');
+const S3Helper = require('../lib/s3');
 const {
-	DOCUMENT_TYPE, TAXI_ORDER_STATUS, USER_ROLE, CREDITS, CASHBACK_SOURCE, FUNDS_TYPE, SERVICE_TYPE_TO_FUNDS_TYPE,
-	CASHBACK_TYPE, ACCOUNT_ACTIONS_REASON
-} = require("../lib/constants");
-const { generateAccessToken, generateRefreshToken } = require("../lib/jwt");
-const { getOrders } = require("../dao/TaxiOrder");
-const TaxiOrderDao = require("../dao/TaxiOrder");
-const DeliveryOrderDao = require("../dao/DeliveryOrder");
-const { drive } = require("googleapis/build/src/apis/drive");
-const GroupDao = require("../dao/Group");
-const CashbackDao = require("../dao/Cashback");
+	DOCUMENT_TYPE,
+	TAXI_ORDER_STATUS,
+	USER_ROLE,
+	CREDITS,
+	CASHBACK_SOURCE,
+	FUNDS_TYPE,
+	SERVICE_TYPE_TO_FUNDS_TYPE,
+	CASHBACK_TYPE,
+	ACCOUNT_ACTIONS_REASON,
+} = require('../lib/constants');
+const { generateAccessToken, generateRefreshToken } = require('../lib/jwt');
+const { getOrders } = require('../dao/TaxiOrder');
+const TaxiOrderDao = require('../dao/TaxiOrder');
+const DeliveryOrderDao = require('../dao/DeliveryOrder');
+const GroupDao = require('../dao/Group');
+const CashbackDao = require('../dao/Cashback');
 
 /**
  * GET /users
@@ -45,23 +53,23 @@ async function listUsers(req, res) {
 			include: {
 				addresses: {
 					include: {
-						address: true
-					}
+						address: true,
+					},
 				},
 				child_users: { include: { child_user: true } },
-				parent_user: { include: { parent_user: true } }
-			}
+				parent_user: { include: { parent_user: true } },
+			},
 		});
 		if (users) {
 			res.status(200).json(users);
 		} else {
 			res.status(400).json({
-				error: "Error obtaining list of users..",
-				users
+				error: 'Error obtaining list of users..',
+				users,
 			});
 		}
 	} catch (e) {
-		res.status(400).json({ error: "Error obtaining list of users..", e });
+		res.status(400).json({ error: 'Error obtaining list of users..', e });
 	}
 }
 
@@ -82,26 +90,26 @@ async function listPersonalUsers(req, res) {
 			where: {
 				user_role: USER_ROLE.PERSONAL,
 				parent_user: null,
-				disabled: false
+				disabled: false,
 			},
 			include: {
 				addresses: {
 					include: {
-						address: true
-					}
-				}
-			}
+						address: true,
+					},
+				},
+			},
 		});
 		if (users) {
 			res.status(200).json(users);
 		} else {
 			res.status(400).json({
-				error: "Error obtaining list of users..",
-				users
+				error: 'Error obtaining list of users..',
+				users,
 			});
 		}
 	} catch (e) {
-		res.status(400).json({ error: "Error obtaining list of users..", e });
+		res.status(400).json({ error: 'Error obtaining list of users..', e });
 	}
 }
 
@@ -123,27 +131,27 @@ async function getUserById(req, res) {
 			include: {
 				addresses: {
 					include: {
-						address: true
-					}
+						address: true,
+					},
 				},
 				child_users: { include: { child_user: true } },
-				parent_user: { include: { parent_user: true } }
-			}
+				parent_user: { include: { parent_user: true } },
+			},
 		});
 		if (user) {
-			delete user["password"];
+			delete user['password'];
 			let profile = await DocumentDao.getDocumentsForUserByType(user.user_id, DOCUMENT_TYPE.PROFILE_PICTURE);
 			user = {
 				...user,
-				profile_picture: profile[0]?.files[0]?.url
+				profile_picture: profile[0]?.files[0]?.url,
 			};
 			return res.status(200).json(user);
 		} else {
-			res.status(404).json({ error: "User not found" });
+			res.status(404).json({ error: 'User not found' });
 		}
 	} catch (error) {
-		console.error("Error retrieving user:", error);
-		res.status(400).json({ error: "Error retrieving user information", detail: error.message });
+		console.error('Error retrieving user:', error);
+		res.status(400).json({ error: 'Error retrieving user information', detail: error.message });
 	}
 }
 
@@ -167,8 +175,8 @@ async function me(req, res) {
 			include: {
 				addresses: {
 					include: {
-						address: true
-					}
+						address: true,
+					},
 				},
 				driver: {
 					include: {
@@ -176,45 +184,45 @@ async function me(req, res) {
 							include: {
 								vehicle: {
 									include: {
-										current_driver: true
-									}
-								}
-							}
+										current_driver: true,
+									},
+								},
+							},
 						},
 						current_vehicle: true,
 						activity_logs: {
 							orderBy: {
-								started_at: "desc"
-							}
-						}
-					}
+								started_at: 'desc',
+							},
+						},
+					},
 				},
 				delivery_driver: true,
 				child_users: {
 					include: {
 						child_user: { select: { user_id: true, first_name: true, last_name: true } },
-						allowance: true
-					}
+						allowance: true,
+					},
 				},
 				parent_user: {
 					include: {
 						parent_user: { select: { user_id: true, first_name: true, user_role: true } },
-						allowance: true
-					}
+						allowance: true,
+					},
 				},
 				referrals_made: true,
 				referral: { include: { referrer: { select: { first_name: true, last_name: true } } } },
-				user_favorite_businesses: true
-			}
+				user_favorite_businesses: true,
+			},
 		});
-		console.log("/me user: ", user?.user_id);
+		console.log('/me user: ', user?.user_id);
 		if (user) {
 			let payment_methods = [];
 			if (user.stripe_customer_id) {
 				payment_methods = await stripe.getPaymentMethods(user.stripe_customer_id);
 			}
 
-			delete user["password"];
+			delete user['password'];
 			// const access_token = generateAccessToken(user);
 			// const refresh_token = generateRefreshToken(user);
 			let profile = await DocumentDao.getDocumentsForUserByType(user.user_id, DOCUMENT_TYPE.PROFILE_PICTURE);
@@ -223,17 +231,17 @@ async function me(req, res) {
 				// access_token,
 				// refresh_token,
 				profile_picture: profile[0]?.files[0]?.url,
-				payment_methods
+				payment_methods,
 			};
 			return res.status(200).json(user);
 		} else {
-			res.status(400).json({ error: "Error obtaining user information" });
+			res.status(400).json({ error: 'Error obtaining user information' });
 		}
 		// if (user) return res.status(200).json(user);
 		// res.status(400).json({ error: "Error obtaining user information" });
 	} catch (e) {
 		console.error(e);
-		res.status(400).json({ error: "Error obtaining user information", e });
+		res.status(400).json({ error: 'Error obtaining user information', e });
 	}
 }
 
@@ -251,18 +259,16 @@ async function me(req, res) {
  * @response 400 - Error updating user information.
  */
 async function updateMe(req, res) {
-
 	try {
 		let user = await UserDao.updateUser(req.user.user_id, req.body);
 		if (user) {
-			if (req.socket)
-				req.socket.emit("updateUser", user);
+			if (req.socket) req.socket.emit('updateUser', user);
 			return res.status(200).json(user);
 		}
-		res.status(400).json({ error: "Error updating user information" });
+		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error updating user information", e });
+		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
 
@@ -287,10 +293,10 @@ async function updateUserByUserId(req, res) {
 		if (user) {
 			return res.status(200).json(user);
 		}
-		res.status(400).json({ error: "Error updating user information" });
+		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error updating user information", e });
+		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
 
@@ -310,26 +316,26 @@ async function updateUserByUserId(req, res) {
 async function updatePassword(req, res) {
 	try {
 		let postData = req.body;
-		console.log("changing password");
+		console.log('changing password');
 		let userCheck = await UserDao.getUserById(req.user.user_id, {
 			select: {
 				password: true,
 				email: true,
-				user_id: true
-			}
+				user_id: true,
+			},
 		});
-		console.log("changing password 1");
+		console.log('changing password 1');
 		let correctPw = await bcrypt.compare(postData.password, userCheck.password);
-		if (!correctPw) return res.status(400).json({ error: "Wrong password.." });
+		if (!correctPw) return res.status(400).json({ error: 'Wrong password..' });
 		let hash = await bcrypt.hash(postData.new_password, Number(process.env.BCRYPT_SALT_ROUNDS));
 		user = await UserDao.updateUserPassword(req.user.user_id, hash);
 
 		if (user) return res.status(200).json(user);
 
-		res.status(400).json({ error: "Error updating user information" });
+		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error updating user information", e });
+		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
 
@@ -350,13 +356,13 @@ async function updatePassword(req, res) {
 async function updateEmail(req, res) {
 	try {
 		let user = await UserDao.getUserByEmailOrTelephone(req.body.email);
-		if (user) return res.status(400).json({ error: "Email already exists.." });
+		if (user) return res.status(400).json({ error: 'Email already exists..' });
 		let updated_user = await UserDao.updateEmail(req.user.user_id, req.body.email);
 
 		if (!updated_user.stripe_customer_id) {
 			const stripe_customer = await stripe.createCustomer(
 				updated_user.email,
-				updated_user.first_name + " " + updated_user.last_name,
+				updated_user.first_name + ' ' + updated_user.last_name,
 				updated_user.telephone
 			);
 			await UserDao.updateStripeCustomerId(req.user.user_id, stripe_customer.id);
@@ -366,10 +372,10 @@ async function updateEmail(req, res) {
 
 		if (updated_user) return res.status(200).json(updated_user);
 
-		res.status(400).json({ error: "Error updating user information" });
+		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error updating user information", e });
+		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
 
@@ -408,10 +414,10 @@ async function updateProfilePicture(req, res) {
 		// Link new document to user
 		await DocumentDao.linkDocumentToUser(document.document_id, userId);
 
-		res.status(200).json({ message: "Profile picture created successfully" });
+		res.status(200).json({ message: 'Profile picture created successfully' });
 	} catch (error) {
-		console.error("Error updating profile picture:", error);
-		res.status(400).json({ error: "Error updating profile picture", detail: error.message });
+		console.error('Error updating profile picture:', error);
+		res.status(400).json({ error: 'Error updating profile picture', detail: error.message });
 	}
 }
 
@@ -434,9 +440,9 @@ async function updateUserTaxiPreferences(req, res) {
 
 		if (user) return res.status(200).json(user);
 
-		res.status(400).json({ error: "Error updating user information" });
+		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
-		res.status(400).json({ error: "Error updating user information", e });
+		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
 
@@ -459,9 +465,9 @@ async function updateUserNotificationPreferences(req, res) {
 
 		if (user) return res.status(200).json(user);
 
-		res.status(400).json({ error: "Error updating user information" });
+		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
-		res.status(400).json({ error: "Error updating user information", e });
+		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
 
@@ -480,13 +486,16 @@ async function updateUserNotificationPreferences(req, res) {
  */
 async function updateUserTaxiPushNotifications(req, res) {
 	try {
-		let user = await UserDao.updateUserTaxiPushNotifications(req.user.user_id, req.body.taxi_push_notification_preferences);
+		let user = await UserDao.updateUserTaxiPushNotifications(
+			req.user.user_id,
+			req.body.taxi_push_notification_preferences
+		);
 
 		if (user) return res.status(200).json(user);
 
-		res.status(400).json({ error: "Error updating user information" });
+		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
-		res.status(400).json({ error: "Error updating user information", e });
+		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
 
@@ -505,13 +514,16 @@ async function updateUserTaxiPushNotifications(req, res) {
  */
 async function updateUserTransferPushNotifications(req, res) {
 	try {
-		let user = await UserDao.updateUserTransferPushNotifications(req.user.user_id, req.body.transfer_push_notification_preferences);
+		let user = await UserDao.updateUserTransferPushNotifications(
+			req.user.user_id,
+			req.body.transfer_push_notification_preferences
+		);
 
 		if (user) return res.status(200).json(user);
 
-		res.status(400).json({ error: "Error updating user information" });
+		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
-		res.status(400).json({ error: "Error updating user information", e });
+		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
 
@@ -530,13 +542,16 @@ async function updateUserTransferPushNotifications(req, res) {
  */
 async function updateUserDeliveryPushNotifications(req, res) {
 	try {
-		let user = await UserDao.updateUserDeliveryPushNotifications(req.user.user_id, req.body.delivery_push_notification_preferences);
+		let user = await UserDao.updateUserDeliveryPushNotifications(
+			req.user.user_id,
+			req.body.delivery_push_notification_preferences
+		);
 
 		if (user) return res.status(200).json(user);
 
-		res.status(400).json({ error: "Error updating user information" });
+		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
-		res.status(400).json({ error: "Error updating user information", e });
+		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
 
@@ -559,9 +574,9 @@ async function updateUserSpicyPreferences(req, res) {
 
 		if (user) return res.status(200).json(user);
 
-		res.status(400).json({ error: "Error updating user information" });
+		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
-		res.status(400).json({ error: "Error updating user information", e });
+		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
 
@@ -584,9 +599,9 @@ async function updateUserTransferPreferences(req, res) {
 
 		if (user) return res.status(200).json(user);
 
-		res.status(400).json({ error: "Error updating user information" });
+		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
-		res.status(400).json({ error: "Error updating user information", e });
+		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
 
@@ -609,9 +624,9 @@ async function updateUserRadioPreferences(req, res) {
 
 		if (user) return res.status(200).json(user);
 
-		res.status(400).json({ error: "Error updating user information" });
+		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
-		res.status(400).json({ error: "Error updating user information", e });
+		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
 
@@ -634,9 +649,9 @@ async function updateUserAllergiesPreferences(req, res) {
 
 		if (user) return res.status(200).json(user);
 
-		res.status(400).json({ error: "Error updating user information" });
+		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
-		res.status(400).json({ error: "Error updating user information", e });
+		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
 
@@ -657,7 +672,7 @@ async function updateUserAllergiesPreferences(req, res) {
 async function updateTelephone(req, res) {
 	try {
 		let phoneExists = await UserDao.getUserByEmailOrTelephone(req.body.telephone);
-		if (phoneExists) return res.status(400).json({ error: "Telephone already exists.." });
+		if (phoneExists) return res.status(400).json({ error: 'Telephone already exists..' });
 		let user = await UserDao.updateTelephone(req.user.user_id, req.body);
 		user = await UserDao.updateUserTelephoneVerified(req.user.user_id, false);
 		//await TokenDao.generateSMSVerificationToken(user);
@@ -665,10 +680,10 @@ async function updateTelephone(req, res) {
 		// TODO: Send SMS verification token
 		if (user) return res.status(200).json(user);
 
-		res.status(400).json({ error: "Error updating user information" });
+		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error updating user information", e });
+		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
 
@@ -689,13 +704,13 @@ async function requestSMSVerification(req, res) {
 		console.log(token);
 		console.info(token);
 		if (token) {
-			return res.status(200).json({ message: "Token sent", telephone: user.telephone });
+			return res.status(200).json({ message: 'Token sent', telephone: user.telephone });
 		}
 
-		res.status(400).json({ error: "Error obtaining user information" });
+		res.status(400).json({ error: 'Error obtaining user information' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error obtaining user information", e });
+		res.status(400).json({ error: 'Error obtaining user information', e });
 	}
 }
 
@@ -716,16 +731,16 @@ async function verifyMe(req, res) {
 		let user = await UserDao.getUserById(req.user.user_id);
 		let token = await TokenDao.getActiveSMSToken(user);
 		console.info(token);
-		if (token && (token.token === req.body.token) && (token.user_id === req.user.user_id)) {
+		if (token && token.token === req.body.token && token.user_id === req.user.user_id) {
 			await TokenDao.updateToken(token.token_id, { active: false });
 			user = await UserDao.updateUser(req.user.user_id, { phone_verified: true });
-			return res.status(200).json({ message: "Phone verified successfully." });
+			return res.status(200).json({ message: 'Phone verified successfully.' });
 		} else {
-			return res.status(400).json({ error: "Invalid token" });
+			return res.status(400).json({ error: 'Invalid token' });
 		}
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error obtaining user information", e });
+		res.status(400).json({ error: 'Error obtaining user information', e });
 	}
 }
 
@@ -735,10 +750,10 @@ async function oneSignalId(req, res) {
 		if (user) {
 			return res.status(200).json(user);
 		}
-		res.status(400).json({ error: "Error updating user information" });
+		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error updating user information", e });
+		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
 
@@ -762,10 +777,10 @@ async function addAddress(req, res) {
 		if (userAddress) {
 			return res.status(200).json(userAddress);
 		}
-		res.status(400).json({ error: "Error adding address1" });
+		res.status(400).json({ error: 'Error adding address1' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error adding address", e });
+		res.status(400).json({ error: 'Error adding address', e });
 	}
 }
 
@@ -782,10 +797,10 @@ async function addAddress(req, res) {
 async function deleteAddress(req, res) {
 	try {
 		await AddressDao.deleteUserAddress(req.user.user_id, req.params.address_id);
-		return res.status(200).json({ message: "Address deleted successfully." });
+		return res.status(200).json({ message: 'Address deleted successfully.' });
 	} catch (error) {
 		console.error(error);
-		return res.status(400).json({ error: "Error deleting address." });
+		return res.status(400).json({ error: 'Error deleting address.' });
 	}
 }
 
@@ -806,19 +821,19 @@ async function deleteUserByUserId(req, res) {
 		const deletedUser = await UserDao.deleteUserByUserId(user_id);
 
 		return res.status(200).json({
-			message: "User deleted successfully.",
-			user: deletedUser
+			message: 'User deleted successfully.',
+			user: deletedUser,
 		});
 	} catch (error) {
-		if (error.code === "P2025") { // Prisma specific error code for "Record to delete not found"
-			return res.status(404).json({ error: "User not found." });
+		if (error.code === 'P2025') {
+			// Prisma specific error code for "Record to delete not found"
+			return res.status(404).json({ error: 'User not found.' });
 		}
 		// Handle other errors
-		console.error("Error deleting user:", error);
-		return res.status(400).json({ error: "Error deleting user." });
+		console.error('Error deleting user:', error);
+		return res.status(400).json({ error: 'Error deleting user.' });
 	}
 }
-
 
 /**
  * PATCH /users/active/{user_id}
@@ -838,22 +853,21 @@ async function updateUserActiveByUserId(req, res) {
 	const { active, reason } = req.body;
 	try {
 		if (!req.user.user_id) {
-			throw new Error("Missing creator user_id.");
+			throw new Error('Missing creator user_id.');
 		}
 		if (!user_id || !Object.values(ACCOUNT_ACTIONS_REASON).includes(reason)) {
-			throw new Error("Missing user_id or invalid reason.");
+			throw new Error('Missing user_id or invalid reason.');
 		}
 		const updatedUser = await UserDao.updateUserActive(user_id, active, req.user.user_id, reason);
 		return res.status(200).json({
-			message: "User active field updated successfully.",
-			user: updatedUser
+			message: 'User active field updated successfully.',
+			user: updatedUser,
 		});
 	} catch (error) {
-		console.error("Error updating active field:", error);
-		return res.status(400).json({ error: "Error updating active field." });
+		console.error('Error updating active field:', error);
+		return res.status(400).json({ error: 'Error updating active field.' });
 	}
 }
-
 
 /**
  * PATCH /users/disabled/{user_id}
@@ -871,20 +885,20 @@ async function updateUserDisabledByUserId(req, res) {
 	const { disabled, reason } = req.body;
 	try {
 		if (!req.user.user_id) {
-			throw new Error("Missing creator user_id.");
+			throw new Error('Missing creator user_id.');
 		}
 		if (!user_id || !Object.values(ACCOUNT_ACTIONS_REASON).includes(reason)) {
-			throw new Error("Missing user_id or invalid reason.");
+			throw new Error('Missing user_id or invalid reason.');
 		}
 		const disabledUser = await UserDao.updateUserDisabled(user_id, disabled, req.user.user_id, reason);
 
 		return res.status(200).json({
-			message: "User disabled field updated successfully.",
-			user: disabledUser
+			message: 'User disabled field updated successfully.',
+			user: disabledUser,
 		});
 	} catch (error) {
-		console.error("Error updating disabled field:", error);
-		return res.status(400).json({ error: "Error updating disabled field." });
+		console.error('Error updating disabled field:', error);
+		return res.status(400).json({ error: 'Error updating disabled field.' });
 	}
 }
 
@@ -904,20 +918,20 @@ async function softDeleteUserByUserId(req, res) {
 	const { reason } = req.body;
 	try {
 		if (!req.user.user_id) {
-			throw new Error("Missing creator user_id.");
+			throw new Error('Missing creator user_id.');
 		}
 		if (!user_id || !Object.values(ACCOUNT_ACTIONS_REASON).includes(reason)) {
-			throw new Error("Missing user_id or invalid reason.");
+			throw new Error('Missing user_id or invalid reason.');
 		}
 		const disabledUser = await UserDao.updateUserDisabled(user_id, true, req.user.user_id, reason);
 		const wipedUser = await UserDao.wipeUserPersonalData(user_id);
 		return res.status(200).json({
-			message: "User \"soft delete\" successful.",
-			user: wipedUser
+			message: 'User "soft delete" successful.',
+			user: wipedUser,
 		});
 	} catch (error) {
-		console.error("Error soft deleting user:", error);
-		return res.status(400).json({ error: "Error soft deleting user." });
+		console.error('Error soft deleting user:', error);
+		return res.status(400).json({ error: 'Error soft deleting user.' });
 	}
 }
 
@@ -936,16 +950,22 @@ async function softDeleteUserByUserId(req, res) {
  */
 async function disableMe(req, res) {
 	try {
-		let disabledUser = await UserDao.updateUserDisabled(req.user.user_id, true, req.user.user_id, ACCOUNT_ACTIONS_REASON.SELF_DISABLE);
-		if (disabledUser) return res.status(200).json({
-			message: "User disabled successfully.",
-			user: disabledUser
-		});
+		let disabledUser = await UserDao.updateUserDisabled(
+			req.user.user_id,
+			true,
+			req.user.user_id,
+			ACCOUNT_ACTIONS_REASON.SELF_DISABLE
+		);
+		if (disabledUser)
+			return res.status(200).json({
+				message: 'User disabled successfully.',
+				user: disabledUser,
+			});
 
-		res.status(400).json({ error: "Error updating user information" });
+		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		console.log(e);
-		return res.status(400).json({ error: "Error updating user information", e });
+		return res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
 
@@ -970,10 +990,10 @@ async function editAddress(req, res) {
 		if (userAddress) {
 			return res.status(200).json(userAddress);
 		}
-		res.status(400).json({ error: "Error editing address" });
+		res.status(400).json({ error: 'Error editing address' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error adding address", e });
+		res.status(400).json({ error: 'Error adding address', e });
 	}
 }
 
@@ -992,12 +1012,12 @@ async function setPrimaryAddress(req, res) {
 	try {
 		let userAddress = await AddressDao.setPrimaryUserAddress(req.user.user_id, req.params.address_id);
 		if (userAddress) {
-			return res.status(200).json({ message: "Primary address set." });
+			return res.status(200).json({ message: 'Primary address set.' });
 		}
-		res.status(400).json({ error: "Error setting primary address" });
+		res.status(400).json({ error: 'Error setting primary address' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error setting primary address", e });
+		res.status(400).json({ error: 'Error setting primary address', e });
 	}
 }
 
@@ -1019,7 +1039,7 @@ async function reviewUser(req, res) {
 		if (!user.reviewable_id) {
 			let reviewable = await ReviewDao.createReviewableUser(user.user_id);
 			if (!reviewable) {
-				return res.status(400).json({ error: "Error adding review" });
+				return res.status(400).json({ error: 'Error adding review' });
 			}
 			user.reviewable_id = reviewable.reviewable_id;
 		}
@@ -1029,23 +1049,22 @@ async function reviewUser(req, res) {
 			feedback: req.body.feedback,
 			author: {
 				connect: {
-					user_id: req.user.user_id
-				}
+					user_id: req.user.user_id,
+				},
 			},
 			reviewable: {
 				connect: {
-					reviewable_id: user.reviewable_id
-				}
-			}
-
+					reviewable_id: user.reviewable_id,
+				},
+			},
 		});
 		if (review) {
 			return res.status(200).json(review);
 		}
-		res.status(400).json({ error: "Error adding review" });
+		res.status(400).json({ error: 'Error adding review' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error adding review", e });
+		res.status(400).json({ error: 'Error adding review', e });
 	}
 }
 
@@ -1066,10 +1085,10 @@ async function getPaymentSheetCredentials(req, res) {
 		if (credentials) {
 			return res.status(200).json(credentials);
 		}
-		res.status(400).json({ error: "Error obtaining payment sheet credentials" });
+		res.status(400).json({ error: 'Error obtaining payment sheet credentials' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error obtaining payment sheet credentials", e });
+		res.status(400).json({ error: 'Error obtaining payment sheet credentials', e });
 	}
 }
 
@@ -1077,16 +1096,23 @@ async function requestToAddFundsToWallet(req, res) {
 	try {
 		const { amount, currency, payment_method_id, return_url } = req.body;
 		if ((!amount && amount <= 0) || !currency || !payment_method_id) {
-			return res.status(400).json({ error: "Error requesting to add funds to wallet: Invalid parameters!" });
+			return res.status(400).json({ error: 'Error requesting to add funds to wallet: Invalid parameters!' });
 		}
 		// Create a Payment Method to handle the transaction
 		let user = await UserDao.getUserById(req.user.user_id);
-		let paymentIntent = await stripe.createPaymentIntentForWallet(Math.round(amount * 100), currency, payment_method_id, user.stripe_customer_id, user.user_id, return_url);
+		let paymentIntent = await stripe.createPaymentIntentForWallet(
+			Math.round(amount * 100),
+			currency,
+			payment_method_id,
+			user.stripe_customer_id,
+			user.user_id,
+			return_url
+		);
 		// const newWalletFunds = await WalletFundsDao.createWalletFunds(req.user.user_id,paymentIntent.latest_charge, amount * 100);
 		res.status(200).json(paymentIntent);
 	} catch (error) {
-		console.error("Error requesting to add funds to wallet:", error);
-		res.status(400).json({ error: "Error requesting to add funds to wallet" });
+		console.error('Error requesting to add funds to wallet:', error);
+		res.status(400).json({ error: 'Error requesting to add funds to wallet' });
 	}
 }
 
@@ -1094,62 +1120,66 @@ async function requestPaymentIntent(req, res) {
 	try {
 		const { amount, currency, return_url } = req.body;
 		if ((!amount && amount <= 0) || !currency) {
-			return res.status(400).json({ error: "Error requesting payment intent: Invalid parameters!" });
+			return res.status(400).json({ error: 'Error requesting payment intent: Invalid parameters!' });
 		}
 		// Create a Payment Method to handle the transaction
 		let user = await UserDao.getUserById(req.user.user_id);
-		let paymentIntent = await stripe.createPaymentIntentForPlatform(Math.round(amount * 100), currency, user.stripe_customer_id, {
-			user_id: req.user.user_id,
-			type: "wallet_topup"
-		});
+		let paymentIntent = await stripe.createPaymentIntentForPlatform(
+			Math.round(amount * 100),
+			currency,
+			user.stripe_customer_id,
+			{
+				user_id: req.user.user_id,
+				type: 'wallet_topup',
+			}
+		);
 		res.status(200).json(paymentIntent);
 	} catch (error) {
-		console.error("Error requesting payment intent:", error);
-		res.status(400).json({ error: "Error requesting payment intent" });
+		console.error('Error requesting payment intent:', error);
+		res.status(400).json({ error: 'Error requesting payment intent' });
 	}
-
 }
 
 async function confirmPaymentIntent(req, res) {
 	try {
 		const { payment_intent_id } = req.body;
 		if (!payment_intent_id) {
-			return res.status(400).json({ error: "Error confirming payment intent: Invalid parameters!" });
+			return res.status(400).json({ error: 'Error confirming payment intent: Invalid parameters!' });
 		}
 		// Confirm the Payment Intent
 		let paymentIntent = await stripe.confirmPaymentIntent(payment_intent_id);
 		res.status(200).json(paymentIntent);
 	} catch (error) {
-		console.error("Error confirming payment intent:", error);
-		res.status(400).json({ error: "Error confirming payment intent" });
+		console.error('Error confirming payment intent:', error);
+		res.status(400).json({ error: 'Error confirming payment intent' });
 	}
 }
 
 async function ping(req, res) {
-	console.log("ping, req.user ", req.user);
+	console.log('ping, req.user ', req.user);
 	let user = await UserDao.getUserById(req.user.user_id, {
 		include: {
 			driver: true,
-			delivery_driver: true
-		}
+			delivery_driver: true,
+		},
 	});
 	if (!user) {
-		return res.status(400).json({ error: "Error obtaining user information" });
+		return res.status(400).json({ error: 'Error obtaining user information' });
 	}
 	if (user.driver) {
 		let driver = await DriverDao.updateDriver(user.driver.driver_id, {
 			last_ping_at: new Date(),
-			is_inactive: false
+			is_inactive: false,
 		});
-		return res.status(200).json({ message: "Driver is online" });
+		return res.status(200).json({ message: 'Driver is online' });
 	} else if (user.delivery_driver) {
 		let delliveryDriver = await DeliveryDriverDao.updateDeliveryDriver(user.delivery_driver.delivery_driver_id, {
 			last_ping_at: new Date(),
-			is_inactive: false
+			is_inactive: false,
 		});
-		return res.status(200).json({ message: "Delivery driver is online" });
+		return res.status(200).json({ message: 'Delivery driver is online' });
 	} else {
-		return res.status(400).json({ error: "User is not a driver" });
+		return res.status(400).json({ error: 'User is not a driver' });
 	}
 }
 
@@ -1159,12 +1189,12 @@ async function getSelfScheduledOrders(req, res) {
 			where: {
 				is_scheduled: true,
 				status: TAXI_ORDER_STATUS.PENDING,
-				user_id: req.user.user_id
-			}
+				user_id: req.user.user_id,
+			},
 		});
 		res.status(200).json(orders);
 	} catch (e) {
-		console.info("TaxiOrderController", e);
+		console.info('TaxiOrderController', e);
 		res.status(500).json(e);
 	}
 }
@@ -1177,7 +1207,7 @@ async function getMyReviews(req, res) {
 		}
 		let reviews = await prisma.reviews.findMany({
 			where: {
-				reviewable_id: user.reviewable_id
+				reviewable_id: user.reviewable_id,
 			},
 			include: {
 				author: {
@@ -1188,14 +1218,14 @@ async function getMyReviews(req, res) {
 						user_role: true,
 						documents: {
 							where: {
-								document_type: "PROFILE_PICTURE"
+								document_type: 'PROFILE_PICTURE',
 							},
 							select: {
 								files: true,
-								document_type: true
-							}
-						}
-					}
+								document_type: true,
+							},
+						},
+					},
 				},
 				reviewable: {
 					include: {
@@ -1205,15 +1235,14 @@ async function getMyReviews(req, res) {
 								business_id: true,
 								documents: {
 									where: {
-										document_type: "PROFILE_PICTURE"
+										document_type: 'PROFILE_PICTURE',
 									},
 									select: {
 										files: true,
-										document_type: true
-									}
-								}
-							}
-
+										document_type: true,
+									},
+								},
+							},
 						},
 						user: {
 							select: {
@@ -1223,21 +1252,21 @@ async function getMyReviews(req, res) {
 								user_role: true,
 								documents: {
 									where: {
-										document_type: "PROFILE_PICTURE"
+										document_type: 'PROFILE_PICTURE',
 									},
 									select: {
 										files: true,
-										document_type: true
-									}
-								}
-							}
-						}
-					}
-				}
+										document_type: true,
+									},
+								},
+							},
+						},
+					},
+				},
 			},
 			orderBy: {
-				created_at: "desc"  // Order by 'created_at' field in descending order
-			}
+				created_at: 'desc', // Order by 'created_at' field in descending order
+			},
 		});
 		for (let review of reviews) {
 			if (review.reviewable.user.length > 0) {
@@ -1250,7 +1279,7 @@ async function getMyReviews(req, res) {
 		}
 		res.status(200).json(reviews);
 	} catch (e) {
-		console.log("UserController", e);
+		console.log('UserController', e);
 		res.status(500).json(e);
 	}
 }
@@ -1266,8 +1295,8 @@ async function getReviewsByUserId(req, res) {
 			// Fetch business associated with the driver
 			let business = await prisma.business.findUnique({
 				where: {
-					business_id: driver.business_id
-				}
+					business_id: driver.business_id,
+				},
 			});
 
 			if (!business?.reviewable_id) {
@@ -1277,7 +1306,7 @@ async function getReviewsByUserId(req, res) {
 			// Fetch reviews for the business
 			let reviews = await prisma.reviews.findMany({
 				where: {
-					reviewable_id: business.reviewable_id
+					reviewable_id: business.reviewable_id,
 				},
 				include: {
 					author: {
@@ -1288,14 +1317,14 @@ async function getReviewsByUserId(req, res) {
 							user_role: true,
 							documents: {
 								where: {
-									document_type: "PROFILE_PICTURE"
+									document_type: 'PROFILE_PICTURE',
 								},
 								select: {
 									files: true,
-									document_type: true
-								}
-							}
-						}
+									document_type: true,
+								},
+							},
+						},
 					},
 					reviewable: {
 						include: {
@@ -1305,14 +1334,14 @@ async function getReviewsByUserId(req, res) {
 									business_id: true,
 									documents: {
 										where: {
-											document_type: "PROFILE_PICTURE"
+											document_type: 'PROFILE_PICTURE',
 										},
 										select: {
 											files: true,
-											document_type: true
-										}
-									}
-								}
+											document_type: true,
+										},
+									},
+								},
 							},
 							user: {
 								select: {
@@ -1322,21 +1351,21 @@ async function getReviewsByUserId(req, res) {
 									user_role: true,
 									documents: {
 										where: {
-											document_type: "PROFILE_PICTURE"
+											document_type: 'PROFILE_PICTURE',
 										},
 										select: {
 											files: true,
-											document_type: true
-										}
-									}
-								}
-							}
-						}
-					}
+											document_type: true,
+										},
+									},
+								},
+							},
+						},
+					},
 				},
 				orderBy: {
-					created_at: "desc"
-				}
+					created_at: 'desc',
+				},
 			});
 
 			for (let review of reviews) {
@@ -1354,20 +1383,20 @@ async function getReviewsByUserId(req, res) {
 			// If not a driver, assume it's a regular user and fetch their reviews
 			let user = await prisma.users.findUnique({
 				where: {
-					user_id: req.params.user_id
-				}
+					user_id: req.params.user_id,
+				},
 			});
 
 			if (!user) {
-				return res.status(404).json({ error: "User not found" });
+				return res.status(404).json({ error: 'User not found' });
 			}
 
 			let reviews = await prisma.reviews.findMany({
 				where: {
 					OR: [
-						{ author_id: user.user_id },  // Reviews authored by the user
-						{ reviewable: { user: { some: { user_id: user.user_id } } } }  // Reviews for the user
-					]
+						{ author_id: user.user_id }, // Reviews authored by the user
+						{ reviewable: { user: { some: { user_id: user.user_id } } } }, // Reviews for the user
+					],
 				},
 				include: {
 					author: {
@@ -1378,14 +1407,14 @@ async function getReviewsByUserId(req, res) {
 							user_role: true,
 							documents: {
 								where: {
-									document_type: "PROFILE_PICTURE"
+									document_type: 'PROFILE_PICTURE',
 								},
 								select: {
 									files: true,
-									document_type: true
-								}
-							}
-						}
+									document_type: true,
+								},
+							},
+						},
 					},
 					reviewable: {
 						include: {
@@ -1395,14 +1424,14 @@ async function getReviewsByUserId(req, res) {
 									business_id: true,
 									documents: {
 										where: {
-											document_type: "PROFILE_PICTURE"
+											document_type: 'PROFILE_PICTURE',
 										},
 										select: {
 											files: true,
-											document_type: true
-										}
-									}
-								}
+											document_type: true,
+										},
+									},
+								},
 							},
 							user: {
 								select: {
@@ -1412,21 +1441,21 @@ async function getReviewsByUserId(req, res) {
 									user_role: true,
 									documents: {
 										where: {
-											document_type: "PROFILE_PICTURE"
+											document_type: 'PROFILE_PICTURE',
 										},
 										select: {
 											files: true,
-											document_type: true
-										}
-									}
-								}
-							}
-						}
-					}
+											document_type: true,
+										},
+									},
+								},
+							},
+						},
+					},
 				},
 				orderBy: {
-					created_at: "desc"
-				}
+					created_at: 'desc',
+				},
 			});
 
 			for (let review of reviews) {
@@ -1442,11 +1471,10 @@ async function getReviewsByUserId(req, res) {
 			res.status(200).json(reviews);
 		}
 	} catch (e) {
-		console.error("UserController", e);
-		res.status(500).json({ error: "Internal server error" });
+		console.error('UserController', e);
+		res.status(500).json({ error: 'Internal server error' });
 	}
 }
-
 
 /**
  * POST /users/me/group_user/register-child
@@ -1465,29 +1493,28 @@ async function getReviewsByUserId(req, res) {
 async function registerChildUser(req, res) {
 	let user_data = req.body;
 	const parent_user_id = user_data.parent_user_id;
-	delete user_data["parent_user_id"];
+	delete user_data['parent_user_id'];
 
 	try {
-
 		if (!user_data.email) {
-			user_data.email = "";
+			user_data.email = '';
 		}
 		user_data.email = user_data.email.toLowerCase();
 		let UserExistsPhone = await UserDao.getUserByTelephone(user_data.telephone);
 		if (UserExistsPhone) {
-			return res.status(400).json({ error: "Telephone already in use!" });
+			return res.status(400).json({ error: 'Telephone already in use!' });
 		}
 		let UserExistsEmail = await UserDao.getUserByEmail(user_data.email);
 		if (UserExistsEmail) {
-			return res.status(400).json({ error: "Email already in use!" });
+			return res.status(400).json({ error: 'Email already in use!' });
 		}
 		let hash = await bcrypt.hash(user_data.password, Number(process.env.BCRYPT_SALT_ROUNDS));
 		let stripeCustomer = await stripe.createCustomer(
 			user_data.email,
-			user_data.first_name + " " + user_data.last_name,
+			user_data.first_name + ' ' + user_data.last_name,
 			user_data.telephone
 		);
-		const userRole = user_data.user_role || "PERSONAL";
+		const userRole = user_data.user_role || 'PERSONAL';
 		let userObj = {
 			...user_data,
 			date_of_birth: new Date(user_data.date_of_birth),
@@ -1495,13 +1522,13 @@ async function registerChildUser(req, res) {
 			user_role: userRole,
 			stripe_customer_id: stripeCustomer.id,
 			reviewable: {
-				create: {}
-			}
+				create: {},
+			},
 		};
-		delete userObj["confirm_password"];
+		delete userObj['confirm_password'];
 		delete userObj.user_roles;
 		let user = await UserDao.createNewUser(userObj);
-		delete user["password"];
+		delete user['password'];
 
 		const userRoles = user_data.user_roles || [{ role: userRole, primary: true }];
 		await UserDao.linkRolesToUser(user?.user_id, userRoles);
@@ -1509,14 +1536,14 @@ async function registerChildUser(req, res) {
 		//create and connect group_user entry
 		const group_user_data = {
 			parent_user_id: parent_user_id,
-			child_user_id: user.user_id
+			child_user_id: user.user_id,
 		};
 		const group_user_entry = GroupDao.createGroupUser(group_user_data);
 
 		res.status(200).json({ user, group_user_entry });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error something went wrong..", e });
+		res.status(400).json({ error: 'Error something went wrong..', e });
 	}
 }
 
@@ -1536,8 +1563,10 @@ async function registerChildUser(req, res) {
 async function updateChildUserEnabledByGroupUserId(req, res) {
 	const { group_user_id, value } = req.body;
 
-	if (!group_user_id || typeof value !== "boolean") {
-		return res.status(400).json({ error: "Invalid input. Please provide a valid group_user_id and a boolean value." });
+	if (!group_user_id || typeof value !== 'boolean') {
+		return res
+			.status(400)
+			.json({ error: 'Invalid input. Please provide a valid group_user_id and a boolean value.' });
 	}
 
 	try {
@@ -1545,10 +1574,10 @@ async function updateChildUserEnabledByGroupUserId(req, res) {
 		if (group_user) {
 			return res.status(200).json(group_user);
 		}
-		res.status(400).json({ error: "Error updating group user enabled status" });
+		res.status(400).json({ error: 'Error updating group user enabled status' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error updating group user enabled status", e });
+		res.status(400).json({ error: 'Error updating group user enabled status', e });
 	}
 }
 
@@ -1573,10 +1602,10 @@ async function updateChildUserAllowanceByGroupUserId(req, res) {
 		if (group_user) {
 			return res.status(200).json(group_user);
 		}
-		res.status(400).json({ error: "Error updating group user allowance" });
+		res.status(400).json({ error: 'Error updating group user allowance' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error updating group user allowance", e });
+		res.status(400).json({ error: 'Error updating group user allowance', e });
 	}
 }
 
@@ -1599,10 +1628,10 @@ async function deleteChildUserByGroupUserId(req, res) {
 		if (group_user) {
 			return res.status(200).json(group_user);
 		}
-		res.status(400).json({ error: "Error deleting group user" });
+		res.status(400).json({ error: 'Error deleting group user' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error deleting group user", e });
+		res.status(400).json({ error: 'Error deleting group user', e });
 	}
 }
 
@@ -1645,10 +1674,9 @@ async function getAvailableWalletBalance(req, res) {
 		let balance = await WalletFundsDao.getAvailableWalletBalance(req.params.user_id);
 
 		return res.status(200).json({ wallet_balance: balance });
-
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error obtaining wallet balance", e });
+		res.status(400).json({ error: 'Error obtaining wallet balance', e });
 	}
 }
 
@@ -1670,24 +1698,26 @@ async function getFamilyWalletBalanceAndType(req, res) {
 		} else if (group_user) {
 			console.log(group_user);
 			if (group_user.enabled) {
-				const parent_wallet_balance = await WalletFundsDao.getAvailableWalletBalance(group_user.parent_user.user_id);
+				const parent_wallet_balance = await WalletFundsDao.getAvailableWalletBalance(
+					group_user.parent_user.user_id
+				);
 				return res.status(200).json({
 					parent_wallet_balance: parent_wallet_balance,
 					allowance: group_user.allowance,
-					family_wallet_type: group_user.parent_user.user_role.startsWith("BUSINESS") ? "BUSINESS" : "FAMILY"
+					family_wallet_type: group_user.parent_user.user_role.startsWith('BUSINESS') ? 'BUSINESS' : 'FAMILY',
 				});
 			} else {
 				return res.status(200).json({
 					parent_wallet_balance: 0,
 					allowance: 0,
-					family_wallet_type: group_user.parent_user.user_role.startsWith("BUSINESS") ? "BUSINESS" : "FAMILY"
+					family_wallet_type: group_user.parent_user.user_role.startsWith('BUSINESS') ? 'BUSINESS' : 'FAMILY',
 				});
 			}
 		}
-		res.status(400).json({ error: "Error obtaining family wallet balance and type" });
+		res.status(400).json({ error: 'Error obtaining family wallet balance and type' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error obtaining family wallet balance and type", e });
+		res.status(400).json({ error: 'Error obtaining family wallet balance and type', e });
 	}
 }
 
@@ -1712,13 +1742,13 @@ async function updateWalletBalance(req, res) {
 	try {
 		let new_transaction = await UserDao.updateWalletBalance(user_id, amount, documents);
 		if (new_transaction) {
-			const wallet_balance = await WalletFundsDao.getAvailableWalletBalance(user_id) / 100;
-			return res.status(200).json({ message: "Wallet balance updated successfully.", wallet_balance });
+			const wallet_balance = (await WalletFundsDao.getAvailableWalletBalance(user_id)) / 100;
+			return res.status(200).json({ message: 'Wallet balance updated successfully.', wallet_balance });
 		}
-		res.status(400).json({ error: "Error updating wallet balance" });
+		res.status(400).json({ error: 'Error updating wallet balance' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error updating wallet balance", e });
+		res.status(400).json({ error: 'Error updating wallet balance', e });
 	}
 }
 
@@ -1730,10 +1760,10 @@ async function getTransactions(req, res) {
 		if (transactions) {
 			return res.status(200).json(transactions);
 		}
-		res.status(400).json({ error: "Error updating wallet balance" });
+		res.status(400).json({ error: 'Error updating wallet balance' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error fetching transactions", e });
+		res.status(400).json({ error: 'Error fetching transactions', e });
 	}
 }
 
@@ -1757,10 +1787,10 @@ async function updateUserLanguage(req, res) {
 		if (updatedUser) {
 			return res.status(200).json(updatedUser);
 		}
-		res.status(400).json({ error: "Error updating user language." });
+		res.status(400).json({ error: 'Error updating user language.' });
 	} catch (e) {
 		console.log(e);
-		res.status(400).json({ error: "Error updating user language.", e });
+		res.status(400).json({ error: 'Error updating user language.', e });
 	}
 }
 
@@ -1770,9 +1800,9 @@ async function getUserByReferralCode(req, res) {
 		if (user) {
 			return res.status(200).json(user);
 		}
-		res.status(400).json({ error: "Error fetching user by referral code." });
+		res.status(400).json({ error: 'Error fetching user by referral code.' });
 	} catch (err) {
-		res.status(400).json({ error: "Error fetching user by referral code.", err });
+		res.status(400).json({ error: 'Error fetching user by referral code.', err });
 	}
 }
 
@@ -1795,31 +1825,31 @@ async function redeemReferralCode(req, res) {
 		// First check if user already has a referral
 		const existingReferral = await ReferralDao.getReferralByReferredUserId(user_id);
 		if (existingReferral) {
-			return res.status(400).json({ errorCustom: "User has already redeemed a referral code" });
+			return res.status(400).json({ errorCustom: 'User has already redeemed a referral code' });
 		}
 		// Find the referrer by their referral code
 		const referrer = await UserDao.getUserByReferralCode(referral_code);
 		if (!referrer) {
-			return res.status(400).json({ errorCustom: "Invalid referral code" });
+			return res.status(400).json({ errorCustom: 'Invalid referral code' });
 		}
 		// Prevent referral by user referrals
 		const referrerReferral = await ReferralDao.getReferralByReferredUserId(referrer.user_id);
 		if (referrerReferral?.referrer_user_id === user_id) {
-			return res.status(400).json({ errorCustom: "Cannot get referred by one of your referrals" });
+			return res.status(400).json({ errorCustom: 'Cannot get referred by one of your referrals' });
 		}
 		// Prevent self-referral
 		if (referrer.user_id === user_id) {
-			return res.status(400).json({ errorCustom: "Cannot use own referral code" });
+			return res.status(400).json({ errorCustom: 'Cannot use own referral code' });
 		}
 		// Referrer can only refer up to 10 people
 		if (referrer.referrals_made?.length >= 10) {
-			return res.status(400).json({ errorCustom: "This user has already referred 10 people" });
+			return res.status(400).json({ errorCustom: 'This user has already referred 10 people' });
 		}
 		const referral = await ReferralDao.createReferral(referrer.user_id, user_id, referral_code);
 
-		return res.status(200).json({ message: "Referral code redeemed successfully", referral });
+		return res.status(200).json({ message: 'Referral code redeemed successfully', referral });
 	} catch (error) {
-		return res.status(400).json({ error: error.message || "Error redeeming referral code" });
+		return res.status(400).json({ error: error.message || 'Error redeeming referral code' });
 	}
 }
 
@@ -1827,12 +1857,12 @@ async function claimReward(req, res) {
 	try {
 		const { referral_id } = req.body;
 		if (!referral_id) {
-			return res.status(400).json("Missing referral_id in the request body!");
+			return res.status(400).json('Missing referral_id in the request body!');
 		}
 
 		const alreadyClaimed = await ReferralDao.getReferralByReferralId(referral_id);
 		if (alreadyClaimed?.reward_claimed) {
-			return res.status(400).json({ error: "Reward already claimed!" });
+			return res.status(400).json({ error: 'Reward already claimed!' });
 		}
 
 		const expiryDate = new Date();
@@ -1843,17 +1873,17 @@ async function claimReward(req, res) {
 			user: { connect: { user_id: req.user.user_id } },
 			amount: CREDITS.REFERRAL,
 			type: FUNDS_TYPE.CREDITS_ANY, // we add taxi credits on referral
-			referral: { connect: { referral_id: referral_id } }
+			referral: { connect: { referral_id: referral_id } },
 		});
 
 		const referral = await ReferralDao.updateReferralRewardClaimed(referral_id, true);
 		if (!referral) {
-			return res.status(400).json({ error: "Error claiming reward" });
+			return res.status(400).json({ error: 'Error claiming reward' });
 		}
 
 		return res.status(200).json(referral);
 	} catch (error) {
-		return res.status(400).json({ error: error.message || "Error claiming reward" });
+		return res.status(400).json({ error: error.message || 'Error claiming reward' });
 	}
 }
 
@@ -1861,17 +1891,24 @@ async function getUserCredits(req, res) {
 	try {
 		const { service_type } = req.params;
 		const { user_id } = req.user;
-		const availableCredits = await WalletFundsDao.getAvailableCreditsByType(user_id, SERVICE_TYPE_TO_FUNDS_TYPE[service_type]);
-		const expiredCredits = await WalletFundsDao.getExpiredCredits(user_id, SERVICE_TYPE_TO_FUNDS_TYPE[service_type]);
+		const availableCredits = await WalletFundsDao.getAvailableCreditsByType(
+			user_id,
+			SERVICE_TYPE_TO_FUNDS_TYPE[service_type]
+		);
+		const expiredCredits = await WalletFundsDao.getExpiredCredits(
+			user_id,
+			SERVICE_TYPE_TO_FUNDS_TYPE[service_type]
+		);
 		const cashbacks = Object.keys(CASHBACK_TYPE).includes(service_type.toUpperCase())
-			? await CashbackDao.getPendingUserCashbackByType(user_id, service_type) : [];
+			? await CashbackDao.getPendingUserCashbackByType(user_id, service_type)
+			: [];
 		return res.status(200).json({
 			availableCredits: availableCredits,
 			expiredCredits: expiredCredits,
-			cashbacks: cashbacks
+			cashbacks: cashbacks,
 		});
 	} catch (error) {
-		return res.status(400).json({ error: error.message || "Error fetching user credits" });
+		return res.status(400).json({ error: error.message || 'Error fetching user credits' });
 	}
 }
 
@@ -1884,20 +1921,20 @@ async function getMyActiveOrderIds(req, res) {
 		return res.status(200).json({
 			scheduled_taxi_order_ids,
 			non_scheduled_taxi_order_ids,
-			delivery_order_ids
+			delivery_order_ids,
 		});
 	} catch (error) {
-		return res.status(400).json({ error: error.message || "Error fetching user active order ids" });
+		return res.status(400).json({ error: error.message || 'Error fetching user active order ids' });
 	}
 }
 
 async function getReferral(req, res) {
 	try {
 		const referral = ReferralDao.getReferralByReferredUserId(req.user.user_id);
-		if (!referral) return res.status(400).json({ error: "Error fetching referral" });
+		if (!referral) return res.status(400).json({ error: 'Error fetching referral' });
 		return res.status(200).json(referral);
 	} catch (error) {
-		return res.status(400).json({ error: error.message || "Error fetching referral" });
+		return res.status(400).json({ error: error.message || 'Error fetching referral' });
 	}
 }
 
@@ -1907,9 +1944,9 @@ async function updateMarketingNotifications(req, res) {
 		if (user) {
 			return res.status(200).json(user);
 		}
-		res.status(400).json({ error: "Error setting marketing notifications" });
+		res.status(400).json({ error: 'Error setting marketing notifications' });
 	} catch (err) {
-		return res.status(400).json({ error: err.message || "Error setting marketing notifications" });
+		return res.status(400).json({ error: err.message || 'Error setting marketing notifications' });
 	}
 }
 
@@ -1919,9 +1956,9 @@ async function updateAdsPersonalization(req, res) {
 		if (user) {
 			return res.status(200).json(user);
 		}
-		res.status(400).json({ error: "Error setting ads personalization" });
+		res.status(400).json({ error: 'Error setting ads personalization' });
 	} catch (err) {
-		return res.status(400).json({ error: err.message || "Error setting ads personalization" });
+		return res.status(400).json({ error: err.message || 'Error setting ads personalization' });
 	}
 }
 
@@ -1931,9 +1968,9 @@ async function updateNewsletter(req, res) {
 		if (user) {
 			return res.status(200).json(user);
 		}
-		res.status(400).json({ error: "Error setting newsletter" });
+		res.status(400).json({ error: 'Error setting newsletter' });
 	} catch (err) {
-		return res.status(400).json({ error: err.message || "Error setting newsletter" });
+		return res.status(400).json({ error: err.message || 'Error setting newsletter' });
 	}
 }
 
@@ -1947,13 +1984,14 @@ async function requestData(req, res) {
 						user_roles_id: true,
 						user_id: true,
 						role: true,
-						primary: true
-					}
+						primary: true,
+					},
 				},
-				addresses: { // user_address
+				addresses: {
+					// user_address
 					select: {
-						address: true // addresses model
-					}
+						address: true, // addresses model
+					},
 				},
 				// tokens: { //NO NEED TO SEND BACK THE TOKENS
 				// 	where: { active: true } // Optional: only active tokens
@@ -1973,18 +2011,18 @@ async function requestData(req, res) {
 							select: {
 								business_id: true,
 								name: true,
-								type: true
+								type: true,
 								// Only include minimal business information needed for identification
-							}
+							},
 						},
 						operating_address: {
 							select: {
 								address_id: true,
-								address: true
+								address: true,
 								// Only include minimal address information needed for identification
-							}
-						}
-					}
+							},
+						},
+					},
 				},
 				driver: {
 					select: {
@@ -2014,7 +2052,8 @@ async function requestData(req, res) {
 						partner_cash_balance: true,
 						come_to_work_last_sent_at: true,
 						//include
-						vehicles: { // vehicle_drivers
+						vehicles: {
+							// vehicle_drivers
 							select: {
 								vehicle_drivers_id: true,
 								vehicle_id: true,
@@ -2032,10 +2071,10 @@ async function requestData(req, res) {
 										make: true,
 										model: true,
 										color: true,
-										license_plate: true
-									}
-								}
-							}
+										license_plate: true,
+									},
+								},
+							},
 						},
 						current_vehicle: {
 							select: {
@@ -2045,8 +2084,8 @@ async function requestData(req, res) {
 								make: true,
 								model: true,
 								color: true,
-								license_plate: true
-							}
+								license_plate: true,
+							},
 						},
 						documents: {
 							select: {
@@ -2056,8 +2095,8 @@ async function requestData(req, res) {
 								updated_at: true,
 								expiration_date: true,
 								issue_date: true,
-								public: true
-							}
+								public: true,
+							},
 						},
 						activity_logs: {
 							select: {
@@ -2066,16 +2105,16 @@ async function requestData(req, res) {
 								started_at: true,
 								ended_at: true,
 								timeout_at: true,
-								lockout_until: true
-							}
+								lockout_until: true,
+							},
 						},
 						driver_municipalities: {
 							select: {
 								driver_municipalities_id: true,
 								municipalities_id: true,
 								created_at: true,
-								updated_at: true
-							}
+								updated_at: true,
+							},
 						},
 						driver_history_locations: {
 							select: {
@@ -2085,8 +2124,8 @@ async function requestData(req, res) {
 								status: true,
 								location: true,
 								created_at: true,
-								updated_at: true
-							}
+								updated_at: true,
+							},
 						},
 						received_orders: {
 							select: {
@@ -2097,8 +2136,8 @@ async function requestData(req, res) {
 								timeline: true,
 								created_at: true,
 								updated_at: true,
-								rejected: true
-							}
+								rejected: true,
+							},
 						},
 						received_delivery_orders: {
 							select: {
@@ -2108,10 +2147,10 @@ async function requestData(req, res) {
 								location: true,
 								timeline: true,
 								created_at: true,
-								updated_at: true
-							}
-						}
-					}
+								updated_at: true,
+							},
+						},
+					},
 				},
 				documents: {
 					select: {
@@ -2132,10 +2171,10 @@ async function requestData(req, res) {
 								public: true,
 								mime_type: true,
 								created_at: true,
-								updated_at: true
-							}
-						}
-					}
+								updated_at: true,
+							},
+						},
+					},
 				},
 				delivery_driver: {
 					select: {
@@ -2166,8 +2205,8 @@ async function requestData(req, res) {
 								make: true,
 								model: true,
 								color: true,
-								license_plate: true
-							}
+								license_plate: true,
+							},
 						},
 						documents: {
 							select: {
@@ -2177,8 +2216,8 @@ async function requestData(req, res) {
 								updated_at: true,
 								expiration_date: true,
 								issue_date: true,
-								public: true
-							}
+								public: true,
+							},
 						},
 						delivery_driver_history_locations: {
 							select: {
@@ -2187,8 +2226,8 @@ async function requestData(req, res) {
 								status: true,
 								location: true,
 								created_at: true,
-								updated_at: true
-							}
+								updated_at: true,
+							},
 						},
 						received_orders: {
 							select: {
@@ -2198,19 +2237,20 @@ async function requestData(req, res) {
 								location: true,
 								timeline: true,
 								created_at: true,
-								updated_at: true
-							}
+								updated_at: true,
+							},
 						},
 						daily_meal_business: {
 							select: {
 								business_id: true,
 								name: true,
-								type: true
-							}
-						}
-					}
+								type: true,
+							},
+						},
+					},
 				},
-				orders: { // taxi_orders
+				orders: {
+					// taxi_orders
 					select: {
 						order_id: true,
 						user_id: true,
@@ -2253,21 +2293,21 @@ async function requestData(req, res) {
 								make: true,
 								model: true,
 								color: true,
-								license_plate: true
-							}
+								license_plate: true,
+							},
 						},
 						driver: {
 							select: {
 								driver_id: true,
-								user_id: true // Only include the essential identifiers
-							}
+								user_id: true, // Only include the essential identifiers
+							},
 						},
 						business: {
 							select: {
 								business_id: true,
 								name: true,
-								type: true
-							}
+								type: true,
+							},
 						},
 						history: {
 							select: {
@@ -2279,20 +2319,20 @@ async function requestData(req, res) {
 								location: true,
 								timeline: true,
 								created_at: true,
-								updated_at: true
-							}
+								updated_at: true,
+							},
 						},
 						grouped_orders: {
 							select: {
 								order_id: true,
-								status: true
-							}
+								status: true,
+							},
 						},
 						parent_order: {
 							select: {
 								order_id: true,
-								status: true
-							}
+								status: true,
+							},
 						},
 						wallet_transfer: {
 							select: {
@@ -2300,8 +2340,8 @@ async function requestData(req, res) {
 								amount: true,
 								created_at: true,
 								updated_at: true,
-								success: true
-							}
+								success: true,
+							},
 						},
 						transactions: {
 							select: {
@@ -2310,8 +2350,8 @@ async function requestData(req, res) {
 								type: true,
 								description: true,
 								createdAt: true,
-								updatedAt: true
-							}
+								updatedAt: true,
+							},
 						},
 						scoring_points: {
 							select: {
@@ -2321,16 +2361,16 @@ async function requestData(req, res) {
 								reason: true,
 								expiration_date: true,
 								created_at: true,
-								updated_at: true
-							}
+								updated_at: true,
+							},
 						},
 						late_events: {
 							select: {
 								late_events_id: true,
 								seconds: true,
 								created_at: true,
-								updated_at: true
-							}
+								updated_at: true,
+							},
 						},
 						cashback: {
 							select: {
@@ -2340,10 +2380,10 @@ async function requestData(req, res) {
 								source: true,
 								status: true,
 								earned_at: true,
-								expires_at: true
-							}
-						}
-					}
+								expires_at: true,
+							},
+						},
+					},
 				},
 				delivery_orders: {
 					select: {
@@ -2383,8 +2423,8 @@ async function requestData(req, res) {
 								make: true,
 								model: true,
 								color: true,
-								license_plate: true
-							}
+								license_plate: true,
+							},
 						},
 						//we dont need to include the driver or delivery_driver details for the order
 						// delivery_driver: {
@@ -2404,7 +2444,7 @@ async function requestData(req, res) {
 								business_id: true,
 								name: true,
 								// type: true
-							}
+							},
 						},
 						// history: { //we dont need to include the history for this order
 						// 	select: {
@@ -2426,8 +2466,8 @@ async function requestData(req, res) {
 								type: true,
 								description: true,
 								createdAt: true,
-								updatedAt: true
-							}
+								updatedAt: true,
+							},
 						},
 						wallet_transfer: {
 							select: {
@@ -2435,8 +2475,8 @@ async function requestData(req, res) {
 								amount: true,
 								created_at: true,
 								updated_at: true,
-								success: true
-							}
+								success: true,
+							},
 						},
 						scoring_points: {
 							select: {
@@ -2446,16 +2486,16 @@ async function requestData(req, res) {
 								reason: true,
 								expiration_date: true,
 								created_at: true,
-								updated_at: true
-							}
+								updated_at: true,
+							},
 						},
 						late_events: {
 							select: {
 								late_events_id: true,
 								seconds: true,
 								created_at: true,
-								updated_at: true
-							}
+								updated_at: true,
+							},
 						},
 						cashback: {
 							select: {
@@ -2465,8 +2505,8 @@ async function requestData(req, res) {
 								source: true,
 								status: true,
 								earned_at: true,
-								expires_at: true
-							}
+								expires_at: true,
+							},
 						},
 						order_lobbies: {
 							select: {
@@ -2478,12 +2518,13 @@ async function requestData(req, res) {
 								restaurant_id: true,
 								creator_id: true,
 								created_at: true,
-								updated_at: true
-							}
-						}
-					}
+								updated_at: true,
+							},
+						},
+					},
 				},
-				reviewable: { // Reviews left for the user
+				reviewable: {
+					// Reviews left for the user
 					select: {
 						reviewable_id: true,
 						reviews: {
@@ -2493,12 +2534,13 @@ async function requestData(req, res) {
 								comment: true,
 								feedback: true,
 								created_at: true,
-								updated_at: true
-							}
-						}
-					}
+								updated_at: true,
+							},
+						},
+					},
 				},
-				reviews: { // Reviews written by the user
+				reviews: {
+					// Reviews written by the user
 					select: {
 						review_id: true,
 						rating: true,
@@ -2506,8 +2548,8 @@ async function requestData(req, res) {
 						feedback: true,
 						created_at: true,
 						updated_at: true,
-						reviewable_id: true
-					}
+						reviewable_id: true,
+					},
 				},
 				transactions: {
 					select: {
@@ -2527,10 +2569,10 @@ async function requestData(req, res) {
 								document_type: true,
 								created_at: true,
 								expiration_date: true,
-								issue_date: true
-							}
-						}
-					}
+								issue_date: true,
+							},
+						},
+					},
 				},
 				reservations: {
 					select: {
@@ -2542,9 +2584,9 @@ async function requestData(req, res) {
 						created_at: true,
 						updated_at: true,
 						status: true,
-						table: true
+						table: true,
 						// business_id: true // Only include business ID, not full business details
-					}
+					},
 				},
 				flag_changes: {
 					select: {
@@ -2552,8 +2594,8 @@ async function requestData(req, res) {
 						flag_id: true,
 						status: true,
 						created_at: true,
-						updated_at: true
-					}
+						updated_at: true,
+					},
 				}, // flag_history
 				lost_items: {
 					select: {
@@ -2570,26 +2612,28 @@ async function requestData(req, res) {
 								document_type: true,
 								created_at: true,
 								updated_at: true,
-								expiration_date: true
-							}
-						}
-					}
+								expiration_date: true,
+							},
+						},
+					},
 				},
-				child_users: { // Users for whom the current user is a parent
+				child_users: {
+					// Users for whom the current user is a parent
 					select: {
 						group_user_id: true, // Only include the relationship ID, not the linked accounts' details
 						created_at: true,
 						updated_at: true,
-						enabled: true
-					}
+						enabled: true,
+					},
 				},
-				parent_user: { // If the current user is a child_user, this is their parent linkage
+				parent_user: {
+					// If the current user is a child_user, this is their parent linkage
 					select: {
 						group_user_id: true, // Only include the relationship ID, not the linked accounts' details
 						created_at: true,
 						updated_at: true,
-						enabled: true
-					}
+						enabled: true,
+					},
 				},
 				wallet_funds: {
 					select: {
@@ -2605,21 +2649,23 @@ async function requestData(req, res) {
 						updated_at: true,
 						expires_at: true,
 						type: true,
-						status: true
-					}
+						status: true,
+					},
 				}, // GDPR: Include wallet funds but without nested relations
 
-				referrals_made: { // Referrals made by this user
+				referrals_made: {
+					// Referrals made by this user
 					select: {
 						referral_id: true,
 						referral_code: true, // User's own code is okay to include
 						referrer_user_id: true, // This is the user's own ID
 						referred_user_id: true, // ID of who was referred
 						created_at: true,
-						updated_at: true
-					}
+						updated_at: true,
+					},
 				},
-				referral: { // If this user was referred by someone
+				referral: {
+					// If this user was referred by someone
 					select: {
 						referral_id: true,
 						referrer_user_id: true, // ID of who referred the user
@@ -2627,8 +2673,8 @@ async function requestData(req, res) {
 						conditions_met: true, // This relates to the user's own referral
 						reward_claimed: true, // This relates to the user's own reward
 						created_at: true,
-						updated_at: true
-					}
+						updated_at: true,
+					},
 				},
 				cashback: {
 					select: {
@@ -2643,18 +2689,19 @@ async function requestData(req, res) {
 						expires_at: true,
 						converted_at: true,
 						taxi_order_id: true,
-						delivery_order_id: true
-					}
+						delivery_order_id: true,
+					},
 				},
-				business_teams: { // Team the user belongs to
+				business_teams: {
+					// Team the user belongs to
 					select: {
 						business_teams_id: true,
 						team_name: true,
 						business_id: true, // Only include business ID, not full business details
 						limit_per_person: true,
 						created_at: true,
-						updated_at: true
-					}
+						updated_at: true,
+					},
 				},
 				order_lobby_users: {
 					select: {
@@ -2673,10 +2720,10 @@ async function requestData(req, res) {
 								business_id: true, // Only include business ID
 								restaurant_id: true, // Only include restaurant ID
 								created_at: true,
-								updated_at: true
-							}
-						}
-					}
+								updated_at: true,
+							},
+						},
+					},
 				},
 				promo_section_buys: {
 					select: {
@@ -2697,11 +2744,10 @@ async function requestData(req, res) {
 								description: true,
 								canPurchase: true,
 								service_type: true,
-								promo_duration_days: true
-							}
-						}
+								promo_duration_days: true,
+							},
+						},
 					},
-
 				},
 				scoring_points: {
 					select: {
@@ -2714,8 +2760,8 @@ async function requestData(req, res) {
 						reason: true,
 						expiration_date: true,
 						created_at: true,
-						updated_at: true
-					}
+						updated_at: true,
+					},
 				},
 				daily_meals_subscriptions: {
 					select: {
@@ -2731,8 +2777,8 @@ async function requestData(req, res) {
 						quantity: true,
 						order_created: true,
 						restaurant_comment: true,
-						courier_comment: true
-					}
+						courier_comment: true,
+					},
 				},
 				late_events: {
 					select: {
@@ -2743,8 +2789,8 @@ async function requestData(req, res) {
 						scoring_points_id: true,
 						seconds: true,
 						created_at: true,
-						updated_at: true
-					}
+						updated_at: true,
+					},
 				},
 				user_favorite_businesses: {
 					select: {
@@ -2753,47 +2799,49 @@ async function requestData(req, res) {
 						business_id: true,
 						business_type: true,
 						created_at: true,
-						updated_at: true
-					}
+						updated_at: true,
+					},
 				},
-				account_actions: { // Actions performed on this user's account
+				account_actions: {
+					// Actions performed on this user's account
 					select: {
 						account_action_id: true,
 						user_id: true, // Keep the user's own ID - this is their data
 						created_at: true,
 						reason: true,
-						action: true
+						action: true,
 						// No reference to action_creator (other users) to maintain GDPR compliance
-					}
+					},
 				},
-				created_account_actions: { // Actions this user performed on other accounts
+				created_account_actions: {
+					// Actions this user performed on other accounts
 					select: {
 						account_action_id: true,
 						action_creator_user_id: true, // Keep this as it's the requesting user's own ID
 						created_at: true,
 						reason: true,
-						action: true
+						action: true,
 						// No reference to affected users to maintain GDPR compliance
-					}
-				}
+					},
+				},
 			};
 
 			let userData = await UserDao.getUserById(user_id, { select: usersStoredData });
 
 			if (userData) {
 				delete userData.password; // Ensure password is not sent
-				
+
 				// Simplify delivery order items to only include essential items data (only slovenian translation, not all of them)
 				if (userData.delivery_orders) {
-					userData.delivery_orders.forEach(order => {
+					userData.delivery_orders.forEach((order) => {
 						if (order.items && Array.isArray(order.items)) {
-							order.items = order.items.map(item => ({
+							order.items = order.items.map((item) => ({
 								menu_item_id: item.menu_item_id,
 								price: item.price,
 								quantity: item.quantity,
 								discount: item.discount,
 								image: item.image,
-								name: item.names?.sl || "",
+								name: item.names?.sl || '',
 							}));
 						}
 					});
@@ -2801,13 +2849,13 @@ async function requestData(req, res) {
 
 				return res.status(200).json(userData);
 			} else {
-				return res.status(404).json({ error: "User not found" });
+				return res.status(404).json({ error: 'User not found' });
 			}
 		}
-		res.status(400).json({ error: "Error obtaining personal user data: User ID not provided" });
+		res.status(400).json({ error: 'Error obtaining personal user data: User ID not provided' });
 	} catch (err) {
-		console.error("Error in requestData:", err);
-		return res.status(500).json({ error: err.message || "Error obtaining personal user data" });
+		console.error('Error in requestData:', err);
+		return res.status(500).json({ error: err.message || 'Error obtaining personal user data' });
 	}
 }
 
@@ -2871,5 +2919,5 @@ module.exports = {
 	updateMarketingNotifications,
 	updateAdsPersonalization,
 	updateNewsletter,
-	requestData
+	requestData,
 };

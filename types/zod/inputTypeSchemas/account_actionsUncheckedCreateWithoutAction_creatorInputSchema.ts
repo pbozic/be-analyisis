@@ -1,0 +1,16 @@
+import type { Prisma } from '@prisma/client';
+
+import { z } from 'zod';
+import { ACCOUNT_ACTIONS_REASONSchema } from './ACCOUNT_ACTIONS_REASONSchema';
+import { ACCOUNT_ACTIONSSchema } from './ACCOUNT_ACTIONSSchema';
+
+export const account_actionsUncheckedCreateWithoutAction_creatorInputSchema: z.ZodType<Prisma.account_actionsUncheckedCreateWithoutAction_creatorInput> = z.object({
+  account_action_id: z.string().uuid().optional(),
+  business_id: z.string().optional().nullable(),
+  user_id: z.string().optional().nullable(),
+  created_at: z.coerce.date().optional(),
+  reason: z.lazy(() => ACCOUNT_ACTIONS_REASONSchema),
+  action: z.lazy(() => ACCOUNT_ACTIONSSchema)
+}).strict();
+
+export default account_actionsUncheckedCreateWithoutAction_creatorInputSchema;

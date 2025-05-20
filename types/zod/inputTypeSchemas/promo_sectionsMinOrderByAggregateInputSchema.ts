@@ -1,0 +1,24 @@
+import type { Prisma } from '@prisma/client';
+
+import { z } from 'zod';
+import { SortOrderSchema } from './SortOrderSchema';
+
+export const promo_sectionsMinOrderByAggregateInputSchema: z.ZodType<Prisma.promo_sectionsMinOrderByAggregateInput> = z.object({
+  promo_sections_id: z.lazy(() => SortOrderSchema).optional(),
+  name: z.lazy(() => SortOrderSchema).optional(),
+  tag: z.lazy(() => SortOrderSchema).optional(),
+  active: z.lazy(() => SortOrderSchema).optional(),
+  description: z.lazy(() => SortOrderSchema).optional(),
+  stripe_product_id: z.lazy(() => SortOrderSchema).optional(),
+  canPurchase: z.lazy(() => SortOrderSchema).optional(),
+  t1price: z.lazy(() => SortOrderSchema).optional(),
+  t2price: z.lazy(() => SortOrderSchema).optional(),
+  t3price: z.lazy(() => SortOrderSchema).optional(),
+  order: z.lazy(() => SortOrderSchema).optional(),
+  service_type: z.lazy(() => SortOrderSchema).optional(),
+  promo_duration_days: z.lazy(() => SortOrderSchema).optional(),
+  translatable_id: z.lazy(() => SortOrderSchema).optional(),
+  display_cards_per_page: z.lazy(() => SortOrderSchema).optional()
+}).strict();
+
+export default promo_sectionsMinOrderByAggregateInputSchema;

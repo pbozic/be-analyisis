@@ -9,7 +9,7 @@ function combinedRulesJson() {
 
 	const files = fs.readdirSync(rulesDirectory);
 
-	files.forEach(file => {
+	files.forEach((file) => {
 		if (path.extname(file) === '.json') {
 			const filePath = path.join(rulesDirectory, file);
 

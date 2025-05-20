@@ -1,9 +1,9 @@
-const prisma = require("../prisma/prisma");
+const prisma = require('../prisma/prisma');
 
 const cropped_user_columns = {
 	first_name: true,
 	last_name: true,
-	user_id:true,
+	user_id: true,
 };
 
 /**
@@ -34,7 +34,7 @@ const updateBusinessTeam = async (data) => {
 		}
 		return await prisma.business_teams.update({
 			where: {
-				business_teams_id: data.business_teams_id
+				business_teams_id: data.business_teams_id,
 			},
 			data,
 		});
@@ -55,7 +55,7 @@ const addUserToTeam = async (business_teams_id, user_id) => {
 		// First check if user exists and isn't already in a team
 		const user = await prisma.users.findUnique({
 			where: { user_id },
-			select: { business_teams_id: true }
+			select: { business_teams_id: true },
 		});
 
 		if (!user) {
@@ -68,7 +68,7 @@ const addUserToTeam = async (business_teams_id, user_id) => {
 
 		// Check if business team exists
 		const team = await prisma.business_teams.findUnique({
-			where: { business_teams_id }
+			where: { business_teams_id },
 		});
 
 		if (!team) {
@@ -80,14 +80,14 @@ const addUserToTeam = async (business_teams_id, user_id) => {
 			where: { business_teams_id },
 			data: {
 				users: {
-					connect: { user_id }
-				}
+					connect: { user_id },
+				},
 			},
 			include: {
 				users: {
-					select: cropped_user_columns
-				}
-			}
+					select: cropped_user_columns,
+				},
+			},
 		});
 	} catch (error) {
 		console.error('Error adding user to business team:', error);
@@ -105,7 +105,7 @@ const removeUserFromTeam = async (user_id) => {
 		// Check if user exists and is in a team
 		const user = await prisma.users.findUnique({
 			where: { user_id },
-			select: { business_teams_id: true }
+			select: { business_teams_id: true },
 		});
 
 		if (!user) {
@@ -121,14 +121,14 @@ const removeUserFromTeam = async (user_id) => {
 			where: { business_teams_id: user.business_teams_id },
 			data: {
 				users: {
-					disconnect: { user_id }
-				}
+					disconnect: { user_id },
+				},
 			},
 			include: {
 				users: {
-					select: cropped_user_columns
-				}
-			}
+					select: cropped_user_columns,
+				},
+			},
 		});
 	} catch (error) {
 		console.error('Error removing user from business team:', error);
@@ -149,8 +149,8 @@ const moveUserToTeam = async (user_id, new_team_id) => {
 			where: { user_id },
 			select: {
 				user_id: true,
-				business_teams_id: true
-			}
+				business_teams_id: true,
+			},
 		});
 
 		if (!user) {
@@ -159,7 +159,7 @@ const moveUserToTeam = async (user_id, new_team_id) => {
 
 		// Check if new team exists
 		const newTeam = await prisma.business_teams.findUnique({
-			where: { business_teams_id: new_team_id }
+			where: { business_teams_id: new_team_id },
 		});
 
 		if (!newTeam) {
@@ -179,9 +179,9 @@ const moveUserToTeam = async (user_id, new_team_id) => {
 					where: { business_teams_id: user.business_teams_id },
 					data: {
 						users: {
-							disconnect: { user_id }
-						}
-					}
+							disconnect: { user_id },
+						},
+					},
 				});
 			}
 
@@ -190,14 +190,14 @@ const moveUserToTeam = async (user_id, new_team_id) => {
 				where: { business_teams_id: new_team_id },
 				data: {
 					users: {
-						connect: { user_id }
-					}
+						connect: { user_id },
+					},
 				},
 				include: {
 					users: {
-						select: cropped_user_columns
-					}
-				}
+						select: cropped_user_columns,
+					},
+				},
 			});
 		});
 	} catch (error) {
@@ -218,13 +218,13 @@ const getBusinessTeamById = async (business_teams_id) => {
 		}
 		return await prisma.business_teams.findUnique({
 			where: {
-				business_teams_id: business_teams_id
+				business_teams_id: business_teams_id,
 			},
 			include: {
 				users: {
-					select: cropped_user_columns
-				}
-			}
+					select: cropped_user_columns,
+				},
+			},
 		});
 	} catch (error) {
 		console.error('Error fetching business team by ID:', error);
@@ -244,13 +244,13 @@ const getBusinessTeamsForBusinessId = async (business_id) => {
 		}
 		return await prisma.business_teams.findMany({
 			where: {
-				business_id: business_id
+				business_id: business_id,
 			},
 			include: {
 				users: {
-					select: cropped_user_columns
-				}
-			}
+					select: cropped_user_columns,
+				},
+			},
 		});
 	} catch (error) {
 		console.error('Error fetching business teams for business:', error);
@@ -270,8 +270,8 @@ const deleteBusinessTeam = async (business_teams_id) => {
 		}
 		return await prisma.business_teams.delete({
 			where: {
-				business_teams_id: business_teams_id
-			}
+				business_teams_id: business_teams_id,
+			},
 		});
 	} catch (error) {
 		console.error('Error deleting business team:', error);

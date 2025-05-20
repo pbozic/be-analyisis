@@ -1,8 +1,8 @@
-const { pool } = require("../pool/pool");
-const prisma = require("../prisma/prisma");
+const { pool } = require('../pool/pool');
+const prisma = require('../prisma/prisma');
 
-pool.on("connect", () => {
-	console.log("successfully connected to the DB..");
+pool.on('connect', () => {
+	console.log('successfully connected to the DB..');
 });
 
 /* USER prisma queries */
@@ -181,13 +181,7 @@ const createNewFile = async (folder_id, name, path, mime_type, user_groups) => {
                             VALUES ($1, $2, $3, $4, $5)
                             RETURNING *`;
 
-	return await pool.query(query, [
-		folder_id,
-		name,
-		path,
-		mime_type,
-		user_groups,
-	]);
+	return await pool.query(query, [folder_id, name, path, mime_type, user_groups]);
 };
 
 module.exports = {

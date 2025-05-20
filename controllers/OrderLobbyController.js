@@ -1,11 +1,11 @@
 const OrderLobbyDao = require('../dao/OrderLobby');
-const OrderLobbyUserDao = require('../dao/OrderLobbyUser')
-const OrderLobbyItemDao = require('../dao/OrderLobbyItem')
-const UserDao = require('../dao/User')
-const { UserSockets, io } = require("../socket");
-const OneSignal = require("../lib/oneSignal");
-const { getLocalisedTexts } = require("../localisations/languages");
-const DeliveryOrderController = require("../controllers/DeliveryOrderController");
+const OrderLobbyUserDao = require('../dao/OrderLobbyUser');
+const OrderLobbyItemDao = require('../dao/OrderLobbyItem');
+const UserDao = require('../dao/User');
+const { UserSockets, io } = require('../socket');
+const OneSignal = require('../lib/oneSignal');
+const { getLocalisedTexts } = require('../localisations/languages');
+const DeliveryOrderController = require('../controllers/DeliveryOrderController');
 
 async function lobbySocketOrNotification(user_id, event, order_lobby) {
 	const userSocket = UserSockets.get(user_id);
@@ -13,28 +13,28 @@ async function lobbySocketOrNotification(user_id, event, order_lobby) {
 	if (userSocket) {
 		io.to(userSocket).emit(event, order_lobby);
 	} else {
-		const user = await UserDao.getUserById(user_id,{select:{language:true}});
+		const user = await UserDao.getUserById(user_id, { select: { language: true } });
 		if (user) {
-			const l10nNotification = getLocalisedTexts("USER_NOTIFICATIONS", user);
-			const l10nHeading = getLocalisedTexts("HEADING", user);
+			const l10nNotification = getLocalisedTexts('USER_NOTIFICATIONS', user);
+			const l10nHeading = getLocalisedTexts('HEADING', user);
 
-			let notification_title = "";
-			let notification_content = "";
+			let notification_title = '';
+			let notification_content = '';
 
 			switch (event) {
-				case "added_to_lobby":
+				case 'added_to_lobby':
 					notification_title = l10nHeading?.lobby_added;
 					notification_content = l10nNotification?.lobby_added;
 					break;
-				case "removed_from_lobby":
+				case 'removed_from_lobby':
 					notification_title = l10nHeading?.lobby_removed;
 					notification_content = l10nNotification?.lobby_removed;
 					break;
-				case "lobby_completed":
+				case 'lobby_completed':
 					notification_title = l10nHeading?.lobby_completed;
 					notification_content = l10nNotification?.lobby_completed;
 					break;
-				case "lobby_canceled":
+				case 'lobby_canceled':
 					notification_title = l10nHeading?.lobby_canceled;
 					notification_content = l10nNotification?.lobby_canceled;
 					break;
@@ -45,27 +45,24 @@ async function lobbySocketOrNotification(user_id, event, order_lobby) {
 	}
 }
 
-
-
-
-async function addUserToLobby(user_id,order_lobby,limit){
+async function addUserToLobby(user_id, order_lobby, limit) {
 	// create lobby user
-	const ol_user = await OrderLobbyUserDao.createOrderLobbyUser(user_id,order_lobby.order_lobbies_id,limit)
-	if(ol_user){
+	const ol_user = await OrderLobbyUserDao.createOrderLobbyUser(user_id, order_lobby.order_lobbies_id, limit);
+	if (ol_user) {
 		// emit to socket or send notification
-		await lobbySocketOrNotification(ol_user.user_id,"added_to_lobby",order_lobby)
+		await lobbySocketOrNotification(ol_user.user_id, 'added_to_lobby', order_lobby);
 	}
-	return ol_user
+	return ol_user;
 }
 
-async function deleteUserFromLobby(order_lobby_users_id, order_lobby, event="removed_from_lobby"){
+async function deleteUserFromLobby(order_lobby_users_id, order_lobby, event = 'removed_from_lobby') {
 	// create lobby user
-	const deleted_ol_user = await OrderLobbyUserDao.deleteOrderLobbyUserWithItems(order_lobby_users_id)
-	if(deleted_ol_user){
+	const deleted_ol_user = await OrderLobbyUserDao.deleteOrderLobbyUserWithItems(order_lobby_users_id);
+	if (deleted_ol_user) {
 		// emit to socket or send notification
-		await lobbySocketOrNotification(deleted_ol_user.user_id,event,order_lobby)
+		await lobbySocketOrNotification(deleted_ol_user.user_id, event, order_lobby);
 	}
-	return deleted_ol_user
+	return deleted_ol_user;
 }
 
 // async function generateOrderDataFromLobby( lobbyOrderData,creator_id ){
@@ -112,15 +109,15 @@ async function deleteUserFromLobby(order_lobby_users_id, order_lobby, event="rem
  */
 async function createLobby(req, res) {
 	try {
-		const {user_limits_map, lobby_name, lobby_description, business_id, restaurant_id} = req.body
+		const { user_limits_map, lobby_name, lobby_description, business_id, restaurant_id } = req.body;
 
 		const new_lobby = OrderLobbyDao.createOrderLobby({
 			lobby_name,
 			lobby_description,
-			business: {connect: {business_id: business_id}},
+			business: { connect: { business_id: business_id } },
 			restaurant_id,
-			creator_id: req.user.user_id
-		})
+			creator_id: req.user.user_id,
+		});
 
 		const lobby_users = [];
 		if (new_lobby) {
@@ -129,7 +126,7 @@ async function createLobby(req, res) {
 				lobby_users.push(user);
 			}
 		}
-		return res.status(200).json({ new_lobby,lobby_users })
+		return res.status(200).json({ new_lobby, lobby_users });
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
@@ -148,24 +145,27 @@ async function createLobby(req, res) {
  */
 async function submitLobby(req, res) {
 	try {
-		const { order_lobbies_id } = req.params
-		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id)
+		const { order_lobbies_id } = req.params;
+		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
 
-		const { orderBody } = req.body
+		const { orderBody } = req.body;
 		// const { lobbyOrderData } = req.body
 		// const orderData = await generateOrderDataFromLobby(lobbyOrderData)
 
 		// Generate a delivery order
 		//TODO: Decide how to improve to not send whole order from FE, but rather generate from DB data about lobby
-		const order = await DeliveryOrderController.createOrder({ orderBody, user:{user_id:order_lobby.creator_id}},res)
+		const order = await DeliveryOrderController.createOrder(
+			{ orderBody, user: { user_id: order_lobby.creator_id } },
+			res
+		);
 
 		// Update the lobby status
-		await OrderLobbyDao.setOrderLobbyActive(order_lobbies_id,false)
+		await OrderLobbyDao.setOrderLobbyActive(order_lobbies_id, false);
 
-		for(const ol_user of order_lobby.order_lobby_users){
-			lobbySocketOrNotification(ol_user.user_id,"lobby_completed" ,order_lobby)
+		for (const ol_user of order_lobby.order_lobby_users) {
+			lobbySocketOrNotification(ol_user.user_id, 'lobby_completed', order_lobby);
 		}
-		return res.status(201).json(order)
+		return res.status(201).json(order);
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
@@ -184,12 +184,12 @@ async function submitLobby(req, res) {
  */
 async function setLobbyUsersWithLimits(req, res) {
 	try {
-		const { order_lobbies_id } = req.params
-		const { user_limits_map } = req.body
+		const { order_lobbies_id } = req.params;
+		const { user_limits_map } = req.body;
 
 		// Get the current lobby users
 		// const current_order_lobby_users = await OrderLobbyUserDao.getOrderLobbyUsersInOrderLobby(order_lobbies_id)
-		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id)
+		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
 
 		// Compare with provided users
 		for (const user_id of Object.keys(user_limits_map)) {
@@ -198,7 +198,10 @@ async function setLobbyUsersWithLimits(req, res) {
 			if (!lobby_user) {
 				await addUserToLobby(user_id, order_lobbies_id, user_limits_map[user_id]);
 			} else if (user_limits_map[user_id] !== lobby_user.limit) {
-				await OrderLobbyUserDao.updateOrderLobbyUserLimit(lobby_user.order_lobby_users_id, user_limits_map[user_id]);
+				await OrderLobbyUserDao.updateOrderLobbyUserLimit(
+					lobby_user.order_lobby_users_id,
+					user_limits_map[user_id]
+				);
 			}
 		}
 
@@ -207,10 +210,10 @@ async function setLobbyUsersWithLimits(req, res) {
 			const lobby_user = user_limits_map.find((ol_user) => ol_user.user_id === lobby_user.user_id);
 
 			if (!lobby_user) {
-				await deleteUserFromLobby(lobby_user.user_id,order_lobby)
+				await deleteUserFromLobby(lobby_user.user_id, order_lobby);
 			}
 		}
-		return res.status(200)
+		return res.status(200);
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
@@ -231,27 +234,27 @@ async function setLobbyUsersWithLimits(req, res) {
  */
 async function setUserOrderLobbyItems(req, res) {
 	try {
-		const { order_lobbies_id } = req.params
-		const { user_id } = req.user
-		const { items } = req.body
+		const { order_lobbies_id } = req.params;
+		const { user_id } = req.user;
+		const { items } = req.body;
 
-		const order_lobby_items = await OrderLobbyItemDao.getOrderLobbyItemsByLobbyAndUserId(order_lobbies_id,user_id)
+		const order_lobby_items = await OrderLobbyItemDao.getOrderLobbyItemsByLobbyAndUserId(order_lobbies_id, user_id);
 
 		//delete removed items
 		for (const lobby_item of order_lobby_items) {
-			const item = items.find((item) => OrderLobbyItemDao.areItemsEqual(item,lobby_item));
+			const item = items.find((item) => OrderLobbyItemDao.areItemsEqual(item, lobby_item));
 
 			if (!item) {
-				await OrderLobbyItemDao.deleteOrderLobbyItem(lobby_item.order_lobby_items_id)
+				await OrderLobbyItemDao.deleteOrderLobbyItem(lobby_item.order_lobby_items_id);
 			}
 		}
 
 		// Compare with provided items, just update quantity if exists, otherwise create new item.
 		for (const item of items) {
-			const lobby_item = order_lobby_items.find((ol_item) => OrderLobbyItemDao.areItemsEqual(ol_item,item));
+			const lobby_item = order_lobby_items.find((ol_item) => OrderLobbyItemDao.areItemsEqual(ol_item, item));
 
 			if (lobby_item) {
-				await OrderLobbyItemDao.updateOrderLobbyItemQuantity(lobby_item.order_lobby_items_id,item.quantity);
+				await OrderLobbyItemDao.updateOrderLobbyItemQuantity(lobby_item.order_lobby_items_id, item.quantity);
 			} else {
 				await OrderLobbyItemDao.createOrderLobbyItem({
 					order_lobbies_id,
@@ -261,11 +264,11 @@ async function setUserOrderLobbyItems(req, res) {
 					extras: item.extras,
 					quantity: item.quantity,
 					customer_note: item.customer_note,
-				})
+				});
 			}
 		}
 
-		return res.status(200)
+		return res.status(200);
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
@@ -282,12 +285,12 @@ async function setUserOrderLobbyItems(req, res) {
  */
 async function cancelLobby(req, res) {
 	try {
-		const { order_lobbies_id } = req.params
-		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id)
-		for(const ol_user of order_lobby.order_lobby_users){
-			await deleteUserFromLobby(ol_user.order_lobby_users_id,order_lobby,"lobby_canceled")
+		const { order_lobbies_id } = req.params;
+		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
+		for (const ol_user of order_lobby.order_lobby_users) {
+			await deleteUserFromLobby(ol_user.order_lobby_users_id, order_lobby, 'lobby_canceled');
 		}
-		await OrderLobbyDao.deleteOrderLobby(order_lobbies_id)
+		await OrderLobbyDao.deleteOrderLobby(order_lobbies_id);
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}

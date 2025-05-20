@@ -1,0 +1,58 @@
+import { z } from 'zod';
+import type { Prisma } from '@prisma/client';
+import { addressesArgsSchema } from "../outputTypeSchemas/addressesArgsSchema"
+import { financesArgsSchema } from "../outputTypeSchemas/financesArgsSchema"
+import { business_usersFindManyArgsSchema } from "../outputTypeSchemas/business_usersFindManyArgsSchema"
+import { documentsFindManyArgsSchema } from "../outputTypeSchemas/documentsFindManyArgsSchema"
+import { businessArgsSchema } from "../outputTypeSchemas/businessArgsSchema"
+import { businessFindManyArgsSchema } from "../outputTypeSchemas/businessFindManyArgsSchema"
+import { taxi_ordersFindManyArgsSchema } from "../outputTypeSchemas/taxi_ordersFindManyArgsSchema"
+import { delivery_ordersFindManyArgsSchema } from "../outputTypeSchemas/delivery_ordersFindManyArgsSchema"
+import { menusFindManyArgsSchema } from "../outputTypeSchemas/menusFindManyArgsSchema"
+import { reviewableArgsSchema } from "../outputTypeSchemas/reviewableArgsSchema"
+import { local_productsArgsSchema } from "../outputTypeSchemas/local_productsArgsSchema"
+import { word_buyFindManyArgsSchema } from "../outputTypeSchemas/word_buyFindManyArgsSchema"
+import { reservationsFindManyArgsSchema } from "../outputTypeSchemas/reservationsFindManyArgsSchema"
+import { promo_sections_buyFindManyArgsSchema } from "../outputTypeSchemas/promo_sections_buyFindManyArgsSchema"
+import { business_teamsFindManyArgsSchema } from "../outputTypeSchemas/business_teamsFindManyArgsSchema"
+import { order_lobbiesFindManyArgsSchema } from "../outputTypeSchemas/order_lobbiesFindManyArgsSchema"
+import { user_favorite_businessesFindManyArgsSchema } from "../outputTypeSchemas/user_favorite_businessesFindManyArgsSchema"
+import { scoring_pointsFindManyArgsSchema } from "../outputTypeSchemas/scoring_pointsFindManyArgsSchema"
+import { delivery_driversFindManyArgsSchema } from "../outputTypeSchemas/delivery_driversFindManyArgsSchema"
+import { late_eventsFindManyArgsSchema } from "../outputTypeSchemas/late_eventsFindManyArgsSchema"
+import { fiscal_devicesArgsSchema } from "../outputTypeSchemas/fiscal_devicesArgsSchema"
+import { daily_meals_subscriptionsFindManyArgsSchema } from "../outputTypeSchemas/daily_meals_subscriptionsFindManyArgsSchema"
+import { account_actionsFindManyArgsSchema } from "../outputTypeSchemas/account_actionsFindManyArgsSchema"
+import { business_clientsFindManyArgsSchema } from "../outputTypeSchemas/business_clientsFindManyArgsSchema"
+import { BusinessCountOutputTypeArgsSchema } from "../outputTypeSchemas/BusinessCountOutputTypeArgsSchema"
+
+export const businessIncludeSchema: z.ZodType<Prisma.businessInclude> = z.object({
+  address: z.union([z.boolean(),z.lazy(() => addressesArgsSchema)]).optional(),
+  delivery_address: z.union([z.boolean(),z.lazy(() => addressesArgsSchema)]).optional(),
+  finances: z.union([z.boolean(),z.lazy(() => financesArgsSchema)]).optional(),
+  business_users: z.union([z.boolean(),z.lazy(() => business_usersFindManyArgsSchema)]).optional(),
+  documents: z.union([z.boolean(),z.lazy(() => documentsFindManyArgsSchema)]).optional(),
+  parent_business: z.union([z.boolean(),z.lazy(() => businessArgsSchema)]).optional(),
+  child_businesses: z.union([z.boolean(),z.lazy(() => businessFindManyArgsSchema)]).optional(),
+  taxi_orders: z.union([z.boolean(),z.lazy(() => taxi_ordersFindManyArgsSchema)]).optional(),
+  delivery_orders: z.union([z.boolean(),z.lazy(() => delivery_ordersFindManyArgsSchema)]).optional(),
+  menus: z.union([z.boolean(),z.lazy(() => menusFindManyArgsSchema)]).optional(),
+  reviewable: z.union([z.boolean(),z.lazy(() => reviewableArgsSchema)]).optional(),
+  word_buy_stripe_product: z.union([z.boolean(),z.lazy(() => local_productsArgsSchema)]).optional(),
+  word_buys: z.union([z.boolean(),z.lazy(() => word_buyFindManyArgsSchema)]).optional(),
+  reservations: z.union([z.boolean(),z.lazy(() => reservationsFindManyArgsSchema)]).optional(),
+  promo_sections: z.union([z.boolean(),z.lazy(() => promo_sections_buyFindManyArgsSchema)]).optional(),
+  business_teams: z.union([z.boolean(),z.lazy(() => business_teamsFindManyArgsSchema)]).optional(),
+  business_order_lobbies: z.union([z.boolean(),z.lazy(() => order_lobbiesFindManyArgsSchema)]).optional(),
+  user_favorite_businesses: z.union([z.boolean(),z.lazy(() => user_favorite_businessesFindManyArgsSchema)]).optional(),
+  scoring_points: z.union([z.boolean(),z.lazy(() => scoring_pointsFindManyArgsSchema)]).optional(),
+  daily_meal_drivers: z.union([z.boolean(),z.lazy(() => delivery_driversFindManyArgsSchema)]).optional(),
+  late_events: z.union([z.boolean(),z.lazy(() => late_eventsFindManyArgsSchema)]).optional(),
+  fiscal_device: z.union([z.boolean(),z.lazy(() => fiscal_devicesArgsSchema)]).optional(),
+  daily_meals_subscribers: z.union([z.boolean(),z.lazy(() => daily_meals_subscriptionsFindManyArgsSchema)]).optional(),
+  account_actions: z.union([z.boolean(),z.lazy(() => account_actionsFindManyArgsSchema)]).optional(),
+  business_clients: z.union([z.boolean(),z.lazy(() => business_clientsFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => BusinessCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+export default businessIncludeSchema;

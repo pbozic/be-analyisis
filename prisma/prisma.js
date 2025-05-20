@@ -1,12 +1,13 @@
-require("dotenv").config();
-const { PrismaClient } = require("@prisma/client");
+require('dotenv').config();
+const { PrismaClient } = require('@prisma/client');
 console.log(process.env.DATABASE_URL);
-const { handleAddressPivotTable, addAddressPivotTable } = require("./middlewares/address");
-const { handleHidePassword, alwaysAddWalletBalance, handleWalletBalance } = require("./middlewares/user");
-const { handleS3LinkForFiles } = require("./middlewares/file");
-const { handleS3LinkForDocuments } = require("./middlewares/documents");
-const {generateS3LinksRecursively } = require("./middlewares/$allModels")
 const turf = require('@turf/turf');
+
+const { handleAddressPivotTable, addAddressPivotTable } = require('./middlewares/address');
+const { handleHidePassword, alwaysAddWalletBalance, handleWalletBalance } = require('./middlewares/user');
+const { handleS3LinkForFiles } = require('./middlewares/file');
+const { handleS3LinkForDocuments } = require('./middlewares/documents');
+const { generateS3LinksRecursively } = require('./middlewares/$allModels');
 
 const prisma = new PrismaClient({
 	log: ['warn', 'error'],
@@ -15,7 +16,7 @@ const prisma = new PrismaClient({
 		$allModels: {
 			async $allOperations({ model, operation, args, query }) {
 				// Proceed with the operation
-				
+
 				let result = await query(args);
 				if (args.include && args.include.user) {
 					result = removeSensitiveProperties(result);
@@ -42,10 +43,10 @@ const prisma = new PrismaClient({
 		allergens: {
 			async $allOperations({ model, operation, args, query }) {
 				// If the operation is a query on the `allergens` model
-				if (operation.startsWith("find")) {
+				if (operation.startsWith('find')) {
 					args = {
 						orderBy: {
-							code: "asc",
+							code: 'asc',
 						},
 						...args,
 					};
@@ -59,13 +60,13 @@ const prisma = new PrismaClient({
 		files: {
 			async $allOperations({ model, operation, args, query }) {
 				// If the operation is a query on the `files` model
-			
+
 				// Proceed with the operation
 				let result = await query(args);
 				result = await handleS3LinkForFiles(model, operation, args, query, result);
 				// Return the modified result
 				return result;
-			}
+			},
 		},
 		documents: {
 			async $allOperations({ model, operation, args, query }) {
@@ -75,7 +76,7 @@ const prisma = new PrismaClient({
 				result = await handleS3LinkForDocuments(model, operation, args, query, result);
 				// Return the modified result
 				return result;
-			}
+			},
 		},
 		promo_sections: {
 			async findMany({ args, query }) {
@@ -112,7 +113,7 @@ const prisma = new PrismaClient({
 				return settlement[0] || null;
 			},
 			async checkIfAllPointsAreInSameSettlement(points) {
-				if (points.length < 2) throw new Error("At least two points are required.");
+				if (points.length < 2) throw new Error('At least two points are required.');
 
 				const [first, ...rest] = points;
 
@@ -135,13 +136,13 @@ const prisma = new PrismaClient({
 				});
 
 				return allInside ? settlement : null;
-			}
+			},
 		},
 		drivers: {
 			async inRadius(point, radiusInMeters, requirements, vehicleFilters) {
-				console.log("vehicle filters", vehicleFilters);
-				console.log("requirements", requirements);
-			
+				console.log('vehicle filters', vehicleFilters);
+				console.log('requirements', requirements);
+
 				const drivers = await prisma.$queryRaw`
 					SELECT drivers.*, vehicles.*
 					FROM drivers
@@ -159,44 +160,41 @@ const prisma = new PrismaClient({
 			
 					
 				`;
-			
-				return drivers;
-			}
-			
-			
-		}
-	}
-});
 
+				return drivers;
+			},
+		},
+	},
+});
 
 const removeSensitiveProperties = (data, propertiesToRemove = ['password']) => {
 	if (Array.isArray(data)) {
-	  // Recursively process array items
-	  return data.map(item => removeSensitiveProperties(item, propertiesToRemove));
+		// Recursively process array items
+		return data.map((item) => removeSensitiveProperties(item, propertiesToRemove));
 	} else if (data && typeof data === 'object') {
-	  if (data instanceof Date) {
-		// Preserve Date objects as-is
-		return data;
-	  }
-	  
-	  // Create a new object excluding the properties to remove
-	  const result = {};
-	  for (const [key, value] of Object.entries(data)) {
-		if (propertiesToRemove.includes(key)) {
-		  // Skip the properties that should be removed
-		  continue;
+		if (data instanceof Date) {
+			// Preserve Date objects as-is
+			return data;
 		}
-		if (value && typeof value === 'object') {
-		  result[key] = removeSensitiveProperties(value, propertiesToRemove);
-		} else {
-		  result[key] = value;
+
+		// Create a new object excluding the properties to remove
+		const result = {};
+		for (const [key, value] of Object.entries(data)) {
+			if (propertiesToRemove.includes(key)) {
+				// Skip the properties that should be removed
+				continue;
+			}
+			if (value && typeof value === 'object') {
+				result[key] = removeSensitiveProperties(value, propertiesToRemove);
+			} else {
+				result[key] = value;
+			}
 		}
-	  }
-	  return result;
+		return result;
 	}
-	
+
 	// Return the data as-is if it's not an array or object
 	return data;
-  };
+};
 
 module.exports = prisma;

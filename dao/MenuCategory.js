@@ -1,26 +1,26 @@
-const prisma = require("../prisma/prisma");
+const prisma = require('../prisma/prisma');
 
 const createMenuCategory = async (menuId, categoryData) => {
 	// Handle creating categories
 	let categories = categoryData.category_ids ? categoryData.category_ids : [];
 	delete categoryData.category_ids;
-	
+
 	let menu_category = await prisma.menu_categories.create({
 		data: {
 			menu: {
-				connect: { menu_id: menuId }
+				connect: { menu_id: menuId },
 			},
-			...categoryData
+			...categoryData,
 		},
 	});
-	
+
 	let errors = [];
 	for (let cat of categories) {
-		let category =	await prisma.categories.findFirst({
+		let category = await prisma.categories.findFirst({
 			where: {
 				categories_id: cat,
-			}
-		})
+			},
+		});
 
 		if (!category) {
 			errors.push(`Category with ID ${cat} not found`);
@@ -31,12 +31,12 @@ const createMenuCategory = async (menuId, categoryData) => {
 		await prisma.menu_categories_categories.create({
 			data: {
 				menu_category: {
-					connect: { menu_category_id: menu_category.menu_category_id }
+					connect: { menu_category_id: menu_category.menu_category_id },
 				},
 				category: {
-					connect: { categories_id: cat }
-				}
-			}
+					connect: { categories_id: cat },
+				},
+			},
 		});
 	}
 	let menu_categoryR = await prisma.menu_categories.findUnique({
@@ -44,10 +44,10 @@ const createMenuCategory = async (menuId, categoryData) => {
 		include: {
 			menu_categories_categories: {
 				include: {
-					category: true
-				}
-			}
-		}
+					category: true,
+				},
+			},
+		},
 	});
 	return menu_categoryR;
 };
@@ -56,7 +56,7 @@ const addMenuCategoryIdToOrder = async (menu_id, menuCategoryIdToAdd) => {
 	try {
 		const menu = await prisma.menus.findUnique({
 			where: { menu_id: menu_id },
-			select: { menu_categories_ordered: true }
+			select: { menu_categories_ordered: true },
 		});
 
 		let orderedCategories = menu.menu_categories_ordered ? menu.menu_categories_ordered : [];
@@ -64,60 +64,59 @@ const addMenuCategoryIdToOrder = async (menu_id, menuCategoryIdToAdd) => {
 			orderedCategories.push(menuCategoryIdToAdd);
 			return await prisma.menus.update({
 				where: { menu_id: menu_id },
-				data: { menu_categories_ordered: orderedCategories }
+				data: { menu_categories_ordered: orderedCategories },
 			});
 		}
 	} catch (error) {
-
-		console.error("Error adding menu category ID to order:", error);
+		console.error('Error adding menu category ID to order:', error);
 		throw error;
 	}
-}
+};
 
 const removeMenuCategoryIdFromOrder = async (menu_id, menuCategoryIdToRemove) => {
 	try {
 		const menu = await prisma.menus.findUnique({
 			where: { menu_id: menu_id },
-			select: { menu_categories_ordered: true }
+			select: { menu_categories_ordered: true },
 		});
 
 		let orderedCategories = menu.menu_categories_ordered ? menu.menu_categories_ordered : [];
-		orderedCategories = orderedCategories.filter(id => id !== menuCategoryIdToRemove);
+		orderedCategories = orderedCategories.filter((id) => id !== menuCategoryIdToRemove);
 		return await prisma.menus.update({
 			where: { menu_id: menu_id },
-			data: { menu_categories_ordered: orderedCategories }
+			data: { menu_categories_ordered: orderedCategories },
 		});
 	} catch (error) {
-		console.error("Error removing menu category ID from order:", error);
+		console.error('Error removing menu category ID from order:', error);
 		throw error;
 	}
-}
+};
 
 const getMenuCategoriesByMenuId = async (menu_id) => {
 	const categories = await prisma.menu_categories.findMany({
 		where: {
-			menu_id: menu_id
+			menu_id: menu_id,
 		},
 		include: {
 			menu_items: {
 				include: {
 					documents: {
 						include: {
-							files: true
-						}
-					}
-				}
+							files: true,
+						},
+					},
+				},
 			},
 			menu_categories_categories: {
 				include: {
-					category: true
-				}
-			}
-		}
+					category: true,
+				},
+			},
+		},
 	});
 
 	// Sort menu items within each category based on the ordered JSON field
-	categories.forEach(category => {
+	categories.forEach((category) => {
 		if (category.menu_items_ordered) {
 			try {
 				const orderedItemIds = category.menu_items_ordered;
@@ -139,28 +138,28 @@ const getMenuCategoriesByMenuId = async (menu_id) => {
 const getMenuCategoriesByBusinessId = async (business_id) => {
 	const categories = await prisma.menu_categories.findMany({
 		where: {
-			business_id: business_id
+			business_id: business_id,
 		},
 		include: {
 			menu_items: {
 				include: {
 					documents: {
 						include: {
-							files: true
-						}
-					}
-				}
+							files: true,
+						},
+					},
+				},
 			},
 			menu_categories_categories: {
 				include: {
-					category: true
-				}
-			}
-		}
+					category: true,
+				},
+			},
+		},
 	});
 
 	// Sort menu items within each category based on the ordered JSON field
-	categories.forEach(category => {
+	categories.forEach((category) => {
 		if (category.menu_items_ordered) {
 			try {
 				const orderedItemIds = category.menu_items_ordered;
@@ -182,23 +181,23 @@ const getMenuCategoriesByBusinessId = async (business_id) => {
 const deleteMenuCategory = async (menu_category_id) => {
 	const menu_category = await prisma.menu_categories.findUnique({
 		where: {
-			menu_category_id: menu_category_id
+			menu_category_id: menu_category_id,
 		},
 		include: {
-			menu_categories_categories: true
-		}
+			menu_categories_categories: true,
+		},
 	});
 	if (menu_category.menu_categories_categories.length > 0) {
 		await prisma.menu_categories_categories.deleteMany({
 			where: {
-				menu_categories_id: menu_category_id
-			}
+				menu_categories_id: menu_category_id,
+			},
 		});
 	}
 	return await prisma.menu_categories.delete({
 		where: {
-			menu_category_id: menu_category_id
-		}
+			menu_category_id: menu_category_id,
+		},
 	});
 };
 
@@ -211,10 +210,10 @@ const updateMenuCategory = async (menu_category_id, data) => {
 		include: {
 			menu_categories_categories: {
 				include: {
-					category: true
-				}
-			}
-		}
+					category: true,
+				},
+			},
+		},
 	});
 };
 
@@ -228,13 +227,12 @@ const updateMenuItemsOrder = async (menu_category_id, ordered_menu_items_ids) =>
 			select: { menu_item_id: true },
 		});
 
-		const validIds = validItems.map(item => item.menu_item_id);
-		const invalidIds = ordered_menu_items_ids.filter(id => !validIds.includes(id));
+		const validIds = validItems.map((item) => item.menu_item_id);
+		const invalidIds = ordered_menu_items_ids.filter((id) => !validIds.includes(id));
 
 		if (invalidIds.length > 0) {
 			throw new Error(`Invalid menu_item IDs for category ${menu_category_id}: ${invalidIds.join(', ')}`);
 		}
-
 
 		const updatePromises = ordered_menu_items_ids.map((id, index) =>
 			tx.menu_items.update({
@@ -253,17 +251,16 @@ const updateMenuItemsOrder = async (menu_category_id, ordered_menu_items_ids) =>
 	});
 };
 
-
 const addCategoryToMenu = async (menu_id, menu_category_id) => {
 	return await prisma.menu_categories.update({
 		where: {
-			menu_category_id: menu_category_id
+			menu_category_id: menu_category_id,
 		},
 		data: {
 			menu: {
-				connect: { menu_id: menu_id }
-			}
-		}
+				connect: { menu_id: menu_id },
+			},
+		},
 	});
 };
 
@@ -274,7 +271,7 @@ const removeCategoryFromMenu = async (menu_category_id) => {
 				menu_category_id: menu_category_id,
 			},
 			data: {
-				menu_id: null
+				menu_id: null,
 			},
 		});
 	} catch (error) {
@@ -286,14 +283,13 @@ const addCategoryToMenuCategory = async (menu_category_id, category_id) => {
 	return await prisma.menu_categories_categories.create({
 		data: {
 			menu_category: {
-				connect: { menu_category_id: menu_category_id }
+				connect: { menu_category_id: menu_category_id },
 			},
 			category: {
-				connect: { categories_id: category_id }
-			}
-		}
+				connect: { categories_id: category_id },
+			},
+		},
 	});
-
 };
 
 const removeCategoryFromMenuCategory = async (menu_category_id, category_id) => {
@@ -301,35 +297,35 @@ const removeCategoryFromMenuCategory = async (menu_category_id, category_id) => 
 		where: {
 			menu_categories_id_categories_id: {
 				menu_categories_id: menu_category_id,
-				categories_id: category_id
-			}
-		}
+				categories_id: category_id,
+			},
+		},
 	});
 };
 
 const updateDailyMealMenuPrice = async (menu_category_id, price) => {
 	return await prisma.menu_categories.update({
 		where: {
-			menu_category_id: menu_category_id
+			menu_category_id: menu_category_id,
 		},
 		data: {
-			price: price
-		}
+			price: price,
+		},
 	});
-}
+};
 const getMenuCategoryById = async (menu_category_id) => {
 	return await prisma.menu_categories.findUnique({
 		where: {
-			menu_category_id: menu_category_id
+			menu_category_id: menu_category_id,
 		},
 		include: {
 			menu_items: true,
 			menu_categories_categories: {
 				include: {
-					category: true
-				}
-			}
-		}
+					category: true,
+				},
+			},
+		},
 	});
 };
 module.exports = {
@@ -346,5 +342,5 @@ module.exports = {
 	updateMenuItemsOrder,
 	addCategoryToMenuCategory,
 	removeCategoryFromMenuCategory,
-	getMenuCategoryById
+	getMenuCategoryById,
 };

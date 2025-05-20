@@ -20,7 +20,7 @@ const handleAddressPivotTable = async (model, operation, args, query, result) =>
 	if (args.include?.addresses) {
 		if (args.include?.addresses.include?.address) {
 			if (!result) return result;
-			if (typeof result !== "object") return result;
+			if (typeof result !== 'object') return result;
 			if (Array.isArray(result)) {
 				middlewareResult = result.map((user) => {
 					user.addresses = user.addresses.map((address) => {

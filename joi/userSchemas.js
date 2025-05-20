@@ -1,4 +1,4 @@
-const Joi = require("joi");
+const Joi = require('joi');
 
 const updateSchema = Joi.object({
 	user_id: Joi.string(),
@@ -8,12 +8,15 @@ const updateSchema = Joi.object({
 	email: Joi.string().email(),
 	telephone: Joi.string(),
 	user_role: Joi.string(),
-	user_roles: Joi.array().items(
-		Joi.object({
-			role: Joi.string(),
-			primary: Joi.boolean().optional(),
-		})
-	).optional().allow(null),
+	user_roles: Joi.array()
+		.items(
+			Joi.object({
+				role: Joi.string(),
+				primary: Joi.boolean().optional(),
+			})
+		)
+		.optional()
+		.allow(null),
 	addresses: Joi.array().items(
 		Joi.object({
 			address_id: Joi.string(),
@@ -27,7 +30,7 @@ const updateSchema = Joi.object({
 			house_number: Joi.string(),
 			postal: Joi.string(),
 			country: Joi.string(),
-		}),
+		})
 	),
 });
 const verifyPhoneSchema = Joi.object({
@@ -47,7 +50,7 @@ const updatePasswordSchema = Joi.object({
 	new_password: Joi.string()
 		.pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/)
 		.required(),
-	confirm_password: Joi.ref("new_password"),
+	confirm_password: Joi.ref('new_password'),
 });
 
 const updateTelephoneSchema = Joi.object({
@@ -59,13 +62,13 @@ const addAddressSchema = Joi.object({
 	address: Joi.string().required(),
 	latitude: Joi.string().required(),
 	longitude: Joi.string().required(),
-	name:  [Joi.string().optional(), Joi.allow(null)],
-	icon:  [Joi.string().optional(), Joi.allow(null)],
-	street:  [Joi.string().optional(), Joi.allow(null)],
-	city:  [Joi.string().optional(), Joi.allow(null)],
-	house_number:  [Joi.string().optional(), Joi.allow(null)],
-	postal:  [Joi.string().optional(), Joi.allow(null)],
-	country:  [Joi.string().optional(), Joi.allow(null)],
+	name: [Joi.string().optional(), Joi.allow(null)],
+	icon: [Joi.string().optional(), Joi.allow(null)],
+	street: [Joi.string().optional(), Joi.allow(null)],
+	city: [Joi.string().optional(), Joi.allow(null)],
+	house_number: [Joi.string().optional(), Joi.allow(null)],
+	postal: [Joi.string().optional(), Joi.allow(null)],
+	country: [Joi.string().optional(), Joi.allow(null)],
 });
 
 const editAddressSchema = Joi.object({

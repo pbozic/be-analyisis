@@ -1,13 +1,11 @@
-require("dotenv").config();
-const prisma = require("../prisma/prisma");
-const VehicleDao = require("../dao/Vehicle");
-const DocumentDao = require("../dao/Document");
-const FileDao = require("../dao/File");
-const S3Helper = require("../lib/s3");
-const {
-	updateDocumentByDocumentId,
-} = require("../dao/Document");
-const { addFileToDocument } = require("../dao/File");
+require('dotenv').config();
+const prisma = require('../prisma/prisma');
+const VehicleDao = require('../dao/Vehicle');
+const DocumentDao = require('../dao/Document');
+const FileDao = require('../dao/File');
+const S3Helper = require('../lib/s3');
+const { updateDocumentByDocumentId } = require('../dao/Document');
+const { addFileToDocument } = require('../dao/File');
 
 // List all vehicles
 /**
@@ -24,8 +22,8 @@ async function listVehicles(req, res) {
 		const vehicles = await VehicleDao.getVehicles({});
 		res.status(200).json(vehicles);
 	} catch (error) {
-		console.error("Error listing all vehicles:", error);
-		res.status(500).json({ message: "Error listing all vehicles", error: error.message });
+		console.error('Error listing all vehicles:', error);
+		res.status(500).json({ message: 'Error listing all vehicles', error: error.message });
 	}
 }
 
@@ -68,14 +66,13 @@ async function getVehicleById(req, res) {
 		if (vehicle) {
 			res.status(200).json(vehicle);
 		} else {
-			res.status(404).json({ message: "Vehicle not found" });
+			res.status(404).json({ message: 'Vehicle not found' });
 		}
 	} catch (error) {
 		console.error(`Error retrieving vehicle ${vehicle_id}:`, error);
 		res.status(500).json({ message: `Error retrieving vehicle ${vehicle_id}`, error: error.message });
 	}
 }
-
 
 /**
  * GET /vehicles/driver/:driver_id
@@ -93,8 +90,8 @@ async function getVehiclesByDriverId(req, res) {
 		const vehicles = await VehicleDao.getVehiclesByDriverId(driver_id);
 		res.status(200).json(vehicles);
 	} catch (error) {
-		console.error("Error retrieving vehicles for driver:", error);
-		res.status(400).json({ error: "Error retrieving vehicles for driver", detail: error.message });
+		console.error('Error retrieving vehicles for driver:', error);
+		res.status(400).json({ error: 'Error retrieving vehicles for driver', detail: error.message });
 	}
 }
 
@@ -114,8 +111,8 @@ async function getVehiclesByClass(req, res) {
 		const vehicles = await VehicleDao.getVehiclesByClass(vehicleClass);
 		res.status(200).json(vehicles);
 	} catch (error) {
-		console.error("Error retrieving vehicles by class:", error);
-		res.status(500).json({ message: "Error retrieving vehicles by class", error: error.message });
+		console.error('Error retrieving vehicles by class:', error);
+		res.status(500).json({ message: 'Error retrieving vehicles by class', error: error.message });
 	}
 }
 
@@ -135,8 +132,8 @@ async function getVehiclesByCategory(req, res) {
 		const vehicles = await VehicleDao.getVehiclesByCategory(vehicleCategory);
 		res.status(200).json(vehicles);
 	} catch (error) {
-		console.error("Error retrieving vehicles by category:", error);
-		res.status(500).json({ message: "Error retrieving vehicles by category", error: error.message });
+		console.error('Error retrieving vehicles by category:', error);
+		res.status(500).json({ message: 'Error retrieving vehicles by category', error: error.message });
 	}
 }
 
@@ -157,8 +154,8 @@ async function getVehiclesByClassAndCategory(req, res) {
 		const vehicles = await VehicleDao.getVehiclesByClassAndCategory(vehicleClass, vehicleCategory);
 		res.status(200).json(vehicles);
 	} catch (error) {
-		console.error("Error retrieving vehicles by class and category:", error);
-		res.status(500).json({ message: "Error retrieving vehicles by class and category", error: error.message });
+		console.error('Error retrieving vehicles by class and category:', error);
+		res.status(500).json({ message: 'Error retrieving vehicles by class and category', error: error.message });
 	}
 }
 
@@ -179,8 +176,8 @@ async function getVehiclesOfDriverByClass(req, res) {
 		const vehicles = await VehicleDao.getVehiclesOfDriverByClass(driverId, vehicleClass);
 		res.status(200).json(vehicles);
 	} catch (error) {
-		console.error("Error retrieving vehicles of driver by class:", error);
-		res.status(500).json({ message: "Error retrieving vehicles of driver by class", error: error.message });
+		console.error('Error retrieving vehicles of driver by class:', error);
+		res.status(500).json({ message: 'Error retrieving vehicles of driver by class', error: error.message });
 	}
 }
 
@@ -201,8 +198,8 @@ async function getVehiclesOfDriverByCategory(req, res) {
 		const vehicles = await VehicleDao.getVehiclesOfDriverByCategory(driverId, vehicleCategory);
 		res.status(200).json(vehicles);
 	} catch (error) {
-		console.error("Error retrieving vehicles of driver by category:", error);
-		res.status(500).json({ message: "Error retrieving vehicles of driver by category", error: error.message });
+		console.error('Error retrieving vehicles of driver by category:', error);
+		res.status(500).json({ message: 'Error retrieving vehicles of driver by category', error: error.message });
 	}
 }
 
@@ -221,11 +218,18 @@ async function getVehiclesOfDriverByCategory(req, res) {
 async function getVehiclesOfDriverByClassAndCategory(req, res) {
 	const { driverId, vehicleClass, vehicleCategory } = req.params;
 	try {
-		const vehicles = await VehicleDao.getVehiclesOfDriverByClassAndCategory(driverId, vehicleClass, vehicleCategory);
+		const vehicles = await VehicleDao.getVehiclesOfDriverByClassAndCategory(
+			driverId,
+			vehicleClass,
+			vehicleCategory
+		);
 		res.status(200).json(vehicles);
 	} catch (error) {
-		console.error("Error retrieving vehicles of driver by class and category:", error);
-		res.status(500).json({ message: "Error retrieving vehicles of driver by class and category", error: error.message });
+		console.error('Error retrieving vehicles of driver by class and category:', error);
+		res.status(500).json({
+			message: 'Error retrieving vehicles of driver by class and category',
+			error: error.message,
+		});
 	}
 }
 
@@ -246,15 +250,15 @@ async function createVehicle(req, res) {
 		const vehicle = await VehicleDao.createNewVehicle(req.body.vehicle_information);
 		if (vehicle) {
 			if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
-				for (const d of req.body?.drivers) {
+				for (const d of req.body.drivers) {
 					await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, d.driver_id);
 				}
-			// 	TODO: maybe assign to all drivers of business if none selected
-			// } else {
-			// 	const drivers = await DriverDao.getDrivers({ where: { business_id: vehicle.business_id } });
-			// 	for (const d of drivers) {
-			// 		await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, d.driver_id)
-			// 	}
+				// 	TODO: maybe assign to all drivers of business if none selected
+				// } else {
+				// 	const drivers = await DriverDao.getDrivers({ where: { business_id: vehicle.business_id } });
+				// 	for (const d of drivers) {
+				// 		await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, d.driver_id)
+				// 	}
 			}
 
 			if (req.body.documents) {
@@ -267,20 +271,27 @@ async function createVehicle(req, res) {
 						delete file.document_type;
 						let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
 						let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-						S3Helper.SaveObject(key, base64, file.mime_type, {
-							users: [],
-							businesses: [vehicle.business_id]
-						}, fileData, document.public);
+						S3Helper.SaveObject(
+							key,
+							base64,
+							file.mime_type,
+							{
+								users: [],
+								businesses: [vehicle.business_id],
+							},
+							fileData,
+							document.public
+						);
 					}
 					await DocumentDao.linkDocumentToVehicle(document.document_id, vehicle.vehicle_id);
 				}
 			}
 			res.status(200).json(vehicle);
 		} else {
-			res.status(400).json({ error: "Error creating new vehicle" });
+			res.status(400).json({ error: 'Error creating new vehicle' });
 		}
 	} catch (error) {
-		console.error("Error creating new vehicle:", error);
+		console.error('Error creating new vehicle:', error);
 		res.status(400).json({ error: error.message });
 	}
 }
@@ -303,8 +314,8 @@ async function updateVehicle(req, res) {
 	try {
 		const vehicle = await VehicleDao.updateVehicle(vehicle_id, req.body.vehicle_information);
 		if (vehicle) {
-			if (req.body.documents &&  req.body.documents.length > 0) {
-				for (const doc of  req.body.documents) {
+			if (req.body.documents && req.body.documents.length > 0) {
+				for (const doc of req.body.documents) {
 					const documentId = doc.document_id;
 					const updatedDoc = await updateDocumentByDocumentId(documentId, doc.documentData);
 					for (const file of doc.files) {
@@ -316,18 +327,25 @@ async function updateVehicle(req, res) {
 							const newFile = await addFileToDocument(updatedDoc.document_id, file, updatedDoc.public);
 
 							const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
-							await S3Helper.SaveObject(key, base64, file.mime_type, {
-								users: [],
-								businesses: [vehicle.business_id],
-							}, newFile, updatedDoc.public);
+							await S3Helper.SaveObject(
+								key,
+								base64,
+								file.mime_type,
+								{
+									users: [],
+									businesses: [vehicle.business_id],
+								},
+								newFile,
+								updatedDoc.public
+							);
 						}
 					}
 				}
 			}
 			if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
-				const currentDrivers = await VehicleDao.getVehicleDriversByVehicleId(vehicle_id)
-				const currentDriverIds = currentDrivers.map(d => d.driver_id);
-				const newDriverIds = req.body.drivers.map(d => d.driver_id);
+				const currentDrivers = await VehicleDao.getVehicleDriversByVehicleId(vehicle_id);
+				const currentDriverIds = currentDrivers.map((d) => d.driver_id);
+				const newDriverIds = req.body.drivers.map((d) => d.driver_id);
 
 				await VehicleDao.unAssignVehicleFromDrivers(vehicle_id, newDriverIds);
 				for (const driver of req.body.drivers) {
@@ -338,10 +356,10 @@ async function updateVehicle(req, res) {
 			}
 			res.status(200).json(vehicle);
 		} else {
-			res.status(400).json({ error: "Error updating vehicle" });
+			res.status(400).json({ error: 'Error updating vehicle' });
 		}
 	} catch (error) {
-		console.error("Error updating vehicle:", error);
+		console.error('Error updating vehicle:', error);
 		res.status(400).json({ error: error.message });
 	}
 }
@@ -359,7 +377,7 @@ async function updateVehicle(req, res) {
  */
 async function assignVehiclesToDriver(req, res) {
 	const { vehicles, driver_id } = req.body;
-	console.log("assignVehiclesToDriver", req.body)
+	console.log('assignVehiclesToDriver', req.body);
 	try {
 		if (Array.isArray(vehicles) && vehicles.length > 0) {
 			for (const vehicle of vehicles) {
@@ -367,8 +385,8 @@ async function assignVehiclesToDriver(req, res) {
 					where: {
 						vehicle_id: vehicle.vehicle_id,
 						driver_id: driver_id,
-						can_drive: true
-					}
+						can_drive: true,
+					},
 				});
 				if (!existingAssignment) {
 					const updatedVehicle = await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver_id);
@@ -378,12 +396,12 @@ async function assignVehiclesToDriver(req, res) {
 				}
 			}
 		} else {
-			res.status(400).json({ error: "Vehicles should be a non-empty array" });
+			res.status(400).json({ error: 'Vehicles should be a non-empty array' });
 		}
-		res.status(200).json({ message: "Vehicles assigned successfully" });
+		res.status(200).json({ message: 'Vehicles assigned successfully' });
 	} catch (err) {
-		console.error("Error assigning vehicles to driver:", err);
-		res.status(400).json({ error: "Error assigning vehicles to driver", err });
+		console.error('Error assigning vehicles to driver:', err);
+		res.status(400).json({ error: 'Error assigning vehicles to driver', err });
 	}
 }
 
@@ -403,10 +421,10 @@ async function removeVehicleFromDriver(req, res) {
 	try {
 		const updatedVehicle = await VehicleDao.removeVehicleFromDriver(vehicle_id, driver_id);
 		if (updatedVehicle) res.status(200).json(updatedVehicle);
-		res.status(400).json({ error: "Error removing vehicle from driver" });
+		res.status(400).json({ error: 'Error removing vehicle from driver' });
 	} catch (err) {
-		console.error("Error removing vehicle from driver:", err);
-		res.status(400).json({ error: "Error removing vehicle from driver", err });
+		console.error('Error removing vehicle from driver:', err);
+		res.status(400).json({ error: 'Error removing vehicle from driver', err });
 	}
 }
 
@@ -424,14 +442,12 @@ async function removeVehicleFromDriver(req, res) {
 async function deleteVehicle(req, res) {
 	try {
 		await VehicleDao.deleteVehicle(req.params.vehicle_id);
-		res.status(200).json({ message: "Vehicle deleted successfully" });
+		res.status(200).json({ message: 'Vehicle deleted successfully' });
 	} catch (error) {
-		console.error("Error deleting vehicle:", error);
-		res.status(400).json({ error: "Error deleting vehicle", detail: error.message });
+		console.error('Error deleting vehicle:', error);
+		res.status(400).json({ error: 'Error deleting vehicle', detail: error.message });
 	}
 }
-
-
 
 module.exports = {
 	listVehicles,

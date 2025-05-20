@@ -1,5 +1,6 @@
-const Joi = require("joi");
-const prisma = require("../prisma/prisma");
+const Joi = require('joi');
+
+const prisma = require('../prisma/prisma');
 
 const updateSchema = Joi.object({
 	user_id: Joi.string(),
@@ -22,7 +23,7 @@ const updateSchema = Joi.object({
 			house_number: Joi.string(),
 			postal: Joi.string(),
 			country: Joi.string(),
-		}),
+		})
 	),
 });
 const verifyPhoneSchema = Joi.object({
@@ -38,7 +39,7 @@ const updatePasswordSchema = Joi.object({
 	new_password: Joi.string()
 		.pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/)
 		.required(),
-	confirm_password: Joi.ref("new_password"),
+	confirm_password: Joi.ref('new_password'),
 });
 
 const updateTelephoneSchema = Joi.object({
@@ -50,13 +51,13 @@ const addAddressSchema = Joi.object({
 	address: Joi.string().required(),
 	latitude: Joi.string().required(),
 	longitude: Joi.string().required(),
-	name:  [Joi.string().optional(), Joi.allow(null)],
-	icon:  [Joi.string().optional(), Joi.allow(null)],
-	street:  [Joi.string().optional(), Joi.allow(null)],
-	city:  [Joi.string().optional(), Joi.allow(null)],
-	house_number:  [Joi.string().optional(), Joi.allow(null)],
-	postal:  [Joi.string().optional(), Joi.allow(null)],
-	country:  [Joi.string().optional(), Joi.allow(null)],
+	name: [Joi.string().optional(), Joi.allow(null)],
+	icon: [Joi.string().optional(), Joi.allow(null)],
+	street: [Joi.string().optional(), Joi.allow(null)],
+	city: [Joi.string().optional(), Joi.allow(null)],
+	house_number: [Joi.string().optional(), Joi.allow(null)],
+	postal: [Joi.string().optional(), Joi.allow(null)],
+	country: [Joi.string().optional(), Joi.allow(null)],
 });
 
 const editAddressSchema = Joi.object({
@@ -81,7 +82,7 @@ const newBusinessSchema = Joi.object({
 		.email()
 		.optional()
 		.external(async (email, helpers) => {
-			console.log("helpers", helpers.error);
+			console.log('helpers', helpers.error);
 			let isEmailInUse;
 			try {
 				isEmailInUse = await prisma.business.findFirst({
@@ -89,13 +90,13 @@ const newBusinessSchema = Joi.object({
 						email: email.toLowerCase(),
 					},
 				});
-				console.log(isEmailInUse)
+				console.log(isEmailInUse);
 			} catch (error) {
-				console.log(error)
+				console.log(error);
 			}
 
 			if (isEmailInUse) {
-				throw new Error("Account with this email already exists.");
+				throw new Error('Account with this email already exists.');
 			}
 
 			return email;
@@ -104,7 +105,7 @@ const newBusinessSchema = Joi.object({
 	telephone_code: Joi.string(),
 	telephone_number: Joi.string(),
 	website_url: Joi.string().allow(null).optional(),
-	minimum_order: Joi.number().integer().optional()
+	minimum_order: Joi.number().integer().optional(),
 });
 
 module.exports = {

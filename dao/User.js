@@ -1,10 +1,11 @@
-const prisma = require("../prisma/prisma");
-const bcrypt = require("bcrypt");
-const { createDocument, linkDocumentToTransaction } = require("./Document");
-const { addFileToDocument } = require("./File");
-const S3Helper = require("../lib/s3");
-const { USER_ROLE, ACCOUNT_ACTIONS } = require("../lib/constants");
-const WalletFundsDao = require("../dao/WalletFunds");
+const bcrypt = require('bcrypt');
+
+const prisma = require('../prisma/prisma');
+const { createDocument, linkDocumentToTransaction } = require('./Document');
+const { addFileToDocument } = require('./File');
+const S3Helper = require('../lib/s3');
+const { USER_ROLE, ACCOUNT_ACTIONS } = require('../lib/constants');
+const WalletFundsDao = require('../dao/WalletFunds');
 
 const getUsers = async (args) => {
 	try {
@@ -13,8 +14,8 @@ const getUsers = async (args) => {
 			include: {
 				child_users: true,
 				parent_user: true,
-				...args?.include
-			}
+				...args?.include,
+			},
 		});
 	} catch (error) {
 		return new Error(error);
@@ -27,7 +28,7 @@ const getUserById = async (user_id, args) => {
 			where: {
 				user_id: user_id,
 			},
-			...args
+			...args,
 		});
 	} catch (error) {
 		throw new Error(error);
@@ -40,7 +41,7 @@ const getUserByReferralCode = async (code, args) => {
 			where: {
 				referral_code: code,
 			},
-			...args
+			...args,
 		});
 	} catch (error) {
 		throw new Error(error);
@@ -52,11 +53,11 @@ const getScheduledUsers = async () => {
 		const merchantBusiness = await prisma.business.findFirst({
 			where: {
 				type: 'MERCHANT',
-				offers_daily_meals: true
-			}
+				offers_daily_meals: true,
+			},
 		});
 
-		console.info('MERCHANT BUSINESSES', merchantBusiness)
+		console.info('MERCHANT BUSINESSES', merchantBusiness);
 
 		let sortingScheduledUsers;
 
@@ -68,56 +69,49 @@ const getScheduledUsers = async () => {
 
 		const scheduledUsers = await prisma.users.findMany({
 			where: {
-				subscribed_to_daily_meals: true
+				subscribed_to_daily_meals: true,
 			},
 			include: {
 				addresses: {
 					include: {
-						address: true
-					}
-				}
-			}
+						address: true,
+					},
+				},
+			},
 		});
 
 		if (sortingScheduledUsers && sortingScheduledUsers.length !== 0) {
-
 			// Map user_id to user object for easy lookup
-			const userMap = new Map(scheduledUsers.map(user => [user.user_id, user]));
-			console.info('ordered users', userMap)
+			const userMap = new Map(scheduledUsers.map((user) => [user.user_id, user]));
+			console.info('ordered users', userMap);
 			// Sort users based on the order in sortingScheduledUsers
-			return sortingScheduledUsers
-				.map(userId => userMap.get(userId))
-				.filter(user => user !== undefined);
+			return sortingScheduledUsers.map((userId) => userMap.get(userId)).filter((user) => user !== undefined);
 		}
-		console.info('scheduled_users', scheduledUsers)
-		return scheduledUsers
-
+		console.info('scheduled_users', scheduledUsers);
+		return scheduledUsers;
 	} catch (error) {
-		console.error("Error fetching and sorting scheduled users:", error);
+		console.error('Error fetching and sorting scheduled users:', error);
 		throw error;
 	}
 };
-
-
 
 const getUserByEmailOrTelephone = async (query, args) => {
 	try {
 		return prisma.users.findFirst({
 			where: {
 				OR: [
-				{
-					email: query
-				},
-				{
-					telephone: query
-				},
-				{
-					telephone_number: query
-				}
-			]
-				
+					{
+						email: query,
+					},
+					{
+						telephone: query,
+					},
+					{
+						telephone_number: query,
+					},
+				],
 			},
-			...args
+			...args,
 		});
 	} catch (error) {
 		return new Error(error);
@@ -127,9 +121,9 @@ const getUserByEmail = async (query, args) => {
 	try {
 		return prisma.users.findFirst({
 			where: {
-				email: query
+				email: query,
 			},
-			...args
+			...args,
 		});
 	} catch (error) {
 		return new Error(error);
@@ -139,9 +133,9 @@ const getUserByTelephone = async (query, args) => {
 	try {
 		return prisma.users.findFirst({
 			where: {
-				telephone: query
+				telephone: query,
 			},
-			...args
+			...args,
 		});
 	} catch (error) {
 		return new Error(error);
@@ -154,21 +148,21 @@ const getUserByResetToken = async (resetToken, args) => {
 				token: resetToken,
 			},
 			include: {
-				users: true
+				users: true,
 			},
-			...args
+			...args,
 		});
 	} catch (error) {
 		return new Error(error);
 	}
-}
+};
 const getUser = async (email, args) => {
 	try {
 		return prisma.users.findUnique({
 			where: {
 				email: email,
 			},
-			...args
+			...args,
 		});
 	} catch (error) {
 		return new Error(error);
@@ -192,15 +186,15 @@ const updateUser = async (user_id, user) => {
 			},
 			data: {
 				...user,
-			}
+			},
 		});
 	} catch (error) {
-		console.log(error)
+		console.log(error);
 		return new Error(error);
 	}
 };
 
-const updateScheduledUser =  async (user_id, user) => {
+const updateScheduledUser = async (user_id, user) => {
 	try {
 		return await prisma.users.update({
 			where: {
@@ -210,15 +204,15 @@ const updateScheduledUser =  async (user_id, user) => {
 				...user,
 			},
 			include: {
-				addresses:{
+				addresses: {
 					include: {
-						address: true
-					}
-				}
-			}
+						address: true,
+					},
+				},
+			},
 		});
 	} catch (error) {
-		console.log(error)
+		console.log(error);
 		return new Error(error);
 	}
 };
@@ -250,7 +244,7 @@ const updateTelephone = async (user_id, telephone) => {
 	} catch (error) {
 		return new Error(error);
 	}
-}
+};
 const updateUserPassword = async (user_id, password) => {
 	try {
 		return prisma.users.update({
@@ -323,8 +317,8 @@ const updateUserDisabled = async (user_id, disabled, action_creator_user_id, rea
 			return updatedUser;
 		});
 	} catch (error) {
-		console.error("Error updating user disabled status:", error);
-		throw new Error("Failed to update user status");
+		console.error('Error updating user disabled status:', error);
+		throw new Error('Failed to update user status');
 	}
 };
 
@@ -430,14 +424,14 @@ const updateUserTelephoneVerified = async (user_id, telephoneVerified) => {
 const createNewUser = async (user, hashPassword = false) => {
 	try {
 		let newUser = user;
-		if(newUser?.user_role && [USER_ROLE.DRIVER,USER_ROLE.DELIVERY_DRIVER].includes(newUser?.user_role)){
-			newUser.active = false
+		if (newUser?.user_role && [USER_ROLE.DRIVER, USER_ROLE.DELIVERY_DRIVER].includes(newUser?.user_role)) {
+			newUser.active = false;
 		}
 
 		// Check if password hashing is needed
 		if (hashPassword && user.password) {
 			let hash = await bcrypt.hash(user.password, Number(process.env.BCRYPT_SALT_ROUNDS));
-			let email = "";
+			let email = '';
 			if (user.email) {
 				email = user.email.toLowerCase();
 			}
@@ -447,7 +441,7 @@ const createNewUser = async (user, hashPassword = false) => {
 				},
 			});
 			if (exists) {
-				throw new Error("User with that email already exists");
+				throw new Error('User with that email already exists');
 			}
 			// Replace the plain text password with the hashed password
 			newUser = {
@@ -455,7 +449,7 @@ const createNewUser = async (user, hashPassword = false) => {
 				email,
 				password: hash,
 			};
-			delete newUser.confirm_password
+			delete newUser.confirm_password;
 		}
 
 		// Create the user with the potentially hashed password
@@ -464,8 +458,8 @@ const createNewUser = async (user, hashPassword = false) => {
 			include: {
 				child_users: true,
 				parent_user: true,
-				user_roles:true,
-			}
+				user_roles: true,
+			},
 		});
 	} catch (error) {
 		throw new Error(error.message || 'Failed to create new user.');
@@ -483,7 +477,6 @@ const createNewUser = async (user, hashPassword = false) => {
 // 	  throw new Error(error.message || 'Failed to create wallet balance record.');
 // 	}
 // }
-
 
 // /**
 //  * Adds a specified amount(in cents) to the user's wallet balance and records the transaction while creating wallet funds and ocnnecting the two.
@@ -602,14 +595,14 @@ async function deleteUserByUserId(userId) {
 			},
 		});
 	} catch (error) {
-		console.error("Error deleting user:", error);
+		console.error('Error deleting user:', error);
 		throw error;
 	}
 }
 
 const updateWalletBalance = async (userId, amount, documents) => {
 	try {
-		const newTransaction = await WalletFundsDao.createWalletFunds(userId,Math.round(amount*100))
+		const newTransaction = await WalletFundsDao.createWalletFunds(userId, Math.round(amount * 100));
 		// const newTransaction = await addToWalletBalance(userId,Math.round(amount*100),null)//await WalletFundsDao.createWalletFunds(userId,null,Math.round(amount*100));
 		// const updatedUser = await prisma.users.update({
 		// 	where: { user_id: userId },
@@ -632,8 +625,8 @@ const updateWalletBalance = async (userId, amount, documents) => {
 		if (documents && Array.isArray(documents)) {
 			for (const file of documents) {
 				const documentData = {
-						document_type: file.document_type,
-					};
+					document_type: file.document_type,
+				};
 				const newDocument = await createDocument(documentData);
 
 				await linkDocumentToTransaction(newDocument.document_id, newTransaction.transaction_id);
@@ -645,15 +638,22 @@ const updateWalletBalance = async (userId, amount, documents) => {
 				const newFile = await addFileToDocument(newDocument.document_id, file, newDocument.public);
 
 				const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
-				await S3Helper.SaveObject(key, base64, file.mime_type, {
-					users: [userId],
-				}, newFile, newDocument.public);
+				await S3Helper.SaveObject(
+					key,
+					base64,
+					file.mime_type,
+					{
+						users: [userId],
+					},
+					newFile,
+					newDocument.public
+				);
 			}
 		}
 		console.log('Funds added to wallet successfully');
-		return newTransaction
+		return newTransaction;
 	} catch (error) {
-		console.error("Error updating wallet balance:", error);
+		console.error('Error updating wallet balance:', error);
 		throw new Error(error);
 	}
 };
@@ -662,14 +662,14 @@ const getTransactions = async (userId) => {
 	try {
 		return await prisma.transactions.findMany({
 			where: {
-				user_id: userId
-			}
+				user_id: userId,
+			},
 		});
 	} catch (error) {
-		console.error("Error fetching transactions:", error);
+		console.error('Error fetching transactions:', error);
 		throw new Error(error);
 	}
-}
+};
 const updateUserLanguage = async (user_id, language) => {
 	try {
 		return prisma.users.update({
@@ -691,8 +691,8 @@ const wipeUserPersonalData = async (user_id) => {
 			where: {
 				disabled: true,
 			},
-		})
-		const fake_number = String(disabled_count).padStart(10, '0')
+		});
+		const fake_number = String(disabled_count).padStart(10, '0');
 		return prisma.users.update({
 			where: {
 				user_id: user_id,
@@ -701,8 +701,8 @@ const wipeUserPersonalData = async (user_id) => {
 				first_name: null,
 				last_name: null,
 				email: null,
-				telephone_code: "",
-				telephone_number: "",
+				telephone_code: '',
+				telephone_number: '',
 				telephone: fake_number,
 				phone_verified: false,
 			},
@@ -732,8 +732,8 @@ const updateUserActive = async (user_id, active, action_creator_user_id, reason)
 			return updatedUser;
 		});
 	} catch (error) {
-		console.error("Error updating user active status:", error);
-		throw new Error("Failed to update user active status");
+		console.error('Error updating user active status:', error);
+		throw new Error('Failed to update user active status');
 	}
 };
 
@@ -756,59 +756,59 @@ const addCredits = async (user_id, updateData) => {
 	try {
 		return prisma.users.update({
 			where: {
-				user_id: user_id
+				user_id: user_id,
 			},
-			data: updateData
+			data: updateData,
 		});
 	} catch (err) {
 		return new Error(err);
 	}
-}
+};
 
 const updateUserMarketingNotifications = async (user_id, data) => {
 	try {
 		return prisma.users.update({
 			where: {
-				user_id: user_id
+				user_id: user_id,
 			},
 			data: {
 				allow_marketing_push_notifications: data,
-			}
+			},
 		});
 	} catch (err) {
 		return new Error(err);
 	}
-}
+};
 
 const updateUserAdsPersonalization = async (user_id, data) => {
 	try {
 		return prisma.users.update({
 			where: {
-				user_id: user_id
+				user_id: user_id,
 			},
 			data: {
 				allow_ads_personalization: data,
-			}
+			},
 		});
 	} catch (err) {
 		return new Error(err);
 	}
-}
+};
 
 const updateUserNewsletter = async (user_id, data) => {
 	try {
 		return prisma.users.update({
 			where: {
-				user_id: user_id
+				user_id: user_id,
 			},
 			data: {
 				allow_newsletter: data,
-			}
+			},
 		});
 	} catch (err) {
 		return new Error(err);
 	}
-}
+};
 
 const linkRolesToUser = async (user_id, roles) => {
 	try {
@@ -821,9 +821,9 @@ const linkRolesToUser = async (user_id, roles) => {
 						user: {
 							connect: {
 								user_id: user_id,
-							}
-						}
-					}
+							},
+						},
+					},
 				});
 				user_roles.push(user_role);
 			}
@@ -832,7 +832,7 @@ const linkRolesToUser = async (user_id, roles) => {
 	} catch (err) {
 		return new Error(err);
 	}
-}
+};
 
 module.exports = {
 	getUsers,

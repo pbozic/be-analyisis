@@ -1,15 +1,15 @@
-const prisma = require("../prisma/prisma");
-const { SERVICE_TYPE } = require("../lib/constants");
+const prisma = require('../prisma/prisma');
+const { SERVICE_TYPE } = require('../lib/constants');
 
 const getGroupUsersByParentId = async (parent_id) => {
 	try {
 		return await prisma.group_users.findUnique({
 			where: {
 				parent_user_id: parent_id,
-			}
+			},
 		});
 	} catch (error) {
-		console.error("Error retrieving group_users by parent_id:", error);
+		console.error('Error retrieving group_users by parent_id:', error);
 		throw new Error(error);
 	}
 };
@@ -20,10 +20,10 @@ const getGroupUserByChildId = async (child_id) => {
 			where: {
 				child_user_id: child_id,
 			},
-			include: {parent_user:true, allowance: true}
+			include: { parent_user: true, allowance: true },
 		});
 	} catch (error) {
-		console.error("Error retrieving group_user by child_id:", error);
+		console.error('Error retrieving group_user by child_id:', error);
 		throw new Error(error);
 	}
 };
@@ -32,7 +32,7 @@ const createGroupUser = async (group_user_data) => {
 	const group_user = await prisma.group_users.create({
 		data: {
 			parent_user: { connect: { user_id: group_user_data.parent_user_id } },
-			child_user:{ connect: { user_id: group_user_data.child_user_id } },
+			child_user: { connect: { user_id: group_user_data.child_user_id } },
 		},
 	});
 	await prisma.allowances.create({
@@ -40,21 +40,21 @@ const createGroupUser = async (group_user_data) => {
 			user: {
 				connect: {
 					group_user_id: group_user.group_user_id,
-				}
-			}
-		}
+				},
+			},
+		},
 	});
 	return group_user;
-}
+};
 
 const deleteGroupUser = async (group_user_id) => {
 	return await prisma.group_users.delete({
-		where:{ group_user_id: group_user_id }
+		where: { group_user_id: group_user_id },
 	});
-}
+};
 
-const updateGroupUserEnabled = async (group_user_id,value) => {
-	console.log("UPDATE ENABLED FOR GROUP_USER: ",group_user_id," TO VALUE: ",value);
+const updateGroupUserEnabled = async (group_user_id, value) => {
+	console.log('UPDATE ENABLED FOR GROUP_USER: ', group_user_id, ' TO VALUE: ', value);
 	return await prisma.group_users.update({
 		where: {
 			group_user_id: group_user_id,
@@ -63,36 +63,36 @@ const updateGroupUserEnabled = async (group_user_id,value) => {
 			enabled: value,
 		},
 	});
-}
+};
 
 const updateGroupUserAllowance = async (group_user_id, value, type) => {
 	const updateData = {};
 	switch (type) {
 		case SERVICE_TYPE.TAXI:
 			updateData.amount_taxi_wallet = value;
-			break
+			break;
 		case SERVICE_TYPE.TRANSFER:
 			updateData.amount_transfer_wallet = value;
-			break
+			break;
 		case SERVICE_TYPE.DELIVERY:
 			updateData.amount_delivery_wallet = value;
-			break
+			break;
 		case SERVICE_TYPE.ANY:
 			updateData.amount_any_wallet = value;
-			break
+			break;
 		default:
-			throw new Error("Invalid allowance type given")
+			throw new Error('Invalid allowance type given');
 	}
 	await prisma.allowances.upsert({
 		where: { group_user_id },
 		update: updateData,
-		create: { group_user_id, ...updateData }
+		create: { group_user_id, ...updateData },
 	});
 	return await prisma.group_users.findUnique({
 		where: { group_user_id },
-		include: { allowance: true }
+		include: { allowance: true },
 	});
-}
+};
 
 module.exports = {
 	getGroupUsersByParentId,
@@ -100,5 +100,5 @@ module.exports = {
 	createGroupUser,
 	deleteGroupUser,
 	updateGroupUserEnabled,
-	updateGroupUserAllowance
+	updateGroupUserAllowance,
 };

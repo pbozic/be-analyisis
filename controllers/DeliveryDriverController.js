@@ -1,24 +1,29 @@
-require("dotenv").config();
+require('dotenv').config();
 
-const DeliveryDriverDao = require("../dao/DeliveryDriver");
-const UserDao = require("../dao/User");
+const DeliveryDriverDao = require('../dao/DeliveryDriver');
+const UserDao = require('../dao/User');
 const { UserSockets, io } = require('../socket');
-const DeliveryOrderDao = require("../dao/DeliveryOrder");
-const taxiHelpers = require("../lib/taxiHelpers");
-const { resendPendingOrdersToDeliveryDriver, sendActiveOrdersToDeliveryDriver } = require("../lib/deliveryHelpers");
-const DriverDao = require("../dao/Driver");
-const { updateAddressByAddressId, addAddress, addUserAddress } = require("../dao/Address");
-const { updateDocumentByDocumentId, createDocument, linkDocumentToUser, linkDocumentToDeliveryDriver,
-	linkDocumentToVehicle, findDocumentByTypeAndDeliveryDriverId,
-	getDocumentById
-} = require("../dao/Document");
-const { updateFileInDocument, addFileToDocument } = require("../dao/File");
-const S3Helper = require("../lib/s3");
-const VehicleDao = require("../dao/Vehicle");
-const { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE } = require("../lib/constants");
-const { createVehicle } = require("./VehiclesController");
-const { createNewVehicle } = require("../dao/Vehicle");
-const { calculateTotalEarnings, calculateDeliveryDriversEarnings } = require("../lib/helpersLib");
+const DeliveryOrderDao = require('../dao/DeliveryOrder');
+const taxiHelpers = require('../lib/taxiHelpers');
+const { resendPendingOrdersToDeliveryDriver, sendActiveOrdersToDeliveryDriver } = require('../lib/deliveryHelpers');
+const DriverDao = require('../dao/Driver');
+const { updateAddressByAddressId, addAddress, addUserAddress } = require('../dao/Address');
+const {
+	updateDocumentByDocumentId,
+	createDocument,
+	linkDocumentToUser,
+	linkDocumentToDeliveryDriver,
+	linkDocumentToVehicle,
+	findDocumentByTypeAndDeliveryDriverId,
+	getDocumentById,
+} = require('../dao/Document');
+const { updateFileInDocument, addFileToDocument } = require('../dao/File');
+const S3Helper = require('../lib/s3');
+const VehicleDao = require('../dao/Vehicle');
+const { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE } = require('../lib/constants');
+const { createVehicle } = require('./VehiclesController');
+const { createNewVehicle } = require('../dao/Vehicle');
+const { calculateTotalEarnings, calculateDeliveryDriversEarnings } = require('../lib/helpersLib');
 
 /**
  * GET /delivery_drivers/orders/user_id
@@ -31,12 +36,12 @@ const { calculateTotalEarnings, calculateDeliveryDriversEarnings } = require("..
  * @response 400 - Error retrieving orders
  */
 async function resendDelegatedOrdersToDeliveryDriver(req, res) {
-	const userId = req.params.user_id
-	console.info('resendDelegatedOrdersToDeliveryDriver', userId)
+	const userId = req.params.user_id;
+	console.info('resendDelegatedOrdersToDeliveryDriver', userId);
 	try {
 		const driver = await DeliveryDriverDao.getDeliveryDriverByUserId(userId);
 		if (!driver) {
-			return res.status(404).json({ error: "Driver not found" });
+			return res.status(404).json({ error: 'Driver not found' });
 		}
 
 		// Send already sent orders to this driver
@@ -47,11 +52,10 @@ async function resendDelegatedOrdersToDeliveryDriver(req, res) {
 		// Return a 200 status
 		res.status(200).send();
 	} catch (error) {
-		console.error("Error retrieving orders for delivery driver:", error);
-		res.status(400).json({ error: "Error retrieving orders", detail: error.message });
+		console.error('Error retrieving orders for delivery driver:', error);
+		res.status(400).json({ error: 'Error retrieving orders', detail: error.message });
 	}
 }
-
 
 /**
  * PATCH /delivery_drivers/edit
@@ -67,40 +71,39 @@ async function resendDelegatedOrdersToDeliveryDriver(req, res) {
  * @response 400 - Error updating delivery driver
  */
 async function editDeliveryDriver(req, res) {
-	const { user, driver, vehicle, documents, files, address } = req.body
+	const { user, driver, vehicle, documents, files, address } = req.body;
 
-	const business_id = driver?.business_id
-	delete driver?.business_id
-	const delivery_driver_id = driver?.delivery_driver_id
-	delete driver?.delivery_driver_id
-	const user_id = user?.user_id
-	delete user?.user_id
+	const business_id = driver?.business_id;
+	delete driver?.business_id;
+	const delivery_driver_id = driver?.delivery_driver_id;
+	delete driver?.delivery_driver_id;
+	const user_id = user?.user_id;
+	delete user?.user_id;
 	let vehicle_id;
-	let updatedAddress
+	let updatedAddress;
 
 	try {
 		const updatedDriver = await DeliveryDriverDao.updateDeliveryDriver(delivery_driver_id, driver);
 		let updatedUser = await UserDao.updateScheduledUser(user_id, user);
 
 		if (address?.address_id) {
-			const address_id = address?.address_id
+			const address_id = address?.address_id;
 			updatedAddress = await updateAddressByAddressId(address_id, address);
-		} else if ( Object.keys(address).length !== 0) {
-			const response = await addAddress(address)
+		} else if (Object.keys(address).length !== 0) {
+			const response = await addAddress(address);
 			await addUserAddress(user_id, response.address_id);
 		}
 
 		let updatedVehicle;
 		if (vehicle?.vehicle_id) {
-			vehicle_id = vehicle?.vehicle_id
-			delete vehicle?.vehicle_id
-			updatedVehicle = await VehicleDao.updateVehicle(vehicle_id, vehicle)
-		} else if ( Object.keys(vehicle).length !== 0) {
-			const response = await VehicleDao.createNewVehicle({...vehicle, business_id: business_id});
-			vehicle_id = response?.vehicle_id
+			vehicle_id = vehicle?.vehicle_id;
+			delete vehicle?.vehicle_id;
+			updatedVehicle = await VehicleDao.updateVehicle(vehicle_id, vehicle);
+		} else if (Object.keys(vehicle).length !== 0) {
+			const response = await VehicleDao.createNewVehicle({ ...vehicle, business_id: business_id });
+			vehicle_id = response?.vehicle_id;
 			await VehicleDao.assignVehicleToDeliveryDriver(response.vehicle_id, delivery_driver_id);
 		}
-
 
 		if (documents && documents.length > 0) {
 			for (const doc of documents) {
@@ -115,37 +118,56 @@ async function editDeliveryDriver(req, res) {
 				if (file?.base64 && file?.file_id) {
 					let document = await getDocumentById(file.document_id);
 					const fileId = file.file_id;
-					delete file.document_id
+					delete file.document_id;
 					delete file.file_id;
-					delete file?.name
+					delete file?.name;
 
 					let base64 = file.base64;
 					delete file.base64;
-					delete file?.document_type
-					await updateFileInDocument(fileId, file, document.public)
+					delete file?.document_type;
+					await updateFileInDocument(fileId, file, document.public);
 
 					let key = S3Helper.getFileKey(fileId, file.mime_type);
-					await S3Helper.SaveObject(key, base64, file.mime_type, {
-						users: [user_id],
-						businesses: [business_id]
-					}, file, document.public);
-
+					await S3Helper.SaveObject(
+						key,
+						base64,
+						file.mime_type,
+						{
+							users: [user_id],
+							businesses: [business_id],
+						},
+						file,
+						document.public
+					);
 				} else if (!file?.file_id) {
-					const existingDocument = await findDocumentByTypeAndDeliveryDriverId(file.document_type, delivery_driver_id);
+					const existingDocument = await findDocumentByTypeAndDeliveryDriverId(
+						file.document_type,
+						delivery_driver_id
+					);
 					if (existingDocument) {
 						const base64 = file.base64;
 						delete file.base64;
 						delete file.document_type;
 						delete file.name;
 
-						const newFile = await addFileToDocument(existingDocument.document_id, file, existingDocument.public);
+						const newFile = await addFileToDocument(
+							existingDocument.document_id,
+							file,
+							existingDocument.public
+						);
 
 						const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
-						await S3Helper.SaveObject(key, base64, file.mime_type, {
-							users: [user_id],
-							businesses: [business_id],
-						}, newFile, existingDocument.public);
-
+						await S3Helper.SaveObject(
+							key,
+							base64,
+							file.mime_type,
+							{
+								users: [user_id],
+								businesses: [business_id],
+							},
+							newFile,
+							existingDocument.public
+						);
 					} else {
 						const documentData = {
 							document_type: file.document_type,
@@ -154,17 +176,24 @@ async function editDeliveryDriver(req, res) {
 
 						const base64 = file.base64;
 						delete file.base64;
-						const document_type = file?.document_type
+						const document_type = file?.document_type;
 						delete file.document_type;
 						delete file.name;
 
 						const newFile = await addFileToDocument(newDocument.document_id, file, newDocument.public);
 
 						const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
-						await S3Helper.SaveObject(key, base64, file.mime_type, {
-							users: [user_id],
-							businesses: [business_id],
-						}, newFile, newDocument.public);
+						await S3Helper.SaveObject(
+							key,
+							base64,
+							file.mime_type,
+							{
+								users: [user_id],
+								businesses: [business_id],
+							},
+							newFile,
+							newDocument.public
+						);
 
 						if (
 							document_type === DOCUMENT_TYPE.PROFILE_PICTURE ||
@@ -187,7 +216,10 @@ async function editDeliveryDriver(req, res) {
 									class: 'SEDAN',
 									category: 'STANDARD',
 								});
-								await VehicleDao.assignVehicleToDeliveryDriver(newVehicle.vehicle_id, delivery_driver_id);
+								await VehicleDao.assignVehicleToDeliveryDriver(
+									newVehicle.vehicle_id,
+									delivery_driver_id
+								);
 								await linkDocumentToVehicle(newDocument.document_id, newVehicle.vehicle_id);
 							}
 						} else if (
@@ -197,10 +229,9 @@ async function editDeliveryDriver(req, res) {
 							document_type === DOCUMENT_TYPE.BACKGROUND_CHECK_REPORT ||
 							document_type === DOCUMENT_TYPE.HEALTH_DECLARATION
 						) {
-							console.log(file?.document_type)
+							console.log(file?.document_type);
 							await linkDocumentToDeliveryDriver(newDocument.document_id, delivery_driver_id);
 						}
-
 					}
 				}
 			}
@@ -208,11 +239,10 @@ async function editDeliveryDriver(req, res) {
 
 		res.status(200).json({ updatedDriver, updatedUser, updatedAddress, updatedVehicle, files });
 	} catch (error) {
-		console.error("Error editing driver:", error);
-		res.status(400).json({ error: "Error editing driver", detail: error.message });
+		console.error('Error editing driver:', error);
+		res.status(400).json({ error: 'Error editing driver', detail: error.message });
 	}
 }
-
 
 /**
  * GET /delivery
@@ -229,8 +259,8 @@ async function listDeliveryDrivers(req, res) {
 		const deliveryDrivers = await DeliveryDriverDao.getDeliveryDrivers({});
 		res.status(200).json(deliveryDrivers);
 	} catch (error) {
-		console.error("Error listing delivery drivers:", error);
-		res.status(400).json({ error: "Error listing delivery drivers", detail: error.message });
+		console.error('Error listing delivery drivers:', error);
+		res.status(400).json({ error: 'Error listing delivery drivers', detail: error.message });
 	}
 }
 
@@ -249,8 +279,8 @@ async function listOnlineDeliveryDrivers(req, res) {
 		const onlineDeliveryDrivers = await DeliveryDriverDao.getOnlineDeliveryDrivers();
 		res.status(200).json(onlineDeliveryDrivers);
 	} catch (error) {
-		console.error("Error listing online delivery drivers:", error);
-		res.status(400).json({ error: "Error listing online delivery drivers", detail: error.message });
+		console.error('Error listing online delivery drivers:', error);
+		res.status(400).json({ error: 'Error listing online delivery drivers', detail: error.message });
 	}
 }
 
@@ -269,8 +299,8 @@ async function getAvailableDeliveryDrivers(req, res) {
 		const deliveryDrivers = await DeliveryDriverDao.getAvailableDeliveryDrivers();
 		res.status(200).json(deliveryDrivers);
 	} catch (error) {
-		console.error("Error getting available delivery drivers:", error);
-		res.status(400).json({ error: "Error getting available delivery drivers", detail: error.message });
+		console.error('Error getting available delivery drivers:', error);
+		res.status(400).json({ error: 'Error getting available delivery drivers', detail: error.message });
 	}
 }
 
@@ -285,15 +315,15 @@ async function getAvailableDeliveryDrivers(req, res) {
  * @response 400 - Error occurred while obtaining the delivery driver list
  */
 async function listDeliveryDriversWithDailyMeals(req, res) {
-    try {
-        const deliveryDrivers = await DeliveryDriverDao.getDeliveryDrivers({
-            where: { delivers_daily_meals: true }
-        });
-        res.status(200).json(deliveryDrivers);
-    } catch (e) {
-        console.error("Error listing delivery drivers with daily meals:", e);
-        res.status(400).json({ error: "Error listing delivery drivers with daily meals", e });
-    }
+	try {
+		const deliveryDrivers = await DeliveryDriverDao.getDeliveryDrivers({
+			where: { delivers_daily_meals: true },
+		});
+		res.status(200).json(deliveryDrivers);
+	} catch (e) {
+		console.error('Error listing delivery drivers with daily meals:', e);
+		res.status(400).json({ error: 'Error listing delivery drivers with daily meals', e });
+	}
 }
 
 /**
@@ -358,19 +388,24 @@ async function getDeliveryDriverById(req, res) {
 				},
 			};
 
-			deliveryDriver = await DeliveryDriverDao.getDeliveryDriverById(req.params.delivery_driver_id, includeParams);
+			deliveryDriver = await DeliveryDriverDao.getDeliveryDriverById(
+				req.params.delivery_driver_id,
+				includeParams
+			);
 		}
 		if (deliveryDriver) {
 			res.status(200).json(deliveryDriver);
 		} else {
-			res.status(404).json({ error: "Delivery driver not found by id" });
+			res.status(404).json({ error: 'Delivery driver not found by id' });
 		}
 	} catch (error) {
-		console.error("Error retrieving delivery driver:", error);
-		res.status(400).json({ error: "Error retrieving delivery driver information (by delivery driver id)", detail: error.message });
+		console.error('Error retrieving delivery driver:', error);
+		res.status(400).json({
+			error: 'Error retrieving delivery driver information (by delivery driver id)',
+			detail: error.message,
+		});
 	}
 }
-
 
 /**
  * GET /delivery_drivers/user/:user_id
@@ -390,11 +425,14 @@ async function getDeliveryDriverByUserId(req, res) {
 		if (deliveryDriver) {
 			res.status(200).json(deliveryDriver);
 		} else {
-			res.status(404).json({ error: "Delivery driver not found by user_id" }, deliveryDriver);
+			res.status(404).json({ error: 'Delivery driver not found by user_id' }, deliveryDriver);
 		}
 	} catch (error) {
-		console.error("Error retrieving delivery driver:", error);
-		res.status(400).json({ error: "Error retrieving delivery driver (by user_id) information", detail: error.message });
+		console.error('Error retrieving delivery driver:', error);
+		res.status(400).json({
+			error: 'Error retrieving delivery driver (by user_id) information',
+			detail: error.message,
+		});
 	}
 }
 
@@ -417,10 +455,10 @@ async function getDeliveryDriverLocation(req, res) {
 			if (deliveryDriver.location) {
 				res.status(200).json(deliveryDriver.location);
 			} else {
-				res.status(404).json({ error: "Location for the specified delivery driver not found" });
+				res.status(404).json({ error: 'Location for the specified delivery driver not found' });
 			}
 		} else {
-			res.status(404).json({ error: "Delivery driver not found" });
+			res.status(404).json({ error: 'Delivery driver not found' });
 		}
 	} catch (error) {
 		console.error("Error retrieving delivery driver's location:", error);
@@ -449,8 +487,8 @@ async function updateDeliveryDriver(req, res) {
 		const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriver(delivery_driver_id, updateData);
 		res.status(200).json(updatedDeliveryDriver);
 	} catch (error) {
-		console.error("Error updating delivery driver:", error);
-		res.status(400).json({ error: "Error updating delivery driver", detail: error.message });
+		console.error('Error updating delivery driver:', error);
+		res.status(400).json({ error: 'Error updating delivery driver', detail: error.message });
 	}
 }
 
@@ -469,11 +507,14 @@ async function updateDeliveryDriver(req, res) {
  */
 async function updateDeliveryDriverLocation(req, res) {
 	try {
-		console.log(req.body, 'location, body')
+		console.log(req.body, 'location, body');
 		try {
 			const userId = req.user.user_id;
 			const deliveryDriver = await DeliveryDriverDao.getDeliveryDriverByUserId(userId);
-			const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriverLocation(deliveryDriver.delivery_driver_id, req.body.location);
+			const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriverLocation(
+				deliveryDriver.delivery_driver_id,
+				req.body.location
+			);
 
 			// Emit the delivery driver's updated location to each order's specific channel
 			const orders = await DeliveryOrderDao.getOrdersByDeliveryDriverId(deliveryDriver.delivery_driver_id);
@@ -495,31 +536,35 @@ async function updateDeliveryDriverLocation(req, res) {
 
 			for (let order of orders) {
 				try {
-					io.to(`order_${order.order_id}`).emit("driver_location_delivery", {
+					io.to(`order_${order.order_id}`).emit('driver_location_delivery', {
 						...deliveryDriver,
 						delivery_driver_id: deliveryDriver.delivery_driver_id,
-						location: req.body.location
+						location: req.body.location,
 					});
 				} catch (error) {
 					console.error("Error emitting delivery driver's location to connected users:", error);
 				}
 			}
 			if (orders.length === 0) {
-				io.emit("driver_location_delivery", {
+				io.emit('driver_location_delivery', {
 					...deliveryDriver,
 					delivery_driver_id: deliveryDriver.delivery_driver_id,
-					location: req.body.location
+					location: req.body.location,
 				});
 			}
-			await DeliveryDriverDao.updateDeliveryDriverLocationHistory(deliveryDriver.delivery_driver_id, req.body.location, orderStatus, orderId);
+			await DeliveryDriverDao.updateDeliveryDriverLocationHistory(
+				deliveryDriver.delivery_driver_id,
+				req.body.location,
+				orderStatus,
+				orderId
+			);
 			res.status(200).json(updatedDeliveryDriver);
 		} catch (error) {
 			console.error("Error updating delivery driver's location:", error);
 		}
-
 	} catch (error) {
 		console.error("Error updating delivery driver's location:", error);
-		res.status(400).json({ error: "Error updating delivery driver location", detail: error.message });
+		res.status(400).json({ error: 'Error updating delivery driver location', detail: error.message });
 	}
 }
 
@@ -544,19 +589,22 @@ async function updateDeliveryDriverOnlineStatus(req, res) {
 	const { delivery_driver_id, online } = req.body;
 
 	try {
-		const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriverOnlineStatus(delivery_driver_id, online);
-		console.info('updatedDeliveryDriver', updatedDeliveryDriver.online)
+		const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriverOnlineStatus(
+			delivery_driver_id,
+			online
+		);
+		console.info('updatedDeliveryDriver', updatedDeliveryDriver.online);
 
 		if (online) {
-			io.emit("driver_available", updatedDeliveryDriver);
+			io.emit('driver_available', updatedDeliveryDriver);
 			// await resendPendingOrdersToDeliveryDriver(updatedDeliveryDriver);
 		} else {
-			io.emit("driver_unavailable", delivery_driver_id);
+			io.emit('driver_unavailable', delivery_driver_id);
 		}
 		res.status(200).json(updatedDeliveryDriver);
 	} catch (error) {
-		console.error("Error setting online status for delivery driver:", error);
-		res.status(400).json({ error: "Error setting online status for delivery driver", detail: error.message });
+		console.error('Error setting online status for delivery driver:', error);
+		res.status(400).json({ error: 'Error setting online status for delivery driver', detail: error.message });
 	}
 }
 
@@ -579,13 +627,13 @@ async function createDeliveryDriver(req, res) {
 
 		const driverCreated = await DeliveryDriverDao.createDeliveryDriver(driverData, userData);
 		if (!driverCreated) {
-			return res.status(400).json({ error: "Failed to create new delivery driver" });
+			return res.status(400).json({ error: 'Failed to create new delivery driver' });
 		}
 
 		res.status(201).json(driverCreated);
 	} catch (error) {
-		console.error("Error creating new delivery driver:", error);
-		res.status(400).json({ error: "Error creating new delivery driver", detail: error.message });
+		console.error('Error creating new delivery driver:', error);
+		res.status(400).json({ error: 'Error creating new delivery driver', detail: error.message });
 	}
 }
 
@@ -619,15 +667,16 @@ async function getDriverEarnings(req, res) {
 				status: DELIVERY_ORDER_STATUS.SUCCESS,
 				created_at: {
 					gte: new Date(start_date).toISOString(),
-					lte: new Date(end_date).toISOString()
-				}
-			}});
+					lte: new Date(end_date).toISOString(),
+				},
+			},
+		});
 		const earningsData = calculateDeliveryDriversEarnings(driverOrders, driver);
 
 		if (earningsData) {
 			res.status(200).json({ delivery_driver_id, ...earningsData });
 		} else {
-			res.status(404).json({ error: "Delivery driver not found or no earnings data available" });
+			res.status(404).json({ error: 'Delivery driver not found or no earnings data available' });
 		}
 	} catch (error) {
 		console.error("Error retrieving delivery driver's earnings:", error);
@@ -663,9 +712,10 @@ async function getAllDriversEarnings(req, res) {
 					status: DELIVERY_ORDER_STATUS.SUCCESS,
 					created_at: {
 						gte: new Date(start_date).toISOString(),
-						lte: new Date(end_date).toISOString()
-					}
-			}});
+						lte: new Date(end_date).toISOString(),
+					},
+				},
+			});
 			return calculateDeliveryDriversEarnings(driverOrders, driver);
 		});
 
@@ -673,7 +723,10 @@ async function getAllDriversEarnings(req, res) {
 		res.status(200).json(allEarnings);
 	} catch (error) {
 		console.error("Error retrieving all delivery delivery drivers' earnings:", error);
-		res.status(400).json({ error: "Error retrieving all delivery delivery drivers' earnings", detail: error.message });
+		res.status(400).json({
+			error: "Error retrieving all delivery delivery drivers' earnings",
+			detail: error.message,
+		});
 	}
 }
 
@@ -691,8 +744,9 @@ async function getTotalEarnings(req, res) {
 	try {
 		const orders = await DeliveryOrderDao.getOrders({
 			where: {
-				status: DELIVERY_ORDER_STATUS.SUCCESS
-			}});
+				status: DELIVERY_ORDER_STATUS.SUCCESS,
+			},
+		});
 		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.SUCCESS, true);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
@@ -725,8 +779,9 @@ async function getDriverTotalEarnings(req, res) {
 		const orders = await DeliveryOrderDao.getOrders({
 			where: {
 				status: DELIVERY_ORDER_STATUS.SUCCESS,
-				delivery_driver_id: delivery_driver_id
-			}});
+				delivery_driver_id: delivery_driver_id,
+			},
+		});
 		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.SUCCESS, true, detailed);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
@@ -740,15 +795,17 @@ async function assignBusinessForDailyMealsToDriver(req, res) {
 	try {
 		const driver = await DeliveryDriverDao.getDeliveryDriverById(delivery_driver_id);
 		if (!driver) {
-			return res.status(404).json({ error: "Driver not found" });
+			return res.status(404).json({ error: 'Driver not found' });
 		}
-		await DeliveryDriverDao.updateDeliveryDriver(delivery_driver_id, { daily_meals_business: {
-			connect: { business_id: business_id }
-		} });
-		res.status(200).json({ message: "Business assigned for daily meals" });
+		await DeliveryDriverDao.updateDeliveryDriver(delivery_driver_id, {
+			daily_meals_business: {
+				connect: { business_id: business_id },
+			},
+		});
+		res.status(200).json({ message: 'Business assigned for daily meals' });
 	} catch (error) {
-		console.error("Error assigning business for daily meals to driver:", error);
-		res.status(400).json({ error: "Error assigning business for daily meals to driver", detail: error.message });
+		console.error('Error assigning business for daily meals to driver:', error);
+		res.status(400).json({ error: 'Error assigning business for daily meals to driver', detail: error.message });
 	}
 }
 
@@ -770,5 +827,5 @@ module.exports = {
 	getAllDriversEarnings,
 	getTotalEarnings,
 	getDriverTotalEarnings,
-	assignBusinessForDailyMealsToDriver
+	assignBusinessForDailyMealsToDriver,
 };

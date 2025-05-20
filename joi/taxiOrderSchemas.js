@@ -1,4 +1,4 @@
-const Joi = require("joi");
+const Joi = require('joi');
 const addressSchema = Joi.object({
 	id: Joi.string().optional(),
 	address: Joi.string().required(),
@@ -6,7 +6,7 @@ const addressSchema = Joi.object({
 		latitude: Joi.number().required(),
 		longitude: Joi.number().required(),
 	}).required(),
-	locked: Joi.boolean().optional()
+	locked: Joi.boolean().optional(),
 });
 
 const deliveryLocationSchema = Joi.object({
@@ -16,7 +16,7 @@ const deliveryLocationSchema = Joi.object({
 		latitude: Joi.number().allow(null),
 		longitude: Joi.number().allow(null),
 	}).allow(null),
-	locked: Joi.boolean().optional()
+	locked: Joi.boolean().optional(),
 }).allow(null);
 
 const createOrderSchema = Joi.object({
@@ -41,9 +41,9 @@ const createOrderSchema = Joi.object({
 	parent_user_type: Joi.string().allow(null).optional(),
 	creating_user_id: Joi.string().allow(null).optional(),
 	vehicle_transfer_order: Joi.object().allow(null).optional(),
-	allow_credits_usage: Joi.boolean().optional()
+	allow_credits_usage: Joi.boolean().optional(),
 });
 
 module.exports = {
-    createOrderSchema,
+	createOrderSchema,
 };

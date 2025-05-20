@@ -1,4 +1,4 @@
-const prisma = require("../prisma/prisma");
+const prisma = require('../prisma/prisma');
 
 const cropped_user_columns = {
 	first_name: true,
@@ -41,10 +41,10 @@ const getOrderLobbyById = async (orderLobbiesId) => {
 				order_lobby_users: {
 					include: {
 						users: {
-							select: cropped_user_columns
-						}
-					}
-				}
+							select: cropped_user_columns,
+						},
+					},
+				},
 			},
 		});
 	} catch (error) {
@@ -65,9 +65,9 @@ const getAllOrderLobbies = async () => {
 				order_lobby_users: {
 					include: {
 						users: {
-							select: cropped_user_columns
-						}
-					}
+							select: cropped_user_columns,
+						},
+					},
 				},
 				delivery_orders: true,
 			},
@@ -87,16 +87,16 @@ const getOrderLobbiesForBusiness = async (business_id) => {
 	try {
 		return await prisma.order_lobbies.findMany({
 			where: {
-				business_id: business_id
+				business_id: business_id,
 			},
 			include: {
 				order_lobby_items: true,
 				order_lobby_users: {
 					include: {
 						users: {
-							select: cropped_user_columns
-						}
-					}
+							select: cropped_user_columns,
+						},
+					},
 				},
 				delivery_orders: true,
 			},
@@ -128,10 +128,10 @@ const getActiveOrderLobbiesByUserID = async (userId) => {
 				order_lobby_users: {
 					include: {
 						users: {
-							select: cropped_user_columns
-						}
-					}
-				}
+							select: cropped_user_columns,
+						},
+					},
+				},
 			},
 		});
 	} catch (error) {

@@ -1,6 +1,6 @@
-const ReservationDao = require("../dao/Reservation");
+const ReservationDao = require('../dao/Reservation');
 const { UserSockets, io } = require('../socket');
-const prisma = require("../prisma/prisma");
+const prisma = require('../prisma/prisma');
 
 /**
  * GET /reservations
@@ -17,8 +17,8 @@ async function getReservations(req, res) {
 		const reservations = await ReservationDao.getReservations({});
 		res.status(200).json(reservations);
 	} catch (error) {
-		console.error("Error listing reservations:", error);
-		res.status(400).json({ error: "Error listing reservations", detail: error.message });
+		console.error('Error listing reservations:', error);
+		res.status(400).json({ error: 'Error listing reservations', detail: error.message });
 	}
 }
 
@@ -40,11 +40,11 @@ async function getReservationById(req, res) {
 		if (reservation) {
 			res.status(200).json(reservation);
 		} else {
-			res.status(404).json({ error: "Reservation not found" });
+			res.status(404).json({ error: 'Reservation not found' });
 		}
 	} catch (error) {
-		console.error("Error retrieving reservation:", error);
-		res.status(400).json({ error: "Error retrieving reservation information", detail: error.message });
+		console.error('Error retrieving reservation:', error);
+		res.status(400).json({ error: 'Error retrieving reservation information', detail: error.message });
 	}
 }
 
@@ -73,8 +73,8 @@ async function getReservationsByBusinessId(req, res) {
 		});
 		res.status(200).json(reservations);
 	} catch (error) {
-		console.error("Error retrieving reservations by business ID:", error);
-		res.status(400).json({ error: "Error retrieving reservations by business ID", detail: error.message });
+		console.error('Error retrieving reservations by business ID:', error);
+		res.status(400).json({ error: 'Error retrieving reservations by business ID', detail: error.message });
 	}
 }
 
@@ -94,14 +94,13 @@ async function getActiveTableReservation(req, res) {
 	const { user_id } = req.params;
 
 	try {
-		const activeReservations = await ReservationDao.getReservationIfNotCompleted(user_id)
+		const activeReservations = await ReservationDao.getReservationIfNotCompleted(user_id);
 		res.status(200).json(activeReservations);
 	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
 }
-
 
 /**
  * POST /reservations/create
@@ -116,19 +115,19 @@ async function getActiveTableReservation(req, res) {
  * @response 400 - Error creating reservation
  */
 async function createReservation(req, res) {
-	const { reservation, user_id } = req.body
+	const { reservation, user_id } = req.body;
 	try {
 		const reservationData = {
 			...reservation,
 			user_id: user_id,
 		};
-		console.log(reservationData, 'reservationData')
+		console.log(reservationData, 'reservationData');
 		const newReservation = await ReservationDao.createReservation(reservationData);
 
 		// Get all business users associated with the business
 		const businessUsers = await prisma.business_users.findMany({
 			where: {
-				business_id: reservation.business_id
+				business_id: reservation.business_id,
 			},
 			include: {
 				users: true,
@@ -136,17 +135,17 @@ async function createReservation(req, res) {
 		});
 
 		// Notify all business users about the new reservation
-		businessUsers.forEach(businessUser => {
+		businessUsers.forEach((businessUser) => {
 			const userSocket = UserSockets.get(businessUser.user_id);
 			if (userSocket) {
-				io.to("reservations_" + reservation.business_id).emit('new_reservation', newReservation);
+				io.to('reservations_' + reservation.business_id).emit('new_reservation', newReservation);
 			}
 		});
 
 		res.status(201).json(newReservation);
 	} catch (error) {
-		console.error("Error creating new reservation:", error);
-		res.status(400).json({ error: "Error creating new reservation", detail: error.message });
+		console.error('Error creating new reservation:', error);
+		res.status(400).json({ error: 'Error creating new reservation', detail: error.message });
 	}
 }
 
@@ -170,13 +169,13 @@ async function addTableNumber(req, res) {
 		// Notify the user about the reservation table number
 		const userSocket = UserSockets.get(updatedReservation.user_id);
 		if (userSocket) {
-			io.to("reservation_" + updatedReservation.reservation_id).emit('added_table_number', updatedReservation);
+			io.to('reservation_' + updatedReservation.reservation_id).emit('added_table_number', updatedReservation);
 		}
 
 		res.status(200).json(updatedReservation);
 	} catch (error) {
-		console.error("Error updating reservation table number:", error);
-		res.status(400).json({ error: "Error updating reservation table number", detail: error.message });
+		console.error('Error updating reservation table number:', error);
+		res.status(400).json({ error: 'Error updating reservation table number', detail: error.message });
 	}
 }
 
@@ -195,18 +194,24 @@ async function addTableNumber(req, res) {
  */
 async function updateReservationStatus(req, res) {
 	try {
-		const updatedReservation = await ReservationDao.updateReservationStatus(req.body.reservation_id, req.body.status);
+		const updatedReservation = await ReservationDao.updateReservationStatus(
+			req.body.reservation_id,
+			req.body.status
+		);
 
 		// Notify the user about the reservation status change
 		const userSocket = UserSockets.get(updatedReservation.user_id);
 		if (userSocket) {
-			io.to("reservation_" + updatedReservation.reservation_id).emit('reservation_status_change', updatedReservation);
+			io.to('reservation_' + updatedReservation.reservation_id).emit(
+				'reservation_status_change',
+				updatedReservation
+			);
 		}
 
 		res.status(200).json(updatedReservation);
 	} catch (error) {
-		console.error("Error updating reservation status:", error);
-		res.status(400).json({ error: "Error updating reservation status", detail: error.message });
+		console.error('Error updating reservation status:', error);
+		res.status(400).json({ error: 'Error updating reservation status', detail: error.message });
 	}
 }
 
@@ -224,10 +229,10 @@ async function updateReservationStatus(req, res) {
 async function deleteReservation(req, res) {
 	try {
 		await ReservationDao.deleteReservation(req.params.reservation_id);
-		res.status(200).json({ message: "Reservation deleted successfully" });
+		res.status(200).json({ message: 'Reservation deleted successfully' });
 	} catch (error) {
-		console.error("Error deleting reservation:", error);
-		res.status(400).json({ error: "Error deleting reservation", detail: error.message });
+		console.error('Error deleting reservation:', error);
+		res.status(400).json({ error: 'Error deleting reservation', detail: error.message });
 	}
 }
 
@@ -239,5 +244,5 @@ module.exports = {
 	updateReservationStatus,
 	deleteReservation,
 	addTableNumber,
-	getActiveTableReservation
+	getActiveTableReservation,
 };

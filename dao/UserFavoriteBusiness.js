@@ -1,4 +1,4 @@
-const prisma = require("../prisma/prisma");
+const prisma = require('../prisma/prisma');
 
 // Add a new favorite business for a user
 const addFavoriteBusiness = async (user_id, business_id, business_type) => {
@@ -11,7 +11,7 @@ const addFavoriteBusiness = async (user_id, business_id, business_type) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error adding favorite business:", error);
+		console.error('Error adding favorite business:', error);
 		throw new Error(error);
 	}
 };
@@ -21,11 +21,11 @@ const removeFavoriteBusiness = async (user_favorite_businesses_id) => {
 	try {
 		return await prisma.user_favorite_businesses.delete({
 			where: {
-				user_favorite_businesses_id
+				user_favorite_businesses_id,
 			},
 		});
 	} catch (error) {
-		console.error("Error removing favorite business:", error);
+		console.error('Error removing favorite business:', error);
 		throw new Error(error);
 	}
 };
@@ -48,7 +48,7 @@ const getFavoriteBusinesses = async (user_id, business_type = null) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving favorite businesses:", error);
+		console.error('Error retrieving favorite businesses:', error);
 		throw new Error(error);
 	}
 };

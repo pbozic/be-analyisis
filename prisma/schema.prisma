@@ -7,7 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// generator zod {
+//   provider = "prisma-zod-generator"
+//   output   = "../types/zod"
+//   onlyModel  = true
+//    relationModel = false
+// }
+generator zod {
+  provider       = "npx zod-prisma-types"
+  output   = "../types/zod"
+  createRelationValuesTypes = true
+  useMultipleFiles = true
+  addInputTypeValidation = true
+}
 model finances {
+  @@map("finances")
   finance_id          String     @id @default(uuid()) @db.Uuid
   bank_name           String
   account_holder      String

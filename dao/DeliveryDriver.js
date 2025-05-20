@@ -1,5 +1,5 @@
-const prisma = require("../prisma/prisma");
-const UserDao = require("./User");
+const prisma = require('../prisma/prisma');
+const UserDao = require('./User');
 
 const getDeliveryDrivers = async (args) => {
 	try {
@@ -9,14 +9,14 @@ const getDeliveryDrivers = async (args) => {
 				user: true,
 				vehicles: {
 					include: {
-						vehicle_specification: true
-					}
+						vehicle_specification: true,
+					},
 				},
-				documents: false
-			}
+				documents: false,
+			},
 		});
 	} catch (error) {
-		console.error("Error retrieving delivery drivers:", error);
+		console.error('Error retrieving delivery drivers:', error);
 		throw new Error(error);
 	}
 };
@@ -26,19 +26,19 @@ const getOnlineDeliveryDrivers = async (args) => {
 		return await prisma.delivery_drivers.findMany({
 			where: {
 				online: true,
-				...args
+				...args,
 			},
 			include: {
 				user: true,
 				vehicles: {
 					include: {
-						vehicle_specification: true
-					}
-				}
-			}
+						vehicle_specification: true,
+					},
+				},
+			},
 		});
 	} catch (error) {
-		console.error("Error retrieving online delivery drivers:", error);
+		console.error('Error retrieving online delivery drivers:', error);
 		throw new Error(error);
 	}
 };
@@ -60,7 +60,7 @@ const updateDeliveryDriver = async (delivery_driver_id, updateData) => {
 			},
 		});
 	} catch (error) {
-		console.error("Error updating driver:", error);
+		console.error('Error updating driver:', error);
 		throw new Error(error);
 	}
 };
@@ -77,7 +77,7 @@ const getDeliveryDriverById = async (delivery_driver_id, includeParams) => {
 	};
 
 	const include = includeParams || defaultInclude;
-	console.log("include:",include);
+	console.log('include:', include);
 	try {
 		return await prisma.delivery_drivers.findUnique({
 			where: {
@@ -86,30 +86,29 @@ const getDeliveryDriverById = async (delivery_driver_id, includeParams) => {
 			include: include,
 		});
 	} catch (error) {
-		console.error("Error retrieving delivery driver:", error);
+		console.error('Error retrieving delivery driver:', error);
 		throw new Error(error);
 	}
 };
-
 
 const getDeliveryDriverByUserId = async (user_id) => {
 	try {
 		return await prisma.delivery_drivers.findUnique({
 			where: {
-				user_id: user_id
+				user_id: user_id,
 			},
 			include: {
 				user: true,
 				vehicles: {
 					include: {
-						vehicle_specification: true
-					}
+						vehicle_specification: true,
+					},
 				},
-				documents: false
-			}
+				documents: false,
+			},
 		});
 	} catch (error) {
-		console.error("Error retrieving delivery driver by user ID:", error);
+		console.error('Error retrieving delivery driver by user ID:', error);
 		throw new Error(error);
 	}
 };
@@ -119,8 +118,8 @@ const getDeliveryDriverLocation = async (delivery_driver_id) => {
 		const deliveryDriver = await prisma.delivery_drivers.findUnique({
 			where: { delivery_driver_id },
 			select: {
-				location: true // Select only the location field
-			}
+				location: true, // Select only the location field
+			},
 		});
 		return deliveryDriver ? deliveryDriver.location : null;
 	} catch (error) {
@@ -138,10 +137,10 @@ const updateDeliveryDriverOnlineStatus = async (delivery_driver_id, isOnline) =>
 				user: true,
 				vehicles: {
 					include: {
-						vehicle_specification: true
-					}
-				}
-			}
+						vehicle_specification: true,
+					},
+				},
+			},
 		});
 	} catch (error) {
 		console.error("Error setting delivery driver's online status:", error);
@@ -156,13 +155,13 @@ const updateDeliveryDriverLocation = async (delivery_driver_id, location) => {
 			address: location?.address ?? null,
 			coordinates: {
 				latitude: location?.coordinates?.latitude ?? null,
-				longitude: location?.coordinates?.longitude ?? null
-			}
+				longitude: location?.coordinates?.longitude ?? null,
+			},
 		};
 
 		return await prisma.delivery_drivers.update({
 			where: { delivery_driver_id },
-			data: { location: locationData }
+			data: { location: locationData },
 		});
 	} catch (error) {
 		console.error("Error updating delivery driver's location:", error);
@@ -208,7 +207,7 @@ const createDeliveryDriver = async (driverData, userData) => {
 		if (!userData?.user_id) {
 			newUser = await UserDao.createNewUser(userData);
 			if (!newUser) {
-				throw new Error("Failed to create user for new delivery driver", userData);
+				throw new Error('Failed to create user for new delivery driver', userData);
 			}
 		}
 
@@ -235,11 +234,10 @@ const createDeliveryDriver = async (driverData, userData) => {
 		// Include the user data in the returned driver data
 		return {
 			...newDriver,
-			user: newUser
+			user: newUser,
 		};
-
 	} catch (error) {
-		console.error("Error creating new delivery driver:", error);
+		console.error('Error creating new delivery driver:', error);
 		throw new Error(error.message);
 	}
 };
@@ -252,17 +250,16 @@ const getAvailableDeliveryDrivers = async () => {
 				user: true,
 				vehicles: {
 					include: {
-						vehicle_specification: true
-					}
-				}
-			}
+						vehicle_specification: true,
+					},
+				},
+			},
 		});
 	} catch (error) {
-		console.error("Error getting available delivery drivers:", error);
+		console.error('Error getting available delivery drivers:', error);
 		throw new Error(error);
 	}
-}
-
+};
 
 const updateDriverLocation = async (delivery_driver_id, location) => {
 	try {
@@ -285,28 +282,27 @@ const updateDriverLocation = async (delivery_driver_id, location) => {
 	}
 };
 
-
 const getBusinessByDeliveryDriverId = async (delivery_driver_id) => {
 	try {
 		const driver = await prisma.delivery_drivers.findUnique({
 			where: { delivery_driver_id },
-			select: { business_id: true }
+			select: { business_id: true },
 		});
 
 		if (!driver || !driver.business_id) {
-			throw new Error("Business not found for the given driver ID");
+			throw new Error('Business not found for the given driver ID');
 		}
 
 		const business = await prisma.business.findUnique({
-			where: { business_id: driver.business_id }
+			where: { business_id: driver.business_id },
 		});
 		if (!business) {
-			throw new Error("Business not found for the given business ID");
+			throw new Error('Business not found for the given business ID');
 		}
 
 		return business;
 	} catch (error) {
-		console.error("Error retrieving business by driver ID:", error);
+		console.error('Error retrieving business by driver ID:', error);
 		throw error;
 	}
 };

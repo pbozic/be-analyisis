@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 const PromoController = require('../../../controllers/PromoController');
 
@@ -13,15 +14,4 @@ router.put('/:id', PromoController.updatePromoBanner);
 router.delete('/:id', PromoController.deletePromoBanner);
 router.get('/:id', PromoController.getPromoBannerById);
 
-
 module.exports = router;
-
-
-
-
-
-
-
-
-
-

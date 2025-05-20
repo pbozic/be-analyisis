@@ -1,14 +1,15 @@
-require("dotenv").config();
-const jwt = require("jsonwebtoken");
-const { UserSockets } = require("../socket");
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
+
+const { UserSockets } = require('../socket');
 const { asyncLocalStorage } = require('../lib/logger');
 const authMiddleware = (req, res, next) => {
-	const authHeader = req.headers["authorization"];
+	const authHeader = req.headers['authorization'];
 
-	const token = authHeader && authHeader.split(" ")[1];
+	const token = authHeader && authHeader.split(' ')[1];
 	if (!token) {
-		console.log("Access Denied. No token provided.")
-		return res.status(401).send("Access Denied. No token provided.");
+		console.log('Access Denied. No token provided.');
+		return res.status(401).send('Access Denied. No token provided.');
 	}
 
 	try {
@@ -17,15 +18,15 @@ const authMiddleware = (req, res, next) => {
 		req.socket = UserSockets.get(decoded.user_id);
 		// const userId = decoded.user.user_id; // Your logic
 		// const routePath = req.route?.path || req.originalUrl;
-		
+
 		next();
 		// asyncLocalStorage.run({ userId, routePath }, () => {
-		
-		//  
+
+		//
 		// })
 	} catch (error) {
-		console.log(error)
-		return res.status(401).json({ error: "Access Denied. Token expired.", e: error });
+		console.log(error);
+		return res.status(401).json({ error: 'Access Denied. Token expired.', e: error });
 	}
 };
 module.exports = authMiddleware;

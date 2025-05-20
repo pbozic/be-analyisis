@@ -1,0 +1,25 @@
+import { z } from 'zod';
+import type { Prisma } from '@prisma/client';
+import { word_bundlesIncludeSchema } from '../inputTypeSchemas/word_bundlesIncludeSchema'
+import { word_bundlesWhereUniqueInputSchema } from '../inputTypeSchemas/word_bundlesWhereUniqueInputSchema'
+import { wordsFindManyArgsSchema } from "../outputTypeSchemas/wordsFindManyArgsSchema"
+import { Word_bundlesCountOutputTypeArgsSchema } from "../outputTypeSchemas/Word_bundlesCountOutputTypeArgsSchema"
+// Select schema needs to be in file to prevent circular imports
+//------------------------------------------------------
+
+export const word_bundlesSelectSchema: z.ZodType<Prisma.word_bundlesSelect> = z.object({
+  id: z.boolean().optional(),
+  name: z.boolean().optional(),
+  description: z.boolean().optional(),
+  created_at: z.boolean().optional(),
+  words: z.union([z.boolean(),z.lazy(() => wordsFindManyArgsSchema)]).optional(),
+  _count: z.union([z.boolean(),z.lazy(() => Word_bundlesCountOutputTypeArgsSchema)]).optional(),
+}).strict()
+
+export const word_bundlesFindUniqueArgsSchema: z.ZodType<Prisma.word_bundlesFindUniqueArgs> = z.object({
+  select: word_bundlesSelectSchema.optional(),
+  include: word_bundlesIncludeSchema.optional(),
+  where: word_bundlesWhereUniqueInputSchema,
+}).strict() ;
+
+export default word_bundlesFindUniqueArgsSchema;

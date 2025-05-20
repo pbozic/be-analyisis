@@ -1,4 +1,4 @@
-const prisma = require("../prisma/prisma");
+const prisma = require('../prisma/prisma');
 
 const areItemsEqual = (item1, item2) => {
 	const arraysEqual = (arr1, arr2) => {
@@ -14,12 +14,11 @@ const areItemsEqual = (item1, item2) => {
 	);
 };
 
-
 const createOrderLobbyItem = async (order_lobby_item_data) => {
 	try {
 		return await prisma.order_lobby_items.create({ data: order_lobby_item_data });
 	} catch (error) {
-		console.error("Error creating order lobby item:", error);
+		console.error('Error creating order lobby item:', error);
 		throw error;
 	}
 };
@@ -31,7 +30,7 @@ const updateOrderLobbyItem = async (order_lobby_items_id, order_lobby_items) => 
 			data: order_lobby_items,
 		});
 	} catch (error) {
-		console.error("Error updating order lobby item:", error);
+		console.error('Error updating order lobby item:', error);
 		throw error;
 	}
 };
@@ -43,7 +42,7 @@ const updateOrderLobbyItemQuantity = async (order_lobby_items_id, quantity) => {
 			data: { quantity },
 		});
 	} catch (error) {
-		console.error("Error updating order lobby item quantity:", error);
+		console.error('Error updating order lobby item quantity:', error);
 		throw error;
 	}
 };
@@ -54,7 +53,7 @@ const getOrderLobbyItemsByLobbyId = async (order_lobbies_id) => {
 			where: { order_lobbies_id },
 		});
 	} catch (error) {
-		console.error("Error retrieving order lobby items by lobby ID:", error);
+		console.error('Error retrieving order lobby items by lobby ID:', error);
 		throw error;
 	}
 };
@@ -68,7 +67,7 @@ const getOrderLobbyItemsByLobbyAndUserId = async (order_lobbies_id, user_id) => 
 			},
 		});
 	} catch (error) {
-		console.error("Error retrieving order lobby items by lobby and user ID:", error);
+		console.error('Error retrieving order lobby items by lobby and user ID:', error);
 		throw error;
 	}
 };
@@ -79,7 +78,7 @@ const deleteOrderLobbyItem = async (order_lobby_items_id) => {
 			where: { order_lobby_items_id },
 		});
 	} catch (error) {
-		console.error("Error deleting order lobby item:", error);
+		console.error('Error deleting order lobby item:', error);
 		throw error;
 	}
 };
@@ -94,14 +93,11 @@ const deleteOrderLobbyItemsForUserInLobby = async (user_id, order_lobbies_id) =>
 	try {
 		return await prisma.order_lobby_items.deleteMany({
 			where: {
-				AND: [
-					{ user_id },
-					{ order_lobbies_id }
-				]
+				AND: [{ user_id }, { order_lobbies_id }],
 			},
 		});
 	} catch (error) {
-		console.error("Error deleting order lobby items:", error);
+		console.error('Error deleting order lobby items:', error);
 		throw error;
 	}
 };

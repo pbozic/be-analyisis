@@ -1,7 +1,7 @@
-require("dotenv").config();
-const DocumentDao = require("../dao/Document");
-const DeliveryDriverDao = require("../dao/DeliveryDriver");
-const DriverDao = require("../dao/Driver");
+require('dotenv').config();
+const DocumentDao = require('../dao/Document');
+const DeliveryDriverDao = require('../dao/DeliveryDriver');
+const DriverDao = require('../dao/Driver');
 
 /**
  * GET /documents
@@ -18,7 +18,7 @@ async function listDocuments(req, res) {
 		const documents = await DocumentDao.getDocuments();
 		res.status(200).json(documents);
 	} catch (error) {
-		console.error("Error getting all documents:", error);
+		console.error('Error getting all documents:', error);
 		res.status(400).json({ error: error.message });
 	}
 }
@@ -41,14 +41,13 @@ async function getDocumentById(req, res) {
 		if (document) {
 			res.status(200).json(document);
 		} else {
-			res.status(404).json({ message: "Document not found" });
+			res.status(404).json({ message: 'Document not found' });
 		}
 	} catch (error) {
-		console.error("Error getting document by ID:", error);
+		console.error('Error getting document by ID:', error);
 		res.status(400).json({ error: error.message });
 	}
 }
-
 
 /**
  * GET /documents/users/:userId
@@ -67,7 +66,7 @@ async function getDocumentsForUser(req, res) {
 		const documents = await DocumentDao.getDocumentsForUser(user_id);
 		res.status(200).json(documents);
 	} catch (error) {
-		console.error("Error getting documents for user:", error);
+		console.error('Error getting documents for user:', error);
 		res.status(400).json({ error: error.message });
 	}
 }
@@ -89,7 +88,7 @@ async function getDocumentsForBusiness(req, res) {
 		const documents = await DocumentDao.getDocumentsForBusiness(business_id);
 		res.status(200).json(documents);
 	} catch (error) {
-		console.error("Error getting documents for business:", error);
+		console.error('Error getting documents for business:', error);
 		res.status(400).json({ error: error.message });
 	}
 }
@@ -111,7 +110,7 @@ async function getDocumentsForDeliveryPerson(req, res) {
 		const documents = await DocumentDao.getDocumentsForDeliveryPerson(delivery_person_id);
 		res.status(200).json(documents);
 	} catch (error) {
-		console.error("Error getting documents for delivery person:", error);
+		console.error('Error getting documents for delivery person:', error);
 		res.status(400).json({ error: error.message });
 	}
 }
@@ -133,7 +132,7 @@ async function getDocumentsForDriver(req, res) {
 		const documents = await DocumentDao.getDocumentsForDriver(driver_id);
 		res.status(200).json(documents);
 	} catch (error) {
-		console.error("Error getting documents for driver:", error);
+		console.error('Error getting documents for driver:', error);
 		res.status(400).json({ error: error.message });
 	}
 }
@@ -155,7 +154,7 @@ async function getDocumentsForVehicle(req, res) {
 		const documents = await DocumentDao.getDocumentsForVehicle(vehicle_id);
 		res.status(200).json(documents);
 	} catch (error) {
-		console.error("Error getting documents for vehicle:", error);
+		console.error('Error getting documents for vehicle:', error);
 		res.status(400).json({ error: error.message });
 	}
 }
@@ -177,8 +176,8 @@ async function getDocumentsByDocumentType(req, res) {
 		const documents = await DocumentDao.getDocumentsByType(document_type);
 		res.status(200).json(documents);
 	} catch (error) {
-		console.error("Error getting documents by type:", error);
-		res.status(400).json({ error: "Error retrieving documents", detail: error.message });
+		console.error('Error getting documents by type:', error);
+		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
 	}
 }
 
@@ -200,8 +199,8 @@ async function getDocumentsForBusinessByDocumentType(req, res) {
 		const documents = await DocumentDao.getDocumentsForBusinessByType(business_id, document_type);
 		res.status(200).json(documents);
 	} catch (error) {
-		console.error("Error getting documents for business by type:", error);
-		res.status(400).json({ error: "Error retrieving documents", detail: error.message });
+		console.error('Error getting documents for business by type:', error);
+		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
 	}
 }
 
@@ -222,8 +221,8 @@ async function getDocumentsForUserByDocumentType(req, res) {
 		const documents = await DocumentDao.getDocumentsForUserByType(req.user.user_id, document_type);
 		res.status(200).json(documents);
 	} catch (error) {
-		console.error("Error getting documents for user by type:", error);
-		res.status(400).json({ error: "Error retrieving documents", detail: error.message });
+		console.error('Error getting documents for user by type:', error);
+		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
 	}
 }
 
@@ -245,8 +244,8 @@ async function getDocumentsForDriverByDocumentType(req, res) {
 		const documents = await DocumentDao.getDocumentsForDriverByType(driver_id, document_type);
 		res.status(200).json(documents);
 	} catch (error) {
-		console.error("Error getting documents for driver by type:", error);
-		res.status(400).json({ error: "Error retrieving documents", detail: error.message });
+		console.error('Error getting documents for driver by type:', error);
+		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
 	}
 }
 
@@ -268,8 +267,8 @@ async function getDocumentsForDeliveryPersonByDocumentType(req, res) {
 		const documents = await DocumentDao.getDocumentsForDeliveryPersonByType(delivery_person_id, document_type);
 		res.status(200).json(documents);
 	} catch (error) {
-		console.error("Error getting documents for delivery person by type:", error);
-		res.status(400).json({ error: "Error retrieving documents", detail: error.message });
+		console.error('Error getting documents for delivery person by type:', error);
+		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
 	}
 }
 
@@ -291,8 +290,8 @@ async function getDocumentsForVehicleByDocumentType(req, res) {
 		const documents = await DocumentDao.getDocumentsForVehicleByType(vehicle_id, document_type);
 		res.status(200).json(documents);
 	} catch (error) {
-		console.error("Error getting documents for vehicle by type:", error);
-		res.status(400).json({ error: "Error retrieving documents", detail: error.message });
+		console.error('Error getting documents for vehicle by type:', error);
+		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
 	}
 }
 
@@ -315,12 +314,12 @@ async function createUserDocument(req, res) {
 		const userId = req.params.user_id;
 		const document = await DocumentDao.createDocument(documentData, files);
 		if (!document) {
-			return res.status(400).json({ error: "Error creating the document" });
+			return res.status(400).json({ error: 'Error creating the document' });
 		}
 		await DocumentDao.linkDocumentToUser(document.document_id, userId);
 		res.status(200).json(document);
 	} catch (error) {
-		res.status(400).json({ error: "Error creating user document or linking the document", detail: error.message });
+		res.status(400).json({ error: 'Error creating user document or linking the document', detail: error.message });
 	}
 }
 
@@ -343,12 +342,12 @@ async function createBusinessDocument(req, res) {
 		const businessId = req.params.business_id;
 		const document = await DocumentDao.createDocument(documentData, files);
 		if (!document) {
-			return res.status(400).json({ error: "Error creating the document" });
+			return res.status(400).json({ error: 'Error creating the document' });
 		}
 		await DocumentDao.linkDocumentToBusiness(document.document_id, businessId);
 		res.status(200).json(document);
 	} catch (error) {
-		res.status(400).json({ error: "Error creating or linking the document", detail: error.message });
+		res.status(400).json({ error: 'Error creating or linking the document', detail: error.message });
 	}
 }
 
@@ -371,12 +370,12 @@ async function createDriverDocument(req, res) {
 		const driverId = req.params.driver_id;
 		const document = await DocumentDao.createDocument(documentData, files);
 		if (!document) {
-			return res.status(400).json({ error: "Error creating the document" });
+			return res.status(400).json({ error: 'Error creating the document' });
 		}
 		await DocumentDao.linkDocumentToDriver(document.document_id, driverId);
 		res.status(200).json(document);
 	} catch (error) {
-		res.status(400).json({ error: "Error creating or linking the document", detail: error.message });
+		res.status(400).json({ error: 'Error creating or linking the document', detail: error.message });
 	}
 }
 
@@ -401,8 +400,11 @@ async function createVehicleDocument(req, res) {
 		await DocumentDao.linkDocumentToVehicle(document.document_id, vehicleId);
 		res.status(201).json(document);
 	} catch (error) {
-		console.error("Error creating document for vehicle:", error);
-		res.status(400).json({ error: "Error creating vehicle document or linking the document", detail: error.message });
+		console.error('Error creating document for vehicle:', error);
+		res.status(400).json({
+			error: 'Error creating vehicle document or linking the document',
+			detail: error.message,
+		});
 	}
 }
 
@@ -425,7 +427,7 @@ async function createDeliveryPersonDocument(req, res) {
 		const deliveryPersonId = req.params.delivery_driver_id;
 		const document = await DocumentDao.createDocument(documentData, files);
 		if (!document) {
-			return res.status(400).json({ error: "Error creating the document" });
+			return res.status(400).json({ error: 'Error creating the document' });
 		}
 		let driver = await DeliveryDriverDao.getDeliveryDriverById(deliveryPersonId);
 		if (!driver) {
@@ -436,7 +438,10 @@ async function createDeliveryPersonDocument(req, res) {
 		}
 		res.status(200).json(document);
 	} catch (error) {
-		res.status(400).json({ error: "Error creating delivery person document or linking the document", detail: error.message });
+		res.status(400).json({
+			error: 'Error creating delivery person document or linking the document',
+			detail: error.message,
+		});
 	}
 }
 
@@ -539,8 +544,6 @@ async function updateDocumentAdditionalInfo(req, res) {
 		res.status(400).json({ error: "Error updating document's additional info", detail: error.message });
 	}
 }
-
-
 
 module.exports = {
 	listDocuments,

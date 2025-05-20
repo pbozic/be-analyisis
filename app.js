@@ -1,141 +1,106 @@
-require("dotenv").config();
-const REST_API_ENDPOINT = "/api";
+// app.js
+require('dotenv').config();
 
-const createError = require("http-errors");
-const express = require("express");
-const path = require("path");
-const cookieParser = require("cookie-parser");
-const logger = require("morgan");
-const swaggerUi = require("swagger-ui-express");
-const cors = require("cors");
-const startCronJobs = require("./cron");
-const mainRouter = require("./routes/index");
-const apiRouter = require("./routes/api");
-const fileUploadLib = require("express-fileupload");
-const openapi = require("openapi-comment-parser");
-const { app, server } = require('./server');
-const { io } = require('./socket'); // This initializes the socket.io server even if the io variable is not used in this file
-const CustomConsole = require('./lib/logger');
+const path = require('path');
+
+const express = require('express');
+const createError = require('http-errors');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const swaggerUi = require('swagger-ui-express');
+const cors = require('cors');
+const fileUploadLib = require('express-fileupload');
+const openapi = require('openapi-comment-parser');
 const compression = require('compression');
-const { asyncLocalStorage, log } = require('./lib/logger');
-const util = require('util');
 const flatted = require('flatted');
-// const apm = require('elastic-apm-node').start({
-// 	serviceName: 'Klikni Server',
-// 	serverUrl: 'http://localhost:8200',  // APM Server URL
-// 	environment: process.env.NODE_ENV || 'development',
-// });
+
+const startCronJobs = require('./cron');
+const mainRouter = require('./routes/index');
+const apiRouter = require('./routes/api');
+const { asyncLocalStorage, log } = require('./lib/logger');
+const CustomConsole = require('./lib/logger');
 
 const isDev = process.env.NODE_ENV !== 'production';
+console.socket = console.log;
+
+const REST_API_ENDPOINT = '/api';
+const app = express();
+// ─── Cron Jobs ──────────────────────────────────────────────────────
+if (process.env.NODE_ENV !== 'test') {
+	startCronJobs();
+	console = {};
+}
+// ─── Logging override ───────────────────────────────────────────────
 function formatArg(arg) {
 	if (typeof arg === 'string') return arg;
 	if (typeof arg === 'object') return isDev ? flatted.stringify(arg, null, 2) : JSON.stringify(arg);
 	return String(arg);
-  }
-  
-  function makeConsoleOverride(level = 'info') {
+}
+
+function makeConsoleOverride(level = 'info') {
 	return (...args) => {
-	  const formattedArgs = args.map(formatArg); // Format all args as strings
-	  
-	  if (isDev) {
-		// Pretty print: handle all args as a single message (joined)
-		const msg = formattedArgs.join(' ');  // Join all arguments into one string
-		log[level](...args);  // Log as a single message
-	  } else {
-		// Structured log (JSON-like format)
-		const structuredLog = {};
-		args.forEach((arg, index) => {
-		  if (typeof arg === 'object' && arg !== null) {
-			Object.assign(structuredLog, arg); // Merge object fields
-		  } else {
-			structuredLog[`arg${index}`] = arg;
-		  }
-		});
-		log[level](structuredLog);
-	  }
+		const formattedArgs = args.map(formatArg);
+		if (isDev) {
+			log[level](...args);
+		} else {
+			const structuredLog = {};
+			args.forEach((arg) => {
+				if (typeof arg === 'object' && arg !== null) {
+					Object.assign(structuredLog, arg);
+				}
+			});
+			log[level](structuredLog);
+		}
 	};
-  }
-  
-  // Override console methods
-//   console.log = makeConsoleOverride('info');
-//   console.info = makeConsoleOverride('info');
-//   console.warn = makeConsoleOverride('warn');
-//   console.error = makeConsoleOverride('error');
-//   console.debug = makeConsoleOverride('debug');
-  
-  // Optional: Add a custom console.socket method
-  console.socket = console.log;
-  
-  
-app.use(compression({
-	level: 6, // 1 (fastest, less compression) to 9 (slowest, most compression)
-	threshold: 10 * 1024, // Only compress responses bigger than 10KB
-  }));
-// listen to port 3001
-const port = process.env.PORT || 3001;
+}
 
-startCronJobs();
-
-// view engine setup
-app.set("views", path.join(__dirname, "views"));
-
-// set the view engine to ejs
-app.set("view engine", "pug");
-
-app.use(logger("dev"));
-app.disable("etag")
+// ─── Middleware Setup ───────────────────────────────────────────────
 app.use(
-    express.json({
-        verify: function(req, res, buf) {
-            req.rawBody = buf;
-        },
-		limit: "512mb" 
-    })
+	compression({
+		level: 6,
+		threshold: 10 * 1024,
+	})
 );
-app.use(express.urlencoded({ limit: "512mb", extended: false }));
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
+
+app.use(logger('dev'));
+app.disable('etag');
 
 app.use(
-	cors({
-		//origin: 'http://localhost:8080',
-		//credentials: true,
-		exposedHeaders: ["Content-Disposition"],
-	}),
+	express.json({
+		verify: function (req, res, buf) {
+			req.rawBody = buf;
+		},
+		limit: '512mb',
+	})
 );
+app.use(express.urlencoded({ limit: '512mb', extended: false }));
+
+app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
 app.use(fileUploadLib());
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(express.static(path.join(__dirname, "public")));
-app.use((req, res, next) => {
-	// const store = asyncLocalStorage.getStore();
-	// if (store) {
-	//   store.routePath = req.route?.path || req.originalUrl;
-	// }
-	next();
-  });
-//const spec = openapi();
-
-//app.use("/v1/api-docs", swaggerUi.serve, swaggerUi.setup(spec, { explorer: true }));
-
+// ─── Routes ─────────────────────────────────────────────────────────
 app.use(mainRouter);
 app.use(REST_API_ENDPOINT, apiRouter);
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
+
+// Uncomment if you want Swagger from comments
+// const spec = openapi();
+// app.use("/v1/api-docs", swaggerUi.serve, swaggerUi.setup(spec, { explorer: true }));
+
+// ─── Error Handling ─────────────────────────────────────────────────
+app.use((req, res, next) => {
 	next(createError(404));
 });
 
-// error handler
-app.use(function (err, req, res, next) {
-	// set locals, only providing error in development
+app.use((err, req, res, next) => {
 	res.locals.message = err.message;
-	res.locals.error = req.app.get("env") === "development" ? err : {};
-
-	// render the error page
+	res.locals.error = isDev ? err : {};
 	res.status(err.status || 500);
-	res.render("error");
+	res.render('error');
 });
 
-server.listen(port, "0.0.0.0", () => {
-	console.log("server listening on: " + port);
-
-	//precacheDataExport(app).then(r => console.log("pre-caching done"));
-});
+module.exports = app;

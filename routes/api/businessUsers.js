@@ -1,22 +1,25 @@
-var express = require("express");
+var express = require('express');
 const router = express.Router();
 
-const BusinessUsersController = require("../../controllers/BusinessUsersController")
+const BusinessUsersController = require('../../controllers/BusinessUsersController');
 
-router.get("/", BusinessUsersController.getAllBusinessUsers);
-router.get("/:user_id", BusinessUsersController.getBusinessUserByUserId);
-router.get("/business/:business_id", BusinessUsersController.getBusinessUsersByBusinessId);
-router.get("/type/:type", BusinessUsersController.getBusinessUsersByBusinessType);
-router.get("/business/group_user/:business_id", BusinessUsersController.getBusinessGroupsByBusinessId);
-router.get("/business/:business_id/company-role/:company_role", BusinessUsersController.getAllBusinessUsersForBusinessByCompanyRole);
+router.get('/', BusinessUsersController.getAllBusinessUsers);
+router.get('/:user_id', BusinessUsersController.getBusinessUserByUserId);
+router.get('/business/:business_id', BusinessUsersController.getBusinessUsersByBusinessId);
+router.get('/type/:type', BusinessUsersController.getBusinessUsersByBusinessType);
+router.get('/business/group_user/:business_id', BusinessUsersController.getBusinessGroupsByBusinessId);
+router.get(
+	'/business/:business_id/company-role/:company_role',
+	BusinessUsersController.getAllBusinessUsersForBusinessByCompanyRole
+);
 
-router.post("/", BusinessUsersController.createBusinessUser);
-router.post("/address/operating", BusinessUsersController.addOperatingAddress);
+router.post('/', BusinessUsersController.createBusinessUser);
+router.post('/address/operating', BusinessUsersController.addOperatingAddress);
 
-router.patch("/allowance", BusinessUsersController.setAllowance);
-router.patch("/company-role", BusinessUsersController.updateCompanyRole);
-router.patch("/online", BusinessUsersController.updateBusinessUserOnlineStatus);
+router.patch('/allowance', BusinessUsersController.setAllowance);
+router.patch('/company-role', BusinessUsersController.updateCompanyRole);
+router.patch('/online', BusinessUsersController.updateBusinessUserOnlineStatus);
 
-router.delete("/:business_users_id", BusinessUsersController.removeBusinessUser);
+router.delete('/:business_users_id', BusinessUsersController.removeBusinessUser);
 
 module.exports = router;

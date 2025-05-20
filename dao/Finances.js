@@ -1,4 +1,4 @@
-const prisma = require("../prisma/prisma");
+const prisma = require('../prisma/prisma');
 
 const addFinances = async (financeData) => {
 	try {
@@ -6,7 +6,7 @@ const addFinances = async (financeData) => {
 			data: financeData,
 		});
 	} catch (error) {
-		console.error("Error adding finances:", error);
+		console.error('Error adding finances:', error);
 		throw new Error(error);
 	}
 };
@@ -15,7 +15,7 @@ const getFinancesByAccountNumber = async (account_number) => {
 	try {
 		return prisma.finances.findFirst({
 			where: {
-				account_number: account_number
+				account_number: account_number,
 			},
 		});
 	} catch (error) {
@@ -29,7 +29,7 @@ const getFinancesById = async (finance_id) => {
 			where: { finance_id },
 		});
 	} catch (error) {
-		console.error("Error retrieving finances:", error);
+		console.error('Error retrieving finances:', error);
 		throw new Error(error);
 	}
 };
@@ -41,11 +41,10 @@ const updateFinances = async (finance_id, updateData) => {
 			data: updateData,
 		});
 	} catch (error) {
-		console.error("Error updating finances:", error);
+		console.error('Error updating finances:', error);
 		throw new Error(error);
 	}
 };
-
 
 const updateAccountHolder = async (finance_id, accountHolder) => {
 	try {
@@ -54,7 +53,7 @@ const updateAccountHolder = async (finance_id, accountHolder) => {
 			data: { account_holder: accountHolder },
 		});
 	} catch (error) {
-		console.error("Error updating account holder:", error);
+		console.error('Error updating account holder:', error);
 		throw new Error(error);
 	}
 };
@@ -66,7 +65,7 @@ const updateAccountNumber = async (finance_id, accountNumber) => {
 			data: { account_number: accountNumber },
 		});
 	} catch (error) {
-		console.error("Error updating account number:", error);
+		console.error('Error updating account number:', error);
 		throw new Error(error);
 	}
 };
@@ -78,7 +77,7 @@ const updateBankName = async (finance_id, bankName) => {
 			data: { bank_name: bankName },
 		});
 	} catch (error) {
-		console.error("Error updating bank name:", error);
+		console.error('Error updating bank name:', error);
 		throw new Error(error);
 	}
 };
@@ -90,7 +89,7 @@ const updatePaymentPreferences = async (finance_id, paymentPreferences) => {
 			data: { payment_preferences: paymentPreferences },
 		});
 	} catch (error) {
-		console.error("Error updating payment preferences:", error);
+		console.error('Error updating payment preferences:', error);
 		throw new Error(error);
 	}
 };
@@ -101,7 +100,7 @@ const deleteFinances = async (finance_id) => {
 			where: { finance_id },
 		});
 	} catch (error) {
-		console.error("Error deleting finances:", error);
+		console.error('Error deleting finances:', error);
 		throw new Error(error);
 	}
 };
@@ -113,13 +112,13 @@ const linkFinancesToBusiness = async (businessId, financeId) => {
 			data: {
 				finances: {
 					connect: {
-						finance_id: financeId
-					}
-				}
+						finance_id: financeId,
+					},
+				},
 			},
 		});
 	} catch (error) {
-		console.error("Error linking finances to business:", error);
+		console.error('Error linking finances to business:', error);
 		throw new Error(error);
 	}
 };
@@ -130,12 +129,12 @@ const unlinkFinancesFromBusiness = async (businessId) => {
 			where: { business_id: businessId },
 			data: {
 				finances: {
-					disconnect: true
-				}
+					disconnect: true,
+				},
 			},
 		});
 	} catch (error) {
-		console.error("Error unlinking finances from business:", error);
+		console.error('Error unlinking finances from business:', error);
 		throw new Error(error);
 	}
 };
@@ -144,7 +143,7 @@ const getFinanceRecordByBusinessId = async (business_id) => {
 	try {
 		const business = await prisma.business.findUnique({
 			where: { business_id },
-			include: { finances: true }
+			include: { finances: true },
 		});
 
 		if (!business) {
@@ -156,10 +155,7 @@ const getFinanceRecordByBusinessId = async (business_id) => {
 		console.error('Error retrieving finances information:', error);
 		throw error;
 	}
-}
-
-
-
+};
 
 module.exports = {
 	addFinances,
@@ -173,5 +169,5 @@ module.exports = {
 	unlinkFinancesFromBusiness,
 	updatePaymentPreferences,
 	deleteFinances,
-	getFinanceRecordByBusinessId
+	getFinanceRecordByBusinessId,
 };

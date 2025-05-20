@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const DocumentsController = require("../../controllers/DocumentsController");
-const { deleteDocumentsAndFilesByDocumentId } = require("../../controllers/MenuController");
+const DocumentsController = require('../../controllers/DocumentsController');
+const { deleteDocumentsAndFilesByDocumentId } = require('../../controllers/MenuController');
 
 router.get('/', DocumentsController.listDocuments);
 router.get('/:documentId', DocumentsController.getDocumentById);
@@ -15,7 +15,10 @@ router.get('/type/:documentType', DocumentsController.getDocumentsByDocumentType
 router.get('/business/:business_id/type/:document_type', DocumentsController.getDocumentsForBusinessByDocumentType);
 router.get('/user/type/:document_type', DocumentsController.getDocumentsForUserByDocumentType);
 router.get('/drivers/:driverId/type/:documentType', DocumentsController.getDocumentsForDriverByDocumentType);
-router.get('/deliveryPersons/:deliveryPersonId/type/:documentType', DocumentsController.getDocumentsForDeliveryPersonByDocumentType);
+router.get(
+	'/deliveryPersons/:deliveryPersonId/type/:documentType',
+	DocumentsController.getDocumentsForDeliveryPersonByDocumentType
+);
 router.get('/vehicles/:vehicleId/type/:documentType', DocumentsController.getDocumentsForVehicleByDocumentType);
 
 router.post('/create/user/:user_id', DocumentsController.createUserDocument);
