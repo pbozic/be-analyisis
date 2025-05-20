@@ -1027,7 +1027,17 @@ async function getActiveOrderIdsForUser(user_id, scheduled = true) {
         throw new Error(e.message);
     }
 }
-
+async function deleteOrderSent(order_id, taxi_order_sent_id) {
+    try {
+        return prisma.taxi_order_sent.delete({
+            where: {
+                taxi_order_sent_id: taxi_order_sent_id
+            }
+        });
+    } catch (e) {
+        throw new Error(e);
+    }
+}
 module.exports = {
     getOrder,
     getOrdersByDriverId,
@@ -1055,5 +1065,6 @@ module.exports = {
     getAcceptedOrders,
     userActiveOrders,
     getActiveOrderIdsForUser,
-    getDeliveryOrdersByDriverId
+    getDeliveryOrdersByDriverId,
+    deleteOrderSent
 };
