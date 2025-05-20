@@ -1022,15 +1022,15 @@ const getPurchaseOrderLimit = async (business_id) => {
 				payment: true
 			}
 		});
-		const totalTaxiOrders = taxiOrders.reduce((acc, order) => acc + parseFloat(order.payment.price), 0);
+		const totalTaxiOrders = taxiOrders.reduce((acc, order) => acc + (parseFloat(order.payment.price) || 0), 0);
+		console.log("Total taxi orders:", totalTaxiOrders);
 		if (business.purchase_order_limit_amount > 0) {
-			return totalTaxiOrders > business.purchase_order_limit_amount ? business.purchase_order_limit_amount - totalTaxiOrders : 0;
-		} else {
-			return 0;
+			return Math.max(0, business.purchase_order_limit_amount - totalTaxiOrders);
 		}
+		return 0;
 	} catch (error) {
 		console.error("Error retrieving purchase order limit:", error);
-		throw new Error(error);
+		throw error;
 	}
 }
 
