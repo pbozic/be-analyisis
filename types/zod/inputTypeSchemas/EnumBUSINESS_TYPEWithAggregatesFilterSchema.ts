@@ -6,14 +6,24 @@ import { NestedEnumBUSINESS_TYPEWithAggregatesFilterSchema } from './NestedEnumB
 import { NestedIntFilterSchema } from './NestedIntFilterSchema';
 import { NestedEnumBUSINESS_TYPEFilterSchema } from './NestedEnumBUSINESS_TYPEFilterSchema';
 
-export const EnumBUSINESS_TYPEWithAggregatesFilterSchema: z.ZodType<Prisma.EnumBUSINESS_TYPEWithAggregatesFilter> = z.object({
-  equals: z.lazy(() => BUSINESS_TYPESchema).optional(),
-  in: z.lazy(() => BUSINESS_TYPESchema).array().optional(),
-  notIn: z.lazy(() => BUSINESS_TYPESchema).array().optional(),
-  not: z.union([ z.lazy(() => BUSINESS_TYPESchema),z.lazy(() => NestedEnumBUSINESS_TYPEWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedEnumBUSINESS_TYPEFilterSchema).optional(),
-  _max: z.lazy(() => NestedEnumBUSINESS_TYPEFilterSchema).optional()
-}).strict();
+export const EnumBUSINESS_TYPEWithAggregatesFilterSchema: z.ZodType<Prisma.EnumBUSINESS_TYPEWithAggregatesFilter> = z
+	.object({
+		equals: z.lazy(() => BUSINESS_TYPESchema).optional(),
+		in: z
+			.lazy(() => BUSINESS_TYPESchema)
+			.array()
+			.optional(),
+		notIn: z
+			.lazy(() => BUSINESS_TYPESchema)
+			.array()
+			.optional(),
+		not: z
+			.union([z.lazy(() => BUSINESS_TYPESchema), z.lazy(() => NestedEnumBUSINESS_TYPEWithAggregatesFilterSchema)])
+			.optional(),
+		_count: z.lazy(() => NestedIntFilterSchema).optional(),
+		_min: z.lazy(() => NestedEnumBUSINESS_TYPEFilterSchema).optional(),
+		_max: z.lazy(() => NestedEnumBUSINESS_TYPEFilterSchema).optional(),
+	})
+	.strict();
 
 export default EnumBUSINESS_TYPEWithAggregatesFilterSchema;

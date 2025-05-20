@@ -7,11 +7,31 @@ import { reviewsCreateOrConnectWithoutReviewableInputSchema } from './reviewsCre
 import { reviewsCreateManyReviewableInputEnvelopeSchema } from './reviewsCreateManyReviewableInputEnvelopeSchema';
 import { reviewsWhereUniqueInputSchema } from './reviewsWhereUniqueInputSchema';
 
-export const reviewsUncheckedCreateNestedManyWithoutReviewableInputSchema: z.ZodType<Prisma.reviewsUncheckedCreateNestedManyWithoutReviewableInput> = z.object({
-  create: z.union([ z.lazy(() => reviewsCreateWithoutReviewableInputSchema),z.lazy(() => reviewsCreateWithoutReviewableInputSchema).array(),z.lazy(() => reviewsUncheckedCreateWithoutReviewableInputSchema),z.lazy(() => reviewsUncheckedCreateWithoutReviewableInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => reviewsCreateOrConnectWithoutReviewableInputSchema),z.lazy(() => reviewsCreateOrConnectWithoutReviewableInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => reviewsCreateManyReviewableInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => reviewsWhereUniqueInputSchema),z.lazy(() => reviewsWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const reviewsUncheckedCreateNestedManyWithoutReviewableInputSchema: z.ZodType<Prisma.reviewsUncheckedCreateNestedManyWithoutReviewableInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => reviewsCreateWithoutReviewableInputSchema),
+					z.lazy(() => reviewsCreateWithoutReviewableInputSchema).array(),
+					z.lazy(() => reviewsUncheckedCreateWithoutReviewableInputSchema),
+					z.lazy(() => reviewsUncheckedCreateWithoutReviewableInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => reviewsCreateOrConnectWithoutReviewableInputSchema),
+					z.lazy(() => reviewsCreateOrConnectWithoutReviewableInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => reviewsCreateManyReviewableInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => reviewsWhereUniqueInputSchema),
+					z.lazy(() => reviewsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default reviewsUncheckedCreateNestedManyWithoutReviewableInputSchema;

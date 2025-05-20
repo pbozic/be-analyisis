@@ -1,25 +1,25 @@
 type: object
 properties:
-  lost_item_id:
-    type: string
-  user_id:
-    type: string
-  description:
-    type: string
-  documents:
-    type: array
-    items:
-      $ref: ./documents.yaml
-  found:
-    type: boolean
-  created_at:
-    type: string
-  updated_at:
-    type: string
-  user:
-    $ref: ./users.yaml
+    lost_item_id:
+        type: string
+    user_id:
+        type: string
+    description:
+        type: string
+    documents:
+        type: array
+        items:
+            $ref: ./documents.yaml
+    found:
+        type: boolean
+    created_at:
+        type: string
+    updated_at:
+        type: string
+    user:
+        $ref: ./users.yaml
 required:
-  - lost_item_id
-  - description
-  - created_at
-  - updated_at
+    - lost_item_id
+    - description
+    - created_at
+    - updated_at

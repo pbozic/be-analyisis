@@ -1,40 +1,40 @@
 type: object
 properties:
-  vehicle_id:
-    type: string
-  business_id:
-    type: string
-  active:
-    type: boolean
-  make:
-    type: string
-  model:
-    type: string
-  color:
-    type: string
-  license_plate:
-    type: string
-  created_at:
-    type: string
-  updated_at:
-    type: string
-  driver_id:
-    type: string
-  driver:
-    $ref: ./drivers.yaml
-  documents:
-    type: array
-    items:
-      $ref: ./documents.yaml
-  delivery_driver_id:
-    type: string
-  delivery_driver:
-    $ref: ./delivery_drivers.yaml
-  vehicle_specification_id:
-    type: string
-  vehicle_specification:
-    $ref: ./vehicle_specifications.yaml
+    vehicle_id:
+        type: string
+    business_id:
+        type: string
+    active:
+        type: boolean
+    make:
+        type: string
+    model:
+        type: string
+    color:
+        type: string
+    license_plate:
+        type: string
+    created_at:
+        type: string
+    updated_at:
+        type: string
+    driver_id:
+        type: string
+    driver:
+        $ref: ./drivers.yaml
+    documents:
+        type: array
+        items:
+            $ref: ./documents.yaml
+    delivery_driver_id:
+        type: string
+    delivery_driver:
+        $ref: ./delivery_drivers.yaml
+    vehicle_specification_id:
+        type: string
+    vehicle_specification:
+        $ref: ./vehicle_specifications.yaml
 required:
-  - vehicle_id
-  - created_at
-  - updated_at
+    - vehicle_id
+    - created_at
+    - updated_at

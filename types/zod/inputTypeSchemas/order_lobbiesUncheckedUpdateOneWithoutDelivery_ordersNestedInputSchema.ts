@@ -11,14 +11,28 @@ import { order_lobbiesUpdateToOneWithWhereWithoutDelivery_ordersInputSchema } fr
 import { order_lobbiesUpdateWithoutDelivery_ordersInputSchema } from './order_lobbiesUpdateWithoutDelivery_ordersInputSchema';
 import { order_lobbiesUncheckedUpdateWithoutDelivery_ordersInputSchema } from './order_lobbiesUncheckedUpdateWithoutDelivery_ordersInputSchema';
 
-export const order_lobbiesUncheckedUpdateOneWithoutDelivery_ordersNestedInputSchema: z.ZodType<Prisma.order_lobbiesUncheckedUpdateOneWithoutDelivery_ordersNestedInput> = z.object({
-  create: z.union([ z.lazy(() => order_lobbiesCreateWithoutDelivery_ordersInputSchema),z.lazy(() => order_lobbiesUncheckedCreateWithoutDelivery_ordersInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => order_lobbiesCreateOrConnectWithoutDelivery_ordersInputSchema).optional(),
-  upsert: z.lazy(() => order_lobbiesUpsertWithoutDelivery_ordersInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => order_lobbiesWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => order_lobbiesWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => order_lobbiesWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => order_lobbiesUpdateToOneWithWhereWithoutDelivery_ordersInputSchema),z.lazy(() => order_lobbiesUpdateWithoutDelivery_ordersInputSchema),z.lazy(() => order_lobbiesUncheckedUpdateWithoutDelivery_ordersInputSchema) ]).optional(),
-}).strict();
+export const order_lobbiesUncheckedUpdateOneWithoutDelivery_ordersNestedInputSchema: z.ZodType<Prisma.order_lobbiesUncheckedUpdateOneWithoutDelivery_ordersNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => order_lobbiesCreateWithoutDelivery_ordersInputSchema),
+					z.lazy(() => order_lobbiesUncheckedCreateWithoutDelivery_ordersInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => order_lobbiesCreateOrConnectWithoutDelivery_ordersInputSchema).optional(),
+			upsert: z.lazy(() => order_lobbiesUpsertWithoutDelivery_ordersInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => order_lobbiesWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => order_lobbiesWhereInputSchema)]).optional(),
+			connect: z.lazy(() => order_lobbiesWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => order_lobbiesUpdateToOneWithWhereWithoutDelivery_ordersInputSchema),
+					z.lazy(() => order_lobbiesUpdateWithoutDelivery_ordersInputSchema),
+					z.lazy(() => order_lobbiesUncheckedUpdateWithoutDelivery_ordersInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default order_lobbiesUncheckedUpdateOneWithoutDelivery_ordersNestedInputSchema;

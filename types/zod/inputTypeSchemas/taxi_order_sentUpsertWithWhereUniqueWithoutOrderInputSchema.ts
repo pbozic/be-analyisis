@@ -7,10 +7,19 @@ import { taxi_order_sentUncheckedUpdateWithoutOrderInputSchema } from './taxi_or
 import { taxi_order_sentCreateWithoutOrderInputSchema } from './taxi_order_sentCreateWithoutOrderInputSchema';
 import { taxi_order_sentUncheckedCreateWithoutOrderInputSchema } from './taxi_order_sentUncheckedCreateWithoutOrderInputSchema';
 
-export const taxi_order_sentUpsertWithWhereUniqueWithoutOrderInputSchema: z.ZodType<Prisma.taxi_order_sentUpsertWithWhereUniqueWithoutOrderInput> = z.object({
-  where: z.lazy(() => taxi_order_sentWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => taxi_order_sentUpdateWithoutOrderInputSchema),z.lazy(() => taxi_order_sentUncheckedUpdateWithoutOrderInputSchema) ]),
-  create: z.union([ z.lazy(() => taxi_order_sentCreateWithoutOrderInputSchema),z.lazy(() => taxi_order_sentUncheckedCreateWithoutOrderInputSchema) ]),
-}).strict();
+export const taxi_order_sentUpsertWithWhereUniqueWithoutOrderInputSchema: z.ZodType<Prisma.taxi_order_sentUpsertWithWhereUniqueWithoutOrderInput> =
+	z
+		.object({
+			where: z.lazy(() => taxi_order_sentWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => taxi_order_sentUpdateWithoutOrderInputSchema),
+				z.lazy(() => taxi_order_sentUncheckedUpdateWithoutOrderInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => taxi_order_sentCreateWithoutOrderInputSchema),
+				z.lazy(() => taxi_order_sentUncheckedCreateWithoutOrderInputSchema),
+			]),
+		})
+		.strict();
 
 export default taxi_order_sentUpsertWithWhereUniqueWithoutOrderInputSchema;

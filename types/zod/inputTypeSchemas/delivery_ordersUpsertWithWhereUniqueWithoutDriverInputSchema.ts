@@ -7,10 +7,19 @@ import { delivery_ordersUncheckedUpdateWithoutDriverInputSchema } from './delive
 import { delivery_ordersCreateWithoutDriverInputSchema } from './delivery_ordersCreateWithoutDriverInputSchema';
 import { delivery_ordersUncheckedCreateWithoutDriverInputSchema } from './delivery_ordersUncheckedCreateWithoutDriverInputSchema';
 
-export const delivery_ordersUpsertWithWhereUniqueWithoutDriverInputSchema: z.ZodType<Prisma.delivery_ordersUpsertWithWhereUniqueWithoutDriverInput> = z.object({
-  where: z.lazy(() => delivery_ordersWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => delivery_ordersUpdateWithoutDriverInputSchema),z.lazy(() => delivery_ordersUncheckedUpdateWithoutDriverInputSchema) ]),
-  create: z.union([ z.lazy(() => delivery_ordersCreateWithoutDriverInputSchema),z.lazy(() => delivery_ordersUncheckedCreateWithoutDriverInputSchema) ]),
-}).strict();
+export const delivery_ordersUpsertWithWhereUniqueWithoutDriverInputSchema: z.ZodType<Prisma.delivery_ordersUpsertWithWhereUniqueWithoutDriverInput> =
+	z
+		.object({
+			where: z.lazy(() => delivery_ordersWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => delivery_ordersUpdateWithoutDriverInputSchema),
+				z.lazy(() => delivery_ordersUncheckedUpdateWithoutDriverInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => delivery_ordersCreateWithoutDriverInputSchema),
+				z.lazy(() => delivery_ordersUncheckedCreateWithoutDriverInputSchema),
+			]),
+		})
+		.strict();
 
 export default delivery_ordersUpsertWithWhereUniqueWithoutDriverInputSchema;

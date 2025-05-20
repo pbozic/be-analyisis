@@ -7,10 +7,18 @@ import { usersCreateWithoutDelivery_driverInputSchema } from './usersCreateWitho
 import { usersUncheckedCreateWithoutDelivery_driverInputSchema } from './usersUncheckedCreateWithoutDelivery_driverInputSchema';
 import { usersWhereInputSchema } from './usersWhereInputSchema';
 
-export const usersUpsertWithoutDelivery_driverInputSchema: z.ZodType<Prisma.usersUpsertWithoutDelivery_driverInput> = z.object({
-  update: z.union([ z.lazy(() => usersUpdateWithoutDelivery_driverInputSchema),z.lazy(() => usersUncheckedUpdateWithoutDelivery_driverInputSchema) ]),
-  create: z.union([ z.lazy(() => usersCreateWithoutDelivery_driverInputSchema),z.lazy(() => usersUncheckedCreateWithoutDelivery_driverInputSchema) ]),
-  where: z.lazy(() => usersWhereInputSchema).optional()
-}).strict();
+export const usersUpsertWithoutDelivery_driverInputSchema: z.ZodType<Prisma.usersUpsertWithoutDelivery_driverInput> = z
+	.object({
+		update: z.union([
+			z.lazy(() => usersUpdateWithoutDelivery_driverInputSchema),
+			z.lazy(() => usersUncheckedUpdateWithoutDelivery_driverInputSchema),
+		]),
+		create: z.union([
+			z.lazy(() => usersCreateWithoutDelivery_driverInputSchema),
+			z.lazy(() => usersUncheckedCreateWithoutDelivery_driverInputSchema),
+		]),
+		where: z.lazy(() => usersWhereInputSchema).optional(),
+	})
+	.strict();
 
 export default usersUpsertWithoutDelivery_driverInputSchema;

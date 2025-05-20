@@ -1,27 +1,31 @@
 import { z } from 'zod';
 import type { Prisma } from '@prisma/client';
-import { reviewableIncludeSchema } from '../inputTypeSchemas/reviewableIncludeSchema'
-import { reviewableCreateInputSchema } from '../inputTypeSchemas/reviewableCreateInputSchema'
-import { reviewableUncheckedCreateInputSchema } from '../inputTypeSchemas/reviewableUncheckedCreateInputSchema'
-import { reviewsFindManyArgsSchema } from "../outputTypeSchemas/reviewsFindManyArgsSchema"
-import { usersFindManyArgsSchema } from "../outputTypeSchemas/usersFindManyArgsSchema"
-import { businessFindManyArgsSchema } from "../outputTypeSchemas/businessFindManyArgsSchema"
-import { ReviewableCountOutputTypeArgsSchema } from "../outputTypeSchemas/ReviewableCountOutputTypeArgsSchema"
+import { reviewableIncludeSchema } from '../inputTypeSchemas/reviewableIncludeSchema';
+import { reviewableCreateInputSchema } from '../inputTypeSchemas/reviewableCreateInputSchema';
+import { reviewableUncheckedCreateInputSchema } from '../inputTypeSchemas/reviewableUncheckedCreateInputSchema';
+import { reviewsFindManyArgsSchema } from '../outputTypeSchemas/reviewsFindManyArgsSchema';
+import { usersFindManyArgsSchema } from '../outputTypeSchemas/usersFindManyArgsSchema';
+import { businessFindManyArgsSchema } from '../outputTypeSchemas/businessFindManyArgsSchema';
+import { ReviewableCountOutputTypeArgsSchema } from '../outputTypeSchemas/ReviewableCountOutputTypeArgsSchema';
 // Select schema needs to be in file to prevent circular imports
 //------------------------------------------------------
 
-export const reviewableSelectSchema: z.ZodType<Prisma.reviewableSelect> = z.object({
-  reviewable_id: z.boolean().optional(),
-  reviews: z.union([z.boolean(),z.lazy(() => reviewsFindManyArgsSchema)]).optional(),
-  user: z.union([z.boolean(),z.lazy(() => usersFindManyArgsSchema)]).optional(),
-  business: z.union([z.boolean(),z.lazy(() => businessFindManyArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => ReviewableCountOutputTypeArgsSchema)]).optional(),
-}).strict()
+export const reviewableSelectSchema: z.ZodType<Prisma.reviewableSelect> = z
+	.object({
+		reviewable_id: z.boolean().optional(),
+		reviews: z.union([z.boolean(), z.lazy(() => reviewsFindManyArgsSchema)]).optional(),
+		user: z.union([z.boolean(), z.lazy(() => usersFindManyArgsSchema)]).optional(),
+		business: z.union([z.boolean(), z.lazy(() => businessFindManyArgsSchema)]).optional(),
+		_count: z.union([z.boolean(), z.lazy(() => ReviewableCountOutputTypeArgsSchema)]).optional(),
+	})
+	.strict();
 
-export const reviewableCreateArgsSchema: z.ZodType<Prisma.reviewableCreateArgs> = z.object({
-  select: reviewableSelectSchema.optional(),
-  include: reviewableIncludeSchema.optional(),
-  data: z.union([ reviewableCreateInputSchema,reviewableUncheckedCreateInputSchema ]).optional(),
-}).strict() ;
+export const reviewableCreateArgsSchema: z.ZodType<Prisma.reviewableCreateArgs> = z
+	.object({
+		select: reviewableSelectSchema.optional(),
+		include: reviewableIncludeSchema.optional(),
+		data: z.union([reviewableCreateInputSchema, reviewableUncheckedCreateInputSchema]).optional(),
+	})
+	.strict();
 
 export default reviewableCreateArgsSchema;

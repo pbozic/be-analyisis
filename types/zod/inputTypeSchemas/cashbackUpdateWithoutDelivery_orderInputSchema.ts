@@ -15,18 +15,45 @@ import { NullableDateTimeFieldUpdateOperationsInputSchema } from './NullableDate
 import { usersUpdateOneRequiredWithoutCashbackNestedInputSchema } from './usersUpdateOneRequiredWithoutCashbackNestedInputSchema';
 import { taxi_ordersUpdateOneWithoutCashbackNestedInputSchema } from './taxi_ordersUpdateOneWithoutCashbackNestedInputSchema';
 
-export const cashbackUpdateWithoutDelivery_orderInputSchema: z.ZodType<Prisma.cashbackUpdateWithoutDelivery_orderInput> = z.object({
-  cashback_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  type: z.union([ z.lazy(() => CASHBACK_TYPESchema),z.lazy(() => EnumCASHBACK_TYPEFieldUpdateOperationsInputSchema) ]).optional(),
-  source: z.union([ z.lazy(() => CASHBACK_SOURCESchema),z.lazy(() => EnumCASHBACK_SOURCEFieldUpdateOperationsInputSchema) ]).optional(),
-  status: z.union([ z.lazy(() => CASHBACK_STATUSSchema),z.lazy(() => EnumCASHBACK_STATUSFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  earned_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  expires_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  converted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  user: z.lazy(() => usersUpdateOneRequiredWithoutCashbackNestedInputSchema).optional(),
-  taxi_order: z.lazy(() => taxi_ordersUpdateOneWithoutCashbackNestedInputSchema).optional()
-}).strict();
+export const cashbackUpdateWithoutDelivery_orderInputSchema: z.ZodType<Prisma.cashbackUpdateWithoutDelivery_orderInput> =
+	z
+		.object({
+			cashback_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			amount: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputSchema)]).optional(),
+			type: z
+				.union([
+					z.lazy(() => CASHBACK_TYPESchema),
+					z.lazy(() => EnumCASHBACK_TYPEFieldUpdateOperationsInputSchema),
+				])
+				.optional(),
+			source: z
+				.union([
+					z.lazy(() => CASHBACK_SOURCESchema),
+					z.lazy(() => EnumCASHBACK_SOURCEFieldUpdateOperationsInputSchema),
+				])
+				.optional(),
+			status: z
+				.union([
+					z.lazy(() => CASHBACK_STATUSSchema),
+					z.lazy(() => EnumCASHBACK_STATUSFieldUpdateOperationsInputSchema),
+				])
+				.optional(),
+			description: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			earned_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			expires_at: z
+				.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			converted_at: z
+				.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			user: z.lazy(() => usersUpdateOneRequiredWithoutCashbackNestedInputSchema).optional(),
+			taxi_order: z.lazy(() => taxi_ordersUpdateOneWithoutCashbackNestedInputSchema).optional(),
+		})
+		.strict();
 
 export default cashbackUpdateWithoutDelivery_orderInputSchema;

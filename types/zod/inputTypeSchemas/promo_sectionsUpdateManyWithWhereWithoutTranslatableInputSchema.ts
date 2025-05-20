@@ -5,9 +5,15 @@ import { promo_sectionsScalarWhereInputSchema } from './promo_sectionsScalarWher
 import { promo_sectionsUpdateManyMutationInputSchema } from './promo_sectionsUpdateManyMutationInputSchema';
 import { promo_sectionsUncheckedUpdateManyWithoutTranslatableInputSchema } from './promo_sectionsUncheckedUpdateManyWithoutTranslatableInputSchema';
 
-export const promo_sectionsUpdateManyWithWhereWithoutTranslatableInputSchema: z.ZodType<Prisma.promo_sectionsUpdateManyWithWhereWithoutTranslatableInput> = z.object({
-  where: z.lazy(() => promo_sectionsScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => promo_sectionsUpdateManyMutationInputSchema),z.lazy(() => promo_sectionsUncheckedUpdateManyWithoutTranslatableInputSchema) ]),
-}).strict();
+export const promo_sectionsUpdateManyWithWhereWithoutTranslatableInputSchema: z.ZodType<Prisma.promo_sectionsUpdateManyWithWhereWithoutTranslatableInput> =
+	z
+		.object({
+			where: z.lazy(() => promo_sectionsScalarWhereInputSchema),
+			data: z.union([
+				z.lazy(() => promo_sectionsUpdateManyMutationInputSchema),
+				z.lazy(() => promo_sectionsUncheckedUpdateManyWithoutTranslatableInputSchema),
+			]),
+		})
+		.strict();
 
 export default promo_sectionsUpdateManyWithWhereWithoutTranslatableInputSchema;

@@ -10,12 +10,26 @@ import { translatableUpdateToOneWithWhereWithoutCategoriesInputSchema } from './
 import { translatableUpdateWithoutCategoriesInputSchema } from './translatableUpdateWithoutCategoriesInputSchema';
 import { translatableUncheckedUpdateWithoutCategoriesInputSchema } from './translatableUncheckedUpdateWithoutCategoriesInputSchema';
 
-export const translatableUpdateOneRequiredWithoutCategoriesNestedInputSchema: z.ZodType<Prisma.translatableUpdateOneRequiredWithoutCategoriesNestedInput> = z.object({
-  create: z.union([ z.lazy(() => translatableCreateWithoutCategoriesInputSchema),z.lazy(() => translatableUncheckedCreateWithoutCategoriesInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => translatableCreateOrConnectWithoutCategoriesInputSchema).optional(),
-  upsert: z.lazy(() => translatableUpsertWithoutCategoriesInputSchema).optional(),
-  connect: z.lazy(() => translatableWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => translatableUpdateToOneWithWhereWithoutCategoriesInputSchema),z.lazy(() => translatableUpdateWithoutCategoriesInputSchema),z.lazy(() => translatableUncheckedUpdateWithoutCategoriesInputSchema) ]).optional(),
-}).strict();
+export const translatableUpdateOneRequiredWithoutCategoriesNestedInputSchema: z.ZodType<Prisma.translatableUpdateOneRequiredWithoutCategoriesNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => translatableCreateWithoutCategoriesInputSchema),
+					z.lazy(() => translatableUncheckedCreateWithoutCategoriesInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => translatableCreateOrConnectWithoutCategoriesInputSchema).optional(),
+			upsert: z.lazy(() => translatableUpsertWithoutCategoriesInputSchema).optional(),
+			connect: z.lazy(() => translatableWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => translatableUpdateToOneWithWhereWithoutCategoriesInputSchema),
+					z.lazy(() => translatableUpdateWithoutCategoriesInputSchema),
+					z.lazy(() => translatableUncheckedUpdateWithoutCategoriesInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default translatableUpdateOneRequiredWithoutCategoriesNestedInputSchema;

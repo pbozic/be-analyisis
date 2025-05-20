@@ -5,9 +5,15 @@ import { translationsWhereUniqueInputSchema } from './translationsWhereUniqueInp
 import { translationsCreateWithoutTranslatableInputSchema } from './translationsCreateWithoutTranslatableInputSchema';
 import { translationsUncheckedCreateWithoutTranslatableInputSchema } from './translationsUncheckedCreateWithoutTranslatableInputSchema';
 
-export const translationsCreateOrConnectWithoutTranslatableInputSchema: z.ZodType<Prisma.translationsCreateOrConnectWithoutTranslatableInput> = z.object({
-  where: z.lazy(() => translationsWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => translationsCreateWithoutTranslatableInputSchema),z.lazy(() => translationsUncheckedCreateWithoutTranslatableInputSchema) ]),
-}).strict();
+export const translationsCreateOrConnectWithoutTranslatableInputSchema: z.ZodType<Prisma.translationsCreateOrConnectWithoutTranslatableInput> =
+	z
+		.object({
+			where: z.lazy(() => translationsWhereUniqueInputSchema),
+			create: z.union([
+				z.lazy(() => translationsCreateWithoutTranslatableInputSchema),
+				z.lazy(() => translationsUncheckedCreateWithoutTranslatableInputSchema),
+			]),
+		})
+		.strict();
 
 export default translationsCreateOrConnectWithoutTranslatableInputSchema;

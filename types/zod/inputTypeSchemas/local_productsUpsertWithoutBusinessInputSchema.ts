@@ -7,10 +7,19 @@ import { local_productsCreateWithoutBusinessInputSchema } from './local_products
 import { local_productsUncheckedCreateWithoutBusinessInputSchema } from './local_productsUncheckedCreateWithoutBusinessInputSchema';
 import { local_productsWhereInputSchema } from './local_productsWhereInputSchema';
 
-export const local_productsUpsertWithoutBusinessInputSchema: z.ZodType<Prisma.local_productsUpsertWithoutBusinessInput> = z.object({
-  update: z.union([ z.lazy(() => local_productsUpdateWithoutBusinessInputSchema),z.lazy(() => local_productsUncheckedUpdateWithoutBusinessInputSchema) ]),
-  create: z.union([ z.lazy(() => local_productsCreateWithoutBusinessInputSchema),z.lazy(() => local_productsUncheckedCreateWithoutBusinessInputSchema) ]),
-  where: z.lazy(() => local_productsWhereInputSchema).optional()
-}).strict();
+export const local_productsUpsertWithoutBusinessInputSchema: z.ZodType<Prisma.local_productsUpsertWithoutBusinessInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => local_productsUpdateWithoutBusinessInputSchema),
+				z.lazy(() => local_productsUncheckedUpdateWithoutBusinessInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => local_productsCreateWithoutBusinessInputSchema),
+				z.lazy(() => local_productsUncheckedCreateWithoutBusinessInputSchema),
+			]),
+			where: z.lazy(() => local_productsWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default local_productsUpsertWithoutBusinessInputSchema;

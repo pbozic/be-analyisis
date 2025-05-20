@@ -5,9 +5,15 @@ import { driversWhereInputSchema } from './driversWhereInputSchema';
 import { driversUpdateWithoutVehiclesInputSchema } from './driversUpdateWithoutVehiclesInputSchema';
 import { driversUncheckedUpdateWithoutVehiclesInputSchema } from './driversUncheckedUpdateWithoutVehiclesInputSchema';
 
-export const driversUpdateToOneWithWhereWithoutVehiclesInputSchema: z.ZodType<Prisma.driversUpdateToOneWithWhereWithoutVehiclesInput> = z.object({
-  where: z.lazy(() => driversWhereInputSchema).optional(),
-  data: z.union([ z.lazy(() => driversUpdateWithoutVehiclesInputSchema),z.lazy(() => driversUncheckedUpdateWithoutVehiclesInputSchema) ]),
-}).strict();
+export const driversUpdateToOneWithWhereWithoutVehiclesInputSchema: z.ZodType<Prisma.driversUpdateToOneWithWhereWithoutVehiclesInput> =
+	z
+		.object({
+			where: z.lazy(() => driversWhereInputSchema).optional(),
+			data: z.union([
+				z.lazy(() => driversUpdateWithoutVehiclesInputSchema),
+				z.lazy(() => driversUncheckedUpdateWithoutVehiclesInputSchema),
+			]),
+		})
+		.strict();
 
 export default driversUpdateToOneWithWhereWithoutVehiclesInputSchema;

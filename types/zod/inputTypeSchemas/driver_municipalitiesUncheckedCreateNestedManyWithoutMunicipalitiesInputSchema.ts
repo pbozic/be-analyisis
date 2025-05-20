@@ -7,11 +7,31 @@ import { driver_municipalitiesCreateOrConnectWithoutMunicipalitiesInputSchema } 
 import { driver_municipalitiesCreateManyMunicipalitiesInputEnvelopeSchema } from './driver_municipalitiesCreateManyMunicipalitiesInputEnvelopeSchema';
 import { driver_municipalitiesWhereUniqueInputSchema } from './driver_municipalitiesWhereUniqueInputSchema';
 
-export const driver_municipalitiesUncheckedCreateNestedManyWithoutMunicipalitiesInputSchema: z.ZodType<Prisma.driver_municipalitiesUncheckedCreateNestedManyWithoutMunicipalitiesInput> = z.object({
-  create: z.union([ z.lazy(() => driver_municipalitiesCreateWithoutMunicipalitiesInputSchema),z.lazy(() => driver_municipalitiesCreateWithoutMunicipalitiesInputSchema).array(),z.lazy(() => driver_municipalitiesUncheckedCreateWithoutMunicipalitiesInputSchema),z.lazy(() => driver_municipalitiesUncheckedCreateWithoutMunicipalitiesInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => driver_municipalitiesCreateOrConnectWithoutMunicipalitiesInputSchema),z.lazy(() => driver_municipalitiesCreateOrConnectWithoutMunicipalitiesInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => driver_municipalitiesCreateManyMunicipalitiesInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => driver_municipalitiesWhereUniqueInputSchema),z.lazy(() => driver_municipalitiesWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const driver_municipalitiesUncheckedCreateNestedManyWithoutMunicipalitiesInputSchema: z.ZodType<Prisma.driver_municipalitiesUncheckedCreateNestedManyWithoutMunicipalitiesInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => driver_municipalitiesCreateWithoutMunicipalitiesInputSchema),
+					z.lazy(() => driver_municipalitiesCreateWithoutMunicipalitiesInputSchema).array(),
+					z.lazy(() => driver_municipalitiesUncheckedCreateWithoutMunicipalitiesInputSchema),
+					z.lazy(() => driver_municipalitiesUncheckedCreateWithoutMunicipalitiesInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => driver_municipalitiesCreateOrConnectWithoutMunicipalitiesInputSchema),
+					z.lazy(() => driver_municipalitiesCreateOrConnectWithoutMunicipalitiesInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => driver_municipalitiesCreateManyMunicipalitiesInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => driver_municipalitiesWhereUniqueInputSchema),
+					z.lazy(() => driver_municipalitiesWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default driver_municipalitiesUncheckedCreateNestedManyWithoutMunicipalitiesInputSchema;

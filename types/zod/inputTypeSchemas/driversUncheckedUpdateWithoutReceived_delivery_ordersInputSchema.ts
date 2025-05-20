@@ -19,40 +19,100 @@ import { driver_history_locationsUncheckedUpdateManyWithoutDriverNestedInputSche
 import { driver_municipalitiesUncheckedUpdateManyWithoutDriversNestedInputSchema } from './driver_municipalitiesUncheckedUpdateManyWithoutDriversNestedInputSchema';
 import { driver_activity_logsUncheckedUpdateManyWithoutDriverNestedInputSchema } from './driver_activity_logsUncheckedUpdateManyWithoutDriverNestedInputSchema';
 
-export const driversUncheckedUpdateWithoutReceived_delivery_ordersInputSchema: z.ZodType<Prisma.driversUncheckedUpdateWithoutReceived_delivery_ordersInput> = z.object({
-  driver_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  business_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  online: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  on_order: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  working_hours: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  ride_requirements: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  user_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  current_vehicle_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  last_used_vehicle_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  location: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  delivery_timeline: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  last_ping_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  is_inactive: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  transfer_requirements: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  regions: z.union([ z.lazy(() => driversUpdateregionsInputSchema),z.string().array() ]).optional(),
-  handles_taxi_orders: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  handles_transfer_orders: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  handles_delivery_orders: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  taxi_orders_toggled: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  transfer_orders_toggled: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  delivery_orders_toggled: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  partner_cash_balance: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  come_to_work_last_sent_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  vehicles: z.lazy(() => vehicle_driversUncheckedUpdateManyWithoutDriverNestedInputSchema).optional(),
-  orders: z.lazy(() => taxi_ordersUncheckedUpdateManyWithoutDriverNestedInputSchema).optional(),
-  received_orders: z.lazy(() => taxi_order_sentUncheckedUpdateManyWithoutDriverNestedInputSchema).optional(),
-  delivery_orders: z.lazy(() => delivery_ordersUncheckedUpdateManyWithoutDriverNestedInputSchema).optional(),
-  documents: z.lazy(() => documentsUncheckedUpdateManyWithoutDriversNestedInputSchema).optional(),
-  driver_history_locations: z.lazy(() => driver_history_locationsUncheckedUpdateManyWithoutDriverNestedInputSchema).optional(),
-  driver_municipalities: z.lazy(() => driver_municipalitiesUncheckedUpdateManyWithoutDriversNestedInputSchema).optional(),
-  activity_logs: z.lazy(() => driver_activity_logsUncheckedUpdateManyWithoutDriverNestedInputSchema).optional()
-}).strict();
+export const driversUncheckedUpdateWithoutReceived_delivery_ordersInputSchema: z.ZodType<Prisma.driversUncheckedUpdateWithoutReceived_delivery_ordersInput> =
+	z
+		.object({
+			driver_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			business_id: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			online: z
+				.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			on_order: z
+				.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			working_hours: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			ride_requirements: z
+				.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema])
+				.optional(),
+			created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			user_id: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			current_vehicle_id: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			last_used_vehicle_id: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			location: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			delivery_timeline: z
+				.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema])
+				.optional(),
+			last_ping_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			is_inactive: z
+				.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			transfer_requirements: z
+				.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema])
+				.optional(),
+			regions: z.union([z.lazy(() => driversUpdateregionsInputSchema), z.string().array()]).optional(),
+			handles_taxi_orders: z
+				.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			handles_transfer_orders: z
+				.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			handles_delivery_orders: z
+				.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			taxi_orders_toggled: z
+				.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			transfer_orders_toggled: z
+				.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			delivery_orders_toggled: z
+				.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			partner_cash_balance: z
+				.union([z.number(), z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			come_to_work_last_sent_at: z
+				.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			vehicles: z.lazy(() => vehicle_driversUncheckedUpdateManyWithoutDriverNestedInputSchema).optional(),
+			orders: z.lazy(() => taxi_ordersUncheckedUpdateManyWithoutDriverNestedInputSchema).optional(),
+			received_orders: z.lazy(() => taxi_order_sentUncheckedUpdateManyWithoutDriverNestedInputSchema).optional(),
+			delivery_orders: z.lazy(() => delivery_ordersUncheckedUpdateManyWithoutDriverNestedInputSchema).optional(),
+			documents: z.lazy(() => documentsUncheckedUpdateManyWithoutDriversNestedInputSchema).optional(),
+			driver_history_locations: z
+				.lazy(() => driver_history_locationsUncheckedUpdateManyWithoutDriverNestedInputSchema)
+				.optional(),
+			driver_municipalities: z
+				.lazy(() => driver_municipalitiesUncheckedUpdateManyWithoutDriversNestedInputSchema)
+				.optional(),
+			activity_logs: z
+				.lazy(() => driver_activity_logsUncheckedUpdateManyWithoutDriverNestedInputSchema)
+				.optional(),
+		})
+		.strict();
 
 export default driversUncheckedUpdateWithoutReceived_delivery_ordersInputSchema;

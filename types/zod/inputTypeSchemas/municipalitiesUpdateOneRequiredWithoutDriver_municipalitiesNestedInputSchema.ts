@@ -10,12 +10,28 @@ import { municipalitiesUpdateToOneWithWhereWithoutDriver_municipalitiesInputSche
 import { municipalitiesUpdateWithoutDriver_municipalitiesInputSchema } from './municipalitiesUpdateWithoutDriver_municipalitiesInputSchema';
 import { municipalitiesUncheckedUpdateWithoutDriver_municipalitiesInputSchema } from './municipalitiesUncheckedUpdateWithoutDriver_municipalitiesInputSchema';
 
-export const municipalitiesUpdateOneRequiredWithoutDriver_municipalitiesNestedInputSchema: z.ZodType<Prisma.municipalitiesUpdateOneRequiredWithoutDriver_municipalitiesNestedInput> = z.object({
-  create: z.union([ z.lazy(() => municipalitiesCreateWithoutDriver_municipalitiesInputSchema),z.lazy(() => municipalitiesUncheckedCreateWithoutDriver_municipalitiesInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => municipalitiesCreateOrConnectWithoutDriver_municipalitiesInputSchema).optional(),
-  upsert: z.lazy(() => municipalitiesUpsertWithoutDriver_municipalitiesInputSchema).optional(),
-  connect: z.lazy(() => municipalitiesWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => municipalitiesUpdateToOneWithWhereWithoutDriver_municipalitiesInputSchema),z.lazy(() => municipalitiesUpdateWithoutDriver_municipalitiesInputSchema),z.lazy(() => municipalitiesUncheckedUpdateWithoutDriver_municipalitiesInputSchema) ]).optional(),
-}).strict();
+export const municipalitiesUpdateOneRequiredWithoutDriver_municipalitiesNestedInputSchema: z.ZodType<Prisma.municipalitiesUpdateOneRequiredWithoutDriver_municipalitiesNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => municipalitiesCreateWithoutDriver_municipalitiesInputSchema),
+					z.lazy(() => municipalitiesUncheckedCreateWithoutDriver_municipalitiesInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z
+				.lazy(() => municipalitiesCreateOrConnectWithoutDriver_municipalitiesInputSchema)
+				.optional(),
+			upsert: z.lazy(() => municipalitiesUpsertWithoutDriver_municipalitiesInputSchema).optional(),
+			connect: z.lazy(() => municipalitiesWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => municipalitiesUpdateToOneWithWhereWithoutDriver_municipalitiesInputSchema),
+					z.lazy(() => municipalitiesUpdateWithoutDriver_municipalitiesInputSchema),
+					z.lazy(() => municipalitiesUncheckedUpdateWithoutDriver_municipalitiesInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default municipalitiesUpdateOneRequiredWithoutDriver_municipalitiesNestedInputSchema;

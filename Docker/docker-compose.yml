@@ -1,82 +1,81 @@
 x-bake:
-  use-bake: true
+    use-bake: true
 
 include:
-  - ./elasticsearch/docker-compose.elasticsearch.partial.yml
-  # - ./kibana/docker-compose.kibana.partial.yml
-  # - ./filebeat/docker-compose.filebeat.partial.yml
-  # - ./filebeat/docker-compose.filebeat-setup.partial.yml
-  - ./elasticsearch/docker-compose.init.partial.yml
-  # - ./logstash/docker-compose.logstash.partial.yml
-  - ./postgres/docker-compose.postgres.partial.yml
-  - ./redis/docker-compose.redis.partial.yml
-
+    - ./elasticsearch/docker-compose.elasticsearch.partial.yml
+    # - ./kibana/docker-compose.kibana.partial.yml
+    # - ./filebeat/docker-compose.filebeat.partial.yml
+    # - ./filebeat/docker-compose.filebeat-setup.partial.yml
+    - ./elasticsearch/docker-compose.init.partial.yml
+    # - ./logstash/docker-compose.logstash.partial.yml
+    - ./postgres/docker-compose.postgres.partial.yml
+    - ./redis/docker-compose.redis.partial.yml
 
 services:
-  # # Include services from partials
-  # klikni_elasticsearch:
-  #   extends:
-  #     file: ./elasticsearch/docker-compose.elasticsearch.partial.yml
-  #     service: klikni_elasticsearch
+    # # Include services from partials
+    # klikni_elasticsearch:
+    #   extends:
+    #     file: ./elasticsearch/docker-compose.elasticsearch.partial.yml
+    #     service: klikni_elasticsearch
 
-  # kibana:
-  #   extends:
-  #     file: ./kibana/docker-compose.kibana.partial.yml
-  #     service: kibana
+    # kibana:
+    #   extends:
+    #     file: ./kibana/docker-compose.kibana.partial.yml
+    #     service: kibana
 
-  # filebeat:
-  #   extends:
-  #     file: ./filebeat/docker-compose.filebeat.partial.yml
-  #     service: filebeat
-  # filebeat-setup:
-  #   extends:
-  #     file: ./filebeat/docker-compose.filebeat-setup.partial.yml
-  #     service: filebeat-setup
-  # init:
-  #   extends:
-  #     file: ./elasticsearch/docker-compose.init.partial.yml
-  #     service: init
-  # logstash:
-  #   extends:
-  #     file: ./logstash/docker-compose.logstash.partial.yml
-  #     service: logstash
-  # postgres:
-  #   extends:
-  #     file: ./postgres/docker-compose.postgres.partial.yml
-  #     service: postgres
-  # redis:
-  #   extends:
-  #     file: ./redis/docker-compose.redis.partial.yml
-  #     service: redis
-  node-app:
-    build:
-      context: ../
-      dockerfile: ./Docker/node-app/Dockerfile
-    container_name: node-app
-    platform: linux/amd64
-    ports:
-      - "3001:3001"
-    environment:
-      - DATABASE_URL=${DATABASE_URL}
-    depends_on:
-      - postgres
-    logging:
-      driver: json-file
-      options:
-        max-size: "10m"
-        max-file: "3"
-    networks:
-      - shared_network
+    # filebeat:
+    #   extends:
+    #     file: ./filebeat/docker-compose.filebeat.partial.yml
+    #     service: filebeat
+    # filebeat-setup:
+    #   extends:
+    #     file: ./filebeat/docker-compose.filebeat-setup.partial.yml
+    #     service: filebeat-setup
+    # init:
+    #   extends:
+    #     file: ./elasticsearch/docker-compose.init.partial.yml
+    #     service: init
+    # logstash:
+    #   extends:
+    #     file: ./logstash/docker-compose.logstash.partial.yml
+    #     service: logstash
+    # postgres:
+    #   extends:
+    #     file: ./postgres/docker-compose.postgres.partial.yml
+    #     service: postgres
+    # redis:
+    #   extends:
+    #     file: ./redis/docker-compose.redis.partial.yml
+    #     service: redis
+    node-app:
+        build:
+            context: ../
+            dockerfile: ./Docker/node-app/Dockerfile
+        container_name: node-app
+        platform: linux/amd64
+        ports:
+            - '3001:3001'
+        environment:
+            - DATABASE_URL=${DATABASE_URL}
+        depends_on:
+            - postgres
+        logging:
+            driver: json-file
+            options:
+                max-size: '10m'
+                max-file: '3'
+        networks:
+            - shared_network
 
 networks:
-  shared_network:
-    driver: bridge
-  backendnet:
-    driver: bridge
+    shared_network:
+        driver: bridge
+    backendnet:
+        driver: bridge
 
 volumes:
-  shared-init-status:
-    driver: local
-  redis-data:
-  dbdata:
-  es-data:
+    shared-init-status:
+        driver: local
+    redis-data:
+    dbdata:
+    es-data:

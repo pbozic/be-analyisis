@@ -8,19 +8,33 @@ import { DateTimeFilterSchema } from './DateTimeFilterSchema';
 import { Local_productsRelationFilterSchema } from './Local_productsRelationFilterSchema';
 import { local_productsWhereInputSchema } from './local_productsWhereInputSchema';
 
-export const local_pricesWhereInputSchema: z.ZodType<Prisma.local_pricesWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => local_pricesWhereInputSchema),z.lazy(() => local_pricesWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => local_pricesWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => local_pricesWhereInputSchema),z.lazy(() => local_pricesWhereInputSchema).array() ]).optional(),
-  local_prices_id: z.union([ z.lazy(() => UuidFilterSchema),z.string() ]).optional(),
-  local_product_id: z.union([ z.lazy(() => UuidFilterSchema),z.string() ]).optional(),
-  currency: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  stripe_price_id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  stripe_product_id: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  tier: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  product: z.union([ z.lazy(() => Local_productsRelationFilterSchema),z.lazy(() => local_productsWhereInputSchema) ]).optional(),
-}).strict();
+export const local_pricesWhereInputSchema: z.ZodType<Prisma.local_pricesWhereInput> = z
+	.object({
+		AND: z
+			.union([z.lazy(() => local_pricesWhereInputSchema), z.lazy(() => local_pricesWhereInputSchema).array()])
+			.optional(),
+		OR: z
+			.lazy(() => local_pricesWhereInputSchema)
+			.array()
+			.optional(),
+		NOT: z
+			.union([z.lazy(() => local_pricesWhereInputSchema), z.lazy(() => local_pricesWhereInputSchema).array()])
+			.optional(),
+		local_prices_id: z.union([z.lazy(() => UuidFilterSchema), z.string()]).optional(),
+		local_product_id: z.union([z.lazy(() => UuidFilterSchema), z.string()]).optional(),
+		currency: z.union([z.lazy(() => StringFilterSchema), z.string()]).optional(),
+		stripe_price_id: z.union([z.lazy(() => StringFilterSchema), z.string()]).optional(),
+		stripe_product_id: z.union([z.lazy(() => StringFilterSchema), z.string()]).optional(),
+		tier: z
+			.union([z.lazy(() => StringNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+		created_at: z.union([z.lazy(() => DateTimeFilterSchema), z.coerce.date()]).optional(),
+		updated_at: z.union([z.lazy(() => DateTimeFilterSchema), z.coerce.date()]).optional(),
+		product: z
+			.union([z.lazy(() => Local_productsRelationFilterSchema), z.lazy(() => local_productsWhereInputSchema)])
+			.optional(),
+	})
+	.strict();
 
 export default local_pricesWhereInputSchema;

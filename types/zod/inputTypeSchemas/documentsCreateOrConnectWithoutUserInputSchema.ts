@@ -5,9 +5,15 @@ import { documentsWhereUniqueInputSchema } from './documentsWhereUniqueInputSche
 import { documentsCreateWithoutUserInputSchema } from './documentsCreateWithoutUserInputSchema';
 import { documentsUncheckedCreateWithoutUserInputSchema } from './documentsUncheckedCreateWithoutUserInputSchema';
 
-export const documentsCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.documentsCreateOrConnectWithoutUserInput> = z.object({
-  where: z.lazy(() => documentsWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => documentsCreateWithoutUserInputSchema),z.lazy(() => documentsUncheckedCreateWithoutUserInputSchema) ]),
-}).strict();
+export const documentsCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.documentsCreateOrConnectWithoutUserInput> =
+	z
+		.object({
+			where: z.lazy(() => documentsWhereUniqueInputSchema),
+			create: z.union([
+				z.lazy(() => documentsCreateWithoutUserInputSchema),
+				z.lazy(() => documentsUncheckedCreateWithoutUserInputSchema),
+			]),
+		})
+		.strict();
 
 export default documentsCreateOrConnectWithoutUserInputSchema;

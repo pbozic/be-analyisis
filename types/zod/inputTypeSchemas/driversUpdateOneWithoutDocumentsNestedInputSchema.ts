@@ -11,14 +11,28 @@ import { driversUpdateToOneWithWhereWithoutDocumentsInputSchema } from './driver
 import { driversUpdateWithoutDocumentsInputSchema } from './driversUpdateWithoutDocumentsInputSchema';
 import { driversUncheckedUpdateWithoutDocumentsInputSchema } from './driversUncheckedUpdateWithoutDocumentsInputSchema';
 
-export const driversUpdateOneWithoutDocumentsNestedInputSchema: z.ZodType<Prisma.driversUpdateOneWithoutDocumentsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => driversCreateWithoutDocumentsInputSchema),z.lazy(() => driversUncheckedCreateWithoutDocumentsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => driversCreateOrConnectWithoutDocumentsInputSchema).optional(),
-  upsert: z.lazy(() => driversUpsertWithoutDocumentsInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => driversWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => driversWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => driversWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => driversUpdateToOneWithWhereWithoutDocumentsInputSchema),z.lazy(() => driversUpdateWithoutDocumentsInputSchema),z.lazy(() => driversUncheckedUpdateWithoutDocumentsInputSchema) ]).optional(),
-}).strict();
+export const driversUpdateOneWithoutDocumentsNestedInputSchema: z.ZodType<Prisma.driversUpdateOneWithoutDocumentsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => driversCreateWithoutDocumentsInputSchema),
+					z.lazy(() => driversUncheckedCreateWithoutDocumentsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => driversCreateOrConnectWithoutDocumentsInputSchema).optional(),
+			upsert: z.lazy(() => driversUpsertWithoutDocumentsInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => driversWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => driversWhereInputSchema)]).optional(),
+			connect: z.lazy(() => driversWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => driversUpdateToOneWithWhereWithoutDocumentsInputSchema),
+					z.lazy(() => driversUpdateWithoutDocumentsInputSchema),
+					z.lazy(() => driversUncheckedUpdateWithoutDocumentsInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default driversUpdateOneWithoutDocumentsNestedInputSchema;

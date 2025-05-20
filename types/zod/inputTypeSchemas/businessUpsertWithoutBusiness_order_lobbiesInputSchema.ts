@@ -7,10 +7,19 @@ import { businessCreateWithoutBusiness_order_lobbiesInputSchema } from './busine
 import { businessUncheckedCreateWithoutBusiness_order_lobbiesInputSchema } from './businessUncheckedCreateWithoutBusiness_order_lobbiesInputSchema';
 import { businessWhereInputSchema } from './businessWhereInputSchema';
 
-export const businessUpsertWithoutBusiness_order_lobbiesInputSchema: z.ZodType<Prisma.businessUpsertWithoutBusiness_order_lobbiesInput> = z.object({
-  update: z.union([ z.lazy(() => businessUpdateWithoutBusiness_order_lobbiesInputSchema),z.lazy(() => businessUncheckedUpdateWithoutBusiness_order_lobbiesInputSchema) ]),
-  create: z.union([ z.lazy(() => businessCreateWithoutBusiness_order_lobbiesInputSchema),z.lazy(() => businessUncheckedCreateWithoutBusiness_order_lobbiesInputSchema) ]),
-  where: z.lazy(() => businessWhereInputSchema).optional()
-}).strict();
+export const businessUpsertWithoutBusiness_order_lobbiesInputSchema: z.ZodType<Prisma.businessUpsertWithoutBusiness_order_lobbiesInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => businessUpdateWithoutBusiness_order_lobbiesInputSchema),
+				z.lazy(() => businessUncheckedUpdateWithoutBusiness_order_lobbiesInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => businessCreateWithoutBusiness_order_lobbiesInputSchema),
+				z.lazy(() => businessUncheckedCreateWithoutBusiness_order_lobbiesInputSchema),
+			]),
+			where: z.lazy(() => businessWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default businessUpsertWithoutBusiness_order_lobbiesInputSchema;

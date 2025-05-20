@@ -11,14 +11,28 @@ import { local_productsUpdateToOneWithWhereWithoutBusinessInputSchema } from './
 import { local_productsUpdateWithoutBusinessInputSchema } from './local_productsUpdateWithoutBusinessInputSchema';
 import { local_productsUncheckedUpdateWithoutBusinessInputSchema } from './local_productsUncheckedUpdateWithoutBusinessInputSchema';
 
-export const local_productsUpdateOneWithoutBusinessNestedInputSchema: z.ZodType<Prisma.local_productsUpdateOneWithoutBusinessNestedInput> = z.object({
-  create: z.union([ z.lazy(() => local_productsCreateWithoutBusinessInputSchema),z.lazy(() => local_productsUncheckedCreateWithoutBusinessInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => local_productsCreateOrConnectWithoutBusinessInputSchema).optional(),
-  upsert: z.lazy(() => local_productsUpsertWithoutBusinessInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => local_productsWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => local_productsWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => local_productsWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => local_productsUpdateToOneWithWhereWithoutBusinessInputSchema),z.lazy(() => local_productsUpdateWithoutBusinessInputSchema),z.lazy(() => local_productsUncheckedUpdateWithoutBusinessInputSchema) ]).optional(),
-}).strict();
+export const local_productsUpdateOneWithoutBusinessNestedInputSchema: z.ZodType<Prisma.local_productsUpdateOneWithoutBusinessNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => local_productsCreateWithoutBusinessInputSchema),
+					z.lazy(() => local_productsUncheckedCreateWithoutBusinessInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => local_productsCreateOrConnectWithoutBusinessInputSchema).optional(),
+			upsert: z.lazy(() => local_productsUpsertWithoutBusinessInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => local_productsWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => local_productsWhereInputSchema)]).optional(),
+			connect: z.lazy(() => local_productsWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => local_productsUpdateToOneWithWhereWithoutBusinessInputSchema),
+					z.lazy(() => local_productsUpdateWithoutBusinessInputSchema),
+					z.lazy(() => local_productsUncheckedUpdateWithoutBusinessInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default local_productsUpdateOneWithoutBusinessNestedInputSchema;

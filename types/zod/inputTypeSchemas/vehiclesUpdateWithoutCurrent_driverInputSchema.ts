@@ -16,24 +16,59 @@ import { vehicle_specificationsUpdateOneWithoutVehicleNestedInputSchema } from '
 import { taxi_ordersUpdateManyWithoutVehicleNestedInputSchema } from './taxi_ordersUpdateManyWithoutVehicleNestedInputSchema';
 import { delivery_ordersUpdateManyWithoutVehicleNestedInputSchema } from './delivery_ordersUpdateManyWithoutVehicleNestedInputSchema';
 
-export const vehiclesUpdateWithoutCurrent_driverInputSchema: z.ZodType<Prisma.vehiclesUpdateWithoutCurrent_driverInput> = z.object({
-  vehicle_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  business_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  active: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  class: z.union([ z.lazy(() => VEHICLE_CLASSSchema),z.lazy(() => NullableEnumVEHICLE_CLASSFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  category: z.union([ z.lazy(() => VEHICLE_CATEGORYSchema),z.lazy(() => NullableEnumVEHICLE_CATEGORYFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  make: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  model: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  color: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  license_plate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  documents: z.lazy(() => documentsUpdateManyWithoutVehiclesNestedInputSchema).optional(),
-  drivers: z.lazy(() => vehicle_driversUpdateManyWithoutVehicleNestedInputSchema).optional(),
-  delivery_driver: z.lazy(() => delivery_driversUpdateOneWithoutVehiclesNestedInputSchema).optional(),
-  vehicle_specification: z.lazy(() => vehicle_specificationsUpdateOneWithoutVehicleNestedInputSchema).optional(),
-  taxi_orders: z.lazy(() => taxi_ordersUpdateManyWithoutVehicleNestedInputSchema).optional(),
-  delivery_orders: z.lazy(() => delivery_ordersUpdateManyWithoutVehicleNestedInputSchema).optional()
-}).strict();
+export const vehiclesUpdateWithoutCurrent_driverInputSchema: z.ZodType<Prisma.vehiclesUpdateWithoutCurrent_driverInput> =
+	z
+		.object({
+			vehicle_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			business_id: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			active: z
+				.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			class: z
+				.union([
+					z.lazy(() => VEHICLE_CLASSSchema),
+					z.lazy(() => NullableEnumVEHICLE_CLASSFieldUpdateOperationsInputSchema),
+				])
+				.optional()
+				.nullable(),
+			category: z
+				.union([
+					z.lazy(() => VEHICLE_CATEGORYSchema),
+					z.lazy(() => NullableEnumVEHICLE_CATEGORYFieldUpdateOperationsInputSchema),
+				])
+				.optional()
+				.nullable(),
+			make: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			model: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			color: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			license_plate: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			documents: z.lazy(() => documentsUpdateManyWithoutVehiclesNestedInputSchema).optional(),
+			drivers: z.lazy(() => vehicle_driversUpdateManyWithoutVehicleNestedInputSchema).optional(),
+			delivery_driver: z.lazy(() => delivery_driversUpdateOneWithoutVehiclesNestedInputSchema).optional(),
+			vehicle_specification: z
+				.lazy(() => vehicle_specificationsUpdateOneWithoutVehicleNestedInputSchema)
+				.optional(),
+			taxi_orders: z.lazy(() => taxi_ordersUpdateManyWithoutVehicleNestedInputSchema).optional(),
+			delivery_orders: z.lazy(() => delivery_ordersUpdateManyWithoutVehicleNestedInputSchema).optional(),
+		})
+		.strict();
 
 export default vehiclesUpdateWithoutCurrent_driverInputSchema;

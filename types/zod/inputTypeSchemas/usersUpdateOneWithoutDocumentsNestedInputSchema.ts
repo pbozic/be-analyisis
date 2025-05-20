@@ -11,14 +11,28 @@ import { usersUpdateToOneWithWhereWithoutDocumentsInputSchema } from './usersUpd
 import { usersUpdateWithoutDocumentsInputSchema } from './usersUpdateWithoutDocumentsInputSchema';
 import { usersUncheckedUpdateWithoutDocumentsInputSchema } from './usersUncheckedUpdateWithoutDocumentsInputSchema';
 
-export const usersUpdateOneWithoutDocumentsNestedInputSchema: z.ZodType<Prisma.usersUpdateOneWithoutDocumentsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => usersCreateWithoutDocumentsInputSchema),z.lazy(() => usersUncheckedCreateWithoutDocumentsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutDocumentsInputSchema).optional(),
-  upsert: z.lazy(() => usersUpsertWithoutDocumentsInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => usersWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => usersWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => usersUpdateToOneWithWhereWithoutDocumentsInputSchema),z.lazy(() => usersUpdateWithoutDocumentsInputSchema),z.lazy(() => usersUncheckedUpdateWithoutDocumentsInputSchema) ]).optional(),
-}).strict();
+export const usersUpdateOneWithoutDocumentsNestedInputSchema: z.ZodType<Prisma.usersUpdateOneWithoutDocumentsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => usersCreateWithoutDocumentsInputSchema),
+					z.lazy(() => usersUncheckedCreateWithoutDocumentsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutDocumentsInputSchema).optional(),
+			upsert: z.lazy(() => usersUpsertWithoutDocumentsInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => usersWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => usersWhereInputSchema)]).optional(),
+			connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => usersUpdateToOneWithWhereWithoutDocumentsInputSchema),
+					z.lazy(() => usersUpdateWithoutDocumentsInputSchema),
+					z.lazy(() => usersUncheckedUpdateWithoutDocumentsInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default usersUpdateOneWithoutDocumentsNestedInputSchema;

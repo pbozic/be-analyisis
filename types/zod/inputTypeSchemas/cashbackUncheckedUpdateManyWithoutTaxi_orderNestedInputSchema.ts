@@ -11,18 +11,73 @@ import { cashbackUpdateWithWhereUniqueWithoutTaxi_orderInputSchema } from './cas
 import { cashbackUpdateManyWithWhereWithoutTaxi_orderInputSchema } from './cashbackUpdateManyWithWhereWithoutTaxi_orderInputSchema';
 import { cashbackScalarWhereInputSchema } from './cashbackScalarWhereInputSchema';
 
-export const cashbackUncheckedUpdateManyWithoutTaxi_orderNestedInputSchema: z.ZodType<Prisma.cashbackUncheckedUpdateManyWithoutTaxi_orderNestedInput> = z.object({
-  create: z.union([ z.lazy(() => cashbackCreateWithoutTaxi_orderInputSchema),z.lazy(() => cashbackCreateWithoutTaxi_orderInputSchema).array(),z.lazy(() => cashbackUncheckedCreateWithoutTaxi_orderInputSchema),z.lazy(() => cashbackUncheckedCreateWithoutTaxi_orderInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => cashbackCreateOrConnectWithoutTaxi_orderInputSchema),z.lazy(() => cashbackCreateOrConnectWithoutTaxi_orderInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => cashbackUpsertWithWhereUniqueWithoutTaxi_orderInputSchema),z.lazy(() => cashbackUpsertWithWhereUniqueWithoutTaxi_orderInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => cashbackCreateManyTaxi_orderInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => cashbackWhereUniqueInputSchema),z.lazy(() => cashbackWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => cashbackWhereUniqueInputSchema),z.lazy(() => cashbackWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => cashbackWhereUniqueInputSchema),z.lazy(() => cashbackWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => cashbackWhereUniqueInputSchema),z.lazy(() => cashbackWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => cashbackUpdateWithWhereUniqueWithoutTaxi_orderInputSchema),z.lazy(() => cashbackUpdateWithWhereUniqueWithoutTaxi_orderInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => cashbackUpdateManyWithWhereWithoutTaxi_orderInputSchema),z.lazy(() => cashbackUpdateManyWithWhereWithoutTaxi_orderInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => cashbackScalarWhereInputSchema),z.lazy(() => cashbackScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const cashbackUncheckedUpdateManyWithoutTaxi_orderNestedInputSchema: z.ZodType<Prisma.cashbackUncheckedUpdateManyWithoutTaxi_orderNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => cashbackCreateWithoutTaxi_orderInputSchema),
+					z.lazy(() => cashbackCreateWithoutTaxi_orderInputSchema).array(),
+					z.lazy(() => cashbackUncheckedCreateWithoutTaxi_orderInputSchema),
+					z.lazy(() => cashbackUncheckedCreateWithoutTaxi_orderInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => cashbackCreateOrConnectWithoutTaxi_orderInputSchema),
+					z.lazy(() => cashbackCreateOrConnectWithoutTaxi_orderInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => cashbackUpsertWithWhereUniqueWithoutTaxi_orderInputSchema),
+					z.lazy(() => cashbackUpsertWithWhereUniqueWithoutTaxi_orderInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => cashbackCreateManyTaxi_orderInputEnvelopeSchema).optional(),
+			set: z
+				.union([
+					z.lazy(() => cashbackWhereUniqueInputSchema),
+					z.lazy(() => cashbackWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			disconnect: z
+				.union([
+					z.lazy(() => cashbackWhereUniqueInputSchema),
+					z.lazy(() => cashbackWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			delete: z
+				.union([
+					z.lazy(() => cashbackWhereUniqueInputSchema),
+					z.lazy(() => cashbackWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			connect: z
+				.union([
+					z.lazy(() => cashbackWhereUniqueInputSchema),
+					z.lazy(() => cashbackWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => cashbackUpdateWithWhereUniqueWithoutTaxi_orderInputSchema),
+					z.lazy(() => cashbackUpdateWithWhereUniqueWithoutTaxi_orderInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => cashbackUpdateManyWithWhereWithoutTaxi_orderInputSchema),
+					z.lazy(() => cashbackUpdateManyWithWhereWithoutTaxi_orderInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([
+					z.lazy(() => cashbackScalarWhereInputSchema),
+					z.lazy(() => cashbackScalarWhereInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default cashbackUncheckedUpdateManyWithoutTaxi_orderNestedInputSchema;

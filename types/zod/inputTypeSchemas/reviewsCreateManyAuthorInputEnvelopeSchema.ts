@@ -3,9 +3,14 @@ import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { reviewsCreateManyAuthorInputSchema } from './reviewsCreateManyAuthorInputSchema';
 
-export const reviewsCreateManyAuthorInputEnvelopeSchema: z.ZodType<Prisma.reviewsCreateManyAuthorInputEnvelope> = z.object({
-  data: z.union([ z.lazy(() => reviewsCreateManyAuthorInputSchema),z.lazy(() => reviewsCreateManyAuthorInputSchema).array() ]),
-  skipDuplicates: z.boolean().optional()
-}).strict();
+export const reviewsCreateManyAuthorInputEnvelopeSchema: z.ZodType<Prisma.reviewsCreateManyAuthorInputEnvelope> = z
+	.object({
+		data: z.union([
+			z.lazy(() => reviewsCreateManyAuthorInputSchema),
+			z.lazy(() => reviewsCreateManyAuthorInputSchema).array(),
+		]),
+		skipDuplicates: z.boolean().optional(),
+	})
+	.strict();
 
 export default reviewsCreateManyAuthorInputEnvelopeSchema;

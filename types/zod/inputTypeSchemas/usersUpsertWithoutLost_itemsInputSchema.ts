@@ -7,10 +7,18 @@ import { usersCreateWithoutLost_itemsInputSchema } from './usersCreateWithoutLos
 import { usersUncheckedCreateWithoutLost_itemsInputSchema } from './usersUncheckedCreateWithoutLost_itemsInputSchema';
 import { usersWhereInputSchema } from './usersWhereInputSchema';
 
-export const usersUpsertWithoutLost_itemsInputSchema: z.ZodType<Prisma.usersUpsertWithoutLost_itemsInput> = z.object({
-  update: z.union([ z.lazy(() => usersUpdateWithoutLost_itemsInputSchema),z.lazy(() => usersUncheckedUpdateWithoutLost_itemsInputSchema) ]),
-  create: z.union([ z.lazy(() => usersCreateWithoutLost_itemsInputSchema),z.lazy(() => usersUncheckedCreateWithoutLost_itemsInputSchema) ]),
-  where: z.lazy(() => usersWhereInputSchema).optional()
-}).strict();
+export const usersUpsertWithoutLost_itemsInputSchema: z.ZodType<Prisma.usersUpsertWithoutLost_itemsInput> = z
+	.object({
+		update: z.union([
+			z.lazy(() => usersUpdateWithoutLost_itemsInputSchema),
+			z.lazy(() => usersUncheckedUpdateWithoutLost_itemsInputSchema),
+		]),
+		create: z.union([
+			z.lazy(() => usersCreateWithoutLost_itemsInputSchema),
+			z.lazy(() => usersUncheckedCreateWithoutLost_itemsInputSchema),
+		]),
+		where: z.lazy(() => usersWhereInputSchema).optional(),
+	})
+	.strict();
 
 export default usersUpsertWithoutLost_itemsInputSchema;

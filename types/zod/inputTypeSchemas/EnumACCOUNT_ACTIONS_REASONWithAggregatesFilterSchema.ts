@@ -6,14 +6,28 @@ import { NestedEnumACCOUNT_ACTIONS_REASONWithAggregatesFilterSchema } from './Ne
 import { NestedIntFilterSchema } from './NestedIntFilterSchema';
 import { NestedEnumACCOUNT_ACTIONS_REASONFilterSchema } from './NestedEnumACCOUNT_ACTIONS_REASONFilterSchema';
 
-export const EnumACCOUNT_ACTIONS_REASONWithAggregatesFilterSchema: z.ZodType<Prisma.EnumACCOUNT_ACTIONS_REASONWithAggregatesFilter> = z.object({
-  equals: z.lazy(() => ACCOUNT_ACTIONS_REASONSchema).optional(),
-  in: z.lazy(() => ACCOUNT_ACTIONS_REASONSchema).array().optional(),
-  notIn: z.lazy(() => ACCOUNT_ACTIONS_REASONSchema).array().optional(),
-  not: z.union([ z.lazy(() => ACCOUNT_ACTIONS_REASONSchema),z.lazy(() => NestedEnumACCOUNT_ACTIONS_REASONWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedEnumACCOUNT_ACTIONS_REASONFilterSchema).optional(),
-  _max: z.lazy(() => NestedEnumACCOUNT_ACTIONS_REASONFilterSchema).optional()
-}).strict();
+export const EnumACCOUNT_ACTIONS_REASONWithAggregatesFilterSchema: z.ZodType<Prisma.EnumACCOUNT_ACTIONS_REASONWithAggregatesFilter> =
+	z
+		.object({
+			equals: z.lazy(() => ACCOUNT_ACTIONS_REASONSchema).optional(),
+			in: z
+				.lazy(() => ACCOUNT_ACTIONS_REASONSchema)
+				.array()
+				.optional(),
+			notIn: z
+				.lazy(() => ACCOUNT_ACTIONS_REASONSchema)
+				.array()
+				.optional(),
+			not: z
+				.union([
+					z.lazy(() => ACCOUNT_ACTIONS_REASONSchema),
+					z.lazy(() => NestedEnumACCOUNT_ACTIONS_REASONWithAggregatesFilterSchema),
+				])
+				.optional(),
+			_count: z.lazy(() => NestedIntFilterSchema).optional(),
+			_min: z.lazy(() => NestedEnumACCOUNT_ACTIONS_REASONFilterSchema).optional(),
+			_max: z.lazy(() => NestedEnumACCOUNT_ACTIONS_REASONFilterSchema).optional(),
+		})
+		.strict();
 
 export default EnumACCOUNT_ACTIONS_REASONWithAggregatesFilterSchema;

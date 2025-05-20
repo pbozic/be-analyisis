@@ -7,10 +7,19 @@ import { vehiclesCreateWithoutCurrent_driverInputSchema } from './vehiclesCreate
 import { vehiclesUncheckedCreateWithoutCurrent_driverInputSchema } from './vehiclesUncheckedCreateWithoutCurrent_driverInputSchema';
 import { vehiclesWhereInputSchema } from './vehiclesWhereInputSchema';
 
-export const vehiclesUpsertWithoutCurrent_driverInputSchema: z.ZodType<Prisma.vehiclesUpsertWithoutCurrent_driverInput> = z.object({
-  update: z.union([ z.lazy(() => vehiclesUpdateWithoutCurrent_driverInputSchema),z.lazy(() => vehiclesUncheckedUpdateWithoutCurrent_driverInputSchema) ]),
-  create: z.union([ z.lazy(() => vehiclesCreateWithoutCurrent_driverInputSchema),z.lazy(() => vehiclesUncheckedCreateWithoutCurrent_driverInputSchema) ]),
-  where: z.lazy(() => vehiclesWhereInputSchema).optional()
-}).strict();
+export const vehiclesUpsertWithoutCurrent_driverInputSchema: z.ZodType<Prisma.vehiclesUpsertWithoutCurrent_driverInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => vehiclesUpdateWithoutCurrent_driverInputSchema),
+				z.lazy(() => vehiclesUncheckedUpdateWithoutCurrent_driverInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => vehiclesCreateWithoutCurrent_driverInputSchema),
+				z.lazy(() => vehiclesUncheckedCreateWithoutCurrent_driverInputSchema),
+			]),
+			where: z.lazy(() => vehiclesWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default vehiclesUpsertWithoutCurrent_driverInputSchema;

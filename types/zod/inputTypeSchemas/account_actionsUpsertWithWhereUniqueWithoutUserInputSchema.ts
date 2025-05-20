@@ -7,10 +7,19 @@ import { account_actionsUncheckedUpdateWithoutUserInputSchema } from './account_
 import { account_actionsCreateWithoutUserInputSchema } from './account_actionsCreateWithoutUserInputSchema';
 import { account_actionsUncheckedCreateWithoutUserInputSchema } from './account_actionsUncheckedCreateWithoutUserInputSchema';
 
-export const account_actionsUpsertWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.account_actionsUpsertWithWhereUniqueWithoutUserInput> = z.object({
-  where: z.lazy(() => account_actionsWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => account_actionsUpdateWithoutUserInputSchema),z.lazy(() => account_actionsUncheckedUpdateWithoutUserInputSchema) ]),
-  create: z.union([ z.lazy(() => account_actionsCreateWithoutUserInputSchema),z.lazy(() => account_actionsUncheckedCreateWithoutUserInputSchema) ]),
-}).strict();
+export const account_actionsUpsertWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.account_actionsUpsertWithWhereUniqueWithoutUserInput> =
+	z
+		.object({
+			where: z.lazy(() => account_actionsWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => account_actionsUpdateWithoutUserInputSchema),
+				z.lazy(() => account_actionsUncheckedUpdateWithoutUserInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => account_actionsCreateWithoutUserInputSchema),
+				z.lazy(() => account_actionsUncheckedCreateWithoutUserInputSchema),
+			]),
+		})
+		.strict();
 
 export default account_actionsUpsertWithWhereUniqueWithoutUserInputSchema;

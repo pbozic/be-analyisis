@@ -7,10 +7,19 @@ import { businessCreateWithoutWord_buy_stripe_productInputSchema } from './busin
 import { businessUncheckedCreateWithoutWord_buy_stripe_productInputSchema } from './businessUncheckedCreateWithoutWord_buy_stripe_productInputSchema';
 import { businessWhereInputSchema } from './businessWhereInputSchema';
 
-export const businessUpsertWithoutWord_buy_stripe_productInputSchema: z.ZodType<Prisma.businessUpsertWithoutWord_buy_stripe_productInput> = z.object({
-  update: z.union([ z.lazy(() => businessUpdateWithoutWord_buy_stripe_productInputSchema),z.lazy(() => businessUncheckedUpdateWithoutWord_buy_stripe_productInputSchema) ]),
-  create: z.union([ z.lazy(() => businessCreateWithoutWord_buy_stripe_productInputSchema),z.lazy(() => businessUncheckedCreateWithoutWord_buy_stripe_productInputSchema) ]),
-  where: z.lazy(() => businessWhereInputSchema).optional()
-}).strict();
+export const businessUpsertWithoutWord_buy_stripe_productInputSchema: z.ZodType<Prisma.businessUpsertWithoutWord_buy_stripe_productInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => businessUpdateWithoutWord_buy_stripe_productInputSchema),
+				z.lazy(() => businessUncheckedUpdateWithoutWord_buy_stripe_productInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => businessCreateWithoutWord_buy_stripe_productInputSchema),
+				z.lazy(() => businessUncheckedCreateWithoutWord_buy_stripe_productInputSchema),
+			]),
+			where: z.lazy(() => businessWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default businessUpsertWithoutWord_buy_stripe_productInputSchema;

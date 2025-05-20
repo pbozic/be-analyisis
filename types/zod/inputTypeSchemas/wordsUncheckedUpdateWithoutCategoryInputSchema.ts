@@ -7,15 +7,18 @@ import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateO
 import { word_buyUncheckedUpdateManyWithoutWordNestedInputSchema } from './word_buyUncheckedUpdateManyWithoutWordNestedInputSchema';
 import { word_bundlesUncheckedUpdateManyWithoutWordsNestedInputSchema } from './word_bundlesUncheckedUpdateManyWithoutWordsNestedInputSchema';
 
-export const wordsUncheckedUpdateWithoutCategoryInputSchema: z.ZodType<Prisma.wordsUncheckedUpdateWithoutCategoryInput> = z.object({
-  word_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  word: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  popularity: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  translatable_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  subscriptions: z.lazy(() => word_buyUncheckedUpdateManyWithoutWordNestedInputSchema).optional(),
-  bundles: z.lazy(() => word_bundlesUncheckedUpdateManyWithoutWordsNestedInputSchema).optional()
-}).strict();
+export const wordsUncheckedUpdateWithoutCategoryInputSchema: z.ZodType<Prisma.wordsUncheckedUpdateWithoutCategoryInput> =
+	z
+		.object({
+			word_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			word: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			popularity: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputSchema)]).optional(),
+			translatable_id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			subscriptions: z.lazy(() => word_buyUncheckedUpdateManyWithoutWordNestedInputSchema).optional(),
+			bundles: z.lazy(() => word_bundlesUncheckedUpdateManyWithoutWordsNestedInputSchema).optional(),
+		})
+		.strict();
 
 export default wordsUncheckedUpdateWithoutCategoryInputSchema;

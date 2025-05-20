@@ -1,122 +1,122 @@
 type: object
 properties:
-  business_id:
-    type: string
-  address_id:
-    type: string
-  delivery_address_id:
-    type: string
-  finance_id:
-    type: string
-  is_business_unit:
-    type: boolean
-  business_group_name:
-    type: string
-  name:
-    type: string
-  description:
-    type: string
-  tax_id:
-    type: string
-  registration_id:
-    type: string
-  email:
-    type: string
-  telephone:
-    type: string
-  telephone_code:
-    type: string
-  telephone_number:
-    type: string
-  website_url:
-    type: string
-  working_hours:
-    type: object
-  seats:
-    type: integer
-  minimum_order:
-    type: integer
-  offers_daily_meals:
-    type: boolean
-  popular:
-    type: boolean
-  new:
-    type: boolean
-  created_at:
-    type: string
-  updated_at:
-    type: string
-  address:
-    $ref: ./addresses.yaml
-  delivery_address:
-    $ref: ./addresses.yaml
-  finances:
-    $ref: ./finances.yaml
-  business_users:
-    type: array
-    items:
-      $ref: ./business_users.yaml
-  documents:
-    type: array
-    items:
-      $ref: ./documents.yaml
-  parent_business_id:
-    type: string
-  parent_business:
-    $ref: ./business.yaml
-  child_businesses:
-    type: array
-    items:
-      $ref: ./business.yaml
-  taxi_orders:
-    type: array
-    items:
-      $ref: ./taxi_orders.yaml
-  delivery_orders:
-    type: array
-    items:
-      $ref: ./delivery_orders.yaml
-  menus:
-    type: array
-    items:
-      $ref: ./menus.yaml
-  reviewable_id:
-    type: string
-  reviewable:
-    $ref: ./reviewable.yaml
-  stripe_account_id:
-    type: string
-  stripe_customer_id:
-    type: string
-  word_buy_stripe_product_id:
-    type: string
-  word_buy_stripe_product:
-    $ref: ./local_products.yaml
-  word_buy_stripe_subscription_id:
-    type: string
-  reservations:
-    type: array
-    items:
-      $ref: ./reservations.yaml
-  daily_users_sorted:
-    type: object
-  restaurant_overwhelmed:
-    type: boolean
-  activated_at:
-    type: string
+    business_id:
+        type: string
+    address_id:
+        type: string
+    delivery_address_id:
+        type: string
+    finance_id:
+        type: string
+    is_business_unit:
+        type: boolean
+    business_group_name:
+        type: string
+    name:
+        type: string
+    description:
+        type: string
+    tax_id:
+        type: string
+    registration_id:
+        type: string
+    email:
+        type: string
+    telephone:
+        type: string
+    telephone_code:
+        type: string
+    telephone_number:
+        type: string
+    website_url:
+        type: string
+    working_hours:
+        type: object
+    seats:
+        type: integer
+    minimum_order:
+        type: integer
+    offers_daily_meals:
+        type: boolean
+    popular:
+        type: boolean
+    new:
+        type: boolean
+    created_at:
+        type: string
+    updated_at:
+        type: string
+    address:
+        $ref: ./addresses.yaml
+    delivery_address:
+        $ref: ./addresses.yaml
+    finances:
+        $ref: ./finances.yaml
+    business_users:
+        type: array
+        items:
+            $ref: ./business_users.yaml
+    documents:
+        type: array
+        items:
+            $ref: ./documents.yaml
+    parent_business_id:
+        type: string
+    parent_business:
+        $ref: ./business.yaml
+    child_businesses:
+        type: array
+        items:
+            $ref: ./business.yaml
+    taxi_orders:
+        type: array
+        items:
+            $ref: ./taxi_orders.yaml
+    delivery_orders:
+        type: array
+        items:
+            $ref: ./delivery_orders.yaml
+    menus:
+        type: array
+        items:
+            $ref: ./menus.yaml
+    reviewable_id:
+        type: string
+    reviewable:
+        $ref: ./reviewable.yaml
+    stripe_account_id:
+        type: string
+    stripe_customer_id:
+        type: string
+    word_buy_stripe_product_id:
+        type: string
+    word_buy_stripe_product:
+        $ref: ./local_products.yaml
+    word_buy_stripe_subscription_id:
+        type: string
+    reservations:
+        type: array
+        items:
+            $ref: ./reservations.yaml
+    daily_users_sorted:
+        type: object
+    restaurant_overwhelmed:
+        type: boolean
+    activated_at:
+        type: string
 required:
-  - business_id
-  - is_business_unit
-  - name
-  - tax_id
-  - registration_id
-  - email
-  - telephone_code
-  - telephone_number
-  - minimum_order
-  - offers_daily_meals
-  - popular
-  - new
-  - created_at
-  - updated_at
-  - restaurant_overwhelmed
+    - business_id
+    - is_business_unit
+    - name
+    - tax_id
+    - registration_id
+    - email
+    - telephone_code
+    - telephone_number
+    - minimum_order
+    - offers_daily_meals
+    - popular
+    - new
+    - created_at
+    - updated_at
+    - restaurant_overwhelmed

@@ -7,10 +7,18 @@ import { vehiclesCreateWithoutDocumentsInputSchema } from './vehiclesCreateWitho
 import { vehiclesUncheckedCreateWithoutDocumentsInputSchema } from './vehiclesUncheckedCreateWithoutDocumentsInputSchema';
 import { vehiclesWhereInputSchema } from './vehiclesWhereInputSchema';
 
-export const vehiclesUpsertWithoutDocumentsInputSchema: z.ZodType<Prisma.vehiclesUpsertWithoutDocumentsInput> = z.object({
-  update: z.union([ z.lazy(() => vehiclesUpdateWithoutDocumentsInputSchema),z.lazy(() => vehiclesUncheckedUpdateWithoutDocumentsInputSchema) ]),
-  create: z.union([ z.lazy(() => vehiclesCreateWithoutDocumentsInputSchema),z.lazy(() => vehiclesUncheckedCreateWithoutDocumentsInputSchema) ]),
-  where: z.lazy(() => vehiclesWhereInputSchema).optional()
-}).strict();
+export const vehiclesUpsertWithoutDocumentsInputSchema: z.ZodType<Prisma.vehiclesUpsertWithoutDocumentsInput> = z
+	.object({
+		update: z.union([
+			z.lazy(() => vehiclesUpdateWithoutDocumentsInputSchema),
+			z.lazy(() => vehiclesUncheckedUpdateWithoutDocumentsInputSchema),
+		]),
+		create: z.union([
+			z.lazy(() => vehiclesCreateWithoutDocumentsInputSchema),
+			z.lazy(() => vehiclesUncheckedCreateWithoutDocumentsInputSchema),
+		]),
+		where: z.lazy(() => vehiclesWhereInputSchema).optional(),
+	})
+	.strict();
 
 export default vehiclesUpsertWithoutDocumentsInputSchema;

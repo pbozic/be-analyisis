@@ -7,11 +7,31 @@ import { reservationsCreateOrConnectWithoutUserInputSchema } from './reservation
 import { reservationsCreateManyUserInputEnvelopeSchema } from './reservationsCreateManyUserInputEnvelopeSchema';
 import { reservationsWhereUniqueInputSchema } from './reservationsWhereUniqueInputSchema';
 
-export const reservationsCreateNestedManyWithoutUserInputSchema: z.ZodType<Prisma.reservationsCreateNestedManyWithoutUserInput> = z.object({
-  create: z.union([ z.lazy(() => reservationsCreateWithoutUserInputSchema),z.lazy(() => reservationsCreateWithoutUserInputSchema).array(),z.lazy(() => reservationsUncheckedCreateWithoutUserInputSchema),z.lazy(() => reservationsUncheckedCreateWithoutUserInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => reservationsCreateOrConnectWithoutUserInputSchema),z.lazy(() => reservationsCreateOrConnectWithoutUserInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => reservationsCreateManyUserInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => reservationsWhereUniqueInputSchema),z.lazy(() => reservationsWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const reservationsCreateNestedManyWithoutUserInputSchema: z.ZodType<Prisma.reservationsCreateNestedManyWithoutUserInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => reservationsCreateWithoutUserInputSchema),
+					z.lazy(() => reservationsCreateWithoutUserInputSchema).array(),
+					z.lazy(() => reservationsUncheckedCreateWithoutUserInputSchema),
+					z.lazy(() => reservationsUncheckedCreateWithoutUserInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => reservationsCreateOrConnectWithoutUserInputSchema),
+					z.lazy(() => reservationsCreateOrConnectWithoutUserInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => reservationsCreateManyUserInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => reservationsWhereUniqueInputSchema),
+					z.lazy(() => reservationsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default reservationsCreateNestedManyWithoutUserInputSchema;

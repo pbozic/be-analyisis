@@ -7,10 +7,19 @@ import { delivery_order_sentUncheckedUpdateWithoutDriverInputSchema } from './de
 import { delivery_order_sentCreateWithoutDriverInputSchema } from './delivery_order_sentCreateWithoutDriverInputSchema';
 import { delivery_order_sentUncheckedCreateWithoutDriverInputSchema } from './delivery_order_sentUncheckedCreateWithoutDriverInputSchema';
 
-export const delivery_order_sentUpsertWithWhereUniqueWithoutDriverInputSchema: z.ZodType<Prisma.delivery_order_sentUpsertWithWhereUniqueWithoutDriverInput> = z.object({
-  where: z.lazy(() => delivery_order_sentWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => delivery_order_sentUpdateWithoutDriverInputSchema),z.lazy(() => delivery_order_sentUncheckedUpdateWithoutDriverInputSchema) ]),
-  create: z.union([ z.lazy(() => delivery_order_sentCreateWithoutDriverInputSchema),z.lazy(() => delivery_order_sentUncheckedCreateWithoutDriverInputSchema) ]),
-}).strict();
+export const delivery_order_sentUpsertWithWhereUniqueWithoutDriverInputSchema: z.ZodType<Prisma.delivery_order_sentUpsertWithWhereUniqueWithoutDriverInput> =
+	z
+		.object({
+			where: z.lazy(() => delivery_order_sentWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => delivery_order_sentUpdateWithoutDriverInputSchema),
+				z.lazy(() => delivery_order_sentUncheckedUpdateWithoutDriverInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => delivery_order_sentCreateWithoutDriverInputSchema),
+				z.lazy(() => delivery_order_sentUncheckedCreateWithoutDriverInputSchema),
+			]),
+		})
+		.strict();
 
 export default delivery_order_sentUpsertWithWhereUniqueWithoutDriverInputSchema;

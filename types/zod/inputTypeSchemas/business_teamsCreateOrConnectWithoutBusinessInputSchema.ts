@@ -5,9 +5,15 @@ import { business_teamsWhereUniqueInputSchema } from './business_teamsWhereUniqu
 import { business_teamsCreateWithoutBusinessInputSchema } from './business_teamsCreateWithoutBusinessInputSchema';
 import { business_teamsUncheckedCreateWithoutBusinessInputSchema } from './business_teamsUncheckedCreateWithoutBusinessInputSchema';
 
-export const business_teamsCreateOrConnectWithoutBusinessInputSchema: z.ZodType<Prisma.business_teamsCreateOrConnectWithoutBusinessInput> = z.object({
-  where: z.lazy(() => business_teamsWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => business_teamsCreateWithoutBusinessInputSchema),z.lazy(() => business_teamsUncheckedCreateWithoutBusinessInputSchema) ]),
-}).strict();
+export const business_teamsCreateOrConnectWithoutBusinessInputSchema: z.ZodType<Prisma.business_teamsCreateOrConnectWithoutBusinessInput> =
+	z
+		.object({
+			where: z.lazy(() => business_teamsWhereUniqueInputSchema),
+			create: z.union([
+				z.lazy(() => business_teamsCreateWithoutBusinessInputSchema),
+				z.lazy(() => business_teamsUncheckedCreateWithoutBusinessInputSchema),
+			]),
+		})
+		.strict();
 
 export default business_teamsCreateOrConnectWithoutBusinessInputSchema;

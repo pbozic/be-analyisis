@@ -10,16 +10,24 @@ import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateO
 import { categoriesUncheckedUpdateManyWithoutIconNestedInputSchema } from './categoriesUncheckedUpdateManyWithoutIconNestedInputSchema';
 import { promo_bannersUncheckedUpdateManyWithoutFilesNestedInputSchema } from './promo_bannersUncheckedUpdateManyWithoutFilesNestedInputSchema';
 
-export const filesUncheckedUpdateWithoutDocumentsInputSchema: z.ZodType<Prisma.filesUncheckedUpdateWithoutDocumentsInput> = z.object({
-  file_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  url: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  file_type: z.union([ z.lazy(() => FILE_TYPESchema),z.lazy(() => EnumFILE_TYPEFieldUpdateOperationsInputSchema) ]).optional(),
-  public: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  mime_type: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  categories: z.lazy(() => categoriesUncheckedUpdateManyWithoutIconNestedInputSchema).optional(),
-  promo_banners: z.lazy(() => promo_bannersUncheckedUpdateManyWithoutFilesNestedInputSchema).optional()
-}).strict();
+export const filesUncheckedUpdateWithoutDocumentsInputSchema: z.ZodType<Prisma.filesUncheckedUpdateWithoutDocumentsInput> =
+	z
+		.object({
+			file_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			url: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			file_type: z
+				.union([z.lazy(() => FILE_TYPESchema), z.lazy(() => EnumFILE_TYPEFieldUpdateOperationsInputSchema)])
+				.optional(),
+			public: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+			mime_type: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			categories: z.lazy(() => categoriesUncheckedUpdateManyWithoutIconNestedInputSchema).optional(),
+			promo_banners: z.lazy(() => promo_bannersUncheckedUpdateManyWithoutFilesNestedInputSchema).optional(),
+		})
+		.strict();
 
 export default filesUncheckedUpdateWithoutDocumentsInputSchema;

@@ -1,21 +1,21 @@
 services:
-  filebeat-setup:
-      image: docker.elastic.co/beats/filebeat:8.17.1
-      container_name: filebeat_setup
-      user: root
-      depends_on:
-        - klikni_elasticsearch
-        - kibana
-      env_file:
-        - ../../.env
-      volumes:
-        - ./filebeat.template.yml:/usr/share/filebeat/filebeat.template.yml:ro
-        - ./modules.d/nginx.yml:/usr/share/filebeat/modules.d/nginx.yml:ro
-        - ./entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
-        - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh:ro
-        - /var/lib/docker/containers:/var/lib/docker/containers:ro
-        - /var/run/docker.sock:/var/run/docker.sock:ro
-      entrypoint: ["/usr/local/bin/wait-for-it.sh", "kibana", "5601", "--", "/usr/local/bin/entrypoint.sh"]
-      command: ["setup", "--dashboards", "-e"]
-      networks:
-        - shared_network
+    filebeat-setup:
+        image: docker.elastic.co/beats/filebeat:8.17.1
+        container_name: filebeat_setup
+        user: root
+        depends_on:
+            - klikni_elasticsearch
+            - kibana
+        env_file:
+            - ../../.env
+        volumes:
+            - ./filebeat.template.yml:/usr/share/filebeat/filebeat.template.yml:ro
+            - ./modules.d/nginx.yml:/usr/share/filebeat/modules.d/nginx.yml:ro
+            - ./entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
+            - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh:ro
+            - /var/lib/docker/containers:/var/lib/docker/containers:ro
+            - /var/run/docker.sock:/var/run/docker.sock:ro
+        entrypoint: ['/usr/local/bin/wait-for-it.sh', 'kibana', '5601', '--', '/usr/local/bin/entrypoint.sh']
+        command: ['setup', '--dashboards', '-e']
+        networks:
+            - shared_network

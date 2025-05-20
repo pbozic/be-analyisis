@@ -7,11 +7,31 @@ import { documentsCreateOrConnectWithoutMenu_itemsInputSchema } from './document
 import { documentsCreateManyMenu_itemsInputEnvelopeSchema } from './documentsCreateManyMenu_itemsInputEnvelopeSchema';
 import { documentsWhereUniqueInputSchema } from './documentsWhereUniqueInputSchema';
 
-export const documentsUncheckedCreateNestedManyWithoutMenu_itemsInputSchema: z.ZodType<Prisma.documentsUncheckedCreateNestedManyWithoutMenu_itemsInput> = z.object({
-  create: z.union([ z.lazy(() => documentsCreateWithoutMenu_itemsInputSchema),z.lazy(() => documentsCreateWithoutMenu_itemsInputSchema).array(),z.lazy(() => documentsUncheckedCreateWithoutMenu_itemsInputSchema),z.lazy(() => documentsUncheckedCreateWithoutMenu_itemsInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => documentsCreateOrConnectWithoutMenu_itemsInputSchema),z.lazy(() => documentsCreateOrConnectWithoutMenu_itemsInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => documentsCreateManyMenu_itemsInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => documentsWhereUniqueInputSchema),z.lazy(() => documentsWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const documentsUncheckedCreateNestedManyWithoutMenu_itemsInputSchema: z.ZodType<Prisma.documentsUncheckedCreateNestedManyWithoutMenu_itemsInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => documentsCreateWithoutMenu_itemsInputSchema),
+					z.lazy(() => documentsCreateWithoutMenu_itemsInputSchema).array(),
+					z.lazy(() => documentsUncheckedCreateWithoutMenu_itemsInputSchema),
+					z.lazy(() => documentsUncheckedCreateWithoutMenu_itemsInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => documentsCreateOrConnectWithoutMenu_itemsInputSchema),
+					z.lazy(() => documentsCreateOrConnectWithoutMenu_itemsInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => documentsCreateManyMenu_itemsInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => documentsWhereUniqueInputSchema),
+					z.lazy(() => documentsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default documentsUncheckedCreateNestedManyWithoutMenu_itemsInputSchema;

@@ -7,10 +7,19 @@ import { tokensUncheckedUpdateWithoutUsersInputSchema } from './tokensUncheckedU
 import { tokensCreateWithoutUsersInputSchema } from './tokensCreateWithoutUsersInputSchema';
 import { tokensUncheckedCreateWithoutUsersInputSchema } from './tokensUncheckedCreateWithoutUsersInputSchema';
 
-export const tokensUpsertWithWhereUniqueWithoutUsersInputSchema: z.ZodType<Prisma.tokensUpsertWithWhereUniqueWithoutUsersInput> = z.object({
-  where: z.lazy(() => tokensWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => tokensUpdateWithoutUsersInputSchema),z.lazy(() => tokensUncheckedUpdateWithoutUsersInputSchema) ]),
-  create: z.union([ z.lazy(() => tokensCreateWithoutUsersInputSchema),z.lazy(() => tokensUncheckedCreateWithoutUsersInputSchema) ]),
-}).strict();
+export const tokensUpsertWithWhereUniqueWithoutUsersInputSchema: z.ZodType<Prisma.tokensUpsertWithWhereUniqueWithoutUsersInput> =
+	z
+		.object({
+			where: z.lazy(() => tokensWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => tokensUpdateWithoutUsersInputSchema),
+				z.lazy(() => tokensUncheckedUpdateWithoutUsersInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => tokensCreateWithoutUsersInputSchema),
+				z.lazy(() => tokensUncheckedCreateWithoutUsersInputSchema),
+			]),
+		})
+		.strict();
 
 export default tokensUpsertWithWhereUniqueWithoutUsersInputSchema;

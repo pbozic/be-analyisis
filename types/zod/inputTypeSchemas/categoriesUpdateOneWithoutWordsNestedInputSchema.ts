@@ -11,14 +11,28 @@ import { categoriesUpdateToOneWithWhereWithoutWordsInputSchema } from './categor
 import { categoriesUpdateWithoutWordsInputSchema } from './categoriesUpdateWithoutWordsInputSchema';
 import { categoriesUncheckedUpdateWithoutWordsInputSchema } from './categoriesUncheckedUpdateWithoutWordsInputSchema';
 
-export const categoriesUpdateOneWithoutWordsNestedInputSchema: z.ZodType<Prisma.categoriesUpdateOneWithoutWordsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => categoriesCreateWithoutWordsInputSchema),z.lazy(() => categoriesUncheckedCreateWithoutWordsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => categoriesCreateOrConnectWithoutWordsInputSchema).optional(),
-  upsert: z.lazy(() => categoriesUpsertWithoutWordsInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => categoriesWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => categoriesWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => categoriesWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => categoriesUpdateToOneWithWhereWithoutWordsInputSchema),z.lazy(() => categoriesUpdateWithoutWordsInputSchema),z.lazy(() => categoriesUncheckedUpdateWithoutWordsInputSchema) ]).optional(),
-}).strict();
+export const categoriesUpdateOneWithoutWordsNestedInputSchema: z.ZodType<Prisma.categoriesUpdateOneWithoutWordsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => categoriesCreateWithoutWordsInputSchema),
+					z.lazy(() => categoriesUncheckedCreateWithoutWordsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => categoriesCreateOrConnectWithoutWordsInputSchema).optional(),
+			upsert: z.lazy(() => categoriesUpsertWithoutWordsInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => categoriesWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => categoriesWhereInputSchema)]).optional(),
+			connect: z.lazy(() => categoriesWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => categoriesUpdateToOneWithWhereWithoutWordsInputSchema),
+					z.lazy(() => categoriesUpdateWithoutWordsInputSchema),
+					z.lazy(() => categoriesUncheckedUpdateWithoutWordsInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default categoriesUpdateOneWithoutWordsNestedInputSchema;

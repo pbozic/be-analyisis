@@ -14,21 +14,37 @@ import { categoriesUpdateManyWithoutParent_categoryNestedInputSchema } from './c
 import { translatableUpdateOneRequiredWithoutCategoriesNestedInputSchema } from './translatableUpdateOneRequiredWithoutCategoriesNestedInputSchema';
 import { wordsUpdateManyWithoutCategoryNestedInputSchema } from './wordsUpdateManyWithoutCategoryNestedInputSchema';
 
-export const categoriesUpdateWithoutMenu_categoriesInputSchema: z.ZodType<Prisma.categoriesUpdateWithoutMenu_categoriesInput> = z.object({
-  categories_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  tag: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  category_type: z.union([ z.lazy(() => CATEGORY_TYPESchema),z.lazy(() => EnumCATEGORY_TYPEFieldUpdateOperationsInputSchema) ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  icon: z.lazy(() => filesUpdateOneWithoutCategoriesNestedInputSchema).optional(),
-  promo_ads_category: z.lazy(() => promo_ads_categoryUpdateManyWithoutCategoryNestedInputSchema).optional(),
-  parent_category: z.lazy(() => categoriesUpdateOneWithoutSub_categoriesNestedInputSchema).optional(),
-  sub_categories: z.lazy(() => categoriesUpdateManyWithoutParent_categoryNestedInputSchema).optional(),
-  translatable: z.lazy(() => translatableUpdateOneRequiredWithoutCategoriesNestedInputSchema).optional(),
-  words: z.lazy(() => wordsUpdateManyWithoutCategoryNestedInputSchema).optional()
-}).strict();
+export const categoriesUpdateWithoutMenu_categoriesInputSchema: z.ZodType<Prisma.categoriesUpdateWithoutMenu_categoriesInput> =
+	z
+		.object({
+			categories_id: z
+				.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)])
+				.optional(),
+			name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			description: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			tag: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			category_type: z
+				.union([
+					z.lazy(() => CATEGORY_TYPESchema),
+					z.lazy(() => EnumCATEGORY_TYPEFieldUpdateOperationsInputSchema),
+				])
+				.optional(),
+			created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			deleted_at: z
+				.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			icon: z.lazy(() => filesUpdateOneWithoutCategoriesNestedInputSchema).optional(),
+			promo_ads_category: z.lazy(() => promo_ads_categoryUpdateManyWithoutCategoryNestedInputSchema).optional(),
+			parent_category: z.lazy(() => categoriesUpdateOneWithoutSub_categoriesNestedInputSchema).optional(),
+			sub_categories: z.lazy(() => categoriesUpdateManyWithoutParent_categoryNestedInputSchema).optional(),
+			translatable: z.lazy(() => translatableUpdateOneRequiredWithoutCategoriesNestedInputSchema).optional(),
+			words: z.lazy(() => wordsUpdateManyWithoutCategoryNestedInputSchema).optional(),
+		})
+		.strict();
 
 export default categoriesUpdateWithoutMenu_categoriesInputSchema;

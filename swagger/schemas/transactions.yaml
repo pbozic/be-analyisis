@@ -1,38 +1,38 @@
 type: object
 properties:
-  transaction_id:
-    type: string
-  user_id:
-    type: string
-  amount:
-    type: number
-  description:
-    type: string
-  createdAt:
-    type: string
-  updatedAt:
-    type: string
-  delivery_order_id:
-    type: string
-  taxi_order_id:
-    type: string
-  wallet_fund_id:
-    type: string
-  taxi_order:
-    $ref: ./taxi_orders.yaml
-  delivery_order:
-    $ref: ./delivery_orders.yaml
-  user:
-    $ref: ./users.yaml
-  documents:
-    type: array
-    items:
-      $ref: ./documents.yaml
-  wallet_funds:
-    $ref: ./wallet_funds.yaml
+    transaction_id:
+        type: string
+    user_id:
+        type: string
+    amount:
+        type: number
+    description:
+        type: string
+    createdAt:
+        type: string
+    updatedAt:
+        type: string
+    delivery_order_id:
+        type: string
+    taxi_order_id:
+        type: string
+    wallet_fund_id:
+        type: string
+    taxi_order:
+        $ref: ./taxi_orders.yaml
+    delivery_order:
+        $ref: ./delivery_orders.yaml
+    user:
+        $ref: ./users.yaml
+    documents:
+        type: array
+        items:
+            $ref: ./documents.yaml
+    wallet_funds:
+        $ref: ./wallet_funds.yaml
 required:
-  - transaction_id
-  - user_id
-  - amount
-  - createdAt
-  - updatedAt
+    - transaction_id
+    - user_id
+    - amount
+    - createdAt
+    - updatedAt

@@ -1,31 +1,31 @@
 components:
     schemas:
         UserAddress:
-            type: "object"
+            type: 'object'
             properties:
                 user_id:
-                    type: "string"
-                    format: "uuid"
+                    type: 'string'
+                    format: 'uuid'
                 address_id:
-                    type: "string"
-                    format: "uuid"
+                    type: 'string'
+                    format: 'uuid'
                 name:
-                    type: "string"
+                    type: 'string'
                 icon:
-                    type: "string"
+                    type: 'string'
                 selected:
-                    type: "boolean"
+                    type: 'boolean'
                     default: false
                 users:
-                    type: "users"
+                    type: 'users'
                     relation:
-                        fields: ["user_id"]
-                        references: ["user_id"]
+                        fields: ['user_id']
+                        references: ['user_id']
                 addresses:
-                    type: "addresses"
+                    type: 'addresses'
                     relation:
-                        fields: ["address_id"]
-                        references: ["address_id"]
-            required: ["user_id", "address_id"]
+                        fields: ['address_id']
+                        references: ['address_id']
+            required: ['user_id', 'address_id']
             additionalProperties: false
-            primaryKey: ["user_id", "address_id"]
+            primaryKey: ['user_id', 'address_id']

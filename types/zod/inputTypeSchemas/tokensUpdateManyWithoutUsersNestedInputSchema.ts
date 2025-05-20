@@ -11,18 +11,58 @@ import { tokensUpdateWithWhereUniqueWithoutUsersInputSchema } from './tokensUpda
 import { tokensUpdateManyWithWhereWithoutUsersInputSchema } from './tokensUpdateManyWithWhereWithoutUsersInputSchema';
 import { tokensScalarWhereInputSchema } from './tokensScalarWhereInputSchema';
 
-export const tokensUpdateManyWithoutUsersNestedInputSchema: z.ZodType<Prisma.tokensUpdateManyWithoutUsersNestedInput> = z.object({
-  create: z.union([ z.lazy(() => tokensCreateWithoutUsersInputSchema),z.lazy(() => tokensCreateWithoutUsersInputSchema).array(),z.lazy(() => tokensUncheckedCreateWithoutUsersInputSchema),z.lazy(() => tokensUncheckedCreateWithoutUsersInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => tokensCreateOrConnectWithoutUsersInputSchema),z.lazy(() => tokensCreateOrConnectWithoutUsersInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => tokensUpsertWithWhereUniqueWithoutUsersInputSchema),z.lazy(() => tokensUpsertWithWhereUniqueWithoutUsersInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => tokensCreateManyUsersInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => tokensWhereUniqueInputSchema),z.lazy(() => tokensWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => tokensWhereUniqueInputSchema),z.lazy(() => tokensWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => tokensWhereUniqueInputSchema),z.lazy(() => tokensWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => tokensWhereUniqueInputSchema),z.lazy(() => tokensWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => tokensUpdateWithWhereUniqueWithoutUsersInputSchema),z.lazy(() => tokensUpdateWithWhereUniqueWithoutUsersInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => tokensUpdateManyWithWhereWithoutUsersInputSchema),z.lazy(() => tokensUpdateManyWithWhereWithoutUsersInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => tokensScalarWhereInputSchema),z.lazy(() => tokensScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const tokensUpdateManyWithoutUsersNestedInputSchema: z.ZodType<Prisma.tokensUpdateManyWithoutUsersNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => tokensCreateWithoutUsersInputSchema),
+					z.lazy(() => tokensCreateWithoutUsersInputSchema).array(),
+					z.lazy(() => tokensUncheckedCreateWithoutUsersInputSchema),
+					z.lazy(() => tokensUncheckedCreateWithoutUsersInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => tokensCreateOrConnectWithoutUsersInputSchema),
+					z.lazy(() => tokensCreateOrConnectWithoutUsersInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => tokensUpsertWithWhereUniqueWithoutUsersInputSchema),
+					z.lazy(() => tokensUpsertWithWhereUniqueWithoutUsersInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => tokensCreateManyUsersInputEnvelopeSchema).optional(),
+			set: z
+				.union([z.lazy(() => tokensWhereUniqueInputSchema), z.lazy(() => tokensWhereUniqueInputSchema).array()])
+				.optional(),
+			disconnect: z
+				.union([z.lazy(() => tokensWhereUniqueInputSchema), z.lazy(() => tokensWhereUniqueInputSchema).array()])
+				.optional(),
+			delete: z
+				.union([z.lazy(() => tokensWhereUniqueInputSchema), z.lazy(() => tokensWhereUniqueInputSchema).array()])
+				.optional(),
+			connect: z
+				.union([z.lazy(() => tokensWhereUniqueInputSchema), z.lazy(() => tokensWhereUniqueInputSchema).array()])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => tokensUpdateWithWhereUniqueWithoutUsersInputSchema),
+					z.lazy(() => tokensUpdateWithWhereUniqueWithoutUsersInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => tokensUpdateManyWithWhereWithoutUsersInputSchema),
+					z.lazy(() => tokensUpdateManyWithWhereWithoutUsersInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([z.lazy(() => tokensScalarWhereInputSchema), z.lazy(() => tokensScalarWhereInputSchema).array()])
+				.optional(),
+		})
+		.strict();
 
 export default tokensUpdateManyWithoutUsersNestedInputSchema;

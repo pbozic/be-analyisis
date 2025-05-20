@@ -11,14 +11,28 @@ import { vehiclesUpdateToOneWithWhereWithoutTaxi_ordersInputSchema } from './veh
 import { vehiclesUpdateWithoutTaxi_ordersInputSchema } from './vehiclesUpdateWithoutTaxi_ordersInputSchema';
 import { vehiclesUncheckedUpdateWithoutTaxi_ordersInputSchema } from './vehiclesUncheckedUpdateWithoutTaxi_ordersInputSchema';
 
-export const vehiclesUpdateOneWithoutTaxi_ordersNestedInputSchema: z.ZodType<Prisma.vehiclesUpdateOneWithoutTaxi_ordersNestedInput> = z.object({
-  create: z.union([ z.lazy(() => vehiclesCreateWithoutTaxi_ordersInputSchema),z.lazy(() => vehiclesUncheckedCreateWithoutTaxi_ordersInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => vehiclesCreateOrConnectWithoutTaxi_ordersInputSchema).optional(),
-  upsert: z.lazy(() => vehiclesUpsertWithoutTaxi_ordersInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => vehiclesWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => vehiclesWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => vehiclesWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => vehiclesUpdateToOneWithWhereWithoutTaxi_ordersInputSchema),z.lazy(() => vehiclesUpdateWithoutTaxi_ordersInputSchema),z.lazy(() => vehiclesUncheckedUpdateWithoutTaxi_ordersInputSchema) ]).optional(),
-}).strict();
+export const vehiclesUpdateOneWithoutTaxi_ordersNestedInputSchema: z.ZodType<Prisma.vehiclesUpdateOneWithoutTaxi_ordersNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => vehiclesCreateWithoutTaxi_ordersInputSchema),
+					z.lazy(() => vehiclesUncheckedCreateWithoutTaxi_ordersInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => vehiclesCreateOrConnectWithoutTaxi_ordersInputSchema).optional(),
+			upsert: z.lazy(() => vehiclesUpsertWithoutTaxi_ordersInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => vehiclesWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => vehiclesWhereInputSchema)]).optional(),
+			connect: z.lazy(() => vehiclesWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => vehiclesUpdateToOneWithWhereWithoutTaxi_ordersInputSchema),
+					z.lazy(() => vehiclesUpdateWithoutTaxi_ordersInputSchema),
+					z.lazy(() => vehiclesUncheckedUpdateWithoutTaxi_ordersInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default vehiclesUpdateOneWithoutTaxi_ordersNestedInputSchema;

@@ -11,18 +11,73 @@ import { menu_itemsUpdateWithWhereUniqueWithoutMenu_categoryInputSchema } from '
 import { menu_itemsUpdateManyWithWhereWithoutMenu_categoryInputSchema } from './menu_itemsUpdateManyWithWhereWithoutMenu_categoryInputSchema';
 import { menu_itemsScalarWhereInputSchema } from './menu_itemsScalarWhereInputSchema';
 
-export const menu_itemsUpdateManyWithoutMenu_categoryNestedInputSchema: z.ZodType<Prisma.menu_itemsUpdateManyWithoutMenu_categoryNestedInput> = z.object({
-  create: z.union([ z.lazy(() => menu_itemsCreateWithoutMenu_categoryInputSchema),z.lazy(() => menu_itemsCreateWithoutMenu_categoryInputSchema).array(),z.lazy(() => menu_itemsUncheckedCreateWithoutMenu_categoryInputSchema),z.lazy(() => menu_itemsUncheckedCreateWithoutMenu_categoryInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => menu_itemsCreateOrConnectWithoutMenu_categoryInputSchema),z.lazy(() => menu_itemsCreateOrConnectWithoutMenu_categoryInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => menu_itemsUpsertWithWhereUniqueWithoutMenu_categoryInputSchema),z.lazy(() => menu_itemsUpsertWithWhereUniqueWithoutMenu_categoryInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => menu_itemsCreateManyMenu_categoryInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => menu_itemsWhereUniqueInputSchema),z.lazy(() => menu_itemsWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => menu_itemsWhereUniqueInputSchema),z.lazy(() => menu_itemsWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => menu_itemsWhereUniqueInputSchema),z.lazy(() => menu_itemsWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => menu_itemsWhereUniqueInputSchema),z.lazy(() => menu_itemsWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => menu_itemsUpdateWithWhereUniqueWithoutMenu_categoryInputSchema),z.lazy(() => menu_itemsUpdateWithWhereUniqueWithoutMenu_categoryInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => menu_itemsUpdateManyWithWhereWithoutMenu_categoryInputSchema),z.lazy(() => menu_itemsUpdateManyWithWhereWithoutMenu_categoryInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => menu_itemsScalarWhereInputSchema),z.lazy(() => menu_itemsScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const menu_itemsUpdateManyWithoutMenu_categoryNestedInputSchema: z.ZodType<Prisma.menu_itemsUpdateManyWithoutMenu_categoryNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => menu_itemsCreateWithoutMenu_categoryInputSchema),
+					z.lazy(() => menu_itemsCreateWithoutMenu_categoryInputSchema).array(),
+					z.lazy(() => menu_itemsUncheckedCreateWithoutMenu_categoryInputSchema),
+					z.lazy(() => menu_itemsUncheckedCreateWithoutMenu_categoryInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => menu_itemsCreateOrConnectWithoutMenu_categoryInputSchema),
+					z.lazy(() => menu_itemsCreateOrConnectWithoutMenu_categoryInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => menu_itemsUpsertWithWhereUniqueWithoutMenu_categoryInputSchema),
+					z.lazy(() => menu_itemsUpsertWithWhereUniqueWithoutMenu_categoryInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => menu_itemsCreateManyMenu_categoryInputEnvelopeSchema).optional(),
+			set: z
+				.union([
+					z.lazy(() => menu_itemsWhereUniqueInputSchema),
+					z.lazy(() => menu_itemsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			disconnect: z
+				.union([
+					z.lazy(() => menu_itemsWhereUniqueInputSchema),
+					z.lazy(() => menu_itemsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			delete: z
+				.union([
+					z.lazy(() => menu_itemsWhereUniqueInputSchema),
+					z.lazy(() => menu_itemsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			connect: z
+				.union([
+					z.lazy(() => menu_itemsWhereUniqueInputSchema),
+					z.lazy(() => menu_itemsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => menu_itemsUpdateWithWhereUniqueWithoutMenu_categoryInputSchema),
+					z.lazy(() => menu_itemsUpdateWithWhereUniqueWithoutMenu_categoryInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => menu_itemsUpdateManyWithWhereWithoutMenu_categoryInputSchema),
+					z.lazy(() => menu_itemsUpdateManyWithWhereWithoutMenu_categoryInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([
+					z.lazy(() => menu_itemsScalarWhereInputSchema),
+					z.lazy(() => menu_itemsScalarWhereInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default menu_itemsUpdateManyWithoutMenu_categoryNestedInputSchema;

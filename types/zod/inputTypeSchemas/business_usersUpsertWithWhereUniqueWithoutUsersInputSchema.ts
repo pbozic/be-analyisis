@@ -7,10 +7,19 @@ import { business_usersUncheckedUpdateWithoutUsersInputSchema } from './business
 import { business_usersCreateWithoutUsersInputSchema } from './business_usersCreateWithoutUsersInputSchema';
 import { business_usersUncheckedCreateWithoutUsersInputSchema } from './business_usersUncheckedCreateWithoutUsersInputSchema';
 
-export const business_usersUpsertWithWhereUniqueWithoutUsersInputSchema: z.ZodType<Prisma.business_usersUpsertWithWhereUniqueWithoutUsersInput> = z.object({
-  where: z.lazy(() => business_usersWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => business_usersUpdateWithoutUsersInputSchema),z.lazy(() => business_usersUncheckedUpdateWithoutUsersInputSchema) ]),
-  create: z.union([ z.lazy(() => business_usersCreateWithoutUsersInputSchema),z.lazy(() => business_usersUncheckedCreateWithoutUsersInputSchema) ]),
-}).strict();
+export const business_usersUpsertWithWhereUniqueWithoutUsersInputSchema: z.ZodType<Prisma.business_usersUpsertWithWhereUniqueWithoutUsersInput> =
+	z
+		.object({
+			where: z.lazy(() => business_usersWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => business_usersUpdateWithoutUsersInputSchema),
+				z.lazy(() => business_usersUncheckedUpdateWithoutUsersInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => business_usersCreateWithoutUsersInputSchema),
+				z.lazy(() => business_usersUncheckedCreateWithoutUsersInputSchema),
+			]),
+		})
+		.strict();
 
 export default business_usersUpsertWithWhereUniqueWithoutUsersInputSchema;

@@ -7,10 +7,19 @@ import { addressesCreateWithoutBusinesses_delivery_addressInputSchema } from './
 import { addressesUncheckedCreateWithoutBusinesses_delivery_addressInputSchema } from './addressesUncheckedCreateWithoutBusinesses_delivery_addressInputSchema';
 import { addressesWhereInputSchema } from './addressesWhereInputSchema';
 
-export const addressesUpsertWithoutBusinesses_delivery_addressInputSchema: z.ZodType<Prisma.addressesUpsertWithoutBusinesses_delivery_addressInput> = z.object({
-  update: z.union([ z.lazy(() => addressesUpdateWithoutBusinesses_delivery_addressInputSchema),z.lazy(() => addressesUncheckedUpdateWithoutBusinesses_delivery_addressInputSchema) ]),
-  create: z.union([ z.lazy(() => addressesCreateWithoutBusinesses_delivery_addressInputSchema),z.lazy(() => addressesUncheckedCreateWithoutBusinesses_delivery_addressInputSchema) ]),
-  where: z.lazy(() => addressesWhereInputSchema).optional()
-}).strict();
+export const addressesUpsertWithoutBusinesses_delivery_addressInputSchema: z.ZodType<Prisma.addressesUpsertWithoutBusinesses_delivery_addressInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => addressesUpdateWithoutBusinesses_delivery_addressInputSchema),
+				z.lazy(() => addressesUncheckedUpdateWithoutBusinesses_delivery_addressInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => addressesCreateWithoutBusinesses_delivery_addressInputSchema),
+				z.lazy(() => addressesUncheckedCreateWithoutBusinesses_delivery_addressInputSchema),
+			]),
+			where: z.lazy(() => addressesWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default addressesUpsertWithoutBusinesses_delivery_addressInputSchema;

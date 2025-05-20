@@ -7,10 +7,19 @@ import { menu_categories_categoriesUncheckedUpdateWithoutMenu_categoryInputSchem
 import { menu_categories_categoriesCreateWithoutMenu_categoryInputSchema } from './menu_categories_categoriesCreateWithoutMenu_categoryInputSchema';
 import { menu_categories_categoriesUncheckedCreateWithoutMenu_categoryInputSchema } from './menu_categories_categoriesUncheckedCreateWithoutMenu_categoryInputSchema';
 
-export const menu_categories_categoriesUpsertWithWhereUniqueWithoutMenu_categoryInputSchema: z.ZodType<Prisma.menu_categories_categoriesUpsertWithWhereUniqueWithoutMenu_categoryInput> = z.object({
-  where: z.lazy(() => menu_categories_categoriesWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => menu_categories_categoriesUpdateWithoutMenu_categoryInputSchema),z.lazy(() => menu_categories_categoriesUncheckedUpdateWithoutMenu_categoryInputSchema) ]),
-  create: z.union([ z.lazy(() => menu_categories_categoriesCreateWithoutMenu_categoryInputSchema),z.lazy(() => menu_categories_categoriesUncheckedCreateWithoutMenu_categoryInputSchema) ]),
-}).strict();
+export const menu_categories_categoriesUpsertWithWhereUniqueWithoutMenu_categoryInputSchema: z.ZodType<Prisma.menu_categories_categoriesUpsertWithWhereUniqueWithoutMenu_categoryInput> =
+	z
+		.object({
+			where: z.lazy(() => menu_categories_categoriesWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => menu_categories_categoriesUpdateWithoutMenu_categoryInputSchema),
+				z.lazy(() => menu_categories_categoriesUncheckedUpdateWithoutMenu_categoryInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => menu_categories_categoriesCreateWithoutMenu_categoryInputSchema),
+				z.lazy(() => menu_categories_categoriesUncheckedCreateWithoutMenu_categoryInputSchema),
+			]),
+		})
+		.strict();
 
 export default menu_categories_categoriesUpsertWithWhereUniqueWithoutMenu_categoryInputSchema;

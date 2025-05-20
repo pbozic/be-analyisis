@@ -6,14 +6,28 @@ import { NestedEnumCASHBACK_SOURCEWithAggregatesFilterSchema } from './NestedEnu
 import { NestedIntFilterSchema } from './NestedIntFilterSchema';
 import { NestedEnumCASHBACK_SOURCEFilterSchema } from './NestedEnumCASHBACK_SOURCEFilterSchema';
 
-export const EnumCASHBACK_SOURCEWithAggregatesFilterSchema: z.ZodType<Prisma.EnumCASHBACK_SOURCEWithAggregatesFilter> = z.object({
-  equals: z.lazy(() => CASHBACK_SOURCESchema).optional(),
-  in: z.lazy(() => CASHBACK_SOURCESchema).array().optional(),
-  notIn: z.lazy(() => CASHBACK_SOURCESchema).array().optional(),
-  not: z.union([ z.lazy(() => CASHBACK_SOURCESchema),z.lazy(() => NestedEnumCASHBACK_SOURCEWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedEnumCASHBACK_SOURCEFilterSchema).optional(),
-  _max: z.lazy(() => NestedEnumCASHBACK_SOURCEFilterSchema).optional()
-}).strict();
+export const EnumCASHBACK_SOURCEWithAggregatesFilterSchema: z.ZodType<Prisma.EnumCASHBACK_SOURCEWithAggregatesFilter> =
+	z
+		.object({
+			equals: z.lazy(() => CASHBACK_SOURCESchema).optional(),
+			in: z
+				.lazy(() => CASHBACK_SOURCESchema)
+				.array()
+				.optional(),
+			notIn: z
+				.lazy(() => CASHBACK_SOURCESchema)
+				.array()
+				.optional(),
+			not: z
+				.union([
+					z.lazy(() => CASHBACK_SOURCESchema),
+					z.lazy(() => NestedEnumCASHBACK_SOURCEWithAggregatesFilterSchema),
+				])
+				.optional(),
+			_count: z.lazy(() => NestedIntFilterSchema).optional(),
+			_min: z.lazy(() => NestedEnumCASHBACK_SOURCEFilterSchema).optional(),
+			_max: z.lazy(() => NestedEnumCASHBACK_SOURCEFilterSchema).optional(),
+		})
+		.strict();
 
 export default EnumCASHBACK_SOURCEWithAggregatesFilterSchema;

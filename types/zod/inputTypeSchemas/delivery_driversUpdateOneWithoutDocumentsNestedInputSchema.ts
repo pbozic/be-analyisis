@@ -11,14 +11,28 @@ import { delivery_driversUpdateToOneWithWhereWithoutDocumentsInputSchema } from 
 import { delivery_driversUpdateWithoutDocumentsInputSchema } from './delivery_driversUpdateWithoutDocumentsInputSchema';
 import { delivery_driversUncheckedUpdateWithoutDocumentsInputSchema } from './delivery_driversUncheckedUpdateWithoutDocumentsInputSchema';
 
-export const delivery_driversUpdateOneWithoutDocumentsNestedInputSchema: z.ZodType<Prisma.delivery_driversUpdateOneWithoutDocumentsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => delivery_driversCreateWithoutDocumentsInputSchema),z.lazy(() => delivery_driversUncheckedCreateWithoutDocumentsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => delivery_driversCreateOrConnectWithoutDocumentsInputSchema).optional(),
-  upsert: z.lazy(() => delivery_driversUpsertWithoutDocumentsInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => delivery_driversWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => delivery_driversWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => delivery_driversWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => delivery_driversUpdateToOneWithWhereWithoutDocumentsInputSchema),z.lazy(() => delivery_driversUpdateWithoutDocumentsInputSchema),z.lazy(() => delivery_driversUncheckedUpdateWithoutDocumentsInputSchema) ]).optional(),
-}).strict();
+export const delivery_driversUpdateOneWithoutDocumentsNestedInputSchema: z.ZodType<Prisma.delivery_driversUpdateOneWithoutDocumentsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => delivery_driversCreateWithoutDocumentsInputSchema),
+					z.lazy(() => delivery_driversUncheckedCreateWithoutDocumentsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => delivery_driversCreateOrConnectWithoutDocumentsInputSchema).optional(),
+			upsert: z.lazy(() => delivery_driversUpsertWithoutDocumentsInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => delivery_driversWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => delivery_driversWhereInputSchema)]).optional(),
+			connect: z.lazy(() => delivery_driversWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => delivery_driversUpdateToOneWithWhereWithoutDocumentsInputSchema),
+					z.lazy(() => delivery_driversUpdateWithoutDocumentsInputSchema),
+					z.lazy(() => delivery_driversUncheckedUpdateWithoutDocumentsInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default delivery_driversUpdateOneWithoutDocumentsNestedInputSchema;

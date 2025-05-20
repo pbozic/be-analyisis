@@ -7,10 +7,19 @@ import { filesUncheckedUpdateWithoutDocumentsInputSchema } from './filesUnchecke
 import { filesCreateWithoutDocumentsInputSchema } from './filesCreateWithoutDocumentsInputSchema';
 import { filesUncheckedCreateWithoutDocumentsInputSchema } from './filesUncheckedCreateWithoutDocumentsInputSchema';
 
-export const filesUpsertWithWhereUniqueWithoutDocumentsInputSchema: z.ZodType<Prisma.filesUpsertWithWhereUniqueWithoutDocumentsInput> = z.object({
-  where: z.lazy(() => filesWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => filesUpdateWithoutDocumentsInputSchema),z.lazy(() => filesUncheckedUpdateWithoutDocumentsInputSchema) ]),
-  create: z.union([ z.lazy(() => filesCreateWithoutDocumentsInputSchema),z.lazy(() => filesUncheckedCreateWithoutDocumentsInputSchema) ]),
-}).strict();
+export const filesUpsertWithWhereUniqueWithoutDocumentsInputSchema: z.ZodType<Prisma.filesUpsertWithWhereUniqueWithoutDocumentsInput> =
+	z
+		.object({
+			where: z.lazy(() => filesWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => filesUpdateWithoutDocumentsInputSchema),
+				z.lazy(() => filesUncheckedUpdateWithoutDocumentsInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => filesCreateWithoutDocumentsInputSchema),
+				z.lazy(() => filesUncheckedCreateWithoutDocumentsInputSchema),
+			]),
+		})
+		.strict();
 
 export default filesUpsertWithWhereUniqueWithoutDocumentsInputSchema;

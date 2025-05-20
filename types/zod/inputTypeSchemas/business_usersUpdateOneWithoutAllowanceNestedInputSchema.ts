@@ -11,14 +11,28 @@ import { business_usersUpdateToOneWithWhereWithoutAllowanceInputSchema } from '.
 import { business_usersUpdateWithoutAllowanceInputSchema } from './business_usersUpdateWithoutAllowanceInputSchema';
 import { business_usersUncheckedUpdateWithoutAllowanceInputSchema } from './business_usersUncheckedUpdateWithoutAllowanceInputSchema';
 
-export const business_usersUpdateOneWithoutAllowanceNestedInputSchema: z.ZodType<Prisma.business_usersUpdateOneWithoutAllowanceNestedInput> = z.object({
-  create: z.union([ z.lazy(() => business_usersCreateWithoutAllowanceInputSchema),z.lazy(() => business_usersUncheckedCreateWithoutAllowanceInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => business_usersCreateOrConnectWithoutAllowanceInputSchema).optional(),
-  upsert: z.lazy(() => business_usersUpsertWithoutAllowanceInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => business_usersWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => business_usersWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => business_usersWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => business_usersUpdateToOneWithWhereWithoutAllowanceInputSchema),z.lazy(() => business_usersUpdateWithoutAllowanceInputSchema),z.lazy(() => business_usersUncheckedUpdateWithoutAllowanceInputSchema) ]).optional(),
-}).strict();
+export const business_usersUpdateOneWithoutAllowanceNestedInputSchema: z.ZodType<Prisma.business_usersUpdateOneWithoutAllowanceNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => business_usersCreateWithoutAllowanceInputSchema),
+					z.lazy(() => business_usersUncheckedCreateWithoutAllowanceInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => business_usersCreateOrConnectWithoutAllowanceInputSchema).optional(),
+			upsert: z.lazy(() => business_usersUpsertWithoutAllowanceInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => business_usersWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => business_usersWhereInputSchema)]).optional(),
+			connect: z.lazy(() => business_usersWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => business_usersUpdateToOneWithWhereWithoutAllowanceInputSchema),
+					z.lazy(() => business_usersUpdateWithoutAllowanceInputSchema),
+					z.lazy(() => business_usersUncheckedUpdateWithoutAllowanceInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default business_usersUpdateOneWithoutAllowanceNestedInputSchema;

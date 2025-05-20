@@ -8,14 +8,16 @@ import { usersUpdateOneRequiredWithoutChild_usersNestedInputSchema } from './use
 import { usersUpdateOneRequiredWithoutParent_userNestedInputSchema } from './usersUpdateOneRequiredWithoutParent_userNestedInputSchema';
 import { allowancesUpdateOneWithoutUserNestedInputSchema } from './allowancesUpdateOneWithoutUserNestedInputSchema';
 
-export const group_usersUpdateInputSchema: z.ZodType<Prisma.group_usersUpdateInput> = z.object({
-  group_user_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  enabled: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  parent_user: z.lazy(() => usersUpdateOneRequiredWithoutChild_usersNestedInputSchema).optional(),
-  child_user: z.lazy(() => usersUpdateOneRequiredWithoutParent_userNestedInputSchema).optional(),
-  allowance: z.lazy(() => allowancesUpdateOneWithoutUserNestedInputSchema).optional()
-}).strict();
+export const group_usersUpdateInputSchema: z.ZodType<Prisma.group_usersUpdateInput> = z
+	.object({
+		group_user_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		enabled: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+		parent_user: z.lazy(() => usersUpdateOneRequiredWithoutChild_usersNestedInputSchema).optional(),
+		child_user: z.lazy(() => usersUpdateOneRequiredWithoutParent_userNestedInputSchema).optional(),
+		allowance: z.lazy(() => allowancesUpdateOneWithoutUserNestedInputSchema).optional(),
+	})
+	.strict();
 
 export default group_usersUpdateInputSchema;

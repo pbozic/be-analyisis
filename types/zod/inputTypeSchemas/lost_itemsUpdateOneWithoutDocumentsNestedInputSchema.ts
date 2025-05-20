@@ -11,14 +11,28 @@ import { lost_itemsUpdateToOneWithWhereWithoutDocumentsInputSchema } from './los
 import { lost_itemsUpdateWithoutDocumentsInputSchema } from './lost_itemsUpdateWithoutDocumentsInputSchema';
 import { lost_itemsUncheckedUpdateWithoutDocumentsInputSchema } from './lost_itemsUncheckedUpdateWithoutDocumentsInputSchema';
 
-export const lost_itemsUpdateOneWithoutDocumentsNestedInputSchema: z.ZodType<Prisma.lost_itemsUpdateOneWithoutDocumentsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => lost_itemsCreateWithoutDocumentsInputSchema),z.lazy(() => lost_itemsUncheckedCreateWithoutDocumentsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => lost_itemsCreateOrConnectWithoutDocumentsInputSchema).optional(),
-  upsert: z.lazy(() => lost_itemsUpsertWithoutDocumentsInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => lost_itemsWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => lost_itemsWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => lost_itemsWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => lost_itemsUpdateToOneWithWhereWithoutDocumentsInputSchema),z.lazy(() => lost_itemsUpdateWithoutDocumentsInputSchema),z.lazy(() => lost_itemsUncheckedUpdateWithoutDocumentsInputSchema) ]).optional(),
-}).strict();
+export const lost_itemsUpdateOneWithoutDocumentsNestedInputSchema: z.ZodType<Prisma.lost_itemsUpdateOneWithoutDocumentsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => lost_itemsCreateWithoutDocumentsInputSchema),
+					z.lazy(() => lost_itemsUncheckedCreateWithoutDocumentsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => lost_itemsCreateOrConnectWithoutDocumentsInputSchema).optional(),
+			upsert: z.lazy(() => lost_itemsUpsertWithoutDocumentsInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => lost_itemsWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => lost_itemsWhereInputSchema)]).optional(),
+			connect: z.lazy(() => lost_itemsWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => lost_itemsUpdateToOneWithWhereWithoutDocumentsInputSchema),
+					z.lazy(() => lost_itemsUpdateWithoutDocumentsInputSchema),
+					z.lazy(() => lost_itemsUncheckedUpdateWithoutDocumentsInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default lost_itemsUpdateOneWithoutDocumentsNestedInputSchema;

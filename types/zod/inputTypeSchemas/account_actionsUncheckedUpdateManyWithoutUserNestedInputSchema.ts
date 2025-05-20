@@ -11,18 +11,73 @@ import { account_actionsUpdateWithWhereUniqueWithoutUserInputSchema } from './ac
 import { account_actionsUpdateManyWithWhereWithoutUserInputSchema } from './account_actionsUpdateManyWithWhereWithoutUserInputSchema';
 import { account_actionsScalarWhereInputSchema } from './account_actionsScalarWhereInputSchema';
 
-export const account_actionsUncheckedUpdateManyWithoutUserNestedInputSchema: z.ZodType<Prisma.account_actionsUncheckedUpdateManyWithoutUserNestedInput> = z.object({
-  create: z.union([ z.lazy(() => account_actionsCreateWithoutUserInputSchema),z.lazy(() => account_actionsCreateWithoutUserInputSchema).array(),z.lazy(() => account_actionsUncheckedCreateWithoutUserInputSchema),z.lazy(() => account_actionsUncheckedCreateWithoutUserInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => account_actionsCreateOrConnectWithoutUserInputSchema),z.lazy(() => account_actionsCreateOrConnectWithoutUserInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => account_actionsUpsertWithWhereUniqueWithoutUserInputSchema),z.lazy(() => account_actionsUpsertWithWhereUniqueWithoutUserInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => account_actionsCreateManyUserInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => account_actionsWhereUniqueInputSchema),z.lazy(() => account_actionsWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => account_actionsWhereUniqueInputSchema),z.lazy(() => account_actionsWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => account_actionsWhereUniqueInputSchema),z.lazy(() => account_actionsWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => account_actionsWhereUniqueInputSchema),z.lazy(() => account_actionsWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => account_actionsUpdateWithWhereUniqueWithoutUserInputSchema),z.lazy(() => account_actionsUpdateWithWhereUniqueWithoutUserInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => account_actionsUpdateManyWithWhereWithoutUserInputSchema),z.lazy(() => account_actionsUpdateManyWithWhereWithoutUserInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => account_actionsScalarWhereInputSchema),z.lazy(() => account_actionsScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const account_actionsUncheckedUpdateManyWithoutUserNestedInputSchema: z.ZodType<Prisma.account_actionsUncheckedUpdateManyWithoutUserNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => account_actionsCreateWithoutUserInputSchema),
+					z.lazy(() => account_actionsCreateWithoutUserInputSchema).array(),
+					z.lazy(() => account_actionsUncheckedCreateWithoutUserInputSchema),
+					z.lazy(() => account_actionsUncheckedCreateWithoutUserInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => account_actionsCreateOrConnectWithoutUserInputSchema),
+					z.lazy(() => account_actionsCreateOrConnectWithoutUserInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => account_actionsUpsertWithWhereUniqueWithoutUserInputSchema),
+					z.lazy(() => account_actionsUpsertWithWhereUniqueWithoutUserInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => account_actionsCreateManyUserInputEnvelopeSchema).optional(),
+			set: z
+				.union([
+					z.lazy(() => account_actionsWhereUniqueInputSchema),
+					z.lazy(() => account_actionsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			disconnect: z
+				.union([
+					z.lazy(() => account_actionsWhereUniqueInputSchema),
+					z.lazy(() => account_actionsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			delete: z
+				.union([
+					z.lazy(() => account_actionsWhereUniqueInputSchema),
+					z.lazy(() => account_actionsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			connect: z
+				.union([
+					z.lazy(() => account_actionsWhereUniqueInputSchema),
+					z.lazy(() => account_actionsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => account_actionsUpdateWithWhereUniqueWithoutUserInputSchema),
+					z.lazy(() => account_actionsUpdateWithWhereUniqueWithoutUserInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => account_actionsUpdateManyWithWhereWithoutUserInputSchema),
+					z.lazy(() => account_actionsUpdateManyWithWhereWithoutUserInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([
+					z.lazy(() => account_actionsScalarWhereInputSchema),
+					z.lazy(() => account_actionsScalarWhereInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default account_actionsUncheckedUpdateManyWithoutUserNestedInputSchema;

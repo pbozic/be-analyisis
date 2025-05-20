@@ -7,10 +7,19 @@ import { transactionsCreateWithoutDocumentsInputSchema } from './transactionsCre
 import { transactionsUncheckedCreateWithoutDocumentsInputSchema } from './transactionsUncheckedCreateWithoutDocumentsInputSchema';
 import { transactionsWhereInputSchema } from './transactionsWhereInputSchema';
 
-export const transactionsUpsertWithoutDocumentsInputSchema: z.ZodType<Prisma.transactionsUpsertWithoutDocumentsInput> = z.object({
-  update: z.union([ z.lazy(() => transactionsUpdateWithoutDocumentsInputSchema),z.lazy(() => transactionsUncheckedUpdateWithoutDocumentsInputSchema) ]),
-  create: z.union([ z.lazy(() => transactionsCreateWithoutDocumentsInputSchema),z.lazy(() => transactionsUncheckedCreateWithoutDocumentsInputSchema) ]),
-  where: z.lazy(() => transactionsWhereInputSchema).optional()
-}).strict();
+export const transactionsUpsertWithoutDocumentsInputSchema: z.ZodType<Prisma.transactionsUpsertWithoutDocumentsInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => transactionsUpdateWithoutDocumentsInputSchema),
+				z.lazy(() => transactionsUncheckedUpdateWithoutDocumentsInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => transactionsCreateWithoutDocumentsInputSchema),
+				z.lazy(() => transactionsUncheckedCreateWithoutDocumentsInputSchema),
+			]),
+			where: z.lazy(() => transactionsWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default transactionsUpsertWithoutDocumentsInputSchema;

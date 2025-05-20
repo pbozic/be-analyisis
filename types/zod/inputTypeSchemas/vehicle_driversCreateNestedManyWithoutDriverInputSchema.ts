@@ -7,11 +7,31 @@ import { vehicle_driversCreateOrConnectWithoutDriverInputSchema } from './vehicl
 import { vehicle_driversCreateManyDriverInputEnvelopeSchema } from './vehicle_driversCreateManyDriverInputEnvelopeSchema';
 import { vehicle_driversWhereUniqueInputSchema } from './vehicle_driversWhereUniqueInputSchema';
 
-export const vehicle_driversCreateNestedManyWithoutDriverInputSchema: z.ZodType<Prisma.vehicle_driversCreateNestedManyWithoutDriverInput> = z.object({
-  create: z.union([ z.lazy(() => vehicle_driversCreateWithoutDriverInputSchema),z.lazy(() => vehicle_driversCreateWithoutDriverInputSchema).array(),z.lazy(() => vehicle_driversUncheckedCreateWithoutDriverInputSchema),z.lazy(() => vehicle_driversUncheckedCreateWithoutDriverInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => vehicle_driversCreateOrConnectWithoutDriverInputSchema),z.lazy(() => vehicle_driversCreateOrConnectWithoutDriverInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => vehicle_driversCreateManyDriverInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => vehicle_driversWhereUniqueInputSchema),z.lazy(() => vehicle_driversWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const vehicle_driversCreateNestedManyWithoutDriverInputSchema: z.ZodType<Prisma.vehicle_driversCreateNestedManyWithoutDriverInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => vehicle_driversCreateWithoutDriverInputSchema),
+					z.lazy(() => vehicle_driversCreateWithoutDriverInputSchema).array(),
+					z.lazy(() => vehicle_driversUncheckedCreateWithoutDriverInputSchema),
+					z.lazy(() => vehicle_driversUncheckedCreateWithoutDriverInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => vehicle_driversCreateOrConnectWithoutDriverInputSchema),
+					z.lazy(() => vehicle_driversCreateOrConnectWithoutDriverInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => vehicle_driversCreateManyDriverInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => vehicle_driversWhereUniqueInputSchema),
+					z.lazy(() => vehicle_driversWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default vehicle_driversCreateNestedManyWithoutDriverInputSchema;

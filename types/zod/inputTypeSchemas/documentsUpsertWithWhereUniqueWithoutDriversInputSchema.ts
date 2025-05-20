@@ -7,10 +7,19 @@ import { documentsUncheckedUpdateWithoutDriversInputSchema } from './documentsUn
 import { documentsCreateWithoutDriversInputSchema } from './documentsCreateWithoutDriversInputSchema';
 import { documentsUncheckedCreateWithoutDriversInputSchema } from './documentsUncheckedCreateWithoutDriversInputSchema';
 
-export const documentsUpsertWithWhereUniqueWithoutDriversInputSchema: z.ZodType<Prisma.documentsUpsertWithWhereUniqueWithoutDriversInput> = z.object({
-  where: z.lazy(() => documentsWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => documentsUpdateWithoutDriversInputSchema),z.lazy(() => documentsUncheckedUpdateWithoutDriversInputSchema) ]),
-  create: z.union([ z.lazy(() => documentsCreateWithoutDriversInputSchema),z.lazy(() => documentsUncheckedCreateWithoutDriversInputSchema) ]),
-}).strict();
+export const documentsUpsertWithWhereUniqueWithoutDriversInputSchema: z.ZodType<Prisma.documentsUpsertWithWhereUniqueWithoutDriversInput> =
+	z
+		.object({
+			where: z.lazy(() => documentsWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => documentsUpdateWithoutDriversInputSchema),
+				z.lazy(() => documentsUncheckedUpdateWithoutDriversInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => documentsCreateWithoutDriversInputSchema),
+				z.lazy(() => documentsUncheckedCreateWithoutDriversInputSchema),
+			]),
+		})
+		.strict();
 
 export default documentsUpsertWithWhereUniqueWithoutDriversInputSchema;

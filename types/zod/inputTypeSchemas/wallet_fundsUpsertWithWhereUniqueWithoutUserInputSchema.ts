@@ -7,10 +7,19 @@ import { wallet_fundsUncheckedUpdateWithoutUserInputSchema } from './wallet_fund
 import { wallet_fundsCreateWithoutUserInputSchema } from './wallet_fundsCreateWithoutUserInputSchema';
 import { wallet_fundsUncheckedCreateWithoutUserInputSchema } from './wallet_fundsUncheckedCreateWithoutUserInputSchema';
 
-export const wallet_fundsUpsertWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.wallet_fundsUpsertWithWhereUniqueWithoutUserInput> = z.object({
-  where: z.lazy(() => wallet_fundsWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => wallet_fundsUpdateWithoutUserInputSchema),z.lazy(() => wallet_fundsUncheckedUpdateWithoutUserInputSchema) ]),
-  create: z.union([ z.lazy(() => wallet_fundsCreateWithoutUserInputSchema),z.lazy(() => wallet_fundsUncheckedCreateWithoutUserInputSchema) ]),
-}).strict();
+export const wallet_fundsUpsertWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.wallet_fundsUpsertWithWhereUniqueWithoutUserInput> =
+	z
+		.object({
+			where: z.lazy(() => wallet_fundsWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => wallet_fundsUpdateWithoutUserInputSchema),
+				z.lazy(() => wallet_fundsUncheckedUpdateWithoutUserInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => wallet_fundsCreateWithoutUserInputSchema),
+				z.lazy(() => wallet_fundsUncheckedCreateWithoutUserInputSchema),
+			]),
+		})
+		.strict();
 
 export default wallet_fundsUpsertWithWhereUniqueWithoutUserInputSchema;

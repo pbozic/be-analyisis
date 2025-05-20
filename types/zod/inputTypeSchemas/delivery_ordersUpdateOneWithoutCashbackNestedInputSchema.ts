@@ -11,14 +11,28 @@ import { delivery_ordersUpdateToOneWithWhereWithoutCashbackInputSchema } from '.
 import { delivery_ordersUpdateWithoutCashbackInputSchema } from './delivery_ordersUpdateWithoutCashbackInputSchema';
 import { delivery_ordersUncheckedUpdateWithoutCashbackInputSchema } from './delivery_ordersUncheckedUpdateWithoutCashbackInputSchema';
 
-export const delivery_ordersUpdateOneWithoutCashbackNestedInputSchema: z.ZodType<Prisma.delivery_ordersUpdateOneWithoutCashbackNestedInput> = z.object({
-  create: z.union([ z.lazy(() => delivery_ordersCreateWithoutCashbackInputSchema),z.lazy(() => delivery_ordersUncheckedCreateWithoutCashbackInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => delivery_ordersCreateOrConnectWithoutCashbackInputSchema).optional(),
-  upsert: z.lazy(() => delivery_ordersUpsertWithoutCashbackInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => delivery_ordersWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => delivery_ordersWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => delivery_ordersWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => delivery_ordersUpdateToOneWithWhereWithoutCashbackInputSchema),z.lazy(() => delivery_ordersUpdateWithoutCashbackInputSchema),z.lazy(() => delivery_ordersUncheckedUpdateWithoutCashbackInputSchema) ]).optional(),
-}).strict();
+export const delivery_ordersUpdateOneWithoutCashbackNestedInputSchema: z.ZodType<Prisma.delivery_ordersUpdateOneWithoutCashbackNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => delivery_ordersCreateWithoutCashbackInputSchema),
+					z.lazy(() => delivery_ordersUncheckedCreateWithoutCashbackInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => delivery_ordersCreateOrConnectWithoutCashbackInputSchema).optional(),
+			upsert: z.lazy(() => delivery_ordersUpsertWithoutCashbackInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => delivery_ordersWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => delivery_ordersWhereInputSchema)]).optional(),
+			connect: z.lazy(() => delivery_ordersWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => delivery_ordersUpdateToOneWithWhereWithoutCashbackInputSchema),
+					z.lazy(() => delivery_ordersUpdateWithoutCashbackInputSchema),
+					z.lazy(() => delivery_ordersUncheckedUpdateWithoutCashbackInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default delivery_ordersUpdateOneWithoutCashbackNestedInputSchema;

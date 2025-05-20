@@ -7,11 +7,31 @@ import { businessCreateOrConnectWithoutFinancesInputSchema } from './businessCre
 import { businessCreateManyFinancesInputEnvelopeSchema } from './businessCreateManyFinancesInputEnvelopeSchema';
 import { businessWhereUniqueInputSchema } from './businessWhereUniqueInputSchema';
 
-export const businessCreateNestedManyWithoutFinancesInputSchema: z.ZodType<Prisma.businessCreateNestedManyWithoutFinancesInput> = z.object({
-  create: z.union([ z.lazy(() => businessCreateWithoutFinancesInputSchema),z.lazy(() => businessCreateWithoutFinancesInputSchema).array(),z.lazy(() => businessUncheckedCreateWithoutFinancesInputSchema),z.lazy(() => businessUncheckedCreateWithoutFinancesInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => businessCreateOrConnectWithoutFinancesInputSchema),z.lazy(() => businessCreateOrConnectWithoutFinancesInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => businessCreateManyFinancesInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => businessWhereUniqueInputSchema),z.lazy(() => businessWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const businessCreateNestedManyWithoutFinancesInputSchema: z.ZodType<Prisma.businessCreateNestedManyWithoutFinancesInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => businessCreateWithoutFinancesInputSchema),
+					z.lazy(() => businessCreateWithoutFinancesInputSchema).array(),
+					z.lazy(() => businessUncheckedCreateWithoutFinancesInputSchema),
+					z.lazy(() => businessUncheckedCreateWithoutFinancesInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => businessCreateOrConnectWithoutFinancesInputSchema),
+					z.lazy(() => businessCreateOrConnectWithoutFinancesInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => businessCreateManyFinancesInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => businessWhereUniqueInputSchema),
+					z.lazy(() => businessWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default businessCreateNestedManyWithoutFinancesInputSchema;

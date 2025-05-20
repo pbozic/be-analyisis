@@ -7,10 +7,19 @@ import { vehiclesCreateWithoutDelivery_ordersInputSchema } from './vehiclesCreat
 import { vehiclesUncheckedCreateWithoutDelivery_ordersInputSchema } from './vehiclesUncheckedCreateWithoutDelivery_ordersInputSchema';
 import { vehiclesWhereInputSchema } from './vehiclesWhereInputSchema';
 
-export const vehiclesUpsertWithoutDelivery_ordersInputSchema: z.ZodType<Prisma.vehiclesUpsertWithoutDelivery_ordersInput> = z.object({
-  update: z.union([ z.lazy(() => vehiclesUpdateWithoutDelivery_ordersInputSchema),z.lazy(() => vehiclesUncheckedUpdateWithoutDelivery_ordersInputSchema) ]),
-  create: z.union([ z.lazy(() => vehiclesCreateWithoutDelivery_ordersInputSchema),z.lazy(() => vehiclesUncheckedCreateWithoutDelivery_ordersInputSchema) ]),
-  where: z.lazy(() => vehiclesWhereInputSchema).optional()
-}).strict();
+export const vehiclesUpsertWithoutDelivery_ordersInputSchema: z.ZodType<Prisma.vehiclesUpsertWithoutDelivery_ordersInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => vehiclesUpdateWithoutDelivery_ordersInputSchema),
+				z.lazy(() => vehiclesUncheckedUpdateWithoutDelivery_ordersInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => vehiclesCreateWithoutDelivery_ordersInputSchema),
+				z.lazy(() => vehiclesUncheckedCreateWithoutDelivery_ordersInputSchema),
+			]),
+			where: z.lazy(() => vehiclesWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default vehiclesUpsertWithoutDelivery_ordersInputSchema;

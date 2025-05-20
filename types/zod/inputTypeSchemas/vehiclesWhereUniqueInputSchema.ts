@@ -21,42 +21,99 @@ import { Delivery_ordersListRelationFilterSchema } from './Delivery_ordersListRe
 import { DriversNullableRelationFilterSchema } from './DriversNullableRelationFilterSchema';
 import { driversWhereInputSchema } from './driversWhereInputSchema';
 
-export const vehiclesWhereUniqueInputSchema: z.ZodType<Prisma.vehiclesWhereUniqueInput> = z.union([
-  z.object({
-    vehicle_id: z.string().uuid(),
-    vehicle_specification_id: z.string()
-  }),
-  z.object({
-    vehicle_id: z.string().uuid(),
-  }),
-  z.object({
-    vehicle_specification_id: z.string(),
-  }),
-])
-.and(z.object({
-  vehicle_id: z.string().uuid().optional(),
-  vehicle_specification_id: z.string().optional(),
-  AND: z.union([ z.lazy(() => vehiclesWhereInputSchema),z.lazy(() => vehiclesWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => vehiclesWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => vehiclesWhereInputSchema),z.lazy(() => vehiclesWhereInputSchema).array() ]).optional(),
-  business_id: z.union([ z.lazy(() => UuidNullableFilterSchema),z.string() ]).optional().nullable(),
-  active: z.union([ z.lazy(() => BoolNullableFilterSchema),z.boolean() ]).optional().nullable(),
-  class: z.union([ z.lazy(() => EnumVEHICLE_CLASSNullableFilterSchema),z.lazy(() => VEHICLE_CLASSSchema) ]).optional().nullable(),
-  category: z.union([ z.lazy(() => EnumVEHICLE_CATEGORYNullableFilterSchema),z.lazy(() => VEHICLE_CATEGORYSchema) ]).optional().nullable(),
-  make: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  model: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  color: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  license_plate: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  delivery_driver_id: z.union([ z.lazy(() => UuidNullableFilterSchema),z.string() ]).optional().nullable(),
-  documents: z.lazy(() => DocumentsListRelationFilterSchema).optional(),
-  drivers: z.lazy(() => Vehicle_driversListRelationFilterSchema).optional(),
-  delivery_driver: z.union([ z.lazy(() => Delivery_driversNullableRelationFilterSchema),z.lazy(() => delivery_driversWhereInputSchema) ]).optional().nullable(),
-  vehicle_specification: z.union([ z.lazy(() => Vehicle_specificationsNullableRelationFilterSchema),z.lazy(() => vehicle_specificationsWhereInputSchema) ]).optional().nullable(),
-  taxi_orders: z.lazy(() => Taxi_ordersListRelationFilterSchema).optional(),
-  delivery_orders: z.lazy(() => Delivery_ordersListRelationFilterSchema).optional(),
-  current_driver: z.union([ z.lazy(() => DriversNullableRelationFilterSchema),z.lazy(() => driversWhereInputSchema) ]).optional().nullable(),
-}).strict());
+export const vehiclesWhereUniqueInputSchema: z.ZodType<Prisma.vehiclesWhereUniqueInput> = z
+	.union([
+		z.object({
+			vehicle_id: z.string().uuid(),
+			vehicle_specification_id: z.string(),
+		}),
+		z.object({
+			vehicle_id: z.string().uuid(),
+		}),
+		z.object({
+			vehicle_specification_id: z.string(),
+		}),
+	])
+	.and(
+		z
+			.object({
+				vehicle_id: z.string().uuid().optional(),
+				vehicle_specification_id: z.string().optional(),
+				AND: z
+					.union([z.lazy(() => vehiclesWhereInputSchema), z.lazy(() => vehiclesWhereInputSchema).array()])
+					.optional(),
+				OR: z
+					.lazy(() => vehiclesWhereInputSchema)
+					.array()
+					.optional(),
+				NOT: z
+					.union([z.lazy(() => vehiclesWhereInputSchema), z.lazy(() => vehiclesWhereInputSchema).array()])
+					.optional(),
+				business_id: z
+					.union([z.lazy(() => UuidNullableFilterSchema), z.string()])
+					.optional()
+					.nullable(),
+				active: z
+					.union([z.lazy(() => BoolNullableFilterSchema), z.boolean()])
+					.optional()
+					.nullable(),
+				class: z
+					.union([z.lazy(() => EnumVEHICLE_CLASSNullableFilterSchema), z.lazy(() => VEHICLE_CLASSSchema)])
+					.optional()
+					.nullable(),
+				category: z
+					.union([
+						z.lazy(() => EnumVEHICLE_CATEGORYNullableFilterSchema),
+						z.lazy(() => VEHICLE_CATEGORYSchema),
+					])
+					.optional()
+					.nullable(),
+				make: z
+					.union([z.lazy(() => StringNullableFilterSchema), z.string()])
+					.optional()
+					.nullable(),
+				model: z
+					.union([z.lazy(() => StringNullableFilterSchema), z.string()])
+					.optional()
+					.nullable(),
+				color: z
+					.union([z.lazy(() => StringNullableFilterSchema), z.string()])
+					.optional()
+					.nullable(),
+				license_plate: z
+					.union([z.lazy(() => StringNullableFilterSchema), z.string()])
+					.optional()
+					.nullable(),
+				created_at: z.union([z.lazy(() => DateTimeFilterSchema), z.coerce.date()]).optional(),
+				updated_at: z.union([z.lazy(() => DateTimeFilterSchema), z.coerce.date()]).optional(),
+				delivery_driver_id: z
+					.union([z.lazy(() => UuidNullableFilterSchema), z.string()])
+					.optional()
+					.nullable(),
+				documents: z.lazy(() => DocumentsListRelationFilterSchema).optional(),
+				drivers: z.lazy(() => Vehicle_driversListRelationFilterSchema).optional(),
+				delivery_driver: z
+					.union([
+						z.lazy(() => Delivery_driversNullableRelationFilterSchema),
+						z.lazy(() => delivery_driversWhereInputSchema),
+					])
+					.optional()
+					.nullable(),
+				vehicle_specification: z
+					.union([
+						z.lazy(() => Vehicle_specificationsNullableRelationFilterSchema),
+						z.lazy(() => vehicle_specificationsWhereInputSchema),
+					])
+					.optional()
+					.nullable(),
+				taxi_orders: z.lazy(() => Taxi_ordersListRelationFilterSchema).optional(),
+				delivery_orders: z.lazy(() => Delivery_ordersListRelationFilterSchema).optional(),
+				current_driver: z
+					.union([z.lazy(() => DriversNullableRelationFilterSchema), z.lazy(() => driversWhereInputSchema)])
+					.optional()
+					.nullable(),
+			})
+			.strict()
+	);
 
 export default vehiclesWhereUniqueInputSchema;

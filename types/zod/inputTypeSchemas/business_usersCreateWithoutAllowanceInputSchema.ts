@@ -7,16 +7,19 @@ import { businessCreateNestedOneWithoutBusiness_usersInputSchema } from './busin
 import { addressesCreateNestedOneWithoutBusiness_usersInputSchema } from './addressesCreateNestedOneWithoutBusiness_usersInputSchema';
 import { taxi_ordersCreateNestedManyWithoutBusiness_usersInputSchema } from './taxi_ordersCreateNestedManyWithoutBusiness_usersInputSchema';
 
-export const business_usersCreateWithoutAllowanceInputSchema: z.ZodType<Prisma.business_usersCreateWithoutAllowanceInput> = z.object({
-  business_users_id: z.string().uuid().optional(),
-  online: z.boolean().optional().nullable(),
-  company_role: z.lazy(() => COMPANY_ROLESchema).optional(),
-  created_at: z.coerce.date().optional(),
-  updated_at: z.coerce.date().optional(),
-  users: z.lazy(() => usersCreateNestedOneWithoutBusiness_usersInputSchema).optional(),
-  business: z.lazy(() => businessCreateNestedOneWithoutBusiness_usersInputSchema).optional(),
-  operating_address: z.lazy(() => addressesCreateNestedOneWithoutBusiness_usersInputSchema).optional(),
-  taxi_orders: z.lazy(() => taxi_ordersCreateNestedManyWithoutBusiness_usersInputSchema).optional()
-}).strict();
+export const business_usersCreateWithoutAllowanceInputSchema: z.ZodType<Prisma.business_usersCreateWithoutAllowanceInput> =
+	z
+		.object({
+			business_users_id: z.string().uuid().optional(),
+			online: z.boolean().optional().nullable(),
+			company_role: z.lazy(() => COMPANY_ROLESchema).optional(),
+			created_at: z.coerce.date().optional(),
+			updated_at: z.coerce.date().optional(),
+			users: z.lazy(() => usersCreateNestedOneWithoutBusiness_usersInputSchema).optional(),
+			business: z.lazy(() => businessCreateNestedOneWithoutBusiness_usersInputSchema).optional(),
+			operating_address: z.lazy(() => addressesCreateNestedOneWithoutBusiness_usersInputSchema).optional(),
+			taxi_orders: z.lazy(() => taxi_ordersCreateNestedManyWithoutBusiness_usersInputSchema).optional(),
+		})
+		.strict();
 
 export default business_usersCreateWithoutAllowanceInputSchema;

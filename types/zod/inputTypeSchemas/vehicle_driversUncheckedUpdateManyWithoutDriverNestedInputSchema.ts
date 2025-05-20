@@ -11,18 +11,73 @@ import { vehicle_driversUpdateWithWhereUniqueWithoutDriverInputSchema } from './
 import { vehicle_driversUpdateManyWithWhereWithoutDriverInputSchema } from './vehicle_driversUpdateManyWithWhereWithoutDriverInputSchema';
 import { vehicle_driversScalarWhereInputSchema } from './vehicle_driversScalarWhereInputSchema';
 
-export const vehicle_driversUncheckedUpdateManyWithoutDriverNestedInputSchema: z.ZodType<Prisma.vehicle_driversUncheckedUpdateManyWithoutDriverNestedInput> = z.object({
-  create: z.union([ z.lazy(() => vehicle_driversCreateWithoutDriverInputSchema),z.lazy(() => vehicle_driversCreateWithoutDriverInputSchema).array(),z.lazy(() => vehicle_driversUncheckedCreateWithoutDriverInputSchema),z.lazy(() => vehicle_driversUncheckedCreateWithoutDriverInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => vehicle_driversCreateOrConnectWithoutDriverInputSchema),z.lazy(() => vehicle_driversCreateOrConnectWithoutDriverInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => vehicle_driversUpsertWithWhereUniqueWithoutDriverInputSchema),z.lazy(() => vehicle_driversUpsertWithWhereUniqueWithoutDriverInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => vehicle_driversCreateManyDriverInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => vehicle_driversWhereUniqueInputSchema),z.lazy(() => vehicle_driversWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => vehicle_driversWhereUniqueInputSchema),z.lazy(() => vehicle_driversWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => vehicle_driversWhereUniqueInputSchema),z.lazy(() => vehicle_driversWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => vehicle_driversWhereUniqueInputSchema),z.lazy(() => vehicle_driversWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => vehicle_driversUpdateWithWhereUniqueWithoutDriverInputSchema),z.lazy(() => vehicle_driversUpdateWithWhereUniqueWithoutDriverInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => vehicle_driversUpdateManyWithWhereWithoutDriverInputSchema),z.lazy(() => vehicle_driversUpdateManyWithWhereWithoutDriverInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => vehicle_driversScalarWhereInputSchema),z.lazy(() => vehicle_driversScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const vehicle_driversUncheckedUpdateManyWithoutDriverNestedInputSchema: z.ZodType<Prisma.vehicle_driversUncheckedUpdateManyWithoutDriverNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => vehicle_driversCreateWithoutDriverInputSchema),
+					z.lazy(() => vehicle_driversCreateWithoutDriverInputSchema).array(),
+					z.lazy(() => vehicle_driversUncheckedCreateWithoutDriverInputSchema),
+					z.lazy(() => vehicle_driversUncheckedCreateWithoutDriverInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => vehicle_driversCreateOrConnectWithoutDriverInputSchema),
+					z.lazy(() => vehicle_driversCreateOrConnectWithoutDriverInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => vehicle_driversUpsertWithWhereUniqueWithoutDriverInputSchema),
+					z.lazy(() => vehicle_driversUpsertWithWhereUniqueWithoutDriverInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => vehicle_driversCreateManyDriverInputEnvelopeSchema).optional(),
+			set: z
+				.union([
+					z.lazy(() => vehicle_driversWhereUniqueInputSchema),
+					z.lazy(() => vehicle_driversWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			disconnect: z
+				.union([
+					z.lazy(() => vehicle_driversWhereUniqueInputSchema),
+					z.lazy(() => vehicle_driversWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			delete: z
+				.union([
+					z.lazy(() => vehicle_driversWhereUniqueInputSchema),
+					z.lazy(() => vehicle_driversWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			connect: z
+				.union([
+					z.lazy(() => vehicle_driversWhereUniqueInputSchema),
+					z.lazy(() => vehicle_driversWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => vehicle_driversUpdateWithWhereUniqueWithoutDriverInputSchema),
+					z.lazy(() => vehicle_driversUpdateWithWhereUniqueWithoutDriverInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => vehicle_driversUpdateManyWithWhereWithoutDriverInputSchema),
+					z.lazy(() => vehicle_driversUpdateManyWithWhereWithoutDriverInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([
+					z.lazy(() => vehicle_driversScalarWhereInputSchema),
+					z.lazy(() => vehicle_driversScalarWhereInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default vehicle_driversUncheckedUpdateManyWithoutDriverNestedInputSchema;

@@ -6,10 +6,18 @@ import { translatableUncheckedCreateWithoutCategoriesInputSchema } from './trans
 import { translatableCreateOrConnectWithoutCategoriesInputSchema } from './translatableCreateOrConnectWithoutCategoriesInputSchema';
 import { translatableWhereUniqueInputSchema } from './translatableWhereUniqueInputSchema';
 
-export const translatableCreateNestedOneWithoutCategoriesInputSchema: z.ZodType<Prisma.translatableCreateNestedOneWithoutCategoriesInput> = z.object({
-  create: z.union([ z.lazy(() => translatableCreateWithoutCategoriesInputSchema),z.lazy(() => translatableUncheckedCreateWithoutCategoriesInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => translatableCreateOrConnectWithoutCategoriesInputSchema).optional(),
-  connect: z.lazy(() => translatableWhereUniqueInputSchema).optional()
-}).strict();
+export const translatableCreateNestedOneWithoutCategoriesInputSchema: z.ZodType<Prisma.translatableCreateNestedOneWithoutCategoriesInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => translatableCreateWithoutCategoriesInputSchema),
+					z.lazy(() => translatableUncheckedCreateWithoutCategoriesInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => translatableCreateOrConnectWithoutCategoriesInputSchema).optional(),
+			connect: z.lazy(() => translatableWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default translatableCreateNestedOneWithoutCategoriesInputSchema;

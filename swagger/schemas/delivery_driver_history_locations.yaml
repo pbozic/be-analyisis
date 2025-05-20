@@ -1,23 +1,23 @@
 type: object
 properties:
-  delivery_driver_history_location_id:
-    type: string
-  delivery_driver_id:
-    type: string
-  order_id:
-    type: string
-  location:
-    type: object
-  delivery_driver:
-    $ref: ./delivery_drivers.yaml
-  order:
-    $ref: ./delivery_orders.yaml
-  created_at:
-    type: string
-  updated_at:
-    type: string
+    delivery_driver_history_location_id:
+        type: string
+    delivery_driver_id:
+        type: string
+    order_id:
+        type: string
+    location:
+        type: object
+    delivery_driver:
+        $ref: ./delivery_drivers.yaml
+    order:
+        $ref: ./delivery_orders.yaml
+    created_at:
+        type: string
+    updated_at:
+        type: string
 required:
-  - delivery_driver_history_location_id
-  - delivery_driver_id
-  - created_at
-  - updated_at
+    - delivery_driver_history_location_id
+    - delivery_driver_id
+    - created_at
+    - updated_at

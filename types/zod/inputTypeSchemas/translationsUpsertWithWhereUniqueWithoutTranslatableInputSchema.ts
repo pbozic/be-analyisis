@@ -7,10 +7,19 @@ import { translationsUncheckedUpdateWithoutTranslatableInputSchema } from './tra
 import { translationsCreateWithoutTranslatableInputSchema } from './translationsCreateWithoutTranslatableInputSchema';
 import { translationsUncheckedCreateWithoutTranslatableInputSchema } from './translationsUncheckedCreateWithoutTranslatableInputSchema';
 
-export const translationsUpsertWithWhereUniqueWithoutTranslatableInputSchema: z.ZodType<Prisma.translationsUpsertWithWhereUniqueWithoutTranslatableInput> = z.object({
-  where: z.lazy(() => translationsWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => translationsUpdateWithoutTranslatableInputSchema),z.lazy(() => translationsUncheckedUpdateWithoutTranslatableInputSchema) ]),
-  create: z.union([ z.lazy(() => translationsCreateWithoutTranslatableInputSchema),z.lazy(() => translationsUncheckedCreateWithoutTranslatableInputSchema) ]),
-}).strict();
+export const translationsUpsertWithWhereUniqueWithoutTranslatableInputSchema: z.ZodType<Prisma.translationsUpsertWithWhereUniqueWithoutTranslatableInput> =
+	z
+		.object({
+			where: z.lazy(() => translationsWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => translationsUpdateWithoutTranslatableInputSchema),
+				z.lazy(() => translationsUncheckedUpdateWithoutTranslatableInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => translationsCreateWithoutTranslatableInputSchema),
+				z.lazy(() => translationsUncheckedCreateWithoutTranslatableInputSchema),
+			]),
+		})
+		.strict();
 
 export default translationsUpsertWithWhereUniqueWithoutTranslatableInputSchema;

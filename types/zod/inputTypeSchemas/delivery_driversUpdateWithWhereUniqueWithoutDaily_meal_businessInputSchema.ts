@@ -5,9 +5,15 @@ import { delivery_driversWhereUniqueInputSchema } from './delivery_driversWhereU
 import { delivery_driversUpdateWithoutDaily_meal_businessInputSchema } from './delivery_driversUpdateWithoutDaily_meal_businessInputSchema';
 import { delivery_driversUncheckedUpdateWithoutDaily_meal_businessInputSchema } from './delivery_driversUncheckedUpdateWithoutDaily_meal_businessInputSchema';
 
-export const delivery_driversUpdateWithWhereUniqueWithoutDaily_meal_businessInputSchema: z.ZodType<Prisma.delivery_driversUpdateWithWhereUniqueWithoutDaily_meal_businessInput> = z.object({
-  where: z.lazy(() => delivery_driversWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => delivery_driversUpdateWithoutDaily_meal_businessInputSchema),z.lazy(() => delivery_driversUncheckedUpdateWithoutDaily_meal_businessInputSchema) ]),
-}).strict();
+export const delivery_driversUpdateWithWhereUniqueWithoutDaily_meal_businessInputSchema: z.ZodType<Prisma.delivery_driversUpdateWithWhereUniqueWithoutDaily_meal_businessInput> =
+	z
+		.object({
+			where: z.lazy(() => delivery_driversWhereUniqueInputSchema),
+			data: z.union([
+				z.lazy(() => delivery_driversUpdateWithoutDaily_meal_businessInputSchema),
+				z.lazy(() => delivery_driversUncheckedUpdateWithoutDaily_meal_businessInputSchema),
+			]),
+		})
+		.strict();
 
 export default delivery_driversUpdateWithWhereUniqueWithoutDaily_meal_businessInputSchema;

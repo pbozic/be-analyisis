@@ -1,23 +1,25 @@
 import { z } from 'zod';
 import type { Prisma } from '@prisma/client';
-import { documentsFindManyArgsSchema } from "../outputTypeSchemas/documentsFindManyArgsSchema"
-import { vehicle_driversFindManyArgsSchema } from "../outputTypeSchemas/vehicle_driversFindManyArgsSchema"
-import { delivery_driversArgsSchema } from "../outputTypeSchemas/delivery_driversArgsSchema"
-import { vehicle_specificationsArgsSchema } from "../outputTypeSchemas/vehicle_specificationsArgsSchema"
-import { taxi_ordersFindManyArgsSchema } from "../outputTypeSchemas/taxi_ordersFindManyArgsSchema"
-import { delivery_ordersFindManyArgsSchema } from "../outputTypeSchemas/delivery_ordersFindManyArgsSchema"
-import { driversArgsSchema } from "../outputTypeSchemas/driversArgsSchema"
-import { VehiclesCountOutputTypeArgsSchema } from "../outputTypeSchemas/VehiclesCountOutputTypeArgsSchema"
+import { documentsFindManyArgsSchema } from '../outputTypeSchemas/documentsFindManyArgsSchema';
+import { vehicle_driversFindManyArgsSchema } from '../outputTypeSchemas/vehicle_driversFindManyArgsSchema';
+import { delivery_driversArgsSchema } from '../outputTypeSchemas/delivery_driversArgsSchema';
+import { vehicle_specificationsArgsSchema } from '../outputTypeSchemas/vehicle_specificationsArgsSchema';
+import { taxi_ordersFindManyArgsSchema } from '../outputTypeSchemas/taxi_ordersFindManyArgsSchema';
+import { delivery_ordersFindManyArgsSchema } from '../outputTypeSchemas/delivery_ordersFindManyArgsSchema';
+import { driversArgsSchema } from '../outputTypeSchemas/driversArgsSchema';
+import { VehiclesCountOutputTypeArgsSchema } from '../outputTypeSchemas/VehiclesCountOutputTypeArgsSchema';
 
-export const vehiclesIncludeSchema: z.ZodType<Prisma.vehiclesInclude> = z.object({
-  documents: z.union([z.boolean(),z.lazy(() => documentsFindManyArgsSchema)]).optional(),
-  drivers: z.union([z.boolean(),z.lazy(() => vehicle_driversFindManyArgsSchema)]).optional(),
-  delivery_driver: z.union([z.boolean(),z.lazy(() => delivery_driversArgsSchema)]).optional(),
-  vehicle_specification: z.union([z.boolean(),z.lazy(() => vehicle_specificationsArgsSchema)]).optional(),
-  taxi_orders: z.union([z.boolean(),z.lazy(() => taxi_ordersFindManyArgsSchema)]).optional(),
-  delivery_orders: z.union([z.boolean(),z.lazy(() => delivery_ordersFindManyArgsSchema)]).optional(),
-  current_driver: z.union([z.boolean(),z.lazy(() => driversArgsSchema)]).optional(),
-  _count: z.union([z.boolean(),z.lazy(() => VehiclesCountOutputTypeArgsSchema)]).optional(),
-}).strict()
+export const vehiclesIncludeSchema: z.ZodType<Prisma.vehiclesInclude> = z
+	.object({
+		documents: z.union([z.boolean(), z.lazy(() => documentsFindManyArgsSchema)]).optional(),
+		drivers: z.union([z.boolean(), z.lazy(() => vehicle_driversFindManyArgsSchema)]).optional(),
+		delivery_driver: z.union([z.boolean(), z.lazy(() => delivery_driversArgsSchema)]).optional(),
+		vehicle_specification: z.union([z.boolean(), z.lazy(() => vehicle_specificationsArgsSchema)]).optional(),
+		taxi_orders: z.union([z.boolean(), z.lazy(() => taxi_ordersFindManyArgsSchema)]).optional(),
+		delivery_orders: z.union([z.boolean(), z.lazy(() => delivery_ordersFindManyArgsSchema)]).optional(),
+		current_driver: z.union([z.boolean(), z.lazy(() => driversArgsSchema)]).optional(),
+		_count: z.union([z.boolean(), z.lazy(() => VehiclesCountOutputTypeArgsSchema)]).optional(),
+	})
+	.strict();
 
 export default vehiclesIncludeSchema;

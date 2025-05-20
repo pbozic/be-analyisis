@@ -11,18 +11,58 @@ import { wordsUpdateWithWhereUniqueWithoutTranslatableInputSchema } from './word
 import { wordsUpdateManyWithWhereWithoutTranslatableInputSchema } from './wordsUpdateManyWithWhereWithoutTranslatableInputSchema';
 import { wordsScalarWhereInputSchema } from './wordsScalarWhereInputSchema';
 
-export const wordsUpdateManyWithoutTranslatableNestedInputSchema: z.ZodType<Prisma.wordsUpdateManyWithoutTranslatableNestedInput> = z.object({
-  create: z.union([ z.lazy(() => wordsCreateWithoutTranslatableInputSchema),z.lazy(() => wordsCreateWithoutTranslatableInputSchema).array(),z.lazy(() => wordsUncheckedCreateWithoutTranslatableInputSchema),z.lazy(() => wordsUncheckedCreateWithoutTranslatableInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => wordsCreateOrConnectWithoutTranslatableInputSchema),z.lazy(() => wordsCreateOrConnectWithoutTranslatableInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => wordsUpsertWithWhereUniqueWithoutTranslatableInputSchema),z.lazy(() => wordsUpsertWithWhereUniqueWithoutTranslatableInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => wordsCreateManyTranslatableInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => wordsWhereUniqueInputSchema),z.lazy(() => wordsWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => wordsWhereUniqueInputSchema),z.lazy(() => wordsWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => wordsWhereUniqueInputSchema),z.lazy(() => wordsWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => wordsWhereUniqueInputSchema),z.lazy(() => wordsWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => wordsUpdateWithWhereUniqueWithoutTranslatableInputSchema),z.lazy(() => wordsUpdateWithWhereUniqueWithoutTranslatableInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => wordsUpdateManyWithWhereWithoutTranslatableInputSchema),z.lazy(() => wordsUpdateManyWithWhereWithoutTranslatableInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => wordsScalarWhereInputSchema),z.lazy(() => wordsScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const wordsUpdateManyWithoutTranslatableNestedInputSchema: z.ZodType<Prisma.wordsUpdateManyWithoutTranslatableNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => wordsCreateWithoutTranslatableInputSchema),
+					z.lazy(() => wordsCreateWithoutTranslatableInputSchema).array(),
+					z.lazy(() => wordsUncheckedCreateWithoutTranslatableInputSchema),
+					z.lazy(() => wordsUncheckedCreateWithoutTranslatableInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => wordsCreateOrConnectWithoutTranslatableInputSchema),
+					z.lazy(() => wordsCreateOrConnectWithoutTranslatableInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => wordsUpsertWithWhereUniqueWithoutTranslatableInputSchema),
+					z.lazy(() => wordsUpsertWithWhereUniqueWithoutTranslatableInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => wordsCreateManyTranslatableInputEnvelopeSchema).optional(),
+			set: z
+				.union([z.lazy(() => wordsWhereUniqueInputSchema), z.lazy(() => wordsWhereUniqueInputSchema).array()])
+				.optional(),
+			disconnect: z
+				.union([z.lazy(() => wordsWhereUniqueInputSchema), z.lazy(() => wordsWhereUniqueInputSchema).array()])
+				.optional(),
+			delete: z
+				.union([z.lazy(() => wordsWhereUniqueInputSchema), z.lazy(() => wordsWhereUniqueInputSchema).array()])
+				.optional(),
+			connect: z
+				.union([z.lazy(() => wordsWhereUniqueInputSchema), z.lazy(() => wordsWhereUniqueInputSchema).array()])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => wordsUpdateWithWhereUniqueWithoutTranslatableInputSchema),
+					z.lazy(() => wordsUpdateWithWhereUniqueWithoutTranslatableInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => wordsUpdateManyWithWhereWithoutTranslatableInputSchema),
+					z.lazy(() => wordsUpdateManyWithWhereWithoutTranslatableInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([z.lazy(() => wordsScalarWhereInputSchema), z.lazy(() => wordsScalarWhereInputSchema).array()])
+				.optional(),
+		})
+		.strict();
 
 export default wordsUpdateManyWithoutTranslatableNestedInputSchema;

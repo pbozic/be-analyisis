@@ -7,10 +7,19 @@ import { settlementsCreateWithoutWeather_dataInputSchema } from './settlementsCr
 import { settlementsUncheckedCreateWithoutWeather_dataInputSchema } from './settlementsUncheckedCreateWithoutWeather_dataInputSchema';
 import { settlementsWhereInputSchema } from './settlementsWhereInputSchema';
 
-export const settlementsUpsertWithoutWeather_dataInputSchema: z.ZodType<Prisma.settlementsUpsertWithoutWeather_dataInput> = z.object({
-  update: z.union([ z.lazy(() => settlementsUpdateWithoutWeather_dataInputSchema),z.lazy(() => settlementsUncheckedUpdateWithoutWeather_dataInputSchema) ]),
-  create: z.union([ z.lazy(() => settlementsCreateWithoutWeather_dataInputSchema),z.lazy(() => settlementsUncheckedCreateWithoutWeather_dataInputSchema) ]),
-  where: z.lazy(() => settlementsWhereInputSchema).optional()
-}).strict();
+export const settlementsUpsertWithoutWeather_dataInputSchema: z.ZodType<Prisma.settlementsUpsertWithoutWeather_dataInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => settlementsUpdateWithoutWeather_dataInputSchema),
+				z.lazy(() => settlementsUncheckedUpdateWithoutWeather_dataInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => settlementsCreateWithoutWeather_dataInputSchema),
+				z.lazy(() => settlementsUncheckedCreateWithoutWeather_dataInputSchema),
+			]),
+			where: z.lazy(() => settlementsWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default settlementsUpsertWithoutWeather_dataInputSchema;

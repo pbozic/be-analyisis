@@ -6,10 +6,18 @@ import { reviewableUncheckedCreateWithoutReviewsInputSchema } from './reviewable
 import { reviewableCreateOrConnectWithoutReviewsInputSchema } from './reviewableCreateOrConnectWithoutReviewsInputSchema';
 import { reviewableWhereUniqueInputSchema } from './reviewableWhereUniqueInputSchema';
 
-export const reviewableCreateNestedOneWithoutReviewsInputSchema: z.ZodType<Prisma.reviewableCreateNestedOneWithoutReviewsInput> = z.object({
-  create: z.union([ z.lazy(() => reviewableCreateWithoutReviewsInputSchema),z.lazy(() => reviewableUncheckedCreateWithoutReviewsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => reviewableCreateOrConnectWithoutReviewsInputSchema).optional(),
-  connect: z.lazy(() => reviewableWhereUniqueInputSchema).optional()
-}).strict();
+export const reviewableCreateNestedOneWithoutReviewsInputSchema: z.ZodType<Prisma.reviewableCreateNestedOneWithoutReviewsInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => reviewableCreateWithoutReviewsInputSchema),
+					z.lazy(() => reviewableUncheckedCreateWithoutReviewsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => reviewableCreateOrConnectWithoutReviewsInputSchema).optional(),
+			connect: z.lazy(() => reviewableWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default reviewableCreateNestedOneWithoutReviewsInputSchema;

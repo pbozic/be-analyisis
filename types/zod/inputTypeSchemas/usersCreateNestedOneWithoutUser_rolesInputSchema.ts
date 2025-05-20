@@ -6,10 +6,18 @@ import { usersUncheckedCreateWithoutUser_rolesInputSchema } from './usersUncheck
 import { usersCreateOrConnectWithoutUser_rolesInputSchema } from './usersCreateOrConnectWithoutUser_rolesInputSchema';
 import { usersWhereUniqueInputSchema } from './usersWhereUniqueInputSchema';
 
-export const usersCreateNestedOneWithoutUser_rolesInputSchema: z.ZodType<Prisma.usersCreateNestedOneWithoutUser_rolesInput> = z.object({
-  create: z.union([ z.lazy(() => usersCreateWithoutUser_rolesInputSchema),z.lazy(() => usersUncheckedCreateWithoutUser_rolesInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutUser_rolesInputSchema).optional(),
-  connect: z.lazy(() => usersWhereUniqueInputSchema).optional()
-}).strict();
+export const usersCreateNestedOneWithoutUser_rolesInputSchema: z.ZodType<Prisma.usersCreateNestedOneWithoutUser_rolesInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => usersCreateWithoutUser_rolesInputSchema),
+					z.lazy(() => usersUncheckedCreateWithoutUser_rolesInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutUser_rolesInputSchema).optional(),
+			connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default usersCreateNestedOneWithoutUser_rolesInputSchema;

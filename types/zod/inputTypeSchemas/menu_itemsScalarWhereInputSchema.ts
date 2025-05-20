@@ -14,28 +14,58 @@ import { DateTimeNullableFilterSchema } from './DateTimeNullableFilterSchema';
 import { BoolFilterSchema } from './BoolFilterSchema';
 import { IntNullableFilterSchema } from './IntNullableFilterSchema';
 
-export const menu_itemsScalarWhereInputSchema: z.ZodType<Prisma.menu_itemsScalarWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => menu_itemsScalarWhereInputSchema),z.lazy(() => menu_itemsScalarWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => menu_itemsScalarWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => menu_itemsScalarWhereInputSchema),z.lazy(() => menu_itemsScalarWhereInputSchema).array() ]).optional(),
-  menu_item_id: z.union([ z.lazy(() => UuidFilterSchema),z.string() ]).optional(),
-  names: z.lazy(() => JsonFilterSchema).optional(),
-  image: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  description: z.lazy(() => JsonFilterSchema).optional(),
-  allergens: z.lazy(() => StringNullableListFilterSchema).optional(),
-  spicy_level: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  unit_size: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  price: z.union([ z.lazy(() => FloatFilterSchema),z.number() ]).optional(),
-  discount: z.union([ z.lazy(() => FloatNullableFilterSchema),z.number() ]).optional().nullable(),
-  sides: z.lazy(() => StringNullableListFilterSchema).optional(),
-  extras: z.lazy(() => StringNullableListFilterSchema).optional(),
-  ingredients: z.lazy(() => JsonFilterSchema).optional(),
-  availability: z.lazy(() => StringNullableListFilterSchema).optional(),
-  business_id: z.union([ z.lazy(() => UuidFilterSchema),z.string() ]).optional(),
-  menu_category_id: z.union([ z.lazy(() => UuidNullableFilterSchema),z.string() ]).optional().nullable(),
-  daily_date: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
-  is_enabled: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  menu_category_order_index: z.union([ z.lazy(() => IntNullableFilterSchema),z.number() ]).optional().nullable(),
-}).strict();
+export const menu_itemsScalarWhereInputSchema: z.ZodType<Prisma.menu_itemsScalarWhereInput> = z
+	.object({
+		AND: z
+			.union([
+				z.lazy(() => menu_itemsScalarWhereInputSchema),
+				z.lazy(() => menu_itemsScalarWhereInputSchema).array(),
+			])
+			.optional(),
+		OR: z
+			.lazy(() => menu_itemsScalarWhereInputSchema)
+			.array()
+			.optional(),
+		NOT: z
+			.union([
+				z.lazy(() => menu_itemsScalarWhereInputSchema),
+				z.lazy(() => menu_itemsScalarWhereInputSchema).array(),
+			])
+			.optional(),
+		menu_item_id: z.union([z.lazy(() => UuidFilterSchema), z.string()]).optional(),
+		names: z.lazy(() => JsonFilterSchema).optional(),
+		image: z
+			.union([z.lazy(() => StringNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+		description: z.lazy(() => JsonFilterSchema).optional(),
+		allergens: z.lazy(() => StringNullableListFilterSchema).optional(),
+		spicy_level: z.union([z.lazy(() => IntFilterSchema), z.number()]).optional(),
+		unit_size: z.union([z.lazy(() => StringFilterSchema), z.string()]).optional(),
+		price: z.union([z.lazy(() => FloatFilterSchema), z.number()]).optional(),
+		discount: z
+			.union([z.lazy(() => FloatNullableFilterSchema), z.number()])
+			.optional()
+			.nullable(),
+		sides: z.lazy(() => StringNullableListFilterSchema).optional(),
+		extras: z.lazy(() => StringNullableListFilterSchema).optional(),
+		ingredients: z.lazy(() => JsonFilterSchema).optional(),
+		availability: z.lazy(() => StringNullableListFilterSchema).optional(),
+		business_id: z.union([z.lazy(() => UuidFilterSchema), z.string()]).optional(),
+		menu_category_id: z
+			.union([z.lazy(() => UuidNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+		daily_date: z
+			.union([z.lazy(() => DateTimeNullableFilterSchema), z.coerce.date()])
+			.optional()
+			.nullable(),
+		is_enabled: z.union([z.lazy(() => BoolFilterSchema), z.boolean()]).optional(),
+		menu_category_order_index: z
+			.union([z.lazy(() => IntNullableFilterSchema), z.number()])
+			.optional()
+			.nullable(),
+	})
+	.strict();
 
 export default menu_itemsScalarWhereInputSchema;

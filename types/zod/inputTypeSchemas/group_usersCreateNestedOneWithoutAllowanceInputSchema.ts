@@ -6,10 +6,18 @@ import { group_usersUncheckedCreateWithoutAllowanceInputSchema } from './group_u
 import { group_usersCreateOrConnectWithoutAllowanceInputSchema } from './group_usersCreateOrConnectWithoutAllowanceInputSchema';
 import { group_usersWhereUniqueInputSchema } from './group_usersWhereUniqueInputSchema';
 
-export const group_usersCreateNestedOneWithoutAllowanceInputSchema: z.ZodType<Prisma.group_usersCreateNestedOneWithoutAllowanceInput> = z.object({
-  create: z.union([ z.lazy(() => group_usersCreateWithoutAllowanceInputSchema),z.lazy(() => group_usersUncheckedCreateWithoutAllowanceInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => group_usersCreateOrConnectWithoutAllowanceInputSchema).optional(),
-  connect: z.lazy(() => group_usersWhereUniqueInputSchema).optional()
-}).strict();
+export const group_usersCreateNestedOneWithoutAllowanceInputSchema: z.ZodType<Prisma.group_usersCreateNestedOneWithoutAllowanceInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => group_usersCreateWithoutAllowanceInputSchema),
+					z.lazy(() => group_usersUncheckedCreateWithoutAllowanceInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => group_usersCreateOrConnectWithoutAllowanceInputSchema).optional(),
+			connect: z.lazy(() => group_usersWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default group_usersCreateNestedOneWithoutAllowanceInputSchema;

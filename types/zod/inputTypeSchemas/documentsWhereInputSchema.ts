@@ -27,35 +27,103 @@ import { lost_itemsWhereInputSchema } from './lost_itemsWhereInputSchema';
 import { TransactionsNullableRelationFilterSchema } from './TransactionsNullableRelationFilterSchema';
 import { transactionsWhereInputSchema } from './transactionsWhereInputSchema';
 
-export const documentsWhereInputSchema: z.ZodType<Prisma.documentsWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => documentsWhereInputSchema),z.lazy(() => documentsWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => documentsWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => documentsWhereInputSchema),z.lazy(() => documentsWhereInputSchema).array() ]).optional(),
-  document_id: z.union([ z.lazy(() => UuidFilterSchema),z.string() ]).optional(),
-  document_type: z.union([ z.lazy(() => EnumDOCUMENT_TYPEFilterSchema),z.lazy(() => DOCUMENT_TYPESchema) ]).optional(),
-  created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  expiration_date: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
-  issue_date: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
-  additional_info: z.lazy(() => JsonNullableFilterSchema).optional(),
-  public: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  driver_id: z.union([ z.lazy(() => UuidNullableFilterSchema),z.string() ]).optional().nullable(),
-  delivery_driver_id: z.union([ z.lazy(() => UuidNullableFilterSchema),z.string() ]).optional().nullable(),
-  business_id: z.union([ z.lazy(() => UuidNullableFilterSchema),z.string() ]).optional().nullable(),
-  user_id: z.union([ z.lazy(() => UuidNullableFilterSchema),z.string() ]).optional().nullable(),
-  vehicle_id: z.union([ z.lazy(() => UuidNullableFilterSchema),z.string() ]).optional().nullable(),
-  menu_item_id: z.union([ z.lazy(() => UuidNullableFilterSchema),z.string() ]).optional().nullable(),
-  lost_item_id: z.union([ z.lazy(() => UuidNullableFilterSchema),z.string() ]).optional().nullable(),
-  transaction_id: z.union([ z.lazy(() => UuidNullableFilterSchema),z.string() ]).optional().nullable(),
-  files: z.lazy(() => FilesListRelationFilterSchema).optional(),
-  drivers: z.union([ z.lazy(() => DriversNullableRelationFilterSchema),z.lazy(() => driversWhereInputSchema) ]).optional().nullable(),
-  delivery_driver: z.union([ z.lazy(() => Delivery_driversNullableRelationFilterSchema),z.lazy(() => delivery_driversWhereInputSchema) ]).optional().nullable(),
-  business: z.union([ z.lazy(() => BusinessNullableRelationFilterSchema),z.lazy(() => businessWhereInputSchema) ]).optional().nullable(),
-  user: z.union([ z.lazy(() => UsersNullableRelationFilterSchema),z.lazy(() => usersWhereInputSchema) ]).optional().nullable(),
-  vehicles: z.union([ z.lazy(() => VehiclesNullableRelationFilterSchema),z.lazy(() => vehiclesWhereInputSchema) ]).optional().nullable(),
-  menu_items: z.union([ z.lazy(() => Menu_itemsNullableRelationFilterSchema),z.lazy(() => menu_itemsWhereInputSchema) ]).optional().nullable(),
-  lost_items: z.union([ z.lazy(() => Lost_itemsNullableRelationFilterSchema),z.lazy(() => lost_itemsWhereInputSchema) ]).optional().nullable(),
-  transactions: z.union([ z.lazy(() => TransactionsNullableRelationFilterSchema),z.lazy(() => transactionsWhereInputSchema) ]).optional().nullable(),
-}).strict();
+export const documentsWhereInputSchema: z.ZodType<Prisma.documentsWhereInput> = z
+	.object({
+		AND: z
+			.union([z.lazy(() => documentsWhereInputSchema), z.lazy(() => documentsWhereInputSchema).array()])
+			.optional(),
+		OR: z
+			.lazy(() => documentsWhereInputSchema)
+			.array()
+			.optional(),
+		NOT: z
+			.union([z.lazy(() => documentsWhereInputSchema), z.lazy(() => documentsWhereInputSchema).array()])
+			.optional(),
+		document_id: z.union([z.lazy(() => UuidFilterSchema), z.string()]).optional(),
+		document_type: z
+			.union([z.lazy(() => EnumDOCUMENT_TYPEFilterSchema), z.lazy(() => DOCUMENT_TYPESchema)])
+			.optional(),
+		created_at: z.union([z.lazy(() => DateTimeFilterSchema), z.coerce.date()]).optional(),
+		updated_at: z.union([z.lazy(() => DateTimeFilterSchema), z.coerce.date()]).optional(),
+		expiration_date: z
+			.union([z.lazy(() => DateTimeNullableFilterSchema), z.coerce.date()])
+			.optional()
+			.nullable(),
+		issue_date: z
+			.union([z.lazy(() => DateTimeNullableFilterSchema), z.coerce.date()])
+			.optional()
+			.nullable(),
+		additional_info: z.lazy(() => JsonNullableFilterSchema).optional(),
+		public: z.union([z.lazy(() => BoolFilterSchema), z.boolean()]).optional(),
+		driver_id: z
+			.union([z.lazy(() => UuidNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+		delivery_driver_id: z
+			.union([z.lazy(() => UuidNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+		business_id: z
+			.union([z.lazy(() => UuidNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+		user_id: z
+			.union([z.lazy(() => UuidNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+		vehicle_id: z
+			.union([z.lazy(() => UuidNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+		menu_item_id: z
+			.union([z.lazy(() => UuidNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+		lost_item_id: z
+			.union([z.lazy(() => UuidNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+		transaction_id: z
+			.union([z.lazy(() => UuidNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+		files: z.lazy(() => FilesListRelationFilterSchema).optional(),
+		drivers: z
+			.union([z.lazy(() => DriversNullableRelationFilterSchema), z.lazy(() => driversWhereInputSchema)])
+			.optional()
+			.nullable(),
+		delivery_driver: z
+			.union([
+				z.lazy(() => Delivery_driversNullableRelationFilterSchema),
+				z.lazy(() => delivery_driversWhereInputSchema),
+			])
+			.optional()
+			.nullable(),
+		business: z
+			.union([z.lazy(() => BusinessNullableRelationFilterSchema), z.lazy(() => businessWhereInputSchema)])
+			.optional()
+			.nullable(),
+		user: z
+			.union([z.lazy(() => UsersNullableRelationFilterSchema), z.lazy(() => usersWhereInputSchema)])
+			.optional()
+			.nullable(),
+		vehicles: z
+			.union([z.lazy(() => VehiclesNullableRelationFilterSchema), z.lazy(() => vehiclesWhereInputSchema)])
+			.optional()
+			.nullable(),
+		menu_items: z
+			.union([z.lazy(() => Menu_itemsNullableRelationFilterSchema), z.lazy(() => menu_itemsWhereInputSchema)])
+			.optional()
+			.nullable(),
+		lost_items: z
+			.union([z.lazy(() => Lost_itemsNullableRelationFilterSchema), z.lazy(() => lost_itemsWhereInputSchema)])
+			.optional()
+			.nullable(),
+		transactions: z
+			.union([z.lazy(() => TransactionsNullableRelationFilterSchema), z.lazy(() => transactionsWhereInputSchema)])
+			.optional()
+			.nullable(),
+	})
+	.strict();
 
 export default documentsWhereInputSchema;

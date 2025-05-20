@@ -8,13 +8,23 @@ import { EnumTRANSACTION_TYPEFieldUpdateOperationsInputSchema } from './EnumTRAN
 import { NullableStringFieldUpdateOperationsInputSchema } from './NullableStringFieldUpdateOperationsInputSchema';
 import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateOperationsInputSchema';
 
-export const transactionsUpdateManyMutationInputSchema: z.ZodType<Prisma.transactionsUpdateManyMutationInput> = z.object({
-  transaction_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-  type: z.union([ z.lazy(() => TRANSACTION_TYPESchema),z.lazy(() => EnumTRANSACTION_TYPEFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
+export const transactionsUpdateManyMutationInputSchema: z.ZodType<Prisma.transactionsUpdateManyMutationInput> = z
+	.object({
+		transaction_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		amount: z.union([z.number(), z.lazy(() => FloatFieldUpdateOperationsInputSchema)]).optional(),
+		type: z
+			.union([
+				z.lazy(() => TRANSACTION_TYPESchema),
+				z.lazy(() => EnumTRANSACTION_TYPEFieldUpdateOperationsInputSchema),
+			])
+			.optional(),
+		description: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+	})
+	.strict();
 
 export default transactionsUpdateManyMutationInputSchema;

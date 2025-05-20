@@ -7,11 +7,31 @@ import { taxi_ordersCreateOrConnectWithoutBusiness_usersInputSchema } from './ta
 import { taxi_ordersCreateManyBusiness_usersInputEnvelopeSchema } from './taxi_ordersCreateManyBusiness_usersInputEnvelopeSchema';
 import { taxi_ordersWhereUniqueInputSchema } from './taxi_ordersWhereUniqueInputSchema';
 
-export const taxi_ordersUncheckedCreateNestedManyWithoutBusiness_usersInputSchema: z.ZodType<Prisma.taxi_ordersUncheckedCreateNestedManyWithoutBusiness_usersInput> = z.object({
-  create: z.union([ z.lazy(() => taxi_ordersCreateWithoutBusiness_usersInputSchema),z.lazy(() => taxi_ordersCreateWithoutBusiness_usersInputSchema).array(),z.lazy(() => taxi_ordersUncheckedCreateWithoutBusiness_usersInputSchema),z.lazy(() => taxi_ordersUncheckedCreateWithoutBusiness_usersInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => taxi_ordersCreateOrConnectWithoutBusiness_usersInputSchema),z.lazy(() => taxi_ordersCreateOrConnectWithoutBusiness_usersInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => taxi_ordersCreateManyBusiness_usersInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => taxi_ordersWhereUniqueInputSchema),z.lazy(() => taxi_ordersWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const taxi_ordersUncheckedCreateNestedManyWithoutBusiness_usersInputSchema: z.ZodType<Prisma.taxi_ordersUncheckedCreateNestedManyWithoutBusiness_usersInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => taxi_ordersCreateWithoutBusiness_usersInputSchema),
+					z.lazy(() => taxi_ordersCreateWithoutBusiness_usersInputSchema).array(),
+					z.lazy(() => taxi_ordersUncheckedCreateWithoutBusiness_usersInputSchema),
+					z.lazy(() => taxi_ordersUncheckedCreateWithoutBusiness_usersInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => taxi_ordersCreateOrConnectWithoutBusiness_usersInputSchema),
+					z.lazy(() => taxi_ordersCreateOrConnectWithoutBusiness_usersInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => taxi_ordersCreateManyBusiness_usersInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => taxi_ordersWhereUniqueInputSchema),
+					z.lazy(() => taxi_ordersWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default taxi_ordersUncheckedCreateNestedManyWithoutBusiness_usersInputSchema;

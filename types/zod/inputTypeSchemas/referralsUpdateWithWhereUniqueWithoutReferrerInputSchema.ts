@@ -5,9 +5,15 @@ import { referralsWhereUniqueInputSchema } from './referralsWhereUniqueInputSche
 import { referralsUpdateWithoutReferrerInputSchema } from './referralsUpdateWithoutReferrerInputSchema';
 import { referralsUncheckedUpdateWithoutReferrerInputSchema } from './referralsUncheckedUpdateWithoutReferrerInputSchema';
 
-export const referralsUpdateWithWhereUniqueWithoutReferrerInputSchema: z.ZodType<Prisma.referralsUpdateWithWhereUniqueWithoutReferrerInput> = z.object({
-  where: z.lazy(() => referralsWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => referralsUpdateWithoutReferrerInputSchema),z.lazy(() => referralsUncheckedUpdateWithoutReferrerInputSchema) ]),
-}).strict();
+export const referralsUpdateWithWhereUniqueWithoutReferrerInputSchema: z.ZodType<Prisma.referralsUpdateWithWhereUniqueWithoutReferrerInput> =
+	z
+		.object({
+			where: z.lazy(() => referralsWhereUniqueInputSchema),
+			data: z.union([
+				z.lazy(() => referralsUpdateWithoutReferrerInputSchema),
+				z.lazy(() => referralsUncheckedUpdateWithoutReferrerInputSchema),
+			]),
+		})
+		.strict();
 
 export default referralsUpdateWithWhereUniqueWithoutReferrerInputSchema;

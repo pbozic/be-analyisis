@@ -7,11 +7,31 @@ import { promo_bannersCreateOrConnectWithoutPromo_adsInputSchema } from './promo
 import { promo_bannersCreateManyPromo_adsInputEnvelopeSchema } from './promo_bannersCreateManyPromo_adsInputEnvelopeSchema';
 import { promo_bannersWhereUniqueInputSchema } from './promo_bannersWhereUniqueInputSchema';
 
-export const promo_bannersCreateNestedManyWithoutPromo_adsInputSchema: z.ZodType<Prisma.promo_bannersCreateNestedManyWithoutPromo_adsInput> = z.object({
-  create: z.union([ z.lazy(() => promo_bannersCreateWithoutPromo_adsInputSchema),z.lazy(() => promo_bannersCreateWithoutPromo_adsInputSchema).array(),z.lazy(() => promo_bannersUncheckedCreateWithoutPromo_adsInputSchema),z.lazy(() => promo_bannersUncheckedCreateWithoutPromo_adsInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => promo_bannersCreateOrConnectWithoutPromo_adsInputSchema),z.lazy(() => promo_bannersCreateOrConnectWithoutPromo_adsInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => promo_bannersCreateManyPromo_adsInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => promo_bannersWhereUniqueInputSchema),z.lazy(() => promo_bannersWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const promo_bannersCreateNestedManyWithoutPromo_adsInputSchema: z.ZodType<Prisma.promo_bannersCreateNestedManyWithoutPromo_adsInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => promo_bannersCreateWithoutPromo_adsInputSchema),
+					z.lazy(() => promo_bannersCreateWithoutPromo_adsInputSchema).array(),
+					z.lazy(() => promo_bannersUncheckedCreateWithoutPromo_adsInputSchema),
+					z.lazy(() => promo_bannersUncheckedCreateWithoutPromo_adsInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => promo_bannersCreateOrConnectWithoutPromo_adsInputSchema),
+					z.lazy(() => promo_bannersCreateOrConnectWithoutPromo_adsInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => promo_bannersCreateManyPromo_adsInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => promo_bannersWhereUniqueInputSchema),
+					z.lazy(() => promo_bannersWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default promo_bannersCreateNestedManyWithoutPromo_adsInputSchema;

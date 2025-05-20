@@ -9,24 +9,26 @@ import { cashbackMaxOrderByAggregateInputSchema } from './cashbackMaxOrderByAggr
 import { cashbackMinOrderByAggregateInputSchema } from './cashbackMinOrderByAggregateInputSchema';
 import { cashbackSumOrderByAggregateInputSchema } from './cashbackSumOrderByAggregateInputSchema';
 
-export const cashbackOrderByWithAggregationInputSchema: z.ZodType<Prisma.cashbackOrderByWithAggregationInput> = z.object({
-  cashback_id: z.lazy(() => SortOrderSchema).optional(),
-  user_id: z.lazy(() => SortOrderSchema).optional(),
-  amount: z.lazy(() => SortOrderSchema).optional(),
-  type: z.lazy(() => SortOrderSchema).optional(),
-  source: z.lazy(() => SortOrderSchema).optional(),
-  status: z.lazy(() => SortOrderSchema).optional(),
-  description: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  earned_at: z.lazy(() => SortOrderSchema).optional(),
-  expires_at: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  converted_at: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  taxi_order_id: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  delivery_order_id: z.union([ z.lazy(() => SortOrderSchema),z.lazy(() => SortOrderInputSchema) ]).optional(),
-  _count: z.lazy(() => cashbackCountOrderByAggregateInputSchema).optional(),
-  _avg: z.lazy(() => cashbackAvgOrderByAggregateInputSchema).optional(),
-  _max: z.lazy(() => cashbackMaxOrderByAggregateInputSchema).optional(),
-  _min: z.lazy(() => cashbackMinOrderByAggregateInputSchema).optional(),
-  _sum: z.lazy(() => cashbackSumOrderByAggregateInputSchema).optional()
-}).strict();
+export const cashbackOrderByWithAggregationInputSchema: z.ZodType<Prisma.cashbackOrderByWithAggregationInput> = z
+	.object({
+		cashback_id: z.lazy(() => SortOrderSchema).optional(),
+		user_id: z.lazy(() => SortOrderSchema).optional(),
+		amount: z.lazy(() => SortOrderSchema).optional(),
+		type: z.lazy(() => SortOrderSchema).optional(),
+		source: z.lazy(() => SortOrderSchema).optional(),
+		status: z.lazy(() => SortOrderSchema).optional(),
+		description: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputSchema)]).optional(),
+		earned_at: z.lazy(() => SortOrderSchema).optional(),
+		expires_at: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputSchema)]).optional(),
+		converted_at: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputSchema)]).optional(),
+		taxi_order_id: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputSchema)]).optional(),
+		delivery_order_id: z.union([z.lazy(() => SortOrderSchema), z.lazy(() => SortOrderInputSchema)]).optional(),
+		_count: z.lazy(() => cashbackCountOrderByAggregateInputSchema).optional(),
+		_avg: z.lazy(() => cashbackAvgOrderByAggregateInputSchema).optional(),
+		_max: z.lazy(() => cashbackMaxOrderByAggregateInputSchema).optional(),
+		_min: z.lazy(() => cashbackMinOrderByAggregateInputSchema).optional(),
+		_sum: z.lazy(() => cashbackSumOrderByAggregateInputSchema).optional(),
+	})
+	.strict();
 
 export default cashbackOrderByWithAggregationInputSchema;

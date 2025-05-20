@@ -10,12 +10,26 @@ import { usersUpdateToOneWithWhereWithoutReferrals_madeInputSchema } from './use
 import { usersUpdateWithoutReferrals_madeInputSchema } from './usersUpdateWithoutReferrals_madeInputSchema';
 import { usersUncheckedUpdateWithoutReferrals_madeInputSchema } from './usersUncheckedUpdateWithoutReferrals_madeInputSchema';
 
-export const usersUpdateOneRequiredWithoutReferrals_madeNestedInputSchema: z.ZodType<Prisma.usersUpdateOneRequiredWithoutReferrals_madeNestedInput> = z.object({
-  create: z.union([ z.lazy(() => usersCreateWithoutReferrals_madeInputSchema),z.lazy(() => usersUncheckedCreateWithoutReferrals_madeInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutReferrals_madeInputSchema).optional(),
-  upsert: z.lazy(() => usersUpsertWithoutReferrals_madeInputSchema).optional(),
-  connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => usersUpdateToOneWithWhereWithoutReferrals_madeInputSchema),z.lazy(() => usersUpdateWithoutReferrals_madeInputSchema),z.lazy(() => usersUncheckedUpdateWithoutReferrals_madeInputSchema) ]).optional(),
-}).strict();
+export const usersUpdateOneRequiredWithoutReferrals_madeNestedInputSchema: z.ZodType<Prisma.usersUpdateOneRequiredWithoutReferrals_madeNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => usersCreateWithoutReferrals_madeInputSchema),
+					z.lazy(() => usersUncheckedCreateWithoutReferrals_madeInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutReferrals_madeInputSchema).optional(),
+			upsert: z.lazy(() => usersUpsertWithoutReferrals_madeInputSchema).optional(),
+			connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => usersUpdateToOneWithWhereWithoutReferrals_madeInputSchema),
+					z.lazy(() => usersUpdateWithoutReferrals_madeInputSchema),
+					z.lazy(() => usersUncheckedUpdateWithoutReferrals_madeInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default usersUpdateOneRequiredWithoutReferrals_madeNestedInputSchema;

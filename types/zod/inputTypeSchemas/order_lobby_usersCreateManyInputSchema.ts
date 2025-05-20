@@ -2,13 +2,15 @@ import type { Prisma } from '@prisma/client';
 
 import { z } from 'zod';
 
-export const order_lobby_usersCreateManyInputSchema: z.ZodType<Prisma.order_lobby_usersCreateManyInput> = z.object({
-  order_lobby_users_id: z.string().uuid().optional(),
-  user_id: z.string(),
-  order_lobbies_id: z.string(),
-  limit: z.number(),
-  created_at: z.coerce.date().optional(),
-  updated_at: z.coerce.date().optional()
-}).strict();
+export const order_lobby_usersCreateManyInputSchema: z.ZodType<Prisma.order_lobby_usersCreateManyInput> = z
+	.object({
+		order_lobby_users_id: z.string().uuid().optional(),
+		user_id: z.string(),
+		order_lobbies_id: z.string(),
+		limit: z.number(),
+		created_at: z.coerce.date().optional(),
+		updated_at: z.coerce.date().optional(),
+	})
+	.strict();
 
 export default order_lobby_usersCreateManyInputSchema;

@@ -7,10 +7,18 @@ import { financesCreateWithoutBusinessInputSchema } from './financesCreateWithou
 import { financesUncheckedCreateWithoutBusinessInputSchema } from './financesUncheckedCreateWithoutBusinessInputSchema';
 import { financesWhereInputSchema } from './financesWhereInputSchema';
 
-export const financesUpsertWithoutBusinessInputSchema: z.ZodType<Prisma.financesUpsertWithoutBusinessInput> = z.object({
-  update: z.union([ z.lazy(() => financesUpdateWithoutBusinessInputSchema),z.lazy(() => financesUncheckedUpdateWithoutBusinessInputSchema) ]),
-  create: z.union([ z.lazy(() => financesCreateWithoutBusinessInputSchema),z.lazy(() => financesUncheckedCreateWithoutBusinessInputSchema) ]),
-  where: z.lazy(() => financesWhereInputSchema).optional()
-}).strict();
+export const financesUpsertWithoutBusinessInputSchema: z.ZodType<Prisma.financesUpsertWithoutBusinessInput> = z
+	.object({
+		update: z.union([
+			z.lazy(() => financesUpdateWithoutBusinessInputSchema),
+			z.lazy(() => financesUncheckedUpdateWithoutBusinessInputSchema),
+		]),
+		create: z.union([
+			z.lazy(() => financesCreateWithoutBusinessInputSchema),
+			z.lazy(() => financesUncheckedCreateWithoutBusinessInputSchema),
+		]),
+		where: z.lazy(() => financesWhereInputSchema).optional(),
+	})
+	.strict();
 
 export default financesUpsertWithoutBusinessInputSchema;

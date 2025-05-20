@@ -7,10 +7,18 @@ import { wordsCreateWithoutSubscriptionsInputSchema } from './wordsCreateWithout
 import { wordsUncheckedCreateWithoutSubscriptionsInputSchema } from './wordsUncheckedCreateWithoutSubscriptionsInputSchema';
 import { wordsWhereInputSchema } from './wordsWhereInputSchema';
 
-export const wordsUpsertWithoutSubscriptionsInputSchema: z.ZodType<Prisma.wordsUpsertWithoutSubscriptionsInput> = z.object({
-  update: z.union([ z.lazy(() => wordsUpdateWithoutSubscriptionsInputSchema),z.lazy(() => wordsUncheckedUpdateWithoutSubscriptionsInputSchema) ]),
-  create: z.union([ z.lazy(() => wordsCreateWithoutSubscriptionsInputSchema),z.lazy(() => wordsUncheckedCreateWithoutSubscriptionsInputSchema) ]),
-  where: z.lazy(() => wordsWhereInputSchema).optional()
-}).strict();
+export const wordsUpsertWithoutSubscriptionsInputSchema: z.ZodType<Prisma.wordsUpsertWithoutSubscriptionsInput> = z
+	.object({
+		update: z.union([
+			z.lazy(() => wordsUpdateWithoutSubscriptionsInputSchema),
+			z.lazy(() => wordsUncheckedUpdateWithoutSubscriptionsInputSchema),
+		]),
+		create: z.union([
+			z.lazy(() => wordsCreateWithoutSubscriptionsInputSchema),
+			z.lazy(() => wordsUncheckedCreateWithoutSubscriptionsInputSchema),
+		]),
+		where: z.lazy(() => wordsWhereInputSchema).optional(),
+	})
+	.strict();
 
 export default wordsUpsertWithoutSubscriptionsInputSchema;

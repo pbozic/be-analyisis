@@ -6,13 +6,21 @@ import { NullableJsonNullValueInputSchema } from './NullableJsonNullValueInputSc
 import { InputJsonValueSchema } from './InputJsonValueSchema';
 import { delivery_ordersCreateNestedOneWithoutDelivery_driver_history_locationsInputSchema } from './delivery_ordersCreateNestedOneWithoutDelivery_driver_history_locationsInputSchema';
 
-export const delivery_driver_history_locationsCreateWithoutDelivery_driverInputSchema: z.ZodType<Prisma.delivery_driver_history_locationsCreateWithoutDelivery_driverInput> = z.object({
-  delivery_driver_history_location_id: z.string().uuid().optional(),
-  status: z.lazy(() => DELIVERY_ORDER_STATUSSchema).optional().nullable(),
-  location: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  created_at: z.coerce.date().optional(),
-  updated_at: z.coerce.date().optional(),
-  order: z.lazy(() => delivery_ordersCreateNestedOneWithoutDelivery_driver_history_locationsInputSchema).optional()
-}).strict();
+export const delivery_driver_history_locationsCreateWithoutDelivery_driverInputSchema: z.ZodType<Prisma.delivery_driver_history_locationsCreateWithoutDelivery_driverInput> =
+	z
+		.object({
+			delivery_driver_history_location_id: z.string().uuid().optional(),
+			status: z
+				.lazy(() => DELIVERY_ORDER_STATUSSchema)
+				.optional()
+				.nullable(),
+			location: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			created_at: z.coerce.date().optional(),
+			updated_at: z.coerce.date().optional(),
+			order: z
+				.lazy(() => delivery_ordersCreateNestedOneWithoutDelivery_driver_history_locationsInputSchema)
+				.optional(),
+		})
+		.strict();
 
 export default delivery_driver_history_locationsCreateWithoutDelivery_driverInputSchema;

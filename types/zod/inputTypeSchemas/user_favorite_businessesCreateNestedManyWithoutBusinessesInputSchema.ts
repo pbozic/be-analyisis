@@ -7,11 +7,31 @@ import { user_favorite_businessesCreateOrConnectWithoutBusinessesInputSchema } f
 import { user_favorite_businessesCreateManyBusinessesInputEnvelopeSchema } from './user_favorite_businessesCreateManyBusinessesInputEnvelopeSchema';
 import { user_favorite_businessesWhereUniqueInputSchema } from './user_favorite_businessesWhereUniqueInputSchema';
 
-export const user_favorite_businessesCreateNestedManyWithoutBusinessesInputSchema: z.ZodType<Prisma.user_favorite_businessesCreateNestedManyWithoutBusinessesInput> = z.object({
-  create: z.union([ z.lazy(() => user_favorite_businessesCreateWithoutBusinessesInputSchema),z.lazy(() => user_favorite_businessesCreateWithoutBusinessesInputSchema).array(),z.lazy(() => user_favorite_businessesUncheckedCreateWithoutBusinessesInputSchema),z.lazy(() => user_favorite_businessesUncheckedCreateWithoutBusinessesInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => user_favorite_businessesCreateOrConnectWithoutBusinessesInputSchema),z.lazy(() => user_favorite_businessesCreateOrConnectWithoutBusinessesInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => user_favorite_businessesCreateManyBusinessesInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => user_favorite_businessesWhereUniqueInputSchema),z.lazy(() => user_favorite_businessesWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const user_favorite_businessesCreateNestedManyWithoutBusinessesInputSchema: z.ZodType<Prisma.user_favorite_businessesCreateNestedManyWithoutBusinessesInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => user_favorite_businessesCreateWithoutBusinessesInputSchema),
+					z.lazy(() => user_favorite_businessesCreateWithoutBusinessesInputSchema).array(),
+					z.lazy(() => user_favorite_businessesUncheckedCreateWithoutBusinessesInputSchema),
+					z.lazy(() => user_favorite_businessesUncheckedCreateWithoutBusinessesInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => user_favorite_businessesCreateOrConnectWithoutBusinessesInputSchema),
+					z.lazy(() => user_favorite_businessesCreateOrConnectWithoutBusinessesInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => user_favorite_businessesCreateManyBusinessesInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => user_favorite_businessesWhereUniqueInputSchema),
+					z.lazy(() => user_favorite_businessesWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default user_favorite_businessesCreateNestedManyWithoutBusinessesInputSchema;

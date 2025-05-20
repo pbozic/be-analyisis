@@ -11,18 +11,73 @@ import { user_favorite_businessesUpdateWithWhereUniqueWithoutBusinessesInputSche
 import { user_favorite_businessesUpdateManyWithWhereWithoutBusinessesInputSchema } from './user_favorite_businessesUpdateManyWithWhereWithoutBusinessesInputSchema';
 import { user_favorite_businessesScalarWhereInputSchema } from './user_favorite_businessesScalarWhereInputSchema';
 
-export const user_favorite_businessesUncheckedUpdateManyWithoutBusinessesNestedInputSchema: z.ZodType<Prisma.user_favorite_businessesUncheckedUpdateManyWithoutBusinessesNestedInput> = z.object({
-  create: z.union([ z.lazy(() => user_favorite_businessesCreateWithoutBusinessesInputSchema),z.lazy(() => user_favorite_businessesCreateWithoutBusinessesInputSchema).array(),z.lazy(() => user_favorite_businessesUncheckedCreateWithoutBusinessesInputSchema),z.lazy(() => user_favorite_businessesUncheckedCreateWithoutBusinessesInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => user_favorite_businessesCreateOrConnectWithoutBusinessesInputSchema),z.lazy(() => user_favorite_businessesCreateOrConnectWithoutBusinessesInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => user_favorite_businessesUpsertWithWhereUniqueWithoutBusinessesInputSchema),z.lazy(() => user_favorite_businessesUpsertWithWhereUniqueWithoutBusinessesInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => user_favorite_businessesCreateManyBusinessesInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => user_favorite_businessesWhereUniqueInputSchema),z.lazy(() => user_favorite_businessesWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => user_favorite_businessesWhereUniqueInputSchema),z.lazy(() => user_favorite_businessesWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => user_favorite_businessesWhereUniqueInputSchema),z.lazy(() => user_favorite_businessesWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => user_favorite_businessesWhereUniqueInputSchema),z.lazy(() => user_favorite_businessesWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => user_favorite_businessesUpdateWithWhereUniqueWithoutBusinessesInputSchema),z.lazy(() => user_favorite_businessesUpdateWithWhereUniqueWithoutBusinessesInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => user_favorite_businessesUpdateManyWithWhereWithoutBusinessesInputSchema),z.lazy(() => user_favorite_businessesUpdateManyWithWhereWithoutBusinessesInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => user_favorite_businessesScalarWhereInputSchema),z.lazy(() => user_favorite_businessesScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const user_favorite_businessesUncheckedUpdateManyWithoutBusinessesNestedInputSchema: z.ZodType<Prisma.user_favorite_businessesUncheckedUpdateManyWithoutBusinessesNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => user_favorite_businessesCreateWithoutBusinessesInputSchema),
+					z.lazy(() => user_favorite_businessesCreateWithoutBusinessesInputSchema).array(),
+					z.lazy(() => user_favorite_businessesUncheckedCreateWithoutBusinessesInputSchema),
+					z.lazy(() => user_favorite_businessesUncheckedCreateWithoutBusinessesInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => user_favorite_businessesCreateOrConnectWithoutBusinessesInputSchema),
+					z.lazy(() => user_favorite_businessesCreateOrConnectWithoutBusinessesInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => user_favorite_businessesUpsertWithWhereUniqueWithoutBusinessesInputSchema),
+					z.lazy(() => user_favorite_businessesUpsertWithWhereUniqueWithoutBusinessesInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => user_favorite_businessesCreateManyBusinessesInputEnvelopeSchema).optional(),
+			set: z
+				.union([
+					z.lazy(() => user_favorite_businessesWhereUniqueInputSchema),
+					z.lazy(() => user_favorite_businessesWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			disconnect: z
+				.union([
+					z.lazy(() => user_favorite_businessesWhereUniqueInputSchema),
+					z.lazy(() => user_favorite_businessesWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			delete: z
+				.union([
+					z.lazy(() => user_favorite_businessesWhereUniqueInputSchema),
+					z.lazy(() => user_favorite_businessesWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			connect: z
+				.union([
+					z.lazy(() => user_favorite_businessesWhereUniqueInputSchema),
+					z.lazy(() => user_favorite_businessesWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => user_favorite_businessesUpdateWithWhereUniqueWithoutBusinessesInputSchema),
+					z.lazy(() => user_favorite_businessesUpdateWithWhereUniqueWithoutBusinessesInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => user_favorite_businessesUpdateManyWithWhereWithoutBusinessesInputSchema),
+					z.lazy(() => user_favorite_businessesUpdateManyWithWhereWithoutBusinessesInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([
+					z.lazy(() => user_favorite_businessesScalarWhereInputSchema),
+					z.lazy(() => user_favorite_businessesScalarWhereInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default user_favorite_businessesUncheckedUpdateManyWithoutBusinessesNestedInputSchema;

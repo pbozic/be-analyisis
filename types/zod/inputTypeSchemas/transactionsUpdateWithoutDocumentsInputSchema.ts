@@ -12,17 +12,30 @@ import { delivery_ordersUpdateOneWithoutTransactionsNestedInputSchema } from './
 import { usersUpdateOneRequiredWithoutTransactionsNestedInputSchema } from './usersUpdateOneRequiredWithoutTransactionsNestedInputSchema';
 import { wallet_fundsUpdateOneWithoutTransactionsNestedInputSchema } from './wallet_fundsUpdateOneWithoutTransactionsNestedInputSchema';
 
-export const transactionsUpdateWithoutDocumentsInputSchema: z.ZodType<Prisma.transactionsUpdateWithoutDocumentsInput> = z.object({
-  transaction_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  amount: z.union([ z.number(),z.lazy(() => FloatFieldUpdateOperationsInputSchema) ]).optional(),
-  type: z.union([ z.lazy(() => TRANSACTION_TYPESchema),z.lazy(() => EnumTRANSACTION_TYPEFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  createdAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updatedAt: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  taxi_order: z.lazy(() => taxi_ordersUpdateOneWithoutTransactionsNestedInputSchema).optional(),
-  delivery_order: z.lazy(() => delivery_ordersUpdateOneWithoutTransactionsNestedInputSchema).optional(),
-  user: z.lazy(() => usersUpdateOneRequiredWithoutTransactionsNestedInputSchema).optional(),
-  wallet_funds: z.lazy(() => wallet_fundsUpdateOneWithoutTransactionsNestedInputSchema).optional()
-}).strict();
+export const transactionsUpdateWithoutDocumentsInputSchema: z.ZodType<Prisma.transactionsUpdateWithoutDocumentsInput> =
+	z
+		.object({
+			transaction_id: z
+				.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)])
+				.optional(),
+			amount: z.union([z.number(), z.lazy(() => FloatFieldUpdateOperationsInputSchema)]).optional(),
+			type: z
+				.union([
+					z.lazy(() => TRANSACTION_TYPESchema),
+					z.lazy(() => EnumTRANSACTION_TYPEFieldUpdateOperationsInputSchema),
+				])
+				.optional(),
+			description: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			createdAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			updatedAt: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			taxi_order: z.lazy(() => taxi_ordersUpdateOneWithoutTransactionsNestedInputSchema).optional(),
+			delivery_order: z.lazy(() => delivery_ordersUpdateOneWithoutTransactionsNestedInputSchema).optional(),
+			user: z.lazy(() => usersUpdateOneRequiredWithoutTransactionsNestedInputSchema).optional(),
+			wallet_funds: z.lazy(() => wallet_fundsUpdateOneWithoutTransactionsNestedInputSchema).optional(),
+		})
+		.strict();
 
 export default transactionsUpdateWithoutDocumentsInputSchema;

@@ -1,33 +1,33 @@
 type: object
 properties:
-  taxi_order_sent_id:
-    type: string
-  order_id:
-    type: string
-  driver_id:
-    type: string
-  accepted:
-    type: boolean
-  location:
-    type: object
-  timeline:
-    type: object
-  created_at:
-    type: string
-  updated_at:
-    type: string
-  order:
-    $ref: ./taxi_orders.yaml
-  driver:
-    $ref: ./drivers.yaml
-  rejected:
-    type: boolean
+    taxi_order_sent_id:
+        type: string
+    order_id:
+        type: string
+    driver_id:
+        type: string
+    accepted:
+        type: boolean
+    location:
+        type: object
+    timeline:
+        type: object
+    created_at:
+        type: string
+    updated_at:
+        type: string
+    order:
+        $ref: ./taxi_orders.yaml
+    driver:
+        $ref: ./drivers.yaml
+    rejected:
+        type: boolean
 required:
-  - taxi_order_sent_id
-  - order_id
-  - driver_id
-  - accepted
-  - timeline
-  - created_at
-  - updated_at
-  - rejected
+    - taxi_order_sent_id
+    - order_id
+    - driver_id
+    - accepted
+    - timeline
+    - created_at
+    - updated_at
+    - rejected

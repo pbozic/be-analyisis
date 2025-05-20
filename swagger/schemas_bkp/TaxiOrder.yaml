@@ -1,76 +1,85 @@
 components:
-  schemas:
-    Route:
-      type: "object"
-      properties:
-        start_location:
-          type: "string"
-        end_location:
-          type: "string"
-        start_time:
-          type: "string"
-        end_time:
-          type: "string"
-    TaxiOrderRequest:
-      type: "object"
-      properties:
-        user_id:
-          type: "string"
-        pickup_location:
-          type: "string"
-        delivery_location:
-          type: "string"
-        route:
-          $ref: '#/components/schemas/Route'
-    TaxiOrderStatus:
-      type: "string"
-      enum: ["PENDING", "TAXI_ACCEPTED", "TAXI_REJECTED", "TAXI_ARRIVED", "TAXI_COMPLETED", "TAXI_CANCELED", "CUSTOMER_CANCELED"]
-    TaxiOrder:
-      type: "object"
-      properties:
-        id:
-          type: "string"
-        user_id:
-          type: "string"
-        driver_id:
-          type: "string"
-        bussines_id:
-          type: "string"
-        status:
-          $ref: '#/components/schemas/TaxiOrderStatus'
-        pickup_location:
-          type: "string"
-        delivery_location:
-          type: "string"
-        last_sent_at:
-          type: "string"
-        route:
-          $ref: '#/components/schemas/Route'
-        created_at:
-          type: "string"
-        updated_at:
-          type: "string"
-      required: ["user_id", "driver_id", "status", "start_location", "end_location", "start_time", "end_time"]
-    TaxiOrderSent:
-      type: "object"
-      properties:
-        id:
-          type: "string"
-        user_id:
-          type: "string"
-        driver_id:
-          type: "string"
-        accepted:
-          type: "boolean"
-        created_at:
-          type: "string"
-        updated_at:
-          type: "string"
-        location:
-          type: "object"
-          #TODO: FIXME: This is a placeholder. The actual schema should be defined here.
-          properties:
-            latitude:
-              type: "string"
-            longitude:
-              type: "string"
+    schemas:
+        Route:
+            type: 'object'
+            properties:
+                start_location:
+                    type: 'string'
+                end_location:
+                    type: 'string'
+                start_time:
+                    type: 'string'
+                end_time:
+                    type: 'string'
+        TaxiOrderRequest:
+            type: 'object'
+            properties:
+                user_id:
+                    type: 'string'
+                pickup_location:
+                    type: 'string'
+                delivery_location:
+                    type: 'string'
+                route:
+                    $ref: '#/components/schemas/Route'
+        TaxiOrderStatus:
+            type: 'string'
+            enum:
+                [
+                    'PENDING',
+                    'TAXI_ACCEPTED',
+                    'TAXI_REJECTED',
+                    'TAXI_ARRIVED',
+                    'TAXI_COMPLETED',
+                    'TAXI_CANCELED',
+                    'CUSTOMER_CANCELED',
+                ]
+        TaxiOrder:
+            type: 'object'
+            properties:
+                id:
+                    type: 'string'
+                user_id:
+                    type: 'string'
+                driver_id:
+                    type: 'string'
+                bussines_id:
+                    type: 'string'
+                status:
+                    $ref: '#/components/schemas/TaxiOrderStatus'
+                pickup_location:
+                    type: 'string'
+                delivery_location:
+                    type: 'string'
+                last_sent_at:
+                    type: 'string'
+                route:
+                    $ref: '#/components/schemas/Route'
+                created_at:
+                    type: 'string'
+                updated_at:
+                    type: 'string'
+            required: ['user_id', 'driver_id', 'status', 'start_location', 'end_location', 'start_time', 'end_time']
+        TaxiOrderSent:
+            type: 'object'
+            properties:
+                id:
+                    type: 'string'
+                user_id:
+                    type: 'string'
+                driver_id:
+                    type: 'string'
+                accepted:
+                    type: 'boolean'
+                created_at:
+                    type: 'string'
+                updated_at:
+                    type: 'string'
+                location:
+                    type: 'object'
+                    #TODO: FIXME: This is a placeholder. The actual schema should be defined here.
+                    properties:
+                        latitude:
+                            type: 'string'
+                        longitude:
+                            type: 'string'

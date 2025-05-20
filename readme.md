@@ -7,32 +7,40 @@ We provide a complete set of scripts to manage the entire development environmen
 ### Available Commands
 
 #### `npm run docker:up`
+
 Starts all the required containers defined in `./Docker/docker-compose.yml`.  
 This includes the app server (`node-app`), PostgreSQL, Redis, Elasticsearch, and more.  
 It uses `./Docker/dev-up.js` to handle environment pre-checks or bootstrapping logic.
 
 #### `npm run docker:down`
+
 Stops and removes all running containers but **keeps named volumes** (like your PostgreSQL data).
 
 #### `npm run docker:down:full`
+
 Stops and removes all running containers **including volumes and orphan containers**.  
 This will wipe any persisted data in the volumes — use with caution.
 
 #### `npm run docker:build`
+
 Alias for `docker:up`. Re-triggers the full container build via `./Docker/dev-up.js`.
 
 #### `npm run node:logs`
+
 Streams logs from the `node-app` container.  
 Useful to debug backend issues or observe live console output.
 
 #### `npm run node:restart`
+
 Restarts the `node-app` container without affecting the database or other services.
 
 #### `npm run node:recreate`
+
 Recreates the `node-app` container.  
 Use this if you changed dependencies, Dockerfile, or environment variables and need a fresh instance.
 
 #### `npm run node:down`
+
 Stops and removes only the `node-app` container (leaves other containers running).
 
 ---
@@ -45,7 +53,7 @@ Use:
 
 ```bash
 npm run dnpm <command>
-npm run dnpx <command> 
+npm run dnpx <command>
 ```
 
 ```bash
@@ -54,26 +62,34 @@ npm run dnpx prisma studio
 ```
 
 This ensures the commands execute inside the running node-app container, matching the actual runtime environment.
+
 ## Run the app
+
 - Make sure to install the dependencies described in the [dependencies chapter](#dependencies)
 - Make sure to set the .env variables described in the [.env chapter](#.env)
 
-```npm run dev```
+`npm run dev`
 This command runs **npx prisma db push** and **npx prisma generate** and then starts **nodemon** instance that runs the express server
 
-```npm run server``` 
+`npm run server`
 This command only starts the nodemon instance (**nodemon ./app.js**) that runs the express server
 
 1. To install nodemon, run the following command in your terminal:
+
 ```bash
     npm install -g nodemon
 ```
+
 2. If you are using npm locally (without `-g` or `--global` appended), you can also add it to your project with the following command:
+
 ```bash
     npm install --save-dev nodemon
 ```
+
 **Nodemon**: It's a utility that monitors for any changes in your source files and automatically restarts your server, which is very useful during the development process. It saves you from manually stopping and starting the server each time you make changes.
+
 ###
+
 ## .env
 
 ```
@@ -82,6 +98,7 @@ This command only starts the nodemon instance (**nodemon ./app.js**) that runs t
     JWT_TOKEN_SECRET=
     DATABASE_URL=
 ```
+
 - **ENVIRONMENT**: This specifies the current environment in which your application is running (e.g., "development", "production", "test").
 - **BCRYPT_SALT_ROUNDS**: This variable determines the complexity of the hashing process in bcrypt. A higher value denotes more rounds of hashing, thereby providing better security but requiring more computational resources.
 - **JWT_TOKEN_SECRET**: This is the secret key used to sign and verify JSON Web Tokens (JWTs) for authentication purposes. See [Generating JWT Secret](#generating-jwt-secret) form detailed information on generating this variable.
@@ -92,7 +109,8 @@ This command only starts the nodemon instance (**nodemon ./app.js**) that runs t
 ```
 node -e "console.log(require('crypto').randomBytes(256).toString('base64'));"
 ```
-This command is used to generate a base64 encoded string that can be used as a secure JWT (JSON Web Token) secret. When run, it uses the crypto library in Node.js to create 256 random bytes and convert them into a base64 string. You can store this string in your .env file 
+
+This command is used to generate a base64 encoded string that can be used as a secure JWT (JSON Web Token) secret. When run, it uses the crypto library in Node.js to create 256 random bytes and convert them into a base64 string. You can store this string in your .env file
 for `JWT_TOKEN_SECRET`.
 
 ### Changing JWT Secret
@@ -106,9 +124,10 @@ The JWT token secret is a key used for encoding and decoding the JSON Web Tokens
 Please note that changing the JWT secret will invalidate all previously issued tokens. Therefore, all users will have to re-authenticate to receive new tokens.
 
 ## Prisma DB
+
 ### Prisma Usage Guide
 
-Prisma is an open-source database toolkit that makes it easy to reason about your data and how you work with it. 
+Prisma is an open-source database toolkit that makes it easy to reason about your data and how you work with it.
 
 #### Setup `.env` for `DATABASE_URL`
 
@@ -134,16 +153,16 @@ Your [Prisma schema file](./prisma/schema.prisma) describes your database tables
 In the example above, `Post` is a model that corresponds to a database table.
 
 #### Migrations
+
 After editing [Prisma schema file](./prisma/schema.prisma) file, we need to generate a .sql file that migrates the current state of the database to the new changes.
 
-We achieve this by running the **npx prisma migrate dev**, the command will ask us for a migration name, a few good examples for migration names (spaces will be converted to _)
+We achieve this by running the **npx prisma migrate dev**, the command will ask us for a migration name, a few good examples for migration names (spaces will be converted to \_)
 
 - added users table
 - added stripe_customer_id to business
 - fixed default value of email on users
 - ...
 
-  
 #### Useful Prisma Commands
 
 Here are some common Prisma commands you might find useful:

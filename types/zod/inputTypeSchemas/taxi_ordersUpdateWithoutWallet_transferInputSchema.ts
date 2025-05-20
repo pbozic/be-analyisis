@@ -32,48 +32,96 @@ import { cashbackUpdateManyWithoutTaxi_orderNestedInputSchema } from './cashback
 import { scoring_pointsUpdateManyWithoutTaxi_ordersNestedInputSchema } from './scoring_pointsUpdateManyWithoutTaxi_ordersNestedInputSchema';
 import { late_eventsUpdateManyWithoutTaxi_ordersNestedInputSchema } from './late_eventsUpdateManyWithoutTaxi_ordersNestedInputSchema';
 
-export const taxi_ordersUpdateWithoutWallet_transferInputSchema: z.ZodType<Prisma.taxi_ordersUpdateWithoutWallet_transferInput> = z.object({
-  order_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  route: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  pickup_location: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  delivery_location: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  payment: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  estimates: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  timeline: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  preferences: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  status: z.union([ z.lazy(() => TAXI_ORDER_STATUSSchema),z.lazy(() => EnumTAXI_ORDER_STATUSFieldUpdateOperationsInputSchema) ]).optional(),
-  last_sent_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  telephone: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  first_name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  last_name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  cancellation_reason: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  find_drivers_attempts: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  is_scheduled: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  type: z.union([ z.lazy(() => ORDER_TYPESchema),z.lazy(() => EnumORDER_TYPEFieldUpdateOperationsInputSchema) ]).optional(),
-  subtype: z.union([ z.lazy(() => ORDER_SUBTYPESchema),z.lazy(() => EnumORDER_SUBTYPEFieldUpdateOperationsInputSchema) ]).optional(),
-  flags: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  cargo_preferences: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  customer_note: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  parent_user_type: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  creating_user_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  allow_credits_usage: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  order_number: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  business: z.lazy(() => businessUpdateOneWithoutTaxi_ordersNestedInputSchema).optional(),
-  driver: z.lazy(() => driversUpdateOneWithoutOrdersNestedInputSchema).optional(),
-  vehicle: z.lazy(() => vehiclesUpdateOneWithoutTaxi_ordersNestedInputSchema).optional(),
-  user: z.lazy(() => usersUpdateOneWithoutOrdersNestedInputSchema).optional(),
-  business_users: z.lazy(() => business_usersUpdateOneWithoutTaxi_ordersNestedInputSchema).optional(),
-  business_clients: z.lazy(() => business_clientsUpdateOneWithoutTaxi_ordersNestedInputSchema).optional(),
-  history: z.lazy(() => taxi_order_sentUpdateManyWithoutOrderNestedInputSchema).optional(),
-  parent_order: z.lazy(() => taxi_ordersUpdateOneWithoutGrouped_ordersNestedInputSchema).optional(),
-  grouped_orders: z.lazy(() => taxi_ordersUpdateManyWithoutParent_orderNestedInputSchema).optional(),
-  driver_history_locations: z.lazy(() => driver_history_locationsUpdateManyWithoutOrderNestedInputSchema).optional(),
-  transactions: z.lazy(() => transactionsUpdateManyWithoutTaxi_orderNestedInputSchema).optional(),
-  cashback: z.lazy(() => cashbackUpdateManyWithoutTaxi_orderNestedInputSchema).optional(),
-  scoring_points: z.lazy(() => scoring_pointsUpdateManyWithoutTaxi_ordersNestedInputSchema).optional(),
-  late_events: z.lazy(() => late_eventsUpdateManyWithoutTaxi_ordersNestedInputSchema).optional()
-}).strict();
+export const taxi_ordersUpdateWithoutWallet_transferInputSchema: z.ZodType<Prisma.taxi_ordersUpdateWithoutWallet_transferInput> =
+	z
+		.object({
+			order_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			route: z.union([z.lazy(() => JsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			pickup_location: z.union([z.lazy(() => JsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			delivery_location: z
+				.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema])
+				.optional(),
+			payment: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			estimates: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			timeline: z.union([z.lazy(() => JsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			preferences: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			status: z
+				.union([
+					z.lazy(() => TAXI_ORDER_STATUSSchema),
+					z.lazy(() => EnumTAXI_ORDER_STATUSFieldUpdateOperationsInputSchema),
+				])
+				.optional(),
+			last_sent_at: z
+				.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			telephone: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			first_name: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			last_name: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			cancellation_reason: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			find_drivers_attempts: z
+				.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			is_scheduled: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+			type: z
+				.union([z.lazy(() => ORDER_TYPESchema), z.lazy(() => EnumORDER_TYPEFieldUpdateOperationsInputSchema)])
+				.optional(),
+			subtype: z
+				.union([
+					z.lazy(() => ORDER_SUBTYPESchema),
+					z.lazy(() => EnumORDER_SUBTYPEFieldUpdateOperationsInputSchema),
+				])
+				.optional(),
+			flags: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			cargo_preferences: z
+				.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema])
+				.optional(),
+			customer_note: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			parent_user_type: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			creating_user_id: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			allow_credits_usage: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+			order_number: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputSchema)]).optional(),
+			business: z.lazy(() => businessUpdateOneWithoutTaxi_ordersNestedInputSchema).optional(),
+			driver: z.lazy(() => driversUpdateOneWithoutOrdersNestedInputSchema).optional(),
+			vehicle: z.lazy(() => vehiclesUpdateOneWithoutTaxi_ordersNestedInputSchema).optional(),
+			user: z.lazy(() => usersUpdateOneWithoutOrdersNestedInputSchema).optional(),
+			business_users: z.lazy(() => business_usersUpdateOneWithoutTaxi_ordersNestedInputSchema).optional(),
+			business_clients: z.lazy(() => business_clientsUpdateOneWithoutTaxi_ordersNestedInputSchema).optional(),
+			history: z.lazy(() => taxi_order_sentUpdateManyWithoutOrderNestedInputSchema).optional(),
+			parent_order: z.lazy(() => taxi_ordersUpdateOneWithoutGrouped_ordersNestedInputSchema).optional(),
+			grouped_orders: z.lazy(() => taxi_ordersUpdateManyWithoutParent_orderNestedInputSchema).optional(),
+			driver_history_locations: z
+				.lazy(() => driver_history_locationsUpdateManyWithoutOrderNestedInputSchema)
+				.optional(),
+			transactions: z.lazy(() => transactionsUpdateManyWithoutTaxi_orderNestedInputSchema).optional(),
+			cashback: z.lazy(() => cashbackUpdateManyWithoutTaxi_orderNestedInputSchema).optional(),
+			scoring_points: z.lazy(() => scoring_pointsUpdateManyWithoutTaxi_ordersNestedInputSchema).optional(),
+			late_events: z.lazy(() => late_eventsUpdateManyWithoutTaxi_ordersNestedInputSchema).optional(),
+		})
+		.strict();
 
 export default taxi_ordersUpdateWithoutWallet_transferInputSchema;

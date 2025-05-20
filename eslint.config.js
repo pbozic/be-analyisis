@@ -15,9 +15,7 @@ module.exports = [
 			ecmaVersion: 2020,
 			sourceType: 'module',
 			parser: tsParser,
-			parserOptions: {
-				project: './tsconfig.json',
-			},
+			parserOptions: process.env.ESLINT_STRICT ? { project: './tsconfig.json' } : {},
 		},
 		plugins: {
 			'@typescript-eslint': eslintPluginTs,

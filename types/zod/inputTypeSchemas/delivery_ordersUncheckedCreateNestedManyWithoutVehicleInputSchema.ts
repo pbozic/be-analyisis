@@ -7,11 +7,31 @@ import { delivery_ordersCreateOrConnectWithoutVehicleInputSchema } from './deliv
 import { delivery_ordersCreateManyVehicleInputEnvelopeSchema } from './delivery_ordersCreateManyVehicleInputEnvelopeSchema';
 import { delivery_ordersWhereUniqueInputSchema } from './delivery_ordersWhereUniqueInputSchema';
 
-export const delivery_ordersUncheckedCreateNestedManyWithoutVehicleInputSchema: z.ZodType<Prisma.delivery_ordersUncheckedCreateNestedManyWithoutVehicleInput> = z.object({
-  create: z.union([ z.lazy(() => delivery_ordersCreateWithoutVehicleInputSchema),z.lazy(() => delivery_ordersCreateWithoutVehicleInputSchema).array(),z.lazy(() => delivery_ordersUncheckedCreateWithoutVehicleInputSchema),z.lazy(() => delivery_ordersUncheckedCreateWithoutVehicleInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => delivery_ordersCreateOrConnectWithoutVehicleInputSchema),z.lazy(() => delivery_ordersCreateOrConnectWithoutVehicleInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => delivery_ordersCreateManyVehicleInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => delivery_ordersWhereUniqueInputSchema),z.lazy(() => delivery_ordersWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const delivery_ordersUncheckedCreateNestedManyWithoutVehicleInputSchema: z.ZodType<Prisma.delivery_ordersUncheckedCreateNestedManyWithoutVehicleInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => delivery_ordersCreateWithoutVehicleInputSchema),
+					z.lazy(() => delivery_ordersCreateWithoutVehicleInputSchema).array(),
+					z.lazy(() => delivery_ordersUncheckedCreateWithoutVehicleInputSchema),
+					z.lazy(() => delivery_ordersUncheckedCreateWithoutVehicleInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => delivery_ordersCreateOrConnectWithoutVehicleInputSchema),
+					z.lazy(() => delivery_ordersCreateOrConnectWithoutVehicleInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => delivery_ordersCreateManyVehicleInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => delivery_ordersWhereUniqueInputSchema),
+					z.lazy(() => delivery_ordersWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default delivery_ordersUncheckedCreateNestedManyWithoutVehicleInputSchema;

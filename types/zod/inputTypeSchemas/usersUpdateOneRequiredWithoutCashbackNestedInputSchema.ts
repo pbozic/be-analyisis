@@ -10,12 +10,26 @@ import { usersUpdateToOneWithWhereWithoutCashbackInputSchema } from './usersUpda
 import { usersUpdateWithoutCashbackInputSchema } from './usersUpdateWithoutCashbackInputSchema';
 import { usersUncheckedUpdateWithoutCashbackInputSchema } from './usersUncheckedUpdateWithoutCashbackInputSchema';
 
-export const usersUpdateOneRequiredWithoutCashbackNestedInputSchema: z.ZodType<Prisma.usersUpdateOneRequiredWithoutCashbackNestedInput> = z.object({
-  create: z.union([ z.lazy(() => usersCreateWithoutCashbackInputSchema),z.lazy(() => usersUncheckedCreateWithoutCashbackInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutCashbackInputSchema).optional(),
-  upsert: z.lazy(() => usersUpsertWithoutCashbackInputSchema).optional(),
-  connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => usersUpdateToOneWithWhereWithoutCashbackInputSchema),z.lazy(() => usersUpdateWithoutCashbackInputSchema),z.lazy(() => usersUncheckedUpdateWithoutCashbackInputSchema) ]).optional(),
-}).strict();
+export const usersUpdateOneRequiredWithoutCashbackNestedInputSchema: z.ZodType<Prisma.usersUpdateOneRequiredWithoutCashbackNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => usersCreateWithoutCashbackInputSchema),
+					z.lazy(() => usersUncheckedCreateWithoutCashbackInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutCashbackInputSchema).optional(),
+			upsert: z.lazy(() => usersUpsertWithoutCashbackInputSchema).optional(),
+			connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => usersUpdateToOneWithWhereWithoutCashbackInputSchema),
+					z.lazy(() => usersUpdateWithoutCashbackInputSchema),
+					z.lazy(() => usersUncheckedUpdateWithoutCashbackInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default usersUpdateOneRequiredWithoutCashbackNestedInputSchema;

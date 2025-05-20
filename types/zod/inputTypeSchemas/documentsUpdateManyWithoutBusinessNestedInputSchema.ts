@@ -11,18 +11,73 @@ import { documentsUpdateWithWhereUniqueWithoutBusinessInputSchema } from './docu
 import { documentsUpdateManyWithWhereWithoutBusinessInputSchema } from './documentsUpdateManyWithWhereWithoutBusinessInputSchema';
 import { documentsScalarWhereInputSchema } from './documentsScalarWhereInputSchema';
 
-export const documentsUpdateManyWithoutBusinessNestedInputSchema: z.ZodType<Prisma.documentsUpdateManyWithoutBusinessNestedInput> = z.object({
-  create: z.union([ z.lazy(() => documentsCreateWithoutBusinessInputSchema),z.lazy(() => documentsCreateWithoutBusinessInputSchema).array(),z.lazy(() => documentsUncheckedCreateWithoutBusinessInputSchema),z.lazy(() => documentsUncheckedCreateWithoutBusinessInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => documentsCreateOrConnectWithoutBusinessInputSchema),z.lazy(() => documentsCreateOrConnectWithoutBusinessInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => documentsUpsertWithWhereUniqueWithoutBusinessInputSchema),z.lazy(() => documentsUpsertWithWhereUniqueWithoutBusinessInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => documentsCreateManyBusinessInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => documentsWhereUniqueInputSchema),z.lazy(() => documentsWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => documentsWhereUniqueInputSchema),z.lazy(() => documentsWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => documentsWhereUniqueInputSchema),z.lazy(() => documentsWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => documentsWhereUniqueInputSchema),z.lazy(() => documentsWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => documentsUpdateWithWhereUniqueWithoutBusinessInputSchema),z.lazy(() => documentsUpdateWithWhereUniqueWithoutBusinessInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => documentsUpdateManyWithWhereWithoutBusinessInputSchema),z.lazy(() => documentsUpdateManyWithWhereWithoutBusinessInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => documentsScalarWhereInputSchema),z.lazy(() => documentsScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const documentsUpdateManyWithoutBusinessNestedInputSchema: z.ZodType<Prisma.documentsUpdateManyWithoutBusinessNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => documentsCreateWithoutBusinessInputSchema),
+					z.lazy(() => documentsCreateWithoutBusinessInputSchema).array(),
+					z.lazy(() => documentsUncheckedCreateWithoutBusinessInputSchema),
+					z.lazy(() => documentsUncheckedCreateWithoutBusinessInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => documentsCreateOrConnectWithoutBusinessInputSchema),
+					z.lazy(() => documentsCreateOrConnectWithoutBusinessInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => documentsUpsertWithWhereUniqueWithoutBusinessInputSchema),
+					z.lazy(() => documentsUpsertWithWhereUniqueWithoutBusinessInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => documentsCreateManyBusinessInputEnvelopeSchema).optional(),
+			set: z
+				.union([
+					z.lazy(() => documentsWhereUniqueInputSchema),
+					z.lazy(() => documentsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			disconnect: z
+				.union([
+					z.lazy(() => documentsWhereUniqueInputSchema),
+					z.lazy(() => documentsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			delete: z
+				.union([
+					z.lazy(() => documentsWhereUniqueInputSchema),
+					z.lazy(() => documentsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			connect: z
+				.union([
+					z.lazy(() => documentsWhereUniqueInputSchema),
+					z.lazy(() => documentsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => documentsUpdateWithWhereUniqueWithoutBusinessInputSchema),
+					z.lazy(() => documentsUpdateWithWhereUniqueWithoutBusinessInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => documentsUpdateManyWithWhereWithoutBusinessInputSchema),
+					z.lazy(() => documentsUpdateManyWithWhereWithoutBusinessInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([
+					z.lazy(() => documentsScalarWhereInputSchema),
+					z.lazy(() => documentsScalarWhereInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default documentsUpdateManyWithoutBusinessNestedInputSchema;

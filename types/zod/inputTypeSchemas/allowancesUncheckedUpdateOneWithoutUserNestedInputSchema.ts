@@ -11,14 +11,28 @@ import { allowancesUpdateToOneWithWhereWithoutUserInputSchema } from './allowanc
 import { allowancesUpdateWithoutUserInputSchema } from './allowancesUpdateWithoutUserInputSchema';
 import { allowancesUncheckedUpdateWithoutUserInputSchema } from './allowancesUncheckedUpdateWithoutUserInputSchema';
 
-export const allowancesUncheckedUpdateOneWithoutUserNestedInputSchema: z.ZodType<Prisma.allowancesUncheckedUpdateOneWithoutUserNestedInput> = z.object({
-  create: z.union([ z.lazy(() => allowancesCreateWithoutUserInputSchema),z.lazy(() => allowancesUncheckedCreateWithoutUserInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => allowancesCreateOrConnectWithoutUserInputSchema).optional(),
-  upsert: z.lazy(() => allowancesUpsertWithoutUserInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => allowancesWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => allowancesWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => allowancesWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => allowancesUpdateToOneWithWhereWithoutUserInputSchema),z.lazy(() => allowancesUpdateWithoutUserInputSchema),z.lazy(() => allowancesUncheckedUpdateWithoutUserInputSchema) ]).optional(),
-}).strict();
+export const allowancesUncheckedUpdateOneWithoutUserNestedInputSchema: z.ZodType<Prisma.allowancesUncheckedUpdateOneWithoutUserNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => allowancesCreateWithoutUserInputSchema),
+					z.lazy(() => allowancesUncheckedCreateWithoutUserInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => allowancesCreateOrConnectWithoutUserInputSchema).optional(),
+			upsert: z.lazy(() => allowancesUpsertWithoutUserInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => allowancesWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => allowancesWhereInputSchema)]).optional(),
+			connect: z.lazy(() => allowancesWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => allowancesUpdateToOneWithWhereWithoutUserInputSchema),
+					z.lazy(() => allowancesUpdateWithoutUserInputSchema),
+					z.lazy(() => allowancesUncheckedUpdateWithoutUserInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default allowancesUncheckedUpdateOneWithoutUserNestedInputSchema;

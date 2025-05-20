@@ -10,12 +10,26 @@ import { usersUpdateToOneWithWhereWithoutTokensInputSchema } from './usersUpdate
 import { usersUpdateWithoutTokensInputSchema } from './usersUpdateWithoutTokensInputSchema';
 import { usersUncheckedUpdateWithoutTokensInputSchema } from './usersUncheckedUpdateWithoutTokensInputSchema';
 
-export const usersUpdateOneRequiredWithoutTokensNestedInputSchema: z.ZodType<Prisma.usersUpdateOneRequiredWithoutTokensNestedInput> = z.object({
-  create: z.union([ z.lazy(() => usersCreateWithoutTokensInputSchema),z.lazy(() => usersUncheckedCreateWithoutTokensInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutTokensInputSchema).optional(),
-  upsert: z.lazy(() => usersUpsertWithoutTokensInputSchema).optional(),
-  connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => usersUpdateToOneWithWhereWithoutTokensInputSchema),z.lazy(() => usersUpdateWithoutTokensInputSchema),z.lazy(() => usersUncheckedUpdateWithoutTokensInputSchema) ]).optional(),
-}).strict();
+export const usersUpdateOneRequiredWithoutTokensNestedInputSchema: z.ZodType<Prisma.usersUpdateOneRequiredWithoutTokensNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => usersCreateWithoutTokensInputSchema),
+					z.lazy(() => usersUncheckedCreateWithoutTokensInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutTokensInputSchema).optional(),
+			upsert: z.lazy(() => usersUpsertWithoutTokensInputSchema).optional(),
+			connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => usersUpdateToOneWithWhereWithoutTokensInputSchema),
+					z.lazy(() => usersUpdateWithoutTokensInputSchema),
+					z.lazy(() => usersUncheckedUpdateWithoutTokensInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default usersUpdateOneRequiredWithoutTokensNestedInputSchema;

@@ -40,64 +40,116 @@ import { daily_meals_subscriptionsUpdateManyWithoutBusinessNestedInputSchema } f
 import { account_actionsUpdateManyWithoutBusinessNestedInputSchema } from './account_actionsUpdateManyWithoutBusinessNestedInputSchema';
 import { business_clientsUpdateManyWithoutBusinessNestedInputSchema } from './business_clientsUpdateManyWithoutBusinessNestedInputSchema';
 
-export const businessUpdateWithoutWord_buysInputSchema: z.ZodType<Prisma.businessUpdateWithoutWord_buysInput> = z.object({
-  business_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  type: z.union([ z.lazy(() => BUSINESS_TYPESchema),z.lazy(() => EnumBUSINESS_TYPEFieldUpdateOperationsInputSchema) ]).optional(),
-  is_business_unit: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  business_group_name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  tax_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  registration_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  email: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  telephone: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  telephone_code: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  telephone_number: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  website_url: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  working_hours: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  seats: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  minimum_order: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  offers_daily_meals: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  offers_daily_meals_on_weekend: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  popular: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  new: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  stripe_account_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  stripe_customer_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  word_buy_stripe_product_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  word_buy_stripe_subscription_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  daily_users_sorted: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  daily_users_sorting_type: z.union([ z.lazy(() => SORTING_TYPESchema),z.lazy(() => EnumSORTING_TYPEFieldUpdateOperationsInputSchema) ]).optional(),
-  restaurant_overwhelmed: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  first_activated_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  sales_representative_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  purchase_order_limit_amount: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  address: z.lazy(() => addressesUpdateOneWithoutBusinessesNestedInputSchema).optional(),
-  delivery_address: z.lazy(() => addressesUpdateOneWithoutBusinesses_delivery_addressNestedInputSchema).optional(),
-  finances: z.lazy(() => financesUpdateOneWithoutBusinessNestedInputSchema).optional(),
-  business_users: z.lazy(() => business_usersUpdateManyWithoutBusinessNestedInputSchema).optional(),
-  documents: z.lazy(() => documentsUpdateManyWithoutBusinessNestedInputSchema).optional(),
-  parent_business: z.lazy(() => businessUpdateOneWithoutChild_businessesNestedInputSchema).optional(),
-  child_businesses: z.lazy(() => businessUpdateManyWithoutParent_businessNestedInputSchema).optional(),
-  taxi_orders: z.lazy(() => taxi_ordersUpdateManyWithoutBusinessNestedInputSchema).optional(),
-  delivery_orders: z.lazy(() => delivery_ordersUpdateManyWithoutBusinessNestedInputSchema).optional(),
-  menus: z.lazy(() => menusUpdateManyWithoutBusinessNestedInputSchema).optional(),
-  reviewable: z.lazy(() => reviewableUpdateOneWithoutBusinessNestedInputSchema).optional(),
-  word_buy_stripe_product: z.lazy(() => local_productsUpdateOneWithoutBusinessNestedInputSchema).optional(),
-  reservations: z.lazy(() => reservationsUpdateManyWithoutBusinessNestedInputSchema).optional(),
-  promo_sections: z.lazy(() => promo_sections_buyUpdateManyWithoutBusinessNestedInputSchema).optional(),
-  business_teams: z.lazy(() => business_teamsUpdateManyWithoutBusinessNestedInputSchema).optional(),
-  business_order_lobbies: z.lazy(() => order_lobbiesUpdateManyWithoutBusinessNestedInputSchema).optional(),
-  user_favorite_businesses: z.lazy(() => user_favorite_businessesUpdateManyWithoutBusinessesNestedInputSchema).optional(),
-  scoring_points: z.lazy(() => scoring_pointsUpdateManyWithoutBusinessesNestedInputSchema).optional(),
-  daily_meal_drivers: z.lazy(() => delivery_driversUpdateManyWithoutDaily_meal_businessNestedInputSchema).optional(),
-  late_events: z.lazy(() => late_eventsUpdateManyWithoutBusinessesNestedInputSchema).optional(),
-  fiscal_device: z.lazy(() => fiscal_devicesUpdateOneWithoutBusinessesNestedInputSchema).optional(),
-  daily_meals_subscribers: z.lazy(() => daily_meals_subscriptionsUpdateManyWithoutBusinessNestedInputSchema).optional(),
-  account_actions: z.lazy(() => account_actionsUpdateManyWithoutBusinessNestedInputSchema).optional(),
-  business_clients: z.lazy(() => business_clientsUpdateManyWithoutBusinessNestedInputSchema).optional()
-}).strict();
+export const businessUpdateWithoutWord_buysInputSchema: z.ZodType<Prisma.businessUpdateWithoutWord_buysInput> = z
+	.object({
+		business_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		type: z
+			.union([z.lazy(() => BUSINESS_TYPESchema), z.lazy(() => EnumBUSINESS_TYPEFieldUpdateOperationsInputSchema)])
+			.optional(),
+		is_business_unit: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+		business_group_name: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		description: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		tax_id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		registration_id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		email: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		telephone: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		telephone_code: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		telephone_number: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		website_url: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		working_hours: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+		seats: z
+			.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		minimum_order: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputSchema)]).optional(),
+		offers_daily_meals: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+		offers_daily_meals_on_weekend: z
+			.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)])
+			.optional(),
+		popular: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+		new: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+		created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		stripe_account_id: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		stripe_customer_id: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		word_buy_stripe_product_id: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		word_buy_stripe_subscription_id: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		daily_users_sorted: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+		daily_users_sorting_type: z
+			.union([z.lazy(() => SORTING_TYPESchema), z.lazy(() => EnumSORTING_TYPEFieldUpdateOperationsInputSchema)])
+			.optional(),
+		restaurant_overwhelmed: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+		first_activated_at: z
+			.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		active: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+		sales_representative_id: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		purchase_order_limit_amount: z
+			.union([z.number(), z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		address: z.lazy(() => addressesUpdateOneWithoutBusinessesNestedInputSchema).optional(),
+		delivery_address: z
+			.lazy(() => addressesUpdateOneWithoutBusinesses_delivery_addressNestedInputSchema)
+			.optional(),
+		finances: z.lazy(() => financesUpdateOneWithoutBusinessNestedInputSchema).optional(),
+		business_users: z.lazy(() => business_usersUpdateManyWithoutBusinessNestedInputSchema).optional(),
+		documents: z.lazy(() => documentsUpdateManyWithoutBusinessNestedInputSchema).optional(),
+		parent_business: z.lazy(() => businessUpdateOneWithoutChild_businessesNestedInputSchema).optional(),
+		child_businesses: z.lazy(() => businessUpdateManyWithoutParent_businessNestedInputSchema).optional(),
+		taxi_orders: z.lazy(() => taxi_ordersUpdateManyWithoutBusinessNestedInputSchema).optional(),
+		delivery_orders: z.lazy(() => delivery_ordersUpdateManyWithoutBusinessNestedInputSchema).optional(),
+		menus: z.lazy(() => menusUpdateManyWithoutBusinessNestedInputSchema).optional(),
+		reviewable: z.lazy(() => reviewableUpdateOneWithoutBusinessNestedInputSchema).optional(),
+		word_buy_stripe_product: z.lazy(() => local_productsUpdateOneWithoutBusinessNestedInputSchema).optional(),
+		reservations: z.lazy(() => reservationsUpdateManyWithoutBusinessNestedInputSchema).optional(),
+		promo_sections: z.lazy(() => promo_sections_buyUpdateManyWithoutBusinessNestedInputSchema).optional(),
+		business_teams: z.lazy(() => business_teamsUpdateManyWithoutBusinessNestedInputSchema).optional(),
+		business_order_lobbies: z.lazy(() => order_lobbiesUpdateManyWithoutBusinessNestedInputSchema).optional(),
+		user_favorite_businesses: z
+			.lazy(() => user_favorite_businessesUpdateManyWithoutBusinessesNestedInputSchema)
+			.optional(),
+		scoring_points: z.lazy(() => scoring_pointsUpdateManyWithoutBusinessesNestedInputSchema).optional(),
+		daily_meal_drivers: z
+			.lazy(() => delivery_driversUpdateManyWithoutDaily_meal_businessNestedInputSchema)
+			.optional(),
+		late_events: z.lazy(() => late_eventsUpdateManyWithoutBusinessesNestedInputSchema).optional(),
+		fiscal_device: z.lazy(() => fiscal_devicesUpdateOneWithoutBusinessesNestedInputSchema).optional(),
+		daily_meals_subscribers: z
+			.lazy(() => daily_meals_subscriptionsUpdateManyWithoutBusinessNestedInputSchema)
+			.optional(),
+		account_actions: z.lazy(() => account_actionsUpdateManyWithoutBusinessNestedInputSchema).optional(),
+		business_clients: z.lazy(() => business_clientsUpdateManyWithoutBusinessNestedInputSchema).optional(),
+	})
+	.strict();
 
 export default businessUpdateWithoutWord_buysInputSchema;

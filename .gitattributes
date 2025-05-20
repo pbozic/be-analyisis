@@ -1,3 +1,4 @@
 # .gitattributes
 *.sh text eol=lf
 *.sh chmod=+x
+* text=auto eol=lf

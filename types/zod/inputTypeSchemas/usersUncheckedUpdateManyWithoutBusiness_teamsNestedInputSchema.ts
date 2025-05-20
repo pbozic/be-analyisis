@@ -11,18 +11,58 @@ import { usersUpdateWithWhereUniqueWithoutBusiness_teamsInputSchema } from './us
 import { usersUpdateManyWithWhereWithoutBusiness_teamsInputSchema } from './usersUpdateManyWithWhereWithoutBusiness_teamsInputSchema';
 import { usersScalarWhereInputSchema } from './usersScalarWhereInputSchema';
 
-export const usersUncheckedUpdateManyWithoutBusiness_teamsNestedInputSchema: z.ZodType<Prisma.usersUncheckedUpdateManyWithoutBusiness_teamsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => usersCreateWithoutBusiness_teamsInputSchema),z.lazy(() => usersCreateWithoutBusiness_teamsInputSchema).array(),z.lazy(() => usersUncheckedCreateWithoutBusiness_teamsInputSchema),z.lazy(() => usersUncheckedCreateWithoutBusiness_teamsInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => usersCreateOrConnectWithoutBusiness_teamsInputSchema),z.lazy(() => usersCreateOrConnectWithoutBusiness_teamsInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => usersUpsertWithWhereUniqueWithoutBusiness_teamsInputSchema),z.lazy(() => usersUpsertWithWhereUniqueWithoutBusiness_teamsInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => usersCreateManyBusiness_teamsInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => usersWhereUniqueInputSchema),z.lazy(() => usersWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => usersWhereUniqueInputSchema),z.lazy(() => usersWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => usersWhereUniqueInputSchema),z.lazy(() => usersWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => usersWhereUniqueInputSchema),z.lazy(() => usersWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => usersUpdateWithWhereUniqueWithoutBusiness_teamsInputSchema),z.lazy(() => usersUpdateWithWhereUniqueWithoutBusiness_teamsInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => usersUpdateManyWithWhereWithoutBusiness_teamsInputSchema),z.lazy(() => usersUpdateManyWithWhereWithoutBusiness_teamsInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => usersScalarWhereInputSchema),z.lazy(() => usersScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const usersUncheckedUpdateManyWithoutBusiness_teamsNestedInputSchema: z.ZodType<Prisma.usersUncheckedUpdateManyWithoutBusiness_teamsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => usersCreateWithoutBusiness_teamsInputSchema),
+					z.lazy(() => usersCreateWithoutBusiness_teamsInputSchema).array(),
+					z.lazy(() => usersUncheckedCreateWithoutBusiness_teamsInputSchema),
+					z.lazy(() => usersUncheckedCreateWithoutBusiness_teamsInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => usersCreateOrConnectWithoutBusiness_teamsInputSchema),
+					z.lazy(() => usersCreateOrConnectWithoutBusiness_teamsInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => usersUpsertWithWhereUniqueWithoutBusiness_teamsInputSchema),
+					z.lazy(() => usersUpsertWithWhereUniqueWithoutBusiness_teamsInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => usersCreateManyBusiness_teamsInputEnvelopeSchema).optional(),
+			set: z
+				.union([z.lazy(() => usersWhereUniqueInputSchema), z.lazy(() => usersWhereUniqueInputSchema).array()])
+				.optional(),
+			disconnect: z
+				.union([z.lazy(() => usersWhereUniqueInputSchema), z.lazy(() => usersWhereUniqueInputSchema).array()])
+				.optional(),
+			delete: z
+				.union([z.lazy(() => usersWhereUniqueInputSchema), z.lazy(() => usersWhereUniqueInputSchema).array()])
+				.optional(),
+			connect: z
+				.union([z.lazy(() => usersWhereUniqueInputSchema), z.lazy(() => usersWhereUniqueInputSchema).array()])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => usersUpdateWithWhereUniqueWithoutBusiness_teamsInputSchema),
+					z.lazy(() => usersUpdateWithWhereUniqueWithoutBusiness_teamsInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => usersUpdateManyWithWhereWithoutBusiness_teamsInputSchema),
+					z.lazy(() => usersUpdateManyWithWhereWithoutBusiness_teamsInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([z.lazy(() => usersScalarWhereInputSchema), z.lazy(() => usersScalarWhereInputSchema).array()])
+				.optional(),
+		})
+		.strict();
 
 export default usersUncheckedUpdateManyWithoutBusiness_teamsNestedInputSchema;

@@ -13,16 +13,39 @@ import { NullableStringFieldUpdateOperationsInputSchema } from './NullableString
 import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateOperationsInputSchema';
 import { NullableDateTimeFieldUpdateOperationsInputSchema } from './NullableDateTimeFieldUpdateOperationsInputSchema';
 
-export const cashbackUpdateManyMutationInputSchema: z.ZodType<Prisma.cashbackUpdateManyMutationInput> = z.object({
-  cashback_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  amount: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  type: z.union([ z.lazy(() => CASHBACK_TYPESchema),z.lazy(() => EnumCASHBACK_TYPEFieldUpdateOperationsInputSchema) ]).optional(),
-  source: z.union([ z.lazy(() => CASHBACK_SOURCESchema),z.lazy(() => EnumCASHBACK_SOURCEFieldUpdateOperationsInputSchema) ]).optional(),
-  status: z.union([ z.lazy(() => CASHBACK_STATUSSchema),z.lazy(() => EnumCASHBACK_STATUSFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  earned_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  expires_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  converted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-}).strict();
+export const cashbackUpdateManyMutationInputSchema: z.ZodType<Prisma.cashbackUpdateManyMutationInput> = z
+	.object({
+		cashback_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		amount: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputSchema)]).optional(),
+		type: z
+			.union([z.lazy(() => CASHBACK_TYPESchema), z.lazy(() => EnumCASHBACK_TYPEFieldUpdateOperationsInputSchema)])
+			.optional(),
+		source: z
+			.union([
+				z.lazy(() => CASHBACK_SOURCESchema),
+				z.lazy(() => EnumCASHBACK_SOURCEFieldUpdateOperationsInputSchema),
+			])
+			.optional(),
+		status: z
+			.union([
+				z.lazy(() => CASHBACK_STATUSSchema),
+				z.lazy(() => EnumCASHBACK_STATUSFieldUpdateOperationsInputSchema),
+			])
+			.optional(),
+		description: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		earned_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		expires_at: z
+			.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		converted_at: z
+			.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+	})
+	.strict();
 
 export default cashbackUpdateManyMutationInputSchema;

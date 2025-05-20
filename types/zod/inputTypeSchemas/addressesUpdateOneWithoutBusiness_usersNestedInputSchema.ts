@@ -11,14 +11,28 @@ import { addressesUpdateToOneWithWhereWithoutBusiness_usersInputSchema } from '.
 import { addressesUpdateWithoutBusiness_usersInputSchema } from './addressesUpdateWithoutBusiness_usersInputSchema';
 import { addressesUncheckedUpdateWithoutBusiness_usersInputSchema } from './addressesUncheckedUpdateWithoutBusiness_usersInputSchema';
 
-export const addressesUpdateOneWithoutBusiness_usersNestedInputSchema: z.ZodType<Prisma.addressesUpdateOneWithoutBusiness_usersNestedInput> = z.object({
-  create: z.union([ z.lazy(() => addressesCreateWithoutBusiness_usersInputSchema),z.lazy(() => addressesUncheckedCreateWithoutBusiness_usersInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => addressesCreateOrConnectWithoutBusiness_usersInputSchema).optional(),
-  upsert: z.lazy(() => addressesUpsertWithoutBusiness_usersInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => addressesWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => addressesWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => addressesWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => addressesUpdateToOneWithWhereWithoutBusiness_usersInputSchema),z.lazy(() => addressesUpdateWithoutBusiness_usersInputSchema),z.lazy(() => addressesUncheckedUpdateWithoutBusiness_usersInputSchema) ]).optional(),
-}).strict();
+export const addressesUpdateOneWithoutBusiness_usersNestedInputSchema: z.ZodType<Prisma.addressesUpdateOneWithoutBusiness_usersNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => addressesCreateWithoutBusiness_usersInputSchema),
+					z.lazy(() => addressesUncheckedCreateWithoutBusiness_usersInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => addressesCreateOrConnectWithoutBusiness_usersInputSchema).optional(),
+			upsert: z.lazy(() => addressesUpsertWithoutBusiness_usersInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => addressesWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => addressesWhereInputSchema)]).optional(),
+			connect: z.lazy(() => addressesWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => addressesUpdateToOneWithWhereWithoutBusiness_usersInputSchema),
+					z.lazy(() => addressesUpdateWithoutBusiness_usersInputSchema),
+					z.lazy(() => addressesUncheckedUpdateWithoutBusiness_usersInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default addressesUpdateOneWithoutBusiness_usersNestedInputSchema;

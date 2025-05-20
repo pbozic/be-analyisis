@@ -11,18 +11,73 @@ import { promo_ads_categoryUpdateWithWhereUniqueWithoutCategoryInputSchema } fro
 import { promo_ads_categoryUpdateManyWithWhereWithoutCategoryInputSchema } from './promo_ads_categoryUpdateManyWithWhereWithoutCategoryInputSchema';
 import { promo_ads_categoryScalarWhereInputSchema } from './promo_ads_categoryScalarWhereInputSchema';
 
-export const promo_ads_categoryUncheckedUpdateManyWithoutCategoryNestedInputSchema: z.ZodType<Prisma.promo_ads_categoryUncheckedUpdateManyWithoutCategoryNestedInput> = z.object({
-  create: z.union([ z.lazy(() => promo_ads_categoryCreateWithoutCategoryInputSchema),z.lazy(() => promo_ads_categoryCreateWithoutCategoryInputSchema).array(),z.lazy(() => promo_ads_categoryUncheckedCreateWithoutCategoryInputSchema),z.lazy(() => promo_ads_categoryUncheckedCreateWithoutCategoryInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => promo_ads_categoryCreateOrConnectWithoutCategoryInputSchema),z.lazy(() => promo_ads_categoryCreateOrConnectWithoutCategoryInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => promo_ads_categoryUpsertWithWhereUniqueWithoutCategoryInputSchema),z.lazy(() => promo_ads_categoryUpsertWithWhereUniqueWithoutCategoryInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => promo_ads_categoryCreateManyCategoryInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => promo_ads_categoryWhereUniqueInputSchema),z.lazy(() => promo_ads_categoryWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => promo_ads_categoryWhereUniqueInputSchema),z.lazy(() => promo_ads_categoryWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => promo_ads_categoryWhereUniqueInputSchema),z.lazy(() => promo_ads_categoryWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => promo_ads_categoryWhereUniqueInputSchema),z.lazy(() => promo_ads_categoryWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => promo_ads_categoryUpdateWithWhereUniqueWithoutCategoryInputSchema),z.lazy(() => promo_ads_categoryUpdateWithWhereUniqueWithoutCategoryInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => promo_ads_categoryUpdateManyWithWhereWithoutCategoryInputSchema),z.lazy(() => promo_ads_categoryUpdateManyWithWhereWithoutCategoryInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => promo_ads_categoryScalarWhereInputSchema),z.lazy(() => promo_ads_categoryScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const promo_ads_categoryUncheckedUpdateManyWithoutCategoryNestedInputSchema: z.ZodType<Prisma.promo_ads_categoryUncheckedUpdateManyWithoutCategoryNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => promo_ads_categoryCreateWithoutCategoryInputSchema),
+					z.lazy(() => promo_ads_categoryCreateWithoutCategoryInputSchema).array(),
+					z.lazy(() => promo_ads_categoryUncheckedCreateWithoutCategoryInputSchema),
+					z.lazy(() => promo_ads_categoryUncheckedCreateWithoutCategoryInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => promo_ads_categoryCreateOrConnectWithoutCategoryInputSchema),
+					z.lazy(() => promo_ads_categoryCreateOrConnectWithoutCategoryInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => promo_ads_categoryUpsertWithWhereUniqueWithoutCategoryInputSchema),
+					z.lazy(() => promo_ads_categoryUpsertWithWhereUniqueWithoutCategoryInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => promo_ads_categoryCreateManyCategoryInputEnvelopeSchema).optional(),
+			set: z
+				.union([
+					z.lazy(() => promo_ads_categoryWhereUniqueInputSchema),
+					z.lazy(() => promo_ads_categoryWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			disconnect: z
+				.union([
+					z.lazy(() => promo_ads_categoryWhereUniqueInputSchema),
+					z.lazy(() => promo_ads_categoryWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			delete: z
+				.union([
+					z.lazy(() => promo_ads_categoryWhereUniqueInputSchema),
+					z.lazy(() => promo_ads_categoryWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			connect: z
+				.union([
+					z.lazy(() => promo_ads_categoryWhereUniqueInputSchema),
+					z.lazy(() => promo_ads_categoryWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => promo_ads_categoryUpdateWithWhereUniqueWithoutCategoryInputSchema),
+					z.lazy(() => promo_ads_categoryUpdateWithWhereUniqueWithoutCategoryInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => promo_ads_categoryUpdateManyWithWhereWithoutCategoryInputSchema),
+					z.lazy(() => promo_ads_categoryUpdateManyWithWhereWithoutCategoryInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([
+					z.lazy(() => promo_ads_categoryScalarWhereInputSchema),
+					z.lazy(() => promo_ads_categoryScalarWhereInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default promo_ads_categoryUncheckedUpdateManyWithoutCategoryNestedInputSchema;

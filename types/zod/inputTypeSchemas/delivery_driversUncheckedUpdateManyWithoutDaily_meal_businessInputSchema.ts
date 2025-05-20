@@ -10,24 +10,57 @@ import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateO
 import { delivery_driversUpdateregionsInputSchema } from './delivery_driversUpdateregionsInputSchema';
 import { NullableFloatFieldUpdateOperationsInputSchema } from './NullableFloatFieldUpdateOperationsInputSchema';
 
-export const delivery_driversUncheckedUpdateManyWithoutDaily_meal_businessInputSchema: z.ZodType<Prisma.delivery_driversUncheckedUpdateManyWithoutDaily_meal_businessInput> = z.object({
-  delivery_driver_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  online: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  on_order: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  delivers_daily_meals: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  working_hours: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  business_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  user_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  location: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  delivery_timeline: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  last_ping_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  on_daily_meals: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  is_inactive: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  scheduled_meals_route: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  regions: z.union([ z.lazy(() => delivery_driversUpdateregionsInputSchema),z.string().array() ]).optional(),
-  partner_cash_balance: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-}).strict();
+export const delivery_driversUncheckedUpdateManyWithoutDaily_meal_businessInputSchema: z.ZodType<Prisma.delivery_driversUncheckedUpdateManyWithoutDaily_meal_businessInput> =
+	z
+		.object({
+			delivery_driver_id: z
+				.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)])
+				.optional(),
+			online: z
+				.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			on_order: z
+				.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			delivers_daily_meals: z
+				.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			working_hours: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			business_id: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			user_id: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			location: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			delivery_timeline: z
+				.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema])
+				.optional(),
+			last_ping_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			on_daily_meals: z
+				.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			is_inactive: z
+				.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			scheduled_meals_route: z
+				.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema])
+				.optional(),
+			regions: z.union([z.lazy(() => delivery_driversUpdateregionsInputSchema), z.string().array()]).optional(),
+			partner_cash_balance: z
+				.union([z.number(), z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+		})
+		.strict();
 
 export default delivery_driversUncheckedUpdateManyWithoutDaily_meal_businessInputSchema;

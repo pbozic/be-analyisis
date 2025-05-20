@@ -7,10 +7,19 @@ import { businessUncheckedUpdateWithoutReviewableInputSchema } from './businessU
 import { businessCreateWithoutReviewableInputSchema } from './businessCreateWithoutReviewableInputSchema';
 import { businessUncheckedCreateWithoutReviewableInputSchema } from './businessUncheckedCreateWithoutReviewableInputSchema';
 
-export const businessUpsertWithWhereUniqueWithoutReviewableInputSchema: z.ZodType<Prisma.businessUpsertWithWhereUniqueWithoutReviewableInput> = z.object({
-  where: z.lazy(() => businessWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => businessUpdateWithoutReviewableInputSchema),z.lazy(() => businessUncheckedUpdateWithoutReviewableInputSchema) ]),
-  create: z.union([ z.lazy(() => businessCreateWithoutReviewableInputSchema),z.lazy(() => businessUncheckedCreateWithoutReviewableInputSchema) ]),
-}).strict();
+export const businessUpsertWithWhereUniqueWithoutReviewableInputSchema: z.ZodType<Prisma.businessUpsertWithWhereUniqueWithoutReviewableInput> =
+	z
+		.object({
+			where: z.lazy(() => businessWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => businessUpdateWithoutReviewableInputSchema),
+				z.lazy(() => businessUncheckedUpdateWithoutReviewableInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => businessCreateWithoutReviewableInputSchema),
+				z.lazy(() => businessUncheckedCreateWithoutReviewableInputSchema),
+			]),
+		})
+		.strict();
 
 export default businessUpsertWithWhereUniqueWithoutReviewableInputSchema;

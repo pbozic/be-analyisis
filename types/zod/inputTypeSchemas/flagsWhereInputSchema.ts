@@ -7,16 +7,21 @@ import { BoolFilterSchema } from './BoolFilterSchema';
 import { DateTimeFilterSchema } from './DateTimeFilterSchema';
 import { Flag_historyListRelationFilterSchema } from './Flag_historyListRelationFilterSchema';
 
-export const flagsWhereInputSchema: z.ZodType<Prisma.flagsWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => flagsWhereInputSchema),z.lazy(() => flagsWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => flagsWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => flagsWhereInputSchema),z.lazy(() => flagsWhereInputSchema).array() ]).optional(),
-  flag_id: z.union([ z.lazy(() => UuidFilterSchema),z.string() ]).optional(),
-  name: z.union([ z.lazy(() => StringFilterSchema),z.string() ]).optional(),
-  status: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  history: z.lazy(() => Flag_historyListRelationFilterSchema).optional()
-}).strict();
+export const flagsWhereInputSchema: z.ZodType<Prisma.flagsWhereInput> = z
+	.object({
+		AND: z.union([z.lazy(() => flagsWhereInputSchema), z.lazy(() => flagsWhereInputSchema).array()]).optional(),
+		OR: z
+			.lazy(() => flagsWhereInputSchema)
+			.array()
+			.optional(),
+		NOT: z.union([z.lazy(() => flagsWhereInputSchema), z.lazy(() => flagsWhereInputSchema).array()]).optional(),
+		flag_id: z.union([z.lazy(() => UuidFilterSchema), z.string()]).optional(),
+		name: z.union([z.lazy(() => StringFilterSchema), z.string()]).optional(),
+		status: z.union([z.lazy(() => BoolFilterSchema), z.boolean()]).optional(),
+		created_at: z.union([z.lazy(() => DateTimeFilterSchema), z.coerce.date()]).optional(),
+		updated_at: z.union([z.lazy(() => DateTimeFilterSchema), z.coerce.date()]).optional(),
+		history: z.lazy(() => Flag_historyListRelationFilterSchema).optional(),
+	})
+	.strict();
 
 export default flagsWhereInputSchema;

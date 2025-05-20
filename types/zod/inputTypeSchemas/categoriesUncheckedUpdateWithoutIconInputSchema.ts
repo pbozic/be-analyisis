@@ -12,21 +12,46 @@ import { promo_ads_categoryUncheckedUpdateManyWithoutCategoryNestedInputSchema }
 import { categoriesUncheckedUpdateManyWithoutParent_categoryNestedInputSchema } from './categoriesUncheckedUpdateManyWithoutParent_categoryNestedInputSchema';
 import { wordsUncheckedUpdateManyWithoutCategoryNestedInputSchema } from './wordsUncheckedUpdateManyWithoutCategoryNestedInputSchema';
 
-export const categoriesUncheckedUpdateWithoutIconInputSchema: z.ZodType<Prisma.categoriesUncheckedUpdateWithoutIconInput> = z.object({
-  categories_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  tag: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  category_type: z.union([ z.lazy(() => CATEGORY_TYPESchema),z.lazy(() => EnumCATEGORY_TYPEFieldUpdateOperationsInputSchema) ]).optional(),
-  parent_categories_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  translatable_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  deleted_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  menu_categories: z.lazy(() => menu_categories_categoriesUncheckedUpdateManyWithoutCategoryNestedInputSchema).optional(),
-  promo_ads_category: z.lazy(() => promo_ads_categoryUncheckedUpdateManyWithoutCategoryNestedInputSchema).optional(),
-  sub_categories: z.lazy(() => categoriesUncheckedUpdateManyWithoutParent_categoryNestedInputSchema).optional(),
-  words: z.lazy(() => wordsUncheckedUpdateManyWithoutCategoryNestedInputSchema).optional()
-}).strict();
+export const categoriesUncheckedUpdateWithoutIconInputSchema: z.ZodType<Prisma.categoriesUncheckedUpdateWithoutIconInput> =
+	z
+		.object({
+			categories_id: z
+				.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)])
+				.optional(),
+			name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			description: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			tag: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			category_type: z
+				.union([
+					z.lazy(() => CATEGORY_TYPESchema),
+					z.lazy(() => EnumCATEGORY_TYPEFieldUpdateOperationsInputSchema),
+				])
+				.optional(),
+			parent_categories_id: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			translatable_id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			deleted_at: z
+				.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			menu_categories: z
+				.lazy(() => menu_categories_categoriesUncheckedUpdateManyWithoutCategoryNestedInputSchema)
+				.optional(),
+			promo_ads_category: z
+				.lazy(() => promo_ads_categoryUncheckedUpdateManyWithoutCategoryNestedInputSchema)
+				.optional(),
+			sub_categories: z
+				.lazy(() => categoriesUncheckedUpdateManyWithoutParent_categoryNestedInputSchema)
+				.optional(),
+			words: z.lazy(() => wordsUncheckedUpdateManyWithoutCategoryNestedInputSchema).optional(),
+		})
+		.strict();
 
 export default categoriesUncheckedUpdateWithoutIconInputSchema;

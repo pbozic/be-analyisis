@@ -13,18 +13,31 @@ import { businessUpdateOneWithoutScoring_pointsNestedInputSchema } from './busin
 import { taxi_ordersUpdateOneWithoutScoring_pointsNestedInputSchema } from './taxi_ordersUpdateOneWithoutScoring_pointsNestedInputSchema';
 import { late_eventsUpdateManyWithoutScoring_pointsNestedInputSchema } from './late_eventsUpdateManyWithoutScoring_pointsNestedInputSchema';
 
-export const scoring_pointsUpdateWithoutDelivery_ordersInputSchema: z.ZodType<Prisma.scoring_pointsUpdateWithoutDelivery_ordersInput> = z.object({
-  scoring_points_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  points: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  isPenalty: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  reason: z.union([ z.lazy(() => SCORING_POINTS_REASONSchema),z.lazy(() => EnumSCORING_POINTS_REASONFieldUpdateOperationsInputSchema) ]).optional(),
-  expiration_date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  users: z.lazy(() => usersUpdateOneWithoutScoring_pointsNestedInputSchema).optional(),
-  businesses: z.lazy(() => businessUpdateOneWithoutScoring_pointsNestedInputSchema).optional(),
-  taxi_orders: z.lazy(() => taxi_ordersUpdateOneWithoutScoring_pointsNestedInputSchema).optional(),
-  late_events: z.lazy(() => late_eventsUpdateManyWithoutScoring_pointsNestedInputSchema).optional()
-}).strict();
+export const scoring_pointsUpdateWithoutDelivery_ordersInputSchema: z.ZodType<Prisma.scoring_pointsUpdateWithoutDelivery_ordersInput> =
+	z
+		.object({
+			scoring_points_id: z
+				.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)])
+				.optional(),
+			points: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputSchema)]).optional(),
+			isPenalty: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+			reason: z
+				.union([
+					z.lazy(() => SCORING_POINTS_REASONSchema),
+					z.lazy(() => EnumSCORING_POINTS_REASONFieldUpdateOperationsInputSchema),
+				])
+				.optional(),
+			expiration_date: z
+				.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			users: z.lazy(() => usersUpdateOneWithoutScoring_pointsNestedInputSchema).optional(),
+			businesses: z.lazy(() => businessUpdateOneWithoutScoring_pointsNestedInputSchema).optional(),
+			taxi_orders: z.lazy(() => taxi_ordersUpdateOneWithoutScoring_pointsNestedInputSchema).optional(),
+			late_events: z.lazy(() => late_eventsUpdateManyWithoutScoring_pointsNestedInputSchema).optional(),
+		})
+		.strict();
 
 export default scoring_pointsUpdateWithoutDelivery_ordersInputSchema;

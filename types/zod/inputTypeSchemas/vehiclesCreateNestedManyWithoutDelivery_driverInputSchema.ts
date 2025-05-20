@@ -7,11 +7,31 @@ import { vehiclesCreateOrConnectWithoutDelivery_driverInputSchema } from './vehi
 import { vehiclesCreateManyDelivery_driverInputEnvelopeSchema } from './vehiclesCreateManyDelivery_driverInputEnvelopeSchema';
 import { vehiclesWhereUniqueInputSchema } from './vehiclesWhereUniqueInputSchema';
 
-export const vehiclesCreateNestedManyWithoutDelivery_driverInputSchema: z.ZodType<Prisma.vehiclesCreateNestedManyWithoutDelivery_driverInput> = z.object({
-  create: z.union([ z.lazy(() => vehiclesCreateWithoutDelivery_driverInputSchema),z.lazy(() => vehiclesCreateWithoutDelivery_driverInputSchema).array(),z.lazy(() => vehiclesUncheckedCreateWithoutDelivery_driverInputSchema),z.lazy(() => vehiclesUncheckedCreateWithoutDelivery_driverInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => vehiclesCreateOrConnectWithoutDelivery_driverInputSchema),z.lazy(() => vehiclesCreateOrConnectWithoutDelivery_driverInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => vehiclesCreateManyDelivery_driverInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => vehiclesWhereUniqueInputSchema),z.lazy(() => vehiclesWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const vehiclesCreateNestedManyWithoutDelivery_driverInputSchema: z.ZodType<Prisma.vehiclesCreateNestedManyWithoutDelivery_driverInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => vehiclesCreateWithoutDelivery_driverInputSchema),
+					z.lazy(() => vehiclesCreateWithoutDelivery_driverInputSchema).array(),
+					z.lazy(() => vehiclesUncheckedCreateWithoutDelivery_driverInputSchema),
+					z.lazy(() => vehiclesUncheckedCreateWithoutDelivery_driverInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => vehiclesCreateOrConnectWithoutDelivery_driverInputSchema),
+					z.lazy(() => vehiclesCreateOrConnectWithoutDelivery_driverInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => vehiclesCreateManyDelivery_driverInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => vehiclesWhereUniqueInputSchema),
+					z.lazy(() => vehiclesWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default vehiclesCreateNestedManyWithoutDelivery_driverInputSchema;

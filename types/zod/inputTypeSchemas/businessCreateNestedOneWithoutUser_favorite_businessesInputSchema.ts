@@ -6,10 +6,18 @@ import { businessUncheckedCreateWithoutUser_favorite_businessesInputSchema } fro
 import { businessCreateOrConnectWithoutUser_favorite_businessesInputSchema } from './businessCreateOrConnectWithoutUser_favorite_businessesInputSchema';
 import { businessWhereUniqueInputSchema } from './businessWhereUniqueInputSchema';
 
-export const businessCreateNestedOneWithoutUser_favorite_businessesInputSchema: z.ZodType<Prisma.businessCreateNestedOneWithoutUser_favorite_businessesInput> = z.object({
-  create: z.union([ z.lazy(() => businessCreateWithoutUser_favorite_businessesInputSchema),z.lazy(() => businessUncheckedCreateWithoutUser_favorite_businessesInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => businessCreateOrConnectWithoutUser_favorite_businessesInputSchema).optional(),
-  connect: z.lazy(() => businessWhereUniqueInputSchema).optional()
-}).strict();
+export const businessCreateNestedOneWithoutUser_favorite_businessesInputSchema: z.ZodType<Prisma.businessCreateNestedOneWithoutUser_favorite_businessesInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => businessCreateWithoutUser_favorite_businessesInputSchema),
+					z.lazy(() => businessUncheckedCreateWithoutUser_favorite_businessesInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => businessCreateOrConnectWithoutUser_favorite_businessesInputSchema).optional(),
+			connect: z.lazy(() => businessWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default businessCreateNestedOneWithoutUser_favorite_businessesInputSchema;

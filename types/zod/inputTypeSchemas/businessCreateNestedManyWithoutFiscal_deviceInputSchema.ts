@@ -7,11 +7,31 @@ import { businessCreateOrConnectWithoutFiscal_deviceInputSchema } from './busine
 import { businessCreateManyFiscal_deviceInputEnvelopeSchema } from './businessCreateManyFiscal_deviceInputEnvelopeSchema';
 import { businessWhereUniqueInputSchema } from './businessWhereUniqueInputSchema';
 
-export const businessCreateNestedManyWithoutFiscal_deviceInputSchema: z.ZodType<Prisma.businessCreateNestedManyWithoutFiscal_deviceInput> = z.object({
-  create: z.union([ z.lazy(() => businessCreateWithoutFiscal_deviceInputSchema),z.lazy(() => businessCreateWithoutFiscal_deviceInputSchema).array(),z.lazy(() => businessUncheckedCreateWithoutFiscal_deviceInputSchema),z.lazy(() => businessUncheckedCreateWithoutFiscal_deviceInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => businessCreateOrConnectWithoutFiscal_deviceInputSchema),z.lazy(() => businessCreateOrConnectWithoutFiscal_deviceInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => businessCreateManyFiscal_deviceInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => businessWhereUniqueInputSchema),z.lazy(() => businessWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const businessCreateNestedManyWithoutFiscal_deviceInputSchema: z.ZodType<Prisma.businessCreateNestedManyWithoutFiscal_deviceInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => businessCreateWithoutFiscal_deviceInputSchema),
+					z.lazy(() => businessCreateWithoutFiscal_deviceInputSchema).array(),
+					z.lazy(() => businessUncheckedCreateWithoutFiscal_deviceInputSchema),
+					z.lazy(() => businessUncheckedCreateWithoutFiscal_deviceInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => businessCreateOrConnectWithoutFiscal_deviceInputSchema),
+					z.lazy(() => businessCreateOrConnectWithoutFiscal_deviceInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => businessCreateManyFiscal_deviceInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => businessWhereUniqueInputSchema),
+					z.lazy(() => businessWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default businessCreateNestedManyWithoutFiscal_deviceInputSchema;

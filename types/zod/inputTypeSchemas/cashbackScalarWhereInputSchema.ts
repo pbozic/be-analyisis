@@ -14,22 +14,50 @@ import { DateTimeFilterSchema } from './DateTimeFilterSchema';
 import { DateTimeNullableFilterSchema } from './DateTimeNullableFilterSchema';
 import { UuidNullableFilterSchema } from './UuidNullableFilterSchema';
 
-export const cashbackScalarWhereInputSchema: z.ZodType<Prisma.cashbackScalarWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => cashbackScalarWhereInputSchema),z.lazy(() => cashbackScalarWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => cashbackScalarWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => cashbackScalarWhereInputSchema),z.lazy(() => cashbackScalarWhereInputSchema).array() ]).optional(),
-  cashback_id: z.union([ z.lazy(() => UuidFilterSchema),z.string() ]).optional(),
-  user_id: z.union([ z.lazy(() => UuidFilterSchema),z.string() ]).optional(),
-  amount: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  type: z.union([ z.lazy(() => EnumCASHBACK_TYPEFilterSchema),z.lazy(() => CASHBACK_TYPESchema) ]).optional(),
-  source: z.union([ z.lazy(() => EnumCASHBACK_SOURCEFilterSchema),z.lazy(() => CASHBACK_SOURCESchema) ]).optional(),
-  status: z.union([ z.lazy(() => EnumCASHBACK_STATUSFilterSchema),z.lazy(() => CASHBACK_STATUSSchema) ]).optional(),
-  description: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  earned_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  expires_at: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
-  converted_at: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
-  taxi_order_id: z.union([ z.lazy(() => UuidNullableFilterSchema),z.string() ]).optional().nullable(),
-  delivery_order_id: z.union([ z.lazy(() => UuidNullableFilterSchema),z.string() ]).optional().nullable(),
-}).strict();
+export const cashbackScalarWhereInputSchema: z.ZodType<Prisma.cashbackScalarWhereInput> = z
+	.object({
+		AND: z
+			.union([z.lazy(() => cashbackScalarWhereInputSchema), z.lazy(() => cashbackScalarWhereInputSchema).array()])
+			.optional(),
+		OR: z
+			.lazy(() => cashbackScalarWhereInputSchema)
+			.array()
+			.optional(),
+		NOT: z
+			.union([z.lazy(() => cashbackScalarWhereInputSchema), z.lazy(() => cashbackScalarWhereInputSchema).array()])
+			.optional(),
+		cashback_id: z.union([z.lazy(() => UuidFilterSchema), z.string()]).optional(),
+		user_id: z.union([z.lazy(() => UuidFilterSchema), z.string()]).optional(),
+		amount: z.union([z.lazy(() => IntFilterSchema), z.number()]).optional(),
+		type: z.union([z.lazy(() => EnumCASHBACK_TYPEFilterSchema), z.lazy(() => CASHBACK_TYPESchema)]).optional(),
+		source: z
+			.union([z.lazy(() => EnumCASHBACK_SOURCEFilterSchema), z.lazy(() => CASHBACK_SOURCESchema)])
+			.optional(),
+		status: z
+			.union([z.lazy(() => EnumCASHBACK_STATUSFilterSchema), z.lazy(() => CASHBACK_STATUSSchema)])
+			.optional(),
+		description: z
+			.union([z.lazy(() => StringNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+		earned_at: z.union([z.lazy(() => DateTimeFilterSchema), z.coerce.date()]).optional(),
+		expires_at: z
+			.union([z.lazy(() => DateTimeNullableFilterSchema), z.coerce.date()])
+			.optional()
+			.nullable(),
+		converted_at: z
+			.union([z.lazy(() => DateTimeNullableFilterSchema), z.coerce.date()])
+			.optional()
+			.nullable(),
+		taxi_order_id: z
+			.union([z.lazy(() => UuidNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+		delivery_order_id: z
+			.union([z.lazy(() => UuidNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+	})
+	.strict();
 
 export default cashbackScalarWhereInputSchema;

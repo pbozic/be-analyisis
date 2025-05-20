@@ -6,10 +6,18 @@ import { usersUncheckedCreateWithoutLate_eventsInputSchema } from './usersUnchec
 import { usersCreateOrConnectWithoutLate_eventsInputSchema } from './usersCreateOrConnectWithoutLate_eventsInputSchema';
 import { usersWhereUniqueInputSchema } from './usersWhereUniqueInputSchema';
 
-export const usersCreateNestedOneWithoutLate_eventsInputSchema: z.ZodType<Prisma.usersCreateNestedOneWithoutLate_eventsInput> = z.object({
-  create: z.union([ z.lazy(() => usersCreateWithoutLate_eventsInputSchema),z.lazy(() => usersUncheckedCreateWithoutLate_eventsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutLate_eventsInputSchema).optional(),
-  connect: z.lazy(() => usersWhereUniqueInputSchema).optional()
-}).strict();
+export const usersCreateNestedOneWithoutLate_eventsInputSchema: z.ZodType<Prisma.usersCreateNestedOneWithoutLate_eventsInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => usersCreateWithoutLate_eventsInputSchema),
+					z.lazy(() => usersUncheckedCreateWithoutLate_eventsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutLate_eventsInputSchema).optional(),
+			connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default usersCreateNestedOneWithoutLate_eventsInputSchema;

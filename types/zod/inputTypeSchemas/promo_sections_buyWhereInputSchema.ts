@@ -13,21 +13,55 @@ import { businessWhereInputSchema } from './businessWhereInputSchema';
 import { UsersNullableRelationFilterSchema } from './UsersNullableRelationFilterSchema';
 import { usersWhereInputSchema } from './usersWhereInputSchema';
 
-export const promo_sections_buyWhereInputSchema: z.ZodType<Prisma.promo_sections_buyWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => promo_sections_buyWhereInputSchema),z.lazy(() => promo_sections_buyWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => promo_sections_buyWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => promo_sections_buyWhereInputSchema),z.lazy(() => promo_sections_buyWhereInputSchema).array() ]).optional(),
-  promo_sections_buy_id: z.union([ z.lazy(() => UuidFilterSchema),z.string() ]).optional(),
-  promo_sections_id: z.union([ z.lazy(() => UuidFilterSchema),z.string() ]).optional(),
-  stripe_subscription_id: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  business_id: z.union([ z.lazy(() => UuidFilterSchema),z.string() ]).optional(),
-  user_id: z.union([ z.lazy(() => UuidNullableFilterSchema),z.string() ]).optional().nullable(),
-  active_at: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
-  expires_at: z.union([ z.lazy(() => DateTimeNullableFilterSchema),z.coerce.date() ]).optional().nullable(),
-  tier: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  promo_section: z.union([ z.lazy(() => Promo_sectionsRelationFilterSchema),z.lazy(() => promo_sectionsWhereInputSchema) ]).optional(),
-  business: z.union([ z.lazy(() => BusinessRelationFilterSchema),z.lazy(() => businessWhereInputSchema) ]).optional(),
-  bought_by: z.union([ z.lazy(() => UsersNullableRelationFilterSchema),z.lazy(() => usersWhereInputSchema) ]).optional().nullable(),
-}).strict();
+export const promo_sections_buyWhereInputSchema: z.ZodType<Prisma.promo_sections_buyWhereInput> = z
+	.object({
+		AND: z
+			.union([
+				z.lazy(() => promo_sections_buyWhereInputSchema),
+				z.lazy(() => promo_sections_buyWhereInputSchema).array(),
+			])
+			.optional(),
+		OR: z
+			.lazy(() => promo_sections_buyWhereInputSchema)
+			.array()
+			.optional(),
+		NOT: z
+			.union([
+				z.lazy(() => promo_sections_buyWhereInputSchema),
+				z.lazy(() => promo_sections_buyWhereInputSchema).array(),
+			])
+			.optional(),
+		promo_sections_buy_id: z.union([z.lazy(() => UuidFilterSchema), z.string()]).optional(),
+		promo_sections_id: z.union([z.lazy(() => UuidFilterSchema), z.string()]).optional(),
+		stripe_subscription_id: z
+			.union([z.lazy(() => StringNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+		business_id: z.union([z.lazy(() => UuidFilterSchema), z.string()]).optional(),
+		user_id: z
+			.union([z.lazy(() => UuidNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+		active_at: z
+			.union([z.lazy(() => DateTimeNullableFilterSchema), z.coerce.date()])
+			.optional()
+			.nullable(),
+		expires_at: z
+			.union([z.lazy(() => DateTimeNullableFilterSchema), z.coerce.date()])
+			.optional()
+			.nullable(),
+		tier: z.union([z.lazy(() => IntFilterSchema), z.number()]).optional(),
+		promo_section: z
+			.union([z.lazy(() => Promo_sectionsRelationFilterSchema), z.lazy(() => promo_sectionsWhereInputSchema)])
+			.optional(),
+		business: z
+			.union([z.lazy(() => BusinessRelationFilterSchema), z.lazy(() => businessWhereInputSchema)])
+			.optional(),
+		bought_by: z
+			.union([z.lazy(() => UsersNullableRelationFilterSchema), z.lazy(() => usersWhereInputSchema)])
+			.optional()
+			.nullable(),
+	})
+	.strict();
 
 export default promo_sections_buyWhereInputSchema;

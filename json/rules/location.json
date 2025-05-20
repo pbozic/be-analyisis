@@ -1,8 +1,8 @@
 {
-  "name": "McDonald's Šmartinska",
-  "address": "Šmartinska cesta 147, Ljubljana",
-  "coordinates": {
-    "latitude": 46.0696150,
-    "longitude": 14.5411140
-  }
+	"name": "McDonald's Šmartinska",
+	"address": "Šmartinska cesta 147, Ljubljana",
+	"coordinates": {
+		"latitude": 46.069615,
+		"longitude": 14.541114
+	}
 }

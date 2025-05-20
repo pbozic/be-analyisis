@@ -10,17 +10,57 @@ import { wordsUpdateWithWhereUniqueWithoutBundlesInputSchema } from './wordsUpda
 import { wordsUpdateManyWithWhereWithoutBundlesInputSchema } from './wordsUpdateManyWithWhereWithoutBundlesInputSchema';
 import { wordsScalarWhereInputSchema } from './wordsScalarWhereInputSchema';
 
-export const wordsUpdateManyWithoutBundlesNestedInputSchema: z.ZodType<Prisma.wordsUpdateManyWithoutBundlesNestedInput> = z.object({
-  create: z.union([ z.lazy(() => wordsCreateWithoutBundlesInputSchema),z.lazy(() => wordsCreateWithoutBundlesInputSchema).array(),z.lazy(() => wordsUncheckedCreateWithoutBundlesInputSchema),z.lazy(() => wordsUncheckedCreateWithoutBundlesInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => wordsCreateOrConnectWithoutBundlesInputSchema),z.lazy(() => wordsCreateOrConnectWithoutBundlesInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => wordsUpsertWithWhereUniqueWithoutBundlesInputSchema),z.lazy(() => wordsUpsertWithWhereUniqueWithoutBundlesInputSchema).array() ]).optional(),
-  set: z.union([ z.lazy(() => wordsWhereUniqueInputSchema),z.lazy(() => wordsWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => wordsWhereUniqueInputSchema),z.lazy(() => wordsWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => wordsWhereUniqueInputSchema),z.lazy(() => wordsWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => wordsWhereUniqueInputSchema),z.lazy(() => wordsWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => wordsUpdateWithWhereUniqueWithoutBundlesInputSchema),z.lazy(() => wordsUpdateWithWhereUniqueWithoutBundlesInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => wordsUpdateManyWithWhereWithoutBundlesInputSchema),z.lazy(() => wordsUpdateManyWithWhereWithoutBundlesInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => wordsScalarWhereInputSchema),z.lazy(() => wordsScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const wordsUpdateManyWithoutBundlesNestedInputSchema: z.ZodType<Prisma.wordsUpdateManyWithoutBundlesNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => wordsCreateWithoutBundlesInputSchema),
+					z.lazy(() => wordsCreateWithoutBundlesInputSchema).array(),
+					z.lazy(() => wordsUncheckedCreateWithoutBundlesInputSchema),
+					z.lazy(() => wordsUncheckedCreateWithoutBundlesInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => wordsCreateOrConnectWithoutBundlesInputSchema),
+					z.lazy(() => wordsCreateOrConnectWithoutBundlesInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => wordsUpsertWithWhereUniqueWithoutBundlesInputSchema),
+					z.lazy(() => wordsUpsertWithWhereUniqueWithoutBundlesInputSchema).array(),
+				])
+				.optional(),
+			set: z
+				.union([z.lazy(() => wordsWhereUniqueInputSchema), z.lazy(() => wordsWhereUniqueInputSchema).array()])
+				.optional(),
+			disconnect: z
+				.union([z.lazy(() => wordsWhereUniqueInputSchema), z.lazy(() => wordsWhereUniqueInputSchema).array()])
+				.optional(),
+			delete: z
+				.union([z.lazy(() => wordsWhereUniqueInputSchema), z.lazy(() => wordsWhereUniqueInputSchema).array()])
+				.optional(),
+			connect: z
+				.union([z.lazy(() => wordsWhereUniqueInputSchema), z.lazy(() => wordsWhereUniqueInputSchema).array()])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => wordsUpdateWithWhereUniqueWithoutBundlesInputSchema),
+					z.lazy(() => wordsUpdateWithWhereUniqueWithoutBundlesInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => wordsUpdateManyWithWhereWithoutBundlesInputSchema),
+					z.lazy(() => wordsUpdateManyWithWhereWithoutBundlesInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([z.lazy(() => wordsScalarWhereInputSchema), z.lazy(() => wordsScalarWhereInputSchema).array()])
+				.optional(),
+		})
+		.strict();
 
 export default wordsUpdateManyWithoutBundlesNestedInputSchema;

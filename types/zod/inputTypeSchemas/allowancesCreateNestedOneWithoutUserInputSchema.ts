@@ -6,10 +6,18 @@ import { allowancesUncheckedCreateWithoutUserInputSchema } from './allowancesUnc
 import { allowancesCreateOrConnectWithoutUserInputSchema } from './allowancesCreateOrConnectWithoutUserInputSchema';
 import { allowancesWhereUniqueInputSchema } from './allowancesWhereUniqueInputSchema';
 
-export const allowancesCreateNestedOneWithoutUserInputSchema: z.ZodType<Prisma.allowancesCreateNestedOneWithoutUserInput> = z.object({
-  create: z.union([ z.lazy(() => allowancesCreateWithoutUserInputSchema),z.lazy(() => allowancesUncheckedCreateWithoutUserInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => allowancesCreateOrConnectWithoutUserInputSchema).optional(),
-  connect: z.lazy(() => allowancesWhereUniqueInputSchema).optional()
-}).strict();
+export const allowancesCreateNestedOneWithoutUserInputSchema: z.ZodType<Prisma.allowancesCreateNestedOneWithoutUserInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => allowancesCreateWithoutUserInputSchema),
+					z.lazy(() => allowancesUncheckedCreateWithoutUserInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => allowancesCreateOrConnectWithoutUserInputSchema).optional(),
+			connect: z.lazy(() => allowancesWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default allowancesCreateNestedOneWithoutUserInputSchema;

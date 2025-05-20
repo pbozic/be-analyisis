@@ -10,12 +10,26 @@ import { businessUpdateToOneWithWhereWithoutWord_buy_stripe_productInputSchema }
 import { businessUpdateWithoutWord_buy_stripe_productInputSchema } from './businessUpdateWithoutWord_buy_stripe_productInputSchema';
 import { businessUncheckedUpdateWithoutWord_buy_stripe_productInputSchema } from './businessUncheckedUpdateWithoutWord_buy_stripe_productInputSchema';
 
-export const businessUpdateOneRequiredWithoutWord_buy_stripe_productNestedInputSchema: z.ZodType<Prisma.businessUpdateOneRequiredWithoutWord_buy_stripe_productNestedInput> = z.object({
-  create: z.union([ z.lazy(() => businessCreateWithoutWord_buy_stripe_productInputSchema),z.lazy(() => businessUncheckedCreateWithoutWord_buy_stripe_productInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => businessCreateOrConnectWithoutWord_buy_stripe_productInputSchema).optional(),
-  upsert: z.lazy(() => businessUpsertWithoutWord_buy_stripe_productInputSchema).optional(),
-  connect: z.lazy(() => businessWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => businessUpdateToOneWithWhereWithoutWord_buy_stripe_productInputSchema),z.lazy(() => businessUpdateWithoutWord_buy_stripe_productInputSchema),z.lazy(() => businessUncheckedUpdateWithoutWord_buy_stripe_productInputSchema) ]).optional(),
-}).strict();
+export const businessUpdateOneRequiredWithoutWord_buy_stripe_productNestedInputSchema: z.ZodType<Prisma.businessUpdateOneRequiredWithoutWord_buy_stripe_productNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => businessCreateWithoutWord_buy_stripe_productInputSchema),
+					z.lazy(() => businessUncheckedCreateWithoutWord_buy_stripe_productInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => businessCreateOrConnectWithoutWord_buy_stripe_productInputSchema).optional(),
+			upsert: z.lazy(() => businessUpsertWithoutWord_buy_stripe_productInputSchema).optional(),
+			connect: z.lazy(() => businessWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => businessUpdateToOneWithWhereWithoutWord_buy_stripe_productInputSchema),
+					z.lazy(() => businessUpdateWithoutWord_buy_stripe_productInputSchema),
+					z.lazy(() => businessUncheckedUpdateWithoutWord_buy_stripe_productInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default businessUpdateOneRequiredWithoutWord_buy_stripe_productNestedInputSchema;

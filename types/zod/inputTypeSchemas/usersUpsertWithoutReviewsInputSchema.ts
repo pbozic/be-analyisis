@@ -7,10 +7,18 @@ import { usersCreateWithoutReviewsInputSchema } from './usersCreateWithoutReview
 import { usersUncheckedCreateWithoutReviewsInputSchema } from './usersUncheckedCreateWithoutReviewsInputSchema';
 import { usersWhereInputSchema } from './usersWhereInputSchema';
 
-export const usersUpsertWithoutReviewsInputSchema: z.ZodType<Prisma.usersUpsertWithoutReviewsInput> = z.object({
-  update: z.union([ z.lazy(() => usersUpdateWithoutReviewsInputSchema),z.lazy(() => usersUncheckedUpdateWithoutReviewsInputSchema) ]),
-  create: z.union([ z.lazy(() => usersCreateWithoutReviewsInputSchema),z.lazy(() => usersUncheckedCreateWithoutReviewsInputSchema) ]),
-  where: z.lazy(() => usersWhereInputSchema).optional()
-}).strict();
+export const usersUpsertWithoutReviewsInputSchema: z.ZodType<Prisma.usersUpsertWithoutReviewsInput> = z
+	.object({
+		update: z.union([
+			z.lazy(() => usersUpdateWithoutReviewsInputSchema),
+			z.lazy(() => usersUncheckedUpdateWithoutReviewsInputSchema),
+		]),
+		create: z.union([
+			z.lazy(() => usersCreateWithoutReviewsInputSchema),
+			z.lazy(() => usersUncheckedCreateWithoutReviewsInputSchema),
+		]),
+		where: z.lazy(() => usersWhereInputSchema).optional(),
+	})
+	.strict();
 
 export default usersUpsertWithoutReviewsInputSchema;

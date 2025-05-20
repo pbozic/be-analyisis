@@ -8,16 +8,18 @@ import { usersUpdateOneRequiredWithoutReferrals_madeNestedInputSchema } from './
 import { usersUpdateOneRequiredWithoutReferralNestedInputSchema } from './usersUpdateOneRequiredWithoutReferralNestedInputSchema';
 import { wallet_fundsUpdateManyWithoutReferralNestedInputSchema } from './wallet_fundsUpdateManyWithoutReferralNestedInputSchema';
 
-export const referralsUpdateInputSchema: z.ZodType<Prisma.referralsUpdateInput> = z.object({
-  referral_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  referral_code: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  conditions_met: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  reward_claimed: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  referrer: z.lazy(() => usersUpdateOneRequiredWithoutReferrals_madeNestedInputSchema).optional(),
-  referred: z.lazy(() => usersUpdateOneRequiredWithoutReferralNestedInputSchema).optional(),
-  credits: z.lazy(() => wallet_fundsUpdateManyWithoutReferralNestedInputSchema).optional()
-}).strict();
+export const referralsUpdateInputSchema: z.ZodType<Prisma.referralsUpdateInput> = z
+	.object({
+		referral_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		referral_code: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		conditions_met: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+		reward_claimed: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+		created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		referrer: z.lazy(() => usersUpdateOneRequiredWithoutReferrals_madeNestedInputSchema).optional(),
+		referred: z.lazy(() => usersUpdateOneRequiredWithoutReferralNestedInputSchema).optional(),
+		credits: z.lazy(() => wallet_fundsUpdateManyWithoutReferralNestedInputSchema).optional(),
+	})
+	.strict();
 
 export default referralsUpdateInputSchema;

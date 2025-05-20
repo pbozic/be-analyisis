@@ -5,9 +5,15 @@ import { translationsScalarWhereInputSchema } from './translationsScalarWhereInp
 import { translationsUpdateManyMutationInputSchema } from './translationsUpdateManyMutationInputSchema';
 import { translationsUncheckedUpdateManyWithoutTranslatableInputSchema } from './translationsUncheckedUpdateManyWithoutTranslatableInputSchema';
 
-export const translationsUpdateManyWithWhereWithoutTranslatableInputSchema: z.ZodType<Prisma.translationsUpdateManyWithWhereWithoutTranslatableInput> = z.object({
-  where: z.lazy(() => translationsScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => translationsUpdateManyMutationInputSchema),z.lazy(() => translationsUncheckedUpdateManyWithoutTranslatableInputSchema) ]),
-}).strict();
+export const translationsUpdateManyWithWhereWithoutTranslatableInputSchema: z.ZodType<Prisma.translationsUpdateManyWithWhereWithoutTranslatableInput> =
+	z
+		.object({
+			where: z.lazy(() => translationsScalarWhereInputSchema),
+			data: z.union([
+				z.lazy(() => translationsUpdateManyMutationInputSchema),
+				z.lazy(() => translationsUncheckedUpdateManyWithoutTranslatableInputSchema),
+			]),
+		})
+		.strict();
 
 export default translationsUpdateManyWithWhereWithoutTranslatableInputSchema;

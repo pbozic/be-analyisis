@@ -11,18 +11,73 @@ import { categoriesUpdateWithWhereUniqueWithoutParent_categoryInputSchema } from
 import { categoriesUpdateManyWithWhereWithoutParent_categoryInputSchema } from './categoriesUpdateManyWithWhereWithoutParent_categoryInputSchema';
 import { categoriesScalarWhereInputSchema } from './categoriesScalarWhereInputSchema';
 
-export const categoriesUncheckedUpdateManyWithoutParent_categoryNestedInputSchema: z.ZodType<Prisma.categoriesUncheckedUpdateManyWithoutParent_categoryNestedInput> = z.object({
-  create: z.union([ z.lazy(() => categoriesCreateWithoutParent_categoryInputSchema),z.lazy(() => categoriesCreateWithoutParent_categoryInputSchema).array(),z.lazy(() => categoriesUncheckedCreateWithoutParent_categoryInputSchema),z.lazy(() => categoriesUncheckedCreateWithoutParent_categoryInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => categoriesCreateOrConnectWithoutParent_categoryInputSchema),z.lazy(() => categoriesCreateOrConnectWithoutParent_categoryInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => categoriesUpsertWithWhereUniqueWithoutParent_categoryInputSchema),z.lazy(() => categoriesUpsertWithWhereUniqueWithoutParent_categoryInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => categoriesCreateManyParent_categoryInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => categoriesWhereUniqueInputSchema),z.lazy(() => categoriesWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => categoriesWhereUniqueInputSchema),z.lazy(() => categoriesWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => categoriesWhereUniqueInputSchema),z.lazy(() => categoriesWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => categoriesWhereUniqueInputSchema),z.lazy(() => categoriesWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => categoriesUpdateWithWhereUniqueWithoutParent_categoryInputSchema),z.lazy(() => categoriesUpdateWithWhereUniqueWithoutParent_categoryInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => categoriesUpdateManyWithWhereWithoutParent_categoryInputSchema),z.lazy(() => categoriesUpdateManyWithWhereWithoutParent_categoryInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => categoriesScalarWhereInputSchema),z.lazy(() => categoriesScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const categoriesUncheckedUpdateManyWithoutParent_categoryNestedInputSchema: z.ZodType<Prisma.categoriesUncheckedUpdateManyWithoutParent_categoryNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => categoriesCreateWithoutParent_categoryInputSchema),
+					z.lazy(() => categoriesCreateWithoutParent_categoryInputSchema).array(),
+					z.lazy(() => categoriesUncheckedCreateWithoutParent_categoryInputSchema),
+					z.lazy(() => categoriesUncheckedCreateWithoutParent_categoryInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => categoriesCreateOrConnectWithoutParent_categoryInputSchema),
+					z.lazy(() => categoriesCreateOrConnectWithoutParent_categoryInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => categoriesUpsertWithWhereUniqueWithoutParent_categoryInputSchema),
+					z.lazy(() => categoriesUpsertWithWhereUniqueWithoutParent_categoryInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => categoriesCreateManyParent_categoryInputEnvelopeSchema).optional(),
+			set: z
+				.union([
+					z.lazy(() => categoriesWhereUniqueInputSchema),
+					z.lazy(() => categoriesWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			disconnect: z
+				.union([
+					z.lazy(() => categoriesWhereUniqueInputSchema),
+					z.lazy(() => categoriesWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			delete: z
+				.union([
+					z.lazy(() => categoriesWhereUniqueInputSchema),
+					z.lazy(() => categoriesWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			connect: z
+				.union([
+					z.lazy(() => categoriesWhereUniqueInputSchema),
+					z.lazy(() => categoriesWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => categoriesUpdateWithWhereUniqueWithoutParent_categoryInputSchema),
+					z.lazy(() => categoriesUpdateWithWhereUniqueWithoutParent_categoryInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => categoriesUpdateManyWithWhereWithoutParent_categoryInputSchema),
+					z.lazy(() => categoriesUpdateManyWithWhereWithoutParent_categoryInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([
+					z.lazy(() => categoriesScalarWhereInputSchema),
+					z.lazy(() => categoriesScalarWhereInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default categoriesUncheckedUpdateManyWithoutParent_categoryNestedInputSchema;

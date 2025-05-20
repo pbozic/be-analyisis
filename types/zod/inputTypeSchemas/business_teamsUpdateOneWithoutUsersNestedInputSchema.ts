@@ -11,14 +11,28 @@ import { business_teamsUpdateToOneWithWhereWithoutUsersInputSchema } from './bus
 import { business_teamsUpdateWithoutUsersInputSchema } from './business_teamsUpdateWithoutUsersInputSchema';
 import { business_teamsUncheckedUpdateWithoutUsersInputSchema } from './business_teamsUncheckedUpdateWithoutUsersInputSchema';
 
-export const business_teamsUpdateOneWithoutUsersNestedInputSchema: z.ZodType<Prisma.business_teamsUpdateOneWithoutUsersNestedInput> = z.object({
-  create: z.union([ z.lazy(() => business_teamsCreateWithoutUsersInputSchema),z.lazy(() => business_teamsUncheckedCreateWithoutUsersInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => business_teamsCreateOrConnectWithoutUsersInputSchema).optional(),
-  upsert: z.lazy(() => business_teamsUpsertWithoutUsersInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => business_teamsWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => business_teamsWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => business_teamsWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => business_teamsUpdateToOneWithWhereWithoutUsersInputSchema),z.lazy(() => business_teamsUpdateWithoutUsersInputSchema),z.lazy(() => business_teamsUncheckedUpdateWithoutUsersInputSchema) ]).optional(),
-}).strict();
+export const business_teamsUpdateOneWithoutUsersNestedInputSchema: z.ZodType<Prisma.business_teamsUpdateOneWithoutUsersNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => business_teamsCreateWithoutUsersInputSchema),
+					z.lazy(() => business_teamsUncheckedCreateWithoutUsersInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => business_teamsCreateOrConnectWithoutUsersInputSchema).optional(),
+			upsert: z.lazy(() => business_teamsUpsertWithoutUsersInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => business_teamsWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => business_teamsWhereInputSchema)]).optional(),
+			connect: z.lazy(() => business_teamsWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => business_teamsUpdateToOneWithWhereWithoutUsersInputSchema),
+					z.lazy(() => business_teamsUpdateWithoutUsersInputSchema),
+					z.lazy(() => business_teamsUncheckedUpdateWithoutUsersInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default business_teamsUpdateOneWithoutUsersNestedInputSchema;

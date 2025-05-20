@@ -6,12 +6,20 @@ import { BoolFieldUpdateOperationsInputSchema } from './BoolFieldUpdateOperation
 import { usersUpdateOneRequiredWithoutAddressesNestedInputSchema } from './usersUpdateOneRequiredWithoutAddressesNestedInputSchema';
 import { addressesUpdateOneRequiredWithoutUsersNestedInputSchema } from './addressesUpdateOneRequiredWithoutUsersNestedInputSchema';
 
-export const user_addressUpdateInputSchema: z.ZodType<Prisma.user_addressUpdateInput> = z.object({
-  name: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  icon: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  primary: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  users: z.lazy(() => usersUpdateOneRequiredWithoutAddressesNestedInputSchema).optional(),
-  address: z.lazy(() => addressesUpdateOneRequiredWithoutUsersNestedInputSchema).optional()
-}).strict();
+export const user_addressUpdateInputSchema: z.ZodType<Prisma.user_addressUpdateInput> = z
+	.object({
+		name: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		icon: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		primary: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+		users: z.lazy(() => usersUpdateOneRequiredWithoutAddressesNestedInputSchema).optional(),
+		address: z.lazy(() => addressesUpdateOneRequiredWithoutUsersNestedInputSchema).optional(),
+	})
+	.strict();
 
 export default user_addressUpdateInputSchema;

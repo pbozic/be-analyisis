@@ -1,30 +1,30 @@
 type: object
 properties:
-  promo_sections_id:
-    type: string
-  name:
-    type: string
-  tag:
-    type: string
-  description:
-    type: string
-  prices:
-    type: object
-  limits:
-    type: object
-  stripe_product_id:
-    type: string
-  canPurchase:
-    type: boolean
-  promo_section_buy:
-    type: array
-    items:
-      $ref: ./promo_sections_buy.yaml
-  promo_duration_days:
-    type: integer
+    promo_sections_id:
+        type: string
+    name:
+        type: string
+    tag:
+        type: string
+    description:
+        type: string
+    prices:
+        type: object
+    limits:
+        type: object
+    stripe_product_id:
+        type: string
+    canPurchase:
+        type: boolean
+    promo_section_buy:
+        type: array
+        items:
+            $ref: ./promo_sections_buy.yaml
+    promo_duration_days:
+        type: integer
 required:
-  - promo_sections_id
-  - name
-  - tag
-  - canPurchase
-  - promo_duration_days
+    - promo_sections_id
+    - name
+    - tag
+    - canPurchase
+    - promo_duration_days

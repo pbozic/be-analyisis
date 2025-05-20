@@ -9,29 +9,40 @@ import { delivery_order_sentUncheckedCreateNestedManyWithoutDelivery_driverInput
 import { documentsUncheckedCreateNestedManyWithoutDelivery_driverInputSchema } from './documentsUncheckedCreateNestedManyWithoutDelivery_driverInputSchema';
 import { delivery_driver_history_locationsUncheckedCreateNestedManyWithoutDelivery_driverInputSchema } from './delivery_driver_history_locationsUncheckedCreateNestedManyWithoutDelivery_driverInputSchema';
 
-export const delivery_driversUncheckedCreateWithoutOrdersInputSchema: z.ZodType<Prisma.delivery_driversUncheckedCreateWithoutOrdersInput> = z.object({
-  delivery_driver_id: z.string().uuid().optional(),
-  online: z.boolean().optional().nullable(),
-  on_order: z.boolean().optional().nullable(),
-  delivers_daily_meals: z.boolean().optional().nullable(),
-  working_hours: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  business_id: z.string().optional().nullable(),
-  created_at: z.coerce.date().optional(),
-  updated_at: z.coerce.date().optional(),
-  user_id: z.string().optional().nullable(),
-  location: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  delivery_timeline: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  last_ping_at: z.coerce.date().optional(),
-  on_daily_meals: z.boolean().optional().nullable(),
-  is_inactive: z.boolean().optional().nullable(),
-  scheduled_meals_route: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  regions: z.union([ z.lazy(() => delivery_driversCreateregionsInputSchema),z.string().array() ]).optional(),
-  partner_cash_balance: z.number().optional().nullable(),
-  daily_meal_business_id: z.string().optional().nullable(),
-  vehicles: z.lazy(() => vehiclesUncheckedCreateNestedManyWithoutDelivery_driverInputSchema).optional(),
-  received_orders: z.lazy(() => delivery_order_sentUncheckedCreateNestedManyWithoutDelivery_driverInputSchema).optional(),
-  documents: z.lazy(() => documentsUncheckedCreateNestedManyWithoutDelivery_driverInputSchema).optional(),
-  delivery_driver_history_locations: z.lazy(() => delivery_driver_history_locationsUncheckedCreateNestedManyWithoutDelivery_driverInputSchema).optional()
-}).strict();
+export const delivery_driversUncheckedCreateWithoutOrdersInputSchema: z.ZodType<Prisma.delivery_driversUncheckedCreateWithoutOrdersInput> =
+	z
+		.object({
+			delivery_driver_id: z.string().uuid().optional(),
+			online: z.boolean().optional().nullable(),
+			on_order: z.boolean().optional().nullable(),
+			delivers_daily_meals: z.boolean().optional().nullable(),
+			working_hours: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			business_id: z.string().optional().nullable(),
+			created_at: z.coerce.date().optional(),
+			updated_at: z.coerce.date().optional(),
+			user_id: z.string().optional().nullable(),
+			location: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			delivery_timeline: z
+				.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema])
+				.optional(),
+			last_ping_at: z.coerce.date().optional(),
+			on_daily_meals: z.boolean().optional().nullable(),
+			is_inactive: z.boolean().optional().nullable(),
+			scheduled_meals_route: z
+				.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema])
+				.optional(),
+			regions: z.union([z.lazy(() => delivery_driversCreateregionsInputSchema), z.string().array()]).optional(),
+			partner_cash_balance: z.number().optional().nullable(),
+			daily_meal_business_id: z.string().optional().nullable(),
+			vehicles: z.lazy(() => vehiclesUncheckedCreateNestedManyWithoutDelivery_driverInputSchema).optional(),
+			received_orders: z
+				.lazy(() => delivery_order_sentUncheckedCreateNestedManyWithoutDelivery_driverInputSchema)
+				.optional(),
+			documents: z.lazy(() => documentsUncheckedCreateNestedManyWithoutDelivery_driverInputSchema).optional(),
+			delivery_driver_history_locations: z
+				.lazy(() => delivery_driver_history_locationsUncheckedCreateNestedManyWithoutDelivery_driverInputSchema)
+				.optional(),
+		})
+		.strict();
 
 export default delivery_driversUncheckedCreateWithoutOrdersInputSchema;

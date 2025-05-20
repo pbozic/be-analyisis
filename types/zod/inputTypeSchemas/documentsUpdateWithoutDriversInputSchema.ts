@@ -18,23 +18,33 @@ import { menu_itemsUpdateOneWithoutDocumentsNestedInputSchema } from './menu_ite
 import { lost_itemsUpdateOneWithoutDocumentsNestedInputSchema } from './lost_itemsUpdateOneWithoutDocumentsNestedInputSchema';
 import { transactionsUpdateOneWithoutDocumentsNestedInputSchema } from './transactionsUpdateOneWithoutDocumentsNestedInputSchema';
 
-export const documentsUpdateWithoutDriversInputSchema: z.ZodType<Prisma.documentsUpdateWithoutDriversInput> = z.object({
-  document_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  document_type: z.union([ z.lazy(() => DOCUMENT_TYPESchema),z.lazy(() => EnumDOCUMENT_TYPEFieldUpdateOperationsInputSchema) ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  expiration_date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  issue_date: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  additional_info: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  public: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  files: z.lazy(() => filesUpdateManyWithoutDocumentsNestedInputSchema).optional(),
-  delivery_driver: z.lazy(() => delivery_driversUpdateOneWithoutDocumentsNestedInputSchema).optional(),
-  business: z.lazy(() => businessUpdateOneWithoutDocumentsNestedInputSchema).optional(),
-  user: z.lazy(() => usersUpdateOneWithoutDocumentsNestedInputSchema).optional(),
-  vehicles: z.lazy(() => vehiclesUpdateOneWithoutDocumentsNestedInputSchema).optional(),
-  menu_items: z.lazy(() => menu_itemsUpdateOneWithoutDocumentsNestedInputSchema).optional(),
-  lost_items: z.lazy(() => lost_itemsUpdateOneWithoutDocumentsNestedInputSchema).optional(),
-  transactions: z.lazy(() => transactionsUpdateOneWithoutDocumentsNestedInputSchema).optional()
-}).strict();
+export const documentsUpdateWithoutDriversInputSchema: z.ZodType<Prisma.documentsUpdateWithoutDriversInput> = z
+	.object({
+		document_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		document_type: z
+			.union([z.lazy(() => DOCUMENT_TYPESchema), z.lazy(() => EnumDOCUMENT_TYPEFieldUpdateOperationsInputSchema)])
+			.optional(),
+		created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		expiration_date: z
+			.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		issue_date: z
+			.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		additional_info: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+		public: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+		files: z.lazy(() => filesUpdateManyWithoutDocumentsNestedInputSchema).optional(),
+		delivery_driver: z.lazy(() => delivery_driversUpdateOneWithoutDocumentsNestedInputSchema).optional(),
+		business: z.lazy(() => businessUpdateOneWithoutDocumentsNestedInputSchema).optional(),
+		user: z.lazy(() => usersUpdateOneWithoutDocumentsNestedInputSchema).optional(),
+		vehicles: z.lazy(() => vehiclesUpdateOneWithoutDocumentsNestedInputSchema).optional(),
+		menu_items: z.lazy(() => menu_itemsUpdateOneWithoutDocumentsNestedInputSchema).optional(),
+		lost_items: z.lazy(() => lost_itemsUpdateOneWithoutDocumentsNestedInputSchema).optional(),
+		transactions: z.lazy(() => transactionsUpdateOneWithoutDocumentsNestedInputSchema).optional(),
+	})
+	.strict();
 
 export default documentsUpdateWithoutDriversInputSchema;

@@ -10,12 +10,26 @@ import { usersUpdateToOneWithWhereWithoutChild_usersInputSchema } from './usersU
 import { usersUpdateWithoutChild_usersInputSchema } from './usersUpdateWithoutChild_usersInputSchema';
 import { usersUncheckedUpdateWithoutChild_usersInputSchema } from './usersUncheckedUpdateWithoutChild_usersInputSchema';
 
-export const usersUpdateOneRequiredWithoutChild_usersNestedInputSchema: z.ZodType<Prisma.usersUpdateOneRequiredWithoutChild_usersNestedInput> = z.object({
-  create: z.union([ z.lazy(() => usersCreateWithoutChild_usersInputSchema),z.lazy(() => usersUncheckedCreateWithoutChild_usersInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutChild_usersInputSchema).optional(),
-  upsert: z.lazy(() => usersUpsertWithoutChild_usersInputSchema).optional(),
-  connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => usersUpdateToOneWithWhereWithoutChild_usersInputSchema),z.lazy(() => usersUpdateWithoutChild_usersInputSchema),z.lazy(() => usersUncheckedUpdateWithoutChild_usersInputSchema) ]).optional(),
-}).strict();
+export const usersUpdateOneRequiredWithoutChild_usersNestedInputSchema: z.ZodType<Prisma.usersUpdateOneRequiredWithoutChild_usersNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => usersCreateWithoutChild_usersInputSchema),
+					z.lazy(() => usersUncheckedCreateWithoutChild_usersInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutChild_usersInputSchema).optional(),
+			upsert: z.lazy(() => usersUpsertWithoutChild_usersInputSchema).optional(),
+			connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => usersUpdateToOneWithWhereWithoutChild_usersInputSchema),
+					z.lazy(() => usersUpdateWithoutChild_usersInputSchema),
+					z.lazy(() => usersUncheckedUpdateWithoutChild_usersInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default usersUpdateOneRequiredWithoutChild_usersNestedInputSchema;

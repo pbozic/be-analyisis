@@ -11,18 +11,73 @@ import { delivery_ordersUpdateWithWhereUniqueWithoutDriverInputSchema } from './
 import { delivery_ordersUpdateManyWithWhereWithoutDriverInputSchema } from './delivery_ordersUpdateManyWithWhereWithoutDriverInputSchema';
 import { delivery_ordersScalarWhereInputSchema } from './delivery_ordersScalarWhereInputSchema';
 
-export const delivery_ordersUpdateManyWithoutDriverNestedInputSchema: z.ZodType<Prisma.delivery_ordersUpdateManyWithoutDriverNestedInput> = z.object({
-  create: z.union([ z.lazy(() => delivery_ordersCreateWithoutDriverInputSchema),z.lazy(() => delivery_ordersCreateWithoutDriverInputSchema).array(),z.lazy(() => delivery_ordersUncheckedCreateWithoutDriverInputSchema),z.lazy(() => delivery_ordersUncheckedCreateWithoutDriverInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => delivery_ordersCreateOrConnectWithoutDriverInputSchema),z.lazy(() => delivery_ordersCreateOrConnectWithoutDriverInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => delivery_ordersUpsertWithWhereUniqueWithoutDriverInputSchema),z.lazy(() => delivery_ordersUpsertWithWhereUniqueWithoutDriverInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => delivery_ordersCreateManyDriverInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => delivery_ordersWhereUniqueInputSchema),z.lazy(() => delivery_ordersWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => delivery_ordersWhereUniqueInputSchema),z.lazy(() => delivery_ordersWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => delivery_ordersWhereUniqueInputSchema),z.lazy(() => delivery_ordersWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => delivery_ordersWhereUniqueInputSchema),z.lazy(() => delivery_ordersWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => delivery_ordersUpdateWithWhereUniqueWithoutDriverInputSchema),z.lazy(() => delivery_ordersUpdateWithWhereUniqueWithoutDriverInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => delivery_ordersUpdateManyWithWhereWithoutDriverInputSchema),z.lazy(() => delivery_ordersUpdateManyWithWhereWithoutDriverInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => delivery_ordersScalarWhereInputSchema),z.lazy(() => delivery_ordersScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const delivery_ordersUpdateManyWithoutDriverNestedInputSchema: z.ZodType<Prisma.delivery_ordersUpdateManyWithoutDriverNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => delivery_ordersCreateWithoutDriverInputSchema),
+					z.lazy(() => delivery_ordersCreateWithoutDriverInputSchema).array(),
+					z.lazy(() => delivery_ordersUncheckedCreateWithoutDriverInputSchema),
+					z.lazy(() => delivery_ordersUncheckedCreateWithoutDriverInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => delivery_ordersCreateOrConnectWithoutDriverInputSchema),
+					z.lazy(() => delivery_ordersCreateOrConnectWithoutDriverInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => delivery_ordersUpsertWithWhereUniqueWithoutDriverInputSchema),
+					z.lazy(() => delivery_ordersUpsertWithWhereUniqueWithoutDriverInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => delivery_ordersCreateManyDriverInputEnvelopeSchema).optional(),
+			set: z
+				.union([
+					z.lazy(() => delivery_ordersWhereUniqueInputSchema),
+					z.lazy(() => delivery_ordersWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			disconnect: z
+				.union([
+					z.lazy(() => delivery_ordersWhereUniqueInputSchema),
+					z.lazy(() => delivery_ordersWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			delete: z
+				.union([
+					z.lazy(() => delivery_ordersWhereUniqueInputSchema),
+					z.lazy(() => delivery_ordersWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			connect: z
+				.union([
+					z.lazy(() => delivery_ordersWhereUniqueInputSchema),
+					z.lazy(() => delivery_ordersWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => delivery_ordersUpdateWithWhereUniqueWithoutDriverInputSchema),
+					z.lazy(() => delivery_ordersUpdateWithWhereUniqueWithoutDriverInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => delivery_ordersUpdateManyWithWhereWithoutDriverInputSchema),
+					z.lazy(() => delivery_ordersUpdateManyWithWhereWithoutDriverInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([
+					z.lazy(() => delivery_ordersScalarWhereInputSchema),
+					z.lazy(() => delivery_ordersScalarWhereInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default delivery_ordersUpdateManyWithoutDriverNestedInputSchema;

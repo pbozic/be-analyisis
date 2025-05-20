@@ -8,15 +8,19 @@ import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateO
 import { BoolFieldUpdateOperationsInputSchema } from './BoolFieldUpdateOperationsInputSchema';
 import { usersUpdateOneRequiredWithoutTokensNestedInputSchema } from './usersUpdateOneRequiredWithoutTokensNestedInputSchema';
 
-export const tokensUpdateInputSchema: z.ZodType<Prisma.tokensUpdateInput> = z.object({
-  token_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  type: z.union([ z.lazy(() => TokenTypeSchema),z.lazy(() => EnumTokenTypeFieldUpdateOperationsInputSchema) ]).optional(),
-  token: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  expires_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  active: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  users: z.lazy(() => usersUpdateOneRequiredWithoutTokensNestedInputSchema).optional()
-}).strict();
+export const tokensUpdateInputSchema: z.ZodType<Prisma.tokensUpdateInput> = z
+	.object({
+		token_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		type: z
+			.union([z.lazy(() => TokenTypeSchema), z.lazy(() => EnumTokenTypeFieldUpdateOperationsInputSchema)])
+			.optional(),
+		token: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		expires_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		active: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+		users: z.lazy(() => usersUpdateOneRequiredWithoutTokensNestedInputSchema).optional(),
+	})
+	.strict();
 
 export default tokensUpdateInputSchema;

@@ -6,18 +6,23 @@ import { InputJsonValueSchema } from './InputJsonValueSchema';
 import { driver_municipalitiesUncheckedCreateNestedManyWithoutMunicipalitiesInputSchema } from './driver_municipalitiesUncheckedCreateNestedManyWithoutMunicipalitiesInputSchema';
 import { weather_dataUncheckedCreateNestedManyWithoutMunicipalityInputSchema } from './weather_dataUncheckedCreateNestedManyWithoutMunicipalityInputSchema';
 
-export const municipalitiesUncheckedCreateWithoutSettlementsInputSchema: z.ZodType<Prisma.municipalitiesUncheckedCreateWithoutSettlementsInput> = z.object({
-  municipalities_id: z.string().uuid().optional(),
-  name: z.string(),
-  geojson: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]),
-  requires_license: z.boolean().optional(),
-  gis_sifra: z.string().optional().nullable(),
-  eid_obcina: z.string().optional().nullable(),
-  feature_id: z.string().optional().nullable(),
-  created_at: z.coerce.date().optional(),
-  updated_at: z.coerce.date().optional(),
-  driver_municipalities: z.lazy(() => driver_municipalitiesUncheckedCreateNestedManyWithoutMunicipalitiesInputSchema).optional(),
-  weather_data: z.lazy(() => weather_dataUncheckedCreateNestedManyWithoutMunicipalityInputSchema).optional()
-}).strict();
+export const municipalitiesUncheckedCreateWithoutSettlementsInputSchema: z.ZodType<Prisma.municipalitiesUncheckedCreateWithoutSettlementsInput> =
+	z
+		.object({
+			municipalities_id: z.string().uuid().optional(),
+			name: z.string(),
+			geojson: z.union([z.lazy(() => JsonNullValueInputSchema), InputJsonValueSchema]),
+			requires_license: z.boolean().optional(),
+			gis_sifra: z.string().optional().nullable(),
+			eid_obcina: z.string().optional().nullable(),
+			feature_id: z.string().optional().nullable(),
+			created_at: z.coerce.date().optional(),
+			updated_at: z.coerce.date().optional(),
+			driver_municipalities: z
+				.lazy(() => driver_municipalitiesUncheckedCreateNestedManyWithoutMunicipalitiesInputSchema)
+				.optional(),
+			weather_data: z.lazy(() => weather_dataUncheckedCreateNestedManyWithoutMunicipalityInputSchema).optional(),
+		})
+		.strict();
 
 export default municipalitiesUncheckedCreateWithoutSettlementsInputSchema;

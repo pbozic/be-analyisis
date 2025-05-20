@@ -10,12 +10,26 @@ import { driversUpdateToOneWithWhereWithoutActivity_logsInputSchema } from './dr
 import { driversUpdateWithoutActivity_logsInputSchema } from './driversUpdateWithoutActivity_logsInputSchema';
 import { driversUncheckedUpdateWithoutActivity_logsInputSchema } from './driversUncheckedUpdateWithoutActivity_logsInputSchema';
 
-export const driversUpdateOneRequiredWithoutActivity_logsNestedInputSchema: z.ZodType<Prisma.driversUpdateOneRequiredWithoutActivity_logsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => driversCreateWithoutActivity_logsInputSchema),z.lazy(() => driversUncheckedCreateWithoutActivity_logsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => driversCreateOrConnectWithoutActivity_logsInputSchema).optional(),
-  upsert: z.lazy(() => driversUpsertWithoutActivity_logsInputSchema).optional(),
-  connect: z.lazy(() => driversWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => driversUpdateToOneWithWhereWithoutActivity_logsInputSchema),z.lazy(() => driversUpdateWithoutActivity_logsInputSchema),z.lazy(() => driversUncheckedUpdateWithoutActivity_logsInputSchema) ]).optional(),
-}).strict();
+export const driversUpdateOneRequiredWithoutActivity_logsNestedInputSchema: z.ZodType<Prisma.driversUpdateOneRequiredWithoutActivity_logsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => driversCreateWithoutActivity_logsInputSchema),
+					z.lazy(() => driversUncheckedCreateWithoutActivity_logsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => driversCreateOrConnectWithoutActivity_logsInputSchema).optional(),
+			upsert: z.lazy(() => driversUpsertWithoutActivity_logsInputSchema).optional(),
+			connect: z.lazy(() => driversWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => driversUpdateToOneWithWhereWithoutActivity_logsInputSchema),
+					z.lazy(() => driversUpdateWithoutActivity_logsInputSchema),
+					z.lazy(() => driversUncheckedUpdateWithoutActivity_logsInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default driversUpdateOneRequiredWithoutActivity_logsNestedInputSchema;

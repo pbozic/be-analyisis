@@ -1,28 +1,28 @@
 type: object
 properties:
-  review_id:
-    type: string
-  reviewable_id:
-    type: string
-  author_id:
-    type: string
-  rating:
-    type: number
-  comment:
-    type: string
-  feedback:
-    type: object
-  created_at:
-    type: string
-  updated_at:
-    type: string
-  reviewable:
-    $ref: ./reviewable.yaml
-  author:
-    $ref: ./users.yaml
+    review_id:
+        type: string
+    reviewable_id:
+        type: string
+    author_id:
+        type: string
+    rating:
+        type: number
+    comment:
+        type: string
+    feedback:
+        type: object
+    created_at:
+        type: string
+    updated_at:
+        type: string
+    reviewable:
+        $ref: ./reviewable.yaml
+    author:
+        $ref: ./users.yaml
 required:
-  - review_id
-  - reviewable_id
-  - author_id
-  - created_at
-  - updated_at
+    - review_id
+    - reviewable_id
+    - author_id
+    - created_at
+    - updated_at

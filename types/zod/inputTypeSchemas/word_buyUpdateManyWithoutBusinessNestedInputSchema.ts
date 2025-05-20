@@ -11,18 +11,73 @@ import { word_buyUpdateWithWhereUniqueWithoutBusinessInputSchema } from './word_
 import { word_buyUpdateManyWithWhereWithoutBusinessInputSchema } from './word_buyUpdateManyWithWhereWithoutBusinessInputSchema';
 import { word_buyScalarWhereInputSchema } from './word_buyScalarWhereInputSchema';
 
-export const word_buyUpdateManyWithoutBusinessNestedInputSchema: z.ZodType<Prisma.word_buyUpdateManyWithoutBusinessNestedInput> = z.object({
-  create: z.union([ z.lazy(() => word_buyCreateWithoutBusinessInputSchema),z.lazy(() => word_buyCreateWithoutBusinessInputSchema).array(),z.lazy(() => word_buyUncheckedCreateWithoutBusinessInputSchema),z.lazy(() => word_buyUncheckedCreateWithoutBusinessInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => word_buyCreateOrConnectWithoutBusinessInputSchema),z.lazy(() => word_buyCreateOrConnectWithoutBusinessInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => word_buyUpsertWithWhereUniqueWithoutBusinessInputSchema),z.lazy(() => word_buyUpsertWithWhereUniqueWithoutBusinessInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => word_buyCreateManyBusinessInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => word_buyWhereUniqueInputSchema),z.lazy(() => word_buyWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => word_buyWhereUniqueInputSchema),z.lazy(() => word_buyWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => word_buyWhereUniqueInputSchema),z.lazy(() => word_buyWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => word_buyWhereUniqueInputSchema),z.lazy(() => word_buyWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => word_buyUpdateWithWhereUniqueWithoutBusinessInputSchema),z.lazy(() => word_buyUpdateWithWhereUniqueWithoutBusinessInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => word_buyUpdateManyWithWhereWithoutBusinessInputSchema),z.lazy(() => word_buyUpdateManyWithWhereWithoutBusinessInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => word_buyScalarWhereInputSchema),z.lazy(() => word_buyScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const word_buyUpdateManyWithoutBusinessNestedInputSchema: z.ZodType<Prisma.word_buyUpdateManyWithoutBusinessNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => word_buyCreateWithoutBusinessInputSchema),
+					z.lazy(() => word_buyCreateWithoutBusinessInputSchema).array(),
+					z.lazy(() => word_buyUncheckedCreateWithoutBusinessInputSchema),
+					z.lazy(() => word_buyUncheckedCreateWithoutBusinessInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => word_buyCreateOrConnectWithoutBusinessInputSchema),
+					z.lazy(() => word_buyCreateOrConnectWithoutBusinessInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => word_buyUpsertWithWhereUniqueWithoutBusinessInputSchema),
+					z.lazy(() => word_buyUpsertWithWhereUniqueWithoutBusinessInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => word_buyCreateManyBusinessInputEnvelopeSchema).optional(),
+			set: z
+				.union([
+					z.lazy(() => word_buyWhereUniqueInputSchema),
+					z.lazy(() => word_buyWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			disconnect: z
+				.union([
+					z.lazy(() => word_buyWhereUniqueInputSchema),
+					z.lazy(() => word_buyWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			delete: z
+				.union([
+					z.lazy(() => word_buyWhereUniqueInputSchema),
+					z.lazy(() => word_buyWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			connect: z
+				.union([
+					z.lazy(() => word_buyWhereUniqueInputSchema),
+					z.lazy(() => word_buyWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => word_buyUpdateWithWhereUniqueWithoutBusinessInputSchema),
+					z.lazy(() => word_buyUpdateWithWhereUniqueWithoutBusinessInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => word_buyUpdateManyWithWhereWithoutBusinessInputSchema),
+					z.lazy(() => word_buyUpdateManyWithWhereWithoutBusinessInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([
+					z.lazy(() => word_buyScalarWhereInputSchema),
+					z.lazy(() => word_buyScalarWhereInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default word_buyUpdateManyWithoutBusinessNestedInputSchema;

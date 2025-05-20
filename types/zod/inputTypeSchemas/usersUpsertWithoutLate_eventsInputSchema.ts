@@ -7,10 +7,18 @@ import { usersCreateWithoutLate_eventsInputSchema } from './usersCreateWithoutLa
 import { usersUncheckedCreateWithoutLate_eventsInputSchema } from './usersUncheckedCreateWithoutLate_eventsInputSchema';
 import { usersWhereInputSchema } from './usersWhereInputSchema';
 
-export const usersUpsertWithoutLate_eventsInputSchema: z.ZodType<Prisma.usersUpsertWithoutLate_eventsInput> = z.object({
-  update: z.union([ z.lazy(() => usersUpdateWithoutLate_eventsInputSchema),z.lazy(() => usersUncheckedUpdateWithoutLate_eventsInputSchema) ]),
-  create: z.union([ z.lazy(() => usersCreateWithoutLate_eventsInputSchema),z.lazy(() => usersUncheckedCreateWithoutLate_eventsInputSchema) ]),
-  where: z.lazy(() => usersWhereInputSchema).optional()
-}).strict();
+export const usersUpsertWithoutLate_eventsInputSchema: z.ZodType<Prisma.usersUpsertWithoutLate_eventsInput> = z
+	.object({
+		update: z.union([
+			z.lazy(() => usersUpdateWithoutLate_eventsInputSchema),
+			z.lazy(() => usersUncheckedUpdateWithoutLate_eventsInputSchema),
+		]),
+		create: z.union([
+			z.lazy(() => usersCreateWithoutLate_eventsInputSchema),
+			z.lazy(() => usersUncheckedCreateWithoutLate_eventsInputSchema),
+		]),
+		where: z.lazy(() => usersWhereInputSchema).optional(),
+	})
+	.strict();
 
 export default usersUpsertWithoutLate_eventsInputSchema;

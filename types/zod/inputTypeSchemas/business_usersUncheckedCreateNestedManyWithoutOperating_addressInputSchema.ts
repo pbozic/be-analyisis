@@ -7,11 +7,31 @@ import { business_usersCreateOrConnectWithoutOperating_addressInputSchema } from
 import { business_usersCreateManyOperating_addressInputEnvelopeSchema } from './business_usersCreateManyOperating_addressInputEnvelopeSchema';
 import { business_usersWhereUniqueInputSchema } from './business_usersWhereUniqueInputSchema';
 
-export const business_usersUncheckedCreateNestedManyWithoutOperating_addressInputSchema: z.ZodType<Prisma.business_usersUncheckedCreateNestedManyWithoutOperating_addressInput> = z.object({
-  create: z.union([ z.lazy(() => business_usersCreateWithoutOperating_addressInputSchema),z.lazy(() => business_usersCreateWithoutOperating_addressInputSchema).array(),z.lazy(() => business_usersUncheckedCreateWithoutOperating_addressInputSchema),z.lazy(() => business_usersUncheckedCreateWithoutOperating_addressInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => business_usersCreateOrConnectWithoutOperating_addressInputSchema),z.lazy(() => business_usersCreateOrConnectWithoutOperating_addressInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => business_usersCreateManyOperating_addressInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => business_usersWhereUniqueInputSchema),z.lazy(() => business_usersWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const business_usersUncheckedCreateNestedManyWithoutOperating_addressInputSchema: z.ZodType<Prisma.business_usersUncheckedCreateNestedManyWithoutOperating_addressInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => business_usersCreateWithoutOperating_addressInputSchema),
+					z.lazy(() => business_usersCreateWithoutOperating_addressInputSchema).array(),
+					z.lazy(() => business_usersUncheckedCreateWithoutOperating_addressInputSchema),
+					z.lazy(() => business_usersUncheckedCreateWithoutOperating_addressInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => business_usersCreateOrConnectWithoutOperating_addressInputSchema),
+					z.lazy(() => business_usersCreateOrConnectWithoutOperating_addressInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => business_usersCreateManyOperating_addressInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => business_usersWhereUniqueInputSchema),
+					z.lazy(() => business_usersWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default business_usersUncheckedCreateNestedManyWithoutOperating_addressInputSchema;

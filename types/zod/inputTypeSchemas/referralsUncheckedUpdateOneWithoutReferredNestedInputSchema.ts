@@ -11,14 +11,28 @@ import { referralsUpdateToOneWithWhereWithoutReferredInputSchema } from './refer
 import { referralsUpdateWithoutReferredInputSchema } from './referralsUpdateWithoutReferredInputSchema';
 import { referralsUncheckedUpdateWithoutReferredInputSchema } from './referralsUncheckedUpdateWithoutReferredInputSchema';
 
-export const referralsUncheckedUpdateOneWithoutReferredNestedInputSchema: z.ZodType<Prisma.referralsUncheckedUpdateOneWithoutReferredNestedInput> = z.object({
-  create: z.union([ z.lazy(() => referralsCreateWithoutReferredInputSchema),z.lazy(() => referralsUncheckedCreateWithoutReferredInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => referralsCreateOrConnectWithoutReferredInputSchema).optional(),
-  upsert: z.lazy(() => referralsUpsertWithoutReferredInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => referralsWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => referralsWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => referralsWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => referralsUpdateToOneWithWhereWithoutReferredInputSchema),z.lazy(() => referralsUpdateWithoutReferredInputSchema),z.lazy(() => referralsUncheckedUpdateWithoutReferredInputSchema) ]).optional(),
-}).strict();
+export const referralsUncheckedUpdateOneWithoutReferredNestedInputSchema: z.ZodType<Prisma.referralsUncheckedUpdateOneWithoutReferredNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => referralsCreateWithoutReferredInputSchema),
+					z.lazy(() => referralsUncheckedCreateWithoutReferredInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => referralsCreateOrConnectWithoutReferredInputSchema).optional(),
+			upsert: z.lazy(() => referralsUpsertWithoutReferredInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => referralsWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => referralsWhereInputSchema)]).optional(),
+			connect: z.lazy(() => referralsWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => referralsUpdateToOneWithWhereWithoutReferredInputSchema),
+					z.lazy(() => referralsUpdateWithoutReferredInputSchema),
+					z.lazy(() => referralsUncheckedUpdateWithoutReferredInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default referralsUncheckedUpdateOneWithoutReferredNestedInputSchema;

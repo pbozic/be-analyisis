@@ -1,48 +1,48 @@
 services:
-  node-app:
-    build:
-      context: ../
-      dockerfile: ./Docker/node-app/Dockerfile.dev
-    volumes:
-      - ../:/app
-      - ../.env:/app/.env   # mount local .env into container
-      - /app/node_modules  # prevent host overwrite
-    env_file:
-      - ../.env   # and tell Docker Compose to load it
-    environment:
-      - NODE_ENV=development
-  proxy:
-    image: nginx:alpine
-    ports:
-      - "3002:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - node-app
-    networks:
-      - shared_network
-  test-db:
-    image: postgres:15
-    container_name: postgres-test
-    ports:
-      - "5433:5432"  # Host port 5433 → container port 5432
-    environment:
-      POSTGRES_USER: test
-      POSTGRES_PASSWORD: test
-      POSTGRES_DB: test_db
-    volumes:
-      - pgdata-test:/var/lib/postgresql/data
-    networks:
-      - shared_network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U test"]
-      interval: 2s
-      timeout: 2s
-      retries: 10
+    node-app:
+        build:
+            context: ../
+            dockerfile: ./Docker/node-app/Dockerfile.dev
+        volumes:
+            - ../:/app
+            - ../.env:/app/.env # mount local .env into container
+            - /app/node_modules # prevent host overwrite
+        env_file:
+            - ../.env # and tell Docker Compose to load it
+        environment:
+            - NODE_ENV=development
+    proxy:
+        image: nginx:alpine
+        ports:
+            - '3002:80'
+        volumes:
+            - ./nginx.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - node-app
+        networks:
+            - shared_network
+    test-db:
+        image: postgres:15
+        container_name: postgres-test
+        ports:
+            - '5433:5432' # Host port 5433 → container port 5432
+        environment:
+            POSTGRES_USER: test
+            POSTGRES_PASSWORD: test
+            POSTGRES_DB: test_db
+        volumes:
+            - pgdata-test:/var/lib/postgresql/data
+        networks:
+            - shared_network
+        healthcheck:
+            test: ['CMD-SHELL', 'pg_isready -U test']
+            interval: 2s
+            timeout: 2s
+            retries: 10
 
 volumes:
-  pgdata-test:
+    pgdata-test:
 
 networks:
-  shared_network:
-    driver: bridge
+    shared_network:
+        driver: bridge

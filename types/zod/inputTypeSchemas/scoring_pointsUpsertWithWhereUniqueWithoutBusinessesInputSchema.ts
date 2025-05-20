@@ -7,10 +7,19 @@ import { scoring_pointsUncheckedUpdateWithoutBusinessesInputSchema } from './sco
 import { scoring_pointsCreateWithoutBusinessesInputSchema } from './scoring_pointsCreateWithoutBusinessesInputSchema';
 import { scoring_pointsUncheckedCreateWithoutBusinessesInputSchema } from './scoring_pointsUncheckedCreateWithoutBusinessesInputSchema';
 
-export const scoring_pointsUpsertWithWhereUniqueWithoutBusinessesInputSchema: z.ZodType<Prisma.scoring_pointsUpsertWithWhereUniqueWithoutBusinessesInput> = z.object({
-  where: z.lazy(() => scoring_pointsWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => scoring_pointsUpdateWithoutBusinessesInputSchema),z.lazy(() => scoring_pointsUncheckedUpdateWithoutBusinessesInputSchema) ]),
-  create: z.union([ z.lazy(() => scoring_pointsCreateWithoutBusinessesInputSchema),z.lazy(() => scoring_pointsUncheckedCreateWithoutBusinessesInputSchema) ]),
-}).strict();
+export const scoring_pointsUpsertWithWhereUniqueWithoutBusinessesInputSchema: z.ZodType<Prisma.scoring_pointsUpsertWithWhereUniqueWithoutBusinessesInput> =
+	z
+		.object({
+			where: z.lazy(() => scoring_pointsWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => scoring_pointsUpdateWithoutBusinessesInputSchema),
+				z.lazy(() => scoring_pointsUncheckedUpdateWithoutBusinessesInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => scoring_pointsCreateWithoutBusinessesInputSchema),
+				z.lazy(() => scoring_pointsUncheckedCreateWithoutBusinessesInputSchema),
+			]),
+		})
+		.strict();
 
 export default scoring_pointsUpsertWithWhereUniqueWithoutBusinessesInputSchema;

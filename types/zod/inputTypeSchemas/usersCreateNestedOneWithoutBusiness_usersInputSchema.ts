@@ -6,10 +6,18 @@ import { usersUncheckedCreateWithoutBusiness_usersInputSchema } from './usersUnc
 import { usersCreateOrConnectWithoutBusiness_usersInputSchema } from './usersCreateOrConnectWithoutBusiness_usersInputSchema';
 import { usersWhereUniqueInputSchema } from './usersWhereUniqueInputSchema';
 
-export const usersCreateNestedOneWithoutBusiness_usersInputSchema: z.ZodType<Prisma.usersCreateNestedOneWithoutBusiness_usersInput> = z.object({
-  create: z.union([ z.lazy(() => usersCreateWithoutBusiness_usersInputSchema),z.lazy(() => usersUncheckedCreateWithoutBusiness_usersInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutBusiness_usersInputSchema).optional(),
-  connect: z.lazy(() => usersWhereUniqueInputSchema).optional()
-}).strict();
+export const usersCreateNestedOneWithoutBusiness_usersInputSchema: z.ZodType<Prisma.usersCreateNestedOneWithoutBusiness_usersInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => usersCreateWithoutBusiness_usersInputSchema),
+					z.lazy(() => usersUncheckedCreateWithoutBusiness_usersInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutBusiness_usersInputSchema).optional(),
+			connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default usersCreateNestedOneWithoutBusiness_usersInputSchema;

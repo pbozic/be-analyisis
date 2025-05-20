@@ -6,13 +6,15 @@ import { BoolFieldUpdateOperationsInputSchema } from './BoolFieldUpdateOperation
 import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateOperationsInputSchema';
 import { flag_historyUpdateManyWithoutFlagNestedInputSchema } from './flag_historyUpdateManyWithoutFlagNestedInputSchema';
 
-export const flagsUpdateInputSchema: z.ZodType<Prisma.flagsUpdateInput> = z.object({
-  flag_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  status: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  history: z.lazy(() => flag_historyUpdateManyWithoutFlagNestedInputSchema).optional()
-}).strict();
+export const flagsUpdateInputSchema: z.ZodType<Prisma.flagsUpdateInput> = z
+	.object({
+		flag_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		status: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+		created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		history: z.lazy(() => flag_historyUpdateManyWithoutFlagNestedInputSchema).optional(),
+	})
+	.strict();
 
 export default flagsUpdateInputSchema;

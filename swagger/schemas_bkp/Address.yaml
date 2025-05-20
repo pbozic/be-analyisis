@@ -1,42 +1,42 @@
 components:
     schemas:
         Address:
-            type: "object"
+            type: 'object'
             properties:
                 address_id:
-                    type: "string"
-                    format: "uuid"
+                    type: 'string'
+                    format: 'uuid'
                 address:
-                    type: "string"
+                    type: 'string'
                 latitude:
-                    type: "string"
+                    type: 'string'
                 longitude:
-                    type: "string"
+                    type: 'string'
                 street:
-                    type: "string"
+                    type: 'string'
                 house_number:
-                    type: "string"
+                    type: 'string'
                 city:
-                    type: "string"
+                    type: 'string'
                 country:
-                    type: "string"
+                    type: 'string'
                 postal:
-                    type: "string"
+                    type: 'string'
                 users:
-                    type: "user_address[]"
+                    type: 'user_address[]'
             required:
-                - "address_id"
-                - "address"
-                - "latitude"
-                - "longitude"
-                - "street"
-                - "house_number"
-                - "city"
-                - "country"
-                - "postal"
+                - 'address_id'
+                - 'address'
+                - 'latitude'
+                - 'longitude'
+                - 'street'
+                - 'house_number'
+                - 'city'
+                - 'country'
+                - 'postal'
             uniqueItems:
                 - uniqueAddressIdentifier:
                       fields:
-                          - "address"
-                          - "latitude"
-                          - "longitude"
+                          - 'address'
+                          - 'latitude'
+                          - 'longitude'

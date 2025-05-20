@@ -11,18 +11,73 @@ import { transactionsUpdateWithWhereUniqueWithoutWallet_fundsInputSchema } from 
 import { transactionsUpdateManyWithWhereWithoutWallet_fundsInputSchema } from './transactionsUpdateManyWithWhereWithoutWallet_fundsInputSchema';
 import { transactionsScalarWhereInputSchema } from './transactionsScalarWhereInputSchema';
 
-export const transactionsUncheckedUpdateManyWithoutWallet_fundsNestedInputSchema: z.ZodType<Prisma.transactionsUncheckedUpdateManyWithoutWallet_fundsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => transactionsCreateWithoutWallet_fundsInputSchema),z.lazy(() => transactionsCreateWithoutWallet_fundsInputSchema).array(),z.lazy(() => transactionsUncheckedCreateWithoutWallet_fundsInputSchema),z.lazy(() => transactionsUncheckedCreateWithoutWallet_fundsInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => transactionsCreateOrConnectWithoutWallet_fundsInputSchema),z.lazy(() => transactionsCreateOrConnectWithoutWallet_fundsInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => transactionsUpsertWithWhereUniqueWithoutWallet_fundsInputSchema),z.lazy(() => transactionsUpsertWithWhereUniqueWithoutWallet_fundsInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => transactionsCreateManyWallet_fundsInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => transactionsWhereUniqueInputSchema),z.lazy(() => transactionsWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => transactionsWhereUniqueInputSchema),z.lazy(() => transactionsWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => transactionsWhereUniqueInputSchema),z.lazy(() => transactionsWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => transactionsWhereUniqueInputSchema),z.lazy(() => transactionsWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => transactionsUpdateWithWhereUniqueWithoutWallet_fundsInputSchema),z.lazy(() => transactionsUpdateWithWhereUniqueWithoutWallet_fundsInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => transactionsUpdateManyWithWhereWithoutWallet_fundsInputSchema),z.lazy(() => transactionsUpdateManyWithWhereWithoutWallet_fundsInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => transactionsScalarWhereInputSchema),z.lazy(() => transactionsScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const transactionsUncheckedUpdateManyWithoutWallet_fundsNestedInputSchema: z.ZodType<Prisma.transactionsUncheckedUpdateManyWithoutWallet_fundsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => transactionsCreateWithoutWallet_fundsInputSchema),
+					z.lazy(() => transactionsCreateWithoutWallet_fundsInputSchema).array(),
+					z.lazy(() => transactionsUncheckedCreateWithoutWallet_fundsInputSchema),
+					z.lazy(() => transactionsUncheckedCreateWithoutWallet_fundsInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => transactionsCreateOrConnectWithoutWallet_fundsInputSchema),
+					z.lazy(() => transactionsCreateOrConnectWithoutWallet_fundsInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => transactionsUpsertWithWhereUniqueWithoutWallet_fundsInputSchema),
+					z.lazy(() => transactionsUpsertWithWhereUniqueWithoutWallet_fundsInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => transactionsCreateManyWallet_fundsInputEnvelopeSchema).optional(),
+			set: z
+				.union([
+					z.lazy(() => transactionsWhereUniqueInputSchema),
+					z.lazy(() => transactionsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			disconnect: z
+				.union([
+					z.lazy(() => transactionsWhereUniqueInputSchema),
+					z.lazy(() => transactionsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			delete: z
+				.union([
+					z.lazy(() => transactionsWhereUniqueInputSchema),
+					z.lazy(() => transactionsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			connect: z
+				.union([
+					z.lazy(() => transactionsWhereUniqueInputSchema),
+					z.lazy(() => transactionsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => transactionsUpdateWithWhereUniqueWithoutWallet_fundsInputSchema),
+					z.lazy(() => transactionsUpdateWithWhereUniqueWithoutWallet_fundsInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => transactionsUpdateManyWithWhereWithoutWallet_fundsInputSchema),
+					z.lazy(() => transactionsUpdateManyWithWhereWithoutWallet_fundsInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([
+					z.lazy(() => transactionsScalarWhereInputSchema),
+					z.lazy(() => transactionsScalarWhereInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default transactionsUncheckedUpdateManyWithoutWallet_fundsNestedInputSchema;

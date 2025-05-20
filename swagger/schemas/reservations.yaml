@@ -1,36 +1,36 @@
 type: object
 properties:
-  reservation_id:
-    type: string
-  seats:
-    type: integer
-  date:
-    type: string
-  time:
-    type: string
-  datetime:
-    type: string
-  created_at:
-    type: string
-  updated_at:
-    type: string
-  business_id:
-    type: string
-  business:
-    $ref: ./business.yaml
-  user_id:
-    type: string
-  user:
-    $ref: ./users.yaml
-  table:
-    type: integer
+    reservation_id:
+        type: string
+    seats:
+        type: integer
+    date:
+        type: string
+    time:
+        type: string
+    datetime:
+        type: string
+    created_at:
+        type: string
+    updated_at:
+        type: string
+    business_id:
+        type: string
+    business:
+        $ref: ./business.yaml
+    user_id:
+        type: string
+    user:
+        $ref: ./users.yaml
+    table:
+        type: integer
 required:
-  - reservation_id
-  - seats
-  - date
-  - time
-  - datetime
-  - created_at
-  - updated_at
-  - business_id
-  - user_id
+    - reservation_id
+    - seats
+    - date
+    - time
+    - datetime
+    - created_at
+    - updated_at
+    - business_id
+    - user_id

@@ -6,10 +6,18 @@ import { translatableUncheckedCreateWithoutPromo_sectionsInputSchema } from './t
 import { translatableCreateOrConnectWithoutPromo_sectionsInputSchema } from './translatableCreateOrConnectWithoutPromo_sectionsInputSchema';
 import { translatableWhereUniqueInputSchema } from './translatableWhereUniqueInputSchema';
 
-export const translatableCreateNestedOneWithoutPromo_sectionsInputSchema: z.ZodType<Prisma.translatableCreateNestedOneWithoutPromo_sectionsInput> = z.object({
-  create: z.union([ z.lazy(() => translatableCreateWithoutPromo_sectionsInputSchema),z.lazy(() => translatableUncheckedCreateWithoutPromo_sectionsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => translatableCreateOrConnectWithoutPromo_sectionsInputSchema).optional(),
-  connect: z.lazy(() => translatableWhereUniqueInputSchema).optional()
-}).strict();
+export const translatableCreateNestedOneWithoutPromo_sectionsInputSchema: z.ZodType<Prisma.translatableCreateNestedOneWithoutPromo_sectionsInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => translatableCreateWithoutPromo_sectionsInputSchema),
+					z.lazy(() => translatableUncheckedCreateWithoutPromo_sectionsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => translatableCreateOrConnectWithoutPromo_sectionsInputSchema).optional(),
+			connect: z.lazy(() => translatableWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default translatableCreateNestedOneWithoutPromo_sectionsInputSchema;

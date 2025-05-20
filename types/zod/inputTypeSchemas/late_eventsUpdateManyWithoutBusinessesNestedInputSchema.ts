@@ -11,18 +11,73 @@ import { late_eventsUpdateWithWhereUniqueWithoutBusinessesInputSchema } from './
 import { late_eventsUpdateManyWithWhereWithoutBusinessesInputSchema } from './late_eventsUpdateManyWithWhereWithoutBusinessesInputSchema';
 import { late_eventsScalarWhereInputSchema } from './late_eventsScalarWhereInputSchema';
 
-export const late_eventsUpdateManyWithoutBusinessesNestedInputSchema: z.ZodType<Prisma.late_eventsUpdateManyWithoutBusinessesNestedInput> = z.object({
-  create: z.union([ z.lazy(() => late_eventsCreateWithoutBusinessesInputSchema),z.lazy(() => late_eventsCreateWithoutBusinessesInputSchema).array(),z.lazy(() => late_eventsUncheckedCreateWithoutBusinessesInputSchema),z.lazy(() => late_eventsUncheckedCreateWithoutBusinessesInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => late_eventsCreateOrConnectWithoutBusinessesInputSchema),z.lazy(() => late_eventsCreateOrConnectWithoutBusinessesInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => late_eventsUpsertWithWhereUniqueWithoutBusinessesInputSchema),z.lazy(() => late_eventsUpsertWithWhereUniqueWithoutBusinessesInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => late_eventsCreateManyBusinessesInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => late_eventsWhereUniqueInputSchema),z.lazy(() => late_eventsWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => late_eventsWhereUniqueInputSchema),z.lazy(() => late_eventsWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => late_eventsWhereUniqueInputSchema),z.lazy(() => late_eventsWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => late_eventsWhereUniqueInputSchema),z.lazy(() => late_eventsWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => late_eventsUpdateWithWhereUniqueWithoutBusinessesInputSchema),z.lazy(() => late_eventsUpdateWithWhereUniqueWithoutBusinessesInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => late_eventsUpdateManyWithWhereWithoutBusinessesInputSchema),z.lazy(() => late_eventsUpdateManyWithWhereWithoutBusinessesInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => late_eventsScalarWhereInputSchema),z.lazy(() => late_eventsScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const late_eventsUpdateManyWithoutBusinessesNestedInputSchema: z.ZodType<Prisma.late_eventsUpdateManyWithoutBusinessesNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => late_eventsCreateWithoutBusinessesInputSchema),
+					z.lazy(() => late_eventsCreateWithoutBusinessesInputSchema).array(),
+					z.lazy(() => late_eventsUncheckedCreateWithoutBusinessesInputSchema),
+					z.lazy(() => late_eventsUncheckedCreateWithoutBusinessesInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => late_eventsCreateOrConnectWithoutBusinessesInputSchema),
+					z.lazy(() => late_eventsCreateOrConnectWithoutBusinessesInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => late_eventsUpsertWithWhereUniqueWithoutBusinessesInputSchema),
+					z.lazy(() => late_eventsUpsertWithWhereUniqueWithoutBusinessesInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => late_eventsCreateManyBusinessesInputEnvelopeSchema).optional(),
+			set: z
+				.union([
+					z.lazy(() => late_eventsWhereUniqueInputSchema),
+					z.lazy(() => late_eventsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			disconnect: z
+				.union([
+					z.lazy(() => late_eventsWhereUniqueInputSchema),
+					z.lazy(() => late_eventsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			delete: z
+				.union([
+					z.lazy(() => late_eventsWhereUniqueInputSchema),
+					z.lazy(() => late_eventsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			connect: z
+				.union([
+					z.lazy(() => late_eventsWhereUniqueInputSchema),
+					z.lazy(() => late_eventsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => late_eventsUpdateWithWhereUniqueWithoutBusinessesInputSchema),
+					z.lazy(() => late_eventsUpdateWithWhereUniqueWithoutBusinessesInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => late_eventsUpdateManyWithWhereWithoutBusinessesInputSchema),
+					z.lazy(() => late_eventsUpdateManyWithWhereWithoutBusinessesInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([
+					z.lazy(() => late_eventsScalarWhereInputSchema),
+					z.lazy(() => late_eventsScalarWhereInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default late_eventsUpdateManyWithoutBusinessesNestedInputSchema;

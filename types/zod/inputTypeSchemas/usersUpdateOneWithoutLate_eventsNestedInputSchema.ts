@@ -11,14 +11,28 @@ import { usersUpdateToOneWithWhereWithoutLate_eventsInputSchema } from './usersU
 import { usersUpdateWithoutLate_eventsInputSchema } from './usersUpdateWithoutLate_eventsInputSchema';
 import { usersUncheckedUpdateWithoutLate_eventsInputSchema } from './usersUncheckedUpdateWithoutLate_eventsInputSchema';
 
-export const usersUpdateOneWithoutLate_eventsNestedInputSchema: z.ZodType<Prisma.usersUpdateOneWithoutLate_eventsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => usersCreateWithoutLate_eventsInputSchema),z.lazy(() => usersUncheckedCreateWithoutLate_eventsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutLate_eventsInputSchema).optional(),
-  upsert: z.lazy(() => usersUpsertWithoutLate_eventsInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => usersWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => usersWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => usersUpdateToOneWithWhereWithoutLate_eventsInputSchema),z.lazy(() => usersUpdateWithoutLate_eventsInputSchema),z.lazy(() => usersUncheckedUpdateWithoutLate_eventsInputSchema) ]).optional(),
-}).strict();
+export const usersUpdateOneWithoutLate_eventsNestedInputSchema: z.ZodType<Prisma.usersUpdateOneWithoutLate_eventsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => usersCreateWithoutLate_eventsInputSchema),
+					z.lazy(() => usersUncheckedCreateWithoutLate_eventsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutLate_eventsInputSchema).optional(),
+			upsert: z.lazy(() => usersUpsertWithoutLate_eventsInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => usersWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => usersWhereInputSchema)]).optional(),
+			connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => usersUpdateToOneWithWhereWithoutLate_eventsInputSchema),
+					z.lazy(() => usersUpdateWithoutLate_eventsInputSchema),
+					z.lazy(() => usersUncheckedUpdateWithoutLate_eventsInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default usersUpdateOneWithoutLate_eventsNestedInputSchema;

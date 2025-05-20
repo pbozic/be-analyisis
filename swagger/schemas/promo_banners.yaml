@@ -1,28 +1,28 @@
 type: object
 properties:
-  promo_banners_id:
-    type: string
-  type:
-    type: string
-  size:
-    type: string
-  title:
-    type: string
-  text:
-    type: string
-  image:
-    type: array
-    items:
-      $ref: ./documents.yaml
-  promo_ads:
-    type: array
-    items:
-      $ref: ./promo_ads.yaml
-  promo_section_buy_id:
-    type: string
+    promo_banners_id:
+        type: string
+    type:
+        type: string
+    size:
+        type: string
+    title:
+        type: string
+    text:
+        type: string
+    image:
+        type: array
+        items:
+            $ref: ./documents.yaml
+    promo_ads:
+        type: array
+        items:
+            $ref: ./promo_ads.yaml
+    promo_section_buy_id:
+        type: string
 required:
-  - promo_banners_id
-  - type
-  - title
-  - text
-  - promo_section_buy_id
+    - promo_banners_id
+    - type
+    - title
+    - text
+    - promo_section_buy_id

@@ -7,10 +7,18 @@ import { reviewableCreateWithoutReviewsInputSchema } from './reviewableCreateWit
 import { reviewableUncheckedCreateWithoutReviewsInputSchema } from './reviewableUncheckedCreateWithoutReviewsInputSchema';
 import { reviewableWhereInputSchema } from './reviewableWhereInputSchema';
 
-export const reviewableUpsertWithoutReviewsInputSchema: z.ZodType<Prisma.reviewableUpsertWithoutReviewsInput> = z.object({
-  update: z.union([ z.lazy(() => reviewableUpdateWithoutReviewsInputSchema),z.lazy(() => reviewableUncheckedUpdateWithoutReviewsInputSchema) ]),
-  create: z.union([ z.lazy(() => reviewableCreateWithoutReviewsInputSchema),z.lazy(() => reviewableUncheckedCreateWithoutReviewsInputSchema) ]),
-  where: z.lazy(() => reviewableWhereInputSchema).optional()
-}).strict();
+export const reviewableUpsertWithoutReviewsInputSchema: z.ZodType<Prisma.reviewableUpsertWithoutReviewsInput> = z
+	.object({
+		update: z.union([
+			z.lazy(() => reviewableUpdateWithoutReviewsInputSchema),
+			z.lazy(() => reviewableUncheckedUpdateWithoutReviewsInputSchema),
+		]),
+		create: z.union([
+			z.lazy(() => reviewableCreateWithoutReviewsInputSchema),
+			z.lazy(() => reviewableUncheckedCreateWithoutReviewsInputSchema),
+		]),
+		where: z.lazy(() => reviewableWhereInputSchema).optional(),
+	})
+	.strict();
 
 export default reviewableUpsertWithoutReviewsInputSchema;

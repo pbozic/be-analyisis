@@ -7,11 +7,31 @@ import { transactionsCreateOrConnectWithoutWallet_fundsInputSchema } from './tra
 import { transactionsCreateManyWallet_fundsInputEnvelopeSchema } from './transactionsCreateManyWallet_fundsInputEnvelopeSchema';
 import { transactionsWhereUniqueInputSchema } from './transactionsWhereUniqueInputSchema';
 
-export const transactionsUncheckedCreateNestedManyWithoutWallet_fundsInputSchema: z.ZodType<Prisma.transactionsUncheckedCreateNestedManyWithoutWallet_fundsInput> = z.object({
-  create: z.union([ z.lazy(() => transactionsCreateWithoutWallet_fundsInputSchema),z.lazy(() => transactionsCreateWithoutWallet_fundsInputSchema).array(),z.lazy(() => transactionsUncheckedCreateWithoutWallet_fundsInputSchema),z.lazy(() => transactionsUncheckedCreateWithoutWallet_fundsInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => transactionsCreateOrConnectWithoutWallet_fundsInputSchema),z.lazy(() => transactionsCreateOrConnectWithoutWallet_fundsInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => transactionsCreateManyWallet_fundsInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => transactionsWhereUniqueInputSchema),z.lazy(() => transactionsWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const transactionsUncheckedCreateNestedManyWithoutWallet_fundsInputSchema: z.ZodType<Prisma.transactionsUncheckedCreateNestedManyWithoutWallet_fundsInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => transactionsCreateWithoutWallet_fundsInputSchema),
+					z.lazy(() => transactionsCreateWithoutWallet_fundsInputSchema).array(),
+					z.lazy(() => transactionsUncheckedCreateWithoutWallet_fundsInputSchema),
+					z.lazy(() => transactionsUncheckedCreateWithoutWallet_fundsInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => transactionsCreateOrConnectWithoutWallet_fundsInputSchema),
+					z.lazy(() => transactionsCreateOrConnectWithoutWallet_fundsInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => transactionsCreateManyWallet_fundsInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => transactionsWhereUniqueInputSchema),
+					z.lazy(() => transactionsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default transactionsUncheckedCreateNestedManyWithoutWallet_fundsInputSchema;

@@ -6,20 +6,25 @@ import { businessCreateNestedManyWithoutAddressInputSchema } from './businessCre
 import { businessCreateNestedManyWithoutDelivery_addressInputSchema } from './businessCreateNestedManyWithoutDelivery_addressInputSchema';
 import { business_usersCreateNestedManyWithoutOperating_addressInputSchema } from './business_usersCreateNestedManyWithoutOperating_addressInputSchema';
 
-export const addressesCreateWithoutDaily_meals_subscriptionsInputSchema: z.ZodType<Prisma.addressesCreateWithoutDaily_meals_subscriptionsInput> = z.object({
-  address_id: z.string().uuid().optional(),
-  address: z.string(),
-  latitude: z.string(),
-  longitude: z.string(),
-  street: z.string().optional().nullable(),
-  house_number: z.string().optional().nullable(),
-  city: z.string().optional().nullable(),
-  country: z.string().optional().nullable(),
-  postal: z.string().optional().nullable(),
-  users: z.lazy(() => user_addressCreateNestedManyWithoutAddressInputSchema).optional(),
-  businesses: z.lazy(() => businessCreateNestedManyWithoutAddressInputSchema).optional(),
-  businesses_delivery_address: z.lazy(() => businessCreateNestedManyWithoutDelivery_addressInputSchema).optional(),
-  business_users: z.lazy(() => business_usersCreateNestedManyWithoutOperating_addressInputSchema).optional()
-}).strict();
+export const addressesCreateWithoutDaily_meals_subscriptionsInputSchema: z.ZodType<Prisma.addressesCreateWithoutDaily_meals_subscriptionsInput> =
+	z
+		.object({
+			address_id: z.string().uuid().optional(),
+			address: z.string(),
+			latitude: z.string(),
+			longitude: z.string(),
+			street: z.string().optional().nullable(),
+			house_number: z.string().optional().nullable(),
+			city: z.string().optional().nullable(),
+			country: z.string().optional().nullable(),
+			postal: z.string().optional().nullable(),
+			users: z.lazy(() => user_addressCreateNestedManyWithoutAddressInputSchema).optional(),
+			businesses: z.lazy(() => businessCreateNestedManyWithoutAddressInputSchema).optional(),
+			businesses_delivery_address: z
+				.lazy(() => businessCreateNestedManyWithoutDelivery_addressInputSchema)
+				.optional(),
+			business_users: z.lazy(() => business_usersCreateNestedManyWithoutOperating_addressInputSchema).optional(),
+		})
+		.strict();
 
 export default addressesCreateWithoutDaily_meals_subscriptionsInputSchema;

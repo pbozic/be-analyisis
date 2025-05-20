@@ -3,8 +3,8 @@
 #
 
 #cluster.name: "docker-cluster"
-cluster.name: "local-klikni"
-node.name: "local-klikni"
+cluster.name: 'local-klikni'
+node.name: 'local-klikni'
 
 # Set the bind address to a specific IP (IPv4 or IPv6):
 # _local_ Any loopback addresses on the system, for example 127.0.0.1

@@ -6,11 +6,18 @@ import { translationsUncheckedUpdateManyWithoutTranslatableNestedInputSchema } f
 import { categoriesUncheckedUpdateManyWithoutTranslatableNestedInputSchema } from './categoriesUncheckedUpdateManyWithoutTranslatableNestedInputSchema';
 import { promo_sectionsUncheckedUpdateManyWithoutTranslatableNestedInputSchema } from './promo_sectionsUncheckedUpdateManyWithoutTranslatableNestedInputSchema';
 
-export const translatableUncheckedUpdateWithoutWordsInputSchema: z.ZodType<Prisma.translatableUncheckedUpdateWithoutWordsInput> = z.object({
-  translatable_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  translations: z.lazy(() => translationsUncheckedUpdateManyWithoutTranslatableNestedInputSchema).optional(),
-  categories: z.lazy(() => categoriesUncheckedUpdateManyWithoutTranslatableNestedInputSchema).optional(),
-  promo_sections: z.lazy(() => promo_sectionsUncheckedUpdateManyWithoutTranslatableNestedInputSchema).optional()
-}).strict();
+export const translatableUncheckedUpdateWithoutWordsInputSchema: z.ZodType<Prisma.translatableUncheckedUpdateWithoutWordsInput> =
+	z
+		.object({
+			translatable_id: z
+				.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)])
+				.optional(),
+			translations: z.lazy(() => translationsUncheckedUpdateManyWithoutTranslatableNestedInputSchema).optional(),
+			categories: z.lazy(() => categoriesUncheckedUpdateManyWithoutTranslatableNestedInputSchema).optional(),
+			promo_sections: z
+				.lazy(() => promo_sectionsUncheckedUpdateManyWithoutTranslatableNestedInputSchema)
+				.optional(),
+		})
+		.strict();
 
 export default translatableUncheckedUpdateWithoutWordsInputSchema;

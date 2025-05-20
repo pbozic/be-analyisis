@@ -1,39 +1,39 @@
 {
-    "artificialDelayMilliseconds": 700,
-    "keepExistingTerminalsOpen": true,
-    "runOnStartup": true,
-    "terminals": [
-    {
-      "splitTerminals": [
-        {
-          "name": "server",
-          "commands": ["npm i", "npm run start"]
-        }
-      ]
-    },
-    {
-        "splitTerminals": [
-          {
-            "name": "es-tunnel",
-            "commands": ["npm run es-tunnel"]
-          }
-        ]
-      },
-      {
-        "splitTerminals": [
-          {
-            "name": "stripe",
-            "commands": ["npm run stripe"]
-          }
-        ]
-      },
-      {
-        "splitTerminals": [
-          {
-            "name": "commands",
-            "commands": []
-          }
-        ]
-      }
-  ]
+	"artificialDelayMilliseconds": 700,
+	"keepExistingTerminalsOpen": true,
+	"runOnStartup": true,
+	"terminals": [
+		{
+			"splitTerminals": [
+				{
+					"name": "server",
+					"commands": ["npm i", "npm run start"]
+				}
+			]
+		},
+		{
+			"splitTerminals": [
+				{
+					"name": "es-tunnel",
+					"commands": ["npm run es-tunnel"]
+				}
+			]
+		},
+		{
+			"splitTerminals": [
+				{
+					"name": "stripe",
+					"commands": ["npm run stripe"]
+				}
+			]
+		},
+		{
+			"splitTerminals": [
+				{
+					"name": "commands",
+					"commands": []
+				}
+			]
+		}
+	]
 }

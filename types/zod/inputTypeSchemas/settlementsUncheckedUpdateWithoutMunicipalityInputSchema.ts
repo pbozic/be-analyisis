@@ -8,15 +8,26 @@ import { InputJsonValueSchema } from './InputJsonValueSchema';
 import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateOperationsInputSchema';
 import { weather_dataUncheckedUpdateManyWithoutSettlementNestedInputSchema } from './weather_dataUncheckedUpdateManyWithoutSettlementNestedInputSchema';
 
-export const settlementsUncheckedUpdateWithoutMunicipalityInputSchema: z.ZodType<Prisma.settlementsUncheckedUpdateWithoutMunicipalityInput> = z.object({
-  settlement_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  name: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  eid_naselje: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  feature_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  geojson: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  weather_data: z.lazy(() => weather_dataUncheckedUpdateManyWithoutSettlementNestedInputSchema).optional()
-}).strict();
+export const settlementsUncheckedUpdateWithoutMunicipalityInputSchema: z.ZodType<Prisma.settlementsUncheckedUpdateWithoutMunicipalityInput> =
+	z
+		.object({
+			settlement_id: z
+				.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)])
+				.optional(),
+			name: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			eid_naselje: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			feature_id: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			geojson: z.union([z.lazy(() => JsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			weather_data: z.lazy(() => weather_dataUncheckedUpdateManyWithoutSettlementNestedInputSchema).optional(),
+		})
+		.strict();
 
 export default settlementsUncheckedUpdateWithoutMunicipalityInputSchema;

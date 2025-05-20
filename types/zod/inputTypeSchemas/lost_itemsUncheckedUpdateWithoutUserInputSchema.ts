@@ -8,14 +8,25 @@ import { NullableBoolFieldUpdateOperationsInputSchema } from './NullableBoolFiel
 import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateOperationsInputSchema';
 import { documentsUncheckedUpdateManyWithoutLost_itemsNestedInputSchema } from './documentsUncheckedUpdateManyWithoutLost_itemsNestedInputSchema';
 
-export const lost_itemsUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.lost_itemsUncheckedUpdateWithoutUserInput> = z.object({
-  lost_item_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  status: z.union([ z.lazy(() => LOST_FOUND_STATUSSchema),z.lazy(() => EnumLOST_FOUND_STATUSFieldUpdateOperationsInputSchema) ]).optional(),
-  description: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  found: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  documents: z.lazy(() => documentsUncheckedUpdateManyWithoutLost_itemsNestedInputSchema).optional()
-}).strict();
+export const lost_itemsUncheckedUpdateWithoutUserInputSchema: z.ZodType<Prisma.lost_itemsUncheckedUpdateWithoutUserInput> =
+	z
+		.object({
+			lost_item_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			status: z
+				.union([
+					z.lazy(() => LOST_FOUND_STATUSSchema),
+					z.lazy(() => EnumLOST_FOUND_STATUSFieldUpdateOperationsInputSchema),
+				])
+				.optional(),
+			description: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			found: z
+				.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			documents: z.lazy(() => documentsUncheckedUpdateManyWithoutLost_itemsNestedInputSchema).optional(),
+		})
+		.strict();
 
 export default lost_itemsUncheckedUpdateWithoutUserInputSchema;

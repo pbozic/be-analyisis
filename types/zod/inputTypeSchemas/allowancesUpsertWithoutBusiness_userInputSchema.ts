@@ -7,10 +7,19 @@ import { allowancesCreateWithoutBusiness_userInputSchema } from './allowancesCre
 import { allowancesUncheckedCreateWithoutBusiness_userInputSchema } from './allowancesUncheckedCreateWithoutBusiness_userInputSchema';
 import { allowancesWhereInputSchema } from './allowancesWhereInputSchema';
 
-export const allowancesUpsertWithoutBusiness_userInputSchema: z.ZodType<Prisma.allowancesUpsertWithoutBusiness_userInput> = z.object({
-  update: z.union([ z.lazy(() => allowancesUpdateWithoutBusiness_userInputSchema),z.lazy(() => allowancesUncheckedUpdateWithoutBusiness_userInputSchema) ]),
-  create: z.union([ z.lazy(() => allowancesCreateWithoutBusiness_userInputSchema),z.lazy(() => allowancesUncheckedCreateWithoutBusiness_userInputSchema) ]),
-  where: z.lazy(() => allowancesWhereInputSchema).optional()
-}).strict();
+export const allowancesUpsertWithoutBusiness_userInputSchema: z.ZodType<Prisma.allowancesUpsertWithoutBusiness_userInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => allowancesUpdateWithoutBusiness_userInputSchema),
+				z.lazy(() => allowancesUncheckedUpdateWithoutBusiness_userInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => allowancesCreateWithoutBusiness_userInputSchema),
+				z.lazy(() => allowancesUncheckedCreateWithoutBusiness_userInputSchema),
+			]),
+			where: z.lazy(() => allowancesWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default allowancesUpsertWithoutBusiness_userInputSchema;

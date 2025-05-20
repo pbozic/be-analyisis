@@ -1,61 +1,61 @@
 type: object
 properties:
-  document_id:
-    type: string
-  created_at:
-    type: string
-  updated_at:
-    type: string
-  expiration_date:
-    type: string
-  issue_date:
-    type: string
-  additional_info:
-    type: object
-  public:
-    type: boolean
-  files:
-    type: array
-    items:
-      $ref: ./files.yaml
-  driver_id:
-    type: string
-  drivers:
-    $ref: ./drivers.yaml
-  delivery_driver_id:
-    type: string
-  delivery_driver:
-    $ref: ./delivery_drivers.yaml
-  business_id:
-    type: string
-  business:
-    $ref: ./business.yaml
-  user_id:
-    type: string
-  user:
-    $ref: ./users.yaml
-  vehicle_id:
-    type: string
-  vehicles:
-    $ref: ./vehicles.yaml
-  menu_item_id:
-    type: string
-  menu_items:
-    $ref: ./menu_items.yaml
-  lost_item_id:
-    type: string
-  lost_items:
-    $ref: ./lost_items.yaml
-  transaction_id:
-    type: string
-  transactions:
-    $ref: ./transactions.yaml
-  promo_banners_id:
-    type: string
-  promo_banners:
-    $ref: ./promo_banners.yaml
+    document_id:
+        type: string
+    created_at:
+        type: string
+    updated_at:
+        type: string
+    expiration_date:
+        type: string
+    issue_date:
+        type: string
+    additional_info:
+        type: object
+    public:
+        type: boolean
+    files:
+        type: array
+        items:
+            $ref: ./files.yaml
+    driver_id:
+        type: string
+    drivers:
+        $ref: ./drivers.yaml
+    delivery_driver_id:
+        type: string
+    delivery_driver:
+        $ref: ./delivery_drivers.yaml
+    business_id:
+        type: string
+    business:
+        $ref: ./business.yaml
+    user_id:
+        type: string
+    user:
+        $ref: ./users.yaml
+    vehicle_id:
+        type: string
+    vehicles:
+        $ref: ./vehicles.yaml
+    menu_item_id:
+        type: string
+    menu_items:
+        $ref: ./menu_items.yaml
+    lost_item_id:
+        type: string
+    lost_items:
+        $ref: ./lost_items.yaml
+    transaction_id:
+        type: string
+    transactions:
+        $ref: ./transactions.yaml
+    promo_banners_id:
+        type: string
+    promo_banners:
+        $ref: ./promo_banners.yaml
 required:
-  - document_id
-  - created_at
-  - updated_at
-  - public
+    - document_id
+    - created_at
+    - updated_at
+    - public

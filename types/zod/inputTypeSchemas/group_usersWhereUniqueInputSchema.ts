@@ -10,31 +10,59 @@ import { usersWhereInputSchema } from './usersWhereInputSchema';
 import { AllowancesNullableRelationFilterSchema } from './AllowancesNullableRelationFilterSchema';
 import { allowancesWhereInputSchema } from './allowancesWhereInputSchema';
 
-export const group_usersWhereUniqueInputSchema: z.ZodType<Prisma.group_usersWhereUniqueInput> = z.union([
-  z.object({
-    group_user_id: z.string().uuid(),
-    child_user_id: z.string()
-  }),
-  z.object({
-    group_user_id: z.string().uuid(),
-  }),
-  z.object({
-    child_user_id: z.string(),
-  }),
-])
-.and(z.object({
-  group_user_id: z.string().uuid().optional(),
-  child_user_id: z.string().optional(),
-  AND: z.union([ z.lazy(() => group_usersWhereInputSchema),z.lazy(() => group_usersWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => group_usersWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => group_usersWhereInputSchema),z.lazy(() => group_usersWhereInputSchema).array() ]).optional(),
-  parent_user_id: z.union([ z.lazy(() => UuidFilterSchema),z.string() ]).optional(),
-  created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  enabled: z.union([ z.lazy(() => BoolFilterSchema),z.boolean() ]).optional(),
-  parent_user: z.union([ z.lazy(() => UsersRelationFilterSchema),z.lazy(() => usersWhereInputSchema) ]).optional(),
-  child_user: z.union([ z.lazy(() => UsersRelationFilterSchema),z.lazy(() => usersWhereInputSchema) ]).optional(),
-  allowance: z.union([ z.lazy(() => AllowancesNullableRelationFilterSchema),z.lazy(() => allowancesWhereInputSchema) ]).optional().nullable(),
-}).strict());
+export const group_usersWhereUniqueInputSchema: z.ZodType<Prisma.group_usersWhereUniqueInput> = z
+	.union([
+		z.object({
+			group_user_id: z.string().uuid(),
+			child_user_id: z.string(),
+		}),
+		z.object({
+			group_user_id: z.string().uuid(),
+		}),
+		z.object({
+			child_user_id: z.string(),
+		}),
+	])
+	.and(
+		z
+			.object({
+				group_user_id: z.string().uuid().optional(),
+				child_user_id: z.string().optional(),
+				AND: z
+					.union([
+						z.lazy(() => group_usersWhereInputSchema),
+						z.lazy(() => group_usersWhereInputSchema).array(),
+					])
+					.optional(),
+				OR: z
+					.lazy(() => group_usersWhereInputSchema)
+					.array()
+					.optional(),
+				NOT: z
+					.union([
+						z.lazy(() => group_usersWhereInputSchema),
+						z.lazy(() => group_usersWhereInputSchema).array(),
+					])
+					.optional(),
+				parent_user_id: z.union([z.lazy(() => UuidFilterSchema), z.string()]).optional(),
+				created_at: z.union([z.lazy(() => DateTimeFilterSchema), z.coerce.date()]).optional(),
+				updated_at: z.union([z.lazy(() => DateTimeFilterSchema), z.coerce.date()]).optional(),
+				enabled: z.union([z.lazy(() => BoolFilterSchema), z.boolean()]).optional(),
+				parent_user: z
+					.union([z.lazy(() => UsersRelationFilterSchema), z.lazy(() => usersWhereInputSchema)])
+					.optional(),
+				child_user: z
+					.union([z.lazy(() => UsersRelationFilterSchema), z.lazy(() => usersWhereInputSchema)])
+					.optional(),
+				allowance: z
+					.union([
+						z.lazy(() => AllowancesNullableRelationFilterSchema),
+						z.lazy(() => allowancesWhereInputSchema),
+					])
+					.optional()
+					.nullable(),
+			})
+			.strict()
+	);
 
 export default group_usersWhereUniqueInputSchema;

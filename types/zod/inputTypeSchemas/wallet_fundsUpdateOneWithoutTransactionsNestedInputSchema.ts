@@ -11,14 +11,28 @@ import { wallet_fundsUpdateToOneWithWhereWithoutTransactionsInputSchema } from '
 import { wallet_fundsUpdateWithoutTransactionsInputSchema } from './wallet_fundsUpdateWithoutTransactionsInputSchema';
 import { wallet_fundsUncheckedUpdateWithoutTransactionsInputSchema } from './wallet_fundsUncheckedUpdateWithoutTransactionsInputSchema';
 
-export const wallet_fundsUpdateOneWithoutTransactionsNestedInputSchema: z.ZodType<Prisma.wallet_fundsUpdateOneWithoutTransactionsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => wallet_fundsCreateWithoutTransactionsInputSchema),z.lazy(() => wallet_fundsUncheckedCreateWithoutTransactionsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => wallet_fundsCreateOrConnectWithoutTransactionsInputSchema).optional(),
-  upsert: z.lazy(() => wallet_fundsUpsertWithoutTransactionsInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => wallet_fundsWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => wallet_fundsWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => wallet_fundsWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => wallet_fundsUpdateToOneWithWhereWithoutTransactionsInputSchema),z.lazy(() => wallet_fundsUpdateWithoutTransactionsInputSchema),z.lazy(() => wallet_fundsUncheckedUpdateWithoutTransactionsInputSchema) ]).optional(),
-}).strict();
+export const wallet_fundsUpdateOneWithoutTransactionsNestedInputSchema: z.ZodType<Prisma.wallet_fundsUpdateOneWithoutTransactionsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => wallet_fundsCreateWithoutTransactionsInputSchema),
+					z.lazy(() => wallet_fundsUncheckedCreateWithoutTransactionsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => wallet_fundsCreateOrConnectWithoutTransactionsInputSchema).optional(),
+			upsert: z.lazy(() => wallet_fundsUpsertWithoutTransactionsInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => wallet_fundsWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => wallet_fundsWhereInputSchema)]).optional(),
+			connect: z.lazy(() => wallet_fundsWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => wallet_fundsUpdateToOneWithWhereWithoutTransactionsInputSchema),
+					z.lazy(() => wallet_fundsUpdateWithoutTransactionsInputSchema),
+					z.lazy(() => wallet_fundsUncheckedUpdateWithoutTransactionsInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default wallet_fundsUpdateOneWithoutTransactionsNestedInputSchema;

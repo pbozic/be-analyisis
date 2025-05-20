@@ -1,14 +1,14 @@
 type: object
 properties:
-  allergen_id:
-    type: string
-  name:
-    type: string
-  description:
-    type: string
-  code:
-    type: integer
+    allergen_id:
+        type: string
+    name:
+        type: string
+    description:
+        type: string
+    code:
+        type: integer
 required:
-  - allergen_id
-  - name
-  - code
+    - allergen_id
+    - name
+    - code

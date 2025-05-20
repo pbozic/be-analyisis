@@ -6,10 +6,18 @@ import { financesUncheckedCreateWithoutBusinessInputSchema } from './financesUnc
 import { financesCreateOrConnectWithoutBusinessInputSchema } from './financesCreateOrConnectWithoutBusinessInputSchema';
 import { financesWhereUniqueInputSchema } from './financesWhereUniqueInputSchema';
 
-export const financesCreateNestedOneWithoutBusinessInputSchema: z.ZodType<Prisma.financesCreateNestedOneWithoutBusinessInput> = z.object({
-  create: z.union([ z.lazy(() => financesCreateWithoutBusinessInputSchema),z.lazy(() => financesUncheckedCreateWithoutBusinessInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => financesCreateOrConnectWithoutBusinessInputSchema).optional(),
-  connect: z.lazy(() => financesWhereUniqueInputSchema).optional()
-}).strict();
+export const financesCreateNestedOneWithoutBusinessInputSchema: z.ZodType<Prisma.financesCreateNestedOneWithoutBusinessInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => financesCreateWithoutBusinessInputSchema),
+					z.lazy(() => financesUncheckedCreateWithoutBusinessInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => financesCreateOrConnectWithoutBusinessInputSchema).optional(),
+			connect: z.lazy(() => financesWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default financesCreateNestedOneWithoutBusinessInputSchema;

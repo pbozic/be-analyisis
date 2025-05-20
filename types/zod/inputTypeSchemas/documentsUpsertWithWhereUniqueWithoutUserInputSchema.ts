@@ -7,10 +7,19 @@ import { documentsUncheckedUpdateWithoutUserInputSchema } from './documentsUnche
 import { documentsCreateWithoutUserInputSchema } from './documentsCreateWithoutUserInputSchema';
 import { documentsUncheckedCreateWithoutUserInputSchema } from './documentsUncheckedCreateWithoutUserInputSchema';
 
-export const documentsUpsertWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.documentsUpsertWithWhereUniqueWithoutUserInput> = z.object({
-  where: z.lazy(() => documentsWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => documentsUpdateWithoutUserInputSchema),z.lazy(() => documentsUncheckedUpdateWithoutUserInputSchema) ]),
-  create: z.union([ z.lazy(() => documentsCreateWithoutUserInputSchema),z.lazy(() => documentsUncheckedCreateWithoutUserInputSchema) ]),
-}).strict();
+export const documentsUpsertWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.documentsUpsertWithWhereUniqueWithoutUserInput> =
+	z
+		.object({
+			where: z.lazy(() => documentsWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => documentsUpdateWithoutUserInputSchema),
+				z.lazy(() => documentsUncheckedUpdateWithoutUserInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => documentsCreateWithoutUserInputSchema),
+				z.lazy(() => documentsUncheckedCreateWithoutUserInputSchema),
+			]),
+		})
+		.strict();
 
 export default documentsUpsertWithWhereUniqueWithoutUserInputSchema;

@@ -9,16 +9,34 @@ import { EnumVEHICLE_CATEGORYFieldUpdateOperationsInputSchema } from './EnumVEHI
 import { NullableStringFieldUpdateOperationsInputSchema } from './NullableStringFieldUpdateOperationsInputSchema';
 import { vehiclesUncheckedUpdateOneWithoutVehicle_specificationNestedInputSchema } from './vehiclesUncheckedUpdateOneWithoutVehicle_specificationNestedInputSchema';
 
-export const vehicle_specificationsUncheckedUpdateInputSchema: z.ZodType<Prisma.vehicle_specificationsUncheckedUpdateInput> = z.object({
-  vehicle_specification_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  class: z.union([ z.lazy(() => VEHICLE_CLASSSchema),z.lazy(() => EnumVEHICLE_CLASSFieldUpdateOperationsInputSchema) ]).optional(),
-  category: z.union([ z.lazy(() => VEHICLE_CATEGORYSchema),z.lazy(() => EnumVEHICLE_CATEGORYFieldUpdateOperationsInputSchema) ]).optional(),
-  people: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  start_cost: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  per_kilometre: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  per_minute: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  vehicle_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  vehicle: z.lazy(() => vehiclesUncheckedUpdateOneWithoutVehicle_specificationNestedInputSchema).optional()
-}).strict();
+export const vehicle_specificationsUncheckedUpdateInputSchema: z.ZodType<Prisma.vehicle_specificationsUncheckedUpdateInput> =
+	z
+		.object({
+			vehicle_specification_id: z
+				.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)])
+				.optional(),
+			class: z
+				.union([
+					z.lazy(() => VEHICLE_CLASSSchema),
+					z.lazy(() => EnumVEHICLE_CLASSFieldUpdateOperationsInputSchema),
+				])
+				.optional(),
+			category: z
+				.union([
+					z.lazy(() => VEHICLE_CATEGORYSchema),
+					z.lazy(() => EnumVEHICLE_CATEGORYFieldUpdateOperationsInputSchema),
+				])
+				.optional(),
+			people: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			start_cost: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			per_kilometre: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			per_minute: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			vehicle_id: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			vehicle: z.lazy(() => vehiclesUncheckedUpdateOneWithoutVehicle_specificationNestedInputSchema).optional(),
+		})
+		.strict();
 
 export default vehicle_specificationsUncheckedUpdateInputSchema;

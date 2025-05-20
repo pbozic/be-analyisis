@@ -11,14 +11,28 @@ import { promo_adsUpdateToOneWithWhereWithoutBannerInputSchema } from './promo_a
 import { promo_adsUpdateWithoutBannerInputSchema } from './promo_adsUpdateWithoutBannerInputSchema';
 import { promo_adsUncheckedUpdateWithoutBannerInputSchema } from './promo_adsUncheckedUpdateWithoutBannerInputSchema';
 
-export const promo_adsUpdateOneWithoutBannerNestedInputSchema: z.ZodType<Prisma.promo_adsUpdateOneWithoutBannerNestedInput> = z.object({
-  create: z.union([ z.lazy(() => promo_adsCreateWithoutBannerInputSchema),z.lazy(() => promo_adsUncheckedCreateWithoutBannerInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => promo_adsCreateOrConnectWithoutBannerInputSchema).optional(),
-  upsert: z.lazy(() => promo_adsUpsertWithoutBannerInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => promo_adsWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => promo_adsWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => promo_adsWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => promo_adsUpdateToOneWithWhereWithoutBannerInputSchema),z.lazy(() => promo_adsUpdateWithoutBannerInputSchema),z.lazy(() => promo_adsUncheckedUpdateWithoutBannerInputSchema) ]).optional(),
-}).strict();
+export const promo_adsUpdateOneWithoutBannerNestedInputSchema: z.ZodType<Prisma.promo_adsUpdateOneWithoutBannerNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => promo_adsCreateWithoutBannerInputSchema),
+					z.lazy(() => promo_adsUncheckedCreateWithoutBannerInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => promo_adsCreateOrConnectWithoutBannerInputSchema).optional(),
+			upsert: z.lazy(() => promo_adsUpsertWithoutBannerInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => promo_adsWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => promo_adsWhereInputSchema)]).optional(),
+			connect: z.lazy(() => promo_adsWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => promo_adsUpdateToOneWithWhereWithoutBannerInputSchema),
+					z.lazy(() => promo_adsUpdateWithoutBannerInputSchema),
+					z.lazy(() => promo_adsUncheckedUpdateWithoutBannerInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default promo_adsUpdateOneWithoutBannerNestedInputSchema;

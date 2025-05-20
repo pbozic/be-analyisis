@@ -11,19 +11,44 @@ import { NullableFloatFieldUpdateOperationsInputSchema } from './NullableFloatFi
 import { menu_categories_categoriesUncheckedUpdateManyWithoutMenu_categoryNestedInputSchema } from './menu_categories_categoriesUncheckedUpdateManyWithoutMenu_categoryNestedInputSchema';
 import { daily_meals_subscriptionsUncheckedUpdateManyWithoutMenu_categoryNestedInputSchema } from './daily_meals_subscriptionsUncheckedUpdateManyWithoutMenu_categoryNestedInputSchema';
 
-export const menu_categoriesUncheckedUpdateWithoutMenu_itemsInputSchema: z.ZodType<Prisma.menu_categoriesUncheckedUpdateWithoutMenu_itemsInput> = z.object({
-  menu_category_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  names: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  description: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  categories: z.union([ z.lazy(() => menu_categoriesUpdatecategoriesInputSchema),z.string().array() ]).optional(),
-  business_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  menu_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  order: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  price: z.union([ z.number(),z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  menu_items_ordered: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  menu_order_index: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  menu_categories_categories: z.lazy(() => menu_categories_categoriesUncheckedUpdateManyWithoutMenu_categoryNestedInputSchema).optional(),
-  daily_meal_subscribers: z.lazy(() => daily_meals_subscriptionsUncheckedUpdateManyWithoutMenu_categoryNestedInputSchema).optional()
-}).strict();
+export const menu_categoriesUncheckedUpdateWithoutMenu_itemsInputSchema: z.ZodType<Prisma.menu_categoriesUncheckedUpdateWithoutMenu_itemsInput> =
+	z
+		.object({
+			menu_category_id: z
+				.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)])
+				.optional(),
+			names: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			description: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			categories: z
+				.union([z.lazy(() => menu_categoriesUpdatecategoriesInputSchema), z.string().array()])
+				.optional(),
+			business_id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			menu_id: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			order: z
+				.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			price: z
+				.union([z.number(), z.lazy(() => NullableFloatFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			menu_items_ordered: z
+				.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema])
+				.optional(),
+			menu_order_index: z
+				.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			menu_categories_categories: z
+				.lazy(() => menu_categories_categoriesUncheckedUpdateManyWithoutMenu_categoryNestedInputSchema)
+				.optional(),
+			daily_meal_subscribers: z
+				.lazy(() => daily_meals_subscriptionsUncheckedUpdateManyWithoutMenu_categoryNestedInputSchema)
+				.optional(),
+		})
+		.strict();
 
 export default menu_categoriesUncheckedUpdateWithoutMenu_itemsInputSchema;

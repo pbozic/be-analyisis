@@ -6,10 +6,18 @@ import { municipalitiesUncheckedCreateWithoutSettlementsInputSchema } from './mu
 import { municipalitiesCreateOrConnectWithoutSettlementsInputSchema } from './municipalitiesCreateOrConnectWithoutSettlementsInputSchema';
 import { municipalitiesWhereUniqueInputSchema } from './municipalitiesWhereUniqueInputSchema';
 
-export const municipalitiesCreateNestedOneWithoutSettlementsInputSchema: z.ZodType<Prisma.municipalitiesCreateNestedOneWithoutSettlementsInput> = z.object({
-  create: z.union([ z.lazy(() => municipalitiesCreateWithoutSettlementsInputSchema),z.lazy(() => municipalitiesUncheckedCreateWithoutSettlementsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => municipalitiesCreateOrConnectWithoutSettlementsInputSchema).optional(),
-  connect: z.lazy(() => municipalitiesWhereUniqueInputSchema).optional()
-}).strict();
+export const municipalitiesCreateNestedOneWithoutSettlementsInputSchema: z.ZodType<Prisma.municipalitiesCreateNestedOneWithoutSettlementsInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => municipalitiesCreateWithoutSettlementsInputSchema),
+					z.lazy(() => municipalitiesUncheckedCreateWithoutSettlementsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => municipalitiesCreateOrConnectWithoutSettlementsInputSchema).optional(),
+			connect: z.lazy(() => municipalitiesWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default municipalitiesCreateNestedOneWithoutSettlementsInputSchema;

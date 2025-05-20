@@ -10,12 +10,26 @@ import { translatableUpdateToOneWithWhereWithoutWordsInputSchema } from './trans
 import { translatableUpdateWithoutWordsInputSchema } from './translatableUpdateWithoutWordsInputSchema';
 import { translatableUncheckedUpdateWithoutWordsInputSchema } from './translatableUncheckedUpdateWithoutWordsInputSchema';
 
-export const translatableUpdateOneRequiredWithoutWordsNestedInputSchema: z.ZodType<Prisma.translatableUpdateOneRequiredWithoutWordsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => translatableCreateWithoutWordsInputSchema),z.lazy(() => translatableUncheckedCreateWithoutWordsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => translatableCreateOrConnectWithoutWordsInputSchema).optional(),
-  upsert: z.lazy(() => translatableUpsertWithoutWordsInputSchema).optional(),
-  connect: z.lazy(() => translatableWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => translatableUpdateToOneWithWhereWithoutWordsInputSchema),z.lazy(() => translatableUpdateWithoutWordsInputSchema),z.lazy(() => translatableUncheckedUpdateWithoutWordsInputSchema) ]).optional(),
-}).strict();
+export const translatableUpdateOneRequiredWithoutWordsNestedInputSchema: z.ZodType<Prisma.translatableUpdateOneRequiredWithoutWordsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => translatableCreateWithoutWordsInputSchema),
+					z.lazy(() => translatableUncheckedCreateWithoutWordsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => translatableCreateOrConnectWithoutWordsInputSchema).optional(),
+			upsert: z.lazy(() => translatableUpsertWithoutWordsInputSchema).optional(),
+			connect: z.lazy(() => translatableWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => translatableUpdateToOneWithWhereWithoutWordsInputSchema),
+					z.lazy(() => translatableUpdateWithoutWordsInputSchema),
+					z.lazy(() => translatableUncheckedUpdateWithoutWordsInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default translatableUpdateOneRequiredWithoutWordsNestedInputSchema;

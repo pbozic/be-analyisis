@@ -5,9 +5,15 @@ import { documentsWhereUniqueInputSchema } from './documentsWhereUniqueInputSche
 import { documentsUpdateWithoutVehiclesInputSchema } from './documentsUpdateWithoutVehiclesInputSchema';
 import { documentsUncheckedUpdateWithoutVehiclesInputSchema } from './documentsUncheckedUpdateWithoutVehiclesInputSchema';
 
-export const documentsUpdateWithWhereUniqueWithoutVehiclesInputSchema: z.ZodType<Prisma.documentsUpdateWithWhereUniqueWithoutVehiclesInput> = z.object({
-  where: z.lazy(() => documentsWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => documentsUpdateWithoutVehiclesInputSchema),z.lazy(() => documentsUncheckedUpdateWithoutVehiclesInputSchema) ]),
-}).strict();
+export const documentsUpdateWithWhereUniqueWithoutVehiclesInputSchema: z.ZodType<Prisma.documentsUpdateWithWhereUniqueWithoutVehiclesInput> =
+	z
+		.object({
+			where: z.lazy(() => documentsWhereUniqueInputSchema),
+			data: z.union([
+				z.lazy(() => documentsUpdateWithoutVehiclesInputSchema),
+				z.lazy(() => documentsUncheckedUpdateWithoutVehiclesInputSchema),
+			]),
+		})
+		.strict();
 
 export default documentsUpdateWithWhereUniqueWithoutVehiclesInputSchema;

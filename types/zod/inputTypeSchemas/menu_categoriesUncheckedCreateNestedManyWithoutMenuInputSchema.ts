@@ -7,11 +7,31 @@ import { menu_categoriesCreateOrConnectWithoutMenuInputSchema } from './menu_cat
 import { menu_categoriesCreateManyMenuInputEnvelopeSchema } from './menu_categoriesCreateManyMenuInputEnvelopeSchema';
 import { menu_categoriesWhereUniqueInputSchema } from './menu_categoriesWhereUniqueInputSchema';
 
-export const menu_categoriesUncheckedCreateNestedManyWithoutMenuInputSchema: z.ZodType<Prisma.menu_categoriesUncheckedCreateNestedManyWithoutMenuInput> = z.object({
-  create: z.union([ z.lazy(() => menu_categoriesCreateWithoutMenuInputSchema),z.lazy(() => menu_categoriesCreateWithoutMenuInputSchema).array(),z.lazy(() => menu_categoriesUncheckedCreateWithoutMenuInputSchema),z.lazy(() => menu_categoriesUncheckedCreateWithoutMenuInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => menu_categoriesCreateOrConnectWithoutMenuInputSchema),z.lazy(() => menu_categoriesCreateOrConnectWithoutMenuInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => menu_categoriesCreateManyMenuInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => menu_categoriesWhereUniqueInputSchema),z.lazy(() => menu_categoriesWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const menu_categoriesUncheckedCreateNestedManyWithoutMenuInputSchema: z.ZodType<Prisma.menu_categoriesUncheckedCreateNestedManyWithoutMenuInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => menu_categoriesCreateWithoutMenuInputSchema),
+					z.lazy(() => menu_categoriesCreateWithoutMenuInputSchema).array(),
+					z.lazy(() => menu_categoriesUncheckedCreateWithoutMenuInputSchema),
+					z.lazy(() => menu_categoriesUncheckedCreateWithoutMenuInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => menu_categoriesCreateOrConnectWithoutMenuInputSchema),
+					z.lazy(() => menu_categoriesCreateOrConnectWithoutMenuInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => menu_categoriesCreateManyMenuInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => menu_categoriesWhereUniqueInputSchema),
+					z.lazy(() => menu_categoriesWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default menu_categoriesUncheckedCreateNestedManyWithoutMenuInputSchema;

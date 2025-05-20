@@ -3,11 +3,19 @@ import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { TokenTypeSchema } from './TokenTypeSchema';
 
-export const NestedEnumTokenTypeFilterSchema: z.ZodType<Prisma.NestedEnumTokenTypeFilter> = z.object({
-  equals: z.lazy(() => TokenTypeSchema).optional(),
-  in: z.lazy(() => TokenTypeSchema).array().optional(),
-  notIn: z.lazy(() => TokenTypeSchema).array().optional(),
-  not: z.union([ z.lazy(() => TokenTypeSchema),z.lazy(() => NestedEnumTokenTypeFilterSchema) ]).optional(),
-}).strict();
+export const NestedEnumTokenTypeFilterSchema: z.ZodType<Prisma.NestedEnumTokenTypeFilter> = z
+	.object({
+		equals: z.lazy(() => TokenTypeSchema).optional(),
+		in: z
+			.lazy(() => TokenTypeSchema)
+			.array()
+			.optional(),
+		notIn: z
+			.lazy(() => TokenTypeSchema)
+			.array()
+			.optional(),
+		not: z.union([z.lazy(() => TokenTypeSchema), z.lazy(() => NestedEnumTokenTypeFilterSchema)]).optional(),
+	})
+	.strict();
 
 export default NestedEnumTokenTypeFilterSchema;

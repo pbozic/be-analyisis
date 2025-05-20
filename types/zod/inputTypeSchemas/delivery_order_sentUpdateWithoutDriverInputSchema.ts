@@ -9,15 +9,20 @@ import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateO
 import { delivery_ordersUpdateOneWithoutHistoryNestedInputSchema } from './delivery_ordersUpdateOneWithoutHistoryNestedInputSchema';
 import { delivery_driversUpdateOneWithoutReceived_ordersNestedInputSchema } from './delivery_driversUpdateOneWithoutReceived_ordersNestedInputSchema';
 
-export const delivery_order_sentUpdateWithoutDriverInputSchema: z.ZodType<Prisma.delivery_order_sentUpdateWithoutDriverInput> = z.object({
-  delivery_order_sent_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  accepted: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  location: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  timeline: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  order: z.lazy(() => delivery_ordersUpdateOneWithoutHistoryNestedInputSchema).optional(),
-  delivery_driver: z.lazy(() => delivery_driversUpdateOneWithoutReceived_ordersNestedInputSchema).optional()
-}).strict();
+export const delivery_order_sentUpdateWithoutDriverInputSchema: z.ZodType<Prisma.delivery_order_sentUpdateWithoutDriverInput> =
+	z
+		.object({
+			delivery_order_sent_id: z
+				.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)])
+				.optional(),
+			accepted: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+			location: z.union([z.lazy(() => JsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			timeline: z.union([z.lazy(() => JsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			order: z.lazy(() => delivery_ordersUpdateOneWithoutHistoryNestedInputSchema).optional(),
+			delivery_driver: z.lazy(() => delivery_driversUpdateOneWithoutReceived_ordersNestedInputSchema).optional(),
+		})
+		.strict();
 
 export default delivery_order_sentUpdateWithoutDriverInputSchema;

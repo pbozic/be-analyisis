@@ -7,10 +7,19 @@ import { usersCreateWithoutDaily_meals_subscriptionsInputSchema } from './usersC
 import { usersUncheckedCreateWithoutDaily_meals_subscriptionsInputSchema } from './usersUncheckedCreateWithoutDaily_meals_subscriptionsInputSchema';
 import { usersWhereInputSchema } from './usersWhereInputSchema';
 
-export const usersUpsertWithoutDaily_meals_subscriptionsInputSchema: z.ZodType<Prisma.usersUpsertWithoutDaily_meals_subscriptionsInput> = z.object({
-  update: z.union([ z.lazy(() => usersUpdateWithoutDaily_meals_subscriptionsInputSchema),z.lazy(() => usersUncheckedUpdateWithoutDaily_meals_subscriptionsInputSchema) ]),
-  create: z.union([ z.lazy(() => usersCreateWithoutDaily_meals_subscriptionsInputSchema),z.lazy(() => usersUncheckedCreateWithoutDaily_meals_subscriptionsInputSchema) ]),
-  where: z.lazy(() => usersWhereInputSchema).optional()
-}).strict();
+export const usersUpsertWithoutDaily_meals_subscriptionsInputSchema: z.ZodType<Prisma.usersUpsertWithoutDaily_meals_subscriptionsInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => usersUpdateWithoutDaily_meals_subscriptionsInputSchema),
+				z.lazy(() => usersUncheckedUpdateWithoutDaily_meals_subscriptionsInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => usersCreateWithoutDaily_meals_subscriptionsInputSchema),
+				z.lazy(() => usersUncheckedCreateWithoutDaily_meals_subscriptionsInputSchema),
+			]),
+			where: z.lazy(() => usersWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default usersUpsertWithoutDaily_meals_subscriptionsInputSchema;

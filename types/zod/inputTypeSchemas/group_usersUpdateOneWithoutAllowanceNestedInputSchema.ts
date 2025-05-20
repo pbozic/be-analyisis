@@ -11,14 +11,28 @@ import { group_usersUpdateToOneWithWhereWithoutAllowanceInputSchema } from './gr
 import { group_usersUpdateWithoutAllowanceInputSchema } from './group_usersUpdateWithoutAllowanceInputSchema';
 import { group_usersUncheckedUpdateWithoutAllowanceInputSchema } from './group_usersUncheckedUpdateWithoutAllowanceInputSchema';
 
-export const group_usersUpdateOneWithoutAllowanceNestedInputSchema: z.ZodType<Prisma.group_usersUpdateOneWithoutAllowanceNestedInput> = z.object({
-  create: z.union([ z.lazy(() => group_usersCreateWithoutAllowanceInputSchema),z.lazy(() => group_usersUncheckedCreateWithoutAllowanceInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => group_usersCreateOrConnectWithoutAllowanceInputSchema).optional(),
-  upsert: z.lazy(() => group_usersUpsertWithoutAllowanceInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => group_usersWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => group_usersWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => group_usersWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => group_usersUpdateToOneWithWhereWithoutAllowanceInputSchema),z.lazy(() => group_usersUpdateWithoutAllowanceInputSchema),z.lazy(() => group_usersUncheckedUpdateWithoutAllowanceInputSchema) ]).optional(),
-}).strict();
+export const group_usersUpdateOneWithoutAllowanceNestedInputSchema: z.ZodType<Prisma.group_usersUpdateOneWithoutAllowanceNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => group_usersCreateWithoutAllowanceInputSchema),
+					z.lazy(() => group_usersUncheckedCreateWithoutAllowanceInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => group_usersCreateOrConnectWithoutAllowanceInputSchema).optional(),
+			upsert: z.lazy(() => group_usersUpsertWithoutAllowanceInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => group_usersWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => group_usersWhereInputSchema)]).optional(),
+			connect: z.lazy(() => group_usersWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => group_usersUpdateToOneWithWhereWithoutAllowanceInputSchema),
+					z.lazy(() => group_usersUpdateWithoutAllowanceInputSchema),
+					z.lazy(() => group_usersUncheckedUpdateWithoutAllowanceInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default group_usersUpdateOneWithoutAllowanceNestedInputSchema;

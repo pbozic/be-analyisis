@@ -1,20 +1,20 @@
 {
-  "ride_requirements": {
-    "luggage": true,
-    "traveling_with_pet": true,
-    "air_conditioning": true,
-    "child_seat": true,
-    "wheelchair_accessibility": true,
-    "quiet_ride": true,
-    "onboard_restrooms": true,
-    "multilingual_staff": true,
-    "outlets": true,
-    "language_en": true,
-    "language_it": true,
-    "language_de": true,
-    "language_es": true,
-    "language_hr": true,
-    "language_fr": true,
-    "language_ru": true
-  }
+	"ride_requirements": {
+		"luggage": true,
+		"traveling_with_pet": true,
+		"air_conditioning": true,
+		"child_seat": true,
+		"wheelchair_accessibility": true,
+		"quiet_ride": true,
+		"onboard_restrooms": true,
+		"multilingual_staff": true,
+		"outlets": true,
+		"language_en": true,
+		"language_it": true,
+		"language_de": true,
+		"language_es": true,
+		"language_hr": true,
+		"language_fr": true,
+		"language_ru": true
+	}
 }

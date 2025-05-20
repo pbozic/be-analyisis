@@ -7,10 +7,18 @@ import { translatableCreateWithoutWordsInputSchema } from './translatableCreateW
 import { translatableUncheckedCreateWithoutWordsInputSchema } from './translatableUncheckedCreateWithoutWordsInputSchema';
 import { translatableWhereInputSchema } from './translatableWhereInputSchema';
 
-export const translatableUpsertWithoutWordsInputSchema: z.ZodType<Prisma.translatableUpsertWithoutWordsInput> = z.object({
-  update: z.union([ z.lazy(() => translatableUpdateWithoutWordsInputSchema),z.lazy(() => translatableUncheckedUpdateWithoutWordsInputSchema) ]),
-  create: z.union([ z.lazy(() => translatableCreateWithoutWordsInputSchema),z.lazy(() => translatableUncheckedCreateWithoutWordsInputSchema) ]),
-  where: z.lazy(() => translatableWhereInputSchema).optional()
-}).strict();
+export const translatableUpsertWithoutWordsInputSchema: z.ZodType<Prisma.translatableUpsertWithoutWordsInput> = z
+	.object({
+		update: z.union([
+			z.lazy(() => translatableUpdateWithoutWordsInputSchema),
+			z.lazy(() => translatableUncheckedUpdateWithoutWordsInputSchema),
+		]),
+		create: z.union([
+			z.lazy(() => translatableCreateWithoutWordsInputSchema),
+			z.lazy(() => translatableUncheckedCreateWithoutWordsInputSchema),
+		]),
+		where: z.lazy(() => translatableWhereInputSchema).optional(),
+	})
+	.strict();
 
 export default translatableUpsertWithoutWordsInputSchema;

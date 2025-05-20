@@ -28,7 +28,16 @@ const app = express();
 // ─── Cron Jobs ──────────────────────────────────────────────────────
 if (process.env.NODE_ENV !== 'test') {
 	startCronJobs();
-	console = {};
+}
+if (process.env.NODE_ENV === 'test') {
+	console = {
+		log: () => {},
+		error: () => {},
+		warn: () => {},
+		info: () => {},
+		debug: () => {},
+		socket: () => {},
+	};
 }
 // ─── Logging override ───────────────────────────────────────────────
 function formatArg(arg) {

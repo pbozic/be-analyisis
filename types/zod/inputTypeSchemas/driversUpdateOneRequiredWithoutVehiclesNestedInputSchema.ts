@@ -10,12 +10,26 @@ import { driversUpdateToOneWithWhereWithoutVehiclesInputSchema } from './drivers
 import { driversUpdateWithoutVehiclesInputSchema } from './driversUpdateWithoutVehiclesInputSchema';
 import { driversUncheckedUpdateWithoutVehiclesInputSchema } from './driversUncheckedUpdateWithoutVehiclesInputSchema';
 
-export const driversUpdateOneRequiredWithoutVehiclesNestedInputSchema: z.ZodType<Prisma.driversUpdateOneRequiredWithoutVehiclesNestedInput> = z.object({
-  create: z.union([ z.lazy(() => driversCreateWithoutVehiclesInputSchema),z.lazy(() => driversUncheckedCreateWithoutVehiclesInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => driversCreateOrConnectWithoutVehiclesInputSchema).optional(),
-  upsert: z.lazy(() => driversUpsertWithoutVehiclesInputSchema).optional(),
-  connect: z.lazy(() => driversWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => driversUpdateToOneWithWhereWithoutVehiclesInputSchema),z.lazy(() => driversUpdateWithoutVehiclesInputSchema),z.lazy(() => driversUncheckedUpdateWithoutVehiclesInputSchema) ]).optional(),
-}).strict();
+export const driversUpdateOneRequiredWithoutVehiclesNestedInputSchema: z.ZodType<Prisma.driversUpdateOneRequiredWithoutVehiclesNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => driversCreateWithoutVehiclesInputSchema),
+					z.lazy(() => driversUncheckedCreateWithoutVehiclesInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => driversCreateOrConnectWithoutVehiclesInputSchema).optional(),
+			upsert: z.lazy(() => driversUpsertWithoutVehiclesInputSchema).optional(),
+			connect: z.lazy(() => driversWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => driversUpdateToOneWithWhereWithoutVehiclesInputSchema),
+					z.lazy(() => driversUpdateWithoutVehiclesInputSchema),
+					z.lazy(() => driversUncheckedUpdateWithoutVehiclesInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default driversUpdateOneRequiredWithoutVehiclesNestedInputSchema;

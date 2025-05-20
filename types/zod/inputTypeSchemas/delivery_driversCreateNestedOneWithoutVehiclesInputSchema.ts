@@ -6,10 +6,18 @@ import { delivery_driversUncheckedCreateWithoutVehiclesInputSchema } from './del
 import { delivery_driversCreateOrConnectWithoutVehiclesInputSchema } from './delivery_driversCreateOrConnectWithoutVehiclesInputSchema';
 import { delivery_driversWhereUniqueInputSchema } from './delivery_driversWhereUniqueInputSchema';
 
-export const delivery_driversCreateNestedOneWithoutVehiclesInputSchema: z.ZodType<Prisma.delivery_driversCreateNestedOneWithoutVehiclesInput> = z.object({
-  create: z.union([ z.lazy(() => delivery_driversCreateWithoutVehiclesInputSchema),z.lazy(() => delivery_driversUncheckedCreateWithoutVehiclesInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => delivery_driversCreateOrConnectWithoutVehiclesInputSchema).optional(),
-  connect: z.lazy(() => delivery_driversWhereUniqueInputSchema).optional()
-}).strict();
+export const delivery_driversCreateNestedOneWithoutVehiclesInputSchema: z.ZodType<Prisma.delivery_driversCreateNestedOneWithoutVehiclesInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => delivery_driversCreateWithoutVehiclesInputSchema),
+					z.lazy(() => delivery_driversUncheckedCreateWithoutVehiclesInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => delivery_driversCreateOrConnectWithoutVehiclesInputSchema).optional(),
+			connect: z.lazy(() => delivery_driversWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default delivery_driversCreateNestedOneWithoutVehiclesInputSchema;

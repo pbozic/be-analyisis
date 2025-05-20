@@ -5,9 +5,15 @@ import { wallet_fundsWhereUniqueInputSchema } from './wallet_fundsWhereUniqueInp
 import { wallet_fundsUpdateWithoutUserInputSchema } from './wallet_fundsUpdateWithoutUserInputSchema';
 import { wallet_fundsUncheckedUpdateWithoutUserInputSchema } from './wallet_fundsUncheckedUpdateWithoutUserInputSchema';
 
-export const wallet_fundsUpdateWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.wallet_fundsUpdateWithWhereUniqueWithoutUserInput> = z.object({
-  where: z.lazy(() => wallet_fundsWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => wallet_fundsUpdateWithoutUserInputSchema),z.lazy(() => wallet_fundsUncheckedUpdateWithoutUserInputSchema) ]),
-}).strict();
+export const wallet_fundsUpdateWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.wallet_fundsUpdateWithWhereUniqueWithoutUserInput> =
+	z
+		.object({
+			where: z.lazy(() => wallet_fundsWhereUniqueInputSchema),
+			data: z.union([
+				z.lazy(() => wallet_fundsUpdateWithoutUserInputSchema),
+				z.lazy(() => wallet_fundsUncheckedUpdateWithoutUserInputSchema),
+			]),
+		})
+		.strict();
 
 export default wallet_fundsUpdateWithWhereUniqueWithoutUserInputSchema;

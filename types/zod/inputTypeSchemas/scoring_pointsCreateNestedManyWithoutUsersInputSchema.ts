@@ -7,11 +7,31 @@ import { scoring_pointsCreateOrConnectWithoutUsersInputSchema } from './scoring_
 import { scoring_pointsCreateManyUsersInputEnvelopeSchema } from './scoring_pointsCreateManyUsersInputEnvelopeSchema';
 import { scoring_pointsWhereUniqueInputSchema } from './scoring_pointsWhereUniqueInputSchema';
 
-export const scoring_pointsCreateNestedManyWithoutUsersInputSchema: z.ZodType<Prisma.scoring_pointsCreateNestedManyWithoutUsersInput> = z.object({
-  create: z.union([ z.lazy(() => scoring_pointsCreateWithoutUsersInputSchema),z.lazy(() => scoring_pointsCreateWithoutUsersInputSchema).array(),z.lazy(() => scoring_pointsUncheckedCreateWithoutUsersInputSchema),z.lazy(() => scoring_pointsUncheckedCreateWithoutUsersInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => scoring_pointsCreateOrConnectWithoutUsersInputSchema),z.lazy(() => scoring_pointsCreateOrConnectWithoutUsersInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => scoring_pointsCreateManyUsersInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => scoring_pointsWhereUniqueInputSchema),z.lazy(() => scoring_pointsWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const scoring_pointsCreateNestedManyWithoutUsersInputSchema: z.ZodType<Prisma.scoring_pointsCreateNestedManyWithoutUsersInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => scoring_pointsCreateWithoutUsersInputSchema),
+					z.lazy(() => scoring_pointsCreateWithoutUsersInputSchema).array(),
+					z.lazy(() => scoring_pointsUncheckedCreateWithoutUsersInputSchema),
+					z.lazy(() => scoring_pointsUncheckedCreateWithoutUsersInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => scoring_pointsCreateOrConnectWithoutUsersInputSchema),
+					z.lazy(() => scoring_pointsCreateOrConnectWithoutUsersInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => scoring_pointsCreateManyUsersInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => scoring_pointsWhereUniqueInputSchema),
+					z.lazy(() => scoring_pointsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default scoring_pointsCreateNestedManyWithoutUsersInputSchema;

@@ -11,14 +11,28 @@ import { delivery_ordersUpdateToOneWithWhereWithoutLate_eventsInputSchema } from
 import { delivery_ordersUpdateWithoutLate_eventsInputSchema } from './delivery_ordersUpdateWithoutLate_eventsInputSchema';
 import { delivery_ordersUncheckedUpdateWithoutLate_eventsInputSchema } from './delivery_ordersUncheckedUpdateWithoutLate_eventsInputSchema';
 
-export const delivery_ordersUpdateOneWithoutLate_eventsNestedInputSchema: z.ZodType<Prisma.delivery_ordersUpdateOneWithoutLate_eventsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => delivery_ordersCreateWithoutLate_eventsInputSchema),z.lazy(() => delivery_ordersUncheckedCreateWithoutLate_eventsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => delivery_ordersCreateOrConnectWithoutLate_eventsInputSchema).optional(),
-  upsert: z.lazy(() => delivery_ordersUpsertWithoutLate_eventsInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => delivery_ordersWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => delivery_ordersWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => delivery_ordersWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => delivery_ordersUpdateToOneWithWhereWithoutLate_eventsInputSchema),z.lazy(() => delivery_ordersUpdateWithoutLate_eventsInputSchema),z.lazy(() => delivery_ordersUncheckedUpdateWithoutLate_eventsInputSchema) ]).optional(),
-}).strict();
+export const delivery_ordersUpdateOneWithoutLate_eventsNestedInputSchema: z.ZodType<Prisma.delivery_ordersUpdateOneWithoutLate_eventsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => delivery_ordersCreateWithoutLate_eventsInputSchema),
+					z.lazy(() => delivery_ordersUncheckedCreateWithoutLate_eventsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => delivery_ordersCreateOrConnectWithoutLate_eventsInputSchema).optional(),
+			upsert: z.lazy(() => delivery_ordersUpsertWithoutLate_eventsInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => delivery_ordersWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => delivery_ordersWhereInputSchema)]).optional(),
+			connect: z.lazy(() => delivery_ordersWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => delivery_ordersUpdateToOneWithWhereWithoutLate_eventsInputSchema),
+					z.lazy(() => delivery_ordersUpdateWithoutLate_eventsInputSchema),
+					z.lazy(() => delivery_ordersUncheckedUpdateWithoutLate_eventsInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default delivery_ordersUpdateOneWithoutLate_eventsNestedInputSchema;

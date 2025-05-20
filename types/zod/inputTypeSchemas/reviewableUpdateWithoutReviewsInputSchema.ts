@@ -5,10 +5,12 @@ import { StringFieldUpdateOperationsInputSchema } from './StringFieldUpdateOpera
 import { usersUpdateManyWithoutReviewableNestedInputSchema } from './usersUpdateManyWithoutReviewableNestedInputSchema';
 import { businessUpdateManyWithoutReviewableNestedInputSchema } from './businessUpdateManyWithoutReviewableNestedInputSchema';
 
-export const reviewableUpdateWithoutReviewsInputSchema: z.ZodType<Prisma.reviewableUpdateWithoutReviewsInput> = z.object({
-  reviewable_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  user: z.lazy(() => usersUpdateManyWithoutReviewableNestedInputSchema).optional(),
-  business: z.lazy(() => businessUpdateManyWithoutReviewableNestedInputSchema).optional()
-}).strict();
+export const reviewableUpdateWithoutReviewsInputSchema: z.ZodType<Prisma.reviewableUpdateWithoutReviewsInput> = z
+	.object({
+		reviewable_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		user: z.lazy(() => usersUpdateManyWithoutReviewableNestedInputSchema).optional(),
+		business: z.lazy(() => businessUpdateManyWithoutReviewableNestedInputSchema).optional(),
+	})
+	.strict();
 
 export default reviewableUpdateWithoutReviewsInputSchema;

@@ -11,14 +11,28 @@ import { delivery_driversUpdateToOneWithWhereWithoutReceived_ordersInputSchema }
 import { delivery_driversUpdateWithoutReceived_ordersInputSchema } from './delivery_driversUpdateWithoutReceived_ordersInputSchema';
 import { delivery_driversUncheckedUpdateWithoutReceived_ordersInputSchema } from './delivery_driversUncheckedUpdateWithoutReceived_ordersInputSchema';
 
-export const delivery_driversUpdateOneWithoutReceived_ordersNestedInputSchema: z.ZodType<Prisma.delivery_driversUpdateOneWithoutReceived_ordersNestedInput> = z.object({
-  create: z.union([ z.lazy(() => delivery_driversCreateWithoutReceived_ordersInputSchema),z.lazy(() => delivery_driversUncheckedCreateWithoutReceived_ordersInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => delivery_driversCreateOrConnectWithoutReceived_ordersInputSchema).optional(),
-  upsert: z.lazy(() => delivery_driversUpsertWithoutReceived_ordersInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => delivery_driversWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => delivery_driversWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => delivery_driversWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => delivery_driversUpdateToOneWithWhereWithoutReceived_ordersInputSchema),z.lazy(() => delivery_driversUpdateWithoutReceived_ordersInputSchema),z.lazy(() => delivery_driversUncheckedUpdateWithoutReceived_ordersInputSchema) ]).optional(),
-}).strict();
+export const delivery_driversUpdateOneWithoutReceived_ordersNestedInputSchema: z.ZodType<Prisma.delivery_driversUpdateOneWithoutReceived_ordersNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => delivery_driversCreateWithoutReceived_ordersInputSchema),
+					z.lazy(() => delivery_driversUncheckedCreateWithoutReceived_ordersInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => delivery_driversCreateOrConnectWithoutReceived_ordersInputSchema).optional(),
+			upsert: z.lazy(() => delivery_driversUpsertWithoutReceived_ordersInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => delivery_driversWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => delivery_driversWhereInputSchema)]).optional(),
+			connect: z.lazy(() => delivery_driversWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => delivery_driversUpdateToOneWithWhereWithoutReceived_ordersInputSchema),
+					z.lazy(() => delivery_driversUpdateWithoutReceived_ordersInputSchema),
+					z.lazy(() => delivery_driversUncheckedUpdateWithoutReceived_ordersInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default delivery_driversUpdateOneWithoutReceived_ordersNestedInputSchema;

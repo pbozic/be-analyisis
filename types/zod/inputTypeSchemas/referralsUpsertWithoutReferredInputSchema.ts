@@ -7,10 +7,18 @@ import { referralsCreateWithoutReferredInputSchema } from './referralsCreateWith
 import { referralsUncheckedCreateWithoutReferredInputSchema } from './referralsUncheckedCreateWithoutReferredInputSchema';
 import { referralsWhereInputSchema } from './referralsWhereInputSchema';
 
-export const referralsUpsertWithoutReferredInputSchema: z.ZodType<Prisma.referralsUpsertWithoutReferredInput> = z.object({
-  update: z.union([ z.lazy(() => referralsUpdateWithoutReferredInputSchema),z.lazy(() => referralsUncheckedUpdateWithoutReferredInputSchema) ]),
-  create: z.union([ z.lazy(() => referralsCreateWithoutReferredInputSchema),z.lazy(() => referralsUncheckedCreateWithoutReferredInputSchema) ]),
-  where: z.lazy(() => referralsWhereInputSchema).optional()
-}).strict();
+export const referralsUpsertWithoutReferredInputSchema: z.ZodType<Prisma.referralsUpsertWithoutReferredInput> = z
+	.object({
+		update: z.union([
+			z.lazy(() => referralsUpdateWithoutReferredInputSchema),
+			z.lazy(() => referralsUncheckedUpdateWithoutReferredInputSchema),
+		]),
+		create: z.union([
+			z.lazy(() => referralsCreateWithoutReferredInputSchema),
+			z.lazy(() => referralsUncheckedCreateWithoutReferredInputSchema),
+		]),
+		where: z.lazy(() => referralsWhereInputSchema).optional(),
+	})
+	.strict();
 
 export default referralsUpsertWithoutReferredInputSchema;

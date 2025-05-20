@@ -1,28 +1,28 @@
 type: object
 properties:
-  business_users_id:
-    type: string
-  online:
-    type: boolean
-  created_at:
-    type: string
-  updated_at:
-    type: string
-  user_id:
-    type: string
-  users:
-    $ref: ./users.yaml
-  business_id:
-    type: string
-  business:
-    $ref: ./business.yaml
-  operating_address_id:
-    type: string
-  operating_address:
-    $ref: ./addresses.yaml
+    business_users_id:
+        type: string
+    online:
+        type: boolean
+    created_at:
+        type: string
+    updated_at:
+        type: string
+    user_id:
+        type: string
+    users:
+        $ref: ./users.yaml
+    business_id:
+        type: string
+    business:
+        $ref: ./business.yaml
+    operating_address_id:
+        type: string
+    operating_address:
+        $ref: ./addresses.yaml
 required:
-  - business_users_id
-  - created_at
-  - updated_at
-  - user_id
-  - business_id
+    - business_users_id
+    - created_at
+    - updated_at
+    - user_id
+    - business_id

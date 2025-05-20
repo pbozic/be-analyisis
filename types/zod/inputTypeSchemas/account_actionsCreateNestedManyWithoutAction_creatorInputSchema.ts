@@ -7,11 +7,31 @@ import { account_actionsCreateOrConnectWithoutAction_creatorInputSchema } from '
 import { account_actionsCreateManyAction_creatorInputEnvelopeSchema } from './account_actionsCreateManyAction_creatorInputEnvelopeSchema';
 import { account_actionsWhereUniqueInputSchema } from './account_actionsWhereUniqueInputSchema';
 
-export const account_actionsCreateNestedManyWithoutAction_creatorInputSchema: z.ZodType<Prisma.account_actionsCreateNestedManyWithoutAction_creatorInput> = z.object({
-  create: z.union([ z.lazy(() => account_actionsCreateWithoutAction_creatorInputSchema),z.lazy(() => account_actionsCreateWithoutAction_creatorInputSchema).array(),z.lazy(() => account_actionsUncheckedCreateWithoutAction_creatorInputSchema),z.lazy(() => account_actionsUncheckedCreateWithoutAction_creatorInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => account_actionsCreateOrConnectWithoutAction_creatorInputSchema),z.lazy(() => account_actionsCreateOrConnectWithoutAction_creatorInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => account_actionsCreateManyAction_creatorInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => account_actionsWhereUniqueInputSchema),z.lazy(() => account_actionsWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const account_actionsCreateNestedManyWithoutAction_creatorInputSchema: z.ZodType<Prisma.account_actionsCreateNestedManyWithoutAction_creatorInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => account_actionsCreateWithoutAction_creatorInputSchema),
+					z.lazy(() => account_actionsCreateWithoutAction_creatorInputSchema).array(),
+					z.lazy(() => account_actionsUncheckedCreateWithoutAction_creatorInputSchema),
+					z.lazy(() => account_actionsUncheckedCreateWithoutAction_creatorInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => account_actionsCreateOrConnectWithoutAction_creatorInputSchema),
+					z.lazy(() => account_actionsCreateOrConnectWithoutAction_creatorInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => account_actionsCreateManyAction_creatorInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => account_actionsWhereUniqueInputSchema),
+					z.lazy(() => account_actionsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default account_actionsCreateNestedManyWithoutAction_creatorInputSchema;

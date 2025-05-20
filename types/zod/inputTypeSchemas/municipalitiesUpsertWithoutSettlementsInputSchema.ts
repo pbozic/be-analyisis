@@ -7,10 +7,19 @@ import { municipalitiesCreateWithoutSettlementsInputSchema } from './municipalit
 import { municipalitiesUncheckedCreateWithoutSettlementsInputSchema } from './municipalitiesUncheckedCreateWithoutSettlementsInputSchema';
 import { municipalitiesWhereInputSchema } from './municipalitiesWhereInputSchema';
 
-export const municipalitiesUpsertWithoutSettlementsInputSchema: z.ZodType<Prisma.municipalitiesUpsertWithoutSettlementsInput> = z.object({
-  update: z.union([ z.lazy(() => municipalitiesUpdateWithoutSettlementsInputSchema),z.lazy(() => municipalitiesUncheckedUpdateWithoutSettlementsInputSchema) ]),
-  create: z.union([ z.lazy(() => municipalitiesCreateWithoutSettlementsInputSchema),z.lazy(() => municipalitiesUncheckedCreateWithoutSettlementsInputSchema) ]),
-  where: z.lazy(() => municipalitiesWhereInputSchema).optional()
-}).strict();
+export const municipalitiesUpsertWithoutSettlementsInputSchema: z.ZodType<Prisma.municipalitiesUpsertWithoutSettlementsInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => municipalitiesUpdateWithoutSettlementsInputSchema),
+				z.lazy(() => municipalitiesUncheckedUpdateWithoutSettlementsInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => municipalitiesCreateWithoutSettlementsInputSchema),
+				z.lazy(() => municipalitiesUncheckedCreateWithoutSettlementsInputSchema),
+			]),
+			where: z.lazy(() => municipalitiesWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default municipalitiesUpsertWithoutSettlementsInputSchema;

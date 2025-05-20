@@ -7,10 +7,19 @@ import { vehicle_specificationsCreateWithoutVehicleInputSchema } from './vehicle
 import { vehicle_specificationsUncheckedCreateWithoutVehicleInputSchema } from './vehicle_specificationsUncheckedCreateWithoutVehicleInputSchema';
 import { vehicle_specificationsWhereInputSchema } from './vehicle_specificationsWhereInputSchema';
 
-export const vehicle_specificationsUpsertWithoutVehicleInputSchema: z.ZodType<Prisma.vehicle_specificationsUpsertWithoutVehicleInput> = z.object({
-  update: z.union([ z.lazy(() => vehicle_specificationsUpdateWithoutVehicleInputSchema),z.lazy(() => vehicle_specificationsUncheckedUpdateWithoutVehicleInputSchema) ]),
-  create: z.union([ z.lazy(() => vehicle_specificationsCreateWithoutVehicleInputSchema),z.lazy(() => vehicle_specificationsUncheckedCreateWithoutVehicleInputSchema) ]),
-  where: z.lazy(() => vehicle_specificationsWhereInputSchema).optional()
-}).strict();
+export const vehicle_specificationsUpsertWithoutVehicleInputSchema: z.ZodType<Prisma.vehicle_specificationsUpsertWithoutVehicleInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => vehicle_specificationsUpdateWithoutVehicleInputSchema),
+				z.lazy(() => vehicle_specificationsUncheckedUpdateWithoutVehicleInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => vehicle_specificationsCreateWithoutVehicleInputSchema),
+				z.lazy(() => vehicle_specificationsUncheckedCreateWithoutVehicleInputSchema),
+			]),
+			where: z.lazy(() => vehicle_specificationsWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default vehicle_specificationsUpsertWithoutVehicleInputSchema;

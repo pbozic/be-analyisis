@@ -6,14 +6,16 @@ import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateO
 import { BoolFieldUpdateOperationsInputSchema } from './BoolFieldUpdateOperationsInputSchema';
 import { allowancesUncheckedUpdateOneWithoutUserNestedInputSchema } from './allowancesUncheckedUpdateOneWithoutUserNestedInputSchema';
 
-export const group_usersUncheckedUpdateInputSchema: z.ZodType<Prisma.group_usersUncheckedUpdateInput> = z.object({
-  group_user_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  parent_user_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  child_user_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  enabled: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  allowance: z.lazy(() => allowancesUncheckedUpdateOneWithoutUserNestedInputSchema).optional()
-}).strict();
+export const group_usersUncheckedUpdateInputSchema: z.ZodType<Prisma.group_usersUncheckedUpdateInput> = z
+	.object({
+		group_user_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		parent_user_id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		child_user_id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		enabled: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+		allowance: z.lazy(() => allowancesUncheckedUpdateOneWithoutUserNestedInputSchema).optional(),
+	})
+	.strict();
 
 export default group_usersUncheckedUpdateInputSchema;

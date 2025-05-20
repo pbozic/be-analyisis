@@ -7,11 +7,28 @@ import { usersCreateOrConnectWithoutBusiness_teamsInputSchema } from './usersCre
 import { usersCreateManyBusiness_teamsInputEnvelopeSchema } from './usersCreateManyBusiness_teamsInputEnvelopeSchema';
 import { usersWhereUniqueInputSchema } from './usersWhereUniqueInputSchema';
 
-export const usersCreateNestedManyWithoutBusiness_teamsInputSchema: z.ZodType<Prisma.usersCreateNestedManyWithoutBusiness_teamsInput> = z.object({
-  create: z.union([ z.lazy(() => usersCreateWithoutBusiness_teamsInputSchema),z.lazy(() => usersCreateWithoutBusiness_teamsInputSchema).array(),z.lazy(() => usersUncheckedCreateWithoutBusiness_teamsInputSchema),z.lazy(() => usersUncheckedCreateWithoutBusiness_teamsInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => usersCreateOrConnectWithoutBusiness_teamsInputSchema),z.lazy(() => usersCreateOrConnectWithoutBusiness_teamsInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => usersCreateManyBusiness_teamsInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => usersWhereUniqueInputSchema),z.lazy(() => usersWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const usersCreateNestedManyWithoutBusiness_teamsInputSchema: z.ZodType<Prisma.usersCreateNestedManyWithoutBusiness_teamsInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => usersCreateWithoutBusiness_teamsInputSchema),
+					z.lazy(() => usersCreateWithoutBusiness_teamsInputSchema).array(),
+					z.lazy(() => usersUncheckedCreateWithoutBusiness_teamsInputSchema),
+					z.lazy(() => usersUncheckedCreateWithoutBusiness_teamsInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => usersCreateOrConnectWithoutBusiness_teamsInputSchema),
+					z.lazy(() => usersCreateOrConnectWithoutBusiness_teamsInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => usersCreateManyBusiness_teamsInputEnvelopeSchema).optional(),
+			connect: z
+				.union([z.lazy(() => usersWhereUniqueInputSchema), z.lazy(() => usersWhereUniqueInputSchema).array()])
+				.optional(),
+		})
+		.strict();
 
 export default usersCreateNestedManyWithoutBusiness_teamsInputSchema;

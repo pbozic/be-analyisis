@@ -1,12 +1,12 @@
 {
-  "status": "UNPAID",
-  "type": "CREDIT_CARD",
-  "credit_card": {
-    "issuer": null,
-    "number": null
-  },
-  "date": "6. 10. 2023, 14:35:12",
-  "price": 0,
-  "distance": 0,
-  "duration": 0
+	"status": "UNPAID",
+	"type": "CREDIT_CARD",
+	"credit_card": {
+		"issuer": null,
+		"number": null
+	},
+	"date": "6. 10. 2023, 14:35:12",
+	"price": 0,
+	"distance": 0,
+	"duration": 0
 }

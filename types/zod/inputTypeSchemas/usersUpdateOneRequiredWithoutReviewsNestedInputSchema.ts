@@ -10,12 +10,26 @@ import { usersUpdateToOneWithWhereWithoutReviewsInputSchema } from './usersUpdat
 import { usersUpdateWithoutReviewsInputSchema } from './usersUpdateWithoutReviewsInputSchema';
 import { usersUncheckedUpdateWithoutReviewsInputSchema } from './usersUncheckedUpdateWithoutReviewsInputSchema';
 
-export const usersUpdateOneRequiredWithoutReviewsNestedInputSchema: z.ZodType<Prisma.usersUpdateOneRequiredWithoutReviewsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => usersCreateWithoutReviewsInputSchema),z.lazy(() => usersUncheckedCreateWithoutReviewsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutReviewsInputSchema).optional(),
-  upsert: z.lazy(() => usersUpsertWithoutReviewsInputSchema).optional(),
-  connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => usersUpdateToOneWithWhereWithoutReviewsInputSchema),z.lazy(() => usersUpdateWithoutReviewsInputSchema),z.lazy(() => usersUncheckedUpdateWithoutReviewsInputSchema) ]).optional(),
-}).strict();
+export const usersUpdateOneRequiredWithoutReviewsNestedInputSchema: z.ZodType<Prisma.usersUpdateOneRequiredWithoutReviewsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => usersCreateWithoutReviewsInputSchema),
+					z.lazy(() => usersUncheckedCreateWithoutReviewsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutReviewsInputSchema).optional(),
+			upsert: z.lazy(() => usersUpsertWithoutReviewsInputSchema).optional(),
+			connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => usersUpdateToOneWithWhereWithoutReviewsInputSchema),
+					z.lazy(() => usersUpdateWithoutReviewsInputSchema),
+					z.lazy(() => usersUncheckedUpdateWithoutReviewsInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default usersUpdateOneRequiredWithoutReviewsNestedInputSchema;

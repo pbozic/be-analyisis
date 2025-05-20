@@ -5,14 +5,28 @@ import { SORTING_TYPESchema } from './SORTING_TYPESchema';
 import { NestedIntFilterSchema } from './NestedIntFilterSchema';
 import { NestedEnumSORTING_TYPEFilterSchema } from './NestedEnumSORTING_TYPEFilterSchema';
 
-export const NestedEnumSORTING_TYPEWithAggregatesFilterSchema: z.ZodType<Prisma.NestedEnumSORTING_TYPEWithAggregatesFilter> = z.object({
-  equals: z.lazy(() => SORTING_TYPESchema).optional(),
-  in: z.lazy(() => SORTING_TYPESchema).array().optional(),
-  notIn: z.lazy(() => SORTING_TYPESchema).array().optional(),
-  not: z.union([ z.lazy(() => SORTING_TYPESchema),z.lazy(() => NestedEnumSORTING_TYPEWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedEnumSORTING_TYPEFilterSchema).optional(),
-  _max: z.lazy(() => NestedEnumSORTING_TYPEFilterSchema).optional()
-}).strict();
+export const NestedEnumSORTING_TYPEWithAggregatesFilterSchema: z.ZodType<Prisma.NestedEnumSORTING_TYPEWithAggregatesFilter> =
+	z
+		.object({
+			equals: z.lazy(() => SORTING_TYPESchema).optional(),
+			in: z
+				.lazy(() => SORTING_TYPESchema)
+				.array()
+				.optional(),
+			notIn: z
+				.lazy(() => SORTING_TYPESchema)
+				.array()
+				.optional(),
+			not: z
+				.union([
+					z.lazy(() => SORTING_TYPESchema),
+					z.lazy(() => NestedEnumSORTING_TYPEWithAggregatesFilterSchema),
+				])
+				.optional(),
+			_count: z.lazy(() => NestedIntFilterSchema).optional(),
+			_min: z.lazy(() => NestedEnumSORTING_TYPEFilterSchema).optional(),
+			_max: z.lazy(() => NestedEnumSORTING_TYPEFilterSchema).optional(),
+		})
+		.strict();
 
 export default NestedEnumSORTING_TYPEWithAggregatesFilterSchema;

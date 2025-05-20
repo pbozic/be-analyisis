@@ -7,10 +7,19 @@ import { municipalitiesCreateWithoutDriver_municipalitiesInputSchema } from './m
 import { municipalitiesUncheckedCreateWithoutDriver_municipalitiesInputSchema } from './municipalitiesUncheckedCreateWithoutDriver_municipalitiesInputSchema';
 import { municipalitiesWhereInputSchema } from './municipalitiesWhereInputSchema';
 
-export const municipalitiesUpsertWithoutDriver_municipalitiesInputSchema: z.ZodType<Prisma.municipalitiesUpsertWithoutDriver_municipalitiesInput> = z.object({
-  update: z.union([ z.lazy(() => municipalitiesUpdateWithoutDriver_municipalitiesInputSchema),z.lazy(() => municipalitiesUncheckedUpdateWithoutDriver_municipalitiesInputSchema) ]),
-  create: z.union([ z.lazy(() => municipalitiesCreateWithoutDriver_municipalitiesInputSchema),z.lazy(() => municipalitiesUncheckedCreateWithoutDriver_municipalitiesInputSchema) ]),
-  where: z.lazy(() => municipalitiesWhereInputSchema).optional()
-}).strict();
+export const municipalitiesUpsertWithoutDriver_municipalitiesInputSchema: z.ZodType<Prisma.municipalitiesUpsertWithoutDriver_municipalitiesInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => municipalitiesUpdateWithoutDriver_municipalitiesInputSchema),
+				z.lazy(() => municipalitiesUncheckedUpdateWithoutDriver_municipalitiesInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => municipalitiesCreateWithoutDriver_municipalitiesInputSchema),
+				z.lazy(() => municipalitiesUncheckedCreateWithoutDriver_municipalitiesInputSchema),
+			]),
+			where: z.lazy(() => municipalitiesWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default municipalitiesUpsertWithoutDriver_municipalitiesInputSchema;

@@ -5,9 +5,15 @@ import { transactionsScalarWhereInputSchema } from './transactionsScalarWhereInp
 import { transactionsUpdateManyMutationInputSchema } from './transactionsUpdateManyMutationInputSchema';
 import { transactionsUncheckedUpdateManyWithoutWallet_fundsInputSchema } from './transactionsUncheckedUpdateManyWithoutWallet_fundsInputSchema';
 
-export const transactionsUpdateManyWithWhereWithoutWallet_fundsInputSchema: z.ZodType<Prisma.transactionsUpdateManyWithWhereWithoutWallet_fundsInput> = z.object({
-  where: z.lazy(() => transactionsScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => transactionsUpdateManyMutationInputSchema),z.lazy(() => transactionsUncheckedUpdateManyWithoutWallet_fundsInputSchema) ]),
-}).strict();
+export const transactionsUpdateManyWithWhereWithoutWallet_fundsInputSchema: z.ZodType<Prisma.transactionsUpdateManyWithWhereWithoutWallet_fundsInput> =
+	z
+		.object({
+			where: z.lazy(() => transactionsScalarWhereInputSchema),
+			data: z.union([
+				z.lazy(() => transactionsUpdateManyMutationInputSchema),
+				z.lazy(() => transactionsUncheckedUpdateManyWithoutWallet_fundsInputSchema),
+			]),
+		})
+		.strict();
 
 export default transactionsUpdateManyWithWhereWithoutWallet_fundsInputSchema;

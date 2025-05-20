@@ -7,13 +7,32 @@ import { EnumACTIVITY_TYPEFieldUpdateOperationsInputSchema } from './EnumACTIVIT
 import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateOperationsInputSchema';
 import { NullableDateTimeFieldUpdateOperationsInputSchema } from './NullableDateTimeFieldUpdateOperationsInputSchema';
 
-export const driver_activity_logsUncheckedUpdateWithoutDriverInputSchema: z.ZodType<Prisma.driver_activity_logsUncheckedUpdateWithoutDriverInput> = z.object({
-  driver_activity_log_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  activity_type: z.union([ z.lazy(() => ACTIVITY_TYPESchema),z.lazy(() => EnumACTIVITY_TYPEFieldUpdateOperationsInputSchema) ]).optional(),
-  started_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  ended_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  timeout_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  lockout_until: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-}).strict();
+export const driver_activity_logsUncheckedUpdateWithoutDriverInputSchema: z.ZodType<Prisma.driver_activity_logsUncheckedUpdateWithoutDriverInput> =
+	z
+		.object({
+			driver_activity_log_id: z
+				.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)])
+				.optional(),
+			activity_type: z
+				.union([
+					z.lazy(() => ACTIVITY_TYPESchema),
+					z.lazy(() => EnumACTIVITY_TYPEFieldUpdateOperationsInputSchema),
+				])
+				.optional(),
+			started_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			ended_at: z
+				.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			timeout_at: z
+				.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			lockout_until: z
+				.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+		})
+		.strict();
 
 export default driver_activity_logsUncheckedUpdateWithoutDriverInputSchema;

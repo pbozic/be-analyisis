@@ -6,10 +6,18 @@ import { menusUncheckedCreateWithoutDaily_meal_subscribersInputSchema } from './
 import { menusCreateOrConnectWithoutDaily_meal_subscribersInputSchema } from './menusCreateOrConnectWithoutDaily_meal_subscribersInputSchema';
 import { menusWhereUniqueInputSchema } from './menusWhereUniqueInputSchema';
 
-export const menusCreateNestedOneWithoutDaily_meal_subscribersInputSchema: z.ZodType<Prisma.menusCreateNestedOneWithoutDaily_meal_subscribersInput> = z.object({
-  create: z.union([ z.lazy(() => menusCreateWithoutDaily_meal_subscribersInputSchema),z.lazy(() => menusUncheckedCreateWithoutDaily_meal_subscribersInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => menusCreateOrConnectWithoutDaily_meal_subscribersInputSchema).optional(),
-  connect: z.lazy(() => menusWhereUniqueInputSchema).optional()
-}).strict();
+export const menusCreateNestedOneWithoutDaily_meal_subscribersInputSchema: z.ZodType<Prisma.menusCreateNestedOneWithoutDaily_meal_subscribersInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => menusCreateWithoutDaily_meal_subscribersInputSchema),
+					z.lazy(() => menusUncheckedCreateWithoutDaily_meal_subscribersInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => menusCreateOrConnectWithoutDaily_meal_subscribersInputSchema).optional(),
+			connect: z.lazy(() => menusWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default menusCreateNestedOneWithoutDaily_meal_subscribersInputSchema;

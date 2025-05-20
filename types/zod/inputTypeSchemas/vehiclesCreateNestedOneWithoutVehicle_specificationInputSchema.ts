@@ -6,10 +6,18 @@ import { vehiclesUncheckedCreateWithoutVehicle_specificationInputSchema } from '
 import { vehiclesCreateOrConnectWithoutVehicle_specificationInputSchema } from './vehiclesCreateOrConnectWithoutVehicle_specificationInputSchema';
 import { vehiclesWhereUniqueInputSchema } from './vehiclesWhereUniqueInputSchema';
 
-export const vehiclesCreateNestedOneWithoutVehicle_specificationInputSchema: z.ZodType<Prisma.vehiclesCreateNestedOneWithoutVehicle_specificationInput> = z.object({
-  create: z.union([ z.lazy(() => vehiclesCreateWithoutVehicle_specificationInputSchema),z.lazy(() => vehiclesUncheckedCreateWithoutVehicle_specificationInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => vehiclesCreateOrConnectWithoutVehicle_specificationInputSchema).optional(),
-  connect: z.lazy(() => vehiclesWhereUniqueInputSchema).optional()
-}).strict();
+export const vehiclesCreateNestedOneWithoutVehicle_specificationInputSchema: z.ZodType<Prisma.vehiclesCreateNestedOneWithoutVehicle_specificationInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => vehiclesCreateWithoutVehicle_specificationInputSchema),
+					z.lazy(() => vehiclesUncheckedCreateWithoutVehicle_specificationInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => vehiclesCreateOrConnectWithoutVehicle_specificationInputSchema).optional(),
+			connect: z.lazy(() => vehiclesWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default vehiclesCreateNestedOneWithoutVehicle_specificationInputSchema;

@@ -1,10 +1,13 @@
 {
-  "mon": [["12:00", "13:00"], ["14:00", "15:00"]],
-  "tue": [["12:00", "13:00"]],
-  "wed": null,
-  "thu": null,
-  "fri": null,
-  "sat": null,
-  "sun": null,
-  "holidays": null
+	"mon": [
+		["12:00", "13:00"],
+		["14:00", "15:00"]
+	],
+	"tue": [["12:00", "13:00"]],
+	"wed": null,
+	"thu": null,
+	"fri": null,
+	"sat": null,
+	"sun": null,
+	"holidays": null
 }

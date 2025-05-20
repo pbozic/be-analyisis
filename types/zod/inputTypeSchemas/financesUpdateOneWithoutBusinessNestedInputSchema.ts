@@ -11,14 +11,28 @@ import { financesUpdateToOneWithWhereWithoutBusinessInputSchema } from './financ
 import { financesUpdateWithoutBusinessInputSchema } from './financesUpdateWithoutBusinessInputSchema';
 import { financesUncheckedUpdateWithoutBusinessInputSchema } from './financesUncheckedUpdateWithoutBusinessInputSchema';
 
-export const financesUpdateOneWithoutBusinessNestedInputSchema: z.ZodType<Prisma.financesUpdateOneWithoutBusinessNestedInput> = z.object({
-  create: z.union([ z.lazy(() => financesCreateWithoutBusinessInputSchema),z.lazy(() => financesUncheckedCreateWithoutBusinessInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => financesCreateOrConnectWithoutBusinessInputSchema).optional(),
-  upsert: z.lazy(() => financesUpsertWithoutBusinessInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => financesWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => financesWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => financesWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => financesUpdateToOneWithWhereWithoutBusinessInputSchema),z.lazy(() => financesUpdateWithoutBusinessInputSchema),z.lazy(() => financesUncheckedUpdateWithoutBusinessInputSchema) ]).optional(),
-}).strict();
+export const financesUpdateOneWithoutBusinessNestedInputSchema: z.ZodType<Prisma.financesUpdateOneWithoutBusinessNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => financesCreateWithoutBusinessInputSchema),
+					z.lazy(() => financesUncheckedCreateWithoutBusinessInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => financesCreateOrConnectWithoutBusinessInputSchema).optional(),
+			upsert: z.lazy(() => financesUpsertWithoutBusinessInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => financesWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => financesWhereInputSchema)]).optional(),
+			connect: z.lazy(() => financesWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => financesUpdateToOneWithWhereWithoutBusinessInputSchema),
+					z.lazy(() => financesUpdateWithoutBusinessInputSchema),
+					z.lazy(() => financesUncheckedUpdateWithoutBusinessInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default financesUpdateOneWithoutBusinessNestedInputSchema;

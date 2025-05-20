@@ -1,34 +1,34 @@
 services:
-  klikni_elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.17.1
-    restart: unless-stopped
-    env_file:
-      - ../../.env
-    volumes:
-      - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-      - ./scripts:/usr/share/elasticsearch/scripts
-      - es-data:/usr/share/elasticsearch/data
-    environment:
-      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-      - ES_JAVA_OPTS=-Xms1g -Xmx2g
-      - discovery.type=single-node
-    ports:
-      - "127.0.0.1:9200:9200"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    networks:
-      - shared_network
-    deploy:
-      resources:
-        limits:
-          cpus: "0.6"
-          memory: 2g
-        reservations:
-          cpus: "0.2"
-          memory: 1g
+    klikni_elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.17.1
+        restart: unless-stopped
+        env_file:
+            - ../../.env
+        volumes:
+            - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+            - ./scripts:/usr/share/elasticsearch/scripts
+            - es-data:/usr/share/elasticsearch/data
+        environment:
+            - ELASTIC_USERNAME=${ELASTIC_USERNAME}
+            - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+            - ES_JAVA_OPTS=-Xms1g -Xmx2g
+            - discovery.type=single-node
+        ports:
+            - '127.0.0.1:9200:9200'
+        ulimits:
+            memlock:
+                soft: -1
+                hard: -1
+        networks:
+            - shared_network
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.6'
+                    memory: 2g
+                reservations:
+                    cpus: '0.2'
+                    memory: 1g
 networks:
-  shared_network:
-    driver: bridge
+    shared_network:
+        driver: bridge

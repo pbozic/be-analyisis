@@ -3,16 +3,19 @@ import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { SortOrderSchema } from './SortOrderSchema';
 
-export const taxi_order_sentCountOrderByAggregateInputSchema: z.ZodType<Prisma.taxi_order_sentCountOrderByAggregateInput> = z.object({
-  taxi_order_sent_id: z.lazy(() => SortOrderSchema).optional(),
-  order_id: z.lazy(() => SortOrderSchema).optional(),
-  driver_id: z.lazy(() => SortOrderSchema).optional(),
-  accepted: z.lazy(() => SortOrderSchema).optional(),
-  location: z.lazy(() => SortOrderSchema).optional(),
-  timeline: z.lazy(() => SortOrderSchema).optional(),
-  created_at: z.lazy(() => SortOrderSchema).optional(),
-  updated_at: z.lazy(() => SortOrderSchema).optional(),
-  rejected: z.lazy(() => SortOrderSchema).optional()
-}).strict();
+export const taxi_order_sentCountOrderByAggregateInputSchema: z.ZodType<Prisma.taxi_order_sentCountOrderByAggregateInput> =
+	z
+		.object({
+			taxi_order_sent_id: z.lazy(() => SortOrderSchema).optional(),
+			order_id: z.lazy(() => SortOrderSchema).optional(),
+			driver_id: z.lazy(() => SortOrderSchema).optional(),
+			accepted: z.lazy(() => SortOrderSchema).optional(),
+			location: z.lazy(() => SortOrderSchema).optional(),
+			timeline: z.lazy(() => SortOrderSchema).optional(),
+			created_at: z.lazy(() => SortOrderSchema).optional(),
+			updated_at: z.lazy(() => SortOrderSchema).optional(),
+			rejected: z.lazy(() => SortOrderSchema).optional(),
+		})
+		.strict();
 
 export default taxi_order_sentCountOrderByAggregateInputSchema;

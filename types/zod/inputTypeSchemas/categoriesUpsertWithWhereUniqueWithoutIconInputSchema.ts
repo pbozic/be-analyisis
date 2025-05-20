@@ -7,10 +7,19 @@ import { categoriesUncheckedUpdateWithoutIconInputSchema } from './categoriesUnc
 import { categoriesCreateWithoutIconInputSchema } from './categoriesCreateWithoutIconInputSchema';
 import { categoriesUncheckedCreateWithoutIconInputSchema } from './categoriesUncheckedCreateWithoutIconInputSchema';
 
-export const categoriesUpsertWithWhereUniqueWithoutIconInputSchema: z.ZodType<Prisma.categoriesUpsertWithWhereUniqueWithoutIconInput> = z.object({
-  where: z.lazy(() => categoriesWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => categoriesUpdateWithoutIconInputSchema),z.lazy(() => categoriesUncheckedUpdateWithoutIconInputSchema) ]),
-  create: z.union([ z.lazy(() => categoriesCreateWithoutIconInputSchema),z.lazy(() => categoriesUncheckedCreateWithoutIconInputSchema) ]),
-}).strict();
+export const categoriesUpsertWithWhereUniqueWithoutIconInputSchema: z.ZodType<Prisma.categoriesUpsertWithWhereUniqueWithoutIconInput> =
+	z
+		.object({
+			where: z.lazy(() => categoriesWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => categoriesUpdateWithoutIconInputSchema),
+				z.lazy(() => categoriesUncheckedUpdateWithoutIconInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => categoriesCreateWithoutIconInputSchema),
+				z.lazy(() => categoriesUncheckedCreateWithoutIconInputSchema),
+			]),
+		})
+		.strict();
 
 export default categoriesUpsertWithWhereUniqueWithoutIconInputSchema;

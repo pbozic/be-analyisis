@@ -8,24 +8,33 @@ import { vehicle_driversUncheckedCreateNestedManyWithoutVehicleInputSchema } fro
 import { taxi_ordersUncheckedCreateNestedManyWithoutVehicleInputSchema } from './taxi_ordersUncheckedCreateNestedManyWithoutVehicleInputSchema';
 import { driversUncheckedCreateNestedOneWithoutCurrent_vehicleInputSchema } from './driversUncheckedCreateNestedOneWithoutCurrent_vehicleInputSchema';
 
-export const vehiclesUncheckedCreateWithoutDelivery_ordersInputSchema: z.ZodType<Prisma.vehiclesUncheckedCreateWithoutDelivery_ordersInput> = z.object({
-  vehicle_id: z.string().uuid().optional(),
-  business_id: z.string().optional().nullable(),
-  active: z.boolean().optional().nullable(),
-  class: z.lazy(() => VEHICLE_CLASSSchema).optional().nullable(),
-  category: z.lazy(() => VEHICLE_CATEGORYSchema).optional().nullable(),
-  make: z.string().optional().nullable(),
-  model: z.string().optional().nullable(),
-  color: z.string().optional().nullable(),
-  license_plate: z.string().optional().nullable(),
-  created_at: z.coerce.date().optional(),
-  updated_at: z.coerce.date().optional(),
-  delivery_driver_id: z.string().optional().nullable(),
-  vehicle_specification_id: z.string().optional().nullable(),
-  documents: z.lazy(() => documentsUncheckedCreateNestedManyWithoutVehiclesInputSchema).optional(),
-  drivers: z.lazy(() => vehicle_driversUncheckedCreateNestedManyWithoutVehicleInputSchema).optional(),
-  taxi_orders: z.lazy(() => taxi_ordersUncheckedCreateNestedManyWithoutVehicleInputSchema).optional(),
-  current_driver: z.lazy(() => driversUncheckedCreateNestedOneWithoutCurrent_vehicleInputSchema).optional()
-}).strict();
+export const vehiclesUncheckedCreateWithoutDelivery_ordersInputSchema: z.ZodType<Prisma.vehiclesUncheckedCreateWithoutDelivery_ordersInput> =
+	z
+		.object({
+			vehicle_id: z.string().uuid().optional(),
+			business_id: z.string().optional().nullable(),
+			active: z.boolean().optional().nullable(),
+			class: z
+				.lazy(() => VEHICLE_CLASSSchema)
+				.optional()
+				.nullable(),
+			category: z
+				.lazy(() => VEHICLE_CATEGORYSchema)
+				.optional()
+				.nullable(),
+			make: z.string().optional().nullable(),
+			model: z.string().optional().nullable(),
+			color: z.string().optional().nullable(),
+			license_plate: z.string().optional().nullable(),
+			created_at: z.coerce.date().optional(),
+			updated_at: z.coerce.date().optional(),
+			delivery_driver_id: z.string().optional().nullable(),
+			vehicle_specification_id: z.string().optional().nullable(),
+			documents: z.lazy(() => documentsUncheckedCreateNestedManyWithoutVehiclesInputSchema).optional(),
+			drivers: z.lazy(() => vehicle_driversUncheckedCreateNestedManyWithoutVehicleInputSchema).optional(),
+			taxi_orders: z.lazy(() => taxi_ordersUncheckedCreateNestedManyWithoutVehicleInputSchema).optional(),
+			current_driver: z.lazy(() => driversUncheckedCreateNestedOneWithoutCurrent_vehicleInputSchema).optional(),
+		})
+		.strict();
 
 export default vehiclesUncheckedCreateWithoutDelivery_ordersInputSchema;

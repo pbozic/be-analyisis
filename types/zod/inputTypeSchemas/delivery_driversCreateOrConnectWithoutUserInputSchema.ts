@@ -5,9 +5,15 @@ import { delivery_driversWhereUniqueInputSchema } from './delivery_driversWhereU
 import { delivery_driversCreateWithoutUserInputSchema } from './delivery_driversCreateWithoutUserInputSchema';
 import { delivery_driversUncheckedCreateWithoutUserInputSchema } from './delivery_driversUncheckedCreateWithoutUserInputSchema';
 
-export const delivery_driversCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.delivery_driversCreateOrConnectWithoutUserInput> = z.object({
-  where: z.lazy(() => delivery_driversWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => delivery_driversCreateWithoutUserInputSchema),z.lazy(() => delivery_driversUncheckedCreateWithoutUserInputSchema) ]),
-}).strict();
+export const delivery_driversCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.delivery_driversCreateOrConnectWithoutUserInput> =
+	z
+		.object({
+			where: z.lazy(() => delivery_driversWhereUniqueInputSchema),
+			create: z.union([
+				z.lazy(() => delivery_driversCreateWithoutUserInputSchema),
+				z.lazy(() => delivery_driversUncheckedCreateWithoutUserInputSchema),
+			]),
+		})
+		.strict();
 
 export default delivery_driversCreateOrConnectWithoutUserInputSchema;

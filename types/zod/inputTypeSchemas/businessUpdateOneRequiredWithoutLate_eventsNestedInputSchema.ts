@@ -10,12 +10,26 @@ import { businessUpdateToOneWithWhereWithoutLate_eventsInputSchema } from './bus
 import { businessUpdateWithoutLate_eventsInputSchema } from './businessUpdateWithoutLate_eventsInputSchema';
 import { businessUncheckedUpdateWithoutLate_eventsInputSchema } from './businessUncheckedUpdateWithoutLate_eventsInputSchema';
 
-export const businessUpdateOneRequiredWithoutLate_eventsNestedInputSchema: z.ZodType<Prisma.businessUpdateOneRequiredWithoutLate_eventsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => businessCreateWithoutLate_eventsInputSchema),z.lazy(() => businessUncheckedCreateWithoutLate_eventsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => businessCreateOrConnectWithoutLate_eventsInputSchema).optional(),
-  upsert: z.lazy(() => businessUpsertWithoutLate_eventsInputSchema).optional(),
-  connect: z.lazy(() => businessWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => businessUpdateToOneWithWhereWithoutLate_eventsInputSchema),z.lazy(() => businessUpdateWithoutLate_eventsInputSchema),z.lazy(() => businessUncheckedUpdateWithoutLate_eventsInputSchema) ]).optional(),
-}).strict();
+export const businessUpdateOneRequiredWithoutLate_eventsNestedInputSchema: z.ZodType<Prisma.businessUpdateOneRequiredWithoutLate_eventsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => businessCreateWithoutLate_eventsInputSchema),
+					z.lazy(() => businessUncheckedCreateWithoutLate_eventsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => businessCreateOrConnectWithoutLate_eventsInputSchema).optional(),
+			upsert: z.lazy(() => businessUpsertWithoutLate_eventsInputSchema).optional(),
+			connect: z.lazy(() => businessWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => businessUpdateToOneWithWhereWithoutLate_eventsInputSchema),
+					z.lazy(() => businessUpdateWithoutLate_eventsInputSchema),
+					z.lazy(() => businessUncheckedUpdateWithoutLate_eventsInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default businessUpdateOneRequiredWithoutLate_eventsNestedInputSchema;

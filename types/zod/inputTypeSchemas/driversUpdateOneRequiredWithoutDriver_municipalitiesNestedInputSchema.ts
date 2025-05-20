@@ -10,12 +10,26 @@ import { driversUpdateToOneWithWhereWithoutDriver_municipalitiesInputSchema } fr
 import { driversUpdateWithoutDriver_municipalitiesInputSchema } from './driversUpdateWithoutDriver_municipalitiesInputSchema';
 import { driversUncheckedUpdateWithoutDriver_municipalitiesInputSchema } from './driversUncheckedUpdateWithoutDriver_municipalitiesInputSchema';
 
-export const driversUpdateOneRequiredWithoutDriver_municipalitiesNestedInputSchema: z.ZodType<Prisma.driversUpdateOneRequiredWithoutDriver_municipalitiesNestedInput> = z.object({
-  create: z.union([ z.lazy(() => driversCreateWithoutDriver_municipalitiesInputSchema),z.lazy(() => driversUncheckedCreateWithoutDriver_municipalitiesInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => driversCreateOrConnectWithoutDriver_municipalitiesInputSchema).optional(),
-  upsert: z.lazy(() => driversUpsertWithoutDriver_municipalitiesInputSchema).optional(),
-  connect: z.lazy(() => driversWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => driversUpdateToOneWithWhereWithoutDriver_municipalitiesInputSchema),z.lazy(() => driversUpdateWithoutDriver_municipalitiesInputSchema),z.lazy(() => driversUncheckedUpdateWithoutDriver_municipalitiesInputSchema) ]).optional(),
-}).strict();
+export const driversUpdateOneRequiredWithoutDriver_municipalitiesNestedInputSchema: z.ZodType<Prisma.driversUpdateOneRequiredWithoutDriver_municipalitiesNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => driversCreateWithoutDriver_municipalitiesInputSchema),
+					z.lazy(() => driversUncheckedCreateWithoutDriver_municipalitiesInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => driversCreateOrConnectWithoutDriver_municipalitiesInputSchema).optional(),
+			upsert: z.lazy(() => driversUpsertWithoutDriver_municipalitiesInputSchema).optional(),
+			connect: z.lazy(() => driversWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => driversUpdateToOneWithWhereWithoutDriver_municipalitiesInputSchema),
+					z.lazy(() => driversUpdateWithoutDriver_municipalitiesInputSchema),
+					z.lazy(() => driversUncheckedUpdateWithoutDriver_municipalitiesInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default driversUpdateOneRequiredWithoutDriver_municipalitiesNestedInputSchema;

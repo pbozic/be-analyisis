@@ -5,9 +5,15 @@ import { documentsScalarWhereInputSchema } from './documentsScalarWhereInputSche
 import { documentsUpdateManyMutationInputSchema } from './documentsUpdateManyMutationInputSchema';
 import { documentsUncheckedUpdateManyWithoutBusinessInputSchema } from './documentsUncheckedUpdateManyWithoutBusinessInputSchema';
 
-export const documentsUpdateManyWithWhereWithoutBusinessInputSchema: z.ZodType<Prisma.documentsUpdateManyWithWhereWithoutBusinessInput> = z.object({
-  where: z.lazy(() => documentsScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => documentsUpdateManyMutationInputSchema),z.lazy(() => documentsUncheckedUpdateManyWithoutBusinessInputSchema) ]),
-}).strict();
+export const documentsUpdateManyWithWhereWithoutBusinessInputSchema: z.ZodType<Prisma.documentsUpdateManyWithWhereWithoutBusinessInput> =
+	z
+		.object({
+			where: z.lazy(() => documentsScalarWhereInputSchema),
+			data: z.union([
+				z.lazy(() => documentsUpdateManyMutationInputSchema),
+				z.lazy(() => documentsUncheckedUpdateManyWithoutBusinessInputSchema),
+			]),
+		})
+		.strict();
 
 export default documentsUpdateManyWithWhereWithoutBusinessInputSchema;

@@ -8,20 +8,41 @@ import { IntFilterSchema } from './IntFilterSchema';
 import { StringNullableFilterSchema } from './StringNullableFilterSchema';
 import { DateTimeFilterSchema } from './DateTimeFilterSchema';
 
-export const order_lobby_itemsScalarWhereInputSchema: z.ZodType<Prisma.order_lobby_itemsScalarWhereInput> = z.object({
-  AND: z.union([ z.lazy(() => order_lobby_itemsScalarWhereInputSchema),z.lazy(() => order_lobby_itemsScalarWhereInputSchema).array() ]).optional(),
-  OR: z.lazy(() => order_lobby_itemsScalarWhereInputSchema).array().optional(),
-  NOT: z.union([ z.lazy(() => order_lobby_itemsScalarWhereInputSchema),z.lazy(() => order_lobby_itemsScalarWhereInputSchema).array() ]).optional(),
-  order_lobby_items_id: z.union([ z.lazy(() => UuidFilterSchema),z.string() ]).optional(),
-  order_lobbies_id: z.union([ z.lazy(() => UuidFilterSchema),z.string() ]).optional(),
-  menu_item_id: z.union([ z.lazy(() => UuidFilterSchema),z.string() ]).optional(),
-  user_id: z.union([ z.lazy(() => UuidNullableFilterSchema),z.string() ]).optional().nullable(),
-  sides: z.lazy(() => StringNullableListFilterSchema).optional(),
-  extras: z.lazy(() => StringNullableListFilterSchema).optional(),
-  quantity: z.union([ z.lazy(() => IntFilterSchema),z.number() ]).optional(),
-  customer_note: z.union([ z.lazy(() => StringNullableFilterSchema),z.string() ]).optional().nullable(),
-  created_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-  updated_at: z.union([ z.lazy(() => DateTimeFilterSchema),z.coerce.date() ]).optional(),
-}).strict();
+export const order_lobby_itemsScalarWhereInputSchema: z.ZodType<Prisma.order_lobby_itemsScalarWhereInput> = z
+	.object({
+		AND: z
+			.union([
+				z.lazy(() => order_lobby_itemsScalarWhereInputSchema),
+				z.lazy(() => order_lobby_itemsScalarWhereInputSchema).array(),
+			])
+			.optional(),
+		OR: z
+			.lazy(() => order_lobby_itemsScalarWhereInputSchema)
+			.array()
+			.optional(),
+		NOT: z
+			.union([
+				z.lazy(() => order_lobby_itemsScalarWhereInputSchema),
+				z.lazy(() => order_lobby_itemsScalarWhereInputSchema).array(),
+			])
+			.optional(),
+		order_lobby_items_id: z.union([z.lazy(() => UuidFilterSchema), z.string()]).optional(),
+		order_lobbies_id: z.union([z.lazy(() => UuidFilterSchema), z.string()]).optional(),
+		menu_item_id: z.union([z.lazy(() => UuidFilterSchema), z.string()]).optional(),
+		user_id: z
+			.union([z.lazy(() => UuidNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+		sides: z.lazy(() => StringNullableListFilterSchema).optional(),
+		extras: z.lazy(() => StringNullableListFilterSchema).optional(),
+		quantity: z.union([z.lazy(() => IntFilterSchema), z.number()]).optional(),
+		customer_note: z
+			.union([z.lazy(() => StringNullableFilterSchema), z.string()])
+			.optional()
+			.nullable(),
+		created_at: z.union([z.lazy(() => DateTimeFilterSchema), z.coerce.date()]).optional(),
+		updated_at: z.union([z.lazy(() => DateTimeFilterSchema), z.coerce.date()]).optional(),
+	})
+	.strict();
 
 export default order_lobby_itemsScalarWhereInputSchema;

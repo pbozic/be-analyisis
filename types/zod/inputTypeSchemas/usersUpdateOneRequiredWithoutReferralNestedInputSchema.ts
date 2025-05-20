@@ -10,12 +10,26 @@ import { usersUpdateToOneWithWhereWithoutReferralInputSchema } from './usersUpda
 import { usersUpdateWithoutReferralInputSchema } from './usersUpdateWithoutReferralInputSchema';
 import { usersUncheckedUpdateWithoutReferralInputSchema } from './usersUncheckedUpdateWithoutReferralInputSchema';
 
-export const usersUpdateOneRequiredWithoutReferralNestedInputSchema: z.ZodType<Prisma.usersUpdateOneRequiredWithoutReferralNestedInput> = z.object({
-  create: z.union([ z.lazy(() => usersCreateWithoutReferralInputSchema),z.lazy(() => usersUncheckedCreateWithoutReferralInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutReferralInputSchema).optional(),
-  upsert: z.lazy(() => usersUpsertWithoutReferralInputSchema).optional(),
-  connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => usersUpdateToOneWithWhereWithoutReferralInputSchema),z.lazy(() => usersUpdateWithoutReferralInputSchema),z.lazy(() => usersUncheckedUpdateWithoutReferralInputSchema) ]).optional(),
-}).strict();
+export const usersUpdateOneRequiredWithoutReferralNestedInputSchema: z.ZodType<Prisma.usersUpdateOneRequiredWithoutReferralNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => usersCreateWithoutReferralInputSchema),
+					z.lazy(() => usersUncheckedCreateWithoutReferralInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutReferralInputSchema).optional(),
+			upsert: z.lazy(() => usersUpsertWithoutReferralInputSchema).optional(),
+			connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => usersUpdateToOneWithWhereWithoutReferralInputSchema),
+					z.lazy(() => usersUpdateWithoutReferralInputSchema),
+					z.lazy(() => usersUncheckedUpdateWithoutReferralInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default usersUpdateOneRequiredWithoutReferralNestedInputSchema;

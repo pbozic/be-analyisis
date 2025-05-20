@@ -7,10 +7,19 @@ import { business_usersCreateWithoutTaxi_ordersInputSchema } from './business_us
 import { business_usersUncheckedCreateWithoutTaxi_ordersInputSchema } from './business_usersUncheckedCreateWithoutTaxi_ordersInputSchema';
 import { business_usersWhereInputSchema } from './business_usersWhereInputSchema';
 
-export const business_usersUpsertWithoutTaxi_ordersInputSchema: z.ZodType<Prisma.business_usersUpsertWithoutTaxi_ordersInput> = z.object({
-  update: z.union([ z.lazy(() => business_usersUpdateWithoutTaxi_ordersInputSchema),z.lazy(() => business_usersUncheckedUpdateWithoutTaxi_ordersInputSchema) ]),
-  create: z.union([ z.lazy(() => business_usersCreateWithoutTaxi_ordersInputSchema),z.lazy(() => business_usersUncheckedCreateWithoutTaxi_ordersInputSchema) ]),
-  where: z.lazy(() => business_usersWhereInputSchema).optional()
-}).strict();
+export const business_usersUpsertWithoutTaxi_ordersInputSchema: z.ZodType<Prisma.business_usersUpsertWithoutTaxi_ordersInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => business_usersUpdateWithoutTaxi_ordersInputSchema),
+				z.lazy(() => business_usersUncheckedUpdateWithoutTaxi_ordersInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => business_usersCreateWithoutTaxi_ordersInputSchema),
+				z.lazy(() => business_usersUncheckedCreateWithoutTaxi_ordersInputSchema),
+			]),
+			where: z.lazy(() => business_usersWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default business_usersUpsertWithoutTaxi_ordersInputSchema;

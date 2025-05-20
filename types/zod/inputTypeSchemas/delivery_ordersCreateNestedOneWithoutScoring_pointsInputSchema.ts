@@ -6,10 +6,18 @@ import { delivery_ordersUncheckedCreateWithoutScoring_pointsInputSchema } from '
 import { delivery_ordersCreateOrConnectWithoutScoring_pointsInputSchema } from './delivery_ordersCreateOrConnectWithoutScoring_pointsInputSchema';
 import { delivery_ordersWhereUniqueInputSchema } from './delivery_ordersWhereUniqueInputSchema';
 
-export const delivery_ordersCreateNestedOneWithoutScoring_pointsInputSchema: z.ZodType<Prisma.delivery_ordersCreateNestedOneWithoutScoring_pointsInput> = z.object({
-  create: z.union([ z.lazy(() => delivery_ordersCreateWithoutScoring_pointsInputSchema),z.lazy(() => delivery_ordersUncheckedCreateWithoutScoring_pointsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => delivery_ordersCreateOrConnectWithoutScoring_pointsInputSchema).optional(),
-  connect: z.lazy(() => delivery_ordersWhereUniqueInputSchema).optional()
-}).strict();
+export const delivery_ordersCreateNestedOneWithoutScoring_pointsInputSchema: z.ZodType<Prisma.delivery_ordersCreateNestedOneWithoutScoring_pointsInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => delivery_ordersCreateWithoutScoring_pointsInputSchema),
+					z.lazy(() => delivery_ordersUncheckedCreateWithoutScoring_pointsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => delivery_ordersCreateOrConnectWithoutScoring_pointsInputSchema).optional(),
+			connect: z.lazy(() => delivery_ordersWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default delivery_ordersCreateNestedOneWithoutScoring_pointsInputSchema;

@@ -5,9 +5,15 @@ import { taxi_ordersWhereUniqueInputSchema } from './taxi_ordersWhereUniqueInput
 import { taxi_ordersUpdateWithoutBusiness_clientsInputSchema } from './taxi_ordersUpdateWithoutBusiness_clientsInputSchema';
 import { taxi_ordersUncheckedUpdateWithoutBusiness_clientsInputSchema } from './taxi_ordersUncheckedUpdateWithoutBusiness_clientsInputSchema';
 
-export const taxi_ordersUpdateWithWhereUniqueWithoutBusiness_clientsInputSchema: z.ZodType<Prisma.taxi_ordersUpdateWithWhereUniqueWithoutBusiness_clientsInput> = z.object({
-  where: z.lazy(() => taxi_ordersWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => taxi_ordersUpdateWithoutBusiness_clientsInputSchema),z.lazy(() => taxi_ordersUncheckedUpdateWithoutBusiness_clientsInputSchema) ]),
-}).strict();
+export const taxi_ordersUpdateWithWhereUniqueWithoutBusiness_clientsInputSchema: z.ZodType<Prisma.taxi_ordersUpdateWithWhereUniqueWithoutBusiness_clientsInput> =
+	z
+		.object({
+			where: z.lazy(() => taxi_ordersWhereUniqueInputSchema),
+			data: z.union([
+				z.lazy(() => taxi_ordersUpdateWithoutBusiness_clientsInputSchema),
+				z.lazy(() => taxi_ordersUncheckedUpdateWithoutBusiness_clientsInputSchema),
+			]),
+		})
+		.strict();
 
 export default taxi_ordersUpdateWithWhereUniqueWithoutBusiness_clientsInputSchema;

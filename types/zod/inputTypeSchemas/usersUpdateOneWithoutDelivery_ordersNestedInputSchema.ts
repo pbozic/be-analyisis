@@ -11,14 +11,28 @@ import { usersUpdateToOneWithWhereWithoutDelivery_ordersInputSchema } from './us
 import { usersUpdateWithoutDelivery_ordersInputSchema } from './usersUpdateWithoutDelivery_ordersInputSchema';
 import { usersUncheckedUpdateWithoutDelivery_ordersInputSchema } from './usersUncheckedUpdateWithoutDelivery_ordersInputSchema';
 
-export const usersUpdateOneWithoutDelivery_ordersNestedInputSchema: z.ZodType<Prisma.usersUpdateOneWithoutDelivery_ordersNestedInput> = z.object({
-  create: z.union([ z.lazy(() => usersCreateWithoutDelivery_ordersInputSchema),z.lazy(() => usersUncheckedCreateWithoutDelivery_ordersInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutDelivery_ordersInputSchema).optional(),
-  upsert: z.lazy(() => usersUpsertWithoutDelivery_ordersInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => usersWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => usersWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => usersUpdateToOneWithWhereWithoutDelivery_ordersInputSchema),z.lazy(() => usersUpdateWithoutDelivery_ordersInputSchema),z.lazy(() => usersUncheckedUpdateWithoutDelivery_ordersInputSchema) ]).optional(),
-}).strict();
+export const usersUpdateOneWithoutDelivery_ordersNestedInputSchema: z.ZodType<Prisma.usersUpdateOneWithoutDelivery_ordersNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => usersCreateWithoutDelivery_ordersInputSchema),
+					z.lazy(() => usersUncheckedCreateWithoutDelivery_ordersInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutDelivery_ordersInputSchema).optional(),
+			upsert: z.lazy(() => usersUpsertWithoutDelivery_ordersInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => usersWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => usersWhereInputSchema)]).optional(),
+			connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => usersUpdateToOneWithWhereWithoutDelivery_ordersInputSchema),
+					z.lazy(() => usersUpdateWithoutDelivery_ordersInputSchema),
+					z.lazy(() => usersUncheckedUpdateWithoutDelivery_ordersInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default usersUpdateOneWithoutDelivery_ordersNestedInputSchema;

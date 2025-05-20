@@ -6,10 +6,18 @@ import { delivery_ordersUncheckedCreateWithoutLate_eventsInputSchema } from './d
 import { delivery_ordersCreateOrConnectWithoutLate_eventsInputSchema } from './delivery_ordersCreateOrConnectWithoutLate_eventsInputSchema';
 import { delivery_ordersWhereUniqueInputSchema } from './delivery_ordersWhereUniqueInputSchema';
 
-export const delivery_ordersCreateNestedOneWithoutLate_eventsInputSchema: z.ZodType<Prisma.delivery_ordersCreateNestedOneWithoutLate_eventsInput> = z.object({
-  create: z.union([ z.lazy(() => delivery_ordersCreateWithoutLate_eventsInputSchema),z.lazy(() => delivery_ordersUncheckedCreateWithoutLate_eventsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => delivery_ordersCreateOrConnectWithoutLate_eventsInputSchema).optional(),
-  connect: z.lazy(() => delivery_ordersWhereUniqueInputSchema).optional()
-}).strict();
+export const delivery_ordersCreateNestedOneWithoutLate_eventsInputSchema: z.ZodType<Prisma.delivery_ordersCreateNestedOneWithoutLate_eventsInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => delivery_ordersCreateWithoutLate_eventsInputSchema),
+					z.lazy(() => delivery_ordersUncheckedCreateWithoutLate_eventsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => delivery_ordersCreateOrConnectWithoutLate_eventsInputSchema).optional(),
+			connect: z.lazy(() => delivery_ordersWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default delivery_ordersCreateNestedOneWithoutLate_eventsInputSchema;

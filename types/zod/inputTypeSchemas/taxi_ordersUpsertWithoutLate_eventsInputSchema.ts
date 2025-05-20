@@ -7,10 +7,19 @@ import { taxi_ordersCreateWithoutLate_eventsInputSchema } from './taxi_ordersCre
 import { taxi_ordersUncheckedCreateWithoutLate_eventsInputSchema } from './taxi_ordersUncheckedCreateWithoutLate_eventsInputSchema';
 import { taxi_ordersWhereInputSchema } from './taxi_ordersWhereInputSchema';
 
-export const taxi_ordersUpsertWithoutLate_eventsInputSchema: z.ZodType<Prisma.taxi_ordersUpsertWithoutLate_eventsInput> = z.object({
-  update: z.union([ z.lazy(() => taxi_ordersUpdateWithoutLate_eventsInputSchema),z.lazy(() => taxi_ordersUncheckedUpdateWithoutLate_eventsInputSchema) ]),
-  create: z.union([ z.lazy(() => taxi_ordersCreateWithoutLate_eventsInputSchema),z.lazy(() => taxi_ordersUncheckedCreateWithoutLate_eventsInputSchema) ]),
-  where: z.lazy(() => taxi_ordersWhereInputSchema).optional()
-}).strict();
+export const taxi_ordersUpsertWithoutLate_eventsInputSchema: z.ZodType<Prisma.taxi_ordersUpsertWithoutLate_eventsInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => taxi_ordersUpdateWithoutLate_eventsInputSchema),
+				z.lazy(() => taxi_ordersUncheckedUpdateWithoutLate_eventsInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => taxi_ordersCreateWithoutLate_eventsInputSchema),
+				z.lazy(() => taxi_ordersUncheckedCreateWithoutLate_eventsInputSchema),
+			]),
+			where: z.lazy(() => taxi_ordersWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default taxi_ordersUpsertWithoutLate_eventsInputSchema;

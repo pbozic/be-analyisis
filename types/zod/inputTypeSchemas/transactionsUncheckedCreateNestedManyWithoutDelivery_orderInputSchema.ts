@@ -7,11 +7,31 @@ import { transactionsCreateOrConnectWithoutDelivery_orderInputSchema } from './t
 import { transactionsCreateManyDelivery_orderInputEnvelopeSchema } from './transactionsCreateManyDelivery_orderInputEnvelopeSchema';
 import { transactionsWhereUniqueInputSchema } from './transactionsWhereUniqueInputSchema';
 
-export const transactionsUncheckedCreateNestedManyWithoutDelivery_orderInputSchema: z.ZodType<Prisma.transactionsUncheckedCreateNestedManyWithoutDelivery_orderInput> = z.object({
-  create: z.union([ z.lazy(() => transactionsCreateWithoutDelivery_orderInputSchema),z.lazy(() => transactionsCreateWithoutDelivery_orderInputSchema).array(),z.lazy(() => transactionsUncheckedCreateWithoutDelivery_orderInputSchema),z.lazy(() => transactionsUncheckedCreateWithoutDelivery_orderInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => transactionsCreateOrConnectWithoutDelivery_orderInputSchema),z.lazy(() => transactionsCreateOrConnectWithoutDelivery_orderInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => transactionsCreateManyDelivery_orderInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => transactionsWhereUniqueInputSchema),z.lazy(() => transactionsWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const transactionsUncheckedCreateNestedManyWithoutDelivery_orderInputSchema: z.ZodType<Prisma.transactionsUncheckedCreateNestedManyWithoutDelivery_orderInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => transactionsCreateWithoutDelivery_orderInputSchema),
+					z.lazy(() => transactionsCreateWithoutDelivery_orderInputSchema).array(),
+					z.lazy(() => transactionsUncheckedCreateWithoutDelivery_orderInputSchema),
+					z.lazy(() => transactionsUncheckedCreateWithoutDelivery_orderInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => transactionsCreateOrConnectWithoutDelivery_orderInputSchema),
+					z.lazy(() => transactionsCreateOrConnectWithoutDelivery_orderInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => transactionsCreateManyDelivery_orderInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => transactionsWhereUniqueInputSchema),
+					z.lazy(() => transactionsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default transactionsUncheckedCreateNestedManyWithoutDelivery_orderInputSchema;

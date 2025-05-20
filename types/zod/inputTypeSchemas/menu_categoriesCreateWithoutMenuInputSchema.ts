@@ -8,19 +8,25 @@ import { menu_itemsCreateNestedManyWithoutMenu_categoryInputSchema } from './men
 import { menu_categories_categoriesCreateNestedManyWithoutMenu_categoryInputSchema } from './menu_categories_categoriesCreateNestedManyWithoutMenu_categoryInputSchema';
 import { daily_meals_subscriptionsCreateNestedManyWithoutMenu_categoryInputSchema } from './daily_meals_subscriptionsCreateNestedManyWithoutMenu_categoryInputSchema';
 
-export const menu_categoriesCreateWithoutMenuInputSchema: z.ZodType<Prisma.menu_categoriesCreateWithoutMenuInput> = z.object({
-  menu_category_id: z.string().uuid().optional(),
-  names: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  description: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  categories: z.union([ z.lazy(() => menu_categoriesCreatecategoriesInputSchema),z.string().array() ]).optional(),
-  business_id: z.string(),
-  order: z.number().int().optional().nullable(),
-  price: z.number().optional().nullable(),
-  menu_items_ordered: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  menu_order_index: z.number().int().optional().nullable(),
-  menu_items: z.lazy(() => menu_itemsCreateNestedManyWithoutMenu_categoryInputSchema).optional(),
-  menu_categories_categories: z.lazy(() => menu_categories_categoriesCreateNestedManyWithoutMenu_categoryInputSchema).optional(),
-  daily_meal_subscribers: z.lazy(() => daily_meals_subscriptionsCreateNestedManyWithoutMenu_categoryInputSchema).optional()
-}).strict();
+export const menu_categoriesCreateWithoutMenuInputSchema: z.ZodType<Prisma.menu_categoriesCreateWithoutMenuInput> = z
+	.object({
+		menu_category_id: z.string().uuid().optional(),
+		names: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+		description: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+		categories: z.union([z.lazy(() => menu_categoriesCreatecategoriesInputSchema), z.string().array()]).optional(),
+		business_id: z.string(),
+		order: z.number().int().optional().nullable(),
+		price: z.number().optional().nullable(),
+		menu_items_ordered: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+		menu_order_index: z.number().int().optional().nullable(),
+		menu_items: z.lazy(() => menu_itemsCreateNestedManyWithoutMenu_categoryInputSchema).optional(),
+		menu_categories_categories: z
+			.lazy(() => menu_categories_categoriesCreateNestedManyWithoutMenu_categoryInputSchema)
+			.optional(),
+		daily_meal_subscribers: z
+			.lazy(() => daily_meals_subscriptionsCreateNestedManyWithoutMenu_categoryInputSchema)
+			.optional(),
+	})
+	.strict();
 
 export default menu_categoriesCreateWithoutMenuInputSchema;

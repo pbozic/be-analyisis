@@ -5,9 +5,15 @@ import { categoriesWhereUniqueInputSchema } from './categoriesWhereUniqueInputSc
 import { categoriesCreateWithoutIconInputSchema } from './categoriesCreateWithoutIconInputSchema';
 import { categoriesUncheckedCreateWithoutIconInputSchema } from './categoriesUncheckedCreateWithoutIconInputSchema';
 
-export const categoriesCreateOrConnectWithoutIconInputSchema: z.ZodType<Prisma.categoriesCreateOrConnectWithoutIconInput> = z.object({
-  where: z.lazy(() => categoriesWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => categoriesCreateWithoutIconInputSchema),z.lazy(() => categoriesUncheckedCreateWithoutIconInputSchema) ]),
-}).strict();
+export const categoriesCreateOrConnectWithoutIconInputSchema: z.ZodType<Prisma.categoriesCreateOrConnectWithoutIconInput> =
+	z
+		.object({
+			where: z.lazy(() => categoriesWhereUniqueInputSchema),
+			create: z.union([
+				z.lazy(() => categoriesCreateWithoutIconInputSchema),
+				z.lazy(() => categoriesUncheckedCreateWithoutIconInputSchema),
+			]),
+		})
+		.strict();
 
 export default categoriesCreateOrConnectWithoutIconInputSchema;

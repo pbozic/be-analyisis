@@ -11,14 +11,28 @@ import { fiscal_devicesUpdateToOneWithWhereWithoutBusinessesInputSchema } from '
 import { fiscal_devicesUpdateWithoutBusinessesInputSchema } from './fiscal_devicesUpdateWithoutBusinessesInputSchema';
 import { fiscal_devicesUncheckedUpdateWithoutBusinessesInputSchema } from './fiscal_devicesUncheckedUpdateWithoutBusinessesInputSchema';
 
-export const fiscal_devicesUpdateOneWithoutBusinessesNestedInputSchema: z.ZodType<Prisma.fiscal_devicesUpdateOneWithoutBusinessesNestedInput> = z.object({
-  create: z.union([ z.lazy(() => fiscal_devicesCreateWithoutBusinessesInputSchema),z.lazy(() => fiscal_devicesUncheckedCreateWithoutBusinessesInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => fiscal_devicesCreateOrConnectWithoutBusinessesInputSchema).optional(),
-  upsert: z.lazy(() => fiscal_devicesUpsertWithoutBusinessesInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => fiscal_devicesWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => fiscal_devicesWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => fiscal_devicesWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => fiscal_devicesUpdateToOneWithWhereWithoutBusinessesInputSchema),z.lazy(() => fiscal_devicesUpdateWithoutBusinessesInputSchema),z.lazy(() => fiscal_devicesUncheckedUpdateWithoutBusinessesInputSchema) ]).optional(),
-}).strict();
+export const fiscal_devicesUpdateOneWithoutBusinessesNestedInputSchema: z.ZodType<Prisma.fiscal_devicesUpdateOneWithoutBusinessesNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => fiscal_devicesCreateWithoutBusinessesInputSchema),
+					z.lazy(() => fiscal_devicesUncheckedCreateWithoutBusinessesInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => fiscal_devicesCreateOrConnectWithoutBusinessesInputSchema).optional(),
+			upsert: z.lazy(() => fiscal_devicesUpsertWithoutBusinessesInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => fiscal_devicesWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => fiscal_devicesWhereInputSchema)]).optional(),
+			connect: z.lazy(() => fiscal_devicesWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => fiscal_devicesUpdateToOneWithWhereWithoutBusinessesInputSchema),
+					z.lazy(() => fiscal_devicesUpdateWithoutBusinessesInputSchema),
+					z.lazy(() => fiscal_devicesUncheckedUpdateWithoutBusinessesInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default fiscal_devicesUpdateOneWithoutBusinessesNestedInputSchema;

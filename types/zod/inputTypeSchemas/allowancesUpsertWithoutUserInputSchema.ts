@@ -7,10 +7,18 @@ import { allowancesCreateWithoutUserInputSchema } from './allowancesCreateWithou
 import { allowancesUncheckedCreateWithoutUserInputSchema } from './allowancesUncheckedCreateWithoutUserInputSchema';
 import { allowancesWhereInputSchema } from './allowancesWhereInputSchema';
 
-export const allowancesUpsertWithoutUserInputSchema: z.ZodType<Prisma.allowancesUpsertWithoutUserInput> = z.object({
-  update: z.union([ z.lazy(() => allowancesUpdateWithoutUserInputSchema),z.lazy(() => allowancesUncheckedUpdateWithoutUserInputSchema) ]),
-  create: z.union([ z.lazy(() => allowancesCreateWithoutUserInputSchema),z.lazy(() => allowancesUncheckedCreateWithoutUserInputSchema) ]),
-  where: z.lazy(() => allowancesWhereInputSchema).optional()
-}).strict();
+export const allowancesUpsertWithoutUserInputSchema: z.ZodType<Prisma.allowancesUpsertWithoutUserInput> = z
+	.object({
+		update: z.union([
+			z.lazy(() => allowancesUpdateWithoutUserInputSchema),
+			z.lazy(() => allowancesUncheckedUpdateWithoutUserInputSchema),
+		]),
+		create: z.union([
+			z.lazy(() => allowancesCreateWithoutUserInputSchema),
+			z.lazy(() => allowancesUncheckedCreateWithoutUserInputSchema),
+		]),
+		where: z.lazy(() => allowancesWhereInputSchema).optional(),
+	})
+	.strict();
 
 export default allowancesUpsertWithoutUserInputSchema;

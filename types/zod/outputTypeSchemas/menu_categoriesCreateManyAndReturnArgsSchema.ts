@@ -1,10 +1,12 @@
 import { z } from 'zod';
 import type { Prisma } from '@prisma/client';
-import { menu_categoriesCreateManyInputSchema } from '../inputTypeSchemas/menu_categoriesCreateManyInputSchema'
+import { menu_categoriesCreateManyInputSchema } from '../inputTypeSchemas/menu_categoriesCreateManyInputSchema';
 
-export const menu_categoriesCreateManyAndReturnArgsSchema: z.ZodType<Prisma.menu_categoriesCreateManyAndReturnArgs> = z.object({
-  data: z.union([ menu_categoriesCreateManyInputSchema,menu_categoriesCreateManyInputSchema.array() ]),
-  skipDuplicates: z.boolean().optional(),
-}).strict() ;
+export const menu_categoriesCreateManyAndReturnArgsSchema: z.ZodType<Prisma.menu_categoriesCreateManyAndReturnArgs> = z
+	.object({
+		data: z.union([menu_categoriesCreateManyInputSchema, menu_categoriesCreateManyInputSchema.array()]),
+		skipDuplicates: z.boolean().optional(),
+	})
+	.strict();
 
 export default menu_categoriesCreateManyAndReturnArgsSchema;

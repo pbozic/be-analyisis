@@ -6,14 +6,24 @@ import { NestedEnumDOCUMENT_TYPEWithAggregatesFilterSchema } from './NestedEnumD
 import { NestedIntFilterSchema } from './NestedIntFilterSchema';
 import { NestedEnumDOCUMENT_TYPEFilterSchema } from './NestedEnumDOCUMENT_TYPEFilterSchema';
 
-export const EnumDOCUMENT_TYPEWithAggregatesFilterSchema: z.ZodType<Prisma.EnumDOCUMENT_TYPEWithAggregatesFilter> = z.object({
-  equals: z.lazy(() => DOCUMENT_TYPESchema).optional(),
-  in: z.lazy(() => DOCUMENT_TYPESchema).array().optional(),
-  notIn: z.lazy(() => DOCUMENT_TYPESchema).array().optional(),
-  not: z.union([ z.lazy(() => DOCUMENT_TYPESchema),z.lazy(() => NestedEnumDOCUMENT_TYPEWithAggregatesFilterSchema) ]).optional(),
-  _count: z.lazy(() => NestedIntFilterSchema).optional(),
-  _min: z.lazy(() => NestedEnumDOCUMENT_TYPEFilterSchema).optional(),
-  _max: z.lazy(() => NestedEnumDOCUMENT_TYPEFilterSchema).optional()
-}).strict();
+export const EnumDOCUMENT_TYPEWithAggregatesFilterSchema: z.ZodType<Prisma.EnumDOCUMENT_TYPEWithAggregatesFilter> = z
+	.object({
+		equals: z.lazy(() => DOCUMENT_TYPESchema).optional(),
+		in: z
+			.lazy(() => DOCUMENT_TYPESchema)
+			.array()
+			.optional(),
+		notIn: z
+			.lazy(() => DOCUMENT_TYPESchema)
+			.array()
+			.optional(),
+		not: z
+			.union([z.lazy(() => DOCUMENT_TYPESchema), z.lazy(() => NestedEnumDOCUMENT_TYPEWithAggregatesFilterSchema)])
+			.optional(),
+		_count: z.lazy(() => NestedIntFilterSchema).optional(),
+		_min: z.lazy(() => NestedEnumDOCUMENT_TYPEFilterSchema).optional(),
+		_max: z.lazy(() => NestedEnumDOCUMENT_TYPEFilterSchema).optional(),
+	})
+	.strict();
 
 export default EnumDOCUMENT_TYPEWithAggregatesFilterSchema;

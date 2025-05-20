@@ -7,12 +7,21 @@ import { COMPANY_ROLESchema } from './COMPANY_ROLESchema';
 import { EnumCOMPANY_ROLEFieldUpdateOperationsInputSchema } from './EnumCOMPANY_ROLEFieldUpdateOperationsInputSchema';
 import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateOperationsInputSchema';
 
-export const business_usersUpdateManyMutationInputSchema: z.ZodType<Prisma.business_usersUpdateManyMutationInput> = z.object({
-  business_users_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  online: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  company_role: z.union([ z.lazy(() => COMPANY_ROLESchema),z.lazy(() => EnumCOMPANY_ROLEFieldUpdateOperationsInputSchema) ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
+export const business_usersUpdateManyMutationInputSchema: z.ZodType<Prisma.business_usersUpdateManyMutationInput> = z
+	.object({
+		business_users_id: z
+			.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)])
+			.optional(),
+		online: z
+			.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		company_role: z
+			.union([z.lazy(() => COMPANY_ROLESchema), z.lazy(() => EnumCOMPANY_ROLEFieldUpdateOperationsInputSchema)])
+			.optional(),
+		created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+	})
+	.strict();
 
 export default business_usersUpdateManyMutationInputSchema;

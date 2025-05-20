@@ -1,23 +1,23 @@
 type: object
 properties:
-  driver_history_location_id:
-    type: string
-  driver_id:
-    type: string
-  order_id:
-    type: string
-  location:
-    type: object
-  driver:
-    $ref: ./drivers.yaml
-  order:
-    $ref: ./taxi_orders.yaml
-  created_at:
-    type: string
-  updated_at:
-    type: string
+    driver_history_location_id:
+        type: string
+    driver_id:
+        type: string
+    order_id:
+        type: string
+    location:
+        type: object
+    driver:
+        $ref: ./drivers.yaml
+    order:
+        $ref: ./taxi_orders.yaml
+    created_at:
+        type: string
+    updated_at:
+        type: string
 required:
-  - driver_history_location_id
-  - driver_id
-  - created_at
-  - updated_at
+    - driver_history_location_id
+    - driver_id
+    - created_at
+    - updated_at

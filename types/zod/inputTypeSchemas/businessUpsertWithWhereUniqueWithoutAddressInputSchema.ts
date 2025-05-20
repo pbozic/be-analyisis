@@ -7,10 +7,19 @@ import { businessUncheckedUpdateWithoutAddressInputSchema } from './businessUnch
 import { businessCreateWithoutAddressInputSchema } from './businessCreateWithoutAddressInputSchema';
 import { businessUncheckedCreateWithoutAddressInputSchema } from './businessUncheckedCreateWithoutAddressInputSchema';
 
-export const businessUpsertWithWhereUniqueWithoutAddressInputSchema: z.ZodType<Prisma.businessUpsertWithWhereUniqueWithoutAddressInput> = z.object({
-  where: z.lazy(() => businessWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => businessUpdateWithoutAddressInputSchema),z.lazy(() => businessUncheckedUpdateWithoutAddressInputSchema) ]),
-  create: z.union([ z.lazy(() => businessCreateWithoutAddressInputSchema),z.lazy(() => businessUncheckedCreateWithoutAddressInputSchema) ]),
-}).strict();
+export const businessUpsertWithWhereUniqueWithoutAddressInputSchema: z.ZodType<Prisma.businessUpsertWithWhereUniqueWithoutAddressInput> =
+	z
+		.object({
+			where: z.lazy(() => businessWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => businessUpdateWithoutAddressInputSchema),
+				z.lazy(() => businessUncheckedUpdateWithoutAddressInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => businessCreateWithoutAddressInputSchema),
+				z.lazy(() => businessUncheckedCreateWithoutAddressInputSchema),
+			]),
+		})
+		.strict();
 
 export default businessUpsertWithWhereUniqueWithoutAddressInputSchema;

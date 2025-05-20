@@ -11,14 +11,28 @@ import { business_usersUpdateToOneWithWhereWithoutTaxi_ordersInputSchema } from 
 import { business_usersUpdateWithoutTaxi_ordersInputSchema } from './business_usersUpdateWithoutTaxi_ordersInputSchema';
 import { business_usersUncheckedUpdateWithoutTaxi_ordersInputSchema } from './business_usersUncheckedUpdateWithoutTaxi_ordersInputSchema';
 
-export const business_usersUpdateOneWithoutTaxi_ordersNestedInputSchema: z.ZodType<Prisma.business_usersUpdateOneWithoutTaxi_ordersNestedInput> = z.object({
-  create: z.union([ z.lazy(() => business_usersCreateWithoutTaxi_ordersInputSchema),z.lazy(() => business_usersUncheckedCreateWithoutTaxi_ordersInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => business_usersCreateOrConnectWithoutTaxi_ordersInputSchema).optional(),
-  upsert: z.lazy(() => business_usersUpsertWithoutTaxi_ordersInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => business_usersWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => business_usersWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => business_usersWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => business_usersUpdateToOneWithWhereWithoutTaxi_ordersInputSchema),z.lazy(() => business_usersUpdateWithoutTaxi_ordersInputSchema),z.lazy(() => business_usersUncheckedUpdateWithoutTaxi_ordersInputSchema) ]).optional(),
-}).strict();
+export const business_usersUpdateOneWithoutTaxi_ordersNestedInputSchema: z.ZodType<Prisma.business_usersUpdateOneWithoutTaxi_ordersNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => business_usersCreateWithoutTaxi_ordersInputSchema),
+					z.lazy(() => business_usersUncheckedCreateWithoutTaxi_ordersInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => business_usersCreateOrConnectWithoutTaxi_ordersInputSchema).optional(),
+			upsert: z.lazy(() => business_usersUpsertWithoutTaxi_ordersInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => business_usersWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => business_usersWhereInputSchema)]).optional(),
+			connect: z.lazy(() => business_usersWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => business_usersUpdateToOneWithWhereWithoutTaxi_ordersInputSchema),
+					z.lazy(() => business_usersUpdateWithoutTaxi_ordersInputSchema),
+					z.lazy(() => business_usersUncheckedUpdateWithoutTaxi_ordersInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default business_usersUpdateOneWithoutTaxi_ordersNestedInputSchema;

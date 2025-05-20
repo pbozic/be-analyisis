@@ -11,14 +11,28 @@ import { taxi_ordersUpdateToOneWithWhereWithoutLate_eventsInputSchema } from './
 import { taxi_ordersUpdateWithoutLate_eventsInputSchema } from './taxi_ordersUpdateWithoutLate_eventsInputSchema';
 import { taxi_ordersUncheckedUpdateWithoutLate_eventsInputSchema } from './taxi_ordersUncheckedUpdateWithoutLate_eventsInputSchema';
 
-export const taxi_ordersUpdateOneWithoutLate_eventsNestedInputSchema: z.ZodType<Prisma.taxi_ordersUpdateOneWithoutLate_eventsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => taxi_ordersCreateWithoutLate_eventsInputSchema),z.lazy(() => taxi_ordersUncheckedCreateWithoutLate_eventsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => taxi_ordersCreateOrConnectWithoutLate_eventsInputSchema).optional(),
-  upsert: z.lazy(() => taxi_ordersUpsertWithoutLate_eventsInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => taxi_ordersWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => taxi_ordersWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => taxi_ordersWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => taxi_ordersUpdateToOneWithWhereWithoutLate_eventsInputSchema),z.lazy(() => taxi_ordersUpdateWithoutLate_eventsInputSchema),z.lazy(() => taxi_ordersUncheckedUpdateWithoutLate_eventsInputSchema) ]).optional(),
-}).strict();
+export const taxi_ordersUpdateOneWithoutLate_eventsNestedInputSchema: z.ZodType<Prisma.taxi_ordersUpdateOneWithoutLate_eventsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => taxi_ordersCreateWithoutLate_eventsInputSchema),
+					z.lazy(() => taxi_ordersUncheckedCreateWithoutLate_eventsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => taxi_ordersCreateOrConnectWithoutLate_eventsInputSchema).optional(),
+			upsert: z.lazy(() => taxi_ordersUpsertWithoutLate_eventsInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => taxi_ordersWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => taxi_ordersWhereInputSchema)]).optional(),
+			connect: z.lazy(() => taxi_ordersWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => taxi_ordersUpdateToOneWithWhereWithoutLate_eventsInputSchema),
+					z.lazy(() => taxi_ordersUpdateWithoutLate_eventsInputSchema),
+					z.lazy(() => taxi_ordersUncheckedUpdateWithoutLate_eventsInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default taxi_ordersUpdateOneWithoutLate_eventsNestedInputSchema;

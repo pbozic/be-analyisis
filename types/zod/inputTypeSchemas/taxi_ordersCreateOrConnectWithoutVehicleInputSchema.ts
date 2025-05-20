@@ -5,9 +5,15 @@ import { taxi_ordersWhereUniqueInputSchema } from './taxi_ordersWhereUniqueInput
 import { taxi_ordersCreateWithoutVehicleInputSchema } from './taxi_ordersCreateWithoutVehicleInputSchema';
 import { taxi_ordersUncheckedCreateWithoutVehicleInputSchema } from './taxi_ordersUncheckedCreateWithoutVehicleInputSchema';
 
-export const taxi_ordersCreateOrConnectWithoutVehicleInputSchema: z.ZodType<Prisma.taxi_ordersCreateOrConnectWithoutVehicleInput> = z.object({
-  where: z.lazy(() => taxi_ordersWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => taxi_ordersCreateWithoutVehicleInputSchema),z.lazy(() => taxi_ordersUncheckedCreateWithoutVehicleInputSchema) ]),
-}).strict();
+export const taxi_ordersCreateOrConnectWithoutVehicleInputSchema: z.ZodType<Prisma.taxi_ordersCreateOrConnectWithoutVehicleInput> =
+	z
+		.object({
+			where: z.lazy(() => taxi_ordersWhereUniqueInputSchema),
+			create: z.union([
+				z.lazy(() => taxi_ordersCreateWithoutVehicleInputSchema),
+				z.lazy(() => taxi_ordersUncheckedCreateWithoutVehicleInputSchema),
+			]),
+		})
+		.strict();
 
 export default taxi_ordersCreateOrConnectWithoutVehicleInputSchema;

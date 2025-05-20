@@ -7,11 +7,31 @@ import { flag_historyCreateOrConnectWithoutFlagInputSchema } from './flag_histor
 import { flag_historyCreateManyFlagInputEnvelopeSchema } from './flag_historyCreateManyFlagInputEnvelopeSchema';
 import { flag_historyWhereUniqueInputSchema } from './flag_historyWhereUniqueInputSchema';
 
-export const flag_historyUncheckedCreateNestedManyWithoutFlagInputSchema: z.ZodType<Prisma.flag_historyUncheckedCreateNestedManyWithoutFlagInput> = z.object({
-  create: z.union([ z.lazy(() => flag_historyCreateWithoutFlagInputSchema),z.lazy(() => flag_historyCreateWithoutFlagInputSchema).array(),z.lazy(() => flag_historyUncheckedCreateWithoutFlagInputSchema),z.lazy(() => flag_historyUncheckedCreateWithoutFlagInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => flag_historyCreateOrConnectWithoutFlagInputSchema),z.lazy(() => flag_historyCreateOrConnectWithoutFlagInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => flag_historyCreateManyFlagInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => flag_historyWhereUniqueInputSchema),z.lazy(() => flag_historyWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const flag_historyUncheckedCreateNestedManyWithoutFlagInputSchema: z.ZodType<Prisma.flag_historyUncheckedCreateNestedManyWithoutFlagInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => flag_historyCreateWithoutFlagInputSchema),
+					z.lazy(() => flag_historyCreateWithoutFlagInputSchema).array(),
+					z.lazy(() => flag_historyUncheckedCreateWithoutFlagInputSchema),
+					z.lazy(() => flag_historyUncheckedCreateWithoutFlagInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => flag_historyCreateOrConnectWithoutFlagInputSchema),
+					z.lazy(() => flag_historyCreateOrConnectWithoutFlagInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => flag_historyCreateManyFlagInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => flag_historyWhereUniqueInputSchema),
+					z.lazy(() => flag_historyWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default flag_historyUncheckedCreateNestedManyWithoutFlagInputSchema;

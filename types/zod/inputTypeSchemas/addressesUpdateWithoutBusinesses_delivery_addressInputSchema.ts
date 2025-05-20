@@ -8,20 +8,40 @@ import { businessUpdateManyWithoutAddressNestedInputSchema } from './businessUpd
 import { business_usersUpdateManyWithoutOperating_addressNestedInputSchema } from './business_usersUpdateManyWithoutOperating_addressNestedInputSchema';
 import { daily_meals_subscriptionsUpdateManyWithoutAddressNestedInputSchema } from './daily_meals_subscriptionsUpdateManyWithoutAddressNestedInputSchema';
 
-export const addressesUpdateWithoutBusinesses_delivery_addressInputSchema: z.ZodType<Prisma.addressesUpdateWithoutBusinesses_delivery_addressInput> = z.object({
-  address_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  address: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  latitude: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  longitude: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  street: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  house_number: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  city: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  country: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  postal: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  users: z.lazy(() => user_addressUpdateManyWithoutAddressNestedInputSchema).optional(),
-  businesses: z.lazy(() => businessUpdateManyWithoutAddressNestedInputSchema).optional(),
-  business_users: z.lazy(() => business_usersUpdateManyWithoutOperating_addressNestedInputSchema).optional(),
-  daily_meals_subscriptions: z.lazy(() => daily_meals_subscriptionsUpdateManyWithoutAddressNestedInputSchema).optional()
-}).strict();
+export const addressesUpdateWithoutBusinesses_delivery_addressInputSchema: z.ZodType<Prisma.addressesUpdateWithoutBusinesses_delivery_addressInput> =
+	z
+		.object({
+			address_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			address: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			latitude: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			longitude: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			street: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			house_number: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			city: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			country: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			postal: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			users: z.lazy(() => user_addressUpdateManyWithoutAddressNestedInputSchema).optional(),
+			businesses: z.lazy(() => businessUpdateManyWithoutAddressNestedInputSchema).optional(),
+			business_users: z.lazy(() => business_usersUpdateManyWithoutOperating_addressNestedInputSchema).optional(),
+			daily_meals_subscriptions: z
+				.lazy(() => daily_meals_subscriptionsUpdateManyWithoutAddressNestedInputSchema)
+				.optional(),
+		})
+		.strict();
 
 export default addressesUpdateWithoutBusinesses_delivery_addressInputSchema;

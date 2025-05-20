@@ -7,10 +7,19 @@ import { reservationsUncheckedUpdateWithoutUserInputSchema } from './reservation
 import { reservationsCreateWithoutUserInputSchema } from './reservationsCreateWithoutUserInputSchema';
 import { reservationsUncheckedCreateWithoutUserInputSchema } from './reservationsUncheckedCreateWithoutUserInputSchema';
 
-export const reservationsUpsertWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.reservationsUpsertWithWhereUniqueWithoutUserInput> = z.object({
-  where: z.lazy(() => reservationsWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => reservationsUpdateWithoutUserInputSchema),z.lazy(() => reservationsUncheckedUpdateWithoutUserInputSchema) ]),
-  create: z.union([ z.lazy(() => reservationsCreateWithoutUserInputSchema),z.lazy(() => reservationsUncheckedCreateWithoutUserInputSchema) ]),
-}).strict();
+export const reservationsUpsertWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.reservationsUpsertWithWhereUniqueWithoutUserInput> =
+	z
+		.object({
+			where: z.lazy(() => reservationsWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => reservationsUpdateWithoutUserInputSchema),
+				z.lazy(() => reservationsUncheckedUpdateWithoutUserInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => reservationsCreateWithoutUserInputSchema),
+				z.lazy(() => reservationsUncheckedCreateWithoutUserInputSchema),
+			]),
+		})
+		.strict();
 
 export default reservationsUpsertWithWhereUniqueWithoutUserInputSchema;

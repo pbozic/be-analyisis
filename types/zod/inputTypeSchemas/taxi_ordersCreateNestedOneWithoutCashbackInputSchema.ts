@@ -6,10 +6,18 @@ import { taxi_ordersUncheckedCreateWithoutCashbackInputSchema } from './taxi_ord
 import { taxi_ordersCreateOrConnectWithoutCashbackInputSchema } from './taxi_ordersCreateOrConnectWithoutCashbackInputSchema';
 import { taxi_ordersWhereUniqueInputSchema } from './taxi_ordersWhereUniqueInputSchema';
 
-export const taxi_ordersCreateNestedOneWithoutCashbackInputSchema: z.ZodType<Prisma.taxi_ordersCreateNestedOneWithoutCashbackInput> = z.object({
-  create: z.union([ z.lazy(() => taxi_ordersCreateWithoutCashbackInputSchema),z.lazy(() => taxi_ordersUncheckedCreateWithoutCashbackInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => taxi_ordersCreateOrConnectWithoutCashbackInputSchema).optional(),
-  connect: z.lazy(() => taxi_ordersWhereUniqueInputSchema).optional()
-}).strict();
+export const taxi_ordersCreateNestedOneWithoutCashbackInputSchema: z.ZodType<Prisma.taxi_ordersCreateNestedOneWithoutCashbackInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => taxi_ordersCreateWithoutCashbackInputSchema),
+					z.lazy(() => taxi_ordersUncheckedCreateWithoutCashbackInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => taxi_ordersCreateOrConnectWithoutCashbackInputSchema).optional(),
+			connect: z.lazy(() => taxi_ordersWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default taxi_ordersCreateNestedOneWithoutCashbackInputSchema;

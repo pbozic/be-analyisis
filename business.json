@@ -1,183 +1,143 @@
 {
-  "business_id": "1b127df7-19f8-431a-b934-65ce07731511",
-  "address_id": "0dd3ea98-4faa-4b91-9451-f9198ac79d24",
-  "delivery_address_id": "0dd3ea98-4faa-4b91-9451-f9198ac79d24",
-  "finance_id": "7f617a1c-8fb1-4c09-be7e-b43a13aa8153",
-  "type": "MERCHANT",
-  "is_business_unit": false,
-  "business_group_name": null,
-  "name": "Zulauf, Lubowitz and Stanton",
-  "description": "Intuitive uniform knowledge user",
-  "tax_id": "98733321",
-  "registration_id": "33341",
-  "email": "Name_Hessel@gmail.com",
-  "telephone": "+00061891943",
-  "telephone_code": "SI",
-  "telephone_number": "061891943",
-  "website_url": "https://dependable-unique.com",
-  "working_hours": {
-    "fri": [
-      [
-        "10:00",
-        "23:00"
-      ]
-    ],
-    "mon": [
-      [
-        "10:00",
-        "22:00"
-      ]
-    ],
-    "sat": [
-      [
-        "10:00",
-        "23:00"
-      ]
-    ],
-    "sun": [
-      [
-        "10:00",
-        "22:00"
-      ]
-    ],
-    "thu": [
-      [
-        "10:00",
-        "22:00"
-      ]
-    ],
-    "tue": [
-      [
-        "10:00",
-        "22:00"
-      ]
-    ],
-    "wed": [
-      [
-        "10:00",
-        "22:00"
-      ]
-    ],
-    "holidays": [
-      [
-        "10:00",
-        "22:00"
-      ]
-    ]
-  },
-  "seats": 15,
-  "minimum_order": 20,
-  "offers_daily_meals": false,
-  "popular": true,
-  "new": true,
-  "created_at": "2025-03-13T13:41:45.221Z",
-  "updated_at": "2025-03-13T13:41:49.435Z",
-  "parent_business_id": null,
-  "reviewable_id": null,
-  "stripe_account_id": "acct_1R2C2ZIJiqEh9Ls7",
-  "stripe_customer_id": "cus_Rw4AsFJzdO1xy8",
-  "word_buy_stripe_product_id": null,
-  "word_buy_stripe_subscription_id": null,
-  "daily_users_sorted": [],
-  "daily_users_sorting_type": "AUTOMATIC",
-  "restaurant_overwhelmed": false,
-  "activated_at": null,
-  "sales_representative_id": null,
-  "address": {
-    "address_id": "0dd3ea98-4faa-4b91-9451-f9198ac79d24",
-    "address": "902 Ruecker Neck",
-    "latitude": "46.074707359875916",
-    "longitude": "14.461628941490565",
-    "street": null,
-    "house_number": null,
-    "city": null,
-    "country": null,
-    "postal": null
-  },
-  "delivery_address": {
-    "address_id": "0dd3ea98-4faa-4b91-9451-f9198ac79d24",
-    "address": "902 Ruecker Neck",
-    "latitude": "46.074707359875916",
-    "longitude": "14.461628941490565",
-    "street": null,
-    "house_number": null,
-    "city": null,
-    "country": null,
-    "postal": null
-  },
-  "word_buys": [],
-  "menus": [
-    {
-      "menu_id": "90f19ae7-2924-4733-939f-0cd5a689d42c",
-      "business_id": "1b127df7-19f8-431a-b934-65ce07731511",
-      "active": true,
-      "menu_categories_ordered": null,
-      "isDailyMeal": false,
-      "date": null,
-      "categories": []
-    }
-  ],
-  "documents": [
-    {
-      "document_id": "df1f48b4-0dae-47cd-8bd0-51134ae1228f",
-      "document_type": "LOGO",
-      "created_at": "2025-03-13T13:41:46.203Z",
-      "updated_at": "2025-03-13T13:41:46.598Z",
-      "expiration_date": null,
-      "issue_date": null,
-      "additional_info": null,
-      "public": true,
-      "driver_id": null,
-      "delivery_driver_id": null,
-      "business_id": "1b127df7-19f8-431a-b934-65ce07731511",
-      "user_id": null,
-      "vehicle_id": null,
-      "menu_item_id": null,
-      "lost_item_id": null,
-      "transaction_id": null,
-      "files": [
-        {
-          "file_id": "a9274b42-cbd5-4b14-b1ad-463e7131276f",
-          "url": "https://s3.tebi.io/klikni-test/a9274b42-cbd5-4b14-b1ad-463e7131276f.jpeg",
-          "file_type": "IMAGE",
-          "public": true,
-          "mime_type": "image/jpeg",
-          "created_at": "2025-03-13T13:41:46.219Z",
-          "updated_at": "2025-03-13T13:41:46.596Z",
-          "document_id": "df1f48b4-0dae-47cd-8bd0-51134ae1228f"
-        }
-      ]
-    },
-    {
-      "document_id": "63eb6a2b-e657-4372-a705-8086920d19ef",
-      "document_type": "BANNER",
-      "created_at": "2025-03-13T13:41:46.599Z",
-      "updated_at": "2025-03-13T13:41:46.865Z",
-      "expiration_date": null,
-      "issue_date": null,
-      "additional_info": null,
-      "public": true,
-      "driver_id": null,
-      "delivery_driver_id": null,
-      "business_id": "1b127df7-19f8-431a-b934-65ce07731511",
-      "user_id": null,
-      "vehicle_id": null,
-      "menu_item_id": null,
-      "lost_item_id": null,
-      "transaction_id": null,
-      "files": [
-        {
-          "file_id": "73049a2e-8dd4-4df6-ad74-b11285fc33e4",
-          "url": "https://s3.tebi.io/klikni-test/73049a2e-8dd4-4df6-ad74-b11285fc33e4.jpeg",
-          "file_type": "IMAGE",
-          "public": true,
-          "mime_type": "image/jpeg",
-          "created_at": "2025-03-13T13:41:46.600Z",
-          "updated_at": "2025-03-13T13:41:46.862Z",
-          "document_id": "63eb6a2b-e657-4372-a705-8086920d19ef"
-        }
-      ]
-    }
-  ],
-  "promo_sections": []
+	"business_id": "1b127df7-19f8-431a-b934-65ce07731511",
+	"address_id": "0dd3ea98-4faa-4b91-9451-f9198ac79d24",
+	"delivery_address_id": "0dd3ea98-4faa-4b91-9451-f9198ac79d24",
+	"finance_id": "7f617a1c-8fb1-4c09-be7e-b43a13aa8153",
+	"type": "MERCHANT",
+	"is_business_unit": false,
+	"business_group_name": null,
+	"name": "Zulauf, Lubowitz and Stanton",
+	"description": "Intuitive uniform knowledge user",
+	"tax_id": "98733321",
+	"registration_id": "33341",
+	"email": "Name_Hessel@gmail.com",
+	"telephone": "+00061891943",
+	"telephone_code": "SI",
+	"telephone_number": "061891943",
+	"website_url": "https://dependable-unique.com",
+	"working_hours": {
+		"fri": [["10:00", "23:00"]],
+		"mon": [["10:00", "22:00"]],
+		"sat": [["10:00", "23:00"]],
+		"sun": [["10:00", "22:00"]],
+		"thu": [["10:00", "22:00"]],
+		"tue": [["10:00", "22:00"]],
+		"wed": [["10:00", "22:00"]],
+		"holidays": [["10:00", "22:00"]]
+	},
+	"seats": 15,
+	"minimum_order": 20,
+	"offers_daily_meals": false,
+	"popular": true,
+	"new": true,
+	"created_at": "2025-03-13T13:41:45.221Z",
+	"updated_at": "2025-03-13T13:41:49.435Z",
+	"parent_business_id": null,
+	"reviewable_id": null,
+	"stripe_account_id": "acct_1R2C2ZIJiqEh9Ls7",
+	"stripe_customer_id": "cus_Rw4AsFJzdO1xy8",
+	"word_buy_stripe_product_id": null,
+	"word_buy_stripe_subscription_id": null,
+	"daily_users_sorted": [],
+	"daily_users_sorting_type": "AUTOMATIC",
+	"restaurant_overwhelmed": false,
+	"activated_at": null,
+	"sales_representative_id": null,
+	"address": {
+		"address_id": "0dd3ea98-4faa-4b91-9451-f9198ac79d24",
+		"address": "902 Ruecker Neck",
+		"latitude": "46.074707359875916",
+		"longitude": "14.461628941490565",
+		"street": null,
+		"house_number": null,
+		"city": null,
+		"country": null,
+		"postal": null
+	},
+	"delivery_address": {
+		"address_id": "0dd3ea98-4faa-4b91-9451-f9198ac79d24",
+		"address": "902 Ruecker Neck",
+		"latitude": "46.074707359875916",
+		"longitude": "14.461628941490565",
+		"street": null,
+		"house_number": null,
+		"city": null,
+		"country": null,
+		"postal": null
+	},
+	"word_buys": [],
+	"menus": [
+		{
+			"menu_id": "90f19ae7-2924-4733-939f-0cd5a689d42c",
+			"business_id": "1b127df7-19f8-431a-b934-65ce07731511",
+			"active": true,
+			"menu_categories_ordered": null,
+			"isDailyMeal": false,
+			"date": null,
+			"categories": []
+		}
+	],
+	"documents": [
+		{
+			"document_id": "df1f48b4-0dae-47cd-8bd0-51134ae1228f",
+			"document_type": "LOGO",
+			"created_at": "2025-03-13T13:41:46.203Z",
+			"updated_at": "2025-03-13T13:41:46.598Z",
+			"expiration_date": null,
+			"issue_date": null,
+			"additional_info": null,
+			"public": true,
+			"driver_id": null,
+			"delivery_driver_id": null,
+			"business_id": "1b127df7-19f8-431a-b934-65ce07731511",
+			"user_id": null,
+			"vehicle_id": null,
+			"menu_item_id": null,
+			"lost_item_id": null,
+			"transaction_id": null,
+			"files": [
+				{
+					"file_id": "a9274b42-cbd5-4b14-b1ad-463e7131276f",
+					"url": "https://s3.tebi.io/klikni-test/a9274b42-cbd5-4b14-b1ad-463e7131276f.jpeg",
+					"file_type": "IMAGE",
+					"public": true,
+					"mime_type": "image/jpeg",
+					"created_at": "2025-03-13T13:41:46.219Z",
+					"updated_at": "2025-03-13T13:41:46.596Z",
+					"document_id": "df1f48b4-0dae-47cd-8bd0-51134ae1228f"
+				}
+			]
+		},
+		{
+			"document_id": "63eb6a2b-e657-4372-a705-8086920d19ef",
+			"document_type": "BANNER",
+			"created_at": "2025-03-13T13:41:46.599Z",
+			"updated_at": "2025-03-13T13:41:46.865Z",
+			"expiration_date": null,
+			"issue_date": null,
+			"additional_info": null,
+			"public": true,
+			"driver_id": null,
+			"delivery_driver_id": null,
+			"business_id": "1b127df7-19f8-431a-b934-65ce07731511",
+			"user_id": null,
+			"vehicle_id": null,
+			"menu_item_id": null,
+			"lost_item_id": null,
+			"transaction_id": null,
+			"files": [
+				{
+					"file_id": "73049a2e-8dd4-4df6-ad74-b11285fc33e4",
+					"url": "https://s3.tebi.io/klikni-test/73049a2e-8dd4-4df6-ad74-b11285fc33e4.jpeg",
+					"file_type": "IMAGE",
+					"public": true,
+					"mime_type": "image/jpeg",
+					"created_at": "2025-03-13T13:41:46.600Z",
+					"updated_at": "2025-03-13T13:41:46.862Z",
+					"document_id": "63eb6a2b-e657-4372-a705-8086920d19ef"
+				}
+			]
+		}
+	],
+	"promo_sections": []
 }

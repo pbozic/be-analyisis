@@ -10,16 +10,23 @@ import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateO
 import { categoriesUpdateManyWithoutIconNestedInputSchema } from './categoriesUpdateManyWithoutIconNestedInputSchema';
 import { promo_bannersUpdateManyWithoutFilesNestedInputSchema } from './promo_bannersUpdateManyWithoutFilesNestedInputSchema';
 
-export const filesUpdateWithoutDocumentsInputSchema: z.ZodType<Prisma.filesUpdateWithoutDocumentsInput> = z.object({
-  file_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  url: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  file_type: z.union([ z.lazy(() => FILE_TYPESchema),z.lazy(() => EnumFILE_TYPEFieldUpdateOperationsInputSchema) ]).optional(),
-  public: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  mime_type: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  categories: z.lazy(() => categoriesUpdateManyWithoutIconNestedInputSchema).optional(),
-  promo_banners: z.lazy(() => promo_bannersUpdateManyWithoutFilesNestedInputSchema).optional()
-}).strict();
+export const filesUpdateWithoutDocumentsInputSchema: z.ZodType<Prisma.filesUpdateWithoutDocumentsInput> = z
+	.object({
+		file_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		url: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		file_type: z
+			.union([z.lazy(() => FILE_TYPESchema), z.lazy(() => EnumFILE_TYPEFieldUpdateOperationsInputSchema)])
+			.optional(),
+		public: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+		mime_type: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		categories: z.lazy(() => categoriesUpdateManyWithoutIconNestedInputSchema).optional(),
+		promo_banners: z.lazy(() => promo_bannersUpdateManyWithoutFilesNestedInputSchema).optional(),
+	})
+	.strict();
 
 export default filesUpdateWithoutDocumentsInputSchema;

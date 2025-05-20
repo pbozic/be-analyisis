@@ -1,196 +1,156 @@
 {
-  "business": {
-    "data": {
-      "new": true,
-      "type": "MERCHANT",
-      "is_business_unit": false,
-      "name": "Okusi Italije",
-      "description": "Okusite vse vrste testenin",
-      "tax_id": "98733321",
-      "registration_id": "33341",
-      "email": "info@okusi.com",
-      "telephone": "+38641555124",
-      "telephone_code": "SI",
-      "telephone_number": "041555124",
-      "website_url": "okusi.com",
-      "working_hours": {
-        "mon": [
-          [
-            "10:00",
-            "22:00"
-          ]
-        ],
-        "tue": [
-          [
-            "10:00",
-            "22:00"
-          ]
-        ],
-        "wed": [
-          [
-            "10:00",
-            "22:00"
-          ]
-        ],
-        "thu": [
-          [
-            "10:00",
-            "22:00"
-          ]
-        ],
-        "fri": [
-          [
-            "10:00",
-            "23:00"
-          ]
-        ],
-        "sat": [
-          [
-            "10:00",
-            "23:00"
-          ]
-        ],
-        "sun": [
-          [
-            "10:00",
-            "22:00"
-          ]
-        ],
-        "holidays": [
-          [
-            "10:00",
-            "22:00"
-          ]
-        ]
-      },
-      "minimum_order": 20,
-      "business_group_name": null,
-      "seats": 15,
-      "offers_daily_meals": false
-    },
-    "documents": [
-      {
-        "documentData": {
-          "document_type": "OPERATING_PERMIT"
-        },
-        "files": [
-          {
-            "url": "file:///data/user/0/host.exp.exponent/cache/DocumentPicker/4a704e3c-57de-439b-8709-064e13863b46.jpg",
-            "file_type": "IMAGE",
-            "mime_type": "image/jpeg",
-            "base64": ""
-          }
-        ]
-      },
-      {
-        "documentData": {
-          "document_type": "BUSINESS_LICENSE"
-        },
-        "files": [
-          {
-            "url": "file:///data/user/0/host.exp.exponent/cache/DocumentPicker/7995d843-2c90-4061-af58-e4c454f4deac.jpg",
-            "file_type": "IMAGE",
-            "mime_type": "image/jpeg",
-            "base64": ""
-          }
-        ]
-      },
-      {
-        "documentData": {
-          "document_type": "HACCP_CERTIFICATION"
-        },
-        "files": [
-          {
-            "url": "file:///data/user/0/host.exp.exponent/cache/DocumentPicker/1b270080-8fb5-4d43-a432-057cb25f3748.jpg",
-            "file_type": "IMAGE",
-            "mime_type": "image/jpeg",
-            "base64": ""
-          }
-        ]
-      },
-      {
-        "documentData": {
-          "document_type": "LOGO"
-        },
-        "files": [
-          {
-            "url": "file:///data/user/0/host.exp.exponent/cache/DocumentPicker/1c53acae-386b-40e4-8ce4-0edc01975ed4.jpg",
-            "file_type": "IMAGE",
-            "mime_type": "image/jpeg",
-            "base64": ""
-          }
-        ]
-      },
-      {
-        "documentData": {
-          "document_type": "BANNER"
-        },
-        "files": [
-          {
-            "url": "file:///data/user/0/host.exp.exponent/cache/DocumentPicker/0a8f9189-a16f-4bcd-9865-cd11b816a96c.jpg",
-            "file_type": "IMAGE",
-            "mime_type": "image/jpeg",
-            "base64": ""
-          }
-        ]
-      }
-    ],
-    "parent": {
-      "parent_business": null
-    }
-  },
-  "addresses": {
-    "business": {
-      "address": "Slovenska cesta, Ljubljana",
-      "latitude": "46.0521601",
-      "longitude": "14.5033736"
-    },
-    "delivery": {
-      "address": "Slovenska cesta, Ljubljana",
-      "latitude": "46.0521601",
-      "longitude": "14.5033736"
-    }
-  },
-  "finances": {
-    "bank_name": "NLB",
-    "account_holder": "Okusi Italije d.o.o.",
-    "account_number": "Si56555534213377879",
-    "payment_preferences": {
-      "payment_methods": {
-        "cash": true,
-        "mobile": true,
-        "card": true
-      }
-    }
-  },
-  "users": [
-    {
-      "user": {
-        "data": {
-          "user_role": "BUSINESS_OWNER",
-          "first_name": "Andrej",
-          "last_name": "Novak",
-          "email": "andrej.novak@okusi.com",
-          "password": "112358",
-          "telephone": "+38641521663",
-          "telephone_number": "41521663",
-          "telephone_code": "SI",
-          "date_of_birth": "1980-11-12T00:00:00.000+01:00"
-        },
-        "addresses": [
-          {
-            "address": "Gosposvetska cesta, Ljubljana",
-            "latitude": "46.0556646",
-            "longitude": "14.5026335"
-          },
-          {
-            "address": "Slovenska cesta, Ljubljana",
-            "latitude": "46.0521601",
-            "longitude": "14.5033736"
-          }
-        ],
-        "company_role": "DIRECTOR"
-      }
-    }
-  ]
+	"business": {
+		"data": {
+			"new": true,
+			"type": "MERCHANT",
+			"is_business_unit": false,
+			"name": "Okusi Italije",
+			"description": "Okusite vse vrste testenin",
+			"tax_id": "98733321",
+			"registration_id": "33341",
+			"email": "info@okusi.com",
+			"telephone": "+38641555124",
+			"telephone_code": "SI",
+			"telephone_number": "041555124",
+			"website_url": "okusi.com",
+			"working_hours": {
+				"mon": [["10:00", "22:00"]],
+				"tue": [["10:00", "22:00"]],
+				"wed": [["10:00", "22:00"]],
+				"thu": [["10:00", "22:00"]],
+				"fri": [["10:00", "23:00"]],
+				"sat": [["10:00", "23:00"]],
+				"sun": [["10:00", "22:00"]],
+				"holidays": [["10:00", "22:00"]]
+			},
+			"minimum_order": 20,
+			"business_group_name": null,
+			"seats": 15,
+			"offers_daily_meals": false
+		},
+		"documents": [
+			{
+				"documentData": {
+					"document_type": "OPERATING_PERMIT"
+				},
+				"files": [
+					{
+						"url": "file:///data/user/0/host.exp.exponent/cache/DocumentPicker/4a704e3c-57de-439b-8709-064e13863b46.jpg",
+						"file_type": "IMAGE",
+						"mime_type": "image/jpeg",
+						"base64": ""
+					}
+				]
+			},
+			{
+				"documentData": {
+					"document_type": "BUSINESS_LICENSE"
+				},
+				"files": [
+					{
+						"url": "file:///data/user/0/host.exp.exponent/cache/DocumentPicker/7995d843-2c90-4061-af58-e4c454f4deac.jpg",
+						"file_type": "IMAGE",
+						"mime_type": "image/jpeg",
+						"base64": ""
+					}
+				]
+			},
+			{
+				"documentData": {
+					"document_type": "HACCP_CERTIFICATION"
+				},
+				"files": [
+					{
+						"url": "file:///data/user/0/host.exp.exponent/cache/DocumentPicker/1b270080-8fb5-4d43-a432-057cb25f3748.jpg",
+						"file_type": "IMAGE",
+						"mime_type": "image/jpeg",
+						"base64": ""
+					}
+				]
+			},
+			{
+				"documentData": {
+					"document_type": "LOGO"
+				},
+				"files": [
+					{
+						"url": "file:///data/user/0/host.exp.exponent/cache/DocumentPicker/1c53acae-386b-40e4-8ce4-0edc01975ed4.jpg",
+						"file_type": "IMAGE",
+						"mime_type": "image/jpeg",
+						"base64": ""
+					}
+				]
+			},
+			{
+				"documentData": {
+					"document_type": "BANNER"
+				},
+				"files": [
+					{
+						"url": "file:///data/user/0/host.exp.exponent/cache/DocumentPicker/0a8f9189-a16f-4bcd-9865-cd11b816a96c.jpg",
+						"file_type": "IMAGE",
+						"mime_type": "image/jpeg",
+						"base64": ""
+					}
+				]
+			}
+		],
+		"parent": {
+			"parent_business": null
+		}
+	},
+	"addresses": {
+		"business": {
+			"address": "Slovenska cesta, Ljubljana",
+			"latitude": "46.0521601",
+			"longitude": "14.5033736"
+		},
+		"delivery": {
+			"address": "Slovenska cesta, Ljubljana",
+			"latitude": "46.0521601",
+			"longitude": "14.5033736"
+		}
+	},
+	"finances": {
+		"bank_name": "NLB",
+		"account_holder": "Okusi Italije d.o.o.",
+		"account_number": "Si56555534213377879",
+		"payment_preferences": {
+			"payment_methods": {
+				"cash": true,
+				"mobile": true,
+				"card": true
+			}
+		}
+	},
+	"users": [
+		{
+			"user": {
+				"data": {
+					"user_role": "BUSINESS_OWNER",
+					"first_name": "Andrej",
+					"last_name": "Novak",
+					"email": "andrej.novak@okusi.com",
+					"password": "112358",
+					"telephone": "+38641521663",
+					"telephone_number": "41521663",
+					"telephone_code": "SI",
+					"date_of_birth": "1980-11-12T00:00:00.000+01:00"
+				},
+				"addresses": [
+					{
+						"address": "Gosposvetska cesta, Ljubljana",
+						"latitude": "46.0556646",
+						"longitude": "14.5026335"
+					},
+					{
+						"address": "Slovenska cesta, Ljubljana",
+						"latitude": "46.0521601",
+						"longitude": "14.5033736"
+					}
+				],
+				"company_role": "DIRECTOR"
+			}
+		}
+	]
 }

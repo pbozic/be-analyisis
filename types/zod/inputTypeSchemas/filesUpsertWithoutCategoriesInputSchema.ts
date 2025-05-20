@@ -7,10 +7,18 @@ import { filesCreateWithoutCategoriesInputSchema } from './filesCreateWithoutCat
 import { filesUncheckedCreateWithoutCategoriesInputSchema } from './filesUncheckedCreateWithoutCategoriesInputSchema';
 import { filesWhereInputSchema } from './filesWhereInputSchema';
 
-export const filesUpsertWithoutCategoriesInputSchema: z.ZodType<Prisma.filesUpsertWithoutCategoriesInput> = z.object({
-  update: z.union([ z.lazy(() => filesUpdateWithoutCategoriesInputSchema),z.lazy(() => filesUncheckedUpdateWithoutCategoriesInputSchema) ]),
-  create: z.union([ z.lazy(() => filesCreateWithoutCategoriesInputSchema),z.lazy(() => filesUncheckedCreateWithoutCategoriesInputSchema) ]),
-  where: z.lazy(() => filesWhereInputSchema).optional()
-}).strict();
+export const filesUpsertWithoutCategoriesInputSchema: z.ZodType<Prisma.filesUpsertWithoutCategoriesInput> = z
+	.object({
+		update: z.union([
+			z.lazy(() => filesUpdateWithoutCategoriesInputSchema),
+			z.lazy(() => filesUncheckedUpdateWithoutCategoriesInputSchema),
+		]),
+		create: z.union([
+			z.lazy(() => filesCreateWithoutCategoriesInputSchema),
+			z.lazy(() => filesUncheckedCreateWithoutCategoriesInputSchema),
+		]),
+		where: z.lazy(() => filesWhereInputSchema).optional(),
+	})
+	.strict();
 
 export default filesUpsertWithoutCategoriesInputSchema;

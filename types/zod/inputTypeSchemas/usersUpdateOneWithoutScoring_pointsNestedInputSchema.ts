@@ -11,14 +11,28 @@ import { usersUpdateToOneWithWhereWithoutScoring_pointsInputSchema } from './use
 import { usersUpdateWithoutScoring_pointsInputSchema } from './usersUpdateWithoutScoring_pointsInputSchema';
 import { usersUncheckedUpdateWithoutScoring_pointsInputSchema } from './usersUncheckedUpdateWithoutScoring_pointsInputSchema';
 
-export const usersUpdateOneWithoutScoring_pointsNestedInputSchema: z.ZodType<Prisma.usersUpdateOneWithoutScoring_pointsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => usersCreateWithoutScoring_pointsInputSchema),z.lazy(() => usersUncheckedCreateWithoutScoring_pointsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutScoring_pointsInputSchema).optional(),
-  upsert: z.lazy(() => usersUpsertWithoutScoring_pointsInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => usersWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => usersWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => usersUpdateToOneWithWhereWithoutScoring_pointsInputSchema),z.lazy(() => usersUpdateWithoutScoring_pointsInputSchema),z.lazy(() => usersUncheckedUpdateWithoutScoring_pointsInputSchema) ]).optional(),
-}).strict();
+export const usersUpdateOneWithoutScoring_pointsNestedInputSchema: z.ZodType<Prisma.usersUpdateOneWithoutScoring_pointsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => usersCreateWithoutScoring_pointsInputSchema),
+					z.lazy(() => usersUncheckedCreateWithoutScoring_pointsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutScoring_pointsInputSchema).optional(),
+			upsert: z.lazy(() => usersUpsertWithoutScoring_pointsInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => usersWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => usersWhereInputSchema)]).optional(),
+			connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => usersUpdateToOneWithWhereWithoutScoring_pointsInputSchema),
+					z.lazy(() => usersUpdateWithoutScoring_pointsInputSchema),
+					z.lazy(() => usersUncheckedUpdateWithoutScoring_pointsInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default usersUpdateOneWithoutScoring_pointsNestedInputSchema;

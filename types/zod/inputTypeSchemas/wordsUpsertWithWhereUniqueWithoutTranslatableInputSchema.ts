@@ -7,10 +7,19 @@ import { wordsUncheckedUpdateWithoutTranslatableInputSchema } from './wordsUnche
 import { wordsCreateWithoutTranslatableInputSchema } from './wordsCreateWithoutTranslatableInputSchema';
 import { wordsUncheckedCreateWithoutTranslatableInputSchema } from './wordsUncheckedCreateWithoutTranslatableInputSchema';
 
-export const wordsUpsertWithWhereUniqueWithoutTranslatableInputSchema: z.ZodType<Prisma.wordsUpsertWithWhereUniqueWithoutTranslatableInput> = z.object({
-  where: z.lazy(() => wordsWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => wordsUpdateWithoutTranslatableInputSchema),z.lazy(() => wordsUncheckedUpdateWithoutTranslatableInputSchema) ]),
-  create: z.union([ z.lazy(() => wordsCreateWithoutTranslatableInputSchema),z.lazy(() => wordsUncheckedCreateWithoutTranslatableInputSchema) ]),
-}).strict();
+export const wordsUpsertWithWhereUniqueWithoutTranslatableInputSchema: z.ZodType<Prisma.wordsUpsertWithWhereUniqueWithoutTranslatableInput> =
+	z
+		.object({
+			where: z.lazy(() => wordsWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => wordsUpdateWithoutTranslatableInputSchema),
+				z.lazy(() => wordsUncheckedUpdateWithoutTranslatableInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => wordsCreateWithoutTranslatableInputSchema),
+				z.lazy(() => wordsUncheckedCreateWithoutTranslatableInputSchema),
+			]),
+		})
+		.strict();
 
 export default wordsUpsertWithWhereUniqueWithoutTranslatableInputSchema;

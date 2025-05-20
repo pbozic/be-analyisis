@@ -5,9 +5,15 @@ import { transactionsWhereUniqueInputSchema } from './transactionsWhereUniqueInp
 import { transactionsCreateWithoutDocumentsInputSchema } from './transactionsCreateWithoutDocumentsInputSchema';
 import { transactionsUncheckedCreateWithoutDocumentsInputSchema } from './transactionsUncheckedCreateWithoutDocumentsInputSchema';
 
-export const transactionsCreateOrConnectWithoutDocumentsInputSchema: z.ZodType<Prisma.transactionsCreateOrConnectWithoutDocumentsInput> = z.object({
-  where: z.lazy(() => transactionsWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => transactionsCreateWithoutDocumentsInputSchema),z.lazy(() => transactionsUncheckedCreateWithoutDocumentsInputSchema) ]),
-}).strict();
+export const transactionsCreateOrConnectWithoutDocumentsInputSchema: z.ZodType<Prisma.transactionsCreateOrConnectWithoutDocumentsInput> =
+	z
+		.object({
+			where: z.lazy(() => transactionsWhereUniqueInputSchema),
+			create: z.union([
+				z.lazy(() => transactionsCreateWithoutDocumentsInputSchema),
+				z.lazy(() => transactionsUncheckedCreateWithoutDocumentsInputSchema),
+			]),
+		})
+		.strict();
 
 export default transactionsCreateOrConnectWithoutDocumentsInputSchema;

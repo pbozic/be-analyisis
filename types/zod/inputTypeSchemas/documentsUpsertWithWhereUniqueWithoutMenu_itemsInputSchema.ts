@@ -7,10 +7,19 @@ import { documentsUncheckedUpdateWithoutMenu_itemsInputSchema } from './document
 import { documentsCreateWithoutMenu_itemsInputSchema } from './documentsCreateWithoutMenu_itemsInputSchema';
 import { documentsUncheckedCreateWithoutMenu_itemsInputSchema } from './documentsUncheckedCreateWithoutMenu_itemsInputSchema';
 
-export const documentsUpsertWithWhereUniqueWithoutMenu_itemsInputSchema: z.ZodType<Prisma.documentsUpsertWithWhereUniqueWithoutMenu_itemsInput> = z.object({
-  where: z.lazy(() => documentsWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => documentsUpdateWithoutMenu_itemsInputSchema),z.lazy(() => documentsUncheckedUpdateWithoutMenu_itemsInputSchema) ]),
-  create: z.union([ z.lazy(() => documentsCreateWithoutMenu_itemsInputSchema),z.lazy(() => documentsUncheckedCreateWithoutMenu_itemsInputSchema) ]),
-}).strict();
+export const documentsUpsertWithWhereUniqueWithoutMenu_itemsInputSchema: z.ZodType<Prisma.documentsUpsertWithWhereUniqueWithoutMenu_itemsInput> =
+	z
+		.object({
+			where: z.lazy(() => documentsWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => documentsUpdateWithoutMenu_itemsInputSchema),
+				z.lazy(() => documentsUncheckedUpdateWithoutMenu_itemsInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => documentsCreateWithoutMenu_itemsInputSchema),
+				z.lazy(() => documentsUncheckedCreateWithoutMenu_itemsInputSchema),
+			]),
+		})
+		.strict();
 
 export default documentsUpsertWithWhereUniqueWithoutMenu_itemsInputSchema;

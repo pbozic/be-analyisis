@@ -6,10 +6,18 @@ import { driversUncheckedCreateWithoutDelivery_ordersInputSchema } from './drive
 import { driversCreateOrConnectWithoutDelivery_ordersInputSchema } from './driversCreateOrConnectWithoutDelivery_ordersInputSchema';
 import { driversWhereUniqueInputSchema } from './driversWhereUniqueInputSchema';
 
-export const driversCreateNestedOneWithoutDelivery_ordersInputSchema: z.ZodType<Prisma.driversCreateNestedOneWithoutDelivery_ordersInput> = z.object({
-  create: z.union([ z.lazy(() => driversCreateWithoutDelivery_ordersInputSchema),z.lazy(() => driversUncheckedCreateWithoutDelivery_ordersInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => driversCreateOrConnectWithoutDelivery_ordersInputSchema).optional(),
-  connect: z.lazy(() => driversWhereUniqueInputSchema).optional()
-}).strict();
+export const driversCreateNestedOneWithoutDelivery_ordersInputSchema: z.ZodType<Prisma.driversCreateNestedOneWithoutDelivery_ordersInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => driversCreateWithoutDelivery_ordersInputSchema),
+					z.lazy(() => driversUncheckedCreateWithoutDelivery_ordersInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => driversCreateOrConnectWithoutDelivery_ordersInputSchema).optional(),
+			connect: z.lazy(() => driversWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default driversCreateNestedOneWithoutDelivery_ordersInputSchema;

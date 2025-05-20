@@ -5,11 +5,13 @@ import { reviewsCreateNestedManyWithoutReviewableInputSchema } from './reviewsCr
 import { usersCreateNestedManyWithoutReviewableInputSchema } from './usersCreateNestedManyWithoutReviewableInputSchema';
 import { businessCreateNestedManyWithoutReviewableInputSchema } from './businessCreateNestedManyWithoutReviewableInputSchema';
 
-export const reviewableCreateInputSchema: z.ZodType<Prisma.reviewableCreateInput> = z.object({
-  reviewable_id: z.string().uuid().optional(),
-  reviews: z.lazy(() => reviewsCreateNestedManyWithoutReviewableInputSchema).optional(),
-  user: z.lazy(() => usersCreateNestedManyWithoutReviewableInputSchema).optional(),
-  business: z.lazy(() => businessCreateNestedManyWithoutReviewableInputSchema).optional()
-}).strict();
+export const reviewableCreateInputSchema: z.ZodType<Prisma.reviewableCreateInput> = z
+	.object({
+		reviewable_id: z.string().uuid().optional(),
+		reviews: z.lazy(() => reviewsCreateNestedManyWithoutReviewableInputSchema).optional(),
+		user: z.lazy(() => usersCreateNestedManyWithoutReviewableInputSchema).optional(),
+		business: z.lazy(() => businessCreateNestedManyWithoutReviewableInputSchema).optional(),
+	})
+	.strict();
 
 export default reviewableCreateInputSchema;

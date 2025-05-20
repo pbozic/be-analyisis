@@ -5,9 +5,15 @@ import { reviewableWhereUniqueInputSchema } from './reviewableWhereUniqueInputSc
 import { reviewableCreateWithoutUserInputSchema } from './reviewableCreateWithoutUserInputSchema';
 import { reviewableUncheckedCreateWithoutUserInputSchema } from './reviewableUncheckedCreateWithoutUserInputSchema';
 
-export const reviewableCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.reviewableCreateOrConnectWithoutUserInput> = z.object({
-  where: z.lazy(() => reviewableWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => reviewableCreateWithoutUserInputSchema),z.lazy(() => reviewableUncheckedCreateWithoutUserInputSchema) ]),
-}).strict();
+export const reviewableCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.reviewableCreateOrConnectWithoutUserInput> =
+	z
+		.object({
+			where: z.lazy(() => reviewableWhereUniqueInputSchema),
+			create: z.union([
+				z.lazy(() => reviewableCreateWithoutUserInputSchema),
+				z.lazy(() => reviewableUncheckedCreateWithoutUserInputSchema),
+			]),
+		})
+		.strict();
 
 export default reviewableCreateOrConnectWithoutUserInputSchema;

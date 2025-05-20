@@ -11,18 +11,73 @@ import { documentsUpdateWithWhereUniqueWithoutDriversInputSchema } from './docum
 import { documentsUpdateManyWithWhereWithoutDriversInputSchema } from './documentsUpdateManyWithWhereWithoutDriversInputSchema';
 import { documentsScalarWhereInputSchema } from './documentsScalarWhereInputSchema';
 
-export const documentsUpdateManyWithoutDriversNestedInputSchema: z.ZodType<Prisma.documentsUpdateManyWithoutDriversNestedInput> = z.object({
-  create: z.union([ z.lazy(() => documentsCreateWithoutDriversInputSchema),z.lazy(() => documentsCreateWithoutDriversInputSchema).array(),z.lazy(() => documentsUncheckedCreateWithoutDriversInputSchema),z.lazy(() => documentsUncheckedCreateWithoutDriversInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => documentsCreateOrConnectWithoutDriversInputSchema),z.lazy(() => documentsCreateOrConnectWithoutDriversInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => documentsUpsertWithWhereUniqueWithoutDriversInputSchema),z.lazy(() => documentsUpsertWithWhereUniqueWithoutDriversInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => documentsCreateManyDriversInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => documentsWhereUniqueInputSchema),z.lazy(() => documentsWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => documentsWhereUniqueInputSchema),z.lazy(() => documentsWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => documentsWhereUniqueInputSchema),z.lazy(() => documentsWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => documentsWhereUniqueInputSchema),z.lazy(() => documentsWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => documentsUpdateWithWhereUniqueWithoutDriversInputSchema),z.lazy(() => documentsUpdateWithWhereUniqueWithoutDriversInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => documentsUpdateManyWithWhereWithoutDriversInputSchema),z.lazy(() => documentsUpdateManyWithWhereWithoutDriversInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => documentsScalarWhereInputSchema),z.lazy(() => documentsScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const documentsUpdateManyWithoutDriversNestedInputSchema: z.ZodType<Prisma.documentsUpdateManyWithoutDriversNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => documentsCreateWithoutDriversInputSchema),
+					z.lazy(() => documentsCreateWithoutDriversInputSchema).array(),
+					z.lazy(() => documentsUncheckedCreateWithoutDriversInputSchema),
+					z.lazy(() => documentsUncheckedCreateWithoutDriversInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => documentsCreateOrConnectWithoutDriversInputSchema),
+					z.lazy(() => documentsCreateOrConnectWithoutDriversInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => documentsUpsertWithWhereUniqueWithoutDriversInputSchema),
+					z.lazy(() => documentsUpsertWithWhereUniqueWithoutDriversInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => documentsCreateManyDriversInputEnvelopeSchema).optional(),
+			set: z
+				.union([
+					z.lazy(() => documentsWhereUniqueInputSchema),
+					z.lazy(() => documentsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			disconnect: z
+				.union([
+					z.lazy(() => documentsWhereUniqueInputSchema),
+					z.lazy(() => documentsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			delete: z
+				.union([
+					z.lazy(() => documentsWhereUniqueInputSchema),
+					z.lazy(() => documentsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			connect: z
+				.union([
+					z.lazy(() => documentsWhereUniqueInputSchema),
+					z.lazy(() => documentsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => documentsUpdateWithWhereUniqueWithoutDriversInputSchema),
+					z.lazy(() => documentsUpdateWithWhereUniqueWithoutDriversInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => documentsUpdateManyWithWhereWithoutDriversInputSchema),
+					z.lazy(() => documentsUpdateManyWithWhereWithoutDriversInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([
+					z.lazy(() => documentsScalarWhereInputSchema),
+					z.lazy(() => documentsScalarWhereInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default documentsUpdateManyWithoutDriversNestedInputSchema;

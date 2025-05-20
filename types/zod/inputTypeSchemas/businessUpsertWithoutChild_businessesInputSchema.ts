@@ -7,10 +7,19 @@ import { businessCreateWithoutChild_businessesInputSchema } from './businessCrea
 import { businessUncheckedCreateWithoutChild_businessesInputSchema } from './businessUncheckedCreateWithoutChild_businessesInputSchema';
 import { businessWhereInputSchema } from './businessWhereInputSchema';
 
-export const businessUpsertWithoutChild_businessesInputSchema: z.ZodType<Prisma.businessUpsertWithoutChild_businessesInput> = z.object({
-  update: z.union([ z.lazy(() => businessUpdateWithoutChild_businessesInputSchema),z.lazy(() => businessUncheckedUpdateWithoutChild_businessesInputSchema) ]),
-  create: z.union([ z.lazy(() => businessCreateWithoutChild_businessesInputSchema),z.lazy(() => businessUncheckedCreateWithoutChild_businessesInputSchema) ]),
-  where: z.lazy(() => businessWhereInputSchema).optional()
-}).strict();
+export const businessUpsertWithoutChild_businessesInputSchema: z.ZodType<Prisma.businessUpsertWithoutChild_businessesInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => businessUpdateWithoutChild_businessesInputSchema),
+				z.lazy(() => businessUncheckedUpdateWithoutChild_businessesInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => businessCreateWithoutChild_businessesInputSchema),
+				z.lazy(() => businessUncheckedCreateWithoutChild_businessesInputSchema),
+			]),
+			where: z.lazy(() => businessWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default businessUpsertWithoutChild_businessesInputSchema;

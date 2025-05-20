@@ -11,14 +11,28 @@ import { taxi_ordersUpdateToOneWithWhereWithoutScoring_pointsInputSchema } from 
 import { taxi_ordersUpdateWithoutScoring_pointsInputSchema } from './taxi_ordersUpdateWithoutScoring_pointsInputSchema';
 import { taxi_ordersUncheckedUpdateWithoutScoring_pointsInputSchema } from './taxi_ordersUncheckedUpdateWithoutScoring_pointsInputSchema';
 
-export const taxi_ordersUpdateOneWithoutScoring_pointsNestedInputSchema: z.ZodType<Prisma.taxi_ordersUpdateOneWithoutScoring_pointsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => taxi_ordersCreateWithoutScoring_pointsInputSchema),z.lazy(() => taxi_ordersUncheckedCreateWithoutScoring_pointsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => taxi_ordersCreateOrConnectWithoutScoring_pointsInputSchema).optional(),
-  upsert: z.lazy(() => taxi_ordersUpsertWithoutScoring_pointsInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => taxi_ordersWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => taxi_ordersWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => taxi_ordersWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => taxi_ordersUpdateToOneWithWhereWithoutScoring_pointsInputSchema),z.lazy(() => taxi_ordersUpdateWithoutScoring_pointsInputSchema),z.lazy(() => taxi_ordersUncheckedUpdateWithoutScoring_pointsInputSchema) ]).optional(),
-}).strict();
+export const taxi_ordersUpdateOneWithoutScoring_pointsNestedInputSchema: z.ZodType<Prisma.taxi_ordersUpdateOneWithoutScoring_pointsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => taxi_ordersCreateWithoutScoring_pointsInputSchema),
+					z.lazy(() => taxi_ordersUncheckedCreateWithoutScoring_pointsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => taxi_ordersCreateOrConnectWithoutScoring_pointsInputSchema).optional(),
+			upsert: z.lazy(() => taxi_ordersUpsertWithoutScoring_pointsInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => taxi_ordersWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => taxi_ordersWhereInputSchema)]).optional(),
+			connect: z.lazy(() => taxi_ordersWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => taxi_ordersUpdateToOneWithWhereWithoutScoring_pointsInputSchema),
+					z.lazy(() => taxi_ordersUpdateWithoutScoring_pointsInputSchema),
+					z.lazy(() => taxi_ordersUncheckedUpdateWithoutScoring_pointsInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default taxi_ordersUpdateOneWithoutScoring_pointsNestedInputSchema;

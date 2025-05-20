@@ -7,10 +7,19 @@ import { user_addressUncheckedUpdateWithoutAddressInputSchema } from './user_add
 import { user_addressCreateWithoutAddressInputSchema } from './user_addressCreateWithoutAddressInputSchema';
 import { user_addressUncheckedCreateWithoutAddressInputSchema } from './user_addressUncheckedCreateWithoutAddressInputSchema';
 
-export const user_addressUpsertWithWhereUniqueWithoutAddressInputSchema: z.ZodType<Prisma.user_addressUpsertWithWhereUniqueWithoutAddressInput> = z.object({
-  where: z.lazy(() => user_addressWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => user_addressUpdateWithoutAddressInputSchema),z.lazy(() => user_addressUncheckedUpdateWithoutAddressInputSchema) ]),
-  create: z.union([ z.lazy(() => user_addressCreateWithoutAddressInputSchema),z.lazy(() => user_addressUncheckedCreateWithoutAddressInputSchema) ]),
-}).strict();
+export const user_addressUpsertWithWhereUniqueWithoutAddressInputSchema: z.ZodType<Prisma.user_addressUpsertWithWhereUniqueWithoutAddressInput> =
+	z
+		.object({
+			where: z.lazy(() => user_addressWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => user_addressUpdateWithoutAddressInputSchema),
+				z.lazy(() => user_addressUncheckedUpdateWithoutAddressInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => user_addressCreateWithoutAddressInputSchema),
+				z.lazy(() => user_addressUncheckedCreateWithoutAddressInputSchema),
+			]),
+		})
+		.strict();
 
 export default user_addressUpsertWithWhereUniqueWithoutAddressInputSchema;

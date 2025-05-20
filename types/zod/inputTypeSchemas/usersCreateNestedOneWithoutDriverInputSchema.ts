@@ -6,10 +6,17 @@ import { usersUncheckedCreateWithoutDriverInputSchema } from './usersUncheckedCr
 import { usersCreateOrConnectWithoutDriverInputSchema } from './usersCreateOrConnectWithoutDriverInputSchema';
 import { usersWhereUniqueInputSchema } from './usersWhereUniqueInputSchema';
 
-export const usersCreateNestedOneWithoutDriverInputSchema: z.ZodType<Prisma.usersCreateNestedOneWithoutDriverInput> = z.object({
-  create: z.union([ z.lazy(() => usersCreateWithoutDriverInputSchema),z.lazy(() => usersUncheckedCreateWithoutDriverInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutDriverInputSchema).optional(),
-  connect: z.lazy(() => usersWhereUniqueInputSchema).optional()
-}).strict();
+export const usersCreateNestedOneWithoutDriverInputSchema: z.ZodType<Prisma.usersCreateNestedOneWithoutDriverInput> = z
+	.object({
+		create: z
+			.union([
+				z.lazy(() => usersCreateWithoutDriverInputSchema),
+				z.lazy(() => usersUncheckedCreateWithoutDriverInputSchema),
+			])
+			.optional(),
+		connectOrCreate: z.lazy(() => usersCreateOrConnectWithoutDriverInputSchema).optional(),
+		connect: z.lazy(() => usersWhereUniqueInputSchema).optional(),
+	})
+	.strict();
 
 export default usersCreateNestedOneWithoutDriverInputSchema;

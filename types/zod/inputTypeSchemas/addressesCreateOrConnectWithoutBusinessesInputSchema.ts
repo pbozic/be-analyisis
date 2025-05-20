@@ -5,9 +5,15 @@ import { addressesWhereUniqueInputSchema } from './addressesWhereUniqueInputSche
 import { addressesCreateWithoutBusinessesInputSchema } from './addressesCreateWithoutBusinessesInputSchema';
 import { addressesUncheckedCreateWithoutBusinessesInputSchema } from './addressesUncheckedCreateWithoutBusinessesInputSchema';
 
-export const addressesCreateOrConnectWithoutBusinessesInputSchema: z.ZodType<Prisma.addressesCreateOrConnectWithoutBusinessesInput> = z.object({
-  where: z.lazy(() => addressesWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => addressesCreateWithoutBusinessesInputSchema),z.lazy(() => addressesUncheckedCreateWithoutBusinessesInputSchema) ]),
-}).strict();
+export const addressesCreateOrConnectWithoutBusinessesInputSchema: z.ZodType<Prisma.addressesCreateOrConnectWithoutBusinessesInput> =
+	z
+		.object({
+			where: z.lazy(() => addressesWhereUniqueInputSchema),
+			create: z.union([
+				z.lazy(() => addressesCreateWithoutBusinessesInputSchema),
+				z.lazy(() => addressesUncheckedCreateWithoutBusinessesInputSchema),
+			]),
+		})
+		.strict();
 
 export default addressesCreateOrConnectWithoutBusinessesInputSchema;

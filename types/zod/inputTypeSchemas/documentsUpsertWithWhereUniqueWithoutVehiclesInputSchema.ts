@@ -7,10 +7,19 @@ import { documentsUncheckedUpdateWithoutVehiclesInputSchema } from './documentsU
 import { documentsCreateWithoutVehiclesInputSchema } from './documentsCreateWithoutVehiclesInputSchema';
 import { documentsUncheckedCreateWithoutVehiclesInputSchema } from './documentsUncheckedCreateWithoutVehiclesInputSchema';
 
-export const documentsUpsertWithWhereUniqueWithoutVehiclesInputSchema: z.ZodType<Prisma.documentsUpsertWithWhereUniqueWithoutVehiclesInput> = z.object({
-  where: z.lazy(() => documentsWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => documentsUpdateWithoutVehiclesInputSchema),z.lazy(() => documentsUncheckedUpdateWithoutVehiclesInputSchema) ]),
-  create: z.union([ z.lazy(() => documentsCreateWithoutVehiclesInputSchema),z.lazy(() => documentsUncheckedCreateWithoutVehiclesInputSchema) ]),
-}).strict();
+export const documentsUpsertWithWhereUniqueWithoutVehiclesInputSchema: z.ZodType<Prisma.documentsUpsertWithWhereUniqueWithoutVehiclesInput> =
+	z
+		.object({
+			where: z.lazy(() => documentsWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => documentsUpdateWithoutVehiclesInputSchema),
+				z.lazy(() => documentsUncheckedUpdateWithoutVehiclesInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => documentsCreateWithoutVehiclesInputSchema),
+				z.lazy(() => documentsUncheckedCreateWithoutVehiclesInputSchema),
+			]),
+		})
+		.strict();
 
 export default documentsUpsertWithWhereUniqueWithoutVehiclesInputSchema;

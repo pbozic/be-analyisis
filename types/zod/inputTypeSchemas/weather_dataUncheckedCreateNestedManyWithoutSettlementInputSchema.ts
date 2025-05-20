@@ -7,11 +7,31 @@ import { weather_dataCreateOrConnectWithoutSettlementInputSchema } from './weath
 import { weather_dataCreateManySettlementInputEnvelopeSchema } from './weather_dataCreateManySettlementInputEnvelopeSchema';
 import { weather_dataWhereUniqueInputSchema } from './weather_dataWhereUniqueInputSchema';
 
-export const weather_dataUncheckedCreateNestedManyWithoutSettlementInputSchema: z.ZodType<Prisma.weather_dataUncheckedCreateNestedManyWithoutSettlementInput> = z.object({
-  create: z.union([ z.lazy(() => weather_dataCreateWithoutSettlementInputSchema),z.lazy(() => weather_dataCreateWithoutSettlementInputSchema).array(),z.lazy(() => weather_dataUncheckedCreateWithoutSettlementInputSchema),z.lazy(() => weather_dataUncheckedCreateWithoutSettlementInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => weather_dataCreateOrConnectWithoutSettlementInputSchema),z.lazy(() => weather_dataCreateOrConnectWithoutSettlementInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => weather_dataCreateManySettlementInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => weather_dataWhereUniqueInputSchema),z.lazy(() => weather_dataWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const weather_dataUncheckedCreateNestedManyWithoutSettlementInputSchema: z.ZodType<Prisma.weather_dataUncheckedCreateNestedManyWithoutSettlementInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => weather_dataCreateWithoutSettlementInputSchema),
+					z.lazy(() => weather_dataCreateWithoutSettlementInputSchema).array(),
+					z.lazy(() => weather_dataUncheckedCreateWithoutSettlementInputSchema),
+					z.lazy(() => weather_dataUncheckedCreateWithoutSettlementInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => weather_dataCreateOrConnectWithoutSettlementInputSchema),
+					z.lazy(() => weather_dataCreateOrConnectWithoutSettlementInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => weather_dataCreateManySettlementInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => weather_dataWhereUniqueInputSchema),
+					z.lazy(() => weather_dataWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default weather_dataUncheckedCreateNestedManyWithoutSettlementInputSchema;

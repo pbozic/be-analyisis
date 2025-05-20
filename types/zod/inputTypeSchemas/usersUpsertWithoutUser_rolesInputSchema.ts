@@ -7,10 +7,18 @@ import { usersCreateWithoutUser_rolesInputSchema } from './usersCreateWithoutUse
 import { usersUncheckedCreateWithoutUser_rolesInputSchema } from './usersUncheckedCreateWithoutUser_rolesInputSchema';
 import { usersWhereInputSchema } from './usersWhereInputSchema';
 
-export const usersUpsertWithoutUser_rolesInputSchema: z.ZodType<Prisma.usersUpsertWithoutUser_rolesInput> = z.object({
-  update: z.union([ z.lazy(() => usersUpdateWithoutUser_rolesInputSchema),z.lazy(() => usersUncheckedUpdateWithoutUser_rolesInputSchema) ]),
-  create: z.union([ z.lazy(() => usersCreateWithoutUser_rolesInputSchema),z.lazy(() => usersUncheckedCreateWithoutUser_rolesInputSchema) ]),
-  where: z.lazy(() => usersWhereInputSchema).optional()
-}).strict();
+export const usersUpsertWithoutUser_rolesInputSchema: z.ZodType<Prisma.usersUpsertWithoutUser_rolesInput> = z
+	.object({
+		update: z.union([
+			z.lazy(() => usersUpdateWithoutUser_rolesInputSchema),
+			z.lazy(() => usersUncheckedUpdateWithoutUser_rolesInputSchema),
+		]),
+		create: z.union([
+			z.lazy(() => usersCreateWithoutUser_rolesInputSchema),
+			z.lazy(() => usersUncheckedCreateWithoutUser_rolesInputSchema),
+		]),
+		where: z.lazy(() => usersWhereInputSchema).optional(),
+	})
+	.strict();
 
 export default usersUpsertWithoutUser_rolesInputSchema;

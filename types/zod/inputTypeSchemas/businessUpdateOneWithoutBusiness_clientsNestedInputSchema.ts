@@ -11,14 +11,28 @@ import { businessUpdateToOneWithWhereWithoutBusiness_clientsInputSchema } from '
 import { businessUpdateWithoutBusiness_clientsInputSchema } from './businessUpdateWithoutBusiness_clientsInputSchema';
 import { businessUncheckedUpdateWithoutBusiness_clientsInputSchema } from './businessUncheckedUpdateWithoutBusiness_clientsInputSchema';
 
-export const businessUpdateOneWithoutBusiness_clientsNestedInputSchema: z.ZodType<Prisma.businessUpdateOneWithoutBusiness_clientsNestedInput> = z.object({
-  create: z.union([ z.lazy(() => businessCreateWithoutBusiness_clientsInputSchema),z.lazy(() => businessUncheckedCreateWithoutBusiness_clientsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => businessCreateOrConnectWithoutBusiness_clientsInputSchema).optional(),
-  upsert: z.lazy(() => businessUpsertWithoutBusiness_clientsInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => businessWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => businessWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => businessWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => businessUpdateToOneWithWhereWithoutBusiness_clientsInputSchema),z.lazy(() => businessUpdateWithoutBusiness_clientsInputSchema),z.lazy(() => businessUncheckedUpdateWithoutBusiness_clientsInputSchema) ]).optional(),
-}).strict();
+export const businessUpdateOneWithoutBusiness_clientsNestedInputSchema: z.ZodType<Prisma.businessUpdateOneWithoutBusiness_clientsNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => businessCreateWithoutBusiness_clientsInputSchema),
+					z.lazy(() => businessUncheckedCreateWithoutBusiness_clientsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => businessCreateOrConnectWithoutBusiness_clientsInputSchema).optional(),
+			upsert: z.lazy(() => businessUpsertWithoutBusiness_clientsInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => businessWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => businessWhereInputSchema)]).optional(),
+			connect: z.lazy(() => businessWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => businessUpdateToOneWithWhereWithoutBusiness_clientsInputSchema),
+					z.lazy(() => businessUpdateWithoutBusiness_clientsInputSchema),
+					z.lazy(() => businessUncheckedUpdateWithoutBusiness_clientsInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default businessUpdateOneWithoutBusiness_clientsNestedInputSchema;

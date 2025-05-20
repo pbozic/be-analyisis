@@ -5,9 +5,15 @@ import { allowancesWhereUniqueInputSchema } from './allowancesWhereUniqueInputSc
 import { allowancesCreateWithoutUserInputSchema } from './allowancesCreateWithoutUserInputSchema';
 import { allowancesUncheckedCreateWithoutUserInputSchema } from './allowancesUncheckedCreateWithoutUserInputSchema';
 
-export const allowancesCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.allowancesCreateOrConnectWithoutUserInput> = z.object({
-  where: z.lazy(() => allowancesWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => allowancesCreateWithoutUserInputSchema),z.lazy(() => allowancesUncheckedCreateWithoutUserInputSchema) ]),
-}).strict();
+export const allowancesCreateOrConnectWithoutUserInputSchema: z.ZodType<Prisma.allowancesCreateOrConnectWithoutUserInput> =
+	z
+		.object({
+			where: z.lazy(() => allowancesWhereUniqueInputSchema),
+			create: z.union([
+				z.lazy(() => allowancesCreateWithoutUserInputSchema),
+				z.lazy(() => allowancesUncheckedCreateWithoutUserInputSchema),
+			]),
+		})
+		.strict();
 
 export default allowancesCreateOrConnectWithoutUserInputSchema;

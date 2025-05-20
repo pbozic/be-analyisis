@@ -5,9 +5,15 @@ import { municipalitiesWhereUniqueInputSchema } from './municipalitiesWhereUniqu
 import { municipalitiesCreateWithoutSettlementsInputSchema } from './municipalitiesCreateWithoutSettlementsInputSchema';
 import { municipalitiesUncheckedCreateWithoutSettlementsInputSchema } from './municipalitiesUncheckedCreateWithoutSettlementsInputSchema';
 
-export const municipalitiesCreateOrConnectWithoutSettlementsInputSchema: z.ZodType<Prisma.municipalitiesCreateOrConnectWithoutSettlementsInput> = z.object({
-  where: z.lazy(() => municipalitiesWhereUniqueInputSchema),
-  create: z.union([ z.lazy(() => municipalitiesCreateWithoutSettlementsInputSchema),z.lazy(() => municipalitiesUncheckedCreateWithoutSettlementsInputSchema) ]),
-}).strict();
+export const municipalitiesCreateOrConnectWithoutSettlementsInputSchema: z.ZodType<Prisma.municipalitiesCreateOrConnectWithoutSettlementsInput> =
+	z
+		.object({
+			where: z.lazy(() => municipalitiesWhereUniqueInputSchema),
+			create: z.union([
+				z.lazy(() => municipalitiesCreateWithoutSettlementsInputSchema),
+				z.lazy(() => municipalitiesUncheckedCreateWithoutSettlementsInputSchema),
+			]),
+		})
+		.strict();
 
 export default municipalitiesCreateOrConnectWithoutSettlementsInputSchema;

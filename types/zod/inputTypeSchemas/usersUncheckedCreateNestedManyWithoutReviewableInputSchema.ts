@@ -7,11 +7,28 @@ import { usersCreateOrConnectWithoutReviewableInputSchema } from './usersCreateO
 import { usersCreateManyReviewableInputEnvelopeSchema } from './usersCreateManyReviewableInputEnvelopeSchema';
 import { usersWhereUniqueInputSchema } from './usersWhereUniqueInputSchema';
 
-export const usersUncheckedCreateNestedManyWithoutReviewableInputSchema: z.ZodType<Prisma.usersUncheckedCreateNestedManyWithoutReviewableInput> = z.object({
-  create: z.union([ z.lazy(() => usersCreateWithoutReviewableInputSchema),z.lazy(() => usersCreateWithoutReviewableInputSchema).array(),z.lazy(() => usersUncheckedCreateWithoutReviewableInputSchema),z.lazy(() => usersUncheckedCreateWithoutReviewableInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => usersCreateOrConnectWithoutReviewableInputSchema),z.lazy(() => usersCreateOrConnectWithoutReviewableInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => usersCreateManyReviewableInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => usersWhereUniqueInputSchema),z.lazy(() => usersWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const usersUncheckedCreateNestedManyWithoutReviewableInputSchema: z.ZodType<Prisma.usersUncheckedCreateNestedManyWithoutReviewableInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => usersCreateWithoutReviewableInputSchema),
+					z.lazy(() => usersCreateWithoutReviewableInputSchema).array(),
+					z.lazy(() => usersUncheckedCreateWithoutReviewableInputSchema),
+					z.lazy(() => usersUncheckedCreateWithoutReviewableInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => usersCreateOrConnectWithoutReviewableInputSchema),
+					z.lazy(() => usersCreateOrConnectWithoutReviewableInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => usersCreateManyReviewableInputEnvelopeSchema).optional(),
+			connect: z
+				.union([z.lazy(() => usersWhereUniqueInputSchema), z.lazy(() => usersWhereUniqueInputSchema).array()])
+				.optional(),
+		})
+		.strict();
 
 export default usersUncheckedCreateNestedManyWithoutReviewableInputSchema;

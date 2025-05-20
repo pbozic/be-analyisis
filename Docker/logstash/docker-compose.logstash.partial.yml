@@ -1,30 +1,30 @@
 services:
-  logstash:
-    image: docker.elastic.co/logstash/logstash:8.17.1
-    container_name: logstash
-    restart: unless-stopped
-    depends_on:
-      - klikni_elasticsearch
-    env_file:
-      - ../../.env
-    ports:
-      - "5044:5044"
-      - "9600:9600"
-    environment:
-      - ELASTIC_USERNAME=${ELASTIC_USERNAME}
-      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
-    volumes:
-      - ./entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
-      - ./pipeline/logstash.template.conf:/usr/share/logstash/pipeline/logstash.template.conf:ro
-      - ./config/logstash.template.yml:/usr/share/logstash/config/logstash.template.yml:ro
-      - shared-init-status:/init-status
-      
-    entrypoint: ["/usr/local/bin/entrypoint.sh"]
-    command: ["--config.reload.automatic"]
-    networks:
-      - shared_network
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 512m
+    logstash:
+        image: docker.elastic.co/logstash/logstash:8.17.1
+        container_name: logstash
+        restart: unless-stopped
+        depends_on:
+            - klikni_elasticsearch
+        env_file:
+            - ../../.env
+        ports:
+            - '5044:5044'
+            - '9600:9600'
+        environment:
+            - ELASTIC_USERNAME=${ELASTIC_USERNAME}
+            - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+        volumes:
+            - ./entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
+            - ./pipeline/logstash.template.conf:/usr/share/logstash/pipeline/logstash.template.conf:ro
+            - ./config/logstash.template.yml:/usr/share/logstash/config/logstash.template.yml:ro
+            - shared-init-status:/init-status
+
+        entrypoint: ['/usr/local/bin/entrypoint.sh']
+        command: ['--config.reload.automatic']
+        networks:
+            - shared_network
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.5'
+                    memory: 512m

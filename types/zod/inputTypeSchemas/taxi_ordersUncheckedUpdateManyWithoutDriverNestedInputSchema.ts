@@ -11,18 +11,73 @@ import { taxi_ordersUpdateWithWhereUniqueWithoutDriverInputSchema } from './taxi
 import { taxi_ordersUpdateManyWithWhereWithoutDriverInputSchema } from './taxi_ordersUpdateManyWithWhereWithoutDriverInputSchema';
 import { taxi_ordersScalarWhereInputSchema } from './taxi_ordersScalarWhereInputSchema';
 
-export const taxi_ordersUncheckedUpdateManyWithoutDriverNestedInputSchema: z.ZodType<Prisma.taxi_ordersUncheckedUpdateManyWithoutDriverNestedInput> = z.object({
-  create: z.union([ z.lazy(() => taxi_ordersCreateWithoutDriverInputSchema),z.lazy(() => taxi_ordersCreateWithoutDriverInputSchema).array(),z.lazy(() => taxi_ordersUncheckedCreateWithoutDriverInputSchema),z.lazy(() => taxi_ordersUncheckedCreateWithoutDriverInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => taxi_ordersCreateOrConnectWithoutDriverInputSchema),z.lazy(() => taxi_ordersCreateOrConnectWithoutDriverInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => taxi_ordersUpsertWithWhereUniqueWithoutDriverInputSchema),z.lazy(() => taxi_ordersUpsertWithWhereUniqueWithoutDriverInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => taxi_ordersCreateManyDriverInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => taxi_ordersWhereUniqueInputSchema),z.lazy(() => taxi_ordersWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => taxi_ordersWhereUniqueInputSchema),z.lazy(() => taxi_ordersWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => taxi_ordersWhereUniqueInputSchema),z.lazy(() => taxi_ordersWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => taxi_ordersWhereUniqueInputSchema),z.lazy(() => taxi_ordersWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => taxi_ordersUpdateWithWhereUniqueWithoutDriverInputSchema),z.lazy(() => taxi_ordersUpdateWithWhereUniqueWithoutDriverInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => taxi_ordersUpdateManyWithWhereWithoutDriverInputSchema),z.lazy(() => taxi_ordersUpdateManyWithWhereWithoutDriverInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => taxi_ordersScalarWhereInputSchema),z.lazy(() => taxi_ordersScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const taxi_ordersUncheckedUpdateManyWithoutDriverNestedInputSchema: z.ZodType<Prisma.taxi_ordersUncheckedUpdateManyWithoutDriverNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => taxi_ordersCreateWithoutDriverInputSchema),
+					z.lazy(() => taxi_ordersCreateWithoutDriverInputSchema).array(),
+					z.lazy(() => taxi_ordersUncheckedCreateWithoutDriverInputSchema),
+					z.lazy(() => taxi_ordersUncheckedCreateWithoutDriverInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => taxi_ordersCreateOrConnectWithoutDriverInputSchema),
+					z.lazy(() => taxi_ordersCreateOrConnectWithoutDriverInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => taxi_ordersUpsertWithWhereUniqueWithoutDriverInputSchema),
+					z.lazy(() => taxi_ordersUpsertWithWhereUniqueWithoutDriverInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => taxi_ordersCreateManyDriverInputEnvelopeSchema).optional(),
+			set: z
+				.union([
+					z.lazy(() => taxi_ordersWhereUniqueInputSchema),
+					z.lazy(() => taxi_ordersWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			disconnect: z
+				.union([
+					z.lazy(() => taxi_ordersWhereUniqueInputSchema),
+					z.lazy(() => taxi_ordersWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			delete: z
+				.union([
+					z.lazy(() => taxi_ordersWhereUniqueInputSchema),
+					z.lazy(() => taxi_ordersWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			connect: z
+				.union([
+					z.lazy(() => taxi_ordersWhereUniqueInputSchema),
+					z.lazy(() => taxi_ordersWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => taxi_ordersUpdateWithWhereUniqueWithoutDriverInputSchema),
+					z.lazy(() => taxi_ordersUpdateWithWhereUniqueWithoutDriverInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => taxi_ordersUpdateManyWithWhereWithoutDriverInputSchema),
+					z.lazy(() => taxi_ordersUpdateManyWithWhereWithoutDriverInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([
+					z.lazy(() => taxi_ordersScalarWhereInputSchema),
+					z.lazy(() => taxi_ordersScalarWhereInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default taxi_ordersUncheckedUpdateManyWithoutDriverNestedInputSchema;

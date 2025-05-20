@@ -7,11 +7,31 @@ import { weather_dataCreateOrConnectWithoutMunicipalityInputSchema } from './wea
 import { weather_dataCreateManyMunicipalityInputEnvelopeSchema } from './weather_dataCreateManyMunicipalityInputEnvelopeSchema';
 import { weather_dataWhereUniqueInputSchema } from './weather_dataWhereUniqueInputSchema';
 
-export const weather_dataUncheckedCreateNestedManyWithoutMunicipalityInputSchema: z.ZodType<Prisma.weather_dataUncheckedCreateNestedManyWithoutMunicipalityInput> = z.object({
-  create: z.union([ z.lazy(() => weather_dataCreateWithoutMunicipalityInputSchema),z.lazy(() => weather_dataCreateWithoutMunicipalityInputSchema).array(),z.lazy(() => weather_dataUncheckedCreateWithoutMunicipalityInputSchema),z.lazy(() => weather_dataUncheckedCreateWithoutMunicipalityInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => weather_dataCreateOrConnectWithoutMunicipalityInputSchema),z.lazy(() => weather_dataCreateOrConnectWithoutMunicipalityInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => weather_dataCreateManyMunicipalityInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => weather_dataWhereUniqueInputSchema),z.lazy(() => weather_dataWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const weather_dataUncheckedCreateNestedManyWithoutMunicipalityInputSchema: z.ZodType<Prisma.weather_dataUncheckedCreateNestedManyWithoutMunicipalityInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => weather_dataCreateWithoutMunicipalityInputSchema),
+					z.lazy(() => weather_dataCreateWithoutMunicipalityInputSchema).array(),
+					z.lazy(() => weather_dataUncheckedCreateWithoutMunicipalityInputSchema),
+					z.lazy(() => weather_dataUncheckedCreateWithoutMunicipalityInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => weather_dataCreateOrConnectWithoutMunicipalityInputSchema),
+					z.lazy(() => weather_dataCreateOrConnectWithoutMunicipalityInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => weather_dataCreateManyMunicipalityInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => weather_dataWhereUniqueInputSchema),
+					z.lazy(() => weather_dataWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default weather_dataUncheckedCreateNestedManyWithoutMunicipalityInputSchema;

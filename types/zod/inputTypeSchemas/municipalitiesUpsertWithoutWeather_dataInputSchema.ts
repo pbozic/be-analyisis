@@ -7,10 +7,19 @@ import { municipalitiesCreateWithoutWeather_dataInputSchema } from './municipali
 import { municipalitiesUncheckedCreateWithoutWeather_dataInputSchema } from './municipalitiesUncheckedCreateWithoutWeather_dataInputSchema';
 import { municipalitiesWhereInputSchema } from './municipalitiesWhereInputSchema';
 
-export const municipalitiesUpsertWithoutWeather_dataInputSchema: z.ZodType<Prisma.municipalitiesUpsertWithoutWeather_dataInput> = z.object({
-  update: z.union([ z.lazy(() => municipalitiesUpdateWithoutWeather_dataInputSchema),z.lazy(() => municipalitiesUncheckedUpdateWithoutWeather_dataInputSchema) ]),
-  create: z.union([ z.lazy(() => municipalitiesCreateWithoutWeather_dataInputSchema),z.lazy(() => municipalitiesUncheckedCreateWithoutWeather_dataInputSchema) ]),
-  where: z.lazy(() => municipalitiesWhereInputSchema).optional()
-}).strict();
+export const municipalitiesUpsertWithoutWeather_dataInputSchema: z.ZodType<Prisma.municipalitiesUpsertWithoutWeather_dataInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => municipalitiesUpdateWithoutWeather_dataInputSchema),
+				z.lazy(() => municipalitiesUncheckedUpdateWithoutWeather_dataInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => municipalitiesCreateWithoutWeather_dataInputSchema),
+				z.lazy(() => municipalitiesUncheckedCreateWithoutWeather_dataInputSchema),
+			]),
+			where: z.lazy(() => municipalitiesWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default municipalitiesUpsertWithoutWeather_dataInputSchema;

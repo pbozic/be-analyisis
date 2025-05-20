@@ -5,9 +5,15 @@ import { reservationsScalarWhereInputSchema } from './reservationsScalarWhereInp
 import { reservationsUpdateManyMutationInputSchema } from './reservationsUpdateManyMutationInputSchema';
 import { reservationsUncheckedUpdateManyWithoutBusinessInputSchema } from './reservationsUncheckedUpdateManyWithoutBusinessInputSchema';
 
-export const reservationsUpdateManyWithWhereWithoutBusinessInputSchema: z.ZodType<Prisma.reservationsUpdateManyWithWhereWithoutBusinessInput> = z.object({
-  where: z.lazy(() => reservationsScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => reservationsUpdateManyMutationInputSchema),z.lazy(() => reservationsUncheckedUpdateManyWithoutBusinessInputSchema) ]),
-}).strict();
+export const reservationsUpdateManyWithWhereWithoutBusinessInputSchema: z.ZodType<Prisma.reservationsUpdateManyWithWhereWithoutBusinessInput> =
+	z
+		.object({
+			where: z.lazy(() => reservationsScalarWhereInputSchema),
+			data: z.union([
+				z.lazy(() => reservationsUpdateManyMutationInputSchema),
+				z.lazy(() => reservationsUncheckedUpdateManyWithoutBusinessInputSchema),
+			]),
+		})
+		.strict();
 
 export default reservationsUpdateManyWithWhereWithoutBusinessInputSchema;

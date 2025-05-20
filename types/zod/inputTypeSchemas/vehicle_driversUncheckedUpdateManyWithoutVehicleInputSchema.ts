@@ -5,12 +5,17 @@ import { StringFieldUpdateOperationsInputSchema } from './StringFieldUpdateOpera
 import { BoolFieldUpdateOperationsInputSchema } from './BoolFieldUpdateOperationsInputSchema';
 import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateOperationsInputSchema';
 
-export const vehicle_driversUncheckedUpdateManyWithoutVehicleInputSchema: z.ZodType<Prisma.vehicle_driversUncheckedUpdateManyWithoutVehicleInput> = z.object({
-  vehicle_drivers_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  driver_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  can_drive: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-}).strict();
+export const vehicle_driversUncheckedUpdateManyWithoutVehicleInputSchema: z.ZodType<Prisma.vehicle_driversUncheckedUpdateManyWithoutVehicleInput> =
+	z
+		.object({
+			vehicle_drivers_id: z
+				.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)])
+				.optional(),
+			driver_id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			can_drive: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+			created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		})
+		.strict();
 
 export default vehicle_driversUncheckedUpdateManyWithoutVehicleInputSchema;

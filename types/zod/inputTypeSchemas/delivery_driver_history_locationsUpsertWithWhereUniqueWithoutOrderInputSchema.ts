@@ -7,10 +7,19 @@ import { delivery_driver_history_locationsUncheckedUpdateWithoutOrderInputSchema
 import { delivery_driver_history_locationsCreateWithoutOrderInputSchema } from './delivery_driver_history_locationsCreateWithoutOrderInputSchema';
 import { delivery_driver_history_locationsUncheckedCreateWithoutOrderInputSchema } from './delivery_driver_history_locationsUncheckedCreateWithoutOrderInputSchema';
 
-export const delivery_driver_history_locationsUpsertWithWhereUniqueWithoutOrderInputSchema: z.ZodType<Prisma.delivery_driver_history_locationsUpsertWithWhereUniqueWithoutOrderInput> = z.object({
-  where: z.lazy(() => delivery_driver_history_locationsWhereUniqueInputSchema),
-  update: z.union([ z.lazy(() => delivery_driver_history_locationsUpdateWithoutOrderInputSchema),z.lazy(() => delivery_driver_history_locationsUncheckedUpdateWithoutOrderInputSchema) ]),
-  create: z.union([ z.lazy(() => delivery_driver_history_locationsCreateWithoutOrderInputSchema),z.lazy(() => delivery_driver_history_locationsUncheckedCreateWithoutOrderInputSchema) ]),
-}).strict();
+export const delivery_driver_history_locationsUpsertWithWhereUniqueWithoutOrderInputSchema: z.ZodType<Prisma.delivery_driver_history_locationsUpsertWithWhereUniqueWithoutOrderInput> =
+	z
+		.object({
+			where: z.lazy(() => delivery_driver_history_locationsWhereUniqueInputSchema),
+			update: z.union([
+				z.lazy(() => delivery_driver_history_locationsUpdateWithoutOrderInputSchema),
+				z.lazy(() => delivery_driver_history_locationsUncheckedUpdateWithoutOrderInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => delivery_driver_history_locationsCreateWithoutOrderInputSchema),
+				z.lazy(() => delivery_driver_history_locationsUncheckedCreateWithoutOrderInputSchema),
+			]),
+		})
+		.strict();
 
 export default delivery_driver_history_locationsUpsertWithWhereUniqueWithoutOrderInputSchema;

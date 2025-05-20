@@ -9,21 +9,24 @@ import { categoriesCreateNestedManyWithoutParent_categoryInputSchema } from './c
 import { translatableCreateNestedOneWithoutCategoriesInputSchema } from './translatableCreateNestedOneWithoutCategoriesInputSchema';
 import { wordsCreateNestedManyWithoutCategoryInputSchema } from './wordsCreateNestedManyWithoutCategoryInputSchema';
 
-export const categoriesCreateWithoutMenu_categoriesInputSchema: z.ZodType<Prisma.categoriesCreateWithoutMenu_categoriesInput> = z.object({
-  categories_id: z.string().uuid().optional(),
-  name: z.string(),
-  description: z.string().optional().nullable(),
-  tag: z.string(),
-  category_type: z.lazy(() => CATEGORY_TYPESchema),
-  created_at: z.coerce.date().optional(),
-  updated_at: z.coerce.date().optional(),
-  deleted_at: z.coerce.date().optional().nullable(),
-  icon: z.lazy(() => filesCreateNestedOneWithoutCategoriesInputSchema).optional(),
-  promo_ads_category: z.lazy(() => promo_ads_categoryCreateNestedManyWithoutCategoryInputSchema).optional(),
-  parent_category: z.lazy(() => categoriesCreateNestedOneWithoutSub_categoriesInputSchema).optional(),
-  sub_categories: z.lazy(() => categoriesCreateNestedManyWithoutParent_categoryInputSchema).optional(),
-  translatable: z.lazy(() => translatableCreateNestedOneWithoutCategoriesInputSchema),
-  words: z.lazy(() => wordsCreateNestedManyWithoutCategoryInputSchema).optional()
-}).strict();
+export const categoriesCreateWithoutMenu_categoriesInputSchema: z.ZodType<Prisma.categoriesCreateWithoutMenu_categoriesInput> =
+	z
+		.object({
+			categories_id: z.string().uuid().optional(),
+			name: z.string(),
+			description: z.string().optional().nullable(),
+			tag: z.string(),
+			category_type: z.lazy(() => CATEGORY_TYPESchema),
+			created_at: z.coerce.date().optional(),
+			updated_at: z.coerce.date().optional(),
+			deleted_at: z.coerce.date().optional().nullable(),
+			icon: z.lazy(() => filesCreateNestedOneWithoutCategoriesInputSchema).optional(),
+			promo_ads_category: z.lazy(() => promo_ads_categoryCreateNestedManyWithoutCategoryInputSchema).optional(),
+			parent_category: z.lazy(() => categoriesCreateNestedOneWithoutSub_categoriesInputSchema).optional(),
+			sub_categories: z.lazy(() => categoriesCreateNestedManyWithoutParent_categoryInputSchema).optional(),
+			translatable: z.lazy(() => translatableCreateNestedOneWithoutCategoriesInputSchema),
+			words: z.lazy(() => wordsCreateNestedManyWithoutCategoryInputSchema).optional(),
+		})
+		.strict();
 
 export default categoriesCreateWithoutMenu_categoriesInputSchema;

@@ -11,14 +11,28 @@ import { driversUpdateToOneWithWhereWithoutReceived_ordersInputSchema } from './
 import { driversUpdateWithoutReceived_ordersInputSchema } from './driversUpdateWithoutReceived_ordersInputSchema';
 import { driversUncheckedUpdateWithoutReceived_ordersInputSchema } from './driversUncheckedUpdateWithoutReceived_ordersInputSchema';
 
-export const driversUpdateOneWithoutReceived_ordersNestedInputSchema: z.ZodType<Prisma.driversUpdateOneWithoutReceived_ordersNestedInput> = z.object({
-  create: z.union([ z.lazy(() => driversCreateWithoutReceived_ordersInputSchema),z.lazy(() => driversUncheckedCreateWithoutReceived_ordersInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => driversCreateOrConnectWithoutReceived_ordersInputSchema).optional(),
-  upsert: z.lazy(() => driversUpsertWithoutReceived_ordersInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => driversWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => driversWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => driversWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => driversUpdateToOneWithWhereWithoutReceived_ordersInputSchema),z.lazy(() => driversUpdateWithoutReceived_ordersInputSchema),z.lazy(() => driversUncheckedUpdateWithoutReceived_ordersInputSchema) ]).optional(),
-}).strict();
+export const driversUpdateOneWithoutReceived_ordersNestedInputSchema: z.ZodType<Prisma.driversUpdateOneWithoutReceived_ordersNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => driversCreateWithoutReceived_ordersInputSchema),
+					z.lazy(() => driversUncheckedCreateWithoutReceived_ordersInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => driversCreateOrConnectWithoutReceived_ordersInputSchema).optional(),
+			upsert: z.lazy(() => driversUpsertWithoutReceived_ordersInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => driversWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => driversWhereInputSchema)]).optional(),
+			connect: z.lazy(() => driversWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => driversUpdateToOneWithWhereWithoutReceived_ordersInputSchema),
+					z.lazy(() => driversUpdateWithoutReceived_ordersInputSchema),
+					z.lazy(() => driversUncheckedUpdateWithoutReceived_ordersInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default driversUpdateOneWithoutReceived_ordersNestedInputSchema;

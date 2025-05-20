@@ -1,289 +1,289 @@
 {
-  "finances": {
-    "business": "business"
-  },
-  "business": {
-    "address": "addresses",
-    "delivery_address": "addresses",
-    "finances": "finances",
-    "business_users": "business_users",
-    "documents": "documents",
-    "parent_business": "business",
-    "child_businesses": "business",
-    "taxi_orders": "taxi_orders",
-    "delivery_orders": "delivery_orders",
-    "menus": "menus",
-    "reviewable": "reviewable",
-    "word_buy_stripe_product": "local_products",
-    "word_buys": "word_buy",
-    "reservations": "reservations",
-    "business_teams": "business_teams",
-    "business_order_lobbies": "order_lobbies"
-  },
-  "business_users": {
-    "users": "users",
-    "business": "business",
-    "operating_address": "addresses"
-  },
-  "users": {
-    "addresses": "user_address",
-    "tokens": "tokens",
-    "business_users": "business_users",
-    "driver": "drivers",
-    "orders": "taxi_orders",
-    "documents": "documents",
-    "delivery_driver": "delivery_drivers",
-    "delivery_orders": "delivery_orders",
-    "reviewable": "reviewable",
-    "reviews": "reviews",
-    "transactions": "transactions",
-    "reservations": "reservations",
-    "flag_changes": "flag_history",
-    "lost_items": "lost_items",
-    "child_users": "group_users",
-    "parent_user": "group_users",
-    "wallet_funds": "wallet_funds",
-    "referrals_made": "referrals",
-    "referral": "referrals",
-    "cashback": "cashback",
-    "business_teams": "business_teams",
-    "order_lobby_users": "order_lobby_users"
-  },
-  "cashback": {
-    "user": "users",
-    "taxi_order": "taxi_orders",
-    "delivery_order": "delivery_orders",
-    "referral": "referrals"
-  },
-  "referrals": {
-    "referrer": "users",
-    "referred": "users",
-    "cashback": "cashback"
-  },
-  "group_users": {
-    "parent_user": "users",
-    "child_user": "users"
-  },
-  "documents": {
-    "files": "files",
-    "drivers": "drivers",
-    "delivery_driver": "delivery_drivers",
-    "business": "business",
-    "user": "users",
-    "vehicles": "vehicles",
-    "menu_items": "menu_items",
-    "lost_items": "lost_items",
-    "transactions": "transactions",
-    "promo_banners": "promo_banners"
-  },
-  "files": {
-    "documents": "documents",
-    "categories": "categories"
-  },
-  "tokens": {
-    "users": "users"
-  },
-  "addresses": {
-    "users": "user_address",
-    "businesses": "business",
-    "businesses_delivery_address": "business",
-    "business_users": "business_users"
-  },
-  "user_address": {
-    "users": "users",
-    "address": "addresses"
-  },
-  "delivery_drivers": {
-    "user": "users",
-    "vehicles": "vehicles",
-    "orders": "delivery_orders",
-    "received_orders": "delivery_order_sent",
-    "documents": "documents",
-    "delivery_driver_history_locations": "delivery_driver_history_locations"
-  },
-  "drivers": {
-    "user": "users",
-    "vehicles": "vehicles",
-    "orders": "taxi_orders",
-    "received_orders": "taxi_order_sent",
-    "delivery_orders": "delivery_orders",
-    "received_delivery_orders": "delivery_order_sent",
-    "documents": "documents",
-    "driver_history_locations": "driver_history_locations"
-  },
-  "vehicles": {
-    "driver": "drivers",
-    "documents": "documents",
-    "delivery_driver": "delivery_drivers",
-    "vehicle_specification": "vehicle_specifications"
-  },
-  "vehicle_specifications": {
-    "vehicle": "vehicles"
-  },
-  "reviewable": {
-    "reviews": "reviews",
-    "user": "users",
-    "business": "business"
-  },
-  "reviews": {
-    "reviewable": "reviewable",
-    "author": "users"
-  },
-  "allergens": {},
-  "taxi_orders": {
-    "business": "business",
-    "driver": "drivers",
-    "user": "users",
-    "history": "taxi_order_sent",
-    "parent_order": "taxi_orders",
-    "grouped_orders": "taxi_orders",
-    "driver_history_locations": "driver_history_locations",
-    "wallet_transfer": "wallet_transfer_history",
-    "transactions": "transactions",
-    "cashback": "cashback"
-  },
-  "taxi_order_sent": {
-    "order": "taxi_orders",
-    "driver": "drivers"
-  },
-  "delivery_orders": {
-    "user": "users",
-    "history": "delivery_order_sent",
-    "delivery_driver": "delivery_drivers",
-    "driver": "drivers",
-    "business": "business",
-    "transactions": "transactions",
-    "wallet_transfer": "wallet_transfer_history",
-    "delivery_driver_history_locations": "delivery_driver_history_locations",
-    "cashback": "cashback",
-    "order_lobbies": "order_lobbies"
-  },
-  "delivery_order_sent": {
-    "order": "delivery_orders",
-    "delivery_driver": "delivery_drivers",
-    "driver": "drivers"
-  },
-  "menus": {
-    "business": "business",
-    "categories": "menu_categories"
-  },
-  "menu_categories": {
-    "menu_items": "menu_items",
-    "menu": "menus",
-    "menu_categories_categories": "menu_categories_categories"
-  },
-  "menu_items": {
-    "menu_category": "menu_categories",
-    "documents": "documents"
-  },
-  "transactions": {
-    "taxi_order": "taxi_orders",
-    "delivery_order": "delivery_orders",
-    "user": "users",
-    "documents": "documents",
-    "wallet_funds": "wallet_funds"
-  },
-  "reservations": {
-    "business": "business",
-    "user": "users"
-  },
-  "lost_items": {
-    "documents": "documents",
-    "user": "users"
-  },
-  "flags": {
-    "history": "flag_history"
-  },
-  "flag_history": {
-    "flag": "flags",
-    "user": "users"
-  },
-  "driver_history_locations": {
-    "driver": "drivers",
-    "order": "taxi_orders"
-  },
-  "delivery_driver_history_locations": {
-    "delivery_driver": "delivery_drivers",
-    "order": "delivery_orders"
-  },
-  "wallet_transfer_history": {
-    "delivery_order": "delivery_orders",
-    "taxi_order": "taxi_orders"
-  },
-  "wallet_funds": {
-    "user": "users",
-    "transactions": "transactions"
-  },
-  "local_products": {
-    "prices": "local_prices",
-    "business": "business"
-  },
-  "local_prices": {
-    "product": "local_products"
-  },
-  "categories": {
-    "icon": "files",
-    "menu_categories": "menu_categories_categories",
-    "promo_ads_category": "promo_ads_category",
-    "parent_category": "categories",
-    "sub_categories": "categories",
-    "translatable": "translatable",
-    "words": "words"
-  },
-  "menu_categories_categories": {
-    "menu_category": "menu_categories",
-    "category": "categories"
-  },
-  "promo_sections": {
-    "promo_section_buy": "promo_sections_buy"
-  },
-  "promo_banners": {
-    "image": "documents",
-    "promo_ads": "promo_ads"
-  },
-  "promo_sections_buy": {
-    "promo_section": "promo_sections"
-  },
-  "promo_ads": {
-    "banner": "promo_banners",
-    "categories": "promo_ads_category"
-  },
-  "promo_ads_category": {
-    "promo_ad": "promo_ads",
-    "category": "categories"
-  },
-  "words": {
-    "category": "categories",
-    "translatable": "translatable",
-    "subscriptions": "word_buy"
-  },
-  "word_buy": {
-    "word": "words",
-    "business": "business"
-  },
-  "order_lobbies": {
-    "order_lobby_items": "order_lobby_items",
-    "order_lobby_users": "order_lobby_users",
-    "delivery_orders": "delivery_orders",
-    "business": "business"
-  },
-  "order_lobby_items": {
-    "order_lobbies": "order_lobbies"
-  },
-  "order_lobby_users": {
-    "order_lobbies": "order_lobbies",
-    "users": "users"
-  },
-  "business_teams": {
-    "users": "users",
-    "business": "business"
-  },
-  "translatable": {
-    "translations": "translations",
-    "words": "words",
-    "categories": "categories"
-  },
-  "translations": {
-    "translatable": "translatable"
-  }
+	"finances": {
+		"business": "business"
+	},
+	"business": {
+		"address": "addresses",
+		"delivery_address": "addresses",
+		"finances": "finances",
+		"business_users": "business_users",
+		"documents": "documents",
+		"parent_business": "business",
+		"child_businesses": "business",
+		"taxi_orders": "taxi_orders",
+		"delivery_orders": "delivery_orders",
+		"menus": "menus",
+		"reviewable": "reviewable",
+		"word_buy_stripe_product": "local_products",
+		"word_buys": "word_buy",
+		"reservations": "reservations",
+		"business_teams": "business_teams",
+		"business_order_lobbies": "order_lobbies"
+	},
+	"business_users": {
+		"users": "users",
+		"business": "business",
+		"operating_address": "addresses"
+	},
+	"users": {
+		"addresses": "user_address",
+		"tokens": "tokens",
+		"business_users": "business_users",
+		"driver": "drivers",
+		"orders": "taxi_orders",
+		"documents": "documents",
+		"delivery_driver": "delivery_drivers",
+		"delivery_orders": "delivery_orders",
+		"reviewable": "reviewable",
+		"reviews": "reviews",
+		"transactions": "transactions",
+		"reservations": "reservations",
+		"flag_changes": "flag_history",
+		"lost_items": "lost_items",
+		"child_users": "group_users",
+		"parent_user": "group_users",
+		"wallet_funds": "wallet_funds",
+		"referrals_made": "referrals",
+		"referral": "referrals",
+		"cashback": "cashback",
+		"business_teams": "business_teams",
+		"order_lobby_users": "order_lobby_users"
+	},
+	"cashback": {
+		"user": "users",
+		"taxi_order": "taxi_orders",
+		"delivery_order": "delivery_orders",
+		"referral": "referrals"
+	},
+	"referrals": {
+		"referrer": "users",
+		"referred": "users",
+		"cashback": "cashback"
+	},
+	"group_users": {
+		"parent_user": "users",
+		"child_user": "users"
+	},
+	"documents": {
+		"files": "files",
+		"drivers": "drivers",
+		"delivery_driver": "delivery_drivers",
+		"business": "business",
+		"user": "users",
+		"vehicles": "vehicles",
+		"menu_items": "menu_items",
+		"lost_items": "lost_items",
+		"transactions": "transactions",
+		"promo_banners": "promo_banners"
+	},
+	"files": {
+		"documents": "documents",
+		"categories": "categories"
+	},
+	"tokens": {
+		"users": "users"
+	},
+	"addresses": {
+		"users": "user_address",
+		"businesses": "business",
+		"businesses_delivery_address": "business",
+		"business_users": "business_users"
+	},
+	"user_address": {
+		"users": "users",
+		"address": "addresses"
+	},
+	"delivery_drivers": {
+		"user": "users",
+		"vehicles": "vehicles",
+		"orders": "delivery_orders",
+		"received_orders": "delivery_order_sent",
+		"documents": "documents",
+		"delivery_driver_history_locations": "delivery_driver_history_locations"
+	},
+	"drivers": {
+		"user": "users",
+		"vehicles": "vehicles",
+		"orders": "taxi_orders",
+		"received_orders": "taxi_order_sent",
+		"delivery_orders": "delivery_orders",
+		"received_delivery_orders": "delivery_order_sent",
+		"documents": "documents",
+		"driver_history_locations": "driver_history_locations"
+	},
+	"vehicles": {
+		"driver": "drivers",
+		"documents": "documents",
+		"delivery_driver": "delivery_drivers",
+		"vehicle_specification": "vehicle_specifications"
+	},
+	"vehicle_specifications": {
+		"vehicle": "vehicles"
+	},
+	"reviewable": {
+		"reviews": "reviews",
+		"user": "users",
+		"business": "business"
+	},
+	"reviews": {
+		"reviewable": "reviewable",
+		"author": "users"
+	},
+	"allergens": {},
+	"taxi_orders": {
+		"business": "business",
+		"driver": "drivers",
+		"user": "users",
+		"history": "taxi_order_sent",
+		"parent_order": "taxi_orders",
+		"grouped_orders": "taxi_orders",
+		"driver_history_locations": "driver_history_locations",
+		"wallet_transfer": "wallet_transfer_history",
+		"transactions": "transactions",
+		"cashback": "cashback"
+	},
+	"taxi_order_sent": {
+		"order": "taxi_orders",
+		"driver": "drivers"
+	},
+	"delivery_orders": {
+		"user": "users",
+		"history": "delivery_order_sent",
+		"delivery_driver": "delivery_drivers",
+		"driver": "drivers",
+		"business": "business",
+		"transactions": "transactions",
+		"wallet_transfer": "wallet_transfer_history",
+		"delivery_driver_history_locations": "delivery_driver_history_locations",
+		"cashback": "cashback",
+		"order_lobbies": "order_lobbies"
+	},
+	"delivery_order_sent": {
+		"order": "delivery_orders",
+		"delivery_driver": "delivery_drivers",
+		"driver": "drivers"
+	},
+	"menus": {
+		"business": "business",
+		"categories": "menu_categories"
+	},
+	"menu_categories": {
+		"menu_items": "menu_items",
+		"menu": "menus",
+		"menu_categories_categories": "menu_categories_categories"
+	},
+	"menu_items": {
+		"menu_category": "menu_categories",
+		"documents": "documents"
+	},
+	"transactions": {
+		"taxi_order": "taxi_orders",
+		"delivery_order": "delivery_orders",
+		"user": "users",
+		"documents": "documents",
+		"wallet_funds": "wallet_funds"
+	},
+	"reservations": {
+		"business": "business",
+		"user": "users"
+	},
+	"lost_items": {
+		"documents": "documents",
+		"user": "users"
+	},
+	"flags": {
+		"history": "flag_history"
+	},
+	"flag_history": {
+		"flag": "flags",
+		"user": "users"
+	},
+	"driver_history_locations": {
+		"driver": "drivers",
+		"order": "taxi_orders"
+	},
+	"delivery_driver_history_locations": {
+		"delivery_driver": "delivery_drivers",
+		"order": "delivery_orders"
+	},
+	"wallet_transfer_history": {
+		"delivery_order": "delivery_orders",
+		"taxi_order": "taxi_orders"
+	},
+	"wallet_funds": {
+		"user": "users",
+		"transactions": "transactions"
+	},
+	"local_products": {
+		"prices": "local_prices",
+		"business": "business"
+	},
+	"local_prices": {
+		"product": "local_products"
+	},
+	"categories": {
+		"icon": "files",
+		"menu_categories": "menu_categories_categories",
+		"promo_ads_category": "promo_ads_category",
+		"parent_category": "categories",
+		"sub_categories": "categories",
+		"translatable": "translatable",
+		"words": "words"
+	},
+	"menu_categories_categories": {
+		"menu_category": "menu_categories",
+		"category": "categories"
+	},
+	"promo_sections": {
+		"promo_section_buy": "promo_sections_buy"
+	},
+	"promo_banners": {
+		"image": "documents",
+		"promo_ads": "promo_ads"
+	},
+	"promo_sections_buy": {
+		"promo_section": "promo_sections"
+	},
+	"promo_ads": {
+		"banner": "promo_banners",
+		"categories": "promo_ads_category"
+	},
+	"promo_ads_category": {
+		"promo_ad": "promo_ads",
+		"category": "categories"
+	},
+	"words": {
+		"category": "categories",
+		"translatable": "translatable",
+		"subscriptions": "word_buy"
+	},
+	"word_buy": {
+		"word": "words",
+		"business": "business"
+	},
+	"order_lobbies": {
+		"order_lobby_items": "order_lobby_items",
+		"order_lobby_users": "order_lobby_users",
+		"delivery_orders": "delivery_orders",
+		"business": "business"
+	},
+	"order_lobby_items": {
+		"order_lobbies": "order_lobbies"
+	},
+	"order_lobby_users": {
+		"order_lobbies": "order_lobbies",
+		"users": "users"
+	},
+	"business_teams": {
+		"users": "users",
+		"business": "business"
+	},
+	"translatable": {
+		"translations": "translations",
+		"words": "words",
+		"categories": "categories"
+	},
+	"translations": {
+		"translatable": "translatable"
+	}
 }

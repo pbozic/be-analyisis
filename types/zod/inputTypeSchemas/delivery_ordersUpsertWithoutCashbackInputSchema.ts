@@ -7,10 +7,19 @@ import { delivery_ordersCreateWithoutCashbackInputSchema } from './delivery_orde
 import { delivery_ordersUncheckedCreateWithoutCashbackInputSchema } from './delivery_ordersUncheckedCreateWithoutCashbackInputSchema';
 import { delivery_ordersWhereInputSchema } from './delivery_ordersWhereInputSchema';
 
-export const delivery_ordersUpsertWithoutCashbackInputSchema: z.ZodType<Prisma.delivery_ordersUpsertWithoutCashbackInput> = z.object({
-  update: z.union([ z.lazy(() => delivery_ordersUpdateWithoutCashbackInputSchema),z.lazy(() => delivery_ordersUncheckedUpdateWithoutCashbackInputSchema) ]),
-  create: z.union([ z.lazy(() => delivery_ordersCreateWithoutCashbackInputSchema),z.lazy(() => delivery_ordersUncheckedCreateWithoutCashbackInputSchema) ]),
-  where: z.lazy(() => delivery_ordersWhereInputSchema).optional()
-}).strict();
+export const delivery_ordersUpsertWithoutCashbackInputSchema: z.ZodType<Prisma.delivery_ordersUpsertWithoutCashbackInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => delivery_ordersUpdateWithoutCashbackInputSchema),
+				z.lazy(() => delivery_ordersUncheckedUpdateWithoutCashbackInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => delivery_ordersCreateWithoutCashbackInputSchema),
+				z.lazy(() => delivery_ordersUncheckedCreateWithoutCashbackInputSchema),
+			]),
+			where: z.lazy(() => delivery_ordersWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default delivery_ordersUpsertWithoutCashbackInputSchema;

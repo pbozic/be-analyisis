@@ -6,10 +6,18 @@ import { driversUncheckedCreateWithoutDocumentsInputSchema } from './driversUnch
 import { driversCreateOrConnectWithoutDocumentsInputSchema } from './driversCreateOrConnectWithoutDocumentsInputSchema';
 import { driversWhereUniqueInputSchema } from './driversWhereUniqueInputSchema';
 
-export const driversCreateNestedOneWithoutDocumentsInputSchema: z.ZodType<Prisma.driversCreateNestedOneWithoutDocumentsInput> = z.object({
-  create: z.union([ z.lazy(() => driversCreateWithoutDocumentsInputSchema),z.lazy(() => driversUncheckedCreateWithoutDocumentsInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => driversCreateOrConnectWithoutDocumentsInputSchema).optional(),
-  connect: z.lazy(() => driversWhereUniqueInputSchema).optional()
-}).strict();
+export const driversCreateNestedOneWithoutDocumentsInputSchema: z.ZodType<Prisma.driversCreateNestedOneWithoutDocumentsInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => driversCreateWithoutDocumentsInputSchema),
+					z.lazy(() => driversUncheckedCreateWithoutDocumentsInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => driversCreateOrConnectWithoutDocumentsInputSchema).optional(),
+			connect: z.lazy(() => driversWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default driversCreateNestedOneWithoutDocumentsInputSchema;

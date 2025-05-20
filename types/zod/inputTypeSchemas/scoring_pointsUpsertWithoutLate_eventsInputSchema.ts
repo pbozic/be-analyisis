@@ -7,10 +7,19 @@ import { scoring_pointsCreateWithoutLate_eventsInputSchema } from './scoring_poi
 import { scoring_pointsUncheckedCreateWithoutLate_eventsInputSchema } from './scoring_pointsUncheckedCreateWithoutLate_eventsInputSchema';
 import { scoring_pointsWhereInputSchema } from './scoring_pointsWhereInputSchema';
 
-export const scoring_pointsUpsertWithoutLate_eventsInputSchema: z.ZodType<Prisma.scoring_pointsUpsertWithoutLate_eventsInput> = z.object({
-  update: z.union([ z.lazy(() => scoring_pointsUpdateWithoutLate_eventsInputSchema),z.lazy(() => scoring_pointsUncheckedUpdateWithoutLate_eventsInputSchema) ]),
-  create: z.union([ z.lazy(() => scoring_pointsCreateWithoutLate_eventsInputSchema),z.lazy(() => scoring_pointsUncheckedCreateWithoutLate_eventsInputSchema) ]),
-  where: z.lazy(() => scoring_pointsWhereInputSchema).optional()
-}).strict();
+export const scoring_pointsUpsertWithoutLate_eventsInputSchema: z.ZodType<Prisma.scoring_pointsUpsertWithoutLate_eventsInput> =
+	z
+		.object({
+			update: z.union([
+				z.lazy(() => scoring_pointsUpdateWithoutLate_eventsInputSchema),
+				z.lazy(() => scoring_pointsUncheckedUpdateWithoutLate_eventsInputSchema),
+			]),
+			create: z.union([
+				z.lazy(() => scoring_pointsCreateWithoutLate_eventsInputSchema),
+				z.lazy(() => scoring_pointsUncheckedCreateWithoutLate_eventsInputSchema),
+			]),
+			where: z.lazy(() => scoring_pointsWhereInputSchema).optional(),
+		})
+		.strict();
 
 export default scoring_pointsUpsertWithoutLate_eventsInputSchema;

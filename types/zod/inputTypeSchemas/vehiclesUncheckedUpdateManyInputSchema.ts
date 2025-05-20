@@ -10,20 +10,58 @@ import { VEHICLE_CATEGORYSchema } from './VEHICLE_CATEGORYSchema';
 import { NullableEnumVEHICLE_CATEGORYFieldUpdateOperationsInputSchema } from './NullableEnumVEHICLE_CATEGORYFieldUpdateOperationsInputSchema';
 import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateOperationsInputSchema';
 
-export const vehiclesUncheckedUpdateManyInputSchema: z.ZodType<Prisma.vehiclesUncheckedUpdateManyInput> = z.object({
-  vehicle_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  business_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  active: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  class: z.union([ z.lazy(() => VEHICLE_CLASSSchema),z.lazy(() => NullableEnumVEHICLE_CLASSFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  category: z.union([ z.lazy(() => VEHICLE_CATEGORYSchema),z.lazy(() => NullableEnumVEHICLE_CATEGORYFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  make: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  model: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  color: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  license_plate: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  delivery_driver_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  vehicle_specification_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-}).strict();
+export const vehiclesUncheckedUpdateManyInputSchema: z.ZodType<Prisma.vehiclesUncheckedUpdateManyInput> = z
+	.object({
+		vehicle_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		business_id: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		active: z
+			.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		class: z
+			.union([
+				z.lazy(() => VEHICLE_CLASSSchema),
+				z.lazy(() => NullableEnumVEHICLE_CLASSFieldUpdateOperationsInputSchema),
+			])
+			.optional()
+			.nullable(),
+		category: z
+			.union([
+				z.lazy(() => VEHICLE_CATEGORYSchema),
+				z.lazy(() => NullableEnumVEHICLE_CATEGORYFieldUpdateOperationsInputSchema),
+			])
+			.optional()
+			.nullable(),
+		make: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		model: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		color: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		license_plate: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		delivery_driver_id: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		vehicle_specification_id: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+	})
+	.strict();
 
 export default vehiclesUncheckedUpdateManyInputSchema;

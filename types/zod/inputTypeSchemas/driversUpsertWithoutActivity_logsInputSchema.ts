@@ -7,10 +7,18 @@ import { driversCreateWithoutActivity_logsInputSchema } from './driversCreateWit
 import { driversUncheckedCreateWithoutActivity_logsInputSchema } from './driversUncheckedCreateWithoutActivity_logsInputSchema';
 import { driversWhereInputSchema } from './driversWhereInputSchema';
 
-export const driversUpsertWithoutActivity_logsInputSchema: z.ZodType<Prisma.driversUpsertWithoutActivity_logsInput> = z.object({
-  update: z.union([ z.lazy(() => driversUpdateWithoutActivity_logsInputSchema),z.lazy(() => driversUncheckedUpdateWithoutActivity_logsInputSchema) ]),
-  create: z.union([ z.lazy(() => driversCreateWithoutActivity_logsInputSchema),z.lazy(() => driversUncheckedCreateWithoutActivity_logsInputSchema) ]),
-  where: z.lazy(() => driversWhereInputSchema).optional()
-}).strict();
+export const driversUpsertWithoutActivity_logsInputSchema: z.ZodType<Prisma.driversUpsertWithoutActivity_logsInput> = z
+	.object({
+		update: z.union([
+			z.lazy(() => driversUpdateWithoutActivity_logsInputSchema),
+			z.lazy(() => driversUncheckedUpdateWithoutActivity_logsInputSchema),
+		]),
+		create: z.union([
+			z.lazy(() => driversCreateWithoutActivity_logsInputSchema),
+			z.lazy(() => driversUncheckedCreateWithoutActivity_logsInputSchema),
+		]),
+		where: z.lazy(() => driversWhereInputSchema).optional(),
+	})
+	.strict();
 
 export default driversUpsertWithoutActivity_logsInputSchema;

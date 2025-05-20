@@ -7,11 +7,31 @@ import { business_clientsCreateOrConnectWithoutBusinessInputSchema } from './bus
 import { business_clientsCreateManyBusinessInputEnvelopeSchema } from './business_clientsCreateManyBusinessInputEnvelopeSchema';
 import { business_clientsWhereUniqueInputSchema } from './business_clientsWhereUniqueInputSchema';
 
-export const business_clientsUncheckedCreateNestedManyWithoutBusinessInputSchema: z.ZodType<Prisma.business_clientsUncheckedCreateNestedManyWithoutBusinessInput> = z.object({
-  create: z.union([ z.lazy(() => business_clientsCreateWithoutBusinessInputSchema),z.lazy(() => business_clientsCreateWithoutBusinessInputSchema).array(),z.lazy(() => business_clientsUncheckedCreateWithoutBusinessInputSchema),z.lazy(() => business_clientsUncheckedCreateWithoutBusinessInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => business_clientsCreateOrConnectWithoutBusinessInputSchema),z.lazy(() => business_clientsCreateOrConnectWithoutBusinessInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => business_clientsCreateManyBusinessInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => business_clientsWhereUniqueInputSchema),z.lazy(() => business_clientsWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const business_clientsUncheckedCreateNestedManyWithoutBusinessInputSchema: z.ZodType<Prisma.business_clientsUncheckedCreateNestedManyWithoutBusinessInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => business_clientsCreateWithoutBusinessInputSchema),
+					z.lazy(() => business_clientsCreateWithoutBusinessInputSchema).array(),
+					z.lazy(() => business_clientsUncheckedCreateWithoutBusinessInputSchema),
+					z.lazy(() => business_clientsUncheckedCreateWithoutBusinessInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => business_clientsCreateOrConnectWithoutBusinessInputSchema),
+					z.lazy(() => business_clientsCreateOrConnectWithoutBusinessInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => business_clientsCreateManyBusinessInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => business_clientsWhereUniqueInputSchema),
+					z.lazy(() => business_clientsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default business_clientsUncheckedCreateNestedManyWithoutBusinessInputSchema;

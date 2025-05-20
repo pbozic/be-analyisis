@@ -6,14 +6,34 @@ import { NestedEnumCREDIT_STATUSNullableWithAggregatesFilterSchema } from './Nes
 import { NestedIntNullableFilterSchema } from './NestedIntNullableFilterSchema';
 import { NestedEnumCREDIT_STATUSNullableFilterSchema } from './NestedEnumCREDIT_STATUSNullableFilterSchema';
 
-export const EnumCREDIT_STATUSNullableWithAggregatesFilterSchema: z.ZodType<Prisma.EnumCREDIT_STATUSNullableWithAggregatesFilter> = z.object({
-  equals: z.lazy(() => CREDIT_STATUSSchema).optional().nullable(),
-  in: z.lazy(() => CREDIT_STATUSSchema).array().optional().nullable(),
-  notIn: z.lazy(() => CREDIT_STATUSSchema).array().optional().nullable(),
-  not: z.union([ z.lazy(() => CREDIT_STATUSSchema),z.lazy(() => NestedEnumCREDIT_STATUSNullableWithAggregatesFilterSchema) ]).optional().nullable(),
-  _count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
-  _min: z.lazy(() => NestedEnumCREDIT_STATUSNullableFilterSchema).optional(),
-  _max: z.lazy(() => NestedEnumCREDIT_STATUSNullableFilterSchema).optional()
-}).strict();
+export const EnumCREDIT_STATUSNullableWithAggregatesFilterSchema: z.ZodType<Prisma.EnumCREDIT_STATUSNullableWithAggregatesFilter> =
+	z
+		.object({
+			equals: z
+				.lazy(() => CREDIT_STATUSSchema)
+				.optional()
+				.nullable(),
+			in: z
+				.lazy(() => CREDIT_STATUSSchema)
+				.array()
+				.optional()
+				.nullable(),
+			notIn: z
+				.lazy(() => CREDIT_STATUSSchema)
+				.array()
+				.optional()
+				.nullable(),
+			not: z
+				.union([
+					z.lazy(() => CREDIT_STATUSSchema),
+					z.lazy(() => NestedEnumCREDIT_STATUSNullableWithAggregatesFilterSchema),
+				])
+				.optional()
+				.nullable(),
+			_count: z.lazy(() => NestedIntNullableFilterSchema).optional(),
+			_min: z.lazy(() => NestedEnumCREDIT_STATUSNullableFilterSchema).optional(),
+			_max: z.lazy(() => NestedEnumCREDIT_STATUSNullableFilterSchema).optional(),
+		})
+		.strict();
 
 export default EnumCREDIT_STATUSNullableWithAggregatesFilterSchema;

@@ -6,10 +6,18 @@ import { flagsUncheckedCreateWithoutHistoryInputSchema } from './flagsUncheckedC
 import { flagsCreateOrConnectWithoutHistoryInputSchema } from './flagsCreateOrConnectWithoutHistoryInputSchema';
 import { flagsWhereUniqueInputSchema } from './flagsWhereUniqueInputSchema';
 
-export const flagsCreateNestedOneWithoutHistoryInputSchema: z.ZodType<Prisma.flagsCreateNestedOneWithoutHistoryInput> = z.object({
-  create: z.union([ z.lazy(() => flagsCreateWithoutHistoryInputSchema),z.lazy(() => flagsUncheckedCreateWithoutHistoryInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => flagsCreateOrConnectWithoutHistoryInputSchema).optional(),
-  connect: z.lazy(() => flagsWhereUniqueInputSchema).optional()
-}).strict();
+export const flagsCreateNestedOneWithoutHistoryInputSchema: z.ZodType<Prisma.flagsCreateNestedOneWithoutHistoryInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => flagsCreateWithoutHistoryInputSchema),
+					z.lazy(() => flagsUncheckedCreateWithoutHistoryInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => flagsCreateOrConnectWithoutHistoryInputSchema).optional(),
+			connect: z.lazy(() => flagsWhereUniqueInputSchema).optional(),
+		})
+		.strict();
 
 export default flagsCreateNestedOneWithoutHistoryInputSchema;

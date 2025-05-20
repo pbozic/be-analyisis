@@ -7,11 +7,31 @@ import { delivery_driver_history_locationsCreateOrConnectWithoutOrderInputSchema
 import { delivery_driver_history_locationsCreateManyOrderInputEnvelopeSchema } from './delivery_driver_history_locationsCreateManyOrderInputEnvelopeSchema';
 import { delivery_driver_history_locationsWhereUniqueInputSchema } from './delivery_driver_history_locationsWhereUniqueInputSchema';
 
-export const delivery_driver_history_locationsUncheckedCreateNestedManyWithoutOrderInputSchema: z.ZodType<Prisma.delivery_driver_history_locationsUncheckedCreateNestedManyWithoutOrderInput> = z.object({
-  create: z.union([ z.lazy(() => delivery_driver_history_locationsCreateWithoutOrderInputSchema),z.lazy(() => delivery_driver_history_locationsCreateWithoutOrderInputSchema).array(),z.lazy(() => delivery_driver_history_locationsUncheckedCreateWithoutOrderInputSchema),z.lazy(() => delivery_driver_history_locationsUncheckedCreateWithoutOrderInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => delivery_driver_history_locationsCreateOrConnectWithoutOrderInputSchema),z.lazy(() => delivery_driver_history_locationsCreateOrConnectWithoutOrderInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => delivery_driver_history_locationsCreateManyOrderInputEnvelopeSchema).optional(),
-  connect: z.union([ z.lazy(() => delivery_driver_history_locationsWhereUniqueInputSchema),z.lazy(() => delivery_driver_history_locationsWhereUniqueInputSchema).array() ]).optional(),
-}).strict();
+export const delivery_driver_history_locationsUncheckedCreateNestedManyWithoutOrderInputSchema: z.ZodType<Prisma.delivery_driver_history_locationsUncheckedCreateNestedManyWithoutOrderInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => delivery_driver_history_locationsCreateWithoutOrderInputSchema),
+					z.lazy(() => delivery_driver_history_locationsCreateWithoutOrderInputSchema).array(),
+					z.lazy(() => delivery_driver_history_locationsUncheckedCreateWithoutOrderInputSchema),
+					z.lazy(() => delivery_driver_history_locationsUncheckedCreateWithoutOrderInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => delivery_driver_history_locationsCreateOrConnectWithoutOrderInputSchema),
+					z.lazy(() => delivery_driver_history_locationsCreateOrConnectWithoutOrderInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => delivery_driver_history_locationsCreateManyOrderInputEnvelopeSchema).optional(),
+			connect: z
+				.union([
+					z.lazy(() => delivery_driver_history_locationsWhereUniqueInputSchema),
+					z.lazy(() => delivery_driver_history_locationsWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default delivery_driver_history_locationsUncheckedCreateNestedManyWithoutOrderInputSchema;

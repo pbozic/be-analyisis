@@ -1,22 +1,22 @@
 services:
-  redis:
-    image: redis:latest
-    container_name: redis
-    restart: unless-stopped
-    environment:
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-    ports:
-      - "127.0.0.1:6379:6379"
-    volumes:
-      - ./entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
-      - ./redis.template.conf:/usr/local/etc/redis/redis.template.conf
-      - redis-data:/data
-    networks:
-      - shared_network
-    entrypoint: ["/usr/local/bin/entrypoint.sh"]
-    command: ["/usr/local/etc/redis/redis.conf"]
-    deploy:
-      resources:
-        limits:
-          cpus: "0.5"
-          memory: 512m
+    redis:
+        image: redis:latest
+        container_name: redis
+        restart: unless-stopped
+        environment:
+            - REDIS_PASSWORD=${REDIS_PASSWORD}
+        ports:
+            - '127.0.0.1:6379:6379'
+        volumes:
+            - ./entrypoint.sh:/usr/local/bin/entrypoint.sh:ro
+            - ./redis.template.conf:/usr/local/etc/redis/redis.template.conf
+            - redis-data:/data
+        networks:
+            - shared_network
+        entrypoint: ['/usr/local/bin/entrypoint.sh']
+        command: ['/usr/local/etc/redis/redis.conf']
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.5'
+                    memory: 512m

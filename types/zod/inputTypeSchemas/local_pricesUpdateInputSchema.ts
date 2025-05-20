@@ -6,15 +6,20 @@ import { NullableStringFieldUpdateOperationsInputSchema } from './NullableString
 import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateOperationsInputSchema';
 import { local_productsUpdateOneRequiredWithoutPricesNestedInputSchema } from './local_productsUpdateOneRequiredWithoutPricesNestedInputSchema';
 
-export const local_pricesUpdateInputSchema: z.ZodType<Prisma.local_pricesUpdateInput> = z.object({
-  local_prices_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  currency: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  stripe_price_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  stripe_product_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  tier: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  product: z.lazy(() => local_productsUpdateOneRequiredWithoutPricesNestedInputSchema).optional()
-}).strict();
+export const local_pricesUpdateInputSchema: z.ZodType<Prisma.local_pricesUpdateInput> = z
+	.object({
+		local_prices_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		currency: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		stripe_price_id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		stripe_product_id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		tier: z
+			.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+			.optional()
+			.nullable(),
+		created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		product: z.lazy(() => local_productsUpdateOneRequiredWithoutPricesNestedInputSchema).optional(),
+	})
+	.strict();
 
 export default local_pricesUpdateInputSchema;

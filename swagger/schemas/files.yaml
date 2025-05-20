@@ -1,25 +1,25 @@
 type: object
 properties:
-  file_id:
-    type: string
-  url:
-    type: string
-  public:
-    type: boolean
-  mime_type:
-    type: string
-  created_at:
-    type: string
-  updated_at:
-    type: string
-  document_id:
-    type: string
-  documents:
-    $ref: ./documents.yaml
+    file_id:
+        type: string
+    url:
+        type: string
+    public:
+        type: boolean
+    mime_type:
+        type: string
+    created_at:
+        type: string
+    updated_at:
+        type: string
+    document_id:
+        type: string
+    documents:
+        $ref: ./documents.yaml
 required:
-  - file_id
-  - url
-  - public
-  - mime_type
-  - created_at
-  - updated_at
+    - file_id
+    - url
+    - public
+    - mime_type
+    - created_at
+    - updated_at

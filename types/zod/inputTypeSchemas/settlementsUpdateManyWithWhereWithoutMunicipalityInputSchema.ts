@@ -5,9 +5,15 @@ import { settlementsScalarWhereInputSchema } from './settlementsScalarWhereInput
 import { settlementsUpdateManyMutationInputSchema } from './settlementsUpdateManyMutationInputSchema';
 import { settlementsUncheckedUpdateManyWithoutMunicipalityInputSchema } from './settlementsUncheckedUpdateManyWithoutMunicipalityInputSchema';
 
-export const settlementsUpdateManyWithWhereWithoutMunicipalityInputSchema: z.ZodType<Prisma.settlementsUpdateManyWithWhereWithoutMunicipalityInput> = z.object({
-  where: z.lazy(() => settlementsScalarWhereInputSchema),
-  data: z.union([ z.lazy(() => settlementsUpdateManyMutationInputSchema),z.lazy(() => settlementsUncheckedUpdateManyWithoutMunicipalityInputSchema) ]),
-}).strict();
+export const settlementsUpdateManyWithWhereWithoutMunicipalityInputSchema: z.ZodType<Prisma.settlementsUpdateManyWithWhereWithoutMunicipalityInput> =
+	z
+		.object({
+			where: z.lazy(() => settlementsScalarWhereInputSchema),
+			data: z.union([
+				z.lazy(() => settlementsUpdateManyMutationInputSchema),
+				z.lazy(() => settlementsUncheckedUpdateManyWithoutMunicipalityInputSchema),
+			]),
+		})
+		.strict();
 
 export default settlementsUpdateManyWithWhereWithoutMunicipalityInputSchema;

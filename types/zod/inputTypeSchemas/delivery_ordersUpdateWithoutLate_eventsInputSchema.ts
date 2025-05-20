@@ -27,42 +27,69 @@ import { cashbackUpdateManyWithoutDelivery_orderNestedInputSchema } from './cash
 import { order_lobbiesUpdateOneWithoutDelivery_ordersNestedInputSchema } from './order_lobbiesUpdateOneWithoutDelivery_ordersNestedInputSchema';
 import { scoring_pointsUpdateManyWithoutDelivery_ordersNestedInputSchema } from './scoring_pointsUpdateManyWithoutDelivery_ordersNestedInputSchema';
 
-export const delivery_ordersUpdateWithoutLate_eventsInputSchema: z.ZodType<Prisma.delivery_ordersUpdateWithoutLate_eventsInput> = z.object({
-  order_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  route: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  pickup_location: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  delivery_location: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  payment: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  estimates: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  items: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  details: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  courier_instructions: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  restaurant_message: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  scheduled: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  timeline: z.union([ z.lazy(() => JsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  status: z.union([ z.lazy(() => DELIVERY_ORDER_STATUSSchema),z.lazy(() => EnumDELIVERY_ORDER_STATUSFieldUpdateOperationsInputSchema) ]).optional(),
-  last_sent_at: z.union([ z.coerce.date(),z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  payment_intent_id: z.union([ z.string(),z.lazy(() => NullableStringFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  find_drivers_attempts: z.union([ z.number().int(),z.lazy(() => NullableIntFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  is_daily_meal: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  flags: z.union([ z.lazy(() => NullableJsonNullValueInputSchema),InputJsonValueSchema ]).optional(),
-  allow_credits_usage: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  order_number: z.union([ z.number().int(),z.lazy(() => IntFieldUpdateOperationsInputSchema) ]).optional(),
-  user: z.lazy(() => usersUpdateOneWithoutDelivery_ordersNestedInputSchema).optional(),
-  history: z.lazy(() => delivery_order_sentUpdateManyWithoutOrderNestedInputSchema).optional(),
-  vehicle: z.lazy(() => vehiclesUpdateOneWithoutDelivery_ordersNestedInputSchema).optional(),
-  delivery_driver: z.lazy(() => delivery_driversUpdateOneWithoutOrdersNestedInputSchema).optional(),
-  driver: z.lazy(() => driversUpdateOneWithoutDelivery_ordersNestedInputSchema).optional(),
-  business: z.lazy(() => businessUpdateOneWithoutDelivery_ordersNestedInputSchema).optional(),
-  transactions: z.lazy(() => transactionsUpdateManyWithoutDelivery_orderNestedInputSchema).optional(),
-  wallet_transfer: z.lazy(() => wallet_transfer_historyUpdateManyWithoutDelivery_orderNestedInputSchema).optional(),
-  driver_history_locations: z.lazy(() => driver_history_locationsUpdateManyWithoutDelivery_orderNestedInputSchema).optional(),
-  delivery_driver_history_locations: z.lazy(() => delivery_driver_history_locationsUpdateManyWithoutOrderNestedInputSchema).optional(),
-  cashback: z.lazy(() => cashbackUpdateManyWithoutDelivery_orderNestedInputSchema).optional(),
-  order_lobbies: z.lazy(() => order_lobbiesUpdateOneWithoutDelivery_ordersNestedInputSchema).optional(),
-  scoring_points: z.lazy(() => scoring_pointsUpdateManyWithoutDelivery_ordersNestedInputSchema).optional()
-}).strict();
+export const delivery_ordersUpdateWithoutLate_eventsInputSchema: z.ZodType<Prisma.delivery_ordersUpdateWithoutLate_eventsInput> =
+	z
+		.object({
+			order_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			route: z.union([z.lazy(() => JsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			pickup_location: z.union([z.lazy(() => JsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			delivery_location: z.union([z.lazy(() => JsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			payment: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			estimates: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			items: z.union([z.lazy(() => JsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			details: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			courier_instructions: z
+				.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema])
+				.optional(),
+			restaurant_message: z
+				.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema])
+				.optional(),
+			scheduled: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			timeline: z.union([z.lazy(() => JsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			status: z
+				.union([
+					z.lazy(() => DELIVERY_ORDER_STATUSSchema),
+					z.lazy(() => EnumDELIVERY_ORDER_STATUSFieldUpdateOperationsInputSchema),
+				])
+				.optional(),
+			last_sent_at: z
+				.union([z.coerce.date(), z.lazy(() => NullableDateTimeFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			payment_intent_id: z
+				.union([z.string(), z.lazy(() => NullableStringFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			find_drivers_attempts: z
+				.union([z.number().int(), z.lazy(() => NullableIntFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			is_daily_meal: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+			flags: z.union([z.lazy(() => NullableJsonNullValueInputSchema), InputJsonValueSchema]).optional(),
+			allow_credits_usage: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+			order_number: z.union([z.number().int(), z.lazy(() => IntFieldUpdateOperationsInputSchema)]).optional(),
+			user: z.lazy(() => usersUpdateOneWithoutDelivery_ordersNestedInputSchema).optional(),
+			history: z.lazy(() => delivery_order_sentUpdateManyWithoutOrderNestedInputSchema).optional(),
+			vehicle: z.lazy(() => vehiclesUpdateOneWithoutDelivery_ordersNestedInputSchema).optional(),
+			delivery_driver: z.lazy(() => delivery_driversUpdateOneWithoutOrdersNestedInputSchema).optional(),
+			driver: z.lazy(() => driversUpdateOneWithoutDelivery_ordersNestedInputSchema).optional(),
+			business: z.lazy(() => businessUpdateOneWithoutDelivery_ordersNestedInputSchema).optional(),
+			transactions: z.lazy(() => transactionsUpdateManyWithoutDelivery_orderNestedInputSchema).optional(),
+			wallet_transfer: z
+				.lazy(() => wallet_transfer_historyUpdateManyWithoutDelivery_orderNestedInputSchema)
+				.optional(),
+			driver_history_locations: z
+				.lazy(() => driver_history_locationsUpdateManyWithoutDelivery_orderNestedInputSchema)
+				.optional(),
+			delivery_driver_history_locations: z
+				.lazy(() => delivery_driver_history_locationsUpdateManyWithoutOrderNestedInputSchema)
+				.optional(),
+			cashback: z.lazy(() => cashbackUpdateManyWithoutDelivery_orderNestedInputSchema).optional(),
+			order_lobbies: z.lazy(() => order_lobbiesUpdateOneWithoutDelivery_ordersNestedInputSchema).optional(),
+			scoring_points: z.lazy(() => scoring_pointsUpdateManyWithoutDelivery_ordersNestedInputSchema).optional(),
+		})
+		.strict();
 
 export default delivery_ordersUpdateWithoutLate_eventsInputSchema;

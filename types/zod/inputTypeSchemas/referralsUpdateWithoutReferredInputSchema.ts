@@ -7,15 +7,17 @@ import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateO
 import { usersUpdateOneRequiredWithoutReferrals_madeNestedInputSchema } from './usersUpdateOneRequiredWithoutReferrals_madeNestedInputSchema';
 import { wallet_fundsUpdateManyWithoutReferralNestedInputSchema } from './wallet_fundsUpdateManyWithoutReferralNestedInputSchema';
 
-export const referralsUpdateWithoutReferredInputSchema: z.ZodType<Prisma.referralsUpdateWithoutReferredInput> = z.object({
-  referral_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  referral_code: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  conditions_met: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  reward_claimed: z.union([ z.boolean(),z.lazy(() => BoolFieldUpdateOperationsInputSchema) ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  referrer: z.lazy(() => usersUpdateOneRequiredWithoutReferrals_madeNestedInputSchema).optional(),
-  credits: z.lazy(() => wallet_fundsUpdateManyWithoutReferralNestedInputSchema).optional()
-}).strict();
+export const referralsUpdateWithoutReferredInputSchema: z.ZodType<Prisma.referralsUpdateWithoutReferredInput> = z
+	.object({
+		referral_id: z.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		referral_code: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+		conditions_met: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+		reward_claimed: z.union([z.boolean(), z.lazy(() => BoolFieldUpdateOperationsInputSchema)]).optional(),
+		created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+		referrer: z.lazy(() => usersUpdateOneRequiredWithoutReferrals_madeNestedInputSchema).optional(),
+		credits: z.lazy(() => wallet_fundsUpdateManyWithoutReferralNestedInputSchema).optional(),
+	})
+	.strict();
 
 export default referralsUpdateWithoutReferredInputSchema;

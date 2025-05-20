@@ -11,18 +11,73 @@ import { weather_dataUpdateWithWhereUniqueWithoutMunicipalityInputSchema } from 
 import { weather_dataUpdateManyWithWhereWithoutMunicipalityInputSchema } from './weather_dataUpdateManyWithWhereWithoutMunicipalityInputSchema';
 import { weather_dataScalarWhereInputSchema } from './weather_dataScalarWhereInputSchema';
 
-export const weather_dataUpdateManyWithoutMunicipalityNestedInputSchema: z.ZodType<Prisma.weather_dataUpdateManyWithoutMunicipalityNestedInput> = z.object({
-  create: z.union([ z.lazy(() => weather_dataCreateWithoutMunicipalityInputSchema),z.lazy(() => weather_dataCreateWithoutMunicipalityInputSchema).array(),z.lazy(() => weather_dataUncheckedCreateWithoutMunicipalityInputSchema),z.lazy(() => weather_dataUncheckedCreateWithoutMunicipalityInputSchema).array() ]).optional(),
-  connectOrCreate: z.union([ z.lazy(() => weather_dataCreateOrConnectWithoutMunicipalityInputSchema),z.lazy(() => weather_dataCreateOrConnectWithoutMunicipalityInputSchema).array() ]).optional(),
-  upsert: z.union([ z.lazy(() => weather_dataUpsertWithWhereUniqueWithoutMunicipalityInputSchema),z.lazy(() => weather_dataUpsertWithWhereUniqueWithoutMunicipalityInputSchema).array() ]).optional(),
-  createMany: z.lazy(() => weather_dataCreateManyMunicipalityInputEnvelopeSchema).optional(),
-  set: z.union([ z.lazy(() => weather_dataWhereUniqueInputSchema),z.lazy(() => weather_dataWhereUniqueInputSchema).array() ]).optional(),
-  disconnect: z.union([ z.lazy(() => weather_dataWhereUniqueInputSchema),z.lazy(() => weather_dataWhereUniqueInputSchema).array() ]).optional(),
-  delete: z.union([ z.lazy(() => weather_dataWhereUniqueInputSchema),z.lazy(() => weather_dataWhereUniqueInputSchema).array() ]).optional(),
-  connect: z.union([ z.lazy(() => weather_dataWhereUniqueInputSchema),z.lazy(() => weather_dataWhereUniqueInputSchema).array() ]).optional(),
-  update: z.union([ z.lazy(() => weather_dataUpdateWithWhereUniqueWithoutMunicipalityInputSchema),z.lazy(() => weather_dataUpdateWithWhereUniqueWithoutMunicipalityInputSchema).array() ]).optional(),
-  updateMany: z.union([ z.lazy(() => weather_dataUpdateManyWithWhereWithoutMunicipalityInputSchema),z.lazy(() => weather_dataUpdateManyWithWhereWithoutMunicipalityInputSchema).array() ]).optional(),
-  deleteMany: z.union([ z.lazy(() => weather_dataScalarWhereInputSchema),z.lazy(() => weather_dataScalarWhereInputSchema).array() ]).optional(),
-}).strict();
+export const weather_dataUpdateManyWithoutMunicipalityNestedInputSchema: z.ZodType<Prisma.weather_dataUpdateManyWithoutMunicipalityNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => weather_dataCreateWithoutMunicipalityInputSchema),
+					z.lazy(() => weather_dataCreateWithoutMunicipalityInputSchema).array(),
+					z.lazy(() => weather_dataUncheckedCreateWithoutMunicipalityInputSchema),
+					z.lazy(() => weather_dataUncheckedCreateWithoutMunicipalityInputSchema).array(),
+				])
+				.optional(),
+			connectOrCreate: z
+				.union([
+					z.lazy(() => weather_dataCreateOrConnectWithoutMunicipalityInputSchema),
+					z.lazy(() => weather_dataCreateOrConnectWithoutMunicipalityInputSchema).array(),
+				])
+				.optional(),
+			upsert: z
+				.union([
+					z.lazy(() => weather_dataUpsertWithWhereUniqueWithoutMunicipalityInputSchema),
+					z.lazy(() => weather_dataUpsertWithWhereUniqueWithoutMunicipalityInputSchema).array(),
+				])
+				.optional(),
+			createMany: z.lazy(() => weather_dataCreateManyMunicipalityInputEnvelopeSchema).optional(),
+			set: z
+				.union([
+					z.lazy(() => weather_dataWhereUniqueInputSchema),
+					z.lazy(() => weather_dataWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			disconnect: z
+				.union([
+					z.lazy(() => weather_dataWhereUniqueInputSchema),
+					z.lazy(() => weather_dataWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			delete: z
+				.union([
+					z.lazy(() => weather_dataWhereUniqueInputSchema),
+					z.lazy(() => weather_dataWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			connect: z
+				.union([
+					z.lazy(() => weather_dataWhereUniqueInputSchema),
+					z.lazy(() => weather_dataWhereUniqueInputSchema).array(),
+				])
+				.optional(),
+			update: z
+				.union([
+					z.lazy(() => weather_dataUpdateWithWhereUniqueWithoutMunicipalityInputSchema),
+					z.lazy(() => weather_dataUpdateWithWhereUniqueWithoutMunicipalityInputSchema).array(),
+				])
+				.optional(),
+			updateMany: z
+				.union([
+					z.lazy(() => weather_dataUpdateManyWithWhereWithoutMunicipalityInputSchema),
+					z.lazy(() => weather_dataUpdateManyWithWhereWithoutMunicipalityInputSchema).array(),
+				])
+				.optional(),
+			deleteMany: z
+				.union([
+					z.lazy(() => weather_dataScalarWhereInputSchema),
+					z.lazy(() => weather_dataScalarWhereInputSchema).array(),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default weather_dataUpdateManyWithoutMunicipalityNestedInputSchema;

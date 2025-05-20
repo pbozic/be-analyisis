@@ -1,22 +1,22 @@
 type: object
 properties:
-  flag_id:
-    type: string
-  name:
-    type: string
-  status:
-    type: boolean
-  created_at:
-    type: string
-  updated_at:
-    type: string
-  history:
-    type: array
-    items:
-      $ref: ./flag_history.yaml
+    flag_id:
+        type: string
+    name:
+        type: string
+    status:
+        type: boolean
+    created_at:
+        type: string
+    updated_at:
+        type: string
+    history:
+        type: array
+        items:
+            $ref: ./flag_history.yaml
 required:
-  - flag_id
-  - name
-  - status
-  - created_at
-  - updated_at
+    - flag_id
+    - name
+    - status
+    - created_at
+    - updated_at

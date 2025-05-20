@@ -5,9 +5,15 @@ import { account_actionsWhereUniqueInputSchema } from './account_actionsWhereUni
 import { account_actionsUpdateWithoutUserInputSchema } from './account_actionsUpdateWithoutUserInputSchema';
 import { account_actionsUncheckedUpdateWithoutUserInputSchema } from './account_actionsUncheckedUpdateWithoutUserInputSchema';
 
-export const account_actionsUpdateWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.account_actionsUpdateWithWhereUniqueWithoutUserInput> = z.object({
-  where: z.lazy(() => account_actionsWhereUniqueInputSchema),
-  data: z.union([ z.lazy(() => account_actionsUpdateWithoutUserInputSchema),z.lazy(() => account_actionsUncheckedUpdateWithoutUserInputSchema) ]),
-}).strict();
+export const account_actionsUpdateWithWhereUniqueWithoutUserInputSchema: z.ZodType<Prisma.account_actionsUpdateWithWhereUniqueWithoutUserInput> =
+	z
+		.object({
+			where: z.lazy(() => account_actionsWhereUniqueInputSchema),
+			data: z.union([
+				z.lazy(() => account_actionsUpdateWithoutUserInputSchema),
+				z.lazy(() => account_actionsUncheckedUpdateWithoutUserInputSchema),
+			]),
+		})
+		.strict();
 
 export default account_actionsUpdateWithWhereUniqueWithoutUserInputSchema;

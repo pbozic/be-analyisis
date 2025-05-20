@@ -9,16 +9,29 @@ import { DateTimeFieldUpdateOperationsInputSchema } from './DateTimeFieldUpdateO
 import { allowancesUncheckedUpdateOneWithoutBusiness_userNestedInputSchema } from './allowancesUncheckedUpdateOneWithoutBusiness_userNestedInputSchema';
 import { taxi_ordersUncheckedUpdateManyWithoutBusiness_usersNestedInputSchema } from './taxi_ordersUncheckedUpdateManyWithoutBusiness_usersNestedInputSchema';
 
-export const business_usersUncheckedUpdateWithoutOperating_addressInputSchema: z.ZodType<Prisma.business_usersUncheckedUpdateWithoutOperating_addressInput> = z.object({
-  business_users_id: z.union([ z.string().uuid(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  online: z.union([ z.boolean(),z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema) ]).optional().nullable(),
-  company_role: z.union([ z.lazy(() => COMPANY_ROLESchema),z.lazy(() => EnumCOMPANY_ROLEFieldUpdateOperationsInputSchema) ]).optional(),
-  created_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  updated_at: z.union([ z.coerce.date(),z.lazy(() => DateTimeFieldUpdateOperationsInputSchema) ]).optional(),
-  user_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  business_id: z.union([ z.string(),z.lazy(() => StringFieldUpdateOperationsInputSchema) ]).optional(),
-  allowance: z.lazy(() => allowancesUncheckedUpdateOneWithoutBusiness_userNestedInputSchema).optional(),
-  taxi_orders: z.lazy(() => taxi_ordersUncheckedUpdateManyWithoutBusiness_usersNestedInputSchema).optional()
-}).strict();
+export const business_usersUncheckedUpdateWithoutOperating_addressInputSchema: z.ZodType<Prisma.business_usersUncheckedUpdateWithoutOperating_addressInput> =
+	z
+		.object({
+			business_users_id: z
+				.union([z.string().uuid(), z.lazy(() => StringFieldUpdateOperationsInputSchema)])
+				.optional(),
+			online: z
+				.union([z.boolean(), z.lazy(() => NullableBoolFieldUpdateOperationsInputSchema)])
+				.optional()
+				.nullable(),
+			company_role: z
+				.union([
+					z.lazy(() => COMPANY_ROLESchema),
+					z.lazy(() => EnumCOMPANY_ROLEFieldUpdateOperationsInputSchema),
+				])
+				.optional(),
+			created_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			updated_at: z.union([z.coerce.date(), z.lazy(() => DateTimeFieldUpdateOperationsInputSchema)]).optional(),
+			user_id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			business_id: z.union([z.string(), z.lazy(() => StringFieldUpdateOperationsInputSchema)]).optional(),
+			allowance: z.lazy(() => allowancesUncheckedUpdateOneWithoutBusiness_userNestedInputSchema).optional(),
+			taxi_orders: z.lazy(() => taxi_ordersUncheckedUpdateManyWithoutBusiness_usersNestedInputSchema).optional(),
+		})
+		.strict();
 
 export default business_usersUncheckedUpdateWithoutOperating_addressInputSchema;

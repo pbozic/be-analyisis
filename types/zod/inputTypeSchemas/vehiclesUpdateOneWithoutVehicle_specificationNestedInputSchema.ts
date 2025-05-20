@@ -11,14 +11,28 @@ import { vehiclesUpdateToOneWithWhereWithoutVehicle_specificationInputSchema } f
 import { vehiclesUpdateWithoutVehicle_specificationInputSchema } from './vehiclesUpdateWithoutVehicle_specificationInputSchema';
 import { vehiclesUncheckedUpdateWithoutVehicle_specificationInputSchema } from './vehiclesUncheckedUpdateWithoutVehicle_specificationInputSchema';
 
-export const vehiclesUpdateOneWithoutVehicle_specificationNestedInputSchema: z.ZodType<Prisma.vehiclesUpdateOneWithoutVehicle_specificationNestedInput> = z.object({
-  create: z.union([ z.lazy(() => vehiclesCreateWithoutVehicle_specificationInputSchema),z.lazy(() => vehiclesUncheckedCreateWithoutVehicle_specificationInputSchema) ]).optional(),
-  connectOrCreate: z.lazy(() => vehiclesCreateOrConnectWithoutVehicle_specificationInputSchema).optional(),
-  upsert: z.lazy(() => vehiclesUpsertWithoutVehicle_specificationInputSchema).optional(),
-  disconnect: z.union([ z.boolean(),z.lazy(() => vehiclesWhereInputSchema) ]).optional(),
-  delete: z.union([ z.boolean(),z.lazy(() => vehiclesWhereInputSchema) ]).optional(),
-  connect: z.lazy(() => vehiclesWhereUniqueInputSchema).optional(),
-  update: z.union([ z.lazy(() => vehiclesUpdateToOneWithWhereWithoutVehicle_specificationInputSchema),z.lazy(() => vehiclesUpdateWithoutVehicle_specificationInputSchema),z.lazy(() => vehiclesUncheckedUpdateWithoutVehicle_specificationInputSchema) ]).optional(),
-}).strict();
+export const vehiclesUpdateOneWithoutVehicle_specificationNestedInputSchema: z.ZodType<Prisma.vehiclesUpdateOneWithoutVehicle_specificationNestedInput> =
+	z
+		.object({
+			create: z
+				.union([
+					z.lazy(() => vehiclesCreateWithoutVehicle_specificationInputSchema),
+					z.lazy(() => vehiclesUncheckedCreateWithoutVehicle_specificationInputSchema),
+				])
+				.optional(),
+			connectOrCreate: z.lazy(() => vehiclesCreateOrConnectWithoutVehicle_specificationInputSchema).optional(),
+			upsert: z.lazy(() => vehiclesUpsertWithoutVehicle_specificationInputSchema).optional(),
+			disconnect: z.union([z.boolean(), z.lazy(() => vehiclesWhereInputSchema)]).optional(),
+			delete: z.union([z.boolean(), z.lazy(() => vehiclesWhereInputSchema)]).optional(),
+			connect: z.lazy(() => vehiclesWhereUniqueInputSchema).optional(),
+			update: z
+				.union([
+					z.lazy(() => vehiclesUpdateToOneWithWhereWithoutVehicle_specificationInputSchema),
+					z.lazy(() => vehiclesUpdateWithoutVehicle_specificationInputSchema),
+					z.lazy(() => vehiclesUncheckedUpdateWithoutVehicle_specificationInputSchema),
+				])
+				.optional(),
+		})
+		.strict();
 
 export default vehiclesUpdateOneWithoutVehicle_specificationNestedInputSchema;
