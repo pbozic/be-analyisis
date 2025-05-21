@@ -362,7 +362,7 @@ async function createOrder(req, res) {
 		console.info('order created:', order);
 		SocketStore.addUserToRoom(user_id, `order_${order.order_id}`);
 		BusinessHelpers.joinAllBusinessUsersToRoom(order.business_id, `order_${order.order_id}`);
-		console.log(io);
+
 		io.to('orders_' + order.business_id).emit('new_order', order);
 
 		res.status(200).json({
