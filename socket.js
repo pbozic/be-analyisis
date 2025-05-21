@@ -52,6 +52,6 @@ async function initRedisAdapter() {
 
 module.exports = {
 	setupSocket,
-	io: () => io,
+	io: io,
 	UserSockets,
 };
