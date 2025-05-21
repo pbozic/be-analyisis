@@ -111,7 +111,7 @@ async function createLobby(req, res) {
 	try {
 		const { user_limits_map, lobby_name, lobby_description, business_id, restaurant_id } = req.body;
 
-		const new_lobby = OrderLobbyDao.createOrderLobby({
+		const new_lobby = await OrderLobbyDao.createOrderLobby({
 			lobby_name,
 			lobby_description,
 			business: { connect: { business_id: business_id } },
