@@ -229,7 +229,9 @@ async function createOrder(req, res) {
 			if (order.scheduled?.time && order.scheduled?.date) {
 				order.details.customer_expected_delivery_at = new Date(order.scheduled.time);
 				order.details.ready_for_pickup_at = new Date(
-					new Date(order.scheduled.time).getTime() - order.details.duration * 1000
+					new Date(order.scheduled.time).getTime() -
+						order.details.duration * 1000 -
+						new Date().getTimezoneOffset()
 				)
 					.toISOString()
 					.slice(0, -1);
