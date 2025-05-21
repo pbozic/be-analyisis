@@ -6,8 +6,9 @@ const jwt = require('jsonwebtoken');
 const redis = require('./lib/redis');
 
 const UserSockets = new Map();
+const subClient = redis.duplicate();
 
-let io;
+const io = {}; // mutable container
 
 const SocketStore = {
 	async addSocket(userId, socket) {
@@ -26,7 +27,7 @@ const SocketStore = {
 	async addUserToRoom(userId, roomName) {
 		const socketIds = await this.getUserSocketIds(userId);
 		for (const socketId of socketIds) {
-			const socket = io.sockets.sockets.get(socketId);
+			const socket = io.server.sockets.sockets.get(socketId);
 			if (socket) socket.join(roomName);
 		}
 		await redis.sAdd(`user_rooms:${userId}`, roomName);
@@ -36,7 +37,7 @@ const SocketStore = {
 	async removeUserFromRoom(userId, roomName) {
 		const socketIds = await this.getUserSocketIds(userId);
 		for (const socketId of socketIds) {
-			const socket = io.sockets.sockets.get(socketId);
+			const socket = io.server.sockets.sockets.get(socketId);
 			if (socket) socket.leave(roomName);
 		}
 		await redis.sRem(`user_rooms:${userId}`, roomName);
@@ -72,20 +73,20 @@ async function restoreUserSockets() {
 		const userId = key.split(':')[1];
 		const socketIds = await redis.sMembers(key);
 		for (const socketId of socketIds) {
-			const socket = io.sockets.sockets.get(socketId);
+			const socket = io.server.sockets.sockets.get(socketId);
 			if (socket) UserSockets.set(userId, socket);
 		}
 	}
 }
 
 function setupSocket(server) {
-	io = new Server(server, {
+	io.server = new Server(server, {
 		cors: {
 			origin: '*',
 		},
 	});
-	initRedisAdapter(io).catch(console.error);
-	io.use((socket, next) => {
+
+	io.server.use((socket, next) => {
 		const token = socket.handshake.auth.token || socket.handshake.headers['authorization']?.split(' ')[1];
 		if (!token) return next(new Error('Authentication error'));
 
@@ -100,7 +101,7 @@ function setupSocket(server) {
 		});
 	});
 
-	io.on('connection', async (socket) => {
+	io.server.on('connection', async (socket) => {
 		const userId = socket.user?.user_id;
 		const rooms = await SocketStore.getRoomsForUser(userId);
 		for (const room of rooms) {
@@ -115,20 +116,25 @@ function setupSocket(server) {
 		socket.on('joinRoom', (roomName) => SocketStore.addUserToRoom(userId, roomName));
 		socket.on('leaveRoom', (roomName) => SocketStore.removeUserFromRoom(userId, roomName));
 	});
+
+	initRedisAdapter();
 }
 
-async function initRedisAdapter(io) {
-	redis.connect();
-	const subClient = redis.duplicate();
+async function initRedisAdapter() {
 	await subClient.connect();
-
-	io.adapter(createAdapter(redis, subClient));
+	await redis.connect();
+	io.server.adapter(createAdapter(redis, subClient));
 	await restoreUserSockets();
 }
 
 module.exports = {
 	setupSocket,
-	io,
+	io: new Proxy(io, {
+		get(target, prop) {
+			if (!target.server) throw new Error('Socket.IO not initialized');
+			return target.server[prop];
+		},
+	}),
 	UserSockets,
 	SocketStore,
 };
