@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"start": "npx prisma generate && npx prisma migrate deploy &&  nodemon ./aserverpp.js",
+		"start": "npx prisma generate && npx prisma migrate deploy &&  nodemon ./server.js",
 		"prod": "node ./server.js",
 		"dev": "npx prisma generate && npx prisma migrate deploy &&  nodemon ./server.js",
 		"server": "nodemon ./server.js",
