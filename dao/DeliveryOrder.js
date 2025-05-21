@@ -509,6 +509,9 @@ async function updateOrderStatus(order_id, status) {
 						},
 					}),
 				},
+				include: {
+					user: true,
+				},
 			});
 		});
 	} catch (e) {
