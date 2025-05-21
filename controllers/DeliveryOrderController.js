@@ -1268,16 +1268,15 @@ async function updateOrderStatus(req, res) {
 async function merchantAcceptOrder(req, res) {
 	const { order_id, preparation_time } = req.body;
 	try {
-		let order;
+		let order = await DeliveryOrderDao.getOrder(order_id);
+		const user = order?.user;
 		if (preparation_time) {
 			order = await DeliveryOrderDao.updateOrderPickupTime(order_id, preparation_time);
 			io.to('order_' + order.order_id).emit('order_pickup_time', order);
-		} else {
+		} else if (!order.scheduled?.date && !order.scheduled?.time) {
 			console.error('Preparation time must be set');
 			return res.status(400).json(order_id);
 		}
-		order = await DeliveryOrderDao.getOrder(order_id);
-		const user = order?.user;
 		console.info('got into merchantAcceptOrder', JSON.stringify(order.payment_intent_id));
 		const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
 		const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT } =
