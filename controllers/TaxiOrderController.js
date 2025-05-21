@@ -1339,6 +1339,28 @@ async function completeOrder(req, res) {
 						);
 					}
 				} else if (order.payment.type === 'FAMILY_WALLET') {
+					// handle wallet payment
+					let has_parent_user = user.parent_user;
+					if (!has_parent_user) {
+						throw new Error('User has no family wallet');
+					}
+					let parent_user = user.parent_user.parent_user;
+					const parent_available_wallet_balances = WalletFundsDao.getAvailableWalletBalanceGroupedByType(
+						parent_user.user_id
+					);
+					let allowance = user.parent_user.allowance?.amount_taxi_wallet;
+					if (!allowance) {
+						allowance = user.parent_user.allowance?.amount_any_wallet;
+					}
+
+					if (allowance < TOTAL_COST_CENTS / 100) {
+						throw new Error('Insufficient allowance');
+					}
+					//TODO: Should this allow usage of credits from parent?
+					if (parent_available_wallet_balances[null] < TOTAL_COST_CENTS / 100) {
+						throw new Error('Insufficient funds');
+					}
+
 					let parent_user_id = user.parent_user.parent_user_id;
 					if (PLATFORM_CUT > 0) {
 						const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
@@ -1428,6 +1450,7 @@ async function completeOrder(req, res) {
 				const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(
 					user.user_id
 				);
+				const businessUser = await BusinessUsersDao.getBusinessUserByUserId(order.user_id);
 
 				if (DISCOUNTED_TOTAL_COST > 0) {
 					if (order.payment.type === 'WALLET') {
@@ -1439,6 +1462,17 @@ async function completeOrder(req, res) {
 							throw new Error('Insufficient funds');
 						}
 
+						let any;
+						if (businessUser) {
+							let allowance = businessUser.allowance?.amount_taxi_wallet;
+							if (!allowance) {
+								allowance = businessUser.allowance?.amount_any_wallet;
+								any = true;
+							}
+							if (allowance < DISCOUNTED_TOTAL_COST / 100) {
+								throw new Error('Insufficient allowance');
+							}
+						}
 						// await UsersDao.removeWalletBalance(order.user_id, (DISCOUNTED_TOTAL_COST / 100), order.order_id, "taxi");
 						const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
 							user.user_id,
@@ -1446,6 +1480,24 @@ async function completeOrder(req, res) {
 							order.order_id
 						);
 
+						if (businessUser) {
+							const updateData = {};
+							if (any) {
+								updateData.amount_any_wallet = { decrement: DISCOUNTED_TOTAL_COST / 100 };
+							} else {
+								if (order.type === ORDER_TYPE.TAXI) {
+									updateData.amount_taxi_wallet = { decrement: DISCOUNTED_TOTAL_COST / 100 };
+								} else {
+									updateData.amount_transfer_wallet = { decrement: DISCOUNTED_TOTAL_COST / 100 };
+								}
+							}
+							await prisma.allowances.update({
+								where: {
+									business_users_id: businessUser.business_users_id,
+								},
+								data: updateData,
+							});
+						}
 						order = await TaxiOrderDao.updateOrder(order.order_id, {
 							payment: {
 								...order.payment,
@@ -1480,12 +1532,12 @@ async function completeOrder(req, res) {
 						const parent_available_wallet_balances = WalletFundsDao.getAvailableWalletBalanceGroupedByType(
 							parent_user.user_id
 						);
-						let is_businessUser = await BusinessUsersDao.getBusinessUserByUserId(parent_user.user_id);
-						let allowance = user.parent_user.allowance?.amount_taxi;
-						if (is_businessUser) {
-							allowance = allowance * 2;
+						let any;
+						let allowance = user.parent_user.allowance?.amount_taxi_wallet;
+						if (!allowance) {
+							allowance = user.parent_user.allowance?.amount_any_wallet;
+							any = true;
 						}
-						// todo is parent business user?
 
 						if (allowance < DISCOUNTED_TOTAL_COST / 100) {
 							throw new Error('Insufficient allowance');
@@ -1503,10 +1555,14 @@ async function completeOrder(req, res) {
 						);
 
 						const updateData = {};
-						if (order.type === ORDER_TYPE.TAXI) {
-							updateData.amount_taxi = { decrement: DISCOUNTED_TOTAL_COST / 100 };
+						if (any) {
+							updateData.amount_any_wallet = { decrement: DISCOUNTED_TOTAL_COST / 100 };
 						} else {
-							updateData.amount_transfer = { decrement: DISCOUNTED_TOTAL_COST / 100 };
+							if (order.type === ORDER_TYPE.TAXI) {
+								updateData.amount_taxi_wallet = { decrement: DISCOUNTED_TOTAL_COST / 100 };
+							} else {
+								updateData.amount_transfer_wallet = { decrement: DISCOUNTED_TOTAL_COST / 100 };
+							}
 						}
 						await prisma.allowances.update({
 							where: {
@@ -1537,6 +1593,34 @@ async function completeOrder(req, res) {
 						);
 					}
 				} else {
+					if (businessUser) {
+						let any;
+						let allowance = businessUser.allowance?.amount_taxi_purchase_order;
+						if (!allowance) {
+							allowance = businessUser.allowance?.amount_any_purchase_order;
+							any = true;
+						}
+						if (allowance < DISCOUNTED_TOTAL_COST / 100) {
+							throw new Error('Insufficient allowance');
+						}
+
+						const updateData = {};
+						if (any) {
+							updateData.amount_any_purchase_order = { decrement: DISCOUNTED_TOTAL_COST / 100 };
+						} else {
+							if (order.type === ORDER_TYPE.TAXI) {
+								updateData.amount_taxi_purchase_order = { decrement: DISCOUNTED_TOTAL_COST / 100 };
+							} else {
+								updateData.amount_transfer_purchase_order = { decrement: DISCOUNTED_TOTAL_COST / 100 };
+							}
+						}
+						await prisma.allowances.update({
+							where: {
+								business_users_id: businessUser.business_users_id,
+							},
+							data: updateData,
+						});
+					}
 					order = await TaxiOrderDao.updateOrder(order.order_id, {
 						payment: {
 							...order.payment,
