@@ -227,12 +227,12 @@ async function createOrder(req, res) {
 			order.details.duration = result.rows[0].elements[0].duration.value;
 
 			if (order.scheduled?.time && order.scheduled?.date) {
-				order.details.customer_expected_delivery_at = new Date(order.scheduled.time);
-				order.details.ready_for_pickup_at = new Date(
-					new Date(order.scheduled.time).getTime() -
-						order.details.duration * 1000 -
-						new Date().getTimezoneOffset()
-				)
+				const scheduledTime = new Date(order.scheduled.time);
+				const durationMs = order.details.duration * 1000;
+				const timezoneOffsetMs = scheduledTime.getTimezoneOffset() * 60 * 1000;
+
+				order.details.customer_expected_delivery_at = scheduledTime;
+				order.details.ready_for_pickup_at = new Date(scheduledTime.getTime() - durationMs - timezoneOffsetMs)
 					.toISOString()
 					.slice(0, -1);
 			}
