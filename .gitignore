@@ -13,3 +13,4 @@ mycert.*
 .DS_Store
 *.DS_Store
 .eslintcache
+types/zod/

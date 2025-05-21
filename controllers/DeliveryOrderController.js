@@ -1275,6 +1275,7 @@ async function merchantAcceptOrder(req, res) {
 			console.error('Preparation time must be set');
 			return res.status(400).json(order_id);
 		}
+		order = await DeliveryOrderDao.getOrder(order_id);
 		const user = order?.user;
 		console.info('got into merchantAcceptOrder', JSON.stringify(order.payment_intent_id));
 		const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
@@ -1327,6 +1328,25 @@ async function merchantAcceptOrder(req, res) {
 				order.order_id,
 				SERVICE_TYPE.DELIVERY
 			);
+		} else if (order.payment.type === 'CASH') {
+			if (MERCHANT_CREDIT_CUT > 0) {
+				const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+					order.user_id,
+					restaurant_stripe,
+					MERCHANT_CREDIT_CUT,
+					order.order_id,
+					SERVICE_TYPE.DELIVERY
+				);
+			}
+			if (PLATFORM_CREDIT_CUT > 0) {
+				const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+					order.user_id,
+					'platform',
+					PLATFORM_CREDIT_CUT,
+					order.order_id,
+					SERVICE_TYPE.DELIVERY
+				);
+			}
 		} else {
 			// TODO: reject
 			throw new Error('Payment type not supported');
