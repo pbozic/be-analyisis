@@ -1498,12 +1498,6 @@ async function completeOrder(req, res) {
 								data: updateData,
 							});
 						}
-						order = await TaxiOrderDao.updateOrder(order.order_id, {
-							payment: {
-								...order.payment,
-								status: 'PAID',
-							},
-						});
 
 						//Only transfer money to driver since we already have the wallet money?
 						// const transfer = await stripe.transferToConnectedAccount(DRIVER_CUT_AMOUNT, driver_business.stripe_account_id);
@@ -1521,8 +1515,7 @@ async function completeOrder(req, res) {
 							order.order_id,
 							SERVICE_TYPE.TAXI
 						);
-					}
-					if (order.payment.type === 'FAMILY_WALLET') {
+					} else if (order.payment.type === 'FAMILY_WALLET') {
 						// handle wallet payment
 						let has_parent_user = user.parent_user;
 						if (!has_parent_user) {
@@ -1570,12 +1563,6 @@ async function completeOrder(req, res) {
 							},
 							data: updateData,
 						});
-						order = await TaxiOrderDao.updateOrder(order.order_id, {
-							payment: {
-								...order.payment,
-								status: 'PAID',
-							},
-						});
 
 						const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 							parent_user.user_id,
@@ -1591,9 +1578,7 @@ async function completeOrder(req, res) {
 							order.order_id,
 							SERVICE_TYPE.TAXI
 						);
-					}
-				} else {
-					if (businessUser) {
+					} else if (businessUser) {
 						let any;
 						let allowance = businessUser.allowance?.amount_taxi_purchase_order;
 						if (!allowance) {
@@ -1621,13 +1606,13 @@ async function completeOrder(req, res) {
 							data: updateData,
 						});
 					}
-					order = await TaxiOrderDao.updateOrder(order.order_id, {
-						payment: {
-							...order.payment,
-							status: 'PAID',
-						},
-					});
 				}
+				order = await TaxiOrderDao.updateOrder(order.order_id, {
+					payment: {
+						...order.payment,
+						status: 'PAID',
+					},
+				});
 			}
 
 			if (orderingUser.user_role === USER_ROLE.PERSONAL) {
