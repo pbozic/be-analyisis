@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const redis = require('./lib/redis');
 
 const UserSockets = new Map();
-const subClient = redis.duplicate();
+
 let io;
 
 const SocketStore = {
@@ -118,6 +118,8 @@ function setupSocket(server) {
 }
 
 async function initRedisAdapter(io) {
+	redis.connect();
+	const subClient = redis.duplicate();
 	await subClient.connect();
 
 	io.adapter(createAdapter(redis, subClient));
