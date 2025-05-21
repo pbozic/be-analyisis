@@ -1,0 +1,46 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/vehicles/class/:vehicleClass/category/:vehicleCategory:
+    get:
+      tags:
+        - Vehicles
+      summary: Get vehicles by class and category
+      description: Retrieves a list of vehicles of a specific class and category.
+      parameters:
+        - name: vehicleClass
+          in: path
+          description: The class of the vehicles
+          required: true
+          schema:
+            type: string
+        - name: vehicleCategory
+          in: path
+          description: The category of the vehicles
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vehicle'
+        '500':
+          description: Error fetching vehicles
+components: {}

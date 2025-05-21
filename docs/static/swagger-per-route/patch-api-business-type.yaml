@@ -1,0 +1,39 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/business/type:
+    patch:
+      tags:
+        - Business
+      summary: Updates a business's type
+      description: This endpoint is used to update a business's type.
+      operationId: updateBusinessType
+      requestBody:
+        description: The new type for the business
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBusinessTypeRequest'
+        required: true
+      responses:
+        '200':
+          description: Type updated successfully. Returns the updated business details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Business'
+        '400':
+          description: Error updating business information.
+components: {}

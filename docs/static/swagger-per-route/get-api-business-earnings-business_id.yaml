@@ -1,0 +1,65 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/business/earnings/:business_id:
+    get:
+      tags:
+        - Business
+      summary: Get earnings for a specific business
+      description: >-
+        Retrieves earnings data for a specific business based on the provided
+        business ID and date range.
+      operationId: getBusinessEarnings
+      parameters:
+        - name: business_id
+          in: path
+          description: The ID of the business to retrieve earnings for
+          required: true
+          schema:
+            type: string
+        - name: start_date
+          in: query
+          description: The start date for the earnings calculation
+          required: true
+          schema:
+            type: string
+        - name: end_date
+          in: query
+          description: The end date for the earnings calculation
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: >-
+            Successful operation, returns the earnings data for the specified
+            business
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Missing required parameters
+          content:
+            application/json:
+              schema:
+                type: object
+        '404':
+          description: Business not found or no earnings data available
+          content:
+            application/json:
+              schema:
+                type: object
+components: {}

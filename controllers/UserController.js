@@ -384,7 +384,6 @@ async function updateEmail(req, res) {
  * @tag Users
  * @summary Updates the current user's profile picture
  * @operationId updateProfilePicture
- * @requestBody {ProfilePictureData} application/json - New profile picture data
  * @response 200 - Profile picture updated successfully
  * @responseContent {User} 200.application/json - Updated user details
  * @response 400 - Error updating profile picture
@@ -941,9 +940,7 @@ async function softDeleteUserByUserId(req, res) {
  * @summary Disables the current user
  * @description This endpoint is used to disable the current user.
  * @operationId disableMe
- * @bodyDescription
- * @bodyContent
- * @bodyRequired
+
  * @response 200 - User disabled successfully. Returns user.
  * @responseContent {User} 200.application/json
  * @response 400 - Error updating user information.
@@ -1074,7 +1071,6 @@ async function reviewUser(req, res) {
  * @summary Get payment sheet credentials for a user
  * @description This endpoint is used to get Stripe payment sheet credentials for a particular user.
  * @operationId getPaymentSheetCredentials
- * @headerDescription Authorization Bearer token is required
  * @response 200 - {StripePaymentSheetCredentials}
  * @response 400 - Error obtaining payment sheet credentials
  */
@@ -1554,7 +1550,7 @@ async function registerChildUser(req, res) {
  * @description This endpoint is used to update enabled field of the given child_user_id
  * @operationId updateChildUser
  * @bodyDescription The child's group_user_id and value to set for the child user's enabled field
- * @bodyContent {group_user_id,value}
+ * @bodyContent {group_user_id,value} application/json
  * @bodyRequired
  * @response 200 - User updated successfully. Returns the updated group_user.
  * @responseContent {group_user} 200.application/json
@@ -1588,7 +1584,7 @@ async function updateChildUserEnabledByGroupUserId(req, res) {
  * @description This endpoint is used to update the allowance of the given child_user_id for the given service_type
  * @operationId updateChildUserAllowance
  * @bodyDescription The child's group_user_id and value to set for the child user's allowance for the given service type
- * @bodyContent { group_user_id, value, type }
+ * @bodyContent { group_user_id, value, type } application/json
  * @bodyRequired
  * @response 200 - User allowance updated successfully. Returns the updated group_user.
  * @responseContent {group_user} 200.application/json
@@ -1642,7 +1638,6 @@ async function deleteChildUserByGroupUserId(req, res) {
 //  * @summary Get wallet balance for regular wallet.
 //  * @description This endpoint is used to check wallet balance for a particular user.
 //  * @operationId getPaymentSheetCredentials
-//  * @headerDescription Authorization Bearer token is required
 //  * @response 200 - {wallet_balance:float}
 //  * @response 400 - Error checking wallet balances
 //  */
@@ -1665,7 +1660,6 @@ async function deleteChildUserByGroupUserId(req, res) {
  * @summary Get wallet balance from wallet_funds.
  * @description This endpoint is used to check available wallet balance for a particular user.
  * @operationId getPaymentSheetCredentials
- * @headerDescription Authorization Bearer token is required
  * @response 200 - {wallet_balance:float}
  * @response 400 - Error checking wallet balances
  */
@@ -1686,7 +1680,6 @@ async function getAvailableWalletBalance(req, res) {
  * @summary Get family wallet type and minimum between allowance and actual family wallet balance.
  * @description This endpoint is used to check wallet balance and type for a particular user.
  * @operationId getPaymentSheetCredentials
- * @headerDescription Authorization Bearer token is required
  * @response 200 - {family_wallet_balance:float,family_wallet_type:string}
  * @response 400 - Error checking wallet balances
  */

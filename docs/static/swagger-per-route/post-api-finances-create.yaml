@@ -1,0 +1,38 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/finances/create:
+    post:
+      tags:
+        - Finance
+      summary: Add new finance record
+      description: Adds a new finance record to the database.
+      operationId: addFinances
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Finance'
+        required: true
+      responses:
+        '201':
+          description: Finance record added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Finance'
+        '400':
+          description: Error adding finance record
+components: {}

@@ -1,0 +1,38 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/business/deactivate:
+    post:
+      tags:
+        - Business
+      summary: Deactivate a business
+      description: Deactivates a business.
+      operationId: deactivateBusiness
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          description: Error occurred while obtaining the business list
+          content:
+            application/json:
+              schema:
+                type: object
+components: {}

@@ -1,0 +1,45 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/drivers/edit:
+    patch:
+      tags:
+        - Drivers
+      summary: Edit a driver
+      description: Edits the data of specific driver.
+      operationId: editDriver
+      parameters:
+        - name: driver_id
+          in: path
+          description: The ID of the driver to edit
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DriverEdit'
+        required: true
+      responses:
+        '200':
+          description: Driver edited successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Driver'
+        '400':
+          description: Error updating driver
+components: {}

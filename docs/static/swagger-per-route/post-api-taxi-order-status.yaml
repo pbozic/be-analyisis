@@ -1,0 +1,47 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/taxi/order/status:
+    post:
+      tags:
+        - Taxi
+      summary: Update a taxi order's status.
+      description: >-
+        Updates the status of a specific taxi order based on the provided
+        details from the request body. Returns the updated order if successful.
+      operationId: updateOrderStatus
+      requestBody:
+        description: >-
+          Request body must include 'order_id' to identify the order and
+          'status' to specify the new status.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateOrderStatusRequest'
+        required: true
+      responses:
+        '200':
+          description: >-
+            Successful operation. Returns the updated order in the response
+            body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxiOrder'
+        '500':
+          description: >-
+            Server error. Returns error message if any exception is encountered
+            during execution.
+components: {}

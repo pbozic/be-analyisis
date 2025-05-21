@@ -1,0 +1,55 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/drivers/earnings/:driver_id:
+    get:
+      tags:
+        - Drivers
+      summary: Get earnings for a specific driver
+      description: >-
+        Retrieves the earnings of a specific driver within a specified date
+        range.
+      operationId: getDriverEarnings
+      parameters:
+        - name: driver_id
+          in: path
+          description: The ID of the driver whose earnings are being retrieved
+          required: true
+          schema:
+            type: string
+        - name: start_date
+          in: path
+          description: 'The start date for the earnings period (format: YYYY-MM-DD)'
+          required: true
+          schema:
+            type: string
+        - name: end_date
+          in: path
+          description: 'The end date for the earnings period (format: YYYY-MM-DD)'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation, returns driver's earnings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Earnings'
+        '400':
+          description: Error retrieving driver's earnings
+        '404':
+          description: Driver not found
+components: {}

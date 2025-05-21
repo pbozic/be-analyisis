@@ -84,7 +84,6 @@ async function getReservationsByBusinessId(req, res) {
  * @summary Get active reservations orders.
  * @description This fetches all completed orders for a specific driver.
  * @operationId getActiveTableReservation
- * @requestBody {DriverId} user_id - The ID of the user to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.

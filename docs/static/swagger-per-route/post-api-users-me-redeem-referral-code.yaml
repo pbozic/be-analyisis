@@ -1,0 +1,34 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/users/me/redeem-referral-code:
+    post:
+      tags:
+        - Users
+      summary: Redeem a referral code for an existing user
+      description: This endpoint allows an existing user to redeem a referral code
+      operationId: redeemReferralCode
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        '200':
+          description: Referral code redeemed successfully
+        '400':
+          description: Error redeeming referral code
+components: {}

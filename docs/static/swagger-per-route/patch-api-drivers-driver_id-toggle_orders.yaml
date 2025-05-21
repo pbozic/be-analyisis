@@ -1,0 +1,50 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/drivers/:driver_id/toggle_orders:
+    patch:
+      tags:
+        - Drivers
+      summary: Toggle driver's orders he should receive
+      description: >-
+        This endpoint allows toggling the types of orders a specific driver can
+        receive. The request body should contain an object specifying which
+        order types (taxi, transfer, delivery) to toggle on or off.
+      operationId: toggleDriverOrders
+      parameters:
+        - name: driver_id
+          in: path
+          description: The ID of the driver to toggle
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Object'
+        required: true
+      responses:
+        '200':
+          description: Driver orders toggled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Object'
+        '400':
+          description: Error toggling driver orders
+        '404':
+          description: Driver not found
+components: {}

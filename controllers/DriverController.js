@@ -683,8 +683,6 @@ async function handleSosAlert(req, res) {
  * @summary Get history of locations for a driver.
  * @description Get history of locations for a driver with a given driver id and between specified time interval
  * @operationId getDriverLocationsController
- * @bodyContent {Driver} application/json
- * @bodyRequired
  * @response 201 - Driver history locations fetched successfully
  * @responseContent {Driver} 201.application/json
  * @response 400 - Error fetching history locations for a particular driver

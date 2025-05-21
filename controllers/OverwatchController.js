@@ -7,11 +7,6 @@ const { SERVICE_TYPE } = require('../lib/constants');
  * @summary Get orders with pagination.
  * @description This fetches orders with pagination.
  * @operationId getOrdersWithPagination
- * @requestBody {Object} where - Optional filters for the query.
- * @requestBody {Object} orderBy - Optional sorting for the query.
- * @requestBody {number} take - Number of records to fetch.
- * @requestBody {number} page - Page number to fetch.
- * @requestBody {string} service - Type of orders to fetch.
  * @response 200 - Successful operation. Returns a list of orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -52,7 +47,6 @@ async function getOrdersWithPagination(req, res) {
  * @summary Update driver activity settings
  * @description Updates existing driver activity settings or creates new ones if they don't exist
  * @operationId updateDriverActivitySettings
- * @prisma_model driver_activity_settings
  * @bodyContent {
  *   "first_offline_lockout": 30,
  *   "second_offline_lockout": 120,

@@ -73,7 +73,6 @@ async function getOrder(req, res) {
  * @summary Get active taxi orders.
  * @description This fetches all completed orders for a specific user.
  * @operationId getCompletedDeliveryOrders
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -196,7 +195,6 @@ async function getActiveTaxiOrdersByDriverId(req, res) {
  * @summary Get completed taxi orders.
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedTaxiOrders
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -224,7 +222,6 @@ async function getTaxiOrdersByDriverId(req, res) {
  * @summary Get completed taxi orders.
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedTaxiOrders
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -253,7 +250,6 @@ async function getCompletedTaxiOrders(req, res) {
  * @summary Get canceled taxi orders.
  * @description This fetches all canceled orders for a specific driver.
  * @operationId getCanceledTaxiOrders
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve canceled orders for
  * @response 200 - Successful operation. Returns a list of canceled orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -281,7 +277,6 @@ async function getCanceledTaxiOrders(req, res) {
  * @summary Get rejected taxi orders.
  * @description This fetches all rejected orders for a specific driver.
  * @operationId getRejectedTaxiOrders
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve rejected orders for
  * @response 200 - Successful operation. Returns a list of rejected orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -342,7 +337,6 @@ async function getTaxiOrders(req, res) {
  * @summary Get completed taxi orders.
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedTaxiOrdersByUserId
- * @requestBody {UserId} userId - The ID of the driver to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -374,7 +368,6 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
  * @summary Get completed taxi orders.
  * @description This fetches all completed orders for a business.
  * @operationId getCompletedTaxiOrdersByBusinessId
- * @requestBody {BusinessId} businessId - The ID of the business to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -406,7 +399,6 @@ async function getCompletedTaxiOrdersByBusinessId(req, res) {
  * @summary Get canceled taxi orders.
  * @description This fetches all canceled orders for a specific driver.
  * @operationId getCanceledTaxiOrders
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve canceled orders for
  * @response 200 - Successful operation. Returns a list of canceled orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -2175,9 +2167,9 @@ async function updateTaxiOrderPayment(req, res) {
 /**
  * POST /taxi/driver
  * @tag Taxi
- * @summary
- * @description
- * @operationId
+ * @summary Append driver to taxi order.
+ * @description Append driver to taxi order.
+ * @operationId appendTaxiDriver
  * @bodyDescription Request body must include 'order_id', and 'driver_id'
  * @bodyContent {selectTaxiDriverRequest} application/json
  * @bodyRequired
@@ -2286,10 +2278,6 @@ async function getDriversForOrder(req, res) {
  * @summary Get taxi orders with pagination.
  * @description This fetches orders with pagination.
  * @operationId getTaxiOrdersWithPagination
- * @requestBody {Object} where - Optional filters for the query.
- * @requestBody {Object} orderBy - Optional sorting for the query.
- * @requestBody {number} take - Number of records to fetch.
- * @requestBody {number} page - Page number to fetch.
  * @response 200 - Successful operation. Returns a list of orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.

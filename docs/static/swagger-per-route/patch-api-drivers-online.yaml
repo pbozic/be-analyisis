@@ -1,0 +1,52 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/drivers/online:
+    patch:
+      tags:
+        - Drivers
+      summary: Set driver online status
+      description: >-
+        Sets the online status of a specific driver and emits appropriate socket
+        events.
+      operationId: setDriverOnlineStatus
+      parameters:
+        - name: driver_id
+          in: path
+          description: The ID of the driver to update the online status for
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DriverOnlineStatus'
+        required: true
+      responses:
+        '200':
+          description: Online status updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Driver'
+        '400':
+          description: |-
+            Error updating online status
+
+            Emits:
+            - "driver_available" event with driver object if online is true
+            - "driver_unavailable" event with driver_id if online is false
+components: {}

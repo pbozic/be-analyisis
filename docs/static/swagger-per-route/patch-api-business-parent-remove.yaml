@@ -1,0 +1,39 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/business/parent/remove:
+    patch:
+      tags:
+        - Business
+      summary: Remove a child business from its parent
+      description: Clears the parent business association for a given child business.
+      operationId: removeChildBusiness
+      parameters:
+        - name: business_id
+          in: path
+          description: The ID of the "child" business to remove from its parent
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Child business removed from parent successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Business'
+        '400':
+          description: Error removing parent business from business
+components: {}

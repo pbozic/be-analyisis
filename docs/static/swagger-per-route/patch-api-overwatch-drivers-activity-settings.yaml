@@ -1,0 +1,47 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/overwatch/drivers/activity/settings:
+    patch:
+      tags:
+        - DriverSettings
+      summary: Update driver activity settings
+      description: >-
+        Updates existing driver activity settings or creates new ones if they
+        don't exist
+      operationId: updateDriverActivitySettings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: |
+                #/components/schemas/
+                  "first_offline_lockout": 30,
+                  "second_offline_lockout": 120,
+                  "online_timeout": 120,
+                  "active": true
+        required: true
+      responses:
+        '200':
+          description: Settings updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid request data
+        '500':
+          description: Server error while updating settings
+components: {}

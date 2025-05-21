@@ -1,0 +1,48 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/taxi/order/reject:
+    post:
+      tags:
+        - Taxi
+      summary: Reject a taxi order.
+      description: >-
+        Rejects a taxi order with the provided order ID, status, and rejection
+        reason from the request body. Returns the rejected order if successful
+        and emits a 'order_rejected' event.
+      operationId: rejectOrder
+      requestBody:
+        description: >-
+          Request body must include 'order_id', 'status', and
+          'rejection_reason'.
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        '200':
+          description: >-
+            Successful operation. Returns the rejected order in the response
+            body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxiOrder'
+        '500':
+          description: >-
+            Server error. Console logs the error message and returns it in the
+            response.
+components: {}

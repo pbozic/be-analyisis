@@ -884,7 +884,6 @@ async function completeOrder(req, res) {
  * @summary Get completed delivery orders.
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedDeliveryOrdersByDriverId
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -917,7 +916,6 @@ async function getDeliveryOrdersByDriverId(req, res) {
  * @summary Get completed delivery orders.
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedDeliveryOrdersByDriverId
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -949,7 +947,6 @@ async function getCompletedDeliveryOrdersByDriverId(req, res) {
  * @summary Get active delivery orders.
  * @description This fetches all active orders for a specific driver.
  * @operationId getActiveDeliveryOrdersByDriverId
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve active orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -1014,7 +1011,6 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
  * @summary Get completed delivery orders.
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedDeliveryOrdersByDriverId
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -1082,7 +1078,6 @@ async function getCompletedDeliveryOrdersByUserId(req, res) {
  * @summary Get active delivery orders.
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedDeliveryOrdersByDriverId
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -1106,7 +1101,6 @@ async function getActiveDeliveryOrdersByUserId(req, res) {
  * @summary Get active delivery orders.
  * @description This fetches all completed orders for a specific business.
  * @operationId getCompletedDeliveryOrdersByBusinessId
- * @requestBody {BusinessId} businessId - The ID of the business to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -1129,7 +1123,6 @@ async function getActiveDeliveryOrdersByBusinessId(req, res) {
  * @summary Get delivery orders.
  * @description This fetches all restaurant orders.
  * @operationId getDeliveryOrdersByBusinessId
- * @requestBody {business_id} business_id - The ID of the business to retrieve orders for
  * @response 200 - Successful operation. Returns a list of orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -1158,7 +1151,6 @@ async function getDeliveryOrdersByBusinessId(req, res) {
  * @summary Get completed delivery orders by business id.
  * @description This fetches all completed restaurant orders.
  * @operationId getCompletedDeliveryOrdersByBusinessId
- * @requestBody {business_id} business_id - The ID of the business to retrieve orders for
  * @response 200 - Successful operation. Returns a list of orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.

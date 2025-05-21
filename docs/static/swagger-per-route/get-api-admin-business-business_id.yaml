@@ -1,0 +1,43 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/admin/business/:business_id:
+    get:
+      tags:
+        - Business
+      summary: Get a business by ID including admin data
+      description: >-
+        Retrieves detailed information about a specific business by its ID,
+        including data an admin can see.
+      operationId: getBusinessAdminDataById
+      parameters:
+        - name: business_id
+          in: path
+          description: The ID of the business to retrieve
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation, returns detailed business information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Business'
+        '400':
+          description: Error retrieving business information
+        '404':
+          description: Business not found
+components: {}

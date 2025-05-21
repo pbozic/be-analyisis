@@ -1,0 +1,40 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/vehicles/:vehicle_id:
+    get:
+      tags:
+        - Vehicles
+      summary: Get a vehicle by ID
+      description: Retrieves a single vehicle by its ID from the database.
+      parameters:
+        - name: vehicle_id
+          in: path
+          description: The ID of the vehicle to retrieve
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        '404':
+          description: Vehicle not found
+        '500':
+          description: Error fetching vehicle
+components: {}

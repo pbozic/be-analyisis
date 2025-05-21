@@ -167,6 +167,7 @@ async function createBusinessUser(req, res) {
  * @operationId removeBusinessUser
  * @pathParam {string} business_users_id - The ID of the business user to remove
  * @response 200 - Business user removed successfully.
+ * @responseContent {object} 200.application/json
  * @response 400 - Error removing business user.
  */
 async function removeBusinessUser(req, res) {
@@ -223,6 +224,7 @@ async function addOperatingAddress(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Company role updated successfully
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating company role
  */
 async function updateCompanyRole(req, res) {
@@ -247,6 +249,7 @@ async function updateCompanyRole(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Company role updated successfully
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating company role
  */
 async function updateBusinessUserOnlineStatus(req, res) {
@@ -290,7 +293,6 @@ async function getBusinessGroupsByBusinessId(req, res) {
 		res.status(400).json({ error: 'Error obtaining group_users for business', e });
 	}
 }
-
 /**
  * PATCH /business_users/allowance
  * @tag BusinessUsers
@@ -298,7 +300,7 @@ async function getBusinessGroupsByBusinessId(req, res) {
  * @description This endpoint is used to update the allowance of the given child_user_id for the given service_type
  * @operationId updateChildUserAllowance
  * @bodyDescription The child's group_user_id and value to set for the child user's allowance for the given service type
- * @bodyContent { business_users_id, value, type }
+ * @bodyContent { business_users_id, value, type } application/json
  * @bodyRequired
  * @response 200 - User allowance updated successfully. Returns the updated group_user.
  * @responseContent {business_user} 200.application/json

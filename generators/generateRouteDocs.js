@@ -1,0 +1,132 @@
+const fs = require('fs');
+const path = require('path');
+
+const fg = require('fast-glob');
+const yaml = require('js-yaml');
+const openapi = require('openapi-comment-parser');
+const ROUTES_MAP = path.join(__dirname, './routesMap.json');
+const OUTPUT_DIR = path.join(process.cwd(), 'docs', 'docs', 'api');
+const CONTROLLERS_DIR = path.join(process.cwd(), 'docs', 'docs', 'controllers');
+const DOCS_DIR = path.join(process.cwd(), 'docs');
+const SWAGGER_INPUT = path.join(DOCS_DIR, 'static/swagger/openApiConfig.yaml');
+console.log('SWAGGER_INPUT', SWAGGER_INPUT);
+const SWAGGER_OUTPUT_DIR = path.join(DOCS_DIR, 'static/swagger-per-route');
+const merge = require('lodash.merge');
+function ensureDir(dir) {
+	if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+}
+
+function sanitizePathSegment(segment) {
+	return segment.replace(/[:*?<>|"\\]/g, '').replace(/\s+/g, '-');
+}
+
+function generateRouteDoc(route) {
+	const segments = route.path.split('/').filter(Boolean).map(sanitizePathSegment);
+	const method = route.method.toLowerCase();
+	const methodPrefix = method;
+	const filenameBase = [methodPrefix, ...segments].join('-');
+
+	const dir = path.join(OUTPUT_DIR, ...segments);
+	ensureDir(dir);
+
+	const filepath = path.join(dir, `${filenameBase}.mdx`);
+	ensureDir(SWAGGER_OUTPUT_DIR);
+
+	const controllerDocFile = path.join(CONTROLLERS_DIR, `${path.basename(route.controller, '.js')}.md`);
+	const depth = segments.length + 1;
+	const upDirs = Array(depth).fill('..').join('/');
+	const relativePathToControllerDoc = `${upDirs}/controllers/${path.basename(route.controller, '.js')}.md`;
+
+	const controllerLink = fs.existsSync(controllerDocFile)
+		? `[${route.function}](${relativePathToControllerDoc}#${route.function.toLowerCase()})`
+		: `\`${route.function}\` (no controller doc yet)`;
+
+	const openapiFull = yaml.load(fs.readFileSync(SWAGGER_INPUT, 'utf8'));
+	let routeSpec = openapiFull.paths?.[route.path.replace('/api', '')]?.[method];
+	if (!routeSpec) {
+		routeSpec = openapiFull.paths?.[route.path]?.[method];
+	}
+	if (!routeSpec) {
+		routeSpec = openapiFull.paths?.[route.path.replace('/api/', '')]?.[method];
+	}
+	if (!routeSpec) {
+		console.warn(`⚠️ No OpenAPI spec found for ${route.method} ${route.path}`);
+		return;
+	}
+
+	const filteredSpec = {
+		openapi: openapiFull.openapi || '3.0.3',
+		info: openapiFull.info || { title: `${route.method} ${route.path}`, version: '1.0.0' },
+		paths: {
+			[route.path]: {
+				[method]: routeSpec,
+			},
+		},
+		components: openapiFull.components || {},
+	};
+
+	const specFileName = `${filenameBase}.yaml`;
+	const specFilePath = path.join(SWAGGER_OUTPUT_DIR, specFileName);
+	fs.writeFileSync(specFilePath, yaml.dump(filteredSpec), 'utf8');
+
+	const relativeSpecPath = `${upDirs}/swagger-per-route/${specFileName}`;
+	const content = `import SwaggerUI from 'swagger-ui-react';
+import 'swagger-ui-react/swagger-ui.css';
+
+# [${route.method.toUpperCase()}] ${route.path}
+
+**Controller**: ${controllerLink}
+
+**Requires Auth**: ${route.auth ? '✅ Yes' : '❌ No'}
+
+## 🧾 Swagger Preview
+
+<SwaggerUI url="${relativeSpecPath}" deepLinking={true} filter={true} />
+
+## ✍️ Description
+_Add details here._
+
+`;
+
+	if (!fs.existsSync(filepath)) {
+		console.log(`✅ Creating route doc: ${filepath}`);
+		fs.writeFileSync(filepath, content);
+	} else {
+		console.log(`⏩ Skipped (already exists): ${filepath}`);
+	}
+}
+
+async function generateRouteDocs() {
+	const data = JSON.parse(fs.readFileSync(ROUTES_MAP, 'utf-8'));
+	let spec;
+	let finalSpec;
+	try {
+		const baseYamlPath = path.join(__dirname, '../swagger', 'openApiConfig.yaml');
+		const baseSpec = yaml.load(fs.readFileSync(baseYamlPath, 'utf8'));
+		const files = fg.sync(['routes/**/*.js', 'controllers/**/*.js', 'middlewares/**/*.js'], {
+			cwd: process.cwd(), // base dir to resolve from
+			absolute: true, // get full paths
+		});
+		console.log('path', path.join(process.cwd(), 'routes/**/*.js'));
+		console.log('files', files);
+		// This triggers parsing of comments
+		spec = openapi({
+			include: files,
+		});
+		console.log('spec', spec);
+		console.log('baseSpec', baseSpec);
+		finalSpec = merge({}, baseSpec, spec);
+		if (!finalSpec.openapi) finalSpec.openapi = '3.0.3';
+		const yamlSpec = yaml.dump(finalSpec);
+		const outputPath = path.join(__dirname, '../docs/static/swagger', 'openApiConfig.yaml'); // adjust if needed
+		fs.writeFileSync(outputPath, yamlSpec, 'utf8');
+	} catch (err) {
+		console.error('❌ Failed to parse OpenAPI comments:', err.message);
+		console.error(err.stack);
+		process.exit(1); // or continue without Swagger if desired
+	}
+	ensureDir(OUTPUT_DIR);
+	data.forEach(generateRouteDoc);
+}
+
+module.exports = generateRouteDocs;

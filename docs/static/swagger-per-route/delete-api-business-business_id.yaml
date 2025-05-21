@@ -1,0 +1,35 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/business/:business_id:
+    delete:
+      tags:
+        - Business
+      summary: Delete a business
+      description: Deletes a business by its ID.
+      operationId: deleteBusiness
+      parameters:
+        - name: business_id
+          in: path
+          description: The ID of the business to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Business deleted successfully
+        '400':
+          description: Error deleting business
+components: {}

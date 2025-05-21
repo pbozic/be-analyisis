@@ -1,0 +1,46 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/business/parent/update:
+    patch:
+      tags:
+        - Business
+      summary: Update parent business
+      description: Updates the parent business of a specific business by its ID.
+      operationId: updateParentBusiness
+      parameters:
+        - name: business_id
+          in: path
+          description: The ID of the business to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The ID of the new parent business
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateParentBusinessRequest'
+        required: true
+      responses:
+        '200':
+          description: Parent business updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Business'
+        '400':
+          description: Error updating parent business
+components: {}
