@@ -858,7 +858,7 @@ async function completeOrder(req, res) {
 		await handleReferral(order.user_id);
 
 		if (DISCOUNTED_DELIVERY_COST_CENTS > 0) {
-			if (order.payment.type === 'CARD') {
+			if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
 				const paymentIntent = await stripe.client.paymentIntents.retrieve(order.payment_intent_id);
 				const transferDelivery = stripe.splitCutFromPaymentIntent(
 					paymentIntent,
