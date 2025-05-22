@@ -1,0 +1,28 @@
+openapi: 3.0.3
+info:
+  title: delete /api/vehicles/:vehicle_id
+  version: 1.0.0
+paths:
+  /api/vehicles/:vehicle_id:
+    delete:
+      tags:
+        - Vehicles
+      summary: Delete a vehicle
+      description: Deletes a vehicle from the database.
+      operationId: deleteVehicle
+      parameters:
+        - name: vehicle_id
+          in: path
+          description: The ID of the vehicle to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Vehicle deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Error deleting vehicle

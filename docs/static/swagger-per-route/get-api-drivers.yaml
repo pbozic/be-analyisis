@@ -1,0 +1,23 @@
+openapi: 3.0.3
+info:
+  title: get /api/drivers/business/:business_id
+  version: 1.0.0
+paths:
+  /api/drivers/business/:business_id:
+    get:
+      tags:
+        - Drivers
+      summary: Get a list of drivers for business
+      description: Returns a list of drivers along with their user and vehicle information.
+      operationId: getDrivers
+      responses:
+        '200':
+          description: Successful operation, returns a list of drivers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Driver'
+        '400':
+          description: Error occurred while obtaining the driver list

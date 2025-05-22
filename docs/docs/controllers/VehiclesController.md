@@ -4,9 +4,9 @@
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: Listall vehicles
 
-**Description**: Retrieves
+**Description**: Retrievesa list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -21,9 +21,9 @@
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Getvehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrievesvehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -44,9 +44,9 @@
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Geta vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrievesa single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -68,9 +68,9 @@
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Getvehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrievesa list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -91,9 +91,9 @@
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Getvehicles by class
 
-**Description**: Retrieves
+**Description**: Retrievesa list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -114,9 +114,9 @@
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Getvehicles by category
 
-**Description**: Retrieves
+**Description**: Retrievesa list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -137,9 +137,9 @@
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Getvehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrievesa list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -161,9 +161,9 @@
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Getvehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrievesa list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -185,9 +185,9 @@
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Getvehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrievesa list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -209,9 +209,9 @@
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Getvehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrievesa list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -234,9 +234,9 @@
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Createa new vehicle
 
-**Description**: Adds
+**Description**: Addsa new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -257,9 +257,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Updatea vehicle
 
-**Description**: Updates
+**Description**: Updatesan existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -286,9 +286,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assignvehicles to a driver
 
-**Description**: Assigns
+**Description**: Assignsexisting vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -307,9 +307,9 @@ Content-Type: `- The vehicles to assign`
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Removea vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociatesa vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -328,9 +328,9 @@ Content-Type: `- The ID of the vehicle to unassign`
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Deletea vehicle
 
-**Description**: Deletes
+**Description**: Deletesa vehicle from the database.
 
 **Parameters:**
 
@@ -353,9 +353,9 @@ Content-Type: `- The ID of the vehicle to unassign`
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -365,14 +365,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -388,14 +390,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -412,14 +416,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -435,14 +441,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -457,15 +465,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -480,15 +490,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -504,15 +516,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -528,15 +542,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -553,14 +569,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -578,14 +596,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -599,16 +619,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -628,16 +648,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -651,14 +671,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -672,14 +694,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -695,16 +719,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -714,14 +738,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -737,14 +763,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -761,14 +789,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -784,14 +814,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -806,15 +838,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -829,15 +863,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -853,15 +889,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -877,15 +915,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -902,14 +942,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -927,14 +969,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -948,16 +992,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -977,16 +1021,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -1000,14 +1044,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -1021,14 +1067,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -1044,16 +1092,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -1063,14 +1111,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -1086,14 +1136,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -1110,14 +1162,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -1133,14 +1187,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -1155,15 +1211,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -1178,15 +1236,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -1202,15 +1262,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -1226,15 +1288,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -1251,14 +1315,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -1276,14 +1342,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1297,16 +1365,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -1326,16 +1394,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -1349,14 +1417,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -1370,14 +1440,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -1393,16 +1465,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -1412,14 +1484,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -1435,14 +1509,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -1459,14 +1535,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -1482,14 +1560,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -1504,15 +1584,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -1527,15 +1609,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -1551,15 +1635,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -1575,15 +1661,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -1600,14 +1688,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -1625,14 +1715,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1646,16 +1738,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -1675,16 +1767,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -1698,14 +1790,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -1719,14 +1813,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -1742,16 +1838,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -1761,14 +1857,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -1784,14 +1882,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -1808,14 +1908,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -1831,14 +1933,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -1853,15 +1957,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -1876,15 +1982,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -1900,15 +2008,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -1924,15 +2034,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -1949,14 +2061,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -1974,14 +2088,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1995,16 +2111,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -2024,16 +2140,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -2047,14 +2163,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -2068,14 +2186,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -2091,16 +2211,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -2110,14 +2230,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -2133,14 +2255,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -2157,14 +2281,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -2180,14 +2306,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -2202,15 +2330,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -2225,15 +2355,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -2249,15 +2381,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -2273,15 +2407,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -2298,14 +2434,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -2323,14 +2461,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2344,16 +2484,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -2373,16 +2513,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -2396,14 +2536,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -2417,14 +2559,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -2440,16 +2584,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -2459,14 +2603,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -2482,14 +2628,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -2506,14 +2654,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -2529,14 +2679,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -2551,15 +2703,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -2574,15 +2728,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -2598,15 +2754,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -2622,15 +2780,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -2647,14 +2807,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -2672,14 +2834,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2693,16 +2857,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -2722,16 +2886,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -2745,14 +2909,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -2766,14 +2932,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -2789,16 +2957,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -2808,14 +2976,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -2831,14 +3001,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -2855,14 +3027,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -2878,14 +3052,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -2900,15 +3076,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -2923,15 +3101,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -2947,15 +3127,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -2971,15 +3153,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -2996,14 +3180,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -3021,14 +3207,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3042,16 +3230,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -3071,16 +3259,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -3094,14 +3282,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -3115,14 +3305,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -3138,16 +3330,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -3157,14 +3349,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -3180,14 +3374,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -3204,14 +3400,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -3227,14 +3425,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -3249,15 +3449,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -3272,15 +3474,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -3296,15 +3500,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -3320,15 +3526,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -3345,14 +3553,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -3370,14 +3580,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3391,16 +3603,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -3420,16 +3632,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -3443,14 +3655,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -3464,14 +3678,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -3487,16 +3703,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -3506,14 +3722,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -3529,14 +3747,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -3553,14 +3773,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -3576,14 +3798,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -3598,15 +3822,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -3621,15 +3847,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -3645,15 +3873,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -3669,15 +3899,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -3694,14 +3926,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -3719,14 +3953,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3740,16 +3976,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -3769,16 +4005,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -3792,14 +4028,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -3813,14 +4051,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -3836,16 +4076,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -3855,14 +4095,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -3878,14 +4120,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -3902,14 +4146,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -3925,14 +4171,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -3947,15 +4195,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -3970,15 +4220,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -3994,15 +4246,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -4018,15 +4272,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -4043,14 +4299,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -4068,14 +4326,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4089,16 +4349,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -4118,16 +4378,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -4141,14 +4401,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -4162,14 +4424,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -4185,16 +4449,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -4204,14 +4468,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -4227,14 +4493,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -4251,14 +4519,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -4274,14 +4544,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -4296,15 +4568,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -4319,15 +4593,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -4343,15 +4619,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -4367,15 +4645,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -4392,14 +4672,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -4417,14 +4699,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4438,16 +4722,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -4467,16 +4751,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -4490,14 +4774,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -4511,14 +4797,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -4534,16 +4822,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -4553,14 +4841,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -4576,14 +4866,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -4600,14 +4892,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -4623,14 +4917,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -4645,15 +4941,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -4668,15 +4966,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -4692,15 +4992,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -4716,15 +5018,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -4741,14 +5045,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -4766,14 +5072,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4787,16 +5095,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -4816,16 +5124,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -4839,14 +5147,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -4860,14 +5170,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -4883,16 +5195,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -4902,14 +5214,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -4925,14 +5239,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -4949,14 +5265,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -4972,14 +5290,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -4994,15 +5314,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -5017,15 +5339,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -5041,15 +5365,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -5065,15 +5391,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -5090,14 +5418,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -5115,14 +5445,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5136,16 +5468,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -5165,16 +5497,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -5188,14 +5520,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -5209,14 +5543,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -5232,16 +5568,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -5251,14 +5587,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -5274,14 +5612,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -5298,14 +5638,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -5321,14 +5663,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -5343,15 +5687,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -5366,15 +5712,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -5390,15 +5738,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -5414,15 +5764,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -5439,14 +5791,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -5464,14 +5818,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5485,16 +5841,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -5514,16 +5870,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -5537,14 +5893,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -5558,14 +5916,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -5581,16 +5941,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -5600,14 +5960,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -5623,14 +5985,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -5647,14 +6011,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -5670,14 +6036,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -5692,15 +6060,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -5715,15 +6085,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -5739,15 +6111,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -5763,15 +6137,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -5788,14 +6164,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -5813,14 +6191,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5834,16 +6214,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -5863,16 +6243,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -5886,14 +6266,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -5907,14 +6289,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -5930,16 +6314,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -5949,14 +6333,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -5972,14 +6358,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -5996,14 +6384,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -6019,14 +6409,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -6041,15 +6433,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -6064,15 +6458,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -6088,15 +6484,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -6112,15 +6510,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -6137,14 +6537,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -6162,14 +6564,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6183,16 +6587,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -6212,16 +6616,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -6235,14 +6639,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -6256,14 +6662,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -6279,16 +6687,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -6298,14 +6706,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -6321,14 +6731,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -6345,14 +6757,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -6368,14 +6782,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -6390,15 +6806,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -6413,15 +6831,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -6437,15 +6857,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -6461,15 +6883,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -6486,14 +6910,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -6511,14 +6937,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6532,16 +6960,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -6561,16 +6989,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -6584,14 +7012,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -6605,14 +7035,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -6628,16 +7060,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -6647,14 +7079,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -6670,14 +7104,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -6694,14 +7130,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -6717,14 +7155,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -6739,15 +7179,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -6762,15 +7204,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -6786,15 +7230,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -6810,15 +7256,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -6835,14 +7283,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -6860,14 +7310,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6881,16 +7333,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -6910,16 +7362,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -6933,14 +7385,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -6954,14 +7408,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -6977,16 +7433,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -6996,14 +7452,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -7019,14 +7477,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -7043,14 +7503,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -7066,14 +7528,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -7088,15 +7552,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -7111,15 +7577,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -7135,15 +7603,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -7159,15 +7629,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -7184,14 +7656,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -7209,14 +7683,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7230,16 +7706,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -7259,16 +7735,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -7282,14 +7758,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -7303,14 +7781,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -7326,16 +7806,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -7345,14 +7825,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -7368,14 +7850,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -7392,14 +7876,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -7415,14 +7901,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -7437,15 +7925,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -7460,15 +7950,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -7484,15 +7976,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -7508,15 +8002,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -7533,14 +8029,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -7558,14 +8056,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7579,16 +8079,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -7608,16 +8108,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -7631,14 +8131,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -7652,14 +8154,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -7675,16 +8179,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -7694,14 +8198,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -7717,14 +8223,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -7741,14 +8249,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -7764,14 +8274,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -7786,15 +8298,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -7809,15 +8323,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -7833,15 +8349,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -7857,15 +8375,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -7882,14 +8402,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -7907,14 +8429,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7928,16 +8452,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -7957,16 +8481,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -7980,14 +8504,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -8001,14 +8527,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -8024,16 +8552,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -8043,14 +8571,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -8066,14 +8596,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -8090,14 +8622,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -8113,14 +8647,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -8135,15 +8671,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -8158,15 +8696,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -8182,15 +8722,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -8206,15 +8748,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -8231,14 +8775,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -8256,14 +8802,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8277,16 +8825,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -8306,16 +8854,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -8329,14 +8877,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -8350,14 +8900,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -8373,16 +8925,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -8392,14 +8944,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -8415,14 +8969,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -8439,14 +8995,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -8462,14 +9020,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -8484,15 +9044,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -8507,15 +9069,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -8531,15 +9095,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -8555,15 +9121,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -8580,14 +9148,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -8605,14 +9175,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8626,16 +9198,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -8655,16 +9227,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -8678,14 +9250,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -8699,14 +9273,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -8722,16 +9298,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -8741,14 +9317,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -8764,14 +9342,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -8788,14 +9368,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -8811,14 +9393,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -8833,15 +9417,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -8856,15 +9442,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -8880,15 +9468,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -8904,15 +9494,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -8929,14 +9521,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -8954,14 +9548,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8975,16 +9571,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -9004,16 +9600,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -9027,14 +9623,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -9048,14 +9646,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -9071,16 +9671,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -9090,14 +9690,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -9113,14 +9715,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -9137,14 +9741,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -9160,14 +9766,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -9182,15 +9790,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -9205,15 +9815,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -9229,15 +9841,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -9253,15 +9867,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -9278,14 +9894,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -9303,14 +9921,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9324,16 +9944,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -9353,16 +9973,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -9376,14 +9996,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -9397,14 +10019,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -9420,16 +10044,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -9439,14 +10063,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -9462,14 +10088,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -9486,14 +10114,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -9509,14 +10139,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -9531,15 +10163,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -9554,15 +10188,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -9578,15 +10214,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -9602,15 +10240,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -9627,14 +10267,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -9652,14 +10294,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9673,16 +10317,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -9702,16 +10346,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -9725,14 +10369,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -9746,14 +10392,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -9769,16 +10417,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -9788,14 +10436,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -9811,14 +10461,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -9835,14 +10487,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -9858,14 +10512,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -9880,15 +10536,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -9903,15 +10561,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -9927,15 +10587,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -9951,15 +10613,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -9976,14 +10640,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -10001,14 +10667,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10022,16 +10690,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -10051,16 +10719,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -10074,14 +10742,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -10095,14 +10765,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -10118,16 +10790,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -10137,14 +10809,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -10160,14 +10834,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -10184,14 +10860,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -10207,14 +10885,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -10229,15 +10909,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -10252,15 +10934,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -10276,15 +10960,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -10300,15 +10986,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -10325,14 +11013,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -10350,14 +11040,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10371,16 +11063,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -10400,16 +11092,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -10423,14 +11115,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -10444,14 +11138,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -10467,16 +11163,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -10486,14 +11182,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -10509,14 +11207,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -10533,14 +11233,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -10556,14 +11258,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -10578,15 +11282,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -10601,15 +11307,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -10625,15 +11333,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -10649,15 +11359,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -10674,14 +11386,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -10699,14 +11413,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10720,16 +11436,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -10749,16 +11465,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -10772,14 +11488,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -10793,14 +11511,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -10816,16 +11536,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -10835,14 +11555,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -10858,14 +11580,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -10882,14 +11606,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -10905,14 +11631,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -10927,15 +11655,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -10950,15 +11680,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -10974,15 +11706,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -10998,15 +11732,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -11023,14 +11759,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -11048,14 +11786,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11069,16 +11809,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -11098,16 +11838,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -11121,14 +11861,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -11142,14 +11884,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -11165,16 +11909,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->
 
 <!-- DOCGEN:START listVehicles -->
 ### listVehicles
 
-**Summary**: List
+**Summary**: List all vehicles
 
-**Description**: Retrieves
+**Description**: Retrieves a list of all vehicles in the database.
 
 **Responses:**
 - 200
@@ -11184,14 +11928,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehicles -->
 
 <!-- DOCGEN:START listVehiclesByBusiness -->
 ### listVehiclesByBusiness
 
-**Summary**: Get
+**Summary**: Get vehicles by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves vehicles associated with a specific business ID.
 
 **Parameters:**
 
@@ -11207,14 +11953,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END listVehiclesByBusiness -->
 
 <!-- DOCGEN:START getVehicleById -->
 ### getVehicleById
 
-**Summary**: Get
+**Summary**: Get a vehicle by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a single vehicle by its ID from the database.
 
 **Parameters:**
 
@@ -11231,14 +11979,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehicleById -->
 
 <!-- DOCGEN:START getVehiclesByDriverId -->
 ### getVehiclesByDriverId
 
-**Summary**: Get
+**Summary**: Get vehicles by driver ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
 
 **Parameters:**
 
@@ -11254,14 +12004,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesByDriverId -->
 
 <!-- DOCGEN:START getVehiclesByClass -->
 ### getVehiclesByClass
 
-**Summary**: Get
+**Summary**: Get vehicles by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class.
 
 **Parameters:**
 
@@ -11276,15 +12028,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClass -->
 
 <!-- DOCGEN:START getVehiclesByCategory -->
 ### getVehiclesByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category.
 
 **Parameters:**
 
@@ -11299,15 +12053,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByCategory -->
 
 <!-- DOCGEN:START getVehiclesByClassAndCategory -->
 ### getVehiclesByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category.
 
 **Parameters:**
 
@@ -11323,15 +12079,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesByClassAndCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClass -->
 ### getVehiclesOfDriverByClass
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
 
 **Parameters:**
 
@@ -11347,15 +12105,17 @@ Content-Type: `- The ID of the vehicle to unassign`
 **Response Content:**
 
 - ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getVehiclesOfDriverByClass -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByCategory -->
 ### getVehiclesOfDriverByCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
 
 **Parameters:**
 
@@ -11372,14 +12132,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByCategory -->
 
 <!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
 ### getVehiclesOfDriverByClassAndCategory
 
-**Summary**: Get
+**Summary**: Get vehicles of a certain driver by class and category
 
-**Description**: Retrieves
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
 
 **Parameters:**
 
@@ -11397,14 +12159,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
 
 <!-- DOCGEN:START createVehicle -->
 ### createVehicle
 
-**Summary**: Create
+**Summary**: Create a new vehicle
 
-**Description**: Adds
+**Description**: Adds a new vehicle to the database, including its specifications.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11418,16 +12182,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
 
 <!-- DOCGEN:END createVehicle -->
 
 <!-- DOCGEN:START updateVehicle -->
 ### updateVehicle
 
-**Summary**: Update
+**Summary**: Update a vehicle
 
-**Description**: Updates
+**Description**: Updates an existing vehicle's details and specifications.
 
 **Parameters:**
 
@@ -11447,16 +12211,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
 
 <!-- DOCGEN:END updateVehicle -->
 
 <!-- DOCGEN:START assignVehiclesToDriver -->
 ### assignVehiclesToDriver
 
-**Summary**: Assign
+**Summary**: Assign vehicles to a driver
 
-**Description**: Assigns
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
 
 **Request Body:** (optional)
 Type: `vehicles`
@@ -11470,14 +12234,16 @@ Content-Type: `- The vehicles to assign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END assignVehiclesToDriver -->
 
 <!-- DOCGEN:START removeVehicleFromDriver -->
 ### removeVehicleFromDriver
 
-**Summary**: Remove
+**Summary**: Remove a vehicle from a driver
 
-**Description**: Disassociates
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
 
 **Request Body:** (optional)
 Type: `vehicle_id`
@@ -11491,14 +12257,16 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END removeVehicleFromDriver -->
 
 <!-- DOCGEN:START deleteVehicle -->
 ### deleteVehicle
 
-**Summary**: Delete
+**Summary**: Delete a vehicle
 
-**Description**: Deletes
+**Description**: Deletes a vehicle from the database.
 
 **Parameters:**
 
@@ -11514,6 +12282,752 @@ Content-Type: `- The ID of the vehicle to unassign`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
+
+<!-- DOCGEN:END deleteVehicle -->
+
+<!-- DOCGEN:START listVehicles -->
+### listVehicles
+
+**Summary**: List all vehicles
+
+**Description**: Retrieves a list of all vehicles in the database.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END listVehicles -->
+
+<!-- DOCGEN:START listVehiclesByBusiness -->
+### listVehiclesByBusiness
+
+**Summary**: Get vehicles by business ID
+
+**Description**: Retrieves vehicles associated with a specific business ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | businessId |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END listVehiclesByBusiness -->
+
+<!-- DOCGEN:START getVehicleById -->
+### getVehicleById
+
+**Summary**: Get a vehicle by ID
+
+**Description**: Retrieves a single vehicle by its ID from the database.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | vehicle_id |  |
+
+**Responses:**
+- 200
+- 404
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getVehicleById -->
+
+<!-- DOCGEN:START getVehiclesByDriverId -->
+### getVehiclesByDriverId
+
+**Summary**: Get vehicles by driver ID
+
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | driver_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getVehiclesByDriverId -->
+
+<!-- DOCGEN:START getVehiclesByClass -->
+### getVehiclesByClass
+
+**Summary**: Get vehicles by class
+
+**Description**: Retrieves a list of vehicles of a specific class.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | vehicleClass |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getVehiclesByClass -->
+
+<!-- DOCGEN:START getVehiclesByCategory -->
+### getVehiclesByCategory
+
+**Summary**: Get vehicles by category
+
+**Description**: Retrieves a list of vehicles of a specific category.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | vehicleCategory |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getVehiclesByCategory -->
+
+<!-- DOCGEN:START getVehiclesByClassAndCategory -->
+### getVehiclesByClassAndCategory
+
+**Summary**: Get vehicles by class and category
+
+**Description**: Retrieves a list of vehicles of a specific class and category.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | vehicleClass |  |
+| undefined | path | vehicleCategory |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getVehiclesByClassAndCategory -->
+
+<!-- DOCGEN:START getVehiclesOfDriverByClass -->
+### getVehiclesOfDriverByClass
+
+**Summary**: Get vehicles of a certain driver by class
+
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | driverId |  |
+| undefined | path | vehicleClass |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getVehiclesOfDriverByClass -->
+
+<!-- DOCGEN:START getVehiclesOfDriverByCategory -->
+### getVehiclesOfDriverByCategory
+
+**Summary**: Get vehicles of a certain driver by category
+
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | driverId |  |
+| undefined | path | vehicleCategory |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getVehiclesOfDriverByCategory -->
+
+<!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
+### getVehiclesOfDriverByClassAndCategory
+
+**Summary**: Get vehicles of a certain driver by class and category
+
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | driverId |  |
+| undefined | path | vehicleClass |  |
+| undefined | path | vehicleCategory |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
+
+<!-- DOCGEN:START createVehicle -->
+### createVehicle
+
+**Summary**: Create a new vehicle
+
+**Description**: Adds a new vehicle to the database, including its specifications.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 201
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `201.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
+
+<!-- DOCGEN:END createVehicle -->
+
+<!-- DOCGEN:START updateVehicle -->
+### updateVehicle
+
+**Summary**: Update a vehicle
+
+**Description**: Updates an existing vehicle's details and specifications.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | vehicle_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
+
+<!-- DOCGEN:END updateVehicle -->
+
+<!-- DOCGEN:START assignVehiclesToDriver -->
+### assignVehiclesToDriver
+
+**Summary**: Assign vehicles to a driver
+
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
+
+**Request Body:** (optional)
+Type: `vehicles`
+Content-Type: `- The vehicles to assign`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END assignVehiclesToDriver -->
+
+<!-- DOCGEN:START removeVehicleFromDriver -->
+### removeVehicleFromDriver
+
+**Summary**: Remove a vehicle from a driver
+
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
+
+**Request Body:** (optional)
+Type: `vehicle_id`
+Content-Type: `- The ID of the vehicle to unassign`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END removeVehicleFromDriver -->
+
+<!-- DOCGEN:START deleteVehicle -->
+### deleteVehicle
+
+**Summary**: Delete a vehicle
+
+**Description**: Deletes a vehicle from the database.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | vehicle_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
+
+<!-- DOCGEN:END deleteVehicle -->
+
+<!-- DOCGEN:START listVehicles -->
+### listVehicles
+
+**Summary**: List all vehicles
+
+**Description**: Retrieves a list of all vehicles in the database.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END listVehicles -->
+
+<!-- DOCGEN:START listVehiclesByBusiness -->
+### listVehiclesByBusiness
+
+**Summary**: Get vehicles by business ID
+
+**Description**: Retrieves vehicles associated with a specific business ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | businessId |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END listVehiclesByBusiness -->
+
+<!-- DOCGEN:START getVehicleById -->
+### getVehicleById
+
+**Summary**: Get a vehicle by ID
+
+**Description**: Retrieves a single vehicle by its ID from the database.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | vehicle_id |  |
+
+**Responses:**
+- 200
+- 404
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getVehicleById -->
+
+<!-- DOCGEN:START getVehiclesByDriverId -->
+### getVehiclesByDriverId
+
+**Summary**: Get vehicles by driver ID
+
+**Description**: Retrieves a list of vehicles assigned to a specific driver.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | driver_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getVehiclesByDriverId -->
+
+<!-- DOCGEN:START getVehiclesByClass -->
+### getVehiclesByClass
+
+**Summary**: Get vehicles by class
+
+**Description**: Retrieves a list of vehicles of a specific class.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | vehicleClass |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getVehiclesByClass -->
+
+<!-- DOCGEN:START getVehiclesByCategory -->
+### getVehiclesByCategory
+
+**Summary**: Get vehicles by category
+
+**Description**: Retrieves a list of vehicles of a specific category.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | vehicleCategory |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getVehiclesByCategory -->
+
+<!-- DOCGEN:START getVehiclesByClassAndCategory -->
+### getVehiclesByClassAndCategory
+
+**Summary**: Get vehicles by class and category
+
+**Description**: Retrieves a list of vehicles of a specific class and category.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | vehicleClass |  |
+| undefined | path | vehicleCategory |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getVehiclesByClassAndCategory -->
+
+<!-- DOCGEN:START getVehiclesOfDriverByClass -->
+### getVehiclesOfDriverByClass
+
+**Summary**: Get vehicles of a certain driver by class
+
+**Description**: Retrieves a list of vehicles of a specific class assigned to a specific driver.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | driverId |  |
+| undefined | path | vehicleClass |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getVehiclesOfDriverByClass -->
+
+<!-- DOCGEN:START getVehiclesOfDriverByCategory -->
+### getVehiclesOfDriverByCategory
+
+**Summary**: Get vehicles of a certain driver by category
+
+**Description**: Retrieves a list of vehicles of a specific category assigned to a specific driver.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | driverId |  |
+| undefined | path | vehicleCategory |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getVehiclesOfDriverByCategory -->
+
+<!-- DOCGEN:START getVehiclesOfDriverByClassAndCategory -->
+### getVehiclesOfDriverByClassAndCategory
+
+**Summary**: Get vehicles of a certain driver by class and category
+
+**Description**: Retrieves a list of vehicles of a specific class and category assigned to a specific driver.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | driverId |  |
+| undefined | path | vehicleClass |  |
+| undefined | path | vehicleCategory |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getVehiclesOfDriverByClassAndCategory -->
+
+<!-- DOCGEN:START createVehicle -->
+### createVehicle
+
+**Summary**: Create a new vehicle
+
+**Description**: Adds a new vehicle to the database, including its specifications.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 201
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `201.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createNewVehicle )
+
+<!-- DOCGEN:END createVehicle -->
+
+<!-- DOCGEN:START updateVehicle -->
+### updateVehicle
+
+**Summary**: Update a vehicle
+
+**Description**: Updates an existing vehicle's details and specifications.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | vehicle_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateVehicle )
+
+<!-- DOCGEN:END updateVehicle -->
+
+<!-- DOCGEN:START assignVehiclesToDriver -->
+### assignVehiclesToDriver
+
+**Summary**: Assign vehicles to a driver
+
+**Description**: Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
+
+**Request Body:** (optional)
+Type: `vehicles`
+Content-Type: `- The vehicles to assign`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END assignVehiclesToDriver -->
+
+<!-- DOCGEN:START removeVehicleFromDriver -->
+### removeVehicleFromDriver
+
+**Summary**: Remove a vehicle from a driver
+
+**Description**: Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
+
+**Request Body:** (optional)
+Type: `vehicle_id`
+Content-Type: `- The ID of the vehicle to unassign`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END removeVehicleFromDriver -->
+
+<!-- DOCGEN:START deleteVehicle -->
+### deleteVehicle
+
+**Summary**: Delete a vehicle
+
+**Description**: Deletes a vehicle from the database.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | vehicle_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteVehicle )
 
 <!-- DOCGEN:END deleteVehicle -->

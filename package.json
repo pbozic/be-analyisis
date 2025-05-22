@@ -30,8 +30,9 @@
 		"lint:fix": "eslint . --ext .js,.ts --fix",
 		"prepare": "husky",
 		"type-check": "tsc --noEmit",
-		"docs": "cd docs && npm start",
-		"docs:build": "cd docs && npm run build"
+		"docs": "npm run docs:generate && cd docs && npm start",
+		"docs:build": "npm run docs:generate && cd docs && npm run build",
+		"docs:generate": "node ./scripts/generateDocs.js"
 	},
 	"lint-staged": {
 		"*.{js,ts,jsx,tsx}": [

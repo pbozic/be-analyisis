@@ -50,9 +50,13 @@ function parseJsFile(filePath) {
 
 function formatDocBlock(name, doc) {
 	const tags = doc.tags || [];
-	const summary = tags.find((t) => t.tag === 'summary')?.name || '';
-	const description = tags.find((t) => t.tag === 'description')?.name || '';
-	const operationId = tags.find((t) => t.tag === 'operationId')?.name;
+	const summary = tags.find((t) => t.tag === 'summary');
+	const description = tags.find((t) => t.tag === 'description');
+	const operationId = tags.find((t) => t.tag === 'operationId');
+
+	const summaryText = (summary?.name || '') + ' ' + (summary?.description || '');
+	const descriptionText = (description?.name || '') + ' ' + (description?.description || '');
+	const operationIdText = (operationId?.name || '') + ' ' + (operationId?.description || '');
 	const params = tags.filter((t) => t.tag === 'pathParam');
 	const responses = tags.filter((t) => t.tag === 'response');
 	const responseContent = tags.filter((t) => t.tag === 'responseContent');
@@ -61,8 +65,8 @@ function formatDocBlock(name, doc) {
 
 	let block = `\n<!-- DOCGEN:START ${name} -->\n### ${name}\n\n`;
 
-	if (summary) block += `**Summary**: ${summary}\n\n`;
-	if (description) block += `**Description**: ${description}\n\n`;
+	if (summaryText) block += `**Summary**: ${summaryText}\n\n`;
+	if (descriptionText) block += `**Description**: ${descriptionText}\n\n`;
 
 	if (params.length) {
 		block += '**Parameters:**\n\n| Name | In | Type | Description |\n|------|----|------|-------------|\n';
@@ -102,8 +106,8 @@ function formatDocBlock(name, doc) {
 		block += '\n';
 	}
 
-	if (operationId) {
-		block += `🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/${operationId})\n\n`;
+	if (operationIdText) {
+		block += `🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/${operationIdText})\n\n`;
 	}
 
 	block += `<!-- DOCGEN:END ${name} -->\n`;

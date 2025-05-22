@@ -1,0 +1,24 @@
+openapi: 3.0.3
+info:
+  title: post /api/business/scheduled_users/sorting/type
+  version: 1.0.0
+paths:
+  /api/business/scheduled_users/sorting/type:
+    post:
+      tags:
+        - Business
+      summary: Add sorting type for scheduled users
+      description: This endpoint is used to add the sorting type for scheduled users.
+      operationId: addScheduledUserSortingType
+      requestBody:
+        description: The sorting type (manual or automatic).
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddScheduledUserSortingTypeRequest'
+        required: true
+      responses:
+        '200':
+          description: Sorting type added successfully.
+        '400':
+          description: Error adding sorting type.

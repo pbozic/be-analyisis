@@ -1,0 +1,37 @@
+openapi: 3.0.3
+info:
+  title: get /api/vehicles/driver/:driver_id/category/:vehicleCategory
+  version: 1.0.0
+paths:
+  /api/vehicles/driver/:driver_id/category/:vehicleCategory:
+    get:
+      tags:
+        - Vehicles
+      summary: Get vehicles of a certain driver by category
+      description: >-
+        Retrieves a list of vehicles of a specific category assigned to a
+        specific driver.
+      parameters:
+        - name: driverId
+          in: path
+          description: The ID of the driver
+          required: true
+          schema:
+            type: string
+        - name: vehicleCategory
+          in: path
+          description: The category of the vehicles to retrieve
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Vehicle'
+        '500':
+          description: Error fetching vehicles

@@ -4,9 +4,9 @@
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Getmenus by business ID
 
-**Description**: Retrieves
+**Description**: Retrievesa list of menus for a specific business.
 
 **Parameters:**
 
@@ -29,9 +29,9 @@
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Getmenus by business ID
 
-**Description**: Retrieves
+**Description**: Retrievesa list of menus for a specific business.
 
 **Parameters:**
 
@@ -54,9 +54,9 @@
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Createa new menu
 
-**Description**: Creates
+**Description**: Createsa new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -77,9 +77,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Createa new daily meal menu
 
-**Description**: Creates
+**Description**: Createsa new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -100,9 +100,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Deletea menu
 
-**Description**: Deletes
+**Description**: Deletesa menu by its ID.
 
 **Parameters:**
 
@@ -121,9 +121,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Setmenu active status
 
-**Description**: Updates
+**Description**: Updatesthe active status of a menu.
 
 **Parameters:**
 
@@ -150,9 +150,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Createa new menu category
 
-**Description**: Creates
+**Description**: Createsa new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -173,9 +173,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Adda menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Addsa menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -196,9 +196,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Removea menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removesa menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -219,9 +219,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Adda menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Addsa menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -242,9 +242,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Removea menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removesa menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -265,9 +265,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Getmenu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrievesa list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -290,9 +290,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Getmenu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrievesa list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -315,9 +315,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Getmenu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrievesa list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -340,9 +340,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Getmenu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrievesa list of menu items for a specific business.
 
 **Parameters:**
 
@@ -365,9 +365,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Deletea menu category
 
-**Description**: Deletes
+**Description**: Deletesa menu category by its ID.
 
 **Parameters:**
 
@@ -386,9 +386,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Updatea menu category
 
-**Description**: Updates
+**Description**: Updatesa menu category by its ID.
 
 **Parameters:**
 
@@ -415,9 +415,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Updatea menu order
 
-**Description**: Updates
+**Description**: Updatesa menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -444,9 +444,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Updatea menu items order
 
-**Description**: Updates
+**Description**: Updatesa menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -473,9 +473,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Createa new menu item
 
-**Description**: Creates
+**Description**: Createsa new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -496,9 +496,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Createa new menu daily meals menu
 
-**Description**: Creates
+**Description**: Createsa new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -519,9 +519,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrievethe last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetchesthe most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -541,9 +541,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Deletea menu item
 
-**Description**: Deletes
+**Description**: Deletesa menu item by its ID.
 
 **Parameters:**
 
@@ -562,9 +562,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Updatea menu item
 
-**Description**: Updates
+**Description**: Updatesa menu item by its ID.
 
 **Parameters:**
 
@@ -591,9 +591,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Updatea menu item enabled field
 
-**Description**: Updates
+**Description**: Updatesa menu item by its ID.
 
 **Parameters:**
 
@@ -620,9 +620,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Updatemenu item price
 
-**Description**: Updates
+**Description**: Updatesthe price of a menu item.
 
 **Parameters:**
 
@@ -649,9 +649,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Updatemenu item category
 
-**Description**: Add
+**Description**: Addmenu item to a category.
 
 **Parameters:**
 
@@ -678,9 +678,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Removemenu item from category
 
-**Description**: Removes
+**Description**: Removesa menu item from its category.
 
 **Parameters:**
 
@@ -703,9 +703,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Adda menu category to a menu
 
-**Description**: Adds
+**Description**: Addsa menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -726,9 +726,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Removea menu category from a menu
 
-**Description**: Removes
+**Description**: Removesa menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -774,9 +774,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -792,16 +792,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -817,16 +817,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -840,16 +840,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -863,16 +863,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -884,16 +884,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -913,16 +913,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -936,16 +936,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -959,16 +959,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -982,16 +982,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1005,16 +1005,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1028,16 +1028,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -1053,16 +1053,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -1078,16 +1078,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -1103,16 +1103,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -1128,16 +1128,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -1149,16 +1149,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -1178,16 +1178,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -1207,16 +1207,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -1236,16 +1236,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1259,16 +1259,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1282,16 +1282,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -1304,16 +1304,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -1325,16 +1325,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -1354,16 +1354,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -1383,16 +1383,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -1412,16 +1412,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -1441,16 +1441,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -1466,16 +1466,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1489,16 +1489,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1512,41 +1512,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -1562,16 +1592,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -1587,16 +1617,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1610,16 +1640,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1633,16 +1663,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -1654,16 +1684,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -1683,16 +1713,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1706,16 +1736,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1729,16 +1759,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1752,16 +1782,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1775,16 +1805,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1798,16 +1828,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -1823,16 +1853,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -1848,16 +1878,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -1873,16 +1903,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -1898,16 +1928,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -1919,16 +1949,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -1948,16 +1978,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -1977,16 +2007,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -2006,16 +2036,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2029,16 +2059,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2052,16 +2082,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -2074,16 +2104,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -2095,16 +2125,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -2124,16 +2154,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -2153,16 +2183,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -2182,16 +2212,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -2211,16 +2241,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -2236,16 +2266,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2259,16 +2289,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2282,41 +2312,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -2332,16 +2392,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -2357,16 +2417,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2380,16 +2440,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2403,16 +2463,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -2424,16 +2484,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -2453,16 +2513,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2476,16 +2536,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2499,16 +2559,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2522,16 +2582,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2545,16 +2605,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2568,16 +2628,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -2593,16 +2653,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -2618,16 +2678,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -2643,16 +2703,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -2668,16 +2728,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -2689,16 +2749,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -2718,16 +2778,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -2747,16 +2807,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -2776,16 +2836,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2799,16 +2859,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2822,16 +2882,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -2844,16 +2904,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -2865,16 +2925,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -2894,16 +2954,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -2923,16 +2983,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -2952,16 +3012,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -2981,16 +3041,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -3006,16 +3066,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3029,16 +3089,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3052,41 +3112,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -3102,16 +3192,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -3127,16 +3217,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3150,16 +3240,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3173,16 +3263,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -3194,16 +3284,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -3223,16 +3313,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3246,16 +3336,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3269,16 +3359,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3292,16 +3382,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3315,16 +3405,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3338,16 +3428,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -3363,16 +3453,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -3388,16 +3478,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -3413,16 +3503,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -3438,16 +3528,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -3459,16 +3549,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -3488,16 +3578,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -3517,16 +3607,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -3546,16 +3636,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3569,16 +3659,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3592,16 +3682,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -3614,16 +3704,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -3635,16 +3725,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -3664,16 +3754,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -3693,16 +3783,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -3722,16 +3812,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -3751,16 +3841,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -3776,16 +3866,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3799,16 +3889,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3822,41 +3912,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -3872,16 +3992,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -3897,16 +4017,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3920,16 +4040,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3943,16 +4063,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -3964,16 +4084,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -3993,16 +4113,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4016,16 +4136,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4039,16 +4159,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4062,16 +4182,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4085,16 +4205,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4108,16 +4228,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -4133,16 +4253,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -4158,16 +4278,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -4183,16 +4303,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -4208,16 +4328,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -4229,16 +4349,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -4258,16 +4378,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -4287,16 +4407,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -4316,16 +4436,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4339,16 +4459,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4362,16 +4482,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -4384,16 +4504,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -4405,16 +4525,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -4434,16 +4554,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -4463,16 +4583,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -4492,16 +4612,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -4521,16 +4641,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -4546,16 +4666,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4569,16 +4689,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4592,41 +4712,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -4642,16 +4792,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -4667,16 +4817,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4690,16 +4840,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4713,16 +4863,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -4734,16 +4884,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -4763,16 +4913,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4786,16 +4936,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4809,16 +4959,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4832,16 +4982,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4855,16 +5005,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4878,16 +5028,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -4903,16 +5053,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -4928,16 +5078,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -4953,16 +5103,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -4978,16 +5128,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -4999,16 +5149,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -5028,16 +5178,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -5057,16 +5207,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -5086,16 +5236,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5109,16 +5259,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5132,16 +5282,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -5154,16 +5304,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -5175,16 +5325,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -5204,16 +5354,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -5233,16 +5383,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -5262,16 +5412,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -5291,16 +5441,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -5316,16 +5466,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5339,16 +5489,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5362,41 +5512,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -5412,16 +5592,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -5437,16 +5617,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5460,16 +5640,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5483,16 +5663,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -5504,16 +5684,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -5533,16 +5713,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5556,16 +5736,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5579,16 +5759,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5602,16 +5782,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5625,16 +5805,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5648,16 +5828,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -5673,16 +5853,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -5698,16 +5878,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -5723,16 +5903,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -5748,16 +5928,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -5769,16 +5949,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -5798,16 +5978,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -5827,16 +6007,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -5856,16 +6036,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5879,16 +6059,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5902,16 +6082,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -5924,16 +6104,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -5945,16 +6125,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -5974,16 +6154,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -6003,16 +6183,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -6032,16 +6212,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -6061,16 +6241,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -6086,16 +6266,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6109,16 +6289,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6132,41 +6312,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -6182,16 +6392,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -6207,16 +6417,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6230,16 +6440,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6253,16 +6463,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -6274,16 +6484,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -6303,16 +6513,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6326,16 +6536,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6349,16 +6559,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6372,16 +6582,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6395,16 +6605,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6418,16 +6628,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -6443,16 +6653,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -6468,16 +6678,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -6493,16 +6703,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -6518,16 +6728,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -6539,16 +6749,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -6568,16 +6778,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -6597,16 +6807,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -6626,16 +6836,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6649,16 +6859,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6672,16 +6882,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -6694,16 +6904,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -6715,16 +6925,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -6744,16 +6954,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -6773,16 +6983,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -6802,16 +7012,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -6831,16 +7041,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -6856,16 +7066,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6879,16 +7089,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6902,41 +7112,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -6952,16 +7192,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -6977,16 +7217,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7000,16 +7240,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7023,16 +7263,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -7044,16 +7284,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -7073,16 +7313,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7096,16 +7336,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7119,16 +7359,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7142,16 +7382,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7165,16 +7405,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7188,16 +7428,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -7213,16 +7453,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -7238,16 +7478,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -7263,16 +7503,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -7288,16 +7528,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -7309,16 +7549,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -7338,16 +7578,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -7367,16 +7607,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -7396,16 +7636,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7419,16 +7659,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7442,16 +7682,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -7464,16 +7704,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -7485,16 +7725,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -7514,16 +7754,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -7543,16 +7783,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -7572,16 +7812,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -7601,16 +7841,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -7626,16 +7866,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7649,16 +7889,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7672,41 +7912,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -7722,16 +7992,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -7747,16 +8017,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7770,16 +8040,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7793,16 +8063,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -7814,16 +8084,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -7843,16 +8113,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7866,16 +8136,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7889,16 +8159,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7912,16 +8182,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7935,16 +8205,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7958,16 +8228,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -7983,16 +8253,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -8008,16 +8278,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -8033,16 +8303,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -8058,16 +8328,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -8079,16 +8349,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -8108,16 +8378,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -8137,16 +8407,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -8166,16 +8436,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8189,16 +8459,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8212,16 +8482,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -8234,16 +8504,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -8255,16 +8525,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -8284,16 +8554,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -8313,16 +8583,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -8342,16 +8612,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -8371,16 +8641,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -8396,16 +8666,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8419,16 +8689,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8442,41 +8712,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -8492,16 +8792,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -8517,16 +8817,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8540,16 +8840,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8563,16 +8863,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -8584,16 +8884,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -8613,16 +8913,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8636,16 +8936,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8659,16 +8959,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8682,16 +8982,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8705,16 +9005,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8728,16 +9028,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -8753,16 +9053,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -8778,16 +9078,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -8803,16 +9103,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -8828,16 +9128,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -8849,16 +9149,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -8878,16 +9178,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -8907,16 +9207,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -8936,16 +9236,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8959,16 +9259,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8982,16 +9282,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -9004,16 +9304,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -9025,16 +9325,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -9054,16 +9354,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -9083,16 +9383,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -9112,16 +9412,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -9141,16 +9441,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -9166,16 +9466,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9189,16 +9489,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9212,41 +9512,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -9262,16 +9592,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -9287,16 +9617,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9310,16 +9640,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9333,16 +9663,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -9354,16 +9684,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -9383,16 +9713,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9406,16 +9736,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9429,16 +9759,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9452,16 +9782,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9475,16 +9805,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9498,16 +9828,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -9523,16 +9853,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -9548,16 +9878,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -9573,16 +9903,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -9598,16 +9928,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -9619,16 +9949,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -9648,16 +9978,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -9677,16 +10007,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -9706,16 +10036,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9729,16 +10059,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9752,16 +10082,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -9774,16 +10104,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -9795,16 +10125,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -9824,16 +10154,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -9853,16 +10183,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -9882,16 +10212,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -9911,16 +10241,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -9936,16 +10266,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9959,16 +10289,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9982,41 +10312,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -10032,16 +10392,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -10057,16 +10417,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10080,16 +10440,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10103,16 +10463,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -10124,16 +10484,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -10153,16 +10513,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10176,16 +10536,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10199,16 +10559,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10222,16 +10582,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10245,16 +10605,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10268,16 +10628,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -10293,16 +10653,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -10318,16 +10678,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -10343,16 +10703,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -10368,16 +10728,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -10389,16 +10749,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -10418,16 +10778,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -10447,16 +10807,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -10476,16 +10836,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10499,16 +10859,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10522,16 +10882,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -10544,16 +10904,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -10565,16 +10925,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -10594,16 +10954,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -10623,16 +10983,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -10652,16 +11012,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -10681,16 +11041,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -10706,16 +11066,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10729,16 +11089,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10752,41 +11112,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -10802,16 +11192,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -10827,16 +11217,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10850,16 +11240,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10873,16 +11263,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -10894,16 +11284,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -10923,16 +11313,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10946,16 +11336,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10969,16 +11359,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10992,16 +11382,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11015,16 +11405,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11038,16 +11428,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -11063,16 +11453,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -11088,16 +11478,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -11113,16 +11503,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -11138,16 +11528,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -11159,16 +11549,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -11188,16 +11578,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -11217,16 +11607,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -11246,16 +11636,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11269,16 +11659,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11292,16 +11682,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -11314,16 +11704,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -11335,16 +11725,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -11364,16 +11754,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -11393,16 +11783,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -11422,16 +11812,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -11451,16 +11841,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -11476,16 +11866,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11499,16 +11889,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11522,41 +11912,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -11572,16 +11992,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -11597,16 +12017,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11620,16 +12040,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11643,16 +12063,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -11664,16 +12084,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -11693,16 +12113,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11716,16 +12136,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11739,16 +12159,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11762,16 +12182,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11785,16 +12205,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11808,16 +12228,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -11833,16 +12253,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -11858,16 +12278,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -11883,16 +12303,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -11908,16 +12328,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -11929,16 +12349,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -11958,16 +12378,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -11987,16 +12407,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -12016,16 +12436,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12039,16 +12459,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12062,16 +12482,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -12084,16 +12504,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -12105,16 +12525,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -12134,16 +12554,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -12163,16 +12583,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -12192,16 +12612,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -12221,16 +12641,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -12246,16 +12666,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12269,16 +12689,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12292,41 +12712,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -12342,16 +12792,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -12367,16 +12817,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12390,16 +12840,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12413,16 +12863,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -12434,16 +12884,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -12463,16 +12913,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12486,16 +12936,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12509,16 +12959,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12532,16 +12982,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12555,16 +13005,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12578,16 +13028,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -12603,16 +13053,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -12628,16 +13078,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -12653,16 +13103,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -12678,16 +13128,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -12699,16 +13149,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -12728,16 +13178,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -12757,16 +13207,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -12786,16 +13236,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12809,16 +13259,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12832,16 +13282,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -12854,16 +13304,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -12875,16 +13325,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -12904,16 +13354,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -12933,16 +13383,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -12962,16 +13412,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -12991,16 +13441,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -13016,16 +13466,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13039,16 +13489,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13062,41 +13512,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -13112,16 +13592,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -13137,16 +13617,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13160,16 +13640,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13183,16 +13663,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -13204,16 +13684,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -13233,16 +13713,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13256,16 +13736,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13279,16 +13759,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13302,16 +13782,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13325,16 +13805,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13348,16 +13828,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -13373,16 +13853,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -13398,16 +13878,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -13423,16 +13903,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -13448,16 +13928,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -13469,16 +13949,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -13498,16 +13978,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -13527,16 +14007,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -13556,16 +14036,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13579,16 +14059,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13602,16 +14082,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -13624,16 +14104,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -13645,16 +14125,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -13674,16 +14154,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -13703,16 +14183,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -13732,16 +14212,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -13761,16 +14241,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -13786,16 +14266,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13809,16 +14289,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13832,41 +14312,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -13882,16 +14392,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -13907,16 +14417,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13930,16 +14440,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13953,16 +14463,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -13974,16 +14484,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -14003,16 +14513,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14026,16 +14536,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14049,16 +14559,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14072,16 +14582,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14095,16 +14605,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14118,16 +14628,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -14143,16 +14653,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -14168,16 +14678,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -14193,16 +14703,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -14218,16 +14728,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -14239,16 +14749,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -14268,16 +14778,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -14297,16 +14807,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -14326,16 +14836,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14349,16 +14859,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14372,16 +14882,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -14394,16 +14904,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -14415,16 +14925,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -14444,16 +14954,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -14473,16 +14983,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -14502,16 +15012,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -14531,16 +15041,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -14556,16 +15066,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14579,16 +15089,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14602,41 +15112,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -14652,16 +15192,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -14677,16 +15217,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14700,16 +15240,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14723,16 +15263,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -14744,16 +15284,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -14773,16 +15313,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14796,16 +15336,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14819,16 +15359,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14842,16 +15382,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14865,16 +15405,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14888,16 +15428,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -14913,16 +15453,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -14938,16 +15478,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -14963,16 +15503,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -14988,16 +15528,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -15009,16 +15549,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -15038,16 +15578,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -15067,16 +15607,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -15096,16 +15636,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15119,16 +15659,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15142,16 +15682,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -15164,16 +15704,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -15185,16 +15725,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -15214,16 +15754,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -15243,16 +15783,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -15272,16 +15812,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -15301,16 +15841,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -15326,16 +15866,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15349,16 +15889,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15372,41 +15912,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -15422,16 +15992,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -15447,16 +16017,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15470,16 +16040,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15493,16 +16063,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -15514,16 +16084,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -15543,16 +16113,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15566,16 +16136,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15589,16 +16159,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15612,16 +16182,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15635,16 +16205,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15658,16 +16228,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -15683,16 +16253,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -15708,16 +16278,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -15733,16 +16303,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -15758,16 +16328,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -15779,16 +16349,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -15808,16 +16378,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -15837,16 +16407,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -15866,16 +16436,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15889,16 +16459,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15912,16 +16482,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -15934,16 +16504,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -15955,16 +16525,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -15984,16 +16554,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -16013,16 +16583,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -16042,16 +16612,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -16071,16 +16641,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -16096,16 +16666,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16119,16 +16689,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16142,41 +16712,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -16192,16 +16792,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -16217,16 +16817,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16240,16 +16840,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16263,16 +16863,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -16284,16 +16884,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -16313,16 +16913,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16336,16 +16936,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16359,16 +16959,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16382,16 +16982,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16405,16 +17005,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16428,16 +17028,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -16453,16 +17053,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -16478,16 +17078,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -16503,16 +17103,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -16528,16 +17128,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -16549,16 +17149,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -16578,16 +17178,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -16607,16 +17207,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -16636,16 +17236,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16659,16 +17259,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16682,16 +17282,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -16704,16 +17304,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -16725,16 +17325,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -16754,16 +17354,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -16783,16 +17383,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -16812,16 +17412,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -16841,16 +17441,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -16866,16 +17466,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16889,16 +17489,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16912,41 +17512,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -16962,16 +17592,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -16987,16 +17617,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17010,16 +17640,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17033,16 +17663,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -17054,16 +17684,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -17083,16 +17713,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17106,16 +17736,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17129,16 +17759,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17152,16 +17782,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17175,16 +17805,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17198,16 +17828,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -17223,16 +17853,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -17248,16 +17878,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -17273,16 +17903,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -17298,16 +17928,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -17319,16 +17949,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -17348,16 +17978,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -17377,16 +18007,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -17406,16 +18036,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17429,16 +18059,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17452,16 +18082,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -17474,16 +18104,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -17495,16 +18125,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -17524,16 +18154,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -17553,16 +18183,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -17582,16 +18212,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -17611,16 +18241,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -17636,16 +18266,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17659,16 +18289,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17682,41 +18312,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -17732,16 +18392,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -17757,16 +18417,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17780,16 +18440,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17803,16 +18463,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -17824,16 +18484,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -17853,16 +18513,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17876,16 +18536,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17899,16 +18559,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17922,16 +18582,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17945,16 +18605,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17968,16 +18628,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -17993,16 +18653,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -18018,16 +18678,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -18043,16 +18703,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -18068,16 +18728,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -18089,16 +18749,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -18118,16 +18778,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -18147,16 +18807,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -18176,16 +18836,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18199,16 +18859,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18222,16 +18882,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -18244,16 +18904,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -18265,16 +18925,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -18294,16 +18954,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -18323,16 +18983,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -18352,16 +19012,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -18381,16 +19041,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -18406,16 +19066,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18429,16 +19089,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18452,41 +19112,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -18502,16 +19192,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -18527,16 +19217,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18550,16 +19240,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18573,16 +19263,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -18594,16 +19284,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -18623,16 +19313,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18646,16 +19336,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18669,16 +19359,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18692,16 +19382,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18715,16 +19405,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18738,16 +19428,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -18763,16 +19453,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -18788,16 +19478,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -18813,16 +19503,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -18838,16 +19528,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -18859,16 +19549,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -18888,16 +19578,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -18917,16 +19607,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -18946,16 +19636,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18969,16 +19659,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18992,16 +19682,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -19014,16 +19704,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -19035,16 +19725,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -19064,16 +19754,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -19093,16 +19783,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -19122,16 +19812,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -19151,16 +19841,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -19176,16 +19866,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19199,16 +19889,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19222,41 +19912,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -19272,16 +19992,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -19297,16 +20017,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19320,16 +20040,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19343,16 +20063,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -19364,16 +20084,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -19393,16 +20113,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19416,16 +20136,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19439,16 +20159,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19462,16 +20182,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19485,16 +20205,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19508,16 +20228,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -19533,16 +20253,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -19558,16 +20278,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -19583,16 +20303,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -19608,16 +20328,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -19629,16 +20349,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -19658,16 +20378,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -19687,16 +20407,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -19716,16 +20436,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19739,16 +20459,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19762,16 +20482,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -19784,16 +20504,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -19805,16 +20525,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -19834,16 +20554,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -19863,16 +20583,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -19892,16 +20612,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -19921,16 +20641,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -19946,16 +20666,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19969,16 +20689,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19992,41 +20712,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -20042,16 +20792,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -20067,16 +20817,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -20090,16 +20840,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -20113,16 +20863,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -20134,16 +20884,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -20163,16 +20913,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -20186,16 +20936,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -20209,16 +20959,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -20232,16 +20982,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -20255,16 +21005,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -20278,16 +21028,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -20303,16 +21053,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -20328,16 +21078,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -20353,16 +21103,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -20378,16 +21128,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -20399,16 +21149,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -20428,16 +21178,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -20457,16 +21207,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -20486,16 +21236,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -20509,16 +21259,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -20532,16 +21282,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -20554,16 +21304,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -20575,16 +21325,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -20604,16 +21354,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -20633,16 +21383,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -20662,16 +21412,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -20691,16 +21441,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -20716,16 +21466,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -20739,16 +21489,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -20762,41 +21512,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -20812,16 +21592,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -20837,16 +21617,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -20860,16 +21640,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -20883,16 +21663,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -20904,16 +21684,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -20933,16 +21713,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -20956,16 +21736,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -20979,16 +21759,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -21002,16 +21782,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -21025,16 +21805,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -21048,16 +21828,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -21073,16 +21853,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -21098,16 +21878,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -21123,16 +21903,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -21148,16 +21928,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -21169,16 +21949,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -21198,16 +21978,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -21227,16 +22007,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -21256,16 +22036,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -21279,16 +22059,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -21302,16 +22082,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -21324,16 +22104,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -21345,16 +22125,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -21374,16 +22154,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -21403,16 +22183,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -21432,16 +22212,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -21461,16 +22241,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -21486,16 +22266,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -21509,16 +22289,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -21532,41 +22312,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -21582,16 +22392,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -21607,16 +22417,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -21630,16 +22440,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -21653,16 +22463,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -21674,16 +22484,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -21703,16 +22513,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -21726,16 +22536,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -21749,16 +22559,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -21772,16 +22582,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -21795,16 +22605,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -21818,16 +22628,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -21843,16 +22653,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -21868,16 +22678,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -21893,16 +22703,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -21918,16 +22728,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -21939,16 +22749,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -21968,16 +22778,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -21997,16 +22807,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -22026,16 +22836,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -22049,16 +22859,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -22072,16 +22882,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -22094,16 +22904,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -22115,16 +22925,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -22144,16 +22954,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -22173,16 +22983,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -22202,16 +23012,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -22231,16 +23041,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -22256,16 +23066,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -22279,16 +23089,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -22302,41 +23112,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -22352,16 +23192,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -22377,16 +23217,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -22400,16 +23240,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -22423,16 +23263,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -22444,16 +23284,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -22473,16 +23313,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -22496,16 +23336,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -22519,16 +23359,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -22542,16 +23382,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -22565,16 +23405,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -22588,16 +23428,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -22613,16 +23453,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -22638,16 +23478,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -22663,16 +23503,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -22688,16 +23528,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -22709,16 +23549,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -22738,16 +23578,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -22767,16 +23607,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -22796,16 +23636,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -22819,16 +23659,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -22842,16 +23682,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -22864,16 +23704,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -22885,16 +23725,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -22914,16 +23754,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -22943,16 +23783,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -22972,16 +23812,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -23001,16 +23841,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -23026,16 +23866,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -23049,16 +23889,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -23072,41 +23912,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -23122,16 +23992,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -23147,16 +24017,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -23170,16 +24040,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -23193,16 +24063,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -23214,16 +24084,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -23243,16 +24113,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -23266,16 +24136,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -23289,16 +24159,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -23312,16 +24182,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -23335,16 +24205,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -23358,16 +24228,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -23383,16 +24253,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -23408,16 +24278,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -23433,16 +24303,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -23458,16 +24328,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -23479,16 +24349,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -23508,16 +24378,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -23537,16 +24407,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -23566,16 +24436,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -23589,16 +24459,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -23612,16 +24482,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -23634,16 +24504,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -23655,16 +24525,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -23684,16 +24554,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -23713,16 +24583,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -23742,16 +24612,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -23771,16 +24641,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -23796,16 +24666,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -23819,16 +24689,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -23842,41 +24712,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -23892,16 +24792,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -23917,16 +24817,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -23940,16 +24840,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -23963,16 +24863,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -23984,16 +24884,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -24013,16 +24913,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -24036,16 +24936,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -24059,16 +24959,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -24082,16 +24982,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -24105,16 +25005,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -24128,16 +25028,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -24153,16 +25053,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -24178,16 +25078,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -24203,16 +25103,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -24228,16 +25128,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -24249,16 +25149,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -24278,16 +25178,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -24307,16 +25207,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -24336,16 +25236,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -24359,16 +25259,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -24382,16 +25282,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -24404,16 +25304,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -24425,16 +25325,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -24454,16 +25354,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -24483,16 +25383,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -24512,16 +25412,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -24541,16 +25441,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -24566,16 +25466,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -24589,16 +25489,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -24612,41 +25512,71 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
 
 <!-- DOCGEN:START getMenuByBusinessId -->
 ### getMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -24662,16 +25592,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
 
 <!-- DOCGEN:END getMenuByBusinessId -->
 
 <!-- DOCGEN:START getDailyMenuByBusinessId -->
 ### getDailyMenuByBusinessId
 
-**Summary**: Get
+**Summary**: Get menus by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menus for a specific business.
 
 **Parameters:**
 
@@ -24687,16 +25617,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
 
 <!-- DOCGEN:END getDailyMenuByBusinessId -->
 
 <!-- DOCGEN:START createMenu -->
 ### createMenu
 
-**Summary**: Create
+**Summary**: Create a new menu
 
-**Description**: Creates
+**Description**: Creates a new menu for a business.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -24710,16 +25640,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
 
 <!-- DOCGEN:END createMenu -->
 
 <!-- DOCGEN:START createDailyMealMenu -->
 ### createDailyMealMenu
 
-**Summary**: Create
+**Summary**: Create a new daily meal menu
 
-**Description**: Creates
+**Description**: Creates a new daily meal menu for merchant.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -24733,16 +25663,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
 
 <!-- DOCGEN:END createDailyMealMenu -->
 
 <!-- DOCGEN:START deleteMenu -->
 ### deleteMenu
 
-**Summary**: Delete
+**Summary**: Delete a menu
 
-**Description**: Deletes
+**Description**: Deletes a menu by its ID.
 
 **Parameters:**
 
@@ -24754,16 +25684,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
 
 <!-- DOCGEN:END deleteMenu -->
 
 <!-- DOCGEN:START setActiveMenu -->
 ### setActiveMenu
 
-**Summary**: Set
+**Summary**: Set menu active status
 
-**Description**: Updates
+**Description**: Updates the active status of a menu.
 
 **Parameters:**
 
@@ -24783,16 +25713,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
 
 <!-- DOCGEN:END setActiveMenu -->
 
 <!-- DOCGEN:START createMenuCategory -->
 ### createMenuCategory
 
-**Summary**: Create
+**Summary**: Create a new menu category
 
-**Description**: Creates
+**Description**: Creates a new menu category for a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -24806,16 +25736,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
 
 <!-- DOCGEN:END createMenuCategory -->
 
 <!-- DOCGEN:START addMenuItemIdToOrder -->
 ### addMenuItemIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu item ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu item ID to the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -24829,16 +25759,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
 
 <!-- DOCGEN:END addMenuItemIdToOrder -->
 
 <!-- DOCGEN:START removeMenuItemIdFromOrder -->
 ### removeMenuItemIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu item ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu item ID from the ordered list of a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -24852,16 +25782,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
 
 <!-- DOCGEN:END removeMenuItemIdFromOrder -->
 
 <!-- DOCGEN:START addMenuCategoryIdToOrder -->
 ### addMenuCategoryIdToOrder
 
-**Summary**: Add
+**Summary**: Add a menu category ID to the ordered list
 
-**Description**: Adds
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -24875,16 +25805,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
 
 <!-- DOCGEN:END addMenuCategoryIdToOrder -->
 
 <!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
 ### removeMenuCategoryIdFromOrder
 
-**Summary**: Remove
+**Summary**: Remove a menu category ID from the ordered list
 
-**Description**: Removes
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -24898,16 +25828,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
 
 <!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
 
 <!-- DOCGEN:START getMenuItemsByCategoryId -->
 ### getMenuItemsByCategoryId
 
-**Summary**: Get
+**Summary**: Get menu items by category ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific menu category.
 
 **Parameters:**
 
@@ -24923,16 +25853,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
 
 <!-- DOCGEN:END getMenuItemsByCategoryId -->
 
 <!-- DOCGEN:START getMenuCategoriesByMenuId -->
 ### getMenuCategoriesByMenuId
 
-**Summary**: Get
+**Summary**: Get menu categories by menu ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific menu.
 
 **Parameters:**
 
@@ -24948,16 +25878,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
 
 <!-- DOCGEN:END getMenuCategoriesByMenuId -->
 
 <!-- DOCGEN:START getMenuCategoriesByBusinessId -->
 ### getMenuCategoriesByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu categories by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu categories for a specific business.
 
 **Parameters:**
 
@@ -24973,16 +25903,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
 
 <!-- DOCGEN:END getMenuCategoriesByBusinessId -->
 
 <!-- DOCGEN:START getMenuItemsByBusinessId -->
 ### getMenuItemsByBusinessId
 
-**Summary**: Get
+**Summary**: Get menu items by business ID
 
-**Description**: Retrieves
+**Description**: Retrieves a list of menu items for a specific business.
 
 **Parameters:**
 
@@ -24998,16 +25928,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
 
 <!-- DOCGEN:END getMenuItemsByBusinessId -->
 
 <!-- DOCGEN:START deleteMenuCategory -->
 ### deleteMenuCategory
 
-**Summary**: Delete
+**Summary**: Delete a menu category
 
-**Description**: Deletes
+**Description**: Deletes a menu category by its ID.
 
 **Parameters:**
 
@@ -25019,16 +25949,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
 
 <!-- DOCGEN:END deleteMenuCategory -->
 
 <!-- DOCGEN:START updateMenuCategory -->
 ### updateMenuCategory
 
-**Summary**: Update
+**Summary**: Update a menu category
 
-**Description**: Updates
+**Description**: Updates a menu category by its ID.
 
 **Parameters:**
 
@@ -25048,16 +25978,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
 
 <!-- DOCGEN:END updateMenuCategory -->
 
 <!-- DOCGEN:START updateMenuOrder -->
 ### updateMenuOrder
 
-**Summary**: Update
+**Summary**: Update a menu order
 
-**Description**: Updates
+**Description**: Updates a menu order by the menu category IDs.
 
 **Parameters:**
 
@@ -25077,16 +26007,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
 
 <!-- DOCGEN:END updateMenuOrder -->
 
 <!-- DOCGEN:START updateMenuItemsOrder -->
 ### updateMenuItemsOrder
 
-**Summary**: Update
+**Summary**: Update a menu items order
 
-**Description**: Updates
+**Description**: Updates a menu items order by the menu items IDs.
 
 **Parameters:**
 
@@ -25106,16 +26036,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
 
 <!-- DOCGEN:END updateMenuItemsOrder -->
 
 <!-- DOCGEN:START createMenuItem -->
 ### createMenuItem
 
-**Summary**: Create
+**Summary**: Create a new menu item
 
-**Description**: Creates
+**Description**: Creates a new menu item for a menu category.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -25129,16 +26059,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
 
 <!-- DOCGEN:END createMenuItem -->
 
 <!-- DOCGEN:START createDailyMealsMenu -->
 ### createDailyMealsMenu
 
-**Summary**: Create
+**Summary**: Create a new menu daily meals menu
 
-**Description**: Creates
+**Description**: Creates a new daily meals menu for a business
 
 **Request Body:** (required)
 Type: `application/json`
@@ -25152,16 +26082,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
 
 <!-- DOCGEN:END createDailyMealsMenu -->
 
 <!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
 ### getLastUploadedDailyMealsMenu
 
-**Summary**: Retrieve
+**Summary**: Retrieve the last uploaded daily meals menu
 
-**Description**: Fetches
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
 
 **Responses:**
 - 200
@@ -25174,16 +26104,16 @@ Content-Type: `application/json`
 - ⚠️ Could not parse: `404.application/json`
 - ⚠️ Could not parse: `500.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
 
 <!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
 
 <!-- DOCGEN:START deleteMenuItem -->
 ### deleteMenuItem
 
-**Summary**: Delete
+**Summary**: Delete a menu item
 
-**Description**: Deletes
+**Description**: Deletes a menu item by its ID.
 
 **Parameters:**
 
@@ -25195,16 +26125,16 @@ Content-Type: `application/json`
 - 204
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
 
 <!-- DOCGEN:END deleteMenuItem -->
 
 <!-- DOCGEN:START updateMenuItem -->
 ### updateMenuItem
 
-**Summary**: Update
+**Summary**: Update a menu item
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -25224,16 +26154,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItem -->
 
 <!-- DOCGEN:START updateMenuItemEnabled -->
 ### updateMenuItemEnabled
 
-**Summary**: Update
+**Summary**: Update a menu item enabled field
 
-**Description**: Updates
+**Description**: Updates a menu item by its ID.
 
 **Parameters:**
 
@@ -25253,16 +26183,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
 
 <!-- DOCGEN:END updateMenuItemEnabled -->
 
 <!-- DOCGEN:START updateMenuItemPrice -->
 ### updateMenuItemPrice
 
-**Summary**: Update
+**Summary**: Update menu item price
 
-**Description**: Updates
+**Description**: Updates the price of a menu item.
 
 **Parameters:**
 
@@ -25282,16 +26212,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
 
 <!-- DOCGEN:END updateMenuItemPrice -->
 
 <!-- DOCGEN:START addMenuItemMenuCategory -->
 ### addMenuItemMenuCategory
 
-**Summary**: Update
+**Summary**: Update menu item category
 
-**Description**: Add
+**Description**: Add menu item to a category.
 
 **Parameters:**
 
@@ -25311,16 +26241,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
 
 <!-- DOCGEN:END addMenuItemMenuCategory -->
 
 <!-- DOCGEN:START removeMenuItemFromCategory -->
 ### removeMenuItemFromCategory
 
-**Summary**: Remove
+**Summary**: Remove menu item from category
 
-**Description**: Removes
+**Description**: Removes a menu item from its category.
 
 **Parameters:**
 
@@ -25336,16 +26266,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
 
 <!-- DOCGEN:END removeMenuItemFromCategory -->
 
 <!-- DOCGEN:START addMenuCategory -->
 ### addMenuCategory
 
-**Summary**: Add
+**Summary**: Add a menu category to a menu
 
-**Description**: Adds
+**Description**: Adds a menu category to a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -25359,16 +26289,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
 
 <!-- DOCGEN:END addMenuCategory -->
 
 <!-- DOCGEN:START removeMenuCategory -->
 ### removeMenuCategory
 
-**Summary**: Remove
+**Summary**: Remove a menu category from a menu
 
-**Description**: Removes
+**Description**: Removes a menu category from a menu.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -25382,31 +26312,1661 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
 
 <!-- DOCGEN:END removeMenuCategory -->
 
 <!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
 ### deleteDocumentsAndFilesByDocumentId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
 
 <!-- DOCGEN:START getMenuItemsByDate -->
 ### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByDate -->
 
 <!-- DOCGEN:START getMenuByDate -->
 ### getMenuByDate
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getMenuByDate -->
 
 <!-- DOCGEN:START updateDailyMealMenuPrice -->
 ### updateDailyMealMenuPrice
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END updateDailyMealMenuPrice -->
 
 <!-- DOCGEN:START getMenuItemsByIds -->
 ### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getMenuItemsByIds -->
+
+<!-- DOCGEN:START getMenuByBusinessId -->
+### getMenuByBusinessId
+
+**Summary**: Get menus by business ID
+
+**Description**: Retrieves a list of menus for a specific business.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
+
+<!-- DOCGEN:END getMenuByBusinessId -->
+
+<!-- DOCGEN:START getDailyMenuByBusinessId -->
+### getDailyMenuByBusinessId
+
+**Summary**: Get menus by business ID
+
+**Description**: Retrieves a list of menus for a specific business.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
+
+<!-- DOCGEN:END getDailyMenuByBusinessId -->
+
+<!-- DOCGEN:START createMenu -->
+### createMenu
+
+**Summary**: Create a new menu
+
+**Description**: Creates a new menu for a business.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 201
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `201.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
+
+<!-- DOCGEN:END createMenu -->
+
+<!-- DOCGEN:START createDailyMealMenu -->
+### createDailyMealMenu
+
+**Summary**: Create a new daily meal menu
+
+**Description**: Creates a new daily meal menu for merchant.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
+
+<!-- DOCGEN:END createDailyMealMenu -->
+
+<!-- DOCGEN:START deleteMenu -->
+### deleteMenu
+
+**Summary**: Delete a menu
+
+**Description**: Deletes a menu by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_id |  |
+
+**Responses:**
+- 204
+- 400
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
+
+<!-- DOCGEN:END deleteMenu -->
+
+<!-- DOCGEN:START setActiveMenu -->
+### setActiveMenu
+
+**Summary**: Set menu active status
+
+**Description**: Updates the active status of a menu.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
+
+<!-- DOCGEN:END setActiveMenu -->
+
+<!-- DOCGEN:START createMenuCategory -->
+### createMenuCategory
+
+**Summary**: Create a new menu category
+
+**Description**: Creates a new menu category for a menu.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 201
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `201.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
+
+<!-- DOCGEN:END createMenuCategory -->
+
+<!-- DOCGEN:START addMenuItemIdToOrder -->
+### addMenuItemIdToOrder
+
+**Summary**: Add a menu item ID to the ordered list
+
+**Description**: Adds a menu item ID to the ordered list of a menu category.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
+
+<!-- DOCGEN:END addMenuItemIdToOrder -->
+
+<!-- DOCGEN:START removeMenuItemIdFromOrder -->
+### removeMenuItemIdFromOrder
+
+**Summary**: Remove a menu item ID from the ordered list
+
+**Description**: Removes a menu item ID from the ordered list of a menu category.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
+
+<!-- DOCGEN:END removeMenuItemIdFromOrder -->
+
+<!-- DOCGEN:START addMenuCategoryIdToOrder -->
+### addMenuCategoryIdToOrder
+
+**Summary**: Add a menu category ID to the ordered list
+
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
+
+<!-- DOCGEN:END addMenuCategoryIdToOrder -->
+
+<!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
+### removeMenuCategoryIdFromOrder
+
+**Summary**: Remove a menu category ID from the ordered list
+
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
+
+<!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
+
+<!-- DOCGEN:START getMenuItemsByCategoryId -->
+### getMenuItemsByCategoryId
+
+**Summary**: Get menu items by category ID
+
+**Description**: Retrieves a list of menu items for a specific menu category.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | category_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
+
+<!-- DOCGEN:END getMenuItemsByCategoryId -->
+
+<!-- DOCGEN:START getMenuCategoriesByMenuId -->
+### getMenuCategoriesByMenuId
+
+**Summary**: Get menu categories by menu ID
+
+**Description**: Retrieves a list of menu categories for a specific menu.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
+
+<!-- DOCGEN:END getMenuCategoriesByMenuId -->
+
+<!-- DOCGEN:START getMenuCategoriesByBusinessId -->
+### getMenuCategoriesByBusinessId
+
+**Summary**: Get menu categories by business ID
+
+**Description**: Retrieves a list of menu categories for a specific business.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
+
+<!-- DOCGEN:END getMenuCategoriesByBusinessId -->
+
+<!-- DOCGEN:START getMenuItemsByBusinessId -->
+### getMenuItemsByBusinessId
+
+**Summary**: Get menu items by business ID
+
+**Description**: Retrieves a list of menu items for a specific business.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
+
+<!-- DOCGEN:END getMenuItemsByBusinessId -->
+
+<!-- DOCGEN:START deleteMenuCategory -->
+### deleteMenuCategory
+
+**Summary**: Delete a menu category
+
+**Description**: Deletes a menu category by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_category_id |  |
+
+**Responses:**
+- 204
+- 400
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
+
+<!-- DOCGEN:END deleteMenuCategory -->
+
+<!-- DOCGEN:START updateMenuCategory -->
+### updateMenuCategory
+
+**Summary**: Update a menu category
+
+**Description**: Updates a menu category by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_category_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
+
+<!-- DOCGEN:END updateMenuCategory -->
+
+<!-- DOCGEN:START updateMenuOrder -->
+### updateMenuOrder
+
+**Summary**: Update a menu order
+
+**Description**: Updates a menu order by the menu category IDs.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
+
+<!-- DOCGEN:END updateMenuOrder -->
+
+<!-- DOCGEN:START updateMenuItemsOrder -->
+### updateMenuItemsOrder
+
+**Summary**: Update a menu items order
+
+**Description**: Updates a menu items order by the menu items IDs.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_category_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
+
+<!-- DOCGEN:END updateMenuItemsOrder -->
+
+<!-- DOCGEN:START createMenuItem -->
+### createMenuItem
+
+**Summary**: Create a new menu item
+
+**Description**: Creates a new menu item for a menu category.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 201
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `201.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
+
+<!-- DOCGEN:END createMenuItem -->
+
+<!-- DOCGEN:START createDailyMealsMenu -->
+### createDailyMealsMenu
+
+**Summary**: Create a new menu daily meals menu
+
+**Description**: Creates a new daily meals menu for a business
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 201
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `201.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
+
+<!-- DOCGEN:END createDailyMealsMenu -->
+
+<!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
+### getLastUploadedDailyMealsMenu
+
+**Summary**: Retrieve the last uploaded daily meals menu
+
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
+
+**Responses:**
+- 200
+- 404
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+- ⚠️ Could not parse: `404.application/json`
+- ⚠️ Could not parse: `500.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
+
+<!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
+
+<!-- DOCGEN:START deleteMenuItem -->
+### deleteMenuItem
+
+**Summary**: Delete a menu item
+
+**Description**: Deletes a menu item by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_item_id |  |
+
+**Responses:**
+- 204
+- 400
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
+
+<!-- DOCGEN:END deleteMenuItem -->
+
+<!-- DOCGEN:START updateMenuItem -->
+### updateMenuItem
+
+**Summary**: Update a menu item
+
+**Description**: Updates a menu item by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_item_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
+
+<!-- DOCGEN:END updateMenuItem -->
+
+<!-- DOCGEN:START updateMenuItemEnabled -->
+### updateMenuItemEnabled
+
+**Summary**: Update a menu item enabled field
+
+**Description**: Updates a menu item by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_item_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
+
+<!-- DOCGEN:END updateMenuItemEnabled -->
+
+<!-- DOCGEN:START updateMenuItemPrice -->
+### updateMenuItemPrice
+
+**Summary**: Update menu item price
+
+**Description**: Updates the price of a menu item.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_item_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
+
+<!-- DOCGEN:END updateMenuItemPrice -->
+
+<!-- DOCGEN:START addMenuItemMenuCategory -->
+### addMenuItemMenuCategory
+
+**Summary**: Update menu item category
+
+**Description**: Add menu item to a category.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_item_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
+
+<!-- DOCGEN:END addMenuItemMenuCategory -->
+
+<!-- DOCGEN:START removeMenuItemFromCategory -->
+### removeMenuItemFromCategory
+
+**Summary**: Remove menu item from category
+
+**Description**: Removes a menu item from its category.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_item_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
+
+<!-- DOCGEN:END removeMenuItemFromCategory -->
+
+<!-- DOCGEN:START addMenuCategory -->
+### addMenuCategory
+
+**Summary**: Add a menu category to a menu
+
+**Description**: Adds a menu category to a menu.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
+
+<!-- DOCGEN:END addMenuCategory -->
+
+<!-- DOCGEN:START removeMenuCategory -->
+### removeMenuCategory
+
+**Summary**: Remove a menu category from a menu
+
+**Description**: Removes a menu category from a menu.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
+
+<!-- DOCGEN:END removeMenuCategory -->
+
+<!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
+### deleteDocumentsAndFilesByDocumentId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
+
+<!-- DOCGEN:START getMenuItemsByDate -->
+### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getMenuItemsByDate -->
+
+<!-- DOCGEN:START getMenuByDate -->
+### getMenuByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getMenuByDate -->
+
+<!-- DOCGEN:START updateDailyMealMenuPrice -->
+### updateDailyMealMenuPrice
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END updateDailyMealMenuPrice -->
+
+<!-- DOCGEN:START getMenuItemsByIds -->
+### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getMenuItemsByIds -->
+
+<!-- DOCGEN:START getMenuByBusinessId -->
+### getMenuByBusinessId
+
+**Summary**: Get menus by business ID
+
+**Description**: Retrieves a list of menus for a specific business.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuByBusinessId )
+
+<!-- DOCGEN:END getMenuByBusinessId -->
+
+<!-- DOCGEN:START getDailyMenuByBusinessId -->
+### getDailyMenuByBusinessId
+
+**Summary**: Get menus by business ID
+
+**Description**: Retrieves a list of menus for a specific business.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDailyMenuByBusinessId )
+
+<!-- DOCGEN:END getDailyMenuByBusinessId -->
+
+<!-- DOCGEN:START createMenu -->
+### createMenu
+
+**Summary**: Create a new menu
+
+**Description**: Creates a new menu for a business.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 201
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `201.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenu )
+
+<!-- DOCGEN:END createMenu -->
+
+<!-- DOCGEN:START createDailyMealMenu -->
+### createDailyMealMenu
+
+**Summary**: Create a new daily meal menu
+
+**Description**: Creates a new daily meal menu for merchant.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealMenu )
+
+<!-- DOCGEN:END createDailyMealMenu -->
+
+<!-- DOCGEN:START deleteMenu -->
+### deleteMenu
+
+**Summary**: Delete a menu
+
+**Description**: Deletes a menu by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_id |  |
+
+**Responses:**
+- 204
+- 400
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenu )
+
+<!-- DOCGEN:END deleteMenu -->
+
+<!-- DOCGEN:START setActiveMenu -->
+### setActiveMenu
+
+**Summary**: Set menu active status
+
+**Description**: Updates the active status of a menu.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/setActiveMenu )
+
+<!-- DOCGEN:END setActiveMenu -->
+
+<!-- DOCGEN:START createMenuCategory -->
+### createMenuCategory
+
+**Summary**: Create a new menu category
+
+**Description**: Creates a new menu category for a menu.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 201
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `201.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuCategory )
+
+<!-- DOCGEN:END createMenuCategory -->
+
+<!-- DOCGEN:START addMenuItemIdToOrder -->
+### addMenuItemIdToOrder
+
+**Summary**: Add a menu item ID to the ordered list
+
+**Description**: Adds a menu item ID to the ordered list of a menu category.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemIdToOrder )
+
+<!-- DOCGEN:END addMenuItemIdToOrder -->
+
+<!-- DOCGEN:START removeMenuItemIdFromOrder -->
+### removeMenuItemIdFromOrder
+
+**Summary**: Remove a menu item ID from the ordered list
+
+**Description**: Removes a menu item ID from the ordered list of a menu category.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemIdFromOrder )
+
+<!-- DOCGEN:END removeMenuItemIdFromOrder -->
+
+<!-- DOCGEN:START addMenuCategoryIdToOrder -->
+### addMenuCategoryIdToOrder
+
+**Summary**: Add a menu category ID to the ordered list
+
+**Description**: Adds a menu category ID to the ordered list of categories in a menu.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategoryIdToOrder )
+
+<!-- DOCGEN:END addMenuCategoryIdToOrder -->
+
+<!-- DOCGEN:START removeMenuCategoryIdFromOrder -->
+### removeMenuCategoryIdFromOrder
+
+**Summary**: Remove a menu category ID from the ordered list
+
+**Description**: Removes a menu category ID from the ordered list of categories in a menu.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategoryIdFromOrder )
+
+<!-- DOCGEN:END removeMenuCategoryIdFromOrder -->
+
+<!-- DOCGEN:START getMenuItemsByCategoryId -->
+### getMenuItemsByCategoryId
+
+**Summary**: Get menu items by category ID
+
+**Description**: Retrieves a list of menu items for a specific menu category.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | category_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByCategoryId )
+
+<!-- DOCGEN:END getMenuItemsByCategoryId -->
+
+<!-- DOCGEN:START getMenuCategoriesByMenuId -->
+### getMenuCategoriesByMenuId
+
+**Summary**: Get menu categories by menu ID
+
+**Description**: Retrieves a list of menu categories for a specific menu.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByMenuId )
+
+<!-- DOCGEN:END getMenuCategoriesByMenuId -->
+
+<!-- DOCGEN:START getMenuCategoriesByBusinessId -->
+### getMenuCategoriesByBusinessId
+
+**Summary**: Get menu categories by business ID
+
+**Description**: Retrieves a list of menu categories for a specific business.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuCategoriesByBusinessId )
+
+<!-- DOCGEN:END getMenuCategoriesByBusinessId -->
+
+<!-- DOCGEN:START getMenuItemsByBusinessId -->
+### getMenuItemsByBusinessId
+
+**Summary**: Get menu items by business ID
+
+**Description**: Retrieves a list of menu items for a specific business.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getMenuItemsByBusinessId )
+
+<!-- DOCGEN:END getMenuItemsByBusinessId -->
+
+<!-- DOCGEN:START deleteMenuCategory -->
+### deleteMenuCategory
+
+**Summary**: Delete a menu category
+
+**Description**: Deletes a menu category by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_category_id |  |
+
+**Responses:**
+- 204
+- 400
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuCategory )
+
+<!-- DOCGEN:END deleteMenuCategory -->
+
+<!-- DOCGEN:START updateMenuCategory -->
+### updateMenuCategory
+
+**Summary**: Update a menu category
+
+**Description**: Updates a menu category by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_category_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuCategory )
+
+<!-- DOCGEN:END updateMenuCategory -->
+
+<!-- DOCGEN:START updateMenuOrder -->
+### updateMenuOrder
+
+**Summary**: Update a menu order
+
+**Description**: Updates a menu order by the menu category IDs.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuOrder )
+
+<!-- DOCGEN:END updateMenuOrder -->
+
+<!-- DOCGEN:START updateMenuItemsOrder -->
+### updateMenuItemsOrder
+
+**Summary**: Update a menu items order
+
+**Description**: Updates a menu items order by the menu items IDs.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_category_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemsOrder )
+
+<!-- DOCGEN:END updateMenuItemsOrder -->
+
+<!-- DOCGEN:START createMenuItem -->
+### createMenuItem
+
+**Summary**: Create a new menu item
+
+**Description**: Creates a new menu item for a menu category.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 201
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `201.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createMenuItem )
+
+<!-- DOCGEN:END createMenuItem -->
+
+<!-- DOCGEN:START createDailyMealsMenu -->
+### createDailyMealsMenu
+
+**Summary**: Create a new menu daily meals menu
+
+**Description**: Creates a new daily meals menu for a business
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 201
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `201.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMealsMenu )
+
+<!-- DOCGEN:END createDailyMealsMenu -->
+
+<!-- DOCGEN:START getLastUploadedDailyMealsMenu -->
+### getLastUploadedDailyMealsMenu
+
+**Summary**: Retrieve the last uploaded daily meals menu
+
+**Description**: Fetches the most recent daily meals menu for a business, including the menu's name and URL.
+
+**Responses:**
+- 200
+- 404
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+- ⚠️ Could not parse: `404.application/json`
+- ⚠️ Could not parse: `500.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getLastDailyMealsMenu )
+
+<!-- DOCGEN:END getLastUploadedDailyMealsMenu -->
+
+<!-- DOCGEN:START deleteMenuItem -->
+### deleteMenuItem
+
+**Summary**: Delete a menu item
+
+**Description**: Deletes a menu item by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_item_id |  |
+
+**Responses:**
+- 204
+- 400
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteMenuItem )
+
+<!-- DOCGEN:END deleteMenuItem -->
+
+<!-- DOCGEN:START updateMenuItem -->
+### updateMenuItem
+
+**Summary**: Update a menu item
+
+**Description**: Updates a menu item by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_item_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
+
+<!-- DOCGEN:END updateMenuItem -->
+
+<!-- DOCGEN:START updateMenuItemEnabled -->
+### updateMenuItemEnabled
+
+**Summary**: Update a menu item enabled field
+
+**Description**: Updates a menu item by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_item_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItem )
+
+<!-- DOCGEN:END updateMenuItemEnabled -->
+
+<!-- DOCGEN:START updateMenuItemPrice -->
+### updateMenuItemPrice
+
+**Summary**: Update menu item price
+
+**Description**: Updates the price of a menu item.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_item_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateMenuItemPrice )
+
+<!-- DOCGEN:END updateMenuItemPrice -->
+
+<!-- DOCGEN:START addMenuItemMenuCategory -->
+### addMenuItemMenuCategory
+
+**Summary**: Update menu item category
+
+**Description**: Add menu item to a category.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_item_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuItemToCategory )
+
+<!-- DOCGEN:END addMenuItemMenuCategory -->
+
+<!-- DOCGEN:START removeMenuItemFromCategory -->
+### removeMenuItemFromCategory
+
+**Summary**: Remove menu item from category
+
+**Description**: Removes a menu item from its category.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | menu_item_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuItemFromCategory )
+
+<!-- DOCGEN:END removeMenuItemFromCategory -->
+
+<!-- DOCGEN:START addMenuCategory -->
+### addMenuCategory
+
+**Summary**: Add a menu category to a menu
+
+**Description**: Adds a menu category to a menu.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addMenuCategory )
+
+<!-- DOCGEN:END addMenuCategory -->
+
+<!-- DOCGEN:START removeMenuCategory -->
+### removeMenuCategory
+
+**Summary**: Remove a menu category from a menu
+
+**Description**: Removes a menu category from a menu.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeMenuCategory )
+
+<!-- DOCGEN:END removeMenuCategory -->
+
+<!-- DOCGEN:START deleteDocumentsAndFilesByDocumentId -->
+### deleteDocumentsAndFilesByDocumentId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END deleteDocumentsAndFilesByDocumentId -->
+
+<!-- DOCGEN:START getMenuItemsByDate -->
+### getMenuItemsByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getMenuItemsByDate -->
+
+<!-- DOCGEN:START getMenuByDate -->
+### getMenuByDate
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getMenuByDate -->
+
+<!-- DOCGEN:START updateDailyMealMenuPrice -->
+### updateDailyMealMenuPrice
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END updateDailyMealMenuPrice -->
+
+<!-- DOCGEN:START getMenuItemsByIds -->
+### getMenuItemsByIds
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getMenuItemsByIds -->
