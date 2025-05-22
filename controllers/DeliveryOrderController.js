@@ -886,6 +886,7 @@ async function completeOrder(req, res) {
 			orderId: order.order_id,
 			subtotal: order.details.sub_total_price,
 			total: order.details.total_price,
+			discount: order.details.discount_savings,
 		};
 		EmailHelper.sendEmailTemplate(
 			'Order confirmation ' + order.order_id,
