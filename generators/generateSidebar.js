@@ -1,33 +1,21 @@
 const fs = require('fs');
 const path = require('path');
 
-const DOCS_ROOT = path.join(process.cwd(), 'docs', 'docs'); // the folder that contains [api, dao, controllers]
+const DOCS_ROOT = path.join(process.cwd(), 'docs', 'docs'); // e.g. docs/docs/api/*
 const SIDEBAR_PATH = path.join(process.cwd(), 'docs', 'sidebars.js');
 
-function walk(dir, prefix = '') {
+function walk(dir) {
 	const entries = fs.readdirSync(dir, { withFileTypes: true });
 
-	return entries.flatMap((entry) => {
-		const fullPath = path.join(dir, entry.name);
-		const relativePath = path.relative(DOCS_ROOT, fullPath);
-		const docId = relativePath.replace(/\.mdx?$/, '').replace(/\\/g, '/'); // normalize Windows slashes
+	const items = entries
+		.filter((entry) => entry.isFile() && (entry.name.endsWith('.md') || entry.name.endsWith('.mdx')))
+		.map((entry) => {
+			const fullPath = path.join(dir, entry.name);
+			const relativePath = path.relative(DOCS_ROOT, fullPath);
+			return relativePath.replace(/\.mdx?$/, '').replace(/\\/g, '/'); // normalize slashes
+		});
 
-		if (entry.isDirectory()) {
-			return {
-				type: 'category',
-				label: entry.name,
-				collapsible: true,
-				collapsed: true,
-				items: walk(fullPath, path.join(prefix, entry.name)),
-			};
-		}
-
-		if (entry.isFile() && (entry.name.endsWith('.md') || entry.name.endsWith('.mdx'))) {
-			return docId;
-		}
-
-		return [];
-	});
+	return items;
 }
 
 function generateSidebar() {
@@ -40,7 +28,17 @@ function generateSidebar() {
 
 	for (const dir of fs.readdirSync(DOCS_ROOT, { withFileTypes: true })) {
 		if (dir.isDirectory()) {
-			sidebar[dir.name] = walk(path.join(DOCS_ROOT, dir.name), dir.name);
+			const subDir = path.join(DOCS_ROOT, dir.name);
+			const items = walk(subDir);
+
+			// Even if empty, add it
+			sidebar[dir.name] = {
+				type: 'category',
+				label: dir.name,
+				collapsible: true,
+				collapsed: true,
+				items,
+			};
 		}
 	}
 

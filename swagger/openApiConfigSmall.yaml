@@ -1,0 +1,12 @@
+openapi: 3.0.3
+info:
+    title: Klikni BE
+    version: 1.0.0
+    description: ""
+    termsOfService: undefined
+    contact: undefined
+    license: undefined
+
+externalDocs:
+    description: Find out more about Swagger
+    url: http://swagger.io
