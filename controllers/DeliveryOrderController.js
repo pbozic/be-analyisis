@@ -887,6 +887,7 @@ async function completeOrder(req, res) {
 			subtotal: order.details.sub_total_price,
 			total: order.details.total_price,
 			discount: order.details.discount_savings,
+			paymentMethod: order.payment.type,
 		};
 		EmailHelper.sendEmailTemplate(
 			'Order confirmation ' + order.order_id,
@@ -894,8 +895,8 @@ async function completeOrder(req, res) {
 			order.user.email,
 			templateData,
 			{
-				filename: 'Order confirmation ' + order.order_id + '.pdf',
-				content: pdf,
+				filename: 'Order_confirmation_' + order.order_id + '.pdf',
+				content: Buffer.isBuffer(pdf) ? pdf : Buffer.from(pdf, 'binary'),
 				contentType: 'application/pdf',
 			}
 		);
