@@ -4,18 +4,21 @@ const path = require('path');
 const DOCS_ROOT = path.join(process.cwd(), 'docs', 'docs'); // e.g. docs/docs/api/*
 const SIDEBAR_PATH = path.join(process.cwd(), 'docs', 'sidebars.js');
 
-function walk(dir) {
-	const entries = fs.readdirSync(dir, { withFileTypes: true });
+// Recursively walk a directory and return all .md/.mdx files as relative paths
+function walkRecursive(dir) {
+	let results = [];
 
-	const items = entries
-		.filter((entry) => entry.isFile() && (entry.name.endsWith('.md') || entry.name.endsWith('.mdx')))
-		.map((entry) => {
-			const fullPath = path.join(dir, entry.name);
+	for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+		const fullPath = path.join(dir, entry.name);
+		if (entry.isDirectory()) {
+			results = results.concat(walkRecursive(fullPath));
+		} else if (entry.isFile() && (entry.name.endsWith('.md') || entry.name.endsWith('.mdx'))) {
 			const relativePath = path.relative(DOCS_ROOT, fullPath);
-			return relativePath.replace(/\.mdx?$/, '').replace(/\\/g, '/'); // normalize slashes
-		});
+			results.push(relativePath.replace(/\.mdx?$/, '').replace(/\\/g, '/')); // Normalize for Docusaurus
+		}
+	}
 
-	return items;
+	return results;
 }
 
 function generateSidebar() {
@@ -29,17 +32,26 @@ function generateSidebar() {
 	for (const dir of fs.readdirSync(DOCS_ROOT, { withFileTypes: true })) {
 		if (dir.isDirectory()) {
 			const subDir = path.join(DOCS_ROOT, dir.name);
-			const items = walk(subDir);
+			const items = walkRecursive(subDir);
 
-			// Even if empty, add it
-			sidebar[dir.name] = {
-				type: 'category',
-				label: dir.name,
-				collapsible: true,
-				collapsed: true,
-				items,
-			};
+			if (items.length > 0) {
+				sidebar[dir.name] = {
+					type: 'category',
+					label: dir.name,
+					collapsible: true,
+					collapsed: true,
+					items,
+				};
+				console.log(`✅ Added category: ${dir.name} (${items.length} items)`);
+			} else {
+				console.warn(`⚠️ Skipping empty category: ${dir.name}`);
+			}
 		}
+	}
+
+	if (Object.keys(sidebar).length === 0) {
+		console.warn(`⚠️ No categories found. Sidebar not written.`);
+		return;
 	}
 
 	fs.writeFileSync(SIDEBAR_PATH, `module.exports = ${JSON.stringify(sidebar, null, 2)};\n`);

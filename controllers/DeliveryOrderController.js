@@ -877,7 +877,7 @@ async function completeOrder(req, res) {
 		}
 		sendDeliveryOrderNotifications(order.user, null, order.user_id, null, order.status);
 		// send email
-		let template = 'orderComfirmation';
+		let template = 'orderConfirmation';
 		let pdf = await getOrderAndPDF(order.order_id);
 		let templateData = {
 			userName: order.user.first_name,
