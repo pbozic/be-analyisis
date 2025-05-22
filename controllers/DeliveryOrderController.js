@@ -164,12 +164,13 @@ async function getUserByDeliveryOrderId(req, res) {
 async function createOrder(req, res) {
 	const { orderBody, user_id, return_url } = req.body;
 	console.info('CREATE DELIVERY ORDER: ', req.body);
+	let order;
 	try {
 		const isValidOrder = await verifyOrderCosts(orderBody);
 		if (!isValidOrder) throw new Error('Invalid order data!');
 		let orderData = {
 			...orderBody,
-			status: DELIVERY_ORDER_STATUS.PENDING,
+			status: DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING,
 		};
 
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
@@ -209,7 +210,7 @@ async function createOrder(req, res) {
 				throw new Error('Missing stripe_customer_id');
 			}
 		}
-		let order = await DeliveryOrderDao.createOrder(orderData, user_id);
+		order = await DeliveryOrderDao.createOrder(orderData, user_id);
 		// let delivery_business = await BusinessDao.getBusinessById(orderData?.delivery_driver?.business_id);
 		orderData.telephone = user.telephone;
 		let payment_intent;
@@ -256,13 +257,13 @@ async function createOrder(req, res) {
 		const TOTAL_PRICE_CENTS = Math.round(orderData.details.total_price * 100); //already includes delivery cost
 		const CREDITS_AMOUNT_RESERVED = orderData?.allow_credits_usage
 			? (
-					await WalletFundsHelpers.reserveCreditsForOrder(
-						user.user_id,
-						TOTAL_PRICE_CENTS,
-						order.order_id,
-						FUNDS_TYPE.CREDITS_DELIVERY
-					)
-				).reduce((sum, wf) => sum + wf.amount, 0)
+				await WalletFundsHelpers.reserveCreditsForOrder(
+					user.user_id,
+					TOTAL_PRICE_CENTS,
+					order.order_id,
+					FUNDS_TYPE.CREDITS_DELIVERY
+				)
+			).reduce((sum, wf) => sum + wf.amount, 0)
 			: 0;
 		const DISCOUNTED_COMBINED_COST_CENTS = TOTAL_PRICE_CENTS - CREDITS_AMOUNT_RESERVED;
 		order.details.credit_discount = CREDITS_AMOUNT_RESERVED;
@@ -284,7 +285,6 @@ async function createOrder(req, res) {
 					MERCHANT_CUT,
 					return_url
 				);
-
 				orderData.payment_intent_id = payment_intent.id;
 				order = await DeliveryOrderDao.updateOrder(order.order_id, {
 					payment_intent_id: payment_intent.id,
@@ -302,6 +302,7 @@ async function createOrder(req, res) {
 						DISCOUNTED_COMBINED_COST_CENTS,
 						order.order_id
 					);
+					await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.PENDING);
 				} catch (err) {
 					order = await DeliveryOrderDao.updateOrder(order.order_id, {
 						payment: {
@@ -318,10 +319,14 @@ async function createOrder(req, res) {
 					io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 					throw err;
 				}
+			} else if (order.payment.type === 'CASH') {
+				order = await DeliveryOrderDao.updateOrderStatus(
+					order.order_id,
+					DELIVERY_ORDER_STATUS.PENDING
+				);
+			} else {
+				throw new Error("Unsuported payment type.");
 			}
-			// else if (order.payment.type === 'CASH') {
-
-			// }
 		}
 
 		order = await DeliveryOrderDao.getOrder(order.order_id, {
@@ -365,7 +370,9 @@ async function createOrder(req, res) {
 		SocketStore.addUserToRoom(user_id, `order_${order.order_id}`);
 		BusinessHelpers.joinAllBusinessUsersToRoom(order.business_id, `order_${order.order_id}`);
 
-		io.to('orders_' + order.business_id).emit('new_order', order);
+		if (order.status === DELIVERY_ORDER_STATUS.PENDING) {
+			io.to('orders_' + order.business_id).emit('new_order', order);
+		}
 
 		res.status(200).json({
 			...order,
@@ -373,6 +380,9 @@ async function createOrder(req, res) {
 		});
 	} catch (e) {
 		console.log(e);
+		if (order && order?.order_id && order?.user_id) {
+			await handlePaymentCleanup(order);
+		}
 		res.status(500).json(e);
 	}
 }
@@ -463,9 +473,9 @@ async function createDailyMeals(req, res) {
 			const dailyMealItems = user.daily_meal_preferences
 				? generateItemsFromPreferences(user.daily_meal_preferences, { price: 0, discount: 0 })
 				: generateItemsFromPreferences(
-						{ normal: { amount: 1 }, substitution: { amount: 0 } },
-						{ price: 0, discount: 0 }
-					);
+					{ normal: { amount: 1 }, substitution: { amount: 0 } },
+					{ price: 0, discount: 0 }
+				);
 
 			let { result } = await gApi.distanceBetweenTwoPoints(
 				delivery_driver.location.coordinates,
@@ -1051,9 +1061,9 @@ async function getCompletedDeliveryOrdersByUserId(req, res) {
 			const logoDocument = business.documents.find((doc) => doc.document_type === DOCUMENT_TYPE.LOGO);
 			const logo = logoDocument
 				? {
-						...logoDocument,
-						files: logoDocument.files,
-					}
+					...logoDocument,
+					files: logoDocument.files,
+				}
 				: null;
 
 			return {
@@ -1224,6 +1234,7 @@ async function updateOrderStatus(req, res) {
 			].includes(order.status)
 		) {
 			order = await DeliveryOrderDao.updateOrderStatus(req.body.order_id, DELIVERY_ORDER_STATUS.FAIL);
+			//TODO: handle payment cleanup
 			io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 		} else if (
 			[DELIVERY_ORDER_STATUS.CUSTOMER_PICKED_UP, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED].includes(order.status)
@@ -1757,14 +1768,14 @@ async function dailyMealsSubscriptionPayment(req, res) {
 		const TOTAL_PRICE_CENTS = Math.round(total_price * 100); //already includes delivery cost
 		const CREDITS_AMOUNT_RESERVED = allow_credits_usage
 			? (
-					await WalletFundsHelpers.reserveCreditsForOrder(
-						user.user_id,
-						TOTAL_PRICE_CENTS,
-						groupedId,
-						FUNDS_TYPE.CREDITS_DELIVERY,
-						'daily_meals_subscription'
-					)
-				).reduce((sum, wf) => sum + wf.amount, 0)
+				await WalletFundsHelpers.reserveCreditsForOrder(
+					user.user_id,
+					TOTAL_PRICE_CENTS,
+					groupedId,
+					FUNDS_TYPE.CREDITS_DELIVERY,
+					'daily_meals_subscription'
+				)
+			).reduce((sum, wf) => sum + wf.amount, 0)
 			: 0;
 		const DISCOUNTED_COMBINED_COST_CENTS = TOTAL_PRICE_CENTS - CREDITS_AMOUNT_RESERVED;
 
