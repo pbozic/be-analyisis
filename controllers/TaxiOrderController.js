@@ -1570,7 +1570,7 @@ async function completeOrder(req, res) {
 							order.order_id,
 							SERVICE_TYPE.TAXI
 						);
-					} else if (businessUser) {
+					} else if (businessUser && order.payment.type === 'PURCHASE_ORDER') {
 						let any;
 						let allowance = businessUser.allowance?.amount_taxi_purchase_order;
 						if (!allowance) {
