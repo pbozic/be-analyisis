@@ -1,0 +1,38 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/drivers/create:
+    post:
+      tags:
+        - Drivers
+      summary: Create a new driver
+      description: Adds a new driver to the database.
+      operationId: createNewDriver
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Driver'
+        required: true
+      responses:
+        '201':
+          description: Driver created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Driver'
+        '400':
+          description: Error creating driver
+components: {}

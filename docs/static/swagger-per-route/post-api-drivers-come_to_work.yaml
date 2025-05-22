@@ -1,0 +1,42 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/drivers/come_to_work:
+    post:
+      tags:
+        - Drivers
+      summary: Send notifications for drivers to come to work
+      description: >-
+        This endpoint allows sending a "come to work" notifications to all
+        drivers who are currently offline.
+      operationId: comeToWorkDrivers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Object'
+        required: true
+      responses:
+        '200':
+          description: Notification sent out successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Object'
+        '400':
+          description: Problem sending notification
+        '404':
+          description: Problem sending notification
+components: {}

@@ -1,0 +1,45 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/drivers/earnings/:driver_id/total:
+    get:
+      tags:
+        - Drivers
+      summary: Get total earnings for a specific driver
+      description: >-
+        Retrieves the total earnings of a specific driver based on completed
+        orders.
+      operationId: getDriverTotalEarnings
+      parameters:
+        - name: driver_id
+          in: path
+          description: The ID of the driver whose total earnings are being retrieved
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: >-
+            Successful operation, returns total earnings for the specified
+            driver
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TotalEarnings'
+        '400':
+          description: Error retrieving driver's total earnings
+        '404':
+          description: Driver not found
+components: {}

@@ -2,12 +2,15 @@
 require('dotenv').config();
 
 const path = require('path');
+const fs = require('fs');
 
 const express = require('express');
 const createError = require('http-errors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const swaggerUi = require('swagger-ui-express');
+const YAML = require('js-yaml');
+const merge = require('lodash.merge');
 const cors = require('cors');
 const fileUploadLib = require('express-fileupload');
 const openapi = require('openapi-comment-parser');
@@ -97,8 +100,25 @@ app.use(mainRouter);
 app.use(REST_API_ENDPOINT, apiRouter);
 
 // Uncomment if you want Swagger from comments
-// const spec = openapi();
-// app.use("/v1/api-docs", swaggerUi.serve, swaggerUi.setup(spec, { explorer: true }));
+let spec;
+let finalSpec;
+try {
+	const baseYamlPath = path.join(__dirname, 'swagger', 'openApiConfig.yaml');
+	const baseSpec = YAML.load(fs.readFileSync(baseYamlPath, 'utf8'));
+
+	// This triggers parsing of comments
+	spec = openapi({
+		include: ['./routes/**/*.js', './controllers/**/*.js', './middlewares/**/*.js'],
+	});
+
+	finalSpec = merge({}, baseSpec, spec);
+	if (!finalSpec.openapi) finalSpec.openapi = '3.0.3';
+} catch (err) {
+	console.error('❌ Failed to parse OpenAPI comments:', err.message);
+	console.error(err.stack);
+	process.exit(1); // or continue without Swagger if desired
+}
+app.use('/v1/api-docs', swaggerUi.serve, swaggerUi.setup(finalSpec, { explorer: true }));
 
 // ─── Error Handling ─────────────────────────────────────────────────
 app.use((req, res, next) => {

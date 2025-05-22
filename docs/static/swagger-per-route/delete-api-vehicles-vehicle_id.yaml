@@ -1,0 +1,39 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/vehicles/:vehicle_id:
+    delete:
+      tags:
+        - Vehicles
+      summary: Delete a vehicle
+      description: Deletes a vehicle from the database.
+      operationId: deleteVehicle
+      parameters:
+        - name: vehicle_id
+          in: path
+          description: The ID of the vehicle to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Vehicle deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Error deleting vehicle
+components: {}

@@ -1,0 +1,45 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/documents/files:
+    patch:
+      tags:
+        - Documents
+      summary: Update document's files
+      description: Updates the files associated with a specific document.
+      operationId: updateDocumentFiles
+      parameters:
+        - name: document_id
+          in: path
+          description: The ID of the document to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFilesRequest'
+        required: true
+      responses:
+        '200':
+          description: Document files updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '400':
+          description: Error updating document's files
+components: {}

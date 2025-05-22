@@ -1,0 +1,41 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/documents/user/type/:document_type:
+    get:
+      tags:
+        - Documents
+      summary: Get documents for a user by type
+      description: Retrieves documents of a specific type associated with a user.
+      operationId: getDocumentsForUserByDocumentType
+      parameters:
+        - name: document_type
+          in: path
+          description: The type of the documents
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation, returns documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Document'
+        '400':
+          description: Error retrieving documents
+components: {}

@@ -1,0 +1,41 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/drivers/:driver_id/location:
+    get:
+      tags:
+        - Drivers
+      summary: Get driver location
+      description: Retrieves the current location of a specific driver.
+      operationId: getDriverLocation
+      parameters:
+        - name: driver_id
+          in: path
+          description: The ID of the driver whose location is being retrieved
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation, returns driver's location
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Location'
+        '400':
+          description: Error retrieving driver's location
+        '404':
+          description: Driver not found
+components: {}

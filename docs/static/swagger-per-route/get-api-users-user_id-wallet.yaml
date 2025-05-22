@@ -1,0 +1,30 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/users/:user_id/wallet:
+    get:
+      tags:
+        - Users
+      summary: Get wallet balance from wallet_funds.
+      description: >-
+        This endpoint is used to check available wallet balance for a particular
+        user.
+      operationId: getPaymentSheetCredentials
+      responses:
+        '200':
+          description: '{wallet_balance:float}'
+        '400':
+          description: Error checking wallet balances
+components: {}

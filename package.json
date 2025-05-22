@@ -29,7 +29,9 @@
 		"lint:quiet": "eslint . --ext .js,.ts --quiet",
 		"lint:fix": "eslint . --ext .js,.ts --fix",
 		"prepare": "husky",
-		"type-check": "tsc --noEmit"
+		"type-check": "tsc --noEmit",
+		"docs": "cd docs && npm start",
+		"docs:build": "cd docs && npm run build"
 	},
 	"lint-staged": {
 		"*.{js,ts,jsx,tsx}": [
@@ -45,6 +47,8 @@
 		"@aws-sdk/client-s3": "^3.596.0",
 		"@aws-sdk/lib-storage": "^3.596.0",
 		"@aws-sdk/s3-request-presigner": "^3.596.0",
+		"@babel/parser": "^7.27.2",
+		"@commitlint/cli": "^19.8.1",
 		"@elastic/elasticsearch": "^8.17.0",
 		"@googlemaps/google-maps-services-js": "^3.4.0",
 		"@joi/date": "^2.1.1",
@@ -60,6 +64,7 @@
 		"bcrypt": "^5.0.1",
 		"canvas": "^2.8.0",
 		"chalk": "^4.0.0",
+		"comment-parser": "^1.4.1",
 		"compression": "^1.8.0",
 		"cookie-parser": "~1.4.4",
 		"core-js": "^3.37.1",
@@ -74,6 +79,7 @@
 		"express": "~4.16.1",
 		"express-fileupload": "^1.2.1",
 		"express-form-data": "^2.0.17",
+		"fast-glob": "^3.3.3",
 		"flatted": "^3.3.3",
 		"follow-redirects": "^1.15.9",
 		"fontkit": "^2.0.4",
@@ -83,9 +89,11 @@
 		"http-errors": "~1.6.3",
 		"jade": "~1.11.0",
 		"joi": "^17.13.1",
+		"js-yaml": "^4.1.0",
 		"jsonwebtoken": "^9.0.2",
 		"jwk-to-pem": "^2.0.7",
 		"libphonenumber-js": "^1.11.20",
+		"lodash.merge": "^4.6.2",
 		"mime-types": "^2.1.35",
 		"morgan": "~1.9.1",
 		"node-7z": "^3.0.0",
@@ -107,6 +115,7 @@
 		"qr-code-styling-node": "^1.5.0",
 		"react-export-excel": "^0.5.3",
 		"read-excel-file": "^5.2.6",
+		"recast": "^0.23.11",
 		"redis": "^4.7.0",
 		"socket.io": "^4.7.5",
 		"stripe": "^15.12.0",
@@ -116,6 +125,7 @@
 		"unklogger": "^2.3.0",
 		"wkhtmltopdf": "^0.4.0",
 		"wkhtmltopdf-installer": "^0.3.2",
+		"yaml": "^2.8.0",
 		"zod-prisma-types": "~3.1.0"
 	},
 	"description": "BE server to Klikni project",

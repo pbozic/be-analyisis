@@ -1,0 +1,38 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/users/me:
+    get:
+      tags:
+        - Users
+      summary: Retrieve authenticated user's information
+      description: Retrieve the details of the authenticated user by their ID.
+      security:
+        - 'bearerAuth:': []
+      operationId: retrieveUserInformation
+      responses:
+        '200':
+          description: Successful operation, returns user info.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Error obtaining user information.
+          content:
+            application/json:
+              schema:
+                type: object
+components: {}

@@ -228,10 +228,12 @@ async function createOrder(req, res) {
 			order.details.duration = result.rows[0].elements[0].duration.value;
 
 			if (order.scheduled?.time && order.scheduled?.date) {
-				order.details.customer_expected_delivery_at = new Date(order.scheduled.time);
-				order.details.ready_for_pickup_at = new Date(
-					new Date(order.scheduled.time).getTime() - order.details.duration * 1000
-				)
+				const scheduledTime = new Date(order.scheduled.time);
+				const durationMs = order.details.duration * 1000;
+				const timezoneOffsetMs = scheduledTime.getTimezoneOffset() * 60 * 1000;
+
+				order.details.customer_expected_delivery_at = scheduledTime;
+				order.details.ready_for_pickup_at = new Date(scheduledTime.getTime() - durationMs - timezoneOffsetMs)
 					.toISOString()
 					.slice(0, -1);
 			}
@@ -892,7 +894,6 @@ async function completeOrder(req, res) {
  * @summary Get completed delivery orders.
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedDeliveryOrdersByDriverId
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -925,7 +926,6 @@ async function getDeliveryOrdersByDriverId(req, res) {
  * @summary Get completed delivery orders.
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedDeliveryOrdersByDriverId
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -957,7 +957,6 @@ async function getCompletedDeliveryOrdersByDriverId(req, res) {
  * @summary Get active delivery orders.
  * @description This fetches all active orders for a specific driver.
  * @operationId getActiveDeliveryOrdersByDriverId
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve active orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -1022,7 +1021,6 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
  * @summary Get completed delivery orders.
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedDeliveryOrdersByDriverId
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -1090,7 +1088,6 @@ async function getCompletedDeliveryOrdersByUserId(req, res) {
  * @summary Get active delivery orders.
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedDeliveryOrdersByDriverId
- * @requestBody {DriverId} driverId - The ID of the driver to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -1114,7 +1111,6 @@ async function getActiveDeliveryOrdersByUserId(req, res) {
  * @summary Get active delivery orders.
  * @description This fetches all completed orders for a specific business.
  * @operationId getCompletedDeliveryOrdersByBusinessId
- * @requestBody {BusinessId} businessId - The ID of the business to retrieve completed orders for
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -1137,7 +1133,6 @@ async function getActiveDeliveryOrdersByBusinessId(req, res) {
  * @summary Get delivery orders.
  * @description This fetches all restaurant orders.
  * @operationId getDeliveryOrdersByBusinessId
- * @requestBody {business_id} business_id - The ID of the business to retrieve orders for
  * @response 200 - Successful operation. Returns a list of orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -1166,7 +1161,6 @@ async function getDeliveryOrdersByBusinessId(req, res) {
  * @summary Get completed delivery orders by business id.
  * @description This fetches all completed restaurant orders.
  * @operationId getCompletedDeliveryOrdersByBusinessId
- * @requestBody {business_id} business_id - The ID of the business to retrieve orders for
  * @response 200 - Successful operation. Returns a list of orders in the response body.
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
@@ -1279,16 +1273,15 @@ async function updateOrderStatus(req, res) {
 async function merchantAcceptOrder(req, res) {
 	const { order_id, preparation_time } = req.body;
 	try {
-		let order;
+		let order = await DeliveryOrderDao.getOrder(order_id);
+		const user = order?.user;
 		if (preparation_time) {
 			order = await DeliveryOrderDao.updateOrderPickupTime(order_id, preparation_time);
 			io.to('order_' + order.order_id).emit('order_pickup_time', order);
-		} else {
+		} else if (!order.scheduled?.date && !order.scheduled?.time) {
 			console.error('Preparation time must be set');
 			return res.status(400).json(order_id);
 		}
-		order = await DeliveryOrderDao.getOrder(order_id);
-		const user = order?.user;
 		console.info('got into merchantAcceptOrder', JSON.stringify(order.payment_intent_id));
 		const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
 		const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT } =

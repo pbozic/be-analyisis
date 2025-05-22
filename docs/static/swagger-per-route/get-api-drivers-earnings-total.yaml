@@ -1,0 +1,32 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/drivers/earnings/total:
+    get:
+      tags:
+        - Drivers
+      summary: Get total earnings for all drivers
+      description: Retrieves the total earnings of all drivers based on completed orders.
+      operationId: getTotalEarnings
+      responses:
+        '200':
+          description: Successful operation, returns total earnings for all drivers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TotalEarnings'
+        '400':
+          description: Error retrieving total earnings
+components: {}

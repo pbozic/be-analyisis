@@ -1,0 +1,45 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/documents/additionalInfo:
+    patch:
+      tags:
+        - Documents
+      summary: Update document's additional info
+      description: Updates the additional information of a specific document.
+      operationId: updateDocumentAdditionalInfo
+      parameters:
+        - name: document_id
+          in: path
+          description: The ID of the document to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateAdditionalInfoRequest'
+        required: true
+      responses:
+        '200':
+          description: Document additional info updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '400':
+          description: Error updating document's additional info
+components: {}

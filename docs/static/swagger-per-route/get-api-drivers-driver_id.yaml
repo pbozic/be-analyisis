@@ -1,0 +1,41 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/drivers/:driver_id:
+    get:
+      tags:
+        - Drivers
+      summary: Get a driver by ID
+      description: Retrieves detailed information about a specific driver by their ID.
+      operationId: getDriverById
+      parameters:
+        - name: driver_id
+          in: path
+          description: The ID of the driver to retrieve
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation, returns detailed driver information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Driver'
+        '400':
+          description: Error retrieving driver information
+        '404':
+          description: Driver not found
+components: {}

@@ -1,0 +1,32 @@
+openapi: 3.0.3
+info:
+  title: ''
+  version: ''
+  description: >
+    This is a simple CRUD API application made with Express and documented with
+    Swagger
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: bourdakos1@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  x-github: https://github.com/bee-travels
+paths:
+  /api/drivers/orders:
+    get:
+      tags:
+        - Drivers
+      summary: Send already sent pending or accepted orders to a driver
+      description: >-
+        Retrieves a list of orders for a specific driver by their user ID and
+        sends them to the driver via socket emission.
+      operationId: sendAcceptedOrdersToDriver
+      responses:
+        '200':
+          description: Successful operation, orders sent to the driver
+        '400':
+          description: Error retrieving orders
+        '404':
+          description: Driver not found
+components: {}

@@ -29,32 +29,9 @@ function getDiscountedPricePerQuantity(basePrice, quantity) {
  * @bodyDescription The promo section details to create
  * @bodyContent {object} application/json
  * @bodyRequired
- * @bodyContentExample {
- *   "name": "Promo Section Name",
- *   "tag": "Promo Tag",
- *   "description": "Description of the promo section",
- *   "service_type": "Service Type",
- *   "canPurchase": true,
- *   "t1Price": 1000, // Base price for tier 1
- *   "t2Price": 2000, // Base price for tier 2
- *   "t3Price": 3000  // Base price for tier 3
- *
- * }
  * @response 200 - Promo section created successfully
  * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
- *   "promo_sections_id": 1,
- *   "name": "Promo Section Name",
- *   "tag": "Promo Tag",
- *   "description": "Description of the promo section",
- *   "service_type": "Service Type",
- *   "canPurchase": true,
- *   "t1Price": 1000, // Base price for tier 1
- *   "t2Price": 2000, // Base price for tier 2
- *   "t3Price": 3000  // Base price for tier 3
- * }
  * @response 500 - Error creating new promo section
- * @prisma_model promo_sections
  */
 
 async function createPromoSection(req, res) {
@@ -109,7 +86,6 @@ async function reorderPromoSections(req, res) {
  * @pathParam {string} id - The ID of the promo section to delete
  * @response 200 - Promo section deleted successfully
  * @responseContent {object} 200.application/json
- * @responseExample 204.application/json
  * @response 500 - Error deleting promo section
  */
 async function deletePromoSection(req, res) {
