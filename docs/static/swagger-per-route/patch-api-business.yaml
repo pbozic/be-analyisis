@@ -1,17 +1,7 @@
 openapi: 3.0.3
 info:
-  title: ''
-  version: ''
-  description: >
-    This is a simple CRUD API application made with Express and documented with
-    Swagger
-  termsOfService: http://swagger.io/terms/
-  contact:
-    email: bourdakos1@gmail.com
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  x-github: https://github.com/bee-travels
+  title: patch /api/business/
+  version: 1.0.0
 paths:
   /api/business/:
     patch:
@@ -43,4 +33,3 @@ paths:
                 $ref: '#/components/schemas/Business'
         '400':
           description: Error updating business information.
-components: {}

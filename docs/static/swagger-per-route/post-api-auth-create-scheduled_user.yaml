@@ -1,23 +1,21 @@
 openapi: 3.0.3
 info:
-  title: post /api/delivery/orders/order
+  title: post /api/auth/create/scheduled_user
   version: 1.0.0
 paths:
-  /api/delivery/orders/order:
+  /api/auth/create/scheduled_user:
     post:
       tags:
-        - Delivery
-      summary: Create a new delivery order.
-      description: >-
-        This creates a new delivery order with the provided details from the
-        request body. Returns the created order if successful.
-      operationId: createOrder
+        - User
+      summary: Create a new scheduled user.
+      description: This created new scheduled user.
+      operationId: createScheduledUser
       requestBody:
         description: Request body must include necessary order details.
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DeliveryOrderRequest'
+              $ref: '#/components/schemas/createScheduledUserRequest'
         required: true
       responses:
         '200':
@@ -27,7 +25,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DeliveryOrder'
+                $ref: '#/components/schemas/createScheduledUser'
         '500':
           description: >-
             Server error. Returns error message "Something went wrong..." if any
