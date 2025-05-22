@@ -1442,9 +1442,13 @@ async function completeOrder(req, res) {
 				const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(
 					user.user_id
 				);
-				const businessUser = await BusinessUsersDao.getBusinessUserByUserId(order.user_id);
+				const businessUser =
+					order.creating_user_id && (!order.payment.subtype || order.payment.subtype !== 'CUSTOMER')
+						? await BusinessUsersDao.getBusinessUserByUserId(order.creating_user_id)
+						: await BusinessUsersDao.getBusinessUserByUserId(order.user_id);
 
 				if (DISCOUNTED_TOTAL_COST > 0) {
+					//TODO: add order.payment.type === 'BUSINESS_WALLET' instead of order.payment.subtype
 					if (order.payment.type === 'WALLET') {
 						// handle wallet payment
 						if (
