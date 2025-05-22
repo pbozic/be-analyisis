@@ -17,12 +17,18 @@ function generateRoutesMap(routesFolderPath, outputFilePath) {
 
 		lines.forEach((line, index) => {
 			// eslint-disable-next-line no-useless-escape
-			const match = line.match(/router\.(get|post|put|delete|patch)\(['\"](.*?)['\"],\s*(.*?)\)/);
+			const match = line.match(/router\.(get|post|put|delete|patch)\(['\"`](.*?)['\"`],\s*(.+?)\)/);
 			if (match) {
-				const [_, method, routePath, handler] = match;
+				const [_, method, routePath, handlerExpr] = match;
 
-				if (!handler.includes('.')) {
-					console.warn(`⚠️  Skipping malformed handler at ${file}:${index + 1} → ${handler}`);
+				// Try to extract controller.function even from arrays or middleware chains
+				const handler = handlerExpr
+					.replace(/\[|\]|\s/g, '') // remove brackets/spaces
+					.split(',')
+					.find((s) => s.includes('.'));
+
+				if (!handler || !handler.includes('.')) {
+					console.warn(`⚠️  Skipping unrecognized handler at ${file}:${index + 1} → ${handlerExpr}`);
 					return;
 				}
 
@@ -39,10 +45,7 @@ function generateRoutesMap(routesFolderPath, outputFilePath) {
 				const functionLine = findFunctionLine(controllerPath, functionName);
 				const isDocumented = checkIfDocumented(controllerPath, functionName);
 				const fullPath = path.posix.join(prefix, routePath).replace(/\\/g, '/');
-
-				console.log(`📌 ${method.toUpperCase()} ${fullPath} → ${controllerName}.${functionName}`);
-
-				const normalizedPath = fullPath.replace(/^\/+/, '').replace(/\/+$/, '').replace(/\//g, '-');
+				const normalizedPath = fullPath.replace(/^\/+/g, '').replace(/\/+$/g, '').replace(/\//g, '-');
 				const filename = `${method.toLowerCase()}-${normalizedPath || 'root'}`;
 
 				routesMap.push({
@@ -81,18 +84,38 @@ function buildRequireMap(content, basePath) {
 	let match;
 	while ((match = requireRegex.exec(content)) !== null) {
 		const name = match[1];
-		let fullPath = path.resolve(basePath, match[2]);
-		if (!fullPath.endsWith('.js')) fullPath += '.js';
-		requireMap[name] = fullPath;
+		const required = match[2];
+		const resolved = tryResolve(basePath, required);
+		if (resolved) requireMap[name] = resolved;
 	}
 	return requireMap;
+}
+
+function tryResolve(basePath, required) {
+	const exts = ['.js', '.ts'];
+	const pathsToTry = [
+		path.resolve(basePath, required),
+		...exts.map((ext) => path.resolve(basePath, required + ext)),
+		path.resolve(basePath, required, 'index.js'),
+		path.resolve(basePath, required, 'index.ts'),
+	];
+
+	for (const p of pathsToTry) {
+		if (fs.existsSync(p)) return p;
+	}
+	return null;
 }
 
 function findFunctionLine(controllerPath, functionName) {
 	if (!fs.existsSync(controllerPath)) return -1;
 	const lines = fs.readFileSync(controllerPath, 'utf-8').split('\n');
 	for (let i = 0; i < lines.length; i++) {
-		if (lines[i].includes(`function ${functionName}`)) {
+		if (
+			lines[i].includes(`function ${functionName}`) ||
+			lines[i].includes(`exports.${functionName}`) ||
+			lines[i].includes(`${functionName} =`) ||
+			lines[i].includes(`${functionName}:`)
+		) {
 			return i + 1;
 		}
 	}

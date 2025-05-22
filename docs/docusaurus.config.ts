@@ -80,6 +80,18 @@ const config: Config = {
 					position: 'left',
 					label: 'API Docs',
 				},
+				{
+					type: 'docSidebar',
+					sidebarId: 'controllers',
+					position: 'left',
+					label: 'Controller Docs',
+				},
+				{
+					type: 'docSidebar',
+					sidebarId: 'daos',
+					position: 'left',
+					label: 'Daos Docs',
+				},
 			],
 		},
 		footer: {

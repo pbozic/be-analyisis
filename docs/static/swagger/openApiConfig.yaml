@@ -38,7 +38,7 @@ externalDocs:
   description: Find out more about Swagger
   url: http://swagger.io
 paths:
-  /user/auth/scheduled_users:
+  /auth/scheduled_users:
     post:
       tags:
         - User
@@ -284,7 +284,7 @@ paths:
                 $ref: '#/components/schemas/BusinessRegistrationResponse'
         '400':
           description: Error registering business
-  /user/auth/create/scheduled_user:
+  /auth/create/scheduled_user:
     post:
       tags:
         - User

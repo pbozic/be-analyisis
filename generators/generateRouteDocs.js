@@ -9,6 +9,7 @@ const OUTPUT_DIR = path.join(process.cwd(), 'docs', 'docs', 'api');
 const CONTROLLERS_DIR = path.join(process.cwd(), 'docs', 'docs', 'controllers');
 const DOCS_DIR = path.join(process.cwd(), 'docs');
 const SWAGGER_INPUT = path.join(DOCS_DIR, 'static/swagger/openApiConfig.yaml');
+const SWAGGER_SMALL_INPUT = path.join(DOCS_DIR, 'static/swagger/openApiConfig.yaml');
 console.log('SWAGGER_INPUT', SWAGGER_INPUT);
 const SWAGGER_OUTPUT_DIR = path.join(DOCS_DIR, 'static/swagger-per-route');
 const merge = require('lodash.merge');
@@ -42,6 +43,7 @@ function generateRouteDoc(route) {
 		: `\`${route.function}\` (no controller doc yet)`;
 
 	const openapiFull = yaml.load(fs.readFileSync(SWAGGER_INPUT, 'utf8'));
+	const openapiSmall = yaml.load(fs.readFileSync(SWAGGER_SMALL_INPUT, 'utf8'));
 	let routeSpec = openapiFull.paths?.[route.path.replace('/api', '')]?.[method];
 	if (!routeSpec) {
 		routeSpec = openapiFull.paths?.[route.path]?.[method];
@@ -55,21 +57,21 @@ function generateRouteDoc(route) {
 	}
 
 	const filteredSpec = {
-		openapi: openapiFull.openapi || '3.0.3',
-		info: openapiFull.info || { title: `${route.method} ${route.path}`, version: '1.0.0' },
+		openapi: openapiSmall.openapi || '3.0.3',
+		info: { title: `${route.method} ${route.path}`, version: '1.0.0' },
 		paths: {
 			[route.path]: {
 				[method]: routeSpec,
 			},
 		},
-		components: openapiFull.components || {},
+		components: undefined,
 	};
 
 	const specFileName = `${filenameBase}.yaml`;
 	const specFilePath = path.join(SWAGGER_OUTPUT_DIR, specFileName);
 	fs.writeFileSync(specFilePath, yaml.dump(filteredSpec), 'utf8');
 
-	const relativeSpecPath = `${upDirs}/swagger-per-route/${specFileName}`;
+	const relativeSpecPath = `/swagger-per-route/${specFileName}`;
 	const content = `import SwaggerUI from 'swagger-ui-react';
 import 'swagger-ui-react/swagger-ui.css';
 

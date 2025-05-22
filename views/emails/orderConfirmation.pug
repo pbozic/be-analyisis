@@ -1,0 +1,82 @@
+doctype html
+html
+  head
+    meta(charset="UTF-8")
+    title Order Receipt
+    style.
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #ffffff;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        border-radius: 6px;
+        overflow: hidden;
+        border: 1px solid #eee;
+      }
+      .header {
+        background-color: #00bfff;
+        color: white;
+        padding: 30px 20px;
+        text-align: center;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 26px;
+      }
+      .body {
+        padding: 20px;
+        font-size: 16px;
+        color: #333;
+      }
+      .summary {
+        margin-top: 20px;
+        border-top: 1px solid #ccc;
+        padding-top: 10px;
+      }
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 6px;
+      }
+      .footer {
+        font-size: 14px;
+        color: #777;
+        background: #fafafa;
+        padding: 15px 20px;
+        border-top: 1px solid #eee;
+        text-align: center;
+      }
+
+  body
+    .container
+      .header
+        h1 Thanks for ordering, #{userName}!
+
+      .body
+        p Here's your receipt:
+
+        strong #{restaurant}
+        br
+        | #{orderDate}
+        br
+        | Order ID: #{orderId}
+
+        .summary
+          .summary-row
+            strong Total
+            strong EUR #{total.toFixed(2)}
+
+          .summary-row
+            | #{paymentMethod}
+            | EUR #{subtotal.toFixed(2)}
+
+          .summary-row
+            | Discount
+            | EUR #{discount.toFixed(2)}
+
+      .footer
+        | Your order documents are attached to this email. If you have any questions, please contact support.

@@ -1000,6 +1000,10 @@ const getPurchaseOrderLimit = async (business_id) => {
 		// get all taxi orders for this business (this month) and check if the limit is reached
 		const taxiOrders = await prisma.taxi_orders.findMany({
 			where: {
+				payment: {
+					path: ['type'],
+					equals: 'PURCHASE_ORDER',
+				},
 				updated_at: {
 					gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
 					lte: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),

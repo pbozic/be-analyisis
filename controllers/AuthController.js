@@ -25,7 +25,7 @@ const prisma = require('../prisma/prisma');
 require('dotenv').config();
 
 /**
- * POST /user/auth/scheduled_users
+ * POST /auth/scheduled_users
  * @tag User
  * @summary Get scheduled users
  * @description This function fetches all scheduled users.
@@ -39,6 +39,7 @@ require('dotenv').config();
  */
 async function getScheduledUsers(req, res) {
 	try {
+		//@ sddfsdfsdf
 		let users = await UserDao.getScheduledUsers();
 		res.status(200).json(users);
 	} catch (e) {
@@ -1101,7 +1102,7 @@ async function registerBusiness(req, res) {
 }
 
 /**
- * POST /user/auth/create/scheduled_user
+ * POST /auth/create/scheduled_user
  * @tag User
  * @summary Create a new scheduled user.
  * @description This created new scheduled user.

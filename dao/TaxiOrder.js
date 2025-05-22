@@ -882,6 +882,9 @@ async function updateTaxiOrderPayment(order_id, payment) {
 			data: {
 				payment: payment,
 			},
+			include: {
+				business_users: true,
+			},
 		});
 	} catch (e) {
 		throw new Error(e);

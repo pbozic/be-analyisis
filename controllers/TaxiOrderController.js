@@ -1439,13 +1439,13 @@ async function completeOrder(req, res) {
 						SERVICE_TYPE.TAXI
 					);
 				}
-				const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(
-					user.user_id
-				);
 				const businessUser =
-					order.creating_user_id && (!order.payment.subtype || order.payment.subtype !== 'CUSTOMER')
+					order.payment?.subtype === 'BUSINESS'
 						? await BusinessUsersDao.getBusinessUserByUserId(order.creating_user_id)
-						: await BusinessUsersDao.getBusinessUserByUserId(order.user_id);
+						: order.business_users;
+				const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(
+					businessUser ? businessUser.user_id : user.user_id
+				);
 
 				if (DISCOUNTED_TOTAL_COST > 0) {
 					//TODO: add order.payment.type === 'BUSINESS_WALLET' instead of order.payment.subtype
@@ -1471,7 +1471,7 @@ async function completeOrder(req, res) {
 						}
 						// await UsersDao.removeWalletBalance(order.user_id, (DISCOUNTED_TOTAL_COST / 100), order.order_id, "taxi");
 						const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
-							user.user_id,
+							businessUser ? businessUser.user_id : user.user_id,
 							DISCOUNTED_TOTAL_COST,
 							order.order_id
 						);
@@ -1498,14 +1498,14 @@ async function completeOrder(req, res) {
 						//Only transfer money to driver since we already have the wallet money?
 						// const transfer = await stripe.transferToConnectedAccount(DRIVER_CUT_AMOUNT, driver_business.stripe_account_id);
 						const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-							user.user_id,
+							businessUser ? businessUser.user_id : user.user_id,
 							driver_business.stripe_account_id,
 							DRIVER_CUT_CENTS,
 							order.order_id,
 							SERVICE_TYPE.TAXI
 						);
 						const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-							user.user_id,
+							businessUser ? businessUser.user_id : user.user_id,
 							'platform',
 							PLATFORM_CUT_CENTS,
 							order.order_id,

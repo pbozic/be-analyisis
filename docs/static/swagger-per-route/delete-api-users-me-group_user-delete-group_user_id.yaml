@@ -1,17 +1,7 @@
 openapi: 3.0.3
 info:
-  title: ''
-  version: ''
-  description: >
-    This is a simple CRUD API application made with Express and documented with
-    Swagger
-  termsOfService: http://swagger.io/terms/
-  contact:
-    email: bourdakos1@gmail.com
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  x-github: https://github.com/bee-travels
+  title: delete /api/users/me/group_user/delete/:group_user_id
+  version: 1.0.0
 paths:
   /api/users/me/group_user/delete/:group_user_id:
     delete:
@@ -36,4 +26,3 @@ paths:
           description: Error deleting user.
         '404':
           description: User not found.
-components: {}

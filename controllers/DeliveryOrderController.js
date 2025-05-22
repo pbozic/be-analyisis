@@ -10,9 +10,11 @@ const AddressDao = require('../dao/Address');
 const UsersDao = require('../dao/User');
 const MenuDao = require('../dao/Menu');
 const MenuCategoryDao = require('../dao/MenuCategory');
+const EmailHelper = require('../lib/emailSender');
 const gApi = require('../lib/gApis');
 const { UserSockets, io, SocketStore } = require('../socket');
 const stripe = require('../lib/stripe');
+const { getOrderAndPDF } = require('../lib/orderPdf');
 const {
 	DELIVERY_ORDER_STATUS,
 	DOCUMENT_TYPE,
@@ -257,13 +259,13 @@ async function createOrder(req, res) {
 		const TOTAL_PRICE_CENTS = Math.round(orderData.details.total_price * 100); //already includes delivery cost
 		const CREDITS_AMOUNT_RESERVED = orderData?.allow_credits_usage
 			? (
-				await WalletFundsHelpers.reserveCreditsForOrder(
-					user.user_id,
-					TOTAL_PRICE_CENTS,
-					order.order_id,
-					FUNDS_TYPE.CREDITS_DELIVERY
-				)
-			).reduce((sum, wf) => sum + wf.amount, 0)
+					await WalletFundsHelpers.reserveCreditsForOrder(
+						user.user_id,
+						TOTAL_PRICE_CENTS,
+						order.order_id,
+						FUNDS_TYPE.CREDITS_DELIVERY
+					)
+				).reduce((sum, wf) => sum + wf.amount, 0)
 			: 0;
 		const DISCOUNTED_COMBINED_COST_CENTS = TOTAL_PRICE_CENTS - CREDITS_AMOUNT_RESERVED;
 		order.details.credit_discount = CREDITS_AMOUNT_RESERVED;
@@ -320,12 +322,9 @@ async function createOrder(req, res) {
 					throw err;
 				}
 			} else if (order.payment.type === 'CASH') {
-				order = await DeliveryOrderDao.updateOrderStatus(
-					order.order_id,
-					DELIVERY_ORDER_STATUS.PENDING
-				);
+				order = await DeliveryOrderDao.updateOrderStatus(order.order_id, DELIVERY_ORDER_STATUS.PENDING);
 			} else {
-				throw new Error("Unsuported payment type.");
+				throw new Error('Unsuported payment type.');
 			}
 		}
 
@@ -473,9 +472,9 @@ async function createDailyMeals(req, res) {
 			const dailyMealItems = user.daily_meal_preferences
 				? generateItemsFromPreferences(user.daily_meal_preferences, { price: 0, discount: 0 })
 				: generateItemsFromPreferences(
-					{ normal: { amount: 1 }, substitution: { amount: 0 } },
-					{ price: 0, discount: 0 }
-				);
+						{ normal: { amount: 1 }, substitution: { amount: 0 } },
+						{ price: 0, discount: 0 }
+					);
 
 			let { result } = await gApi.distanceBetweenTwoPoints(
 				delivery_driver.location.coordinates,
@@ -877,6 +876,30 @@ async function completeOrder(req, res) {
 			}
 		}
 		sendDeliveryOrderNotifications(order.user, null, order.user_id, null, order.status);
+		// send email
+		let template = 'orderConfirmation';
+		let pdf = await getOrderAndPDF(order.order_id);
+		let templateData = {
+			userName: order.user.first_name,
+			restaurant: order.business.name,
+			orderDate: moment(order.created_at).format('DD/MM/YYYY HH:mm'),
+			orderId: order.order_id,
+			subtotal: order.details.sub_total_price,
+			total: order.details.total_price,
+			discount: order.details.discount_savings,
+			paymentMethod: order.payment.type,
+		};
+		EmailHelper.sendEmailTemplate(
+			'Order confirmation ' + order.order_id,
+			template,
+			order.user.email,
+			templateData,
+			{
+				filename: 'Order_confirmation_' + order.order_id + '.pdf',
+				content: Buffer.isBuffer(pdf) ? pdf : Buffer.from(pdf, 'binary'),
+				contentType: 'application/pdf',
+			}
+		);
 		// order = await DeliveryOrderDao.updateOrderStatus(order.order_id,DELIVERY_ORDER_STATUS.SUCCESS)
 		io.to('order_' + order.order_id).emit('order_completed__delivery', order);
 		io.emit('driver_available', driver);
@@ -1061,9 +1084,9 @@ async function getCompletedDeliveryOrdersByUserId(req, res) {
 			const logoDocument = business.documents.find((doc) => doc.document_type === DOCUMENT_TYPE.LOGO);
 			const logo = logoDocument
 				? {
-					...logoDocument,
-					files: logoDocument.files,
-				}
+						...logoDocument,
+						files: logoDocument.files,
+					}
 				: null;
 
 			return {
@@ -1768,14 +1791,14 @@ async function dailyMealsSubscriptionPayment(req, res) {
 		const TOTAL_PRICE_CENTS = Math.round(total_price * 100); //already includes delivery cost
 		const CREDITS_AMOUNT_RESERVED = allow_credits_usage
 			? (
-				await WalletFundsHelpers.reserveCreditsForOrder(
-					user.user_id,
-					TOTAL_PRICE_CENTS,
-					groupedId,
-					FUNDS_TYPE.CREDITS_DELIVERY,
-					'daily_meals_subscription'
-				)
-			).reduce((sum, wf) => sum + wf.amount, 0)
+					await WalletFundsHelpers.reserveCreditsForOrder(
+						user.user_id,
+						TOTAL_PRICE_CENTS,
+						groupedId,
+						FUNDS_TYPE.CREDITS_DELIVERY,
+						'daily_meals_subscription'
+					)
+				).reduce((sum, wf) => sum + wf.amount, 0)
 			: 0;
 		const DISCOUNTED_COMBINED_COST_CENTS = TOTAL_PRICE_CENTS - CREDITS_AMOUNT_RESERVED;
 

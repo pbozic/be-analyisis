@@ -1,17 +1,7 @@
 openapi: 3.0.3
 info:
-  title: ''
-  version: ''
-  description: >
-    This is a simple CRUD API application made with Express and documented with
-    Swagger
-  termsOfService: http://swagger.io/terms/
-  contact:
-    email: bourdakos1@gmail.com
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  x-github: https://github.com/bee-travels
+  title: patch /api/drivers/:driver_id/set_current_vehicle
+  version: 1.0.0
 paths:
   /api/drivers/:driver_id/set_current_vehicle:
     patch:
@@ -48,4 +38,3 @@ paths:
           description: Invalid vehicle ID or error setting vehicle
         '404':
           description: Driver or vehicle not found
-components: {}
