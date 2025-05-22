@@ -884,8 +884,8 @@ async function completeOrder(req, res) {
 			restaurant: order.business.name,
 			orderDate: moment(order.created_at).format('DD/MM/YYYY HH:mm'),
 			orderId: order.order_id,
-			subtotal: order.payment.sub_total_price,
-			total: order.payment.total_price,
+			subtotal: order.details.sub_total_price,
+			total: order.details.total_price,
 		};
 		EmailHelper.sendEmailTemplate(
 			'Order confirmation ' + order.order_id,
