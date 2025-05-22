@@ -250,6 +250,14 @@ async function handleWebhook(req, res) {
 				} catch (err) {
 					console.error(`Failed to capture PaymentIntent ${paymentIntent.id}:`, err);
 				}
+			} else if (amount_capturable > 0 && order_id && order_type === 'DELIVERY') {
+				try {
+					const order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.PENDING);
+					io.to('orders_' + order.business_id).emit('new_order', order);
+					console.log(`Processed order ${order_id} into PENDING state.`);
+				} catch (err) {
+					console.error(`Failed to process order ${paymentIntent.id} into PENDING state: `, err);
+				}
 			}
 			break;
 		}
