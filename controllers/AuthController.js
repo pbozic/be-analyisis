@@ -92,6 +92,12 @@ async function login(req, res) {
 						taxi_orders_toggled: true,
 						transfer_orders_toggled: true,
 						delivery_orders_toggled: true,
+						business: {
+							select: {
+								address: true,
+								tax_id: true,
+							},
+						},
 						vehicles: {
 							select: {
 								vehicle_drivers_id: true,
