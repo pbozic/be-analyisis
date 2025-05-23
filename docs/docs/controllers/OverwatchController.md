@@ -4,9 +4,9 @@
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Getorders with pagination.
 
-**Description**: This
+**Description**: Thisfetches orders with pagination.
 
 **Responses:**
 - 200
@@ -23,9 +23,9 @@
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Updatedriver activity settings
 
-**Description**: Updates
+**Description**: Updatesexisting driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -52,9 +52,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -64,16 +64,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -88,21 +88,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -112,16 +118,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -136,21 +142,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -160,16 +172,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -184,21 +196,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -208,16 +226,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -232,21 +250,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -256,16 +280,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -280,21 +304,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -304,16 +334,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -328,21 +358,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -352,16 +388,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -376,21 +412,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -400,16 +442,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -424,21 +466,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -448,16 +496,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -472,21 +520,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -496,16 +550,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -520,21 +574,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -544,16 +604,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -568,21 +628,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -592,16 +658,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -616,21 +682,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -640,16 +712,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -664,21 +736,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -688,16 +766,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -712,21 +790,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -736,16 +820,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -760,21 +844,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -784,16 +874,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -808,21 +898,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -832,16 +928,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -856,21 +952,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -880,16 +982,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -904,21 +1006,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -928,16 +1036,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -952,21 +1060,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -976,16 +1090,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1000,21 +1114,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -1024,16 +1144,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1048,21 +1168,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -1072,16 +1198,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1096,21 +1222,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -1120,16 +1252,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1144,21 +1276,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -1168,16 +1306,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1192,21 +1330,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -1216,16 +1360,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1240,21 +1384,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -1264,16 +1414,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1288,21 +1438,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -1312,16 +1468,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1336,21 +1492,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -1360,16 +1522,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1384,21 +1546,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -1408,16 +1576,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1432,21 +1600,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -1456,16 +1630,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1480,21 +1654,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -1504,16 +1684,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1528,21 +1708,27 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->
 
 <!-- DOCGEN:START getOrdersWithPagination -->
 ### getOrdersWithPagination
 
-**Summary**: Get
+**Summary**: Get orders with pagination.
 
-**Description**: This
+**Description**: This fetches orders with pagination.
 
 **Responses:**
 - 200
@@ -1552,16 +1738,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
 
 <!-- DOCGEN:END getOrdersWithPagination -->
 
 <!-- DOCGEN:START setDriversActivitySettings -->
 ### setDriversActivitySettings
 
-**Summary**: Update
+**Summary**: Update driver activity settings
 
-**Description**: Updates
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1576,11 +1762,125 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
 
 <!-- DOCGEN:END setDriversActivitySettings -->
 
 <!-- DOCGEN:START getDriversActivitySettings -->
 ### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getDriversActivitySettings -->
+
+<!-- DOCGEN:START getOrdersWithPagination -->
+### getOrdersWithPagination
+
+**Summary**: Get orders with pagination.
+
+**Description**: This fetches orders with pagination.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
+
+<!-- DOCGEN:END getOrdersWithPagination -->
+
+<!-- DOCGEN:START setDriversActivitySettings -->
+### setDriversActivitySettings
+
+**Summary**: Update driver activity settings
+
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
+
+<!-- DOCGEN:END setDriversActivitySettings -->
+
+<!-- DOCGEN:START getDriversActivitySettings -->
+### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getDriversActivitySettings -->
+
+<!-- DOCGEN:START getOrdersWithPagination -->
+### getOrdersWithPagination
+
+**Summary**: Get orders with pagination.
+
+**Description**: This fetches orders with pagination.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrdersWithPagination )
+
+<!-- DOCGEN:END getOrdersWithPagination -->
+
+<!-- DOCGEN:START setDriversActivitySettings -->
+### setDriversActivitySettings
+
+**Summary**: Update driver activity settings
+
+**Description**: Updates existing driver activity settings or creates new ones if they don't exist
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDriverActivitySettings )
+
+<!-- DOCGEN:END setDriversActivitySettings -->
+
+<!-- DOCGEN:START getDriversActivitySettings -->
+### getDriversActivitySettings
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDriversActivitySettings -->

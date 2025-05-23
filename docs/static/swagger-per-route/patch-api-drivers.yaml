@@ -1,0 +1,40 @@
+openapi: 3.0.3
+info:
+  title: patch /api/drivers/:driver_id/:action/:type
+  version: 1.0.0
+paths:
+  /api/drivers/:driver_id/:action/:type:
+    patch:
+      tags:
+        - Drivers
+      summary: Enable or disable a driver
+      description: >-
+        Enables or disables a specific driver based on the provided action and
+        type.
+      operationId: setDriverHandle
+      parameters:
+        - name: driver_id
+          in: path
+          description: The ID of the driver to toggle
+          required: true
+          schema:
+            type: string
+        - name: action
+          in: path
+          description: The action to perform (enable or disable)
+          required: true
+          schema:
+            type: string
+        - name: type
+          in: path
+          description: The type of action (taxi, transfer, delivery)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Driver toggled successfully
+        '400':
+          description: Error toggling driver
+        '404':
+          description: Driver not found

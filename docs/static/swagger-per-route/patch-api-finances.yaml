@@ -1,0 +1,34 @@
+openapi: 3.0.3
+info:
+  title: patch /api/finances/:finance_id/payment_preferences
+  version: 1.0.0
+paths:
+  /api/finances/:finance_id/payment_preferences:
+    patch:
+      tags:
+        - Finance
+      summary: Update payment preferences
+      description: Updates the payment preferences for a specific finance record.
+      operationId: updatePaymentPreferences
+      parameters:
+        - name: finance_id
+          in: path
+          description: The ID of the finance record to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        '200':
+          description: Payment preferences updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Finance'
+        '400':
+          description: Error updating payment preferences

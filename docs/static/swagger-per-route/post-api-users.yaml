@@ -1,0 +1,23 @@
+openapi: 3.0.3
+info:
+  title: post /api/users/me/redeem-referral-code
+  version: 1.0.0
+paths:
+  /api/users/me/redeem-referral-code:
+    post:
+      tags:
+        - Users
+      summary: Redeem a referral code for an existing user
+      description: This endpoint allows an existing user to redeem a referral code
+      operationId: redeemReferralCode
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+        required: true
+      responses:
+        '200':
+          description: Referral code redeemed successfully
+        '400':
+          description: Error redeeming referral code

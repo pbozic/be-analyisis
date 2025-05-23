@@ -52,10 +52,11 @@ function formatDocBlock(name, doc) {
 	const tags = doc.tags || [];
 	const summary = tags.find((t) => t.tag === 'summary')?.name || '';
 	const description = tags.find((t) => t.tag === 'description')?.name || '';
-
+	const summaryText = (summary?.name || '') + ' ' + (summary?.description || '');
+	const descriptionText = (description?.name || '') + ' ' + (description?.description || '');
 	let block = `\n<!-- DOCGEN:START ${name} -->\n### ${name}\n\n`;
-	if (summary) block += `**Summary**: ${summary}\n\n`;
-	if (description) block += `**Description**: ${description}\n\n`;
+	if (summary) block += `**Summary**: ${summaryText}\n\n`;
+	if (description) block += `**Description**: ${descriptionText}\n\n`;
 	block += `<!-- DOCGEN:END ${name} -->\n`;
 
 	return block;

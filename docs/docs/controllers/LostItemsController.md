@@ -4,9 +4,9 @@
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Getall lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrievesall lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -23,9 +23,9 @@
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Reporta found item
 
-**Description**: Reports
+**Description**: Reportsa found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -46,9 +46,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Deletea found item
 
-**Description**: Deletes
+**Description**: Deletesa found item from the database.
 
 **Parameters:**
 
@@ -71,9 +71,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Updatea lost item
 
-**Description**: Updates
+**Description**: Updatesthe details of a lost item in the database.
 
 **Parameters:**
 
@@ -100,9 +100,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -112,16 +112,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -135,16 +135,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -160,16 +160,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -189,16 +189,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -208,16 +208,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -231,16 +231,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -256,16 +256,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -285,16 +285,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -304,16 +304,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -327,16 +327,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -352,16 +352,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -381,16 +381,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -400,16 +400,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -423,16 +423,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -448,16 +448,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -477,16 +477,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -496,16 +496,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -519,16 +519,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -544,16 +544,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -573,16 +573,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -592,16 +592,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -615,16 +615,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -640,16 +640,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -669,16 +669,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -688,16 +688,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -711,16 +711,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -736,16 +736,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -765,16 +765,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -784,16 +784,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -807,16 +807,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -832,16 +832,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -861,16 +861,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -880,16 +880,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -903,16 +903,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -928,16 +928,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -957,16 +957,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -976,16 +976,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -999,16 +999,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -1024,16 +1024,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -1053,16 +1053,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -1072,16 +1072,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1095,16 +1095,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -1120,16 +1120,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -1149,16 +1149,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -1168,16 +1168,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1191,16 +1191,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -1216,16 +1216,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -1245,16 +1245,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -1264,16 +1264,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1287,16 +1287,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -1312,16 +1312,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -1341,16 +1341,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -1360,16 +1360,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1383,16 +1383,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -1408,16 +1408,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -1437,16 +1437,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -1456,16 +1456,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1479,16 +1479,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -1504,16 +1504,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -1533,16 +1533,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -1552,16 +1552,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1575,16 +1575,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -1600,16 +1600,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -1629,16 +1629,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -1648,16 +1648,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1671,16 +1671,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -1696,16 +1696,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -1725,16 +1725,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -1744,16 +1744,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1767,16 +1767,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -1792,16 +1792,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -1821,16 +1821,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -1840,16 +1840,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1863,16 +1863,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -1888,16 +1888,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -1917,16 +1917,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -1936,16 +1936,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1959,16 +1959,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -1984,16 +1984,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -2013,16 +2013,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -2032,16 +2032,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2055,16 +2055,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -2080,16 +2080,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -2109,16 +2109,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -2128,16 +2128,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2151,16 +2151,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -2176,16 +2176,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -2205,16 +2205,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -2224,16 +2224,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2247,16 +2247,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -2272,16 +2272,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -2301,16 +2301,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -2320,16 +2320,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2343,16 +2343,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -2368,16 +2368,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -2397,16 +2397,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -2416,16 +2416,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2439,16 +2439,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -2464,16 +2464,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -2493,16 +2493,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -2512,16 +2512,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2535,16 +2535,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -2560,16 +2560,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -2589,16 +2589,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -2608,16 +2608,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2631,16 +2631,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -2656,16 +2656,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -2685,16 +2685,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -2704,16 +2704,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2727,16 +2727,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -2752,16 +2752,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -2781,16 +2781,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -2800,16 +2800,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2823,16 +2823,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -2848,16 +2848,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -2877,16 +2877,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -2896,16 +2896,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2919,16 +2919,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -2944,16 +2944,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -2973,16 +2973,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -2992,16 +2992,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3015,16 +3015,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -3040,16 +3040,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -3069,16 +3069,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->
 
 <!-- DOCGEN:START getAllLostItems -->
 ### getAllLostItems
 
-**Summary**: Get
+**Summary**: Get all lost items with their documents and files
 
-**Description**: Retrieves
+**Description**: Retrieves all lost items, including their associated documents and files.
 
 **Responses:**
 - 200
@@ -3088,16 +3088,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
 
 <!-- DOCGEN:END getAllLostItems -->
 
 <!-- DOCGEN:START reportFoundItem -->
 ### reportFoundItem
 
-**Summary**: Report
+**Summary**: Report a found item
 
-**Description**: Reports
+**Description**: Reports a found item and adds it to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3111,16 +3111,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
 
 <!-- DOCGEN:END reportFoundItem -->
 
 <!-- DOCGEN:START deleteFoundItem -->
 ### deleteFoundItem
 
-**Summary**: Delete
+**Summary**: Delete a found item
 
-**Description**: Deletes
+**Description**: Deletes a found item from the database.
 
 **Parameters:**
 
@@ -3136,16 +3136,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
 
 <!-- DOCGEN:END deleteFoundItem -->
 
 <!-- DOCGEN:START updateLostItem -->
 ### updateLostItem
 
-**Summary**: Update
+**Summary**: Update a lost item
 
-**Description**: Updates
+**Description**: Updates the details of a lost item in the database.
 
 **Parameters:**
 
@@ -3165,6 +3165,198 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
+
+<!-- DOCGEN:END updateLostItem -->
+
+<!-- DOCGEN:START getAllLostItems -->
+### getAllLostItems
+
+**Summary**: Get all lost items with their documents and files
+
+**Description**: Retrieves all lost items, including their associated documents and files.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
+
+<!-- DOCGEN:END getAllLostItems -->
+
+<!-- DOCGEN:START reportFoundItem -->
+### reportFoundItem
+
+**Summary**: Report a found item
+
+**Description**: Reports a found item and adds it to the database.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 201
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `201.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
+
+<!-- DOCGEN:END reportFoundItem -->
+
+<!-- DOCGEN:START deleteFoundItem -->
+### deleteFoundItem
+
+**Summary**: Delete a found item
+
+**Description**: Deletes a found item from the database.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | lost_item_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
+
+<!-- DOCGEN:END deleteFoundItem -->
+
+<!-- DOCGEN:START updateLostItem -->
+### updateLostItem
+
+**Summary**: Update a lost item
+
+**Description**: Updates the details of a lost item in the database.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | lost_item_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
+
+<!-- DOCGEN:END updateLostItem -->
+
+<!-- DOCGEN:START getAllLostItems -->
+### getAllLostItems
+
+**Summary**: Get all lost items with their documents and files
+
+**Description**: Retrieves all lost items, including their associated documents and files.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllLostItems )
+
+<!-- DOCGEN:END getAllLostItems -->
+
+<!-- DOCGEN:START reportFoundItem -->
+### reportFoundItem
+
+**Summary**: Report a found item
+
+**Description**: Reports a found item and adds it to the database.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 201
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `201.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/reportFoundItem )
+
+<!-- DOCGEN:END reportFoundItem -->
+
+<!-- DOCGEN:START deleteFoundItem -->
+### deleteFoundItem
+
+**Summary**: Delete a found item
+
+**Description**: Deletes a found item from the database.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | lost_item_id |  |
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFoundItem )
+
+<!-- DOCGEN:END deleteFoundItem -->
+
+<!-- DOCGEN:START updateLostItem -->
+### updateLostItem
+
+**Summary**: Update a lost item
+
+**Description**: Updates the details of a lost item in the database.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | lost_item_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateLostItem )
 
 <!-- DOCGEN:END updateLostItem -->

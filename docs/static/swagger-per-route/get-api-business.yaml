@@ -1,0 +1,34 @@
+openapi: 3.0.3
+info:
+  title: get /api/business/earnings/:business_id/total
+  version: 1.0.0
+paths:
+  /api/business/earnings/:business_id/total:
+    get:
+      tags:
+        - Business
+      summary: Get total earnings for a specific business
+      description: >-
+        Retrieves the total earnings of a specific business based on completed
+        orders.
+      operationId: getBusinessTotalEarnings
+      parameters:
+        - name: business_id
+          in: path
+          description: The ID of the business whose total earnings are being retrieved
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: >-
+            Successful operation, returns total earnings for the specified
+            business
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TotalEarnings'
+        '400':
+          description: Error retrieving business' total earnings
+        '404':
+          description: Business not found

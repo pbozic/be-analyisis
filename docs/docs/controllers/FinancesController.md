@@ -4,9 +4,9 @@
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Addnew finance record
 
-**Description**: Adds
+**Description**: Addsa new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -27,9 +27,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Getfinance record by ID
 
-**Description**: Retrieves
+**Description**: Retrievesa finance record by its ID.
 
 **Parameters:**
 
@@ -53,9 +53,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Getfinance record for a company
 
-**Description**: Retrieves
+**Description**: Retrievesthe finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -79,9 +79,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Updatefinance record
 
-**Description**: Updates
+**Description**: Updatesan existing finance record by its ID.
 
 **Parameters:**
 
@@ -108,9 +108,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Updateaccount number
 
-**Description**: Updates
+**Description**: Updatesthe account number for a specific finance record.
 
 **Parameters:**
 
@@ -137,9 +137,9 @@ Content-Type: `- The new account number`
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Updatebank name
 
-**Description**: Updates
+**Description**: Updatesthe bank name for a specific finance record.
 
 **Parameters:**
 
@@ -166,9 +166,9 @@ Content-Type: `- The new bank name`
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Updatepayment preferences
 
-**Description**: Updates
+**Description**: Updatesthe payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -195,9 +195,9 @@ Content-Type: `- The new payment preferences`
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Deletefinance record
 
-**Description**: Deletes
+**Description**: Deletesa finance record by its ID.
 
 **Parameters:**
 
@@ -216,9 +216,9 @@ Content-Type: `- The new payment preferences`
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -232,16 +232,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -258,16 +258,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -284,16 +284,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -313,16 +313,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -342,16 +342,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -371,16 +371,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -400,16 +400,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -421,16 +421,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -444,16 +444,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -470,16 +470,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -496,16 +496,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -525,16 +525,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -554,16 +554,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -583,16 +583,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -612,16 +612,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -633,16 +633,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -656,16 +656,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -682,16 +682,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -708,16 +708,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -737,16 +737,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -766,16 +766,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -795,16 +795,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -824,16 +824,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -845,16 +845,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -868,16 +868,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -894,16 +894,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -920,16 +920,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -949,16 +949,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -978,16 +978,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -1007,16 +1007,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -1036,16 +1036,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -1057,16 +1057,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1080,16 +1080,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -1106,16 +1106,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -1132,16 +1132,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -1161,16 +1161,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -1190,16 +1190,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -1219,16 +1219,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -1248,16 +1248,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -1269,16 +1269,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1292,16 +1292,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -1318,16 +1318,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -1344,16 +1344,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -1373,16 +1373,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -1402,16 +1402,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -1431,16 +1431,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -1460,16 +1460,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -1481,16 +1481,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1504,16 +1504,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -1530,16 +1530,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -1556,16 +1556,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -1585,16 +1585,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -1614,16 +1614,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -1643,16 +1643,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -1672,16 +1672,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -1693,16 +1693,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1716,16 +1716,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -1742,16 +1742,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -1768,16 +1768,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -1797,16 +1797,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -1826,16 +1826,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -1855,16 +1855,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -1884,16 +1884,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -1905,16 +1905,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1928,16 +1928,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -1954,16 +1954,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -1980,16 +1980,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -2009,16 +2009,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -2038,16 +2038,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -2067,16 +2067,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -2096,16 +2096,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -2117,16 +2117,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2140,16 +2140,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -2166,16 +2166,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -2192,16 +2192,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -2221,16 +2221,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -2250,16 +2250,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -2279,16 +2279,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -2308,16 +2308,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -2329,16 +2329,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2352,16 +2352,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -2378,16 +2378,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -2404,16 +2404,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -2433,16 +2433,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -2462,16 +2462,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -2491,16 +2491,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -2520,16 +2520,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -2541,16 +2541,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2564,16 +2564,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -2590,16 +2590,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -2616,16 +2616,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -2645,16 +2645,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -2674,16 +2674,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -2703,16 +2703,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -2732,16 +2732,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -2753,16 +2753,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2776,16 +2776,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -2802,16 +2802,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -2828,16 +2828,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -2857,16 +2857,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -2886,16 +2886,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -2915,16 +2915,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -2944,16 +2944,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -2965,16 +2965,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2988,16 +2988,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -3014,16 +3014,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -3040,16 +3040,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -3069,16 +3069,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -3098,16 +3098,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -3127,16 +3127,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -3156,16 +3156,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -3177,16 +3177,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3200,16 +3200,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -3226,16 +3226,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -3252,16 +3252,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -3281,16 +3281,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -3310,16 +3310,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -3339,16 +3339,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -3368,16 +3368,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -3389,16 +3389,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3412,16 +3412,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -3438,16 +3438,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -3464,16 +3464,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -3493,16 +3493,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -3522,16 +3522,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -3551,16 +3551,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -3580,16 +3580,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -3601,16 +3601,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3624,16 +3624,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -3650,16 +3650,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -3676,16 +3676,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -3705,16 +3705,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -3734,16 +3734,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -3763,16 +3763,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -3792,16 +3792,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -3813,16 +3813,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3836,16 +3836,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -3862,16 +3862,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -3888,16 +3888,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -3917,16 +3917,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -3946,16 +3946,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -3975,16 +3975,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -4004,16 +4004,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -4025,16 +4025,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4048,16 +4048,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -4074,16 +4074,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -4100,16 +4100,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -4129,16 +4129,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -4158,16 +4158,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -4187,16 +4187,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -4216,16 +4216,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -4237,16 +4237,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4260,16 +4260,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -4286,16 +4286,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -4312,16 +4312,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -4341,16 +4341,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -4370,16 +4370,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -4399,16 +4399,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -4428,16 +4428,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -4449,16 +4449,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4472,16 +4472,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -4498,16 +4498,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -4524,16 +4524,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -4553,16 +4553,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -4582,16 +4582,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -4611,16 +4611,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -4640,16 +4640,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -4661,16 +4661,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4684,16 +4684,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -4710,16 +4710,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -4736,16 +4736,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -4765,16 +4765,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -4794,16 +4794,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -4823,16 +4823,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -4852,16 +4852,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -4873,16 +4873,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4896,16 +4896,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -4922,16 +4922,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -4948,16 +4948,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -4977,16 +4977,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -5006,16 +5006,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -5035,16 +5035,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -5064,16 +5064,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -5085,16 +5085,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5108,16 +5108,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -5134,16 +5134,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -5160,16 +5160,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -5189,16 +5189,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -5218,16 +5218,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -5247,16 +5247,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -5276,16 +5276,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -5297,16 +5297,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5320,16 +5320,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -5346,16 +5346,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -5372,16 +5372,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -5401,16 +5401,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -5430,16 +5430,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -5459,16 +5459,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -5488,16 +5488,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -5509,16 +5509,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5532,16 +5532,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -5558,16 +5558,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -5584,16 +5584,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -5613,16 +5613,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -5642,16 +5642,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -5671,16 +5671,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -5700,16 +5700,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -5721,16 +5721,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5744,16 +5744,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -5770,16 +5770,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -5796,16 +5796,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -5825,16 +5825,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -5854,16 +5854,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -5883,16 +5883,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -5912,16 +5912,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -5933,16 +5933,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5956,16 +5956,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -5982,16 +5982,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -6008,16 +6008,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -6037,16 +6037,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -6066,16 +6066,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -6095,16 +6095,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -6124,16 +6124,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -6145,16 +6145,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6168,16 +6168,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -6194,16 +6194,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -6220,16 +6220,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -6249,16 +6249,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -6278,16 +6278,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -6307,16 +6307,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -6336,16 +6336,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -6357,16 +6357,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6380,16 +6380,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -6406,16 +6406,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -6432,16 +6432,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -6461,16 +6461,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -6490,16 +6490,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -6519,16 +6519,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -6548,16 +6548,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -6569,16 +6569,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6592,16 +6592,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -6618,16 +6618,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -6644,16 +6644,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -6673,16 +6673,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -6702,16 +6702,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -6731,16 +6731,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -6760,16 +6760,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -6781,16 +6781,16 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->
 
 <!-- DOCGEN:START createNewFinanceRecord -->
 ### createNewFinanceRecord
 
-**Summary**: Add
+**Summary**: Add new finance record
 
-**Description**: Adds
+**Description**: Adds a new finance record to the database.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6804,16 +6804,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `201.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
 
 <!-- DOCGEN:END createNewFinanceRecord -->
 
 <!-- DOCGEN:START getFinanceRecordById -->
 ### getFinanceRecordById
 
-**Summary**: Get
+**Summary**: Get finance record by ID
 
-**Description**: Retrieves
+**Description**: Retrieves a finance record by its ID.
 
 **Parameters:**
 
@@ -6830,16 +6830,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
 
 <!-- DOCGEN:END getFinanceRecordById -->
 
 <!-- DOCGEN:START getFinanceRecordByBusinessId -->
 ### getFinanceRecordByBusinessId
 
-**Summary**: Get
+**Summary**: Get finance record for a company
 
-**Description**: Retrieves
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
 
 **Parameters:**
 
@@ -6856,16 +6856,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
 
 <!-- DOCGEN:END getFinanceRecordByBusinessId -->
 
 <!-- DOCGEN:START updateFinanceRecord -->
 ### updateFinanceRecord
 
-**Summary**: Update
+**Summary**: Update finance record
 
-**Description**: Updates
+**Description**: Updates an existing finance record by its ID.
 
 **Parameters:**
 
@@ -6885,16 +6885,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
 
 <!-- DOCGEN:END updateFinanceRecord -->
 
 <!-- DOCGEN:START updateAccountNumber -->
 ### updateAccountNumber
 
-**Summary**: Update
+**Summary**: Update account number
 
-**Description**: Updates
+**Description**: Updates the account number for a specific finance record.
 
 **Parameters:**
 
@@ -6914,16 +6914,16 @@ Content-Type: `- The new account number`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
 
 <!-- DOCGEN:END updateAccountNumber -->
 
 <!-- DOCGEN:START updateBankName -->
 ### updateBankName
 
-**Summary**: Update
+**Summary**: Update bank name
 
-**Description**: Updates
+**Description**: Updates the bank name for a specific finance record.
 
 **Parameters:**
 
@@ -6943,16 +6943,16 @@ Content-Type: `- The new bank name`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
 
 <!-- DOCGEN:END updateBankName -->
 
 <!-- DOCGEN:START updatePaymentPreferences -->
 ### updatePaymentPreferences
 
-**Summary**: Update
+**Summary**: Update payment preferences
 
-**Description**: Updates
+**Description**: Updates the payment preferences for a specific finance record.
 
 **Parameters:**
 
@@ -6972,16 +6972,16 @@ Content-Type: `- The new payment preferences`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
 
 <!-- DOCGEN:END updatePaymentPreferences -->
 
 <!-- DOCGEN:START deleteFinanceRecord -->
 ### deleteFinanceRecord
 
-**Summary**: Delete
+**Summary**: Delete finance record
 
-**Description**: Deletes
+**Description**: Deletes a finance record by its ID.
 
 **Parameters:**
 
@@ -6993,6 +6993,430 @@ Content-Type: `- The new payment preferences`
 - 200
 - 400
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
+
+<!-- DOCGEN:END deleteFinanceRecord -->
+
+<!-- DOCGEN:START createNewFinanceRecord -->
+### createNewFinanceRecord
+
+**Summary**: Add new finance record
+
+**Description**: Adds a new finance record to the database.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 201
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `201.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
+
+<!-- DOCGEN:END createNewFinanceRecord -->
+
+<!-- DOCGEN:START getFinanceRecordById -->
+### getFinanceRecordById
+
+**Summary**: Get finance record by ID
+
+**Description**: Retrieves a finance record by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | finance_id |  |
+
+**Responses:**
+- 200
+- 404
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
+
+<!-- DOCGEN:END getFinanceRecordById -->
+
+<!-- DOCGEN:START getFinanceRecordByBusinessId -->
+### getFinanceRecordByBusinessId
+
+**Summary**: Get finance record for a company
+
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+
+**Responses:**
+- 200
+- 404
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
+
+<!-- DOCGEN:END getFinanceRecordByBusinessId -->
+
+<!-- DOCGEN:START updateFinanceRecord -->
+### updateFinanceRecord
+
+**Summary**: Update finance record
+
+**Description**: Updates an existing finance record by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | finance_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
+
+<!-- DOCGEN:END updateFinanceRecord -->
+
+<!-- DOCGEN:START updateAccountNumber -->
+### updateAccountNumber
+
+**Summary**: Update account number
+
+**Description**: Updates the account number for a specific finance record.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | finance_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `- The new account number`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
+
+<!-- DOCGEN:END updateAccountNumber -->
+
+<!-- DOCGEN:START updateBankName -->
+### updateBankName
+
+**Summary**: Update bank name
+
+**Description**: Updates the bank name for a specific finance record.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | finance_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `- The new bank name`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
+
+<!-- DOCGEN:END updateBankName -->
+
+<!-- DOCGEN:START updatePaymentPreferences -->
+### updatePaymentPreferences
+
+**Summary**: Update payment preferences
+
+**Description**: Updates the payment preferences for a specific finance record.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | finance_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `- The new payment preferences`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
+
+<!-- DOCGEN:END updatePaymentPreferences -->
+
+<!-- DOCGEN:START deleteFinanceRecord -->
+### deleteFinanceRecord
+
+**Summary**: Delete finance record
+
+**Description**: Deletes a finance record by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | finance_id |  |
+
+**Responses:**
+- 200
+- 400
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
+
+<!-- DOCGEN:END deleteFinanceRecord -->
+
+<!-- DOCGEN:START createNewFinanceRecord -->
+### createNewFinanceRecord
+
+**Summary**: Add new finance record
+
+**Description**: Adds a new finance record to the database.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 201
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `201.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/addFinances )
+
+<!-- DOCGEN:END createNewFinanceRecord -->
+
+<!-- DOCGEN:START getFinanceRecordById -->
+### getFinanceRecordById
+
+**Summary**: Get finance record by ID
+
+**Description**: Retrieves a finance record by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | finance_id |  |
+
+**Responses:**
+- 200
+- 404
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinancesById )
+
+<!-- DOCGEN:END getFinanceRecordById -->
+
+<!-- DOCGEN:START getFinanceRecordByBusinessId -->
+### getFinanceRecordByBusinessId
+
+**Summary**: Get finance record for a company
+
+**Description**: Retrieves the finance record associated with a specific company by the company's business ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | business_id |  |
+
+**Responses:**
+- 200
+- 404
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getFinanceRecordByBusinessId )
+
+<!-- DOCGEN:END getFinanceRecordByBusinessId -->
+
+<!-- DOCGEN:START updateFinanceRecord -->
+### updateFinanceRecord
+
+**Summary**: Update finance record
+
+**Description**: Updates an existing finance record by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | finance_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateFinances )
+
+<!-- DOCGEN:END updateFinanceRecord -->
+
+<!-- DOCGEN:START updateAccountNumber -->
+### updateAccountNumber
+
+**Summary**: Update account number
+
+**Description**: Updates the account number for a specific finance record.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | finance_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `- The new account number`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateAccountNumber )
+
+<!-- DOCGEN:END updateAccountNumber -->
+
+<!-- DOCGEN:START updateBankName -->
+### updateBankName
+
+**Summary**: Update bank name
+
+**Description**: Updates the bank name for a specific finance record.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | finance_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `- The new bank name`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBankName )
+
+<!-- DOCGEN:END updateBankName -->
+
+<!-- DOCGEN:START updatePaymentPreferences -->
+### updatePaymentPreferences
+
+**Summary**: Update payment preferences
+
+**Description**: Updates the payment preferences for a specific finance record.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | finance_id |  |
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `- The new payment preferences`
+
+**Responses:**
+- 200
+- 400
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updatePaymentPreferences )
+
+<!-- DOCGEN:END updatePaymentPreferences -->
+
+<!-- DOCGEN:START deleteFinanceRecord -->
+### deleteFinanceRecord
+
+**Summary**: Delete finance record
+
+**Description**: Deletes a finance record by its ID.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | finance_id |  |
+
+**Responses:**
+- 200
+- 400
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/deleteFinances )
 
 <!-- DOCGEN:END deleteFinanceRecord -->

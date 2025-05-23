@@ -30,8 +30,9 @@
 		"lint:fix": "eslint . --ext .js,.ts --fix",
 		"prepare": "husky",
 		"type-check": "tsc --noEmit",
-		"docs": "cd docs && npm start",
-		"docs:build": "cd docs && npm run build"
+		"docs": "npm run docs:generate && cd docs && npm start",
+		"docs:build": "npm run docs:generate && cd docs && npm run build",
+		"docs:generate": "node ./scripts/generateDocs.js"
 	},
 	"lint-staged": {
 		"*.{js,ts,jsx,tsx}": [
@@ -61,7 +62,7 @@
 		"async_hooks": "^1.0.0",
 		"aws-sdk": "^2.1628.0",
 		"axios": "^1.7.2",
-		"bcrypt": "^5.0.1",
+		"bcrypt": "^6.0.0",
 		"canvas": "^2.8.0",
 		"chalk": "^4.0.0",
 		"comment-parser": "^1.4.1",

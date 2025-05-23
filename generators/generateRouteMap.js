@@ -11,25 +11,59 @@ function generateRoutesMap(routesFolderPath, outputFilePath) {
 		const requireMap = buildRequireMap(content, path.dirname(file));
 		const relativePath = path.relative(routesFolderPath, file);
 		const parts = path.dirname(relativePath).split(path.sep).filter(Boolean);
+		const partsFilename = relativePath.replace(path.extname(relativePath), '').split(path.sep).filter(Boolean);
+		const pathParts = [...partsFilename];
 		const fileNameWithoutExt = path.basename(file, path.extname(file));
 		if (fileNameWithoutExt !== 'index') parts.push(fileNameWithoutExt);
 		const prefix = '/' + parts.join('/');
 
-		lines.forEach((line, index) => {
-			// eslint-disable-next-line no-useless-escape
-			const match = line.match(/router\.(get|post|put|delete|patch)\(['\"`](.*?)['\"`],\s*(.+?)\)/);
-			if (match) {
-				const [_, method, routePath, handlerExpr] = match;
+		let middlewareStack = [];
+		for (let i = 0; i < lines.length; i++) {
+			const line = lines[i];
 
-				// Try to extract controller.function even from arrays or middleware chains
-				const handler = handlerExpr
-					.replace(/\[|\]|\s/g, '') // remove brackets/spaces
+			const useMatch = line.match(/router\.use\((['"`])([^'"`]+)\1\s*,\s*(\[[^\]]+\])\s*\)/);
+			if (useMatch) {
+				const middlewareStr = useMatch[3];
+				const mws = middlewareStr
+					// eslint-disable-next-line no-useless-escape
+					.replace(/[\[\]]/g, '')
 					.split(',')
-					.find((s) => s.includes('.'));
+					.map((s) => s.trim())
+					.filter(Boolean);
+				middlewareStack = [...new Set([...middlewareStack, ...mws])];
+				continue;
+			}
+
+			const routeMatch = line.match(/router\.(get|post|put|delete|patch)\((.+?)\)/);
+			if (routeMatch) {
+				const [_, method, fullExpr] = routeMatch;
+
+				// Extract path
+				const pathMatch = fullExpr.match(/['"`]([^'"]+)['"`]/);
+				const routePath = pathMatch ? pathMatch[1] : '';
+
+				// Extract all arguments
+				const rawArgs = fullExpr.replace(/^\s*['"`][^'"`]+['"`]\s*,?/, '').trim();
+				const args = rawArgs
+					.replace(/^\[/, '')
+					.replace(/\]$/, '')
+					.split(',')
+					.map((s) => s.trim())
+					.filter(Boolean);
+
+				const joiSchemas = args
+					.filter((s) => s.startsWith('joi('))
+					.map((s) => {
+						const m = s.match(/joi\(([^)]+)\)/);
+						return m ? m[1].trim() : null;
+					})
+					.filter(Boolean);
+
+				const handler = args.find((s) => s.includes('.') && !s.includes('joi'));
 
 				if (!handler || !handler.includes('.')) {
-					console.warn(`⚠️  Skipping unrecognized handler at ${file}:${index + 1} → ${handlerExpr}`);
-					return;
+					console.warn(`⚠️  Skipping unrecognized handler at ${file}:${i + 1} → ${fullExpr}`);
+					continue;
 				}
 
 				const [controllerName, functionName] = handler.split('.');
@@ -37,16 +71,21 @@ function generateRoutesMap(routesFolderPath, outputFilePath) {
 
 				if (!controllerPath || !functionName) {
 					console.warn(
-						`⚠️  Skipping: missing controller path or function name → ${file}:${index + 1} [${handler}]`
+						`⚠️  Skipping: missing controller path or function name → ${file}:${i + 1} [${handler}]`
 					);
-					return;
+					continue;
 				}
 
 				const functionLine = findFunctionLine(controllerPath, functionName);
 				const isDocumented = checkIfDocumented(controllerPath, functionName);
 				const fullPath = path.posix.join(prefix, routePath).replace(/\\/g, '/');
-				const normalizedPath = fullPath.replace(/^\/+/g, '').replace(/\/+$/g, '').replace(/\//g, '-');
+				const normalizedPath = fullPath.replace(/^\/+/g, '').replace(/\/+/g, '-');
 				const filename = `${method.toLowerCase()}-${normalizedPath || 'root'}`;
+
+				const middlewares = args
+					.filter((s) => s.includes('Middleware') && !s.includes('.') && !s.startsWith('joi'))
+					.concat(middlewareStack)
+					.filter((v, i, a) => a.indexOf(v) === i);
 
 				routesMap.push({
 					path: fullPath,
@@ -56,9 +95,12 @@ function generateRoutesMap(routesFolderPath, outputFilePath) {
 					line: functionLine,
 					documented: isDocumented,
 					filename,
+					pathParts,
+					joi: joiSchemas.length > 0 ? joiSchemas : false,
+					middlewares: middlewares.length > 0 ? middlewares : false,
 				});
 			}
-		});
+		}
 	}
 
 	fs.writeFileSync(outputFilePath, JSON.stringify(routesMap, null, 2));
@@ -79,8 +121,7 @@ function getAllRouteFiles(dir, files = []) {
 
 function buildRequireMap(content, basePath) {
 	const requireMap = {};
-	// eslint-disable-next-line no-useless-escape
-	const requireRegex = /const\s+(\w+)\s*=\s*require\(['\"](.*?)['\"]\)/g;
+	const requireRegex = /const\s+(\w+)\s*=\s*require\(['"](.*?)['"]\)/g;
 	let match;
 	while ((match = requireRegex.exec(content)) !== null) {
 		const name = match[1];

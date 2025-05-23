@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 var express = require('express');
 const router = express.Router();
 const { auth } = require('googleapis/build/src/apis/drive');
@@ -27,6 +29,7 @@ const documentsRoutes = require('./api/documents');
 const menusRoutes = require('./api/menu');
 const businessUserRoutes = require('./api/businessUsers');
 const businessTeamRoutes = require('./api/businessTeams');
+const businessClientRoutes = require('./api/businessClients');
 const stripeRoutes = require('./api/stripe');
 const lostItemsRoutes = require('./api/lostItems');
 const flagRoutes = require('./api/flags');
@@ -38,7 +41,6 @@ const searchRoutes = require('./api/search');
 const overwatchRoutes = require('./api/overwatch');
 const { sendNotificationToUser } = require('../lib/oneSignal');
 
-const fs = require('fs');
 router.use('/stripe', stripeRoutes);
 router.use('/admin', [authMiddleware, adminMiddleware], adminRoutes);
 router.use('/users', [authMiddleware], userRoutes);
@@ -54,7 +56,6 @@ router.use('/business/auth', authBusinessRoutes);
 router.use('/business/search', searchRoutes);
 router.use('/business', [authMiddleware], businessRoutes);
 router.use('/overwatch', overwatchRoutes);
-//router.use("/business", businessRoutes);
 router.use('/drivers', [authMiddleware], driverRoutes);
 router.use('/delivery_drivers', [authMiddleware], deliveryDriverRoutes);
 router.use('/vehicles', [authMiddleware], vehicleRoutes);
@@ -63,6 +64,7 @@ router.use('/documents', [authMiddleware], documentsRoutes);
 router.use('/menus', [authMiddleware], menusRoutes);
 router.use('/business-users', [authMiddleware], businessUserRoutes);
 router.use('/business-teams', [authMiddleware], businessTeamRoutes);
+router.use('/business-clients', [authMiddleware], businessClientRoutes);
 router.use('/order_lobby', [authMiddleware], orderLobbyRoutes);
 router.use('/lost_items', lostItemsRoutes);
 router.use('/flags', [authMiddleware], flagRoutes);

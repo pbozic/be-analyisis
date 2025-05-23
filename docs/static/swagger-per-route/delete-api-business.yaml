@@ -1,0 +1,24 @@
+openapi: 3.0.3
+info:
+  title: delete /api/business/:business_id
+  version: 1.0.0
+paths:
+  /api/business/:business_id:
+    delete:
+      tags:
+        - Business
+      summary: Delete a business
+      description: Deletes a business by its ID.
+      operationId: deleteBusiness
+      parameters:
+        - name: business_id
+          in: path
+          description: The ID of the business to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Business deleted successfully
+        '400':
+          description: Error deleting business

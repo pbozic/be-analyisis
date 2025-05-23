@@ -1,0 +1,32 @@
+openapi: 3.0.3
+info:
+  title: post /api/auth/create/scheduled_user
+  version: 1.0.0
+paths:
+  /api/auth/create/scheduled_user:
+    post:
+      tags:
+        - User
+      summary: Create a new scheduled user.
+      description: This created new scheduled user.
+      operationId: createScheduledUser
+      requestBody:
+        description: Request body must include necessary order details.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createScheduledUserRequest'
+        required: true
+      responses:
+        '200':
+          description: >-
+            Successful operation. Returns the newly created order in the
+            response body.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createScheduledUser'
+        '500':
+          description: >-
+            Server error. Returns error message "Something went wrong..." if any
+            exception is encountered during execution.
