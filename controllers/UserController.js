@@ -2939,6 +2939,7 @@ module.exports = {
 	confirmPaymentIntent,
 	getUserCredits,
 	getMyActiveOrderIds,
+	getMyActiveOrders,
 	updateMarketingNotifications,
 	updateAdsPersonalization,
 	updateNewsletter,
