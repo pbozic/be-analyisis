@@ -100,6 +100,7 @@ model business {
   account_actions             account_actions[]
   business_clients            business_clients[]
   purchase_order_limit_amount Float?
+  drivers                     drivers[]
 }
 
 model business_users {
@@ -487,6 +488,7 @@ model drivers {
   driver_municipalities     driver_municipalities[]
   current_vehicle           vehicles?                  @relation("driver_current_vehicle", fields: [current_vehicle_id], references: [vehicle_id])
   activity_logs             driver_activity_logs[]
+  business                  business?                  @relation(fields: [business_id], references: [business_id])
 }
 
 model vehicle_drivers {

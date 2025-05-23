@@ -6,6 +6,7 @@ const { drive } = require('googleapis/build/src/apis/drive');
 const prisma = require('../prisma/prisma');
 const UserDao = require('../dao/User');
 const BusinessUsersDao = require('../dao/BusinessUsers');
+const BusinessDao = require('../dao/Business');
 const TokenDao = require('../dao/Token');
 const ReviewDao = require('../dao/Review');
 const AddressDao = require('../dao/Address');
@@ -226,6 +227,9 @@ async function me(req, res) {
 				},
 			},
 		});
+		if (user.driver) {
+			user.driver.business = await BusinessDao.getBusinessById(user.driver.business_id);
+		}
 		console.log('/me user: ', user?.user_id);
 		if (user) {
 			let payment_methods = [];
