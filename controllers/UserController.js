@@ -215,6 +215,16 @@ async function me(req, res) {
 				referrals_made: true,
 				referral: { include: { referrer: { select: { first_name: true, last_name: true } } } },
 				user_favorite_businesses: true,
+				business_users: {
+					business_users_id: true,
+					include: {
+						business: {
+							include: {
+								address: true,
+							},
+						},
+					},
+				},
 			},
 		});
 		console.log('/me user: ', user?.user_id);
@@ -1927,23 +1937,18 @@ async function getMyActiveOrders(req, res) {
 	const user_id = req.user.user_id;
 
 	try {
-		const [
-			delivery_orders,
-			taxi_orders,
-			transfer_orders,
-			first_reservation
-		] = await Promise.all([
+		const [delivery_orders, taxi_orders, transfer_orders, first_reservation] = await Promise.all([
 			DeliveryOrderDao.getDeliveryOrdersIfNotCompleted(user_id),
 			TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, ORDER_TYPE.TAXI),
 			TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, ORDER_TYPE.TRANSFER_PRIVATE),
-			ReservationDao.getReservationIfNotCompleted(user_id)
+			ReservationDao.getReservationIfNotCompleted(user_id),
 		]);
 
 		return res.status(200).json({
 			delivery_orders,
 			taxi_orders,
 			transfer_orders,
-			first_reservation
+			first_reservation,
 		});
 	} catch (error) {
 		return res.status(400).json({
