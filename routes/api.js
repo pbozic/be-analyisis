@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 var express = require('express');
 const router = express.Router();
 const { auth } = require('googleapis/build/src/apis/drive');
@@ -39,7 +41,6 @@ const searchRoutes = require('./api/search');
 const overwatchRoutes = require('./api/overwatch');
 const { sendNotificationToUser } = require('../lib/oneSignal');
 
-const fs = require('fs');
 router.use('/stripe', stripeRoutes);
 router.use('/admin', [authMiddleware, adminMiddleware], adminRoutes);
 router.use('/users', [authMiddleware], userRoutes);
