@@ -2,10 +2,12 @@ const OrderLobbyDao = require('../dao/OrderLobby');
 const OrderLobbyUserDao = require('../dao/OrderLobbyUser');
 const OrderLobbyItemDao = require('../dao/OrderLobbyItem');
 const UserDao = require('../dao/User');
+const DocumentDao = require('../dao/Document');
 const { UserSockets, io } = require('../socket');
 const OneSignal = require('../lib/oneSignal');
 const { getLocalisedTexts } = require('../localisations/languages');
 const DeliveryOrderController = require('../controllers/DeliveryOrderController');
+const { DOCUMENT_TYPE } = require('../lib/constants');
 
 async function lobbySocketOrNotification(user_id, event, order_lobby) {
 	const userSocket = UserSockets.get(user_id);
@@ -348,6 +350,18 @@ async function getOrderLobbyById(req, res) {
 	try {
 		const { order_lobbies_id } = req.params;
 		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
+
+		const updatedUsers = await Promise.all(
+			order_lobby.order_lobby_users.map(async (user) => {
+				let profile = await DocumentDao.getDocumentsForUserByType(user.user_id, DOCUMENT_TYPE.PROFILE_PICTURE);
+				return {
+					...user,
+					profile_picture: profile[0]?.files[0]?.url,
+				};
+			})
+		);
+		order_lobby.order_lobby_users = updatedUsers;
+
 		if (!order_lobby) {
 			return res.status(404).json({ success: false, error: 'Order lobby not found' });
 		}
