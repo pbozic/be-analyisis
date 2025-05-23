@@ -28,6 +28,7 @@ const {
 	SERVICE_TYPE_TO_FUNDS_TYPE,
 	CASHBACK_TYPE,
 	ACCOUNT_ACTIONS_REASON,
+	ORDER_TYPE,
 } = require('../lib/constants');
 const { generateAccessToken, generateRefreshToken } = require('../lib/jwt');
 const { getOrders } = require('../dao/TaxiOrder');
@@ -1918,6 +1919,35 @@ async function getMyActiveOrderIds(req, res) {
 		});
 	} catch (error) {
 		return res.status(400).json({ error: error.message || 'Error fetching user active order ids' });
+	}
+}
+
+async function getMyActiveOrders(req, res) {
+	const user_id = req.user.user_id;
+
+	try {
+		const [
+			delivery_orders,
+			taxi_orders,
+			transfer_orders,
+			first_reservation
+		] = await Promise.all([
+			DeliveryOrderDao.getDeliveryOrdersIfNotCompleted(user_id),
+			TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, ORDER_TYPE.TAXI),
+			TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, ORDER_TYPE.TRANSFER_PRIVATE),
+			ReservationDao.getReservationIfNotCompleted(user_id)
+		]);
+
+		return res.status(200).json({
+			delivery_orders,
+			taxi_orders,
+			transfer_orders,
+			first_reservation
+		});
+	} catch (error) {
+		return res.status(400).json({
+			error: error.message || 'Error fetching user active order ids',
+		});
 	}
 }
 

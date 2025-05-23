@@ -388,12 +388,12 @@ async function acceptOrderDelivery(order, deliverer_id, vehicle_id) {
 			});
 			const vehicleData = vehicle_id
 				? {
-						vehicle: {
-							connect: {
-								vehicle_id: vehicle_id,
-							},
+					vehicle: {
+						connect: {
+							vehicle_id: vehicle_id,
 						},
-					}
+					},
+				}
 				: {};
 			return prisma.delivery_orders.update({
 				where: {
