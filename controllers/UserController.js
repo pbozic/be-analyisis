@@ -216,7 +216,6 @@ async function me(req, res) {
 				referral: { include: { referrer: { select: { first_name: true, last_name: true } } } },
 				user_favorite_businesses: true,
 				business_users: {
-					business_users_id: true,
 					include: {
 						business: {
 							include: {
