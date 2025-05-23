@@ -384,7 +384,7 @@ async function createOrder(req, res) {
 		if (order && order?.order_id && order?.user_id) {
 			await handlePaymentCleanup(order);
 		}
-		res.status(500).json(e);
+		res.status(500).json({ message: e.message });
 	}
 }
 
