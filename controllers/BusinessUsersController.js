@@ -2,6 +2,7 @@ const BusinessUsersDao = require('../dao/BusinessUsers');
 const AddressDao = require('../dao/Address');
 const GroupDao = require('../dao/Group');
 const UserDao = require('../dao/User');
+const Constants = require('../lib/constants');
 
 /**
  * GET /business-users
@@ -256,6 +257,9 @@ async function updateBusinessUserOnlineStatus(req, res) {
 	try {
 		const { business_users_id, online } = req.body;
 		const updatedBusinessUser = await BusinessUsersDao.updateBusinessUserOnlineStatus(business_users_id, online);
+		if (updatedBusinessUser?.business?.type === Constants.BUSINESS_TYPE.MERCHANT) {
+			businessIndex(updatedBusinessUser?.business_id);
+		}
 		res.status(200).json(updatedBusinessUser);
 	} catch (error) {
 		console.error('Error updating online status:', error);

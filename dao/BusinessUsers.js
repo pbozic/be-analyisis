@@ -183,6 +183,9 @@ const updateBusinessUserOnlineStatus = async (business_users_id, online) => {
 		return await prisma.business_users.update({
 			where: { business_users_id },
 			data: { online: online },
+			include: {
+				business: true,
+			},
 		});
 	} catch (error) {
 		console.error("Error setting delivery driver's online status:", error);
