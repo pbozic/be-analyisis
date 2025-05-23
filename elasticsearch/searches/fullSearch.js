@@ -314,6 +314,7 @@ async function searchBusinesses(
 					'banner',
 					'telephone',
 					'promo_sections',
+					'online',
 				],
 				sort: [{ _score: 'desc' }],
 			},
