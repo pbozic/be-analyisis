@@ -34,6 +34,7 @@ const { generateAccessToken, generateRefreshToken } = require('../lib/jwt');
 const { getOrders } = require('../dao/TaxiOrder');
 const TaxiOrderDao = require('../dao/TaxiOrder');
 const DeliveryOrderDao = require('../dao/DeliveryOrder');
+const ReservationDao = require('../dao/Reservation');
 const GroupDao = require('../dao/Group');
 const CashbackDao = require('../dao/Cashback');
 
