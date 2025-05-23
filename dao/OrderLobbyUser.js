@@ -68,29 +68,31 @@ async function updateOrderLobbyUserLimit(order_lobby_users_id, newLimit) {
 
 /**
  * Deletes an order lobby user and all their associated items in a transaction
- * @param {string} order_lobby_users_id - The ID of the order lobby user entry to delete
+ * @param {string} user_id - The ID of the user
+ * @param {string} order_lobbies_id - The ID of the order lobby users entry
  * @returns {Promise<Object>} Result of the transaction containing deleted user and items
  * @throws {Error} If either deletion fails, the entire transaction is rolled back
  */
-async function deleteOrderLobbyUserWithItems(order_lobby_users_id) {
+async function deleteOrderLobbyUserWithItems(user_id, order_lobbies_id) {
 	return await prisma.$transaction(async (tx) => {
-		// First get the user and lobby information
-		const lobbyUser = await tx.order_lobby_users.findUnique({
-			where: { order_lobby_users_id },
-			select: {
-				user_id: true,
-				order_lobbies_id: true,
+		// First check if both user and lobby exist
+		const lobbyUser = await tx.order_lobby_users.findFirst({
+			where: {
+				AND: [{ user_id: user_id }, { order_lobbies_id: order_lobbies_id }],
 			},
 		});
 
 		if (!lobbyUser) {
-			throw new Error('Order lobby user not found');
+			throw new Error('Order lobby user relationship not found');
 		}
+
+		// Get the order_lobby_users_id for later use
+		const order_lobby_users_id = lobbyUser.order_lobby_users_id;
 
 		// Delete all items belonging to this user in the lobby
 		await tx.order_lobby_items.deleteMany({
 			where: {
-				AND: [{ user_id: lobbyUser.user_id }, { order_lobbies_id: lobbyUser.order_lobbies_id }],
+				AND: [{ user_id: user_id }, { order_lobbies_id: order_lobbies_id }],
 			},
 		});
 
