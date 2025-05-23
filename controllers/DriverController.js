@@ -749,8 +749,7 @@ async function getDriverEarnings(req, res) {
 				},
 			},
 		});
-		if (deliveryOrders) driverOrders = driverOrders.concat(deliveryOrders);
-		const earningsData = calculateDriversEarnings(driverOrders, driver);
+		const earningsData = calculateDriversEarnings([...driverOrders, ...deliveryOrders], driver);
 
 		if (earningsData) {
 			res.status(200).json({ driver_id, ...earningsData });
@@ -805,8 +804,7 @@ async function getAllDriversEarnings(req, res) {
 					},
 				},
 			});
-			if (deliveryOrders) driverOrders = driverOrders.concat(deliveryOrders);
-			return calculateDriversEarnings(driverOrders, driver);
+			return calculateDriversEarnings([...driverOrders, ...deliveryOrders], driver);
 		});
 
 		const allEarnings = await Promise.all(earningsPromises);
@@ -840,8 +838,7 @@ async function getTotalEarnings(req, res) {
 				driver_id: { not: null },
 			},
 		});
-		if (delivery_orders) orders = orders.concat(delivery_orders);
-		const totalEarnings = calculateTotalEarnings(orders, TAXI_ORDER_STATUS.TAXI_COMPLETED);
+		const totalEarnings = calculateTotalEarnings([...orders, ...delivery_orders]);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
 		console.error("Error retrieving all drivers' total earnings:", error);
@@ -882,8 +879,7 @@ async function getDriverTotalEarnings(req, res) {
 				driver_id: driver_id,
 			},
 		});
-		if (delivery_orders) orders = orders.concat(delivery_orders);
-		const totalEarnings = calculateTotalEarnings(orders, TAXI_ORDER_STATUS.TAXI_COMPLETED, true, detailed);
+		const totalEarnings = calculateTotalEarnings([...orders, ...delivery_orders], detailed);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
 		console.error("Error retrieving driver's total earnings:", error);

@@ -28,11 +28,13 @@ const {
 	SERVICE_TYPE_TO_FUNDS_TYPE,
 	CASHBACK_TYPE,
 	ACCOUNT_ACTIONS_REASON,
+	ORDER_TYPE,
 } = require('../lib/constants');
 const { generateAccessToken, generateRefreshToken } = require('../lib/jwt');
 const { getOrders } = require('../dao/TaxiOrder');
 const TaxiOrderDao = require('../dao/TaxiOrder');
 const DeliveryOrderDao = require('../dao/DeliveryOrder');
+const ReservationDao = require('../dao/Reservation');
 const GroupDao = require('../dao/Group');
 const CashbackDao = require('../dao/Cashback');
 
@@ -1921,6 +1923,35 @@ async function getMyActiveOrderIds(req, res) {
 	}
 }
 
+async function getMyActiveOrders(req, res) {
+	const user_id = req.user.user_id;
+
+	try {
+		const [
+			delivery_orders,
+			taxi_orders,
+			transfer_orders,
+			first_reservation
+		] = await Promise.all([
+			DeliveryOrderDao.getDeliveryOrdersIfNotCompleted(user_id),
+			TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, ORDER_TYPE.TAXI),
+			TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, ORDER_TYPE.TRANSFER_PRIVATE),
+			ReservationDao.getReservationIfNotCompleted(user_id)
+		]);
+
+		return res.status(200).json({
+			delivery_orders,
+			taxi_orders,
+			transfer_orders,
+			first_reservation
+		});
+	} catch (error) {
+		return res.status(400).json({
+			error: error.message || 'Error fetching user active order ids',
+		});
+	}
+}
+
 async function getReferral(req, res) {
 	try {
 		const referral = ReferralDao.getReferralByReferredUserId(req.user.user_id);
@@ -2909,6 +2940,7 @@ module.exports = {
 	confirmPaymentIntent,
 	getUserCredits,
 	getMyActiveOrderIds,
+	getMyActiveOrders,
 	updateMarketingNotifications,
 	updateAdsPersonalization,
 	updateNewsletter,

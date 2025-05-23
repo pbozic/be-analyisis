@@ -41,6 +41,7 @@ async function createBusinessIndex(force = false) {
 						location: { type: 'geo_point' }, // Allows geo-based queries
 						popular: { type: 'boolean' },
 						active: { type: 'boolean' },
+						online: { type: 'boolean' },
 						new: { type: 'boolean' },
 						working_hours: { type: 'object' },
 						delivery_address: { type: 'object' },
@@ -142,6 +143,7 @@ async function indexBusinesses(business_id = null, force = false) {
 		const businesses = await prisma.business.findMany({
 			where: whereClause,
 			include: {
+				business_users: true,
 				address: true,
 				delivery_address: true,
 				word_buys: {
@@ -236,6 +238,7 @@ async function indexBusinesses(business_id = null, force = false) {
 			const doc = {
 				business_id: business.business_id,
 				name: business.name,
+				online: business.business_users?.some((user) => user.online),
 				active: business.active,
 				description: business.description,
 				popular: business.popular,

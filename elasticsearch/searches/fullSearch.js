@@ -340,6 +340,7 @@ async function searchBusinesses(
 
 			return {
 				business_id: hit._source.business_id,
+				online: hit._source.online,
 				name: hit._source.name,
 				description: hit._source.description,
 				score: hit._score,
