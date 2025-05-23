@@ -92,12 +92,6 @@ async function login(req, res) {
 						taxi_orders_toggled: true,
 						transfer_orders_toggled: true,
 						delivery_orders_toggled: true,
-						business: {
-							select: {
-								address: true,
-								tax_id: true,
-							},
-						},
 						vehicles: {
 							select: {
 								vehicle_drivers_id: true,
@@ -141,6 +135,16 @@ async function login(req, res) {
 				referrals_made: true,
 				referral: { include: { referrer: { select: { first_name: true, last_name: true } } } },
 				user_roles: true,
+				business_users: {
+					select: {
+						business: {
+							select: {
+								address: true,
+								tax_id: true,
+							},
+						},
+					},
+				},
 			},
 		});
 		if (user.disabled) return res.status(400).json({ error: 'Account is disabled.' });
