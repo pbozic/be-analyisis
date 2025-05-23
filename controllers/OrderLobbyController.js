@@ -2,10 +2,12 @@ const OrderLobbyDao = require('../dao/OrderLobby');
 const OrderLobbyUserDao = require('../dao/OrderLobbyUser');
 const OrderLobbyItemDao = require('../dao/OrderLobbyItem');
 const UserDao = require('../dao/User');
+const DocumentDao = require('../dao/Document');
 const { UserSockets, io } = require('../socket');
 const OneSignal = require('../lib/oneSignal');
 const { getLocalisedTexts } = require('../localisations/languages');
 const DeliveryOrderController = require('../controllers/DeliveryOrderController');
+const { DOCUMENT_TYPE } = require('../lib/constants');
 
 async function lobbySocketOrNotification(user_id, event, order_lobby) {
 	const userSocket = UserSockets.get(user_id);
@@ -53,16 +55,6 @@ async function addUserToLobby(user_id, order_lobby, limit) {
 		await lobbySocketOrNotification(ol_user.user_id, 'added_to_lobby', order_lobby);
 	}
 	return ol_user;
-}
-
-async function deleteUserFromLobby(order_lobby_users_id, order_lobby, event = 'removed_from_lobby') {
-	// create lobby user
-	const deleted_ol_user = await OrderLobbyUserDao.deleteOrderLobbyUserWithItems(order_lobby_users_id);
-	if (deleted_ol_user) {
-		// emit to socket or send notification
-		await lobbySocketOrNotification(deleted_ol_user.user_id, event, order_lobby);
-	}
-	return deleted_ol_user;
 }
 
 // async function generateOrderDataFromLobby( lobbyOrderData,creator_id ){
@@ -191,12 +183,16 @@ async function setLobbyUsersWithLimits(req, res) {
 		// const current_order_lobby_users = await OrderLobbyUserDao.getOrderLobbyUsersInOrderLobby(order_lobbies_id)
 		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
 
+		if (!order_lobby) {
+			return res.status(404).json({ success: false, error: 'Order lobby not found' });
+		}
+
 		// Compare with provided users
 		for (const user_id of Object.keys(user_limits_map)) {
 			const lobby_user = order_lobby.order_lobby_users.find((ol_user) => ol_user.user_id === user_id);
 
 			if (!lobby_user) {
-				await addUserToLobby(user_id, order_lobbies_id, user_limits_map[user_id]);
+				await addUserToLobby(user_id, order_lobby, user_limits_map[user_id]);
 			} else if (user_limits_map[user_id] !== lobby_user.limit) {
 				await OrderLobbyUserDao.updateOrderLobbyUserLimit(
 					lobby_user.order_lobby_users_id,
@@ -204,16 +200,7 @@ async function setLobbyUsersWithLimits(req, res) {
 				);
 			}
 		}
-
-		//remove missing users (also remove items for removed users)
-		for (const lobby_user of order_lobby.order_lobby_users) {
-			const lobby_user = user_limits_map.find((ol_user) => ol_user.user_id === lobby_user.user_id);
-
-			if (!lobby_user) {
-				await deleteUserFromLobby(lobby_user.user_id, order_lobby);
-			}
-		}
-		return res.status(200);
+		return res.status(200).json({ success: true });
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
@@ -287,10 +274,98 @@ async function cancelLobby(req, res) {
 	try {
 		const { order_lobbies_id } = req.params;
 		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
+
+		if (!order_lobby) {
+			return res.status(404).json({ success: false, error: 'Order lobby not found' });
+		}
+
 		for (const ol_user of order_lobby.order_lobby_users) {
-			await deleteUserFromLobby(ol_user.order_lobby_users_id, order_lobby, 'lobby_canceled');
+			const deleted_ol_user = await OrderLobbyUserDao.deleteOrderLobbyUserWithItems(
+				ol_user.user_id,
+				order_lobbies_id
+			);
+
+			if (!deleted_ol_user) {
+				return res.status(404).json({
+					success: false,
+					error: `Failed to delete user ${ol_user.user_id} from lobby ${order_lobbies_id}`,
+				});
+			}
+
+			await lobbySocketOrNotification(deleted_ol_user.user_id, 'removed_from_lobby', order_lobby);
 		}
 		await OrderLobbyDao.deleteOrderLobby(order_lobbies_id);
+
+		return res.status(200).json({ success: true });
+	} catch (error) {
+		return res.status(500).json({ success: false, error: error.message });
+	}
+}
+
+/**
+ * DELETE /order_lobby/delete_user/:order_lobbies_id/:user_id
+ * Delete a user from an order lobby
+ * @param {Object} req - Express request object
+ * @param {Object} req.params - Request parameters
+ * @param {string} req.params.order_lobbies_id - ID of the order lobby to cancel
+ * @param {string} req.params.user_id - Array of user IDs to remove from the lobby
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>} Returns 200 status on success, or error with 500 status
+ */
+async function deleteUserFromLobby(req, res) {
+	try {
+		const { order_lobbies_id, user_id } = req.params;
+
+		// First get the order lobby to verify it exists and for notifications
+		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
+		if (!order_lobby) {
+			return res.status(404).json({ success: false, error: 'Order lobby not found' });
+		}
+
+		const deleted_ol_user = await OrderLobbyUserDao.deleteOrderLobbyUserWithItems(user_id, order_lobbies_id);
+		if (!deleted_ol_user) {
+			return res.status(404).json({ success: false, error: 'User not found in this lobby' });
+		}
+
+		// Send notification to the user
+		await lobbySocketOrNotification(deleted_ol_user.user_id, 'removed_from_lobby', order_lobby);
+
+		return res.status(200).json({ success: true, deleted_user: deleted_ol_user });
+	} catch (error) {
+		return res.status(500).json({ success: false, error: error.message });
+	}
+}
+
+/**
+ * GET /order_lobby/:order_lobbies_id
+ * Get the order lobby by ID
+ * @param {Object} req - Express request object
+ * @param {Object} req.params - Request parameters
+ * @param {string} req.params.order_lobbies_id - The ID of the order lobby
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>} Returns 200 status with the order lobby data, or error with 500 status
+ */
+
+async function getOrderLobbyById(req, res) {
+	try {
+		const { order_lobbies_id } = req.params;
+		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
+
+		const updatedUsers = await Promise.all(
+			order_lobby.order_lobby_users.map(async (user) => {
+				let profile = await DocumentDao.getDocumentsForUserByType(user.user_id, DOCUMENT_TYPE.PROFILE_PICTURE);
+				return {
+					...user,
+					profile_picture: profile[0]?.files[0]?.url,
+				};
+			})
+		);
+		order_lobby.order_lobby_users = updatedUsers;
+
+		if (!order_lobby) {
+			return res.status(404).json({ success: false, error: 'Order lobby not found' });
+		}
+		return res.status(200).json(order_lobby);
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
@@ -302,4 +377,6 @@ module.exports = {
 	setLobbyUsersWithLimits,
 	setUserOrderLobbyItems,
 	cancelLobby,
+	deleteUserFromLobby,
+	getOrderLobbyById,
 };

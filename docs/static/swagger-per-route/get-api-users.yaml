@@ -1,0 +1,19 @@
+openapi: 3.0.3
+info:
+  title: get /api/users/me/payment-sheet
+  version: 1.0.0
+paths:
+  /api/users/me/payment-sheet:
+    get:
+      tags:
+        - Users
+      summary: Get payment sheet credentials for a user
+      description: >-
+        This endpoint is used to get Stripe payment sheet credentials for a
+        particular user.
+      operationId: getPaymentSheetCredentials
+      responses:
+        '200':
+          description: '{StripePaymentSheetCredentials}'
+        '400':
+          description: Error obtaining payment sheet credentials

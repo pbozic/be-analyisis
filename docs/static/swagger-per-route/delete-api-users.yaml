@@ -1,0 +1,28 @@
+openapi: 3.0.3
+info:
+  title: delete /api/users/me/group_user/delete/:group_user_id
+  version: 1.0.0
+paths:
+  /api/users/me/group_user/delete/:group_user_id:
+    delete:
+      tags:
+        - Users
+      summary: Deletes a group_user by their ID
+      description: >-
+        This endpoint is used to delete a child user from the system by their
+        group_user ID.
+      operationId: deleteChildUserByGroupUserId
+      parameters:
+        - name: group_user_id
+          in: path
+          description: The ID of the child user to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User deleted successfully.
+        '400':
+          description: Error deleting user.
+        '404':
+          description: User not found.

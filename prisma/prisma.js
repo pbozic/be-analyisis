@@ -158,7 +158,38 @@ const prisma = new PrismaClient({
 						${radiusInMeters}
 					)
 			
-					
+					AND (COALESCE(${requirements.traveling_with_pet}, FALSE) = FALSE OR (drivers.ride_requirements->'traveling_with_pet')::BOOLEAN = ${requirements.traveling_with_pet})
+					AND (COALESCE(${requirements.child_seat}, FALSE) = FALSE OR (drivers.ride_requirements->'child_seat')::BOOLEAN = ${requirements.child_seat})
+					AND (COALESCE(${requirements.wheelchair_accessibility}, FALSE) = FALSE OR (drivers.ride_requirements->'wheelchair_accessibility')::BOOLEAN = ${requirements.wheelchair_accessibility})
+					AND (
+						(
+							COALESCE(${vehicleFilters.class}, '') = '' 
+							AND vehicles.class::TEXT NOT IN ('MINIVAN', 'MINIBUS', 'BUS', 'CARGO_VAN')
+						)
+						OR vehicles.class::TEXT = ${vehicleFilters.class.toUpperCase()}
+					)
+					AND (COALESCE(${vehicleFilters.category}, '') = '' OR vehicles.category::TEXT = ${vehicleFilters.category.toUpperCase()})
+					-- Language requirements (match at least one if any are specified)
+					AND (
+						-- Check if no language requirements are specified, or at least one matches
+						(
+							COALESCE(${requirements.language_en}, FALSE) = FALSE
+							AND COALESCE(${requirements.language_it}, FALSE) = FALSE
+							AND COALESCE(${requirements.language_de}, FALSE) = FALSE
+							AND COALESCE(${requirements.language_es}, FALSE) = FALSE
+							AND COALESCE(${requirements.language_hr}, FALSE) = FALSE
+							AND COALESCE(${requirements.language_fr}, FALSE) = FALSE
+							AND COALESCE(${requirements.language_ru}, FALSE) = FALSE
+						) OR (
+							(COALESCE(${requirements.language_en}, FALSE) = TRUE AND (drivers.ride_requirements->'language_en')::BOOLEAN = TRUE) OR
+							(COALESCE(${requirements.language_it}, FALSE) = TRUE AND (drivers.ride_requirements->'language_it')::BOOLEAN = TRUE) OR
+							(COALESCE(${requirements.language_de}, FALSE) = TRUE AND (drivers.ride_requirements->'language_de')::BOOLEAN = TRUE) OR
+							(COALESCE(${requirements.language_es}, FALSE) = TRUE AND (drivers.ride_requirements->'language_es')::BOOLEAN = TRUE) OR
+							(COALESCE(${requirements.language_hr}, FALSE) = TRUE AND (drivers.ride_requirements->'language_cro')::BOOLEAN = TRUE) OR
+							(COALESCE(${requirements.language_fr}, FALSE) = TRUE AND (drivers.ride_requirements->'language_fr')::BOOLEAN = TRUE) OR
+							(COALESCE(${requirements.language_ru}, FALSE) = TRUE AND (drivers.ride_requirements->'language_ru')::BOOLEAN = TRUE)
+						)
+					);
 				`;
 
 				return drivers;

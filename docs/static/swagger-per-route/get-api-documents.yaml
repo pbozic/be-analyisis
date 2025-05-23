@@ -1,0 +1,30 @@
+openapi: 3.0.3
+info:
+  title: get /api/documents/user/type/:document_type
+  version: 1.0.0
+paths:
+  /api/documents/user/type/:document_type:
+    get:
+      tags:
+        - Documents
+      summary: Get documents for a user by type
+      description: Retrieves documents of a specific type associated with a user.
+      operationId: getDocumentsForUserByDocumentType
+      parameters:
+        - name: document_type
+          in: path
+          description: The type of the documents
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation, returns documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Document'
+        '400':
+          description: Error retrieving documents

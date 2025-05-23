@@ -4,9 +4,9 @@
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Getall delivery orders.
 
-**Description**: This
+**Description**: Thisfetches all delivery orders.
 
 **Responses:**
 - 200
@@ -23,9 +23,9 @@
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Getall active delivery orders.
 
-**Description**: This
+**Description**: Thisfetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -42,9 +42,9 @@
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Getorder details.
 
-**Description**: This
+**Description**: Thisfetches the order details using the given order id.
 
 **Parameters:**
 
@@ -67,9 +67,9 @@
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Getorder details.
 
-**Description**: This
+**Description**: Thisfetches the order details using the given order id.
 
 **Parameters:**
 
@@ -92,9 +92,9 @@
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Createa new delivery order.
 
-**Description**: This
+**Description**: Thiscreates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -115,9 +115,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Createdaily meals.
 
-**Description**: This
+**Description**: Thiscreates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -134,9 +134,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accepta delivery order.
 
-**Description**: Accepts
+**Description**: Acceptsdelivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -157,9 +157,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Drivercancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allowsa driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -181,9 +181,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Completea delivery order.
 
-**Description**: Completes
+**Description**: Completesa delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -204,9 +204,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Getcompleted delivery orders.
 
-**Description**: This
+**Description**: Thisfetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -223,9 +223,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Getcompleted delivery orders.
 
-**Description**: This
+**Description**: Thisfetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -242,9 +242,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Getactive delivery orders.
 
-**Description**: This
+**Description**: Thisfetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -261,9 +261,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Getcompleted delivery orders.
 
-**Description**: This
+**Description**: Thisfetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -280,9 +280,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Getactive delivery orders.
 
-**Description**: This
+**Description**: Thisfetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -299,9 +299,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Getactive delivery orders.
 
-**Description**: This
+**Description**: Thisfetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -318,9 +318,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Getdelivery orders.
 
-**Description**: This
+**Description**: Thisfetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -337,9 +337,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Getcompleted delivery orders by business id.
 
-**Description**: This
+**Description**: Thisfetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -356,9 +356,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Updatea delivery order's status.
 
-**Description**: Updates
+**Description**: Updatesthe status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -379,9 +379,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Processa delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processesthe order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -402,9 +402,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Updatea delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updatespickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -425,9 +425,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Updatea delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updatesdelivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -448,9 +448,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Updatea delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updatesthe timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -471,9 +471,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Updatea delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appendsa new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -494,9 +494,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Updatea delivery order.
 
-**Description**: Updates
+**Description**: Updatesa delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -517,9 +517,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Getall delivery orders for today and earnings.
 
-**Description**: This
+**Description**: Thisfetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -536,9 +536,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancelsan order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Canceland if necessary refund an order
 
 **Responses:**
 - 200
@@ -555,9 +555,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancelsan order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Canceland if necessary refund an order
 
 **Responses:**
 - 200
@@ -594,9 +594,9 @@ Content-Type: `application/json`
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -606,16 +606,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -625,16 +625,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -650,16 +650,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -675,16 +675,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -698,16 +698,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -717,16 +717,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -740,16 +740,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -764,16 +764,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -787,16 +787,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -806,16 +806,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -825,16 +825,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -844,16 +844,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -863,16 +863,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -882,16 +882,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -901,16 +901,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -920,16 +920,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -939,16 +939,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -962,16 +962,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -985,16 +985,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1008,16 +1008,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1031,16 +1031,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1054,16 +1054,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1077,16 +1077,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1100,16 +1100,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -1119,16 +1119,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -1138,16 +1138,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -1157,36 +1157,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -1196,16 +1220,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -1215,16 +1239,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -1240,16 +1264,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -1265,16 +1289,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1288,16 +1312,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -1307,16 +1331,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1330,16 +1354,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1354,16 +1378,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1377,16 +1401,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -1396,16 +1420,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -1415,16 +1439,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -1434,16 +1458,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -1453,16 +1477,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -1472,16 +1496,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -1491,16 +1515,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -1510,16 +1534,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -1529,16 +1553,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1552,16 +1576,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1575,16 +1599,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1598,16 +1622,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1621,16 +1645,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1644,16 +1668,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1667,16 +1691,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1690,16 +1714,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -1709,16 +1733,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -1728,16 +1752,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -1747,36 +1771,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -1786,16 +1834,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -1805,16 +1853,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -1830,16 +1878,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -1855,16 +1903,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1878,16 +1926,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -1897,16 +1945,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1920,16 +1968,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1944,16 +1992,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -1967,16 +2015,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -1986,16 +2034,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -2005,16 +2053,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -2024,16 +2072,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -2043,16 +2091,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -2062,16 +2110,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -2081,16 +2129,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -2100,16 +2148,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -2119,16 +2167,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2142,16 +2190,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2165,16 +2213,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2188,16 +2236,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2211,16 +2259,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2234,16 +2282,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2257,16 +2305,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2280,16 +2328,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -2299,16 +2347,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -2318,16 +2366,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -2337,36 +2385,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -2376,16 +2448,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -2395,16 +2467,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -2420,16 +2492,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -2445,16 +2517,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2468,16 +2540,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -2487,16 +2559,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2510,16 +2582,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2534,16 +2606,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2557,16 +2629,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -2576,16 +2648,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -2595,16 +2667,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -2614,16 +2686,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -2633,16 +2705,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -2652,16 +2724,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -2671,16 +2743,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -2690,16 +2762,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -2709,16 +2781,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2732,16 +2804,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2755,16 +2827,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2778,16 +2850,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2801,16 +2873,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2824,16 +2896,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2847,16 +2919,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -2870,16 +2942,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -2889,16 +2961,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -2908,16 +2980,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -2927,36 +2999,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -2966,16 +3062,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -2985,16 +3081,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -3010,16 +3106,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -3035,16 +3131,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3058,16 +3154,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -3077,16 +3173,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3100,16 +3196,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3124,16 +3220,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3147,16 +3243,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -3166,16 +3262,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -3185,16 +3281,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -3204,16 +3300,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -3223,16 +3319,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -3242,16 +3338,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -3261,16 +3357,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -3280,16 +3376,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -3299,16 +3395,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3322,16 +3418,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3345,16 +3441,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3368,16 +3464,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3391,16 +3487,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3414,16 +3510,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3437,16 +3533,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3460,16 +3556,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -3479,16 +3575,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -3498,16 +3594,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -3517,36 +3613,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -3556,16 +3676,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -3575,16 +3695,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -3600,16 +3720,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -3625,16 +3745,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3648,16 +3768,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -3667,16 +3787,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3690,16 +3810,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3714,16 +3834,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3737,16 +3857,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -3756,16 +3876,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -3775,16 +3895,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -3794,16 +3914,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -3813,16 +3933,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -3832,16 +3952,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -3851,16 +3971,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -3870,16 +3990,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -3889,16 +4009,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3912,16 +4032,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3935,16 +4055,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3958,16 +4078,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -3981,16 +4101,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4004,16 +4124,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4027,16 +4147,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4050,16 +4170,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -4069,16 +4189,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -4088,16 +4208,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -4107,36 +4227,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -4146,16 +4290,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -4165,16 +4309,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -4190,16 +4334,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -4215,16 +4359,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4238,16 +4382,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -4257,16 +4401,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4280,16 +4424,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4304,16 +4448,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4327,16 +4471,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -4346,16 +4490,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -4365,16 +4509,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -4384,16 +4528,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -4403,16 +4547,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -4422,16 +4566,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -4441,16 +4585,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -4460,16 +4604,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -4479,16 +4623,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4502,16 +4646,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4525,16 +4669,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4548,16 +4692,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4571,16 +4715,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4594,16 +4738,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4617,16 +4761,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4640,16 +4784,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -4659,16 +4803,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -4678,16 +4822,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -4697,36 +4841,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -4736,16 +4904,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -4755,16 +4923,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -4780,16 +4948,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -4805,16 +4973,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4828,16 +4996,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -4847,16 +5015,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4870,16 +5038,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4894,16 +5062,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -4917,16 +5085,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -4936,16 +5104,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -4955,16 +5123,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -4974,16 +5142,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -4993,16 +5161,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -5012,16 +5180,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -5031,16 +5199,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -5050,16 +5218,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -5069,16 +5237,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5092,16 +5260,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5115,16 +5283,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5138,16 +5306,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5161,16 +5329,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5184,16 +5352,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5207,16 +5375,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5230,16 +5398,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -5249,16 +5417,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -5268,16 +5436,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -5287,36 +5455,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -5326,16 +5518,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -5345,16 +5537,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -5370,16 +5562,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -5395,16 +5587,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5418,16 +5610,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -5437,16 +5629,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5460,16 +5652,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5484,16 +5676,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5507,16 +5699,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -5526,16 +5718,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -5545,16 +5737,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -5564,16 +5756,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -5583,16 +5775,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -5602,16 +5794,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -5621,16 +5813,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -5640,16 +5832,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -5659,16 +5851,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5682,16 +5874,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5705,16 +5897,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5728,16 +5920,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5751,16 +5943,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5774,16 +5966,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5797,16 +5989,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -5820,16 +6012,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -5839,16 +6031,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -5858,16 +6050,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -5877,36 +6069,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -5916,16 +6132,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -5935,16 +6151,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -5960,16 +6176,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -5985,16 +6201,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6008,16 +6224,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -6027,16 +6243,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6050,16 +6266,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6074,16 +6290,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6097,16 +6313,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -6116,16 +6332,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -6135,16 +6351,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -6154,16 +6370,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -6173,16 +6389,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -6192,16 +6408,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -6211,16 +6427,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -6230,16 +6446,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -6249,16 +6465,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6272,16 +6488,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6295,16 +6511,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6318,16 +6534,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6341,16 +6557,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6364,16 +6580,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6387,16 +6603,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6410,16 +6626,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -6429,16 +6645,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -6448,16 +6664,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -6467,36 +6683,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -6506,16 +6746,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -6525,16 +6765,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -6550,16 +6790,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -6575,16 +6815,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6598,16 +6838,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -6617,16 +6857,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6640,16 +6880,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6664,16 +6904,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6687,16 +6927,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -6706,16 +6946,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -6725,16 +6965,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -6744,16 +6984,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -6763,16 +7003,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -6782,16 +7022,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -6801,16 +7041,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -6820,16 +7060,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -6839,16 +7079,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6862,16 +7102,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6885,16 +7125,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6908,16 +7148,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6931,16 +7171,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6954,16 +7194,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -6977,16 +7217,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7000,16 +7240,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -7019,16 +7259,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -7038,16 +7278,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -7057,36 +7297,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -7096,16 +7360,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -7115,16 +7379,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -7140,16 +7404,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -7165,16 +7429,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7188,16 +7452,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -7207,16 +7471,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7230,16 +7494,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7254,16 +7518,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7277,16 +7541,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -7296,16 +7560,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -7315,16 +7579,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -7334,16 +7598,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -7353,16 +7617,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -7372,16 +7636,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -7391,16 +7655,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -7410,16 +7674,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -7429,16 +7693,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7452,16 +7716,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7475,16 +7739,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7498,16 +7762,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7521,16 +7785,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7544,16 +7808,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7567,16 +7831,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7590,16 +7854,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -7609,16 +7873,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -7628,16 +7892,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -7647,36 +7911,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -7686,16 +7974,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -7705,16 +7993,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -7730,16 +8018,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -7755,16 +8043,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7778,16 +8066,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -7797,16 +8085,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7820,16 +8108,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7844,16 +8132,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -7867,16 +8155,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -7886,16 +8174,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -7905,16 +8193,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -7924,16 +8212,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -7943,16 +8231,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -7962,16 +8250,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -7981,16 +8269,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -8000,16 +8288,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -8019,16 +8307,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8042,16 +8330,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8065,16 +8353,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8088,16 +8376,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8111,16 +8399,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8134,16 +8422,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8157,16 +8445,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8180,16 +8468,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -8199,16 +8487,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -8218,16 +8506,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -8237,36 +8525,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -8276,16 +8588,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -8295,16 +8607,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -8320,16 +8632,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -8345,16 +8657,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8368,16 +8680,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -8387,16 +8699,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8410,16 +8722,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8434,16 +8746,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8457,16 +8769,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -8476,16 +8788,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -8495,16 +8807,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -8514,16 +8826,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -8533,16 +8845,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -8552,16 +8864,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -8571,16 +8883,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -8590,16 +8902,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -8609,16 +8921,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8632,16 +8944,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8655,16 +8967,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8678,16 +8990,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8701,16 +9013,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8724,16 +9036,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8747,16 +9059,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8770,16 +9082,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -8789,16 +9101,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -8808,16 +9120,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -8827,36 +9139,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -8866,16 +9202,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -8885,16 +9221,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -8910,16 +9246,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -8935,16 +9271,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -8958,16 +9294,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -8977,16 +9313,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9000,16 +9336,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9024,16 +9360,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9047,16 +9383,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -9066,16 +9402,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -9085,16 +9421,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -9104,16 +9440,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -9123,16 +9459,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -9142,16 +9478,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -9161,16 +9497,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -9180,16 +9516,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -9199,16 +9535,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9222,16 +9558,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9245,16 +9581,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9268,16 +9604,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9291,16 +9627,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9314,16 +9650,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9337,16 +9673,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9360,16 +9696,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -9379,16 +9715,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -9398,16 +9734,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -9417,36 +9753,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -9456,16 +9816,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -9475,16 +9835,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -9500,16 +9860,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -9525,16 +9885,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9548,16 +9908,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -9567,16 +9927,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9590,16 +9950,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9614,16 +9974,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9637,16 +9997,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -9656,16 +10016,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -9675,16 +10035,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -9694,16 +10054,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -9713,16 +10073,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -9732,16 +10092,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -9751,16 +10111,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -9770,16 +10130,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -9789,16 +10149,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9812,16 +10172,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9835,16 +10195,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9858,16 +10218,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9881,16 +10241,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9904,16 +10264,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9927,16 +10287,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -9950,16 +10310,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -9969,16 +10329,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -9988,16 +10348,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -10007,36 +10367,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -10046,16 +10430,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -10065,16 +10449,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -10090,16 +10474,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -10115,16 +10499,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10138,16 +10522,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -10157,16 +10541,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10180,16 +10564,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10204,16 +10588,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10227,16 +10611,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -10246,16 +10630,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -10265,16 +10649,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -10284,16 +10668,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -10303,16 +10687,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -10322,16 +10706,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -10341,16 +10725,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -10360,16 +10744,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -10379,16 +10763,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10402,16 +10786,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10425,16 +10809,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10448,16 +10832,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10471,16 +10855,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10494,16 +10878,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10517,16 +10901,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10540,16 +10924,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -10559,16 +10943,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -10578,16 +10962,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -10597,36 +10981,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -10636,16 +11044,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -10655,16 +11063,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -10680,16 +11088,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -10705,16 +11113,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10728,16 +11136,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -10747,16 +11155,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10770,16 +11178,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10794,16 +11202,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10817,16 +11225,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -10836,16 +11244,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -10855,16 +11263,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -10874,16 +11282,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -10893,16 +11301,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -10912,16 +11320,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -10931,16 +11339,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -10950,16 +11358,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -10969,16 +11377,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -10992,16 +11400,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11015,16 +11423,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11038,16 +11446,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11061,16 +11469,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11084,16 +11492,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11107,16 +11515,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11130,16 +11538,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -11149,16 +11557,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -11168,16 +11576,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -11187,36 +11595,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -11226,16 +11658,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -11245,16 +11677,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -11270,16 +11702,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -11295,16 +11727,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11318,16 +11750,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -11337,16 +11769,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11360,16 +11792,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11384,16 +11816,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11407,16 +11839,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -11426,16 +11858,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -11445,16 +11877,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -11464,16 +11896,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -11483,16 +11915,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -11502,16 +11934,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -11521,16 +11953,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -11540,16 +11972,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -11559,16 +11991,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11582,16 +12014,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11605,16 +12037,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11628,16 +12060,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11651,16 +12083,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11674,16 +12106,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11697,16 +12129,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11720,16 +12152,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -11739,16 +12171,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -11758,16 +12190,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -11777,36 +12209,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -11816,16 +12272,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -11835,16 +12291,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -11860,16 +12316,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -11885,16 +12341,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11908,16 +12364,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -11927,16 +12383,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11950,16 +12406,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11974,16 +12430,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -11997,16 +12453,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -12016,16 +12472,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -12035,16 +12491,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -12054,16 +12510,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -12073,16 +12529,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -12092,16 +12548,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -12111,16 +12567,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -12130,16 +12586,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -12149,16 +12605,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12172,16 +12628,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12195,16 +12651,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12218,16 +12674,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12241,16 +12697,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12264,16 +12720,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12287,16 +12743,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12310,16 +12766,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -12329,16 +12785,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -12348,16 +12804,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -12367,36 +12823,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -12406,16 +12886,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -12425,16 +12905,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -12450,16 +12930,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -12475,16 +12955,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12498,16 +12978,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -12517,16 +12997,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12540,16 +13020,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12564,16 +13044,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12587,16 +13067,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -12606,16 +13086,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -12625,16 +13105,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -12644,16 +13124,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -12663,16 +13143,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -12682,16 +13162,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -12701,16 +13181,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -12720,16 +13200,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -12739,16 +13219,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12762,16 +13242,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12785,16 +13265,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12808,16 +13288,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12831,16 +13311,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12854,16 +13334,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12877,16 +13357,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -12900,16 +13380,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -12919,16 +13399,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -12938,16 +13418,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -12957,36 +13437,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -12996,16 +13500,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -13015,16 +13519,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -13040,16 +13544,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -13065,16 +13569,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13088,16 +13592,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -13107,16 +13611,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13130,16 +13634,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13154,16 +13658,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13177,16 +13681,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -13196,16 +13700,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -13215,16 +13719,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -13234,16 +13738,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -13253,16 +13757,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -13272,16 +13776,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -13291,16 +13795,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -13310,16 +13814,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -13329,16 +13833,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13352,16 +13856,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13375,16 +13879,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13398,16 +13902,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13421,16 +13925,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13444,16 +13948,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13467,16 +13971,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13490,16 +13994,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -13509,16 +14013,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -13528,16 +14032,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -13547,36 +14051,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -13586,16 +14114,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -13605,16 +14133,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -13630,16 +14158,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -13655,16 +14183,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13678,16 +14206,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -13697,16 +14225,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13720,16 +14248,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13744,16 +14272,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13767,16 +14295,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -13786,16 +14314,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -13805,16 +14333,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -13824,16 +14352,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -13843,16 +14371,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -13862,16 +14390,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -13881,16 +14409,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -13900,16 +14428,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -13919,16 +14447,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13942,16 +14470,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13965,16 +14493,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -13988,16 +14516,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14011,16 +14539,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14034,16 +14562,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14057,16 +14585,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14080,16 +14608,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -14099,16 +14627,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -14118,16 +14646,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -14137,36 +14665,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -14176,16 +14728,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -14195,16 +14747,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -14220,16 +14772,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -14245,16 +14797,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14268,16 +14820,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -14287,16 +14839,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14310,16 +14862,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14334,16 +14886,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14357,16 +14909,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -14376,16 +14928,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -14395,16 +14947,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -14414,16 +14966,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -14433,16 +14985,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -14452,16 +15004,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -14471,16 +15023,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -14490,16 +15042,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -14509,16 +15061,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14532,16 +15084,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14555,16 +15107,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14578,16 +15130,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14601,16 +15153,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14624,16 +15176,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14647,16 +15199,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14670,16 +15222,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -14689,16 +15241,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -14708,16 +15260,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -14727,36 +15279,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -14766,16 +15342,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -14785,16 +15361,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -14810,16 +15386,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -14835,16 +15411,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14858,16 +15434,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -14877,16 +15453,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14900,16 +15476,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14924,16 +15500,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -14947,16 +15523,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -14966,16 +15542,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -14985,16 +15561,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -15004,16 +15580,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -15023,16 +15599,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -15042,16 +15618,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -15061,16 +15637,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -15080,16 +15656,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -15099,16 +15675,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15122,16 +15698,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15145,16 +15721,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15168,16 +15744,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15191,16 +15767,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15214,16 +15790,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15237,16 +15813,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15260,16 +15836,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -15279,16 +15855,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -15298,16 +15874,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -15317,36 +15893,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -15356,16 +15956,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -15375,16 +15975,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -15400,16 +16000,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -15425,16 +16025,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15448,16 +16048,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -15467,16 +16067,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15490,16 +16090,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15514,16 +16114,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15537,16 +16137,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -15556,16 +16156,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -15575,16 +16175,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -15594,16 +16194,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -15613,16 +16213,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -15632,16 +16232,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -15651,16 +16251,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -15670,16 +16270,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -15689,16 +16289,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15712,16 +16312,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15735,16 +16335,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15758,16 +16358,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15781,16 +16381,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15804,16 +16404,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15827,16 +16427,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -15850,16 +16450,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -15869,16 +16469,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -15888,16 +16488,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -15907,36 +16507,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -15946,16 +16570,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -15965,16 +16589,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -15990,16 +16614,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -16015,16 +16639,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16038,16 +16662,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -16057,16 +16681,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16080,16 +16704,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16104,16 +16728,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16127,16 +16751,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -16146,16 +16770,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -16165,16 +16789,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -16184,16 +16808,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -16203,16 +16827,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -16222,16 +16846,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -16241,16 +16865,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -16260,16 +16884,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -16279,16 +16903,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16302,16 +16926,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16325,16 +16949,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16348,16 +16972,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16371,16 +16995,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16394,16 +17018,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16417,16 +17041,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16440,16 +17064,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -16459,16 +17083,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -16478,16 +17102,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -16497,36 +17121,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -16536,16 +17184,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -16555,16 +17203,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -16580,16 +17228,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -16605,16 +17253,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16628,16 +17276,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -16647,16 +17295,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16670,16 +17318,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16694,16 +17342,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16717,16 +17365,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -16736,16 +17384,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -16755,16 +17403,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -16774,16 +17422,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -16793,16 +17441,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -16812,16 +17460,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -16831,16 +17479,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -16850,16 +17498,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -16869,16 +17517,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16892,16 +17540,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16915,16 +17563,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16938,16 +17586,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16961,16 +17609,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -16984,16 +17632,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17007,16 +17655,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17030,16 +17678,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -17049,16 +17697,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -17068,16 +17716,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -17087,36 +17735,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -17126,16 +17798,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -17145,16 +17817,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -17170,16 +17842,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -17195,16 +17867,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17218,16 +17890,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -17237,16 +17909,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17260,16 +17932,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17284,16 +17956,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17307,16 +17979,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -17326,16 +17998,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -17345,16 +18017,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -17364,16 +18036,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -17383,16 +18055,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -17402,16 +18074,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -17421,16 +18093,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -17440,16 +18112,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -17459,16 +18131,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17482,16 +18154,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17505,16 +18177,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17528,16 +18200,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17551,16 +18223,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17574,16 +18246,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17597,16 +18269,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17620,16 +18292,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -17639,16 +18311,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -17658,16 +18330,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -17677,36 +18349,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -17716,16 +18412,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -17735,16 +18431,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -17760,16 +18456,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -17785,16 +18481,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17808,16 +18504,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -17827,16 +18523,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17850,16 +18546,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17874,16 +18570,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -17897,16 +18593,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -17916,16 +18612,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -17935,16 +18631,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -17954,16 +18650,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -17973,16 +18669,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -17992,16 +18688,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -18011,16 +18707,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -18030,16 +18726,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -18049,16 +18745,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18072,16 +18768,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18095,16 +18791,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18118,16 +18814,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18141,16 +18837,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18164,16 +18860,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18187,16 +18883,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18210,16 +18906,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -18229,16 +18925,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -18248,16 +18944,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -18267,36 +18963,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -18306,16 +19026,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -18325,16 +19045,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -18350,16 +19070,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -18375,16 +19095,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18398,16 +19118,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -18417,16 +19137,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18440,16 +19160,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18464,16 +19184,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18487,16 +19207,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -18506,16 +19226,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -18525,16 +19245,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -18544,16 +19264,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -18563,16 +19283,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -18582,16 +19302,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -18601,16 +19321,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -18620,16 +19340,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -18639,16 +19359,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18662,16 +19382,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18685,16 +19405,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18708,16 +19428,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18731,16 +19451,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18754,16 +19474,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18777,16 +19497,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18800,16 +19520,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -18819,16 +19539,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -18838,16 +19558,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -18857,36 +19577,60 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrders -->
 ### getDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all delivery orders.
 
-**Description**: This
+**Description**: This fetches all delivery orders.
 
 **Responses:**
 - 200
@@ -18896,16 +19640,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
 
 <!-- DOCGEN:END getDeliveryOrders -->
 
 <!-- DOCGEN:START getActiveDeliveryOrders -->
 ### getActiveDeliveryOrders
 
-**Summary**: Get
+**Summary**: Get all active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active delivery orders.
 
 **Responses:**
 - 200
@@ -18915,16 +19659,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
 
 <!-- DOCGEN:END getActiveDeliveryOrders -->
 
 <!-- DOCGEN:START getOrder -->
 ### getOrder
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -18940,16 +19684,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
 
 <!-- DOCGEN:END getOrder -->
 
 <!-- DOCGEN:START getUserByDeliveryOrderId -->
 ### getUserByDeliveryOrderId
 
-**Summary**: Get
+**Summary**: Get order details.
 
-**Description**: This
+**Description**: This fetches the order details using the given order id.
 
 **Parameters:**
 
@@ -18965,16 +19709,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
 
 <!-- DOCGEN:END getUserByDeliveryOrderId -->
 
 <!-- DOCGEN:START createOrder -->
 ### createOrder
 
-**Summary**: Create
+**Summary**: Create a new delivery order.
 
-**Description**: This
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -18988,16 +19732,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
 
 <!-- DOCGEN:END createOrder -->
 
 <!-- DOCGEN:START createDailyMeals -->
 ### createDailyMeals
 
-**Summary**: Create
+**Summary**: Create daily meals.
 
-**Description**: This
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
 
 **Responses:**
 - 200
@@ -19007,16 +19751,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
 
 <!-- DOCGEN:END createDailyMeals -->
 
 <!-- DOCGEN:START acceptOrderDelivery -->
 ### acceptOrderDelivery
 
-**Summary**: Accept
+**Summary**: Accept a delivery order.
 
-**Description**: Accepts
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19030,16 +19774,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
 
 <!-- DOCGEN:END acceptOrderDelivery -->
 
 <!-- DOCGEN:START cancelOrderDelivery -->
 ### cancelOrderDelivery
 
-**Summary**: Driver
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
 
-**Description**: Allows
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19054,16 +19798,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
 
 <!-- DOCGEN:END cancelOrderDelivery -->
 
 <!-- DOCGEN:START completeOrder -->
 ### completeOrder
 
-**Summary**: Complete
+**Summary**: Complete a delivery order.
 
-**Description**: Completes
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19077,16 +19821,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
 
 <!-- DOCGEN:END completeOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersByDriverId -->
 ### getDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -19096,16 +19840,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
 ### getCompletedDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -19115,16 +19859,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
 ### getActiveDeliveryOrdersByDriverId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all active orders for a specific driver.
 
 **Responses:**
 - 200
@@ -19134,16 +19878,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
 ### getCompletedDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -19153,16 +19897,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
 ### getActiveDeliveryOrdersByUserId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific driver.
 
 **Responses:**
 - 200
@@ -19172,16 +19916,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
 
 <!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
 ### getActiveDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get active delivery orders.
 
-**Description**: This
+**Description**: This fetches all completed orders for a specific business.
 
 **Responses:**
 - 200
@@ -19191,16 +19935,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
 ### getDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get delivery orders.
 
-**Description**: This
+**Description**: This fetches all restaurant orders.
 
 **Responses:**
 - 200
@@ -19210,16 +19954,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
 ### getCompletedDeliveryOrdersByBusinessId
 
-**Summary**: Get
+**Summary**: Get completed delivery orders by business id.
 
-**Description**: This
+**Description**: This fetches all completed restaurant orders.
 
 **Responses:**
 - 200
@@ -19229,16 +19973,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
 
 <!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
 
 <!-- DOCGEN:START updateOrderStatus -->
 ### updateOrderStatus
 
-**Summary**: Update
+**Summary**: Update a delivery order's status.
 
-**Description**: Updates
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19252,16 +19996,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
 
 <!-- DOCGEN:END updateOrderStatus -->
 
 <!-- DOCGEN:START merchantAcceptOrder -->
 ### merchantAcceptOrder
 
-**Summary**: Process
+**Summary**: Process a delivery order from PENDING status.
 
-**Description**: Processes
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19275,16 +20019,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
 
 <!-- DOCGEN:END merchantAcceptOrder -->
 
 <!-- DOCGEN:START updateOrderPickupTime -->
 ### updateOrderPickupTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's pickup time.
 
-**Description**: Updates
+**Description**: Updates pickup time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19298,16 +20042,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
 
 <!-- DOCGEN:END updateOrderPickupTime -->
 
 <!-- DOCGEN:START updateOrderDeliveryTime -->
 ### updateOrderDeliveryTime
 
-**Summary**: Update
+**Summary**: Update a delivery order's delivery time.
 
-**Description**: Updates
+**Description**: Updates delivery time of the delivery order
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19321,16 +20065,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
 
 <!-- DOCGEN:END updateOrderDeliveryTime -->
 
 <!-- DOCGEN:START updateDeliveryOrderTimeline -->
 ### updateDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline.
 
-**Description**: Updates
+**Description**: Updates the timeline of a taxi order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19344,16 +20088,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START addToDeliveryOrderTimeline -->
 ### addToDeliveryOrderTimeline
 
-**Summary**: Update
+**Summary**: Update a delivery order's timeline by appending an entry.
 
-**Description**: Appends
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19367,16 +20111,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END addToDeliveryOrderTimeline -->
 
 <!-- DOCGEN:START updateDeliveryOrder -->
 ### updateDeliveryOrder
 
-**Summary**: Update
+**Summary**: Update a delivery order.
 
-**Description**: Updates
+**Description**: Updates a delivery order.
 
 **Request Body:** (required)
 Type: `application/json`
@@ -19390,16 +20134,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
 
 <!-- DOCGEN:END updateDeliveryOrder -->
 
 <!-- DOCGEN:START getDeliveryOrdersToday -->
 ### getDeliveryOrdersToday
 
-**Summary**: Get
+**Summary**: Get all delivery orders for today and earnings.
 
-**Description**: This
+**Description**: This fetches all delivery orders for today and earnings.
 
 **Responses:**
 - 200
@@ -19409,16 +20153,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
 
 <!-- DOCGEN:END getDeliveryOrdersToday -->
 
 <!-- DOCGEN:START dispatcherCancel -->
 ### dispatcherCancel
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -19428,16 +20172,16 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherCancel -->
 
 <!-- DOCGEN:START dispatcherRevoke -->
 ### dispatcherRevoke
 
-**Summary**: Cancels
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
 
-**Description**: Cancel
+**Description**: Cancel and if necessary refund an order
 
 **Responses:**
 - 200
@@ -19447,26 +20191,1278 @@ Content-Type: `application/json`
 
 - ⚠️ Could not parse: `200.application/json`
 
-🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel)
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
 
 <!-- DOCGEN:END dispatcherRevoke -->
 
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
 
 <!-- DOCGEN:START createDailyMealsSubscription -->
 ### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealsSubscription -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
 ### getDailyMealsSubscriptionsByUserId
 
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
 <!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
+
+<!-- DOCGEN:START getDeliveryOrders -->
+### getDeliveryOrders
+
+**Summary**: Get all delivery orders.
+
+**Description**: This fetches all delivery orders.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
+
+<!-- DOCGEN:END getDeliveryOrders -->
+
+<!-- DOCGEN:START getActiveDeliveryOrders -->
+### getActiveDeliveryOrders
+
+**Summary**: Get all active delivery orders.
+
+**Description**: This fetches all active delivery orders.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
+
+<!-- DOCGEN:END getActiveDeliveryOrders -->
+
+<!-- DOCGEN:START getOrder -->
+### getOrder
+
+**Summary**: Get order details.
+
+**Description**: This fetches the order details using the given order id.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | orderId |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
+
+<!-- DOCGEN:END getOrder -->
+
+<!-- DOCGEN:START getUserByDeliveryOrderId -->
+### getUserByDeliveryOrderId
+
+**Summary**: Get order details.
+
+**Description**: This fetches the order details using the given order id.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | order_id |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
+
+<!-- DOCGEN:END getUserByDeliveryOrderId -->
+
+<!-- DOCGEN:START createOrder -->
+### createOrder
+
+**Summary**: Create a new delivery order.
+
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
+
+<!-- DOCGEN:END createOrder -->
+
+<!-- DOCGEN:START createDailyMeals -->
+### createDailyMeals
+
+**Summary**: Create daily meals.
+
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
+
+<!-- DOCGEN:END createDailyMeals -->
+
+<!-- DOCGEN:START acceptOrderDelivery -->
+### acceptOrderDelivery
+
+**Summary**: Accept a delivery order.
+
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
+
+<!-- DOCGEN:END acceptOrderDelivery -->
+
+<!-- DOCGEN:START cancelOrderDelivery -->
+### cancelOrderDelivery
+
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
+
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
+
+<!-- DOCGEN:END cancelOrderDelivery -->
+
+<!-- DOCGEN:START completeOrder -->
+### completeOrder
+
+**Summary**: Complete a delivery order.
+
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
+
+<!-- DOCGEN:END completeOrder -->
+
+<!-- DOCGEN:START getDeliveryOrdersByDriverId -->
+### getDeliveryOrdersByDriverId
+
+**Summary**: Get completed delivery orders.
+
+**Description**: This fetches all completed orders for a specific driver.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
+
+<!-- DOCGEN:END getDeliveryOrdersByDriverId -->
+
+<!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
+### getCompletedDeliveryOrdersByDriverId
+
+**Summary**: Get completed delivery orders.
+
+**Description**: This fetches all completed orders for a specific driver.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
+
+<!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
+
+<!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
+### getActiveDeliveryOrdersByDriverId
+
+**Summary**: Get active delivery orders.
+
+**Description**: This fetches all active orders for a specific driver.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
+
+<!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
+
+<!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
+### getCompletedDeliveryOrdersByUserId
+
+**Summary**: Get completed delivery orders.
+
+**Description**: This fetches all completed orders for a specific driver.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
+
+<!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
+
+<!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
+### getActiveDeliveryOrdersByUserId
+
+**Summary**: Get active delivery orders.
+
+**Description**: This fetches all completed orders for a specific driver.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
+
+<!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
+
+<!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
+### getActiveDeliveryOrdersByBusinessId
+
+**Summary**: Get active delivery orders.
+
+**Description**: This fetches all completed orders for a specific business.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
+
+<!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
+
+<!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
+### getDeliveryOrdersByBusinessId
+
+**Summary**: Get delivery orders.
+
+**Description**: This fetches all restaurant orders.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
+
+<!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
+
+<!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
+### getCompletedDeliveryOrdersByBusinessId
+
+**Summary**: Get completed delivery orders by business id.
+
+**Description**: This fetches all completed restaurant orders.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
+
+<!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
+
+<!-- DOCGEN:START updateOrderStatus -->
+### updateOrderStatus
+
+**Summary**: Update a delivery order's status.
+
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
+
+<!-- DOCGEN:END updateOrderStatus -->
+
+<!-- DOCGEN:START merchantAcceptOrder -->
+### merchantAcceptOrder
+
+**Summary**: Process a delivery order from PENDING status.
+
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
+
+<!-- DOCGEN:END merchantAcceptOrder -->
+
+<!-- DOCGEN:START updateOrderPickupTime -->
+### updateOrderPickupTime
+
+**Summary**: Update a delivery order's pickup time.
+
+**Description**: Updates pickup time of the delivery order
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
+
+<!-- DOCGEN:END updateOrderPickupTime -->
+
+<!-- DOCGEN:START updateOrderDeliveryTime -->
+### updateOrderDeliveryTime
+
+**Summary**: Update a delivery order's delivery time.
+
+**Description**: Updates delivery time of the delivery order
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
+
+<!-- DOCGEN:END updateOrderDeliveryTime -->
+
+<!-- DOCGEN:START updateDeliveryOrderTimeline -->
+### updateDeliveryOrderTimeline
+
+**Summary**: Update a delivery order's timeline.
+
+**Description**: Updates the timeline of a taxi order.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
+
+<!-- DOCGEN:END updateDeliveryOrderTimeline -->
+
+<!-- DOCGEN:START addToDeliveryOrderTimeline -->
+### addToDeliveryOrderTimeline
+
+**Summary**: Update a delivery order's timeline by appending an entry.
+
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
+
+<!-- DOCGEN:END addToDeliveryOrderTimeline -->
+
+<!-- DOCGEN:START updateDeliveryOrder -->
+### updateDeliveryOrder
+
+**Summary**: Update a delivery order.
+
+**Description**: Updates a delivery order.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
+
+<!-- DOCGEN:END updateDeliveryOrder -->
+
+<!-- DOCGEN:START getDeliveryOrdersToday -->
+### getDeliveryOrdersToday
+
+**Summary**: Get all delivery orders for today and earnings.
+
+**Description**: This fetches all delivery orders for today and earnings.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
+
+<!-- DOCGEN:END getDeliveryOrdersToday -->
+
+<!-- DOCGEN:START dispatcherCancel -->
+### dispatcherCancel
+
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
+
+**Description**: Cancel and if necessary refund an order
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
+
+<!-- DOCGEN:END dispatcherCancel -->
+
+<!-- DOCGEN:START dispatcherRevoke -->
+### dispatcherRevoke
+
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
+
+**Description**: Cancel and if necessary refund an order
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
+
+<!-- DOCGEN:END dispatcherRevoke -->
+
+<!-- DOCGEN:START dailyMealsSubscriptionPayment -->
+### dailyMealsSubscriptionPayment
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END dailyMealsSubscriptionPayment -->
+
+<!-- DOCGEN:START createDailyMealsSubscription -->
+### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END createDailyMealsSubscription -->
+
+<!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
+### getDailyMealsSubscriptionsByUserId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
+
+<!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
+### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
+
+<!-- DOCGEN:START getDeliveryOrders -->
+### getDeliveryOrders
+
+**Summary**: Get all delivery orders.
+
+**Description**: This fetches all delivery orders.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllDeliveryOrders )
+
+<!-- DOCGEN:END getDeliveryOrders -->
+
+<!-- DOCGEN:START getActiveDeliveryOrders -->
+### getActiveDeliveryOrders
+
+**Summary**: Get all active delivery orders.
+
+**Description**: This fetches all active delivery orders.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrders )
+
+<!-- DOCGEN:END getActiveDeliveryOrders -->
+
+<!-- DOCGEN:START getOrder -->
+### getOrder
+
+**Summary**: Get order details.
+
+**Description**: This fetches the order details using the given order id.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | orderId |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getOrder )
+
+<!-- DOCGEN:END getOrder -->
+
+<!-- DOCGEN:START getUserByDeliveryOrderId -->
+### getUserByDeliveryOrderId
+
+**Summary**: Get order details.
+
+**Description**: This fetches the order details using the given order id.
+
+**Parameters:**
+
+| Name | In | Type | Description |
+|------|----|------|-------------|
+| undefined | path | order_id |  |
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getUserByDeliveryOrderId )
+
+<!-- DOCGEN:END getUserByDeliveryOrderId -->
+
+<!-- DOCGEN:START createOrder -->
+### createOrder
+
+**Summary**: Create a new delivery order.
+
+**Description**: This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createOrder )
+
+<!-- DOCGEN:END createOrder -->
+
+<!-- DOCGEN:START createDailyMeals -->
+### createDailyMeals
+
+**Summary**: Create daily meals.
+
+**Description**: This creates the daily meals for the subscribed users. Returns list of orders if successful.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createDailyMeals )
+
+<!-- DOCGEN:END createDailyMeals -->
+
+<!-- DOCGEN:START acceptOrderDelivery -->
+### acceptOrderDelivery
+
+**Summary**: Accept a delivery order.
+
+**Description**: Accepts delivery order with the provided details from the request body. Returns the accepted order if successful.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/acceptOrder )
+
+<!-- DOCGEN:END acceptOrderDelivery -->
+
+<!-- DOCGEN:START cancelOrderDelivery -->
+### cancelOrderDelivery
+
+**Summary**: Driver cancels their delivery of a delivery order which they have accepted but not picked up yet.
+
+**Description**: Allows a driver to cancel their delivery of an accepted delivery order if the order is in MERCHANT_PREPARING or MERCHANT_READY_FOR_PICKUP state.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 400
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/cancelDelivery )
+
+<!-- DOCGEN:END cancelOrderDelivery -->
+
+<!-- DOCGEN:START completeOrder -->
+### completeOrder
+
+**Summary**: Complete a delivery order.
+
+**Description**: Completes a delivery order with the provided order ID from the request body. Returns the completed order if successful and emits a 'driver_available' event.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/completeOrder )
+
+<!-- DOCGEN:END completeOrder -->
+
+<!-- DOCGEN:START getDeliveryOrdersByDriverId -->
+### getDeliveryOrdersByDriverId
+
+**Summary**: Get completed delivery orders.
+
+**Description**: This fetches all completed orders for a specific driver.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
+
+<!-- DOCGEN:END getDeliveryOrdersByDriverId -->
+
+<!-- DOCGEN:START getCompletedDeliveryOrdersByDriverId -->
+### getCompletedDeliveryOrdersByDriverId
+
+**Summary**: Get completed delivery orders.
+
+**Description**: This fetches all completed orders for a specific driver.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
+
+<!-- DOCGEN:END getCompletedDeliveryOrdersByDriverId -->
+
+<!-- DOCGEN:START getActiveDeliveryOrdersByDriverId -->
+### getActiveDeliveryOrdersByDriverId
+
+**Summary**: Get active delivery orders.
+
+**Description**: This fetches all active orders for a specific driver.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getActiveDeliveryOrdersByDriverId )
+
+<!-- DOCGEN:END getActiveDeliveryOrdersByDriverId -->
+
+<!-- DOCGEN:START getCompletedDeliveryOrdersByUserId -->
+### getCompletedDeliveryOrdersByUserId
+
+**Summary**: Get completed delivery orders.
+
+**Description**: This fetches all completed orders for a specific driver.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
+
+<!-- DOCGEN:END getCompletedDeliveryOrdersByUserId -->
+
+<!-- DOCGEN:START getActiveDeliveryOrdersByUserId -->
+### getActiveDeliveryOrdersByUserId
+
+**Summary**: Get active delivery orders.
+
+**Description**: This fetches all completed orders for a specific driver.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByDriverId )
+
+<!-- DOCGEN:END getActiveDeliveryOrdersByUserId -->
+
+<!-- DOCGEN:START getActiveDeliveryOrdersByBusinessId -->
+### getActiveDeliveryOrdersByBusinessId
+
+**Summary**: Get active delivery orders.
+
+**Description**: This fetches all completed orders for a specific business.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
+
+<!-- DOCGEN:END getActiveDeliveryOrdersByBusinessId -->
+
+<!-- DOCGEN:START getDeliveryOrdersByBusinessId -->
+### getDeliveryOrdersByBusinessId
+
+**Summary**: Get delivery orders.
+
+**Description**: This fetches all restaurant orders.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersByBusinessId )
+
+<!-- DOCGEN:END getDeliveryOrdersByBusinessId -->
+
+<!-- DOCGEN:START getCompletedDeliveryOrdersByBusinessId -->
+### getCompletedDeliveryOrdersByBusinessId
+
+**Summary**: Get completed delivery orders by business id.
+
+**Description**: This fetches all completed restaurant orders.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getCompletedDeliveryOrdersByBusinessId )
+
+<!-- DOCGEN:END getCompletedDeliveryOrdersByBusinessId -->
+
+<!-- DOCGEN:START updateOrderStatus -->
+### updateOrderStatus
+
+**Summary**: Update a delivery order's status.
+
+**Description**: Updates the status of a specific delivery order based on the provided details from the request body. Returns the updated order if successful.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderStatus )
+
+<!-- DOCGEN:END updateOrderStatus -->
+
+<!-- DOCGEN:START merchantAcceptOrder -->
+### merchantAcceptOrder
+
+**Summary**: Process a delivery order from PENDING status.
+
+**Description**: Processes the order payment capture and moves the order to the next state accordingly.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/merchantAcceptOrder )
+
+<!-- DOCGEN:END merchantAcceptOrder -->
+
+<!-- DOCGEN:START updateOrderPickupTime -->
+### updateOrderPickupTime
+
+**Summary**: Update a delivery order's pickup time.
+
+**Description**: Updates pickup time of the delivery order
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderPickupTime )
+
+<!-- DOCGEN:END updateOrderPickupTime -->
+
+<!-- DOCGEN:START updateOrderDeliveryTime -->
+### updateOrderDeliveryTime
+
+**Summary**: Update a delivery order's delivery time.
+
+**Description**: Updates delivery time of the delivery order
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateOrderDeliveryTime )
+
+<!-- DOCGEN:END updateOrderDeliveryTime -->
+
+<!-- DOCGEN:START updateDeliveryOrderTimeline -->
+### updateDeliveryOrderTimeline
+
+**Summary**: Update a delivery order's timeline.
+
+**Description**: Updates the timeline of a taxi order.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
+
+<!-- DOCGEN:END updateDeliveryOrderTimeline -->
+
+<!-- DOCGEN:START addToDeliveryOrderTimeline -->
+### addToDeliveryOrderTimeline
+
+**Summary**: Update a delivery order's timeline by appending an entry.
+
+**Description**: Appends a new timeline entry with the given status and optional extra data in entry_data.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
+
+<!-- DOCGEN:END addToDeliveryOrderTimeline -->
+
+<!-- DOCGEN:START updateDeliveryOrder -->
+### updateDeliveryOrder
+
+**Summary**: Update a delivery order.
+
+**Description**: Updates a delivery order.
+
+**Request Body:** (required)
+Type: `application/json`
+Content-Type: `application/json`
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateDeliveryOrderTimeline )
+
+<!-- DOCGEN:END updateDeliveryOrder -->
+
+<!-- DOCGEN:START getDeliveryOrdersToday -->
+### getDeliveryOrdersToday
+
+**Summary**: Get all delivery orders for today and earnings.
+
+**Description**: This fetches all delivery orders for today and earnings.
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getDeliveryOrdersToday )
+
+<!-- DOCGEN:END getDeliveryOrdersToday -->
+
+<!-- DOCGEN:START dispatcherCancel -->
+### dispatcherCancel
+
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
+
+**Description**: Cancel and if necessary refund an order
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
+
+<!-- DOCGEN:END dispatcherCancel -->
+
+<!-- DOCGEN:START dispatcherRevoke -->
+### dispatcherRevoke
+
+**Summary**: Cancels an order with the given order_id. Releases or refunds any used WF and cancels payment intent
+
+**Description**: Cancel and if necessary refund an order
+
+**Responses:**
+- 200
+- 500
+
+**Response Content:**
+
+- ⚠️ Could not parse: `200.application/json`
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/dispatcherCancel )
+
+<!-- DOCGEN:END dispatcherRevoke -->
+
+<!-- DOCGEN:START dailyMealsSubscriptionPayment -->
+### dailyMealsSubscriptionPayment
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END dailyMealsSubscriptionPayment -->
+
+<!-- DOCGEN:START createDailyMealsSubscription -->
+### createDailyMealsSubscription
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END createDailyMealsSubscription -->
+
+<!-- DOCGEN:START getDailyMealsSubscriptionsByUserId -->
+### getDailyMealsSubscriptionsByUserId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
+
+<!-- DOCGEN:END getDailyMealsSubscriptionsByUserId -->
+
+<!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
+### getDailyMealsSubscriptionsByBusinessId
+
+**Summary**:  
+
+**Description**:  
+
+🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->

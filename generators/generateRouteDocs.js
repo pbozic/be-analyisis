@@ -13,6 +13,8 @@ const SWAGGER_SMALL_INPUT = path.join(DOCS_DIR, 'static/swagger/openApiConfig.ya
 console.log('SWAGGER_INPUT', SWAGGER_INPUT);
 const SWAGGER_OUTPUT_DIR = path.join(DOCS_DIR, 'static/swagger-per-route');
 const merge = require('lodash.merge');
+
+const generateRoutesMap = require('./generateRouteMap');
 function ensureDir(dir) {
 	if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
@@ -22,13 +24,12 @@ function sanitizePathSegment(segment) {
 }
 
 function generateRouteDoc(route) {
-	const segments = route.path.split('/').filter(Boolean).map(sanitizePathSegment);
-	const method = route.method.toLowerCase();
-	const methodPrefix = method;
-	const filenameBase = [methodPrefix, ...segments].join('-');
-
+	const segments = route.pathParts.map(sanitizePathSegment);
 	const dir = path.join(OUTPUT_DIR, ...segments);
 	ensureDir(dir);
+	const method = route.method.toLowerCase();
+	const pathSegments = route.path.split('/').filter(Boolean).map(sanitizePathSegment);
+	const filenameBase = [method, ...pathSegments].join('-');
 
 	const filepath = path.join(dir, `${filenameBase}.mdx`);
 	ensureDir(SWAGGER_OUTPUT_DIR);
@@ -53,27 +54,32 @@ function generateRouteDoc(route) {
 	}
 	if (!routeSpec) {
 		console.warn(`⚠️ No OpenAPI spec found for ${route.method} ${route.path}`);
-		return;
 	}
-
-	const filteredSpec = {
-		openapi: openapiSmall.openapi || '3.0.3',
-		info: { title: `${route.method} ${route.path}`, version: '1.0.0' },
-		paths: {
-			[route.path]: {
-				[method]: routeSpec,
+	let relativeSpecPath = '';
+	let swagger = '';
+	if (routeSpec) {
+		const filteredSpec = {
+			openapi: openapiSmall.openapi || '3.0.3',
+			info: { title: `${route.method} ${route.path}`, version: '1.0.0' },
+			paths: {
+				[route.path]: {
+					[method]: routeSpec,
+				},
 			},
-		},
-		components: undefined,
-	};
+			components: undefined,
+		};
 
-	const specFileName = `${filenameBase}.yaml`;
-	const specFilePath = path.join(SWAGGER_OUTPUT_DIR, specFileName);
-	fs.writeFileSync(specFilePath, yaml.dump(filteredSpec), 'utf8');
+		const specFileName = `${filenameBase}.yaml`;
+		const specFilePath = path.join(SWAGGER_OUTPUT_DIR, specFileName);
+		fs.writeFileSync(specFilePath, yaml.dump(filteredSpec), 'utf8');
 
-	const relativeSpecPath = `/swagger-per-route/${specFileName}`;
+		relativeSpecPath = `/swagger-per-route/${specFileName}`;
+
+		swagger = `<SwaggerUI url="${relativeSpecPath}" deepLinking={true} filter={true} />`;
+	}
 	const content = `import SwaggerUI from 'swagger-ui-react';
 import 'swagger-ui-react/swagger-ui.css';
+
 
 # [${route.method.toUpperCase()}] ${route.path}
 
@@ -83,7 +89,7 @@ import 'swagger-ui-react/swagger-ui.css';
 
 ## 🧾 Swagger Preview
 
-<SwaggerUI url="${relativeSpecPath}" deepLinking={true} filter={true} />
+${swagger ? swagger : '⚠️ No OpenAPI spec found for this route.'}
 
 ## ✍️ Description
 _Add details here._
@@ -91,14 +97,16 @@ _Add details here._
 `;
 
 	if (!fs.existsSync(filepath)) {
-		console.log(`✅ Creating route doc: ${filepath}`);
+		//console.log(`✅ Creating route doc: ${filepath}`);
 		fs.writeFileSync(filepath, content);
 	} else {
-		console.log(`⏩ Skipped (already exists): ${filepath}`);
+		//console.log(`⏩ Skipped (already exists): ${filepath}`);
 	}
 }
 
 async function generateRouteDocs() {
+	await generateRoutesMap(path.join(__dirname, '../routes'), ROUTES_MAP);
+	console.log('Generating route docs...');
 	const data = JSON.parse(fs.readFileSync(ROUTES_MAP, 'utf-8'));
 	let spec;
 	let finalSpec;
@@ -109,14 +117,14 @@ async function generateRouteDocs() {
 			cwd: process.cwd(), // base dir to resolve from
 			absolute: true, // get full paths
 		});
-		console.log('path', path.join(process.cwd(), 'routes/**/*.js'));
-		console.log('files', files);
+		//console.log('path', path.join(process.cwd(), 'routes/**/*.js'));
+		//console.log('files', files);
 		// This triggers parsing of comments
 		spec = openapi({
 			include: files,
 		});
-		console.log('spec', spec);
-		console.log('baseSpec', baseSpec);
+		//console.log('spec', spec);
+		//console.log('baseSpec', baseSpec);
 		finalSpec = merge({}, baseSpec, spec);
 		if (!finalSpec.openapi) finalSpec.openapi = '3.0.3';
 		const yamlSpec = yaml.dump(finalSpec);

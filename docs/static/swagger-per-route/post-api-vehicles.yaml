@@ -1,0 +1,30 @@
+openapi: 3.0.3
+info:
+  title: post /api/vehicles/driver/assign/
+  version: 1.0.0
+paths:
+  /api/vehicles/driver/assign/:
+    post:
+      tags:
+        - Vehicles
+      summary: Assign vehicles to a driver
+      description: >-
+        Assigns existing vehicles to a driver by creating a vehicle_drivers
+        entry.
+      requestBody:
+        content:
+          vehicles:
+            schema:
+              type: string
+          driver_id:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Vehicle assigned successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Vehicle'
+        '400':
+          description: Error assigning vehicles to driver

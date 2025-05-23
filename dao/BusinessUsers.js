@@ -1,6 +1,6 @@
 const prisma = require('../prisma/prisma');
 const UserDao = require('./User');
-const stripe = require('../lib/stripe');
+const { client } = require('../lib/stripe');
 const { SERVICE_TYPE } = require('../lib/constants');
 
 const getAllBusinessUsers = async () => {
@@ -100,7 +100,7 @@ const getAllBusinessUsersForBusinessByCompanyRole = async (business_id, company_
 
 const createBusinessUser = async (userData, business_id) => {
 	try {
-		let stripeCustomer = await stripe.createCustomer(
+		let stripeCustomer = await client.createCustomer(
 			userData.data.email,
 			userData.data.first_name + ' ' + userData.data.last_name,
 			userData.data.telephone
