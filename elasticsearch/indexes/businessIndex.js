@@ -234,7 +234,7 @@ async function indexBusinesses(business_id = null, force = false) {
 					}
 				}
 			}
-			console.log(categoriesIds);
+			console.log(categoriesIds?.length);
 			const doc = {
 				business_id: business.business_id,
 				name: business.name,
