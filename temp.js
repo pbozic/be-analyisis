@@ -1,13 +1,13 @@
-const { getDistanceForRouteV2 } = require('./lib/gApis.js');
+const { getDistanceForRoute } = require('./lib/gApis.js');
 
-async function getDistanceForRoute() {
+async function getDistanceForRoute1() {
 	try {
 		const points = [
-			{ latitude: 46.073184167980266, longitude: 14.471815270613476 }, // origin
-			{ latitude: 46.0527405, longitude: 14.4720881 }, // waypoint
-			{ latitude: 46.06816374090053, longitude: 14.473042935132982 }, // destination
+			{ latitude: 46.07318416877476, longitude: 14.47181516089705 },
+			{ latitude: 46.0527405, longitude: 14.4720881 },
+			{ latitude: 46.0719731, longitude: 14.4728517 },
 		];
-		const result = await getDistanceForRouteV2(points);
+		const result = await getDistanceForRoute(points);
 		console.log('Distance and duration:', result);
 		return result;
 	} catch (error) {
@@ -16,7 +16,7 @@ async function getDistanceForRoute() {
 	}
 }
 
-getDistanceForRoute()
+getDistanceForRoute1()
 	.then((result) => {
 		console.log('Route details:', result);
 	})
