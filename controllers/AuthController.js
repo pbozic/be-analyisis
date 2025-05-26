@@ -539,13 +539,13 @@ async function registerTaxiService(req, res) {
 
 		let vehicles = [];
 		if (Array.isArray(req.body.vehicles) && req.body.vehicles.length) {
-			for (const vehicleInfo of req.body.vehicles.data) {
+			for (const vehicleInfo of req.body.vehicles) {
 				const vehicle = await VehicleDao.createNewVehicle({
-					...vehicleInfo?.vehicle_information,
+					...vehicleInfo?.data?.vehicle_information,
 					business_id: business.business_id,
 				});
-				if (Array.isArray(vehicleInfo.drivers) && vehicleInfo.drivers.length) {
-					for (const email of vehicleInfo.drivers) {
+				if (Array.isArray(vehicleInfo?.data?.drivers) && vehicleInfo?.data?.drivers.length) {
+					for (const email of vehicleInfo.data.drivers) {
 						const driver = drivers.find((d) => d.email === email);
 						await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver?.driver_id);
 					}
@@ -553,8 +553,8 @@ async function registerTaxiService(req, res) {
 					await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, drivers[0]?.driver?.driver_id);
 				}
 				// Handle vehicle documents
-				if (vehicleInfo.documents) {
-					for (const doc of vehicleInfo.documents) {
+				if (vehicleInfo?.data?.documents) {
+					for (const doc of vehicleInfo.data.documents) {
 						const document = await DocumentDao.createDocument(doc.documentData);
 						for (const file of doc.files) {
 							let base64 = file.base64;
