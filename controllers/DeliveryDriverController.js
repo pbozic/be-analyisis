@@ -747,7 +747,7 @@ async function getTotalEarnings(req, res) {
 				status: DELIVERY_ORDER_STATUS.SUCCESS,
 			},
 		});
-		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.SUCCESS, true);
+		const totalEarnings = calculateTotalEarnings(orders);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
 		console.error("Error retrieving all delivery drivers' total earnings:", error);
@@ -782,7 +782,7 @@ async function getDriverTotalEarnings(req, res) {
 				delivery_driver_id: delivery_driver_id,
 			},
 		});
-		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.SUCCESS, true, detailed);
+		const totalEarnings = calculateTotalEarnings(orders, detailed);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
 		console.error("Error retrieving delivery driver's total earnings:", error);
