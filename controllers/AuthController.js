@@ -546,7 +546,7 @@ async function registerTaxiService(req, res) {
 				});
 				if (Array.isArray(vehicleInfo?.data?.drivers) && vehicleInfo?.data?.drivers.length) {
 					for (const email of vehicleInfo.data.drivers) {
-						const driver = drivers.find((d) => d.driver.email === email);
+						const driver = drivers.find((d) => d.driver.user.email === email);
 						await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, driver?.driver_id);
 					}
 				} else {
