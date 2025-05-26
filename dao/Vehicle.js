@@ -134,8 +134,17 @@ const unAssignVehicleFromDrivers = async (vehicle_id, newDriverIds) => {
 
 const assignVehicleToDriver = async (vehicleId, driverId) => {
 	try {
-		return await prisma.vehicle_drivers.create({
-			data: {
+		return await prisma.vehicle_drivers.upsert({
+			where: {
+				vehicle_id_driver_id: {
+					vehicle_id: vehicleId,
+					driver_id: driverId,
+				},
+			},
+			update: {
+				can_drive: true,
+			},
+			create: {
 				driver: {
 					connect: {
 						driver_id: driverId,
@@ -146,6 +155,7 @@ const assignVehicleToDriver = async (vehicleId, driverId) => {
 						vehicle_id: vehicleId,
 					},
 				},
+				can_drive: true,
 			},
 		});
 	} catch (error) {
@@ -175,7 +185,12 @@ const assignVehicleToDeliveryDriver = async (vehicleId, driverId) => {
 const removeVehicleFromDriver = async (vehicleId, driverId) => {
 	try {
 		return await prisma.vehicle_drivers.update({
-			where: { vehicle_id: vehicleId, driver_id: driverId },
+			where: {
+				vehicle_id_driver_id: {
+					vehicle_id: vehicleId,
+					driver_id: driverId,
+				},
+			},
 			data: {
 				can_drive: false,
 			},
