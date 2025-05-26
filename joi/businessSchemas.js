@@ -75,7 +75,7 @@ const newBusinessSchema = Joi.object({
 	type: Joi.string(),
 	is_business_unit: Joi.boolean(),
 	name: Joi.string(),
-	description: Joi.string().allow(null).optional(),
+	description: Joi.string().allow('', null).optional(),
 	tax_id: Joi.string(),
 	registration_id: Joi.string(),
 	email: Joi.string()
@@ -104,7 +104,7 @@ const newBusinessSchema = Joi.object({
 	telephone: Joi.string(),
 	telephone_code: Joi.string(),
 	telephone_number: Joi.string(),
-	website_url: Joi.string().allow(null).optional(),
+	website_url: Joi.string().allow('', null).optional(),
 	minimum_order: Joi.number().integer().optional(),
 });
 
