@@ -369,7 +369,7 @@ async function updateVehicle(req, res) {
  * @tag Vehicles
  * @summary Assign vehicles to a driver
  * @description Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
- * @bodyContent {string} vehicles - The vehicles to assign
+ * @bodyContent {array} vehicles - The vehicles to assign
  * @bodyContent {string} driver_id - The ID of the driver to whom the vehicle is being assigned
  * @response 200 - Vehicle assigned successfully
  * @responseContent {Vehicle} 200.application/json
@@ -377,7 +377,6 @@ async function updateVehicle(req, res) {
  */
 async function assignVehiclesToDriver(req, res) {
 	const { vehicles, driver_id } = req.body;
-	console.log('assignVehiclesToDriver', req.body);
 	try {
 		if (Array.isArray(vehicles) && vehicles.length > 0) {
 			for (const vehicle of vehicles) {
@@ -401,30 +400,38 @@ async function assignVehiclesToDriver(req, res) {
 		res.status(200).json({ message: 'Vehicles assigned successfully' });
 	} catch (err) {
 		console.error('Error assigning vehicles to driver:', err);
-		res.status(400).json({ error: 'Error assigning vehicles to driver', err });
+		res.status(500).json({ error: 'Error assigning vehicles to driver', err });
 	}
 }
 
 /**
  * PATCH /vehicles/driver/unassign/
  * @tag Vehicles
- * @summary Remove a vehicle from a driver
+ * @summary Remove vehicles from a driver
  * @description Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
- * @bodyContent {string} vehicle_id - The ID of the vehicle to unassign
+ * @bodyContent {array} vehicles - The vehicles to unassign
  * @bodyContent {string} driver_id - The ID of the driver to unassign
  * @response 200 - Vehicle disassociated successfully
  * @responseContent {Vehicle} 200.application/json
  * @response 400 - Error removing vehicle from driver
  */
-async function removeVehicleFromDriver(req, res) {
-	const { vehicle_id, driver_id } = req.body;
+async function removeVehiclesFromDriver(req, res) {
+	const { vehicles, driver_id } = req.body;
 	try {
-		const updatedVehicle = await VehicleDao.removeVehicleFromDriver(vehicle_id, driver_id);
-		if (updatedVehicle) res.status(200).json(updatedVehicle);
-		res.status(400).json({ error: 'Error removing vehicle from driver' });
+		if (Array.isArray(vehicles) && vehicles.length > 0) {
+			for (const vehicle of vehicles) {
+				const updatedVehicle = await VehicleDao.removeVehicleFromDriver(vehicle.vehicle_id, driver_id);
+				if (!updatedVehicle) {
+					console.error(`Error removing vehicle ${vehicle.vehicle_id} from driver ${driver_id}`);
+				}
+			}
+		} else {
+			res.status(400).json({ error: 'Vehicles should be a non-empty array' });
+		}
+		res.status(200).json({ message: 'Vehicles removed successfully' });
 	} catch (err) {
 		console.error('Error removing vehicle from driver:', err);
-		res.status(400).json({ error: 'Error removing vehicle from driver', err });
+		res.status(500).json({ error: 'Error removing vehicle from driver', err });
 	}
 }
 
@@ -463,6 +470,6 @@ module.exports = {
 	createVehicle,
 	updateVehicle,
 	assignVehiclesToDriver,
-	removeVehicleFromDriver,
+	removeVehiclesFromDriver,
 	deleteVehicle,
 };
