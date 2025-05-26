@@ -164,6 +164,7 @@ const prisma = new PrismaClient({
 					AND (
 						(
 							COALESCE(${vehicleFilters.class}, '') = '' 
+							-- TODO: This is a temporary fix, we need to handle this better
 							AND vehicles.class::TEXT NOT IN ('MINIVAN', 'MINIBUS', 'BUS', 'CARGO_VAN')
 						)
 						OR vehicles.class::TEXT = ${vehicleFilters.class.toUpperCase()}

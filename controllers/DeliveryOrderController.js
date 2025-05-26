@@ -178,6 +178,8 @@ async function createOrder(req, res) {
 		let business = await BusinessDao.getBusinessById(orderData.details.business_id);
 		if (!business) {
 			throw new Error('Business not found!');
+		} else if (!business.business_users?.some((user) => user.online)) {
+			throw new Error('Business is currently offline!');
 		}
 		if (orderData.details.type === 'delivery') {
 			const distance = Helpers.haversineDistance(orderData.delivery_location.coordinates, {
@@ -382,7 +384,7 @@ async function createOrder(req, res) {
 		if (order && order?.order_id && order?.user_id) {
 			await handlePaymentCleanup(order);
 		}
-		res.status(500).json(e);
+		res.status(500).json({ message: e.message });
 	}
 }
 

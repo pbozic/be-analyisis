@@ -52,6 +52,7 @@
 		"@commitlint/cli": "^19.8.1",
 		"@elastic/elasticsearch": "^8.17.0",
 		"@googlemaps/google-maps-services-js": "^3.4.0",
+		"@googlemaps/routing": "^2.0.1",
 		"@joi/date": "^2.1.1",
 		"@onesignal/node-onesignal": "^5.0.0-alpha-01",
 		"@prisma/client": "^5.14.0",

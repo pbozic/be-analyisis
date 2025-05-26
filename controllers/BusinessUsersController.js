@@ -3,6 +3,7 @@ const AddressDao = require('../dao/Address');
 const GroupDao = require('../dao/Group');
 const UserDao = require('../dao/User');
 const Constants = require('../lib/constants');
+const { businessIndex } = require('../elasticsearch');
 
 /**
  * GET /business-users
