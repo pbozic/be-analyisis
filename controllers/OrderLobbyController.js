@@ -94,6 +94,8 @@ async function addUserToLobby(user_id, order_lobby, limit) {
  * @param {string} req.body.lobby_description - Description of the lobby
  * @param {string} req.body.business_id - ID of the business
  * @param {string} req.body.restaurant_id - ID of the restaurant
+ * @param {string} req.body.courier_note - Note for the courier
+ * @param {Object} req.body.delivery_location - Delivery location
  * @param {Object} req.user - Authenticated user object
  * @param {string} req.user.user_id - ID of the authenticated user
  * @param {Object} res - Express response object
@@ -101,7 +103,15 @@ async function addUserToLobby(user_id, order_lobby, limit) {
  */
 async function createLobby(req, res) {
 	try {
-		const { user_limits_map, lobby_name, lobby_description, business_id, restaurant_id } = req.body;
+		const {
+			user_limits_map,
+			lobby_name,
+			lobby_description,
+			business_id,
+			restaurant_id,
+			courier_note,
+			delivery_location,
+		} = req.body;
 
 		const new_lobby = await OrderLobbyDao.createOrderLobby({
 			lobby_name,
@@ -109,6 +119,8 @@ async function createLobby(req, res) {
 			business: { connect: { business_id: business_id } },
 			restaurant_id,
 			creator_id: req.user.user_id,
+			courier_note: courier_note,
+			delivery_location: delivery_location,
 		});
 
 		const lobby_users = [];
