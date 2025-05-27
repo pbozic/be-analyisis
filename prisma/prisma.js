@@ -156,7 +156,7 @@ const prisma = new PrismaClient({
 					JOIN vehicles ON vehicles.vehicle_id = drivers.current_vehicle_id
 					LEFT JOIN driver_municipalities dm
 						ON dm.driver_id = drivers.driver_id
-						AND dm.municipalities_id = ${region_id}
+						AND dm.municipalities_id = ${region_id}::uuid
 					WHERE drivers.online = true
 						AND drivers.on_order = false
 						AND ST_DWithin(
