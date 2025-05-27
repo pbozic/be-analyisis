@@ -29,7 +29,7 @@ async function municipalitiesSeeder() {
 			},
 		});
 		if (exists) {
-			let exists = await prisma.municipalities.update({
+			let update = await prisma.municipalities.update({
 				where: {
 					municipalities_id: exists.municipalities_id,
 					requires_license: requiresLicense.includes(muGJ.properties.NAZIV),
