@@ -893,10 +893,10 @@ async function createOrder(req, res) {
 		}
 		console.log('REGION', region);
 		if (region) {
-			orderData.estiamtes = {
+			orderData.estimates = {
 				...orderData.estimates,
-				region: region,
-				regionLicense: region.requires_license,
+				region: region[0].name,
+				regionLicense: region[0].requires_license,
 			};
 		}
 		let business_client;
