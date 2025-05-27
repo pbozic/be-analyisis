@@ -30,6 +30,14 @@ async function searchBusinesses(
 	pageSize = 10
 ) {
 	try {
+		userLat = userLat ?? 46.0660617;
+		userLon = userLon ?? 14.5098111;
+		categoryIds = categoryIds || [];
+		filterOperator = filterOperator || 'OR';
+		isDailyMealSearch = isDailyMealSearch || false;
+		promoSectionId = promoSectionId || null;
+		page = page || 1;
+		pageSize = pageSize || 10;
 		const from = (page - 1) * pageSize;
 		const queryWords = query ? query.split(' ').filter((word) => word.trim() !== '') : [];
 		const hasQuery = queryWords.length > 0;
