@@ -344,7 +344,9 @@ async function getMenuCategoriesByBusinessId(req, res) {
  */
 async function getMenuItemsByBusinessId(req, res) {
 	try {
-		const items = await MenuItemDao.getMenuItemsByBusinessId(req.params.business_id);
+		const items = await MenuItemDao.getMenuItemsByBusinessId(req.params.business_id, {
+			is_copy: false,
+		});
 		res.status(200).json(items);
 	} catch (e) {
 		console.error('Error obtaining menu items:', e);
@@ -479,7 +481,7 @@ async function updateMenuItemsOrder(req, res) {
  * @response 400 - Error creating new menu item
  */
 async function createMenuItem(req, res) {
-	const { category_id, data, image, user_id } = req.body;
+	const { category_id, data, image, is_copy } = req.body;
 	try {
 		let document = null;
 		if (image?.documentData) {
@@ -498,7 +500,7 @@ async function createMenuItem(req, res) {
 			}
 		}
 
-		const menuItem = await MenuItemDao.createMenuItem(category_id, data);
+		const menuItem = await MenuItemDao.createMenuItem(category_id, data, is_copy);
 		if (document) await DocumentDao.linkDocumentToMenuItem(document.document_id, menuItem.menu_item_id);
 
 		businessIndex(menuItem.business_id);
