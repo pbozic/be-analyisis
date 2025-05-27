@@ -36,7 +36,7 @@ async function searchBusinesses(
 		const hasCategories = categoryIds.length > 0;
 		const hasPromoSection = promoSectionId !== null;
 		const radius_limited = radius ? Math.min(radius, ES_RADIUS_LIMIT_KM) : ES_RADIUS_LIMIT_KM;
-
+		console.log('latlng', userLat, userLon);
 		// Base Query
 		const boolQuery = {
 			bool: {
