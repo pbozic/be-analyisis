@@ -882,7 +882,10 @@ async function createOrder(req, res) {
 			const pointWKT = `SRID=4326;POINT(${coordinates.longitude} ${coordinates.latitude})`;
 
 			region = await prisma.$queryRaw`
-			SELECT *
+			SELECT 
+				municipalities_id,
+				name,
+				requires_license,
 			FROM municipalities
 			WHERE ST_Contains(geom_generated, ST_GeomFromText(${pointWKT}))
 			LIMIT 1;
