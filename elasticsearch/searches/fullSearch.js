@@ -297,6 +297,7 @@ async function searchBusinesses(
 				from,
 				size: pageSize,
 				explain: true,
+				track_total_hits: true,
 				query: functionScoreQuery,
 				_source: [
 					'business_id',
@@ -322,43 +323,48 @@ async function searchBusinesses(
 
 		//console.log(JSON.stringify(esResponse, null, 4));
 
-		return esResponse.hits.hits.map((hit) => {
-			let scores = {
-				name_score: 0,
-				description_score: 0,
-				menu_item_name_score: 0,
-				menu_item_description_score: 0,
-				location_score: 0,
-				promo_score: 0,
-				word_score: 0,
-				popularity_score: 0,
-				new_business_score: 0,
-			};
+		return {
+			total: esResponse.hits.total?.value || 0,
+			max_score: esResponse.hits.max_score,
+			took: esResponse.took,
+			results: esResponse.hits.hits.map((hit) => {
+				let scores = {
+					name_score: 0,
+					description_score: 0,
+					menu_item_name_score: 0,
+					menu_item_description_score: 0,
+					location_score: 0,
+					promo_score: 0,
+					word_score: 0,
+					popularity_score: 0,
+					new_business_score: 0,
+				};
 
-			if (hit._explanation) {
-				extractScores(hit._explanation, scores);
-			}
+				if (hit._explanation) {
+					extractScores(hit._explanation, scores);
+				}
 
-			return {
-				business_id: hit._source.business_id,
-				online: hit._source.online,
-				name: hit._source.name,
-				description: hit._source.description,
-				score: hit._score,
-				address: hit._source.address,
-				delivery_address: hit._source.delivery_address,
-				popular: hit._source.popular,
-				new: hit._source.new,
-				working_hours: hit._source.working_hours,
-				seats: hit._source.seats,
-				restaurant_overwhelmed: hit._source.restaurant_overwhelmed,
-				logo: hit._source.logo,
-				banner: hit._source.banner,
-				telephone: hit._source.telephone,
-				promo_sections: hit._source.promo_sections,
-				scores,
-			};
-		});
+				return {
+					business_id: hit._source.business_id,
+					online: hit._source.online,
+					name: hit._source.name,
+					description: hit._source.description,
+					score: hit._score,
+					address: hit._source.address,
+					delivery_address: hit._source.delivery_address,
+					popular: hit._source.popular,
+					new: hit._source.new,
+					working_hours: hit._source.working_hours,
+					seats: hit._source.seats,
+					restaurant_overwhelmed: hit._source.restaurant_overwhelmed,
+					logo: hit._source.logo,
+					banner: hit._source.banner,
+					telephone: hit._source.telephone,
+					promo_sections: hit._source.promo_sections,
+					scores,
+				};
+			}),
+		};
 	} catch (error) {
 		console.error('❌ Error in search:', error);
 		return [];
