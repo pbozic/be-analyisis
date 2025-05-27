@@ -24,7 +24,7 @@ router.post('/create', VehiclesController.createVehicle);
 
 router.patch('/', VehiclesController.updateVehicle);
 router.post('/driver/assign/', VehiclesController.assignVehiclesToDriver);
-router.patch('/driver/unassign', VehiclesController.removeVehicleFromDriver);
+router.patch('/driver/unassign', VehiclesController.removeVehiclesFromDriver);
 
 router.delete('/:vehicle_id', VehiclesController.deleteVehicle);
 
