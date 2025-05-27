@@ -28,7 +28,14 @@ async function municipalitiesSeeder() {
 				name: muGJ.properties.NAZIV,
 			},
 		});
-		if (exists) continue;
+		if (exists) {
+			let exists = await prisma.municipalities.update({
+				where: {
+					municipalities_id: exists.municipalities_id,
+					requires_license: requiresLicense.includes(muGJ.properties.NAZIV),
+				},
+			});
+		}
 		console.log('Municipality not found, creating: ', muGJ.properties.NAZIV);
 		await prisma.municipalities.create({
 			data: {
