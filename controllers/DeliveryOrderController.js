@@ -441,10 +441,10 @@ async function createDailyMeals(req, res) {
 		};
 
 		let sortedUserAddresses = [];
-		if (provider.daily_users_sorting_type === 'MANUAL') {
+		if (business.daily_users_sorting_type === 'MANUAL') {
 			// Manual sorting based on provider.daily_users_sorted
 			const userMap = new Map(subscriptions.map((sub) => [sub.daily_meals_subscription_id, sub]));
-			sortedUserAddresses = provider.daily_users_sorted
+			sortedUserAddresses = business.daily_users_sorted
 				.map((daily_meals_subscription_id) => userMap.get(daily_meals_subscription_id))
 				.filter((sub) => sub !== undefined)
 				.map((sub) => sub.address);
@@ -514,8 +514,8 @@ async function createDailyMeals(req, res) {
 					sub_total_price: 0,
 					total_price: 0,
 					discount_savings: 0,
-					provider_address: provider.address,
-					business_id: provider.business_id,
+					provider_address: business.address,
+					business_id: business.business_id,
 					delivery_cost: 2.4,
 					delivery_earnings: 0,
 					provider_delivery_cost: 2.4,
