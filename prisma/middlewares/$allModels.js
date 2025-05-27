@@ -25,20 +25,24 @@ async function generateS3LinksRecursively(args, result) {
 							document.files.map(async (file) => {
 								return {
 									...file,
-									url: await S3Helper.GetObject(
-										S3Helper.getFileKey(file.file_id, file.mime_type),
-										file.public
-									),
+									url: file.public
+										? await S3Helper.GetObject(
+												S3Helper.getFileKey(file.file_id, file.mime_type),
+												file.public
+											)
+										: file.url,
 								};
 							})
 						);
 					} else {
 						document.files = {
 							...document.files,
-							url: await S3Helper.GetObject(
-								S3Helper.getFileKey(document.files.file_id, document.files.mime_type),
-								document.files.public
-							),
+							url: document.files.public
+								? await S3Helper.GetObject(
+										S3Helper.getFileKey(document.files.file_id, document.files.mime_type),
+										document.files.public
+									)
+								: document.files.url,
 						};
 					}
 				}
@@ -50,20 +54,24 @@ async function generateS3LinksRecursively(args, result) {
 					result.files.map(async (file) => {
 						return {
 							...file,
-							url: await S3Helper.GetObject(
-								S3Helper.getFileKey(file.file_id, file.mime_type),
-								file.public
-							),
+							url: file.public
+								? await S3Helper.GetObject(
+										S3Helper.getFileKey(file.file_id, file.mime_type),
+										file.public
+									)
+								: file.url,
 						};
 					})
 				);
 			} else {
 				result.files = {
 					...result.files,
-					url: await S3Helper.GetObject(
-						S3Helper.getFileKey(result.files.file_id, result.files.mime_type),
-						result.files.public
-					),
+					url: result.files.public
+						? await S3Helper.GetObject(
+								S3Helper.getFileKey(result.files.file_id, result.files.mime_type),
+								result.files.public
+							)
+						: result.files.url,
 				};
 			}
 		}
