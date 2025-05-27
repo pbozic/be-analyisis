@@ -276,6 +276,10 @@ async function listPromoSectionsWithMerchants(req, res) {
 				10
 			);
 			promoSection.translations = translations;
+			if (!esResults || !esResults.results || esResults.results.length === 0) {
+				esResults.results = [];
+				continue;
+			}
 			let providerIds = esResults.results.map((r) => r.business_id);
 			let providers = await BusinessDao.getBusinessesForSearchById(providerIds);
 			let result = [];
