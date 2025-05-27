@@ -910,7 +910,11 @@ async function getDailyMealSubscriptionsByBusinessId(business_id) {
 			include: {
 				address: true,
 				menu: true,
-				category: true,
+				menu_category: {
+					include: {
+						menu_items: true
+					}
+				},
 			},
 		});
 	} catch (e) {
