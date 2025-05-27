@@ -895,8 +895,9 @@ async function createOrder(req, res) {
 		if (region) {
 			orderData.estimates = {
 				...orderData.estimates,
+				region_id: region[0].municipalities_id,
 				region: region[0].name,
-				regionLicense: region[0].requires_license,
+				region_license: region[0].requires_license,
 			};
 		}
 		let business_client;
