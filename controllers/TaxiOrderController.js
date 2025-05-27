@@ -1132,6 +1132,7 @@ async function createDispatchOrder(req, res) {
 async function acceptOrder(req, res) {
 	const { order_id, user } = req.body;
 	try {
+		let user = await UsersDao.getUserById(req.user.user_id);
 		let driver = await DriverDao.getDriverById(user.driver.driver_id);
 		if (!driver.online) {
 			return res.status(400).json({ error: 'Driver is offline.', errorType: 'ERR_DRIVER_OFFLINE' });

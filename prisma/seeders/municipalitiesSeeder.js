@@ -37,6 +37,7 @@ async function municipalitiesSeeder() {
 					requires_license: requiresLicense.includes(muGJ.properties.NAZIV),
 				},
 			});
+			return console.log('Municipality already exists, updated: ', update.name);
 		}
 		console.log('Municipality not found, creating: ', muGJ.properties.NAZIV);
 		await prisma.municipalities.create({
