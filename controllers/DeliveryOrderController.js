@@ -417,7 +417,7 @@ async function createDailyMeals(req, res) {
 		// - send orders to driver
 
 		const deliveryDriver = await DeliveryDriverDao.getDeliveryDriverById(delivery_driver.delivery_driver_id);
-		const business = await BusinessDao.getBusinessById(deliveryDriver.daily_meals_business_id);
+		const business = await BusinessDao.getBusinessById(deliveryDriver.daily_meal_business_id);
 		if (!business) {
 			return res.status(404).json({ message: 'Business not found.' });
 		}
@@ -425,7 +425,7 @@ async function createDailyMeals(req, res) {
 			return res.status(404).json({ message: 'Delivery driver not found.' });
 		}
 		const subscriptions = await DeliveryOrderDao.getDailyMealSubscriptionsByBusinessId(
-			deliveryDriver.daily_meals_business_id
+			deliveryDriver.daily_meal_business_id
 		);
 
 		if (!subscriptions) {
