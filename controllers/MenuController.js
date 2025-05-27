@@ -486,12 +486,12 @@ async function createMenuItem(req, res) {
 		let document = null;
 		if (image?.documentData) {
 			document = await DocumentDao.createDocument(image.documentData);
-			if (image?.documentData?.files?.length) {
-				for (const file of image.documentData.files) {
+			if (image?.files?.length) {
+				for (const file of image.files) {
 					let base64 = file.base64;
 					delete file.base64;
 					let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
-					if (!image?.documentData?.document_id) {
+					if (!image?.document_id) {
 						let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
 						await S3Helper.SaveObject(key, base64, file.mime_type, {}, fileData, document.public);
 					}
