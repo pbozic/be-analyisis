@@ -417,7 +417,7 @@ async function createDailyMeals(req, res) {
 		// - send orders to driver
 
 		const deliveryDriver = await DeliveryDriverDao.getDeliveryDriverById(delivery_driver.delivery_driver_id);
-		const business = await BusinessDao.getBusinessById(delivery_driver.daily_meals_business_id);
+		const business = await BusinessDao.getBusinessById(deliveryDriver.daily_meals_business_id);
 		if (!business) {
 			return res.status(404).json({ message: 'Business not found.' });
 		}
@@ -425,7 +425,7 @@ async function createDailyMeals(req, res) {
 			return res.status(404).json({ message: 'Delivery driver not found.' });
 		}
 		const subscriptions = await DeliveryOrderDao.getDailyMealSubscriptionsByBusinessId(
-			delivery_driver.daily_meals_business_id
+			deliveryDriver.daily_meals_business_id
 		);
 
 		if (!subscriptions) {
@@ -491,7 +491,7 @@ async function createDailyMeals(req, res) {
 			// 	);
 
 			let { result } = await gApi.distanceBetweenTwoPoints(
-				delivery_driver.location.coordinates,
+				deliveryDriver.location.coordinates,
 				userAddress.coordinates,
 				'driving',
 				new Date(),
@@ -557,18 +557,18 @@ async function createDailyMeals(req, res) {
 				user.user_id
 			);
 
-			await DeliveryOrderDao.createOrderSent(order.order_id, delivery_driver);
-			await DeliveryOrderDao.connectOrderWithDriver(order.order_id, delivery_driver.delivery_driver_id);
+			await DeliveryOrderDao.createOrderSent(order.order_id, deliveryDriver);
+			await DeliveryOrderDao.connectOrderWithDriver(order.order_id, deliveryDriver.delivery_driver_id);
 
 			SocketStore.addUserToRoom(order.user_id, `order_${order.order_id}`);
-			SocketStore.addUserToRoom(delivery_driver.user_id, `order_${order.order_id}`);
+			SocketStore.addUserToRoom(deliveryDriver.user_id, `order_${order.order_id}`);
 
 			orders.push(order);
 			scheduledMealsRoute.push(userAddress);
 		}
 
 		scheduledMealsRoute.push(providerAddress);
-		await DeliveryDriverDao.updateDeliveryDriver(delivery_driver?.delivery_driver_id, {
+		await DeliveryDriverDao.updateDeliveryDriver(deliveryDriver?.delivery_driver_id, {
 			scheduled_meals_route: scheduledMealsRoute,
 			delivery_timeline: [],
 		});
