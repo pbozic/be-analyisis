@@ -10,9 +10,13 @@ const handleS3LinkForDocuments = async (model, operation, args, query, result) =
 				let files = document.files.map(async (file) => {
 					return {
 						...file,
-						url: file.public
-							? await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public)
-							: file.url,
+						url:
+							file.public == false
+								? await S3Helper.GetObject(
+										S3Helper.getFileKey(file.file_id, file.mime_type),
+										file.public
+									)
+								: file.url,
 					};
 				});
 				document.files = await Promise.all(files);
@@ -21,9 +25,10 @@ const handleS3LinkForDocuments = async (model, operation, args, query, result) =
 			let files = middlewareResult.files.map(async (file) => {
 				return {
 					...file,
-					url: file.public
-						? await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public)
-						: file.url,
+					url:
+						file.public == false
+							? await S3Helper.GetObject(S3Helper.getFileKey(file.file_id, file.mime_type), file.public)
+							: file.url,
 				};
 			});
 
