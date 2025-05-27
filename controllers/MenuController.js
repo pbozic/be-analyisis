@@ -486,17 +486,16 @@ async function createMenuItem(req, res) {
 		let document = null;
 		if (image?.documentData) {
 			document = await DocumentDao.createDocument(image.documentData);
-			let files = image.files;
-			if (image?.document_id) {
-				const doc = await FileDao.getFilesByDocumentId(image.document_id);
-				files = doc.files;
-			}
-			for (const file of files) {
-				let base64 = file.base64;
-				delete file.base64;
-				let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
-				let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-				await S3Helper.SaveObject(key, base64, file.mime_type, {}, fileData, document.public);
+			if (image?.documentData?.files?.length) {
+				for (const file of image.documentData.files) {
+					let base64 = file.base64;
+					delete file.base64;
+					let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
+					if (!image?.documentData?.document_id) {
+						let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
+						await S3Helper.SaveObject(key, base64, file.mime_type, {}, fileData, document.public);
+					}
+				}
 			}
 		}
 
@@ -630,7 +629,7 @@ async function deleteMenuItem(req, res) {
  * @response 400 - Error updating menu item
  */
 async function updateMenuItem(req, res) {
-	const { menu_item_id, data, image, user_id } = req.body;
+	const { menu_item_id, data, image } = req.body;
 	try {
 		const menuItem = await MenuItemDao.updateMenuItem(menu_item_id, data);
 
