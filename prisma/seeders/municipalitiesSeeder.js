@@ -32,6 +32,8 @@ async function municipalitiesSeeder() {
 			let update = await prisma.municipalities.update({
 				where: {
 					municipalities_id: exists.municipalities_id,
+				},
+				data: {
 					requires_license: requiresLicense.includes(muGJ.properties.NAZIV),
 				},
 			});
