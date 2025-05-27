@@ -876,7 +876,30 @@ async function createOrder(req, res) {
 			telephone: req.body?.telephone || user.telephone,
 			is_scheduled: req.body.preferences?.departure_date,
 		};
+		let coordinates = orderData?.pickup_location?.coordinates || orderData?.route?.[0]?.coordinates;
+		let region = null;
+		if (coordinates) {
+			const pointWKT = `SRID=4326;POINT(${coordinates.longitude} ${coordinates.latitude})`;
 
+			region = await prisma.$queryRaw`
+			SELECT 
+				municipalities_id,
+				name,
+				requires_license
+			FROM municipalities
+			WHERE ST_Contains(geom_generated, ST_GeomFromText(${pointWKT}))
+			LIMIT 1;
+			`;
+		}
+		console.log('REGION', region);
+		if (region) {
+			orderData.estimates = {
+				...orderData.estimates,
+				region_id: region[0].municipalities_id,
+				region: region[0].name,
+				region_license: region[0].requires_license,
+			};
+		}
 		let business_client;
 		if (orderData.subtype === ORDER_SUBTYPE.CREATED_BY_BUSINESS && orderData?.business_user) {
 			const businessClient = orderData?.business_client;

@@ -14,14 +14,14 @@ datasource db {
 //    relationModel = false
 // }
 generator zod {
-  provider       = "npx zod-prisma-types"
-  output   = "../types/zod"
+  provider                  = "npx zod-prisma-types"
+  output                    = "../types/zod"
   createRelationValuesTypes = true
-  useMultipleFiles = true
-  addInputTypeValidation = true
+  useMultipleFiles          = true
+  addInputTypeValidation    = true
 }
+
 model finances {
-  @@map("finances")
   finance_id          String     @id @default(uuid()) @db.Uuid
   bank_name           String
   account_holder      String
@@ -32,6 +32,7 @@ model finances {
   business            business[]
 
   @@unique([account_number], name: "uniqueAccountNumber")
+  @@map("finances")
 }
 
 model business {
@@ -751,6 +752,7 @@ model menu_items {
   menu_category             menu_categories? @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id])
   documents                 documents[]
   is_enabled                Boolean          @default(true)
+  is_copy                   Boolean          @default(false)
   menu_category_order_index Int?
 
   @@unique([menu_item_id])

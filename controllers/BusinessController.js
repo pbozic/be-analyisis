@@ -192,15 +192,18 @@ async function searchBusinesses(req, res) {
 			req.body.pageSize || 10
 		);
 		console.log('esResults', esResults);
-		esResults.sort((a, b) => b.score - a.score);
-		let businesses = await BusinessDao.getBusinessesForSearchById(esResults.map((b) => b.business_id));
-		let results = esResults.map((esResult) => {
-			let business = businesses.find((b) => b.business_id === esResult.business_id);
-			return {
-				...business,
-				...esResult,
-			};
-		});
+		esResults.results.sort((a, b) => b.score - a.score);
+		let businesses = await BusinessDao.getBusinessesForSearchById(esResults.results.map((b) => b.business_id));
+		let results = {
+			...esResults,
+			results: esResults.results.map((esResult) => {
+				let business = businesses.find((b) => b.business_id === esResult.business_id);
+				return {
+					...business,
+					...esResult,
+				};
+			}),
+		};
 		if (results) {
 			res.status(200).json(results);
 		} else {
@@ -273,11 +276,14 @@ async function listPromoSectionsWithMerchants(req, res) {
 				10
 			);
 			promoSection.translations = translations;
-			let providerIds = esResults.map((r) => r.business_id);
+			if (!esResults || !esResults.results || esResults.results.length === 0) {
+				esResults.results = [];
+			}
+			let providerIds = esResults.results.map((r) => r.business_id);
 			let providers = await BusinessDao.getBusinessesForSearchById(providerIds);
 			let result = [];
 			for (let provider of providers) {
-				let esResult = esResults.find((r) => r.business_id === provider.business_id);
+				let esResult = esResults.results.find((r) => r.business_id === provider.business_id);
 				result.push({
 					...provider,
 					...esResult,

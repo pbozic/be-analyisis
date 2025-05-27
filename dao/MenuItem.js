@@ -1,12 +1,13 @@
 const prisma = require('../prisma/prisma');
 
-const createMenuItem = async (categoryId, menuItemData) => {
+const createMenuItem = async (categoryId, menuItemData, is_copy) => {
 	return await prisma.menu_items.create({
 		data: {
 			menu_category: {
 				connect: { menu_category_id: categoryId },
 			},
 			...menuItemData,
+			is_copy: is_copy || false,
 		},
 	});
 };

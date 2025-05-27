@@ -1,14 +1,44 @@
 const prisma = require('../prisma');
 const MUNICIPALITIES = require('./municipalities.json');
-const requiresLicense = ['Ljubljana', 'Maribor', 'Celje'];
+const requiresLicense = [
+	'Ljubljana',
+	'Maribor',
+	'Ptuj',
+	'Celje',
+	'Velenje',
+	'Murska Sobota',
+	'Kranj',
+	'Bled',
+	'Bohinj',
+	'Kranjska Gora',
+	'Koper',
+	'Piran',
+	'Izola',
+	'Nova Gorica',
+	'Tolmin',
+];
+
 async function municipalitiesSeeder() {
+	console.log(MUNICIPALITIES.type);
 	for (let muGJ of MUNICIPALITIES.features) {
+		console.log(muGJ);
+		if (!requiresLicense.includes(muGJ.properties.NAZIV)) continue;
 		let exists = await prisma.municipalities.findFirst({
 			where: {
 				name: muGJ.properties.NAZIV,
 			},
 		});
-		if (exists) continue;
+		if (exists) {
+			let update = await prisma.municipalities.update({
+				where: {
+					municipalities_id: exists.municipalities_id,
+				},
+				data: {
+					requires_license: requiresLicense.includes(muGJ.properties.NAZIV),
+				},
+			});
+			return console.log('Municipality already exists, updated: ', update.name);
+		}
 		console.log('Municipality not found, creating: ', muGJ.properties.NAZIV);
 		await prisma.municipalities.create({
 			data: {
@@ -23,5 +53,4 @@ async function municipalitiesSeeder() {
 		console.log('Municipality created: ', muGJ.properties.NAZIV);
 	}
 }
-
 module.exports = municipalitiesSeeder;

@@ -7,7 +7,7 @@ const pluginPrettier = require('eslint-plugin-prettier');
 /** @type {import("eslint").Linter.FlatConfig[]} */
 module.exports = [
 	{
-		ignores: ['node_modules', 'dist', 'types/zod', 'prisma/seeders', 'docs'],
+		ignores: ['node_modules', 'dist', 'types/zod', '**/prisma/seeders/**', 'docs'],
 	},
 	{
 		files: ['**/*.ts', '**/*.js'],
