@@ -885,7 +885,7 @@ async function createOrder(req, res) {
 			SELECT 
 				municipalities_id,
 				name,
-				requires_license,
+				requires_license
 			FROM municipalities
 			WHERE ST_Contains(geom_generated, ST_GeomFromText(${pointWKT}))
 			LIMIT 1;
