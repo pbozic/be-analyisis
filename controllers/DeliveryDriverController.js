@@ -508,22 +508,23 @@ async function getDeliveryDriverLocation(req, res) {
  */
 async function updateDeliveryDriver(req, res) {
 	const { delivery_driver_id } = req.params;
-	const { delivers, businessId } = req.body;
+	const { delivers, businessId, ...otherFields } = req.body;
 
 	try {
-		const updateData = delivers
-			? {
-					daily_meal_business: {
-						connect: {
-							business_id: businessId,
-						},
-					},
-				}
-			: {
-					daily_meal_business: {
-						disconnect: true,
-					},
-				};
+		const updateData = { ...otherFields };
+
+		if (delivers === true && businessId) {
+			updateData.daily_meal_business = {
+				connect: {
+					business_id: businessId,
+				},
+			};
+		} else if (delivers === false) {
+			updateData.daily_meal_business = {
+				disconnect: true,
+			};
+		}
+
 		const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriver(delivery_driver_id, updateData);
 		res.status(200).json(updatedDeliveryDriver);
 	} catch (error) {
