@@ -113,6 +113,27 @@ const getDeliveryDriverByUserId = async (user_id) => {
 	}
 };
 
+const getDeliveryDriversByDailyMealBusinessId = async (businessId) => {
+	try {
+		return await prisma.delivery_drivers.findMany({
+			where: {
+				daily_meal_business_id: businessId,
+			},
+			include: {
+				user: true,
+				vehicles: {
+					include: {
+						vehicle_specification: true,
+					},
+				},
+			},
+		});
+	} catch (error) {
+		console.error('Error retrieving delivery drivers by business ID:', error);
+		throw new Error(error);
+	}
+};
+
 const getDeliveryDriverLocation = async (delivery_driver_id) => {
 	try {
 		const deliveryDriver = await prisma.delivery_drivers.findUnique({
@@ -312,6 +333,7 @@ module.exports = {
 	getOnlineDeliveryDrivers,
 	getDeliveryDriverById,
 	getDeliveryDriverByUserId,
+	getDeliveryDriversByDailyMealBusinessId,
 	getDeliveryDriverLocation,
 	updateDeliveryDriver,
 	updateDeliveryDriverLocation,
