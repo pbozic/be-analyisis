@@ -1158,11 +1158,11 @@ async function createPaymentIntent(req, res) {
  * @response 400 - Error sorting users.
  */
 async function manualSortScheduledUsers(req, res) {
-	const { sorted_user_ids } = req.body;
+	const { sorted_user_ids, business_id } = req.body;
 	const filteredData = sorted_user_ids.filter((item) => item !== null);
 	console.info('sorted_user_ids', sorted_user_ids, filteredData);
 	try {
-		const updatedBusiness = await BusinessDao.manualSortScheduledUsers(filteredData);
+		const updatedBusiness = await BusinessDao.manualSortScheduledUsers(filteredData, business_id);
 		res.status(200).json(updatedBusiness);
 	} catch (e) {
 		console.error(e);
@@ -1182,9 +1182,9 @@ async function manualSortScheduledUsers(req, res) {
  * @response 400 - Error adding sorting type.
  */
 async function addScheduledUserSortingType(req, res) {
-	const { sorting_type } = req.body;
+	const { sorting_type, business_id } = req.body;
 	try {
-		const updatedBusiness = await BusinessDao.addScheduledUserSortingType(sorting_type);
+		const updatedBusiness = await BusinessDao.addScheduledUserSortingType(sorting_type, business_id);
 		res.status(200).json(updatedBusiness);
 	} catch (e) {
 		console.error(e);
