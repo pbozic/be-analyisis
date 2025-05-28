@@ -515,7 +515,7 @@ async function updateDeliveryDriver(req, res) {
 			? {
 					daily_meal_business: {
 						connect: {
-							daily_meal_business_id: businessId,
+							business_id: businessId,
 						},
 					},
 				}
