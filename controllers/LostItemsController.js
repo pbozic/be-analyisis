@@ -1,9 +1,10 @@
-require('dotenv').config();
-const LostItemsDao = require('../dao/LostItems');
-const DocumentDao = require('../dao/Document');
-const FileDao = require('../dao/File');
-const S3Helper = require('../lib/s3');
+import { config } from 'dotenv';
 
+import LostItemsDao from '../dao/LostItems.js';
+import DocumentDao from '../dao/Document.js';
+import FileDao from '../dao/File.js';
+import S3Helper from '../lib/s3.js';
+config();
 /**
  * GET /lost_items
  * @tag LostItems
@@ -23,7 +24,6 @@ async function getAllLostItems(req, res) {
 		res.status(500).json({ error: 'Error retrieving lost items', detail: e.message });
 	}
 }
-
 /**
  * POST /lost_items/report
  * @tag LostItems
@@ -41,7 +41,6 @@ async function reportFoundItem(req, res) {
 	console.info('user', user);
 	try {
 		const foundItem = await LostItemsDao.reportFoundItem({ description, found }, user);
-
 		if (images && images.files.length > 0) {
 			const document = await DocumentDao.createDocument(images.documentData);
 			for (const file of images.files) {
@@ -53,14 +52,12 @@ async function reportFoundItem(req, res) {
 			}
 			await DocumentDao.linkDocumentToLostItem(document.document_id, foundItem.lost_item_id);
 		}
-
 		res.status(201).json(foundItem);
 	} catch (e) {
 		console.error('Error reporting found item:', e);
 		res.status(400).json({ error: 'Error reporting found item', detail: e.message });
 	}
 }
-
 /**
  * DELETE /lost_items/delete/:lost_item_id
  * @tag LostItems
@@ -83,7 +80,6 @@ async function deleteFoundItem(req, res) {
 		res.status(400).json({ error: 'Error deleting found item', detail: e.message });
 	}
 }
-
 /**
  * PATCH /lost_items/update/:lost_item_id
  * @tag LostItems
@@ -100,30 +96,28 @@ async function deleteFoundItem(req, res) {
 async function updateLostItem(req, res) {
 	const { lost_item_id } = req.params;
 	const { description, status } = req.body;
-
 	try {
 		if (!description && !status) {
 			return res.status(400).json({ error: 'No data provided to update' });
 		}
-
 		const updateData = {};
 		if (description) updateData.description = description;
 		if (status) updateData.status = status;
-
 		const updatedLostItem = await LostItemsDao.updateLostItem(lost_item_id, updateData);
-
 		if (!updatedLostItem) {
 			return res.status(404).json({ error: 'Lost item not found' });
 		}
-
 		res.status(200).json(updatedLostItem);
 	} catch (e) {
 		console.error('Error updating lost item:', e);
 		res.status(400).json({ error: 'Error updating lost item', detail: e.message });
 	}
 }
-
-module.exports = {
+export { getAllLostItems };
+export { reportFoundItem };
+export { deleteFoundItem };
+export { updateLostItem };
+export default {
 	getAllLostItems,
 	reportFoundItem,
 	deleteFoundItem,

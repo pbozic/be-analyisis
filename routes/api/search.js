@@ -1,12 +1,11 @@
-var express = require('express');
+import * as express from 'express';
 
+import BusinessController from '../../controllers/BusinessController.js';
+import MenuController from '../../controllers/MenuController.js';
 const router = express.Router();
-const BusinessController = require('../../controllers/BusinessController');
-const MenuController = require('../../controllers/MenuController');
 router.get('/:business_id', BusinessController.getBusinessForSearchById);
 router.post('/sections/merchant', BusinessController.listPromoSectionsWithMerchants);
 router.post('/menu-items/extras-sides/:business_id', MenuController.getMenuItemsByIds);
 router.post('/', BusinessController.searchBusinesses);
 router.get('/', BusinessController.getBusinessesByNameSearch);
-
-module.exports = router;
+export default router;

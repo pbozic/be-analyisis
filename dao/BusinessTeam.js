@@ -1,11 +1,9 @@
-const prisma = require('../prisma/prisma');
-
+import prisma from '../prisma/prisma.js';
 const cropped_user_columns = {
 	first_name: true,
 	last_name: true,
 	user_id: true,
 };
-
 /**
  * Creates a new business team
  * @param {Object} data - The business team data
@@ -21,7 +19,6 @@ const createBusinessTeam = async (data) => {
 		throw error;
 	}
 };
-
 /**
  * Updates an existing business team
  * @param {Object} data - The business team data with id
@@ -43,7 +40,6 @@ const updateBusinessTeam = async (data) => {
 		throw error;
 	}
 };
-
 /**
  * Add a user to a business team
  * @param {string} business_teams_id - The ID of the business team
@@ -57,24 +53,19 @@ const addUserToTeam = async (business_teams_id, user_id) => {
 			where: { user_id },
 			select: { business_teams_id: true },
 		});
-
 		if (!user) {
 			throw new Error('User not found');
 		}
-
 		if (user.business_teams_id) {
 			throw new Error('User is already assigned to a business team');
 		}
-
 		// Check if business team exists
 		const team = await prisma.business_teams.findUnique({
 			where: { business_teams_id },
 		});
-
 		if (!team) {
 			throw new Error('Business team not found');
 		}
-
 		// Connect user to business team using Prisma's connect
 		return await prisma.business_teams.update({
 			where: { business_teams_id },
@@ -94,7 +85,6 @@ const addUserToTeam = async (business_teams_id, user_id) => {
 		throw error;
 	}
 };
-
 /**
  * Remove a user from a business team
  * @param {string} user_id - The ID of the user to remove
@@ -107,15 +97,12 @@ const removeUserFromTeam = async (user_id) => {
 			where: { user_id },
 			select: { business_teams_id: true },
 		});
-
 		if (!user) {
 			throw new Error('User not found');
 		}
-
 		if (!user.business_teams_id) {
 			throw new Error('User is not assigned to any business team');
 		}
-
 		// Disconnect user from business team using Prisma's disconnect
 		return await prisma.business_teams.update({
 			where: { business_teams_id: user.business_teams_id },
@@ -135,7 +122,6 @@ const removeUserFromTeam = async (user_id) => {
 		throw error;
 	}
 };
-
 /**
  * Move a user from their current team (if any) to a new team
  * @param {string} user_id - The ID of the user to move
@@ -152,25 +138,20 @@ const moveUserToTeam = async (user_id, new_team_id) => {
 				business_teams_id: true,
 			},
 		});
-
 		if (!user) {
 			throw new Error('User not found');
 		}
-
 		// Check if new team exists
 		const newTeam = await prisma.business_teams.findUnique({
 			where: { business_teams_id: new_team_id },
 		});
-
 		if (!newTeam) {
 			throw new Error('Target business team not found');
 		}
-
 		// If user is in the same team, no need to move
 		if (user.business_teams_id === new_team_id) {
 			throw new Error('User is already in this team');
 		}
-
 		// Use a transaction to ensure both disconnect and connect operations succeed
 		return await prisma.$transaction(async (prisma) => {
 			// If user is in a team, disconnect from current team
@@ -184,7 +165,6 @@ const moveUserToTeam = async (user_id, new_team_id) => {
 					},
 				});
 			}
-
 			// Connect to new team
 			return await prisma.business_teams.update({
 				where: { business_teams_id: new_team_id },
@@ -205,7 +185,6 @@ const moveUserToTeam = async (user_id, new_team_id) => {
 		throw error;
 	}
 };
-
 /**
  * Retrieves a business team by its ID
  * @param {string} business_teams_id - The ID of the business team
@@ -231,7 +210,6 @@ const getBusinessTeamById = async (business_teams_id) => {
 		throw error;
 	}
 };
-
 /**
  * Retrieves all business teams for a specific business
  * @param {string} business_id - The ID of the business
@@ -257,7 +235,6 @@ const getBusinessTeamsForBusinessId = async (business_id) => {
 		throw error;
 	}
 };
-
 /**
  * Deletes a business team by its ID
  * @param {string} business_teams_id - The ID of the business team to delete
@@ -278,8 +255,15 @@ const deleteBusinessTeam = async (business_teams_id) => {
 		throw error;
 	}
 };
-
-module.exports = {
+export { createBusinessTeam };
+export { updateBusinessTeam };
+export { addUserToTeam };
+export { removeUserFromTeam };
+export { moveUserToTeam };
+export { getBusinessTeamById };
+export { getBusinessTeamsForBusinessId };
+export { deleteBusinessTeam };
+export default {
 	createBusinessTeam,
 	updateBusinessTeam,
 	addUserToTeam,

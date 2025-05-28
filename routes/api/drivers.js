@@ -1,10 +1,10 @@
-var express = require('express');
+import * as express from 'express';
+
+import DriverController from '../../controllers/DriverController.js';
+import joi from '../../middleware/joi.js';
+import driverSchemas from '../../joi/driverSchemas.js';
 const router = express.Router();
-
-const DriverController = require('../../controllers/DriverController');
-const joi = require('../../middleware/joi');
-const { updateSchema } = require('../../joi/driverSchemas');
-
+const { updateSchema } = driverSchemas;
 router.get('/', DriverController.listDrivers);
 router.get('/full', DriverController.listDriversFull);
 router.get('/online', DriverController.listOnlineDrivers);
@@ -19,7 +19,6 @@ router.get('/earnings/total', DriverController.getTotalEarnings);
 router.get('/earnings/:driver_id', DriverController.getDriverEarnings);
 router.get('/earnings/:driver_id/total', DriverController.getDriverTotalEarnings);
 router.get('/business/:business_id', DriverController.getDriversByBusinessId);
-
 router.patch('/update/:driver_id', DriverController.updateDriver);
 router.patch('/edit', DriverController.editDriver);
 router.patch('/ride_requirements', DriverController.updateDriverRideRequirements);
@@ -31,5 +30,4 @@ router.patch('/:driver_id/:action/:type', DriverController.setDriverHandle);
 router.post('/come_to_work', DriverController.sendComeToWorkNotification);
 router.post('/create', DriverController.createDriver);
 router.post('/sos', DriverController.handleSosAlert);
-
-module.exports = router;
+export default router;

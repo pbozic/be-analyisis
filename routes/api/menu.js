@@ -1,8 +1,7 @@
-var express = require('express');
+import * as express from 'express';
+
+import MenuController from '../../controllers/MenuController.js';
 const router = express.Router();
-
-const MenuController = require('../../controllers/MenuController');
-
 // Menu routes
 router.get('/business/:business_id', MenuController.getMenuByBusinessId);
 router.get('/menu/:business_id/:date', MenuController.getMenuByDate);
@@ -20,14 +19,11 @@ router.patch('/menu-categories/order', MenuController.updateMenuOrder);
 router.patch('/menu-categories/price', MenuController.updateDailyMealMenuPrice);
 router.delete('/menu-categories/:menu_category_id', MenuController.deleteMenuCategory);
 router.get('/menu-categories/business/:business_id', MenuController.getMenuCategoriesByBusinessId);
-
 router.patch('/menu-categories', MenuController.updateMenuCategory);
 router.patch('/menu-categories/add', MenuController.addMenuCategory);
 router.patch('/menu-categories/remove', MenuController.removeMenuCategory);
-
 router.get('/daily-meals-menu/:business_id', MenuController.getLastUploadedDailyMealsMenu);
 router.post('/daily-meals-menu/create', MenuController.createDailyMealsMenu);
-
 // Menu Item routes
 router.post('/menu-items/create', MenuController.createMenuItem);
 router.patch('/menu-items/add-order', MenuController.addMenuItemIdToOrder);
@@ -43,8 +39,6 @@ router.patch('/menu-items/price', MenuController.updateMenuItemPrice);
 router.post('/menu-items/extras-sides/:business_id', MenuController.getMenuItemsByIds);
 router.post('/menu-items/category/:category_id', MenuController.addMenuItemMenuCategory);
 router.delete('/menu-items/category/:category_id', MenuController.addMenuItemMenuCategory);
-
 router.patch('/menu-items/category/add', MenuController.addMenuItemMenuCategory);
 router.patch('/menu-items/category/remove', MenuController.removeMenuItemFromCategory);
-
-module.exports = router;
+export default router;

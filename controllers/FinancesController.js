@@ -1,7 +1,8 @@
-require('dotenv').config();
-const FinanceDao = require('../dao/Finances');
-const BusinessDao = require('../dao/Business');
+import { config } from 'dotenv';
 
+import FinanceDao from '../dao/Finances.js';
+import BusinessDao from '../dao/Business.js';
+config();
 /**
  * POST /finances/create
  * @tag Finance
@@ -23,7 +24,6 @@ async function createNewFinanceRecord(req, res) {
 		res.status(400).json({ error: 'Error creating new finance record', detail: e.message });
 	}
 }
-
 /**
  * GET finances/:finance_id
  * @tag Finance
@@ -49,7 +49,6 @@ async function getFinanceRecordById(req, res) {
 		res.status(400).json({ error: 'Error retrieving finance record', detail: error.message });
 	}
 }
-
 /**
  * GET finances/business/:business_id
  * @tag Finance
@@ -76,7 +75,6 @@ async function getFinanceRecordByBusinessId(req, res) {
 		res.status(400).json({ error: 'Error retrieving finance record for the business', detail: e.message });
 	}
 }
-
 /**
  * PATCH /finances/:finance_id
  * @tag Finance
@@ -99,7 +97,6 @@ async function updateFinanceRecord(req, res) {
 		res.status(400).json({ error: 'Error updating finance record', detail: error.message });
 	}
 }
-
 /**
  * PATCH /finances/account_number
  * @tag Finance
@@ -116,7 +113,6 @@ async function updateFinanceRecord(req, res) {
 async function updateAccountNumber(req, res) {
 	const { finance_id } = req.params;
 	const { account_number } = req.body;
-
 	try {
 		const updatedFinanceRecord = await FinanceDao.updateAccountNumber(finance_id, account_number);
 		res.status(200).json(updatedFinanceRecord);
@@ -125,7 +121,6 @@ async function updateAccountNumber(req, res) {
 		res.status(400).json({ error: 'Error updating account number', detail: error.message });
 	}
 }
-
 /**
  * PATCH /finances/:finance_id/bank_name
  * @tag Finance
@@ -142,7 +137,6 @@ async function updateAccountNumber(req, res) {
 async function updateBankName(req, res) {
 	const { finance_id } = req.params;
 	const { bank_name } = req.body;
-
 	try {
 		const updatedFinanceRecord = await FinanceDao.updateBankName(finance_id, bank_name);
 		res.status(200).json(updatedFinanceRecord);
@@ -151,7 +145,6 @@ async function updateBankName(req, res) {
 		res.status(400).json({ error: 'Error updating bank name', detail: error.message });
 	}
 }
-
 /**
  * PATCH /finances/:finance_id/payment_preferences
  * @tag Finance
@@ -168,7 +161,6 @@ async function updateBankName(req, res) {
 async function updatePaymentPreferences(req, res) {
 	const { finance_id } = req.params;
 	const { payment_preferences } = req.body;
-
 	try {
 		const updatedFinanceRecord = await FinanceDao.updatePaymentPreferences(finance_id, payment_preferences);
 		res.status(200).json(updatedFinanceRecord);
@@ -177,7 +169,6 @@ async function updatePaymentPreferences(req, res) {
 		res.status(400).json({ error: 'Error updating payment preferences', detail: error.message });
 	}
 }
-
 /**
  * DELETE /finances/:finance_id
  * @tag Finance
@@ -197,8 +188,15 @@ async function deleteFinanceRecord(req, res) {
 		res.status(400).json({ error: 'Error deleting finance record', detail: error.message });
 	}
 }
-
-module.exports = {
+export { getFinanceRecordById };
+export { getFinanceRecordByBusinessId };
+export { createNewFinanceRecord };
+export { updateFinanceRecord };
+export { updateAccountNumber };
+export { updateBankName };
+export { updatePaymentPreferences };
+export { deleteFinanceRecord };
+export default {
 	getFinanceRecordById,
 	getFinanceRecordByBusinessId,
 	createNewFinanceRecord,

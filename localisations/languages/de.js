@@ -70,4 +70,4 @@ const de = {
 		referral: 'Ihre Empfehlungsprämie wurde Ihrem Konto gutgeschrieben',
 	},
 };
-module.exports = de;
+export default de;

@@ -1,6 +1,5 @@
-const CategoriesDao = require('../dao/Categories');
-const { upsertFileOnS3Helper } = require('./FilesController');
-
+import CategoriesDao from '../dao/Categories.js';
+import { upsertFileOnS3Helper } from './FilesController.js';
 async function getCategories(req, res) {
 	try {
 		const categories = await CategoriesDao.getCategories();
@@ -10,7 +9,6 @@ async function getCategories(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getCategoriesByType(req, res) {
 	try {
 		const category = await CategoriesDao.getCategoriesByType(req.params.category_type);
@@ -20,7 +18,6 @@ async function getCategoriesByType(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function createCategory(req, res) {
 	try {
 		const user_id = req.user.user_id;
@@ -32,7 +29,6 @@ async function createCategory(req, res) {
 				break;
 			}
 		}
-
 		categoryData.tag = tag;
 		const category = await CategoriesDao.createCategory(
 			categoryData,
@@ -52,7 +48,6 @@ async function createCategory(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function updateCategory(req, res) {
 	try {
 		const user_id = req.user.user_id;
@@ -75,7 +70,6 @@ async function updateCategory(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function deleteCategory(req, res) {
 	try {
 		await CategoriesDao.deleteCategory(req.params.id);
@@ -85,7 +79,6 @@ async function deleteCategory(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getCategoryById(req, res) {
 	try {
 		const category = await CategoriesDao.getCategoryById(req.params.id);
@@ -95,8 +88,13 @@ async function getCategoryById(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
-module.exports = {
+export { getCategories };
+export { getCategoriesByType };
+export { createCategory };
+export { updateCategory };
+export { deleteCategory };
+export { getCategoryById };
+export default {
 	getCategories,
 	getCategoriesByType,
 	createCategory,

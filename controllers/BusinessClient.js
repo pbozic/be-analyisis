@@ -1,5 +1,4 @@
-const BusinessClientDao = require('../dao/BusinessClient');
-
+import BusinessClientDao from '../dao/BusinessClient.js';
 /**
  * GET /business-clients
  * @tag BusinessClients
@@ -12,15 +11,14 @@ const BusinessClientDao = require('../dao/BusinessClient');
  * @responseContent {object} 400.application/json The error object
  */
 async function getAllBusinessClients(req, res) {
-    try {
-        const businessClients = await BusinessClientDao.getAllBusinessClients();
-        res.status(200).json(businessClients);
-    } catch (error) {
-        console.error('Error retrieving all business clients:', error);
-        res.status(400).json({ error: 'Error retrieving all business clients', detail: error.message });
-    }
+	try {
+		const businessClients = await BusinessClientDao.getAllBusinessClients();
+		res.status(200).json(businessClients);
+	} catch (error) {
+		console.error('Error retrieving all business clients:', error);
+		res.status(400).json({ error: 'Error retrieving all business clients', detail: error.message });
+	}
 }
-
 /**
  * GET /business-clients/{business_clients_id}
  * @tag BusinessClients
@@ -34,18 +32,17 @@ async function getAllBusinessClients(req, res) {
  * @responseContent {object} 400.application/json The error object
  */
 async function getBusinessClientById(req, res) {
-    try {
-        const businessClient = await BusinessClientDao.getBusinessClientById(req.params.business_clients_id);
-        if (!businessClient) {
-            return res.status(404).json({ error: 'Business client not found' });
-        }
-        res.status(200).json(businessClient);
-    } catch (error) {
-        console.error('Error retrieving business client:', error);
-        res.status(400).json({ error: 'Error retrieving business client', detail: error.message });
-    }
+	try {
+		const businessClient = await BusinessClientDao.getBusinessClientById(req.params.business_clients_id);
+		if (!businessClient) {
+			return res.status(404).json({ error: 'Business client not found' });
+		}
+		res.status(200).json(businessClient);
+	} catch (error) {
+		console.error('Error retrieving business client:', error);
+		res.status(400).json({ error: 'Error retrieving business client', detail: error.message });
+	}
 }
-
 /**
  * GET /business-clients/business/{business_id}
  * @tag BusinessClients
@@ -59,15 +56,14 @@ async function getBusinessClientById(req, res) {
  * @responseContent {object} 400.application/json The error object
  */
 async function getBusinessClientsByBusinessId(req, res) {
-    try {
-        const businessClients = await BusinessClientDao.getBusinessClientsByBusinessId(req.params.business_id);
-        res.status(200).json(businessClients);
-    } catch (error) {
-        console.error('Error retrieving business clients by business ID:', error);
-        res.status(400).json({ error: 'Error retrieving business clients by business ID', detail: error.message });
-    }
+	try {
+		const businessClients = await BusinessClientDao.getBusinessClientsByBusinessId(req.params.business_id);
+		res.status(200).json(businessClients);
+	} catch (error) {
+		console.error('Error retrieving business clients by business ID:', error);
+		res.status(400).json({ error: 'Error retrieving business clients by business ID', detail: error.message });
+	}
 }
-
 /**
  * POST /business-clients
  * @tag BusinessClients
@@ -82,15 +78,14 @@ async function getBusinessClientsByBusinessId(req, res) {
  * @response 400 - Error creating business client.
  */
 async function createBusinessClient(req, res) {
-    try {
-        const businessClient = await BusinessClientDao.createBusinessClient(req.body);
-        res.status(201).json(businessClient);
-    } catch (error) {
-        console.error('Error creating a business client:', error);
-        res.status(400).json({ error: 'Error creating a business client', detail: error.message });
-    }
+	try {
+		const businessClient = await BusinessClientDao.createBusinessClient(req.body);
+		res.status(201).json(businessClient);
+	} catch (error) {
+		console.error('Error creating a business client:', error);
+		res.status(400).json({ error: 'Error creating a business client', detail: error.message });
+	}
 }
-
 /**
  * PATCH /business-clients/{business_clients_id}
  * @tag BusinessClients
@@ -107,21 +102,17 @@ async function createBusinessClient(req, res) {
  * @response 404 - Business client not found.
  */
 async function updateBusinessClient(req, res) {
-    try {
-        const businessClient = await BusinessClientDao.updateBusinessClient(
-            req.params.business_clients_id, 
-            req.body
-        );
-        if (!businessClient) {
-            return res.status(404).json({ error: 'Business client not found' });
-        }
-        res.status(200).json(businessClient);
-    } catch (error) {
-        console.error('Error updating business client:', error);
-        res.status(400).json({ error: 'Error updating business client', detail: error.message });
-    }
+	try {
+		const businessClient = await BusinessClientDao.updateBusinessClient(req.params.business_clients_id, req.body);
+		if (!businessClient) {
+			return res.status(404).json({ error: 'Business client not found' });
+		}
+		res.status(200).json(businessClient);
+	} catch (error) {
+		console.error('Error updating business client:', error);
+		res.status(400).json({ error: 'Error updating business client', detail: error.message });
+	}
 }
-
 /**
  * DELETE /business-clients/{business_clients_id}
  * @tag BusinessClients
@@ -134,20 +125,25 @@ async function updateBusinessClient(req, res) {
  * @response 400 - Error removing business client.
  */
 async function removeBusinessClient(req, res) {
-    try {
-        await BusinessClientDao.removeBusinessClient(req.params.business_clients_id);
-        res.status(200).json({ message: 'Business client removed successfully.' });
-    } catch (error) {
-        console.error('Error removing a business client:', error);
-        res.status(400).json({ error: 'Error removing a business client', detail: error.message });
-    }
+	try {
+		await BusinessClientDao.removeBusinessClient(req.params.business_clients_id);
+		res.status(200).json({ message: 'Business client removed successfully.' });
+	} catch (error) {
+		console.error('Error removing a business client:', error);
+		res.status(400).json({ error: 'Error removing a business client', detail: error.message });
+	}
 }
-
-module.exports = {
-    getAllBusinessClients,
-    getBusinessClientById,
-    getBusinessClientsByBusinessId,
-    createBusinessClient,
-    updateBusinessClient,
-    removeBusinessClient
+export { getAllBusinessClients };
+export { getBusinessClientById };
+export { getBusinessClientsByBusinessId };
+export { createBusinessClient };
+export { updateBusinessClient };
+export { removeBusinessClient };
+export default {
+	getAllBusinessClients,
+	getBusinessClientById,
+	getBusinessClientsByBusinessId,
+	createBusinessClient,
+	updateBusinessClient,
+	removeBusinessClient,
 };

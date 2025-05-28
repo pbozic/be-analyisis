@@ -1,5 +1,4 @@
-const prisma = require('../prisma/prisma');
-
+import prisma from '../prisma/prisma.js';
 async function createReviewableBusiness(bussines_id) {
 	try {
 		return prisma.reviewable.create({
@@ -30,7 +29,6 @@ async function createReviewableUser(user_id) {
 		throw new Error(e);
 	}
 }
-
 async function createReview(review) {
 	try {
 		return prisma.reviews.create({
@@ -40,8 +38,10 @@ async function createReview(review) {
 		throw new Error(e);
 	}
 }
-
-module.exports = {
+export { createReviewableBusiness };
+export { createReviewableUser };
+export { createReview };
+export default {
 	createReviewableBusiness,
 	createReviewableUser,
 	createReview,

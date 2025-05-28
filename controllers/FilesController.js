@@ -1,6 +1,5 @@
-const FileDao = require('../dao/File');
-const S3Helper = require('../lib/s3');
-
+import FileDao from '../dao/File.js';
+import S3Helper from '../lib/s3.js';
 async function createFileHelper(owner_id, fileData) {
 	const { file_type, mime_type } = fileData;
 	const isPublic = fileData.public || false;
@@ -30,18 +29,15 @@ async function updateFileByIdHelper(updater_id, file_id, fileData) {
 	);
 	return updated_file;
 }
-
 async function upsertFileOnS3Helper(user_id, file, new_file_type, new_mime_type, new_base64) {
 	let key = S3Helper.getFileKey(file.file_id, new_mime_type);
 	await S3Helper.SaveObject(key, new_base64, new_mime_type, { users: [user_id] }, file, file.public);
 }
-
 async function createFile(req, res) {
 	try {
 		const user_id = req.user.user_id;
 		const { fileData } = req.body;
 		const new_file = await createFileHelper(user_id, fileData);
-
 		res.status(200).json({
 			message: 'File created successfully',
 			new_file,
@@ -54,21 +50,17 @@ async function createFile(req, res) {
 		});
 	}
 }
-
 async function updateFileById(req, res) {
 	try {
 		const user_id = req.user.user_id;
 		const { file_id, fileData } = req.body;
-
 		const existingFile = await FileDao.getFile(file_id);
 		if (!existingFile) {
 			return res.status(404).json({
 				error: 'File not found',
 			});
 		}
-
 		const updated_file = updateFileByIdHelper(user_id, file_id, fileData);
-
 		res.status(200).json({
 			message: 'File updated successfully',
 			updated_file,
@@ -81,8 +73,12 @@ async function updateFileById(req, res) {
 		});
 	}
 }
-
-module.exports = {
+export { createFile };
+export { updateFileById };
+export { createFileHelper };
+export { updateFileByIdHelper };
+export { upsertFileOnS3Helper };
+export default {
 	createFile,
 	updateFileById,
 	createFileHelper,

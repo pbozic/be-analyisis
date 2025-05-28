@@ -1,11 +1,9 @@
-const js = require('@eslint/js');
-const eslintPluginTs = require('@typescript-eslint/eslint-plugin');
-const tsParser = require('@typescript-eslint/parser');
-const pluginImport = require('eslint-plugin-import');
-const pluginPrettier = require('eslint-plugin-prettier');
-
-/** @type {import("eslint").Linter.FlatConfig[]} */
-module.exports = [
+import js from '@eslint/js';
+import eslintPluginTs from '@typescript-eslint/eslint-plugin';
+import * as tsParser from '@typescript-eslint/parser';
+import * as pluginImport from 'eslint-plugin-import';
+import pluginPrettier from 'eslint-plugin-prettier';
+export default [
 	{
 		ignores: ['node_modules', 'dist', 'types/zod', '**/prisma/seeders/**', 'docs'],
 	},

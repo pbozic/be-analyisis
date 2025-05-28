@@ -1,5 +1,4 @@
-const Joi = require('joi');
-
+import Joi from 'joi';
 const updateSchema = Joi.object({
 	user_id: Joi.string(),
 	profile_picture: [Joi.string().base64().optional(), Joi.allow(null)],
@@ -36,7 +35,6 @@ const updateSchema = Joi.object({
 const verifyPhoneSchema = Joi.object({
 	token: Joi.string().required(),
 });
-
 const updateEmailSchema = Joi.object({
 	email: Joi.string().required(),
 });
@@ -44,7 +42,6 @@ const updateUserLanguageSchema = Joi.object({
 	user_id: Joi.string().required(),
 	language: Joi.string().required(),
 });
-
 const updatePasswordSchema = Joi.object({
 	password: Joi.string().required(),
 	new_password: Joi.string()
@@ -52,7 +49,6 @@ const updatePasswordSchema = Joi.object({
 		.required(),
 	confirm_password: Joi.ref('new_password'),
 });
-
 const updateTelephoneSchema = Joi.object({
 	telephone: Joi.string().required(),
 	telephone_code: Joi.string().required(),
@@ -70,17 +66,24 @@ const addAddressSchema = Joi.object({
 	postal: [Joi.string().optional(), Joi.allow(null)],
 	country: [Joi.string().optional(), Joi.allow(null)],
 });
-
 const editAddressSchema = Joi.object({
 	name: Joi.string().optional(),
 	icon: Joi.string().optional(),
 	primary: Joi.boolean().optional(),
 });
-
 const oneSignalIdSchema = Joi.object({
 	one_signal_id: Joi.string().required(),
 });
-module.exports = {
+export { updateSchema };
+export { verifyPhoneSchema };
+export { updateEmailSchema };
+export { updateUserLanguageSchema };
+export { updatePasswordSchema };
+export { updateTelephoneSchema };
+export { addAddressSchema };
+export { editAddressSchema };
+export { oneSignalIdSchema };
+export default {
 	updateSchema,
 	verifyPhoneSchema,
 	updateEmailSchema,

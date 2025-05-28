@@ -1,25 +1,24 @@
-require('dotenv').config();
-const bcrypt = require('bcrypt');
-const { User } = require('@onesignal/node-onesignal');
-const { drive } = require('googleapis/build/src/apis/drive');
+import { config } from 'dotenv';
+import bcrypt from 'bcrypt';
+import * as nodeOnesignal from '@onesignal/node-onesignal';
 
-const prisma = require('../prisma/prisma');
-const UserDao = require('../dao/User');
-const BusinessUsersDao = require('../dao/BusinessUsers');
-const BusinessDao = require('../dao/Business');
-const TokenDao = require('../dao/Token');
-const ReviewDao = require('../dao/Review');
-const AddressDao = require('../dao/Address');
-const DocumentDao = require('../dao/Document');
-const FileDao = require('../dao/File');
-const DeliveryDriverDao = require('../dao/DeliveryDriver');
-const DriverDao = require('../dao/Driver');
-const WalletFundsDao = require('../dao/WalletFunds');
-const ReferralDao = require('../dao/Referrals');
-const SMS = require('../lib/SMS');
-const stripe = require('../lib/stripe');
-const S3Helper = require('../lib/s3');
-const {
+import prisma from '../prisma/prisma.js';
+import UserDao from '../dao/User.js';
+import BusinessUsersDao from '../dao/BusinessUsers.js';
+import BusinessDao from '../dao/Business.js';
+import TokenDao from '../dao/Token.js';
+import ReviewDao from '../dao/Review.js';
+import AddressDao from '../dao/Address.js';
+import DocumentDao from '../dao/Document.js';
+import FileDao from '../dao/File.js';
+import DeliveryDriverDao from '../dao/DeliveryDriver.js';
+import DriverDao from '../dao/Driver.js';
+import WalletFundsDao from '../dao/WalletFunds.js';
+import ReferralDao from '../dao/Referrals.js';
+import SMS from '../lib/SMS.js';
+import stripe from '../lib/stripe.js';
+import S3Helper from '../lib/s3.js';
+import {
 	DOCUMENT_TYPE,
 	TAXI_ORDER_STATUS,
 	USER_ROLE,
@@ -30,15 +29,16 @@ const {
 	CASHBACK_TYPE,
 	ACCOUNT_ACTIONS_REASON,
 	ORDER_TYPE,
-} = require('../lib/constants');
-const { generateAccessToken, generateRefreshToken } = require('../lib/jwt');
-const { getOrders } = require('../dao/TaxiOrder');
-const TaxiOrderDao = require('../dao/TaxiOrder');
-const DeliveryOrderDao = require('../dao/DeliveryOrder');
-const ReservationDao = require('../dao/Reservation');
-const GroupDao = require('../dao/Group');
-const CashbackDao = require('../dao/Cashback');
-
+} from '../lib/constants.js';
+import { generateAccessToken, generateRefreshToken } from '../lib/jwt.js';
+import { getOrders } from '../dao/TaxiOrder.js';
+import TaxiOrderDao from '../dao/TaxiOrder.js';
+import DeliveryOrderDao from '../dao/DeliveryOrder.js';
+import ReservationDao from '../dao/Reservation.js';
+import GroupDao from '../dao/Group.js';
+import CashbackDao from '../dao/Cashback.js';
+config();
+const { User } = nodeOnesignal;
 /**
  * GET /users
  * @tag Users
@@ -75,7 +75,6 @@ async function listUsers(req, res) {
 		res.status(400).json({ error: 'Error obtaining list of users..', e });
 	}
 }
-
 /**
  * GET /users
  * @tag Users
@@ -115,7 +114,6 @@ async function listPersonalUsers(req, res) {
 		res.status(400).json({ error: 'Error obtaining list of users..', e });
 	}
 }
-
 /**
  * GET /users/:user_id
  * @tag Users
@@ -157,7 +155,6 @@ async function getUserById(req, res) {
 		res.status(400).json({ error: 'Error retrieving user information', detail: error.message });
 	}
 }
-
 /**
  * GET /users/me
  * @tag Users
@@ -170,7 +167,6 @@ async function getUserById(req, res) {
  * @response 400 - Error obtaining user information.
  * @responseContent {object} 400.application/json
  */
-
 async function me(req, res) {
 	try {
 		//console.log("/me req: ",req)
@@ -236,7 +232,6 @@ async function me(req, res) {
 			if (user.stripe_customer_id) {
 				payment_methods = await stripe.getPaymentMethods(user.stripe_customer_id);
 			}
-
 			delete user['password'];
 			// const access_token = generateAccessToken(user);
 			// const refresh_token = generateRefreshToken(user);
@@ -259,7 +254,6 @@ async function me(req, res) {
 		res.status(400).json({ error: 'Error obtaining user information', e });
 	}
 }
-
 /**
  * PATCH /me
  * @tag Users
@@ -286,7 +280,6 @@ async function updateMe(req, res) {
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 /**
  * PATCH /me/update_user
  * @tag Users
@@ -302,7 +295,6 @@ async function updateMe(req, res) {
  */
 async function updateUserByUserId(req, res) {
 	const { user_id, data } = req.body;
-
 	try {
 		let user = await UserDao.updateScheduledUser(user_id, data);
 		if (user) {
@@ -314,7 +306,6 @@ async function updateUserByUserId(req, res) {
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 /**
  * PATCH /me/password
  * @tag Users
@@ -344,16 +335,13 @@ async function updatePassword(req, res) {
 		if (!correctPw) return res.status(400).json({ error: 'Wrong password..' });
 		let hash = await bcrypt.hash(postData.new_password, Number(process.env.BCRYPT_SALT_ROUNDS));
 		user = await UserDao.updateUserPassword(req.user.user_id, hash);
-
 		if (user) return res.status(200).json(user);
-
 		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		console.log(e);
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 /**
  * PATCH /me/email
  * @tag Users
@@ -367,13 +355,11 @@ async function updatePassword(req, res) {
  * @responseContent {User} 200.application/json
  * @response 400 - Error updating user information.
  */
-
 async function updateEmail(req, res) {
 	try {
 		let user = await UserDao.getUserByEmailOrTelephone(req.body.email);
 		if (user) return res.status(400).json({ error: 'Email already exists..' });
 		let updated_user = await UserDao.updateEmail(req.user.user_id, req.body.email);
-
 		if (!updated_user.stripe_customer_id) {
 			const stripe_customer = await stripe.createCustomer(
 				updated_user.email,
@@ -384,16 +370,13 @@ async function updateEmail(req, res) {
 		} else {
 			await stripe.updateCustomerEmail(updated_user.stripe_customer_id, req.body.email);
 		}
-
 		if (updated_user) return res.status(200).json(updated_user);
-
 		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		console.log(e);
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 /**
  * PATCH /me/profile_picture
  * @tag Users
@@ -406,13 +389,11 @@ async function updateEmail(req, res) {
 async function updateProfilePicture(req, res) {
 	const userId = req.user.user_id;
 	const { image } = req.body;
-
 	try {
 		const documents = await DocumentDao.getDocumentsForUserByType(userId, DOCUMENT_TYPE.PROFILE_PICTURE);
 		for (const document of documents) {
 			await DocumentDao.deleteDocument(document.document_id);
 		}
-
 		// Create new document for profile picture
 		const document = await DocumentDao.createDocument(image.documentData);
 		//console.log("files", image.files)
@@ -424,17 +405,14 @@ async function updateProfilePicture(req, res) {
 			let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
 			await S3Helper.SaveObject(key, base64, file.mime_type, { users: [userId] }, fileData, document.public);
 		}
-
 		// Link new document to user
 		await DocumentDao.linkDocumentToUser(document.document_id, userId);
-
 		res.status(200).json({ message: 'Profile picture created successfully' });
 	} catch (error) {
 		console.error('Error updating profile picture:', error);
 		res.status(400).json({ error: 'Error updating profile picture', detail: error.message });
 	}
 }
-
 /**
  * PATCH /me/taxi-preferences
  * @tag Users
@@ -451,15 +429,12 @@ async function updateProfilePicture(req, res) {
 async function updateUserTaxiPreferences(req, res) {
 	try {
 		let user = await UserDao.updateUserTaxiPreferences(req.user.user_id, req.body.taxi_preferences);
-
 		if (user) return res.status(200).json(user);
-
 		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 /**
  * PATCH /me/notification-preferences
  * @tag Users
@@ -476,15 +451,12 @@ async function updateUserTaxiPreferences(req, res) {
 async function updateUserNotificationPreferences(req, res) {
 	try {
 		let user = await UserDao.updateUserNotificationPreferences(req.user.user_id, req.body.notification_preferences);
-
 		if (user) return res.status(200).json(user);
-
 		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 /**
  * PATCH /me/taxi-push-notification-preferences
  * @tag Users
@@ -504,15 +476,12 @@ async function updateUserTaxiPushNotifications(req, res) {
 			req.user.user_id,
 			req.body.taxi_push_notification_preferences
 		);
-
 		if (user) return res.status(200).json(user);
-
 		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 /**
  * PATCH /me/transfer-push-notification-preferences
  * @tag Users
@@ -532,15 +501,12 @@ async function updateUserTransferPushNotifications(req, res) {
 			req.user.user_id,
 			req.body.transfer_push_notification_preferences
 		);
-
 		if (user) return res.status(200).json(user);
-
 		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 /**
  * PATCH /me/delivery-push-notification-preferences
  * @tag Users
@@ -560,15 +526,12 @@ async function updateUserDeliveryPushNotifications(req, res) {
 			req.user.user_id,
 			req.body.delivery_push_notification_preferences
 		);
-
 		if (user) return res.status(200).json(user);
-
 		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 /**
  * PATCH /me/spicy-preferences
  * @tag Users
@@ -585,15 +548,12 @@ async function updateUserDeliveryPushNotifications(req, res) {
 async function updateUserSpicyPreferences(req, res) {
 	try {
 		let user = await UserDao.updateUserSpicyPreferences(req.user.user_id, req.body.spicy_preferences);
-
 		if (user) return res.status(200).json(user);
-
 		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 /**
  * PATCH /me/transfer-preferences
  * @tag Users
@@ -610,15 +570,12 @@ async function updateUserSpicyPreferences(req, res) {
 async function updateUserTransferPreferences(req, res) {
 	try {
 		let user = await UserDao.updateUserTransferPreferences(req.user.user_id, req.body.transfer_preferences);
-
 		if (user) return res.status(200).json(user);
-
 		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 /**
  * PATCH /me/radio-preferences
  * @tag Users
@@ -635,15 +592,12 @@ async function updateUserTransferPreferences(req, res) {
 async function updateUserRadioPreferences(req, res) {
 	try {
 		let user = await UserDao.updateUserRadioPreferences(req.user.user_id, req.body.radio_preferences);
-
 		if (user) return res.status(200).json(user);
-
 		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 /**
  * PATCH /me/allergies-preferences
  * @tag Users
@@ -660,15 +614,12 @@ async function updateUserRadioPreferences(req, res) {
 async function updateUserAllergiesPreferences(req, res) {
 	try {
 		let user = await UserDao.updateUserAllergiesPreferences(req.user.user_id, req.body.allergies_preferences);
-
 		if (user) return res.status(200).json(user);
-
 		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 /**
  * PATCH /me/telephone
  * @tag Users
@@ -682,7 +633,6 @@ async function updateUserAllergiesPreferences(req, res) {
  * @responseContent {User} 200.application/json
  * @response 400 - Error updating user information.
  */
-
 async function updateTelephone(req, res) {
 	try {
 		let phoneExists = await UserDao.getUserByEmailOrTelephone(req.body.telephone);
@@ -693,14 +643,12 @@ async function updateTelephone(req, res) {
 		await stripe.updateCustomerPhone(user.stripe_customer_id, req.body.telephone);
 		// TODO: Send SMS verification token
 		if (user) return res.status(200).json(user);
-
 		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		console.log(e);
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 /**
  * GET /me/verify/phone
  * @tag Users
@@ -720,14 +668,12 @@ async function requestSMSVerification(req, res) {
 		if (token) {
 			return res.status(200).json({ message: 'Token sent', telephone: user.telephone });
 		}
-
 		res.status(400).json({ error: 'Error obtaining user information' });
 	} catch (e) {
 		console.log(e);
 		res.status(400).json({ error: 'Error obtaining user information', e });
 	}
 }
-
 /**
  * POST /me/verify/phone
  * @tag Users
@@ -757,7 +703,6 @@ async function verifyMe(req, res) {
 		res.status(400).json({ error: 'Error obtaining user information', e });
 	}
 }
-
 async function oneSignalId(req, res) {
 	try {
 		let user = await UserDao.updateUser(req.user.user_id, { one_signal_id: req.body.player_id });
@@ -770,7 +715,6 @@ async function oneSignalId(req, res) {
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 /**
  * POST /me/address
  * @tag Users
@@ -797,7 +741,6 @@ async function addAddress(req, res) {
 		res.status(400).json({ error: 'Error adding address', e });
 	}
 }
-
 /**
  * DELETE /me/address/{address_id}
  * @tag Users
@@ -817,7 +760,6 @@ async function deleteAddress(req, res) {
 		return res.status(400).json({ error: 'Error deleting address.' });
 	}
 }
-
 /**
  * DELETE /users/{user_id}
  * @tag Users
@@ -833,7 +775,6 @@ async function deleteUserByUserId(req, res) {
 	const { user_id } = req.params;
 	try {
 		const deletedUser = await UserDao.deleteUserByUserId(user_id);
-
 		return res.status(200).json({
 			message: 'User deleted successfully.',
 			user: deletedUser,
@@ -848,7 +789,6 @@ async function deleteUserByUserId(req, res) {
 		return res.status(400).json({ error: 'Error deleting user.' });
 	}
 }
-
 /**
  * PATCH /users/active/{user_id}
  * @tag Users
@@ -882,7 +822,6 @@ async function updateUserActiveByUserId(req, res) {
 		return res.status(400).json({ error: 'Error updating active field.' });
 	}
 }
-
 /**
  * PATCH /users/disabled/{user_id}
  * @tag Users
@@ -905,7 +844,6 @@ async function updateUserDisabledByUserId(req, res) {
 			throw new Error('Missing user_id or invalid reason.');
 		}
 		const disabledUser = await UserDao.updateUserDisabled(user_id, disabled, req.user.user_id, reason);
-
 		return res.status(200).json({
 			message: 'User disabled field updated successfully.',
 			user: disabledUser,
@@ -915,7 +853,6 @@ async function updateUserDisabledByUserId(req, res) {
 		return res.status(400).json({ error: 'Error updating disabled field.' });
 	}
 }
-
 /**
  * PATCH /users/soft_delete/{user_id}
  * @tag Users
@@ -948,7 +885,6 @@ async function softDeleteUserByUserId(req, res) {
 		return res.status(400).json({ error: 'Error soft deleting user.' });
 	}
 }
-
 /**
  * PATCH /me/disabled
  * @tag Users
@@ -973,14 +909,12 @@ async function disableMe(req, res) {
 				message: 'User disabled successfully.',
 				user: disabledUser,
 			});
-
 		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
 		console.log(e);
 		return res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 /**
  * PATCH /me/address/{address_id}
  * @tag Users
@@ -1008,7 +942,6 @@ async function editAddress(req, res) {
 		res.status(400).json({ error: 'Error adding address', e });
 	}
 }
-
 /**
  * PATCH /me/address/{address_id}/primary
  * @tag Users
@@ -1019,7 +952,6 @@ async function editAddress(req, res) {
  * @response 200 - Primary address set successfully.
  * @response 400 - Error setting primary address.
  */
-
 async function setPrimaryAddress(req, res) {
 	try {
 		let userAddress = await AddressDao.setPrimaryUserAddress(req.user.user_id, req.params.address_id);
@@ -1032,7 +964,6 @@ async function setPrimaryAddress(req, res) {
 		res.status(400).json({ error: 'Error setting primary address', e });
 	}
 }
-
 /**
  * POST /user/review
  * @tag Users
@@ -1079,7 +1010,6 @@ async function reviewUser(req, res) {
 		res.status(400).json({ error: 'Error adding review', e });
 	}
 }
-
 /**
  * GET /users/me/payment-sheet
  * @tag Users
@@ -1102,7 +1032,6 @@ async function getPaymentSheetCredentials(req, res) {
 		res.status(400).json({ error: 'Error obtaining payment sheet credentials', e });
 	}
 }
-
 async function requestToAddFundsToWallet(req, res) {
 	try {
 		const { amount, currency, payment_method_id, return_url } = req.body;
@@ -1126,7 +1055,6 @@ async function requestToAddFundsToWallet(req, res) {
 		res.status(400).json({ error: 'Error requesting to add funds to wallet' });
 	}
 }
-
 async function requestPaymentIntent(req, res) {
 	try {
 		const { amount, currency, return_url } = req.body;
@@ -1150,7 +1078,6 @@ async function requestPaymentIntent(req, res) {
 		res.status(400).json({ error: 'Error requesting payment intent' });
 	}
 }
-
 async function confirmPaymentIntent(req, res) {
 	try {
 		const { payment_intent_id } = req.body;
@@ -1165,7 +1092,6 @@ async function confirmPaymentIntent(req, res) {
 		res.status(400).json({ error: 'Error confirming payment intent' });
 	}
 }
-
 async function ping(req, res) {
 	console.log('ping, req.user ', req.user);
 	let user = await UserDao.getUserById(req.user.user_id, {
@@ -1193,7 +1119,6 @@ async function ping(req, res) {
 		return res.status(400).json({ error: 'User is not a driver' });
 	}
 }
-
 async function getSelfScheduledOrders(req, res) {
 	try {
 		const orders = await TaxiOrderDao.getOrders({
@@ -1209,7 +1134,6 @@ async function getSelfScheduledOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 async function getMyReviews(req, res) {
 	try {
 		let user = await UserDao.getUserById(req.user.user_id);
@@ -1294,14 +1218,11 @@ async function getMyReviews(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 async function getReviewsByUserId(req, res) {
 	try {
 		console.log(req.params);
-
 		// Check if the user_id corresponds to a driver
 		let driver = await DriverDao.getDriverByUserId(req.params.user_id);
-
 		if (driver) {
 			// Fetch business associated with the driver
 			let business = await prisma.business.findUnique({
@@ -1309,11 +1230,9 @@ async function getReviewsByUserId(req, res) {
 					business_id: driver.business_id,
 				},
 			});
-
 			if (!business?.reviewable_id) {
 				return res.status(200).json([]);
 			}
-
 			// Fetch reviews for the business
 			let reviews = await prisma.reviews.findMany({
 				where: {
@@ -1378,7 +1297,6 @@ async function getReviewsByUserId(req, res) {
 					created_at: 'desc',
 				},
 			});
-
 			for (let review of reviews) {
 				if (review.reviewable.user.length > 0) {
 					review.target = review.reviewable.user[0];
@@ -1388,7 +1306,6 @@ async function getReviewsByUserId(req, res) {
 				}
 				review.reviewable = undefined;
 			}
-
 			res.status(200).json(reviews);
 		} else {
 			// If not a driver, assume it's a regular user and fetch their reviews
@@ -1397,11 +1314,9 @@ async function getReviewsByUserId(req, res) {
 					user_id: req.params.user_id,
 				},
 			});
-
 			if (!user) {
 				return res.status(404).json({ error: 'User not found' });
 			}
-
 			let reviews = await prisma.reviews.findMany({
 				where: {
 					OR: [
@@ -1468,7 +1383,6 @@ async function getReviewsByUserId(req, res) {
 					created_at: 'desc',
 				},
 			});
-
 			for (let review of reviews) {
 				if (review.reviewable.user.length > 0) {
 					review.target = review.reviewable.user[0];
@@ -1478,7 +1392,6 @@ async function getReviewsByUserId(req, res) {
 				}
 				review.reviewable = undefined;
 			}
-
 			res.status(200).json(reviews);
 		}
 	} catch (e) {
@@ -1486,7 +1399,6 @@ async function getReviewsByUserId(req, res) {
 		res.status(500).json({ error: 'Internal server error' });
 	}
 }
-
 /**
  * POST /users/me/group_user/register-child
  * @tag GroupUser
@@ -1505,7 +1417,6 @@ async function registerChildUser(req, res) {
 	let user_data = req.body;
 	const parent_user_id = user_data.parent_user_id;
 	delete user_data['parent_user_id'];
-
 	try {
 		if (!user_data.email) {
 			user_data.email = '';
@@ -1540,24 +1451,20 @@ async function registerChildUser(req, res) {
 		delete userObj.user_roles;
 		let user = await UserDao.createNewUser(userObj);
 		delete user['password'];
-
 		const userRoles = user_data.user_roles || [{ role: userRole, primary: true }];
 		await UserDao.linkRolesToUser(user?.user_id, userRoles);
-
 		//create and connect group_user entry
 		const group_user_data = {
 			parent_user_id: parent_user_id,
 			child_user_id: user.user_id,
 		};
 		const group_user_entry = GroupDao.createGroupUser(group_user_data);
-
 		res.status(200).json({ user, group_user_entry });
 	} catch (e) {
 		console.log(e);
 		res.status(400).json({ error: 'Error something went wrong..', e });
 	}
 }
-
 /**
  * PATCH /users/me/group_user/status
  * @tag Users
@@ -1573,13 +1480,11 @@ async function registerChildUser(req, res) {
  */
 async function updateChildUserEnabledByGroupUserId(req, res) {
 	const { group_user_id, value } = req.body;
-
 	if (!group_user_id || typeof value !== 'boolean') {
 		return res
 			.status(400)
 			.json({ error: 'Invalid input. Please provide a valid group_user_id and a boolean value.' });
 	}
-
 	try {
 		let group_user = await GroupDao.updateGroupUserEnabled(group_user_id, value);
 		if (group_user) {
@@ -1591,7 +1496,6 @@ async function updateChildUserEnabledByGroupUserId(req, res) {
 		res.status(400).json({ error: 'Error updating group user enabled status', e });
 	}
 }
-
 /**
  * PATCH /users/me/group_user/allowance
  * @tag Users
@@ -1607,7 +1511,6 @@ async function updateChildUserEnabledByGroupUserId(req, res) {
  */
 async function updateChildUserAllowanceByGroupUserId(req, res) {
 	const { group_user_id, value, type } = req.body;
-
 	try {
 		let group_user = await GroupDao.updateGroupUserAllowance(group_user_id, value, type);
 		if (group_user) {
@@ -1619,7 +1522,6 @@ async function updateChildUserAllowanceByGroupUserId(req, res) {
 		res.status(400).json({ error: 'Error updating group user allowance', e });
 	}
 }
-
 /**
  * DELETE /users/me/group_user/delete/:group_user_id
  * @tag Users
@@ -1633,7 +1535,6 @@ async function updateChildUserAllowanceByGroupUserId(req, res) {
  */
 async function deleteChildUserByGroupUserId(req, res) {
 	const group_user_id = req.params.group_user_id;
-
 	try {
 		let group_user = await GroupDao.deleteGroupUser(group_user_id);
 		if (group_user) {
@@ -1645,7 +1546,6 @@ async function deleteChildUserByGroupUserId(req, res) {
 		res.status(400).json({ error: 'Error deleting group user', e });
 	}
 }
-
 // /**
 //  * DEPRECATED CODE DUE TO ADDING WALLET_FUNDS
 //  * GET /users/:user_id/wallet
@@ -1668,7 +1568,6 @@ async function deleteChildUserByGroupUserId(req, res) {
 // 		res.status(400).json({ error: "Error obtaining wallet balance", e });
 // 	}
 // }
-
 /**
  * GET /users/:user_id/wallet
  * @tag Users
@@ -1681,14 +1580,12 @@ async function deleteChildUserByGroupUserId(req, res) {
 async function getAvailableWalletBalance(req, res) {
 	try {
 		let balance = await WalletFundsDao.getAvailableWalletBalance(req.params.user_id);
-
 		return res.status(200).json({ wallet_balance: balance });
 	} catch (e) {
 		console.log(e);
 		res.status(400).json({ error: 'Error obtaining wallet balance', e });
 	}
 }
-
 /**
  * GET /users/:user_id/family_wallet
  * @tag Users
@@ -1728,7 +1625,6 @@ async function getFamilyWalletBalanceAndType(req, res) {
 		res.status(400).json({ error: 'Error obtaining family wallet balance and type', e });
 	}
 }
-
 /**
  * PATCH /users/:user_id/wallet
  * @tag Users
@@ -1746,7 +1642,6 @@ async function getFamilyWalletBalanceAndType(req, res) {
 async function updateWalletBalance(req, res) {
 	const { user_id } = req.params;
 	const { amount, documents } = req.body;
-
 	try {
 		let new_transaction = await UserDao.updateWalletBalance(user_id, amount, documents);
 		if (new_transaction) {
@@ -1759,10 +1654,8 @@ async function updateWalletBalance(req, res) {
 		res.status(400).json({ error: 'Error updating wallet balance', e });
 	}
 }
-
 async function getTransactions(req, res) {
 	const { user_id } = req.params;
-
 	try {
 		const transactions = await UserDao.getTransactions(user_id);
 		if (transactions) {
@@ -1774,7 +1667,6 @@ async function getTransactions(req, res) {
 		res.status(400).json({ error: 'Error fetching transactions', e });
 	}
 }
-
 /**
  * PATCH /users/language
  * @tag Users
@@ -1801,7 +1693,6 @@ async function updateUserLanguage(req, res) {
 		res.status(400).json({ error: 'Error updating user language.', e });
 	}
 }
-
 async function getUserByReferralCode(req, res) {
 	try {
 		const user = await UserDao.getUserByReferralCode(req.params.code);
@@ -1813,7 +1704,6 @@ async function getUserByReferralCode(req, res) {
 		res.status(400).json({ error: 'Error fetching user by referral code.', err });
 	}
 }
-
 /**
  * POST /users/me/redeem-referral-code
  * @tag Users
@@ -1829,7 +1719,6 @@ async function redeemReferralCode(req, res) {
 	try {
 		const { referral_code } = req.body;
 		const user_id = req.user.user_id;
-
 		// First check if user already has a referral
 		const existingReferral = await ReferralDao.getReferralByReferredUserId(user_id);
 		if (existingReferral) {
@@ -1854,25 +1743,21 @@ async function redeemReferralCode(req, res) {
 			return res.status(400).json({ errorCustom: 'This user has already referred 10 people' });
 		}
 		const referral = await ReferralDao.createReferral(referrer.user_id, user_id, referral_code);
-
 		return res.status(200).json({ message: 'Referral code redeemed successfully', referral });
 	} catch (error) {
 		return res.status(400).json({ error: error.message || 'Error redeeming referral code' });
 	}
 }
-
 async function claimReward(req, res) {
 	try {
 		const { referral_id } = req.body;
 		if (!referral_id) {
 			return res.status(400).json('Missing referral_id in the request body!');
 		}
-
 		const alreadyClaimed = await ReferralDao.getReferralByReferralId(referral_id);
 		if (alreadyClaimed?.reward_claimed) {
 			return res.status(400).json({ error: 'Reward already claimed!' });
 		}
-
 		const expiryDate = new Date();
 		expiryDate.setDate(expiryDate.getDate() + 30);
 		expiryDate.setHours(23, 59, 59, 999);
@@ -1883,18 +1768,15 @@ async function claimReward(req, res) {
 			type: FUNDS_TYPE.CREDITS_ANY, // we add taxi credits on referral
 			referral: { connect: { referral_id: referral_id } },
 		});
-
 		const referral = await ReferralDao.updateReferralRewardClaimed(referral_id, true);
 		if (!referral) {
 			return res.status(400).json({ error: 'Error claiming reward' });
 		}
-
 		return res.status(200).json(referral);
 	} catch (error) {
 		return res.status(400).json({ error: error.message || 'Error claiming reward' });
 	}
 }
-
 async function getUserCredits(req, res) {
 	try {
 		const { service_type } = req.params;
@@ -1919,7 +1801,6 @@ async function getUserCredits(req, res) {
 		return res.status(400).json({ error: error.message || 'Error fetching user credits' });
 	}
 }
-
 async function getMyActiveOrderIds(req, res) {
 	const user_id = req.user.user_id;
 	try {
@@ -1935,10 +1816,8 @@ async function getMyActiveOrderIds(req, res) {
 		return res.status(400).json({ error: error.message || 'Error fetching user active order ids' });
 	}
 }
-
 async function getMyActiveOrders(req, res) {
 	const user_id = req.user.user_id;
-
 	try {
 		const [delivery_orders, taxi_orders, transfer_orders, first_reservation] = await Promise.all([
 			DeliveryOrderDao.getDeliveryOrdersIfNotCompleted(user_id),
@@ -1946,7 +1825,6 @@ async function getMyActiveOrders(req, res) {
 			TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, ORDER_TYPE.TRANSFER_PRIVATE),
 			ReservationDao.getReservationIfNotCompleted(user_id),
 		]);
-
 		return res.status(200).json({
 			delivery_orders,
 			taxi_orders,
@@ -1959,7 +1837,6 @@ async function getMyActiveOrders(req, res) {
 		});
 	}
 }
-
 async function getReferral(req, res) {
 	try {
 		const referral = ReferralDao.getReferralByReferredUserId(req.user.user_id);
@@ -1969,7 +1846,6 @@ async function getReferral(req, res) {
 		return res.status(400).json({ error: error.message || 'Error fetching referral' });
 	}
 }
-
 async function updateMarketingNotifications(req, res) {
 	try {
 		const user = await UserDao.updateUserMarketingNotifications(req.user.user_id, req.body.data);
@@ -1981,7 +1857,6 @@ async function updateMarketingNotifications(req, res) {
 		return res.status(400).json({ error: err.message || 'Error setting marketing notifications' });
 	}
 }
-
 async function updateAdsPersonalization(req, res) {
 	try {
 		const user = await UserDao.updateUserAdsPersonalization(req.user.user_id, req.body.data);
@@ -1993,7 +1868,6 @@ async function updateAdsPersonalization(req, res) {
 		return res.status(400).json({ error: err.message || 'Error setting ads personalization' });
 	}
 }
-
 async function updateNewsletter(req, res) {
 	try {
 		const user = await UserDao.updateUserNewsletter(req.user.user_id, req.body.data);
@@ -2005,7 +1879,6 @@ async function updateNewsletter(req, res) {
 		return res.status(400).json({ error: err.message || 'Error setting newsletter' });
 	}
 }
-
 async function requestData(req, res) {
 	try {
 		const user_id = req.user.user_id;
@@ -2093,7 +1966,6 @@ async function requestData(req, res) {
 								can_drive: true,
 								created_at: true,
 								updated_at: true,
-
 								//include
 								vehicle: {
 									select: {
@@ -2684,7 +2556,6 @@ async function requestData(req, res) {
 						status: true,
 					},
 				}, // GDPR: Include wallet funds but without nested relations
-
 				referrals_made: {
 					// Referrals made by this user
 					select: {
@@ -2857,12 +2728,9 @@ async function requestData(req, res) {
 					},
 				},
 			};
-
 			let userData = await UserDao.getUserById(user_id, { select: usersStoredData });
-
 			if (userData) {
 				delete userData.password; // Ensure password is not sent
-
 				// Simplify delivery order items to only include essential items data (only slovenian translation, not all of them)
 				if (userData.delivery_orders) {
 					userData.delivery_orders.forEach((order) => {
@@ -2878,7 +2746,6 @@ async function requestData(req, res) {
 						}
 					});
 				}
-
 				return res.status(200).json(userData);
 			} else {
 				return res.status(404).json({ error: 'User not found' });
@@ -2890,8 +2757,67 @@ async function requestData(req, res) {
 		return res.status(500).json({ error: err.message || 'Error obtaining personal user data' });
 	}
 }
-
-module.exports = {
+export { getReferral };
+export { claimReward };
+export { redeemReferralCode };
+export { getUserByReferralCode };
+export { listUsers };
+export { listPersonalUsers };
+export { getUserById };
+export { me };
+export { updateMe };
+export { verifyMe };
+export { requestSMSVerification };
+export { updatePassword };
+export { updateEmail };
+export { updateTelephone };
+export { addAddress };
+export { deleteAddress };
+export { editAddress };
+export { setPrimaryAddress };
+export { reviewUser };
+export { oneSignalId };
+export { getPaymentSheetCredentials };
+export { requestToAddFundsToWallet };
+export { updateUserTaxiPreferences };
+export { updateUserAllergiesPreferences };
+export { updateUserSpicyPreferences };
+export { updateUserTransferPreferences };
+export { updateUserRadioPreferences };
+export { updateUserNotificationPreferences };
+export { updateUserTaxiPushNotifications };
+export { updateProfilePicture };
+export { ping };
+export { deleteUserByUserId };
+export { getSelfScheduledOrders };
+export { getMyReviews };
+export { getReviewsByUserId };
+export { updateUserByUserId };
+export { updateUserTransferPushNotifications };
+export { updateUserDeliveryPushNotifications };
+export { disableMe };
+export { updateUserDisabledByUserId };
+export { updateUserActiveByUserId };
+export { registerChildUser };
+export { updateChildUserEnabledByGroupUserId };
+export { updateChildUserAllowanceByGroupUserId };
+export { deleteChildUserByGroupUserId };
+export { getFamilyWalletBalanceAndType };
+export { getAvailableWalletBalance };
+export { getTransactions };
+export { updateWalletBalance };
+export { updateUserLanguage };
+export { softDeleteUserByUserId };
+export { requestPaymentIntent };
+export { confirmPaymentIntent };
+export { getUserCredits };
+export { getMyActiveOrderIds };
+export { getMyActiveOrders };
+export { updateMarketingNotifications };
+export { updateAdsPersonalization };
+export { updateNewsletter };
+export { requestData };
+export default {
 	getReferral,
 	claimReward,
 	redeemReferralCode,
@@ -2938,7 +2864,6 @@ module.exports = {
 	updateChildUserAllowanceByGroupUserId,
 	deleteChildUserByGroupUserId,
 	getFamilyWalletBalanceAndType,
-	// getWalletBalance,
 	getAvailableWalletBalance,
 	getTransactions,
 	updateWalletBalance,

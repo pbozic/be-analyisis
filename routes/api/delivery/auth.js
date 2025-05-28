@@ -1,10 +1,8 @@
-var express = require('express');
+import * as express from 'express';
 
+import AuthController from '../../../controllers/AuthController.js';
+import { loginSchema, registerSchema, refreshSchema, resetPasswordSchema } from '../../../joi/authSchemas.js';
+import joi from '../../../middleware/joi.js';
 const router = express.Router();
-const AuthController = require('../../../controllers/AuthController');
-const { loginSchema, registerSchema, refreshSchema, resetPasswordSchema } = require('../../../joi/authSchemas');
-const joi = require('../../../middleware/joi');
-
 router.post('/register', AuthController.registerDeliveryService);
-
-module.exports = router;
+export default router;

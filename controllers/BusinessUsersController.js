@@ -1,10 +1,10 @@
-const BusinessUsersDao = require('../dao/BusinessUsers');
-const AddressDao = require('../dao/Address');
-const GroupDao = require('../dao/Group');
-const UserDao = require('../dao/User');
-const Constants = require('../lib/constants');
-const { businessIndex } = require('../elasticsearch');
-
+import BusinessUsersDao from '../dao/BusinessUsers.js';
+import AddressDao from '../dao/Address.js';
+import GroupDao from '../dao/Group.js';
+import UserDao from '../dao/User.js';
+import Constants from '../lib/constants.js';
+import elasticsearch from '../elasticsearch/index.js';
+const { businessIndex } = elasticsearch;
 /**
  * GET /business-users
  * @tag BusinessUsers
@@ -25,7 +25,6 @@ async function getAllBusinessUsers(req, res) {
 		res.status(400).json({ error: 'Error retrieving all business users', detail: error.message });
 	}
 }
-
 /**
  * GET /business-users/{user_id}
  * @tag BusinessUsers
@@ -46,7 +45,6 @@ async function getBusinessUserByUserId(req, res) {
 		res.status(400).json({ error: 'Error retrieving business user', detail: error.message });
 	}
 }
-
 /**
  * GET /business-users/business/{business_id}
  * @tag BusinessUsers
@@ -68,7 +66,6 @@ async function getBusinessUsersByBusinessId(req, res) {
 		res.status(400).json({ error: 'Error retrieving business users by business ID', detail: error.message });
 	}
 }
-
 /**
  * GET /business-users/type/{type}
  * @tag BusinessUsers
@@ -90,7 +87,6 @@ async function getBusinessUsersByBusinessType(req, res) {
 		res.status(400).json({ error: 'Error retrieving business users by business type', detail: error.message });
 	}
 }
-
 /**
  * GET /business-users/business/{business_id}/company-role/{company_role}
  * @tag BusinessUsers
@@ -117,7 +113,6 @@ async function getAllBusinessUsersForBusinessByCompanyRole(req, res) {
 		res.status(400).json({ error: 'Error retrieving business users by company role', detail: error.message });
 	}
 }
-
 /**
  * POST /business-users
  * @tag BusinessUsers
@@ -139,7 +134,6 @@ async function createBusinessUser(req, res) {
 			{ role: req.body.userData.user_role || 'PERSONAL', primary: true },
 		];
 		await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
-
 		let personal_address = null;
 		if (userData.address) {
 			personal_address = await AddressDao.addAddress(userData.address);
@@ -153,14 +147,12 @@ async function createBusinessUser(req, res) {
 		await BusinessUsersDao.updateBusinessUser(businessUser.business_users_id, {
 			operating_address_id: operating_address.address_id,
 		});
-
 		res.status(201).json(businessUser);
 	} catch (error) {
 		console.error('Error creating a business user:', error);
 		res.status(400).json({ error: 'Error creating a business user', detail: error.message });
 	}
 }
-
 /**
  * DELETE /business-users/{business_users_id}
  * @tag BusinessUsers
@@ -181,7 +173,6 @@ async function removeBusinessUser(req, res) {
 		res.status(400).json({ error: 'Error removing a business user', detail: error.message });
 	}
 }
-
 /**
  * POST /business-users/{business_users_id}/address/operating
  * @tag BusinessUsers
@@ -215,7 +206,6 @@ async function addOperatingAddress(req, res) {
 		res.status(400).json({ error: 'Error adding address', detail: e.message });
 	}
 }
-
 /**
  * PATCH /business-users/company-role
  * @tag BusinessUsers
@@ -240,7 +230,6 @@ async function updateCompanyRole(req, res) {
 		res.status(400).json({ error: 'Error updating company role', detail: error.message });
 	}
 }
-
 /**
  * PATCH /business-users/online
  * @tag BusinessUsers
@@ -267,7 +256,6 @@ async function updateBusinessUserOnlineStatus(req, res) {
 		res.status(400).json({ error: 'Error updating business user online status', detail: error.message });
 	}
 }
-
 /**
  * GET /business-users/business/group-users/{business_id}
  * @tag GroupUsers
@@ -313,7 +301,6 @@ async function getBusinessGroupsByBusinessId(req, res) {
  */
 async function setAllowance(req, res) {
 	const { business_users_id, wallet, purchase_order, type } = req.body;
-
 	try {
 		let business_user = await BusinessUsersDao.updateAllowance(business_users_id, wallet, purchase_order, type);
 		if (business_user) {
@@ -325,8 +312,19 @@ async function setAllowance(req, res) {
 		res.status(400).json({ error: 'Error updating business user allowance', e });
 	}
 }
-
-module.exports = {
+export { updateCompanyRole };
+export { getAllBusinessUsersForBusinessByCompanyRole };
+export { getAllBusinessUsers };
+export { getBusinessUserByUserId };
+export { getBusinessUsersByBusinessId };
+export { getBusinessUsersByBusinessType };
+export { createBusinessUser };
+export { addOperatingAddress };
+export { removeBusinessUser };
+export { updateBusinessUserOnlineStatus };
+export { getBusinessGroupsByBusinessId };
+export { setAllowance };
+export default {
 	updateCompanyRole,
 	getAllBusinessUsersForBusinessByCompanyRole,
 	getAllBusinessUsers,

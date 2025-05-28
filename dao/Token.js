@@ -1,6 +1,6 @@
-const crypto = require('crypto');
+import crypto from 'crypto';
 
-const prisma = require('../prisma/prisma');
+import prisma from '../prisma/prisma.js';
 async function getPasswordToken(token) {
 	try {
 		return prisma.tokens.findFirst({
@@ -82,7 +82,6 @@ const savePasswordResetToken = async (token) => {
 		return new Error(e);
 	}
 };
-
 async function generateSMSVerificationToken(user) {
 	let tokenObj = {
 		user_id: user.user_id,
@@ -94,7 +93,6 @@ async function generateSMSVerificationToken(user) {
 	// TODO: send SMS
 	return token;
 }
-
 async function generatePaswordResetToken(user) {
 	let tokenHash = crypto.randomBytes(20).toString('hex');
 	const resetTokenExpires = Date.now() + 3600000 * 24; // 1 hour from now
@@ -121,8 +119,14 @@ async function generatePaswordResetToken(user) {
 	//TODO: send email
 	return token;
 }
-
-module.exports = {
+export { getActiveSMSToken };
+export { saveSMSToken };
+export { updateToken };
+export { savePasswordResetToken };
+export { generateSMSVerificationToken };
+export { generatePaswordResetToken };
+export { getPasswordToken };
+export default {
 	getActiveSMSToken,
 	saveSMSToken,
 	updateToken,

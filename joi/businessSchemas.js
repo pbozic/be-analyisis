@@ -1,7 +1,6 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
-const prisma = require('../prisma/prisma');
-
+import prisma from '../prisma/prisma.js';
 const updateSchema = Joi.object({
 	user_id: Joi.string(),
 	profile_picture: [Joi.string().base64().optional(), Joi.allow(null)],
@@ -29,11 +28,9 @@ const updateSchema = Joi.object({
 const verifyPhoneSchema = Joi.object({
 	token: Joi.string().required(),
 });
-
 const updateEmailSchema = Joi.object({
 	email: Joi.string().required(),
 });
-
 const updatePasswordSchema = Joi.object({
 	password: Joi.string().required(),
 	new_password: Joi.string()
@@ -41,7 +38,6 @@ const updatePasswordSchema = Joi.object({
 		.required(),
 	confirm_password: Joi.ref('new_password'),
 });
-
 const updateTelephoneSchema = Joi.object({
 	telephone: Joi.string().required(),
 	telephone_code: Joi.string().required(),
@@ -59,7 +55,6 @@ const addAddressSchema = Joi.object({
 	postal: [Joi.string().optional(), Joi.allow(null)],
 	country: [Joi.string().optional(), Joi.allow(null)],
 });
-
 const editAddressSchema = Joi.object({
 	name: Joi.string().optional(),
 	icon: Joi.string().optional(),
@@ -70,7 +65,6 @@ const paymentIntentSchema = Joi.object({
 	payment_method: Joi.string().required(),
 	user_id: Joi.string().required(),
 });
-
 const newBusinessSchema = Joi.object({
 	type: Joi.string(),
 	is_business_unit: Joi.boolean(),
@@ -94,11 +88,9 @@ const newBusinessSchema = Joi.object({
 			} catch (error) {
 				console.log(error);
 			}
-
 			if (isEmailInUse) {
 				throw new Error('Account with this email already exists.');
 			}
-
 			return email;
 		}),
 	telephone: Joi.string(),
@@ -107,8 +99,16 @@ const newBusinessSchema = Joi.object({
 	website_url: Joi.string().allow('', null).optional(),
 	minimum_order: Joi.number().integer().optional(),
 });
-
-module.exports = {
+export { updateSchema };
+export { verifyPhoneSchema };
+export { updateEmailSchema };
+export { updatePasswordSchema };
+export { updateTelephoneSchema };
+export { addAddressSchema };
+export { paymentIntentSchema };
+export { editAddressSchema };
+export { newBusinessSchema };
+export default {
 	updateSchema,
 	verifyPhoneSchema,
 	updateEmailSchema,

@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from 'joi';
 const addressSchema = Joi.object({
 	id: Joi.string().optional(),
 	address: Joi.string().required(),
@@ -8,7 +8,6 @@ const addressSchema = Joi.object({
 	}).required(),
 	locked: Joi.boolean().optional(),
 });
-
 const deliveryLocationSchema = Joi.object({
 	id: Joi.string().optional(),
 	address: Joi.string().allow(null),
@@ -18,7 +17,6 @@ const deliveryLocationSchema = Joi.object({
 	}).allow(null),
 	locked: Joi.boolean().optional(),
 }).allow(null);
-
 const createOrderSchema = Joi.object({
 	type: Joi.string().optional(),
 	subtype: Joi.string().optional(),
@@ -43,7 +41,7 @@ const createOrderSchema = Joi.object({
 	vehicle_transfer_order: Joi.object().allow(null).optional(),
 	allow_credits_usage: Joi.boolean().optional(),
 });
-
-module.exports = {
+export { createOrderSchema };
+export default {
 	createOrderSchema,
 };

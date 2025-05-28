@@ -70,4 +70,4 @@ const es = {
 		referral: 'Tu recompensa por referido ha sido acreditada en tu cuenta',
 	},
 };
-module.exports = es;
+export default es;

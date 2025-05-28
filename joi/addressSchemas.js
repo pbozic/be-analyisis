@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from 'joi';
 const addressSchema = Joi.object({
 	address: Joi.string().required(),
 	latitude: Joi.string()
@@ -8,7 +8,7 @@ const addressSchema = Joi.object({
 		.regex(/^[-+]?((1[0-7]\d(\.\d+)?|18[0-3](\.\d+)?|\d{1,2}(\.\d+)?))/)
 		.required(),
 });
-
-module.exports = {
+export { addressSchema };
+export default {
 	addressSchema,
 };

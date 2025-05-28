@@ -1,8 +1,7 @@
-var express = require('express');
+import * as express from 'express';
+
+import BusinessUsersController from '../../controllers/BusinessUsersController.js';
 const router = express.Router();
-
-const BusinessUsersController = require('../../controllers/BusinessUsersController');
-
 router.get('/', BusinessUsersController.getAllBusinessUsers);
 router.get('/:user_id', BusinessUsersController.getBusinessUserByUserId);
 router.get('/business/:business_id', BusinessUsersController.getBusinessUsersByBusinessId);
@@ -12,14 +11,10 @@ router.get(
 	'/business/:business_id/company-role/:company_role',
 	BusinessUsersController.getAllBusinessUsersForBusinessByCompanyRole
 );
-
 router.post('/', BusinessUsersController.createBusinessUser);
 router.post('/address/operating', BusinessUsersController.addOperatingAddress);
-
 router.patch('/allowance', BusinessUsersController.setAllowance);
 router.patch('/company-role', BusinessUsersController.updateCompanyRole);
 router.patch('/online', BusinessUsersController.updateBusinessUserOnlineStatus);
-
 router.delete('/:business_users_id', BusinessUsersController.removeBusinessUser);
-
-module.exports = router;
+export default router;

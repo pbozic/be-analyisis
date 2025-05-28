@@ -1,9 +1,8 @@
-const express = require('express');
+import * as express from 'express';
+
+import DocumentsController from '../../controllers/DocumentsController.js';
+import { deleteDocumentsAndFilesByDocumentId } from '../../controllers/MenuController.js';
 const router = express.Router();
-
-const DocumentsController = require('../../controllers/DocumentsController');
-const { deleteDocumentsAndFilesByDocumentId } = require('../../controllers/MenuController');
-
 router.get('/', DocumentsController.listDocuments);
 router.get('/:documentId', DocumentsController.getDocumentById);
 router.get('/users/:userId', DocumentsController.getDocumentsForUser);
@@ -20,18 +19,14 @@ router.get(
 	DocumentsController.getDocumentsForDeliveryPersonByDocumentType
 );
 router.get('/vehicles/:vehicleId/type/:documentType', DocumentsController.getDocumentsForVehicleByDocumentType);
-
 router.post('/create/user/:user_id', DocumentsController.createUserDocument);
 router.post('/create/business/:business_id', DocumentsController.createBusinessDocument);
 router.post('/create/driver/:driver_id', DocumentsController.createDriverDocument);
 router.post('/create/vehicle/:vehicle_id', DocumentsController.createVehicleDocument);
 router.post('/create/delivery_driver/:delivery_driver_id', DocumentsController.createDeliveryPersonDocument);
-
 router.patch('/expirationDate', DocumentsController.updateDocumentExpirationDate);
 router.patch('/issueDate', DocumentsController.updateDocumentIssueDate);
 router.patch('/files', DocumentsController.updateDocumentFiles);
 router.patch('/additionalInfo', DocumentsController.updateDocumentAdditionalInfo);
-
 router.delete('/files/:field/:id', deleteDocumentsAndFilesByDocumentId);
-
-module.exports = router;
+export default router;

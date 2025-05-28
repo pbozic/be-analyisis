@@ -1,5 +1,4 @@
-const FlagDao = require('../dao/Flags');
-
+import FlagDao from '../dao/Flags.js';
 const getFlags = async (req, res) => {
 	try {
 		let flags = await FlagDao.getFlags(req.query);
@@ -9,7 +8,6 @@ const getFlags = async (req, res) => {
 		res.status(500).send('Error retrieving flags');
 	}
 };
-
 const getFlagById = async (req, res) => {
 	try {
 		let flag = await FlagDao.getFlagById(req.params.flag_id);
@@ -19,7 +17,6 @@ const getFlagById = async (req, res) => {
 		res.status(500).send('Error retrieving flag');
 	}
 };
-
 const createFlag = async (req, res) => {
 	try {
 		let flag = await FlagDao.createFlag(req.body, req.user);
@@ -29,7 +26,6 @@ const createFlag = async (req, res) => {
 		res.status(500).send('Error creating flag');
 	}
 };
-
 const updateFlag = async (req, res) => {
 	try {
 		let flag = await FlagDao.updateFlag(req.params.flag_id, req.body, req.user);
@@ -39,7 +35,6 @@ const updateFlag = async (req, res) => {
 		res.status(500).send('Error updating flag');
 	}
 };
-
 const deleteFlag = async (req, res) => {
 	try {
 		await FlagDao.deleteFlag(req.params.flag_id);
@@ -49,8 +44,12 @@ const deleteFlag = async (req, res) => {
 		res.status(500).send('Error deleting flag');
 	}
 };
-
-module.exports = {
+export { getFlags };
+export { getFlagById };
+export { createFlag };
+export { updateFlag };
+export { deleteFlag };
+export default {
 	getFlags,
 	getFlagById,
 	createFlag,

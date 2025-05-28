@@ -1,9 +1,9 @@
-require('dotenv').config();
-const express = require('express');
+import { config } from 'dotenv';
+import * as express from 'express';
 
-const UserController = require('../../controllers/UserController');
-const joi = require('../../middleware/joi');
-const {
+import UserController from '../../controllers/UserController.js';
+import joi from '../../middleware/joi.js';
+import {
 	updateSchema,
 	verifyPhoneSchema,
 	updateEmailSchema,
@@ -13,12 +13,11 @@ const {
 	addAddressSchema,
 	editAddressSchema,
 	oneSignalIdSchema,
-} = require('../../joi/userSchemas');
-const { reviewUserSchema } = require('../../joi/reviewSchemas');
-const { registerChildSchema } = require('../../joi/authSchemas');
-
+} from '../../joi/userSchemas.js';
+import { reviewUserSchema } from '../../joi/reviewSchemas.js';
+import { registerChildSchema } from '../../joi/authSchemas.js';
+config();
 const router = express.Router();
-
 router.get('/', UserController.listUsers);
 router.get('/personal', UserController.listPersonalUsers);
 router.get('/me', UserController.me);
@@ -70,18 +69,13 @@ router.patch('/group_user/allowance', UserController.updateChildUserAllowanceByG
 router.delete('/me/group_user/delete/:group_user_id', UserController.deleteChildUserByGroupUserId);
 router.post('/me/request-payment-intent', UserController.requestPaymentIntent);
 router.post('/me/confirm-payment-intent', UserController.confirmPaymentIntent);
-
 router.get('/me/credits/:service_type', UserController.getUserCredits);
-
 router.patch('/me/claim-reward', UserController.claimReward);
 router.post('/me/redeem-referral-code', UserController.redeemReferralCode);
 router.get('/user/:code', UserController.getUserByReferralCode);
 router.get('/me/referral', UserController.getReferral);
-
 router.patch('/me/marketing-notifications', UserController.updateMarketingNotifications);
 router.patch('/me/ads-personalization', UserController.updateAdsPersonalization);
 router.patch('/me/newsletter', UserController.updateNewsletter);
-
 router.post('/me/request-data', UserController.requestData);
-
-module.exports = router;
+export default router;

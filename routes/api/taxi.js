@@ -1,10 +1,9 @@
-var express = require('express');
+import * as express from 'express';
 
+import TaxiOrderController from '../../controllers/TaxiOrderController.js';
+import { createOrderSchema } from '../../joi/taxiOrderSchemas.js';
+import joi from '../../middleware/joi.js';
 const router = express.Router();
-const TaxiOrderController = require('../../controllers/TaxiOrderController');
-const { createOrderSchema } = require('../../joi/taxiOrderSchemas');
-const joi = require('../../middleware/joi');
-
 router.get('/', TaxiOrderController.getTaxiOrders);
 router.get('/today', TaxiOrderController.getTaxiOrdersToday);
 router.get('/order/:order_id', TaxiOrderController.getOrder);
@@ -41,5 +40,4 @@ router.post('/order/reject', TaxiOrderController.rejectOrder);
 router.post('/grouped_order/cancel', TaxiOrderController.cancelGroupedOrderByParentId);
 router.post('/grouped_order/reject', TaxiOrderController.rejectGroupedOrderByParentId);
 router.post('/calculate_transfer_price', TaxiOrderController.calculateTransferPrice);
-
-module.exports = router;
+export default router;

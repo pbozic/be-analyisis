@@ -1,6 +1,4 @@
-const { file } = require('googleapis/build/src/apis/file');
-
-const prisma = require('../prisma/prisma');
+import prisma from '../prisma/prisma.js';
 const addFileToDocument = async (documentId, fileData, isPublic) => {
 	fileData.public = isPublic || false;
 	try {
@@ -23,7 +21,6 @@ const addFilesToDocument = async (documentId, filesData) => {
 	try {
 		// Ensure filesData is treated as an array
 		const filesArray = Array.isArray(filesData) ? filesData : [filesData];
-
 		// Create files
 		return await Promise.all(
 			filesArray.map(async (file) => {
@@ -44,7 +41,6 @@ const addFilesToDocument = async (documentId, filesData) => {
 		throw new Error(error);
 	}
 };
-
 const updateFileInDocument = async (fileId, updateData, isPublic) => {
 	updateData.public = isPublic || false;
 	try {
@@ -57,7 +53,6 @@ const updateFileInDocument = async (fileId, updateData, isPublic) => {
 		return new Error(error);
 	}
 };
-
 const removeFileFromDocument = async (fileId) => {
 	try {
 		// First, disconnect the file from the document
@@ -69,7 +64,6 @@ const removeFileFromDocument = async (fileId) => {
 				},
 			},
 		});
-
 		// Then, delete the file
 		return await prisma.files.delete({
 			where: { file_id: fileId },
@@ -79,7 +73,6 @@ const removeFileFromDocument = async (fileId) => {
 		throw new Error(error);
 	}
 };
-
 // Remove all files from a document
 const removeAllFilesFromDocument = async (documentId) => {
 	try {
@@ -89,7 +82,6 @@ const removeAllFilesFromDocument = async (documentId) => {
 				document_id: null,
 			},
 		});
-
 		return await prisma.files.deleteMany({
 			where: { document_id: documentId },
 		});
@@ -98,7 +90,6 @@ const removeAllFilesFromDocument = async (documentId) => {
 		throw new Error(error);
 	}
 };
-
 async function getFilesByDocumentId(document_id) {
 	return await prisma.files.findMany({
 		where: {
@@ -106,7 +97,6 @@ async function getFilesByDocumentId(document_id) {
 		},
 	});
 }
-
 async function createFile(file_type, mime_type, isPublic = false) {
 	try {
 		return await prisma.files.create({
@@ -121,7 +111,6 @@ async function createFile(file_type, mime_type, isPublic = false) {
 		throw new Error(error);
 	}
 }
-
 async function getFile(file_id) {
 	try {
 		return await prisma.files.findUnique({
@@ -134,7 +123,6 @@ async function getFile(file_id) {
 		throw new Error(error);
 	}
 }
-
 async function updateFileById(file_id, file_type, mime_type, url) {
 	try {
 		return await prisma.files.update({
@@ -152,8 +140,16 @@ async function updateFileById(file_id, file_type, mime_type, url) {
 		throw new Error(error);
 	}
 }
-
-module.exports = {
+export { addFileToDocument };
+export { addFilesToDocument };
+export { updateFileInDocument };
+export { removeFileFromDocument };
+export { removeAllFilesFromDocument };
+export { getFilesByDocumentId };
+export { createFile };
+export { updateFileById };
+export { getFile };
+export default {
 	addFileToDocument,
 	addFilesToDocument,
 	updateFileInDocument,

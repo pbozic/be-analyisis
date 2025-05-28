@@ -1,9 +1,7 @@
-const esClient = require('../client');
-
+import esClient from '../client.js';
 async function listAllBusinessesWithScoring(userLat, userLon, page = 1, pageSize = 10) {
 	try {
 		const from = (page - 1) * pageSize;
-
 		const esResponse = await esClient.search({
 			index: 'business_index',
 			body: {
@@ -64,7 +62,6 @@ async function listAllBusinessesWithScoring(userLat, userLon, page = 1, pageSize
 				sort: [{ _score: 'desc' }], // Sort by highest score
 			},
 		});
-
 		console.log(JSON.stringify(esResponse, null, 4));
 		return esResponse.hits.hits.map((hit) => ({
 			business_id: hit._source.business_id,
@@ -77,5 +74,4 @@ async function listAllBusinessesWithScoring(userLat, userLon, page = 1, pageSize
 		return [];
 	}
 }
-
-module.exports = listAllBusinessesWithScoring;
+export default listAllBusinessesWithScoring;

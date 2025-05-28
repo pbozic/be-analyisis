@@ -1,10 +1,9 @@
-const fs = require('fs');
-const path = require('path');
-
-const prisma = require('../prisma');
-const { upsertFileOnS3Helper } = require('../../controllers/FilesController');
-const CategoriesDao = require('../../dao/Categories');
-const WordDao = require('../../dao/Word');
+import fs from 'fs';
+import path from 'path';
+import prisma from '../prisma.js';
+import { upsertFileOnS3Helper } from '../../controllers/FilesController.js';
+import CategoriesDao from '../../dao/Categories.js';
+import WordDao from '../../dao/Word.js';
 let languages = {
 	en: {
 		fastFood: 'Fast food',
@@ -457,7 +456,6 @@ let languages = {
 		studentMeals: 'Студенческие обеды',
 	},
 };
-
 let CATEGORIES_FULL = {
 	fastFood: { key: 'fastFood', tag: 'fast-food', source: './icons/fast-food.png', name: 'Fast food' },
 	pizza: { key: 'pizza', tag: 'pizza', source: './icons/pizza.png', name: 'Pizza' },
@@ -513,7 +511,6 @@ let CATEGORIES_FULL = {
 		name: 'Student meals',
 	},
 };
-
 async function seedCategories() {
 	console.log('Seeding categories...');
 	for (let key in CATEGORIES_FULL) {
@@ -538,7 +535,6 @@ async function seedCategories() {
 		} catch (error) {
 			console.error(`Error processing ${imagePath}:`, error);
 		}
-
 		let categoryObj = {
 			categoryData: {
 				name: category.name,
@@ -586,7 +582,6 @@ async function seedCategories() {
 				}
 				console.log(`Category ${cat.categories_id} created.`);
 			}
-
 			let wordObj = {
 				wordData: {
 					word: categoryObj.categoryData.name,
@@ -627,5 +622,4 @@ async function seedCategories() {
 	}
 	console.log('Categories seeded.');
 }
-
-module.exports = seedCategories;
+export default seedCategories;

@@ -48,10 +48,10 @@ async function handleWalletBalance(model, operation, args, query, result) {
 	}
 	return middlewareResult;
 }
-
-//TODO: if user is type BUSINESS_CARETAKER || BUSINESS_OWNER, then handle address user_address_id, if empty get user_address.
-
-module.exports = {
+export { handleHidePassword };
+export { alwaysAddWalletBalance };
+export { handleWalletBalance };
+export default {
 	handleHidePassword,
 	alwaysAddWalletBalance,
 	handleWalletBalance,

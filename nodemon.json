@@ -1,21 +1,21 @@
 {
-	"watch": [
-		"app.js",
-		"server.js",
-		"socket.js",
-		"controllers",
-		"dao",
-		"prisma",
-		"routes",
-		"lib",
-		"middleware",
-		"views",
-		"joi",
-		"json",
-		"models",
-		"public"
-	],
-	"ext": "js,json,ts",
-	"ignore": ["node_modules", "Docker", ".git"],
-	"legacyWatch": true
+    "watch": [
+        "app.js",
+        "server.js",
+        "socket.js",
+        "controllers",
+        "dao",
+        "prisma",
+        "routes",
+        "lib",
+        "middleware",
+        "views",
+        "joi",
+        "json",
+        "models",
+        "public"
+    ],
+    "ext": "js,json,ts",
+    "ignore": ["node_modules", "Docker", ".git"],
+    "legacyWatch": true
 }

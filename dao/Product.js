@@ -1,11 +1,9 @@
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
 
-const prisma = require('../prisma/prisma');
+import prisma from '../prisma/prisma.js';
 dotenv.config();
-
 const createProduct = async (product) => {
 	// check if it exists
-
 	const isProduct = await prisma.local_products.findUnique({
 		where: {
 			stripe_product_id: product.stripe_product_id,
@@ -29,7 +27,6 @@ const createProduct = async (product) => {
 		return error;
 	}
 };
-
 const createPrice = async (price) => {
 	try {
 		const price = await prisma.local_prices.findUnique({
@@ -37,11 +34,9 @@ const createPrice = async (price) => {
 				stripe_price_id: price.stripe_price_id,
 			},
 		});
-
 		if (price) {
 			return price;
 		}
-
 		const result = await prisma.local_prices.create({
 			data: {
 				amount: price.amount,
@@ -61,7 +56,6 @@ const createPrice = async (price) => {
 		return error;
 	}
 };
-
 const getProductByStripeId = async (stripe_product_id) => {
 	try {
 		const result = await prisma.local_products.findUnique({
@@ -75,7 +69,6 @@ const getProductByStripeId = async (stripe_product_id) => {
 		return error;
 	}
 };
-
 const getPriceByStripeId = async (stripe_price_id) => {
 	try {
 		const result = await prisma.local_prices.findUnique({
@@ -89,7 +82,6 @@ const getPriceByStripeId = async (stripe_price_id) => {
 		return error;
 	}
 };
-
 const getProduct = async (product_id) => {
 	try {
 		const result = await prisma.local_products.findUnique({
@@ -103,7 +95,6 @@ const getProduct = async (product_id) => {
 		return error;
 	}
 };
-
 const getPrice = async (price_id) => {
 	try {
 		const result = await prisma.local_prices.findUnique({
@@ -117,7 +108,6 @@ const getPrice = async (price_id) => {
 		return error;
 	}
 };
-
 const updateProductByStripeId = async (stripe_product_id, product) => {
 	try {
 		const result = await prisma.local_products.update({
@@ -135,7 +125,6 @@ const updateProductByStripeId = async (stripe_product_id, product) => {
 		return error;
 	}
 };
-
 const updatePriceByStripeId = async (stripe_price_id, price) => {
 	try {
 		const result = await prisma.local_prices.update({
@@ -153,7 +142,6 @@ const updatePriceByStripeId = async (stripe_price_id, price) => {
 		return error;
 	}
 };
-
 const deleteProductByStripeId = async (stripe_product_id) => {
 	try {
 		const result = await prisma.local_products.delete({
@@ -167,7 +155,6 @@ const deleteProductByStripeId = async (stripe_product_id) => {
 		return error;
 	}
 };
-
 const deletePriceByStripeId = async (stripe_price_id) => {
 	try {
 		const result = await prisma.local_prices.delete({
@@ -181,7 +168,6 @@ const deletePriceByStripeId = async (stripe_price_id) => {
 		return error;
 	}
 };
-
 async function getPricesByProductId(product_id) {
 	try {
 		const result = await prisma.local_prices.findMany({
@@ -195,7 +181,6 @@ async function getPricesByProductId(product_id) {
 		return error;
 	}
 }
-
 async function getPricesByStripeProductId(stripe_product_id) {
 	try {
 		const result = await prisma.local_prices.findMany({
@@ -209,7 +194,19 @@ async function getPricesByStripeProductId(stripe_product_id) {
 		return error;
 	}
 }
-module.exports = {
+export { createProduct };
+export { createPrice };
+export { getProductByStripeId };
+export { getPriceByStripeId };
+export { getProduct };
+export { getPrice };
+export { updateProductByStripeId };
+export { updatePriceByStripeId };
+export { deleteProductByStripeId };
+export { deletePriceByStripeId };
+export { getPricesByProductId };
+export { getPricesByStripeProductId };
+export default {
 	createProduct,
 	createPrice,
 	getProductByStripeId,

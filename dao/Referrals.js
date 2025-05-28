@@ -1,6 +1,5 @@
-const prisma = require('../prisma/prisma');
-const { TAXI_ORDER_STATUS, DELIVERY_ORDER_STATUS } = require('../lib/constants');
-
+import prisma from '../prisma/prisma.js';
+import { TAXI_ORDER_STATUS, DELIVERY_ORDER_STATUS } from '../lib/constants.js';
 const createReferral = async (referrerUserId, referredUserId, referralCode) => {
 	try {
 		return await prisma.referrals.create({
@@ -18,7 +17,6 @@ const createReferral = async (referrerUserId, referredUserId, referralCode) => {
 		throw error;
 	}
 };
-
 const getReferralByReferralId = async (referralId) => {
 	try {
 		return await prisma.referrals.findUnique({
@@ -31,7 +29,6 @@ const getReferralByReferralId = async (referralId) => {
 		throw error;
 	}
 };
-
 const updateReferralConditionsMet = async (referralId, conditionsMet) => {
 	try {
 		return await prisma.referrals.update({
@@ -47,7 +44,6 @@ const updateReferralConditionsMet = async (referralId, conditionsMet) => {
 		throw error;
 	}
 };
-
 const updateReferralRewardClaimed = async (referralId, claimed) => {
 	try {
 		return await prisma.referrals.update({
@@ -63,7 +59,6 @@ const updateReferralRewardClaimed = async (referralId, claimed) => {
 		throw error;
 	}
 };
-
 const getReferralByReferredUserId = async (referredUserId) => {
 	try {
 		return await prisma.referrals.findUnique({
@@ -80,7 +75,6 @@ const getReferralByReferredUserId = async (referredUserId) => {
 		throw error;
 	}
 };
-
 const getReferralsByReferrerUserId = async (referrerUserId) => {
 	try {
 		return await prisma.referrals.findMany({
@@ -96,8 +90,13 @@ const getReferralsByReferrerUserId = async (referrerUserId) => {
 		throw error;
 	}
 };
-
-module.exports = {
+export { getReferralByReferralId };
+export { createReferral };
+export { updateReferralConditionsMet };
+export { updateReferralRewardClaimed };
+export { getReferralByReferredUserId };
+export { getReferralsByReferrerUserId };
+export default {
 	getReferralByReferralId,
 	createReferral,
 	updateReferralConditionsMet,

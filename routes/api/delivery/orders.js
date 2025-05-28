@@ -1,10 +1,9 @@
-var express = require('express');
+import * as express from 'express';
 
+import { createOrderSchema } from '../../../joi/taxiOrderSchemas.js';
+import joi from '../../../middleware/joi.js';
+import DeliveryOrderController from '../../../controllers/DeliveryOrderController.js';
 const router = express.Router();
-const { createOrderSchema } = require('../../../joi/taxiOrderSchemas');
-const joi = require('../../../middleware/joi');
-const DeliveryOrderController = require('../../../controllers/DeliveryOrderController');
-
 router.get('/:daily_meals', DeliveryOrderController.getDeliveryOrders);
 router.get('/today', DeliveryOrderController.getDeliveryOrdersToday);
 router.get('/active', DeliveryOrderController.getActiveDeliveryOrders);
@@ -24,7 +23,6 @@ router.post('/daily_meals/subscription', DeliveryOrderController.createDailyMeal
 router.post('/daily_meals/user', DeliveryOrderController.getDailyMealsSubscriptionsByUserId);
 router.post('/daily_meals/business', DeliveryOrderController.getDailyMealsSubscriptionsByBusinessId);
 router.post('/daily_meals', DeliveryOrderController.createDailyMeals);
-
 router.post('/order/merchant_accept', DeliveryOrderController.merchantAcceptOrder);
 router.post('/order/dispatcher_cancel', DeliveryOrderController.dispatcherCancel);
 router.post('/order/dispatcher_revoke', DeliveryOrderController.dispatcherRevoke);
@@ -37,5 +35,4 @@ router.post('/order/complete', DeliveryOrderController.completeOrder);
 router.post('/timeline', DeliveryOrderController.updateDeliveryOrderTimeline);
 router.post('/add_to_timeline', DeliveryOrderController.addToDeliveryOrderTimeline);
 router.post('/order/update', DeliveryOrderController.updateDeliveryOrder);
-
-module.exports = router;
+export default router;

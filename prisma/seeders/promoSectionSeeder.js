@@ -1,8 +1,6 @@
-const faker = require('@faker-js/faker');
-
-const prisma = require('../prisma');
-const PromoDao = require('../../dao/Promo');
-
+import * as faker from '@faker-js/faker';
+import prisma from '../prisma.js';
+import PromoDao from '../../dao/Promo.js';
 const placeholder_promo_sections = [
 	{
 		translations: [
@@ -135,7 +133,6 @@ const placeholder_promo_sections = [
 		},
 	},
 ];
-
 async function promoSectionSeed() {
 	const existing_promo_sections = await PromoDao.getAllPromoSections();
 	return new Promise(async (resolve, reject) => {
@@ -158,5 +155,4 @@ async function promoSectionSeed() {
 		}
 	});
 }
-
-module.exports = promoSectionSeed;
+export default promoSectionSeed;

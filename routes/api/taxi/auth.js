@@ -1,10 +1,8 @@
-var express = require('express');
+import * as express from 'express';
 
+import AuthController from '../../../controllers/AuthController.js';
+import { registerTaxiBusinessSchema } from '../../../joi/taxiSchemas.js';
+import joi from '../../../middleware/joi.js';
 const router = express.Router();
-const AuthController = require('../../../controllers/AuthController');
-const { registerTaxiBusinessSchema } = require('../../../joi/taxiSchemas');
-const joi = require('../../../middleware/joi');
-
 router.post('/register', joi(registerTaxiBusinessSchema), AuthController.registerTaxiService);
-
-module.exports = router;
+export default router;

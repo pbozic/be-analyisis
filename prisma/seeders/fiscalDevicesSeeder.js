@@ -1,5 +1,4 @@
-const prisma = require('../prisma');
-
+import prisma from '../prisma.js';
 async function fiscalDevicesSeeder() {
 	let exists = await prisma.fiscal_devices.findFirst({
 		where: {
@@ -13,5 +12,4 @@ async function fiscalDevicesSeeder() {
 		},
 	});
 }
-
-module.exports = fiscalDevicesSeeder;
+export default fiscalDevicesSeeder;

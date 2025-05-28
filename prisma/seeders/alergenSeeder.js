@@ -1,7 +1,5 @@
-const faker = require('@faker-js/faker');
-
-const prisma = require('../prisma');
-
+import * as faker from '@faker-js/faker';
+import prisma from '../prisma.js';
 const allergens = [
 	{
 		code: 1,
@@ -59,7 +57,6 @@ const allergens = [
 		description: 'Mehkužci in proizvodi iz njih, kot so školjke, lignji, polži.',
 	},
 ];
-
 async function alergenSeed() {
 	return new Promise(async (resolve, reject) => {
 		console.log('Seeding alergens...');
@@ -83,5 +80,4 @@ async function alergenSeed() {
 		}
 	});
 }
-
-module.exports = alergenSeed;
+export default alergenSeed;

@@ -1,6 +1,5 @@
-const prisma = require('../prisma/prisma');
-const { updateFileInDocument } = require('./File');
-
+import prisma from '../prisma/prisma.js';
+import { updateFileInDocument } from './File.js';
 const getDocuments = async () => {
 	try {
 		return await prisma.documents.findMany({
@@ -13,7 +12,6 @@ const getDocuments = async () => {
 		return new Error(error);
 	}
 };
-
 const getDocumentById = async (documentId) => {
 	try {
 		return await prisma.documents.findUnique({
@@ -27,7 +25,6 @@ const getDocumentById = async (documentId) => {
 		return new Error(error);
 	}
 };
-
 const getDocumentsForBusiness = async (businessId) => {
 	try {
 		return await prisma.documents.findMany({
@@ -41,7 +38,6 @@ const getDocumentsForBusiness = async (businessId) => {
 		return new Error(error);
 	}
 };
-
 const getDocumentsForDeliveryPerson = async (deliveryPersonId) => {
 	try {
 		return await prisma.documents.findMany({
@@ -55,7 +51,6 @@ const getDocumentsForDeliveryPerson = async (deliveryPersonId) => {
 		return new Error(error);
 	}
 };
-
 const getDocumentsForDriver = async (driverId) => {
 	try {
 		return await prisma.documents.findMany({
@@ -69,7 +64,6 @@ const getDocumentsForDriver = async (driverId) => {
 		return new Error(error);
 	}
 };
-
 const getDocumentsForUser = async (userId) => {
 	try {
 		return await prisma.documents.findMany({
@@ -83,7 +77,6 @@ const getDocumentsForUser = async (userId) => {
 		return new Error(error);
 	}
 };
-
 const getDocumentsForVehicle = async (vehicleId) => {
 	try {
 		return await prisma.documents.findMany({
@@ -97,7 +90,6 @@ const getDocumentsForVehicle = async (vehicleId) => {
 		return new Error(error);
 	}
 };
-
 const getDocumentsByType = async (documentType) => {
 	try {
 		return await prisma.documents.findMany({
@@ -111,7 +103,6 @@ const getDocumentsByType = async (documentType) => {
 		return new Error(error);
 	}
 };
-
 const getDocumentsForUserByType = async (userId, documentType) => {
 	try {
 		return await prisma.documents.findMany({
@@ -128,7 +119,6 @@ const getDocumentsForUserByType = async (userId, documentType) => {
 		return new Error(error);
 	}
 };
-
 const getDocumentsForBusinessByType = async (businessId, documentType) => {
 	try {
 		return await prisma.documents.findMany({
@@ -145,7 +135,6 @@ const getDocumentsForBusinessByType = async (businessId, documentType) => {
 		return new Error(error);
 	}
 };
-
 const getDocumentsForDriverByType = async (driverId, documentType) => {
 	try {
 		return await prisma.documents.findMany({
@@ -162,7 +151,6 @@ const getDocumentsForDriverByType = async (driverId, documentType) => {
 		return new Error(error);
 	}
 };
-
 const getDocumentsForDeliveryPersonByType = async (deliveryPersonId, documentType) => {
 	try {
 		return await prisma.documents.findMany({
@@ -179,7 +167,6 @@ const getDocumentsForDeliveryPersonByType = async (deliveryPersonId, documentTyp
 		return new Error(error);
 	}
 };
-
 const getDocumentsForVehicleByType = async (vehicleId, documentType) => {
 	try {
 		return await prisma.documents.findMany({
@@ -196,7 +183,6 @@ const getDocumentsForVehicleByType = async (vehicleId, documentType) => {
 		return new Error(error);
 	}
 };
-
 const findDocumentByTypeAndDeliveryDriverId = async (documentType, deliveryDriverId) => {
 	try {
 		return await prisma.documents.findFirst({
@@ -209,7 +195,6 @@ const findDocumentByTypeAndDeliveryDriverId = async (documentType, deliveryDrive
 		throw new Error('Unable to find document');
 	}
 };
-
 const findDocumentByTypeAndDriverId = async (documentType, driverId) => {
 	try {
 		return await prisma.documents.findFirst({
@@ -222,7 +207,6 @@ const findDocumentByTypeAndDriverId = async (documentType, driverId) => {
 		throw new Error('Unable to find document');
 	}
 };
-
 const createDocument = async (documentData, filesData = []) => {
 	for (let file of filesData) {
 		delete file.data;
@@ -257,7 +241,6 @@ const createDocument = async (documentData, filesData = []) => {
 		return new Error(error);
 	}
 };
-
 const updateDocumentExpirationDate = async (documentId, expirationDate) => {
 	try {
 		return await prisma.documents.update({
@@ -271,7 +254,6 @@ const updateDocumentExpirationDate = async (documentId, expirationDate) => {
 		return new Error(error);
 	}
 };
-
 const updateDocumentIssueDate = async (documentId, issueDate) => {
 	try {
 		return await prisma.documents.update({
@@ -285,7 +267,6 @@ const updateDocumentIssueDate = async (documentId, issueDate) => {
 		return new Error(error);
 	}
 };
-
 const updateDocumentFiles = async (documentId, filesData) => {
 	try {
 		return await prisma.documents.update({
@@ -305,7 +286,6 @@ const updateDocumentFiles = async (documentId, filesData) => {
 		return new Error(error);
 	}
 };
-
 const updateDocumentAdditionalInfo = async (documentId, jsonData) => {
 	try {
 		return await prisma.documents.update({
@@ -334,7 +314,6 @@ const linkDocumentToUser = async (documentId, userId) => {
 		return new Error(error);
 	}
 };
-
 const linkDocumentToTransaction = async (documentId, transactionId) => {
 	try {
 		return await prisma.documents.update({
@@ -352,7 +331,6 @@ const linkDocumentToTransaction = async (documentId, transactionId) => {
 		return new Error(error);
 	}
 };
-
 const linkDocumentToVehicle = async (documentId, vehicleId) => {
 	try {
 		return await prisma.documents.update({
@@ -370,7 +348,6 @@ const linkDocumentToVehicle = async (documentId, vehicleId) => {
 		return new Error(error);
 	}
 };
-
 const linkDocumentToMenuItem = async (documentId, menuItemId) => {
 	try {
 		return await prisma.documents.update({
@@ -388,7 +365,6 @@ const linkDocumentToMenuItem = async (documentId, menuItemId) => {
 		return new Error(error);
 	}
 };
-
 const linkDocumentToLostItem = async (documentId, lostItemId) => {
 	try {
 		return await prisma.documents.update({
@@ -406,7 +382,6 @@ const linkDocumentToLostItem = async (documentId, lostItemId) => {
 		return new Error(error);
 	}
 };
-
 const linkDocumentToDriver = async (documentId, driverId) => {
 	try {
 		return await prisma.documents.update({
@@ -424,7 +399,6 @@ const linkDocumentToDriver = async (documentId, driverId) => {
 		return new Error(error);
 	}
 };
-
 const linkDocumentToBusiness = async (documentId, businessId) => {
 	try {
 		return await prisma.documents.update({
@@ -442,7 +416,6 @@ const linkDocumentToBusiness = async (documentId, businessId) => {
 		return new Error(error);
 	}
 };
-
 const linkDocumentToDeliveryDriver = async (documentId, deliveryDriverId) => {
 	try {
 		return await prisma.documents.update({
@@ -467,36 +440,30 @@ const deleteDocument = async (documentId) => {
 			where: { document_id: documentId },
 			include: { files: true },
 		});
-
 		// Ensure document exists
 		if (!document) {
 			throw new Error(`Document with ID ${documentId} not found`);
 		}
-
 		// Await the resolution of document.files
 		const files = await prisma.files.findMany({
 			where: { document_id: documentId },
 		});
-
 		// Delete all files associated with the document
 		for (const file of files) {
 			await prisma.files.delete({
 				where: { file_id: file.file_id },
 			});
 		}
-
 		// Delete the document itself
 		await prisma.documents.delete({
 			where: { document_id: documentId },
 		});
-
 		console.log(`Document ${documentId} and associated files deleted`);
 	} catch (error) {
 		console.error('Error deleting document:', error);
 		throw new Error(error);
 	}
 };
-
 const deleteDocumentsAndFiles = async (field, id) => {
 	try {
 		// Fetch all documents based on the provided field and id
@@ -509,7 +476,6 @@ const deleteDocumentsAndFiles = async (field, id) => {
 				},
 			},
 		});
-
 		// Delete all files associated with the fetched documents
 		for (const document of documents) {
 			await prisma.files.deleteMany({
@@ -518,20 +484,17 @@ const deleteDocumentsAndFiles = async (field, id) => {
 				},
 			});
 		}
-
 		// Delete all documents associated with the provided field and id
 		await prisma.documents.deleteMany({
 			where: {
 				[field]: id,
 			},
 		});
-
 		console.log(`All documents and files deleted for ${field}:`, id);
 	} catch (error) {
 		console.error(`Error deleting documents and files for ${field}:`, id, error);
 	}
 };
-
 const deleteDocumentsAndFilesByDocumentId = async (documentType, documentId) => {
 	try {
 		// Fetch all documents based on the provided documentType and documentId
@@ -547,7 +510,6 @@ const deleteDocumentsAndFilesByDocumentId = async (documentType, documentId) => 
 				},
 			},
 		});
-
 		// Delete all files associated with the fetched documents
 		for (const document of documents) {
 			await prisma.files.deleteMany({
@@ -556,7 +518,6 @@ const deleteDocumentsAndFilesByDocumentId = async (documentType, documentId) => 
 				},
 			});
 		}
-
 		// Delete all documents based on the provided documentType and documentId
 		await prisma.documents.deleteMany({
 			where: {
@@ -564,7 +525,6 @@ const deleteDocumentsAndFilesByDocumentId = async (documentType, documentId) => 
 				document_type: documentType,
 			},
 		});
-
 		console.log(`All documents and files deleted for documentType: ${documentType} and documentId: ${documentId}`);
 	} catch (error) {
 		console.error(
@@ -573,7 +533,6 @@ const deleteDocumentsAndFilesByDocumentId = async (documentType, documentId) => 
 		);
 	}
 };
-
 async function getLastDocumentByTypeAndBusinessId(type, business_id) {
 	return await prisma.documents.findFirst({
 		where: {
@@ -585,18 +544,15 @@ async function getLastDocumentByTypeAndBusinessId(type, business_id) {
 		},
 	});
 }
-
 const updateDocumentByDocumentId = async (documentId, updateData) => {
 	try {
 		const document = await prisma.documents.findUnique({
 			where: { document_id: documentId },
 			include: { files: true },
 		});
-
 		if (!document) {
 			throw new Error('Document not found');
 		}
-
 		return await prisma.documents.update({
 			where: { document_id: documentId },
 			data: updateData,
@@ -606,8 +562,40 @@ const updateDocumentByDocumentId = async (documentId, updateData) => {
 		throw new Error(error);
 	}
 };
-
-module.exports = {
+export { createDocument };
+export { getDocuments };
+export { getDocumentById };
+export { getDocumentsForUser };
+export { getDocumentsForBusiness };
+export { getDocumentsForDeliveryPerson };
+export { getDocumentsForDriver };
+export { getDocumentsForVehicle };
+export { getDocumentsByType };
+export { getDocumentsForUserByType };
+export { getDocumentsForBusinessByType };
+export { getDocumentsForDriverByType };
+export { getDocumentsForDeliveryPersonByType };
+export { getDocumentsForVehicleByType };
+export { updateDocumentFiles };
+export { updateDocumentExpirationDate };
+export { updateDocumentIssueDate };
+export { updateDocumentAdditionalInfo };
+export { linkDocumentToUser };
+export { linkDocumentToTransaction };
+export { linkDocumentToVehicle };
+export { linkDocumentToDriver };
+export { linkDocumentToDeliveryDriver };
+export { linkDocumentToBusiness };
+export { deleteDocument };
+export { linkDocumentToMenuItem };
+export { linkDocumentToLostItem };
+export { deleteDocumentsAndFiles };
+export { getLastDocumentByTypeAndBusinessId };
+export { deleteDocumentsAndFilesByDocumentId };
+export { updateDocumentByDocumentId };
+export { findDocumentByTypeAndDeliveryDriverId };
+export { findDocumentByTypeAndDriverId };
+export default {
 	createDocument,
 	getDocuments,
 	getDocumentById,

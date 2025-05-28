@@ -1,10 +1,8 @@
-var express = require('express');
+import * as express from 'express';
 
+import OverwatchController from '../../controllers/OverwatchController.js';
 const router = express.Router();
-const OverwatchController = require('../../controllers/OverwatchController');
-
 router.post('/orders/pagination/', OverwatchController.getOrdersWithPagination);
 router.patch('/drivers/activity/settings', OverwatchController.setDriversActivitySettings);
 router.get('/drivers/activity/settings', OverwatchController.getDriversActivitySettings);
-
-module.exports = router;
+export default router;

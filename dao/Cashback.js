@@ -1,6 +1,5 @@
-const prisma = require('../prisma/prisma');
-const { CASHBACK_STATUS, CASHBACK_TYPE } = require('../lib/constants');
-
+import prisma from '../prisma/prisma.js';
+import { CASHBACK_STATUS, CASHBACK_TYPE } from '../lib/constants.js';
 const createCashback = async (data) => {
 	try {
 		return await prisma.cashback.create({
@@ -13,7 +12,6 @@ const createCashback = async (data) => {
 		throw error;
 	}
 };
-
 const getUserCashbackHistory = async (user_id) => {
 	try {
 		return prisma.cashback.findMany({
@@ -33,7 +31,6 @@ const getUserCashbackHistory = async (user_id) => {
 		throw error;
 	}
 };
-
 const getPendingUserCashbackByType = async (user_id, type) => {
 	try {
 		return prisma.cashback.findMany({
@@ -55,8 +52,10 @@ const getPendingUserCashbackByType = async (user_id, type) => {
 		throw error;
 	}
 };
-
-module.exports = {
+export { createCashback };
+export { getUserCashbackHistory };
+export { getPendingUserCashbackByType };
+export default {
 	createCashback,
 	getUserCashbackHistory,
 	getPendingUserCashbackByType,

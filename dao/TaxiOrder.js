@@ -1,5 +1,5 @@
-const prisma = require('../prisma/prisma');
-const { TIME_LIMIT, TAXI_ORDER_STATUS, ORDER_TYPE, ORDER_SUBTYPE } = require('../lib/constants');
+import prisma from '../prisma/prisma.js';
+import { TIME_LIMIT, TAXI_ORDER_STATUS, ORDER_TYPE, ORDER_SUBTYPE } from '../lib/constants.js';
 async function getOrders(args) {
 	try {
 		const mergedArgs = {
@@ -23,14 +23,12 @@ async function getOrders(args) {
 				vehicle: true,
 			},
 		};
-
 		return await prisma.taxi_orders.findMany(mergedArgs);
 	} catch (e) {
 		console.error('Error fetching orders:', e);
 		throw new Error(e);
 	}
 }
-
 async function getOrder(order_id) {
 	try {
 		return await prisma.taxi_orders.findFirst({
@@ -76,7 +74,6 @@ async function getOrder(order_id) {
 		throw new Error(e);
 	}
 }
-
 async function getTaxiOrdersIfNotCompleted(user_id, type) {
 	try {
 		return await prisma.taxi_orders.findMany({
@@ -129,7 +126,6 @@ async function getTaxiOrdersIfNotCompleted(user_id, type) {
 		throw new Error(e.message);
 	}
 }
-
 async function getActiveOrdersByDriverId(driver_id) {
 	const thirtyMinutesInMs = TIME_LIMIT.START_DRIVE * 60000;
 	const currentTime = new Date();
@@ -137,7 +133,6 @@ async function getActiveOrdersByDriverId(driver_id) {
 	const comparisonTime = new Date(currentTime.getTime() - timezoneOffset + thirtyMinutesInMs)
 		.toISOString()
 		.slice(0, -1);
-
 	try {
 		return await prisma.taxi_orders.findMany({
 			where: {
@@ -214,7 +209,6 @@ async function getDeliveryOrdersByDriverId(driver_id, args) {
 			driver_id: driver_id,
 			...args,
 		};
-
 		return await prisma.delivery_orders.findMany({
 			where: whereClause,
 			include: {
@@ -249,14 +243,12 @@ async function getDeliveryOrdersByDriverId(driver_id, args) {
 		throw new Error(e);
 	}
 }
-
 async function getOrdersByDriverId(driver_id, args) {
 	try {
 		const whereClause = {
 			driver_id: driver_id,
 			...args,
 		};
-
 		return await prisma.taxi_orders.findMany({
 			where: whereClause,
 			include: {
@@ -291,7 +283,6 @@ async function getOrdersByDriverId(driver_id, args) {
 		throw new Error(e);
 	}
 }
-
 async function createOrder(order) {
 	try {
 		return await prisma.$transaction(async (prisma) => {
@@ -311,7 +302,6 @@ async function createOrder(order) {
 		throw new Error(e);
 	}
 }
-
 async function createOrderSent(order_id, driver) {
 	try {
 		return prisma.taxi_order_sent.create({
@@ -346,7 +336,6 @@ async function isOrderSent(order_id, driver) {
 		throw new Error(e);
 	}
 }
-
 async function getAlreadySentOrdersByDriverId(driver_id) {
 	try {
 		return await prisma.taxi_order_sent.findMany({
@@ -367,7 +356,6 @@ async function getAlreadySentOrdersByDriverId(driver_id) {
 		throw new Error(e);
 	}
 }
-
 async function acceptOrder(order, user) {
 	const order_id = order.order_id;
 	try {
@@ -439,7 +427,6 @@ async function acceptOrder(order, user) {
 		throw new Error(e);
 	}
 }
-
 async function updateOrderStatus(order_id, status) {
 	try {
 		return prisma.taxi_orders.update({
@@ -480,7 +467,6 @@ async function updateOrderStatus(order_id, status) {
 		throw new Error(e);
 	}
 }
-
 async function completeOrder(order_id) {
 	try {
 		let taxi_order = await prisma.taxi_orders.update({
@@ -530,7 +516,6 @@ async function completeOrder(order_id) {
 		throw new Error(e);
 	}
 }
-
 async function cancelOrder(order_id, status, cancellation_reason) {
 	try {
 		let taxi_order = await prisma.taxi_orders.update({
@@ -568,7 +553,6 @@ async function cancelOrder(order_id, status, cancellation_reason) {
 				},
 			},
 		});
-
 		if (taxi_order.driver_id) {
 			await prisma.drivers.update({
 				where: {
@@ -579,14 +563,12 @@ async function cancelOrder(order_id, status, cancellation_reason) {
 				},
 			});
 		}
-
 		return taxi_order;
 	} catch (e) {
 		console.error('Error cancelling order:', e);
 		throw new Error(e);
 	}
 }
-
 async function cancelVehicleTransferOrder(user_id, status, cancellation_reason) {
 	try {
 		let taxi_order = await prisma.taxi_orders.findFirst({
@@ -602,12 +584,10 @@ async function cancelVehicleTransferOrder(user_id, status, cancellation_reason) 
 				},
 			},
 		});
-
 		if (!taxi_order) {
 			console.info(`Vehicle transfer order for user: ${user_id} not found`);
 			return null;
 		}
-
 		taxi_order = await prisma.taxi_orders.update({
 			where: {
 				order_id: taxi_order.order_id,
@@ -643,7 +623,6 @@ async function cancelVehicleTransferOrder(user_id, status, cancellation_reason) 
 				},
 			},
 		});
-
 		if (taxi_order.driver_id) {
 			await prisma.drivers.update({
 				where: {
@@ -654,14 +633,12 @@ async function cancelVehicleTransferOrder(user_id, status, cancellation_reason) 
 				},
 			});
 		}
-
 		return taxi_order;
 	} catch (e) {
 		console.error('Error cancelling vehicle transfer order:', e);
 		throw new Error(e);
 	}
 }
-
 async function acceptOrderSent(order_id, driver_id) {
 	console.log('order sent accept', order_id, driver_id);
 	try {
@@ -718,7 +695,6 @@ async function updateOrderLastSentAt(order_id) {
 		throw new Error(e);
 	}
 }
-
 async function updateTaxiOderRoute(order_id, route) {
 	try {
 		return prisma.taxi_orders.update({
@@ -733,7 +709,6 @@ async function updateTaxiOderRoute(order_id, route) {
 		throw new Error(e);
 	}
 }
-
 async function updateTaxiOrderPickupLocation(order_id, pickupLocation) {
 	try {
 		return prisma.taxi_orders.update({
@@ -748,7 +723,6 @@ async function updateTaxiOrderPickupLocation(order_id, pickupLocation) {
 		throw new Error(e);
 	}
 }
-
 async function updateTaxiOrderDeliveryLocation(order_id, deliveryLocation) {
 	try {
 		return prisma.taxi_orders.update({
@@ -763,21 +737,18 @@ async function updateTaxiOrderDeliveryLocation(order_id, deliveryLocation) {
 		throw new Error(e);
 	}
 }
-
 async function updateCompleteTaxiRoute(order_id, route) {
 	try {
 		const data = {
 			route: route,
 			pickup_location: { address: route[0].address, coordinates: route[0].coordinates },
 		};
-
 		if (route.length > 1) {
 			data.delivery_location = {
 				address: route[route.length - 1].address,
 				coordinates: route[route.length - 1].coordinates,
 			};
 		}
-
 		return prisma.taxi_orders.update({
 			where: {
 				order_id,
@@ -815,7 +786,6 @@ async function updateCompleteTaxiRoute(order_id, route) {
 		throw new Error(e);
 	}
 }
-
 async function updateTaxiOrderTimeline(order_id, newTimelineEntries) {
 	try {
 		const order = await prisma.taxi_orders.findUnique({
@@ -826,11 +796,9 @@ async function updateTaxiOrderTimeline(order_id, newTimelineEntries) {
 				timeline: true,
 			},
 		});
-
 		if (!order) {
 			throw new Error(`Order with ID ${order_id} not found`);
 		}
-
 		const updatedTimeline = [...order.timeline, ...newTimelineEntries];
 		const updated_order = await prisma.taxi_orders.update({
 			where: {
@@ -872,7 +840,6 @@ async function updateTaxiOrderTimeline(order_id, newTimelineEntries) {
 		throw new Error(e);
 	}
 }
-
 async function updateTaxiOrderPayment(order_id, payment) {
 	try {
 		return prisma.taxi_orders.update({
@@ -1003,7 +970,6 @@ async function userActiveOrders(user_id) {
 		throw new Error(e);
 	}
 }
-
 async function getActiveOrderIdsForUser(user_id, scheduled = true) {
 	try {
 		const orders = await prisma.taxi_orders.findMany({
@@ -1043,7 +1009,35 @@ async function deleteOrderSent(order_id, taxi_order_sent_id) {
 		throw new Error(e);
 	}
 }
-module.exports = {
+export { getOrder };
+export { getOrdersByDriverId };
+export { createOrder };
+export { acceptOrder };
+export { createOrderSent };
+export { getOrders };
+export { getSentDrivers };
+export { updateOrder };
+export { updateOrderLastSentAt };
+export { completeOrder };
+export { cancelOrder };
+export { cancelVehicleTransferOrder };
+export { updateOrderStatus };
+export { isOrderSent };
+export { updateTaxiOderRoute };
+export { updateTaxiOrderPickupLocation };
+export { updateTaxiOrderDeliveryLocation };
+export { updateCompleteTaxiRoute };
+export { updateTaxiOrderPayment };
+export { updateTaxiOrderTimeline };
+export { getTaxiOrdersIfNotCompleted };
+export { getAlreadySentOrdersByDriverId };
+export { getActiveOrdersByDriverId };
+export { getAcceptedOrders };
+export { userActiveOrders };
+export { getActiveOrderIdsForUser };
+export { getDeliveryOrdersByDriverId };
+export { deleteOrderSent };
+export default {
 	getOrder,
 	getOrdersByDriverId,
 	createOrder,

@@ -1,5 +1,4 @@
-const prisma = require('../prisma/prisma');
-
+import prisma from '../prisma/prisma.js';
 const reportFoundItem = async (foundItemData, user) => {
 	try {
 		return await prisma.lost_items.create({
@@ -15,7 +14,6 @@ const reportFoundItem = async (foundItemData, user) => {
 		throw new Error('Error adding found item');
 	}
 };
-
 const deleteFoundItem = async (lost_item_id) => {
 	try {
 		// Disconnect the user from the lost item
@@ -23,7 +21,6 @@ const deleteFoundItem = async (lost_item_id) => {
 		// 	where: { lost_item_id },
 		// 	data: { user: { disconnect: true } }
 		// });
-
 		return await prisma.lost_items.delete({
 			where: { lost_item_id },
 		});
@@ -32,7 +29,6 @@ const deleteFoundItem = async (lost_item_id) => {
 		throw new Error(error);
 	}
 };
-
 const getLostItems = async () => {
 	try {
 		return await prisma.lost_items.findMany({
@@ -50,7 +46,6 @@ const getLostItems = async () => {
 		throw new Error('Could not retrieve lost items');
 	}
 };
-
 const updateLostItem = async (lost_item_id, updateData) => {
 	try {
 		return await prisma.lost_items.update({
@@ -62,8 +57,11 @@ const updateLostItem = async (lost_item_id, updateData) => {
 		throw new Error('Error updating lost item');
 	}
 };
-
-module.exports = {
+export { reportFoundItem };
+export { deleteFoundItem };
+export { getLostItems };
+export { updateLostItem };
+export default {
 	reportFoundItem,
 	deleteFoundItem,
 	getLostItems,

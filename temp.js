@@ -1,5 +1,5 @@
-const { municipalitiesSeeder } = require('./prisma/seeders/municipalitiesSeeder');
-
+import municipalitiesSeeder$0 from './prisma/seeders/municipalitiesSeeder.js';
+const { municipalitiesSeeder } = municipalitiesSeeder$0;
 (async () => {
 	try {
 		await municipalitiesSeeder();

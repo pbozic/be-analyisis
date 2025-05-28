@@ -1,29 +1,30 @@
-const fs = require('fs');
+import fs from 'fs';
 
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { config } from 'dotenv';
 
-const UserDao = require('../dao/User');
-const { generateAccessToken, generateRefreshToken } = require('../lib/jwt');
-const TokenDao = require('../dao/Token');
-const BusinessDao = require('../dao/Business');
-const AddressDao = require('../dao/Address');
-const DriverDao = require('../dao/Driver');
-const VehicleDao = require('../dao/Vehicle');
-const DocumentDao = require('../dao/Document');
-const DeliveryDriverDao = require('../dao/DeliveryDriver');
-const BusinessUsersDao = require('../dao/BusinessUsers');
-const FileDao = require('../dao/File');
-const S3Helper = require('../lib/s3');
-const EmailHelper = require('../lib/emailSender');
-const stripe = require('../lib/stripe');
-const MenuDao = require('../dao/Menu');
-const SMSHelper = require('../lib/SMS');
-const { DOCUMENT_TYPE } = require('../lib/constants');
-const { businessIndex } = require('../elasticsearch');
-const prisma = require('../prisma/prisma');
-require('dotenv').config();
-
+import UserDao from '../dao/User.js';
+import { generateAccessToken, generateRefreshToken } from '../lib/jwt.js';
+import TokenDao from '../dao/Token.js';
+import BusinessDao from '../dao/Business.js';
+import AddressDao from '../dao/Address.js';
+import DriverDao from '../dao/Driver.js';
+import VehicleDao from '../dao/Vehicle.js';
+import DocumentDao from '../dao/Document.js';
+import DeliveryDriverDao from '../dao/DeliveryDriver.js';
+import BusinessUsersDao from '../dao/BusinessUsers.js';
+import FileDao from '../dao/File.js';
+import S3Helper from '../lib/s3.js';
+import EmailHelper from '../lib/emailSender.js';
+import stripe from '../lib/stripe.js';
+import MenuDao from '../dao/Menu.js';
+import SMSHelper from '../lib/SMS.js';
+import { DOCUMENT_TYPE } from '../lib/constants.js';
+import elasticsearch from '../elasticsearch/index.js';
+import prisma from '../prisma/prisma.js';
+const { businessIndex } = elasticsearch;
+config();
 /**
  * POST /auth/scheduled_users
  * @tag User
@@ -47,7 +48,6 @@ async function getScheduledUsers(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * POST /auth/login
  * @tag Authentication
@@ -160,7 +160,6 @@ async function login(req, res) {
 			user_id: user.user_id,
 		});
 		let profile = await DocumentDao.getDocumentsForUserByType(user.user_id, DOCUMENT_TYPE.PROFILE_PICTURE);
-
 		user = {
 			...user,
 			access_token,
@@ -176,7 +175,6 @@ async function login(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * POST /auth/register
  * @tag Authentication
@@ -232,7 +230,6 @@ async function register(req, res) {
 			apple_id: postData.apple_id || null,
 			google_id: postData.google_id || null,
 		};
-
 		delete userObj['confirm_password'];
 		delete userObj.referral_code;
 		let user = await UserDao.createNewUser(userObj);
@@ -249,7 +246,6 @@ async function register(req, res) {
 		const refresh_token = generateRefreshToken({
 			user_id: user.user_id,
 		});
-
 		user = {
 			...user,
 			access_token,
@@ -261,7 +257,6 @@ async function register(req, res) {
 		res.status(400).json({ error: 'Error something went wrong..', e });
 	}
 }
-
 /**
  * POST /auth/refresh
  * @tag Authentication
@@ -277,13 +272,11 @@ async function register(req, res) {
  * @response 400 - Access Denied. No refresh token provided.
  * @response 401 - Access Denied. Token expired.
  */
-
 async function refreshToken(req, res) {
 	const refreshToken = req.body.refresh_token;
 	if (!refreshToken) {
 		return res.status(400).send('Access Denied. No refresh token provided.');
 	}
-
 	jwt.verify(refreshToken, process.env.JWT_TOKEN_SECRET, async function (err, decoded) {
 		if (err) {
 			return res.status(401).json({ error: 'Access Denied. Token expired.', e: err });
@@ -350,7 +343,6 @@ async function requestPasswordReset(req, res) {
 		res.status(400).json({ error: 'Error obtaining user information', e });
 	}
 }
-
 async function passwordResetForm(req, res) {
 	const token = req.params.token;
 	try {
@@ -365,7 +357,6 @@ async function passwordResetForm(req, res) {
 		res.status(500).send('Internal Server Error');
 	}
 }
-
 async function passwordReset(req, res) {
 	const token = req.params.token;
 	const password = req.body.password;
@@ -394,7 +385,6 @@ async function passwordReset(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * POST /auth/taxi/register
  * @tag Auth
@@ -436,7 +426,6 @@ async function registerTaxiService(req, res) {
 				}
 			}
 		}
-
 		let stripeCustomer = await stripe.createCustomer(
 			req.body.business.email,
 			req.body.business.name,
@@ -446,7 +435,6 @@ async function registerTaxiService(req, res) {
 			...req.body.business,
 			stripe_customer_id: stripeCustomer.id,
 		});
-
 		// TODO: handle uniqueness here or with joi validation
 		let drivers = [];
 		if (Array.isArray(req.body.drivers) && req.body.drivers.length) {
@@ -473,7 +461,6 @@ async function registerTaxiService(req, res) {
 				];
 				const result = await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
 				console.log('User roles linked:', result);
-
 				// Handle user documents
 				if (driverInfo.user.documents) {
 					for (const doc of driverInfo.user.documents) {
@@ -482,9 +469,7 @@ async function registerTaxiService(req, res) {
 							let base64 = file.base64;
 							delete file.base64;
 							let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
-
 							let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-
 							S3Helper.SaveObject(
 								key,
 								base64,
@@ -500,7 +485,6 @@ async function registerTaxiService(req, res) {
 						await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 					}
 				}
-
 				const driverData = { ...driverInfo.driver.data, business_id: business.business_id };
 				const driver = await DriverDao.createNewDriver(driverData, newUser);
 				const regions = driverInfo.driver.regions || [];
@@ -529,14 +513,11 @@ async function registerTaxiService(req, res) {
 						await DocumentDao.linkDocumentToDriver(document.document_id, driver.driver_id);
 					}
 				}
-
 				//Handle addresses of the driver
 				let addresses = [];
-
 				drivers.push({ driver, addresses });
 			}
 		}
-
 		let vehicles = [];
 		if (Array.isArray(req.body.vehicles) && req.body.vehicles.length) {
 			for (const vehicleInfo of req.body.vehicles) {
@@ -579,7 +560,6 @@ async function registerTaxiService(req, res) {
 				vehicles.push(vehicle);
 			}
 		}
-
 		// Handle business documents
 		if (req.body.business.documents) {
 			for (const doc of req.body.business.documents) {
@@ -604,10 +584,8 @@ async function registerTaxiService(req, res) {
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
 		}
-
 		let stripeAccount = await stripe.createAccount(business);
 		await BusinessDao.updateBusiness(business.business_id, { stripe_account_id: stripeAccount.id });
-
 		let accountLink = await stripe.getAccountLinks(stripeAccount.id, business.business_id);
 		// send email to business user with account link
 		EmailHelper.sendEmailTemplate('Stripe Onboarding', 'stripeOnboarding', business.email, {
@@ -615,18 +593,15 @@ async function registerTaxiService(req, res) {
 			title: 'Stripe Onboarding',
 			onboardLink: accountLink.url,
 		});
-
 		/*let finances = {};
-		if (req.body.finances) {
-			finances = await FinancesDao.addFinances(req.body.finances);
-			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
-		}*/
-
+        if (req.body.finances) {
+            finances = await FinancesDao.addFinances(req.body.finances);
+            await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
+        }*/
 		let businessAddress = {};
 		if (req.body.addresses) {
 			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
 		}
-
 		res.status(201).json({
 			message: 'Taxi service business registered successfully',
 			business,
@@ -640,7 +615,6 @@ async function registerTaxiService(req, res) {
 		res.status(400).json({ error: 'Error registering taxi service', detail: error.message });
 	}
 }
-
 /**
  * POST /auth/delivery/register
  * @tag Auth
@@ -681,7 +655,6 @@ async function registerDeliveryService(req, res) {
 				}
 			}
 		}
-
 		let stripeCustomer = await stripe.createCustomer(
 			req.body.business.email,
 			req.body.business.name,
@@ -691,7 +664,6 @@ async function registerDeliveryService(req, res) {
 			...req.body.business,
 			stripe_customer_id: stripeCustomer.id,
 		});
-
 		let deliveryDrivers = [];
 		if (Array.isArray(req.body.deliveryDrivers) && req.body.deliveryDrivers.length) {
 			for (const deliveryDriverInfo of req.body.deliveryDrivers) {
@@ -716,7 +688,6 @@ async function registerDeliveryService(req, res) {
 					{ role: deliveryDriverInfo.user.data.user_role || 'DELIVERY_DRIVER', primary: true },
 				];
 				await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
-
 				// Handle user documents
 				if (deliveryDriverInfo.user?.documents) {
 					for (const doc of deliveryDriverInfo.user.documents) {
@@ -738,10 +709,8 @@ async function registerDeliveryService(req, res) {
 						await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 					}
 				}
-
 				const deliveryDriverData = { ...deliveryDriverInfo.driver.data, business_id: business.business_id };
 				const deliveryDriver = await DeliveryDriverDao.createDeliveryDriver(deliveryDriverData, newUser);
-
 				// Handle delivery driver documents
 				if (deliveryDriverInfo.driver?.documents) {
 					for (const doc of deliveryDriverInfo.driver.documents) {
@@ -766,7 +735,6 @@ async function registerDeliveryService(req, res) {
 						);
 					}
 				}
-
 				// Handle addresses of the delivery driver
 				let addresses = [];
 				if (deliveryDriverInfo.user.addresses) {
@@ -776,7 +744,6 @@ async function registerDeliveryService(req, res) {
 						addresses.push(address);
 					}
 				}
-
 				let vehicles = [];
 				if (Array.isArray(deliveryDriverInfo.vehicles) && deliveryDriverInfo.vehicles.length) {
 					for (const vehicleInfo of deliveryDriverInfo.vehicles) {
@@ -816,22 +783,18 @@ async function registerDeliveryService(req, res) {
 						vehicles.push(vehicle);
 					}
 				}
-
 				deliveryDrivers.push({ deliveryDriver, vehicles, addresses });
 			}
 		}
-
 		/*let finances = {};
-		if (req.body.finances) {
-			finances = await FinancesDao.addFinances(req.body.finances);
-			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
-		}*/
-
+        if (req.body.finances) {
+            finances = await FinancesDao.addFinances(req.body.finances);
+            await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
+        }*/
 		let businessAddress = {};
 		if (req.body.addresses) {
 			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
 		}
-
 		res.status(201).json({
 			message: 'Delivery service business registered successfully',
 			business,
@@ -843,7 +806,6 @@ async function registerDeliveryService(req, res) {
 		res.status(400).json({ error: 'Error registering delivery service', detail: error.message });
 	}
 }
-
 /**
  * POST /auth/merchant/register
  * @tag Auth
@@ -885,7 +847,6 @@ async function registerMerchantService(req, res) {
 				}
 			}
 		}
-
 		let stripeCustomer = await stripe.createCustomer(
 			req.body.business.email,
 			req.body.business.name,
@@ -895,12 +856,10 @@ async function registerMerchantService(req, res) {
 			...req.body.business.data,
 			stripe_customer_id: stripeCustomer.id,
 		});
-
 		// Ensure at least one business user data is provided & created
 		if (!Array.isArray(req.body.users) || !req.body.users.length) {
 			return res.status(400).json({ error: 'At least one business user must be provided.' });
 		}
-
 		let businessUsers = [];
 		for (const userInfo of req.body.users) {
 			const userObj = userInfo.user;
@@ -910,7 +869,6 @@ async function registerMerchantService(req, res) {
 				{ role: userInfo.user.user_role || 'BUSINESS_USER', primary: true },
 			];
 			await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
-
 			let addresses = [];
 			if (userInfo.user.addresses) {
 				for (const addressInfo of userInfo.user.addresses) {
@@ -919,10 +877,8 @@ async function registerMerchantService(req, res) {
 					addresses.push(address);
 				}
 			}
-
 			businessUsers.push({ businessUser, addresses });
 		}
-
 		// Handle business documents
 		if (req.body.business.documents) {
 			for (const doc of req.body.business.documents) {
@@ -946,7 +902,6 @@ async function registerMerchantService(req, res) {
 		}
 		let stripeAccount = await stripe.createAccount(business);
 		await BusinessDao.updateBusiness(business.business_id, { stripe_account_id: stripeAccount.id });
-
 		let accountLink = await stripe.getAccountLinks(stripeAccount.id, business.business_id);
 		// send email to business user with account link
 		EmailHelper.sendEmailTemplate('Stripe Onboarding', 'stripeOnboarding', business.email, {
@@ -959,19 +914,15 @@ async function registerMerchantService(req, res) {
 		// 	finances = await FinancesDao.addFinances(req.body.finances);
 		// 	await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
 		// }
-
 		let businessAddress = {};
 		if (req.body.addresses && req.body.addresses.business) {
 			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
 		}
-
 		let deliveryAddress = {};
 		if (req.body.addresses && req.body.addresses.delivery) {
 			deliveryAddress = await BusinessDao.addDeliveryAddress(business.business_id, req.body.addresses.delivery);
 		}
-
 		const menu = await MenuDao.createMenu(business.business_id);
-
 		console.log('ACCOUNT STRIPE ONBOARDING LINK', accountLink.url);
 		businessIndex(business.business_id);
 		res.status(201).json({
@@ -987,7 +938,6 @@ async function registerMerchantService(req, res) {
 		res.status(400).json({ error: 'Error registering merchant service', detail: error.message });
 	}
 }
-
 /**
  * POST /auth/business/register
  * @tag Auth
@@ -1028,7 +978,6 @@ async function registerBusiness(req, res) {
 				}
 			}
 		}
-
 		let stripeCustomer = await stripe.createCustomer(
 			req.body.business.email,
 			req.body.business.name,
@@ -1042,7 +991,6 @@ async function registerBusiness(req, res) {
 		if (!Array.isArray(req.body.users) || !req.body.users.length) {
 			return res.status(400).json({ error: 'At least one business user must be provided.' });
 		}
-
 		let businessUsers = [];
 		for (const userInfo of req.body.users) {
 			const userObj = userInfo.user;
@@ -1052,7 +1000,6 @@ async function registerBusiness(req, res) {
 				{ role: userInfo.user.user_role || 'BUSINESS_USER', primary: true },
 			];
 			await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
-
 			let addresses = [];
 			if (userInfo.user.addresses) {
 				for (const addressInfo of userInfo.user.addresses) {
@@ -1063,7 +1010,6 @@ async function registerBusiness(req, res) {
 			}
 			businessUsers.push({ businessUser, addresses });
 		}
-
 		// Handle business documents
 		if (req.body.business.documents) {
 			for (const doc of req.body.business.documents) {
@@ -1085,19 +1031,16 @@ async function registerBusiness(req, res) {
 				await DocumentDao.linkDocumentToBusiness(document.document_id, business.business_id);
 			}
 		}
-
 		// let finances = {};
 		// if (req.body.finances) {
 		// 	finances = await FinancesDao.addFinances(req.body.finances);
 		// 	await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
 		// }
-
 		let businessAddress = {};
 		if (req.body.addresses && req.body.addresses.business) {
 			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
 		}
 		// TODO: select user to login,
-
 		res.status(201).json({
 			message: 'Business registered successfully',
 			business,
@@ -1109,7 +1052,6 @@ async function registerBusiness(req, res) {
 		res.status(400).json({ error: 'Error registering business', detail: error.message });
 	}
 }
-
 /**
  * POST /auth/create/scheduled_user
  * @tag User
@@ -1132,7 +1074,6 @@ async function createScheduledUser(req, res) {
 			},
 			true
 		);
-
 		let addressList = [];
 		if (addresses) {
 			for (const addressInfo of addresses) {
@@ -1141,14 +1082,12 @@ async function createScheduledUser(req, res) {
 				addressList.push(address);
 			}
 		}
-
 		res.status(200).json({ user, addresses: addressList });
 	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
 	}
 }
-
 /**
  * PATCH /update/scheduled_user
  * @tag Users
@@ -1167,22 +1106,18 @@ async function updateScheduledUser(req, res) {
 	const pass = data?.password;
 	delete data?.password;
 	let updatedData = data ? { ...data } : {};
-
 	try {
 		if (pass && pass !== '') {
 			updatedData.password = await bcrypt.hash(pass, Number(process.env.BCRYPT_SALT_ROUNDS));
 		}
-
 		let user = await UserDao.updateScheduledUser(user_id, updatedData);
 		if (user) {
 			let addressList = [];
-
 			// Check if the user has existing addresses and delete them
 			if (addresses && addresses.length > 0) {
 				for (const userAddress of user.addresses) {
 					await AddressDao.deleteUserAddress(user.user_id, userAddress.address_id);
 				}
-
 				// Add the new addresses
 				for (const addressInfo of addresses) {
 					const address = await AddressDao.addAddress(addressInfo);
@@ -1197,7 +1132,6 @@ async function updateScheduledUser(req, res) {
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 async function getMunicipalitiesWithLicenseRequirements(req, res) {
 	try {
 		let municipalities = await prisma.municipalities.findMany({
@@ -1215,8 +1149,21 @@ async function getMunicipalitiesWithLicenseRequirements(req, res) {
 		res.status(400).json({ error: 'Error fetching municipalities', e });
 	}
 }
-
-module.exports = {
+export { login };
+export { register };
+export { refreshToken };
+export { requestPasswordReset };
+export { passwordResetForm };
+export { passwordReset };
+export { registerTaxiService };
+export { registerDeliveryService };
+export { registerMerchantService };
+export { registerBusiness };
+export { createScheduledUser };
+export { getScheduledUsers };
+export { updateScheduledUser };
+export { getMunicipalitiesWithLicenseRequirements };
+export default {
 	login,
 	register,
 	refreshToken,

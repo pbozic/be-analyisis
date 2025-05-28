@@ -68,4 +68,4 @@ const hr = {
 		referral: 'Vaša nagrada za preporuku je uplaćena na vaš račun',
 	},
 };
-module.exports = hr;
+export default hr;

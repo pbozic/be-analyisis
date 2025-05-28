@@ -1,10 +1,11 @@
-const Joi = require('joi').extend(require('@joi/date'));
+import joi from 'joi';
+import date from '@joi/date';
 
-const { newBusinessSchema } = require('./businessSchemas');
-const { addressSchema } = require('./addressSchemas');
-const { newDriverSchema } = require('./driverSchemas');
-const { newVehicleSchema } = require('./vehicleSchemas');
-
+import { newBusinessSchema } from './businessSchemas.js';
+import { addressSchema } from './addressSchemas.js';
+import { newDriverSchema } from './driverSchemas.js';
+import { newVehicleSchema } from './vehicleSchemas.js';
+const Joi = joi.extend(date);
 const registerTaxiBusinessSchema = Joi.object({
 	business: newBusinessSchema,
 	addresses: Joi.object({
@@ -13,5 +14,7 @@ const registerTaxiBusinessSchema = Joi.object({
 	drivers: Joi.array().items(newDriverSchema),
 	vehicles: Joi.array().items(newVehicleSchema),
 });
-
-module.exports = { registerTaxiBusinessSchema };
+export { registerTaxiBusinessSchema };
+export default {
+	registerTaxiBusinessSchema,
+};

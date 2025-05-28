@@ -1,5 +1,8 @@
-module.exports = {
-	testEnvironment: 'node',
-	setupFiles: ['<rootDir>/tests/setupEnv.js'],
-	testMatch: ['**/tests/**/*.test.js'],
+export const testEnvironment = 'node';
+export const setupFiles = ['<rootDir>/tests/setupEnv.js'];
+export const testMatch = ['**/tests/**/*.test.js'];
+export default {
+	testEnvironment,
+	setupFiles,
+	testMatch,
 };

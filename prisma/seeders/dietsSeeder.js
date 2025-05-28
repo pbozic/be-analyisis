@@ -1,9 +1,8 @@
-const fs = require('fs');
-const path = require('path');
-
-const prisma = require('../prisma');
-const { upsertFileOnS3Helper } = require('../../controllers/FilesController');
-const CategoriesDao = require('../../dao/Categories');
+import fs from 'fs';
+import path from 'path';
+import prisma from '../prisma.js';
+import { upsertFileOnS3Helper } from '../../controllers/FilesController.js';
+import CategoriesDao from '../../dao/Categories.js';
 let languages = {
 	bs: {
 		title: 'Slijedite li neke specifične dijetalne smjernice?',
@@ -156,7 +155,6 @@ let languages = {
 			"Kada je odabrano 'I', prikazat ćemo vam samo restorane sa svim odabranim prehrambenim opcijama.\nKada je odabrano 'ILI', prikazat ćemo vam restorane s bilo kojom od odabranih prehrambenih opcija.",
 	},
 };
-
 const DIETARY_OPTIONS = [
 	{ title: 'Gallbladder', tag: 'gallbladder', source: './icons/liver_icon.png' },
 	{ title: 'Gluten Free', tag: 'gluten-free', key: 'glutenFree', source: './icons/gluten-free_icon.png' },
@@ -191,7 +189,6 @@ async function seedCategories() {
 		} catch (error) {
 			console.error(`Error processing ${imagePath}:`, error);
 		}
-
 		let categoryObj = {
 			categoryData: {
 				name: doption.title,
@@ -238,5 +235,4 @@ async function seedCategories() {
 	}
 	console.log('Dietary options seeded.');
 }
-
-module.exports = seedCategories;
+export default seedCategories;

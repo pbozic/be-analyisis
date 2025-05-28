@@ -1,4 +1,4 @@
-const prisma = require('../prisma/prisma');
+import prisma from '../prisma/prisma.js';
 async function addAddress(address) {
 	delete address.name;
 	delete address.icon;
@@ -96,17 +96,14 @@ async function setPrimaryUserAddress(user_id, address_id) {
 		return new Error(error);
 	}
 }
-
 const updateAddressByAddressId = async (addressId, updateData) => {
 	try {
 		const existingAddress = await prisma.addresses.findUnique({
 			where: { address_id: addressId },
 		});
-
 		if (!existingAddress) {
 			throw new Error('Address not found');
 		}
-
 		return await prisma.addresses.update({
 			where: { address_id: addressId },
 			data: updateData,
@@ -116,8 +113,13 @@ const updateAddressByAddressId = async (addressId, updateData) => {
 		throw new Error(error);
 	}
 };
-
-module.exports = {
+export { addAddress };
+export { addUserAddress };
+export { deleteUserAddress };
+export { editUserAddress };
+export { setPrimaryUserAddress };
+export { updateAddressByAddressId };
+export default {
 	addAddress,
 	addUserAddress,
 	deleteUserAddress,

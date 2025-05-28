@@ -1,5 +1,4 @@
-const esClient = require('../client');
-
+import esClient from '../client.js';
 async function searchBusinesses(query) {
 	const response = await esClient.search({
 		index: 'business_index',
@@ -34,5 +33,4 @@ async function searchBusinesses(query) {
 		menu_categories: hit._source.menu_categories,
 	}));
 }
-
-module.exports = searchBusinesses;
+export default searchBusinesses;

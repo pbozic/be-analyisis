@@ -1,9 +1,10 @@
-require('dotenv').config();
-const { Client } = require('@googlemaps/google-maps-services-js');
+import { config } from 'dotenv';
+import * as googleMapsServicesJs from '@googlemaps/google-maps-services-js';
+import * as axios from 'axios';
+config();
+const { Client } = googleMapsServicesJs;
 const apiKey = process.env.GOOGLE_API_KEY;
 const client = new Client({});
-const axios = require('axios');
-
 /**
  * GET /google_maps/geocode_address
  * @tag GoogleMaps
@@ -19,11 +20,9 @@ const axios = require('axios');
  */
 async function geocodeAddress(req, res) {
 	const { address } = req.body;
-
 	if (!address) {
 		return res.status(400).json({ error: 'Address is required' });
 	}
-
 	try {
 		const response = await client.geocode({
 			params: {
@@ -41,7 +40,6 @@ async function geocodeAddress(req, res) {
 					longitude: location.lng,
 				},
 			};
-
 			return res.status(200).json({ addressData });
 		} else {
 			return res.status(400).json({ error: 'Location not found' });
@@ -51,7 +49,6 @@ async function geocodeAddress(req, res) {
 		return res.status(500).json({ error: 'Failed to fetch geocode' });
 	}
 }
-
 /**
  * GET /google_maps/autocomplete
  * @tag GoogleMaps
@@ -66,12 +63,10 @@ async function geocodeAddress(req, res) {
  */
 async function getPlacePredictions(req, res) {
 	const { inputText } = req.query;
-
 	try {
 		const location = '46.056946,14.505751'; // Ljubljana, Slovenia
 		const radius = 150000; // 150km in meters
 		const country = 'SI'; // Country code for Slovenia
-
 		const response = await axios.get(
 			`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(inputText)}&location=${location}&radius=${radius}&components=country:${country}&key=${process.env.GOOGLE_API_KEY}&language=sl`
 		);
@@ -81,17 +76,14 @@ async function getPlacePredictions(req, res) {
 			console.error('Failed to fetch data:', response.status, response.statusText);
 			return res.status(500).json({ error: 'Failed to fetch predictions' });
 		}
-
 		if (data.status === 'OK') {
 			const predictions = data.predictions.map((prediction) => {
 				const addressComponents = prediction.description.split(', ');
 				addressComponents.pop(); // remove the last element (country)
-
 				let cityWithPostalCode = addressComponents.pop(); // remove the city with postal code
 				let city = cityWithPostalCode.replace(/\d+/g, '').trim(); // remove the postal code
 				addressComponents.push(city); // add back the city without postal code
 				const addressWithoutCountryAndPostalCode = addressComponents.join(', ');
-
 				return {
 					...prediction,
 					description: addressWithoutCountryAndPostalCode,
@@ -109,8 +101,9 @@ async function getPlacePredictions(req, res) {
 		return res.status(500).json({ error: 'Failed to fetch predictions' });
 	}
 }
-
-module.exports = {
+export { geocodeAddress };
+export { getPlacePredictions };
+export default {
 	geocodeAddress,
 	getPlacePredictions,
 };

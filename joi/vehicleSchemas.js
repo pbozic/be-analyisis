@@ -1,8 +1,6 @@
-// schemas/vehicles.js
-const Joi = require('joi');
+import Joi from 'joi';
 
-const { documentsArraySchema } = require('./documentSchemas');
-
+import { documentsArraySchema } from './documentSchemas.js';
 // Insurance file schema
 const insuranceFileSchema = Joi.object({
 	mimeType: Joi.string(),
@@ -11,7 +9,6 @@ const insuranceFileSchema = Joi.object({
 	size: Joi.number().integer(),
 	base64: Joi.string(),
 });
-
 // Vehicle information schema
 const vehicleInformationSchema = Joi.object({
 	license_plate: Joi.string(),
@@ -26,7 +23,6 @@ const vehicleInformationSchema = Joi.object({
 	insurance_expiration_date: Joi.date().optional(),
 	insurance_file: Joi.array().items(insuranceFileSchema).optional(),
 });
-
 // Vehicle schema
 const newVehicleSchema = Joi.object({
 	data: Joi.object({
@@ -35,7 +31,7 @@ const newVehicleSchema = Joi.object({
 		drivers: Joi.array().items(Joi.string().email()), // Driver emails
 	}),
 });
-
-module.exports = {
+export { newVehicleSchema };
+export default {
 	newVehicleSchema,
 };

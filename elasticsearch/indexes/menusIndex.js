@@ -1,6 +1,5 @@
-const prisma = require('../../prisma/prisma');
-const esClient = require('../client');
-
+import prisma from '../../prisma/prisma.js';
+import esClient from '../client.js';
 async function indexMenus() {
 	const menus = await prisma.menus.findMany({
 		include: {
@@ -24,7 +23,6 @@ async function indexMenus() {
 			},
 		},
 	});
-
 	const bulkOps = menus.flatMap((menu) => [
 		{ index: { _index: 'menus_index', _id: menu.menu_id } },
 		{
@@ -66,12 +64,9 @@ async function indexMenus() {
 			})),
 		},
 	]);
-
 	if (bulkOps.length > 0) {
 		await esClient.bulk({ refresh: true, body: bulkOps });
 	}
-
 	console.log('Menus, Categories (with Translations), and Items indexed successfully');
 }
-
-module.exports = indexMenus;
+export default indexMenus;

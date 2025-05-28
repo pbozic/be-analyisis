@@ -1,5 +1,4 @@
-const prisma = require('../prisma/prisma');
-
+import prisma from '../prisma/prisma.js';
 // Add a new favorite business for a user
 const addFavoriteBusiness = async (user_id, business_id, business_type) => {
 	try {
@@ -15,7 +14,6 @@ const addFavoriteBusiness = async (user_id, business_id, business_type) => {
 		throw new Error(error);
 	}
 };
-
 // Remove a favorite business for a user
 const removeFavoriteBusiness = async (user_favorite_businesses_id) => {
 	try {
@@ -29,18 +27,15 @@ const removeFavoriteBusiness = async (user_favorite_businesses_id) => {
 		throw new Error(error);
 	}
 };
-
 // Get many favorite businesses by type for a user
 const getFavoriteBusinesses = async (user_id, business_type = null) => {
 	try {
 		const whereClause = {
 			user_id,
 		};
-
 		if (business_type) {
 			whereClause.business_type = business_type;
 		}
-
 		return await prisma.user_favorite_businesses.findMany({
 			where: whereClause,
 			include: {
@@ -52,8 +47,10 @@ const getFavoriteBusinesses = async (user_id, business_type = null) => {
 		throw new Error(error);
 	}
 };
-
-module.exports = {
+export { addFavoriteBusiness };
+export { removeFavoriteBusiness };
+export { getFavoriteBusinesses };
+export default {
 	addFavoriteBusiness,
 	removeFavoriteBusiness,
 	getFavoriteBusinesses,

@@ -1,11 +1,9 @@
-const prisma = require('../prisma/prisma');
-
+import prisma from '../prisma/prisma.js';
 const areItemsEqual = (item1, item2) => {
 	const arraysEqual = (arr1, arr2) => {
 		if (arr1.length !== arr2.length) return false;
 		return arr1.sort().toString() === arr2.sort().toString();
 	};
-
 	return (
 		item1.menu_item_id === item2.menu_item_id &&
 		item1.customer_note === item2.customer_note &&
@@ -13,7 +11,6 @@ const areItemsEqual = (item1, item2) => {
 		arraysEqual(item1.sides, item2.sides)
 	);
 };
-
 const createOrderLobbyItem = async (order_lobby_item_data) => {
 	try {
 		return await prisma.order_lobby_items.create({ data: order_lobby_item_data });
@@ -22,7 +19,6 @@ const createOrderLobbyItem = async (order_lobby_item_data) => {
 		throw error;
 	}
 };
-
 const updateOrderLobbyItem = async (order_lobby_items_id, order_lobby_items) => {
 	try {
 		return await prisma.order_lobby_items.update({
@@ -34,7 +30,6 @@ const updateOrderLobbyItem = async (order_lobby_items_id, order_lobby_items) => 
 		throw error;
 	}
 };
-
 const updateOrderLobbyItemQuantity = async (order_lobby_items_id, quantity) => {
 	try {
 		return await prisma.order_lobby_items.update({
@@ -46,7 +41,6 @@ const updateOrderLobbyItemQuantity = async (order_lobby_items_id, quantity) => {
 		throw error;
 	}
 };
-
 const getOrderLobbyItemsByLobbyId = async (order_lobbies_id) => {
 	try {
 		return await prisma.order_lobby_items.findMany({
@@ -57,7 +51,6 @@ const getOrderLobbyItemsByLobbyId = async (order_lobbies_id) => {
 		throw error;
 	}
 };
-
 const getOrderLobbyItemsByLobbyAndUserId = async (order_lobbies_id, user_id) => {
 	try {
 		return await prisma.order_lobby_items.findMany({
@@ -71,7 +64,6 @@ const getOrderLobbyItemsByLobbyAndUserId = async (order_lobbies_id, user_id) => 
 		throw error;
 	}
 };
-
 const deleteOrderLobbyItem = async (order_lobby_items_id) => {
 	try {
 		return await prisma.order_lobby_items.delete({
@@ -82,7 +74,6 @@ const deleteOrderLobbyItem = async (order_lobby_items_id) => {
 		throw error;
 	}
 };
-
 /**
  * Deletes all order lobby items for a specific user in a specific lobby
  * @param {string} user_id - The ID of the user
@@ -101,8 +92,14 @@ const deleteOrderLobbyItemsForUserInLobby = async (user_id, order_lobbies_id) =>
 		throw error;
 	}
 };
-
-module.exports = {
+export { createOrderLobbyItem };
+export { updateOrderLobbyItem };
+export { updateOrderLobbyItemQuantity };
+export { getOrderLobbyItemsByLobbyId };
+export { getOrderLobbyItemsByLobbyAndUserId };
+export { deleteOrderLobbyItem };
+export { areItemsEqual };
+export default {
 	createOrderLobbyItem,
 	updateOrderLobbyItem,
 	updateOrderLobbyItemQuantity,

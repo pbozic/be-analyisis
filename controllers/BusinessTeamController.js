@@ -1,5 +1,4 @@
-const BusinessTeamDao = require('../dao/BusinessTeam');
-
+import BusinessTeamDao from '../dao/BusinessTeam.js';
 /**
  * Get all business teams for a business
  * @route GET /business-teams/:business_id
@@ -18,7 +17,6 @@ const getBusinessTeamsByBusinessId = async (req, res) => {
 		});
 	}
 };
-
 /**
  * Get a business team by ID
  * @route GET /business-teams/:business_teams_id
@@ -40,7 +38,6 @@ const getBusinessTeamById = async (req, res) => {
 		});
 	}
 };
-
 /**
  * Create a new business team
  * @route POST /business-teams/create
@@ -64,7 +61,6 @@ const createBusinessTeam = async (req, res) => {
 		});
 	}
 };
-
 /**
  * Update an existing business team
  * @route PATCH /business-teams/:business_teams_id
@@ -94,7 +90,6 @@ const updateBusinessTeam = async (req, res) => {
 		});
 	}
 };
-
 /**
  * Update an existing business team's limit_per_person
  * @route PATCH /business-teams/:business_teams_id/limit_per_person
@@ -123,7 +118,6 @@ const setBusinessTeamLimit = async (req, res) => {
 		});
 	}
 };
-
 /**
  * Update an existing business team's team_name
  * @route PATCH /business-teams/:business_teams_id/name
@@ -135,7 +129,6 @@ const setBusinessTeamLimit = async (req, res) => {
 const setBusinessTeamName = async (req, res) => {
 	try {
 		const { team_name } = req.body;
-
 		const data = {
 			business_teams_id: req.params.business_teams_id,
 			team_name,
@@ -153,7 +146,6 @@ const setBusinessTeamName = async (req, res) => {
 		});
 	}
 };
-
 /**
  * Delete a business team
  * @route DELETE /business-teams/:business_teams_id
@@ -172,7 +164,6 @@ const deleteBusinessTeam = async (req, res) => {
 		});
 	}
 };
-
 /**
  * Add an unassigned user to a business team
  * @route PATCH /business-teams/add_user
@@ -186,13 +177,11 @@ const deleteBusinessTeam = async (req, res) => {
 const addUserToTeam = async (req, res) => {
 	try {
 		const { user_id, business_teams_id } = req.body;
-
 		if (!business_teams_id || !user_id) {
 			return res.status(400).json({
 				error: 'Both business_teams_id and user_id are required',
 			});
 		}
-
 		const updatedTeam = await BusinessTeamDao.addUserToTeam(business_teams_id, user_id);
 		res.status(200).json({
 			message: 'User successfully added to business team',
@@ -200,28 +189,24 @@ const addUserToTeam = async (req, res) => {
 		});
 	} catch (error) {
 		console.error('Error adding user to business team:', error);
-
 		if (error.message.includes('already assigned')) {
 			return res.status(400).json({
 				error: 'User is already assigned to a business team',
 				details: error.message,
 			});
 		}
-
 		if (error.message.includes('not found')) {
 			return res.status(404).json({
 				error: 'Resource not found',
 				details: error.message,
 			});
 		}
-
 		res.status(500).json({
 			error: 'Error adding user to business team',
 			details: error.message,
 		});
 	}
 };
-
 /**
  * Remove a user from a business team
  * @route PATCH /business-teams/remove_user
@@ -234,13 +219,11 @@ const addUserToTeam = async (req, res) => {
 const removeUserFromTeam = async (req, res) => {
 	try {
 		const { user_id } = req.params;
-
 		if (!user_id) {
 			return res.status(400).json({
 				error: 'user_id is required',
 			});
 		}
-
 		const updatedTeam = await BusinessTeamDao.removeUserFromTeam(user_id);
 		res.status(200).json({
 			message: 'User successfully removed from business team',
@@ -248,28 +231,24 @@ const removeUserFromTeam = async (req, res) => {
 		});
 	} catch (error) {
 		console.error('Error removing user from business team:', error);
-
 		if (error.message.includes('not found')) {
 			return res.status(404).json({
 				error: 'User not found',
 				details: error.message,
 			});
 		}
-
 		if (error.message.includes('not assigned')) {
 			return res.status(400).json({
 				error: 'User is not assigned to any business team',
 				details: error.message,
 			});
 		}
-
 		res.status(500).json({
 			error: 'Error removing user from business team',
 			details: error.message,
 		});
 	}
 };
-
 /**
  * Move a user to a different business team
  * @route PATCH /business-teams/move_user
@@ -283,13 +262,11 @@ const removeUserFromTeam = async (req, res) => {
 const moveUserToTeam = async (req, res) => {
 	try {
 		const { user_id, business_teams_id } = req.body;
-
 		if (!user_id || !business_teams_id) {
 			return res.status(400).json({
 				error: 'Both user_id and new_team_id are required',
 			});
 		}
-
 		const updatedTeam = await BusinessTeamDao.moveUserToTeam(user_id, business_teams_id);
 		res.status(200).json({
 			message: 'User successfully moved to new business team',
@@ -297,29 +274,35 @@ const moveUserToTeam = async (req, res) => {
 		});
 	} catch (error) {
 		console.error('Error moving user to new team:', error);
-
 		if (error.message.includes('already in this team')) {
 			return res.status(400).json({
 				error: 'User is already in this team',
 				details: error.message,
 			});
 		}
-
 		if (error.message.includes('not found')) {
 			return res.status(404).json({
 				error: 'Resource not found',
 				details: error.message,
 			});
 		}
-
 		res.status(500).json({
 			error: 'Error moving user to new team',
 			details: error.message,
 		});
 	}
 };
-
-module.exports = {
+export { getBusinessTeamsByBusinessId };
+export { getBusinessTeamById };
+export { createBusinessTeam };
+export { updateBusinessTeam };
+export { setBusinessTeamLimit };
+export { setBusinessTeamName };
+export { addUserToTeam };
+export { removeUserFromTeam };
+export { moveUserToTeam };
+export { deleteBusinessTeam };
+export default {
 	getBusinessTeamsByBusinessId,
 	getBusinessTeamById,
 	createBusinessTeam,

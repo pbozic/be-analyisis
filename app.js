@@ -1,31 +1,33 @@
+import path from 'path';
+import fs from 'fs';
+import url from 'node:url';
+
+import { config } from 'dotenv';
+import express from 'express';
+import createError from 'http-errors';
+import cookieParser from 'cookie-parser';
+import logger from 'morgan';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'js-yaml';
+import merge from 'lodash.merge';
+import cors from 'cors';
+import fileUploadLib from 'express-fileupload';
+import openapi from 'openapi-comment-parser';
+import compression from 'compression';
+import * as flatted from 'flatted';
+
+import startCronJobs from './cron.js';
+import mainRouter from './routes/index.js';
+import apiRouter from './routes/api.js';
+import { asyncLocalStorage, log } from './lib/logger.js';
+import CustomConsole from './lib/logger.js';
+
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 // app.js
-require('dotenv').config();
-
-const path = require('path');
-const fs = require('fs');
-
-const express = require('express');
-const createError = require('http-errors');
-const cookieParser = require('cookie-parser');
-const logger = require('morgan');
-const swaggerUi = require('swagger-ui-express');
-const YAML = require('js-yaml');
-const merge = require('lodash.merge');
-const cors = require('cors');
-const fileUploadLib = require('express-fileupload');
-const openapi = require('openapi-comment-parser');
-const compression = require('compression');
-const flatted = require('flatted');
-
-const startCronJobs = require('./cron');
-const mainRouter = require('./routes/index');
-const apiRouter = require('./routes/api');
-const { asyncLocalStorage, log } = require('./lib/logger');
-const CustomConsole = require('./lib/logger');
-
+config();
 const isDev = process.env.NODE_ENV !== 'production';
 console.socket = console.log;
-
 const REST_API_ENDPOINT = '/api';
 const app = express();
 // ─── Cron Jobs ──────────────────────────────────────────────────────
@@ -48,7 +50,6 @@ function formatArg(arg) {
 	if (typeof arg === 'object') return isDev ? flatted.stringify(arg, null, 2) : JSON.stringify(arg);
 	return String(arg);
 }
-
 function makeConsoleOverride(level = 'info') {
 	return (...args) => {
 		const formattedArgs = args.map(formatArg);
@@ -65,7 +66,6 @@ function makeConsoleOverride(level = 'info') {
 		}
 	};
 }
-
 // ─── Middleware Setup ───────────────────────────────────────────────
 app.use(
 	compression({
@@ -73,13 +73,10 @@ app.use(
 		threshold: 10 * 1024,
 	})
 );
-
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-
 app.use(logger('dev'));
 app.disable('etag');
-
 app.use(
 	express.json({
 		verify: function (req, res, buf) {
@@ -89,28 +86,23 @@ app.use(
 	})
 );
 app.use(express.urlencoded({ limit: '512mb', extended: false }));
-
 app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
 app.use(fileUploadLib());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
 // ─── Routes ─────────────────────────────────────────────────────────
 app.use(mainRouter);
 app.use(REST_API_ENDPOINT, apiRouter);
-
 // Uncomment if you want Swagger from comments
 let spec;
 let finalSpec;
 try {
 	const baseYamlPath = path.join(__dirname, 'swagger', 'openApiConfig.yaml');
 	const baseSpec = YAML.load(fs.readFileSync(baseYamlPath, 'utf8'));
-
 	// This triggers parsing of comments
 	spec = openapi({
 		include: ['./routes/**/*.js', './controllers/**/*.js', './middlewares/**/*.js'],
 	});
-
 	finalSpec = merge({}, baseSpec, spec);
 	if (!finalSpec.openapi) finalSpec.openapi = '3.0.3';
 } catch (err) {
@@ -119,17 +111,14 @@ try {
 	process.exit(1); // or continue without Swagger if desired
 }
 app.use('/v1/api-docs', swaggerUi.serve, swaggerUi.setup(finalSpec, { explorer: true }));
-
 // ─── Error Handling ─────────────────────────────────────────────────
 app.use((req, res, next) => {
 	next(createError(404));
 });
-
 app.use((err, req, res, next) => {
 	res.locals.message = err.message;
 	res.locals.error = isDev ? err : {};
 	res.status(err.status || 500);
 	res.render('error');
 });
-
-module.exports = app;
+export default app;

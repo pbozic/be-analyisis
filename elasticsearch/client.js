@@ -1,7 +1,6 @@
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
+import { Client } from '@elastic/elasticsearch';
 dotenv.config();
-const { Client } = require('@elastic/elasticsearch');
-
 const esClient = new Client({
 	node: process.env.ELASTIC_URL,
 	auth: {
@@ -9,5 +8,4 @@ const esClient = new Client({
 		password: process.env.ELASTIC_PASSWORD,
 	},
 });
-
-module.exports = esClient;
+export default esClient;

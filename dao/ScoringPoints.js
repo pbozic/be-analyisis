@@ -1,5 +1,4 @@
-const prisma = require('../prisma/prisma');
-
+import prisma from '../prisma/prisma.js';
 async function createScoringPoints(business_id, user_id, delivery_order_id, taxi_order_id, points, isPenalty, reason) {
 	try {
 		const newScoringPoints = await prisma.scoring_points.create({
@@ -20,7 +19,6 @@ async function createScoringPoints(business_id, user_id, delivery_order_id, taxi
 		throw error;
 	}
 }
-
 async function getScoringPointsById(scoring_points_id) {
 	try {
 		const scoringPoints = await prisma.scoring_points.findUnique({
@@ -41,7 +39,6 @@ async function getScoringPointsById(scoring_points_id) {
 		throw error;
 	}
 }
-
 async function getScoringPointsByUserId(user_id) {
 	try {
 		const scoringPoints = await prisma.scoring_points.findMany({
@@ -65,7 +62,6 @@ async function getScoringPointsByUserId(user_id) {
 		throw error;
 	}
 }
-
 async function getScoringPointsByBusinessId(business_id) {
 	try {
 		const scoringPoints = await prisma.scoring_points.findMany({
@@ -89,7 +85,6 @@ async function getScoringPointsByBusinessId(business_id) {
 		throw error;
 	}
 }
-
 async function updateScoringPoints(scoring_points_id, data) {
 	try {
 		const updatedScoringPoints = await prisma.scoring_points.update({
@@ -112,7 +107,6 @@ async function updateScoringPoints(scoring_points_id, data) {
 		throw error;
 	}
 }
-
 async function deleteScoringPoints(scoring_points_id) {
 	try {
 		await prisma.scoring_points.delete({
@@ -126,8 +120,13 @@ async function deleteScoringPoints(scoring_points_id) {
 		throw error;
 	}
 }
-
-module.exports = {
+export { createScoringPoints };
+export { getScoringPointsById };
+export { getScoringPointsByUserId };
+export { getScoringPointsByBusinessId };
+export { updateScoringPoints };
+export { deleteScoringPoints };
+export default {
 	createScoringPoints,
 	getScoringPointsById,
 	getScoringPointsByUserId,

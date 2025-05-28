@@ -1,29 +1,31 @@
-require('dotenv').config();
-const bcrypt = require('bcrypt');
+import { config } from 'dotenv';
+import bcrypt from 'bcrypt';
 
-const BusinessDao = require('../dao/Business');
-const ReviewDao = require('../dao/Review');
-const Constants = require('../lib/constants');
-const stripe = require('../lib/stripe');
-const UserDao = require('../dao/User');
-const DriverDao = require('../dao/Driver');
-const DeliveryDriverDao = require('../dao/DeliveryDriver');
-const DeliveryOrderDao = require('../dao/DeliveryOrder');
-const {
+import BusinessDao from '../dao/Business.js';
+import ReviewDao from '../dao/Review.js';
+import Constants from '../lib/constants.js';
+import stripe from '../lib/stripe.js';
+import UserDao from '../dao/User.js';
+import DriverDao from '../dao/Driver.js';
+import DeliveryDriverDao from '../dao/DeliveryDriver.js';
+import DeliveryOrderDao from '../dao/DeliveryOrder.js';
+import {
 	BUSINESS_TYPE,
 	DELIVERY_ORDER_STATUS,
 	SCORING_POINTS_REASON,
 	ACCOUNT_ACTIONS_REASON,
-} = require('../lib/constants');
-const { calculateBusinessEarnings, calculateTotalEarnings } = require('../lib/helpersLib');
-const prisma = require('../prisma/prisma');
-const BusinessUsersDao = require('../dao/BusinessUsers');
-const EmailHelper = require('../lib/emailSender');
-const { UserSockets, io } = require('../socket');
-const { businessIndex, categorySearch, fullSearch } = require('../elasticsearch');
-const UserFavoriteBusinessDao = require('../dao/UserFavoriteBusiness');
-const ScoringPointsDao = require('../dao/ScoringPoints');
-
+} from '../lib/constants.js';
+import { calculateBusinessEarnings, calculateTotalEarnings } from '../lib/helpersLib.js';
+import prisma from '../prisma/prisma.js';
+import BusinessUsersDao from '../dao/BusinessUsers.js';
+import EmailHelper from '../lib/emailSender.js';
+import socket from '../socket.js';
+import elasticsearch from '../elasticsearch/index.js';
+import UserFavoriteBusinessDao from '../dao/UserFavoriteBusiness.js';
+import ScoringPointsDao from '../dao/ScoringPoints.js';
+config();
+const { UserSockets, io } = socket;
+const { businessIndex, categorySearch, fullSearch } = elasticsearch;
 /**
  * POST /business/activate
  * @tag Business
@@ -35,7 +37,6 @@ const ScoringPointsDao = require('../dao/ScoringPoints');
  * @response 400 - Error occurred while obtaining the business list
  * @responseContent {object} 400.application/json The error object
  */
-
 async function activateBusiness(req, res) {
 	try {
 		if (!req.user.user_id) {
@@ -61,7 +62,6 @@ async function activateBusiness(req, res) {
 		res.status(400).json({ error: 'Error activating business..', e });
 	}
 }
-
 /**
  * POST /business/deactivate
  * @tag Business
@@ -73,7 +73,6 @@ async function activateBusiness(req, res) {
  * @response 400 - Error occurred while obtaining the business list
  * @responseContent {object} 400.application/json The error object
  */
-
 async function deactivateBusiness(req, res) {
 	try {
 		if (!req.user.user_id) {
@@ -125,7 +124,6 @@ async function listBusinesses(req, res) {
 		res.status(400).json({ error: 'Error obtaining list of businesses..', e });
 	}
 }
-
 /**
  * POST /businesses/ids
  * @tag Business
@@ -165,7 +163,6 @@ async function getBusinessesByIds(req, res) {
 		res.status(400).json({ error: 'Error obtaining list of businesses..', e: e.message });
 	}
 }
-
 /**
  * POST /businesses/search
  * @tag Business
@@ -230,7 +227,6 @@ async function listMerchantBusinesses(req, res) {
 	//TODO: elastic search
 	try {
 		const merchantBusinesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT);
-
 		res.status(200).json(merchantBusinesses);
 	} catch (e) {
 		console.error('Error listing merchant businesses:', e);
@@ -293,7 +289,6 @@ async function listPromoSectionsWithMerchants(req, res) {
 			promoSection.providers = result;
 			delete promoSection.translatable;
 		}
-
 		res.status(200).json(promoSections);
 	} catch (e) {
 		console.error('Error listing merchant businesses:', e);
@@ -321,7 +316,6 @@ async function listMerchantBusinessesWithDailyMeals(req, res) {
 		res.status(400).json({ error: 'Error listing merchant businesses with daily meals', e });
 	}
 }
-
 /**
  * GET /businesses/merchant/main
  * @tag Business
@@ -343,7 +337,6 @@ async function listMerchantBusinessesMainInfo(req, res) {
 		res.status(400).json({ error: 'Error listing merchant businesses with daily meals', e });
 	}
 }
-
 /**
  * GET /businesses/taxi/main
  * @tag Business
@@ -365,7 +358,6 @@ async function listTransferBusinessesMainInfo(req, res) {
 		res.status(400).json({ error: 'Error listing transfer businesses', e });
 	}
 }
-
 /**
  * GET /businesses/taxis
  * @tag Business
@@ -385,7 +377,6 @@ async function listTransferBusinesses(req, res) {
 		res.status(400).json({ error: 'Error listing taxi businesses', e });
 	}
 }
-
 /**
  * GET /business/:business_id
  * @tag Business
@@ -412,7 +403,6 @@ async function getBusinessById(req, res) {
 		res.status(400).json({ error: 'Error retrieving business information', e });
 	}
 }
-
 /**
  * GET /admin/business/:business_id
  * @tag Business
@@ -439,7 +429,6 @@ async function getBusinessAdminDataById(req, res) {
 		res.status(400).json({ error: 'Error retrieving business information', e });
 	}
 }
-
 /**
  * GET /business/search/:business_id
  * @tag Business
@@ -503,7 +492,6 @@ async function getParentBusiness(req, res) {
 		res.status(400).json({ error: 'Error retrieving parent business information', e });
 	}
 }
-
 /**
  * GET /business/children/:parent_business_id
  * @tag Business
@@ -524,7 +512,6 @@ async function getChildBusinesses(req, res) {
 		res.status(400).json({ error: 'Error retrieving child businesses information', e });
 	}
 }
-
 /**
  * POST /business
  * @tag Business
@@ -552,7 +539,6 @@ async function createNewBusiness(req, res) {
 		res.status(400).json({ error: 'Error creating new business', e });
 	}
 }
-
 /**
  * PATCH /business/
  * @tag Business
@@ -585,7 +571,6 @@ async function update(req, res) {
 		res.status(400).json({ error: 'Error updating business information', e });
 	}
 }
-
 /**
  * PATCH /business/type
  * @tag Business
@@ -614,7 +599,6 @@ async function updateBusinessType(req, res) {
 		res.status(400).json({ error: 'Error updating business type', e });
 	}
 }
-
 /**
  * PATCH /business/business-unit
  * @tag Businesses
@@ -643,7 +627,6 @@ async function updateIsBusinessUnit(req, res) {
 		res.status(400).json({ error: 'Error updating business unit status', e });
 	}
 }
-
 /**
  * PATCH /business/business-group-name
  * @tag Businesses
@@ -672,7 +655,6 @@ async function updateBusinessGroupName(req, res) {
 		res.status(400).json({ error: 'Error updating business group name', e });
 	}
 }
-
 /**
  * PATCH /business/email/
  * @tag Business
@@ -702,7 +684,6 @@ async function updateBusinessEmail(req, res) {
 		res.status(400).json({ error: 'Error updating business email', e });
 	}
 }
-
 /**
  * PATCH /business/telephone/
  * @tag Business
@@ -737,7 +718,6 @@ async function updateBusinessTelephone(req, res) {
 		res.status(400).json({ error: 'Error updating business telephone', e });
 	}
 }
-
 /**
  * PATCH /business/workingHours
  * @tag Business
@@ -802,7 +782,6 @@ async function updateRestaurantOverwhelmed(req, res) {
 		res.status(400).json({ error: 'Error updating business restaurant overwhelmed', e });
 	}
 }
-
 /**
  * PATCH /business/new
  * @tag Business
@@ -832,7 +811,6 @@ async function updateBusinessIsNew(req, res) {
 		res.status(400).json({ error: 'Error updating business new status', e });
 	}
 }
-
 /**
  * PATCH /business/popular
  * @tag Business
@@ -862,7 +840,6 @@ async function updateBusinessIsPopular(req, res) {
 		res.status(400).json({ error: 'Error updating business popularity', e });
 	}
 }
-
 /**
  * GET /business/business_group_name
  * @tag Business
@@ -887,7 +864,6 @@ async function getBusinessesByGroupName(req, res) {
 		res.status(400).json({ error: 'Error occurred while searching for businesses by group name', e });
 	}
 }
-
 /**
  * GET /businesses/search
  * @tag Business
@@ -912,7 +888,6 @@ async function getBusinessesByNameSearch(req, res) {
 		res.status(400).json({ error: 'Error occurred while searching for businesses by name', e });
 	}
 }
-
 /**
  * POST /business/address/add
  * @tag Business
@@ -939,7 +914,6 @@ async function addBusinessAddress(req, res) {
 		res.status(400).json({ error: 'Error adding business address', detail: error.message });
 	}
 }
-
 /**
  * POST /business/delivery-address/add
  * @tag Business
@@ -966,7 +940,6 @@ async function addDeliveryAddress(req, res) {
 		res.status(400).json({ error: 'Error adding delivery address', detail: error.message });
 	}
 }
-
 /**
  * PATCH /business/parent/update
  * @tag Business
@@ -993,7 +966,6 @@ async function updateParentBusinessId(req, res) {
 		res.status(400).json({ error: 'Error updating parent business', e });
 	}
 }
-
 /**
  * PATCH /business/address/:business_id
  * @tag Business
@@ -1017,7 +989,6 @@ async function updateBusinessAddress(req, res) {
 		res.status(400).json({ error: 'Error updating business address', e });
 	}
 }
-
 /**
  * PATCH /business/delivery-address/:business_id
  * @tag Business
@@ -1041,7 +1012,6 @@ async function updateBusinessDeliveryAddress(req, res) {
 		res.status(400).json({ error: 'Error updating business delivery address', e });
 	}
 }
-
 /**
  * DELETE /business/:business_id
  * @tag Business
@@ -1061,7 +1031,6 @@ async function deleteBusiness(req, res) {
 		res.status(400).json({ error: 'Error deleting business', e });
 	}
 }
-
 /**
  * PATCH /business/parent/remove
  * @tag Business
@@ -1082,7 +1051,6 @@ async function removeParentBusinessId(req, res) {
 		res.status(400).json({ error: 'Error removing child business from parent', e });
 	}
 }
-
 /**
  * POST /business/review
  * @tag Business
@@ -1098,7 +1066,6 @@ async function removeParentBusinessId(req, res) {
 async function reviewBusiness(req, res) {
 	try {
 		let business_id = req.body.business_id;
-
 		// Check if driver_id is present in the request body
 		if (req.body.driver_id) {
 			const business = await DriverDao.getBusinessByDriverId(req.body.driver_id);
@@ -1107,7 +1074,6 @@ async function reviewBusiness(req, res) {
 			}
 			business_id = business.business_id;
 		}
-
 		if (req.body.delivery_driver_id) {
 			const business = await DeliveryDriverDao.getBusinessByDeliveryDriverId(req.body.delivery_driver_id);
 			if (!business) {
@@ -1115,7 +1081,6 @@ async function reviewBusiness(req, res) {
 			}
 			business_id = business.business_id;
 		}
-
 		// Proceed with the business_id obtained or provided
 		let business = await BusinessDao.getBusinessById(business_id);
 		if (business.reviewable_id === null) {
@@ -1125,7 +1090,6 @@ async function reviewBusiness(req, res) {
 			}
 			business.reviewable_id = reviewable.reviewable_id;
 		}
-
 		let review = await ReviewDao.createReview({
 			comment: req.body.comment,
 			rating: req.body.rating,
@@ -1141,7 +1105,6 @@ async function reviewBusiness(req, res) {
 				},
 			},
 		});
-
 		if (review) {
 			return res.status(200).json(review);
 		}
@@ -1151,7 +1114,6 @@ async function reviewBusiness(req, res) {
 		res.status(400).json({ error: 'Error adding review', e });
 	}
 }
-
 async function confirmBusinessReview(req, res) {
 	try {
 		res.status(200).json({ message: 'Review confirmed successfully' });
@@ -1183,7 +1145,6 @@ async function createPaymentIntent(req, res) {
 		res.status(400).json({ error: 'Error creating payment intent', e });
 	}
 }
-
 /**
  * POST /business/scheduled_users/sorting
  * @tag Business
@@ -1208,7 +1169,6 @@ async function manualSortScheduledUsers(req, res) {
 		res.status(400).json({ error: 'Error sorting users', e });
 	}
 }
-
 /**
  * POST /business/scheduled_users/sorting/type
  * @tag Business
@@ -1221,7 +1181,6 @@ async function manualSortScheduledUsers(req, res) {
  * @response 200 - Sorting type added successfully.
  * @response 400 - Error adding sorting type.
  */
-
 async function addScheduledUserSortingType(req, res) {
 	const { sorting_type } = req.body;
 	try {
@@ -1232,7 +1191,6 @@ async function addScheduledUserSortingType(req, res) {
 		res.status(400).json({ error: 'Error adding sorting type', e });
 	}
 }
-
 /**
  * GET /business/earnings/:business_id
  * @tag Business
@@ -1252,11 +1210,9 @@ async function addScheduledUserSortingType(req, res) {
 async function getBusinessEarnings(req, res) {
 	const { business_id } = req.params;
 	const { start_date, end_date } = req.query;
-
 	if (!business_id || !start_date || !end_date) {
 		return res.status(400).json({ message: 'Missing required parameters' });
 	}
-
 	try {
 		const business = await BusinessDao.getBusinessById(business_id);
 		const businessDeliveryOrders = await DeliveryOrderDao.getOrders({
@@ -1270,7 +1226,6 @@ async function getBusinessEarnings(req, res) {
 			},
 		});
 		const earningsData = calculateBusinessEarnings(businessDeliveryOrders, business);
-
 		if (earningsData) {
 			res.status(200).json({ business_id, ...earningsData });
 		} else {
@@ -1281,7 +1236,6 @@ async function getBusinessEarnings(req, res) {
 		res.status(400).json({ error: "Error retrieving business' earnings", detail: error.message });
 	}
 }
-
 /**
  * GET /business/earnings
  * @tag Business
@@ -1297,11 +1251,9 @@ async function getBusinessEarnings(req, res) {
  */
 async function getAllBusinessesEarnings(req, res) {
 	const { start_date, end_date } = req.query;
-
 	if (!start_date || !end_date) {
 		return res.status(400).json({ message: 'Missing required parameters' });
 	}
-
 	try {
 		const businesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT);
 		const earningsPromises = businesses.map(async (business) => {
@@ -1317,7 +1269,6 @@ async function getAllBusinessesEarnings(req, res) {
 			});
 			return calculateBusinessEarnings(businessDeliveryOrders, business);
 		});
-
 		const allEarnings = await Promise.all(earningsPromises);
 		res.status(200).json(allEarnings);
 	} catch (error) {
@@ -1325,7 +1276,6 @@ async function getAllBusinessesEarnings(req, res) {
 		res.status(400).json({ error: "Error retrieving all businesses' earnings", detail: error.message });
 	}
 }
-
 /**
  * GET /business/total-earnings
  * @tag Business
@@ -1351,7 +1301,6 @@ async function getTotalEarnings(req, res) {
 		res.status(400).json({ error: "Error retrieving all businesses' total earnings", detail: error.message });
 	}
 }
-
 /**
  * GET /business/earnings/:business_id/total
  * @tag Business
@@ -1366,11 +1315,9 @@ async function getTotalEarnings(req, res) {
  */
 async function getBusinessTotalEarnings(req, res) {
 	const { business_id: business_id } = req.params;
-
 	if (!business_id) {
 		return res.status(400).json({ message: 'Missing required parameter: business_id' });
 	}
-
 	try {
 		const orders = await DeliveryOrderDao.getOrders({
 			where: {
@@ -1385,14 +1332,11 @@ async function getBusinessTotalEarnings(req, res) {
 		res.status(400).json({ error: "Error retrieving business' total earnings", detail: error.message });
 	}
 }
-
 async function getBusinessReviewsById(req, res) {
 	const { business_id: business_id } = req.params;
-
 	if (!business_id) {
 		return res.status(400).json({ message: 'Missing required parameter: business_id' });
 	}
-
 	try {
 		const business = await BusinessDao.getBusinessById(business_id);
 		if (!business?.reviewable_id) {
@@ -1462,7 +1406,6 @@ async function getBusinessReviewsById(req, res) {
 					created_at: 'desc',
 				},
 			});
-
 			for (let review of reviews) {
 				if (review.reviewable.user.length > 0) {
 					review.target = review.reviewable.user[0];
@@ -1472,7 +1415,6 @@ async function getBusinessReviewsById(req, res) {
 				}
 				review.reviewable = undefined;
 			}
-
 			res.status(200).json(reviews);
 		}
 	} catch (e) {
@@ -1480,7 +1422,6 @@ async function getBusinessReviewsById(req, res) {
 		res.status(500).json({ error: 'Internal server error' });
 	}
 }
-
 /**
  * PATCH /business/edit
  * @tag Business
@@ -1508,11 +1449,9 @@ async function editBusiness(req, res) {
 		...otherData
 	} = req.body;
 	const business_id = otherData.business_id;
-
 	try {
 		// Update the business details
 		let updatedBusiness = await BusinessDao.updateBusiness(business_id, otherData);
-
 		if (finances) {
 			updatedBusiness = await BusinessDao.updateBusinessFinances(business_id, finances);
 		}
@@ -1540,7 +1479,6 @@ async function editBusiness(req, res) {
 		if (popular) {
 			updatedBusiness = await BusinessDao.updateBusinessIsPopular(business_id, popular);
 		}
-
 		// Return the updated business details
 		if (updatedBusiness.type === Constants.BUSINESS_TYPE.MERCHANT) {
 			businessIndex(updatedBusiness.business_id);
@@ -1551,7 +1489,6 @@ async function editBusiness(req, res) {
 		res.status(400).json({ error: 'Error updating business information', detail: error.message });
 	}
 }
-
 async function getBusinessStripeStatusByBusinessId(req, res) {
 	try {
 		const business_id = req.params.business_id;
@@ -1566,19 +1503,16 @@ async function getBusinessStripeStatusByBusinessId(req, res) {
 		throw new Error(error);
 	}
 }
-
 async function generateBusinessStripeByBusinessId(req, res) {
 	try {
 		const business_id = req.params.business_id;
 		const business = await BusinessDao.getBusinessById(business_id);
 		let stripe_account;
-
 		if (business?.stripe_account_id) {
 			stripe_account = await stripe.client.accounts.retrieve(business.stripe_account_id);
 			console.info('stripe_account', stripe_account);
 			const current_reqs = stripe_account?.requirements?.currently_due;
 			const eventual_reqs = stripe_account?.requirements?.eventually_due;
-
 			if (
 				stripe_account.details_submitted &&
 				!(current_reqs && current_reqs.length > 0) &&
@@ -1590,7 +1524,6 @@ async function generateBusinessStripeByBusinessId(req, res) {
 			stripe_account = await stripe.createAccount(business);
 			await BusinessDao.updateBusiness(business.business_id, { stripe_account_id: stripe_account.id });
 		}
-
 		let accountLink = await stripe.getAccountLinks(stripe_account.id, business.business_id);
 		// send email to business user with account link
 		EmailHelper.sendEmailTemplate('Stripe Onboarding', 'stripeOnboarding', business.email, {
@@ -1598,7 +1531,6 @@ async function generateBusinessStripeByBusinessId(req, res) {
 			title: 'Stripe Onboarding',
 			onboardLink: accountLink.url,
 		});
-
 		res.status(200).render('stripeOnboardingEmailSent', {
 			businessEmail: business.email,
 		});
@@ -1607,24 +1539,19 @@ async function generateBusinessStripeByBusinessId(req, res) {
 		throw new Error(error);
 	}
 }
-
 async function onboardingEnd(req, res) {
 	try {
 		const business_id = req.params.business_id;
 		const business = await BusinessDao.getBusinessById(business_id);
-
 		if (!business || !business.stripe_account_id) {
 			return res.status(404).render('stripeOnboardingIncomplete', {
 				message: 'We couldn’t find a valid Stripe account for this business.',
 			});
 		}
-
 		const stripe_account = await stripe.client.accounts.retrieve(business.stripe_account_id);
 		const current_reqs = stripe_account?.requirements?.currently_due || [];
 		const eventual_reqs = stripe_account?.requirements?.eventually_due || [];
-
 		const isComplete = stripe_account.details_submitted && current_reqs.length === 0 && eventual_reqs.length === 0;
-
 		if (isComplete) {
 			return res.render('stripeOnboardingSuccess', {
 				businessName: business.name,
@@ -1642,7 +1569,6 @@ async function onboardingEnd(req, res) {
 		});
 	}
 }
-
 async function getBusynessFactorsBusinessIdList(req, res) {
 	const { business_ids } = req.query;
 	if (!business_ids) {
@@ -1651,7 +1577,6 @@ async function getBusynessFactorsBusinessIdList(req, res) {
 	try {
 		// Assuming we have a function to get orders by business IDs
 		const busynessFactors = {};
-
 		for (const businessId of business_ids) {
 			const orderCount = await DeliveryOrderDao.getInProgressDeliveryOrdersCountForBusinessId(businessId);
 			console.info('orderCount: ', businessId, orderCount);
@@ -1664,19 +1589,16 @@ async function getBusynessFactorsBusinessIdList(req, res) {
 			busynessFactor += Math.floor(orderCount / 5) * 0.2;
 			busynessFactors[businessId] = busynessFactor;
 		}
-
 		res.status(200).json(busynessFactors);
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: 'Internal Server Error while getting busyness factors' });
 	}
 }
-
 async function addBusinessToFavorites(req, res) {
 	try {
 		const { business_id, type } = req.body;
 		const { user_id } = req.user;
-
 		const business = await BusinessDao.getBusinessById(business_id);
 		if (!business) {
 			return res.status(400).json({ message: 'Business not found.' });
@@ -1685,21 +1607,17 @@ async function addBusinessToFavorites(req, res) {
 			// made as array for future upgrade to array business.types
 			return res.status(400).json({ message: 'Business does not have the given type.' });
 		}
-
 		const new_entry = await UserFavoriteBusinessDao.addFavoriteBusiness(user_id, business_id, type);
-
 		res.status(200).json(new_entry);
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: 'Internal Server Error while adding Business to Favorites' });
 	}
 }
-
 async function removeBusinessFromFavorites(req, res) {
 	try {
 		const { user_favorite_businesses_id } = req.body;
 		const { user_id } = req.user;
-
 		const user_favorites = await UserFavoriteBusinessDao.getFavoriteBusinesses(user_id);
 		const favorited_entry = user_favorites.find(
 			(fav) => fav.user_favorite_businesses_id === user_favorite_businesses_id
@@ -1707,16 +1625,13 @@ async function removeBusinessFromFavorites(req, res) {
 		if (!favorited_entry) {
 			return res.status(400).json({ message: 'Business not favorited for given type.' });
 		}
-
 		const removed_entry = await UserFavoriteBusinessDao.removeFavoriteBusiness(user_favorite_businesses_id);
-
 		res.status(200).json(removed_entry);
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: 'Internal Server Error while adding Business to Favorites' });
 	}
 }
-
 async function getFavoriteBusinesses(req, res) {
 	try {
 		const { user_id } = req.user;
@@ -1728,7 +1643,6 @@ async function getFavoriteBusinesses(req, res) {
 		res.status(500).json({ message: 'Internal Server Error while adding Business to Favorites' });
 	}
 }
-
 async function getScheduledUsersByBusinessId(req, res) {
 	try {
 		const users = await BusinessDao.getScheduledUsersByBusinessId(req.params.business_id);
@@ -1742,30 +1656,24 @@ async function getScheduledUsersByBusinessId(req, res) {
 		res.status(400).json({ error: 'Error getting daily meal users by business ID', e });
 	}
 }
-
 async function createScoringPointsHandler(req, res) {
 	try {
 		const { reason, points, taxi_order_id, delivery_order_id } = req.body;
-
 		if (!Object.keys(SCORING_POINTS_REASON).includes(reason) || typeof points !== 'number' || points <= 0) {
 			return res.status(400).json({ error: 'Invalid reason or points' });
 		}
-
 		const user_id = req.user?.user_id;
 		if (!user_id) {
 			return res.status(401).json({ error: 'User not authenticated' });
 		}
-
 		const user_with_drivers = await UserDao.getUserById(user_id, {
 			include: { driver: true, delivery_driver: true },
 		});
 		const business_id =
 			user_with_drivers?.driver?.business_id || user_with_drivers?.delivery_driver?.business_id || null;
-
 		if (!business_id) {
 			return res.status(400).json({ error: 'Business ID is required' });
 		}
-
 		const scoringPoint = await ScoringPointsDao.createScoringPoints(
 			business_id,
 			user_id,
@@ -1775,20 +1683,17 @@ async function createScoringPointsHandler(req, res) {
 			true,
 			reason
 		);
-
 		return res.status(201).json(scoringPoint);
 	} catch (error) {
 		console.error('Error in createScoringPointsHandler:', error);
 		return res.status(500).json({ error: 'Internal server error' });
 	}
 }
-
 async function getPurchaseOrderLimit(req, res) {
 	const { business_id } = req.params;
 	if (!business_id) {
 		return res.status(400).json({ error: 'Business ID is required' });
 	}
-
 	try {
 		const purchaseOrderLimit = await BusinessDao.getPurchaseOrderLimit(business_id);
 		if (purchaseOrderLimit >= 0) {
@@ -1801,8 +1706,63 @@ async function getPurchaseOrderLimit(req, res) {
 		return res.status(500).json({ error: 'Internal server error' });
 	}
 }
-
-module.exports = {
+export { getScheduledUsersByBusinessId };
+export { listBusinesses };
+export { listTransferBusinesses };
+export { listMerchantBusinesses };
+export { listMerchantBusinessesWithDailyMeals };
+export { addBusinessAddress };
+export { addDeliveryAddress };
+export { update };
+export { createNewBusiness };
+export { getBusinessById };
+export { getBusinessAdminDataById };
+export { getParentBusiness };
+export { getChildBusinesses };
+export { getBusinessesByGroupName };
+export { getBusinessesByNameSearch };
+export { updateBusinessAddress };
+export { updateBusinessDeliveryAddress };
+export { updateBusinessType };
+export { updateIsBusinessUnit };
+export { updateBusinessGroupName };
+export { updateBusinessEmail };
+export { updateBusinessTelephone };
+export { updateBusinessWorkingHours };
+export { updateRestaurantOverwhelmed };
+export { updateBusinessIsNew };
+export { updateBusinessIsPopular };
+export { updateParentBusinessId };
+export { removeParentBusinessId };
+export { deleteBusiness };
+export { reviewBusiness };
+export { createPaymentIntent };
+export { manualSortScheduledUsers };
+export { addScheduledUserSortingType };
+export { listMerchantBusinessesMainInfo };
+export { listTransferBusinessesMainInfo };
+export { getBusinessEarnings };
+export { getAllBusinessesEarnings };
+export { getTotalEarnings };
+export { getBusinessTotalEarnings };
+export { getBusinessReviewsById };
+export { editBusiness };
+export { getBusinessStripeStatusByBusinessId };
+export { generateBusinessStripeByBusinessId };
+export { getBusynessFactorsBusinessIdList };
+export { getBusinessesByIds };
+export { searchBusinesses };
+export { listPromoSectionsWithMerchants };
+export { activateBusiness };
+export { deactivateBusiness };
+export { getBusinessForSearchById };
+export { addBusinessToFavorites };
+export { removeBusinessFromFavorites };
+export { getFavoriteBusinesses };
+export { onboardingEnd };
+export { createScoringPointsHandler };
+export { getPurchaseOrderLimit };
+export default {
 	getScheduledUsersByBusinessId,
 	listBusinesses,
 	listTransferBusinesses,

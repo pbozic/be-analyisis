@@ -1,14 +1,13 @@
-const en = require('./languages/en');
-const sl = require('./languages/sl');
-const it = require('./languages/it');
-const de = require('./languages/de');
-const es = require('./languages/es');
-const sr = require('./languages/sr');
-const bs = require('./languages/bs');
-const hr = require('./languages/hr');
-const fr = require('./languages/fr');
-const ru = require('./languages/ru');
-
+import en from './languages/en.js';
+import sl from './languages/sl.js';
+import it from './languages/it.js';
+import de from './languages/de.js';
+import es from './languages/es.js';
+import sr from './languages/sr.js';
+import bs from './languages/bs.js';
+import hr from './languages/hr.js';
+import fr from './languages/fr.js';
+import ru from './languages/ru.js';
 const languageTexts = {
 	en,
 	sl,
@@ -21,7 +20,7 @@ const languageTexts = {
 	fr,
 	ru,
 };
-
-module.exports = {
+export { languageTexts };
+export default {
 	languageTexts,
 };

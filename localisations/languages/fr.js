@@ -70,4 +70,4 @@ const fr = {
 		referral: 'Votre récompense de parrainage a été créditée sur votre compte',
 	},
 };
-module.exports = fr;
+export default fr;

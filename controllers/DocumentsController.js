@@ -1,8 +1,9 @@
-require('dotenv').config();
-const DocumentDao = require('../dao/Document');
-const DeliveryDriverDao = require('../dao/DeliveryDriver');
-const DriverDao = require('../dao/Driver');
+import { config } from 'dotenv';
 
+import DocumentDao from '../dao/Document.js';
+import DeliveryDriverDao from '../dao/DeliveryDriver.js';
+import DriverDao from '../dao/Driver.js';
+config();
 /**
  * GET /documents
  * @tag Documents
@@ -22,7 +23,6 @@ async function listDocuments(req, res) {
 		res.status(400).json({ error: error.message });
 	}
 }
-
 /**
  * GET /documents/:documentId
  * @tag Documents
@@ -48,7 +48,6 @@ async function getDocumentById(req, res) {
 		res.status(400).json({ error: error.message });
 	}
 }
-
 /**
  * GET /documents/users/:userId
  * @tag Documents
@@ -70,7 +69,6 @@ async function getDocumentsForUser(req, res) {
 		res.status(400).json({ error: error.message });
 	}
 }
-
 /**
  * GET /documents/businesses/:businessId
  * @tag Documents
@@ -92,7 +90,6 @@ async function getDocumentsForBusiness(req, res) {
 		res.status(400).json({ error: error.message });
 	}
 }
-
 /**
  * GET /documents/deliveryPersons/:deliveryPersonId
  * @tag Documents
@@ -114,7 +111,6 @@ async function getDocumentsForDeliveryPerson(req, res) {
 		res.status(400).json({ error: error.message });
 	}
 }
-
 /**
  * GET /documents/drivers/:driverId
  * @tag Documents
@@ -136,7 +132,6 @@ async function getDocumentsForDriver(req, res) {
 		res.status(400).json({ error: error.message });
 	}
 }
-
 /**
  * GET /documents/vehicles/:vehicleId
  * @tag Documents
@@ -158,7 +153,6 @@ async function getDocumentsForVehicle(req, res) {
 		res.status(400).json({ error: error.message });
 	}
 }
-
 /**
  * GET /documents/type/:documentType
  * @tag Documents
@@ -180,7 +174,6 @@ async function getDocumentsByDocumentType(req, res) {
 		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
 	}
 }
-
 /**
  * GET /documents/business/:businessId/documents/type/:documentType
  * @tag Documents
@@ -203,7 +196,6 @@ async function getDocumentsForBusinessByDocumentType(req, res) {
 		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
 	}
 }
-
 /**
  * GET /documents/user/type/:document_type
  * @tag Documents
@@ -225,7 +217,6 @@ async function getDocumentsForUserByDocumentType(req, res) {
 		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
 	}
 }
-
 /**
  * GET /documents/drivers/:driverId/documents/type/:documentType
  * @tag Documents
@@ -248,7 +239,6 @@ async function getDocumentsForDriverByDocumentType(req, res) {
 		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
 	}
 }
-
 /**
  * GET /documents/deliveryPersons/:deliveryPersonId/documents/type/:documentType
  * @tag Documents
@@ -271,7 +261,6 @@ async function getDocumentsForDeliveryPersonByDocumentType(req, res) {
 		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
 	}
 }
-
 /**
  * GET /documents/vehicles/:vehicleId/documents/type/:documentType
  * @tag Documents
@@ -294,7 +283,6 @@ async function getDocumentsForVehicleByDocumentType(req, res) {
 		res.status(400).json({ error: 'Error retrieving documents', detail: error.message });
 	}
 }
-
 /**
  * POST /documents/create/user/:user_id
  * @tag Documents
@@ -322,7 +310,6 @@ async function createUserDocument(req, res) {
 		res.status(400).json({ error: 'Error creating user document or linking the document', detail: error.message });
 	}
 }
-
 /**
  * POST /documents/create/business/:business_id
  * @tag Documents
@@ -350,7 +337,6 @@ async function createBusinessDocument(req, res) {
 		res.status(400).json({ error: 'Error creating or linking the document', detail: error.message });
 	}
 }
-
 /**
  * POST /documents/create/driver/:driver_id
  * @tag Documents
@@ -378,7 +364,6 @@ async function createDriverDocument(req, res) {
 		res.status(400).json({ error: 'Error creating or linking the document', detail: error.message });
 	}
 }
-
 /**
  * POST /documents/create/vehicle/:vehicle_id
  * @tag Documents
@@ -407,7 +392,6 @@ async function createVehicleDocument(req, res) {
 		});
 	}
 }
-
 /**
  * POST /documents/create/delivery_driver/:delivery_driver_id
  * @tag Documents
@@ -444,7 +428,6 @@ async function createDeliveryPersonDocument(req, res) {
 		});
 	}
 }
-
 /**
  * PATCH /documents/expirationDate
  * @tag Documents
@@ -469,7 +452,6 @@ async function updateDocumentExpirationDate(req, res) {
 		res.status(400).json({ error: "Error updating document's expiration date", detail: error.message });
 	}
 }
-
 /**
  * PATCH /documents/issueDate
  * @tag Documents
@@ -494,7 +476,6 @@ async function updateDocumentIssueDate(req, res) {
 		res.status(400).json({ error: "Error updating document's issue date", detail: error.message });
 	}
 }
-
 /**
  * PATCH /documents/files
  * @tag Documents
@@ -519,7 +500,6 @@ async function updateDocumentFiles(req, res) {
 		res.status(400).json({ error: "Error updating document's files", detail: error.message });
 	}
 }
-
 /**
  * PATCH /documents/additionalInfo
  * @tag Documents
@@ -544,8 +524,29 @@ async function updateDocumentAdditionalInfo(req, res) {
 		res.status(400).json({ error: "Error updating document's additional info", detail: error.message });
 	}
 }
-
-module.exports = {
+export { listDocuments };
+export { getDocumentById };
+export { getDocumentsForUser };
+export { getDocumentsForVehicle };
+export { getDocumentsForDriver };
+export { getDocumentsForDeliveryPerson };
+export { getDocumentsForBusiness };
+export { getDocumentsByDocumentType };
+export { getDocumentsForBusinessByDocumentType };
+export { getDocumentsForDriverByDocumentType };
+export { getDocumentsForDeliveryPersonByDocumentType };
+export { getDocumentsForVehicleByDocumentType };
+export { getDocumentsForUserByDocumentType };
+export { createUserDocument };
+export { createBusinessDocument };
+export { createVehicleDocument };
+export { createDriverDocument };
+export { createDeliveryPersonDocument };
+export { updateDocumentExpirationDate };
+export { updateDocumentIssueDate };
+export { updateDocumentFiles };
+export { updateDocumentAdditionalInfo };
+export default {
 	listDocuments,
 	getDocumentById,
 	getDocumentsForUser,

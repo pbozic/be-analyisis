@@ -1,35 +1,37 @@
-require('dotenv').config();
-const moment = require('moment');
+import { config } from 'dotenv';
+import moment from 'moment';
 
-const prisma = require('../prisma/prisma');
-const DriverDao = require('../dao/Driver');
-const VehicleDao = require('../dao/Vehicle');
-const UserDao = require('../dao/User');
-const { UserSockets, io } = require('../socket');
-const TaxiOrderDao = require('../dao/TaxiOrder');
-const taxiHelpers = require('../lib/taxiHelpers');
-const { updateAddressByAddressId, addAddress, addUserAddress } = require('../dao/Address');
-const {
+import prisma from '../prisma/prisma.js';
+import DriverDao from '../dao/Driver.js';
+import VehicleDao from '../dao/Vehicle.js';
+import UserDao from '../dao/User.js';
+import socket from '../socket.js';
+import TaxiOrderDao from '../dao/TaxiOrder.js';
+import taxiHelpers from '../lib/taxiHelpers.js';
+import { updateAddressByAddressId, addAddress, addUserAddress } from '../dao/Address.js';
+import {
 	updateDocumentByDocumentId,
 	findDocumentByTypeAndDriverId,
 	createDocument,
 	linkDocumentToDriver,
 	linkDocumentToUser,
 	linkDocumentToVehicle,
-} = require('../dao/Document');
-const { updateFileInDocument, addFileToDocument } = require('../dao/File');
-const FileDao = require('../dao/File');
-const S3Helper = require('../lib/s3');
-const DocumentDao = require('../dao/Document');
-const { TAXI_ORDER_STATUS, DELIVERY_ORDER_STATUS, DOCUMENT_TYPE, ACTIVITY_TYPE } = require('../lib/constants');
-const { createNewVehicle } = require('../dao/Vehicle');
-const { calculateTotalEarnings, calculateDriversEarnings } = require('../lib/helpersLib');
-const deliveryHelpers = require('../lib/deliveryHelpers');
-const stripe = require('../lib/stripe');
-const SMSHelper = require('../lib/SMS');
-const { sendNotificationToUser } = require('../lib/oneSignal');
-const { getLocalisedTexts } = require('../localisations/languages');
-const { handleDriverStatusChange } = require('../lib/driverHelpers');
+} from '../dao/Document.js';
+import { updateFileInDocument, addFileToDocument } from '../dao/File.js';
+import FileDao from '../dao/File.js';
+import S3Helper from '../lib/s3.js';
+import DocumentDao from '../dao/Document.js';
+import { TAXI_ORDER_STATUS, DELIVERY_ORDER_STATUS, DOCUMENT_TYPE, ACTIVITY_TYPE } from '../lib/constants.js';
+import { createNewVehicle } from '../dao/Vehicle.js';
+import { calculateTotalEarnings, calculateDriversEarnings } from '../lib/helpersLib.js';
+import deliveryHelpers from '../lib/deliveryHelpers.js';
+import stripe from '../lib/stripe.js';
+import SMSHelper from '../lib/SMS.js';
+import { sendNotificationToUser } from '../lib/oneSignal.js';
+import { getLocalisedTexts } from '../localisations/languages.js';
+import { handleDriverStatusChange } from '../lib/driverHelpers.js';
+config();
+const { UserSockets, io } = socket;
 /**
  * GET /drivers
  * @tag Drivers
@@ -49,7 +51,6 @@ async function listDrivers(req, res) {
 		res.status(400).json({ error: 'Error listing drivers', detail: error.message });
 	}
 }
-
 /**
  * GET /drivers/business/:business_id
  * @tag Drivers
@@ -70,7 +71,6 @@ async function getDriversByBusinessId(req, res) {
 		res.status(400).json({ error: 'Error obtaining drivers', detail: error.message });
 	}
 }
-
 /**
  * GET /drivers/full
  * @tag Drivers
@@ -110,7 +110,6 @@ async function listOnlineDrivers(req, res) {
 		res.status(400).json({ error: 'Error listing online drivers', detail: error.message });
 	}
 }
-
 async function getAvailableDrivers(req, res) {
 	try {
 		const drivers = await DriverDao.getAvailableDrivers();
@@ -120,7 +119,6 @@ async function getAvailableDrivers(req, res) {
 		res.status(400).json({ error: 'Error getting available drivers', detail: error.message });
 	}
 }
-
 async function getUnavailableDrivers(req, res) {
 	try {
 		const drivers = await DriverDao.getUnavailableDrivers();
@@ -130,7 +128,6 @@ async function getUnavailableDrivers(req, res) {
 		res.status(400).json({ error: 'Error getting unavailable drivers', detail: error.message });
 	}
 }
-
 /**
  * GET /drivers/:driver_id
  * @tag Drivers
@@ -156,7 +153,6 @@ async function getDriverById(req, res) {
 		res.status(400).json({ error: 'Error retrieving driver information', detail: error.message });
 	}
 }
-
 /**
  * GET /drivers/:driver_id/location
  * @tag Drivers
@@ -186,7 +182,6 @@ async function getDriverLocation(req, res) {
 		res.status(400).json({ error: "Error retrieving driver's location", detail: error.message });
 	}
 }
-
 /**
  * GET /drivers/orders
  * @tag Drivers
@@ -199,13 +194,11 @@ async function getDriverLocation(req, res) {
  */
 async function resendDelegatedOrdersToDriver(req, res) {
 	const userId = req.user.user_id;
-
 	try {
 		const driver = await DriverDao.getDriverByUserId(userId);
 		if (!driver) {
 			return res.status(404).json({ error: 'Driver not found' });
 		}
-
 		// Send already sent orders to this driver
 		await taxiHelpers.resendPendingOrdersToDriver(driver);
 		// Send active orders to this driver
@@ -214,7 +207,6 @@ async function resendDelegatedOrdersToDriver(req, res) {
 		await deliveryHelpers.resendPendingOrdersToDeliveryDriver(driver);
 		// Send active orders to this driver
 		await deliveryHelpers.sendActiveOrdersToDeliveryDriver(driver);
-
 		// Return a 200 status
 		res.status(200).send();
 	} catch (error) {
@@ -222,7 +214,6 @@ async function resendDelegatedOrdersToDriver(req, res) {
 		res.status(400).json({ error: 'Error retrieving orders', detail: error.message });
 	}
 }
-
 /**
  * PATCH /drivers/update/:driver_id
  * @tag Drivers
@@ -239,7 +230,6 @@ async function resendDelegatedOrdersToDriver(req, res) {
 async function updateDriver(req, res) {
 	const { driver_id } = req.params;
 	const updateData = req.body;
-
 	try {
 		const updatedDriver = await DriverDao.updateDriver(driver_id, updateData);
 		res.status(200).json(updatedDriver);
@@ -248,7 +238,6 @@ async function updateDriver(req, res) {
 		res.status(400).json({ error: 'Error updating driver', detail: error.message });
 	}
 }
-
 /**
  * PATCH /drivers/edit
  * @tag Drivers
@@ -265,20 +254,16 @@ async function updateDriver(req, res) {
 async function editDriver(req, res) {
 	const { user, driver, documents, files, address } = req.body;
 	console.log('editDriver', req.body);
-
 	const business_id = driver?.business_id;
 	delete driver?.business_id;
 	const driver_id = driver?.driver_id;
 	delete driver?.driver_id;
 	const user_id = user?.user_id;
 	delete user?.user_id;
-
 	let updatedAddress;
-
 	try {
 		const updatedDriver = await DriverDao.updateDriver(driver_id, driver);
 		let updatedUser = await UserDao.updateScheduledUser(user_id, user);
-
 		if (address?.address_id) {
 			const address_id = address?.address_id;
 			updatedAddress = await updateAddressByAddressId(address_id, address);
@@ -286,7 +271,6 @@ async function editDriver(req, res) {
 			const response = await addAddress(address);
 			await addUserAddress(user_id, response.address_id);
 		}
-
 		if (documents && documents.length > 0) {
 			for (const doc of documents) {
 				const documentId = doc.document_id;
@@ -294,7 +278,6 @@ async function editDriver(req, res) {
 				await updateDocumentByDocumentId(documentId, doc);
 			}
 		}
-
 		if (files && files.length > 0) {
 			for (const file of files) {
 				if (file?.base64 && file?.file_id) {
@@ -303,12 +286,10 @@ async function editDriver(req, res) {
 					delete file.document_id;
 					delete file.file_id;
 					delete file?.name;
-
 					let base64 = file.base64;
 					delete file.base64;
 					delete file?.document_type;
 					await updateFileInDocument(fileId, file, document.public);
-
 					let key = S3Helper.getFileKey(fileId, file.mime_type);
 					await S3Helper.SaveObject(
 						key,
@@ -328,13 +309,11 @@ async function editDriver(req, res) {
 						delete file.base64;
 						delete file.document_type;
 						delete file.name;
-
 						const newFile = await addFileToDocument(
 							existingDocument.document_id,
 							file,
 							existingDocument.public
 						);
-
 						const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
 						await S3Helper.SaveObject(
 							key,
@@ -352,15 +331,12 @@ async function editDriver(req, res) {
 							document_type: file.document_type,
 						};
 						const newDocument = await createDocument(documentData);
-
 						const base64 = file.base64;
 						delete file.base64;
 						const document_type = file?.document_type;
 						delete file.document_type;
 						delete file.name;
-
 						const newFile = await addFileToDocument(newDocument.document_id, file, newDocument.public);
-
 						const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
 						await S3Helper.SaveObject(
 							key,
@@ -373,7 +349,6 @@ async function editDriver(req, res) {
 							newFile,
 							newDocument.public
 						);
-
 						if (
 							document_type === DOCUMENT_TYPE.PROFILE_PICTURE ||
 							document_type === DOCUMENT_TYPE.NATIONAL_ID ||
@@ -394,14 +369,12 @@ async function editDriver(req, res) {
 				}
 			}
 		}
-
 		res.status(200).json({ updatedDriver, updatedUser, updatedAddress, files });
 	} catch (error) {
 		console.error('Error editing driver:', error);
 		res.status(400).json({ error: 'Error editing driver', detail: error.message });
 	}
 }
-
 /**
  * PATCH /drivers/location
  * @tag Drivers
@@ -419,10 +392,8 @@ async function updateDriverLocation(req, res) {
 	try {
 		const userId = req.user.user_id;
 		const locationData = req.body.location;
-
 		const driver = await DriverDao.getDriverByUserId(userId);
 		let driverUpdatedLocation = await DriverDao.updateDriverLocation(driver.driver_id, locationData);
-
 		// Emit the driver's updated location to each order's specific channel
 		const orders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id);
 		const deliveryOrders = await TaxiOrderDao.getDeliveryOrdersByDriverId(driver.driver_id);
@@ -435,7 +406,6 @@ async function updateDriverLocation(req, res) {
 			const latestOrder = allOrders.reduce((latest, order) => {
 				return !latest || order.updated_at > latest.updated_at ? order : latest;
 			}, null);
-
 			// If there's a most recently updated order, set its status
 			if (latestOrder) {
 				orderStatus = latestOrder.status;
@@ -454,7 +424,6 @@ async function updateDriverLocation(req, res) {
 				console.error("Error emiting driver's location to connected users:", error);
 			}
 		}
-
 		console.info('ORDERS LENGTH driver_location', orders.length);
 		if (!driver?.on_order) {
 			console.info('EMIT DRIVER_LOCATION');
@@ -471,7 +440,6 @@ async function updateDriverLocation(req, res) {
 		res.status(400).json({ error: 'Error updating driver location', detail: error.message });
 	}
 }
-
 /**
  * PATCH /drivers/ride_requirements
  * @tag Drivers
@@ -494,7 +462,6 @@ async function updateDriverRideRequirements(req, res) {
 		res.status(400).json({ error: 'Error updating user information', e });
 	}
 }
-
 /**
  * PATCH /drivers/online
  * @tag Drivers
@@ -514,7 +481,6 @@ async function updateDriverRideRequirements(req, res) {
  */
 async function updateDriverOnlineStatus(req, res) {
 	const { driver_id, online } = req.body;
-
 	try {
 		const driver = await DriverDao.getDriverById(driver_id);
 		if (driver.online === online) {
@@ -540,18 +506,14 @@ async function updateDriverOnlineStatus(req, res) {
 			if (latestLog?.activity_type === ACTIVITY_TYPE.LOCKED_OUT && latestLog?.lockout_until > new Date()) {
 				return res.status(400).json({ driver, errorMsg: 'LOCKED_OUT' });
 			}
-
 			await handleDriverStatusChange(driver_id, online, latestLog, settings);
 		}
 		const updatedDriver = await DriverDao.updateDriverOnlineStatus(driver_id, online);
-
 		if (online) {
 			console.log('Driver is now online:', driver_id);
 			io.emit('driver_available', updatedDriver);
-
 			// Re-send pending orders to this driver
 			await taxiHelpers.resendPendingOrdersToDriver(updatedDriver);
-
 			// Send active orders to this driver
 			await taxiHelpers.sendActiveOrdersToDriver(updatedDriver);
 		} else {
@@ -563,7 +525,6 @@ async function updateDriverOnlineStatus(req, res) {
 		res.status(400).json({ error: 'Error setting online status for driver', detail: error.message });
 	}
 }
-
 /**
  * POST /drivers/create
  * @tag Drivers
@@ -597,7 +558,6 @@ async function createDriver(req, res) {
 		const newUser = await UserDao.createNewUser(userObj, true);
 		const userRoles = req.body.user.data.user_roles || [{ role: newUser.user_role || 'DRIVER', primary: true }];
 		await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
-
 		// Handle user documents
 		if (req.body.user.documents) {
 			for (const doc of req.body.user.documents) {
@@ -608,9 +568,7 @@ async function createDriver(req, res) {
 					delete file.name;
 					delete file.document_type;
 					let fileData = await FileDao.addFileToDocument(document.document_id, file, document.public);
-
 					let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
-
 					S3Helper.SaveObject(
 						key,
 						base64,
@@ -626,7 +584,6 @@ async function createDriver(req, res) {
 				await DocumentDao.linkDocumentToUser(document.document_id, newUser.user_id);
 			}
 		}
-
 		const driverData = { ...req.body.driver.data };
 		const driver = await DriverDao.createNewDriver(driverData, newUser);
 		// Handle taxi documents
@@ -658,14 +615,12 @@ async function createDriver(req, res) {
 		if (!driver) {
 			return res.status(400).json({ error: 'Failed to create new driver' });
 		}
-
 		res.status(201).json(driver);
 	} catch (error) {
 		console.error('Error creating new driver:', error);
 		res.status(400).json({ error: 'Error creating new driver', detail: error.message });
 	}
 }
-
 async function handleSosAlert(req, res) {
 	const data = req.body;
 	try {
@@ -676,7 +631,6 @@ async function handleSosAlert(req, res) {
 		res.status(400).json({ error: 'Error sending SOS alert', detail: error.message });
 	}
 }
-
 /**
  * GET /drivers/:driver_id/history_location/:start_time/:end_time
  * @tag Drivers
@@ -691,11 +645,9 @@ async function getDriverHistoryLocations(req, res) {
 	const { driver_id } = req.params;
 	const { start_time, end_time } = req.query;
 	console.info(req.params, 'getDriverHistoryLocations');
-
 	if (!driver_id || !start_time || !end_time) {
 		return res.status(400).json({ message: 'Missing required parameters' });
 	}
-
 	try {
 		const locations = await DriverDao.getDriverLocationsWithPerformance(driver_id, start_time, end_time);
 		res.status(200).json(locations);
@@ -704,7 +656,6 @@ async function getDriverHistoryLocations(req, res) {
 		res.status(500).json({ message: 'Something went wrong...' });
 	}
 }
-
 /**
  * GET /drivers/earnings/:driver_id
  * @tag Drivers
@@ -722,11 +673,9 @@ async function getDriverHistoryLocations(req, res) {
 async function getDriverEarnings(req, res) {
 	const { driver_id } = req.params;
 	const { start_date, end_date } = req.query;
-
 	if (!driver_id || !start_date || !end_date) {
 		return res.status(400).json({ message: 'Missing required parameters' });
 	}
-
 	try {
 		const driver = await DriverDao.getDriverById(driver_id);
 		let driverOrders = await prisma.taxi_orders.findMany({
@@ -750,7 +699,6 @@ async function getDriverEarnings(req, res) {
 			},
 		});
 		const earningsData = calculateDriversEarnings([...driverOrders, ...deliveryOrders], driver);
-
 		if (earningsData) {
 			res.status(200).json({ driver_id, ...earningsData });
 		} else {
@@ -761,7 +709,6 @@ async function getDriverEarnings(req, res) {
 		res.status(400).json({ error: "Error retrieving driver's earnings", detail: error.message });
 	}
 }
-
 /**
  * GET /drivers/earnings/all
  * @tag Drivers
@@ -776,11 +723,9 @@ async function getDriverEarnings(req, res) {
  */
 async function getAllDriversEarnings(req, res) {
 	const { start_date, end_date } = req.query;
-
 	if (!start_date || !end_date) {
 		return res.status(400).json({ message: 'Missing required parameters' });
 	}
-
 	try {
 		const drivers = await DriverDao.getDrivers();
 		const earningsPromises = drivers.map(async (driver) => {
@@ -806,7 +751,6 @@ async function getAllDriversEarnings(req, res) {
 			});
 			return calculateDriversEarnings([...driverOrders, ...deliveryOrders], driver);
 		});
-
 		const allEarnings = await Promise.all(earningsPromises);
 		res.status(200).json(allEarnings);
 	} catch (error) {
@@ -814,7 +758,6 @@ async function getAllDriversEarnings(req, res) {
 		res.status(400).json({ error: "Error retrieving all drivers' earnings", detail: error.message });
 	}
 }
-
 /**
  * GET /drivers/earnings/total
  * @tag Drivers
@@ -845,7 +788,6 @@ async function getTotalEarnings(req, res) {
 		res.status(400).json({ error: "Error retrieving all drivers' total earnings", detail: error.message });
 	}
 }
-
 /**
  * GET /drivers/earnings/:driver_id/total
  * @tag Drivers
@@ -861,11 +803,9 @@ async function getTotalEarnings(req, res) {
 async function getDriverTotalEarnings(req, res) {
 	const { driver_id } = req.params;
 	const detailed = req.query?.detailed === 'true';
-
 	if (!driver_id) {
 		return res.status(400).json({ message: 'Missing required parameter: driver_id' });
 	}
-
 	try {
 		let orders = await prisma.taxi_orders.findMany({
 			where: {
@@ -886,7 +826,6 @@ async function getDriverTotalEarnings(req, res) {
 		res.status(400).json({ error: "Error retrieving driver's total earnings", detail: error.message });
 	}
 }
-
 /**
  * PATCH /drivers/:driver_id/:action/:type
  * @tag Drivers
@@ -902,21 +841,18 @@ async function getDriverTotalEarnings(req, res) {
  */
 async function setDriverHandle(req, res) {
 	const { driver_id, action, type } = req.params;
-
 	try {
 		const driver = await DriverDao.getDriverById(driver_id);
 		if (!driver) {
 			return res.status(404).json({ error: 'Driver not found' });
 		}
 		await DriverDao.setDriverHandle(driver_id, action, type);
-
 		res.status(200).json({ message: `Driver ${type} orders ${action}d successfully` });
 	} catch (error) {
 		console.error('Error toggling driver handle field:', error);
 		res.status(400).json({ error: 'Error toggling driver handle field', detail: error.message });
 	}
 }
-
 /**
  * PATCH /drivers/:driver_id/toggle_orders
  * @tag Drivers
@@ -937,14 +873,12 @@ async function toggleDriverOrders(req, res) {
 	if (!types) {
 		return res.status(400).json({ error: 'Missing required parameter: types' });
 	}
-
 	try {
 		const driver = await DriverDao.getDriverById(driver_id);
 		if (!driver) {
 			return res.status(404).json({ error: 'Driver not found' });
 		}
 		await DriverDao.toggleDriverOrders(driver_id, types);
-
 		res.status(200).json({ message: `Driver orders toggled successfully` });
 	} catch (error) {
 		console.error('Error toggling driver orders:', error);
@@ -970,7 +904,6 @@ async function sendComeToWorkNotification(req, res) {
 	if (!region) {
 		return res.status(400).json({ error: 'Missing required parameter: region' });
 	}
-
 	try {
 		if (isSendingComeToWorkNotification) {
 			return res.status(400).json({ error: 'Already sending notifications' });
@@ -981,7 +914,6 @@ async function sendComeToWorkNotification(req, res) {
 				online: false,
 			},
 		});
-
 		for (let driver of drivers) {
 			if (
 				!driver.come_to_work_last_sent_at ||
@@ -1019,11 +951,9 @@ async function sendComeToWorkNotification(req, res) {
 async function setCurrentVehicle(req, res) {
 	const { driver_id } = req.params;
 	const { vehicle_id } = req.body;
-
 	if (!vehicle_id) {
 		return res.status(400).json({ error: 'vehicle_id is required in the request body.' });
 	}
-
 	try {
 		const driver = await DriverDao.getDriverById(driver_id);
 		if (!driver) {
@@ -1044,7 +974,6 @@ async function setCurrentVehicle(req, res) {
 				error_code: 'ERR_VEHICLE_UNAVAILABLE',
 			});
 		}
-
 		const updatedDriver = await DriverDao.setDriverCurrentVehicle(driver_id, vehicle_id);
 		res.status(200).json(updatedDriver);
 	} catch (error) {
@@ -1052,8 +981,32 @@ async function setCurrentVehicle(req, res) {
 		res.status(400).json({ error: 'Error setting driver current vehicle.' });
 	}
 }
-
-module.exports = {
+export { getDriversByBusinessId };
+export { setDriverHandle };
+export { toggleDriverOrders };
+export { listDrivers };
+export { listOnlineDrivers };
+export { getDriverById };
+export { getDriverLocation };
+export { updateDriver };
+export { updateDriverLocation };
+export { updateDriverOnlineStatus };
+export { createDriver };
+export { getAvailableDrivers };
+export { updateDriverRideRequirements };
+export { resendDelegatedOrdersToDriver };
+export { listDriversFull };
+export { getUnavailableDrivers };
+export { handleSosAlert };
+export { getDriverHistoryLocations };
+export { editDriver };
+export { getDriverEarnings };
+export { getAllDriversEarnings };
+export { getTotalEarnings };
+export { getDriverTotalEarnings };
+export { sendComeToWorkNotification };
+export { setCurrentVehicle };
+export default {
 	getDriversByBusinessId,
 	setDriverHandle,
 	toggleDriverOrders,

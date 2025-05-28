@@ -1,11 +1,9 @@
-const prisma = require('../prisma/prisma');
-
+import prisma from '../prisma/prisma.js';
 const cropped_user_columns = {
 	first_name: true,
 	last_name: true,
 	user_id: true,
 };
-
 /**
  * Creates a new order lobby user
  * @param {string} user_id - The ID of the user
@@ -31,7 +29,6 @@ async function createOrderLobbyUser(user_id, order_lobbies_id, limit) {
 		},
 	});
 }
-
 /**
  * Retrieves all users in a given order lobby
  * @param {string} order_lobbies_id - The ID of the order lobby
@@ -47,7 +44,6 @@ async function getOrderLobbyUsersInOrderLobby(order_lobbies_id) {
 		},
 	});
 }
-
 /**
  * Updates the spending limit for an order lobby user
  * @param {string} order_lobby_users_id - The ID of the order lobby user entry
@@ -65,7 +61,6 @@ async function updateOrderLobbyUserLimit(order_lobby_users_id, newLimit) {
 		},
 	});
 }
-
 /**
  * Deletes an order lobby user and all their associated items in a transaction
  * @param {string} user_id - The ID of the user
@@ -81,31 +76,29 @@ async function deleteOrderLobbyUserWithItems(user_id, order_lobbies_id) {
 				AND: [{ user_id: user_id }, { order_lobbies_id: order_lobbies_id }],
 			},
 		});
-
 		if (!lobbyUser) {
 			throw new Error('Order lobby user relationship not found');
 		}
-
 		// Get the order_lobby_users_id for later use
 		const order_lobby_users_id = lobbyUser.order_lobby_users_id;
-
 		// Delete all items belonging to this user in the lobby
 		await tx.order_lobby_items.deleteMany({
 			where: {
 				AND: [{ user_id: user_id }, { order_lobbies_id: order_lobbies_id }],
 			},
 		});
-
 		// Delete the order lobby user
 		const deletedUser = await tx.order_lobby_users.delete({
 			where: { order_lobby_users_id },
 		});
-
 		return deletedUser;
 	});
 }
-
-module.exports = {
+export { createOrderLobbyUser };
+export { getOrderLobbyUsersInOrderLobby };
+export { updateOrderLobbyUserLimit };
+export { deleteOrderLobbyUserWithItems };
+export default {
 	createOrderLobbyUser,
 	getOrderLobbyUsersInOrderLobby,
 	updateOrderLobbyUserLimit,

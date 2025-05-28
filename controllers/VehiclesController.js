@@ -1,12 +1,13 @@
-require('dotenv').config();
-const prisma = require('../prisma/prisma');
-const VehicleDao = require('../dao/Vehicle');
-const DocumentDao = require('../dao/Document');
-const FileDao = require('../dao/File');
-const S3Helper = require('../lib/s3');
-const { updateDocumentByDocumentId } = require('../dao/Document');
-const { addFileToDocument } = require('../dao/File');
+import { config } from 'dotenv';
 
+import prisma from '../prisma/prisma.js';
+import VehicleDao from '../dao/Vehicle.js';
+import DocumentDao from '../dao/Document.js';
+import FileDao from '../dao/File.js';
+import S3Helper from '../lib/s3.js';
+import { updateDocumentByDocumentId } from '../dao/Document.js';
+import { addFileToDocument } from '../dao/File.js';
+config();
 // List all vehicles
 /**
  * GET /vehicles
@@ -26,7 +27,6 @@ async function listVehicles(req, res) {
 		res.status(500).json({ message: 'Error listing all vehicles', error: error.message });
 	}
 }
-
 /**
  * GET /vehicles/business/:businessId
  * @tag Vehicles
@@ -47,7 +47,6 @@ async function listVehiclesByBusiness(req, res) {
 		res.status(500).json({ message: `Error listing vehicles for business ${businessId}`, error: error.message });
 	}
 }
-
 /**
  * GET /vehicles/:vehicle_id
  * @tag Vehicles
@@ -73,7 +72,6 @@ async function getVehicleById(req, res) {
 		res.status(500).json({ message: `Error retrieving vehicle ${vehicle_id}`, error: error.message });
 	}
 }
-
 /**
  * GET /vehicles/driver/:driver_id
  * @tag Vehicles
@@ -94,7 +92,6 @@ async function getVehiclesByDriverId(req, res) {
 		res.status(400).json({ error: 'Error retrieving vehicles for driver', detail: error.message });
 	}
 }
-
 /**
  * GET /vehicles/class/:vehicleClass
  * @tag Vehicles
@@ -115,7 +112,6 @@ async function getVehiclesByClass(req, res) {
 		res.status(500).json({ message: 'Error retrieving vehicles by class', error: error.message });
 	}
 }
-
 /**
  * GET /vehicles/category/:vehicleCategory
  * @tag Vehicles
@@ -136,7 +132,6 @@ async function getVehiclesByCategory(req, res) {
 		res.status(500).json({ message: 'Error retrieving vehicles by category', error: error.message });
 	}
 }
-
 /**
  * GET /vehicles/class/:vehicleClass/category/:vehicleCategory
  * @tag Vehicles
@@ -158,7 +153,6 @@ async function getVehiclesByClassAndCategory(req, res) {
 		res.status(500).json({ message: 'Error retrieving vehicles by class and category', error: error.message });
 	}
 }
-
 /**
  * GET /vehicles/driver/:driver_id/class/:vehicleClass
  * @tag Vehicles
@@ -180,7 +174,6 @@ async function getVehiclesOfDriverByClass(req, res) {
 		res.status(500).json({ message: 'Error retrieving vehicles of driver by class', error: error.message });
 	}
 }
-
 /**
  * GET /vehicles/driver/:driver_id/category/:vehicleCategory
  * @tag Vehicles
@@ -202,7 +195,6 @@ async function getVehiclesOfDriverByCategory(req, res) {
 		res.status(500).json({ message: 'Error retrieving vehicles of driver by category', error: error.message });
 	}
 }
-
 /**
  * GET /vehicles/driver/:driver_id/class/:vehicleClass/category/:vehicleCategory
  * @tag Vehicles
@@ -232,7 +224,6 @@ async function getVehiclesOfDriverByClassAndCategory(req, res) {
 		});
 	}
 }
-
 /**
  * POST /vehicles/create
  * @tag Vehicles
@@ -260,7 +251,6 @@ async function createVehicle(req, res) {
 				// 		await VehicleDao.assignVehicleToDriver(vehicle.vehicle_id, d.driver_id)
 				// 	}
 			}
-
 			if (req.body.documents) {
 				for (const doc of req.body.documents) {
 					const document = await DocumentDao.createDocument(doc.documentData);
@@ -295,7 +285,6 @@ async function createVehicle(req, res) {
 		res.status(400).json({ error: error.message });
 	}
 }
-
 /**
  * PATCH /vehicles
  * @tag Vehicles
@@ -325,7 +314,6 @@ async function updateVehicle(req, res) {
 							delete file.document_type;
 							delete file.name;
 							const newFile = await addFileToDocument(updatedDoc.document_id, file, updatedDoc.public);
-
 							const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
 							await S3Helper.SaveObject(
 								key,
@@ -346,7 +334,6 @@ async function updateVehicle(req, res) {
 				const currentDrivers = await VehicleDao.getVehicleDriversByVehicleId(vehicle_id);
 				const currentDriverIds = currentDrivers.map((d) => d.driver_id);
 				const newDriverIds = req.body.drivers.map((d) => d.driver_id);
-
 				await VehicleDao.unAssignVehicleFromDrivers(vehicle_id, newDriverIds);
 				for (const driver of req.body.drivers) {
 					if (!currentDriverIds.includes(driver.driver_id)) {
@@ -363,7 +350,6 @@ async function updateVehicle(req, res) {
 		res.status(400).json({ error: error.message });
 	}
 }
-
 /**
  * POST /vehicles/driver/assign/
  * @tag Vehicles
@@ -403,7 +389,6 @@ async function assignVehiclesToDriver(req, res) {
 		res.status(500).json({ error: 'Error assigning vehicles to driver', err });
 	}
 }
-
 /**
  * PATCH /vehicles/driver/unassign/
  * @tag Vehicles
@@ -434,7 +419,6 @@ async function removeVehiclesFromDriver(req, res) {
 		res.status(500).json({ error: 'Error removing vehicle from driver', err });
 	}
 }
-
 /**
  * DELETE /vehicles/:vehicle_id
  * @tag Vehicles
@@ -455,8 +439,22 @@ async function deleteVehicle(req, res) {
 		res.status(400).json({ error: 'Error deleting vehicle', detail: error.message });
 	}
 }
-
-module.exports = {
+export { listVehicles };
+export { listVehiclesByBusiness };
+export { getVehicleById };
+export { getVehiclesByDriverId };
+export { getVehiclesOfDriverByClass };
+export { getVehiclesOfDriverByCategory };
+export { getVehiclesOfDriverByClassAndCategory };
+export { getVehiclesByClass };
+export { getVehiclesByCategory };
+export { getVehiclesByClassAndCategory };
+export { createVehicle };
+export { updateVehicle };
+export { assignVehiclesToDriver };
+export { removeVehiclesFromDriver };
+export { deleteVehicle };
+export default {
 	listVehicles,
 	listVehiclesByBusiness,
 	getVehicleById,

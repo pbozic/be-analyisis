@@ -1,9 +1,10 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-const { getDMMF } = require('@prisma/sdk');
+import sdk from '@prisma/sdk';
 
-const prisma = require('./prisma');
+import prisma from './prisma.js';
+const { getDMMF } = sdk;
 async function generateRelationMap() {
 	const schemaPath = path.join(__dirname, './schema.prisma');
 	console.log('Schema Path: ', schemaPath);
@@ -14,20 +15,17 @@ async function generateRelationMap() {
 	for (const model of dmmf.datamodel.models) {
 		console.log('Model Name: ', model.name);
 		relationMap[model.name] = {};
-
 		model.fields.forEach((field) => {
 			if (field.relationName) {
 				relationMap[model.name][field.name] = field.type; // Relation field -> Actual model
 			}
 		});
 	}
-
 	// Save to JSON file
 	fs.writeFileSync('./relationMap.json', JSON.stringify(relationMap, null, 2));
 	console.log(' Relation map generated successfully!');
 	await prisma.$disconnect();
 }
-
 generateRelationMap().catch((err) => {
 	console.error('Error generating relation map:', err);
 	prisma.$disconnect();

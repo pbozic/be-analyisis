@@ -70,4 +70,4 @@ const it = {
 		referral: 'Il tuo premio per referral è stato accreditato sul tuo account',
 	},
 };
-module.exports = it;
+export default it;

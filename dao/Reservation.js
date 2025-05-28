@@ -1,6 +1,5 @@
-const prisma = require('../prisma/prisma');
-const { TAXI_ORDER_STATUS, DOCUMENT_TYPE } = require('../lib/constants');
-
+import prisma from '../prisma/prisma.js';
+import { TAXI_ORDER_STATUS, DOCUMENT_TYPE } from '../lib/constants.js';
 const getReservations = async (args) => {
 	try {
 		return await prisma.reservations.findMany({
@@ -15,12 +14,10 @@ const getReservations = async (args) => {
 		throw new Error(error);
 	}
 };
-
 async function getReservationIfNotCompleted(user_id) {
 	try {
 		const now = new Date();
 		const twoHoursBeforeNow = new Date(now.getTime() - 2 * 60 * 60 * 1000);
-
 		const reservation = await prisma.reservations.findFirst({
 			orderBy: [
 				{
@@ -80,7 +77,6 @@ async function getReservationIfNotCompleted(user_id) {
 		throw new Error(e.message);
 	}
 }
-
 const getReservationById = async (reservation_id) => {
 	try {
 		return await prisma.reservations.findUnique({
@@ -97,7 +93,6 @@ const getReservationById = async (reservation_id) => {
 		throw new Error(error);
 	}
 };
-
 const createReservation = async (reservationData) => {
 	try {
 		const reservation = await prisma.reservations.create({
@@ -122,7 +117,6 @@ const createReservation = async (reservationData) => {
 				},
 			},
 		});
-
 		if (reservation) {
 			let logo = null;
 			let banner = null;
@@ -136,7 +130,6 @@ const createReservation = async (reservationData) => {
 					}
 				}
 			}
-
 			reservation.business.logo = logo;
 			reservation.business.banner = banner;
 			delete reservation.business.documents;
@@ -149,7 +142,6 @@ const createReservation = async (reservationData) => {
 		throw new Error(error);
 	}
 };
-
 const updateReservationStatus = async (reservation_id, status) => {
 	try {
 		return await prisma.reservations.update({
@@ -165,7 +157,6 @@ const updateReservationStatus = async (reservation_id, status) => {
 		throw new Error(error);
 	}
 };
-
 const addTableNumber = async (reservation_id, table) => {
 	try {
 		return await prisma.reservations.update({
@@ -181,7 +172,6 @@ const addTableNumber = async (reservation_id, table) => {
 		throw new Error(error);
 	}
 };
-
 const deleteReservation = async (reservation_id) => {
 	try {
 		return await prisma.reservations.delete({
@@ -194,8 +184,14 @@ const deleteReservation = async (reservation_id) => {
 		throw new Error(error);
 	}
 };
-
-module.exports = {
+export { getReservations };
+export { getReservationById };
+export { createReservation };
+export { updateReservationStatus };
+export { deleteReservation };
+export { addTableNumber };
+export { getReservationIfNotCompleted };
+export default {
 	getReservations,
 	getReservationById,
 	createReservation,

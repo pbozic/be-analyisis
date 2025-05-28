@@ -1,5 +1,5 @@
-const prisma = require('../prisma');
-const MUNICIPALITIES = require('./municipalities.json');
+import prisma from '../prisma.js';
+import MUNICIPALITIES from './municipalities.json' with { type: 'json' };
 const requiresLicense = [
 	'Ljubljana',
 	'Maribor',
@@ -17,7 +17,6 @@ const requiresLicense = [
 	'Nova Gorica',
 	'Tolmin',
 ];
-
 async function municipalitiesSeeder() {
 	console.log(MUNICIPALITIES.type);
 	for (let muGJ of MUNICIPALITIES.features) {
@@ -53,4 +52,4 @@ async function municipalitiesSeeder() {
 		console.log('Municipality created: ', muGJ.properties.NAZIV);
 	}
 }
-module.exports = municipalitiesSeeder;
+export default municipalitiesSeeder;

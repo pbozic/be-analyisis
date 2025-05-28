@@ -1,13 +1,12 @@
-const cron = require('node-cron');
+import cron from 'node-cron';
 
-const TaxiHelpers = require('./lib/taxiHelpers');
-const DeliveryHelpers = require('./lib/deliveryHelpers');
-const WalletFundsHelper = require('./lib/WalletFundsHelpers');
-const BusinessHelper = require('./lib/businessHelpers');
-const { getSettlementsWeatherForecast } = require('./lib/weatherHelpers');
-const { checkPingStatus } = require('./lib/driverHelpers');
-const stripe = require('./lib/stripe');
-
+import TaxiHelpers from './lib/taxiHelpers.js';
+import DeliveryHelpers from './lib/deliveryHelpers.js';
+import WalletFundsHelper from './lib/WalletFundsHelpers.js';
+import BusinessHelper from './lib/businessHelpers.js';
+import { getSettlementsWeatherForecast } from './lib/weatherHelpers.js';
+import { checkPingStatus } from './lib/driverHelpers.js';
+import stripe from './lib/stripe.js';
 function startCronJobs() {
 	// Every minute
 	cron.schedule('* * * * *', TaxiHelpers.checkIfOrdersNeedSending);
@@ -20,7 +19,6 @@ function startCronJobs() {
 	cron.schedule('* * * * *', TaxiHelpers.revokeAcceptedOrdersFromDriverHandler);
 	cron.schedule('* * * * *', TaxiHelpers.scheduledOrdersNotificationsHandler);
 	cron.schedule('* * * * *', TaxiHelpers.closeScheduledOrders);
-
 	// Every day at midnight - check for expired credits
 	cron.schedule('0 0 * * *', WalletFundsHelper.handleCreditExpiration);
 	cron.schedule('0 0 * * *', DeliveryHelpers.releaseWFForFailedOrders);
@@ -29,8 +27,6 @@ function startCronJobs() {
 	cron.schedule('* */1 * * *', getSettlementsWeatherForecast);
 	//Every 10 days
 	cron.schedule('0 0 */10 * *', stripe.payoutAvailableBalanceToBusinesses);
-
 	cron.schedule('59 23 * * *', BusinessHelper.setNewBusinesses);
 }
-
-module.exports = startCronJobs;
+export default startCronJobs;

@@ -1,5 +1,4 @@
-const prisma = require('../prisma/prisma');
-
+import prisma from '../prisma/prisma.js';
 // Get all vehicles
 const getVehicles = async (args) => {
 	try {
@@ -15,7 +14,6 @@ const getVehicles = async (args) => {
 		throw new Error(error);
 	}
 };
-
 // Get all vehicles of a certain business
 const getVehiclesByBusiness = async (businessId) => {
 	try {
@@ -50,7 +48,6 @@ const getVehiclesByBusiness = async (businessId) => {
 		throw new Error(error);
 	}
 };
-
 const getVehicleById = async (vehicle_id, args) => {
 	try {
 		return await prisma.vehicles.findUnique({
@@ -86,7 +83,6 @@ const getVehicleById = async (vehicle_id, args) => {
 		throw new Error(error);
 	}
 };
-
 const createNewVehicle = async (vehicle) => {
 	try {
 		return await prisma.vehicles.create({
@@ -97,7 +93,6 @@ const createNewVehicle = async (vehicle) => {
 		throw new Error(error);
 	}
 };
-
 const updateVehicle = async (vehicle_id, vehicleData) => {
 	try {
 		return await prisma.vehicles.update({
@@ -109,7 +104,6 @@ const updateVehicle = async (vehicle_id, vehicleData) => {
 		throw new Error(error);
 	}
 };
-
 const getVehicleDriversByVehicleId = async (vehicle_id) => {
 	return await prisma.vehicle_drivers.findMany({
 		where: {
@@ -120,7 +114,6 @@ const getVehicleDriversByVehicleId = async (vehicle_id) => {
 		},
 	});
 };
-
 const unAssignVehicleFromDrivers = async (vehicle_id, newDriverIds) => {
 	await prisma.vehicle_drivers.deleteMany({
 		where: {
@@ -131,7 +124,6 @@ const unAssignVehicleFromDrivers = async (vehicle_id, newDriverIds) => {
 		},
 	});
 };
-
 const assignVehicleToDriver = async (vehicleId, driverId) => {
 	try {
 		return await prisma.vehicle_drivers.upsert({
@@ -163,7 +155,6 @@ const assignVehicleToDriver = async (vehicleId, driverId) => {
 		throw new Error(error);
 	}
 };
-
 const assignVehicleToDeliveryDriver = async (vehicleId, driverId) => {
 	try {
 		return await prisma.vehicles.update({
@@ -181,7 +172,6 @@ const assignVehicleToDeliveryDriver = async (vehicleId, driverId) => {
 		throw new Error(error);
 	}
 };
-
 const removeVehicleFromDriver = async (vehicleId, driverId) => {
 	try {
 		return await prisma.vehicle_drivers.update({
@@ -200,7 +190,6 @@ const removeVehicleFromDriver = async (vehicleId, driverId) => {
 		throw new Error(error);
 	}
 };
-
 const getVehiclesByDriverId = async (driver_id) => {
 	try {
 		return await prisma.vehicles.findMany({
@@ -215,7 +204,6 @@ const getVehiclesByDriverId = async (driver_id) => {
 		throw new Error(error);
 	}
 };
-
 const deleteVehicle = async (vehicle_id) => {
 	try {
 		return await prisma.vehicles.delete({
@@ -226,7 +214,6 @@ const deleteVehicle = async (vehicle_id) => {
 		throw new Error(error);
 	}
 };
-
 // Get all vehicles of a certain class
 const getVehiclesByClass = async (vehicleClass) => {
 	try {
@@ -246,7 +233,6 @@ const getVehiclesByClass = async (vehicleClass) => {
 		throw new Error(error);
 	}
 };
-
 // Get all vehicles of a certain category
 const getVehiclesByCategory = async (vehicleCategory) => {
 	try {
@@ -266,7 +252,6 @@ const getVehiclesByCategory = async (vehicleCategory) => {
 		throw new Error(error);
 	}
 };
-
 // Get all vehicles of a certain class and category
 const getVehiclesByClassAndCategory = async (vehicleClass, vehicleCategory) => {
 	try {
@@ -286,7 +271,6 @@ const getVehiclesByClassAndCategory = async (vehicleClass, vehicleCategory) => {
 		throw new Error(error);
 	}
 };
-
 // Get all vehicles of a certain driver of class
 const getVehiclesOfDriverByClass = async (driverId, vehicleClass) => {
 	try {
@@ -307,7 +291,6 @@ const getVehiclesOfDriverByClass = async (driverId, vehicleClass) => {
 		throw new Error(error);
 	}
 };
-
 // Get all vehicles of a certain driver of category
 const getVehiclesOfDriverByCategory = async (driverId, vehicleCategory) => {
 	try {
@@ -328,7 +311,6 @@ const getVehiclesOfDriverByCategory = async (driverId, vehicleCategory) => {
 		throw new Error(error);
 	}
 };
-
 // Get all vehicles of a certain driver of class and category
 const getVehiclesOfDriverByClassAndCategory = async (driverId, vehicleClass, vehicleCategory) => {
 	try {
@@ -349,8 +331,25 @@ const getVehiclesOfDriverByClassAndCategory = async (driverId, vehicleClass, veh
 		throw new Error(error);
 	}
 };
-
-module.exports = {
+export { getVehicles };
+export { getVehicleById };
+export { getVehiclesByBusiness };
+export { createNewVehicle };
+export { updateVehicle };
+export { assignVehicleToDriver };
+export { removeVehicleFromDriver };
+export { getVehiclesByDriverId };
+export { deleteVehicle };
+export { getVehiclesByClass };
+export { getVehiclesByCategory };
+export { getVehiclesByClassAndCategory };
+export { getVehiclesOfDriverByClass };
+export { getVehiclesOfDriverByCategory };
+export { getVehiclesOfDriverByClassAndCategory };
+export { getVehicleDriversByVehicleId };
+export { unAssignVehicleFromDrivers };
+export { assignVehicleToDeliveryDriver };
+export default {
 	getVehicles,
 	getVehicleById,
 	getVehiclesByBusiness,

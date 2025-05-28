@@ -1,5 +1,4 @@
-const prisma = require('../prisma/prisma');
-
+import prisma from '../prisma/prisma.js';
 const getFlags = async (args) => {
 	try {
 		return await prisma.flags.findMany({
@@ -10,7 +9,6 @@ const getFlags = async (args) => {
 		throw new Error(error);
 	}
 };
-
 const getFlagById = async (flag_id) => {
 	try {
 		return await prisma.flags.findUnique({
@@ -23,7 +21,6 @@ const getFlagById = async (flag_id) => {
 		throw new Error(error);
 	}
 };
-
 const createFlag = async (flag, user) => {
 	try {
 		let Flag = await prisma.flags.create({
@@ -52,7 +49,6 @@ const createFlag = async (flag, user) => {
 		throw new Error(error);
 	}
 };
-
 const updateFlag = async (flag_id, flag, user) => {
 	try {
 		let Flag = await prisma.flags.update({
@@ -63,7 +59,6 @@ const updateFlag = async (flag_id, flag, user) => {
 				...flag,
 			},
 		});
-
 		await prisma.flag_history.create({
 			data: {
 				flag: {
@@ -85,7 +80,6 @@ const updateFlag = async (flag_id, flag, user) => {
 		throw new Error(error);
 	}
 };
-
 const deleteFlag = async (flag_id) => {
 	try {
 		return await prisma.flags.delete({
@@ -98,8 +92,12 @@ const deleteFlag = async (flag_id) => {
 		throw new Error(error);
 	}
 };
-
-module.exports = {
+export { getFlags };
+export { getFlagById };
+export { createFlag };
+export { updateFlag };
+export { deleteFlag };
+export default {
 	getFlags,
 	getFlagById,
 	createFlag,

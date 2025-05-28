@@ -77,7 +77,6 @@ const BUSINESS_QUERY = (query, userLat, userLon) => ({
 		boost_mode: 'multiply',
 	},
 });
-
 const MENUS_QUERY = (query) => ({
 	function_score: {
 		query: {
@@ -103,5 +102,11 @@ const MENUS_QUERY = (query) => ({
 		boost_mode: 'multiply',
 	},
 });
-
-module.exports = { MENUS_QUERY, BUSINESS_QUERY, SCORING_WEIGHTS };
+export { MENUS_QUERY };
+export { BUSINESS_QUERY };
+export { SCORING_WEIGHTS };
+export default {
+	MENUS_QUERY,
+	BUSINESS_QUERY,
+	SCORING_WEIGHTS,
+};

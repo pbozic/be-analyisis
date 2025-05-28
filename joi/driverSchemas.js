@@ -1,10 +1,9 @@
-const Joi = require('joi');
+import Joi from 'joi';
 
-const { TAXI_REQUIREMENTS, TRANSFER_REQUIREMENTS, WORKING_HOURS } = require('../lib/schemaConstants');
-const { registerSchema } = require('./authSchemas');
-const { documentsArraySchema } = require('./documentSchemas');
-const { addressSchema } = require('./addressSchemas');
-
+import { TAXI_REQUIREMENTS, TRANSFER_REQUIREMENTS, WORKING_HOURS } from '../lib/schemaConstants.js';
+import { registerSchema } from './authSchemas.js';
+import { documentsArraySchema } from './documentSchemas.js';
+import { addressSchema } from './addressSchemas.js';
 const newDriverSchema = Joi.object({
 	user: Joi.object({
 		data: registerSchema.required(),
@@ -53,5 +52,7 @@ const newDriverSchema = Joi.object({
 		documents: documentsArraySchema.required(),
 	}).required(),
 });
-
-module.exports = { newDriverSchema };
+export { newDriverSchema };
+export default {
+	newDriverSchema,
+};

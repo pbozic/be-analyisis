@@ -1,82 +1,80 @@
-const prisma = require('../prisma/prisma');
-const { CREDIT_STATUS, CASHBACK_STATUS, FUNDS_TYPE, SERVICE_TYPE } = require('../lib/constants');
-
+import prisma from '../prisma/prisma.js';
+import { CREDIT_STATUS, CASHBACK_STATUS, FUNDS_TYPE, SERVICE_TYPE } from '../lib/constants.js';
 /*
 async function createWalletFunds(user_id, charge_id, amount){
-	try {
-		if(amount<=0){
-			throw new Error("Amount must be greater than 0");
-		}
+    try {
+        if(amount<=0){
+            throw new Error("Amount must be greater than 0");
+        }
 
-		// const newWalletFund = await prisma.wallet_funds.create({
-		// 	data: {
-		// 		// user_id: user_id,
-		// 		charge_id: charge_id,
-		// 		amount: amount,
-		// 		user:{connect:{user_id:user_id}},
-		// 		transaction: {
-		// 			create: {
-		// 				user: { connect: { user_id: user_id } },
-		// 				amount: amount/100,
-		// 				type: 'CREDIT',
-		// 				description: 'Added funds to wallet',
-		// 			},
-		// 		},
-		// 	},
-		// 	include: {
-		// 		transactions: true,
-		// 	},
-		// });
-
-
-		const newTransaction = await prisma.transactions.create({
-			data: {
-				user: { connect: { user_id: user_id } },
-				amount: amount/100,
-				type: 'CREDIT',
-				description: 'Added funds to wallet',
-				wallet_funds: {
-					create: {
-						charge_id: charge_id,
-						amount: amount,
-						user:{connect:{user_id:user_id}},
-					},
-				},
-			},
-			include: {
-				wallet_funds: true,
-			},
-		});
-		console.info("created wallet funds: ",newTransaction)
-
-		// const newTransaction = await prisma.transactions.create({
-		// 	data: {
-		// 		user: { connect: { user_id: user_id } },
-		// 		amount: amount,
-		// 		type: 'CREDIT',
-		// 		description: 'Added funds to wallet',
-		// 	},
-		// });
-		// const newWalletFund = await prisma.wallet_funds.create({
-		// 	data: {
-		// 		// user_id: user_id,
-		// 		charge_id: charge_id,
-		// 		amount: amount,
-		// 		user:{connect:{user_id:user_id}},
-		// 		transaction_id: newTransaction.transaction_id
-		// 	},
-		// });
-		// console.log(`Wallet fund created with ID: ${newWalletFund.wallet_funds_id}`);
+        // const newWalletFund = await prisma.wallet_funds.create({
+        // 	data: {
+        // 		// user_id: user_id,
+        // 		charge_id: charge_id,
+        // 		amount: amount,
+        // 		user:{connect:{user_id:user_id}},
+        // 		transaction: {
+        // 			create: {
+        // 				user: { connect: { user_id: user_id } },
+        // 				amount: amount/100,
+        // 				type: 'CREDIT',
+        // 				description: 'Added funds to wallet',
+        // 			},
+        // 		},
+        // 	},
+        // 	include: {
+        // 		transactions: true,
+        // 	},
+        // });
 
 
-		return newTransaction;
-	} catch (error) {
-		console.error('Error creating wallet fund:', error);
-		throw error; // Rethrow the error for further handling if necessary
-	}
+        const newTransaction = await prisma.transactions.create({
+            data: {
+                user: { connect: { user_id: user_id } },
+                amount: amount/100,
+                type: 'CREDIT',
+                description: 'Added funds to wallet',
+                wallet_funds: {
+                    create: {
+                        charge_id: charge_id,
+                        amount: amount,
+                        user:{connect:{user_id:user_id}},
+                    },
+                },
+            },
+            include: {
+                wallet_funds: true,
+            },
+        });
+        console.info("created wallet funds: ",newTransaction)
+
+        // const newTransaction = await prisma.transactions.create({
+        // 	data: {
+        // 		user: { connect: { user_id: user_id } },
+        // 		amount: amount,
+        // 		type: 'CREDIT',
+        // 		description: 'Added funds to wallet',
+        // 	},
+        // });
+        // const newWalletFund = await prisma.wallet_funds.create({
+        // 	data: {
+        // 		// user_id: user_id,
+        // 		charge_id: charge_id,
+        // 		amount: amount,
+        // 		user:{connect:{user_id:user_id}},
+        // 		transaction_id: newTransaction.transaction_id
+        // 	},
+        // });
+        // console.log(`Wallet fund created with ID: ${newWalletFund.wallet_funds_id}`);
+
+
+        return newTransaction;
+    } catch (error) {
+        console.error('Error creating wallet fund:', error);
+        throw error; // Rethrow the error for further handling if necessary
+    }
 }
  */
-
 async function createWalletFunds(user_id, amount_cents, charge_id = null, transaction_type = 'CREDIT') {
 	console.log('createWalletFunds ', user_id, amount_cents);
 	return await prisma.transactions.create({
@@ -96,7 +94,6 @@ async function createWalletFunds(user_id, amount_cents, charge_id = null, transa
 		},
 	});
 }
-
 async function getAvailableWalletFunds(userId, order_type) {
 	try {
 		const walletFunds = await prisma.wallet_funds.findMany({
@@ -114,7 +111,6 @@ async function getAvailableWalletFunds(userId, order_type) {
 		throw error;
 	}
 }
-
 async function getReservedWalletFunds(userId, order_id) {
 	try {
 		const walletFunds = await prisma.wallet_funds.findMany({
@@ -132,7 +128,6 @@ async function getReservedWalletFunds(userId, order_id) {
 		throw error;
 	}
 }
-
 async function getAllReservedWalletFunds() {
 	try {
 		const walletFunds = await prisma.wallet_funds.findMany({
@@ -154,7 +149,6 @@ async function getAllReservedWalletFunds() {
 		throw error;
 	}
 }
-
 async function deleteWalletFunds(wallet_funds_id) {
 	try {
 		await prisma.wallet_funds.delete({
@@ -168,28 +162,23 @@ async function deleteWalletFunds(wallet_funds_id) {
 		throw error;
 	}
 }
-
 async function subtractFunds(walletFundsId, amount, order_id = null, service_type = null) {
 	try {
 		if (amount <= 0) {
 			throw new Error('Subtract amount must be greater than 0');
 		}
-
 		const walletFund = await prisma.wallet_funds.findUnique({
 			where: {
 				wallet_funds_id: walletFundsId,
 			},
 		});
-
 		if (!walletFund) {
 			throw new Error('Wallet fund entry not found');
 		}
-
 		if (walletFund.amount < amount) {
 			// Updated to use amount
 			throw new Error('Insufficient funds');
 		}
-
 		let updatedWalletFund = await prisma.$transaction(async (tx) => {
 			const updated_WF = await tx.wallet_funds.update({
 				where: {
@@ -199,7 +188,6 @@ async function subtractFunds(walletFundsId, amount, order_id = null, service_typ
 					amount: walletFund.amount - amount,
 				},
 			});
-
 			console.info(`subtracted ${amount} from WF:\n${JSON.stringify(walletFund, null, 2)}. `);
 			let order_connect_obj = {};
 			switch (service_type) {
@@ -210,7 +198,6 @@ async function subtractFunds(walletFundsId, amount, order_id = null, service_typ
 					order_connect_obj = { delivery_order: { connect: { order_id: order_id } } };
 					break;
 			}
-
 			if (walletFund.reserved_order !== null) {
 				await tx.transactions.create({
 					data: {
@@ -223,20 +210,17 @@ async function subtractFunds(walletFundsId, amount, order_id = null, service_typ
 					},
 				});
 			}
-
 			return updated_WF;
 		});
 		if (updatedWalletFund.amount === 0) {
 			updatedWalletFund = await deleteWalletFunds(updatedWalletFund.wallet_funds_id);
 		}
-
 		return updatedWalletFund;
 	} catch (error) {
 		console.error('Error subtracting funds:', error);
 		throw error;
 	}
 }
-
 async function reserveFunds(walletFundsId, reserveAmount, orderId, orderType = 'order') {
 	try {
 		if (reserveAmount <= 0) {
@@ -247,22 +231,17 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId, orderType = '
 				wallet_funds_id: walletFundsId,
 			},
 		});
-
 		if (!walletFund) {
 			throw new Error('Wallet fund entry not found');
 		}
-
 		if (walletFund.reserved_order !== null) {
 			throw new Error('Source wallet fund entry already reserved');
 		}
-
 		if (walletFund.amount < reserveAmount) {
 			throw new Error('Insufficient funds');
 		}
-
 		// Update the existing wallet fund entry
 		await subtractFunds(walletFund.wallet_funds_id, reserveAmount);
-
 		// Check if a wallet fund with the same charge_id and reserved_order and type exists
 		//TODO: maybe convert to findUnique?
 		const existingReservedFund = await prisma.wallet_funds.findFirst({
@@ -277,7 +256,6 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId, orderType = '
 				type: walletFund.type,
 			},
 		});
-
 		if (existingReservedFund) {
 			// If it exists, update the existing entry
 			const updatedFund = await prisma.wallet_funds.update({
@@ -310,7 +288,6 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId, orderType = '
 		throw error;
 	}
 }
-
 async function releaseFunds(walletFundsId, releaseAmount) {
 	try {
 		if (releaseAmount <= 0) {
@@ -321,19 +298,15 @@ async function releaseFunds(walletFundsId, releaseAmount) {
 				wallet_funds_id: walletFundsId,
 			},
 		});
-
 		if (!walletFund) {
 			throw new Error('Wallet fund entry not found');
 		}
-
 		if (walletFund.reserved_order === null && walletFund.reserved_business === null) {
 			throw new Error('Source wallet fund entry is not reserved');
 		}
-
 		if (walletFund.amount < releaseAmount) {
 			throw new Error('Insufficient funds');
 		}
-
 		const released_WF = await prisma.$transaction(async (tx) => {
 			// await tx.users.update({
 			// 	where: { user_id: walletFund.user_id },
@@ -364,9 +337,7 @@ async function releaseFunds(walletFundsId, releaseAmount) {
 					})
 				);
 			}
-
 			console.info(`released ${releaseAmount} from WF:\n${JSON.stringify(walletFund, null, 2)}. `);
-
 			// Check if same wallet fund exists
 			const existingFund = await tx.wallet_funds.findFirst({
 				where: {
@@ -379,7 +350,6 @@ async function releaseFunds(walletFundsId, releaseAmount) {
 					type: walletFund.type,
 				},
 			});
-
 			if (existingFund) {
 				// If it exists, update the existing entry
 				const updatedFund = await tx.wallet_funds.update({
@@ -413,7 +383,6 @@ async function releaseFunds(walletFundsId, releaseAmount) {
 		throw error;
 	}
 }
-
 async function getAvailableWalletBalance(userId) {
 	try {
 		const result = await prisma.wallet_funds.aggregate({
@@ -427,14 +396,12 @@ async function getAvailableWalletBalance(userId) {
 				amount: true,
 			},
 		});
-
 		return result._sum.amount || 0;
 	} catch (error) {
 		console.error('Error retrieving available wallet balance:', error);
 		throw error;
 	}
 }
-
 async function getAvailableWalletBalanceGroupedByType(userId) {
 	try {
 		const result = await prisma.wallet_funds.groupBy({
@@ -448,20 +415,17 @@ async function getAvailableWalletBalanceGroupedByType(userId) {
 				amount: true,
 			},
 		});
-
 		// Convert result into a key-value pair object
 		const balances = result.reduce((acc, row) => {
 			acc[row.type] = row._sum.amount || 0; // Store balance by type
 			return acc;
 		}, {});
-
 		return balances;
 	} catch (error) {
 		console.error('Error retrieving grouped wallet balance:', error);
 		throw error;
 	}
 }
-
 const createCredit = async (data) => {
 	try {
 		const expiryDate = new Date();
@@ -478,7 +442,6 @@ const createCredit = async (data) => {
 		throw error;
 	}
 };
-
 const convertCashbacksToCredit = async (data, pendingCashbacks, expiryDate) => {
 	try {
 		return await prisma.$transaction(async (tx) => {
@@ -506,11 +469,9 @@ const convertCashbacksToCredit = async (data, pendingCashbacks, expiryDate) => {
 		throw error;
 	}
 };
-
 const expireOutdatedCredits = async () => {
 	const now = new Date();
 	now.setHours(0, 0, 0, 0);
-
 	try {
 		return await prisma.wallet_funds.updateMany({
 			where: {
@@ -528,7 +489,6 @@ const expireOutdatedCredits = async () => {
 		throw error;
 	}
 };
-
 const findCreditsExpiringInDays = async (days) => {
 	try {
 		const endDateStart = new Date();
@@ -537,7 +497,6 @@ const findCreditsExpiringInDays = async (days) => {
 		endDateStart.setHours(0, 0, 0, 0);
 		endDateEnd.setDate(endDateEnd.getDate() + days);
 		endDateEnd.setHours(23, 59, 59, 999);
-
 		return prisma.wallet_funds.findMany({
 			where: {
 				status: CREDIT_STATUS.ACTIVE,
@@ -555,7 +514,6 @@ const findCreditsExpiringInDays = async (days) => {
 		throw error;
 	}
 };
-
 const getAvailableCreditsByType = async (userId, type) => {
 	try {
 		return await prisma.wallet_funds.findMany({
@@ -572,7 +530,6 @@ const getAvailableCreditsByType = async (userId, type) => {
 		throw error;
 	}
 };
-
 const getAvailableCreditsForOrder = async (userId, type) => {
 	try {
 		return await prisma.wallet_funds.findMany({
@@ -591,7 +548,6 @@ const getAvailableCreditsForOrder = async (userId, type) => {
 		throw error;
 	}
 };
-
 const getReservedCredits = async (userId, orderId, orderType = 'order') => {
 	try {
 		return await prisma.wallet_funds.findMany({
@@ -611,7 +567,6 @@ const getReservedCredits = async (userId, orderId, orderType = 'order') => {
 		throw error;
 	}
 };
-
 const getExpiredCredits = async (userId, type) => {
 	try {
 		return await prisma.wallet_funds.findMany({
@@ -626,8 +581,25 @@ const getExpiredCredits = async (userId, type) => {
 		throw error;
 	}
 };
-
-module.exports = {
+export { createWalletFunds };
+export { getAvailableWalletFunds };
+export { getAvailableWalletBalance };
+export { getAvailableWalletBalanceGroupedByType };
+export { getReservedWalletFunds };
+export { getAllReservedWalletFunds };
+export { deleteWalletFunds };
+export { subtractFunds };
+export { reserveFunds };
+export { releaseFunds };
+export { createCredit };
+export { getAvailableCreditsByType };
+export { getAvailableCreditsForOrder };
+export { getReservedCredits };
+export { getExpiredCredits };
+export { convertCashbacksToCredit };
+export { expireOutdatedCredits };
+export { findCreditsExpiringInDays };
+export default {
 	createWalletFunds,
 	getAvailableWalletFunds,
 	getAvailableWalletBalance,
@@ -638,7 +610,6 @@ module.exports = {
 	subtractFunds,
 	reserveFunds,
 	releaseFunds,
-
 	createCredit,
 	getAvailableCreditsByType,
 	getAvailableCreditsForOrder,

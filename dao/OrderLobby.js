@@ -1,11 +1,9 @@
-const prisma = require('../prisma/prisma');
-
+import prisma from '../prisma/prisma.js';
 const cropped_user_columns = {
 	first_name: true,
 	last_name: true,
 	user_id: true,
 };
-
 /**
  * Creates a new order lobby
  * @param {Object} data - The order lobby data
@@ -26,7 +24,6 @@ const createOrderLobby = async (data) => {
 		throw error;
 	}
 };
-
 /**
  * Retrieves an order lobby by its ID
  * @param {string} orderLobbiesId - The ID of the order lobby
@@ -52,7 +49,6 @@ const getOrderLobbyById = async (orderLobbiesId) => {
 		throw error;
 	}
 };
-
 /**
  * Retrieves all order lobbies
  * @returns {Promise<Array>} Array of all order lobbies with their items, users, and delivery orders
@@ -77,7 +73,6 @@ const getAllOrderLobbies = async () => {
 		throw error;
 	}
 };
-
 /**
  * Retrieves all order lobbies for a specific business
  * @param {string} business_id - The ID of the business
@@ -106,7 +101,6 @@ const getOrderLobbiesForBusiness = async (business_id) => {
 		throw error;
 	}
 };
-
 /**
  * Retrieves active order lobbies for a specific user
  * @param {string} userId - The ID of the user
@@ -139,7 +133,6 @@ const getActiveOrderLobbiesByUserID = async (userId) => {
 		throw error;
 	}
 };
-
 /**
  * Updates an order lobby
  * @param {string} orderLobbiesId - The ID of the order lobby to update
@@ -157,7 +150,6 @@ const updateOrderLobby = async (orderLobbiesId, data) => {
 		throw error;
 	}
 };
-
 /**
  * Sets the active status of an order lobby
  * @param {string} orderLobbiesId - The ID of the order lobby
@@ -175,7 +167,6 @@ const setOrderLobbyActive = async (orderLobbiesId, active) => {
 		throw error;
 	}
 };
-
 /**
  * Deletes an order lobby
  * @param {string} orderLobbiesId - The ID of the order lobby to delete
@@ -191,8 +182,15 @@ const deleteOrderLobby = async (orderLobbiesId) => {
 		throw error;
 	}
 };
-
-module.exports = {
+export { createOrderLobby };
+export { getOrderLobbyById };
+export { getOrderLobbiesForBusiness };
+export { getAllOrderLobbies };
+export { getActiveOrderLobbiesByUserID };
+export { updateOrderLobby };
+export { setOrderLobbyActive };
+export { deleteOrderLobby };
+export default {
 	createOrderLobby,
 	getOrderLobbyById,
 	getOrderLobbiesForBusiness,

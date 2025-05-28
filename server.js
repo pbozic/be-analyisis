@@ -1,14 +1,10 @@
-// server.js
-const http = require('http');
+import http from 'http';
 
-const app = require('./app');
-const { setupSocket } = require('./socket');
-
+import app from './app.js';
+import { setupSocket } from './socket.js';
 const port = process.env.PORT || 3001;
 const server = http.createServer(app);
-
 setupSocket(server);
-
 server.listen(port, '0.0.0.0', () => {
 	console.log('server listening on: ' + port);
 });

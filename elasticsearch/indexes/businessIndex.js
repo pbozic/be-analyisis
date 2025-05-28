@@ -1,13 +1,11 @@
-const fs = require('fs');
+import fs from 'fs';
 
-const esClient = require('../client');
-const prisma = require('../../prisma/prisma');
-const Constants = require('../../lib/constants');
-
+import esClient from '../client.js';
+import prisma from '../../prisma/prisma.js';
+import Constants from '../../lib/constants.js';
 async function createBusinessIndex(force = false) {
 	try {
 		const indexExists = await esClient.indices.exists({ index: 'business_index' });
-
 		if (indexExists) {
 			console.log("⚠️ Index 'business_index' already exists. Deleting...");
 			if (force) {
@@ -17,9 +15,7 @@ async function createBusinessIndex(force = false) {
 				return;
 			}
 		}
-
 		console.log('🚀 Creating business_index with optimized mappings...');
-
 		await esClient.indices.create({
 			index: 'business_index',
 			body: {
@@ -84,7 +80,6 @@ async function createBusinessIndex(force = false) {
 								expires_at: { type: 'date' },
 							},
 						},
-
 						word_buys: {
 							type: 'nested',
 							properties: {
@@ -99,13 +94,11 @@ async function createBusinessIndex(force = false) {
 				},
 			},
 		});
-
 		console.log(' business_index created successfully.');
 	} catch (error) {
 		console.error('❌ Error creating business_index:', error);
 	}
 }
-
 async function indexBusinesses(business_id = null, force = false) {
 	//TODO:
 	//- Call this function on:
@@ -130,16 +123,13 @@ async function indexBusinesses(business_id = null, force = false) {
 	//  - Menu item name change
 	//  - Menu item description change
 	//  - Word update
-
 	try {
 		await createBusinessIndex(force);
 		console.log('🚀 Fetching businesses from database...');
-
 		const whereClause = { type: 'MERCHANT' };
 		if (business_id) {
 			whereClause.business_id = business_id;
 		}
-
 		const businesses = await prisma.business.findMany({
 			where: whereClause,
 			include: {
@@ -203,11 +193,8 @@ async function indexBusinesses(business_id = null, force = false) {
 				},
 			},
 		});
-
 		console.log(`Found ${businesses.length} businesses. Preparing data for indexing...`);
-
 		const bulkOps = [];
-
 		for (const business of businesses) {
 			// console.log(JSON.parse(JSON.stringify(business)))
 			if (!business.menus || business.menus.length === 0) {
@@ -297,23 +284,18 @@ async function indexBusinesses(business_id = null, force = false) {
 					};
 				}),
 			};
-
 			//console.log(JSON.stringify(doc))
-
 			bulkOps.push(
 				{ update: { _index: 'business_index', _id: business.business_id } }, // Use business_id as _id
 				{ doc, doc_as_upsert: true } // Update if exists, create if not
 			);
 		}
-
 		if (bulkOps.length > 0) {
 			console.log(`📤 Sending ${bulkOps.length / 2} businesses to Elasticsearch...`);
 			const bulkResponse = await esClient.bulk({ refresh: true, body: bulkOps });
-
 			if (bulkResponse.errors) {
 				console.error('❌ Some bulk operations failed!');
 				const failedOps = [];
-
 				bulkResponse.items.forEach((item, index) => {
 					const operation = Object.keys(item)[0]; // "index" or "update"
 					const result = item[operation];
@@ -323,7 +305,6 @@ async function indexBusinesses(business_id = null, force = false) {
 						failedOps.push(bulkOps[index * 2 + 1]);
 					}
 				});
-
 				if (failedOps.length > 0) {
 					console.log(`🔁 Retrying ${failedOps.length / 2} failed documents...`);
 					await esClient.bulk({ refresh: true, body: failedOps });
@@ -338,5 +319,4 @@ async function indexBusinesses(business_id = null, force = false) {
 		console.error('❌ Error indexing businesses:', error);
 	}
 }
-
-module.exports = indexBusinesses;
+export default indexBusinesses;

@@ -1,8 +1,7 @@
-const express = require('express');
+import * as express from 'express';
 
+import PromoController from '../../../controllers/PromoController.js';
 const router = express.Router();
-const PromoController = require('../../../controllers/PromoController');
-
 router.get('/', PromoController.getAllPromoBanners);
 router.get('/type/:type', PromoController.getAllPromoBannersByType);
 router.get('/size/:size', PromoController.getAllPromoBannersBySize);
@@ -13,5 +12,4 @@ router.post('/', PromoController.createPromoBanner);
 router.put('/:id', PromoController.updatePromoBanner);
 router.delete('/:id', PromoController.deletePromoBanner);
 router.get('/:id', PromoController.getPromoBannerById);
-
-module.exports = router;
+export default router;

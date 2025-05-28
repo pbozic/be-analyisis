@@ -1,12 +1,12 @@
-const Joi = require('joi').extend(require('@joi/date'));
+import joi from 'joi';
+import date from '@joi/date';
 
-const prisma = require('../prisma/prisma');
-
+import prisma from '../prisma/prisma.js';
+const Joi = joi.extend(date);
 const loginSchema = Joi.object({
 	email: Joi.string().required(),
 	password: Joi.string().required(),
 });
-
 const registerSchema = Joi.object({
 	user_role: Joi.string(),
 	user_roles: Joi.array()
@@ -36,11 +36,9 @@ const registerSchema = Joi.object({
 			} catch (error) {
 				console.log(error);
 			}
-
 			if (isEmailInUse) {
 				throw new Error('Account with this email already exists.');
 			}
-
 			return email;
 		}),
 	password: Joi.string()
@@ -61,11 +59,9 @@ const registerSchema = Joi.object({
 			} catch (error) {
 				console.log(error);
 			}
-
 			if (isPhoneNumberInUse) {
 				throw new Error('Account with this phone number already exists.');
 			}
-
 			return telephone;
 		}),
 	telephone_code: Joi.string().required(),
@@ -75,7 +71,6 @@ const registerSchema = Joi.object({
 	google_id: Joi.string().allow('').optional(),
 	apple_id: Joi.string().allow('').optional(),
 });
-
 const registerChildSchema = Joi.object({
 	// user_data: registerSchema, // Require the register schema
 	user_role: Joi.string(),
@@ -106,11 +101,9 @@ const registerChildSchema = Joi.object({
 			} catch (error) {
 				console.log(error);
 			}
-
 			if (isEmailInUse) {
 				throw new Error('Account with this email already exists.');
 			}
-
 			return email;
 		}),
 	password: Joi.string()
@@ -131,11 +124,9 @@ const registerChildSchema = Joi.object({
 			} catch (error) {
 				console.log(error);
 			}
-
 			if (isPhoneNumberInUse) {
 				throw new Error('Account with this phone number already exists.');
 			}
-
 			return telephone;
 		}),
 	telephone_code: Joi.string().required(),
@@ -144,26 +135,28 @@ const registerChildSchema = Joi.object({
 	language: Joi.string().optional(),
 	parent_user_id: Joi.string().required(), // New required string field
 });
-
 const refreshSchema = Joi.object({
 	refresh_token: Joi.string().required(),
 });
-
 const resetPasswordRequestSchema = Joi.object({
 	email: Joi.string().email().optional(),
 	telephone: Joi.string()
 		.pattern(/^(?:\+?[1-9]\d{0,14}|0\d{1,14})$/)
 		.optional(),
 }).xor('email', 'telephone');
-
 const resetPasswordSchema = Joi.object({
 	password: Joi.string()
 		.pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$/)
 		.required(),
 	confirm_password: Joi.ref('password'),
 });
-
-module.exports = {
+export { loginSchema };
+export { registerSchema };
+export { refreshSchema };
+export { resetPasswordSchema };
+export { resetPasswordRequestSchema };
+export { registerChildSchema };
+export default {
 	loginSchema,
 	registerSchema,
 	refreshSchema,

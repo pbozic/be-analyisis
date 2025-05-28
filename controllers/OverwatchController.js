@@ -1,6 +1,5 @@
-const prisma = require('../prisma/prisma');
-const { SERVICE_TYPE } = require('../lib/constants');
-
+import prisma from '../prisma/prisma.js';
+import { SERVICE_TYPE } from '../lib/constants.js';
 /**
  * GET /overwatch/orders/pagination
  * @tag Overwatch
@@ -15,7 +14,6 @@ async function getOrdersWithPagination(req, res) {
 	const { where, orderBy, service } = req.body;
 	const page = req.body.page ? parseInt(req.body.page) : 1;
 	const take = req.body.take ? parseInt(req.body.take) : 8;
-
 	let includeObj = { user: true, vehicle: true, driver: { include: { user: true } }, business: true };
 	if (service === SERVICE_TYPE.DELIVERY) includeObj.delivery_driver = { include: { user: true } };
 	const model = service === SERVICE_TYPE.DELIVERY ? prisma.delivery_orders : prisma.taxi_orders;
@@ -33,14 +31,12 @@ async function getOrdersWithPagination(req, res) {
 				where, // Ensure the count matches the filtered results
 			}),
 		]);
-
 		res.status(200).json({ data, total });
 	} catch (error) {
 		console.error('OverwatchController', error);
 		res.status(500).json({ message: 'Error something went wrong...' });
 	}
 }
-
 /**
  * PATCH /api/overwatch/drivers/activity/settings
  * @tag DriverSettings
@@ -67,7 +63,6 @@ async function setDriversActivitySettings(req, res) {
 		active: !!req.body.active,
 	};
 	const settings_id = req.body.driver_activity_settings_id;
-
 	try {
 		const settings = await prisma.driver_activity_settings.upsert({
 			where: {
@@ -76,13 +71,11 @@ async function setDriversActivitySettings(req, res) {
 			update: data,
 			create: data,
 		});
-
 		return res.json(settings);
 	} catch (error) {
 		return res.status(500).json({ error: error.message });
 	}
 }
-
 async function getDriversActivitySettings(req, res) {
 	try {
 		const settings = await prisma.driver_activity_settings.findFirst({
@@ -98,8 +91,10 @@ async function getDriversActivitySettings(req, res) {
 		return res.status(500).json({ error: error.message });
 	}
 }
-
-module.exports = {
+export { getOrdersWithPagination };
+export { getDriversActivitySettings };
+export { setDriversActivitySettings };
+export default {
 	getOrdersWithPagination,
 	getDriversActivitySettings,
 	setDriversActivitySettings,

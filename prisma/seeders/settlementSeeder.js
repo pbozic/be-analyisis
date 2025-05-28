@@ -1,6 +1,5 @@
-const prisma = require('../prisma');
-const SETTLEMENTS = require('./settlements.json');
-
+import prisma from '../prisma.js';
+import SETTLEMENTS from './settlements.json' with { type: 'json' };
 async function settlementSeeder() {
 	for (let setGJ of SETTLEMENTS.features) {
 		let exists = await prisma.settlements.findFirst({
@@ -30,9 +29,7 @@ async function settlementSeeder() {
 				}),
 			},
 		});
-
 		console.log('Settlement created: ', setGJ.properties.NAZIV);
 	}
 }
-
-module.exports = settlementSeeder;
+export default settlementSeeder;

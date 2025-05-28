@@ -1,5 +1,4 @@
-const prisma = require('../prisma/prisma');
-
+import prisma from '../prisma/prisma.js';
 async function createLateEvent(business_id, user_id, delivery_order_id, taxi_order_id, seconds) {
 	try {
 		const newLateEvent = await prisma.late_events.create({
@@ -18,7 +17,6 @@ async function createLateEvent(business_id, user_id, delivery_order_id, taxi_ord
 		throw error;
 	}
 }
-
 async function getLateEventById(late_events_id) {
 	try {
 		const lateEvent = await prisma.late_events.findUnique({
@@ -39,7 +37,6 @@ async function getLateEventById(late_events_id) {
 		throw error;
 	}
 }
-
 async function getLateEventsByUserId(user_id) {
 	try {
 		const lateEvents = await prisma.late_events.findMany({
@@ -63,7 +60,6 @@ async function getLateEventsByUserId(user_id) {
 		throw error;
 	}
 }
-
 async function getLateEventsByBusinessId(business_id) {
 	try {
 		const lateEvents = await prisma.late_events.findMany({
@@ -87,7 +83,6 @@ async function getLateEventsByBusinessId(business_id) {
 		throw error;
 	}
 }
-
 async function updateLateEvent(late_events_id, data) {
 	try {
 		const updatedLateEvent = await prisma.late_events.update({
@@ -110,7 +105,6 @@ async function updateLateEvent(late_events_id, data) {
 		throw error;
 	}
 }
-
 async function deleteLateEvent(late_events_id) {
 	try {
 		await prisma.late_events.delete({
@@ -124,8 +118,13 @@ async function deleteLateEvent(late_events_id) {
 		throw error;
 	}
 }
-
-module.exports = {
+export { createLateEvent };
+export { getLateEventById };
+export { getLateEventsByUserId };
+export { getLateEventsByBusinessId };
+export { updateLateEvent };
+export { deleteLateEvent };
+export default {
 	createLateEvent,
 	getLateEventById,
 	getLateEventsByUserId,

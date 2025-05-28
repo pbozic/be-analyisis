@@ -1,13 +1,11 @@
-var express = require('express');
+import * as express from 'express';
+
+import joi from '../../middleware/joi.js';
+import { updateSchema, paymentIntentSchema } from '../../joi/businessSchemas.js';
+import { reviewBusinessSchema } from '../../joi/reviewSchemas.js';
+import BusinessController from '../../controllers/BusinessController.js';
+import FinanceController from '../../controllers/FinancesController.js';
 const router = express.Router();
-
-// Middleware and validation schemas (if applicable)
-const joi = require('../../middleware/joi');
-const { updateSchema, paymentIntentSchema } = require('../../joi/businessSchemas');
-const { reviewBusinessSchema } = require('../../joi/reviewSchemas');
-const BusinessController = require('../../controllers/BusinessController');
-const FinanceController = require('../../controllers/FinancesController');
-
 router.post('/businesses/ids', BusinessController.getBusinessesByIds);
 router.post('/businesses/sections/merchant', BusinessController.listPromoSectionsWithMerchants);
 router.get('/businesses/merchant', BusinessController.listMerchantBusinesses);
@@ -16,35 +14,27 @@ router.get('/businesses/merchant/main', BusinessController.listMerchantBusinesse
 router.get('/businesses/taxi', BusinessController.listTransferBusinesses);
 router.get('/businesses/taxi/main', BusinessController.listTransferBusinessesMainInfo);
 router.get('/businesses/busyness', BusinessController.getBusynessFactorsBusinessIdList);
-
 router.get('/favorites/:type', BusinessController.getFavoriteBusinesses);
 router.post('/favorites', BusinessController.addBusinessToFavorites);
 router.delete('/favorites', BusinessController.removeBusinessFromFavorites);
-
 router.get('/purchase_order_limit/:business_id', BusinessController.getPurchaseOrderLimit);
 router.get('/:business_id', BusinessController.getBusinessById);
-
 router.get('/:business_id/reviews', BusinessController.getBusinessReviewsById);
-
 router.get('/parent', BusinessController.getParentBusiness);
 router.get('/stripe/:business_id', BusinessController.getBusinessStripeStatusByBusinessId);
-
 router.get('/earnings/all', BusinessController.getAllBusinessesEarnings);
 router.get('/earnings/total', BusinessController.getTotalEarnings);
 router.get('/earnings/:business_id', BusinessController.getBusinessEarnings);
 router.get('/earnings/:business_id/total', BusinessController.getBusinessTotalEarnings);
-
 router.post('/register', BusinessController.createNewBusiness);
 router.post('/review', joi(reviewBusinessSchema), BusinessController.reviewBusiness);
 router.post('/activate', BusinessController.activateBusiness);
 router.post('/deactivate', BusinessController.deactivateBusiness);
 router.post('/address/add', BusinessController.addBusinessAddress);
 router.post('/delivery-address/add', BusinessController.addDeliveryAddress);
-
 router.get('/daily-meal-users/:business_id', BusinessController.getScheduledUsersByBusinessId);
 router.post('/scheduled_users/sorting', BusinessController.manualSortScheduledUsers);
 router.post('/scheduled_users/sorting/type', BusinessController.addScheduledUserSortingType);
-
 router.patch('/', BusinessController.update);
 router.patch('/edit', BusinessController.editBusiness);
 router.patch('/type', BusinessController.updateBusinessType);
@@ -64,5 +54,4 @@ router.patch('/stripe/generate/:business_id', BusinessController.generateBusines
 router.post('/paymentIntent', joi(paymentIntentSchema), BusinessController.createPaymentIntent);
 router.delete('/:business_id', BusinessController.deleteBusiness);
 router.post('/scoring_points', BusinessController.createScoringPointsHandler);
-
-module.exports = router;
+export default router;

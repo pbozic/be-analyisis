@@ -1,9 +1,7 @@
-const { faker } = require('@faker-js/faker');
-const bcrypt = require('bcrypt');
-
-const prisma = require('../prisma');
+import { faker } from '@faker-js/faker';
+import bcrypt from 'bcrypt';
+import prisma from '../prisma.js';
 const BCRYPT_SALT_ROUNDS = Number(process.env.BCRYPT_SALT_ROUNDS) || 12;
-
 async function userSeed() {
 	return new Promise(async (resolve, reject) => {
 		return reject('Seeding is disabled for production!');
@@ -27,7 +25,6 @@ async function userSeed() {
 					create: {},
 				},
 			};
-
 			users.push(
 				prisma.users.upsert({
 					where: { email: user.email },
@@ -46,5 +43,4 @@ async function userSeed() {
 		}
 	});
 }
-
-module.exports = userSeed;
+export default userSeed;

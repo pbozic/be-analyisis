@@ -1,9 +1,7 @@
-var express = require('express');
+import * as express from 'express';
 
+import UserController from '../../../controllers/UserController.js';
+import joi from '../../../middleware/joi.js';
 const router = express.Router();
-const UserController = require('../../../controllers/UserController');
-const joi = require('../../../middleware/joi');
-
 router.get('/', UserController.listUsers);
-
-module.exports = router;
+export default router;

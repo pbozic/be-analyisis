@@ -1,10 +1,9 @@
-const prisma = require('../prisma/prisma');
-const AddressDao = require('./Address');
-const DocumentDao = require('./Document');
-const Constants = require('../lib/constants');
-const { reorderMenusAndCategories } = require('../lib/businessHelpers');
-const { ACCOUNT_ACTIONS_REASON, ACCOUNT_ACTIONS } = require('../lib/constants'); // Assuming Address.js exports are imported as AddressDao
-
+import prisma from '../prisma/prisma.js';
+import AddressDao from './Address.js';
+import DocumentDao from './Document.js';
+import Constants from '../lib/constants.js';
+import { reorderMenusAndCategories } from '../lib/businessHelpers.js';
+import { ACCOUNT_ACTIONS_REASON, ACCOUNT_ACTIONS } from '../lib/constants.js';
 const getBusinesses = async (args) => {
 	try {
 		return await prisma.business.findMany({
@@ -34,7 +33,6 @@ const getBusinesses = async (args) => {
 		throw new Error(error);
 	}
 };
-
 const getBusinessById = async (business_id) => {
 	try {
 		return await prisma.business.findUnique({
@@ -63,7 +61,6 @@ const getBusinessById = async (business_id) => {
 		throw new Error(error);
 	}
 };
-
 const getBusinessAdminDataById = async (business_id) => {
 	try {
 		return await prisma.business.findUnique({
@@ -89,7 +86,6 @@ const getBusinessAdminDataById = async (business_id) => {
 				documents: false,
 				taxi_orders: false,
 				delivery_orders: false,
-
 				word_buy_stripe_product: {
 					include: {
 						prices: true,
@@ -117,13 +113,11 @@ const getBusinessAdminDataById = async (business_id) => {
 		throw new Error(error);
 	}
 };
-
 const getBusinessesForSearchById = async (business_id) => {
 	try {
 		if (!Array.isArray(business_id)) {
 			business_id = [business_id];
 		}
-
 		let business = await prisma.business.findMany({
 			where: {
 				business_id: {
@@ -294,7 +288,6 @@ const getBusinessByEmail = async (email) => {
 		throw new Error(error);
 	}
 };
-
 const getBusinessByTelephone = async (telephone_number) => {
 	try {
 		return await prisma.business.findFirst({
@@ -326,7 +319,6 @@ const getBusinessByTelephone = async (telephone_number) => {
 		throw new Error(error);
 	}
 };
-
 const getBusinessesByNameSearch = async (search) => {
 	try {
 		return await prisma.business.findMany({
@@ -361,7 +353,6 @@ const getBusinessesByNameSearch = async (search) => {
 		throw new Error(error);
 	}
 };
-
 const getBusinessesByGroupName = async (search) => {
 	try {
 		return await prisma.business.findMany({
@@ -396,7 +387,6 @@ const getBusinessesByGroupName = async (search) => {
 		throw new Error(error);
 	}
 };
-
 const getBusinessesByTypeMainInformation = async (type) => {
 	try {
 		return await prisma.business.findMany({
@@ -409,7 +399,6 @@ const getBusinessesByTypeMainInformation = async (type) => {
 		throw new Error(error);
 	}
 };
-
 const getBusinessesByType = async (type, args = {}) => {
 	try {
 		const includeOptions = {
@@ -447,7 +436,6 @@ const getBusinessesByType = async (type, args = {}) => {
 				},
 			};
 		}
-
 		const businesses = await prisma.business.findMany({
 			where: {
 				type: type,
@@ -455,7 +443,6 @@ const getBusinessesByType = async (type, args = {}) => {
 			},
 			include: includeOptions,
 		});
-
 		// Before returning, sort menus, and menu categories if applicable
 		return reorderMenusAndCategories(businesses);
 	} catch (error) {
@@ -463,7 +450,6 @@ const getBusinessesByType = async (type, args = {}) => {
 		throw new Error(error);
 	}
 };
-
 const getParentBusiness = async (business_id) => {
 	try {
 		const business = await prisma.business.findUnique({
@@ -476,7 +462,6 @@ const getParentBusiness = async (business_id) => {
 		throw new Error(error);
 	}
 };
-
 const getChildBusinesses = async (parent_business_id) => {
 	try {
 		return await prisma.business.findMany({
@@ -487,7 +472,6 @@ const getChildBusinesses = async (parent_business_id) => {
 		throw new Error(error);
 	}
 };
-
 const getFinanceRecordByBusinessId = async (business_id) => {
 	try {
 		const businessWithFinance = await prisma.business.findUnique({
@@ -510,7 +494,6 @@ const getFinanceRecordByBusinessId = async (business_id) => {
 		throw new Error(error);
 	}
 };
-
 const updateBusiness = async (business_id, businessD) => {
 	try {
 		let businessData = {
@@ -530,7 +513,6 @@ const updateBusiness = async (business_id, businessD) => {
 		delete businessData.finances;
 		delete businessData.popular;
 		delete businessData.new;
-
 		return await prisma.business.update({
 			where: { business_id },
 			data: { ...businessData },
@@ -540,7 +522,6 @@ const updateBusiness = async (business_id, businessD) => {
 		throw new Error(error);
 	}
 };
-
 const updateBusinessFinances = async (business_id, financesData) => {
 	try {
 		// First, retrieve the finance record associated with the business
@@ -548,11 +529,9 @@ const updateBusinessFinances = async (business_id, financesData) => {
 			where: { business_id },
 			select: { finance_id: true }, // Select only the finance_id
 		});
-
 		if (!business || !business.finance_id) {
 			throw new Error('No finance record found for the specified business');
 		}
-
 		// Use the upsert method to handle finance creation or retrieval
 		const updatedFinances = await prisma.finances.update({
 			where: {
@@ -562,14 +541,12 @@ const updateBusinessFinances = async (business_id, financesData) => {
 				...financesData, // Update the existing finance record with new data
 			},
 		});
-
 		return updatedFinances; // Return the updated finance record
 	} catch (error) {
 		console.error('Error updating business finances:', error);
 		throw new Error(error);
 	}
 };
-
 const updateBusinessType = async (business_id, type) => {
 	try {
 		return await prisma.business.update({
@@ -581,7 +558,6 @@ const updateBusinessType = async (business_id, type) => {
 		throw new Error(error);
 	}
 };
-
 const updateIsBusinessUnit = async (business_id, is_business_unit) => {
 	try {
 		return await prisma.business.update({
@@ -593,7 +569,6 @@ const updateIsBusinessUnit = async (business_id, is_business_unit) => {
 		throw new Error(error);
 	}
 };
-
 const updateBusinessGroupName = async (business_id, business_group_name) => {
 	try {
 		return await prisma.business.update({
@@ -605,7 +580,6 @@ const updateBusinessGroupName = async (business_id, business_group_name) => {
 		throw new Error(error);
 	}
 };
-
 const updateBusinessEmail = async (business_id, email) => {
 	try {
 		return await prisma.business.update({
@@ -617,7 +591,6 @@ const updateBusinessEmail = async (business_id, email) => {
 		throw new Error(error);
 	}
 };
-
 const updateBusinessTelephone = async (business_id, telephone, telephone_code, telephone_number) => {
 	try {
 		return await prisma.business.update({
@@ -629,7 +602,6 @@ const updateBusinessTelephone = async (business_id, telephone, telephone_code, t
 		throw new Error(error);
 	}
 };
-
 const updateBusinessWorkingHours = async (business_id, working_hours) => {
 	try {
 		return await prisma.business.update({
@@ -674,7 +646,6 @@ const updateBusinessIsPopular = async (business_id, popular) => {
 		throw new Error(error);
 	}
 };
-
 const createNewBusiness = async (business) => {
 	try {
 		return await prisma.business.create({
@@ -685,7 +656,6 @@ const createNewBusiness = async (business) => {
 		throw new Error(error);
 	}
 };
-
 const deleteBusiness = async (business_id) => {
 	try {
 		return await prisma.business.delete({
@@ -696,7 +666,6 @@ const deleteBusiness = async (business_id) => {
 		throw new Error(error);
 	}
 };
-
 const updateParentBusiness = async (business_id, parent_business_id) => {
 	try {
 		return await prisma.business.update({
@@ -708,7 +677,6 @@ const updateParentBusiness = async (business_id, parent_business_id) => {
 		throw new Error(error);
 	}
 };
-
 const removeParentBusiness = async (business_id) => {
 	try {
 		return await prisma.business.update({
@@ -720,7 +688,6 @@ const removeParentBusiness = async (business_id) => {
 		throw new Error(error);
 	}
 };
-
 const addBusinessAddress = async (business_id, addressData) => {
 	try {
 		// Use the upsert method to handle address creation or retrieval
@@ -735,7 +702,6 @@ const addBusinessAddress = async (business_id, addressData) => {
 			update: addressData,
 			create: addressData,
 		});
-
 		// Update the business with the address
 		return await prisma.business.update({
 			where: { business_id },
@@ -752,7 +718,6 @@ const addBusinessAddress = async (business_id, addressData) => {
 		throw new Error(error);
 	}
 };
-
 const addDeliveryAddress = async (business_id, addressData) => {
 	try {
 		// Use the upsert method to handle address creation or retrieval
@@ -767,7 +732,6 @@ const addDeliveryAddress = async (business_id, addressData) => {
 			update: addressData,
 			create: addressData,
 		});
-
 		// Update the business with the delivery address
 		return await prisma.business.update({
 			where: { business_id },
@@ -784,7 +748,6 @@ const addDeliveryAddress = async (business_id, addressData) => {
 		throw new Error(error);
 	}
 };
-
 async function updateBusinessAddress(business_id, address) {
 	try {
 		const updatedAddress = await AddressDao.addAddress(address);
@@ -800,7 +763,6 @@ async function updateBusinessAddress(business_id, address) {
 		throw new Error(error);
 	}
 }
-
 async function updateBusinessDeliveryAddress(business_id, deliveryAddress) {
 	try {
 		const updatedDeliveryAddress = await AddressDao.addAddress(deliveryAddress);
@@ -817,7 +779,6 @@ async function updateBusinessDeliveryAddress(business_id, deliveryAddress) {
 		throw new Error(error);
 	}
 }
-
 const removeBusinessDeliveryAddress = async (business_id) => {
 	try {
 		return await prisma.business.update({
@@ -829,7 +790,6 @@ const removeBusinessDeliveryAddress = async (business_id) => {
 		throw new Error(error);
 	}
 };
-
 const addScheduledUserSortingType = async (type) => {
 	try {
 		return await prisma.business.updateMany({
@@ -841,7 +801,6 @@ const addScheduledUserSortingType = async (type) => {
 		throw new Error(error);
 	}
 };
-
 const manualSortScheduledUsers = async (sorted_users = []) => {
 	try {
 		return await prisma.business.updateMany({
@@ -853,7 +812,6 @@ const manualSortScheduledUsers = async (sorted_users = []) => {
 		throw new Error(error);
 	}
 };
-
 const getBusinessStripeByBusinessId = async (business_id) => {
 	try {
 		const business_data = await prisma.business.findUnique({
@@ -871,7 +829,6 @@ const getBusinessStripeByBusinessId = async (business_id) => {
 		throw new Error(error);
 	}
 };
-
 /**
  * Retrieves the Stripe account IDs for all businesses from the database.
  *
@@ -892,7 +849,6 @@ const getStripeIdsForAllBusinesses = async () => {
 		throw new Error(error);
 	}
 };
-
 async function activateBusiness(business_id, action_creator_user_id, reason) {
 	try {
 		return await prisma.$transaction(async (tx) => {
@@ -900,17 +856,14 @@ async function activateBusiness(business_id, action_creator_user_id, reason) {
 				where: { business_id },
 				select: { first_activated_at: true },
 			});
-
 			const updateData = { active: true };
 			if (!business.first_activated_at) {
 				updateData.first_activated_at = new Date();
 			}
-
 			const updatedBusiness = await tx.business.update({
 				where: { business_id },
 				data: updateData,
 			});
-
 			await tx.account_actions.create({
 				data: {
 					business: { connect: { business_id } },
@@ -919,7 +872,6 @@ async function activateBusiness(business_id, action_creator_user_id, reason) {
 					action: ACCOUNT_ACTIONS.UNSUSPEND,
 				},
 			});
-
 			return updatedBusiness;
 		});
 	} catch (error) {
@@ -927,7 +879,6 @@ async function activateBusiness(business_id, action_creator_user_id, reason) {
 		throw new Error('Failed to activate business');
 	}
 }
-
 async function deactivateBusiness(business_id, action_creator_user_id, reason) {
 	try {
 		return await prisma.$transaction(async (tx) => {
@@ -935,7 +886,6 @@ async function deactivateBusiness(business_id, action_creator_user_id, reason) {
 				where: { business_id },
 				data: { active: false },
 			});
-
 			await tx.account_actions.create({
 				data: {
 					business: { connect: { business_id } },
@@ -944,7 +894,6 @@ async function deactivateBusiness(business_id, action_creator_user_id, reason) {
 					action: ACCOUNT_ACTIONS.SUSPEND,
 				},
 			});
-
 			return updatedBusiness;
 		});
 	} catch (error) {
@@ -952,7 +901,6 @@ async function deactivateBusiness(business_id, action_creator_user_id, reason) {
 		throw new Error('Failed to deactivate business');
 	}
 }
-
 const getScheduledUsersByBusinessId = async (businessId) => {
 	try {
 		const business = await prisma.business.findUnique({
@@ -961,11 +909,9 @@ const getScheduledUsersByBusinessId = async (businessId) => {
 				offers_daily_meals: true,
 			},
 		});
-
 		if (!business) {
 			throw new Error('Business not found or does not offer daily meals');
 		}
-
 		return await prisma.users.findMany({
 			where: {
 				subscribed_to_daily_meals: true,
@@ -986,7 +932,6 @@ const getScheduledUsersByBusinessId = async (businessId) => {
 		throw error;
 	}
 };
-
 const getPurchaseOrderLimit = async (business_id) => {
 	try {
 		const business = await prisma.business.findUnique({
@@ -1032,8 +977,49 @@ const getPurchaseOrderLimit = async (business_id) => {
 		throw error;
 	}
 };
-
-module.exports = {
+export { getScheduledUsersByBusinessId };
+export { getBusinesses };
+export { getBusinessById };
+export { getBusinessByEmail };
+export { getBusinessByTelephone };
+export { getBusinessesByType };
+export { getBusinessesByNameSearch };
+export { getBusinessesByGroupName };
+export { getChildBusinesses };
+export { getParentBusiness };
+export { getFinanceRecordByBusinessId };
+export { createNewBusiness };
+export { addBusinessAddress };
+export { addDeliveryAddress };
+export { updateBusiness };
+export { deleteBusiness };
+export { updateBusinessAddress };
+export { updateBusinessType };
+export { updateIsBusinessUnit };
+export { updateBusinessGroupName };
+export { updateBusinessEmail };
+export { updateBusinessTelephone };
+export { updateBusinessWorkingHours };
+export { updateRestaurantOverwhelmed };
+export { updateBusinessIsNew };
+export { updateBusinessIsPopular };
+export { updateParentBusiness };
+export { removeParentBusiness };
+export { updateBusinessDeliveryAddress };
+export { removeBusinessDeliveryAddress };
+export { addScheduledUserSortingType };
+export { manualSortScheduledUsers };
+export { getBusinessesByTypeMainInformation };
+export { updateBusinessFinances };
+export { getBusinessStripeByBusinessId };
+export { getStripeIdsForAllBusinesses };
+export { getBusinessesForSearchById };
+export { activateBusiness };
+export { deactivateBusiness };
+export { getBusinessForSearchById };
+export { getBusinessAdminDataById };
+export { getPurchaseOrderLimit };
+export default {
 	getScheduledUsersByBusinessId,
 	getBusinesses,
 	getBusinessById,

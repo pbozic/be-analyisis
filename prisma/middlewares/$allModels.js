@@ -1,4 +1,4 @@
-const S3Helper = require('../../lib/s3');
+import S3Helper from '../../lib/s3.js';
 function shouldGenerateS3Links(args) {
 	// Check if args include nested structures with files: true
 	for (let key in args) {
@@ -12,7 +12,6 @@ function shouldGenerateS3Links(args) {
 	}
 	return false;
 }
-
 async function generateS3LinksRecursively(args, result) {
 	// Check if should generate S3 links based on args
 	if (shouldGenerateS3Links(args) || (result && Array.isArray(result) && result.some((doc) => doc?.files))) {
@@ -80,7 +79,6 @@ async function generateS3LinksRecursively(args, result) {
 			}
 		}
 	}
-
 	// Recursively traverse nested includes in args
 	if (args && typeof args === 'object') {
 		for (let key in args) {
@@ -89,7 +87,6 @@ async function generateS3LinksRecursively(args, result) {
 			}
 		}
 	}
-
 	// Recursively traverse nested includes in result
 	if (result && typeof result === 'object') {
 		for (let key in result) {
@@ -98,10 +95,9 @@ async function generateS3LinksRecursively(args, result) {
 			}
 		}
 	}
-
 	return result;
 }
-
-module.exports = {
+export { generateS3LinksRecursively };
+export default {
 	generateS3LinksRecursively,
 };

@@ -1,6 +1,5 @@
-const esClient = require('../client');
-const { ES_RADIUS_LIMIT_KM } = require('../../lib/constants');
-
+import esClient from '../client.js';
+import { ES_RADIUS_LIMIT_KM } from '../../lib/constants.js';
 const SCORING_WEIGHTS = {
 	bid_multiplier: 1, // Boost businesses bidding on words
 	popularity_boost: 2, // Boost for popular businesses
@@ -16,7 +15,6 @@ const SCORING_WEIGHTS = {
 	menu_item_name_weight: 2, // Weight for matching menu items
 	menu_item_description_weight: 1, // Weight for matching menu item descriptions
 };
-
 async function searchBusinesses(
 	query,
 	userLat = 46.0660617,
@@ -61,7 +59,6 @@ async function searchBusinesses(
 				const now = new Date();
 				const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 				const todayISOString = todayStart.toISOString();
-
 				boolQuery.bool.filter.push({
 					nested: {
 						path: 'menus',
@@ -104,7 +101,6 @@ async function searchBusinesses(
 				},
 			});
 		}
-
 		// **Text Search (if query exists)**
 		if (hasQuery) {
 			boolQuery.bool.should.push(
@@ -184,7 +180,6 @@ async function searchBusinesses(
 				}
 			);
 		}
-
 		// **Filter by category ID (if provided)**
 		if (hasCategories) {
 			if (filterOperator === 'AND') {
@@ -211,7 +206,6 @@ async function searchBusinesses(
 				});
 			}
 		}
-
 		// **Filter by radius limited to max delivery radius**
 		boolQuery.bool.filter.push({
 			geo_distance: {
@@ -222,7 +216,6 @@ async function searchBusinesses(
 				},
 			},
 		});
-
 		// **Function Scoring (Maintains All Other Scoring)**
 		let functionScoreQuery = {
 			function_score: {
@@ -266,7 +259,6 @@ async function searchBusinesses(
 				weight: 5,
 			});
 		}
-
 		// **Apply Promo Section Tier Boost (Only for Matched Section)**
 		if (hasPromoSection) {
 			functionScoreQuery.function_score.functions.push({
@@ -297,7 +289,6 @@ async function searchBusinesses(
 				},
 			});
 		}
-
 		// **Execute Search**
 		const esResponse = await esClient.search({
 			index: 'business_index',
@@ -328,9 +319,7 @@ async function searchBusinesses(
 				sort: [{ _score: 'desc' }],
 			},
 		});
-
 		//console.log(JSON.stringify(esResponse, null, 4));
-
 		return {
 			total: esResponse.hits.total?.value || 0,
 			max_score: esResponse.hits.max_score,
@@ -347,11 +336,9 @@ async function searchBusinesses(
 					popularity_score: 0,
 					new_business_score: 0,
 				};
-
 				if (hit._explanation) {
 					extractScores(hit._explanation, scores);
 				}
-
 				return {
 					business_id: hit._source.business_id,
 					online: hit._source.online,
@@ -380,10 +367,8 @@ async function searchBusinesses(
 }
 function extractScores(explanation, scores) {
 	if (!explanation || !explanation.details) return;
-
 	explanation.details.forEach((detail) => {
 		const desc = detail.description.toLowerCase();
-
 		if (desc.includes('match name')) {
 			scores.name_score += detail.value;
 		} else if (desc.includes('match description')) {
@@ -409,9 +394,8 @@ function extractScores(explanation, scores) {
 				scores.new_business_score += detail.value;
 			}
 		}
-
 		// **Check deeper nested scores**
 		extractScores(detail, scores);
 	});
 }
-module.exports = searchBusinesses;
+export default searchBusinesses;

@@ -1,5 +1,4 @@
-const Joi = require('joi');
-
+import Joi from 'joi';
 const reviewBusinessSchema = Joi.object({
 	business_id: Joi.string().allow(null).optional(),
 	driver_id: Joi.string().optional(),
@@ -8,15 +7,15 @@ const reviewBusinessSchema = Joi.object({
 	rating: Joi.number().optional(),
 	feedback: Joi.object().optional(),
 });
-
 const reviewUserSchema = Joi.object({
 	user_id: Joi.string().required(),
 	comment: Joi.string().allow('').optional(),
 	rating: Joi.number().optional(),
 	feedback: Joi.object().optional(),
 });
-
-module.exports = {
+export { reviewBusinessSchema };
+export { reviewUserSchema };
+export default {
 	reviewBusinessSchema,
 	reviewUserSchema,
 };

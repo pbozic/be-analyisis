@@ -1,11 +1,12 @@
-const MenuDao = require('../dao/Menu');
-const MenuCategoryDao = require('../dao/MenuCategory');
-const MenuItemDao = require('../dao/MenuItem');
-const DocumentDao = require('../dao/Document');
-const FileDao = require('../dao/File');
-const S3Helper = require('../lib/s3');
-const { linkDocumentToBusiness } = require('../dao/Document');
-const { businessIndex } = require('../elasticsearch');
+import MenuDao from '../dao/Menu.js';
+import MenuCategoryDao from '../dao/MenuCategory.js';
+import MenuItemDao from '../dao/MenuItem.js';
+import DocumentDao from '../dao/Document.js';
+import FileDao from '../dao/File.js';
+import S3Helper from '../lib/s3.js';
+import { linkDocumentToBusiness } from '../dao/Document.js';
+import elasticsearch from '../elasticsearch/index.js';
+const { businessIndex } = elasticsearch;
 /**
  * GET /menus/business/:business_id
  * @tag Menu
@@ -70,7 +71,6 @@ async function createMenu(req, res) {
 		res.status(400).json({ error: 'Error creating menu', e });
 	}
 }
-
 /**
  * POST /menus/daily-meal
  * @tag Menu
@@ -96,7 +96,6 @@ async function createDailyMealMenu(req, res) {
 		res.status(400).json({ error: 'Error creating daily meal menu', e });
 	}
 }
-
 /**
  * DELETE /menus/:menu_id
  * @tag Menu
@@ -118,7 +117,6 @@ async function deleteMenu(req, res) {
 		res.status(400).json({ error: 'Error deleting menu', e });
 	}
 }
-
 /**
  * PATCH /menus/active
  * @tag Menu
@@ -145,7 +143,6 @@ async function setActiveMenu(req, res) {
 		res.status(400).json({ error: 'Error updating menu active status', e });
 	}
 }
-
 /**
  * POST /menus/menu-categories/create
  * @tag MenuCategory
@@ -170,7 +167,6 @@ async function createMenuCategory(req, res) {
 		res.status(400).json({ error: 'Error creating menu category', e });
 	}
 }
-
 /**
  * POST /menus/menu-items/add-order
  * @tag MenuItem
@@ -188,14 +184,12 @@ async function addMenuItemIdToOrder(req, res) {
 	const { menu_category_id, menuItemIdToAdd } = req.body;
 	try {
 		const response = await MenuItemDao.addMenuItemIdToOrder(menu_category_id, menuItemIdToAdd);
-
 		res.status(200).json(response);
 	} catch (error) {
 		console.error('Error adding menu item ID to order:', error);
 		res.status(400).json({ error: 'Error adding menu item ID to order', details: error });
 	}
 }
-
 /**
  * POST /menus/menu-items/remove-order
  * @tag MenuCategory
@@ -219,7 +213,6 @@ async function removeMenuItemIdFromOrder(req, res) {
 		res.status(400).json({ error: 'Error removing menu item ID from order', details: error });
 	}
 }
-
 /**
  * POST /menus/add-category-order
  * @tag Menu
@@ -243,7 +236,6 @@ async function addMenuCategoryIdToOrder(req, res) {
 		res.status(400).json({ error: 'Error adding menu category ID to order', details: error });
 	}
 }
-
 /**
  * POST /menus/remove-category-order
  * @tag Menu
@@ -267,7 +259,6 @@ async function removeMenuCategoryIdFromOrder(req, res) {
 		res.status(400).json({ error: 'Error removing menu category ID from order', details: error });
 	}
 }
-
 /**
  * GET /menus/menu-items/:category_id
  * @tag MenuItem
@@ -288,7 +279,6 @@ async function getMenuItemsByCategoryId(req, res) {
 		res.status(400).json({ error: 'Error obtaining menu items', e });
 	}
 }
-
 /**
  * GET /menus/menu-categories/:menu_id
  * @tag MenuCategory
@@ -309,7 +299,6 @@ async function getMenuCategoriesByMenuId(req, res) {
 		res.status(400).json({ error: 'Error obtaining menu categories', e });
 	}
 }
-
 /**
  * GET /menus/menu-categories/business/:business_id
  * @tag MenuCategory
@@ -330,7 +319,6 @@ async function getMenuCategoriesByBusinessId(req, res) {
 		res.status(400).json({ error: 'Error obtaining menu categories', e });
 	}
 }
-
 /**
  * GET /menus/menu-items/business/:business_id
  * @tag MenuItem
@@ -353,7 +341,6 @@ async function getMenuItemsByBusinessId(req, res) {
 		res.status(400).json({ error: 'Error obtaining menu items', e });
 	}
 }
-
 /**
  * DELETE /menus/menu-categories/:menu_category_id
  * @tag MenuCategory
@@ -375,7 +362,6 @@ async function deleteMenuCategory(req, res) {
 		res.status(400).json({ error: 'Error deleting menu category', e });
 	}
 }
-
 /**
  * PATCH /menus/menu-categories
  * @tag MenuCategory
@@ -415,7 +401,6 @@ async function updateMenuCategory(req, res) {
 		res.status(400).json({ error: 'Error updating menu category', e });
 	}
 }
-
 /**
  * PATCH /menus/menu-categories/order
  * @tag Menu
@@ -441,7 +426,6 @@ async function updateMenuOrder(req, res) {
 		res.status(400).json({ error: 'Error updating menu order', e });
 	}
 }
-
 /**
  * PATCH /menus/menu-items/order
  * @tag MenuItems
@@ -466,7 +450,6 @@ async function updateMenuItemsOrder(req, res) {
 		res.status(400).json({ error: 'Error updating menu items order', e });
 	}
 }
-
 /**
  * POST /menus/menu-items/create
  * @tag MenuItem
@@ -498,10 +481,8 @@ async function createMenuItem(req, res) {
 				}
 			}
 		}
-
 		const menuItem = await MenuItemDao.createMenuItem(category_id, data, is_copy);
 		if (document) await DocumentDao.linkDocumentToMenuItem(document.document_id, menuItem.menu_item_id);
-
 		businessIndex(menuItem.business_id);
 		res.status(201).json(menuItem);
 	} catch (e) {
@@ -509,7 +490,6 @@ async function createMenuItem(req, res) {
 		res.status(400).json({ error: 'Error creating menu item', message: e.message });
 	}
 }
-
 /**
  * POST /menus/daily-meals-menu/create
  * @tag MenuItem
@@ -530,7 +510,6 @@ async function createDailyMealsMenu(req, res) {
 			document_type: 'DAILY_MEALS_MENU',
 			...data.documentData,
 		});
-
 		for (const file of data.files) {
 			let base64 = file.base64;
 			delete file.base64;
@@ -538,7 +517,6 @@ async function createDailyMealsMenu(req, res) {
 			let key = S3Helper.getFileKey(fileData.file_id, file.mime_type);
 			await S3Helper.SaveObject(key, base64, file.mime_type, {}, fileData, document.public);
 		}
-
 		await linkDocumentToBusiness(document.document_id, business_id);
 		businessIndex(business_id);
 		res.status(201).json(document);
@@ -547,7 +525,6 @@ async function createDailyMealsMenu(req, res) {
 		res.status(400).json({ error: 'Error creating daily meals menu document', e });
 	}
 }
-
 /**
  * GET /menus/daily-meals-menu
  * @tag MenuItem
@@ -563,22 +540,16 @@ async function createDailyMealsMenu(req, res) {
  */
 async function getLastUploadedDailyMealsMenu(req, res) {
 	const { business_id } = req.params;
-
 	try {
 		const lastDocument = await DocumentDao.getLastDocumentByTypeAndBusinessId('DAILY_MEALS_MENU', business_id);
-
 		if (!lastDocument) {
 			return res.status(404).json({ error: 'No daily meals menu found for the given business ID' });
 		}
-
 		const files = await FileDao.getFilesByDocumentId(lastDocument.document_id);
-
 		if (!files || files.length === 0) {
 			return res.status(404).json({ error: 'No files found for the document' });
 		}
-
 		const file = files[0];
-
 		res.status(200).json({
 			document_id: lastDocument.document_id,
 			name: 'Menu',
@@ -590,7 +561,6 @@ async function getLastUploadedDailyMealsMenu(req, res) {
 		res.status(500).json({ error: 'Error retrieving last uploaded daily meals menu', e });
 	}
 }
-
 /**
  * DELETE /menus/menu-items/:menu_item_id
  * @tag MenuItem
@@ -613,7 +583,6 @@ async function deleteMenuItem(req, res) {
 		res.status(400).json({ error: 'Error deleting menu item', e });
 	}
 }
-
 /**
  * PATCH /menus/menu-items
  * @tag MenuItem
@@ -632,7 +601,6 @@ async function updateMenuItem(req, res) {
 	const { menu_item_id, data, image } = req.body;
 	try {
 		const menuItem = await MenuItemDao.updateMenuItem(menu_item_id, data);
-
 		if (image?.files[0].file_type === 'IMAGE') {
 			await DocumentDao.deleteDocumentsAndFiles('menu_item_id', menu_item_id);
 			const document = await DocumentDao.createDocument(image.documentData);
@@ -653,7 +621,6 @@ async function updateMenuItem(req, res) {
 		res.status(400).json({ error: 'Error updating menu item', e });
 	}
 }
-
 /**
  * PATCH /menus/menu-items/is_enabled
  * @tag MenuItem
@@ -679,7 +646,6 @@ async function updateMenuItemEnabled(req, res) {
 		res.status(400).json({ error: 'Error updating menu item', e });
 	}
 }
-
 /**
  * PATCH /menus/menu-items/price
  * @tag MenuItem
@@ -722,7 +688,6 @@ async function updateMenuItemPrice(req, res) {
  */
 async function addMenuItemMenuCategory(req, res) {
 	const { menu_item_id, menu_category_id } = req.body;
-
 	try {
 		const menuItem = await MenuItemDao.addMenuItemToCategory(menu_item_id, menu_category_id);
 		businessIndex(menuItem.business_id);
@@ -732,7 +697,6 @@ async function addMenuItemMenuCategory(req, res) {
 		res.status(400).json({ error: 'Error updating menu item category', e });
 	}
 }
-
 /**
  * PATCH /menus/menu-items/category/remove
  * @tag MenuItem
@@ -755,7 +719,6 @@ async function removeMenuItemFromCategory(req, res) {
 		res.status(400).json({ error: 'Error removing menu item from category', e });
 	}
 }
-
 /**
  * PATCH /menus/menu-categories/add
  * @tag MenuCategory
@@ -780,7 +743,6 @@ async function addMenuCategory(req, res) {
 		res.status(400).json({ error: 'Error adding menu category', e });
 	}
 }
-
 /**
  * PATCH /menus/menu-categories/remove
  * @tag MenuCategory
@@ -805,7 +767,6 @@ async function removeMenuCategory(req, res) {
 		res.status(400).json({ error: 'Error removing menu category', e });
 	}
 }
-
 /**
  * Deletes all documents and associated files based on the provided field and id.
  * @param {Object} req - The request object.
@@ -813,7 +774,6 @@ async function removeMenuCategory(req, res) {
  */
 const deleteDocumentsAndFilesByDocumentId = async (req, res) => {
 	const { field, id } = req.params;
-
 	try {
 		await DocumentDao.deleteDocumentsAndFilesByDocumentId(field, id);
 		res.status(200).json({ message: `Documents and files deleted successfully for ${field}: ${id}` });
@@ -824,7 +784,6 @@ const deleteDocumentsAndFilesByDocumentId = async (req, res) => {
 		});
 	}
 };
-
 const getMenuItemsByDate = async (req, res) => {
 	const { business_id, date } = req.params;
 	try {
@@ -844,7 +803,6 @@ const getMenuItemsByDate = async (req, res) => {
 		res.status(400).json({ error: 'Error obtaining menu items', e });
 	}
 };
-
 const getMenuByDate = async (req, res) => {
 	const { business_id, date } = req.params;
 	try {
@@ -855,7 +813,6 @@ const getMenuByDate = async (req, res) => {
 		res.status(400).json({ error: 'Error obtaining menu items', e });
 	}
 };
-
 const updateDailyMealMenuPrice = async (req, res) => {
 	const { menu_category_id, price } = req.body;
 	try {
@@ -872,7 +829,6 @@ const updateDailyMealMenuPrice = async (req, res) => {
 		res.status(400).json({ error: 'Error updating menu price', e });
 	}
 };
-
 const getMenuItemsByIds = async (req, res) => {
 	try {
 		const menuItems = await MenuItemDao.getMenuItemsByBusinessId(req.params.business_id, {
@@ -890,8 +846,42 @@ const getMenuItemsByIds = async (req, res) => {
 		res.status(400).json({ error: 'Error fetching menu items', e });
 	}
 };
-
-module.exports = {
+export { getMenuItemsByIds };
+export { updateDailyMealMenuPrice };
+export { getMenuItemsByDate };
+export { getMenuByDate };
+export { getMenuByBusinessId };
+export { createMenu };
+export { updateMenuOrder };
+export { updateMenuItemsOrder };
+export { deleteMenu };
+export { setActiveMenu };
+export { createMenuCategory };
+export { getMenuCategoriesByMenuId };
+export { getMenuCategoriesByBusinessId };
+export { deleteMenuCategory };
+export { addMenuCategory };
+export { addMenuCategoryIdToOrder };
+export { removeMenuCategoryIdFromOrder };
+export { addMenuItemIdToOrder };
+export { removeMenuItemIdFromOrder };
+export { removeMenuCategory };
+export { updateMenuCategory };
+export { createMenuItem };
+export { getMenuItemsByCategoryId };
+export { getMenuItemsByBusinessId };
+export { deleteMenuItem };
+export { updateMenuItem };
+export { updateMenuItemPrice };
+export { addMenuItemMenuCategory };
+export { removeMenuItemFromCategory };
+export { createDailyMealsMenu };
+export { createDailyMealMenu };
+export { getLastUploadedDailyMealsMenu };
+export { deleteDocumentsAndFilesByDocumentId };
+export { getDailyMenuByBusinessId };
+export { updateMenuItemEnabled };
+export default {
 	getMenuItemsByIds,
 	updateDailyMealMenuPrice,
 	getMenuItemsByDate,

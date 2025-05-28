@@ -1,20 +1,20 @@
-const dotenv = require('dotenv');
+import dotenv from 'dotenv';
+
+import DeliveryOrderDao from '../dao/DeliveryOrder.js';
+import UsersDao from '../dao/User.js';
+import socket from '../socket.js';
+import stripe from '../lib/stripe.js';
+import BusinessDao from '../dao/Business.js';
+import PromoDao from '../dao/Promo.js';
+import ProductDao from '../dao/Product.js';
+import WalletFundsHelpers from '../lib/WalletFundsHelpers.js';
+import { DELIVERY_ORDER_STATUS, FUNDS_TYPE, SERVICE_TYPE, ORDER_TYPE, TAXI_ORDER_STATUS } from '../lib/constants.js';
+import { calculateDeliveryOrderPaymentCuts } from '../lib/deliveryHelpers.js';
+import WalletFundsDao from '../dao/WalletFunds.js';
+import TaxiOrderDao from '../dao/TaxiOrder.js';
+import { calculateTransferOrderPaymentCuts } from '../lib/taxiHelpers.js';
 dotenv.config();
-
-const DeliveryOrderDao = require('../dao/DeliveryOrder');
-const UsersDao = require('../dao/User');
-const { io, UserSockets, SocketStore } = require('../socket');
-const stripe = require('../lib/stripe');
-const BusinessDao = require('../dao/Business');
-const PromoDao = require('../dao/Promo');
-const ProductDao = require('../dao/Product');
-const WalletFundsHelpers = require('../lib/WalletFundsHelpers');
-const { DELIVERY_ORDER_STATUS, FUNDS_TYPE, SERVICE_TYPE, ORDER_TYPE, TAXI_ORDER_STATUS } = require('../lib/constants');
-const { calculateDeliveryOrderPaymentCuts } = require('../lib/deliveryHelpers');
-const WalletFundsDao = require('../dao/WalletFunds');
-const TaxiOrderDao = require('../dao/TaxiOrder');
-const { calculateTransferOrderPaymentCuts } = require('../lib/taxiHelpers');
-
+const { io, UserSockets, SocketStore } = socket;
 async function handlePaymentIntentSuccess(paymentIntent) {
 	switch (paymentIntent.metadata.type) {
 		case 'wallet_topup':
@@ -37,9 +37,7 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			if (paymentIntent.metadata.order_type === ORDER_TYPE.DELIVERY) {
 				let order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
 				const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
-
 				const { PLATFORM_CREDIT_CUT, MERCHANT_CREDIT_CUT } = await calculateDeliveryOrderPaymentCuts(order);
-
 				if (paymentIntent.metadata?.merchant_cut > 0) {
 					const transferRestaurant = await stripe.splitCutFromPaymentIntent(
 						paymentIntent,
@@ -47,7 +45,6 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 						parseFloat(paymentIntent.metadata.merchant_cut)
 					);
 				}
-
 				if (PLATFORM_CREDIT_CUT > 0) {
 					const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(
 						order.user_id,
@@ -67,7 +64,6 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 					);
 				}
 				//any remaining reserved funds are meant for delivery driver and should be handled on order completion
-
 				order = await DeliveryOrderDao.updateOrder(order.order_id, {
 					payment: {
 						...order.payment,
@@ -94,7 +90,6 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			} else if (paymentIntent.metadata.order_type === ORDER_TYPE.TRANSFER_PRIVATE) {
 				let order = await TaxiOrderDao.getOrder(paymentIntent.metadata.order_id);
 				//any reserved funds are meant to be transfered on order completion
-
 				order = await TaxiOrderDao.updateOrder(order.order_id, {
 					payment: {
 						...order.payment,
@@ -102,7 +97,6 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 					},
 				});
 				order = await TaxiOrderDao.updateOrderStatus(order.order_id, TAXI_ORDER_STATUS.PENDING);
-
 				io.to('order_' + order.order_id).emit('order_status_change__taxi', order);
 			}
 			console.log('PaymentIntent was successful!');
@@ -157,7 +151,6 @@ async function handlePaymentIntentFaliure(paymentIntent) {
 			break;
 	}
 }
-
 async function handleChargeUpdate(charge) {
 	switch (charge.metadata.type) {
 		case 'wallet_topup':
@@ -168,7 +161,6 @@ async function handleChargeUpdate(charge) {
 				);
 				console.info(charge_balance_transaction);
 				const amount_in_eur_cents = charge_balance_transaction.amount;
-
 				await WalletFundsDao.createWalletFunds(charge.metadata.user_id, amount_in_eur_cents, charge.id); //UsersDao.addToWalletBalance(charge.metadata.user_id, amount_in_eur_cents, charge.id);
 				if (UserSockets.get(charge.metadata.user_id)) {
 					const wallet_balance = await WalletFundsDao.getAvailableWalletBalance(charge.metadata.user_id);
@@ -178,7 +170,6 @@ async function handleChargeUpdate(charge) {
 			break;
 	}
 }
-
 async function handleSessionCompleted(session) {
 	if (session.metadata.type === 'promo_section') {
 		await handlePromoSectionBuy(session);
@@ -191,7 +182,6 @@ async function handleWordBuysSubscription(session) {
 	console.log('Handling word_buys subscription', session);
 	// Get new expiration date
 	const newExpiresAt = new Date(session.current_period_end * 1000);
-
 	// Update `expires_at` in all word_buys linked to this subscription
 	await prisma.word_buy.updateMany({
 		where: { stripe_subscription_id: session.id },
@@ -239,9 +229,7 @@ async function handleWebhook(req, res) {
 			break;
 		case 'payment_intent.amount_capturable_updated': {
 			paymentIntent = event.data.object;
-
 			const { amount_capturable, metadata: { order_id, order_type } = {} } = paymentIntent;
-
 			// Check if conditions are met
 			if (amount_capturable > 0 && order_id && order_type === 'TRANSFER_PRIVATE') {
 				try {
@@ -268,7 +256,6 @@ async function handleWebhook(req, res) {
 			console.log(event.data.object);
 			handleChargeUpdate(event.data.object);
 			break;
-
 		/*** PRODUCT EVENTS ***/
 		case 'product.created': {
 			let product = await ProductDao.getProductByStripeId(data.id);
@@ -359,10 +346,8 @@ async function handleWebhook(req, res) {
 			const subscription = event.data.object;
 			if (subscription.metadata.type === 'word_buys') {
 				console.log(`Updating word_buys for subscription ${subscription.id}`);
-
 				// Get new expiration date
 				const newExpiresAt = new Date(subscription.current_period_end * 1000);
-
 				// Update `expires_at` in all word_buys linked to this subscription
 				await prisma.word_buy.updateMany({
 					where: { stripe_subscription_id: subscription.id },
@@ -374,10 +359,8 @@ async function handleWebhook(req, res) {
 				});
 				console.log('Updated expires_at for all word_buys in subscription:', subscription.id);
 			}
-
 			break;
 		}
-
 		case 'customer.subscription.deleted': {
 			const subscription = event.data.object;
 			if (subscription.metadata.type === 'word_buys') {
@@ -386,13 +369,11 @@ async function handleWebhook(req, res) {
 					where: { stripe_subscription_id: subscription.id },
 					data: { stripe_subscription_id: null },
 				});
-
 				// Also update business record to remove subscription
 				await prisma.business.updateMany({
 					where: { word_buy_stripe_subscription_id: subscription.id },
 					data: { word_buy_stripe_subscription_id: null },
 				});
-
 				console.log('Subscription deleted, word_buys marked as deleted:', subscription.id);
 			}
 			break;
@@ -400,10 +381,9 @@ async function handleWebhook(req, res) {
 		default:
 			console.log(`Unhandled event type ${event.type}`);
 	}
-
 	res.json({ received: true });
 }
-
-module.exports = {
+export { handleWebhook };
+export default {
 	handleWebhook,
 };

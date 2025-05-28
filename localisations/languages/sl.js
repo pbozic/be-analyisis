@@ -70,4 +70,4 @@ const sl = {
 		referral: 'Vaša nagrada za priporočilo je bila dodana v vaš račun',
 	},
 };
-module.exports = sl;
+export default sl;

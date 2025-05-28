@@ -1,8 +1,9 @@
-const { cloudprofiler_v2 } = require('googleapis');
+import * as googleapis from 'googleapis';
 
-const prisma = require('../prisma/prisma');
-const { DOCUMENT_TYPE, DELIVERY_ORDER_STATUS, DELIVERY_ORDER_END_STATES } = require('../lib/constants');
-const gApi = require('../lib/gApis');
+import prisma from '../prisma/prisma.js';
+import { DOCUMENT_TYPE, DELIVERY_ORDER_STATUS, DELIVERY_ORDER_END_STATES } from '../lib/constants.js';
+import gApi from '../lib/gApis.js';
+const { cloudprofiler_v2 } = googleapis;
 /**
  *
  * @param {Object} timeline - the order timeline object with entries which must have status and timestamp and can have additional fields
@@ -19,7 +20,6 @@ function addEntryToDeliveryOrderTimeline(timeline, status, entry_data) {
 		},
 	];
 }
-
 async function getOrders(args) {
 	try {
 		return await prisma.delivery_orders.findMany({
@@ -49,7 +49,6 @@ async function getOrders(args) {
 		throw new Error(e);
 	}
 }
-
 async function getActiveDeliveryOrders() {
 	try {
 		return await prisma.delivery_orders.findMany({
@@ -78,7 +77,6 @@ async function getActiveDeliveryOrders() {
 		throw new Error(e.message);
 	}
 }
-
 async function getOrder(order_id, args) {
 	try {
 		return prisma.delivery_orders.findFirst({
@@ -91,7 +89,6 @@ async function getOrder(order_id, args) {
 		throw new Error(e);
 	}
 }
-
 async function getActiveDeliveryOrdersForBusiness(business_id) {
 	try {
 		return await prisma.delivery_orders.findMany({
@@ -121,7 +118,6 @@ async function getActiveDeliveryOrdersForBusiness(business_id) {
 		throw new Error(e.message);
 	}
 }
-
 async function getDeliveryOrdersIfNotCompleted(user_id) {
 	try {
 		let orders = await prisma.delivery_orders.findMany({
@@ -161,7 +157,6 @@ async function getDeliveryOrdersIfNotCompleted(user_id) {
 				},
 			},
 		});
-
 		for (let order of orders) {
 			let logo = null;
 			let banner = null;
@@ -184,7 +179,6 @@ async function getDeliveryOrdersIfNotCompleted(user_id) {
 		throw new Error(e.message);
 	}
 }
-
 async function getUserByDeliveryOrderId(order_id) {
 	try {
 		const order = await prisma.delivery_orders.findUnique({
@@ -195,7 +189,6 @@ async function getUserByDeliveryOrderId(order_id) {
 				user: true,
 			},
 		});
-
 		if (order && order.user) {
 			return order.user;
 		} else {
@@ -206,7 +199,6 @@ async function getUserByDeliveryOrderId(order_id) {
 		throw error;
 	}
 }
-
 async function getActiveOrdersByDeliveryDriverId(deliverer_id) {
 	try {
 		return await prisma.delivery_orders.findMany({
@@ -247,7 +239,6 @@ async function getActiveOrdersByDeliveryDriverId(deliverer_id) {
 		throw new Error(e.message);
 	}
 }
-
 async function getOrdersByDeliveryDriverId(delivery_driver_id) {
 	try {
 		return await prisma.delivery_orders.findMany({
@@ -276,7 +267,6 @@ async function getOrdersByDeliveryDriverId(delivery_driver_id) {
 		throw new Error(e);
 	}
 }
-
 async function createOrder(order, user_id) {
 	let orderData = { ...order };
 	try {
@@ -319,7 +309,6 @@ async function createOrderSent(order_id, driver) {
 			location: driver.location,
 			accepted: false,
 		};
-
 		// Check if the driver is a delivery driver or a normal driver
 		if (driver.delivery_driver_id) {
 			data.delivery_driver = {
@@ -341,7 +330,6 @@ async function createOrderSent(order_id, driver) {
 		throw new Error(e);
 	}
 }
-
 async function isOrderSent(order_id, driver) {
 	try {
 		return prisma.delivery_order_sent.findFirst({
@@ -354,7 +342,6 @@ async function isOrderSent(order_id, driver) {
 		throw new Error(e);
 	}
 }
-
 async function acceptOrderDelivery(order, deliverer_id, vehicle_id) {
 	const { order_id } = order;
 	console.log('accept (delivery) order', order_id);
@@ -388,12 +375,12 @@ async function acceptOrderDelivery(order, deliverer_id, vehicle_id) {
 			});
 			const vehicleData = vehicle_id
 				? {
-					vehicle: {
-						connect: {
-							vehicle_id: vehicle_id,
+						vehicle: {
+							connect: {
+								vehicle_id: vehicle_id,
+							},
 						},
-					},
-				}
+					}
 				: {};
 			return prisma.delivery_orders.update({
 				where: {
@@ -457,7 +444,6 @@ async function acceptOrderDelivery(order, deliverer_id, vehicle_id) {
 		throw new Error(e);
 	}
 }
-
 async function connectOrderWithDriver(order_id, delivery_driver_id) {
 	try {
 		return await prisma.delivery_orders.update({
@@ -477,7 +463,6 @@ async function connectOrderWithDriver(order_id, delivery_driver_id) {
 		throw new Error(`Failed to connect order ${order_id} with driver ${delivery_driver_id}`);
 	}
 }
-
 async function updateOrderStatus(order_id, status) {
 	try {
 		return await prisma.$transaction(async (tx) => {
@@ -490,11 +475,9 @@ async function updateOrderStatus(order_id, status) {
 					timeline: true,
 				},
 			});
-
 			if (!order) {
 				throw new Error(`Order with ID ${order_id} not found`);
 			}
-
 			// Update the status and timeline within a transaction
 			return await tx.delivery_orders.update({
 				where: {
@@ -518,7 +501,6 @@ async function updateOrderStatus(order_id, status) {
 		throw new Error(e);
 	}
 }
-
 async function updateOrderPickupTime(order_id, pickup_time) {
 	try {
 		// Retrieve the current details
@@ -530,7 +512,6 @@ async function updateOrderPickupTime(order_id, pickup_time) {
 				details: true,
 			},
 		});
-
 		if (!order) {
 			throw new Error('Order not found');
 		}
@@ -543,7 +524,6 @@ async function updateOrderPickupTime(order_id, pickup_time) {
 				? new Date(new Date(pickup_time).getTime() + order.details.duration * 1000)
 				: pickup_time,
 		};
-
 		// Update the order with merged details and new pickup_time for ready_for_pickup_at
 		return await prisma.delivery_orders.update({
 			where: {
@@ -560,7 +540,6 @@ async function updateOrderPickupTime(order_id, pickup_time) {
 		throw new Error(e.message);
 	}
 }
-
 async function updateOrderDeliveryTime(order_id, delivery_time) {
 	try {
 		// Retrieve the current details
@@ -572,7 +551,6 @@ async function updateOrderDeliveryTime(order_id, delivery_time) {
 				details: true,
 			},
 		});
-
 		if (!order) {
 			throw new Error('Order not found');
 		}
@@ -581,7 +559,6 @@ async function updateOrderDeliveryTime(order_id, delivery_time) {
 			...order.details,
 			customer_expected_delivery_at: delivery_time,
 		};
-
 		// Update the order with merged details and new pickup_time for ready_for_pickup_at
 		return await prisma.delivery_orders.update({
 			where: {
@@ -595,7 +572,6 @@ async function updateOrderDeliveryTime(order_id, delivery_time) {
 		throw new Error(e.message);
 	}
 }
-
 async function completeOrder(order_id) {
 	try {
 		await updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED);
@@ -670,7 +646,6 @@ async function completeOrder(order_id) {
 		throw new Error(e);
 	}
 }
-
 async function acceptOrderSent(order_id, driver_id) {
 	console.log('delivery order sent accept', order_id, driver_id);
 	try {
@@ -687,7 +662,6 @@ async function acceptOrderSent(order_id, driver_id) {
 		throw new Error(e);
 	}
 }
-
 async function getSentDeliveryDrivers(order_id) {
 	try {
 		return prisma.delivery_order_sent.findMany({
@@ -711,7 +685,6 @@ async function getSentDeliveryDrivers(order_id) {
 		throw new Error(e);
 	}
 }
-
 async function updateOrderLastSentAt(order_id) {
 	try {
 		return prisma.delivery_orders.update({
@@ -726,7 +699,6 @@ async function updateOrderLastSentAt(order_id) {
 		throw new Error(e);
 	}
 }
-
 async function updateDeliveryOrderTimeline(order_id, newTimelineEntries) {
 	try {
 		// Fetch the current timeline
@@ -738,11 +710,9 @@ async function updateDeliveryOrderTimeline(order_id, newTimelineEntries) {
 				timeline: true,
 			},
 		});
-
 		if (!order) {
 			throw new Error(`Order with ID ${order_id} not found`);
 		}
-
 		return await prisma.delivery_orders.update({
 			where: {
 				order_id,
@@ -769,11 +739,9 @@ async function addTimelineEntry(order_id, status, entry_data = {}) {
 				timeline: true,
 			},
 		});
-
 		if (!order) {
 			throw new Error(`Order with ID ${order_id} not found`);
 		}
-
 		return await prisma.delivery_orders.update({
 			where: {
 				order_id,
@@ -786,7 +754,6 @@ async function addTimelineEntry(order_id, status, entry_data = {}) {
 		throw new Error(e);
 	}
 }
-
 async function updateOrder(order_id, order) {
 	let newOrder = { ...order };
 	delete newOrder.user_id;
@@ -798,11 +765,9 @@ async function updateOrder(order_id, order) {
 	delete newOrder.delivery_driver;
 	delete newOrder.driver;
 	delete newOrder.user;
-
 	if (newOrder.last_sent_at && Object.keys(newOrder.last_sent_at).length === 0) {
 		delete newOrder.last_sent_at;
 	}
-
 	try {
 		return await prisma.delivery_orders.update({
 			where: {
@@ -822,7 +787,6 @@ async function updateOrder(order_id, order) {
 		throw new Error(e);
 	}
 }
-
 async function getAlreadySentOrdersByDeliveryDriverId(deliverer_id) {
 	try {
 		return await prisma.delivery_order_sent.findMany({
@@ -839,7 +803,6 @@ async function getAlreadySentOrdersByDeliveryDriverId(deliverer_id) {
 		throw new Error(e);
 	}
 }
-
 async function getInProgressDeliveryOrdersCountForBusinessId(business_id) {
 	try {
 		const count = await prisma.delivery_orders.count({
@@ -857,7 +820,6 @@ async function getInProgressDeliveryOrdersCountForBusinessId(business_id) {
 		throw new Error(e.message);
 	}
 }
-
 async function getActiveOrderIdsForUser(user_id) {
 	try {
 		const orders = await prisma.delivery_orders.findMany({
@@ -878,7 +840,6 @@ async function getActiveOrderIdsForUser(user_id) {
 		throw new Error(e.message);
 	}
 }
-
 async function removeDriverFromOrder(order_id) {
 	try {
 		const order = await prisma.delivery_orders.update({
@@ -912,8 +873,8 @@ async function getTodayDailyMealSubscriptionsByBusinessId(business_id) {
 				menu: true,
 				menu_category: {
 					include: {
-						menu_items: true
-					}
+						menu_items: true,
+					},
 				},
 				user: true,
 			},
@@ -923,7 +884,6 @@ async function getTodayDailyMealSubscriptionsByBusinessId(business_id) {
 		throw new Error(e.message);
 	}
 }
-
 async function createDailyMealsSubscription(
 	grouped_id,
 	user_id,
@@ -1020,7 +980,6 @@ async function getDailyMealsSubscriptionByBusinessId(business_id, start_date) {
 		throw new Error(e.message);
 	}
 }
-
 async function getDailyMealsSubscriptionByUserId(user_id, start_date) {
 	const dateToUse = start_date ? new Date(start_date) : new Date();
 	const normalizedDate = new Date(dateToUse.setHours(0, 0, 0, 0));
@@ -1063,7 +1022,38 @@ async function getDailyMealsSubscriptionByUserId(user_id, start_date) {
 		throw new Error(e.message);
 	}
 }
-module.exports = {
+export { getOrders };
+export { getActiveDeliveryOrders };
+export { getOrder };
+export { getOrdersByDeliveryDriverId };
+export { createOrder };
+export { createOrderSent };
+export { isOrderSent };
+export { acceptOrderDelivery };
+export { acceptOrderSent };
+export { getSentDeliveryDrivers };
+export { updateOrderLastSentAt };
+export { updateOrderStatus };
+export { completeOrder };
+export { updateDeliveryOrderTimeline };
+export { addTimelineEntry };
+export { getUserByDeliveryOrderId };
+export { updateOrder };
+export { updateOrderPickupTime };
+export { updateOrderDeliveryTime };
+export { getDeliveryOrdersIfNotCompleted };
+export { getAlreadySentOrdersByDeliveryDriverId };
+export { getActiveOrdersByDeliveryDriverId };
+export { connectOrderWithDriver };
+export { getActiveDeliveryOrdersForBusiness };
+export { getInProgressDeliveryOrdersCountForBusinessId };
+export { getActiveOrderIdsForUser };
+export { removeDriverFromOrder };
+export { getTodayDailyMealSubscriptionsByBusinessId };
+export { createDailyMealsSubscription };
+export { getDailyMealsSubscriptionByBusinessId };
+export { getDailyMealsSubscriptionByUserId };
+export default {
 	getOrders,
 	getActiveDeliveryOrders,
 	getOrder,

@@ -1,8 +1,7 @@
-const prisma = require('../prisma/prisma');
-const UserDao = require('./User');
-const { client } = require('../lib/stripe');
-const { SERVICE_TYPE } = require('../lib/constants');
-
+import prisma from '../prisma/prisma.js';
+import UserDao from './User.js';
+import { client } from '../lib/stripe.js';
+import { SERVICE_TYPE } from '../lib/constants.js';
 const getAllBusinessUsers = async () => {
 	try {
 		return await prisma.business_users.findMany({
@@ -16,7 +15,6 @@ const getAllBusinessUsers = async () => {
 		throw new Error(error);
 	}
 };
-
 const getBusinessUserByUserId = async (userId) => {
 	try {
 		return await prisma.business_users.findUnique({
@@ -48,7 +46,6 @@ const getBusinessUserByUserId = async (userId) => {
 		throw new Error(error);
 	}
 };
-
 const getBusinessUsersByBusinessId = async (business_id) => {
 	try {
 		return await prisma.business_users.findMany({
@@ -62,7 +59,6 @@ const getBusinessUsersByBusinessId = async (business_id) => {
 		throw new Error(error);
 	}
 };
-
 const getBusinessUsersByBusinessType = async (type) => {
 	try {
 		return await prisma.business.findMany({
@@ -80,7 +76,6 @@ const getBusinessUsersByBusinessType = async (type) => {
 		throw new Error(error);
 	}
 };
-
 const getAllBusinessUsersForBusinessByCompanyRole = async (business_id, company_role) => {
 	try {
 		return await prisma.business_users.findMany({
@@ -97,7 +92,6 @@ const getAllBusinessUsersForBusinessByCompanyRole = async (business_id, company_
 		throw new Error(error);
 	}
 };
-
 const createBusinessUser = async (userData, business_id) => {
 	try {
 		let stripeCustomer = await client.createCustomer(
@@ -105,18 +99,15 @@ const createBusinessUser = async (userData, business_id) => {
 			userData.data.first_name + ' ' + userData.data.last_name,
 			userData.data.telephone
 		);
-
 		userData.data.date_of_birth = new Date(userData.data.date_of_birth);
 		const userObj = {
 			...userData.data,
 			stripe_customer_id: stripeCustomer.id,
 		};
-
 		const newUser = await UserDao.createNewUser(userObj, true);
 		if (!newUser) {
 			throw new Error('Failed to create user for new driver');
 		}
-
 		const businessUser = await prisma.business_users.create({
 			data: {
 				business_id,
@@ -124,14 +115,12 @@ const createBusinessUser = async (userData, business_id) => {
 				company_role: userData.company_role,
 			},
 		});
-
 		return { newUser, businessUser };
 	} catch (error) {
 		console.error('Error creating a business user:', error);
 		throw new Error(error);
 	}
 };
-
 const removeBusinessUser = async (business_users_id) => {
 	try {
 		return await prisma.business_users.delete({
@@ -142,7 +131,6 @@ const removeBusinessUser = async (business_users_id) => {
 		throw new Error(error);
 	}
 };
-
 const updateBusinessUser = async (business_users_id, updates) => {
 	try {
 		return await prisma.business_users.update({
@@ -165,7 +153,6 @@ const updateCompanyRole = async (business_users_id, company_role) => {
 		throw new Error(error);
 	}
 };
-
 async function addOperatingAddress(business_users_id, address_id) {
 	try {
 		return await prisma.business_users.update({
@@ -177,7 +164,6 @@ async function addOperatingAddress(business_users_id, address_id) {
 		throw new Error(error);
 	}
 }
-
 const updateBusinessUserOnlineStatus = async (business_users_id, online) => {
 	try {
 		return await prisma.business_users.update({
@@ -192,7 +178,6 @@ const updateBusinessUserOnlineStatus = async (business_users_id, online) => {
 		throw new Error(error);
 	}
 };
-
 const updateAllowance = async (business_users_id, wallet, purchase_order, type) => {
 	const updateData = {};
 	switch (type) {
@@ -226,8 +211,19 @@ const updateAllowance = async (business_users_id, wallet, purchase_order, type) 
 	});
 	return business_user;
 };
-
-module.exports = {
+export { getAllBusinessUsers };
+export { getBusinessUserByUserId };
+export { getBusinessUsersByBusinessId };
+export { getBusinessUsersByBusinessType };
+export { getAllBusinessUsersForBusinessByCompanyRole };
+export { createBusinessUser };
+export { removeBusinessUser };
+export { updateBusinessUser };
+export { updateCompanyRole };
+export { addOperatingAddress };
+export { updateBusinessUserOnlineStatus };
+export { updateAllowance };
+export default {
 	getAllBusinessUsers,
 	getBusinessUserByUserId,
 	getBusinessUsersByBusinessId,

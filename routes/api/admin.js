@@ -1,11 +1,9 @@
-var express = require('express');
+import * as express from 'express';
+
+import joi from '../../middleware/joi.js';
+import AdminUserRoutes from './admin/users.js';
+import AdminBusinessRoutes from './admin/business.js';
 const router = express.Router();
-
-const joi = require('../../middleware/joi');
-const AdminUserRoutes = require('./admin/users');
-const AdminBusinessRoutes = require('./admin/business');
-
 router.use('/users', AdminUserRoutes);
 router.use('/business', AdminBusinessRoutes);
-
-module.exports = router;
+export default router;

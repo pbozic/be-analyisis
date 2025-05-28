@@ -1,9 +1,8 @@
-const { name } = require('ejs');
+import { name } from 'ejs';
 
-const prisma = require('../prisma/prisma');
-const stripe = require('../lib/stripe');
-const { update } = require('../controllers/BusinessController');
-
+import prisma from '../prisma/prisma.js';
+import stripe from '../lib/stripe.js';
+import { update } from '../controllers/BusinessController.js';
 async function createPromoSection(args, translations) {
 	// Create a new translatable record
 	let translatable = await prisma.translatable.create({
@@ -29,7 +28,6 @@ async function createPromoSection(args, translations) {
 	const new_promo_section = await prisma.promo_sections.create({
 		data: sectionData,
 	});
-
 	// Create translations
 	let translats = [];
 	for (let translation of translations) {
@@ -46,12 +44,10 @@ async function createPromoSection(args, translations) {
 		});
 		translats.push(trans);
 	}
-
 	// Attach translations to the response
 	new_promo_section.translations = translats;
 	return new_promo_section;
 }
-
 async function updatePromoSection(id, args, translations) {
 	const sectionData = {
 		name: args.name,
@@ -74,7 +70,6 @@ async function updatePromoSection(id, args, translations) {
 			translatable: true,
 		},
 	});
-
 	if (translations && translations.length > 0) {
 		// Delete existing translations
 		await prisma.translations.deleteMany({
@@ -82,7 +77,6 @@ async function updatePromoSection(id, args, translations) {
 				translatable_id: updated_promo_section.translatable_id,
 			},
 		});
-
 		// Create new translations
 		let translats = [];
 		for (let translation of translations) {
@@ -101,10 +95,8 @@ async function updatePromoSection(id, args, translations) {
 		}
 		updated_promo_section.translations = translats;
 	}
-
 	return updated_promo_section;
 }
-
 async function reorderPromoSections(promo_sections_ids) {
 	try {
 		return await prisma.$transaction(
@@ -120,7 +112,6 @@ async function reorderPromoSections(promo_sections_ids) {
 		throw error;
 	}
 }
-
 async function deletePromoSection(id) {
 	return await prisma.promo_sections.delete({
 		where: {
@@ -128,13 +119,11 @@ async function deletePromoSection(id) {
 		},
 	});
 }
-
 async function getPromoSectionById(id) {
 	const promo_section = await prisma.promo_sections.findUnique({
 		where: {
 			promo_sections_id: id,
 		},
-
 		include: {
 			promo_section_buy: true,
 			translatable: {
@@ -144,17 +133,13 @@ async function getPromoSectionById(id) {
 			},
 		},
 	});
-
 	if (!promo_section) {
 		throw new Error('Promo Section not found');
 	}
-
 	promo_section.translations = promo_section.translatable.translations;
 	delete promo_section.translatable;
-
 	return promo_section;
 }
-
 async function getAllPromoSections() {
 	const promo_sections = await prisma.promo_sections.findMany({
 		include: {
@@ -169,12 +154,10 @@ async function getAllPromoSections() {
 	promo_sections.map((promo_section) => {
 		promo_section.translations = promo_section.translatable.translations;
 		delete promo_section.translatable;
-
 		return promo_section;
 	});
 	return promo_sections;
 }
-
 async function getAllPromoSectionsByServiceType(type) {
 	const promo_sections = await prisma.promo_sections.findMany({
 		where: {
@@ -192,12 +175,10 @@ async function getAllPromoSectionsByServiceType(type) {
 	promo_sections.map((promo_section) => {
 		promo_section.translations = promo_section.translatable.translations;
 		delete promo_section.translatable;
-
 		return promo_section;
 	});
 	return promo_sections;
 }
-
 async function createPromoAd(promoAdData, categories_ids, promo_banners_ids) {
 	return await prisma.promo_ads.create({
 		data: {
@@ -225,7 +206,6 @@ async function createPromoAd(promoAdData, categories_ids, promo_banners_ids) {
 		},
 	});
 }
-
 async function updatePromoAd(id, promoAdData, categories_ids, promo_banners_ids) {
 	return await prisma.promo_ads.update({
 		where: {
@@ -257,7 +237,6 @@ async function updatePromoAd(id, promoAdData, categories_ids, promo_banners_ids)
 		},
 	});
 }
-
 async function deletePromoAd(id) {
 	return await prisma.$transaction([
 		prisma.promo_ads_category.deleteMany({
@@ -272,7 +251,6 @@ async function deletePromoAd(id) {
 		}),
 	]);
 }
-
 async function getPromoAdById(id) {
 	return await prisma.promo_ads.findUnique({
 		where: {
@@ -284,7 +262,6 @@ async function getPromoAdById(id) {
 		},
 	});
 }
-
 async function getAllPromoAds() {
 	return await prisma.promo_ads.findMany({
 		include: {
@@ -297,7 +274,6 @@ async function getAllPromoAds() {
 		},
 	});
 }
-
 async function getAllPromoAdsByServiceType(type) {
 	return await prisma.promo_ads.findMany({
 		where: {
@@ -313,7 +289,6 @@ async function getAllPromoAdsByServiceType(type) {
 		},
 	});
 }
-
 async function getAllPromoAdsByCategory(category) {
 	return await prisma.promo_ads.findMany({
 		where: {
@@ -333,10 +308,8 @@ async function getAllPromoAdsByCategory(category) {
 		},
 	});
 }
-
 async function createPromoBanner(promoBannerData, imageFileData) {
 	const { file_type, mime_type } = imageFileData || {};
-
 	return await prisma.promo_banners.create({
 		data: {
 			title: promoBannerData.title,
@@ -369,13 +342,11 @@ async function createPromoBanner(promoBannerData, imageFileData) {
 		},
 	});
 }
-
 async function updatePromoBanner(id, promoBannerData, imageFileData) {
 	try {
 		return await prisma.$transaction(async (prisma) => {
 			const updateData = { ...promoBannerData };
 			delete updateData.promo_ads_id;
-
 			if (promoBannerData.promo_ads_id) {
 				updateData.promo_ads = {
 					connect: {
@@ -387,7 +358,6 @@ async function updatePromoBanner(id, promoBannerData, imageFileData) {
 					disconnect: true,
 				};
 			}
-
 			if (imageFileData) {
 				const { file_type, mime_type } = imageFileData;
 				updateData.files = {
@@ -398,7 +368,6 @@ async function updatePromoBanner(id, promoBannerData, imageFileData) {
 					},
 				};
 			}
-
 			return await prisma.promo_banners.update({
 				where: {
 					promo_banners_id: id,
@@ -414,7 +383,6 @@ async function updatePromoBanner(id, promoBannerData, imageFileData) {
 		throw new Error('Failed to update promo banner: ' + error.message);
 	}
 }
-
 async function deletePromoBanner(id) {
 	return await prisma.promo_banners.delete({
 		where: {
@@ -422,7 +390,6 @@ async function deletePromoBanner(id) {
 		},
 	});
 }
-
 async function getPromoBannerById(id) {
 	return await prisma.promo_banners.findUnique({
 		where: {
@@ -430,7 +397,6 @@ async function getPromoBannerById(id) {
 		},
 	});
 }
-
 async function getAllPromoBanners() {
 	return await prisma.promo_banners.findMany({
 		include: {
@@ -443,7 +409,6 @@ async function getAllPromoBanners() {
 		},
 	});
 }
-
 async function getAllPromoBannersByType(type) {
 	return await prisma.promo_banners.findMany({
 		where: {
@@ -459,7 +424,6 @@ async function getAllPromoBannersByType(type) {
 		},
 	});
 }
-
 async function getAllPromoBannersBySize(size) {
 	return await prisma.promo_banners.findMany({
 		where: {
@@ -475,7 +439,6 @@ async function getAllPromoBannersBySize(size) {
 		},
 	});
 }
-
 async function getAllPromoBannersByAd(ad) {
 	return await prisma.promo_banners.findMany({
 		where: {
@@ -491,7 +454,6 @@ async function getAllPromoBannersByAd(ad) {
 		},
 	});
 }
-
 // async function getAllPromoBannersBySection(section) {
 //     return await prisma.promo_banners.findMany({
 //         where: {
@@ -513,18 +475,14 @@ async function createPromoSectionBuy(args) {
 		},
 		tier: args.tier,
 	};
-
 	if (args.active_at) {
 		data.active_at = args.active_at;
 	}
-
 	if (args.expires_at) {
 		data.expires_at = args.expires_at;
 	}
-
 	return await prisma.promo_sections_buy.create({ data });
 }
-
 async function getPromoSectionBuyById(id) {
 	return await prisma.promo_sections_buy.findUnique({
 		where: {
@@ -532,11 +490,9 @@ async function getPromoSectionBuyById(id) {
 		},
 	});
 }
-
 async function getAllPromoSectionBuys() {
 	return await prisma.promo_sections_buy.findMany();
 }
-
 async function getAllPromoSectionBuysBySection(section) {
 	return await prisma.promo_sections_buy.findMany({
 		where: {
@@ -544,7 +500,6 @@ async function getAllPromoSectionBuysBySection(section) {
 		},
 	});
 }
-
 async function getAllPromoSectionBuysByBusiness(business) {
 	return await prisma.promo_sections_buy.findMany({
 		where: {
@@ -554,7 +509,6 @@ async function getAllPromoSectionBuysByBusiness(business) {
 		},
 	});
 }
-
 async function getAllPromoSectionBuysByTier(tier) {
 	return await prisma.promo_sections_buy.findMany({
 		where: {
@@ -562,7 +516,6 @@ async function getAllPromoSectionBuysByTier(tier) {
 		},
 	});
 }
-
 async function updatePromoSectionBuy(id, args) {
 	return await prisma.promo_sections_buy.update({
 		where: {
@@ -571,8 +524,36 @@ async function updatePromoSectionBuy(id, args) {
 		data: args,
 	});
 }
-
-module.exports = {
+export { createPromoSection };
+export { updatePromoSection };
+export { reorderPromoSections };
+export { deletePromoSection };
+export { getPromoSectionById };
+export { getAllPromoSections };
+export { getAllPromoSectionsByServiceType };
+export { createPromoAd };
+export { updatePromoAd };
+export { deletePromoAd };
+export { getPromoAdById };
+export { getAllPromoAds };
+export { getAllPromoAdsByServiceType };
+export { getAllPromoAdsByCategory };
+export { createPromoBanner };
+export { updatePromoBanner };
+export { deletePromoBanner };
+export { getPromoBannerById };
+export { getAllPromoBanners };
+export { getAllPromoBannersByType };
+export { getAllPromoBannersBySize };
+export { getAllPromoBannersByAd };
+export { createPromoSectionBuy };
+export { getPromoSectionBuyById };
+export { getAllPromoSectionBuys };
+export { getAllPromoSectionBuysBySection };
+export { getAllPromoSectionBuysByBusiness };
+export { getAllPromoSectionBuysByTier };
+export { updatePromoSectionBuy };
+export default {
 	createPromoSection,
 	updatePromoSection,
 	reorderPromoSections,
@@ -595,7 +576,6 @@ module.exports = {
 	getAllPromoBannersByType,
 	getAllPromoBannersBySize,
 	getAllPromoBannersByAd,
-	// getAllPromoBannersBySection,
 	createPromoSectionBuy,
 	getPromoSectionBuyById,
 	getAllPromoSectionBuys,

@@ -1,5 +1,4 @@
-const prisma = require('../prisma/prisma');
-
+import prisma from '../prisma/prisma.js';
 const createMenuItem = async (categoryId, menuItemData, is_copy) => {
 	return await prisma.menu_items.create({
 		data: {
@@ -11,14 +10,12 @@ const createMenuItem = async (categoryId, menuItemData, is_copy) => {
 		},
 	});
 };
-
 const addMenuItemIdToOrder = async (menu_category_id, menuItemIdToAdd) => {
 	try {
 		const category = await prisma.menu_categories.findUnique({
 			where: { menu_category_id: menu_category_id },
 			select: { menu_items_ordered: true },
 		});
-
 		let orderedItems = category.menu_items_ordered ? category.menu_items_ordered : [];
 		if (!orderedItems.includes(menuItemIdToAdd)) {
 			orderedItems.push(menuItemIdToAdd);
@@ -32,14 +29,12 @@ const addMenuItemIdToOrder = async (menu_category_id, menuItemIdToAdd) => {
 		throw error;
 	}
 };
-
 const removeMenuItemIdFromOrder = async (menu_category_id, menuItemIdToRemove) => {
 	try {
 		const category = await prisma.menu_categories.findUnique({
 			where: { menu_category_id: menu_category_id },
 			select: { menu_items_ordered: true },
 		});
-
 		let orderedItems = category.menu_items_ordered ? category.menu_items_ordered : [];
 		orderedItems = orderedItems.filter((id) => id !== menuItemIdToRemove);
 		return await prisma.menu_categories.update({
@@ -51,7 +46,6 @@ const removeMenuItemIdFromOrder = async (menu_category_id, menuItemIdToRemove) =
 		throw error;
 	}
 };
-
 const getMenuItemsByIds = async (menu_item_ids) => {
 	return await prisma.menu_items.findMany({
 		where: {
@@ -72,7 +66,6 @@ const getMenuItemsByIds = async (menu_item_ids) => {
 		},
 	});
 };
-
 const getMenuItemsByBusinessId = async (business_id, args) => {
 	return await prisma.menu_items.findMany({
 		where: {
@@ -89,7 +82,6 @@ const getMenuItemsByBusinessId = async (business_id, args) => {
 		},
 	});
 };
-
 const getMenuItemsByCategoryId = async (categoryId) => {
 	return await prisma.menu_items.findMany({
 		where: {
@@ -97,7 +89,6 @@ const getMenuItemsByCategoryId = async (categoryId) => {
 		},
 	});
 };
-
 const deleteMenuItem = async (menuItemId) => {
 	return await prisma.menu_items.delete({
 		where: {
@@ -105,7 +96,6 @@ const deleteMenuItem = async (menuItemId) => {
 		},
 	});
 };
-
 const updateMenuItem = async (menuItemId, data) => {
 	// Exclude price from the data object if it exists
 	const { price, ...updateData } = data;
@@ -116,7 +106,6 @@ const updateMenuItem = async (menuItemId, data) => {
 		data: updateData,
 	});
 };
-
 const updateMenuItemPrice = async (menuItemId, price) => {
 	return await prisma.menu_items.update({
 		where: {
@@ -127,7 +116,6 @@ const updateMenuItemPrice = async (menuItemId, price) => {
 		},
 	});
 };
-
 const addMenuItemToCategory = async (menu_item_id, menu_category_id) => {
 	return await prisma.menu_items.update({
 		where: {
@@ -140,7 +128,6 @@ const addMenuItemToCategory = async (menu_item_id, menu_category_id) => {
 		},
 	});
 };
-
 const removeMenuItemFromCategory = async (menu_item_id) => {
 	try {
 		return await prisma.menu_items.update({
@@ -156,8 +143,18 @@ const removeMenuItemFromCategory = async (menu_item_id) => {
 		throw new Error(error);
 	}
 };
-
-module.exports = {
+export { createMenuItem };
+export { addMenuItemIdToOrder };
+export { removeMenuItemIdFromOrder };
+export { getMenuItemsByIds };
+export { getMenuItemsByCategoryId };
+export { getMenuItemsByBusinessId };
+export { deleteMenuItem };
+export { updateMenuItem };
+export { updateMenuItemPrice };
+export { addMenuItemToCategory };
+export { removeMenuItemFromCategory };
+export default {
 	createMenuItem,
 	addMenuItemIdToOrder,
 	removeMenuItemIdFromOrder,

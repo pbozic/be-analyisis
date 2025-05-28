@@ -70,5 +70,4 @@ const en = {
 		referral: 'Your referral reward has been added to your account',
 	},
 };
-
-module.exports = en;
+export default en;

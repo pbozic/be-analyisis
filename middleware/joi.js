@@ -20,5 +20,4 @@ const joiValidate = (schema) => {
 		}
 	};
 };
-
-module.exports = joiValidate;
+export default joiValidate;

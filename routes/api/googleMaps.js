@@ -1,9 +1,7 @@
-var express = require('express');
+import * as express from 'express';
 
-const { geocodeAddress, getPlacePredictions } = require('../../controllers/GoogleMapsController');
+import { geocodeAddress, getPlacePredictions } from '../../controllers/GoogleMapsController.js';
 const router = express.Router();
-
 router.get('/autocomplete', getPlacePredictions);
 router.post('/geocode_address', geocodeAddress);
-
-module.exports = router;
+export default router;

@@ -1,8 +1,7 @@
-const express = require('express');
+import * as express from 'express';
 
+import PromoController from '../../../controllers/PromoController.js';
 const router = express.Router();
-const PromoController = require('../../../controllers/PromoController');
-
 router.get('/', PromoController.getAllPromoSectionBuys);
 router.post('/request', PromoController.createCheckoutSessionForPromoBuy);
 router.get('/section/:section', PromoController.getAllPromoSectionBuysBySection);
@@ -14,5 +13,4 @@ router.put('/:id', PromoController.updatePromoSectionBuy);
 router.delete('/:id', PromoController.deletePromoSectionBuy);
 router.get('/:id', PromoController.getPromoSectionBuyById);
 router.post('/stripeSub/:id', PromoController.addStripeSubToPromoSectionBuy);
-
-module.exports = router;
+export default router;

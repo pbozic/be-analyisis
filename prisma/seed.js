@@ -1,14 +1,15 @@
-require('dotenv').config();
+import { config } from 'dotenv';
 
-const prisma = require('./prisma');
-const userSeed = require('./seeders/userSeeder');
-const allergernSeed = require('./seeders/alergenSeeder');
-const fiscalDevicesSeeder = require('./seeders/fiscalDevicesSeeder');
-const categoriesSeed = require('./seeders/categoriesSeeder');
-const cuisinesSeed = require('./seeders/dietsSeeder');
-const promoSectionSeed = require('./seeders/promoSectionSeeder');
-const municipalitiesSeeder = require('./seeders/municipalitiesSeeder');
-const settlementSeeder = require('./seeders/settlementSeeder');
+import prisma from './prisma.js';
+import userSeed from './seeders/userSeeder.js';
+import allergernSeed from './seeders/alergenSeeder.js';
+import fiscalDevicesSeeder from './seeders/fiscalDevicesSeeder.js';
+import categoriesSeed from './seeders/categoriesSeeder.js';
+import cuisinesSeed from './seeders/dietsSeeder.js';
+import promoSectionSeed from './seeders/promoSectionSeeder.js';
+import municipalitiesSeeder from './seeders/municipalitiesSeeder.js';
+import settlementSeeder from './seeders/settlementSeeder.js';
+({ config }).config();
 async function main() {
 	if (process.env.ENVIRONMENT === 'development') {
 		// await userSeed();
@@ -22,7 +23,6 @@ async function main() {
 	await fiscalDevicesSeeder();
 	await settlementSeeder();
 }
-
 main()
 	.then(async () => {
 		await prisma.$disconnect();

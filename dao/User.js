@@ -1,12 +1,11 @@
-const bcrypt = require('bcrypt');
+import bcrypt from 'bcrypt';
 
-const prisma = require('../prisma/prisma');
-const { createDocument, linkDocumentToTransaction } = require('./Document');
-const { addFileToDocument } = require('./File');
-const S3Helper = require('../lib/s3');
-const { USER_ROLE, ACCOUNT_ACTIONS } = require('../lib/constants');
-const WalletFundsDao = require('../dao/WalletFunds');
-
+import prisma from '../prisma/prisma.js';
+import { createDocument, linkDocumentToTransaction } from './Document.js';
+import { addFileToDocument } from './File.js';
+import S3Helper from '../lib/s3.js';
+import { USER_ROLE, ACCOUNT_ACTIONS } from '../lib/constants.js';
+import WalletFundsDao from './WalletFunds.js';
 const getUsers = async (args) => {
 	try {
 		return prisma.users.findMany({
@@ -21,7 +20,6 @@ const getUsers = async (args) => {
 		return new Error(error);
 	}
 };
-
 const getUserById = async (user_id, args) => {
 	try {
 		return prisma.users.findUnique({
@@ -34,7 +32,6 @@ const getUserById = async (user_id, args) => {
 		throw new Error(error);
 	}
 };
-
 const getUserByReferralCode = async (code, args) => {
 	try {
 		return prisma.users.findUnique({
@@ -47,7 +44,6 @@ const getUserByReferralCode = async (code, args) => {
 		throw new Error(error);
 	}
 };
-
 const getScheduledUsers = async () => {
 	try {
 		const merchantBusiness = await prisma.business.findFirst({
@@ -56,17 +52,13 @@ const getScheduledUsers = async () => {
 				offers_daily_meals: true,
 			},
 		});
-
 		console.info('MERCHANT BUSINESSES', merchantBusiness);
-
 		let sortingScheduledUsers;
-
 		if (!merchantBusiness) {
 			console.info('No merchant business found that offers daily meals');
 		} else {
 			sortingScheduledUsers = merchantBusiness.daily_users_sorted;
 		}
-
 		const scheduledUsers = await prisma.users.findMany({
 			where: {
 				subscribed_to_daily_meals: true,
@@ -79,7 +71,6 @@ const getScheduledUsers = async () => {
 				},
 			},
 		});
-
 		if (sortingScheduledUsers && sortingScheduledUsers.length !== 0) {
 			// Map user_id to user object for easy lookup
 			const userMap = new Map(scheduledUsers.map((user) => [user.user_id, user]));
@@ -94,7 +85,6 @@ const getScheduledUsers = async () => {
 		throw error;
 	}
 };
-
 const getUserByEmailOrTelephone = async (query, args) => {
 	try {
 		return prisma.users.findFirst({
@@ -168,7 +158,6 @@ const getUser = async (email, args) => {
 		return new Error(error);
 	}
 };
-
 const updateUser = async (user_id, user) => {
 	try {
 		// We do not allow the user to update their email, password, telephone, user_role, or addresses in a general update
@@ -179,7 +168,6 @@ const updateUser = async (user_id, user) => {
 		delete user.password;
 		delete user.addresses;
 		delete user.user_role;
-
 		return prisma.users.update({
 			where: {
 				user_id: user_id,
@@ -193,7 +181,6 @@ const updateUser = async (user_id, user) => {
 		return new Error(error);
 	}
 };
-
 const updateScheduledUser = async (user_id, user) => {
 	try {
 		return await prisma.users.update({
@@ -216,7 +203,6 @@ const updateScheduledUser = async (user_id, user) => {
 		return new Error(error);
 	}
 };
-
 const updateEmail = async (user_id, email) => {
 	try {
 		return prisma.users.update({
@@ -259,7 +245,6 @@ const updateUserPassword = async (user_id, password) => {
 		return new Error(error);
 	}
 };
-
 const updateUserType = async (user_id, user_role) => {
 	try {
 		return prisma.users.update({
@@ -274,7 +259,6 @@ const updateUserType = async (user_id, user_role) => {
 		return new Error(error);
 	}
 };
-
 const updateUserTaxiPreferences = async (user_id, taxiPreferences) => {
 	try {
 		return await prisma.users.update({
@@ -285,7 +269,6 @@ const updateUserTaxiPreferences = async (user_id, taxiPreferences) => {
 		return new Error(error);
 	}
 };
-
 const updateUserDateOfBirth = async (user_id, dateOfBirth) => {
 	try {
 		return await prisma.users.update({
@@ -296,7 +279,6 @@ const updateUserDateOfBirth = async (user_id, dateOfBirth) => {
 		return new Error(error);
 	}
 };
-
 const updateUserDisabled = async (user_id, disabled, action_creator_user_id, reason) => {
 	try {
 		return await prisma.$transaction(async (tx) => {
@@ -304,7 +286,6 @@ const updateUserDisabled = async (user_id, disabled, action_creator_user_id, rea
 				where: { user_id },
 				data: { disabled },
 			});
-
 			await tx.account_actions.create({
 				data: {
 					user: { connect: { user_id } },
@@ -313,7 +294,6 @@ const updateUserDisabled = async (user_id, disabled, action_creator_user_id, rea
 					action: disabled ? ACCOUNT_ACTIONS.SUSPEND : ACCOUNT_ACTIONS.UNSUSPEND,
 				},
 			});
-
 			return updatedUser;
 		});
 	} catch (error) {
@@ -321,7 +301,6 @@ const updateUserDisabled = async (user_id, disabled, action_creator_user_id, rea
 		throw new Error('Failed to update user status');
 	}
 };
-
 const updateUserNotificationPreferences = async (user_id, notificationPreferences) => {
 	try {
 		return await prisma.users.update({
@@ -332,7 +311,6 @@ const updateUserNotificationPreferences = async (user_id, notificationPreference
 		return new Error(error);
 	}
 };
-
 const updateUserTaxiPushNotifications = async (user_id, pushNotificationPreferences) => {
 	try {
 		return await prisma.users.update({
@@ -343,7 +321,6 @@ const updateUserTaxiPushNotifications = async (user_id, pushNotificationPreferen
 		return new Error(error);
 	}
 };
-
 const updateUserTransferPushNotifications = async (user_id, pushNotificationPreferences) => {
 	try {
 		return await prisma.users.update({
@@ -354,7 +331,6 @@ const updateUserTransferPushNotifications = async (user_id, pushNotificationPref
 		return new Error(error);
 	}
 };
-
 const updateUserDeliveryPushNotifications = async (user_id, pushNotificationPreferences) => {
 	try {
 		return await prisma.users.update({
@@ -365,7 +341,6 @@ const updateUserDeliveryPushNotifications = async (user_id, pushNotificationPref
 		return new Error(error);
 	}
 };
-
 const updateUserSpicyPreferences = async (user_id, spicyPreferences) => {
 	try {
 		return await prisma.users.update({
@@ -376,7 +351,6 @@ const updateUserSpicyPreferences = async (user_id, spicyPreferences) => {
 		return new Error(error);
 	}
 };
-
 const updateUserTransferPreferences = async (user_id, transfer_preferences) => {
 	try {
 		return await prisma.users.update({
@@ -387,7 +361,6 @@ const updateUserTransferPreferences = async (user_id, transfer_preferences) => {
 		return new Error(error);
 	}
 };
-
 const updateUserRadioPreferences = async (user_id, radioPreferences) => {
 	try {
 		return await prisma.users.update({
@@ -398,7 +371,6 @@ const updateUserRadioPreferences = async (user_id, radioPreferences) => {
 		return new Error(error);
 	}
 };
-
 const updateUserAllergiesPreferences = async (user_id, allergiesPreferences) => {
 	try {
 		return await prisma.users.update({
@@ -409,7 +381,6 @@ const updateUserAllergiesPreferences = async (user_id, allergiesPreferences) => 
 		return new Error(error);
 	}
 };
-
 const updateUserTelephoneVerified = async (user_id, telephoneVerified) => {
 	try {
 		return await prisma.users.update({
@@ -420,14 +391,12 @@ const updateUserTelephoneVerified = async (user_id, telephoneVerified) => {
 		return new Error(error);
 	}
 };
-
 const createNewUser = async (user, hashPassword = false) => {
 	try {
 		let newUser = user;
 		if (newUser?.user_role && [USER_ROLE.DRIVER, USER_ROLE.DELIVERY_DRIVER].includes(newUser?.user_role)) {
 			newUser.active = false;
 		}
-
 		// Check if password hashing is needed
 		if (hashPassword && user.password) {
 			let hash = await bcrypt.hash(user.password, Number(process.env.BCRYPT_SALT_ROUNDS));
@@ -451,7 +420,6 @@ const createNewUser = async (user, hashPassword = false) => {
 			};
 			delete newUser.confirm_password;
 		}
-
 		// Create the user with the potentially hashed password
 		return await prisma.users.create({
 			data: newUser,
@@ -477,7 +445,6 @@ const createNewUser = async (user, hashPassword = false) => {
 // 	  throw new Error(error.message || 'Failed to create wallet balance record.');
 // 	}
 // }
-
 // /**
 //  * Adds a specified amount(in cents) to the user's wallet balance and records the transaction while creating wallet funds and ocnnecting the two.
 //  *
@@ -533,7 +500,6 @@ const createNewUser = async (user, hashPassword = false) => {
 // 	  throw error;
 // 	}
 //   };
-
 // async function removeWalletBalance(userId, amountToSubtract, order_id, order_type = "delivery") {
 // 	try {
 // 		await prisma.$transaction(async (transaction) => {
@@ -586,7 +552,6 @@ const createNewUser = async (user, hashPassword = false) => {
 // 		  throw error;
 // 		}
 // }
-
 async function deleteUserByUserId(userId) {
 	try {
 		return await prisma.users.delete({
@@ -599,7 +564,6 @@ async function deleteUserByUserId(userId) {
 		throw error;
 	}
 }
-
 const updateWalletBalance = async (userId, amount, documents) => {
 	try {
 		const newTransaction = await WalletFundsDao.createWalletFunds(userId, Math.round(amount * 100));
@@ -612,7 +576,6 @@ const updateWalletBalance = async (userId, amount, documents) => {
 		// 		},
 		// 	},
 		// });
-
 		// const newTransaction = await prisma.transactions.create({
 		// 	data: {
 		// 		user: { connect: { user_id: userId } },
@@ -621,22 +584,18 @@ const updateWalletBalance = async (userId, amount, documents) => {
 		// 		description: 'Added funds to wallet',
 		// 	},
 		// });
-
 		if (documents && Array.isArray(documents)) {
 			for (const file of documents) {
 				const documentData = {
 					document_type: file.document_type,
 				};
 				const newDocument = await createDocument(documentData);
-
 				await linkDocumentToTransaction(newDocument.document_id, newTransaction.transaction_id);
-
 				const base64 = file.base64;
 				delete file.base64;
 				delete file.document_type;
 				delete file.name;
 				const newFile = await addFileToDocument(newDocument.document_id, file, newDocument.public);
-
 				const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
 				await S3Helper.SaveObject(
 					key,
@@ -657,7 +616,6 @@ const updateWalletBalance = async (userId, amount, documents) => {
 		throw new Error(error);
 	}
 };
-
 const getTransactions = async (userId) => {
 	try {
 		return await prisma.transactions.findMany({
@@ -684,7 +642,6 @@ const updateUserLanguage = async (user_id, language) => {
 		return new Error(error);
 	}
 };
-
 const wipeUserPersonalData = async (user_id) => {
 	try {
 		const disabled_count = await prisma.users.count({
@@ -711,7 +668,6 @@ const wipeUserPersonalData = async (user_id) => {
 		return new Error(error);
 	}
 };
-
 const updateUserActive = async (user_id, active, action_creator_user_id, reason) => {
 	try {
 		return await prisma.$transaction(async (tx) => {
@@ -719,7 +675,6 @@ const updateUserActive = async (user_id, active, action_creator_user_id, reason)
 				where: { user_id },
 				data: { active },
 			});
-
 			await tx.account_actions.create({
 				data: {
 					user: { connect: { user_id } },
@@ -728,7 +683,6 @@ const updateUserActive = async (user_id, active, action_creator_user_id, reason)
 					reason,
 				},
 			});
-
 			return updatedUser;
 		});
 	} catch (error) {
@@ -736,7 +690,6 @@ const updateUserActive = async (user_id, active, action_creator_user_id, reason)
 		throw new Error('Failed to update user active status');
 	}
 };
-
 const updateStripeCustomerId = async (user_id, customer_id) => {
 	try {
 		return prisma.users.update({
@@ -751,7 +704,6 @@ const updateStripeCustomerId = async (user_id, customer_id) => {
 		return new Error(error);
 	}
 };
-
 const addCredits = async (user_id, updateData) => {
 	try {
 		return prisma.users.update({
@@ -764,7 +716,6 @@ const addCredits = async (user_id, updateData) => {
 		return new Error(err);
 	}
 };
-
 const updateUserMarketingNotifications = async (user_id, data) => {
 	try {
 		return prisma.users.update({
@@ -779,7 +730,6 @@ const updateUserMarketingNotifications = async (user_id, data) => {
 		return new Error(err);
 	}
 };
-
 const updateUserAdsPersonalization = async (user_id, data) => {
 	try {
 		return prisma.users.update({
@@ -794,7 +744,6 @@ const updateUserAdsPersonalization = async (user_id, data) => {
 		return new Error(err);
 	}
 };
-
 const updateUserNewsletter = async (user_id, data) => {
 	try {
 		return prisma.users.update({
@@ -809,7 +758,6 @@ const updateUserNewsletter = async (user_id, data) => {
 		return new Error(err);
 	}
 };
-
 const linkRolesToUser = async (user_id, roles) => {
 	try {
 		if (Array.isArray(roles)) {
@@ -833,8 +781,47 @@ const linkRolesToUser = async (user_id, roles) => {
 		return new Error(err);
 	}
 };
-
-module.exports = {
+export { getUsers };
+export { getUserByReferralCode };
+export { getUserById };
+export { getUserByEmailOrTelephone };
+export { getUser };
+export { updateUser };
+export { updateEmail };
+export { updateUserLanguage };
+export { updateUserPassword };
+export { updateTelephone };
+export { updateUserType };
+export { updateUserDisabled };
+export { updateStripeCustomerId };
+export { createNewUser };
+export { getUserByResetToken };
+export { updateUserDateOfBirth };
+export { updateUserTelephoneVerified };
+export { updateUserTaxiPreferences };
+export { updateUserNotificationPreferences };
+export { updateUserTaxiPushNotifications };
+export { updateUserSpicyPreferences };
+export { updateUserAllergiesPreferences };
+export { updateUserTransferPreferences };
+export { updateUserRadioPreferences };
+export { getUserByTelephone };
+export { getScheduledUsers };
+export { updateScheduledUser };
+export { deleteUserByUserId };
+export { updateUserDeliveryPushNotifications };
+export { updateUserTransferPushNotifications };
+export { getUserByEmail };
+export { getTransactions };
+export { updateWalletBalance };
+export { updateUserActive };
+export { wipeUserPersonalData };
+export { addCredits };
+export { updateUserMarketingNotifications };
+export { updateUserAdsPersonalization };
+export { updateUserNewsletter };
+export { linkRolesToUser };
+export default {
 	getUsers,
 	getUserByReferralCode,
 	getUserById,
@@ -850,9 +837,6 @@ module.exports = {
 	updateStripeCustomerId,
 	createNewUser,
 	getUserByResetToken,
-	// addToWalletBalance,
-	// removeWalletBalance,
-	// createWalletBalance,
 	updateUserDateOfBirth,
 	updateUserTelephoneVerified,
 	updateUserTaxiPreferences,

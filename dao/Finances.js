@@ -1,5 +1,4 @@
-const prisma = require('../prisma/prisma');
-
+import prisma from '../prisma/prisma.js';
 const addFinances = async (financeData) => {
 	try {
 		return await prisma.finances.create({
@@ -10,7 +9,6 @@ const addFinances = async (financeData) => {
 		throw new Error(error);
 	}
 };
-
 const getFinancesByAccountNumber = async (account_number) => {
 	try {
 		return prisma.finances.findFirst({
@@ -22,7 +20,6 @@ const getFinancesByAccountNumber = async (account_number) => {
 		return new Error(error);
 	}
 };
-
 const getFinancesById = async (finance_id) => {
 	try {
 		return await prisma.finances.findUnique({
@@ -33,7 +30,6 @@ const getFinancesById = async (finance_id) => {
 		throw new Error(error);
 	}
 };
-
 const updateFinances = async (finance_id, updateData) => {
 	try {
 		return await prisma.finances.update({
@@ -45,7 +41,6 @@ const updateFinances = async (finance_id, updateData) => {
 		throw new Error(error);
 	}
 };
-
 const updateAccountHolder = async (finance_id, accountHolder) => {
 	try {
 		return await prisma.finances.update({
@@ -57,7 +52,6 @@ const updateAccountHolder = async (finance_id, accountHolder) => {
 		throw new Error(error);
 	}
 };
-
 const updateAccountNumber = async (finance_id, accountNumber) => {
 	try {
 		return await prisma.finances.update({
@@ -69,7 +63,6 @@ const updateAccountNumber = async (finance_id, accountNumber) => {
 		throw new Error(error);
 	}
 };
-
 const updateBankName = async (finance_id, bankName) => {
 	try {
 		return await prisma.finances.update({
@@ -81,7 +74,6 @@ const updateBankName = async (finance_id, bankName) => {
 		throw new Error(error);
 	}
 };
-
 const updatePaymentPreferences = async (finance_id, paymentPreferences) => {
 	try {
 		return await prisma.finances.update({
@@ -93,7 +85,6 @@ const updatePaymentPreferences = async (finance_id, paymentPreferences) => {
 		throw new Error(error);
 	}
 };
-
 const deleteFinances = async (finance_id) => {
 	try {
 		return await prisma.finances.delete({
@@ -104,7 +95,6 @@ const deleteFinances = async (finance_id) => {
 		throw new Error(error);
 	}
 };
-
 const linkFinancesToBusiness = async (businessId, financeId) => {
 	try {
 		return await prisma.business.update({
@@ -122,7 +112,6 @@ const linkFinancesToBusiness = async (businessId, financeId) => {
 		throw new Error(error);
 	}
 };
-
 const unlinkFinancesFromBusiness = async (businessId) => {
 	try {
 		return await prisma.business.update({
@@ -138,26 +127,34 @@ const unlinkFinancesFromBusiness = async (businessId) => {
 		throw new Error(error);
 	}
 };
-
 const getFinanceRecordByBusinessId = async (business_id) => {
 	try {
 		const business = await prisma.business.findUnique({
 			where: { business_id },
 			include: { finances: true },
 		});
-
 		if (!business) {
 			throw new Error(`Business with id ${business_id} not found`);
 		}
-
 		return business.finances;
 	} catch (error) {
 		console.error('Error retrieving finances information:', error);
 		throw error;
 	}
 };
-
-module.exports = {
+export { addFinances };
+export { getFinancesByAccountNumber };
+export { getFinancesById };
+export { updateFinances };
+export { updateAccountHolder };
+export { updateAccountNumber };
+export { updateBankName };
+export { linkFinancesToBusiness };
+export { unlinkFinancesFromBusiness };
+export { updatePaymentPreferences };
+export { deleteFinances };
+export { getFinanceRecordByBusinessId };
+export default {
 	addFinances,
 	getFinancesByAccountNumber,
 	getFinancesById,

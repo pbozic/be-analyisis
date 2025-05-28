@@ -1,4 +1,4 @@
-const S3Helper = require('../../lib/s3');
+import S3Helper from '../../lib/s3.js';
 const handleS3LinkForFiles = async (model, operation, args, query, result) => {
 	let middlewareResult = result;
 	if (Array.isArray(result)) {
@@ -19,7 +19,7 @@ const handleS3LinkForFiles = async (model, operation, args, query, result) => {
 	}
 	return middlewareResult;
 };
-
-module.exports = {
+export { handleS3LinkForFiles };
+export default {
 	handleS3LinkForFiles,
 };

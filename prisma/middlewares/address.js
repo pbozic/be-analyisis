@@ -14,7 +14,6 @@ const addAddressPivotTable = async (model, operation, args, query) => {
 	}
 	return args;
 };
-
 const handleAddressPivotTable = async (model, operation, args, query, result) => {
 	let middlewareResult = result;
 	if (args.include?.addresses) {
@@ -52,8 +51,9 @@ const handleAddressPivotTable = async (model, operation, args, query, result) =>
 	}
 	return middlewareResult;
 };
-
-module.exports = {
+export { handleAddressPivotTable };
+export { addAddressPivotTable };
+export default {
 	handleAddressPivotTable,
 	addAddressPivotTable,
 };

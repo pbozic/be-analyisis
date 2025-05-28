@@ -1,9 +1,9 @@
-const PromoDao = require('../dao/Promo');
-const ProductDao = require('../dao/Product');
-const BusinessUsersDao = require('../dao/BusinessUsers');
-const BusinessDao = require('../dao/Business');
-const stripe = require('../lib/stripe');
-const S3Helper = require('../lib/s3');
+import PromoDao from '../dao/Promo.js';
+import ProductDao from '../dao/Product.js';
+import BusinessUsersDao from '../dao/BusinessUsers.js';
+import BusinessDao from '../dao/Business.js';
+import stripe from '../lib/stripe.js';
+import S3Helper from '../lib/s3.js';
 const discountRules = {
 	2: 0, // 0% discount (Full price for 1-2 units)
 	4: 5, // 5% discount for 3-4 units
@@ -19,7 +19,6 @@ function getDiscountedPricePerQuantity(basePrice, quantity) {
 	}
 	return basePrice - (basePrice * discount) / 100;
 }
-
 /**
  * POST /promo-sections
  * @tag PromoSection
@@ -33,26 +32,21 @@ function getDiscountedPricePerQuantity(basePrice, quantity) {
  * @responseContent {object} 200.application/json
  * @response 500 - Error creating new promo section
  */
-
 async function createPromoSection(req, res) {
 	try {
 		//TODO: create stripe product and pricing
 		console.info(JSON.stringify(req.body, null, 2));
 		const { sectionData, translations } = req.body;
-
 		let promoSection = await PromoDao.createPromoSection(sectionData, translations);
-
 		res.json(promoSection);
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function updatePromoSection(req, res) {
 	try {
 		const { sectionData, translations } = req.body;
-
 		const promoSection = await PromoDao.updatePromoSection(req.params.id, sectionData, translations);
 		if (!promoSection.canPurchase) {
 			res.status(200).json(promoSection);
@@ -64,11 +58,9 @@ async function updatePromoSection(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function reorderPromoSections(req, res) {
 	try {
 		const { promo_sections_ids } = req.body;
-
 		const promoSections = await PromoDao.reorderPromoSections(promo_sections_ids);
 		res.status(200).json(promoSections);
 	} catch (error) {
@@ -76,7 +68,6 @@ async function reorderPromoSections(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 /**
  * DELETE /promo-sections/{id}
  * @tag PromoSection
@@ -97,7 +88,6 @@ async function deletePromoSection(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getPromoSectionById(req, res) {
 	try {
 		const promoSection = await PromoDao.getPromoSectionById(req.params.id);
@@ -111,7 +101,6 @@ async function getPromoSectionById(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getAllPromoSections(req, res) {
 	try {
 		const promoSections = await PromoDao.getAllPromoSections();
@@ -121,7 +110,6 @@ async function getAllPromoSections(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getAllPromoSectionsByServiceType(req, res) {
 	try {
 		const promoSections = await PromoDao.getAllPromoSectionsByServiceType(req.params.type);
@@ -131,7 +119,6 @@ async function getAllPromoSectionsByServiceType(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function createPromoAd(req, res) {
 	try {
 		const { promoAdData, categories_ids, promo_banners_ids } = req.body;
@@ -142,11 +129,9 @@ async function createPromoAd(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function updatePromoAd(req, res) {
 	try {
 		const { promoAdData, categories_ids, promo_banners_ids } = req.body;
-
 		const promoAd = await PromoDao.updatePromoAd(req.params.id, promoAdData, categories_ids, promo_banners_ids);
 		res.json(promoAd);
 	} catch (error) {
@@ -154,7 +139,6 @@ async function updatePromoAd(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function deletePromoAd(req, res) {
 	try {
 		const promoAd = await PromoDao.deletePromoAd(req.params.id);
@@ -164,7 +148,6 @@ async function deletePromoAd(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getPromoAdById(req, res) {
 	try {
 		const promoAd = await PromoDao.getPromoAdById(req.params.id);
@@ -174,7 +157,6 @@ async function getPromoAdById(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getAllPromoAds(req, res) {
 	try {
 		const promoAds = await PromoDao.getAllPromoAds();
@@ -184,7 +166,6 @@ async function getAllPromoAds(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getPromoAdsByServiceType(req, res) {
 	try {
 		const promoAds = await PromoDao.getAllPromoAdsByServiceType(req.params.type);
@@ -194,7 +175,6 @@ async function getPromoAdsByServiceType(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getPromoAdsByCategory(req, res) {
 	try {
 		const promoAds = await PromoDao.getAllPromoAdsByCategory(req.params.category);
@@ -204,7 +184,6 @@ async function getPromoAdsByCategory(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function createPromoBanner(req, res) {
 	try {
 		const { promoBannerData, imageFileData } = req.body;
@@ -220,7 +199,6 @@ async function createPromoBanner(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function updatePromoBanner(req, res) {
 	try {
 		const { promoBannerData, imageFileData } = req.body;
@@ -236,7 +214,6 @@ async function updatePromoBanner(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function deletePromoBanner(req, res) {
 	try {
 		const promoBanner = await PromoDao.deletePromoBanner(req.params.id);
@@ -246,7 +223,6 @@ async function deletePromoBanner(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getPromoBannerById(req, res) {
 	try {
 		const promoBanner = await PromoDao.getPromoBannerById(req.params.id);
@@ -256,7 +232,6 @@ async function getPromoBannerById(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getAllPromoBanners(req, res) {
 	try {
 		const promoBanners = await PromoDao.getAllPromoBanners();
@@ -266,7 +241,6 @@ async function getAllPromoBanners(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getAllPromoBannersByType(req, res) {
 	try {
 		const promoBanners = await PromoDao.getAllPromoBannersByType(req.params.type);
@@ -276,7 +250,6 @@ async function getAllPromoBannersByType(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getAllPromoBannersBySize(req, res) {
 	try {
 		const promoBanners = await PromoDao.getAllPromoBannersBySize(req.params.size);
@@ -286,7 +259,6 @@ async function getAllPromoBannersBySize(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getAllPromoBannersByAd(req, res) {
 	try {
 		const promoBanners = await PromoDao.getAllPromoBannersByAd(req.params.ad);
@@ -306,7 +278,6 @@ async function getAllPromoBannersByAd(req, res) {
 //         res.status(500).json({ error: error.message });
 //     }
 // }
-
 async function getPromoBannersByServiceType(req, res) {
 	try {
 		const promoBanners = await PromoDao.getPromoBannersByServiceType(req.params.type);
@@ -316,7 +287,6 @@ async function getPromoBannersByServiceType(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function createCheckoutSessionForPromoBuy(req, res) {
 	try {
 		const { promo_sections_id, duration, tier } = req.body;
@@ -377,14 +347,12 @@ async function createCheckoutSessionForPromoBuy(req, res) {
 				tier: tier,
 			},
 		});
-
 		res.json({ checkoutUrl: session.url });
 	} catch (error) {
 		console.error('Checkout Error:', error);
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function createPromoSectionBuy(req, res) {
 	try {
 		let business_id = req.body.business_id;
@@ -396,7 +364,6 @@ async function createPromoSectionBuy(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function updatePromoSectionBuy(req, res) {
 	try {
 		const promoSectionBuy = await PromoDao.updatePromoSectionBuy(req.params.id, req.body);
@@ -406,7 +373,6 @@ async function updatePromoSectionBuy(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function deletePromoSectionBuy(req, res) {
 	try {
 		const promoSectionBuy = await PromoDao.deletePromoSectionBuy(req.params.id);
@@ -416,7 +382,6 @@ async function deletePromoSectionBuy(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getPromoSectionBuyById(req, res) {
 	try {
 		const promoSectionBuy = await PromoDao.getPromoSectionBuyById(req.params.id);
@@ -426,7 +391,6 @@ async function getPromoSectionBuyById(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getAllPromoSectionBuys(req, res) {
 	try {
 		const promoSectionBuys = await PromoDao.getAllPromoSectionBuys();
@@ -436,7 +400,6 @@ async function getAllPromoSectionBuys(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getAllPromoSectionBuysBySection(req, res) {
 	try {
 		const promoSectionBuys = await PromoDao.getAllPromoSectionBuysBySection(req.params.section);
@@ -446,7 +409,6 @@ async function getAllPromoSectionBuysBySection(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getAllPromoSectionBuysByBusiness(req, res) {
 	try {
 		const promoSectionBuys = await PromoDao.getAllPromoSectionBuysByBusiness(req.params.business_id);
@@ -456,7 +418,6 @@ async function getAllPromoSectionBuysByBusiness(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getAllPromoSectionBuysByTier(req, res) {
 	try {
 		const promoSectionBuys = await PromoDao.getAllPromoSectionBuysByTier(req.params.tier);
@@ -466,7 +427,6 @@ async function getAllPromoSectionBuysByTier(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function getAllPromoSectionBuysByStripeSub(req, res) {
 	try {
 		const promoSectionBuys = await PromoDao.getAllPromoSectionBuysByStripeSub(req.params.stripe_subscription_id);
@@ -476,7 +436,6 @@ async function getAllPromoSectionBuysByStripeSub(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
 async function addStripeSubToPromoSectionBuy(req, res) {
 	try {
 		const promoSectionBuy = await PromoDao.addStripeSubToPromoSectionBuy(
@@ -489,8 +448,41 @@ async function addStripeSubToPromoSectionBuy(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-
-module.exports = {
+export { createPromoSection };
+export { updatePromoSection };
+export { reorderPromoSections };
+export { deletePromoSection };
+export { getPromoSectionById };
+export { getAllPromoSections };
+export { getAllPromoSectionsByServiceType };
+export { createPromoAd };
+export { updatePromoAd };
+export { deletePromoAd };
+export { getPromoAdById };
+export { getAllPromoAds };
+export { getPromoAdsByServiceType };
+export { getPromoAdsByCategory };
+export { createPromoBanner };
+export { updatePromoBanner };
+export { deletePromoBanner };
+export { getPromoBannerById };
+export { getAllPromoBanners };
+export { getAllPromoBannersByType };
+export { getAllPromoBannersBySize };
+export { getAllPromoBannersByAd };
+export { getPromoBannersByServiceType };
+export { createPromoSectionBuy };
+export { updatePromoSectionBuy };
+export { deletePromoSectionBuy };
+export { getPromoSectionBuyById };
+export { getAllPromoSectionBuys };
+export { getAllPromoSectionBuysBySection };
+export { getAllPromoSectionBuysByBusiness };
+export { getAllPromoSectionBuysByTier };
+export { getAllPromoSectionBuysByStripeSub };
+export { addStripeSubToPromoSectionBuy };
+export { createCheckoutSessionForPromoBuy };
+export default {
 	createPromoSection,
 	updatePromoSection,
 	reorderPromoSections,
@@ -513,7 +505,6 @@ module.exports = {
 	getAllPromoBannersByType,
 	getAllPromoBannersBySize,
 	getAllPromoBannersByAd,
-	// getAllPromoBannersBySection,
 	getPromoBannersByServiceType,
 	createPromoSectionBuy,
 	updatePromoSectionBuy,

@@ -1,14 +1,14 @@
-require('dotenv').config();
-const { PrismaClient } = require('@prisma/client');
+import { config } from 'dotenv';
+import { PrismaClient } from '@prisma/client';
+import * as turf from '@turf/turf';
+
+import { handleAddressPivotTable, addAddressPivotTable } from './middlewares/address.js';
+import { handleHidePassword, alwaysAddWalletBalance, handleWalletBalance } from './middlewares/user.js';
+import { handleS3LinkForFiles } from './middlewares/file.js';
+import { handleS3LinkForDocuments } from './middlewares/documents.js';
+import { generateS3LinksRecursively } from './middlewares/$allModels.js';
+config();
 console.log(process.env.DATABASE_URL);
-const turf = require('@turf/turf');
-
-const { handleAddressPivotTable, addAddressPivotTable } = require('./middlewares/address');
-const { handleHidePassword, alwaysAddWalletBalance, handleWalletBalance } = require('./middlewares/user');
-const { handleS3LinkForFiles } = require('./middlewares/file');
-const { handleS3LinkForDocuments } = require('./middlewares/documents');
-const { generateS3LinksRecursively } = require('./middlewares/$allModels');
-
 const prisma = new PrismaClient({
 	log: ['warn', 'error'],
 }).$extends({
@@ -16,7 +16,6 @@ const prisma = new PrismaClient({
 		$allModels: {
 			async $allOperations({ model, operation, args, query }) {
 				// Proceed with the operation
-
 				let result = await query(args);
 				if (args.include && args.include.user) {
 					result = removeSensitiveProperties(result);
@@ -60,7 +59,6 @@ const prisma = new PrismaClient({
 		files: {
 			async $allOperations({ model, operation, args, query }) {
 				// If the operation is a query on the `files` model
-
 				// Proceed with the operation
 				let result = await query(args);
 				result = await handleS3LinkForFiles(model, operation, args, query, result);
@@ -109,14 +107,11 @@ const prisma = new PrismaClient({
 					FROM settlements
 					WHERE ST_Intersects(geom_generated, ST_SetSRID(ST_MakePoint(${point2.longitude}, ${point2.latitude}), 4326))
 				`;
-
 				return settlement[0] || null;
 			},
 			async checkIfAllPointsAreInSameSettlement(points) {
 				if (points.length < 2) throw new Error('At least two points are required.');
-
 				const [first, ...rest] = points;
-
 				const [settlement] = await prisma.$queryRaw`
 					SELECT settlement_id, name, geojson
 					FROM settlements
@@ -126,15 +121,12 @@ const prisma = new PrismaClient({
 					)
 					LIMIT 1;
 		  		`;
-
 				if (!settlement) return null;
-
 				const polygon = turf.polygon(settlement.geojson.coordinates);
 				const allInside = rest.every(({ longitude, latitude }) => {
 					const pt = turf.point([longitude, latitude]);
 					return turf.booleanPointInPolygon(pt, polygon);
 				});
-
 				return allInside ? settlement : null;
 			},
 		},
@@ -149,7 +141,6 @@ const prisma = new PrismaClient({
 			) {
 				console.log('vehicle filters', vehicleFilters);
 				console.log('requirements', requirements);
-
 				const drivers = await prisma.$queryRaw`
 					SELECT drivers.*, vehicles.*
 					FROM drivers
@@ -212,13 +203,11 @@ const prisma = new PrismaClient({
 						)
 						);
 				`;
-
 				return drivers;
 			},
 		},
 	},
 });
-
 const removeSensitiveProperties = (data, propertiesToRemove = ['password']) => {
 	if (Array.isArray(data)) {
 		// Recursively process array items
@@ -228,7 +217,6 @@ const removeSensitiveProperties = (data, propertiesToRemove = ['password']) => {
 			// Preserve Date objects as-is
 			return data;
 		}
-
 		// Create a new object excluding the properties to remove
 		const result = {};
 		for (const [key, value] of Object.entries(data)) {
@@ -244,9 +232,7 @@ const removeSensitiveProperties = (data, propertiesToRemove = ['password']) => {
 		}
 		return result;
 	}
-
 	// Return the data as-is if it's not an array or object
 	return data;
 };
-
-module.exports = prisma;
+export default prisma;

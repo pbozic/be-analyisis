@@ -1,17 +1,16 @@
-const OrderLobbyDao = require('../dao/OrderLobby');
-const OrderLobbyUserDao = require('../dao/OrderLobbyUser');
-const OrderLobbyItemDao = require('../dao/OrderLobbyItem');
-const UserDao = require('../dao/User');
-const DocumentDao = require('../dao/Document');
-const { UserSockets, io } = require('../socket');
-const OneSignal = require('../lib/oneSignal');
-const { getLocalisedTexts } = require('../localisations/languages');
-const DeliveryOrderController = require('../controllers/DeliveryOrderController');
-const { DOCUMENT_TYPE } = require('../lib/constants');
-
+import OrderLobbyDao from '../dao/OrderLobby.js';
+import OrderLobbyUserDao from '../dao/OrderLobbyUser.js';
+import OrderLobbyItemDao from '../dao/OrderLobbyItem.js';
+import UserDao from '../dao/User.js';
+import DocumentDao from '../dao/Document.js';
+import socket from '../socket.js';
+import OneSignal from '../lib/oneSignal.js';
+import { getLocalisedTexts } from '../localisations/languages.js';
+import DeliveryOrderController from './DeliveryOrderController.js';
+import { DOCUMENT_TYPE } from '../lib/constants.js';
+const { UserSockets, io } = socket;
 async function lobbySocketOrNotification(user_id, event, order_lobby) {
 	const userSocket = UserSockets.get(user_id);
-
 	if (userSocket) {
 		io.to(userSocket).emit(event, order_lobby);
 	} else {
@@ -19,10 +18,8 @@ async function lobbySocketOrNotification(user_id, event, order_lobby) {
 		if (user) {
 			const l10nNotification = getLocalisedTexts('USER_NOTIFICATIONS', user);
 			const l10nHeading = getLocalisedTexts('HEADING', user);
-
 			let notification_title = '';
 			let notification_content = '';
-
 			switch (event) {
 				case 'added_to_lobby':
 					notification_title = l10nHeading?.lobby_added;
@@ -41,12 +38,10 @@ async function lobbySocketOrNotification(user_id, event, order_lobby) {
 					notification_content = l10nNotification?.lobby_canceled;
 					break;
 			}
-
 			await OneSignal.sendNotificationToUser(notification_title, notification_content, user_id);
 		}
 	}
 }
-
 async function addUserToLobby(user_id, order_lobby, limit) {
 	// create lobby user
 	const ol_user = await OrderLobbyUserDao.createOrderLobbyUser(user_id, order_lobby.order_lobbies_id, limit);
@@ -56,7 +51,6 @@ async function addUserToLobby(user_id, order_lobby, limit) {
 	}
 	return ol_user;
 }
-
 // async function generateOrderDataFromLobby( lobbyOrderData,creator_id ){
 // 	//generate orderData - items, details...
 // 	const orderData = {}
@@ -83,7 +77,6 @@ async function addUserToLobby(user_id, order_lobby, limit) {
 //
 // 	return orderData
 // }
-
 /**
  * POST /order_lobby/create
  * Create a new order lobby
@@ -112,7 +105,6 @@ async function createLobby(req, res) {
 			courier_note,
 			delivery_location,
 		} = req.body;
-
 		const new_lobby = await OrderLobbyDao.createOrderLobby({
 			lobby_name,
 			lobby_description,
@@ -122,7 +114,6 @@ async function createLobby(req, res) {
 			courier_note: courier_note,
 			delivery_location: delivery_location,
 		});
-
 		const lobby_users = [];
 		if (new_lobby) {
 			for (const user_id of Object.keys(user_limits_map)) {
@@ -135,7 +126,6 @@ async function createLobby(req, res) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
 }
-
 /**
  * POST /order_lobby/submit/:order_lobbies_id
  * Submit the order lobby and generate a delivery order
@@ -151,21 +141,17 @@ async function submitLobby(req, res) {
 	try {
 		const { order_lobbies_id } = req.params;
 		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
-
 		const { orderBody } = req.body;
 		// const { lobbyOrderData } = req.body
 		// const orderData = await generateOrderDataFromLobby(lobbyOrderData)
-
 		// Generate a delivery order
 		//TODO: Decide how to improve to not send whole order from FE, but rather generate from DB data about lobby
 		const order = await DeliveryOrderController.createOrder(
 			{ orderBody, user: { user_id: order_lobby.creator_id } },
 			res
 		);
-
 		// Update the lobby status
 		await OrderLobbyDao.setOrderLobbyActive(order_lobbies_id, false);
-
 		for (const ol_user of order_lobby.order_lobby_users) {
 			lobbySocketOrNotification(ol_user.user_id, 'lobby_completed', order_lobby);
 		}
@@ -174,7 +160,6 @@ async function submitLobby(req, res) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
 }
-
 /**
  * PATCH /order_lobby/users/:order_lobbies_id
  * Set the users and their limits for an order lobby
@@ -190,19 +175,15 @@ async function setLobbyUsersWithLimits(req, res) {
 	try {
 		const { order_lobbies_id } = req.params;
 		const { user_limits_map } = req.body;
-
 		// Get the current lobby users
 		// const current_order_lobby_users = await OrderLobbyUserDao.getOrderLobbyUsersInOrderLobby(order_lobbies_id)
 		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
-
 		if (!order_lobby) {
 			return res.status(404).json({ success: false, error: 'Order lobby not found' });
 		}
-
 		// Compare with provided users
 		for (const user_id of Object.keys(user_limits_map)) {
 			const lobby_user = order_lobby.order_lobby_users.find((ol_user) => ol_user.user_id === user_id);
-
 			if (!lobby_user) {
 				await addUserToLobby(user_id, order_lobby, user_limits_map[user_id]);
 			} else if (user_limits_map[user_id] !== lobby_user.limit) {
@@ -217,7 +198,6 @@ async function setLobbyUsersWithLimits(req, res) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
 }
-
 /**
  * PATCH /order_lobby/items/:order_lobbies_id
  * Set user-specific order lobby items
@@ -236,22 +216,17 @@ async function setUserOrderLobbyItems(req, res) {
 		const { order_lobbies_id } = req.params;
 		const { user_id } = req.user;
 		const { items } = req.body;
-
 		const order_lobby_items = await OrderLobbyItemDao.getOrderLobbyItemsByLobbyAndUserId(order_lobbies_id, user_id);
-
 		//delete removed items
 		for (const lobby_item of order_lobby_items) {
 			const item = items.find((item) => OrderLobbyItemDao.areItemsEqual(item, lobby_item));
-
 			if (!item) {
 				await OrderLobbyItemDao.deleteOrderLobbyItem(lobby_item.order_lobby_items_id);
 			}
 		}
-
 		// Compare with provided items, just update quantity if exists, otherwise create new item.
 		for (const item of items) {
 			const lobby_item = order_lobby_items.find((ol_item) => OrderLobbyItemDao.areItemsEqual(ol_item, item));
-
 			if (lobby_item) {
 				await OrderLobbyItemDao.updateOrderLobbyItemQuantity(lobby_item.order_lobby_items_id, item.quantity);
 			} else {
@@ -266,13 +241,11 @@ async function setUserOrderLobbyItems(req, res) {
 				});
 			}
 		}
-
 		return res.status(200);
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
 }
-
 /**
  * DELETE /order_lobby/cancel/:order_lobbies_id
  * Cancel an order lobby
@@ -286,34 +259,28 @@ async function cancelLobby(req, res) {
 	try {
 		const { order_lobbies_id } = req.params;
 		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
-
 		if (!order_lobby) {
 			return res.status(404).json({ success: false, error: 'Order lobby not found' });
 		}
-
 		for (const ol_user of order_lobby.order_lobby_users) {
 			const deleted_ol_user = await OrderLobbyUserDao.deleteOrderLobbyUserWithItems(
 				ol_user.user_id,
 				order_lobbies_id
 			);
-
 			if (!deleted_ol_user) {
 				return res.status(404).json({
 					success: false,
 					error: `Failed to delete user ${ol_user.user_id} from lobby ${order_lobbies_id}`,
 				});
 			}
-
 			await lobbySocketOrNotification(deleted_ol_user.user_id, 'removed_from_lobby', order_lobby);
 		}
 		await OrderLobbyDao.deleteOrderLobby(order_lobbies_id);
-
 		return res.status(200).json({ success: true });
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
 }
-
 /**
  * DELETE /order_lobby/delete_user/:order_lobbies_id/:user_id
  * Delete a user from an order lobby
@@ -327,27 +294,22 @@ async function cancelLobby(req, res) {
 async function deleteUserFromLobby(req, res) {
 	try {
 		const { order_lobbies_id, user_id } = req.params;
-
 		// First get the order lobby to verify it exists and for notifications
 		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
 		if (!order_lobby) {
 			return res.status(404).json({ success: false, error: 'Order lobby not found' });
 		}
-
 		const deleted_ol_user = await OrderLobbyUserDao.deleteOrderLobbyUserWithItems(user_id, order_lobbies_id);
 		if (!deleted_ol_user) {
 			return res.status(404).json({ success: false, error: 'User not found in this lobby' });
 		}
-
 		// Send notification to the user
 		await lobbySocketOrNotification(deleted_ol_user.user_id, 'removed_from_lobby', order_lobby);
-
 		return res.status(200).json({ success: true, deleted_user: deleted_ol_user });
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
 }
-
 /**
  * GET /order_lobby/:order_lobbies_id
  * Get the order lobby by ID
@@ -357,12 +319,10 @@ async function deleteUserFromLobby(req, res) {
  * @param {Object} res - Express response object
  * @returns {Promise<void>} Returns 200 status with the order lobby data, or error with 500 status
  */
-
 async function getOrderLobbyById(req, res) {
 	try {
 		const { order_lobbies_id } = req.params;
 		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
-
 		const updatedUsers = await Promise.all(
 			order_lobby.order_lobby_users.map(async (user) => {
 				let profile = await DocumentDao.getDocumentsForUserByType(user.user_id, DOCUMENT_TYPE.PROFILE_PICTURE);
@@ -373,7 +333,6 @@ async function getOrderLobbyById(req, res) {
 			})
 		);
 		order_lobby.order_lobby_users = updatedUsers;
-
 		if (!order_lobby) {
 			return res.status(404).json({ success: false, error: 'Order lobby not found' });
 		}
@@ -382,8 +341,14 @@ async function getOrderLobbyById(req, res) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
 }
-
-module.exports = {
+export { createLobby };
+export { submitLobby };
+export { setLobbyUsersWithLimits };
+export { setUserOrderLobbyItems };
+export { cancelLobby };
+export { deleteUserFromLobby };
+export { getOrderLobbyById };
+export default {
 	createLobby,
 	submitLobby,
 	setLobbyUsersWithLimits,

@@ -1,18 +1,18 @@
-const { randomUUID } = require('crypto');
+import { randomUUID } from 'crypto';
 
-const moment = require('moment');
+import moment from 'moment';
 
-const TaxiOrderDao = require('../dao/TaxiOrder');
-const DriverDao = require('../dao/Driver');
-const UsersDao = require('../dao/User');
-const FlagDao = require('../dao/Flags');
-const BusinessUsersDao = require('../dao/BusinessUsers');
-const CashbackDao = require('../dao/Cashback');
-const WalletFundsDao = require('../dao/WalletFunds');
-const { UserSockets, io, SocketStore } = require('../socket');
-const gApi = require('../lib/gApis');
-const TaxiHelper = require('../lib/taxiHelpers');
-const {
+import TaxiOrderDao from '../dao/TaxiOrder.js';
+import DriverDao from '../dao/Driver.js';
+import UsersDao from '../dao/User.js';
+import FlagDao from '../dao/Flags.js';
+import BusinessUsersDao from '../dao/BusinessUsers.js';
+import CashbackDao from '../dao/Cashback.js';
+import WalletFundsDao from '../dao/WalletFunds.js';
+import socket from '../socket.js';
+import gApi from '../lib/gApis.js';
+import TaxiHelper from '../lib/taxiHelpers.js';
+import {
 	TAXI_ORDER_STATUS,
 	VEHICLE_CAPACITY,
 	VEHICLE_CLASS,
@@ -27,22 +27,22 @@ const {
 	SERVICE_TYPE,
 	VEHICLE_CATEGORY,
 	ORDER_SUBTYPE,
-} = require('../lib/constants');
-const { sendOrderNotifications } = require('../lib/notifications');
-const { range, todaysEarnings } = require('../lib/helpersLib');
-const prisma = require('../prisma/prisma');
-const BusinessDao = require('../dao/Business');
-const WalletFundsHelpers = require('../lib/WalletFundsHelpers');
-const { sendNotificationToUser } = require('../lib/oneSignal');
-const { getLocalisedTexts } = require('../localisations/languages');
-const { handleReferral } = require('../lib/referralHelper');
-const ScoringPointsDao = require('../dao/ScoringPoints');
-const LateEventsDao = require('../dao/LateEvents');
-const { createAndStorePaymentIntent, validatePaymentIntent, splitCutFromPaymentIntent } = require('../lib/stripe');
-const stripe = require('../lib/stripe');
-const { calculateTransferOrderPaymentCuts } = require('../lib/taxiHelpers');
-const DeliveryOrderDao = require('../dao/DeliveryOrder');
-
+} from '../lib/constants.js';
+import { sendOrderNotifications } from '../lib/notifications.js';
+import { range, todaysEarnings } from '../lib/helpersLib.js';
+import prisma from '../prisma/prisma.js';
+import BusinessDao from '../dao/Business.js';
+import WalletFundsHelpers from '../lib/WalletFundsHelpers.js';
+import { sendNotificationToUser } from '../lib/oneSignal.js';
+import { getLocalisedTexts } from '../localisations/languages.js';
+import { handleReferral } from '../lib/referralHelper.js';
+import ScoringPointsDao from '../dao/ScoringPoints.js';
+import LateEventsDao from '../dao/LateEvents.js';
+import { createAndStorePaymentIntent, validatePaymentIntent, splitCutFromPaymentIntent } from '../lib/stripe.js';
+import stripe from '../lib/stripe.js';
+import { calculateTransferOrderPaymentCuts } from '../lib/taxiHelpers.js';
+import DeliveryOrderDao from '../dao/DeliveryOrder.js';
+const { UserSockets, io, SocketStore } = socket;
 /**
  * GET /taxi/order/{orderId}
  * @tag Taxi
@@ -54,10 +54,8 @@ const DeliveryOrderDao = require('../dao/DeliveryOrder');
  * @responseContent {Order} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
-
 async function getOrder(req, res) {
 	const { order_id } = req.params;
-
 	try {
 		const order = await TaxiOrderDao.getOrder(order_id);
 		res.status(200).json(order);
@@ -66,7 +64,6 @@ async function getOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * GET /taxi/orders/active/:user_id/:type
  * @tag Taxi
@@ -77,21 +74,16 @@ async function getOrder(req, res) {
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
-
 async function getActiveTaxiOrders(req, res) {
 	const { user_id, type } = req.params;
-
 	try {
 		const activeOrders = await TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, type);
-
 		if (activeOrders) {
 			// Iterate over the list of active orders
 			for (let i = 0; i < activeOrders.length; i++) {
 				const activeOrder = activeOrders[i];
-
 				if (activeOrder && activeOrder.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED) {
 					const driver = activeOrder.driver;
-
 					const { result, distance, duration } = await gApi.distanceBetweenTwoPoints(
 						activeOrder.pickup_location.coordinates,
 						driver.location.coordinates,
@@ -99,11 +91,9 @@ async function getActiveTaxiOrders(req, res) {
 						new Date(),
 						'best_guess'
 					);
-
 					console.log('ROES:', result, result?.rows[0], result?.rows[0]?.elements[0]);
 					console.log('ROES DISTANCE:', distance);
 					console.log('ROES DURATION:', duration);
-
 					if (
 						result &&
 						result.rows &&
@@ -127,7 +117,6 @@ async function getActiveTaxiOrders(req, res) {
 						activeOrder.estimates.pickup_time_in_seconds = -1;
 						activeOrder.estimates.pickup_time = null;
 					}
-
 					// Update the order with the new estimates
 					await TaxiOrderDao.updateOrder(activeOrder.order_id, {
 						estimates: activeOrder.estimates,
@@ -142,14 +131,12 @@ async function getActiveTaxiOrders(req, res) {
 				}
 			}
 		}
-
 		res.status(200).json(activeOrders);
 	} catch (e) {
 		console.error('TaxiOrderController', e);
 		res.status(500).json(e);
 	}
 }
-
 /**
  * GET /taxi/orders/active/driver/:driver_id
  * @tag Taxi
@@ -161,14 +148,11 @@ async function getActiveTaxiOrders(req, res) {
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
-
 async function getActiveTaxiOrdersByDriverId(req, res) {
 	const { driver_id } = req.params;
-
 	try {
 		const activeOrders = await TaxiOrderDao.getActiveOrdersByDriverId(driver_id);
 		let pendingOrders = [];
-
 		const sentOrders = await TaxiOrderDao.getAlreadySentOrdersByDriverId(driver_id);
 		for (let sentOrder of sentOrders) {
 			const order = await TaxiOrderDao.getOrder(sentOrder.order.order_id);
@@ -178,7 +162,6 @@ async function getActiveTaxiOrdersByDriverId(req, res) {
 			console.info('Re-sending pending order: ', order.order_id, ' to driver: ', driver_id);
 			pendingOrders.push(order);
 		}
-
 		res.status(200).json({
 			active: activeOrders,
 			pending: pendingOrders,
@@ -188,7 +171,6 @@ async function getActiveTaxiOrdersByDriverId(req, res) {
 		res.status(500).json({ message: 'Error something went wrong...' });
 	}
 }
-
 /**
  * GET /taxi/orders/driver/:driver_id
  * @tag Taxi
@@ -199,10 +181,8 @@ async function getActiveTaxiOrdersByDriverId(req, res) {
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
-
 async function getTaxiOrdersByDriverId(req, res) {
 	const { driver_id } = req.params;
-
 	try {
 		const orders = await TaxiOrderDao.getOrders({
 			where: {
@@ -215,7 +195,6 @@ async function getTaxiOrdersByDriverId(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * GET /taxi/orders/completed
  * @tag Taxi
@@ -226,10 +205,8 @@ async function getTaxiOrdersByDriverId(req, res) {
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
-
 async function getCompletedTaxiOrders(req, res) {
 	const { driver_id } = req.params;
-
 	try {
 		const completedOrders = await TaxiOrderDao.getOrders({
 			where: {
@@ -243,7 +220,6 @@ async function getCompletedTaxiOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * GET /taxi/orders/canceled/:driver_id
  * @tag Taxi
@@ -256,7 +232,6 @@ async function getCompletedTaxiOrders(req, res) {
  */
 async function getCanceledTaxiOrders(req, res) {
 	const { driver_id } = req.params;
-
 	try {
 		const canceledOrders = await TaxiOrderDao.getOrders({
 			where: {
@@ -270,7 +245,6 @@ async function getCanceledTaxiOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * GET /taxi/orders/rejected/:driver_id
  * @tag Taxi
@@ -283,7 +257,6 @@ async function getCanceledTaxiOrders(req, res) {
  */
 async function getRejectedTaxiOrders(req, res) {
 	const { driver_id } = req.params;
-
 	try {
 		const rejectedOrders = await TaxiOrderDao.getOrders({
 			where: {
@@ -297,7 +270,6 @@ async function getRejectedTaxiOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * GET /taxi/orders
  * @tag Taxi
@@ -308,7 +280,6 @@ async function getRejectedTaxiOrders(req, res) {
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
-
 async function getTaxiOrders(req, res) {
 	try {
 		const orders = await prisma.taxi_orders.findMany({
@@ -330,7 +301,6 @@ async function getTaxiOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * GET /taxi/orders/completed/user/:user_id
  * @tag Taxi
@@ -341,10 +311,8 @@ async function getTaxiOrders(req, res) {
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
-
 async function getCompletedTaxiOrdersByUserId(req, res) {
 	const { user_id } = req.params;
-
 	try {
 		const completedOrders = await TaxiOrderDao.getOrders({
 			where: {
@@ -361,7 +329,6 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * GET /taxi/orders/completed/business/:business_id
  * @tag Taxi
@@ -374,12 +341,10 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
  */
 async function getCompletedTaxiOrdersByBusinessId(req, res) {
 	const { business_id } = req.params;
-
 	try {
 		const business = await BusinessDao.getBusinessById(business_id);
 		let userIds = business.business_users?.map((businessUser) => businessUser.user_id) || [];
 		userIds = [...userIds, ...(business.business_clients?.map((client) => client.user_id) || [])];
-
 		const completedOrders = await TaxiOrderDao.getOrders({
 			where: {
 				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
@@ -392,7 +357,6 @@ async function getCompletedTaxiOrdersByBusinessId(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * GET /taxi/orders/canceled/user/:user_id
  * @tag Taxi
@@ -403,10 +367,8 @@ async function getCompletedTaxiOrdersByBusinessId(req, res) {
  * @responseContent {Order[]} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
-
 async function getCanceledTaxiOrdersByUserId(req, res) {
 	const { user_id } = req.params;
-
 	try {
 		const completedOrders = await TaxiOrderDao.getOrders({
 			where: {
@@ -420,7 +382,6 @@ async function getCanceledTaxiOrdersByUserId(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 function preprocessOrderData(orderData) {
 	const cleanedOrderData = {
 		// user_id: orderData.user_id,
@@ -446,10 +407,8 @@ function preprocessOrderData(orderData) {
 		telephone: orderData.telephone,
 		type: orderData.type,
 	};
-
 	const prefs = cleanedOrderData.preferences;
 	const is_repeat = !!prefs.repeat_ride && !prefs.repeat_ride.some((item) => item.value === 'do_not_repeat');
-
 	if (prefs.vehicle_class === VEHICLE_CLASS.CARGO_VAN) {
 		cleanedOrderData.payment = {
 			...cleanedOrderData.payment,
@@ -476,7 +435,6 @@ function preprocessOrderData(orderData) {
 			coordinates: cleanedOrderData.delivery_location.coordinates,
 		};
 	}
-
 	let orderDataArray = [];
 	if (is_repeat) {
 		orderDataArray = generateOrdersForRepeatOrder(
@@ -487,10 +445,8 @@ function preprocessOrderData(orderData) {
 	} else {
 		orderDataArray.push(cleanedOrderData);
 	}
-
 	return orderDataArray;
 }
-
 async function generateVehicleTransferOrder(orderData) {
 	let vehicleTransferOrderData = orderData.vehicle_transfer_order;
 	vehicleTransferOrderData = {
@@ -509,10 +465,8 @@ async function generateVehicleTransferOrder(orderData) {
 			},
 		},
 	});
-
 	return vehicle_transfer_order;
 }
-
 function subdivideOrder(vehicle_class, vehicle_category, n_adults, n_children) {
 	let splits = [];
 	let num_orders;
@@ -529,13 +483,11 @@ function subdivideOrder(vehicle_class, vehicle_category, n_adults, n_children) {
 	} else {
 		num_orders = Math.ceil(total_seats / VEHICLE_CAPACITY[vehicle_class]);
 	}
-
 	console.log('num_orders', num_orders);
 	for (let i = 0; i < num_orders; i++) {
 		let availableSeats = VEHICLE_CAPACITY[vehicle_class];
 		let adults_seated = 0;
 		let children_seated = 0;
-
 		for (let i = 0; i < availableSeats; i++) {
 			if (unassigned_adults > 0) {
 				adults_seated++;
@@ -547,16 +499,13 @@ function subdivideOrder(vehicle_class, vehicle_category, n_adults, n_children) {
 				break;
 			}
 		}
-
 		splits.push({
 			adults_seated,
 			children_seated,
 		});
 	}
-
 	return splits;
 }
-
 async function makeOrder(cleanOrderData, userId, parentOrderId, driverId, businessUserId, businessClientId) {
 	const orderPayload = {
 		...cleanOrderData,
@@ -566,7 +515,6 @@ async function makeOrder(cleanOrderData, userId, parentOrderId, driverId, busine
 			},
 		},
 	};
-
 	if (parentOrderId) {
 		orderPayload.parent_order = {
 			connect: {
@@ -574,7 +522,6 @@ async function makeOrder(cleanOrderData, userId, parentOrderId, driverId, busine
 			},
 		};
 	}
-
 	if (driverId) {
 		orderPayload.driver = {
 			connect: {
@@ -582,7 +529,6 @@ async function makeOrder(cleanOrderData, userId, parentOrderId, driverId, busine
 			},
 		};
 	}
-
 	if (businessUserId) {
 		orderPayload.business_users = {
 			connect: {
@@ -590,7 +536,6 @@ async function makeOrder(cleanOrderData, userId, parentOrderId, driverId, busine
 			},
 		};
 	}
-
 	if (businessClientId) {
 		orderPayload.business_clients = {
 			connect: {
@@ -598,15 +543,12 @@ async function makeOrder(cleanOrderData, userId, parentOrderId, driverId, busine
 			},
 		};
 	}
-
 	const order = await TaxiOrderDao.createOrder(orderPayload);
 	return order;
 }
-
 async function buildOrder(cleanOrderData, userId, parentOrderId, driverId, businessUserId, businessClientId) {
 	const { vehicle_class, vehicle_category, adults, children_under_140 } = cleanOrderData.preferences;
 	const splits = subdivideOrder(vehicle_class, vehicle_category, adults, children_under_140);
-
 	let firstOrderId = parentOrderId;
 	for (let i = 0; i < splits.length; i++) {
 		const { adults_seated, children_seated } = splits[i];
@@ -626,7 +568,6 @@ async function buildOrder(cleanOrderData, userId, parentOrderId, driverId, busin
 	}
 	return firstOrderId;
 }
-
 async function requestTransferOrderPrice(req, res) {
 	try {
 		//TODO: update to use route
@@ -638,7 +579,6 @@ async function requestTransferOrderPrice(req, res) {
 		res.status(500);
 	}
 }
-
 async function cleanedCreateOrderHelper(orderData) {
 	try {
 		const user_id = orderData.user_id;
@@ -647,7 +587,6 @@ async function cleanedCreateOrderHelper(orderData) {
 		const businessClientId = orderData.business_client?.business_clients_id;
 		console.log('ORDER DATA DRIVER', orderData.driver);
 		const cleanedOrderDataArray = preprocessOrderData(orderData);
-
 		let firstOrderId = null;
 		for (const cleanOrderData of cleanedOrderDataArray) {
 			firstOrderId = await buildOrder(
@@ -659,7 +598,6 @@ async function cleanedCreateOrderHelper(orderData) {
 				businessClientId
 			);
 		}
-
 		const order = await TaxiOrderDao.getOrder(firstOrderId, {
 			include: {
 				grouped_orders: true,
@@ -667,23 +605,19 @@ async function cleanedCreateOrderHelper(orderData) {
 		});
 		console.log('parentOrderId', firstOrderId);
 		console.log('fetched grouped_orders', order.grouped_orders);
-
 		if (order && order.preferences.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
 			await generateVehicleTransferOrder(orderData);
 		}
-
 		return order;
 	} catch (error) {
 		console.error('TaxiOrderController', error);
 		throw new Error('Error in cleanedCreateOrderHelper!');
 	}
 }
-
 async function handlePaymentForTransferOrder(order, return_url) {
 	try {
 		let user = await UsersDao.getUserById(order.user_id);
 		let payment_intent = null;
-
 		//CALCULATE IN CENTS
 		const PRICE_CENTS = Math.round(parseFloat(order.payment.price) * 100);
 		const EXTRAS_COST_CENTS = Math.round(
@@ -696,10 +630,8 @@ async function handlePaymentForTransferOrder(order, return_url) {
 			) * 100
 		);
 		const TOTAL_COST_CENTS = PRICE_CENTS + EXTRAS_COST_CENTS;
-
 		const INITIAL_PLATFORM_CUT = Math.round(PRICE_CENTS * DRIVE_FEE) + EXTRAS_COST_CENTS;
 		const INITIAL_DRIVER_CUT = TOTAL_COST_CENTS - INITIAL_PLATFORM_CUT;
-
 		//Handle automatic credits spending ~ use credits to pay platform cut first, to keep the driver cut mostly off stripe
 		const reservedCredits = order.allow_credits_usage
 			? await WalletFundsHelpers.reserveCreditsForOrder(
@@ -711,7 +643,6 @@ async function handlePaymentForTransferOrder(order, return_url) {
 			: [];
 		const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum, wf) => sum + wf.amount, 0);
 		const DISCOUNTED_TOTAL_COST = TOTAL_COST_CENTS - CREDITS_AMOUNT_RESERVED;
-
 		const PLATFORM_CREDIT_CUT_CENTS = Math.min(INITIAL_PLATFORM_CUT, CREDITS_AMOUNT_RESERVED);
 		const DRIVER_CREDIT_CUT_CENTS =
 			CREDITS_AMOUNT_RESERVED > PLATFORM_CREDIT_CUT_CENTS
@@ -723,10 +654,8 @@ async function handlePaymentForTransferOrder(order, return_url) {
 			platform: PLATFORM_CREDIT_CUT_CENTS,
 		};
 		order = await TaxiOrderDao.updateTaxiOrderPayment(order.order_id, order.payment);
-
 		const PLATFORM_CUT_CENTS = INITIAL_PLATFORM_CUT - PLATFORM_CREDIT_CUT_CENTS;
 		const DRIVER_CUT_CENTS = INITIAL_DRIVER_CUT - DRIVER_CREDIT_CUT_CENTS;
-
 		// if(PLATFORM_CREDIT_CUT_CENTS>0) {
 		// 	const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, "platform", PLATFORM_CREDIT_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
 		// }
@@ -734,21 +663,18 @@ async function handlePaymentForTransferOrder(order, return_url) {
 		// 	const transferedCreditsDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(user.user_id, driver_business.stripe_account_id, DRIVER_CREDIT_CUT_CENTS, order.order_id, SERVICE_TYPE.TAXI);
 		// }
 		const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user.user_id);
-
 		if (DISCOUNTED_TOTAL_COST > 0) {
 			if (order.payment.type === 'WALLET') {
 				// handle wallet payment
 				if (available_wallet_balances['TAXI'] + available_wallet_balances[null] < DISCOUNTED_TOTAL_COST / 100) {
 					throw new Error('Insufficient funds');
 				}
-
 				// await UsersDao.removeWalletBalance(order.user_id, (DISCOUNTED_TOTAL_COST / 100), order.order_id, "taxi");
 				const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
 					user.user_id,
 					DISCOUNTED_TOTAL_COST,
 					order.order_id
 				);
-
 				order = await TaxiOrderDao.updateOrder(order.order_id, {
 					payment: {
 						...order.payment,
@@ -773,7 +699,6 @@ async function handlePaymentForTransferOrder(order, return_url) {
 					allowance = allowance * 2;
 				}
 				// todo is parent business user?
-
 				if (allowance < DISCOUNTED_TOTAL_COST / 100) {
 					throw new Error('Insufficient allowance');
 				}
@@ -781,14 +706,12 @@ async function handlePaymentForTransferOrder(order, return_url) {
 				if (parent_available_wallet_balances[null] < DISCOUNTED_TOTAL_COST / 100) {
 					throw new Error('Insufficient funds');
 				}
-
 				// await UsersDao.removeWalletBalance(parent_user.user_id, DISCOUNTED_TOTAL_COST, order.order_id, "taxi");
 				const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
 					parent_user.user_id,
 					DISCOUNTED_TOTAL_COST,
 					order.order_id
 				);
-
 				const updateData = {};
 				if (order.type === ORDER_TYPE.TAXI) {
 					updateData.amount_taxi = { decrement: DISCOUNTED_TOTAL_COST / 100 };
@@ -820,7 +743,6 @@ async function handlePaymentForTransferOrder(order, return_url) {
 					return_url
 				);
 				console.info('payment_intent', payment_intent);
-
 				order = await TaxiOrderDao.updateTaxiOrderPayment(order.order_id, {
 					...order.payment,
 					payment_intent_id: payment_intent.id,
@@ -849,7 +771,6 @@ async function handlePaymentForTransferOrder(order, return_url) {
 		throw new Error('Error when handling payment: ', e);
 	}
 }
-
 /**
  * POST /taxi/order
  * @tag Taxi
@@ -880,7 +801,6 @@ async function createOrder(req, res) {
 		let region = null;
 		if (coordinates) {
 			const pointWKT = `SRID=4326;POINT(${coordinates.longitude} ${coordinates.latitude})`;
-
 			region = await prisma.$queryRaw`
 			SELECT 
 				municipalities_id,
@@ -924,10 +844,8 @@ async function createOrder(req, res) {
 			}
 		}
 		orderData.business_client = business_client;
-
 		console.info('USER TELEPHONE', orderData.telephone);
 		console.info('USER ID', orderData.user_id);
-
 		console.info('dep date', req.body.preferences?.departure_date);
 		let flags = await FlagDao.getFlags();
 		let flagsObj = {};
@@ -935,7 +853,6 @@ async function createOrder(req, res) {
 			flagsObj[flag.name] = flag.status;
 		});
 		orderData.flags = flagsObj;
-
 		orderData.status = TAXI_ORDER_STATUS.PENDING;
 		if (orderData.type === ORDER_TYPE.TRANSFER_PRIVATE) {
 			const { route, preferences } = orderData;
@@ -946,27 +863,23 @@ async function createOrder(req, res) {
 			}
 			if (orderData.payment.price >= 25) {
 				orderData.status = TAXI_ORDER_STATUS.AWAITING_PAYMENT;
-
 				if (
 					VEHICLE_CAPACITY[orderData.preferences.vehicle_class] <
 					orderData.preferences.adults + orderData.preferences.children_under_140
 				) {
 					throw new Error('Number of requested seats exceeds vehicle capacity!');
 				}
-
 				if (
 					!!orderData.preferences.repeat_ride &&
 					!orderData.preferences.repeat_ride.some((item) => item.value === 'do_not_repeat')
 				) {
 					throw new Error(`Repeating orders not allowed for transfer orders above ${25}€!`);
 				}
-
 				let user = await UsersDao.getUserById(orderData.user_id);
 				const customer_acc = user.stripe_customer_id;
 				const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(
 					orderData.user_id
 				);
-
 				if (orderData.payment.type === 'WALLET') {
 					const TOTAL_PRICE_CENT = Math.round(orderData.payment.price * 100);
 					if (
@@ -983,7 +896,6 @@ async function createOrder(req, res) {
 				}
 			}
 		}
-
 		let order = await cleanedCreateOrderHelper(orderData);
 		//TODO: payment management for order
 		let payment_intent =
@@ -992,10 +904,8 @@ async function createOrder(req, res) {
 				: null;
 		console.info('ORDER: ', order);
 		console.info('PAYMENT_INTENT: ', payment_intent);
-
 		if (!order?.creating_user_id) SocketStore.addUserToRoom(req.user.user_id, 'order_' + order.order_id);
 		//console.log("create taxi order", order)
-
 		const userSocket = UserSockets.get(order.user_id);
 		if (userSocket && order.creating_user_id && order.creating_user_id !== order.user_id) {
 			console.log('userSocket exists!');
@@ -1012,7 +922,6 @@ async function createOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 function getDayIndex(dayName) {
 	// Map day names to their corresponding indices
 	const daysOfWeek = {
@@ -1024,24 +933,19 @@ function getDayIndex(dayName) {
 		Friday: 5,
 		Saturday: 6,
 	};
-
 	return daysOfWeek[dayName]; // Return the index of the day
 }
-
 function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
 	try {
 		console.log('rd', repeatDuration);
 		const orders = [];
 		const currentDate = new Date();
-
 		// Get the hours and minutes from the departure time
 		const departureTime = new Date(orderData.preferences.departure_time);
 		const departureHours = departureTime.getHours();
 		const departureMinutes = departureTime.getMinutes();
-
 		// Get current week's day number
 		const currentDay = currentDate.getDay();
-
 		for (let week = 0; week < repeatDuration; week++) {
 			for (let day of repeatData) {
 				console.log('day', day);
@@ -1064,9 +968,7 @@ function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
 					month: 'long',
 					year: 'numeric',
 				}).format(orderDate);
-
 				const formattedDepartureTime = orderDate.toISOString().slice(0, -1);
-
 				// Generate an order for this day
 				let order = {
 					...orderData,
@@ -1079,14 +981,12 @@ function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
 				orders.push(order); // Add to orders list
 			}
 		}
-
 		return orders; // Return generated orders
 	} catch (error) {
 		console.log('TaxiOrderController', error);
 		throw new Error(error);
 	}
 }
-
 /**
  * POST /taxi/dispatch-order
  * @tag Taxi
@@ -1115,7 +1015,6 @@ async function createDispatchOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * POST /taxi/order/accept
  * @tag Taxi
@@ -1138,7 +1037,6 @@ async function acceptOrder(req, res) {
 		} else if (driver.on_order) {
 			return res.status(400).json({ error: 'Driver is already on order.', errorType: 'ERR_DRIVER_ON_ORDER' });
 		}
-
 		let order = await TaxiOrderDao.getOrder(order_id);
 		if (order.status === TAXI_ORDER_STATUS.CUSTOMER_CANCELED) {
 			return res
@@ -1149,7 +1047,6 @@ async function acceptOrder(req, res) {
 				.status(400)
 				.json({ error: 'Order is already accepted.', errorType: 'ERR_ORDER_ALREADY_ACCEPTED' });
 		}
-
 		if (order.is_scheduled) {
 			let isSent = await TaxiOrderDao.isOrderSent(order.order_id, user.driver);
 			if (!isSent) {
@@ -1157,10 +1054,8 @@ async function acceptOrder(req, res) {
 			}
 		}
 		await TaxiOrderDao.acceptOrder(order, user);
-
 		driver.vehicle = driver.current_vehicle;
 		order.driver = driver;
-
 		const { result, distance, duration } = await gApi.distanceBetweenTwoPoints(
 			order.pickup_location.coordinates,
 			driver.location.coordinates,
@@ -1168,13 +1063,10 @@ async function acceptOrder(req, res) {
 			new Date(),
 			'best_guess'
 		);
-
 		console.log('ROES:', result, result?.rows[0], result?.rows[0]?.elements[0]);
 		console.log('ROES DISTANCE:', distance);
 		console.log('ROES DURATION:', duration);
-
 		if (!order.estimates) order.estimates = {};
-
 		if (result && result.rows && result.rows[0] && result.rows[0].elements && result.rows[0].elements[0]) {
 			order.estimates.pickup_time_in_seconds = result.rows[0].elements[0].duration.value;
 			const estimatedPickupTime = new Date();
@@ -1192,23 +1084,19 @@ async function acceptOrder(req, res) {
 			order.estimates.pickup_time_in_seconds = -1;
 			order.estimates.pickup_time = null;
 		}
-
 		order = await TaxiOrderDao.updateOrder(order.order_id, {
 			estimates: order.estimates,
 		});
 		order.driver = driver;
-
 		let userSocket = UserSockets.get(order.user_id);
 		console.log('LALA, user_id', order.user_id);
 		console.log('order accepted', order);
 		if (userSocket) {
 			io.to('order_' + order.order_id).emit('order_accepted__taxi', order);
 			io.emit('driver_unavailable', order.driver_id);
-
 			console.log('userSocket', userSocket);
 		}
 		SocketStore.addUserToRoom(driver.user_id, `order_${order.order_id}`);
-
 		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO)
 			sendOrderNotifications(
 				order?.user,
@@ -1224,7 +1112,6 @@ async function acceptOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * POST /taxi/order/complete
  * @tag Taxi
@@ -1241,10 +1128,8 @@ async function acceptOrder(req, res) {
 async function completeOrder(req, res) {
 	try {
 		let order = await TaxiOrderDao.getOrder(req.body.order_id);
-
 		let driver = await DriverDao.getDriverById(order.driver_id);
 		let driver_business = await BusinessDao.getBusinessById(driver.business_id);
-
 		//assign penalties for being late
 		const timeline_first_waiting_timestamp = order.timeline.find(
 			(entry) => entry.status === TAXI_ORDER_STATUS.TAXI_WAITING
@@ -1252,7 +1137,6 @@ async function completeOrder(req, res) {
 		const timeline_accept_timestamp = order.timeline.findLast(
 			(entry) => entry.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED
 		)?.location?.timestamp;
-
 		const estimated_pickup_timestamp = order.estimates?.pickup_time;
 		if (estimated_pickup_timestamp && timeline_accept_timestamp && timeline_first_waiting_timestamp) {
 			const expected_travel_seconds_to_pickup = moment(estimated_pickup_timestamp).diff(
@@ -1264,9 +1148,7 @@ async function completeOrder(req, res) {
 				'seconds'
 			);
 			console.log(`pickup was ${late_seconds} seconds ${late_seconds > 0 ? 'late' : 'early or on time'}.`);
-
 			let allowed_leeway = order.is_scheduled ? 60 * 10 : Math.max(expected_travel_seconds_to_pickup, 60 * 5);
-
 			if (late_seconds > allowed_leeway) {
 				await LateEventsDao.createLateEvent(
 					driver.business_id,
@@ -1287,7 +1169,6 @@ async function completeOrder(req, res) {
 				SCORING_POINTS_REASON.INSUFFICIENT_DATA
 			);
 		}
-
 		io.emit('driver_available', driver);
 		let user = order.user;
 		if (order.type === ORDER_TYPE.VEHICLE_TRANSFER_COMBO) {
@@ -1298,7 +1179,6 @@ async function completeOrder(req, res) {
 		} else {
 			const orderingUser = !order.creating_user_id ? user : await UsersDao.getUserById(order.creating_user_id);
 			let TOTAL_COST_CENTS = 0;
-
 			if (order.type === ORDER_TYPE.TRANSFER_PRIVATE && order.payment.price >= 25) {
 				//Handle expensive transfer payments
 				const { DRIVER_CREDIT_CUT, PLATFORM_CREDIT_CUT, DRIVER_CUT, PLATFORM_CUT } =
@@ -1322,7 +1202,6 @@ async function completeOrder(req, res) {
 						SERVICE_TYPE.TAXI
 					);
 				}
-
 				if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
 					if (order.payment.payment_intent_id) {
 						const paymentIntent = await stripe.client.paymentIntents.retrieve(
@@ -1367,7 +1246,6 @@ async function completeOrder(req, res) {
 					if (!allowance) {
 						allowance = user.parent_user.allowance?.amount_any_wallet;
 					}
-
 					if (allowance < TOTAL_COST_CENTS / 100) {
 						throw new Error('Insufficient allowance');
 					}
@@ -1375,7 +1253,6 @@ async function completeOrder(req, res) {
 					if (parent_available_wallet_balances[null] < TOTAL_COST_CENTS / 100) {
 						throw new Error('Insufficient funds');
 					}
-
 					let parent_user_id = user.parent_user.parent_user_id;
 					if (PLATFORM_CUT > 0) {
 						const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
@@ -1413,10 +1290,8 @@ async function completeOrder(req, res) {
 					) * 100
 				);
 				TOTAL_COST_CENTS = PRICE_CENTS + EXTRAS_COST_CENTS;
-
 				const INITIAL_PLATFORM_CUT = Math.round(PRICE_CENTS * DRIVE_FEE) + EXTRAS_COST_CENTS;
 				const INITIAL_DRIVER_CUT = TOTAL_COST_CENTS - INITIAL_PLATFORM_CUT;
-
 				//Handle automatic credits spending ~ use credits to pay platform cut first, to keep the driver cut mostly off stripe
 				const reservedCredits = order.allow_credits_usage
 					? await WalletFundsHelpers.reserveCreditsForOrder(
@@ -1428,7 +1303,6 @@ async function completeOrder(req, res) {
 					: [];
 				const CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum, wf) => sum + wf.amount, 0);
 				const DISCOUNTED_TOTAL_COST = TOTAL_COST_CENTS - CREDITS_AMOUNT_RESERVED;
-
 				const PLATFORM_CREDIT_CUT_CENTS = Math.min(INITIAL_PLATFORM_CUT, CREDITS_AMOUNT_RESERVED);
 				const DRIVER_CREDIT_CUT_CENTS =
 					CREDITS_AMOUNT_RESERVED > PLATFORM_CREDIT_CUT_CENTS
@@ -1440,10 +1314,8 @@ async function completeOrder(req, res) {
 					platform: PLATFORM_CREDIT_CUT_CENTS,
 				};
 				order = await TaxiOrderDao.updateTaxiOrderPayment(order.order_id, order.payment);
-
 				const PLATFORM_CUT_CENTS = INITIAL_PLATFORM_CUT - PLATFORM_CREDIT_CUT_CENTS;
 				const DRIVER_CUT_CENTS = INITIAL_DRIVER_CUT - DRIVER_CREDIT_CUT_CENTS;
-
 				if (PLATFORM_CREDIT_CUT_CENTS > 0) {
 					const transferedCreditsPlatform = await WalletFundsHelpers.transferReservedCreditsForOrder(
 						user.user_id,
@@ -1469,7 +1341,6 @@ async function completeOrder(req, res) {
 				const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(
 					businessUser ? businessUser.user_id : user.user_id
 				);
-
 				if (DISCOUNTED_TOTAL_COST > 0) {
 					//TODO: add order.payment.type === 'BUSINESS_WALLET' instead of order.payment.subtype
 					if (order.payment.type === 'WALLET') {
@@ -1480,7 +1351,6 @@ async function completeOrder(req, res) {
 						) {
 							throw new Error('Insufficient funds');
 						}
-
 						let any;
 						if (businessUser) {
 							let allowance = businessUser.allowance?.amount_taxi_wallet;
@@ -1498,7 +1368,6 @@ async function completeOrder(req, res) {
 							DISCOUNTED_TOTAL_COST,
 							order.order_id
 						);
-
 						if (businessUser) {
 							const updateData = {};
 							if (any) {
@@ -1517,7 +1386,6 @@ async function completeOrder(req, res) {
 								data: updateData,
 							});
 						}
-
 						//Only transfer money to driver since we already have the wallet money?
 						// const transfer = await stripe.transferToConnectedAccount(DRIVER_CUT_AMOUNT, driver_business.stripe_account_id);
 						const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
@@ -1550,7 +1418,6 @@ async function completeOrder(req, res) {
 							allowance = user.parent_user.allowance?.amount_any_wallet;
 							any = true;
 						}
-
 						if (allowance < DISCOUNTED_TOTAL_COST / 100) {
 							throw new Error('Insufficient allowance');
 						}
@@ -1558,14 +1425,12 @@ async function completeOrder(req, res) {
 						if (parent_available_wallet_balances[null] < DISCOUNTED_TOTAL_COST / 100) {
 							throw new Error('Insufficient funds');
 						}
-
 						// await UsersDao.removeWalletBalance(parent_user.user_id, DISCOUNTED_TOTAL_COST, order.order_id, "taxi");
 						const reservedFunds = await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
 							parent_user.user_id,
 							DISCOUNTED_TOTAL_COST,
 							order.order_id
 						);
-
 						const updateData = {};
 						if (any) {
 							updateData.amount_any_wallet = { decrement: DISCOUNTED_TOTAL_COST / 100 };
@@ -1582,7 +1447,6 @@ async function completeOrder(req, res) {
 							},
 							data: updateData,
 						});
-
 						const transfersForDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 							parent_user.user_id,
 							driver_business.stripe_account_id,
@@ -1607,7 +1471,6 @@ async function completeOrder(req, res) {
 						if (allowance < DISCOUNTED_TOTAL_COST / 100) {
 							throw new Error('Insufficient allowance');
 						}
-
 						const updateData = {};
 						if (any) {
 							updateData.amount_any_purchase_order = { decrement: DISCOUNTED_TOTAL_COST / 100 };
@@ -1633,7 +1496,6 @@ async function completeOrder(req, res) {
 					},
 				});
 			}
-
 			if (orderingUser.user_role === USER_ROLE.PERSONAL) {
 				let cashbackAmount =
 					TOTAL_COST_CENTS >= CREDITS.CASHBACK_THRESHOLD_TAXI ? Math.floor(TOTAL_COST_CENTS / 100) : 1;
@@ -1662,7 +1524,6 @@ async function completeOrder(req, res) {
 								description: `Cashback remainder after conversion to credit`,
 							});
 						}
-
 						const expiryDate = new Date();
 						expiryDate.setDate(expiryDate.getDate() + 30);
 						expiryDate.setHours(23, 59, 59, 999);
@@ -1687,14 +1548,12 @@ async function completeOrder(req, res) {
 		SocketStore.closeRoom('order_' + order.order_id);
 		console.log('order_completed__taxi ', req.body.order_id);
 		//io.emit("driver_available", driver);
-
 		res.status(200).json(order);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
 		res.status(500).json(e);
 	}
 }
-
 /**
  * POST /taxi/order/status
  * @tag Taxi
@@ -1712,7 +1571,6 @@ async function updateOrderStatus(req, res) {
 	try {
 		let order = await TaxiOrderDao.updateOrderStatus(req.body.order_id, req.body.status);
 		io.to('order_' + order.order_id).emit('order_status_change__taxi', order);
-
 		let user_id = order?.user_id;
 		let driver_id = order?.driver?.driver_id;
 		let user = await UsersDao.getUserById(user_id);
@@ -1727,7 +1585,6 @@ async function updateOrderStatus(req, res) {
 				},
 			});
 		}
-
 		if (
 			order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO &&
 			order.status !== TAXI_ORDER_STATUS.TAXI_DRIVING && //Dont send TAXI_DRIVING notification
@@ -1744,14 +1601,12 @@ async function updateOrderStatus(req, res) {
 			)
 		)
 			sendOrderNotifications(user, driver?.user, user_id, driver_id, req.body.status);
-
 		res.status(200).json(order);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
 		res.status(500).json(e);
 	}
 }
-
 /**
  * POST /taxi/order/update/preferences
  * @tag Taxi
@@ -1768,14 +1623,11 @@ async function updateOrderStatus(req, res) {
 async function updateTaxiOrderPreferences(req, res) {
 	try {
 		const { order_id, vehicle_category, vehicle_class, ride_requirements } = req.body;
-
 		// Fetch the current order details
 		let order = await TaxiOrderDao.getOrder(order_id);
-
 		if (!order) {
 			return res.status(404).json({ message: 'Order not found' });
 		}
-
 		// Update only the vehicle category and vehicle class in the order's preferences
 		const updatedPreferences = {
 			...order.preferences,
@@ -1783,20 +1635,16 @@ async function updateTaxiOrderPreferences(req, res) {
 			vehicle_class: vehicle_class,
 			ride_requirements: ride_requirements,
 		};
-
 		order = await TaxiOrderDao.updateOrder(order.order_id, {
 			preferences: updatedPreferences,
 		});
-
 		io.to('order_' + order.order_id).emit('order_preferences_change__taxi', order);
-
 		res.status(200).json(order);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
 		res.status(500).json({ message: 'Server error', error: e });
 	}
 }
-
 /**
  * POST /taxi/order/cancel
  * @tag Taxi
@@ -1813,7 +1661,6 @@ async function updateTaxiOrderPreferences(req, res) {
 async function cancelOrder(req, res) {
 	const { order_id, status, cancellation_reason } = req.body;
 	console.info('TaxiOrderController', 'CANCEL ORDER', req.body);
-
 	try {
 		let order = await TaxiOrderDao.getOrder(order_id);
 		console.info('TaxiOrderController', 'GET ORDER BY ID', order);
@@ -1837,9 +1684,7 @@ async function cancelOrder(req, res) {
 		console.log('Driver console.log', driver?.user?.user_id);
 		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO)
 			sendOrderNotifications(user, driver?.user, user_id, driver_id, status);
-
 		await TaxiHelper.revokeTaxiOrderFromDrivers(order.order_id);
-
 		// Determine the cancellation reason
 		let reason = '';
 		if (Array.isArray(cancellation_reason) && cancellation_reason.length > 0) {
@@ -1901,20 +1746,17 @@ async function cancelOrder(req, res) {
 					disconnect: true,
 				},
 			});
-
 			io.emit('driver_available', driver);
 			SocketStore.removeUserFromRoom(driver?.user_id, `order_${order_id}`);
 		}
 		io.to('order_' + order.order_id).emit('order_cancelled__taxi', order);
 		SocketStore.removeUserFromRoom(order?.user_id, `order_${order_id}`);
-
 		res.status(200).json(order);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
 		res.status(500).json(e);
 	}
 }
-
 /**
  * POST /taxi/order/reject
  * @tag Taxi
@@ -1948,7 +1790,6 @@ async function rejectOrder(req, res) {
 		console.log('Driver console.log', driver?.user?.user_id);
 		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO)
 			sendOrderNotifications(user, driver?.user, user_id, driver_id, status);
-
 		if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
 			new_status = TAXI_ORDER_STATUS.PENDING;
 			await TaxiOrderDao.updateOrder(order_id, {
@@ -1956,7 +1797,6 @@ async function rejectOrder(req, res) {
 				last_sent_at: null,
 			});
 		}
-
 		SocketStore.removeUserFromRoom(driver?.user_id, `order_${order_id}`);
 		if (userDriver && userDriver.driver_id) {
 			await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, userDriver.driver_id);
@@ -1977,7 +1817,6 @@ async function rejectOrder(req, res) {
 					},
 				},
 			});
-
 			console.log('REJECT ' + order_sent.taxi_order_sent_id);
 			if (order_sent.taxi_order_sent_id) {
 				await prisma.taxi_order_sent.update({
@@ -1990,7 +1829,6 @@ async function rejectOrder(req, res) {
 				});
 			}
 		}
-
 		// Determine the cancellation reason
 		let reason = '';
 		if (Array.isArray(cancellation_reason) && cancellation_reason.length > 0) {
@@ -1998,10 +1836,8 @@ async function rejectOrder(req, res) {
 		} else if (typeof cancellation_reason === 'string' && cancellation_reason.trim() !== '') {
 			reason = cancellation_reason;
 		}
-
 		// Cancel the order with the determined reason
 		order = await TaxiOrderDao.cancelOrder(order_id, new_status, reason);
-
 		if (order.driver_id) {
 			let driver = await DriverDao.getDriverById(order.driver_id);
 			await TaxiOrderDao.updateOrder(order_id, {
@@ -2013,7 +1849,6 @@ async function rejectOrder(req, res) {
 		}
 		io.to('order_' + order.order_id).emit('order_rejected__taxi', order);
 		io.to('order_' + order.order_id).emit('order_status_change__taxi', order);
-
 		let userActiveOrders = await TaxiOrderDao.userActiveOrders(order.user_id);
 		let pending = true;
 		for (let or of userActiveOrders) {
@@ -2028,7 +1863,6 @@ async function rejectOrder(req, res) {
 				UserSockets.get(order.user_id).emit('order_restart_search', order);
 			}
 		}
-
 		console.log('order_status_change__taxi', 'order_rejected__taxi');
 		res.status(200).json(order);
 	} catch (e) {
@@ -2036,7 +1870,6 @@ async function rejectOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * POST /taxi/order/route
  * @tag Taxi
@@ -2060,7 +1893,6 @@ async function updateTaxiOrderRoute(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * POST /taxi/order/pickup_location
  * @tag Taxi
@@ -2084,7 +1916,6 @@ async function updateTaxiOrderPickupLocation(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * POST /taxi/order/delivery_location
  * @tag Taxi
@@ -2108,7 +1939,6 @@ async function updateTaxiOrderDeliveryLocation(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * POST /taxi/order/complete_route
  * @tag Taxi
@@ -2124,7 +1954,6 @@ async function updateTaxiOrderDeliveryLocation(req, res) {
  */
 async function updateCompleteTaxiRoute(req, res) {
 	const { order_id, route } = req.body;
-
 	try {
 		let order = await TaxiOrderDao.updateCompleteTaxiRoute(order_id, route);
 		io.to('order_' + order.order_id).emit('order_complete_route_change', order);
@@ -2134,7 +1963,6 @@ async function updateCompleteTaxiRoute(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * POST /taxi/order/timeline
  * @tag Taxi
@@ -2151,7 +1979,6 @@ async function updateCompleteTaxiRoute(req, res) {
 async function updateTaxiOrderTimeline(req, res) {
 	const { order_id, timeline } = req.body;
 	console.info('TaxiOrderController', 'UPDATE ORDER TIMELINE', req.body);
-
 	try {
 		let order = await TaxiOrderDao.updateTaxiOrderTimeline(order_id, timeline);
 		io.to('order_' + order.order_id).emit('order_timeline_change', order);
@@ -2161,7 +1988,6 @@ async function updateTaxiOrderTimeline(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * POST /taxi/order/payment
  * @tag Taxi
@@ -2190,7 +2016,6 @@ async function updateTaxiOrderPayment(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 /**
  * POST /taxi/driver
  * @tag Taxi
@@ -2206,7 +2031,6 @@ async function updateTaxiOrderPayment(req, res) {
  */
 async function appendTaxiDriver(req, res) {
 	const { order_id, driver_id } = req.body;
-
 	try {
 		console.info(order_id, driver_id);
 		const order = await TaxiOrderDao.updateOrder(order_id, {
@@ -2225,7 +2049,6 @@ async function appendTaxiDriver(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 async function getScheduledOrders(req, res) {
 	try {
 		const orders = await TaxiOrderDao.getOrders({
@@ -2234,7 +2057,6 @@ async function getScheduledOrders(req, res) {
 				status: TAXI_ORDER_STATUS.PENDING,
 			},
 		});
-
 		console.info(orders.length, 'scheduled orders');
 		res.status(200).json(orders);
 	} catch (e) {
@@ -2242,7 +2064,6 @@ async function getScheduledOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 async function getAcceptedScheduledOrders(req, res) {
 	try {
 		const orders = await TaxiOrderDao.getOrders({
@@ -2252,7 +2073,6 @@ async function getAcceptedScheduledOrders(req, res) {
 				status: TAXI_ORDER_STATUS.TAXI_ACCEPTED,
 			},
 		});
-
 		console.info(orders.length, 'scheduled orders');
 		res.status(200).json(orders);
 	} catch (e) {
@@ -2260,7 +2080,6 @@ async function getAcceptedScheduledOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 async function getScheduledOrdersByUserId(req, res) {
 	const { user_id } = req.params;
 	try {
@@ -2271,7 +2090,6 @@ async function getScheduledOrdersByUserId(req, res) {
 				status: TAXI_ORDER_STATUS.PENDING,
 			},
 		});
-
 		console.info(orders.length, 'scheduled orders');
 		res.status(200).json(orders);
 	} catch (e) {
@@ -2279,13 +2097,11 @@ async function getScheduledOrdersByUserId(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 async function getDriversForOrder(req, res) {
 	try {
 		const drivers = await DriverDao.getAvailableDrivers();
 		const order_id = req.params.order_id;
 		let availableDrivers = [];
-
 		for (let driver of drivers) {
 			let isSent = await TaxiOrderDao.isOrderSent(order_id, driver);
 			if (isSent && isSent.rejected) {
@@ -2298,7 +2114,6 @@ async function getDriversForOrder(req, res) {
 		res.status(500).json(error);
 	}
 }
-
 /**
  * GET /taxi/orders/pagination
  * @tag Taxi
@@ -2327,14 +2142,12 @@ async function getTaxiOrdersWithPagination(req, res) {
 				where, // Ensure the count matches the filtered results
 			}),
 		]);
-
 		res.status(200).json({ data, total });
 	} catch (error) {
 		console.error('TaxiOrderController', error);
 		res.status(500).json({ message: 'Error something went wrong...' });
 	}
 }
-
 /**
  * GET /taxi/orders/today
  * @tag Taxi
@@ -2363,7 +2176,6 @@ async function getTaxiOrdersToday(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 async function cancelGroupedOrderByParentId(req, res) {
 	console.info('TaxiOrderController', 'CANCEL GROUP ORDER', req.body);
 	const { parent_order_id, status, cancellation_reason } = req.body;
@@ -2374,21 +2186,16 @@ async function cancelGroupedOrderByParentId(req, res) {
 		reason = cancellation_reason; // Use the raw cancellation reason if it's a non-empty string
 	}
 	const STATUS = status;
-
 	try {
 		await TaxiHelper.revokeTaxiOrderFromDrivers(parent_order_id);
-
 		let parent_order = await TaxiOrderDao.getOrder(parent_order_id);
 		console.info(parent_order.grouped_orders);
 		const skip_cancellation_fee = order.type === 'TAXI' || req.user.user_id !== order?.user_id;
-
 		for (let order of parent_order.grouped_orders) {
 			console.info('TaxiOrderController', 'CANCELLING CHILD ORDER', order);
-
 			const { order_id, user_id, driver_id } = order;
 			const user = await UsersDao.getUserById(user_id);
 			const driver = driver_id ? await DriverDao.getDriverById(driver_id) : null;
-
 			sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
 			await TaxiHelper.revokeTaxiOrderFromDrivers(order_id);
 			const canceled_order = await TaxiOrderDao.cancelOrder(order_id, STATUS, reason);
@@ -2400,11 +2207,9 @@ async function cancelGroupedOrderByParentId(req, res) {
 				order?.preferences?.vehicle_class,
 				skip_cancellation_fee
 			);
-
 			io.to('order_' + order_id).emit('order_status_change__taxi', canceled_order);
 			io.to('order_' + order_id).emit('order_cancelled__taxi', canceled_order);
 			SocketStore.removeUserFromRoom(user_id, `order_${order_id}`);
-
 			if (driver) {
 				SocketStore.removeUserFromRoom(driver.user_id, `order_${order_id}`);
 				await TaxiOrderDao.updateOrder(order_id, {
@@ -2415,19 +2220,15 @@ async function cancelGroupedOrderByParentId(req, res) {
 				io.emit('driver_available', driver);
 			}
 		}
-
 		console.info('TaxiOrderController', 'CANCELLING PARENT ORDER', parent_order);
 		const { order_id, user_id, driver_id } = parent_order;
 		const user = await UsersDao.getUserById(user_id);
 		const driver = driver_id ? await DriverDao.getDriverById(driver_id) : null;
-
 		sendOrderNotifications(user, driver?.user, user_id, driver_id, STATUS);
 		const canceled_order = await TaxiOrderDao.cancelOrder(order_id, STATUS, reason);
-
 		io.to('order_' + order_id).emit('order_status_change__taxi', canceled_order);
 		io.to('order_' + order_id).emit('order_cancelled__taxi', canceled_order);
 		SocketStore.removeUserFromRoom(user_id, `order_${order_id}`);
-
 		if (driver) {
 			SocketStore.removeUserFromRoom(driver.user_id, `order_${order_id}`);
 			await TaxiOrderDao.updateOrder(order_id, {
@@ -2443,7 +2244,6 @@ async function cancelGroupedOrderByParentId(req, res) {
 		res.status(500).json(e);
 	}
 }
-
 async function rejectGroupedOrderByParentId(req, res) {
 	console.info('TaxiOrderController', 'REJECT GROUP ORDER', req.body);
 	const { parent_order_id, rejection_reason } = req.body;
@@ -2454,14 +2254,12 @@ async function rejectGroupedOrderByParentId(req, res) {
 		reason = rejection_reason; // Use the raw cancellation reason if it's a non-empty string
 	}
 	const STATUS = TAXI_ORDER_STATUS.TAXI_REJECTED;
-
 	try {
 		let parent_order = await TaxiOrderDao.getOrder(parent_order_id);
 		console.info(parent_order.grouped_orders);
 		let orders = [...parent_order.grouped_orders, parent_order];
 		for (let order of orders) {
 			console.info('TaxiOrderController', 'REJECTING CHILD ORDER', order);
-
 			const { order_id, user_id, driver_id } = order;
 			//const user = await UsersDao.getUserById(user_id);
 			const driver = driver_id ? await DriverDao.getDriverById(driver_id) : null;
@@ -2474,7 +2272,6 @@ async function rejectGroupedOrderByParentId(req, res) {
 					cancellation_reason: reason,
 				});
 			}
-
 			if (userDriver && userDriver.driver_id) {
 				await TaxiHelper.revokeTaxiOrderFromDriver(order_id, userDriver.driver_id);
 				let order_sent = await prisma.taxi_order_sent.findUnique({
@@ -2485,7 +2282,6 @@ async function rejectGroupedOrderByParentId(req, res) {
 						},
 					},
 				});
-
 				if (order_sent?.taxi_order_sent_id) {
 					await prisma.taxi_order_sent.update({
 						where: {
@@ -2497,9 +2293,7 @@ async function rejectGroupedOrderByParentId(req, res) {
 					});
 				}
 			}
-
 			io.to('order_' + order_id).emit('order_status_change__taxi', order);
-
 			if (driver && userDriver.driver_id === driver.driver_id) {
 				io.to('order_' + order_id).emit('order_rejected__taxi', order);
 				const user = await UsersDao.getUserById(user_id);
@@ -2513,7 +2307,6 @@ async function rejectGroupedOrderByParentId(req, res) {
 				io.emit('driver_available', driver);
 			}
 		}
-
 		let userActiveOrders = await TaxiOrderDao.userActiveOrders(parent_order.user_id);
 		let pending = true;
 		for (let or of userActiveOrders) {
@@ -2529,14 +2322,12 @@ async function rejectGroupedOrderByParentId(req, res) {
 				UserSockets.get(parent_order.user_id).emit('order_restart_search', rejected_order);
 			}
 		}
-
 		res.status(200).json(orders.map((order) => order.order_id));
 	} catch (e) {
 		console.log('TaxiOrderController', e);
 		res.status(500).json(e);
 	}
 }
-
 /**
  * GET /taxi/orders/today
  * @tag Taxi
@@ -2552,7 +2343,6 @@ async function splitVanOrder(req, res) {
 	console.info('TaxiOrderController', 'SPLIT VAN ORDER', req.body);
 	try {
 		let order = await TaxiOrderDao.getOrder(order_id);
-
 		if (order.preferences?.vehicle_class === VEHICLE_CLASS.VAN) {
 			if (order.parent_order_id) {
 				order = await TaxiOrderDao.getOrder(order.parent_order_id);
@@ -2592,7 +2382,43 @@ async function calculateTransferPrice(req, res) {
 		res.status(500).json(e);
 	}
 }
-module.exports = {
+export { getTaxiOrders };
+export { getTaxiOrdersToday };
+export { getOrder };
+export { getTaxiOrdersByDriverId };
+export { getCompletedTaxiOrders };
+export { getCanceledTaxiOrders };
+export { getRejectedTaxiOrders };
+export { createOrder };
+export { acceptOrder };
+export { completeOrder };
+export { cancelOrder };
+export { cancelGroupedOrderByParentId };
+export { rejectOrder };
+export { rejectGroupedOrderByParentId };
+export { updateOrderStatus };
+export { updateTaxiOrderRoute };
+export { updateTaxiOrderPickupLocation };
+export { updateTaxiOrderDeliveryLocation };
+export { updateTaxiOrderPreferences };
+export { updateCompleteTaxiRoute };
+export { updateTaxiOrderPayment };
+export { updateTaxiOrderTimeline };
+export { getActiveTaxiOrders };
+export { getCompletedTaxiOrdersByUserId };
+export { getCompletedTaxiOrdersByBusinessId };
+export { getCanceledTaxiOrdersByUserId };
+export { getActiveTaxiOrdersByDriverId };
+export { createDispatchOrder };
+export { appendTaxiDriver };
+export { getScheduledOrders };
+export { getDriversForOrder };
+export { getAcceptedScheduledOrders };
+export { getScheduledOrdersByUserId };
+export { getTaxiOrdersWithPagination };
+export { calculateTransferPrice };
+export { requestTransferOrderPrice };
+export default {
 	getTaxiOrders,
 	getTaxiOrdersToday,
 	getOrder,

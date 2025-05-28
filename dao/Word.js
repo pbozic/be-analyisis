@@ -1,13 +1,9 @@
-const { language } = require('googleapis/build/src/apis/language');
-
-const prisma = require('../prisma/prisma');
-
+import prisma from '../prisma/prisma.js';
 async function createWord(word, category_id, translations) {
 	// Create a new translatable record
 	let translatable = await prisma.translatable.create({
 		data: {},
 	});
-
 	// Create the word with its relationships
 	let new_word = await prisma.words.create({
 		data: {
@@ -29,7 +25,6 @@ async function createWord(word, category_id, translations) {
 			category: true,
 		},
 	});
-
 	// Create translations
 	let translats = [];
 	for (let translation of translations) {
@@ -46,12 +41,10 @@ async function createWord(word, category_id, translations) {
 		});
 		translats.push(trans);
 	}
-
 	// Attach translations to the response
 	new_word.translations = translats;
 	return new_word;
 }
-
 async function updateWord(id, word, categories_id, translations) {
 	// First get the existing word to access its translatable_id
 	const existingWord = await prisma.words.findUnique({
@@ -62,11 +55,9 @@ async function updateWord(id, word, categories_id, translations) {
 			translatable: true,
 		},
 	});
-
 	if (!existingWord) {
 		throw new Error('Word not found');
 	}
-
 	// Update the word
 	const updatedWord = await prisma.words.update({
 		where: {
@@ -89,7 +80,6 @@ async function updateWord(id, word, categories_id, translations) {
 			translatable: true,
 		},
 	});
-
 	if (translations && translations.length > 0) {
 		// Delete existing translations
 		await prisma.translations.deleteMany({
@@ -97,7 +87,6 @@ async function updateWord(id, word, categories_id, translations) {
 				translatable_id: existingWord.translatable_id,
 			},
 		});
-
 		// Create new translations
 		let translats = [];
 		for (let translation of translations) {
@@ -116,10 +105,8 @@ async function updateWord(id, word, categories_id, translations) {
 		}
 		updatedWord.translations = translats;
 	}
-
 	return updatedWord;
 }
-
 async function deleteWord(id) {
 	return await prisma.words.delete({
 		where: {
@@ -127,7 +114,6 @@ async function deleteWord(id) {
 		},
 	});
 }
-
 async function getWordById(id) {
 	try {
 		let word = await prisma.words.findUnique({
@@ -143,21 +129,17 @@ async function getWordById(id) {
 				category: true,
 			},
 		});
-
 		if (!word) {
 			throw new Error('Word not found');
 		}
-
 		word.translations = word.translatable.translations;
 		delete word.translatable;
-
 		return word;
 	} catch (error) {
 		console.error('Error getting word by ID:', error);
 		throw new Error('Failed to get word');
 	}
 }
-
 async function getAllWords() {
 	try {
 		let words = await prisma.words.findMany({
@@ -170,19 +152,16 @@ async function getAllWords() {
 				category: true,
 			},
 		});
-
 		for (let word of words) {
 			word.translations = word.translatable.translations;
 			delete word.translatable;
 		}
-
 		return words;
 	} catch (error) {
 		console.error('Error getting words:', error);
 		throw new Error('Failed to get words');
 	}
 }
-
 async function getAllWordsByCategory(category) {
 	return await prisma.words.findMany({
 		where: {
@@ -204,7 +183,6 @@ async function removeCategoryFromWord(id) {
 		},
 	});
 }
-
 async function addCategoryToWord(id, category) {
 	// if word already has a category then remove it
 	const word = await getWordById(id);
@@ -224,7 +202,6 @@ async function addCategoryToWord(id, category) {
 		},
 	});
 }
-
 async function createWordBuy(args) {
 	return await prisma.word_buy.create({
 		data: {
@@ -244,7 +221,6 @@ async function createWordBuy(args) {
 		},
 	});
 }
-
 async function addStripeSubToWordBuy(id, stripe_subscription_id) {
 	return await prisma.word_buy.update({
 		where: {
@@ -255,7 +231,6 @@ async function addStripeSubToWordBuy(id, stripe_subscription_id) {
 		},
 	});
 }
-
 async function getWordBuyById(id) {
 	return await prisma.word_buy.findUnique({
 		where: {
@@ -263,11 +238,9 @@ async function getWordBuyById(id) {
 		},
 	});
 }
-
 async function getAllWordBuys() {
 	return await prisma.word_buy.findMany();
 }
-
 async function getAllWordBuysByWord(word) {
 	return await prisma.word_buy.findMany({
 		where: {
@@ -277,7 +250,6 @@ async function getAllWordBuysByWord(word) {
 		},
 	});
 }
-
 async function getAllWordBuysByBusiness(business) {
 	return await prisma.word_buy.findMany({
 		where: {
@@ -287,8 +259,21 @@ async function getAllWordBuysByBusiness(business) {
 		},
 	});
 }
-
-module.exports = {
+export { createWord };
+export { updateWord };
+export { deleteWord };
+export { getWordById };
+export { getAllWords };
+export { getAllWordsByCategory };
+export { createWordBuy };
+export { addStripeSubToWordBuy };
+export { getWordBuyById };
+export { getAllWordBuys };
+export { getAllWordBuysByWord };
+export { getAllWordBuysByBusiness };
+export { removeCategoryFromWord };
+export { addCategoryToWord };
+export default {
 	createWord,
 	updateWord,
 	deleteWord,

@@ -70,4 +70,4 @@ const ru = {
 		referral: 'Ваша награда за приглашение зачислена на ваш счет',
 	},
 };
-module.exports = ru;
+export default ru;
