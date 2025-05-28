@@ -41,6 +41,7 @@ import {
 	handlePaymentCleanup,
 	handlePaymentRefund,
 	verifyOrderCosts,
+	groupSubscriptionsForDailyMeals,
 } from '../lib/deliveryHelpers.js';
 import { sortObjectsByNearestNeighbor, todaysEarnings } from '../lib/helpersLib.js';
 import prisma from '../prisma/prisma.js';
@@ -428,48 +429,59 @@ async function createDailyMeals(req, res) {
 			return result.rows[0].elements[0].duration.value;
 		};
 		const providerLocation = convertAddressToLocation(business.address);
-		let sortedSubscriptions = [];
+
+		const groupedSubscriptions = groupSubscriptionsForDailyMeals(subscriptions);
+
+		let sortedGroupedSubscriptions = [];
 		if (business.daily_users_sorting_type === 'MANUAL') {
 			// Manual sorting based on provider.daily_users_sorted
 			//FIXME: business.daily_users_sorted deprecated?
 			if (!Array.isArray(business.daily_users_sorted)) {
 				return res.status(400).json({ message: 'Manual sort order missing or invalid.' });
 			}
-			const userMap = new Map(subscriptions.map((sub) => [sub.daily_meals_subscription_id, sub]));
-			sortedSubscriptions = business.daily_users_sorted
+			const userMap = new Map(groupedSubscriptions.map((sub) => [sub.daily_meals_subscription_id, sub]));
+			sortedGroupedSubscriptions = business.daily_users_sorted
 				.map((daily_meals_subscription_id) => userMap.get(daily_meals_subscription_id))
 				.filter((sub) => sub !== undefined);
-			console.info('sortedUserAddresses MANUAL', sortedSubscriptions);
-			console.info('sortedUserAddresses MANUAL', sortedSubscriptions[0].address);
+			console.info('sortedUserAddresses MANUAL', sortedGroupedSubscriptions);
+			console.info('sortedUserAddresses MANUAL', sortedGroupedSubscriptions[0].address);
 		} else {
 			// Automatic sorting by nearest neighbor
-			sortedSubscriptions = sortObjectsByNearestNeighbor([{ address: business.address }, ...subscriptions]).slice(
-				1
-			);
-			console.info('sortedUserAddresses AUTOMATIC', sortedSubscriptions);
-			console.info('sortedUserAddresses AUTOMATIC', sortedSubscriptions[0].address);
+			sortedGroupedSubscriptions = sortObjectsByNearestNeighbor([
+				{ address: business.address },
+				...groupedSubscriptions,
+			]).slice(1);
+			console.info('sortedUserAddresses AUTOMATIC', sortedGroupedSubscriptions);
+			console.info('sortedUserAddresses AUTOMATIC', sortedGroupedSubscriptions[0].address);
 		}
 		const orders = [];
 		const start_time = new Date();
 		let cumulativeTime = await getRouteDuration(deliveryDriver.location, providerLocation, start_time); // Track the total elapsed time
 		let scheduledMealsRoute = [providerLocation];
-		for (let i = 0; i < sortedSubscriptions.length; i++) {
-			const deliveryLocation = convertAddressToLocation(sortedSubscriptions[i].address);
-			const user = sortedSubscriptions[i].user;
+
+		for (let i = 0; i < sortedGroupedSubscriptions.length; i++) {
+			const deliveryLocation = convertAddressToLocation(sortedGroupedSubscriptions[i].address);
+			const user = sortedGroupedSubscriptions[i].user;
+
 			//TODO: generate from subscription
-			const dailyMealItemsFromSub = sortedSubscriptions[i].menu_category.menu_items.map((m_i) => {
-				return {
-					...m_i,
-					quantity: sortedSubscriptions[i].quantity,
-					price: 0,
-					discount: 0,
-				};
-			});
+			// const dailyMealItemsFromSub = sortedSubscriptions[i].menu_category.menu_items.map(
+			// 	(m_i) => {
+			// 		return {
+			// 			...m_i,
+			// 			quantity: sortedSubscriptions[i].quantity,
+			// 			price: 0,
+			// 			discount: 0
+			// 		};
+			// 	}
+
+			// );
+
 			const durationValue = await getRouteDuration(
 				scheduledMealsRoute[i],
 				deliveryLocation,
 				new Date(start_time.getTime() + cumulativeTime * 1000)
 			);
+
 			// Calculate expected delivery time based on cumulative time
 			const customerExpectedDeliveryAt = new Date(
 				start_time.getTime() + cumulativeTime * 1000 + durationValue * 1000 + 5 * 60 * 1000
@@ -478,7 +490,7 @@ async function createDailyMeals(req, res) {
 			const readyForPickupAt = start_time.toISOString();
 			const orderData = {
 				is_daily_meal: true,
-				items: dailyMealItemsFromSub,
+				items: sortedGroupedSubscriptions[i].dm_items,
 				details: {
 					type: 'delivery',
 					sub_total_price: 0,
@@ -505,7 +517,7 @@ async function createDailyMeals(req, res) {
 					date: new Date().toISOString(),
 				},
 				courier_instructions: {
-					text: sortedSubscriptions[i]?.courier_comment,
+					text: sortedGroupedSubscriptions[i]?.courier_comment,
 				},
 				restaurant_message: {
 					text: null,
