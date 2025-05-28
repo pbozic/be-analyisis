@@ -519,7 +519,7 @@ async function createDailyMeals(req, res) {
 
 			const orderData = {
 				is_daily_meal: true,
-				items: dailyMealItemsFromSub,
+				items: sortedGroupedSubscriptions[i].dm_items,
 				details: {
 					type: 'delivery',
 					sub_total_price: 0,
