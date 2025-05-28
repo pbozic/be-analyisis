@@ -467,10 +467,19 @@ async function createDailyMeals(req, res) {
 			if (!Array.isArray(business.daily_users_sorted)) {
 				return res.status(400).json({ message: 'Manual sort order missing or invalid.' });
 			}
-			const userMap = new Map(groupedSubscriptions.map((sub) => [sub.daily_meals_subscription_id, sub]));
-			sortedGroupedSubscriptions = business.daily_users_sorted
-				.map((daily_meals_subscription_id) => userMap.get(daily_meals_subscription_id))
-				.filter((sub) => sub !== undefined);
+
+			// Step 1: Map user_id → index
+			const sortIndexMap = new Map(
+				business.daily_users_sorted.map((user_id, index) => [user_id, index])
+			);
+
+			// Step 2: Sort with fallback for unknown users
+			sortedGroupedSubscriptions = [...groupedSubscriptions].sort((a, b) => {
+				const indexA = sortIndexMap.has(a.user_id) ? sortIndexMap.get(a.user_id) : Infinity;
+				const indexB = sortIndexMap.has(b.user_id) ? sortIndexMap.get(b.user_id) : Infinity;
+				return indexA - indexB;
+			});
+
 			console.info('sortedUserAddresses MANUAL', sortedGroupedSubscriptions);
 			console.info('sortedUserAddresses MANUAL', sortedGroupedSubscriptions[0].address);
 		} else {
