@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 import OverwatchController from '../../controllers/OverwatchController.js';
 const router = express.Router();

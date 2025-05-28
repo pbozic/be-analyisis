@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 import AuthController from '../../../controllers/AuthController.js';
 import { loginSchema, registerSchema, refreshSchema, resetPasswordSchema } from '../../../joi/authSchemas.js';

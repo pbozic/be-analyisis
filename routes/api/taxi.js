@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 import TaxiOrderController from '../../controllers/TaxiOrderController.js';
 import { createOrderSchema } from '../../joi/taxiOrderSchemas.js';

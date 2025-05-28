@@ -1,4 +1,3 @@
-import * as faker from '@faker-js/faker';
 import prisma from '../prisma.js';
 import PromoDao from '../../dao/Promo.js';
 const placeholder_promo_sections = [

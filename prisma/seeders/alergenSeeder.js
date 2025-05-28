@@ -1,4 +1,3 @@
-import * as faker from '@faker-js/faker';
 import prisma from '../prisma.js';
 const allergens = [
 	{

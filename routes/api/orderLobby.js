@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 import OrderLobbyController from '../../controllers/OrderLobbyController.js';
 const router = express.Router();

@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 import DocumentsController from '../../controllers/DocumentsController.js';
 import { deleteDocumentsAndFilesByDocumentId } from '../../controllers/MenuController.js';

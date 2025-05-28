@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 import { config } from 'dotenv';
-import * as express from 'express';
+import express from 'express';
 
 import AuthController from '../controllers/AuthController.js';
 import joi from '../middleware/joi.js';

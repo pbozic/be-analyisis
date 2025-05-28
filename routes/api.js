@@ -1,6 +1,6 @@
 import fs from 'fs';
 
-import * as express from 'express';
+import express from 'express';
 
 import prisma from '../prisma/prisma.js';
 import joi from '../middleware/joi.js';

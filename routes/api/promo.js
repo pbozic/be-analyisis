@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 import bannerRouter from './promo/banners.js';
 import adRouter from './promo/ads.js';

@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 import FlagController from '../../controllers/FlagsController.js';
 const router = express.Router();

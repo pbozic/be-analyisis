@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 import LostItemsController from '../../controllers/LostItemsController.js';
 const router = express.Router();

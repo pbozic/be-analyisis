@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 import WordsController from '../../../controllers/WordController.js';
 const router = express.Router();

@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 import { geocodeAddress, getPlacePredictions } from '../../controllers/GoogleMapsController.js';
 const router = express.Router();

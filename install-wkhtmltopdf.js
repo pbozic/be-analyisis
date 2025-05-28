@@ -10,7 +10,7 @@ import url from 'node:url';
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 import * as tar from 'tar';
-import * as unzipper from 'unzipper';
+import unzipper from 'unzipper';
 const mkdir = promisify(fs.mkdir);
 const BIN_DIR = path.join(__dirname, 'bin');
 const WKHTMLTOPDF_DIR = path.join(BIN_DIR, 'wkhtmltopdf');

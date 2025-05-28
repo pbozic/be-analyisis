@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 import BusinessUsersController from '../../controllers/BusinessUsersController.js';
 const router = express.Router();

@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 import BusinessTeamsController from '../../controllers/BusinessTeamController.js';
 const router = express.Router();

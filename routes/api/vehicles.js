@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 import joi from '../../middleware/joi.js';
 import vehicleSchemas from '../../joi/vehicleSchemas.js';

@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 import ReservationController from '../../../controllers/ReservationController.js';
 const router = express.Router();

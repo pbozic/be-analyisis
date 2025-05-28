@@ -1,6 +1,5 @@
 import { config } from 'dotenv';
 import bcrypt from 'bcrypt';
-import * as nodeOnesignal from '@onesignal/node-onesignal';
 
 import prisma from '../prisma/prisma.js';
 import UserDao from '../dao/User.js';
@@ -38,7 +37,6 @@ import ReservationDao from '../dao/Reservation.js';
 import GroupDao from '../dao/Group.js';
 import CashbackDao from '../dao/Cashback.js';
 config();
-const { User } = nodeOnesignal;
 /**
  * GET /users
  * @tag Users

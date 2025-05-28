@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 import StripeController from '../../controllers/StripeController.js';
 import BusinessCOntroller from '../../controllers/BusinessController.js';

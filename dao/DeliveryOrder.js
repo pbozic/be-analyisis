@@ -1,9 +1,6 @@
-import * as googleapis from 'googleapis';
-
 import prisma from '../prisma/prisma.js';
 import { DOCUMENT_TYPE, DELIVERY_ORDER_STATUS, DELIVERY_ORDER_END_STATES } from '../lib/constants.js';
 import gApi from '../lib/gApis.js';
-const { cloudprofiler_v2 } = googleapis;
 /**
  *
  * @param {Object} timeline - the order timeline object with entries which must have status and timestamp and can have additional fields

@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 import AuthController from '../../../controllers/AuthController.js';
 import { registerTaxiBusinessSchema } from '../../../joi/taxiSchemas.js';

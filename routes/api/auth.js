@@ -2,10 +2,10 @@ import fs from 'fs';
 import { Console } from 'console';
 
 import dotenv from 'dotenv';
-import * as express from 'express';
+import express from 'express';
 import jwt from 'jsonwebtoken';
-import * as googleAuthLibrary from 'google-auth-library';
-import * as axios from 'axios';
+import { OAuth2Client } from 'google-auth-library';
+import axios from 'axios';
 import jwkToPem from 'jwk-to-pem';
 
 import AuthController from '../../controllers/AuthController.js';
@@ -21,7 +21,7 @@ import { DOCUMENT_TYPE } from '../../lib/constants.js';
 import stripe from '../../lib/stripe.js';
 dotenv.config();
 const router = express.Router();
-const { OAuth2Client } = googleAuthLibrary;
+
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 async function getUser(id, res) {
 	try {

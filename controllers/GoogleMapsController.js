@@ -1,6 +1,6 @@
 import { config } from 'dotenv';
 import * as googleMapsServicesJs from '@googlemaps/google-maps-services-js';
-import * as axios from 'axios';
+import axios from 'axios';
 config();
 const { Client } = googleMapsServicesJs;
 const apiKey = process.env.GOOGLE_API_KEY;

@@ -1,4 +1,4 @@
-import * as express from 'express';
+import express from 'express';
 
 import UserController from '../../../controllers/UserController.js';
 import joi from '../../../middleware/joi.js';
