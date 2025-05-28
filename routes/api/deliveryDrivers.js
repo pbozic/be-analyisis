@@ -12,6 +12,7 @@ router.get('/online', DeliveryDriverController.listOnlineDeliveryDrivers);
 router.get('/available', DeliveryDriverController.getAvailableDeliveryDrivers);
 router.get('/daily-meals', DeliveryDriverController.listDeliveryDriversWithDailyMeals);
 router.get('/user/:user_id', DeliveryDriverController.getDeliveryDriverByUserId);
+router.get('/daily-meal-business/:business_id', DeliveryDriverController.getDeliveryDriversByBusinessId);
 router.get('/:delivery_driver_id', DeliveryDriverController.getDeliveryDriverById);
 router.get('/:delivery_driver_id/location', DeliveryDriverController.getDeliveryDriverLocation);
 router.get('/earnings/all', DeliveryDriverController.getAllDriversEarnings);

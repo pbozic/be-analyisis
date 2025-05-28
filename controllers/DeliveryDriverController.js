@@ -428,9 +428,36 @@ async function getDeliveryDriverByUserId(req, res) {
 			res.status(404).json({ error: 'Delivery driver not found by user_id' }, deliveryDriver);
 		}
 	} catch (error) {
-		console.error('Error retrieving delivery driver:', error);
-		res.status(400).json({
+		res.status(500).json({
 			error: 'Error retrieving delivery driver (by user_id) information',
+			detail: error.message,
+		});
+	}
+}
+
+/**
+ * GET /delivery_drivers/daily-meal-business/:business_id
+ * @tag DeliveryDrivers
+ * @summary Get delivery drivers by business ID
+ * @description Retrieves detailed information about delivery drivers by business ID.
+ * @operationId getDeliveryDriverByBusinessId
+ * @pathParam {string} business_id - The ID of the daily meal business
+ * @response 200 - Successful operation, returns detailed delivery drivers
+ * @responseContent {DeliveryDriver} 200.application/json
+ * @response 404 - Delivery drivers not found
+ * @response 400 - Error retrieving delivery drivers
+ */
+async function getDeliveryDriversByBusinessId(req, res) {
+	try {
+		const drivers = await DeliveryDriverDao.getDeliveryDriversByDailyMealBusinessId(req.params.business_id);
+		if (drivers) {
+			res.status(200).json(drivers);
+		} else {
+			res.status(404).json({ error: 'Delivery drivers not found for business_id' }, drivers);
+		}
+	} catch (error) {
+		res.status(500).json({
+			error: 'Error retrieving delivery drivers by business_id',
 			detail: error.message,
 		});
 	}
@@ -481,9 +508,22 @@ async function getDeliveryDriverLocation(req, res) {
  */
 async function updateDeliveryDriver(req, res) {
 	const { delivery_driver_id } = req.params;
-	const updateData = req.body;
+	const { delivers, businessId } = req.body;
 
 	try {
+		const updateData = delivers
+			? {
+					daily_meal_business: {
+						connect: {
+							business_id: businessId,
+						},
+					},
+				}
+			: {
+					daily_meal_business: {
+						disconnect: true,
+					},
+				};
 		const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriver(delivery_driver_id, updateData);
 		res.status(200).json(updatedDeliveryDriver);
 	} catch (error) {
@@ -821,6 +861,7 @@ module.exports = {
 	createDeliveryDriver,
 	getAvailableDeliveryDrivers,
 	getDeliveryDriverByUserId,
+	getDeliveryDriversByBusinessId,
 	resendDelegatedOrdersToDeliveryDriver,
 	editDeliveryDriver,
 	getDriverEarnings,
