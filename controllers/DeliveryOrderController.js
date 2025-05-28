@@ -535,6 +535,7 @@ async function createDailyMeals(req, res) {
 					floor_number: user.details?.floor_number,
 					door_number: user.details?.door_number,
 					daily_meal_delivery_order: i + 1, // Add sorted order number (1-based index)
+					duration: cumulativeTime,
 				},
 				payment: {
 					status: 'SUCCESSFUL',
