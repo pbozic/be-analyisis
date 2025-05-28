@@ -830,10 +830,10 @@ const removeBusinessDeliveryAddress = async (business_id) => {
 	}
 };
 
-const addScheduledUserSortingType = async (type) => {
+const addScheduledUserSortingType = async (type, businessId) => {
 	try {
-		return await prisma.business.updateMany({
-			where: { type: 'MERCHANT' },
+		return await prisma.business.update({
+			where: { business_id: businessId },
 			data: { daily_users_sorting_type: type },
 		});
 	} catch (error) {
@@ -842,10 +842,10 @@ const addScheduledUserSortingType = async (type) => {
 	}
 };
 
-const manualSortScheduledUsers = async (sorted_users = []) => {
+const manualSortScheduledUsers = async (sorted_users = [], businessId) => {
 	try {
-		return await prisma.business.updateMany({
-			where: { type: 'MERCHANT' },
+		return await prisma.business.update({
+			where: { business_id: businessId },
 			data: { daily_users_sorted: [...sorted_users] },
 		});
 	} catch (error) {
