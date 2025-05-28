@@ -58,6 +58,7 @@
         "@onesignal/node-onesignal": "^5.0.0-alpha-01",
         "@prisma/client": "^5.14.0",
         "@prisma/sdk": "^4.0.0",
+        "@signpdf/placeholder-plain": "^3.2.5",
         "@signpdf/signer-p12": "^3.2.4",
         "@signpdf/signpdf": "^3.2.5",
         "@socket.io/redis-adapter": "^8.3.0",
