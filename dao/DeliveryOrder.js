@@ -896,7 +896,7 @@ async function removeDriverFromOrder(order_id) {
 		throw new Error(e.message);
 	}
 }
-async function getDailyMealSubscriptionsByBusinessId(business_id) {
+async function getTodayDailyMealSubscriptionsByBusinessId(business_id) {
 	try {
 		return await prisma.daily_meals_subscriptions.findMany({
 			where: {
@@ -915,6 +915,7 @@ async function getDailyMealSubscriptionsByBusinessId(business_id) {
 						menu_items: true
 					}
 				},
+				user: true,
 			},
 		});
 	} catch (e) {
@@ -1090,7 +1091,7 @@ module.exports = {
 	getInProgressDeliveryOrdersCountForBusinessId,
 	getActiveOrderIdsForUser,
 	removeDriverFromOrder,
-	getDailyMealSubscriptionsByBusinessId,
+	getTodayDailyMealSubscriptionsByBusinessId,
 	createDailyMealsSubscription,
 	getDailyMealsSubscriptionByBusinessId,
 	getDailyMealsSubscriptionByUserId,
