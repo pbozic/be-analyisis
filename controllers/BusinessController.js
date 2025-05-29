@@ -245,7 +245,6 @@ async function listMerchantBusinesses(req, res) {
  */
 async function listPromoSectionsWithMerchants(req, res) {
 	try {
-		console.log('HI');
 		const promoSections = await prisma.promo_sections.findMany({
 			where: {},
 			include: {
@@ -254,10 +253,43 @@ async function listPromoSectionsWithMerchants(req, res) {
 				},
 			},
 		});
-		for (let promoSection of promoSections) {
+		const userId = req.user?.user_id;
+		if (!userId) {
+			res.status(400).json({ error: 'No user_id error' });
+		}
+		const user = await UserDao.getUserById(userId, {
+			include: {
+				user_favorite_businesses: true,
+			},
+		});
+		const favoriteBusinessIds = user.user_favorite_businesses?.map((b) => b.business_id);
+		const finalPromoSections = [
+			{
+				tag: 'favorite',
+				translations: {
+					en: 'Favorites',
+					es: 'Favoritos',
+					de: 'Favoriten',
+					fr: 'Favoris',
+					it: 'Preferiti',
+					ru: 'Избранное',
+					hr: 'Omiljeni',
+					bs: 'Omiljeni',
+					sr: 'Omiljeni',
+					sl: 'Priljubljeni',
+				},
+			},
+			...promoSections,
+		];
+		for (let promoSection of finalPromoSections) {
+			let favorite = promoSection.tag === 'favorite';
 			let translations = {};
-			for (let translation of promoSection.translatable.translations) {
-				translations[translation.language] = translation.translation;
+			if (!favorite) {
+				for (let translation of promoSection.translatable.translations) {
+					translations[translation.language] = translation.translation;
+				}
+			} else {
+				translations = promoSection.translations;
 			}
 			let esResults = await fullSearch(
 				'',
@@ -267,9 +299,10 @@ async function listPromoSectionsWithMerchants(req, res) {
 				req.body.radius,
 				req.body.filterOperator || 'OR',
 				req.body.isDailyMealSearch || false,
-				promoSection.promo_sections_id,
+				favorite ? null : promoSection.promo_sections_id,
 				1,
-				10
+				10,
+				favorite ? favoriteBusinessIds : null
 			);
 			promoSection.translations = translations;
 			if (!esResults || !esResults.results || esResults.results.length === 0) {
@@ -289,7 +322,7 @@ async function listPromoSectionsWithMerchants(req, res) {
 			promoSection.providers = result;
 			delete promoSection.translatable;
 		}
-		res.status(200).json(promoSections);
+		res.status(200).json(finalPromoSections);
 	} catch (e) {
 		console.error('Error listing merchant businesses:', e);
 		res.status(400).json({ error: 'Error listing merchant businesses', m: e.message });
