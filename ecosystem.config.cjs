@@ -2,7 +2,7 @@ module.exports = {
 	apps: [
 		{
 			name: 'Klikni Dev',
-			script: 'server.ts', // or server.js if JS
+			script: 'server.js', // or server.js if JS
 			interpreter: 'npx',
 			args: 'ts-node',
 			watch: ['.'],
