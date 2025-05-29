@@ -2,9 +2,9 @@ module.exports = {
   apps: [
     {
       name: 'klikni-dev',
-      script: 'tsx', // this becomes: `npx tsx watch server.ts`
+      script: 'server.ts',
       interpreter: 'npx',
-      args: 'watch server.ts',
+      interpreter_args: 'tsx watch',
       env: {
         NODE_ENV: 'development',
       },
