@@ -1057,7 +1057,7 @@ async function acceptOrder(req, res) {
 				await TaxiOrderDao.createOrderSent(order.order_id, driver);
 			}
 		}
-		await TaxiOrderDao.acceptOrder(order, user);
+		await TaxiOrderDao.acceptOrder(order, user, driver);
 		driver.vehicle = driver.current_vehicle;
 		order.driver = driver;
 		const { result, distance, duration } = await gApi.distanceBetweenTwoPoints(
