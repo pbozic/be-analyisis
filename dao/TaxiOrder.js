@@ -356,7 +356,7 @@ async function getAlreadySentOrdersByDriverId(driver_id) {
 		throw new Error(e);
 	}
 }
-async function acceptOrder(order, user, driver) {
+async function acceptOrder(order, driver) {
 	const order_id = order.order_id;
 	try {
 		let taxi_order_sent = await prisma.taxi_order_sent.update({
@@ -392,7 +392,7 @@ async function acceptOrder(order, user, driver) {
 				},
 				vehicle: {
 					connect: {
-						vehicle_id: user.driver.current_vehicle.vehicle_id,
+						vehicle_id: driver.current_vehicle.vehicle_id,
 					},
 				},
 			},
