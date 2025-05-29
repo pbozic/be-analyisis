@@ -43,7 +43,7 @@
         "checkJs": false /* Enable error reporting in type-checked JavaScript files. */,
         // "maxNodeModuleJsDepth": 1,
         /* Emit */
-        "noEmit": true /* Disable emitting files from a compilation. */,
+        "noEmit": false /* Disable emitting files from a compilation. */,
         // "declaration": true,
         // "declarationMap": true,
         // "emitDeclarationOnly": true,
@@ -99,5 +99,14 @@
     },
     "ts-node": {
     "esm": true
-  }
+  },
+   "exclude": [
+    "node_modules",
+    "dist",
+    ".git",
+    "**/*.test.ts",  // optional: ignore tests
+    "types/zod",
+    "docs"
+
+  ]
 }

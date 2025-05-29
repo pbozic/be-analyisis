@@ -5,7 +5,7 @@ import pluginImport from 'eslint-plugin-import';
 import pluginPrettier from 'eslint-plugin-prettier';
 export default [
 	{
-		ignores: ['node_modules', 'dist', 'types/zod', '**/prisma/seeders/**', 'docs'],
+		ignores: ['node_modules', 'dist', 'types/zod', '**/prisma/seeders/**', 'docs', 'dist'],
 	},
 	{
 		files: ['**/*.ts', '**/*.js'],
