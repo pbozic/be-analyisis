@@ -1,4 +1,8 @@
 import { Request } from 'express';
+export interface AuthUser {
+	user_id: string;
+	// add more fields as needed
+}
 
 export type ValidatedRequest<TBody = unknown, TParams = unknown, TQuery = unknown> = Request<
 	TParams,
@@ -6,4 +10,4 @@ export type ValidatedRequest<TBody = unknown, TParams = unknown, TQuery = unknow
 	any,
 	TBody,
 	TQuery
->;
+> & { user?: AuthUser; file?: Express.Multer.File };

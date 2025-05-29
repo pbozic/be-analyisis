@@ -47,10 +47,6 @@ export const UpdateBlogPostSchema = CreateBlogPostSchema.extend({
 	slug: z.string().optional(),
 });
 
-export const DeleteBlogPostSchema = z.object({
-	blog_posts_id: z.string().uuid(),
-});
-
 export const SearchBlogPostsSchema = z.object({
 	page: z.number().int().min(1).default(1),
 	limit: z.number().int().min(1).max(100).default(10),
@@ -68,7 +64,6 @@ export type EditorJSBlock = z.infer<typeof EditorJSBlockSchema>;
 export type EditorJSData = z.infer<typeof EditorJSDataSchema>;
 export type CreateBlogPostInput = z.infer<typeof CreateBlogPostSchema>;
 export type UpdateBlogPostInput = z.infer<typeof UpdateBlogPostSchema>;
-export type DeleteBlogPostInput = z.infer<typeof DeleteBlogPostSchema>;
 export type SearchBlogPostsInput = z.infer<typeof SearchBlogPostsSchema>;
 
 // =======================

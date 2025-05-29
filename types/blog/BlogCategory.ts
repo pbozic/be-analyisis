@@ -15,10 +15,5 @@ export const CreateBlogCategorySchema = z.object({
 });
 export const UpdateBlogCategorySchema = CreateBlogCategorySchema.partial();
 
-export const DeleteBlogCategorySchema = z.object({
-	blog_categories_id: z.string().uuid(),
-});
-
 export type CreateBlogCategoryInput = z.infer<typeof CreateBlogCategorySchema>;
 export type UpdateBlogCategoryInput = z.infer<typeof UpdateBlogCategorySchema>;
-export type DeleteBlogCategoryInput = z.infer<typeof DeleteBlogCategorySchema>;
