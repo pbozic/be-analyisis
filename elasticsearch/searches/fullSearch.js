@@ -25,7 +25,8 @@ async function searchBusinesses(
 	isDailyMealSearch = false,
 	promoSectionId = null,
 	page = 1,
-	pageSize = 10
+	pageSize = 10,
+	businessIds = []
 ) {
 	try {
 		userLat = userLat ?? 46.0660617;
@@ -36,12 +37,14 @@ async function searchBusinesses(
 		promoSectionId = promoSectionId || null;
 		page = page || 1;
 		pageSize = pageSize || 10;
+		businessIds = businessIds || [];
 		const from = (page - 1) * pageSize;
 		const queryWords = query ? query.split(' ').filter((word) => word.trim() !== '') : [];
 		const hasQuery = queryWords.length > 0;
 		const hasCategories = categoryIds.length > 0;
 		const hasPromoSection = promoSectionId !== null;
 		const radius_limited = radius ? Math.min(radius, ES_RADIUS_LIMIT_KM) : ES_RADIUS_LIMIT_KM;
+		const hasBusinessIds = Array.isArray(businessIds) && businessIds.length > 0;
 		console.log('latlng', userLat, userLon);
 		// Base Query
 		const boolQuery = {
@@ -53,6 +56,12 @@ async function searchBusinesses(
 			},
 		};
 		boolQuery.bool.filter.push({ term: { active: true } });
+		if (hasBusinessIds) {
+			boolQuery.bool.filter.push({
+				terms: { business_id: businessIds },
+			});
+		}
+
 		if (typeof isDailyMealSearch === 'boolean') {
 			if (isDailyMealSearch) {
 				// Only daily meals with a date >= today

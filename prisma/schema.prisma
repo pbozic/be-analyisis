@@ -220,6 +220,7 @@ model users {
 
   account_actions         account_actions[] @relation("action_to_affected_user")
   created_account_actions account_actions[] @relation("action_to_creator")
+  blog_posts             blog_posts[] 
 }
 
 model user_roles {
@@ -351,6 +352,7 @@ model files {
   document_id String?      @db.Uuid
   documents   documents?   @relation(fields: [document_id], references: [document_id])
   categories  categories[]
+  blog_posts blog_posts[] 
 
   promo_banners promo_banners[]
 }
@@ -1351,6 +1353,36 @@ model daily_meals_subscriptions {
   business                     business        @relation(fields: [business_id], references: [business_id])
   menu                         menus           @relation(fields: [menu_id], references: [menu_id])
   address                      addresses       @relation(fields: [address_id], references: [address_id])
+}
+
+model blog_tags {
+  blog_tags_id     String         @id @default(uuid()) @db.Uuid
+  name             String
+  description      String?
+  blog_posts       blog_posts[]   @relation("blog_posts_in_tag")
+}
+model blog_categories {
+  blog_categories_id String         @id @default(uuid()) @db.Uuid
+  name               String
+  description        String?
+  blog_posts         blog_posts[] @relation("blog_posts_in_category")
+}
+model blog_posts {
+  blog_posts_id     String             @id @default(uuid()) @db.Uuid
+  slug              String             @unique
+  title             String
+  short_content     String?
+  image_file_id     String?            @db.Uuid
+  image             files?             @relation(fields: [image_file_id], references: [file_id])
+  content           Json
+  author_id         String             @db.Uuid
+  category_id       String?            @db.Uuid
+  publish_at        DateTime           @default(now()) @db.Timestamptz(6)
+  created_at        DateTime           @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime           @default(now()) @updatedAt @db.Timestamptz(6)
+  author            users              @relation(fields: [author_id], references: [user_id])
+  category          blog_categories?   @relation("blog_posts_in_category", fields: [category_id], references: [blog_categories_id])
+  tags              blog_tags[]        @relation("blog_posts_in_tag")
 }
 
 enum ACCOUNT_ACTIONS {
