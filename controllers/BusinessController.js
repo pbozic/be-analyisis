@@ -283,9 +283,11 @@ async function listPromoSectionsWithMerchants(req, res) {
 		];
 		for (let promoSection of finalPromoSections) {
 			let favorite = promoSection.tag === 'favorite';
-			let translations = {};
-			for (let translation of promoSection.translatable.translations) {
-				translations[translation.language] = translation.translation;
+			if (!favorite) {
+				let translations = {};
+				for (let translation of promoSection.translatable.translations) {
+					translations[translation.language] = translation.translation;
+				}
 			}
 			let esResults = await fullSearch(
 				'',
