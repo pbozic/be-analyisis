@@ -4,7 +4,7 @@ module.exports = {
       name: 'klikni-dev',
       script: 'server.ts',
       interpreter: 'npx',
-      interpreter_args: 'tsx watch',
+      interpreter_args: '--yes tsx watch',
       env: {
         NODE_ENV: 'development',
       },
