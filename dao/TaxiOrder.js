@@ -356,14 +356,14 @@ async function getAlreadySentOrdersByDriverId(driver_id) {
 		throw new Error(e);
 	}
 }
-async function acceptOrder(order, user) {
+async function acceptOrder(order, driver) {
 	const order_id = order.order_id;
 	try {
 		let taxi_order_sent = await prisma.taxi_order_sent.update({
 			where: {
 				taxi_order_sent_driver_unique: {
 					order_id,
-					driver_id: user.driver.driver_id,
+					driver_id: driver.driver_id,
 				},
 			},
 			data: {
@@ -373,7 +373,7 @@ async function acceptOrder(order, user) {
 		console.log('taxi_order_sent', taxi_order_sent);
 		await prisma.drivers.update({
 			where: {
-				driver_id: user.driver.driver_id,
+				driver_id: driver.driver_id,
 			},
 			data: {
 				on_order: !order.is_scheduled,
@@ -387,12 +387,12 @@ async function acceptOrder(order, user) {
 				status: 'TAXI_ACCEPTED',
 				driver: {
 					connect: {
-						driver_id: user.driver.driver_id,
+						driver_id: driver.driver_id,
 					},
 				},
 				vehicle: {
 					connect: {
-						vehicle_id: user.driver.current_vehicle.vehicle_id,
+						vehicle_id: driver.current_vehicle.vehicle_id,
 					},
 				},
 			},

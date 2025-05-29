@@ -634,15 +634,15 @@ async function acceptOrderDelivery(req, res) {
 			order.driver = driver;
 		}
 		/*let { result } = await gApi.distanceBetweenTwoPoints(order.pickup_location.coordinates, order.delivery_location.coordinates, "driving", new Date());
-        order.details.distance = result.rows[0].elements[0].distance.text;
-        order.details.duration = result.rows[0].elements[0].duration.text;
-        if (!order?.is_daily_meal) {
-            order.details.customer_expected_delivery_at = new Date(new Date(order.details.ready_for_pickup_at).getTime() + result.rows[0].elements[0].duration.value * 1000 + 3600000);
-            console.log(order.details.customer_expected_delivery_at, "expected delivery ...");
-        }
-        order = await DeliveryOrderDao.updateOrder(order.order_id, {
-            details: order.details
-        });*/
+		order.details.distance = result.rows[0].elements[0].distance.text;
+		order.details.duration = result.rows[0].elements[0].duration.text;
+		if (!order?.is_daily_meal) {
+			order.details.customer_expected_delivery_at = new Date(new Date(order.details.ready_for_pickup_at).getTime() + result.rows[0].elements[0].duration.value * 1000 + 3600000);
+			console.log(order.details.customer_expected_delivery_at, "expected delivery ...");
+		}
+		order = await DeliveryOrderDao.updateOrder(order.order_id, {
+			details: order.details
+		});*/
 		console.log('order accepted', order);
 		SocketStore.addUserToRoom(deliverer.user_id, `order_${order.order_id}`);
 		io.to('order_' + order.order_id).emit('order_accepted__delivery', order);
@@ -790,43 +790,49 @@ async function completeOrder(req, res) {
 			delivery_credits: DELIVERY_CREDIT_CUT_CENTS,
 			remaining_delivery_cost: DISCOUNTED_DELIVERY_COST_CENTS,
 		});
-		const DELIVERY_COST_CENTS = order.details.total_price * 100;
-		let cashbackAmount =
-			DELIVERY_COST_CENTS >= CREDITS.CASHBACK_THRESHOLD_DELIVERY ? Math.floor(DELIVERY_COST_CENTS / 100) : 1;
-		const cashback = await CashbackDao.createCashback({
-			user: { connect: { user_id: order.user_id } },
-			amount: Math.round(cashbackAmount),
-			type: ORDER_TYPE.DELIVERY,
-			source: CASHBACK_SOURCE.ORDER,
-			description: `Cashback for delivery order ${order.order_id}`,
-			delivery_order: { connect: { order_id: order.order_id } },
-		});
-		if (cashback) {
-			const pendingCashbacks = await CashbackDao.getPendingUserCashbackByType(order.user_id, ORDER_TYPE.DELIVERY);
-			const baskets = pendingCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
-			if (baskets >= CREDITS.CASHBACK_CONVERSION_DELIVERY) {
-				const remainder = baskets % CREDITS.CASHBACK_CONVERSION_DELIVERY;
-				if (remainder > 0) {
-					await CashbackDao.createCashback({
-						user: { connect: { user_id: order.user_id } },
-						amount: Math.round(remainder),
-						type: ORDER_TYPE.DELIVERY,
-						source: CASHBACK_SOURCE.CONVERSION,
-						description: `Cashback remainder after conversion to credit`,
-					});
-				}
-				const expiryDate = new Date();
-				expiryDate.setDate(expiryDate.getDate() + 30);
-				expiryDate.setHours(23, 59, 59, 999);
-				if (baskets > 0) {
-					await WalletFundsDao.convertCashbacksToCredit(
-						{
+		//TODO: handle cashback for daily meals
+		if (!order.is_daily_meal) {
+			const DELIVERY_COST_CENTS = order.details.total_price * 100;
+			let cashbackAmount =
+				DELIVERY_COST_CENTS >= CREDITS.CASHBACK_THRESHOLD_DELIVERY ? Math.floor(DELIVERY_COST_CENTS / 100) : 1;
+			const cashback = await CashbackDao.createCashback({
+				user: { connect: { user_id: order.user_id } },
+				amount: Math.round(cashbackAmount),
+				type: ORDER_TYPE.DELIVERY,
+				source: CASHBACK_SOURCE.ORDER,
+				description: `Cashback for delivery order ${order.order_id}`,
+				delivery_order: { connect: { order_id: order.order_id } },
+			});
+			if (cashback) {
+				const pendingCashbacks = await CashbackDao.getPendingUserCashbackByType(
+					order.user_id,
+					ORDER_TYPE.DELIVERY
+				);
+				const baskets = pendingCashbacks.reduce((sum, cb) => sum + cb.amount, 0);
+				if (baskets >= CREDITS.CASHBACK_CONVERSION_DELIVERY) {
+					const remainder = baskets % CREDITS.CASHBACK_CONVERSION_DELIVERY;
+					if (remainder > 0) {
+						await CashbackDao.createCashback({
 							user: { connect: { user_id: order.user_id } },
-							amount: 100,
-							type: FUNDS_TYPE.CREDITS_DELIVERY,
-						},
-						pendingCashbacks
-					);
+							amount: Math.round(remainder),
+							type: ORDER_TYPE.DELIVERY,
+							source: CASHBACK_SOURCE.CONVERSION,
+							description: `Cashback remainder after conversion to credit`,
+						});
+					}
+					const expiryDate = new Date();
+					expiryDate.setDate(expiryDate.getDate() + 30);
+					expiryDate.setHours(23, 59, 59, 999);
+					if (baskets > 0) {
+						await WalletFundsDao.convertCashbacksToCredit(
+							{
+								user: { connect: { user_id: order.user_id } },
+								amount: 100,
+								type: FUNDS_TYPE.CREDITS_DELIVERY,
+							},
+							pendingCashbacks
+						);
+					}
 				}
 			}
 		}

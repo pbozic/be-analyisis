@@ -35,6 +35,7 @@ const createOrderSchema = Joi.object({
 	business_user: Joi.object().allow(null).optional(),
 	business_client: Joi.object().allow(null).optional(),
 	driver: Joi.any().allow(null).optional(),
+	driver_id: Joi.string().allow(null).optional(),
 	customer_note: Joi.string().allow(null).optional(),
 	parent_user_type: Joi.string().allow(null).optional(),
 	creating_user_id: Joi.string().allow(null).optional(),
