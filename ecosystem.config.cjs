@@ -1,15 +1,15 @@
 module.exports = {
-	apps: [
-		{
-			name: 'Klikni Dev',
-			script: 'ts-node',
-			args: 'server.js', // or whatever your main TS file is
-			interpreter: 'npx',
-			watch: ['.'],
-			ignore_watch: ['node_modules'],
-			env: {
-				NODE_ENV: 'development',
-			},
-		},
-	],
+  apps: [
+    {
+      name: 'Klikni Dev',
+      script: 'server.js',     // Your actual entrypoint
+      interpreter: 'npx',          // Use npx to invoke...
+      interpreter_args: 'ts-node', // ...ts-node as interpreter
+      watch: ['src'],
+      ignore_watch: ['node_modules'],
+      env: {
+        NODE_ENV: 'development',
+      },
+    },
+  ],
 };
