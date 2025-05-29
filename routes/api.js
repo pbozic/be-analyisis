@@ -36,7 +36,7 @@ import googleMaps from './api/googleMaps.js';
 import orderLobbyRoutes from './api/orderLobby.js';
 import searchRoutes from './api/search.js';
 import overwatchRoutes from './api/overwatch.js';
-import blogRoutes from './api/blog.ts';
+import blogRoutes from './api/blog';
 import { sendNotificationToUser } from '../lib/oneSignal.js';
 const router = express.Router();
 const authUserRoutes = authRoutes;
