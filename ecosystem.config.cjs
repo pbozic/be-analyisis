@@ -2,9 +2,9 @@ module.exports = {
 	apps: [
 		{
 			name: 'Klikni Dev',
-			script: 'server.js', // or server.js if JS
+			script: 'ts-node',
+			args: 'server.js', // or whatever your main TS file is
 			interpreter: 'npx',
-			args: 'ts-node',
 			watch: ['.'],
 			ignore_watch: ['node_modules'],
 			env: {
