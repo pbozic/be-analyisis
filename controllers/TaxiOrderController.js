@@ -1029,9 +1029,13 @@ async function createDispatchOrder(req, res) {
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function acceptOrder(req, res) {
-	const { order_id, user } = req.body;
+	const { order_id } = req.body;
 	try {
-		let driver = await DriverDao.getDriverById(user.driver.driver_id);
+		const user = req.user;
+		if (!user.user_id) {
+			return res.status(400).json({ error: 'User error.' });
+		}
+		let driver = await DriverDao.getDriverByUserId(user.user_id);
 		if (!driver.online) {
 			return res.status(400).json({ error: 'Driver is offline.', errorType: 'ERR_DRIVER_OFFLINE' });
 		} else if (driver.on_order) {
@@ -1048,9 +1052,9 @@ async function acceptOrder(req, res) {
 				.json({ error: 'Order is already accepted.', errorType: 'ERR_ORDER_ALREADY_ACCEPTED' });
 		}
 		if (order.is_scheduled) {
-			let isSent = await TaxiOrderDao.isOrderSent(order.order_id, user.driver);
+			let isSent = await TaxiOrderDao.isOrderSent(order.order_id, driver);
 			if (!isSent) {
-				await TaxiOrderDao.createOrderSent(order.order_id, user.driver);
+				await TaxiOrderDao.createOrderSent(order.order_id, driver);
 			}
 		}
 		await TaxiOrderDao.acceptOrder(order, user);
@@ -1105,7 +1109,7 @@ async function acceptOrder(req, res) {
 				driver.driver_id,
 				TAXI_ORDER_STATUS.TAXI_ACCEPTED
 			);
-		await TaxiHelper.revokeTaxiOrderFromOtherDrivers(order.order_id, user.driver.driver_id);
+		await TaxiHelper.revokeTaxiOrderFromOtherDrivers(order.order_id, driver.driver_id);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
