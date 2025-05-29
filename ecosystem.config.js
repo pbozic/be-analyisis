@@ -5,7 +5,7 @@ export default {
 			script: 'server.js', // your entry file
 			interpreter: 'npx',
 			args: 'ts-node',
-			watch: ['src'],
+			watch: ['.'],
 			env: {
 				NODE_ENV: 'development',
 			},
