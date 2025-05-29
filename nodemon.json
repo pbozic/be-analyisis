@@ -17,5 +17,6 @@
     ],
     "ext": "js,json,ts",
     "ignore": ["node_modules", "Docker", ".git"],
-    "legacyWatch": true
+    "legacyWatch": true,
+    "exec": "npx tsx server.ts"
 }

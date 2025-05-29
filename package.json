@@ -5,10 +5,10 @@
     "type": "module",
     "scripts": {
         "build": "node --max-old-space-size=8192 node_modules/typescript/bin/tsc",
-        "start": "npx prisma generate && npx prisma migrate deploy &&  nodemon --exec 'ts-node' ./server.js",
-        "prod": "node ./dist/server.js",
-        "dev": "npx prisma generate && npx prisma migrate dev &&  nodemon --exec 'ts-node' ./server.js",
-        "server": "nodemon ./server.js",
+        "start": "npx prisma generate && npx prisma migrate deploy &&  nodemon",
+        "prod": "npx prisma generate && npx prisma migrate deploy && npm run start && pm2 start ecosystem.config.cjs --only klikni-prod",
+        "dev": "npx prisma generate && npx prisma migrate dev &&  nodemon --exec 'tsx' ./server.ts",
+        "server": "nodemon ./server.ts",
         "prisma": "npx prisma migrate deploy && npx prisma generate",
         "stripe": "stripe listen --skip-verify --forward-to localhost:3001/api/stripe/webhook",
         "docker:up": "node ./Docker/dev-up.js",
@@ -161,6 +161,7 @@
         "prisma-zod-generator": "^0.8.13",
         "supertest": "^7.1.1",
         "ts-node": "^10.9.2",
+        "tsx": "^4.19.4",
         "typescript": "^5.8.3",
         "zod": "^3.25.7"
     }

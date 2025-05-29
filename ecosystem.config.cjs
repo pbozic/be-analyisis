@@ -1,14 +1,22 @@
 module.exports = {
   apps: [
     {
-      name: 'Klikni Dev',
-      script: 'server.js',     // Your actual entrypoint
-      interpreter: 'npx',          // Use npx to invoke...
-      interpreter_args: 'ts-node-esm', // ...ts-node as interpreter
-      watch: ['src'],
-      ignore_watch: ['node_modules'],
+      name: 'klikni-dev',
+      script: 'server.ts',
+      interpreter: 'npx',
+      args: 'tsx watch',
       env: {
         NODE_ENV: 'development',
+      },
+      watch: ['.'],
+      ignore_watch: ['node_modules', 'dist', '.git'],
+    },
+    {
+      name: 'klikni-prod',
+      script: './dist/server.js',
+      interpreter: 'node',
+      env: {
+        NODE_ENV: 'production',
       },
     },
   ],
