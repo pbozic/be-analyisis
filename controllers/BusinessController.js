@@ -253,7 +253,7 @@ async function listPromoSectionsWithMerchants(req, res) {
 				},
 			},
 		});
-		const userId = req.body.user_id;
+		const userId = req.user?.user_id;
 		const finalPromoSections = [...promoSections];
 		let favoriteBusinessIds = null;
 		if (userId) {
