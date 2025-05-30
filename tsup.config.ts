@@ -1,0 +1,33 @@
+export default {
+	entry: ['./server.ts'],
+	format: 'esm',
+	outDir: 'dist',
+	target: 'esnext',
+	splitting: false,
+	sourcemap: true,
+	clean: true,
+	external: [
+		'dotenv',
+		'fs',
+		'path',
+		'./node_modules',
+		'./dist',
+		'.git',
+		'**/*.test.ts', // optional: ignore tests
+		'./types/zod',
+		'./docs',
+		'google-auth-library',
+		'child_process',
+		'google-auth-library',
+		'child_process',
+		'fs',
+		'path',
+		'dotenv',
+		'axios',
+		'jsonwebtoken',
+		'jwk-to-pem',
+		'express',
+		'pg',
+		'@prisma/client',
+	], // 🧠 skip bundling these
+};

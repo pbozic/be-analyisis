@@ -36,7 +36,7 @@ import googleMaps from './api/googleMaps.js';
 import orderLobbyRoutes from './api/orderLobby.js';
 import searchRoutes from './api/search.js';
 import overwatchRoutes from './api/overwatch.js';
-//import blogRoutes from './api/blog';
+import blogRoutes from './api/blog.ts';
 import { sendNotificationToUser } from '../lib/oneSignal.js';
 const router = express.Router();
 const authUserRoutes = authRoutes;
@@ -70,7 +70,7 @@ router.use('/flags', [authMiddleware], flagRoutes);
 router.use('/google_maps', googleMaps);
 router.use('/categories', categoriesRoutes);
 router.use('/promo', [authMiddleware], promoRoutes);
-//router.use('/blog', [authMiddleware], blogRoutes);
+router.use('/blog', [authMiddleware], blogRoutes);
 router.use('/reviews', [authMiddleware], async (req, res) => {
 	let reviews = await prisma.reviews.findMany({
 		include: {

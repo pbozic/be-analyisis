@@ -182,6 +182,58 @@ const deleteOrderLobby = async (orderLobbiesId) => {
 		throw error;
 	}
 };
+
+const editUsersInOrderLobby = async (orderLobbiesId, users) => {
+	try {
+		const orderLobby = await prisma.order_lobbies.findUnique({
+			where: { order_lobbies_id: orderLobbiesId },
+			include: {
+				order_lobby_users: true,
+			},
+		});
+
+		if (!orderLobby) {
+			throw new Error('Order lobby not found');
+		}
+
+		return await prisma.$transaction(async (tx) => {
+			// Delete all existing users from the order lobby
+			await tx.order_lobby_users.deleteMany({
+				where: { order_lobbies_id: orderLobbiesId },
+			});
+
+			// Convert the users map to an array of objects for createMany
+			const userData = Object.entries(users).map(([user_id, limit]) => ({
+				order_lobbies_id: orderLobbiesId,
+				user_id,
+				limit: limit,
+			}));
+
+			// Add new users to the order lobby
+			await tx.order_lobby_users.createMany({
+				data: userData,
+			});
+
+			// Get the updated order lobby with users
+			return await tx.order_lobbies.findUnique({
+				where: { order_lobbies_id: orderLobbiesId },
+				include: {
+					order_lobby_users: {
+						include: {
+							users: {
+								select: cropped_user_columns,
+							},
+						},
+					},
+				},
+			});
+		});
+	} catch (error) {
+		console.error('Error editing users in order lobby:', error);
+		throw error;
+	}
+};
+
 export { createOrderLobby };
 export { getOrderLobbyById };
 export { getOrderLobbiesForBusiness };
@@ -190,6 +242,7 @@ export { getActiveOrderLobbiesByUserID };
 export { updateOrderLobby };
 export { setOrderLobbyActive };
 export { deleteOrderLobby };
+export { editUsersInOrderLobby };
 export default {
 	createOrderLobby,
 	getOrderLobbyById,
@@ -199,4 +252,5 @@ export default {
 	updateOrderLobby,
 	setOrderLobbyActive,
 	deleteOrderLobby,
+	editUsersInOrderLobby,
 };

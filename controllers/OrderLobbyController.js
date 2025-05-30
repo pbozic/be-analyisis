@@ -153,7 +153,7 @@ async function submitLobby(req, res) {
 		// Update the lobby status
 		await OrderLobbyDao.setOrderLobbyActive(order_lobbies_id, false);
 		for (const ol_user of order_lobby.order_lobby_users) {
-			lobbySocketOrNotification(ol_user.user_id, 'lobby_completed', order_lobby);
+			await lobbySocketOrNotification(ol_user.user_id, 'lobby_completed', order_lobby);
 		}
 		return res.status(201).json(order);
 	} catch (error) {
@@ -161,7 +161,7 @@ async function submitLobby(req, res) {
 	}
 }
 /**
- * PATCH /order_lobby/users/:order_lobbies_id
+ * PUT /order_lobby/users/:order_lobbies_id
  * Set the users and their limits for an order lobby
  * @param {Object} req - Express request object
  * @param {Object} req.params - Request parameters
@@ -169,31 +169,29 @@ async function submitLobby(req, res) {
  * @param {Object} req.body - Request body
  * @param {Object} req.body.user_limits_map - Map of user IDs to their updated order limits
  * @param {Object} res - Express response object
- * @returns {Promise<void>} Returns 200 status on success, or error with 500 status
+ * @returns {Promise<void>} Returns 200 status on success, data - updated order_lobby, or error with 500 status
  */
 async function setLobbyUsersWithLimits(req, res) {
 	try {
 		const { order_lobbies_id } = req.params;
 		const { user_limits_map } = req.body;
-		// Get the current lobby users
-		// const current_order_lobby_users = await OrderLobbyUserDao.getOrderLobbyUsersInOrderLobby(order_lobbies_id)
+
 		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
 		if (!order_lobby) {
 			return res.status(404).json({ success: false, error: 'Order lobby not found' });
 		}
-		// Compare with provided users
+
+		// Check if user existed in lobby, if not notify them
 		for (const user_id of Object.keys(user_limits_map)) {
 			const lobby_user = order_lobby.order_lobby_users.find((ol_user) => ol_user.user_id === user_id);
 			if (!lobby_user) {
-				await addUserToLobby(user_id, order_lobby, user_limits_map[user_id]);
-			} else if (user_limits_map[user_id] !== lobby_user.limit) {
-				await OrderLobbyUserDao.updateOrderLobbyUserLimit(
-					lobby_user.order_lobby_users_id,
-					user_limits_map[user_id]
-				);
+				await lobbySocketOrNotification(user_id, 'lobby_completed', order_lobby);
 			}
 		}
-		return res.status(200).json({ success: true });
+
+		const result = await OrderLobbyDao.editUsersInOrderLobby(order_lobbies_id, user_limits_map);
+
+		return res.status(200).json({ success: true, data: result });
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}

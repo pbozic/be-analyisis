@@ -97,14 +97,16 @@ app.use(REST_API_ENDPOINT, apiRouter);
 let spec;
 let finalSpec;
 try {
-	const baseYamlPath = path.join(__dirname, 'swagger', 'openApiConfig.yaml');
-	const baseSpec = YAML.load(fs.readFileSync(baseYamlPath, 'utf8'));
-	// This triggers parsing of comments
-	spec = openapi({
-		include: ['./routes/**/*.js', './controllers/**/*.js', './middlewares/**/*.js'],
-	});
-	finalSpec = merge({}, baseSpec, spec);
-	if (!finalSpec.openapi) finalSpec.openapi = '3.0.3';
+	if (process.env.ENVIRONMENT !== 'production') {
+		const baseYamlPath = path.join(__dirname, 'swagger', 'openApiConfig.yaml');
+		const baseSpec = YAML.load(fs.readFileSync(baseYamlPath, 'utf8'));
+		// This triggers parsing of comments
+		spec = openapi({
+			include: ['./routes/**/*.js', './controllers/**/*.js', './middlewares/**/*.js'],
+		});
+		finalSpec = merge({}, baseSpec, spec);
+		if (!finalSpec.openapi) finalSpec.openapi = '3.0.3';
+	}
 } catch (err) {
 	console.error('❌ Failed to parse OpenAPI comments:', err.message);
 	console.error(err.stack);

@@ -23,9 +23,9 @@
         // "useDefineForClassFields": true,
         // "moduleDetection": "auto",
         /* Modules */
-        "module": "CommonJS" /* Specify what module code is generated. */,
+        "module": "ESNext" /* Specify what module code is generated. */,
         "rootDir": "." /* Specify the root folder within your source files. */,
-        // "moduleResolution": "node10",
+        "moduleResolution": "node",
         // "baseUrl": "./",
         // "paths": {},
         // "rootDirs": [],
@@ -43,7 +43,7 @@
         "checkJs": false /* Enable error reporting in type-checked JavaScript files. */,
         // "maxNodeModuleJsDepth": 1,
         /* Emit */
-        "noEmit": true /* Disable emitting files from a compilation. */,
+        "noEmit": false /* Disable emitting files from a compilation. */,
         // "declaration": true,
         // "declarationMap": true,
         // "emitDeclarationOnly": true,
@@ -96,5 +96,17 @@
         /* Completeness */
         // "skipDefaultLibCheck": true,
         "skipLibCheck": true /* Skip type checking all .d.ts files. */
-    }
+    },
+    "ts-node": {
+    "esm": true
+  },
+   "exclude": [
+    "node_modules",
+    "dist",
+    ".git",
+    "**/*.test.ts",  // optional: ignore tests
+    "types/zod",
+    "docs"
+
+  ]
 }
