@@ -7,7 +7,7 @@ import { CreateBlogCategoryInput, UpdateBlogCategoryInput } from '../types/blog/
 import { CreateBlogTagInput, DeleteBlogTagInput, UpdateBlogTagInput } from '../types/blog/BlogTag';
 import { createFileHelper } from './FilesController';
 import BlogDao from '../dao/Blog';
-import FileDao from '../dao/File';
+
 /**
  * POST /blog/search
  * @tag Blog

@@ -253,18 +253,16 @@ async function listPromoSectionsWithMerchants(req, res) {
 				},
 			},
 		});
-		const userId = req.user?.user_id;
-		if (!userId) {
-			res.status(400).json({ error: 'No user_id error' });
-		}
-		const user = await UserDao.getUserById(userId, {
-			include: {
-				user_favorite_businesses: true,
-			},
-		});
-		const favoriteBusinessIds = user.user_favorite_businesses?.map((b) => b.business_id);
-		const finalPromoSections = [
-			{
+		const userId = req.body.user_id;
+		const finalPromoSections = [...promoSections];
+		let favoriteBusinessIds = null;
+		if (userId) {
+			const user = await UserDao.getUserById(userId, {
+				include: {
+					user_favorite_businesses: true,
+				},
+			});
+			finalPromoSections.unshift({
 				tag: 'favorite',
 				translations: {
 					en: 'Favorites',
@@ -278,9 +276,10 @@ async function listPromoSectionsWithMerchants(req, res) {
 					sr: 'Omiljeni',
 					sl: 'Priljubljeni',
 				},
-			},
-			...promoSections,
-		];
+			});
+			favoriteBusinessIds = user.user_favorite_businesses?.map((b) => b.business_id);
+		}
+
 		for (let promoSection of finalPromoSections) {
 			let favorite = promoSection.tag === 'favorite';
 			let translations = {};
