@@ -12,7 +12,7 @@ const { UserSockets, io } = socket;
 async function lobbySocketOrNotification(user_id, event, order_lobby) {
 	const userSocket = UserSockets.get(user_id);
 	if (userSocket) {
-		io.to(userSocket).emit(event, order_lobby);
+		userSocket.emit(event, order_lobby);
 	} else {
 		const user = await UserDao.getUserById(user_id, { select: { language: true } });
 		if (user) {
