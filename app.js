@@ -17,8 +17,8 @@ import compression from 'compression';
 import * as flatted from 'flatted';
 
 import startCronJobs from './cron.js';
-import mainRouter from './routes/index.js';
-import apiRouter from './routes/api.js';
+import mainRouter from './routes/index.routes.js';
+import apiRouter from './routes/api.routes.js';
 import { asyncLocalStorage, log } from './lib/logger.js';
 import CustomConsole from './lib/logger.js';
 
