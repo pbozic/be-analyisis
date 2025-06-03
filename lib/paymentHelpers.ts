@@ -269,7 +269,7 @@ export async function createPaymentHelper(
 					payment_method_id,
 					total_price_cents,
 					order_type,
-					splits,
+					null,
 					return_url,
 					payment_type,
 					capture_method
