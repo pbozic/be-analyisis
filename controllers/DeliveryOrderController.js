@@ -1698,18 +1698,18 @@ async function dailyMealsSubscriptionPayment(req, res) {
 	let payment = null;
 	try {
 		let user = await UsersDao.getUserById(req.user.user_id);
-		let groupedId = uuidv4();
+		let grouped_id = uuidv4();
 		let hasUuid = false;
 		while (!hasUuid) {
 			const sub = await prisma.daily_meals_subscriptions.findFirst({
 				where: {
-					grouped_id: groupedId,
+					grouped_id: grouped_id,
 				},
 			});
 			if (!sub) {
 				hasUuid = true;
 			} else {
-				groupedId = uuidv4();
+				grouped_id = uuidv4();
 			}
 		}
 
@@ -1732,7 +1732,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 				MERCHANT: { restaurant_acc: RESTAURANT_SHARE_PERC },
 			},
 			null,
-			groupedId
+			grouped_id
 		);
 		//create sub with status awaiting payment.
 		await createDailyMealsSubscriptions(delivery_location, daysData, user.user_id, grouped_id, {
@@ -1743,14 +1743,14 @@ async function dailyMealsSubscriptionPayment(req, res) {
 		});
 		if (payment.status === PAYMENT_STATUS.SUCCEEDED) {
 			await DeliveryOrderDao.updateDailyMealsSubscriptionsStatusByGroupedId(
-				groupedId,
+				grouped_id,
 				SUBSCRIPTION_STATUS.ACTIVE
 			);
 		}
 		//FIXME: return all data that the FE needs
 		return res.status(200).json({
 			status: 'Success',
-			grouped_id: groupedId,
+			grouped_id: grouped_id,
 			payment_intent: payment.payment_intent_id,
 		});
 	} catch (e) {
