@@ -1755,7 +1755,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 		});
 	} catch (e) {
 		if (payment) {
-			await PaymentHelpers.handlePaymentCleanup(payment);
+			await PaymentHelpers.handlePaymentRefund(payment);
 		}
 		console.error('Error creating daily meals subscription payment', e);
 		res.status(500).json(e);
