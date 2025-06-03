@@ -263,6 +263,8 @@ async function editDriver(req, res) {
 	let updatedAddress;
 	try {
 		const updatedDriver = await DriverDao.updateDriver(driver_id, driver);
+		const regions = driver.regions || [];
+		await DriverDao.addDriverMunicipalities(driver_id, regions);
 		let updatedUser = await UserDao.updateScheduledUser(user_id, user);
 		if (address?.address_id) {
 			const address_id = address?.address_id;
