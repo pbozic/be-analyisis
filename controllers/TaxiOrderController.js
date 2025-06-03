@@ -1801,7 +1801,7 @@ async function rejectOrder(req, res) {
 				last_sent_at: null,
 			});
 		}
-		SocketStore.removeUserFromRoom(driver?.user_id, `order_${order_id}`);
+		SocketStore.removeUserFromRoom(userDriver?.user_id, `order_${order_id}`);
 		if (userDriver && userDriver.driver_id) {
 			await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, userDriver.driver_id);
 			await ScoringPointsDao.createScoringPoints(
