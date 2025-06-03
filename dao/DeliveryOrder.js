@@ -926,6 +926,11 @@ async function createDailyMealsSubscription(
 						menu_category_id: menu_category_id,
 					},
 				},
+				payment: {
+					connect: {
+						subscription_grouped_id: grouped_id,
+					},
+				},
 			},
 		});
 	} catch (e) {
@@ -1019,6 +1024,60 @@ async function getDailyMealsSubscriptionByUserId(user_id, start_date) {
 		throw new Error(e.message);
 	}
 }
+
+async function getDailyMealsSubscriptionsByGroupedId(grouped_id) {
+	try {
+		return await prisma.daily_meals_subscriptions.findMany({
+			where: {
+				grouped_id: grouped_id,
+			},
+			include: {
+				address: true,
+				menu: true,
+				menu_category: {
+					include: {
+						menu_categories_categories: {
+							include: {
+								category: true,
+							},
+						},
+					},
+				},
+				business: {
+					select: {
+						business_group_name: true,
+						name: true,
+						telephone: true,
+						email: true,
+					},
+				},
+			},
+			orderBy: {
+				date: 'asc',
+			},
+		});
+	} catch (e) {
+		console.error('Error fetching subscriptions by grouped id:', e);
+		throw new Error(e.message);
+	}
+}
+
+async function updateDailyMealsSubscriptionsStatusByGroupedId(grouped_id, status) {
+	try {
+		return await prisma.daily_meals_subscriptions.updateMany({
+			where: {
+				grouped_id: grouped_id,
+			},
+			data: {
+				status: status,
+			},
+		});
+	} catch (e) {
+		console.error('Error updating subscriptions status by grouped id:', e);
+		throw new Error(e.message);
+	}
+}
+
 export { getOrders };
 export { getActiveDeliveryOrders };
 export { getOrder };
@@ -1050,6 +1109,8 @@ export { getTodayDailyMealSubscriptionsByBusinessId };
 export { createDailyMealsSubscription };
 export { getDailyMealsSubscriptionByBusinessId };
 export { getDailyMealsSubscriptionByUserId };
+export { getDailyMealsSubscriptionsByGroupedId };
+export { updateDailyMealsSubscriptionsStatusByGroupedId };
 export default {
 	getOrders,
 	getActiveDeliveryOrders,
@@ -1082,4 +1143,6 @@ export default {
 	createDailyMealsSubscription,
 	getDailyMealsSubscriptionByBusinessId,
 	getDailyMealsSubscriptionByUserId,
+	getDailyMealsSubscriptionsByGroupedId,
+	updateDailyMealsSubscriptionsStatusByGroupedId,
 };

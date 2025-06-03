@@ -221,6 +221,8 @@ model users {
   account_actions         account_actions[] @relation("action_to_affected_user")
   created_account_actions account_actions[] @relation("action_to_creator")
   blog_posts             blog_posts[] 
+
+  payments payments[]
 }
 
 model user_roles {
@@ -1353,6 +1355,82 @@ model daily_meals_subscriptions {
   business                     business        @relation(fields: [business_id], references: [business_id])
   menu                         menus           @relation(fields: [menu_id], references: [menu_id])
   address                      addresses       @relation(fields: [address_id], references: [address_id])
+  status SUBSCRIPTION_STATUS @default(AWAITING_PAYMENT)
+
+  payment                      payments?       @relation("PaymentGroup", fields: [grouped_id], references: [subscription_grouped_id])
+}
+
+model payments {
+  payment_id                String                       @id @default(uuid()) @db.Uuid
+  amount                    Int
+  credits_amount            Int                          @default(0)
+  payment_method            PAYMENT_METHOD
+  payment_intent_id         String?                      @unique
+  status                    PAYMENT_STATUS               @default(PENDING)
+  created_at                DateTime                     @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime                     @default(now()) @updatedAt @db.Timestamptz(6)
+  order_type                String?
+  payment_type             String?                      
+
+  // For daily meals subscriptions
+  subscription_grouped_id   String?                      @db.Uuid @unique
+  subscriptions             daily_meals_subscriptions[]  @relation("PaymentGroup")
+
+  // delivery_order_id         String?                      @db.Uuid
+  // delivery_order            delivery_orders?             @relation(fields: [delivery_order_id], references: [order_id])
+  // taxi_order_id             String?                      @db.Uuid
+  // taxi_order                taxi_orders?                 @relation(fields: [taxi_order_id], references: [order_id])
+
+  user_id                   String                       @db.Uuid
+  user                      users                        @relation(fields: [user_id], references: [user_id])
+  payment_splits payment_splits[]
+}
+
+model payment_splits {
+  split_id         String                @id @default(uuid()) @db.Uuid
+  status                    SPLIT_STATUS               @default(RESERVED)
+  payment_id String                @db.Uuid
+  destination_type SPLIT_DESTINATION_TYPE
+  destination_id   String
+  amount           Int
+  metadata         Json
+  is_credits        Boolean @default(false)
+  
+  payment payments @relation(fields: [payment_id], references: [payment_id])
+}
+
+enum PAYMENT_METHOD {
+  CARD
+  CASH
+  WALLET
+  PLATFORM
+}
+
+enum PAYMENT_STATUS {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+enum SPLIT_DESTINATION_TYPE {
+  PLATFORM
+  MERCHANT
+  DRIVER
+}
+enum SPLIT_STATUS {
+  RESERVED
+  TRANSFERED
+  CANCELED
+  REFUNDED
+}
+
+enum SUBSCRIPTION_STATUS {
+  AWAITING_PAYMENT
+  ACTIVE
+  CANCELED
+  EXPIRED
+  FAILED
 }
 
 model blog_tags {

@@ -1,18 +1,21 @@
 import dotenv from 'dotenv';
+import { SPLIT_DESTINATION_TYPE } from '@prisma/client';
 
-import DeliveryOrderDao from '../dao/DeliveryOrder.js';
+import DeliveryOrderDao, { updateDailyMealsSubscriptionsStatusByGroupedId } from '../dao/DeliveryOrder.js';
 import UsersDao from '../dao/User.js';
 import socket from '../socket.js';
 import stripe from '../lib/stripe.js';
 import BusinessDao from '../dao/Business.js';
 import PromoDao from '../dao/Promo.js';
 import ProductDao from '../dao/Product.js';
+import PaymentDao from '../dao/Payment.ts';
 import WalletFundsHelpers from '../lib/WalletFundsHelpers.js';
 import { DELIVERY_ORDER_STATUS, FUNDS_TYPE, SERVICE_TYPE, ORDER_TYPE, TAXI_ORDER_STATUS } from '../lib/constants.js';
-import { calculateDeliveryOrderPaymentCuts } from '../lib/deliveryHelpers.js';
+import { calculateDeliveryOrderPaymentCuts, createDailyMealsSubscriptions } from '../lib/deliveryHelpers.js';
 import WalletFundsDao from '../dao/WalletFunds.js';
 import TaxiOrderDao from '../dao/TaxiOrder.js';
 import { calculateTransferOrderPaymentCuts } from '../lib/taxiHelpers.js';
+import PaymentHelpers from '../lib/PaymentHelpers.js';
 dotenv.config();
 const { io, UserSockets, SocketStore } = socket;
 async function handlePaymentIntentSuccess(paymentIntent) {
@@ -33,7 +36,7 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			//     UserSockets.get(user.user_id).emit('wallet_balance_change', user.wallet_balance);
 			// }
 			break;
-		case 'order_payment':
+		case 'order_payment': {
 			if (paymentIntent.metadata.order_type === ORDER_TYPE.DELIVERY) {
 				let order = await DeliveryOrderDao.getOrder(paymentIntent.metadata.order_id);
 				const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
@@ -101,6 +104,26 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			}
 			console.log('PaymentIntent was successful!');
 			break;
+		}
+		case 'daily_meals_subscription_payment': {
+			let payment = await PaymentDao.getPaymentByGroupedId(paymentIntent.transfer_group);
+			await PaymentHelpers.transferSplitsForTypes(payment.payment_id, [
+				SPLIT_DESTINATION_TYPE.PLATFORM,
+				SPLIT_DESTINATION_TYPE.MERCHANT,
+			]);
+			//any remaining reserved funds are meant for delivery driver and should be handled on order completion
+			const updated_subs = await DeliveryOrderDao.updateDailyMealsSubscriptionsStatusByGroupedId(
+				paymentIntent.transfer_group,
+				'ACTIVE'
+			);
+			if (!updated_subs || updated_subs.length === 0) {
+				console.warn(
+					'No DM subscriptions found after transfers for grouped_id: ',
+					payment_intent.transfer_group
+				);
+			}
+			break;
+		}
 	}
 }
 async function handlePaymentIntentFaliure(paymentIntent) {
@@ -149,6 +172,21 @@ async function handlePaymentIntentFaliure(paymentIntent) {
 				}
 			}
 			break;
+		case 'daily_meals_subscription_payment': {
+			let payment = await PaymentDao.getPaymentByGroupedId(paymentIntent.transfer_group);
+			const updated_subs = await DeliveryOrderDao.updateDailyMealsSubscriptionsStatusByGroupedId(
+				paymentIntent.transfer_group,
+				'FAILED'
+			);
+			if (!updated_subs || updated_subs.length === 0) {
+				console.warn(
+					'No DM subscriptions found after transfers for grouped_id: ',
+					payment_intent.transfer_group
+				);
+			}
+			await PaymentHelpers.handlePaymentRefund(payment);
+			break;
+		}
 	}
 }
 async function handleChargeUpdate(charge) {
@@ -229,24 +267,46 @@ async function handleWebhook(req, res) {
 			break;
 		case 'payment_intent.amount_capturable_updated': {
 			paymentIntent = event.data.object;
-			const { amount_capturable, metadata: { order_id, order_type } = {} } = paymentIntent;
-			// Check if conditions are met
-			if (amount_capturable > 0 && order_id && order_type === 'TRANSFER_PRIVATE') {
-				try {
-					await stripe.client.paymentIntents.capture(paymentIntent.id);
-					console.log(`Captured PaymentIntent for order ${order_id}`);
-				} catch (err) {
-					console.error(`Failed to capture PaymentIntent ${paymentIntent.id}:`, err);
-				}
-			} else if (amount_capturable > 0 && order_id && order_type === 'DELIVERY') {
-				try {
-					const order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.PENDING);
-					io.to('orders_' + order.business_id).emit('new_order', order);
-					console.log(`Processed order ${order_id} into PENDING state.`);
-				} catch (err) {
-					console.error(`Failed to process order ${paymentIntent.id} into PENDING state: `, err);
-				}
+			const { amount_capturable, metadata: { order_id, order_type, type } = {} } = paymentIntent;
+			switch (type) {
+				case 'order_payment':
+					// Check if conditions are met
+					if (amount_capturable > 0 && order_id && order_type === 'TRANSFER_PRIVATE') {
+						try {
+							await stripe.client.paymentIntents.capture(paymentIntent.id);
+							console.log(`Captured PaymentIntent for order ${order_id}`);
+						} catch (err) {
+							console.error(`Failed to capture PaymentIntent ${paymentIntent.id}:`, err);
+						}
+					} else if (amount_capturable > 0 && order_id && order_type === 'DELIVERY') {
+						try {
+							const order = await DeliveryOrderDao.updateOrderStatus(
+								order_id,
+								DELIVERY_ORDER_STATUS.PENDING
+							);
+							io.to('orders_' + order.business_id).emit('new_order', order);
+							console.log(`Processed order ${order_id} into PENDING state.`);
+						} catch (err) {
+							console.error(`Failed to process order ${paymentIntent.id} into PENDING state: `, err);
+						}
+					}
+					break;
+				case 'daily_meals_subscription_payment':
+					try {
+						// await stripe.client.paymentIntents.capture(paymentIntent.id);
+						console.log(`Captured PaymentIntent for order ${order_id}`);
+					} catch (err) {
+						console.error(`Failed to capture PaymentIntent ${paymentIntent.id}:`, err);
+					}
+					break;
+
+				case 'wallet_topup':
+					break;
+				default:
+					console.error('Unsupported payment_intent.metadata.type');
+					break;
 			}
+
 			break;
 		}
 		case 'charge.succeeded':

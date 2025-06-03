@@ -1,7 +1,6 @@
-import fs from 'fs';
-
 import moment from 'moment';
 import { v4 } from 'uuid';
+import { PAYMENT_STATUS, SUBSCRIPTION_STATUS } from '@prisma/client';
 
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import DeliveryDriverDao from '../dao/DeliveryDriver.js';
@@ -9,8 +8,6 @@ import FlagDao from '../dao/Flags.js';
 import BusinessDao from '../dao/Business.js';
 import AddressDao from '../dao/Address.js';
 import UsersDao from '../dao/User.js';
-import MenuDao from '../dao/Menu.js';
-import MenuCategoryDao from '../dao/MenuCategory.js';
 import EmailHelper from '../lib/emailSender.js';
 import gApi from '../lib/gApis.js';
 import socket from '../socket.js';
@@ -25,6 +22,8 @@ import {
 	ORDER_TYPE,
 	CASHBACK_SOURCE,
 	DRIVE_FEE,
+	RESTAURANT_SHARE_PERC,
+	DAILY_MEAL_DELIVERY_COST_CENTS,
 	DELIVERY_ORDER_END_STATES,
 	SCORING_POINTS_REASON,
 	FUNDS_TYPE,
@@ -35,6 +34,7 @@ import {
 import Constants from '../lib/constants.js';
 import { getUsers } from '../dao/User.js';
 import {
+	createDailyMealsSubscriptions,
 	generateItemsFromPreferences,
 	revokeDeliveryOrderFromDrivers,
 	calculateDeliveryOrderPaymentCuts,
@@ -43,6 +43,7 @@ import {
 	verifyOrderCosts,
 	groupSubscriptionsForDailyMeals,
 } from '../lib/deliveryHelpers.js';
+import PaymentHelpers from '../lib/PaymentHelpers.js';
 import { sortObjectsByNearestNeighbor, todaysEarnings } from '../lib/helpersLib.js';
 import prisma from '../prisma/prisma.js';
 import WalletFundsHelpers from '../lib/WalletFundsHelpers.js';
@@ -55,6 +56,7 @@ import ScoringPointsDao from '../dao/ScoringPoints.js';
 import LateEventsDao from '../dao/LateEvents.js';
 import BusinessHelpers from '../lib/businessHelpers.js';
 import Helpers from '../lib/helpersLib.js';
+import PaymentDao from '../dao/Payment.ts';
 const { UserSockets, io, SocketStore } = socket;
 const uuidv4 = { v4 }.v4;
 /**
@@ -1686,14 +1688,19 @@ async function dispatcherRevoke(req, res) {
 	}
 }
 async function dailyMealsSubscriptionPayment(req, res) {
-	const { details, payment, return_url, allow_credits_usage } = req.body;
-	const { total_price, delivery_cost, sub_total_price, business_id } = details;
-	const { payment_type, payment_method_id } = payment;
+	const {
+		daysData,
+		details: { total_price, delivery_cost, sub_total_price, business_id },
+		delivery_location,
+		payment: { payment_type, payment_method_id },
+		return_url,
+		allow_credits_usage,
+	} = req.body;
+	let payment = null;
 	try {
 		let user = await UsersDao.getUserById(req.user.user_id);
 		let groupedId = uuidv4();
 		let hasUuid = false;
-		const TOTAL_PRICE_CENT = Math.round(total_price * 100);
 		while (!hasUuid) {
 			const sub = await prisma.daily_meals_subscriptions.findFirst({
 				where: {
@@ -1706,100 +1713,52 @@ async function dailyMealsSubscriptionPayment(req, res) {
 				groupedId = uuidv4();
 			}
 		}
-		const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user?.user_id);
-		if (payment_type === 'WALLET') {
-			if (available_wallet_balances['DELIVERY'] + available_wallet_balances[null] < TOTAL_PRICE_CENT / 100) {
-				throw new Error('Insufficient funds');
-			}
-		}
+
 		const business = await BusinessDao.getBusinessById(business_id);
 		const restaurant_acc = business.stripe_account_id;
-		const pm_id = payment_method_id;
-		const customer_acc = user.stripe_customer_id;
-		if (!customer_acc) {
-			throw new Error('User does not have a stripe customer account.');
-		}
-		const TOTAL_PRICE_CENTS = Math.round(total_price * 100); //already includes delivery cost
-		const CREDITS_AMOUNT_RESERVED = allow_credits_usage
-			? (
-					await WalletFundsHelpers.reserveCreditsForOrder(
-						user.user_id,
-						TOTAL_PRICE_CENTS,
-						groupedId,
-						FUNDS_TYPE.CREDITS_DELIVERY,
-						'daily_meals_subscription'
-					)
-				).reduce((sum, wf) => sum + wf.amount, 0)
-			: 0;
-		const DISCOUNTED_COMBINED_COST_CENTS = TOTAL_PRICE_CENTS - CREDITS_AMOUNT_RESERVED;
-		const results = await calculateDeliveryOrderPaymentCuts(
+		const TOTAL_PRICE_CENT = Math.round(total_price * 100);
+		payment = await PaymentHelpers.createPaymentHelper(
+			user.user_id,
+			TOTAL_PRICE_CENTS,
+			'DELIVERY',
+			'daily_meals_subscription',
+			payment_type,
+			payment_method_id,
+			'automatic',
+			allow_credits_usage,
 			{
-				order_id: groupedId,
-				details: {
-					total_price: total_price,
-					delivery_cost: delivery_cost,
-					sub_total_price: sub_total_price,
-				},
+				DRIVER: { deliverer: DAILY_MEAL_DELIVERY_COST_CENTS },
 			},
-			'daily_meals_subscription'
+			{
+				MERCHANT: { restaurant_acc: RESTAURANT_SHARE_PERC },
+			},
+			null,
+			groupedId
 		);
-		console.info(
-			'createDailyMealsSubscriptionPaymentIntent calculateDeliveryOrderPaymentCuts results: ',
-			JSON.stringify(results, null, 2)
-		);
-		const { MERCHANT_CUT } = results;
-		if (DISCOUNTED_COMBINED_COST_CENTS === 0)
-			return res.status(200).json({ status: 'Success', groupedId: groupedId });
-		let payment_intent = null;
-		if (payment_type === 'CARD' || payment_type === 'PLATFORM') {
-			payment_intent = await stripe.createSplitPayment(
-				customer_acc,
-				restaurant_acc,
+		//create sub with status awaiting payment.
+		await createDailyMealsSubscriptions(delivery_location, daysData, user_id, grouped_id, {
+			total_price,
+			delivery_cost,
+			sub_total_price,
+			business_id,
+		});
+		if (payment.status === PAYMENT_STATUS.SUCCEEDED) {
+			await DeliveryOrderDao.updateDailyMealsSubscriptionsStatusByGroupedId(
 				groupedId,
-				pm_id,
-				DISCOUNTED_COMBINED_COST_CENTS,
-				MERCHANT_CUT,
-				return_url,
-				'daily_meals_subscription_payment'
+				SUBSCRIPTION_STATUS.ACTIVE
 			);
-			if (!payment_intent) {
-				throw new Error('Payment intent creation failed.');
-			}
-			if (payment_intent?.error) {
-				throw new Error(payment_intent?.error.message);
-			}
-			return res.status(200).json({
-				status: 'Success',
-				grouped_id: groupedId,
-				payment_intent: payment_intent,
-			});
 		}
-		if (payment_type === 'WALLET') {
-			// handle wallet payment
-			try {
-				if (available_wallet_balances[null] < DISCOUNTED_COMBINED_COST_CENTS / 100) {
-					throw new Error('Insufficient funds');
-				}
-				// await UsersDao.removeWalletBalance(user_id, DISCOUNTED_COMBINED_COST_CENTS/100, order.order_id);
-				await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
-					user.user_id,
-					DISCOUNTED_COMBINED_COST_CENTS,
-					groupedId,
-					'daily_meals_subscription'
-				);
-				return res.status(200).json({
-					status: 'Success',
-					grouped_id: groupedId,
-				});
-			} catch (err) {
-				throw new Error('Insufficient funds');
-			}
-		}
-		if (payment_type === 'CASH') {
-			throw new Error('CASH payments are not allowed for this order type.');
-		}
+		//FIXME: return all data that the FE needs
+		return res.status(200).json({
+			status: 'Success',
+			grouped_id: groupedId,
+			payment_intent: payment.payment_intent_id,
+		});
 	} catch (e) {
-		console.error('Error creating daily meals subscription payment intent', e);
+		if (payment) {
+			await PaymentHalpers.handlePaymentCleanup(payment);
+		}
+		console.error('Error creating daily meals subscription payment', e);
 		res.status(500).json(e);
 	}
 }
