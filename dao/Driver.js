@@ -597,17 +597,35 @@ async function clearDriverCurrentVehicle(driver_id) {
 		throw new Error(error);
 	}
 }
-const addDriverMunicipalities = async (driver_id, municipalities) => {
+const addDriverMunicipalities = async (driver_id, newMunicipalityIds) => {
 	try {
-		for (let municipality of municipalities) {
-			const exists = await prisma.driver_municipalities.findFirst({
+		const existingMunicipalities = await prisma.driver_municipalities.findMany({
+			where: {
+				driver_id: driver_id,
+			},
+			select: {
+				municipalities_id: true,
+			},
+		});
+
+		const existingMunicipalityIds = existingMunicipalities.map((m) => m.municipalities_id);
+
+		// Find municipalities to remove (exist in DB but not in new list)
+		const municipalitiesToRemove = existingMunicipalityIds.filter((id) => !newMunicipalityIds.includes(id));
+
+		// Find municipalities to add (exist in new list but not in DB)
+		const municipalitiesToAdd = newMunicipalityIds.filter((id) => !existingMunicipalityIds.includes(id));
+
+		if (municipalitiesToRemove.length > 0) {
+			await prisma.driver_municipalities.deleteMany({
 				where: {
-					driver_id: driver_id,
-					municipalities_id: municipality,
+					AND: [{ driver_id: driver_id }, { municipalities_id: { in: municipalitiesToRemove } }],
 				},
 			});
-			if (exists) continue;
-			return await prisma.driver_municipalities.create({
+		}
+
+		const createPromises = municipalitiesToAdd.map((municipality) => {
+			return prisma.driver_municipalities.create({
 				data: {
 					drivers: {
 						connect: { driver_id: driver_id },
@@ -617,9 +635,11 @@ const addDriverMunicipalities = async (driver_id, municipalities) => {
 					},
 				},
 			});
-		}
+		});
+
+		await Promise.all(createPromises);
 	} catch (error) {
-		console.error('Error adding municipalities to driver:', error);
+		console.error('Error updating driver municipalities:', error);
 		throw new Error(error);
 	}
 };
