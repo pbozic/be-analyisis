@@ -31,7 +31,6 @@ import {
 	USER_ROLE,
 	MAX_DELIVERY_RADIUS_KM,
 } from '../lib/constants.js';
-import Constants from '../lib/constants.js';
 import { getUsers } from '../dao/User.js';
 import {
 	createDailyMealsSubscriptions,
