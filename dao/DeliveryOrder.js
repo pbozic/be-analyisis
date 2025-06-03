@@ -64,8 +64,17 @@ async function getActiveDeliveryOrders() {
 				},
 			},
 			include: {
-				delivery_driver: true,
-				driver: true,
+				delivery_driver: {
+					include: {
+						vehicles: true,
+					},
+				},
+				driver: {
+					include: {
+						user: true,
+						current_vehicle: true,
+					},
+				},
 				user: true,
 			},
 		});
