@@ -603,17 +603,17 @@ const addDriverMunicipalities = async (driver_id, municipalities) => {
 			const exists = await prisma.driver_municipalities.findFirst({
 				where: {
 					driver_id: driver_id,
-					municipality_id: municipality,
+					municipalities_id: municipality,
 				},
 			});
 			if (exists) continue;
 			return await prisma.driver_municipalities.create({
 				data: {
-					driver: {
+					drivers: {
 						connect: { driver_id: driver_id },
 					},
-					municipality: {
-						connect: { municipality_id: municipality },
+					municipalities: {
+						connect: { municipalities_id: municipality },
 					},
 				},
 			});
