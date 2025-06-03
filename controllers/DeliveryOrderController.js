@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { v4 } from 'uuid';
-import { PAYMENT_STATUS, SUBSCRIPTION_STATUS } from '@prisma/client';
+import { PAYMENT_STATUS, SUBSCRIPTION_STATUS, SPLIT_DESTINATION_TYPE } from '@prisma/client';
 
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import DeliveryDriverDao from '../dao/DeliveryDriver.js';
@@ -1725,12 +1725,20 @@ async function dailyMealsSubscriptionPayment(req, res) {
 			payment_method_id,
 			'automatic',
 			allow_credits_usage,
-			{
-				DRIVER: { deliverer: DAILY_MEAL_DELIVERY_COST_CENTS },
-			},
-			{
-				MERCHANT: { restaurant_acc: RESTAURANT_SHARE_PERC },
-			},
+			[
+				{
+					type: SPLIT_DESTINATION_TYPE.DRIVER,
+					destination_id: 'deliverer',
+					value: DAILY_MEAL_DELIVERY_COST_CENTS,
+				},
+			],
+			[
+				{
+					type: SPLIT_DESTINATION_TYPE.MERCHANT,
+					destination_id: restaurant_acc,
+					value: RESTAURANT_SHARE_PERC,
+				},
+			],
 			null,
 			grouped_id
 		);
