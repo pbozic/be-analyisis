@@ -15,7 +15,7 @@ import { calculateDeliveryOrderPaymentCuts, createDailyMealsSubscriptions } from
 import WalletFundsDao from '../dao/WalletFunds.js';
 import TaxiOrderDao from '../dao/TaxiOrder.js';
 import { calculateTransferOrderPaymentCuts } from '../lib/taxiHelpers.js';
-import PaymentHelpers from '../lib/PaymentHelpers.js';
+import PaymentHelpers from '../lib/paymentHelpers.ts';
 dotenv.config();
 const { io, UserSockets, SocketStore } = socket;
 async function handlePaymentIntentSuccess(paymentIntent) {

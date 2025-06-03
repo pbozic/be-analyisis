@@ -7,8 +7,8 @@ import {
 	SPLIT_STATUS,
 } from '@prisma/client';
 
-import PaymentSplitDao, { PaymentSplitData } from '../dao/PaymentSplit.js';
-import PaymentDao from '../dao/Payment.js';
+import PaymentSplitDao, { PaymentSplitData } from '../dao/PaymentSplit.ts';
+import PaymentDao from '../dao/Payment.ts';
 import WalletFundsHelpers from '../lib/WalletFundsHelpers.js';
 import WalletFundsDao from '../dao/WalletFunds.js';
 import UserDao from '../dao/User.js';

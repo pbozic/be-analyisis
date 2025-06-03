@@ -43,7 +43,7 @@ import {
 	verifyOrderCosts,
 	groupSubscriptionsForDailyMeals,
 } from '../lib/deliveryHelpers.js';
-import PaymentHelpers from '../lib/PaymentHelpers.js';
+import PaymentHelpers from '../lib/paymentHelpers.ts';
 import { sortObjectsByNearestNeighbor, todaysEarnings } from '../lib/helpersLib.js';
 import prisma from '../prisma/prisma.js';
 import WalletFundsHelpers from '../lib/WalletFundsHelpers.js';
