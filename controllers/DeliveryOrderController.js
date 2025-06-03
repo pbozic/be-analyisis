@@ -1715,7 +1715,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 
 		const business = await BusinessDao.getBusinessById(business_id);
 		const restaurant_acc = business.stripe_account_id;
-		const TOTAL_PRICE_CENT = Math.round(total_price * 100);
+		const TOTAL_PRICE_CENTS = Math.round(total_price * 100);
 		payment = await PaymentHelpers.createPaymentHelper(
 			user.user_id,
 			TOTAL_PRICE_CENTS,
