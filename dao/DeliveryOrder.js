@@ -905,7 +905,6 @@ async function createDailyMealsSubscription(
 	try {
 		return await prisma.daily_meals_subscriptions.create({
 			data: {
-				grouped_id,
 				courier_comment: commentCourier,
 				restaurant_comment: commentRestaurant,
 				date,

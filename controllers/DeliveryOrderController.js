@@ -1762,10 +1762,14 @@ async function dailyMealsSubscriptionPayment(req, res) {
 			payment_intent: payment.payment_intent_id,
 		});
 	} catch (e) {
-		if (payment) {
-			await PaymentHelpers.handlePaymentRefund(payment);
-		}
 		console.error('Error creating daily meals subscription payment', e);
+		if (payment) {
+			try {
+				await PaymentHelpers.handlePaymentRefund(payment);
+			} catch (error) {
+				console.error('Error cleaning daily meals subscription payment', e);
+			}
+		}
 		res.status(500).json(e);
 	}
 }
