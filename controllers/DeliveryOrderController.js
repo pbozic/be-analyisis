@@ -1735,7 +1735,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 			groupedId
 		);
 		//create sub with status awaiting payment.
-		await createDailyMealsSubscriptions(delivery_location, daysData, user_id, grouped_id, {
+		await createDailyMealsSubscriptions(delivery_location, daysData, user.user_id, grouped_id, {
 			total_price,
 			delivery_cost,
 			sub_total_price,

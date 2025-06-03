@@ -215,7 +215,7 @@ export async function createPaymentHelper(
 	return_url: string | null = null,
 	product_identifier?: string
 	// business_id: string,
-): Promise<{ payment: payments; product_identifier?: string }> {
+): Promise<payments> {
 	const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user_id);
 	if (payment_method === 'WALLET') {
 		if (
@@ -304,7 +304,7 @@ export async function createPaymentHelper(
 	if (!response_payment) {
 		throw new Error('Payment not found after update');
 	}
-	return { payment: response_payment, product_identifier };
+	return response_payment;
 }
 
 /**
