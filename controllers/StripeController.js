@@ -285,6 +285,7 @@ async function handleWebhook(req, res) {
 								DELIVERY_ORDER_STATUS.PENDING
 							);
 							io.to('orders_' + order.business_id).emit('new_order', order);
+							io.to('orders_' + order.order_id).emit('order_status_change__delivery', order);
 							console.log(`Processed order ${order_id} into PENDING state.`);
 						} catch (err) {
 							console.error(`Failed to process order ${paymentIntent.id} into PENDING state: `, err);
