@@ -850,7 +850,7 @@ async function completeOrder(req, res) {
 						await WalletFundsDao.convertCashbacksToCredit(
 							{
 								user: { connect: { user_id: order.user_id } },
-								amount: 100,
+								amount: Math.floor(baskets / CREDITS.CASHBACK_CONVERSION_DELIVERY) * 100,
 								type: FUNDS_TYPE.CREDITS_DELIVERY,
 							},
 							pendingCashbacks
