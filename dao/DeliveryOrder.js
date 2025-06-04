@@ -52,29 +52,11 @@ async function getActiveDeliveryOrders() {
 			where: {
 				status: {
 					notIn: DELIVERY_ORDER_END_STATES,
-					// notIn: [
-					// 	DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
-					// 	DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
-					// 	DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
-					// ]
 				},
 			},
 			include: {
-				delivery_driver: {
-					include: {
-						vehicles: true,
-					},
-				},
-				driver: {
-					include: {
-						user: true,
-						current_vehicle: true,
-					},
-				},
+				delivery_driver: true,
+				driver: true,
 				user: true,
 			},
 		});
@@ -102,15 +84,6 @@ async function getActiveDeliveryOrdersForBusiness(business_id) {
 				business_id: business_id,
 				status: {
 					notIn: DELIVERY_ORDER_END_STATES,
-					// notIn: [
-					// 	DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
-					// 	DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
-					// 	DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
-					// ]
 				},
 			},
 			include: {
@@ -131,15 +104,6 @@ async function getDeliveryOrdersIfNotCompleted(user_id) {
 				user_id: user_id,
 				status: {
 					notIn: DELIVERY_ORDER_END_STATES,
-					// notIn: [
-					// 	DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
-					// 	DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
-					// 	DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
-					// ]
 				},
 			},
 			include: {
@@ -212,15 +176,6 @@ async function getActiveOrdersByDeliveryDriverId(deliverer_id) {
 				OR: [{ delivery_driver_id: deliverer_id }, { driver_id: deliverer_id }],
 				status: {
 					notIn: DELIVERY_ORDER_END_STATES,
-					// notIn: [
-					// 	DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
-					// 	DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
-					// 	DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
-					// ]
 				},
 			},
 			include: {
@@ -611,17 +566,6 @@ async function completeOrder(order_id) {
 					{
 						status: {
 							notIn: DELIVERY_ORDER_END_STATES,
-							// notIn: [
-							// 	DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
-							// 	DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED,
-							// 	DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
-							// 	DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
-							// 	DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
-							// 	DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
-							// 	DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
-							// 	DELIVERY_ORDER_STATUS.MERCHANT_REFUNDED,
-							// 	DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED,
-							// ]
 						},
 					},
 				],
