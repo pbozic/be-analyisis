@@ -1860,7 +1860,6 @@ export { createDailyMeals };
 export { getActiveDeliveryOrdersByBusinessId };
 export { getCompletedDeliveryOrdersByBusinessId };
 export { dailyMealsSubscriptionPayment };
-export { createDailyMealsSubscription };
 export { getDailyMealsSubscriptionsByUserId };
 export { getDailyMealsSubscriptionsByBusinessId };
 export default {
@@ -1892,7 +1891,6 @@ export default {
 	getActiveDeliveryOrdersByBusinessId,
 	getCompletedDeliveryOrdersByBusinessId,
 	dailyMealsSubscriptionPayment,
-	createDailyMealsSubscription,
 	getDailyMealsSubscriptionsByUserId,
 	getDailyMealsSubscriptionsByBusinessId,
 };
