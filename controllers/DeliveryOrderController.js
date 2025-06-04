@@ -738,8 +738,9 @@ async function cancelOrderDelivery(req, res) {
 async function completeOrder(req, res) {
 	try {
 		let order = await DeliveryOrderDao.completeOrder(req.body.order_id);
+		let driver;
 		if (order.details?.type !== 'pickup') {
-			let driver = order.delivery_driver_id
+			driver = order.delivery_driver_id
 				? await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id)
 				: await DriverDao.getDriverById(order.driver_id);
 			//assign penalties for being late
