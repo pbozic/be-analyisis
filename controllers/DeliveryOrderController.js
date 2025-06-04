@@ -1773,44 +1773,44 @@ async function dailyMealsSubscriptionPayment(req, res) {
 		res.status(500).json(e);
 	}
 }
-async function createDailyMealsSubscription(req, res) {
-	const { daysData, details, grouped_id, delivery_location } = req.body;
-	try {
-		const user_id = req.user.user_id;
-		const address = await AddressDao.addAddress({
-			address: delivery_location.address,
-			latitude: delivery_location.coordinates.latitude,
-			longitude: delivery_location.coordinates.longitude,
-		});
-		for (const day of daysData) {
-			let menu = day.menu;
-			for (let menuTag of Object.keys(menu)) {
-				let date = new Date(day.date);
-				date.setHours(10, 0, 0);
-				const menuData = menu[menuTag];
-				const business_id = details.business_id || menuData.business_id;
-				await DeliveryOrderDao.createDailyMealsSubscription(
-					grouped_id,
-					user_id,
-					business_id,
-					menuData.menu_id,
-					address.address_id,
-					menuData.menu_category_id,
-					day.commentCourier,
-					day.commentRestaurant,
-					date,
-					menuData.people
-				);
-			}
-		}
-		res.status(200).json({
-			status: 'Success',
-		});
-	} catch (e) {
-		console.log(e);
-		res.status(500).json(e);
-	}
-}
+// async function createDailyMealsSubscription(req, res) {
+// 	const { daysData, details, grouped_id, delivery_location } = req.body;
+// 	try {
+// 		const user_id = req.user.user_id;
+// 		const address = await AddressDao.addAddress({
+// 			address: delivery_location.address,
+// 			latitude: delivery_location.coordinates.latitude,
+// 			longitude: delivery_location.coordinates.longitude,
+// 		});
+// 		for (const day of daysData) {
+// 			let menu = day.menu;
+// 			for (let menuTag of Object.keys(menu)) {
+// 				let date = new Date(day.date);
+// 				date.setHours(10, 0, 0);
+// 				const menuData = menu[menuTag];
+// 				const business_id = details.business_id || menuData.business_id;
+// 				await DeliveryOrderDao.createDailyMealsSubscription(
+// 					grouped_id,
+// 					user_id,
+// 					business_id,
+// 					menuData.menu_id,
+// 					address.address_id,
+// 					menuData.menu_category_id,
+// 					day.commentCourier,
+// 					day.commentRestaurant,
+// 					date,
+// 					menuData.people
+// 				);
+// 			}
+// 		}
+// 		res.status(200).json({
+// 			status: 'Success',
+// 		});
+// 	} catch (e) {
+// 		console.error(e);
+// 		res.status(500).json(e);
+// 	}
+// }
 async function getDailyMealsSubscriptionsByUserId(req, res) {
 	const { start_date } = req.body;
 	const userId = req.user?.user_id;

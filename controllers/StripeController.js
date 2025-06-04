@@ -11,7 +11,7 @@ import ProductDao from '../dao/Product.js';
 import PaymentDao from '../dao/Payment.ts';
 import WalletFundsHelpers from '../lib/WalletFundsHelpers.js';
 import { DELIVERY_ORDER_STATUS, FUNDS_TYPE, SERVICE_TYPE, ORDER_TYPE, TAXI_ORDER_STATUS } from '../lib/constants.js';
-import { calculateDeliveryOrderPaymentCuts, createDailyMealsSubscriptions } from '../lib/deliveryHelpers.js';
+import { calculateDeliveryOrderPaymentCuts } from '../lib/deliveryHelpers.js';
 import WalletFundsDao from '../dao/WalletFunds.js';
 import TaxiOrderDao from '../dao/TaxiOrder.js';
 import { calculateTransferOrderPaymentCuts } from '../lib/taxiHelpers.js';

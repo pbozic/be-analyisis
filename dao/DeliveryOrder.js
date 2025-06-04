@@ -903,6 +903,10 @@ async function createDailyMealsSubscription(
 	quantity
 ) {
 	try {
+		if (!quantity || quantity <= 0) {
+			throw new Error('Queantity must be defined and greater than 0');
+		}
+
 		return await prisma.daily_meals_subscriptions.create({
 			data: {
 				courier_comment: commentCourier,
