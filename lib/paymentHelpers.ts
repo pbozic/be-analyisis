@@ -52,7 +52,7 @@ function generatePaymentSplits(
 		amount: cut.value,
 	}));
 	// 2. Handle percent splits for the remaining amount
-	const remainingAmount = amount - fixedTotal;
+	const remainingAmountForPercentages = amount - fixedTotal;
 	const totalPercent = percentSplitsData.reduce((sum, cut) => sum + cut.value, 0);
 	if (totalPercent >= 100) {
 		throw new Error('Sum of percent split values must be less than 100%');
@@ -60,44 +60,61 @@ function generatePaymentSplits(
 	const percentSplits: Array<{ destination_type: SPLIT_DESTINATION_TYPE; destination_id: string; amount: number }> =
 		[];
 
-	if (remainingAmount <= 0) {
+	if (remainingAmountForPercentages <= 0) {
 		if (percentSplitsData.length > 0) {
 			throw new Error('No remaining amount to allocate for percent splits');
 		}
 	} else {
 		const splitDefs: DestinationCut[] = [];
 
-		// Add PLATFORM with remaining percent if needed
-		const remainingPercent = 100 - totalPercent;
-		if (remainingPercent > 0) {
-			splitDefs.push({ type: 'PLATFORM', destination_id: 'platform', value: remainingPercent });
-		}
-		splitDefs.push(...percentSplitsData);
-
-		// Calculate amounts for each percent split, using integer math to avoid floating point errors
+		// Calculate amounts for each percent split while rounding to avoid floating point errors
 		let allocated = 0;
 		for (let i = 0; i < splitDefs.length; i++) {
 			const def = splitDefs[i]!;
 			if (def.value <= 0) throw new Error('Percent split value must be greater than 0');
 
 			let splitAmount: number;
-			if (i === splitDefs.length - 1) {
-				// Last split gets the remainder to ensure total matches
-				splitAmount = remainingAmount - allocated;
-			} else {
-				splitAmount = Math.floor((remainingAmount * def.value) / 100);
-				allocated += splitAmount;
-			}
+
+			splitAmount = Math.floor((remainingAmountForPercentages * def.value) / 100);
+			allocated += splitAmount;
+
 			percentSplits.push({
 				destination_type: def.type,
 				destination_id: def.destination_id,
 				amount: splitAmount,
 			});
 		}
+		let platformSplitAmount = remainingAmountForPercentages - allocated;
+		if (platformSplitAmount > 0) {
+			percentSplits.push({
+				destination_type: 'PLATFORM',
+				destination_id: 'platform',
+				amount: platformSplitAmount,
+			});
+		}
 	}
+	const enumOrder = Object.values(SPLIT_DESTINATION_TYPE);
 
-	// 3. Combine all splits
-	const allSplits = [...fixedSplits, ...percentSplits];
+	// 3. Combine, merge and sort splits
+	const allSplits = Array.from(
+		[...fixedSplits, ...percentSplits]
+			.reduce((map, split) => {
+				const key = `${split.destination_type}:${split.destination_id}`;
+				const existing = map.get(key);
+				if (existing) {
+					existing.amount += split.amount;
+				} else {
+					map.set(key, { ...split });
+				}
+				return map;
+			}, new Map<string, Omit<PaymentSplitData, 'is_credits' | 'metadata'>>())
+			.values()
+	).sort((a, b) => {
+		if (a.destination_type === 'PLATFORM' && b.destination_type !== 'PLATFORM') return -1;
+		if (a.destination_type !== 'PLATFORM' && b.destination_type === 'PLATFORM') return 1;
+
+		return enumOrder.indexOf(a.destination_type) - enumOrder.indexOf(b.destination_type);
+	});
 
 	// 4. Allocate credits to splits
 	let remainingCredits = credits_amount;
