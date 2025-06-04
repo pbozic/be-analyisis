@@ -1396,7 +1396,7 @@ model payment_splits {
   metadata         Json
   is_credits        Boolean @default(false)
   
-  payment payments @relation(fields: [payment_id], references: [payment_id])
+  payment payments @relation(fields: [payment_id], references: [payment_id], onDelete: Cascade)
 }
 
 enum PAYMENT_METHOD {

@@ -65,12 +65,10 @@ function generatePaymentSplits(
 			throw new Error('No remaining amount to allocate for percent splits');
 		}
 	} else {
-		const splitDefs: DestinationCut[] = [];
-
 		// Calculate amounts for each percent split while rounding to avoid floating point errors
 		let allocated = 0;
-		for (let i = 0; i < splitDefs.length; i++) {
-			const def = splitDefs[i]!;
+		for (let i = 0; i < percentSplitsData.length; i++) {
+			const def = percentSplitsData[i]!;
 			if (def.value <= 0) throw new Error('Percent split value must be greater than 0');
 
 			let splitAmount: number;
