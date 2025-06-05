@@ -71,7 +71,7 @@ router.use('/flags', [authMiddleware], flagRoutes);
 router.use('/google_maps', googleMaps);
 router.use('/categories', categoriesRoutes);
 router.use('/promo', [authMiddleware], promoRoutes);
-router.use('/blog', [authMiddleware], blogRoutes);
+router.use('/blog', blogRoutes);
 router.use('/reviews', [authMiddleware], async (req, res) => {
 	let reviews = await prisma.reviews.findMany({
 		include: {
