@@ -46,12 +46,26 @@ const getBusinessTeamById = async (req, res) => {
  * @body {Object} req.body
  * @body {string} req.body.business_id - ID of the business this team belongs to
  * @body {string} req.body.team_name - Name of the business team
+ * @body {Object} req.body.users - Array of user IDs to assign to the team
  * @body {number} [req.body.limit_per_person] - Optional user limit_per_person for the team
- * @body {string} [req.body.description] - Optional team description
  */
 const createBusinessTeam = async (req, res) => {
 	try {
-		const businessTeam = await BusinessTeamDao.createBusinessTeam(req.body);
+		const { users, ...teamData } = req.body;
+		const businessTeam = await BusinessTeamDao.createBusinessTeam(teamData);
+
+		if (users && users.length > 0) {
+			for (const user_id of users) {
+				try {
+					await BusinessTeamDao.addUserToTeam(businessTeam.business_teams_id, user_id);
+				} catch (e) {
+					console.log(
+						`Error adding user id: ${user_id} to team id: ${businessTeam.business_teams_id} - error:`,
+						e
+					);
+				}
+			}
+		}
 		res.status(201).json(businessTeam);
 	} catch (error) {
 		console.error('Error creating business team:', error);
@@ -155,10 +169,11 @@ const setBusinessTeamName = async (req, res) => {
 const deleteBusinessTeam = async (req, res) => {
 	try {
 		await BusinessTeamDao.deleteBusinessTeam(req.params.business_teams_id);
-		res.status(200).json({ message: 'Business team deleted successfully' });
+		res.status(200).json({ success: true, message: 'Business team deleted successfully' });
 	} catch (error) {
 		console.error('Error deleting business team:', error);
 		res.status(500).json({
+			success: false,
 			error: 'Error deleting business team',
 			details: error.message,
 		});
