@@ -323,9 +323,11 @@ async function transferSplit(
 	} else {
 		switch (payment.payment_method) {
 			case 'CARD':
-			case 'PLATFORM':
-				await stripe.splitCutFromPaymentIntent(payment.payment_intent_id, destination, split.amount);
+			case 'PLATFORM': {
+				const payment_intent = await stripe.client.paymentIntents.retrieve(payment.payment_intent_id);
+				await stripe.splitCutFromPaymentIntent(payment_intent, destination, split.amount);
 				break;
+			}
 			case 'WALLET':
 				await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 					payment.user_id,
