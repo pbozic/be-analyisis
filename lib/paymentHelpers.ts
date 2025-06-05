@@ -243,7 +243,7 @@ export async function createPaymentHelper(
 					throw new Error('Failed to create payment intent');
 				}
 				payment = await PaymentDao.updatePayment(payment.payment_id, {
-					payment_intent_id: payment_intent.payment_intent_id,
+					payment_intent_id: payment_intent.id,
 				});
 				break;
 			}
