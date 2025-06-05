@@ -112,7 +112,7 @@ export async function createManyPaymentSplits(
  * @returns The payment split.
  */
 export async function getPaymentSplitById(split_id: string) {
-	return await prisma.payment_splits.update({
+	return await prisma.payment_splits.findFirst({
 		where: { split_id },
 		include: {
 			payment: true,
