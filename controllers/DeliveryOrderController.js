@@ -1766,7 +1766,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 			grouped_id
 		);
 		payment = payment_response.payment;
-		payment_intent = payment_response.payment_intent;
+		let payment_intent = payment_response.payment_intent;
 		//create sub with status awaiting payment.
 		await createDailyMealsSubscriptions(delivery_location, daysData, user.user_id, grouped_id, {
 			total_price,
