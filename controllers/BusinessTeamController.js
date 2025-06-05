@@ -57,7 +57,8 @@ const createBusinessTeam = async (req, res) => {
 		if (users && users.length > 0) {
 			for (const user_id of users) {
 				try {
-					await BusinessTeamDao.addUserToTeam(businessTeam.business_teams_id, user_id);
+					const addedUsers = await BusinessTeamDao.addUserToTeam(businessTeam.business_teams_id, user_id);
+					businessTeam.users = addedUsers.users;
 				} catch (e) {
 					console.log(
 						`Error adding user id: ${user_id} to team id: ${businessTeam.business_teams_id} - error:`,
@@ -83,7 +84,6 @@ const createBusinessTeam = async (req, res) => {
  * @body {Object} req.body - Fields to update
  * @body {string} [req.body.team_name] - New team team_name
  * @body {number} [req.body.limit_per_person] - New team limit_per_person
- * @body {string} [req.body.description] - New team description
  */
 const updateBusinessTeam = async (req, res) => {
 	try {
@@ -101,6 +101,63 @@ const updateBusinessTeam = async (req, res) => {
 		res.status(500).json({
 			error: 'Error updating business team',
 			details: error.message,
+		});
+	}
+};
+
+/**
+ * Update users in a business team
+ * @route POST /business-teams/users/:business_teams_id
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ * @body {Object} req.body - Two arrays to update
+ * @body {Object} [req.body.users_to_add] - Array of ids of new users to add to the team
+ * @body {Object} [req.body.users_to_delete] - Array of ids of users to delete from the team
+ */
+const editBusinessTeamUsers = async (req, res) => {
+	const usersToAdd = req.body.users_to_add;
+	const usersToDelete = req.body.users_to_delete;
+	const businessTeamId = req.params.business_teams_id;
+
+	if (!businessTeamId) {
+		return res.status(400).json({
+			success: false,
+			error: 'Business team ID is required',
+		});
+	}
+	if (!usersToAdd && !usersToDelete) {
+		return res.status(400).json({
+			success: false,
+			error: 'At least one of users_to_add or users_to_delete must be provided',
+		});
+	}
+
+	try {
+		if (usersToAdd && usersToAdd.length > 0) {
+			for (const user_id of usersToAdd) {
+				try {
+					await BusinessTeamDao.addUserToTeam(businessTeamId, user_id);
+				} catch (e) {
+					console.log(`Error adding user id: ${user_id} to team id: ${businessTeamId} - error:`, e);
+				}
+			}
+		}
+		if (usersToDelete && usersToDelete.length > 0) {
+			for (const user_id of usersToDelete) {
+				try {
+					await BusinessTeamDao.removeUserFromTeam(user_id);
+				} catch (e) {
+					console.log(`Error removing user id: ${user_id} from team id: ${businessTeamId} - error:`, e);
+				}
+			}
+		}
+		res.status(200).json({ success: true, message: 'Business team users updated successfully' });
+	} catch (e) {
+		console.error('Error updating business team users:', e);
+		res.status(500).json({
+			success: false,
+			error: 'Error updating business team users',
+			details: e.message,
 		});
 	}
 };
@@ -317,6 +374,7 @@ export { addUserToTeam };
 export { removeUserFromTeam };
 export { moveUserToTeam };
 export { deleteBusinessTeam };
+export { editBusinessTeamUsers };
 export default {
 	getBusinessTeamsByBusinessId,
 	getBusinessTeamById,
@@ -328,4 +386,5 @@ export default {
 	removeUserFromTeam,
 	moveUserToTeam,
 	deleteBusinessTeam,
+	editBusinessTeamUsers,
 };

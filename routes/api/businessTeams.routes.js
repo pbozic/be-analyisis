@@ -3,6 +3,7 @@ import express from 'express';
 import BusinessTeamsController from '../../controllers/BusinessTeamController.js';
 const router = express.Router();
 router.post('/create', BusinessTeamsController.createBusinessTeam);
+router.post('/users/:business_teams_id', BusinessTeamsController.editBusinessTeamUsers);
 router.get('/:business_id', BusinessTeamsController.getBusinessTeamsByBusinessId);
 router.get('/:business_teams_id', BusinessTeamsController.getBusinessTeamById);
 router.patch('/:business_teams_id', BusinessTeamsController.updateBusinessTeam);
