@@ -7,6 +7,7 @@ import {
 	SPLIT_STATUS,
 	type Prisma as TPrisma,
 } from '@prisma/client';
+import { type Stripe as TStripe } from 'stripe';
 
 import PaymentSplitDao, { PaymentSplitData } from '../dao/PaymentSplit.ts';
 import PaymentDao from '../dao/Payment.ts';
@@ -180,7 +181,7 @@ export async function createPaymentHelper(
 	return_url: string | null = null,
 	product_identifier?: string
 	// business_id: string,
-): Promise<payments> {
+): Promise<{ payment: payments; payment_intent: TStripe.PaymentIntent | null }> {
 	const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user_id);
 	if (payment_method === 'WALLET') {
 		if (
@@ -218,7 +219,7 @@ export async function createPaymentHelper(
 			? generatePaymentSplits(total_price_cents, CREDITS_AMOUNT_RESERVED, fixed_splits_data, percent_splits_data)
 			: [];
 	await PaymentSplitDao.createManyPaymentSplits(payment.payment_id, splits);
-
+	let payment_intent = null;
 	if (total_price_cents - CREDITS_AMOUNT_RESERVED > 0) {
 		switch (payment_method) {
 			case PAYMENT_METHOD.CARD:
@@ -228,7 +229,7 @@ export async function createPaymentHelper(
 				if (!customer_acc) {
 					throw new Error('User does not have a stripe customer account.');
 				}
-				let payment_intent = await stripe.createSplittablePayment(
+				payment_intent = await stripe.createSplittablePayment(
 					customer_acc,
 					product_identifier,
 					payment_method_id,
@@ -269,7 +270,7 @@ export async function createPaymentHelper(
 	if (!response_payment) {
 		throw new Error('Payment not found after update');
 	}
-	return response_payment;
+	return { payment: response_payment, payment_intent };
 }
 
 /**

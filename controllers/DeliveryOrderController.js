@@ -1738,7 +1738,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 		const business = await BusinessDao.getBusinessById(business_id);
 		const restaurant_acc = business.stripe_account_id;
 		const TOTAL_PRICE_CENTS = Math.round(total_price * 100);
-		payment = await PaymentHelpers.createPaymentHelper(
+		payment_response = await PaymentHelpers.createPaymentHelper(
 			user.user_id,
 			TOTAL_PRICE_CENTS,
 			'DELIVERY',
@@ -1765,6 +1765,8 @@ async function dailyMealsSubscriptionPayment(req, res) {
 			null,
 			grouped_id
 		);
+		payment = payment_response.payment;
+		payment_intent = payment_response.payment_intent;
 		//create sub with status awaiting payment.
 		await createDailyMealsSubscriptions(delivery_location, daysData, user.user_id, grouped_id, {
 			total_price,
@@ -1782,7 +1784,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 		return res.status(200).json({
 			status: 'Success',
 			grouped_id: grouped_id,
-			payment_intent: payment.payment_intent_id,
+			payment_intent: payment_intent,
 		});
 	} catch (e) {
 		console.error('Error creating daily meals subscription payment', e);
