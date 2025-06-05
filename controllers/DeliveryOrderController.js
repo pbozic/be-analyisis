@@ -1752,7 +1752,6 @@ async function dailyMealsSubscriptionPayment(req, res) {
 				.map((_, index) => {
 					return {
 						type: SPLIT_DESTINATION_TYPE.DRIVER,
-						destination_id: `deliverer${index}`,
 						value: DAILY_MEAL_DELIVERY_COST_CENTS,
 					};
 				}),
