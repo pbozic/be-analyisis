@@ -77,10 +77,7 @@ export async function searchBlogPosts(req: ValidatedRequest<SearchBlogPostsInput
 			year,
 			month,
 		});
-		res.status(200).json({
-			message: 'Blog posts retrieved successfully',
-			data: blogPosts,
-		});
+		res.status(200).json(blogPosts);
 	} catch (error) {
 		res.status(500).json({ message: 'Error retrieving blog posts', error });
 	}
@@ -140,10 +137,7 @@ export async function getBlogPostById(req: Request, res: Response): Promise<void
 		}
 		const blogPost = await BlogDao.getBlogPostById(id);
 		if (blogPost) {
-			res.status(200).json({
-				message: 'Blog post retrieved successfully',
-				data: blogPost,
-			});
+			res.status(200).json(blogPost);
 		} else {
 			res.status(404).json({
 				message: `Blog post with ID ${id} not found`,
@@ -208,10 +202,7 @@ export async function getBlogPostBySlug(req: Request, res: Response): Promise<vo
 		}
 		const blogPost = await BlogDao.getBlogPostBySlug(slug);
 		if (blogPost) {
-			res.status(200).json({
-				message: 'Blog post retrieved successfully',
-				data: blogPost,
-			});
+			res.status(200).json(blogPost);
 		} else {
 			res.status(404).json({
 				message: `Blog post with slug "${slug}" not found`,
@@ -334,10 +325,7 @@ export async function updateBlogPost(
 			image_file_id,
 			publish_at,
 		});
-		res.status(200).json({
-			message: 'Blog post updated successfully',
-			data: updatedBlogPost,
-		});
+		res.status(200).json(updatedBlogPost);
 	} catch (error) {
 		res.status(500).json({ message: 'Error updating blog post', error });
 	}
@@ -378,10 +366,7 @@ export async function deleteBlogPost(req: Request, res: Response): Promise<void>
 		}
 		const deletedBlogPost = await BlogDao.deleteBlogPost(id);
 		if (deletedBlogPost) {
-			res.status(200).json({
-				message: 'Blog post deleted successfully',
-				data: deletedBlogPost,
-			});
+			res.status(200).json(deletedBlogPost);
 		} else {
 			res.status(404).json({
 				message: `Blog post with ID ${id} not found`,
@@ -422,10 +407,7 @@ export async function deleteBlogPost(req: Request, res: Response): Promise<void>
 export async function getBlogPosts(req: Request, res: Response): Promise<void> {
 	try {
 		let blogPosts = await BlogDao.getBlogPosts();
-		res.status(200).json({
-			message: 'Blog posts retrieved successfully',
-			data: blogPosts,
-		});
+		res.status(200).json(blogPosts);
 	} catch (error) {
 		res.status(500).json({ message: 'Error retrieving blog posts', error });
 	}
@@ -455,10 +437,7 @@ export async function getBlogPosts(req: Request, res: Response): Promise<void> {
 export async function getBlogCategories(req: Request, res: Response): Promise<void> {
 	try {
 		const blogCategories = await BlogDao.getBlogCategories();
-		res.status(200).json({
-			message: 'Blog categories retrieved successfully',
-			data: blogCategories,
-		});
+		res.status(200).json(blogCategories);
 	} catch (error) {
 		res.status(500).json({ message: 'Error retrieving blog categories', error });
 	}
@@ -531,10 +510,7 @@ export async function deleteBlogCategory(req: ValidatedRequest<object, { id: str
 		}
 		const deletedBlogCategory = await BlogDao.deleteBlogCategory(id);
 		if (deletedBlogCategory) {
-			res.status(200).json({
-				message: 'Blog category deleted successfully',
-				data: deletedBlogCategory,
-			});
+			res.status(200).json(deletedBlogCategory);
 		} else {
 			res.status(404).json({
 				message: `Blog category with ID ${id} not found`,
@@ -584,10 +560,7 @@ export async function updateBlogCategory(
 		const { name, description } = req.body;
 		const updatedBlogCategory = await BlogDao.updateBlogCategory(id, { name, description });
 		if (updatedBlogCategory) {
-			res.status(200).json({
-				message: 'Blog category updated successfully',
-				data: updatedBlogCategory,
-			});
+			res.status(200).json(updatedBlogCategory);
 			return;
 		}
 		res.status(404).json({
@@ -622,10 +595,7 @@ export async function updateBlogCategory(
 export async function getBlogTags(req: Request, res: Response): Promise<void> {
 	try {
 		const blogTags = await BlogDao.getBlogTags();
-		res.status(200).json({
-			message: 'Blog tags retrieved successfully',
-			data: blogTags,
-		});
+		res.status(200).json(blogTags);
 	} catch (error) {
 		res.status(500).json({ message: 'Error retrieving blog tags', error });
 	}
@@ -708,10 +678,7 @@ export async function deleteBlogTag(
 		}
 		const deletedBlogTag = await BlogDao.deleteBlogTag(id);
 		if (deletedBlogTag) {
-			res.status(200).json({
-				message: 'Blog tag deleted successfully',
-				data: deletedBlogTag,
-			});
+			res.status(200).json(deletedBlogTag);
 			return;
 		}
 		res.status(404).json({
@@ -761,10 +728,7 @@ export async function updateBlogTag(
 		const { name, description } = req.body;
 		const updatedBlogTag = await BlogDao.updateBlogTag(id, { name, description });
 		if (updatedBlogTag) {
-			res.status(200).json({
-				message: 'Blog tag updated successfully',
-				data: updatedBlogTag,
-			});
+			res.status(200).json(updatedBlogTag);
 			return;
 		}
 		res.status(404).json({
