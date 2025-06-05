@@ -1729,7 +1729,10 @@ async function dailyMealsSubscriptionPayment(req, res) {
 				{
 					type: SPLIT_DESTINATION_TYPE.DRIVER,
 					destination_id: 'deliverer',
-					value: DAILY_MEAL_DELIVERY_COST_CENTS,
+					value:
+						DAILY_MEAL_DELIVERY_COST_CENTS *
+						daysData.filter((day) => day.menu.values().reduce((menuData) => acc + menuData.people, 0) > 0)
+							.length,
 				},
 			],
 			[
