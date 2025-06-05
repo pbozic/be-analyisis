@@ -738,59 +738,81 @@ async function cancelOrderDelivery(req, res) {
 async function completeOrder(req, res) {
 	try {
 		let order = await DeliveryOrderDao.completeOrder(req.body.order_id);
-		let driver = order.delivery_driver_id
-			? await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id)
-			: await DriverDao.getDriverById(order.driver_id);
-		//assign penalties for being late
-		const timeline_delivered_timestamp = order.timeline.findLast(
-			(entry) => entry.status === DELIVERY_ORDER_STATUS.DELIVERY_DELIVERED
-		)?.timestamp;
-		if (timeline_delivered_timestamp && order.details?.customer_expected_delivery_at) {
-			const late_seconds = moment(timeline_delivered_timestamp).diff(
-				moment(order.details.customer_expected_delivery_at),
-				'seconds'
-			);
-			console.log(`Order was ${late_seconds} seconds ${late_seconds > 0 ? 'late' : 'early or on time'}.`);
-			let allowed_leeway = 60 * 30;
-			if (late_seconds > allowed_leeway) {
-				await LateEventsDao.createLateEvent(
-					driver.business_id,
+		let driver;
+		if (order.details?.type !== 'pickup') {
+			driver = order.delivery_driver_id
+				? await DeliveryDriverDao.getDeliveryDriverById(order.delivery_driver_id)
+				: await DriverDao.getDriverById(order.driver_id);
+			//assign penalties for being late
+			const timeline_delivered_timestamp = order.timeline.findLast(
+				(entry) => entry.status === DELIVERY_ORDER_STATUS.DELIVERY_DELIVERED
+			)?.timestamp;
+			if (timeline_delivered_timestamp && order.details?.customer_expected_delivery_at) {
+				const late_seconds = moment(timeline_delivered_timestamp).diff(
+					moment(order.details.customer_expected_delivery_at),
+					'seconds'
+				);
+				console.log(`Order was ${late_seconds} seconds ${late_seconds > 0 ? 'late' : 'early or on time'}.`);
+				let allowed_leeway = 60 * 30;
+				if (late_seconds > allowed_leeway) {
+					await LateEventsDao.createLateEvent(
+						driver.business_id,
+						driver.user_id,
+						order.order_id,
+						null,
+						late_seconds - allowed_leeway
+					);
+				}
+			} else {
+				await ScoringPointsDao.createScoringPoints(
+					order.business_id,
 					driver.user_id,
 					order.order_id,
 					null,
-					late_seconds - allowed_leeway
+					0,
+					false,
+					SCORING_POINTS_REASON.INSUFFICIENT_DATA
 				);
 			}
-		} else {
-			await ScoringPointsDao.createScoringPoints(
-				order.business_id,
-				driver.user_id,
-				order.order_id,
-				null,
-				0,
-				false,
-				SCORING_POINTS_REASON.INSUFFICIENT_DATA
-			);
+			let delivery_business_stripe = await BusinessDao.getBusinessStripeByBusinessId(driver.business_id);
+			const INITIAL_DELIVERY_CUT = Math.round(order.details.delivery_cost * 100 * (1 - DRIVE_FEE));
+			const remainingReservedCredits = await WalletFundsDao.getReservedCredits(order.user_id, order.order_id);
+			const CREDITS_AMOUNT_RESERVED = remainingReservedCredits.reduce((sum, wf) => sum + wf.amount, 0);
+			const DELIVERY_CREDIT_CUT_CENTS = Math.min(INITIAL_DELIVERY_CUT, CREDITS_AMOUNT_RESERVED);
+			if (DELIVERY_CREDIT_CUT_CENTS > 0) {
+				const transferCreditsDeliveryDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(
+					order.user_id,
+					delivery_business_stripe,
+					DELIVERY_CREDIT_CUT_CENTS,
+					order.order_id,
+					SERVICE_TYPE.DELIVERY
+				);
+			}
+			const DISCOUNTED_DELIVERY_COST_CENTS = INITIAL_DELIVERY_CUT - DELIVERY_CREDIT_CUT_CENTS;
+			console.info({
+				delivery_credits: DELIVERY_CREDIT_CUT_CENTS,
+				remaining_delivery_cost: DISCOUNTED_DELIVERY_COST_CENTS,
+			});
+			if (DISCOUNTED_DELIVERY_COST_CENTS > 0) {
+				if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
+					const paymentIntent = await stripe.client.paymentIntents.retrieve(order.payment_intent_id);
+					const transferDelivery = stripe.splitCutFromPaymentIntent(
+						paymentIntent,
+						delivery_business_stripe,
+						DISCOUNTED_DELIVERY_COST_CENTS
+					);
+				} else if (order.payment.type === 'WALLET') {
+					console.info(order);
+					const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+						order.user_id,
+						delivery_business_stripe,
+						DISCOUNTED_DELIVERY_COST_CENTS,
+						order.order_id,
+						SERVICE_TYPE.DELIVERY
+					);
+				}
+			}
 		}
-		let delivery_business_stripe = await BusinessDao.getBusinessStripeByBusinessId(driver.business_id);
-		const INITIAL_DELIVERY_CUT = Math.round(order.details.delivery_cost * 100 * (1 - DRIVE_FEE));
-		const remainingReservedCredits = await WalletFundsDao.getReservedCredits(order.user_id, order.order_id);
-		const CREDITS_AMOUNT_RESERVED = remainingReservedCredits.reduce((sum, wf) => sum + wf.amount, 0);
-		const DELIVERY_CREDIT_CUT_CENTS = Math.min(INITIAL_DELIVERY_CUT, CREDITS_AMOUNT_RESERVED);
-		if (DELIVERY_CREDIT_CUT_CENTS > 0) {
-			const transferCreditsDeliveryDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(
-				order.user_id,
-				delivery_business_stripe,
-				DELIVERY_CREDIT_CUT_CENTS,
-				order.order_id,
-				SERVICE_TYPE.DELIVERY
-			);
-		}
-		const DISCOUNTED_DELIVERY_COST_CENTS = INITIAL_DELIVERY_CUT - DELIVERY_CREDIT_CUT_CENTS;
-		console.info({
-			delivery_credits: DELIVERY_CREDIT_CUT_CENTS,
-			remaining_delivery_cost: DISCOUNTED_DELIVERY_COST_CENTS,
-		});
 		//TODO: handle cashback for daily meals
 		if (!order.is_daily_meal) {
 			const DELIVERY_COST_CENTS = order.details.total_price * 100;
@@ -828,7 +850,7 @@ async function completeOrder(req, res) {
 						await WalletFundsDao.convertCashbacksToCredit(
 							{
 								user: { connect: { user_id: order.user_id } },
-								amount: 100,
+								amount: Math.floor(baskets / CREDITS.CASHBACK_CONVERSION_DELIVERY) * 100,
 								type: FUNDS_TYPE.CREDITS_DELIVERY,
 							},
 							pendingCashbacks
@@ -838,25 +860,6 @@ async function completeOrder(req, res) {
 			}
 		}
 		await handleReferral(order.user_id);
-		if (DISCOUNTED_DELIVERY_COST_CENTS > 0) {
-			if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
-				const paymentIntent = await stripe.client.paymentIntents.retrieve(order.payment_intent_id);
-				const transferDelivery = stripe.splitCutFromPaymentIntent(
-					paymentIntent,
-					delivery_business_stripe,
-					DISCOUNTED_DELIVERY_COST_CENTS
-				);
-			} else if (order.payment.type === 'WALLET') {
-				console.info(order);
-				const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-					order.user_id,
-					delivery_business_stripe,
-					DISCOUNTED_DELIVERY_COST_CENTS,
-					order.order_id,
-					SERVICE_TYPE.DELIVERY
-				);
-			}
-		}
 		sendDeliveryOrderNotifications(order.user, null, order.user_id, null, order.status);
 		// send email
 		let template = 'orderConfirmation';
