@@ -4,10 +4,10 @@ import { Prisma } from '@prisma/client';
 import prisma from '../prisma/prisma.js';
 export type PaymentSplitData = {
 	destination_type: SPLIT_DESTINATION_TYPE;
-	destination_id: string;
+	destination_id?: string;
 	amount: number;
 	is_credits: boolean;
-	metadata: object;
+	metadata?: Record<string, string | number | boolean | object | null>;
 };
 
 /**
@@ -19,7 +19,7 @@ export type PaymentSplitData = {
  * @param {SPLIT_DESTINATION_TYPE} destination_type
  * @param {string} destination_id
  * @param {number} amount
- * @param {object} [metadata={}]
+ * @param {Record<string, any>} [metadata={}]
  * @param {boolean} [is_credits=false]
  * @returns {Promise<payment_splits>}
  */
@@ -28,7 +28,7 @@ export async function createPaymentSplit(
 	destination_type: SPLIT_DESTINATION_TYPE,
 	destination_id: string,
 	amount: number,
-	metadata: object = {},
+	metadata?: Record<string, string | number | boolean | object | null>,
 	is_credits: boolean = false
 ): Promise<payment_splits> {
 	try {
@@ -106,6 +106,21 @@ export async function createManyPaymentSplits(
 }
 
 /**
+ * Fetches a payment split by its split_id.
+ *
+ * @param split_id - UUID of the split to fetch.
+ * @returns The payment split.
+ */
+export async function getPaymentSplitById(split_id: string) {
+	return await prisma.payment_splits.update({
+		where: { split_id },
+		include: {
+			payment: true,
+		},
+	});
+}
+
+/**
  * Updates a payment split by its split_id, excluding immutable fields.
  *
  * @param split_id - UUID of the split to update.
@@ -128,5 +143,6 @@ export async function updatePaymentSplitById(
 export default {
 	createPaymentSplit,
 	createManyPaymentSplits,
+	getPaymentSplitById,
 	updatePaymentSplitById,
 };

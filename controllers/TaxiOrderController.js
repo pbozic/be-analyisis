@@ -1536,7 +1536,6 @@ async function completeOrder(req, res) {
 								{
 									user: { connect: { user_id: orderingUser.user_id } },
 									amount: Math.floor(baskets / CREDITS.CASHBACK_CONVERSION_TAXI) * 100,
-									type: FUNDS_TYPE.CREDITS_TAXI,
 								},
 								pendingCashbacks
 							);

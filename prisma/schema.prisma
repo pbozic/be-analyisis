@@ -1391,9 +1391,9 @@ model payment_splits {
   status                    SPLIT_STATUS               @default(RESERVED)
   payment_id String                @db.Uuid
   destination_type SPLIT_DESTINATION_TYPE
-  destination_id   String
+  destination_id   String?
   amount           Int
-  metadata         Json
+  metadata         Json?
   is_credits        Boolean @default(false)
   
   payment payments @relation(fields: [payment_id], references: [payment_id], onDelete: Cascade)

@@ -5,6 +5,7 @@ import {
 	SPLIT_DESTINATION_TYPE,
 	payment_splits,
 	SPLIT_STATUS,
+	type Prisma as TPrisma,
 } from '@prisma/client';
 
 import PaymentSplitDao, { PaymentSplitData } from '../dao/PaymentSplit.ts';
@@ -27,8 +28,9 @@ import stripe from './stripe.js';
  */
 type DestinationCut = {
 	type: SPLIT_DESTINATION_TYPE;
-	destination_id: string;
+	destination_id?: string;
 	value: number;
+	metadata?: Record<string, string | number | boolean | object | null>;
 };
 
 function generatePaymentSplits(
@@ -46,10 +48,11 @@ function generatePaymentSplits(
 	}
 
 	// 1. Handle fixed splits
-	const fixedSplits = fixedSplitsData.map((cut) => ({
+	const fixedSplits: Omit<PaymentSplitData, 'is_credits'>[] = fixedSplitsData.map((cut) => ({
 		destination_type: cut.type,
 		destination_id: cut.destination_id,
 		amount: cut.value,
+		metadata: cut.metadata,
 	}));
 	// 2. Handle percent splits for the remaining amount
 	const remainingAmountForPercentages = amount - fixedTotal;
@@ -57,8 +60,7 @@ function generatePaymentSplits(
 	if (totalPercent >= 100) {
 		throw new Error('Sum of percent split values must be less than 100%');
 	}
-	const percentSplits: Array<{ destination_type: SPLIT_DESTINATION_TYPE; destination_id: string; amount: number }> =
-		[];
+	const percentSplits: Omit<PaymentSplitData, 'is_credits'>[] = [];
 
 	if (remainingAmountForPercentages <= 0) {
 		if (percentSplitsData.length > 0) {
@@ -71,15 +73,14 @@ function generatePaymentSplits(
 			const def = percentSplitsData[i]!;
 			if (def.value <= 0) throw new Error('Percent split value must be greater than 0');
 
-			let splitAmount: number;
-
-			splitAmount = Math.floor((remainingAmountForPercentages * def.value) / 100);
+			let splitAmount = Math.floor((remainingAmountForPercentages * def.value) / 100);
 			allocated += splitAmount;
 
 			percentSplits.push({
 				destination_type: def.type,
 				destination_id: def.destination_id,
 				amount: splitAmount,
+				metadata: def.metadata,
 			});
 		}
 		let platformSplitAmount = remainingAmountForPercentages - allocated;
@@ -96,8 +97,11 @@ function generatePaymentSplits(
 	// 3. Combine, merge and sort splits
 	const allSplits = Array.from(
 		[...fixedSplits, ...percentSplits]
-			.reduce((map, split) => {
-				const key = `${split.destination_type}:${split.destination_id}`;
+			.reduce((map, split, index) => {
+				//Merging splits by key data while skipping the merge operation for splits with no destination_id
+				const key = split.destination_id
+					? `${split.destination_type}:${split.destination_id}:${JSON.stringify(split.metadata)}`
+					: `null:${index}`;
 				const existing = map.get(key);
 				if (existing) {
 					existing.amount += split.amount;
@@ -105,7 +109,7 @@ function generatePaymentSplits(
 					map.set(key, { ...split });
 				}
 				return map;
-			}, new Map<string, Omit<PaymentSplitData, 'is_credits' | 'metadata'>>())
+			}, new Map<string, Omit<PaymentSplitData, 'is_credits'>>())
 			.values()
 	).sort((a, b) => {
 		if (a.destination_type === 'PLATFORM' && b.destination_type !== 'PLATFORM') return -1;
@@ -126,7 +130,7 @@ function generatePaymentSplits(
 				destination_id: split.destination_id,
 				amount: creditPart,
 				is_credits: true,
-				metadata: {},
+				metadata: split?.metadata,
 			});
 			remainingCredits -= creditPart;
 		}
@@ -137,67 +141,13 @@ function generatePaymentSplits(
 				destination_id: split.destination_id,
 				amount: remainingPart,
 				is_credits: false,
-				metadata: {},
+				metadata: split?.metadata,
 			});
 		}
 	}
 
 	return finalSplits;
 }
-
-// export async function createSubscriptionPaymentHelper(params: {
-// 	user_id: string;
-// 	total_price: number;
-// 	payment_method: PAYMENT_METHOD;
-// 	allow_credits_usage?: boolean;
-// 	business_id: string;
-// }): Promise<{ payment: payments; grouped_id: string }> {
-// 	const { user_id, total_price, payment_method, allow_credits_usage, business_id } = params;
-
-// 	const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user?.user_id);
-// 	if (payment_type === 'WALLET') {
-// 		if (available_wallet_balances['DELIVERY'] + available_wallet_balances[null] < TOTAL_PRICE_CENT / 100) {
-// 			throw new Error('Insufficient funds');
-// 		}
-// 	}
-
-// 	let groupedId = uuidv4();
-// 	let hasUuid = false;
-// 	while (!hasUuid) {
-// 		const sub = await prisma.daily_meals_subscriptions.findFirst({ where: { grouped_id: groupedId } });
-// 		if (!sub) hasUuid = true;
-// 		else groupedId = uuidv4();
-// 	}
-
-// 	const TOTAL_PRICE_CENTS = Math.round(total_price * 100);
-
-// 	let payment = await PaymentDao.createPayment(user_id, TOTAL_PRICE_CENTS, payment_method, 0, null, groupedId);
-
-// 	let CREDITS_AMOUNT_RESERVED = 0;
-// 	if (allow_credits_usage) {
-// 		const reservedCredits = await WalletFundsHelpers.reserveCreditsForOrder(
-// 			user_id,
-// 			TOTAL_PRICE_CENTS,
-// 			groupedId,
-// 			'CREDITS_DELIVERY',
-// 			'daily_meals_subscription'
-// 		);
-// 		CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum, wf) => sum + wf.amount, 0);
-// 		payment = await PaymentDao.updatePayment(payment.payment_id, { credits_amount: CREDITS_AMOUNT_RESERVED });
-// 	}
-
-// 	if (payment_method === 'WALLET') {
-// 		await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(
-// 			user_id,
-// 			TOTAL_PRICE_CENTS - CREDITS_AMOUNT_RESERVED,
-// 			groupedId,
-// 			'daily_meals_subscription'
-// 		);
-// 		payment = await PaymentDao.updatePayment(payment.payment_id, { status: 'SUCCEEDED' as PAYMENT_STATUS });
-// 	}
-
-// 	return { payment, grouped_id: groupedId };
-// }
 
 /**
  * Description placeholder
@@ -323,6 +273,79 @@ export async function createPaymentHelper(
 }
 
 /**
+ * Transfers a payment split to its destination.
+ *
+ * This function handles the transfer of a split amount either via Stripe or wallet-based systems,
+ * depending on the original payment method. It validates the destination account, ensuring it is
+ * either provided or already associated with the split. Throws if any mismatch or invalid conditions arise.
+ *
+ * @export
+ * @async
+ * @function transferSplit
+ *
+ * @param {string} payment_split_id - The ID of the payment split to be transferred.
+ * @param {string} [destination_id] - Optional override destination ID. If provided, must match the existing one if already set.
+ *
+ * @throws {Error} If no destination is provided and the split has no existing destination.
+ * @throws {Error} If a destination is provided that conflicts with the existing destination.
+ * @throws {Error} If the payment method is unsupported.
+ *
+ * @returns {Promise<void>} Resolves when the transfer is successfully processed.
+ *
+ * @example
+ * await transferSplit(SPLIT_OBJECT, PAYMENT_OBJECT, 'acct_5678');
+ * @example
+ * await transferSplit(SPLIT_OBJECT, PAYMENT_OBJECT);
+ */
+async function transferSplit(
+	split: payment_splits | TPrisma.payment_splitsGetPayload<{ include: { payment: true } }>,
+	payment: payments,
+	destination_id?: string
+): Promise<void> {
+	const destination = split.destination_id || destination_id;
+	if (!destination) {
+		throw new Error('No destination for payment split!');
+	}
+
+	if (destination_id && split.destination_id && split.destination_id !== destination_id) {
+		throw new Error('Payment split already has a destination which does not match the given one!');
+	}
+
+	if (split.is_credits) {
+		// Transfer reserved credits for this split
+		await WalletFundsHelpers.transferReservedCreditsForOrder(
+			payment.user_id,
+			destination,
+			split.amount,
+			payment.subscription_grouped_id || payment.payment_id,
+			payment.order_type
+		);
+	} else {
+		switch (payment.payment_method) {
+			case 'CARD':
+			case 'PLATFORM':
+				await stripe.splitCutFromPaymentIntent(payment.payment_intent_id, destination, split.amount);
+				break;
+			case 'WALLET':
+				await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+					payment.user_id,
+					destination,
+					split.amount,
+					payment.subscription_grouped_id || payment.payment_id,
+					payment.order_type
+				);
+				break;
+			case 'CASH':
+				// TODO: Handle cash transfer logic?
+				break;
+			default:
+				throw new Error('Unsupported payment method for split transfer');
+		}
+	}
+	await PaymentSplitDao.updatePaymentSplitById(split.split_id, { status: 'TRANSFERED' });
+}
+
+/**
  * Helper to transfer all splits of given destination types for a payment to their respective destination ids.
  * @param payment_id - The payment to process.
  * @param dest_types - Array of SPLIT_DESTINATION_TYPE to transfer.
@@ -333,44 +356,41 @@ export async function transferSplitsForTypes(payment_id: string, dest_types: SPL
 	if (!payment) throw new Error('Payment not found');
 
 	for (const split of payment.payment_splits) {
-		if (dest_types.includes(split.destination_type)) {
-			if (split.is_credits) {
-				// Transfer reserved credits for this split
-				await WalletFundsHelpers.transferReservedCreditsForOrder(
-					payment.user_id,
-					split.destination_id,
-					split.amount,
-					payment.subscription_grouped_id || payment.payment_id,
-					payment.order_type
-				);
-			} else {
-				switch (payment.payment_method) {
-					case 'CARD':
-					case 'PLATFORM':
-						await stripe.splitCutFromPaymentIntent(
-							payment.payment_intent_id,
-							split.destination_id,
-							split.amount
-						);
-						break;
-					case 'WALLET':
-						await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-							payment.user_id,
-							split.destination_id,
-							split.amount,
-							payment.subscription_grouped_id || payment.payment_id,
-							payment.order_type
-						);
-						break;
-					case 'CASH':
-						// TODO: Handle cash transfer logic?
-						break;
-					default:
-						throw new Error('Unsupported payment method for split transfer');
-				}
-			}
-			await PaymentSplitDao.updatePaymentSplitById(split.split_id, { status: 'TRANSFERED' });
+		if (dest_types.includes(split.destination_type) && split.status === SPLIT_STATUS.RESERVED) {
+			transferSplit(split, payment);
 		}
+	}
+}
+
+/**
+ * Transfers a payment split to its destination.
+ *
+ * This function handles the transfer of a split by its ID
+ *
+ * @export
+ * @async
+ * @function transferSplitById
+ *
+ * @param {string} payment_split_id - The ID of the payment split to be transferred.
+ * @param {string} [destination_id] - Optional override destination ID. If provided, must match the existing one if already set.
+ *
+ * @throws {Error} If the payment split is not found.
+ *
+ * @returns {Promise<void>} Resolves when the transfer is successfully processed.
+ *
+ * @example
+ * await transferSplitById('split-uuid-1234', 'acct_5678');
+ * @example
+ * await transferSplitById('split-uuid-1234');
+ */
+export async function transferSplitById(payment_split_id: string, destination_id?: string): Promise<void> {
+	try {
+		const split = await PaymentSplitDao.getPaymentSplitById(payment_split_id);
+		if (!split) throw new Error('Payment split not found');
+		await transferSplit(split, split.payment, destination_id);
+	} catch (error) {
+		console.error('Error transfering payment_split: ', error);
+		throw new Error(`Error transfering payment_split: ${error instanceof Error ? error.message : 'unknown error'}`);
 	}
 }
 
@@ -452,4 +472,4 @@ export async function handlePaymentRefund(payment: payments & { payment_splits: 
 	}
 }
 
-export default { createPaymentHelper, transferSplitsForTypes, handlePaymentRefund };
+export default { createPaymentHelper, transferSplitsForTypes, transferSplitById, handlePaymentRefund };
