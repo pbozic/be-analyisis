@@ -490,10 +490,12 @@ async function updateDeliveryDriver(req, res) {
 					business_id: businessId,
 				},
 			};
+			updateData.delivers_daily_meals = true;
 		} else if (delivers === false) {
 			updateData.daily_meal_business = {
 				disconnect: true,
 			};
+			updateData.delivers_daily_meals = true;
 		}
 		const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriver(delivery_driver_id, updateData);
 		res.status(200).json(updatedDeliveryDriver);

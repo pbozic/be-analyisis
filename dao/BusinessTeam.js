@@ -34,6 +34,11 @@ const updateBusinessTeam = async (data) => {
 				business_teams_id: data.business_teams_id,
 			},
 			data,
+			include: {
+				users: {
+					select: cropped_user_columns,
+				},
+			},
 		});
 	} catch (error) {
 		console.error('Error updating business team:', error);

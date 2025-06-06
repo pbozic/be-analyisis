@@ -381,7 +381,7 @@ async function assignVehiclesToDriver(req, res) {
 				}
 			}
 		} else {
-			res.status(400).json({ error: 'Vehicles should be a non-empty array' });
+			return res.status(400).json({ error: 'Vehicles should be a non-empty array' });
 		}
 		res.status(200).json({ message: 'Vehicles assigned successfully' });
 	} catch (err) {
@@ -393,7 +393,7 @@ async function assignVehiclesToDriver(req, res) {
  * PATCH /vehicles/driver/unassign/
  * @tag Vehicles
  * @summary Remove vehicles from a driver
- * @description Disassociates a vehicle from its assigned driver by setting the vehicle's driver_id to null.
+ * @description Disassociates vehicles from its assigned driver by setting the vehicle's can_drive to false.
  * @bodyContent {array} vehicles - The vehicles to unassign
  * @bodyContent {string} driver_id - The ID of the driver to unassign
  * @response 200 - Vehicle disassociated successfully
@@ -411,7 +411,7 @@ async function removeVehiclesFromDriver(req, res) {
 				}
 			}
 		} else {
-			res.status(400).json({ error: 'Vehicles should be a non-empty array' });
+			return res.status(400).json({ error: 'Vehicles should be a non-empty array' });
 		}
 		res.status(200).json({ message: 'Vehicles removed successfully' });
 	} catch (err) {

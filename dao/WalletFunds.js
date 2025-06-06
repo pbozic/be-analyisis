@@ -2,77 +2,77 @@ import prisma from '../prisma/prisma.js';
 import { CREDIT_STATUS, CASHBACK_STATUS, FUNDS_TYPE, SERVICE_TYPE } from '../lib/constants.js';
 /*
 async function createWalletFunds(user_id, charge_id, amount){
-    try {
-        if(amount<=0){
-            throw new Error("Amount must be greater than 0");
-        }
+	try {
+		if(amount<=0){
+			throw new Error("Amount must be greater than 0");
+		}
 
-        // const newWalletFund = await prisma.wallet_funds.create({
-        // 	data: {
-        // 		// user_id: user_id,
-        // 		charge_id: charge_id,
-        // 		amount: amount,
-        // 		user:{connect:{user_id:user_id}},
-        // 		transaction: {
-        // 			create: {
-        // 				user: { connect: { user_id: user_id } },
-        // 				amount: amount/100,
-        // 				type: 'CREDIT',
-        // 				description: 'Added funds to wallet',
-        // 			},
-        // 		},
-        // 	},
-        // 	include: {
-        // 		transactions: true,
-        // 	},
-        // });
-
-
-        const newTransaction = await prisma.transactions.create({
-            data: {
-                user: { connect: { user_id: user_id } },
-                amount: amount/100,
-                type: 'CREDIT',
-                description: 'Added funds to wallet',
-                wallet_funds: {
-                    create: {
-                        charge_id: charge_id,
-                        amount: amount,
-                        user:{connect:{user_id:user_id}},
-                    },
-                },
-            },
-            include: {
-                wallet_funds: true,
-            },
-        });
-        console.info("created wallet funds: ",newTransaction)
-
-        // const newTransaction = await prisma.transactions.create({
-        // 	data: {
-        // 		user: { connect: { user_id: user_id } },
-        // 		amount: amount,
-        // 		type: 'CREDIT',
-        // 		description: 'Added funds to wallet',
-        // 	},
-        // });
-        // const newWalletFund = await prisma.wallet_funds.create({
-        // 	data: {
-        // 		// user_id: user_id,
-        // 		charge_id: charge_id,
-        // 		amount: amount,
-        // 		user:{connect:{user_id:user_id}},
-        // 		transaction_id: newTransaction.transaction_id
-        // 	},
-        // });
-        // console.log(`Wallet fund created with ID: ${newWalletFund.wallet_funds_id}`);
+		// const newWalletFund = await prisma.wallet_funds.create({
+		// 	data: {
+		// 		// user_id: user_id,
+		// 		charge_id: charge_id,
+		// 		amount: amount,
+		// 		user:{connect:{user_id:user_id}},
+		// 		transaction: {
+		// 			create: {
+		// 				user: { connect: { user_id: user_id } },
+		// 				amount: amount/100,
+		// 				type: 'CREDIT',
+		// 				description: 'Added funds to wallet',
+		// 			},
+		// 		},
+		// 	},
+		// 	include: {
+		// 		transactions: true,
+		// 	},
+		// });
 
 
-        return newTransaction;
-    } catch (error) {
-        console.error('Error creating wallet fund:', error);
-        throw error; // Rethrow the error for further handling if necessary
-    }
+		const newTransaction = await prisma.transactions.create({
+			data: {
+				user: { connect: { user_id: user_id } },
+				amount: amount/100,
+				type: 'CREDIT',
+				description: 'Added funds to wallet',
+				wallet_funds: {
+					create: {
+						charge_id: charge_id,
+						amount: amount,
+						user:{connect:{user_id:user_id}},
+					},
+				},
+			},
+			include: {
+				wallet_funds: true,
+			},
+		});
+		console.info("created wallet funds: ",newTransaction)
+
+		// const newTransaction = await prisma.transactions.create({
+		// 	data: {
+		// 		user: { connect: { user_id: user_id } },
+		// 		amount: amount,
+		// 		type: 'CREDIT',
+		// 		description: 'Added funds to wallet',
+		// 	},
+		// });
+		// const newWalletFund = await prisma.wallet_funds.create({
+		// 	data: {
+		// 		// user_id: user_id,
+		// 		charge_id: charge_id,
+		// 		amount: amount,
+		// 		user:{connect:{user_id:user_id}},
+		// 		transaction_id: newTransaction.transaction_id
+		// 	},
+		// });
+		// console.log(`Wallet fund created with ID: ${newWalletFund.wallet_funds_id}`);
+
+
+		return newTransaction;
+	} catch (error) {
+		console.error('Error creating wallet fund:', error);
+		throw error; // Rethrow the error for further handling if necessary
+	}
 }
  */
 async function createWalletFunds(user_id, amount_cents, charge_id = null, transaction_type = 'CREDIT') {
@@ -448,6 +448,7 @@ const convertCashbacksToCredit = async (data, pendingCashbacks, expiryDate) => {
 			const credit = await tx.wallet_funds.create({
 				data: {
 					...data,
+					type: FUNDS_TYPE.CREDITS_ANY,
 					expires_at: expiryDate,
 				},
 			});

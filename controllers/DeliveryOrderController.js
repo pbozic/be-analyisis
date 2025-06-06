@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { v4 } from 'uuid';
-import { PAYMENT_STATUS, SUBSCRIPTION_STATUS, SPLIT_DESTINATION_TYPE } from '@prisma/client';
+import { PAYMENT_STATUS, SUBSCRIPTION_STATUS, SPLIT_DESTINATION_TYPE, SPLIT_STATUS } from '@prisma/client';
+import { destination } from 'pino';
 
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import DeliveryDriverDao from '../dao/DeliveryDriver.js';
@@ -515,6 +516,7 @@ async function createDailyMeals(req, res) {
 					door_number: user.details?.door_number,
 					daily_meal_delivery_order: i + 1, // Add sorted order number (1-based index)
 					duration: cumulativeTime,
+					subscription_grouped_id: sortedGroupedSubscriptions[i].grouped_id,
 				},
 				payment: {
 					status: 'SUCCESSFUL',
@@ -780,46 +782,64 @@ async function completeOrder(req, res) {
 					SCORING_POINTS_REASON.INSUFFICIENT_DATA
 				);
 			}
-			let delivery_business_stripe = await BusinessDao.getBusinessStripeByBusinessId(driver.business_id);
-			const INITIAL_DELIVERY_CUT = Math.round(order.details.delivery_cost * 100 * (1 - DRIVE_FEE));
-			const remainingReservedCredits = await WalletFundsDao.getReservedCredits(order.user_id, order.order_id);
-			const CREDITS_AMOUNT_RESERVED = remainingReservedCredits.reduce((sum, wf) => sum + wf.amount, 0);
-			const DELIVERY_CREDIT_CUT_CENTS = Math.min(INITIAL_DELIVERY_CUT, CREDITS_AMOUNT_RESERVED);
-			if (DELIVERY_CREDIT_CUT_CENTS > 0) {
-				const transferCreditsDeliveryDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(
-					order.user_id,
-					delivery_business_stripe,
-					DELIVERY_CREDIT_CUT_CENTS,
-					order.order_id,
-					SERVICE_TYPE.DELIVERY
-				);
-			}
-			const DISCOUNTED_DELIVERY_COST_CENTS = INITIAL_DELIVERY_CUT - DELIVERY_CREDIT_CUT_CENTS;
-			console.info({
-				delivery_credits: DELIVERY_CREDIT_CUT_CENTS,
-				remaining_delivery_cost: DISCOUNTED_DELIVERY_COST_CENTS,
-			});
-			if (DISCOUNTED_DELIVERY_COST_CENTS > 0) {
-				if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
-					const paymentIntent = await stripe.client.paymentIntents.retrieve(order.payment_intent_id);
-					const transferDelivery = stripe.splitCutFromPaymentIntent(
-						paymentIntent,
-						delivery_business_stripe,
-						DISCOUNTED_DELIVERY_COST_CENTS
-					);
-				} else if (order.payment.type === 'WALLET') {
-					console.info(order);
-					const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+			if (!order.is_daily_meal) {
+				let delivery_business_stripe = await BusinessDao.getBusinessStripeByBusinessId(driver.business_id);
+				const INITIAL_DELIVERY_CUT = Math.round(order.details.delivery_cost * 100 * (1 - DRIVE_FEE));
+				const remainingReservedCredits = await WalletFundsDao.getReservedCredits(order.user_id, order.order_id);
+				const CREDITS_AMOUNT_RESERVED = remainingReservedCredits.reduce((sum, wf) => sum + wf.amount, 0);
+				const DELIVERY_CREDIT_CUT_CENTS = Math.min(INITIAL_DELIVERY_CUT, CREDITS_AMOUNT_RESERVED);
+				if (DELIVERY_CREDIT_CUT_CENTS > 0) {
+					const transferCreditsDeliveryDriver = await WalletFundsHelpers.transferReservedCreditsForOrder(
 						order.user_id,
 						delivery_business_stripe,
-						DISCOUNTED_DELIVERY_COST_CENTS,
+						DELIVERY_CREDIT_CUT_CENTS,
 						order.order_id,
 						SERVICE_TYPE.DELIVERY
 					);
 				}
+				const DISCOUNTED_DELIVERY_COST_CENTS = INITIAL_DELIVERY_CUT - DELIVERY_CREDIT_CUT_CENTS;
+				console.info({
+					delivery_credits: DELIVERY_CREDIT_CUT_CENTS,
+					remaining_delivery_cost: DISCOUNTED_DELIVERY_COST_CENTS,
+				});
+				if (DISCOUNTED_DELIVERY_COST_CENTS > 0) {
+					if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
+						const paymentIntent = await stripe.client.paymentIntents.retrieve(order.payment_intent_id);
+						const transferDelivery = stripe.splitCutFromPaymentIntent(
+							paymentIntent,
+							delivery_business_stripe,
+							DISCOUNTED_DELIVERY_COST_CENTS
+						);
+					} else if (order.payment.type === 'WALLET') {
+						console.info(order);
+						const transfersForDeliveryDriver = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+							order.user_id,
+							delivery_business_stripe,
+							DISCOUNTED_DELIVERY_COST_CENTS,
+							order.order_id,
+							SERVICE_TYPE.DELIVERY
+						);
+					}
+				}
+			} else {
+				let delivery_business_stripe = await BusinessDao.getBusinessStripeByBusinessId(driver.business_id);
+				const grouped_id = order.details.subscription_grouped_id;
+				if (!grouped_id) {
+					console.warn('Daily meal order details do not contain subscription_grouped_id');
+				} else {
+					const subscription_payment = await PaymentDao.getPaymentByGroupedId(grouped_id);
+					const first_available_driver_split = subscription_payment.payment_splits.find(
+						(split) =>
+							split.destination_type === SPLIT_DESTINATION_TYPE.DRIVER &&
+							split.status === SPLIT_STATUS.RESERVED
+					);
+					await PaymentHelpers.transferSplitById(
+						first_available_driver_split.split_id,
+						delivery_business_stripe
+					);
+				}
 			}
 		}
-		//TODO: handle cashback for daily meals
 		if (!order.is_daily_meal) {
 			const DELIVERY_COST_CENTS = order.details.total_price * 100;
 			let cashbackAmount =
@@ -857,7 +877,6 @@ async function completeOrder(req, res) {
 							{
 								user: { connect: { user_id: order.user_id } },
 								amount: Math.floor(baskets / CREDITS.CASHBACK_CONVERSION_DELIVERY) * 100,
-								type: FUNDS_TYPE.CREDITS_DELIVERY,
 							},
 							pendingCashbacks
 						);
@@ -1725,7 +1744,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 		const business = await BusinessDao.getBusinessById(business_id);
 		const restaurant_acc = business.stripe_account_id;
 		const TOTAL_PRICE_CENTS = Math.round(total_price * 100);
-		payment = await PaymentHelpers.createPaymentHelper(
+		let payment_response = await PaymentHelpers.createPaymentHelper(
 			user.user_id,
 			TOTAL_PRICE_CENTS,
 			'DELIVERY',
@@ -1734,16 +1753,14 @@ async function dailyMealsSubscriptionPayment(req, res) {
 			payment_method_id,
 			'automatic',
 			allow_credits_usage,
-			[
-				{
-					type: SPLIT_DESTINATION_TYPE.DRIVER,
-					destination_id: 'deliverer',
-					value:
-						DAILY_MEAL_DELIVERY_COST_CENTS *
-						daysData.filter((day) => day.menu.values().reduce((menuData) => acc + menuData.people, 0) > 0)
-							.length,
-				},
-			],
+			daysData
+				.filter((day) => Object.values(day.menu).reduce((acc, menuData) => acc + menuData.people, 0) > 0)
+				.map((_, index) => {
+					return {
+						type: SPLIT_DESTINATION_TYPE.DRIVER,
+						value: DAILY_MEAL_DELIVERY_COST_CENTS,
+					};
+				}),
 			[
 				{
 					type: SPLIT_DESTINATION_TYPE.MERCHANT,
@@ -1754,6 +1771,8 @@ async function dailyMealsSubscriptionPayment(req, res) {
 			null,
 			grouped_id
 		);
+		payment = payment_response.payment;
+		let payment_intent = payment_response.payment_intent;
 		//create sub with status awaiting payment.
 		await createDailyMealsSubscriptions(delivery_location, daysData, user.user_id, grouped_id, {
 			total_price,
@@ -1771,7 +1790,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 		return res.status(200).json({
 			status: 'Success',
 			grouped_id: grouped_id,
-			payment_intent: payment.payment_intent_id,
+			payment_intent: payment_intent,
 		});
 	} catch (e) {
 		console.error('Error creating daily meals subscription payment', e);
