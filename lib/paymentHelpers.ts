@@ -303,15 +303,17 @@ async function transferSplit(
 	payment: payments,
 	destination_id?: string
 ): Promise<void> {
-	const destination = split.destination_id || destination_id;
-	if (!destination) {
+	if (destination_id) {
+		if (!split.destination_id) {
+			await PaymentSplitDao.updatePaymentSplitById(split.split_id, { destination_id });
+		} else if (split.destination_id !== destination_id) {
+			throw new Error('Payment split already has a destination which does not match the given one!');
+		}
+	} else if (!split.destination_id) {
 		throw new Error('No destination for payment split!');
 	}
 
-	if (destination_id && split.destination_id && split.destination_id !== destination_id) {
-		throw new Error('Payment split already has a destination which does not match the given one!');
-	}
-
+	const destination = split.destination_id || destination_id;
 	if (split.is_credits) {
 		// Transfer reserved credits for this split
 		await WalletFundsHelpers.transferReservedCreditsForOrder(
