@@ -1,8 +1,10 @@
 // blogSchemas.ts
 import { z } from 'zod';
 import type { users, files } from '@prisma/client';
+import { BLOG_POST_STATUS } from '@prisma/client';
 
 import type { BlogCategory } from './BlogCategory.js';
+import { BlogTag } from './BlogTag.js';
 
 // =======================
 // Editor.js Zod Schemas
@@ -39,8 +41,10 @@ export const CreateBlogPostSchema = z.object({
 	short_content: z.string().optional().nullable(),
 	content: EditorJSDataSchema,
 	category_id: z.string().uuid().optional(),
+	tag_ids: z.array(z.string().uuid()).optional(),
 	image_file_id: z.string().uuid().optional(),
 	publish_at: z.string().datetime().optional(),
+	status: z.enum(Object.values(BLOG_POST_STATUS) as [string, ...string[]]).default('DRAFT'),
 });
 
 export const UpdateBlogPostSchema = CreateBlogPostSchema.extend({
@@ -84,6 +88,7 @@ export type BlogPost = {
 	updated_at: string;
 	author: users;
 	category?: BlogCategory | null;
+	tags?: BlogTag[];
 };
 
 export type BlogPostInput = Omit<

@@ -11,7 +11,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 		return await prisma.blog_posts.findMany({
 			include: {
 				category: true,
-				//image_file: true,
+				image: true,
 				tags: true,
 			},
 		});
@@ -37,7 +37,7 @@ export async function getBlogPostById(blog_posts_id: string): Promise<BlogPost |
 			where: { blog_posts_id },
 			include: {
 				category: true,
-				image_file: true,
+				image: true,
 				tags: true,
 			},
 		});
@@ -63,7 +63,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 			where: { slug },
 			include: {
 				category: true,
-				//image_file: true,
+				image: true,
 				tags: true,
 			},
 		});
@@ -85,11 +85,29 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 
 export async function createBlogPost(data: CreateBlogPostInput): Promise<BlogPost> {
 	try {
+		// Ensure the data is valid before creating the post
+		const blogPostData = {
+			title: data.title,
+			short_content: data.short_content ?? null,
+			content: data.content,
+			publish_at: data.publish_at ? new Date(data.publish_at) : new Date(),
+			status: data.status ?? 'DRAFT',
+		};
+
 		return await prisma.blog_posts.create({
-			data,
+			data: {
+				...blogPostData,
+				...(data.category_id && { category: { connect: { blog_categories_id: data.category_id } } }),
+				...(data.image_file_id && { image: { connect: { files_id: data.image_file_id } } }),
+				...(data.tag_ids && {
+					tags: {
+						connect: data.tag_ids.map((tag) => ({ blog_tag_id: tag })),
+					},
+				}),
+			},
 			include: {
 				category: true,
-				//image_file: true,
+				image: true,
 				tags: true,
 			},
 		});
@@ -116,7 +134,7 @@ export async function updateBlogPost(blog_posts_id: string, data: UpdateBlogPost
 			data,
 			include: {
 				category: true,
-				//image_file: true,
+				image: true,
 				tags: true,
 			},
 		});
@@ -142,7 +160,7 @@ export async function deleteBlogPost(blog_posts_id: string): Promise<BlogPost> {
 			where: { blog_posts_id },
 			include: {
 				category: true,
-				//image_file: true,
+				image: true,
 				tags: true,
 			},
 		});
@@ -186,7 +204,7 @@ export async function searchBlogPosts(query: SearchBlogPostsInput): Promise<Blog
 			},
 			include: {
 				category: true,
-				//image_file: true,
+				image: true,
 				tags: true,
 			},
 		});
