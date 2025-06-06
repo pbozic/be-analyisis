@@ -1455,6 +1455,7 @@ model blog_posts {
   image_file_id     String?            @db.Uuid
   image             files?             @relation(fields: [image_file_id], references: [file_id])
   content           Json
+  status            BLOG_POST_STATUS   @default(PUBLISHED)
   author_id         String             @db.Uuid
   category_id       String?            @db.Uuid
   publish_at        DateTime           @default(now()) @db.Timestamptz(6)
@@ -1464,7 +1465,11 @@ model blog_posts {
   category          blog_categories?   @relation("blog_posts_in_category", fields: [category_id], references: [blog_categories_id])
   tags              blog_tags[]        @relation("blog_posts_in_tag")
 }
-
+enum BLOG_POST_STATUS {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
 enum ACCOUNT_ACTIONS {
   SUSPEND
   UNSUSPEND
