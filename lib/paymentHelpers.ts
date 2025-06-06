@@ -326,6 +326,9 @@ async function transferSplit(
 			case 'CARD':
 			case 'PLATFORM': {
 				const payment_intent = await stripe.client.paymentIntents.retrieve(payment.payment_intent_id);
+				if (destination === 'platform') {
+					break;
+				}
 				await stripe.splitCutFromPaymentIntent(payment_intent, destination, split.amount);
 				break;
 			}
