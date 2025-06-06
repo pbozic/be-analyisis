@@ -86,12 +86,16 @@ function setupSocket(server) {
 	});
 	io.server.on('connection', async (socket) => {
 		const userId = socket.user?.user_id;
+		UserSockets.set(userId, socket);
 		const rooms = await SocketStore.getRoomsForUser(userId);
 		for (const room of rooms) {
 			socket.join(room);
 		}
 		socket.on('disconnect', async (reason) => {
-			UserSockets.delete(userId);
+			const current = UserSockets.get(userId);
+			if (current?.id === socket.id) {
+				UserSockets.delete(userId); // only delete if this was the current active socket
+			}
 			await SocketStore.removeSocket(userId, socket.id);
 		});
 		socket.on('joinRoom', (roomName) => SocketStore.addUserToRoom(userId, roomName));
