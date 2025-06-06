@@ -1748,7 +1748,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 			user.user_id,
 			TOTAL_PRICE_CENTS,
 			'DELIVERY',
-			'daily_meals_subscription',
+			'daily_meals_subscription_payment',
 			payment_type,
 			payment_method_id,
 			'automatic',
