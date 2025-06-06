@@ -622,6 +622,12 @@ async function acceptOrderDelivery(req, res) {
 		}
 		const vehicle = deliverer.current_vehicle || deliverer.vehicles[0];
 		order = await DeliveryOrderDao.acceptOrderDelivery(order, deliverer_id, vehicle?.vehicle_id);
+		order = await DeliveryOrderDao.getOrder(order.order_id, {
+			include: {
+				delivery_driver: true,
+				driver: true,
+			},
+		});
 		let driver;
 		if (order.delivery_driver?.delivery_driver_id) {
 			driver = await DeliveryDriverDao.getDeliveryDriverById(deliverer_id, {
