@@ -121,19 +121,37 @@ export async function getPaymentSplitById(split_id: string) {
 }
 
 /**
- * Updates a payment split by its split_id, excluding immutable fields.
+ * Updates a payment split by its split_id.
+ * Fields `amount`, `destination_type`, `is_credits`, and `_id` are immutable.
+ * Allows updating `destination_id` only if it is currently null.
  *
  * @param split_id - UUID of the split to update.
- * @param data - Allowed fields to update (excluding amount & destination).
+ * @param data - Allowed fields to update.
  * @returns The updated payment split.
  */
 export async function updatePaymentSplitById(
 	split_id: string,
 	data: Omit<
 		Partial<TPrisma.payment_splitsUpdateInput>,
-		'amount' | 'destination_id' | 'destination_type' | 'is_credits'
+		'amount' | 'destination_type' | 'is_credits' | 'split_id' | 'payment_id'
 	>
-) {
+): Promise<TPrisma.payment_splitsUpdateInput> {
+	// If destination_id is included in the update, check whether it's allowed
+	if ('destination_id' in data) {
+		const existing_split = await prisma.payment_splits.findUnique({
+			where: { split_id },
+			select: { destination_id: true },
+		});
+
+		if (!existing_split) {
+			throw new Error(`Payment split not found for id ${split_id}`);
+		}
+
+		if (existing_split.destination_id !== null) {
+			throw new Error('destination_id is already set and cannot be changed');
+		}
+	}
+
 	return await prisma.payment_splits.update({
 		where: { split_id },
 		data,
