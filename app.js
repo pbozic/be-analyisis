@@ -84,7 +84,7 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.disable('etag');
 
-app.post('/api/blog/upload/file', [authMiddleware], upload.single('image'), BlogController.createBlogImageByFile);
+app.post('/api/blog/upload/file', authMiddleware, upload.single('image'), BlogController.createBlogImageByFile);
 
 app.use((req, res, next) => {
 	express.json({
