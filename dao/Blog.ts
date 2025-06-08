@@ -1,3 +1,5 @@
+import { disconnect } from 'node:process';
+
 import { Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
@@ -118,7 +120,7 @@ export async function createBlogPost(data: CreateBlogPostInput, author_id: strin
 					connect: { blog_categories_id: data.category_id }, // Assuming category is a BlogCategory type with blog_categories_id
 				},
 				tags: {
-					connect: data.tag_ids.map((tag_id) => ({ blog_tag_id: tag_id })), // Assuming tags is a BlogTag type with blog_tag_id
+					connect: data.tag_ids.map((tag_id) => ({ blog_tags_id: tag_id })), // Assuming tags is a BlogTag type with blog_tag_id
 				},
 				image_file: data.image_file_id ? { connect: { files_id: data.image_file_id } } : undefined, // Assuming image_file is a File type with files_id
 			},
@@ -187,8 +189,11 @@ export async function updateBlogPost(blog_posts_id: string, data: UpdateBlogPost
 				category: data.category_id ? { connect: { blog_categories_id: data.category_id } } : undefined,
 				tags: data.tag_ids
 					? {
-							connect: data.tag_ids.map((tag_id) => ({ blog_tag_id: tag_id })),
-							disconnect: [], // Handle disconnection logic if needed
+							connect: data.tag_ids.map((tag_id) => ({ blog_tags_id: tag_id })),
+							disconnect:
+								data.tag_ids.length === 0
+									? { blog_tags_id: { not: { in: data.tag_ids } } } // Disconnect all tags not in the provided list
+									: undefined, // If tag_ids is empty, disconnect all tags
 						}
 					: undefined,
 				image_file: data.image_file_id ? { connect: { files_id: data.image_file_id } } : undefined,
