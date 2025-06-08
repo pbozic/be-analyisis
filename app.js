@@ -77,14 +77,19 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.disable('etag');
-app.use(
+app.use((req, res, next) => {
+	const contentType = req.headers['content-type'] || '';
+	if (contentType.startsWith('multipart/form-data')) {
+		// let multer handle it
+		return next();
+	}
 	express.json({
 		verify: function (req, res, buf) {
 			req.rawBody = buf;
 		},
 		limit: '512mb',
-	})
-);
+	})(req, res, next);
+});
 app.use(express.urlencoded({ limit: '512mb', extended: false }));
 app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
 app.use(fileUploadLib());
