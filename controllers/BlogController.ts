@@ -261,10 +261,7 @@ export async function createBlogPost(req: ValidatedRequest<CreateBlogPostInput>,
 			image_file_id,
 			publish_at,
 		});
-		res.status(201).json({
-			message: 'Blog post created successfully',
-			data: newBlogPost,
-		});
+		res.status(201).json(newBlogPost);
 	} catch (error) {
 		res.status(500).json({ message: 'Error creating blog post', error });
 	}
@@ -472,10 +469,7 @@ export async function createBlogCategory(req: ValidatedRequest<CreateBlogCategor
 	try {
 		const { name, description } = req.body;
 		const newBlogCategory = await BlogDao.createBlogCategory({ name, description });
-		res.status(201).json({
-			message: 'Blog category created successfully',
-			data: newBlogCategory,
-		});
+		res.status(201).json(newBlogCategory);
 	} catch (error) {
 		res.status(500).json({ message: 'Error creating blog category', error });
 	}
@@ -632,10 +626,7 @@ export async function createBlogTag(req: ValidatedRequest<CreateBlogTagInput>, r
 		const { name, description } = req.body;
 		const newBlogTag = await BlogDao.createBlogTag({ name, description });
 		if (newBlogTag) {
-			res.status(201).json({
-				message: 'Blog tag created successfully',
-				data: newBlogTag,
-			});
+			res.status(201).json(newBlogTag);
 			return;
 		}
 		res.status(400).json({
@@ -792,12 +783,7 @@ export async function createBlogImageByUrl(req: ValidatedRequest<{ url: string }
 			public: true,
 		});
 
-		res.status(201).json({
-			message: 'Image created successfully',
-			file: {
-				url: newImage.url || newImage.file_url || newImage.s3_url,
-			},
-		});
+		res.status(201).json(newImage.url || newImage.file_url || newImage.s3_url);
 	} catch (error) {
 		console.error('Failed to create image from URL:', error);
 		res.status(500).json({ message: 'Error creating image', error });
@@ -844,10 +830,7 @@ export async function createBlogImageByFile(req: ValidatedRequest, res: Response
 			base64,
 			public: true,
 		});
-		res.status(201).json({
-			message: 'Image created successfully',
-			data: newImage,
-		});
+		res.status(201).json(newImage);
 	} catch (error) {
 		res.status(500).json({ message: 'Error creating image', error });
 	}
