@@ -83,9 +83,13 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.disable('etag');
-
+app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
 app.post('/api/blog/upload/file', authMiddleware, upload.single('image'), BlogController.createBlogImageByFile);
+app.use(express.urlencoded({ limit: '512mb', extended: false }));
 
+//app.use(fileUploadLib());
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 app.use((req, res, next) => {
 	express.json({
 		verify: function (req, res, buf) {
@@ -94,11 +98,7 @@ app.use((req, res, next) => {
 		limit: '512mb',
 	})(req, res, next);
 });
-app.use(express.urlencoded({ limit: '512mb', extended: false }));
-app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
-//app.use(fileUploadLib());
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+
 // ─── Routes ─────────────────────────────────────────────────────────
 app.use(mainRouter);
 app.use(REST_API_ENDPOINT, apiRouter);
