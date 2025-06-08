@@ -69,6 +69,10 @@ function makeConsoleOverride(level = 'info') {
 // ─── Middleware Setup ───────────────────────────────────────────────
 app.use(
 	compression({
+		filter: (req, res) => {
+			const contentType = req.headers['content-type'] || '';
+			return !contentType.startsWith('multipart/form-data');
+		},
 		level: 6,
 		threshold: 10 * 1024,
 	})
