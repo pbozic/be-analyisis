@@ -87,7 +87,8 @@ export async function createBlogPost(
 	data: CreateBlogPostInput,
 	author_id: string,
 	category_id: string,
-	tag_ids: Array<string> = []
+	tag_ids: Array<string> = [],
+	file_id?: string | null
 ): Promise<BlogPost> {
 	try {
 		let slug = data.title
@@ -122,6 +123,7 @@ export async function createBlogPost(
 				tags: {
 					connect: tag_ids.map((tag_id) => ({ blog_tag_id: tag_id })), // Assuming tags is a BlogTag type with blog_tag_id
 				},
+				image_file: file_id ? { connect: { files_id: file_id } } : undefined, // Assuming image_file is a File type with files_id
 			},
 			include: {
 				category: true,

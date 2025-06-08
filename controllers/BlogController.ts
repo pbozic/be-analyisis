@@ -258,13 +258,13 @@ export async function createBlogPost(req: ValidatedRequest<CreateBlogPostInput>,
 				title,
 				short_content,
 				content,
-				category_id,
 				image_file_id,
 				publish_at,
 			},
 			req.user?.user_id as string,
-			category_id,
-			tag_ids || []
+			category_id as string,
+			tag_ids || [],
+			image_file_id as string
 		);
 		res.status(201).json(newBlogPost);
 	} catch (error) {
