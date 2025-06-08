@@ -11,11 +11,10 @@ const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 router.get('/', BlogController.getBlogPosts);
-router.get('/:id', BlogController.getBlogPostById);
+
 router.get('/slug/:slug', BlogController.getBlogPostBySlug);
 router.post('/', [authMiddleware], validate(CreateBlogPostSchema, 'body'), BlogController.createBlogPost);
-router.put('/:id', [authMiddleware], validate(UpdateBlogPostSchema, 'body'), BlogController.updateBlogPost);
-router.delete('/:id', [authMiddleware], BlogController.deleteBlogPost);
+
 router.post('/search', validate(SearchBlogPostsSchema, 'body'), BlogController.searchBlogPosts);
 
 router.get('/category', BlogController.getBlogCategories);
@@ -30,5 +29,9 @@ router.put('/tag/:id', [authMiddleware], validate(UpdateBlogTagSchema), BlogCont
 
 router.post('/upload/file', [authMiddleware], upload.single('image'), BlogController.createBlogImageByFile);
 router.post('/upload/url', [authMiddleware], BlogController.createBlogImageByFile);
+
+router.get('/:id', BlogController.getBlogPostById);
+router.put('/:id', [authMiddleware], validate(UpdateBlogPostSchema, 'body'), BlogController.updateBlogPost);
+router.delete('/:id', [authMiddleware], BlogController.deleteBlogPost);
 
 export default router;
