@@ -10,6 +10,9 @@ import authMiddleware from '../../middleware/auth';
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
+router.post('/upload/file', [authMiddleware], upload.single('image'), BlogController.createBlogImageByFile);
+router.post('/upload/url', [authMiddleware], BlogController.createBlogImageByFile);
+
 router.get('/', BlogController.getBlogPosts);
 
 router.get('/slug/:slug', BlogController.getBlogPostBySlug);
@@ -26,9 +29,6 @@ router.get('/tag', BlogController.getBlogTags);
 router.post('/tag', [authMiddleware], validate(CreateBlogTagSchema), BlogController.createBlogTag);
 router.delete('/tag/:id', [authMiddleware], BlogController.deleteBlogTag);
 router.put('/tag/:id', [authMiddleware], validate(UpdateBlogTagSchema), BlogController.updateBlogTag);
-
-router.post('/upload/file', [authMiddleware], upload.single('image'), BlogController.createBlogImageByFile);
-router.post('/upload/url', [authMiddleware], BlogController.createBlogImageByFile);
 
 router.get('/:id', BlogController.getBlogPostById);
 router.put('/:id', [authMiddleware], validate(UpdateBlogPostSchema, 'body'), BlogController.updateBlogPost);

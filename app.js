@@ -123,9 +123,18 @@ app.use((req, res, next) => {
 	next(createError(404));
 });
 app.use((err, req, res, next) => {
-	res.locals.message = err.message;
-	res.locals.error = isDev ? err : {};
-	res.status(err.status || 500);
-	res.render('error');
+	const isApi = req.originalUrl.startsWith('/api') || req.xhr || req.headers.accept?.includes('application/json');
+
+	if (isApi) {
+		res.status(err.status || 500).json({
+			message: err.message,
+			stack: isDev ? err.stack : undefined,
+		});
+	} else {
+		res.locals.message = err.message;
+		res.locals.error = isDev ? err : {};
+		res.status(err.status || 500);
+		res.render('error'); // Only for HTML routes
+	}
 });
 export default app;
