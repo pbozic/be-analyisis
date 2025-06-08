@@ -11,10 +11,19 @@ import type { CreateBlogPostInput, UpdateBlogPostInput } from '../types/blog/Blo
 export async function getBlogPosts(): Promise<BlogPost[]> {
 	try {
 		return await prisma.blog_posts.findMany({
+			where: {
+				publish_at: {
+					// Ensure we only fetch posts that are published or will be published in the future
+					lte: new Date(),
+				},
+			},
 			include: {
 				category: true,
 				//image_file: true,
 				tags: true,
+			},
+			orderBy: {
+				publish_at: 'desc', // Order by publish date descending
 			},
 		});
 	} catch (error) {
