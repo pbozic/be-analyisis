@@ -83,13 +83,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 	}
 }
 
-export async function createBlogPost(
-	data: CreateBlogPostInput,
-	author_id: string,
-	category_id: string,
-	tag_ids: Array<string> = [],
-	file_id?: string | null
-): Promise<BlogPost> {
+export async function createBlogPost(data: CreateBlogPostInput, author_id: string): Promise<BlogPost> {
 	try {
 		let slug = data.title
 			.toLowerCase()
@@ -117,13 +111,13 @@ export async function createBlogPost(
 				author: {
 					connect: { user_id: author_id }, // Assuming author is a User type with user_id
 				},
-				blog_category: {
-					connect: { blog_categories_id: category_id }, // Assuming category is a BlogCategory type with blog_categories_id
+				category: {
+					connect: { blog_categories_id: data.category_id }, // Assuming category is a BlogCategory type with blog_categories_id
 				},
 				tags: {
-					connect: tag_ids.map((tag_id) => ({ blog_tag_id: tag_id })), // Assuming tags is a BlogTag type with blog_tag_id
+					connect: data.tag_ids.map((tag_id) => ({ blog_tag_id: tag_id })), // Assuming tags is a BlogTag type with blog_tag_id
 				},
-				image_file: file_id ? { connect: { files_id: file_id } } : undefined, // Assuming image_file is a File type with files_id
+				image_file: data.image_file_id ? { connect: { files_id: data.image_file_id } } : undefined, // Assuming image_file is a File type with files_id
 			},
 			include: {
 				category: true,

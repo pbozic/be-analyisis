@@ -258,13 +258,12 @@ export async function createBlogPost(req: ValidatedRequest<CreateBlogPostInput>,
 				title,
 				short_content,
 				content,
-				image_file_id,
 				publish_at,
+				category_id,
+				image_file_id,
+				tag_ids: tag_ids || [],
 			},
-			req.user?.user_id as string,
-			category_id as string,
-			tag_ids || [],
-			image_file_id as string
+			req.user?.user_id as string
 		);
 		res.status(201).json(newBlogPost);
 	} catch (error) {
@@ -329,6 +328,7 @@ export async function updateBlogPost(
 			category_id,
 			image_file_id,
 			publish_at,
+			tag_ids: req.body.tag_ids || [],
 		});
 		res.status(200).json(updatedBlogPost);
 	} catch (error) {
