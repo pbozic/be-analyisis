@@ -11,17 +11,19 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'js-yaml';
 import merge from 'lodash.merge';
 import cors from 'cors';
-import fileUploadLib from 'express-fileupload';
 import openapi from 'openapi-comment-parser';
 import compression from 'compression';
 import * as flatted from 'flatted';
+import multer from 'multer';
 
 import startCronJobs from './cron.js';
 import mainRouter from './routes/index.routes.js';
 import apiRouter from './routes/api.routes.js';
 import { asyncLocalStorage, log } from './lib/logger.js';
 import CustomConsole from './lib/logger.js';
-
+import BlogController from './controllers/BlogController.js';
+import authMiddleware from './middleware/auth.js';
+const upload = multer({ storage: multer.memoryStorage() });
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // app.js
@@ -81,6 +83,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.disable('etag');
+app.post('api/blog/upload/file', [authMiddleware], upload.single('image'), BlogController.createBlogImageByFile);
 app.use((req, res, next) => {
 	if (req.originalUrl === '/api/blog/upload/file') {
 		console.log('⏭️ Skipping express.json() for upload route');

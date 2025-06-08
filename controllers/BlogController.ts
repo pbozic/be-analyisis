@@ -817,6 +817,7 @@ export async function createBlogImageByUrl(req: ValidatedRequest<{ url: string }
  */
 export async function createBlogImageByFile(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
+		console.log('Received file upload request:', req.file);
 		const { file } = req;
 		if (!file) {
 			res.status(400).json({ message: 'Base64 image data is required' });
@@ -824,6 +825,7 @@ export async function createBlogImageByFile(req: ValidatedRequest, res: Response
 		}
 		const base64 = file.buffer.toString('base64');
 		const mime_type = file.mimetype;
+		console.log('File MIME type:', mime_type);
 		const newImage = await createFileHelper(req.user?.user_id, {
 			file_type: 'image',
 			mime_type,

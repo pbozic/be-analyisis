@@ -10,7 +10,6 @@ import authMiddleware from '../../middleware/auth';
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
-router.post('/upload/file', [authMiddleware], upload.single('image'), BlogController.createBlogImageByFile);
 router.post('/upload/url', [authMiddleware], BlogController.createBlogImageByFile);
 
 router.get('/', BlogController.getBlogPosts);
