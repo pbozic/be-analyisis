@@ -41,6 +41,7 @@ export const CreateBlogPostSchema = z.object({
 	category_id: z.string().uuid().optional(),
 	image_file_id: z.string().uuid().optional(),
 	publish_at: z.string().datetime().optional(),
+	tag_ids: z.array(z.string().uuid()).optional(),
 });
 
 export const UpdateBlogPostSchema = CreateBlogPostSchema.extend({

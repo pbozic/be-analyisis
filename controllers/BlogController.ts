@@ -252,7 +252,7 @@ export async function getBlogPostBySlug(req: Request, res: Response): Promise<vo
  */
 export async function createBlogPost(req: ValidatedRequest<CreateBlogPostInput>, res: Response): Promise<void> {
 	try {
-		const { title, short_content, content, category_id, image_file_id, publish_at } = req.body;
+		const { title, short_content, content, category_id, image_file_id, publish_at, tag_ids } = req.body;
 		const newBlogPost = await BlogDao.createBlogPost(
 			{
 				title,
@@ -262,7 +262,9 @@ export async function createBlogPost(req: ValidatedRequest<CreateBlogPostInput>,
 				image_file_id,
 				publish_at,
 			},
-			req.user?.user_id as string
+			req.user?.user_id as string,
+			category_id,
+			tag_ids || []
 		);
 		res.status(201).json(newBlogPost);
 	} catch (error) {

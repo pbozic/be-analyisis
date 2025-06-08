@@ -83,7 +83,12 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 	}
 }
 
-export async function createBlogPost(data: CreateBlogPostInput, author_id: string): Promise<BlogPost> {
+export async function createBlogPost(
+	data: CreateBlogPostInput,
+	author_id: string,
+	category_id: string,
+	tag_ids: Array<string> = []
+): Promise<BlogPost> {
 	try {
 		let slug = data.title
 			.toLowerCase()
@@ -110,6 +115,12 @@ export async function createBlogPost(data: CreateBlogPostInput, author_id: strin
 				slug,
 				author: {
 					connect: { user_id: author_id }, // Assuming author is a User type with user_id
+				},
+				blog_category: {
+					connect: { blog_categories_id: category_id }, // Assuming category is a BlogCategory type with blog_categories_id
+				},
+				tags: {
+					connect: tag_ids.map((tag_id) => ({ blog_tag_id: tag_id })), // Assuming tags is a BlogTag type with blog_tag_id
 				},
 			},
 			include: {
