@@ -83,6 +83,7 @@ app.use(logger('dev'));
 app.disable('etag');
 app.use((req, res, next) => {
 	if (req.originalUrl === '/api/blog/upload/file') {
+		console.log('⏭️ Skipping express.json() for upload route');
 		return next(); // let multer handle it
 	}
 	express.json({
