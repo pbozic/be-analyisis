@@ -263,7 +263,10 @@ export async function createBlogPost(req: ValidatedRequest<CreateBlogPostInput>,
 		});
 		res.status(201).json(newBlogPost);
 	} catch (error) {
-		res.status(500).json({ message: 'Error creating blog post', error });
+		res.status(500).json({
+			message: 'Error creating blog post',
+			error: error instanceof Error ? error.message : 'Unknown error',
+		});
 	}
 }
 
