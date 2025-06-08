@@ -82,10 +82,8 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.disable('etag');
 app.use((req, res, next) => {
-	const contentType = req.headers['content-type'] || '';
-	if (contentType.startsWith('multipart/form-data')) {
-		// let multer handle it
-		return next();
+	if (req.originalUrl === '/api/blog/upload/file') {
+		return next(); // let multer handle it
 	}
 	express.json({
 		verify: function (req, res, buf) {
