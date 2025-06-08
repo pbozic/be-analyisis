@@ -106,7 +106,10 @@ export async function createBlogPost(data: CreateBlogPostInput, author_id: strin
 
 		return await prisma.blog_posts.create({
 			data: {
-				...data,
+				title: data.title,
+				short_content: data.short_content || null,
+				content: data.content,
+				publish_at: data.publish_at ? new Date(data.publish_at) : new Date(), // Default to now if not provided
 				slug,
 				author: {
 					connect: { user_id: author_id }, // Assuming author is a User type with user_id
@@ -143,9 +146,53 @@ export async function createBlogPost(data: CreateBlogPostInput, author_id: strin
 
 export async function updateBlogPost(blog_posts_id: string, data: UpdateBlogPostInput): Promise<BlogPost> {
 	try {
+		let existingPost1 = await prisma.blog_posts.findUnique({
+			where: { blog_posts_id },
+			select: { slug: true },
+		});
+		if (!existingPost1) {
+			throw new Error(`Blog post with ID ${blog_posts_id} not found`);
+		}
+		// Generate slug from title
+		let slug =
+			existingPost1.slug ||
+			data.title
+				.toLowerCase()
+				.replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric characters with hyphens
+				.replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+
+		// Ensure slug is unique
+		let existingPost = await prisma.blog_posts.findFirst({
+			where: { slug, blog_posts_id: { not: blog_posts_id } }, // Exclude current post
+			select: { blog_posts_id: true },
+		});
+		let counter = 1;
+		while (existingPost) {
+			slug = `${slug}-${counter}`;
+			existingPost = await prisma.blog_posts.findFirst({
+				where: { slug, blog_posts_id: { not: blog_posts_id } }, // Exclude current post
+				select: { blog_posts_id: true },
+			});
+			counter++;
+		}
+
 		return await prisma.blog_posts.update({
 			where: { blog_posts_id },
-			data,
+			data: {
+				title: data.title,
+				short_content: data.short_content || null,
+				content: data.content,
+				publish_at: data.publish_at ? new Date(data.publish_at) : undefined, // Update only if provided
+				slug,
+				category: data.category_id ? { connect: { blog_categories_id: data.category_id } } : undefined,
+				tags: data.tag_ids
+					? {
+							connect: data.tag_ids.map((tag_id) => ({ blog_tag_id: tag_id })),
+							disconnect: [], // Handle disconnection logic if needed
+						}
+					: undefined,
+				image_file: data.image_file_id ? { connect: { files_id: data.image_file_id } } : undefined,
+			},
 			include: {
 				category: true,
 				//image_file: true,
