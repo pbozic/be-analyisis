@@ -85,8 +85,30 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 
 export async function createBlogPost(data: CreateBlogPostInput): Promise<BlogPost> {
 	try {
+		let slug = data.title
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric characters with hyphens
+			.replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+		// Ensure slug is unique
+		let existingPost = await prisma.blog_posts.findFirst({
+			where: { slug },
+			select: { blog_posts_id: true },
+		});
+		let counter = 1;
+		while (existingPost) {
+			slug = `${slug}-${counter}`;
+			existingPost = await prisma.blog_posts.findFirst({
+				where: { slug },
+				select: { blog_posts_id: true },
+			});
+			counter++;
+		}
+
 		return await prisma.blog_posts.create({
-			data,
+			data: {
+				...data,
+				slug,
+			},
 			include: {
 				category: true,
 				//image_file: true,
