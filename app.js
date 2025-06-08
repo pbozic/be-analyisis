@@ -91,6 +91,10 @@ app.use(express.urlencoded({ limit: '512mb', extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use((req, res, next) => {
+	const contentType = req.headers['content-type'] || '';
+	if (contentType.startsWith('multipart/form-data')) {
+		return next(); // skip express.json for file uploads
+	}
 	express.json({
 		verify: function (req, res, buf) {
 			req.rawBody = buf;
