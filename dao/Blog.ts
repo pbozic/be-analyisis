@@ -83,7 +83,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 	}
 }
 
-export async function createBlogPost(data: CreateBlogPostInput): Promise<BlogPost> {
+export async function createBlogPost(data: CreateBlogPostInput, author_id: string): Promise<BlogPost> {
 	try {
 		let slug = data.title
 			.toLowerCase()
@@ -108,6 +108,9 @@ export async function createBlogPost(data: CreateBlogPostInput): Promise<BlogPos
 			data: {
 				...data,
 				slug,
+				author: {
+					connect: { user_id: author_id }, // Assuming author is a User type with user_id
+				},
 			},
 			include: {
 				category: true,

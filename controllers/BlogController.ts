@@ -253,14 +253,17 @@ export async function getBlogPostBySlug(req: Request, res: Response): Promise<vo
 export async function createBlogPost(req: ValidatedRequest<CreateBlogPostInput>, res: Response): Promise<void> {
 	try {
 		const { title, short_content, content, category_id, image_file_id, publish_at } = req.body;
-		const newBlogPost = await BlogDao.createBlogPost({
-			title,
-			short_content,
-			content,
-			category_id,
-			image_file_id,
-			publish_at,
-		});
+		const newBlogPost = await BlogDao.createBlogPost(
+			{
+				title,
+				short_content,
+				content,
+				category_id,
+				image_file_id,
+				publish_at,
+			},
+			req.user?.user_id as string
+		);
 		res.status(201).json(newBlogPost);
 	} catch (error) {
 		res.status(500).json({
