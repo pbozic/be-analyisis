@@ -96,7 +96,7 @@ app.use((req, res, next) => {
 });
 app.use(express.urlencoded({ limit: '512mb', extended: false }));
 app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
-app.use(fileUploadLib());
+//app.use(fileUploadLib());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 // ─── Routes ─────────────────────────────────────────────────────────
