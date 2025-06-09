@@ -1036,7 +1036,7 @@ async function updateDailyMealsSubscriptionsStatusByGroupedId(grouped_id, status
 
 async function updateDailyMealSubscriptionOrderCreatedById(daily_meals_subscriptions_id, date) {
 	try {
-		return await prisma.daily_meals_subscriptions.updateMany({
+		return await prisma.daily_meals_subscriptions.update({
 			where: {
 				daily_meals_subscriptions_id: daily_meals_subscriptions_id,
 			},
