@@ -1034,6 +1034,22 @@ async function updateDailyMealsSubscriptionsStatusByGroupedId(grouped_id, status
 	}
 }
 
+async function updateDailyMealSubscriptionOrderCreatedById(daily_meals_subscriptions_id, date) {
+	try {
+		return await prisma.daily_meals_subscriptions.updateMany({
+			where: {
+				daily_meals_subscriptions_id: daily_meals_subscriptions_id,
+			},
+			data: {
+				order_created: date,
+			},
+		});
+	} catch (e) {
+		console.error('Error updating subscriptions status by grouped id:', e);
+		throw new Error(e.message);
+	}
+}
+
 export { getOrders };
 export { getActiveDeliveryOrders };
 export { getOrder };
@@ -1067,6 +1083,7 @@ export { getDailyMealsSubscriptionByBusinessId };
 export { getDailyMealsSubscriptionByUserId };
 export { getDailyMealsSubscriptionsByGroupedId };
 export { updateDailyMealsSubscriptionsStatusByGroupedId };
+export { updateDailyMealSubscriptionOrderCreatedById };
 export default {
 	getOrders,
 	getActiveDeliveryOrders,
@@ -1101,4 +1118,5 @@ export default {
 	getDailyMealsSubscriptionByUserId,
 	getDailyMealsSubscriptionsByGroupedId,
 	updateDailyMealsSubscriptionsStatusByGroupedId,
+	updateDailyMealSubscriptionOrderCreatedById,
 };

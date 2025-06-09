@@ -548,6 +548,12 @@ async function createDailyMeals(req, res) {
 				},
 				user.user_id
 			);
+			for (const sub of sortedGroupedSubscriptions[i].subscription_ids) {
+				await DeliveryOrderDao.updateDailyMealSubscriptionOrderCreatedById(
+					sub.daily_meals_subscriptions_id,
+					order.created_at
+				);
+			}
 			await DeliveryOrderDao.createOrderSent(order.order_id, deliveryDriver);
 			await DeliveryOrderDao.connectOrderWithDriver(order.order_id, deliveryDriver.delivery_driver_id);
 			SocketStore.addUserToRoom(order.user_id, `order_${order.order_id}`);
