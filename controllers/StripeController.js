@@ -124,6 +124,27 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			}
 			break;
 		}
+		case 'promo_section': {
+			// 1) fetch the promo_sections_buy record by PI id
+			const promoBuy = await PromoDao.getPromoSectionBuyByStripeIntentId(piId);
+			if (!promoBuy) {
+				console.error('No promo_sections_buy found for PI:', piId);
+				break;
+			}
+
+			// 2) compute activation / expiration
+			const now = new Date();
+			const days = parseInt(meta.duration, 10) || 0;
+			const expires = new Date(now.getTime() + days * 24 * 60 * 60 * 1000); // duration in days
+
+			// 3) update the DB record
+			await PromoDao.updatePromoSectionBuy(promoBuy.promo_sections_buy_id, {
+				paid: true,
+				active_at: now,
+				expires_at: expires,
+			});
+			break;
+		}
 	}
 }
 async function handlePaymentIntentFaliure(paymentIntent) {

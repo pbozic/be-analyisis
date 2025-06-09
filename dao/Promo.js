@@ -507,6 +507,17 @@ async function getAllPromoSectionBuysByBusiness(business) {
 				business_id: business,
 			},
 		},
+		include: {
+			promo_section: {
+				include: {
+					translatable: {
+						include: {
+							translations: true,
+						},
+					},
+				},
+			},
+		},
 	});
 }
 async function getAllPromoSectionBuysByTier(tier) {
@@ -522,6 +533,14 @@ async function updatePromoSectionBuy(id, args) {
 			promo_sections_buy_id: id,
 		},
 		data: args,
+	});
+}
+
+export async function getPromoSectionBuyByPaymentIntentId(payment_intent_id) {
+	return await prisma.promo_sections_buy.findFirst({
+		where: {
+			payment_intent_id: payment_intent_id,
+		},
 	});
 }
 export { createPromoSection };
@@ -583,4 +602,5 @@ export default {
 	getAllPromoSectionBuysByBusiness,
 	getAllPromoSectionBuysByTier,
 	updatePromoSectionBuy,
+	getPromoSectionBuyByPaymentIntentId,
 };
