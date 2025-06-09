@@ -549,6 +549,7 @@ async function createDailyMeals(req, res) {
 				user.user_id
 			);
 			for (const sub of sortedGroupedSubscriptions[i].subscription_ids) {
+				console.log(sub.daily_meals_subscriptions_id);
 				await DeliveryOrderDao.updateDailyMealSubscriptionOrderCreatedById(
 					sub.daily_meals_subscriptions_id,
 					order.created_at
