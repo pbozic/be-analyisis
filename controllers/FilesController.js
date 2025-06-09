@@ -1,6 +1,7 @@
 import FileDao from '../dao/File.js';
 import S3Helper from '../lib/s3.js';
 async function createFileHelper(owner_id, fileData) {
+	console.log('Creating file with data:', fileData);
 	const { file_type, mime_type } = fileData;
 	const isPublic = fileData.public || false;
 	const new_file = await FileDao.createFile(file_type, mime_type, isPublic);

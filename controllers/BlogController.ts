@@ -252,21 +252,25 @@ export async function getBlogPostBySlug(req: Request, res: Response): Promise<vo
  */
 export async function createBlogPost(req: ValidatedRequest<CreateBlogPostInput>, res: Response): Promise<void> {
 	try {
-		const { title, short_content, content, category_id, image_file_id, publish_at } = req.body;
-		const newBlogPost = await BlogDao.createBlogPost({
-			title,
-			short_content,
-			content,
-			category_id,
-			image_file_id,
-			publish_at,
-		});
-		res.status(201).json({
-			message: 'Blog post created successfully',
-			data: newBlogPost,
-		});
+		const { title, short_content, content, category_id, image_file_id, publish_at, tag_ids } = req.body;
+		const newBlogPost = await BlogDao.createBlogPost(
+			{
+				title,
+				short_content,
+				content,
+				publish_at,
+				category_id,
+				image_file_id,
+				tag_ids: tag_ids || [],
+			},
+			req.user?.user_id as string
+		);
+		res.status(201).json(newBlogPost);
 	} catch (error) {
-		res.status(500).json({ message: 'Error creating blog post', error });
+		res.status(500).json({
+			message: 'Error creating blog post',
+			error: error instanceof Error ? error.message : 'Unknown error',
+		});
 	}
 }
 
@@ -324,6 +328,7 @@ export async function updateBlogPost(
 			category_id,
 			image_file_id,
 			publish_at,
+			tag_ids: req.body.tag_ids || [],
 		});
 		res.status(200).json(updatedBlogPost);
 	} catch (error) {
@@ -472,10 +477,7 @@ export async function createBlogCategory(req: ValidatedRequest<CreateBlogCategor
 	try {
 		const { name, description } = req.body;
 		const newBlogCategory = await BlogDao.createBlogCategory({ name, description });
-		res.status(201).json({
-			message: 'Blog category created successfully',
-			data: newBlogCategory,
-		});
+		res.status(201).json(newBlogCategory);
 	} catch (error) {
 		res.status(500).json({ message: 'Error creating blog category', error });
 	}
@@ -632,10 +634,7 @@ export async function createBlogTag(req: ValidatedRequest<CreateBlogTagInput>, r
 		const { name, description } = req.body;
 		const newBlogTag = await BlogDao.createBlogTag({ name, description });
 		if (newBlogTag) {
-			res.status(201).json({
-				message: 'Blog tag created successfully',
-				data: newBlogTag,
-			});
+			res.status(201).json(newBlogTag);
 			return;
 		}
 		res.status(400).json({
@@ -792,12 +791,7 @@ export async function createBlogImageByUrl(req: ValidatedRequest<{ url: string }
 			public: true,
 		});
 
-		res.status(201).json({
-			message: 'Image created successfully',
-			file: {
-				url: newImage.url || newImage.file_url || newImage.s3_url,
-			},
-		});
+		res.status(201).json(newImage.url || newImage.file_url || newImage.s3_url);
 	} catch (error) {
 		console.error('Failed to create image from URL:', error);
 		res.status(500).json({ message: 'Error creating image', error });
@@ -831,6 +825,7 @@ export async function createBlogImageByUrl(req: ValidatedRequest<{ url: string }
  */
 export async function createBlogImageByFile(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
+		console.log('Received file upload request:', req.file);
 		const { file } = req;
 		if (!file) {
 			res.status(400).json({ message: 'Base64 image data is required' });
@@ -838,16 +833,14 @@ export async function createBlogImageByFile(req: ValidatedRequest, res: Response
 		}
 		const base64 = file.buffer.toString('base64');
 		const mime_type = file.mimetype;
+		console.log('File MIME type:', mime_type);
 		const newImage = await createFileHelper(req.user?.user_id, {
 			file_type: 'image',
 			mime_type,
 			base64,
 			public: true,
 		});
-		res.status(201).json({
-			message: 'Image created successfully',
-			data: newImage,
-		});
+		res.status(201).json(newImage);
 	} catch (error) {
 		res.status(500).json({ message: 'Error creating image', error });
 	}

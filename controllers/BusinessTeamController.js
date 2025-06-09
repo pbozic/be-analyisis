@@ -137,8 +137,24 @@ const editBusinessTeamUsers = async (req, res) => {
 			for (const user_id of usersToAdd) {
 				try {
 					await BusinessTeamDao.addUserToTeam(businessTeamId, user_id);
-				} catch (e) {
-					console.log(`Error adding user id: ${user_id} to team id: ${businessTeamId} - error:`, e);
+				} catch (error) {
+					console.log(`Error adding user id: ${user_id} to team id: ${businessTeamId} - error:`, error);
+					if (error.message.includes('already assigned')) {
+						return res.status(400).json({
+							error: 'User is already assigned to a business team',
+							details: error.message,
+						});
+					}
+					if (error.message.includes('not found')) {
+						return res.status(404).json({
+							error: 'Resource not found',
+							details: error.message,
+						});
+					}
+					res.status(500).json({
+						error: 'Error adding user to business team',
+						details: error.message,
+					});
 				}
 			}
 		}
@@ -146,8 +162,24 @@ const editBusinessTeamUsers = async (req, res) => {
 			for (const user_id of usersToDelete) {
 				try {
 					await BusinessTeamDao.removeUserFromTeam(user_id);
-				} catch (e) {
-					console.log(`Error removing user id: ${user_id} from team id: ${businessTeamId} - error:`, e);
+				} catch (error) {
+					console.log(`Error removing user id: ${user_id} from team id: ${businessTeamId} - error:`, error);
+					if (error.message.includes('not found')) {
+						return res.status(404).json({
+							error: 'User not found',
+							details: error.message,
+						});
+					}
+					if (error.message.includes('not assigned')) {
+						return res.status(400).json({
+							error: 'User is not assigned to any business team',
+							details: error.message,
+						});
+					}
+					res.status(500).json({
+						error: 'Error deleting user from business team',
+						details: error.message,
+					});
 				}
 			}
 		}

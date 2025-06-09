@@ -38,9 +38,10 @@ export const CreateBlogPostSchema = z.object({
 	title: z.string().min(1),
 	short_content: z.string().optional().nullable(),
 	content: EditorJSDataSchema,
-	category_id: z.string().uuid().optional(),
+	category_id: z.string().uuid(),
 	image_file_id: z.string().uuid().optional(),
 	publish_at: z.string().datetime().optional(),
+	tag_ids: z.array(z.string().uuid()),
 });
 
 export const UpdateBlogPostSchema = CreateBlogPostSchema.extend({
