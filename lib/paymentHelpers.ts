@@ -222,7 +222,7 @@ export async function createPaymentHelper(
 					customer_acc,
 					product_identifier,
 					payment_method_id,
-					total_price_cents,
+					total_price_cents - CREDITS_AMOUNT_RESERVED,
 					order_type,
 					null,
 					return_url,
