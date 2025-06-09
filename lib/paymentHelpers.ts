@@ -357,7 +357,7 @@ export async function transferSplitsForTypes(payment_id: string, dest_types: SPL
 
 	for (const split of payment.payment_splits) {
 		if (dest_types.includes(split.destination_type) && split.status === SPLIT_STATUS.RESERVED) {
-			transferSplit(split, payment);
+			await transferSplit(split, payment);
 		}
 	}
 }

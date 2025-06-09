@@ -180,7 +180,7 @@ async function subtractFunds(walletFundsId, amount, order_id = null, service_typ
 		}
 		if (walletFund.amount < amount) {
 			// Updated to use amount
-			throw new Error('Insufficient funds');
+			throw new Error(`Insufficient funds ${walletFund.amount} < ${amount}`);
 		}
 		let updatedWalletFund = await prisma.$transaction(async (tx) => {
 			const updated_WF = await tx.wallet_funds.update({
@@ -565,7 +565,6 @@ const getReservedCredits = async (userId, orderId, reserveType = 'order') => {
 				...(reserveType === 'daily_meals_subscription_payment'
 					? { reserved_daily_meals_subscription: orderId }
 					: {}),
-				reserved_order: orderId,
 			},
 		});
 	} catch (error) {
