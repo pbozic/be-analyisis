@@ -353,6 +353,90 @@ async function createCheckoutSessionForPromoBuy(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
+export async function createPaymentIntentForPromoBuy(req, res) {
+	try {
+		const { promo_sections_id, duration, tier } = req.body;
+		const userId = req.user.user_id;
+
+		// 1a) Load promo section & business
+		const promoSection = await prisma.promo_sections.findUnique({
+			where: { promo_sections_id },
+		});
+		if (!promoSection) {
+			return res.status(404).json({ error: 'Promo section not found' });
+		}
+
+		const businessUser = await prisma.business_users.findUnique({
+			where: { user_id: userId },
+		});
+		if (!businessUser) {
+			return res.status(404).json({ error: 'Business user not found' });
+		}
+
+		const business = await prisma.business.findUnique({
+			where: { business_id: businessUser.business_id },
+		});
+		if (!business?.stripe_customer_id) {
+			return res.status(400).json({ error: 'No Stripe customer on file' });
+		}
+
+		// 1b) Determine unit price
+		let unitPrice;
+		switch (tier) {
+			case 1:
+				unitPrice = promoSection.t1Price;
+				break;
+			case 2:
+				unitPrice = promoSection.t2Price;
+				break;
+			case 3:
+				unitPrice = promoSection.t3Price;
+				break;
+			default:
+				return res.status(400).json({ error: 'Invalid tier' });
+		}
+		if (unitPrice <= 0) {
+			return res.status(400).json({ error: 'Promo tier not priced' });
+		}
+
+		// 1c) Create the PaymentIntent
+		const amount = unitPrice * 100 * duration; // in cents
+		const paymentIntent = await stripe.paymentIntents.create({
+			amount,
+			currency: 'eur',
+			customer: business.stripe_customer_id,
+			metadata: {
+				user_id: userId,
+				business_id: businessUser.business_id,
+				promo_sections_id,
+				promo_section_name: promoSection.name,
+				tier: tier.toString(),
+				duration: duration.toString() * 30,
+				type: 'promo_section',
+			},
+		});
+
+		// 1d) Create the DB record for the purchase (paid defaults to false)
+		const buyRecord = await prisma.promo_sections_buy.create({
+			data: {
+				promo_sections_id,
+				business_id: businessUser.business_id,
+				user_id: userId,
+				payment_intent_id: paymentIntent.id, // we’re re-using this field to hold the PI id
+				tier,
+				// paid: false, active_at and expires_at are null by default
+			},
+		});
+
+		return res.json({
+			clientSecret: paymentIntent.client_secret,
+			promoBuyId: buyRecord.promo_sections_buy_id,
+		});
+	} catch (err) {
+		console.error('createPaymentIntentForPromoBuy:', err);
+		return res.status(500).json({ error: err.message });
+	}
+}
 async function createPromoSectionBuy(req, res) {
 	try {
 		let business_id = req.body.business_id;

@@ -535,6 +535,14 @@ async function updatePromoSectionBuy(id, args) {
 		data: args,
 	});
 }
+
+export async function getPromoSectionBuyByPaymentIntentId(payment_intent_id) {
+	return await prisma.promo_sections_buy.findFirst({
+		where: {
+			payment_intent_id: payment_intent_id,
+		},
+	});
+}
 export { createPromoSection };
 export { updatePromoSection };
 export { reorderPromoSections };
@@ -594,4 +602,5 @@ export default {
 	getAllPromoSectionBuysByBusiness,
 	getAllPromoSectionBuysByTier,
 	updatePromoSectionBuy,
+	getPromoSectionBuyByPaymentIntentId,
 };
