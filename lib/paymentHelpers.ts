@@ -197,7 +197,7 @@ export async function createPaymentHelper(
 			total_price_cents,
 			product_identifier,
 			'CREDITS_DELIVERY',
-			'daily_meals_subscription'
+			payment_type
 		);
 		CREDITS_AMOUNT_RESERVED = reservedCredits.reduce((sum, wf) => sum + wf.amount, 0);
 		payment = await PaymentDao.updatePayment(payment.payment_id, { credits_amount: CREDITS_AMOUNT_RESERVED });
@@ -242,7 +242,7 @@ export async function createPaymentHelper(
 					user_id,
 					total_price_cents - CREDITS_AMOUNT_RESERVED,
 					product_identifier,
-					'daily_meals_subscription'
+					payment_type
 				);
 				payment = await PaymentDao.updatePayment(payment.payment_id, { status: 'SUCCEEDED' as PAYMENT_STATUS });
 				break;
@@ -310,7 +310,8 @@ async function transferSplit(
 			destination,
 			split.amount_credits,
 			payment.subscription_grouped_id || payment.payment_id,
-			payment.order_type
+			payment.order_type,
+			payment.subscription_grouped_id ? 'order' : 'daily_meals_subscription_payment'
 		);
 	}
 	if (split.amount_regular > 0) {
@@ -330,7 +331,8 @@ async function transferSplit(
 					destination,
 					split.amount_regular,
 					payment.subscription_grouped_id || payment.payment_id,
-					payment.order_type
+					payment.order_type,
+					payment.subscription_grouped_id ? 'order' : 'daily_meals_subscription_payment'
 				);
 				break;
 			case 'CASH':
@@ -415,7 +417,8 @@ export async function handlePaymentRefund(payment: payments & { payment_splits: 
 				await WalletFundsHelpers.releaseReservedWalletFundsForOrder(
 					payment.user_id,
 					payment.payment_id,
-					split.amount_credits
+					split.amount_credits,
+					payment.subscription_grouped_id ? 'order' : 'daily_meals_subscription_payment'
 				);
 			}
 		}
@@ -454,7 +457,8 @@ export async function handlePaymentRefund(payment: payments & { payment_splits: 
 						await WalletFundsHelpers.releaseReservedWalletFundsForOrder(
 							payment.user_id,
 							payment.payment_id,
-							split.amount_regular
+							split.amount_regular,
+							payment.subscription_grouped_id ? 'order' : 'daily_meals_subscription_payment'
 						);
 					}
 				}

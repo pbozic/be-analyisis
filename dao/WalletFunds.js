@@ -94,14 +94,14 @@ async function createWalletFunds(user_id, amount_cents, charge_id = null, transa
 		},
 	});
 }
-async function getAvailableWalletFunds(userId, order_type) {
+async function getAvailableWalletFunds(userId, funds_type) {
 	try {
 		const walletFunds = await prisma.wallet_funds.findMany({
 			where: {
 				user_id: userId,
 				reserved_order: null,
 				reserved_daily_meals_subscription: null,
-				type: order_type,
+				type: funds_type,
 			},
 			orderBy: [{ expires_at: { sort: 'asc', nulls: 'last' } }, { created_at: 'asc' }],
 		});
@@ -111,12 +111,15 @@ async function getAvailableWalletFunds(userId, order_type) {
 		throw error;
 	}
 }
-async function getReservedWalletFunds(userId, order_id) {
+async function getReservedWalletFunds(userId, order_id, reserveType = 'order') {
 	try {
 		const walletFunds = await prisma.wallet_funds.findMany({
 			where: {
 				user_id: userId,
-				reserved_order: order_id,
+				...(reserveType === 'order' ? { reserved_order: orderId } : {}),
+				...(reserveType === 'daily_meals_subscription_payment'
+					? { reserved_daily_meals_subscription: orderId }
+					: {}),
 			},
 			orderBy: {
 				created_at: 'asc',
@@ -221,7 +224,7 @@ async function subtractFunds(walletFundsId, amount, order_id = null, service_typ
 		throw error;
 	}
 }
-async function reserveFunds(walletFundsId, reserveAmount, orderId, orderType = 'order') {
+async function reserveFunds(walletFundsId, reserveAmount, orderId, reserveType = 'order') {
 	try {
 		if (reserveAmount <= 0) {
 			throw new Error('Reserve amount must be greater than 0');
@@ -248,8 +251,10 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId, orderType = '
 			where: {
 				user_id: walletFund.user_id,
 				charge_id: walletFund.charge_id,
-				...(orderType === 'order' ? { reserved_order: orderId } : {}),
-				...(orderType === 'daily_meals_subscription' ? { reserved_daily_meals_subscription: orderId } : {}),
+				...(reserveType === 'order' ? { reserved_order: orderId } : {}),
+				...(reserveType === 'daily_meals_subscription_payment'
+					? { reserved_daily_meals_subscription: orderId }
+					: {}),
 				reserved_business: orderId,
 				expires_at: walletFund.expires_at,
 				referral_id: walletFund.referral_id,
@@ -273,8 +278,10 @@ async function reserveFunds(walletFundsId, reserveAmount, orderId, orderType = '
 				data: {
 					user_id: walletFund.user_id,
 					charge_id: walletFund.charge_id,
-					...(orderType === 'order' ? { reserved_order: orderId } : {}),
-					...(orderType === 'daily_meals_subscription' ? { reserved_daily_meals_subscription: orderId } : {}),
+					...(reserveType === 'order' ? { reserved_order: orderId } : {}),
+					...(reserveType === 'daily_meals_subscription_payment'
+						? { reserved_daily_meals_subscription: orderId }
+						: {}),
 					expires_at: walletFund.expires_at,
 					referral_id: walletFund.referral_id,
 					type: walletFund.type,
@@ -343,8 +350,6 @@ async function releaseFunds(walletFundsId, releaseAmount) {
 				where: {
 					user_id: walletFund.user_id,
 					charge_id: walletFund.charge_id,
-					reserved_order: walletFund.order_id,
-					reserved_business: walletFund.reserved_business,
 					expires_at: walletFund.expires_at,
 					referral_id: walletFund.referral_id,
 					type: walletFund.type,
@@ -367,8 +372,6 @@ async function releaseFunds(walletFundsId, releaseAmount) {
 					data: {
 						user_id: walletFund.user_id,
 						charge_id: walletFund.charge_id,
-						reserved_order: null,
-						reserved_daily_meals_subscription: null,
 						expires_at: walletFund.expires_at,
 						referral_id: walletFund.referral_id,
 						type: walletFund.type,
@@ -549,7 +552,7 @@ const getAvailableCreditsForOrder = async (userId, type) => {
 		throw error;
 	}
 };
-const getReservedCredits = async (userId, orderId, orderType = 'order') => {
+const getReservedCredits = async (userId, orderId, reserveType = 'order') => {
 	try {
 		return await prisma.wallet_funds.findMany({
 			where: {
@@ -558,8 +561,10 @@ const getReservedCredits = async (userId, orderId, orderType = 'order') => {
 					type: FUNDS_TYPE.FUNDS,
 				},
 				// status: CREDIT_STATUS.ACTIVE,
-				...(orderType === 'order' ? { reserved_order: orderId } : {}),
-				...(orderType === 'daily_meals_subscription' ? { reserved_daily_meals_subscription: orderId } : {}),
+				...(reserveType === 'order' ? { reserved_order: orderId } : {}),
+				...(reserveType === 'daily_meals_subscription_payment'
+					? { reserved_daily_meals_subscription: orderId }
+					: {}),
 				reserved_order: orderId,
 			},
 		});
