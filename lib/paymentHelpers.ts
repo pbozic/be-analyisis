@@ -311,7 +311,7 @@ async function transferSplit(
 			split.amount_credits,
 			payment.subscription_grouped_id || payment.payment_id,
 			payment.order_type,
-			payment.subscription_grouped_id ? 'order' : 'daily_meals_subscription_payment'
+			payment.subscription_grouped_id ? 'daily_meals_subscription_payment' : 'order'
 		);
 	}
 	if (split.amount_regular > 0) {
@@ -332,7 +332,7 @@ async function transferSplit(
 					split.amount_regular,
 					payment.subscription_grouped_id || payment.payment_id,
 					payment.order_type,
-					payment.subscription_grouped_id ? 'order' : 'daily_meals_subscription_payment'
+					payment.subscription_grouped_id ? 'daily_meals_subscription_payment' : 'order'
 				);
 				break;
 			case 'CASH':
@@ -418,7 +418,7 @@ export async function handlePaymentRefund(payment: payments & { payment_splits: 
 					payment.user_id,
 					payment.payment_id,
 					split.amount_credits,
-					payment.subscription_grouped_id ? 'order' : 'daily_meals_subscription_payment'
+					payment.subscription_grouped_id ? 'daily_meals_subscription_payment' : 'order'
 				);
 			}
 		}
@@ -458,7 +458,7 @@ export async function handlePaymentRefund(payment: payments & { payment_splits: 
 							payment.user_id,
 							payment.payment_id,
 							split.amount_regular,
-							payment.subscription_grouped_id ? 'order' : 'daily_meals_subscription_payment'
+							payment.subscription_grouped_id ? 'daily_meals_subscription_payment' : 'order'
 						);
 					}
 				}
