@@ -507,6 +507,17 @@ async function getAllPromoSectionBuysByBusiness(business) {
 				business_id: business,
 			},
 		},
+		include: {
+			promo_section: {
+				include: {
+					translatable: {
+						include: {
+							translations: true,
+						},
+					},
+				},
+			},
+		},
 	});
 }
 async function getAllPromoSectionBuysByTier(tier) {
