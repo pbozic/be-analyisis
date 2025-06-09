@@ -19,7 +19,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
 			},
 			include: {
 				category: true,
-				//image_file: true,
+				image: true,
 				tags: true,
 			},
 			orderBy: {
@@ -48,7 +48,7 @@ export async function getBlogPostById(blog_posts_id: string): Promise<BlogPost |
 			where: { blog_posts_id },
 			include: {
 				category: true,
-				image_file: true,
+				image: true,
 				tags: true,
 			},
 		});
@@ -74,7 +74,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 			where: { slug },
 			include: {
 				category: true,
-				//image_file: true,
+				image: true,
 				tags: true,
 			},
 		});
@@ -135,7 +135,7 @@ export async function createBlogPost(data: CreateBlogPostInput, author_id: strin
 			},
 			include: {
 				category: true,
-				//image_file: true,
+				image: true,
 				tags: true,
 			},
 		});
@@ -209,7 +209,7 @@ export async function updateBlogPost(blog_posts_id: string, data: UpdateBlogPost
 			},
 			include: {
 				category: true,
-				//image_file: true,
+				image: true,
 				tags: true,
 			},
 		});
@@ -235,7 +235,7 @@ export async function deleteBlogPost(blog_posts_id: string): Promise<BlogPost> {
 			where: { blog_posts_id },
 			include: {
 				category: true,
-				//image_file: true,
+				image: true,
 				tags: true,
 			},
 		});
@@ -279,7 +279,7 @@ export async function searchBlogPosts(query: SearchBlogPostsInput): Promise<Blog
 			},
 			include: {
 				category: true,
-				//image_file: true,
+				image: true,
 				tags: true,
 			},
 		});

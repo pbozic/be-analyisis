@@ -1,8 +1,10 @@
 // blogSchemas.ts
 import { z } from 'zod';
 import type { users, files } from '@prisma/client';
+import { BLOG_POST_STATUS } from '@prisma/client';
 
 import type { BlogCategory } from './BlogCategory.js';
+import { BlogTag } from './BlogTag.js';
 
 // =======================
 // Editor.js Zod Schemas
@@ -85,6 +87,7 @@ export type BlogPost = {
 	updated_at: string;
 	author: users;
 	category?: BlogCategory | null;
+	tags?: BlogTag[];
 };
 
 export type BlogPostInput = Omit<
