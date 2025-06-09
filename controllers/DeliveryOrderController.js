@@ -1757,7 +1757,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 				.filter((day) => Object.values(day.menu).reduce((acc, menuData) => acc + (menuData.people || 0), 0) > 0)
 				.map((_, index) => {
 					return {
-						type: SPLIT_DESTINATION_TYPE.DRIVER,
+						destination_type: SPLIT_DESTINATION_TYPE.DRIVER,
 						value: DAILY_MEAL_DELIVERY_COST_CENTS,
 					};
 				}),
