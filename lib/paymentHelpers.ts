@@ -28,7 +28,7 @@ import stripe from './stripe.js';
  * @throws {Error} If the sum of fixed split values exceeds the total amount.
  */
 type DestinationCut = {
-	type: SPLIT_DESTINATION_TYPE;
+	destination_type: SPLIT_DESTINATION_TYPE;
 	destination_id?: string;
 	value: number;
 	metadata?: Record<string, string | number | boolean | object | null>;
@@ -49,10 +49,10 @@ function generatePaymentSplits(
 	}
 
 	// 1. Handle fixed splits
-	const fixedSplits: Omit<PaymentSplitData, 'is_credits'>[] = fixedSplitsData.map((cut) => ({
-		destination_type: cut.type,
+	const fixedSplits: DestinationCut[] = fixedSplitsData.map((cut) => ({
+		destination_type: cut.destination_type,
 		destination_id: cut.destination_id,
-		amount: cut.value,
+		value: cut.value,
 		metadata: cut.metadata,
 	}));
 	// 2. Handle percent splits for the remaining amount
@@ -61,7 +61,7 @@ function generatePaymentSplits(
 	if (totalPercent >= 100) {
 		throw new Error('Sum of percent split values must be less than 100%');
 	}
-	const percentSplits: Omit<PaymentSplitData, 'is_credits'>[] = [];
+	const percentSplits: DestinationCut[] = [];
 
 	if (remainingAmountForPercentages <= 0) {
 		if (percentSplitsData.length > 0) {
@@ -78,9 +78,9 @@ function generatePaymentSplits(
 			allocated += splitAmount;
 
 			percentSplits.push({
-				destination_type: def.type,
+				destination_type: def.destination_type,
 				destination_id: def.destination_id,
-				amount: splitAmount,
+				value: splitAmount,
 				metadata: def.metadata,
 			});
 		}
@@ -89,7 +89,7 @@ function generatePaymentSplits(
 			percentSplits.push({
 				destination_type: 'PLATFORM',
 				destination_id: 'platform',
-				amount: platformSplitAmount,
+				value: platformSplitAmount,
 			});
 		}
 	}
@@ -105,12 +105,12 @@ function generatePaymentSplits(
 					: `null:${index}`;
 				const existing = map.get(key);
 				if (existing) {
-					existing.amount += split.amount;
+					existing.value += split.value;
 				} else {
 					map.set(key, { ...split });
 				}
 				return map;
-			}, new Map<string, Omit<PaymentSplitData, 'is_credits'>>())
+			}, new Map<string, DestinationCut>())
 			.values()
 	).sort((a, b) => {
 		if (a.destination_type === 'PLATFORM' && b.destination_type !== 'PLATFORM') return -1;
@@ -124,27 +124,16 @@ function generatePaymentSplits(
 	const finalSplits: PaymentSplitData[] = [];
 
 	for (const split of allSplits) {
-		const creditPart = Math.min(split.amount, remainingCredits);
-		if (creditPart > 0) {
-			finalSplits.push({
-				destination_type: split.destination_type,
-				destination_id: split.destination_id,
-				amount: creditPart,
-				is_credits: true,
-				metadata: split?.metadata,
-			});
-			remainingCredits -= creditPart;
-		}
-		const remainingPart = split.amount - creditPart;
-		if (remainingPart > 0) {
-			finalSplits.push({
-				destination_type: split.destination_type,
-				destination_id: split.destination_id,
-				amount: remainingPart,
-				is_credits: false,
-				metadata: split?.metadata,
-			});
-		}
+		const creditPart = Math.min(split.value, remainingCredits);
+		const remainingPart = split.value - creditPart;
+		finalSplits.push({
+			destination_type: split.destination_type,
+			destination_id: split.destination_id,
+			amount_credits: creditPart > 0 ? Math.round(creditPart) : 0,
+			amount_regular: remainingPart > 0 ? Math.round(remainingPart) : 0,
+			metadata: split?.metadata,
+		});
+		remainingCredits -= creditPart;
 	}
 
 	return finalSplits;
@@ -305,7 +294,7 @@ async function transferSplit(
 ): Promise<void> {
 	if (destination_id) {
 		if (!split.destination_id) {
-			await PaymentSplitDao.updatePaymentSplitById(split.split_id, { destination_id });
+			await PaymentSplitDao.updatePaymentSplitById(split.payment_split_id, { destination_id });
 		} else if (split.destination_id !== destination_id) {
 			throw new Error('Payment split already has a destination which does not match the given one!');
 		}
@@ -314,16 +303,17 @@ async function transferSplit(
 	}
 
 	const destination = split.destination_id || destination_id;
-	if (split.is_credits) {
+	if (split.amount_credits > 0) {
 		// Transfer reserved credits for this split
 		await WalletFundsHelpers.transferReservedCreditsForOrder(
 			payment.user_id,
 			destination,
-			split.amount,
+			split.amount_credits,
 			payment.subscription_grouped_id || payment.payment_id,
 			payment.order_type
 		);
-	} else {
+	}
+	if (split.amount_regular > 0) {
 		switch (payment.payment_method) {
 			case 'CARD':
 			case 'PLATFORM': {
@@ -331,14 +321,14 @@ async function transferSplit(
 				if (destination === 'platform') {
 					break;
 				}
-				await stripe.splitCutFromPaymentIntent(payment_intent, destination, split.amount);
+				await stripe.splitCutFromPaymentIntent(payment_intent, destination, split.amount_regular);
 				break;
 			}
 			case 'WALLET':
 				await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 					payment.user_id,
 					destination,
-					split.amount,
+					split.amount_regular,
 					payment.subscription_grouped_id || payment.payment_id,
 					payment.order_type
 				);
@@ -350,7 +340,7 @@ async function transferSplit(
 				throw new Error('Unsupported payment method for split transfer');
 		}
 	}
-	await PaymentSplitDao.updatePaymentSplitById(split.split_id, { status: 'TRANSFERED' });
+	await PaymentSplitDao.updatePaymentSplitById(split.payment_split_id, { status: 'TRANSFERED' });
 }
 
 /**
@@ -410,47 +400,24 @@ export async function transferSplitById(payment_split_id: string, destination_id
  * @param payment - The payment object (must include payment_splits relation).
  */
 export async function handlePaymentRefund(payment: payments & { payment_splits: payment_splits[] }) {
-	// Group splits by is_credits and status
 	for (const split of payment.payment_splits) {
-		// Only process splits that have a positive amount
-		if (!split.amount || split.amount <= 0) continue;
-
-		// If split was already transferred, we need to create new wallet funds/credits for the user
-		if (split.status === 'TRANSFERED') {
-			if (split.is_credits) {
+		// If split was already transferred, we need to create new wallet credits for the user
+		// If not transferred, just release reserved credits
+		if (split.amount_credits > 0) {
+			if (split.status === 'TRANSFERED') {
 				// Refund credits to user
 				await WalletFundsDao.createCredit({
 					user: { connect: { user_id: payment.user_id } },
-					amount: split.amount,
+					amount: split.amount_credits,
 					type: 'CREDITS_DELIVERY',
 				});
 			} else {
-				// Refund wallet funds to user
-				await WalletFundsDao.createWalletFunds(
-					payment.user_id,
-					split.amount,
-					null
-					// add type if needed
-				);
-			}
-			// Mark split as refunded
-			await PaymentSplitDao.updatePaymentSplitById(split.split_id, { status: SPLIT_STATUS.REFUNDED });
-		} else {
-			// If not transferred, just release reserved funds/credits
-			if (split.is_credits) {
 				await WalletFundsHelpers.releaseReservedWalletFundsForOrder(
 					payment.user_id,
 					payment.payment_id,
-					split.amount
-				);
-			} else {
-				await WalletFundsHelpers.releaseReservedWalletFundsForOrder(
-					payment.user_id,
-					payment.payment_id,
-					split.amount
+					split.amount_credits
 				);
 			}
-			await PaymentSplitDao.updatePaymentSplitById(split.split_id, { status: SPLIT_STATUS.CANCELED });
 		}
 	}
 
@@ -460,17 +427,42 @@ export async function handlePaymentRefund(payment: payments & { payment_splits: 
 		case 'PLATFORM':
 			if (payment.payment_intent_id) {
 				const payment_intent = await stripe.client.paymentIntents.retrieve(payment.payment_intent_id);
-				if (!['succeeded', 'canceled', 'processing'].includes(payment_intent.status)) {
-					await stripe.client.paymentIntents.cancel(payment.payment_intent_id);
-				} else {
+				const should_refund = ['succeeded', 'canceled', 'processing'].includes(payment_intent.status);
+				if (should_refund) {
 					await stripe.client.refunds.create({
 						payment_intent: payment.payment_intent_id,
+					});
+				} else {
+					await stripe.client.paymentIntents.cancel(payment.payment_intent_id);
+				}
+				for (const split of payment.payment_splits) {
+					await PaymentSplitDao.updatePaymentSplitById(split.payment_split_id, {
+						status: should_refund ? SPLIT_STATUS.REFUNDED : SPLIT_STATUS.CANCELED,
 					});
 				}
 			}
 			break;
 		case 'WALLET':
-			// Wallet funds are handled above per split
+			for (const split of payment.payment_splits) {
+				// If split was already transferred, we need to create new wallet funds/credits for the user
+				// If not transferred, just release reserved funds/credits
+				if (split.amount_regular) {
+					if (split.status === 'TRANSFERED') {
+						// Refund wallet funds to user
+						await WalletFundsDao.createWalletFunds(payment.user_id, split.amount_regular, null);
+					} else {
+						await WalletFundsHelpers.releaseReservedWalletFundsForOrder(
+							payment.user_id,
+							payment.payment_id,
+							split.amount_regular
+						);
+					}
+				}
+				// Mark split as refunded
+				await PaymentSplitDao.updatePaymentSplitById(split.payment_split_id, {
+					status: split.status === 'TRANSFERED' ? SPLIT_STATUS.REFUNDED : SPLIT_STATUS.CANCELED,
+				});
+			}
 			break;
 		case 'CASH':
 			// No action needed for cash

@@ -834,7 +834,7 @@ async function completeOrder(req, res) {
 							split.status === SPLIT_STATUS.RESERVED
 					);
 					await PaymentHelpers.transferSplitById(
-						first_available_driver_split.split_id,
+						first_available_driver_split.payment_split_id,
 						delivery_business_stripe
 					);
 				}
@@ -1763,7 +1763,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 				}),
 			[
 				{
-					type: SPLIT_DESTINATION_TYPE.MERCHANT,
+					destination_type: SPLIT_DESTINATION_TYPE.MERCHANT,
 					destination_id: restaurant_acc,
 					value: RESTAURANT_SHARE_PERC,
 				},

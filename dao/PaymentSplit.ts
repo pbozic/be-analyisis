@@ -5,8 +5,8 @@ import prisma from '../prisma/prisma.js';
 export type PaymentSplitData = {
 	destination_type: SPLIT_DESTINATION_TYPE;
 	destination_id?: string;
-	amount: number;
-	is_credits: boolean;
+	amount_regular: number;
+	amount_credits: number;
 	metadata?: Record<string, string | number | boolean | object | null>;
 };
 
@@ -18,18 +18,18 @@ export type PaymentSplitData = {
  * @param {string} payment_id
  * @param {SPLIT_DESTINATION_TYPE} destination_type
  * @param {string} destination_id
- * @param {number} amount
+ * @param {number} amount_regular
+ * @param {number} amount_credits
  * @param {Record<string, any>} [metadata={}]
- * @param {boolean} [is_credits=false]
  * @returns {Promise<payment_splits>}
  */
 export async function createPaymentSplit(
 	payment_id: string,
 	destination_type: SPLIT_DESTINATION_TYPE,
 	destination_id: string,
-	amount: number,
-	metadata?: Record<string, string | number | boolean | object | null>,
-	is_credits: boolean = false
+	amount_regular: number,
+	amount_credits: number,
+	metadata?: Record<string, string | number | boolean | object | null>
 ): Promise<payment_splits> {
 	try {
 		return await prisma.payment_splits.create({
@@ -37,9 +37,9 @@ export async function createPaymentSplit(
 				payment_id,
 				destination_type,
 				destination_id,
-				amount,
+				amount_regular,
+				amount_credits,
 				metadata,
-				is_credits,
 			},
 		});
 	} catch (error) {
@@ -79,9 +79,9 @@ export async function createManyPaymentSplits(
 							payment: { connect: { payment_id } },
 							destination_type: split.destination_type,
 							destination_id: split.destination_id,
-							amount: split.amount,
+							amount_regular: split.amount_regular,
+							amount_credits: split.amount_credits,
 							metadata: split.metadata,
-							is_credits: split.is_credits,
 						},
 					})
 				)
@@ -106,14 +106,14 @@ export async function createManyPaymentSplits(
 }
 
 /**
- * Fetches a payment split by its split_id.
+ * Fetches a payment split by its payment_split_id.
  *
- * @param split_id - UUID of the split to fetch.
+ * @param payment_split_id - UUID of the split to fetch.
  * @returns The payment split.
  */
-export async function getPaymentSplitById(split_id: string) {
+export async function getPaymentSplitById(payment_split_id: string) {
 	return await prisma.payment_splits.findFirst({
-		where: { split_id },
+		where: { payment_split_id },
 		include: {
 			payment: true,
 		},
@@ -121,30 +121,30 @@ export async function getPaymentSplitById(split_id: string) {
 }
 
 /**
- * Updates a payment split by its split_id.
- * Fields `amount`, `destination_type`, `is_credits`, and `_id` are immutable.
+ * Updates a payment split by its payment_split_id.
+ * Fields `amount_regular`, 'amount_credits', `destination_type`, and `_id` are immutable.
  * Allows updating `destination_id` only if it is currently null.
  *
- * @param split_id - UUID of the split to update.
+ * @param payment_split_id - UUID of the split to update.
  * @param data - Allowed fields to update.
  * @returns The updated payment split.
  */
 export async function updatePaymentSplitById(
-	split_id: string,
+	payment_split_id: string,
 	data: Omit<
 		Partial<TPrisma.payment_splitsUpdateInput>,
-		'amount' | 'destination_type' | 'is_credits' | 'split_id' | 'payment_id'
+		'amount_regular' | 'amount_credits' | 'destination_type' | 'payment_split_id' | 'payment_id'
 	>
 ): Promise<TPrisma.payment_splitsUpdateInput> {
 	// If destination_id is included in the update, check whether it's allowed
 	if ('destination_id' in data) {
 		const existing_split = await prisma.payment_splits.findUnique({
-			where: { split_id },
+			where: { payment_split_id },
 			select: { destination_id: true },
 		});
 
 		if (!existing_split) {
-			throw new Error(`Payment split not found for id ${split_id}`);
+			throw new Error(`Payment split not found for id ${payment_split_id}`);
 		}
 
 		if (existing_split.destination_id !== null) {
@@ -153,7 +153,7 @@ export async function updatePaymentSplitById(
 	}
 
 	return await prisma.payment_splits.update({
-		where: { split_id },
+		where: { payment_split_id },
 		data,
 	});
 }
