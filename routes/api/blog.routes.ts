@@ -10,12 +10,13 @@ import authMiddleware from '../../middleware/auth';
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
+router.post('/upload/url', [authMiddleware], BlogController.createBlogImageByFile);
+
 router.get('/', BlogController.getBlogPosts);
-router.get('/:id', BlogController.getBlogPostById);
+
 router.get('/slug/:slug', BlogController.getBlogPostBySlug);
 router.post('/', [authMiddleware], validate(CreateBlogPostSchema, 'body'), BlogController.createBlogPost);
-router.put('/:id', [authMiddleware], validate(UpdateBlogPostSchema, 'body'), BlogController.updateBlogPost);
-router.delete('/:id', [authMiddleware], BlogController.deleteBlogPost);
+
 router.post('/search', validate(SearchBlogPostsSchema, 'body'), BlogController.searchBlogPosts);
 
 router.get('/category', BlogController.getBlogCategories);
@@ -28,7 +29,8 @@ router.post('/tag', [authMiddleware], validate(CreateBlogTagSchema), BlogControl
 router.delete('/tag/:id', [authMiddleware], BlogController.deleteBlogTag);
 router.put('/tag/:id', [authMiddleware], validate(UpdateBlogTagSchema), BlogController.updateBlogTag);
 
-router.post('/upload/file', [authMiddleware], upload.single('image'), BlogController.createBlogImageByFile);
-router.post('/upload/url', [authMiddleware], BlogController.createBlogImageByFile);
+router.get('/:id', BlogController.getBlogPostById);
+router.put('/:id', [authMiddleware], validate(UpdateBlogPostSchema, 'body'), BlogController.updateBlogPost);
+router.delete('/:id', [authMiddleware], BlogController.deleteBlogPost);
 
 export default router;

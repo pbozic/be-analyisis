@@ -11,17 +11,19 @@ import swaggerUi from 'swagger-ui-express';
 import YAML from 'js-yaml';
 import merge from 'lodash.merge';
 import cors from 'cors';
-import fileUploadLib from 'express-fileupload';
 import openapi from 'openapi-comment-parser';
 import compression from 'compression';
 import * as flatted from 'flatted';
+import multer from 'multer';
 
 import startCronJobs from './cron.js';
 import mainRouter from './routes/index.routes.js';
 import apiRouter from './routes/api.routes.js';
 import { asyncLocalStorage, log } from './lib/logger.js';
 import CustomConsole from './lib/logger.js';
-
+import BlogController from './controllers/BlogController.js';
+import authMiddleware from './middleware/auth.js';
+const upload = multer({ storage: multer.memoryStorage() });
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 // app.js
@@ -69,6 +71,10 @@ function makeConsoleOverride(level = 'info') {
 // ─── Middleware Setup ───────────────────────────────────────────────
 app.use(
 	compression({
+		filter: (req, res) => {
+			const contentType = req.headers['content-type'] || '';
+			return !contentType.startsWith('multipart/form-data');
+		},
 		level: 6,
 		threshold: 10 * 1024,
 	})
@@ -77,6 +83,13 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.disable('etag');
+app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
+app.post('/api/blog/upload/file', authMiddleware, upload.single('image'), BlogController.createBlogImageByFile);
+app.use(express.urlencoded({ limit: '512mb', extended: false }));
+
+//app.use(fileUploadLib());
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(
 	express.json({
 		verify: function (req, res, buf) {
@@ -85,11 +98,7 @@ app.use(
 		limit: '512mb',
 	})
 );
-app.use(express.urlencoded({ limit: '512mb', extended: false }));
-app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
-app.use(fileUploadLib());
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+
 // ─── Routes ─────────────────────────────────────────────────────────
 app.use(mainRouter);
 app.use(REST_API_ENDPOINT, apiRouter);
@@ -118,9 +127,18 @@ app.use((req, res, next) => {
 	next(createError(404));
 });
 app.use((err, req, res, next) => {
-	res.locals.message = err.message;
-	res.locals.error = isDev ? err : {};
-	res.status(err.status || 500);
-	res.render('error');
+	const isApi = req.originalUrl.startsWith('/api') || req.xhr || req.headers.accept?.includes('application/json');
+
+	if (isApi) {
+		res.status(err.status || 500).json({
+			message: err.message,
+			stack: isDev ? err.stack : undefined,
+		});
+	} else {
+		res.locals.message = err.message;
+		res.locals.error = isDev ? err : {};
+		res.status(err.status || 500);
+		res.render('error'); // Only for HTML routes
+	}
 });
 export default app;

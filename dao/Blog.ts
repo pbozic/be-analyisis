@@ -1,3 +1,5 @@
+import { disconnect } from 'node:process';
+
 import { Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
@@ -9,10 +11,19 @@ import type { CreateBlogPostInput, UpdateBlogPostInput } from '../types/blog/Blo
 export async function getBlogPosts(): Promise<BlogPost[]> {
 	try {
 		return await prisma.blog_posts.findMany({
+			where: {
+				publish_at: {
+					// Ensure we only fetch posts that are published or will be published in the future
+					lte: new Date(),
+				},
+			},
 			include: {
 				category: true,
 				image: true,
 				tags: true,
+			},
+			orderBy: {
+				publish_at: 'desc', // Order by publish date descending
 			},
 		});
 	} catch (error) {
@@ -83,27 +94,44 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 	}
 }
 
-export async function createBlogPost(data: CreateBlogPostInput): Promise<BlogPost> {
+export async function createBlogPost(data: CreateBlogPostInput, author_id: string): Promise<BlogPost> {
 	try {
-		// Ensure the data is valid before creating the post
-		const blogPostData = {
-			title: data.title,
-			short_content: data.short_content ?? null,
-			content: data.content,
-			publish_at: data.publish_at ? new Date(data.publish_at) : new Date(),
-			status: data.status ?? 'DRAFT',
-		};
+		let slug = data.title
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric characters with hyphens
+			.replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+		// Ensure slug is unique
+		let existingPost = await prisma.blog_posts.findFirst({
+			where: { slug },
+			select: { blog_posts_id: true },
+		});
+		let counter = 1;
+		while (existingPost) {
+			slug = `${slug}-${counter}`;
+			existingPost = await prisma.blog_posts.findFirst({
+				where: { slug },
+				select: { blog_posts_id: true },
+			});
+			counter++;
+		}
 
 		return await prisma.blog_posts.create({
 			data: {
-				...blogPostData,
-				...(data.category_id && { category: { connect: { blog_categories_id: data.category_id } } }),
-				...(data.image_file_id && { image: { connect: { files_id: data.image_file_id } } }),
-				...(data.tag_ids && {
-					tags: {
-						connect: data.tag_ids.map((tag) => ({ blog_tag_id: tag })),
-					},
-				}),
+				title: data.title,
+				short_content: data.short_content || null,
+				content: data.content,
+				publish_at: data.publish_at ? new Date(data.publish_at) : new Date(), // Default to now if not provided
+				slug,
+				author: {
+					connect: { user_id: author_id }, // Assuming author is a User type with user_id
+				},
+				category: {
+					connect: { blog_categories_id: data.category_id }, // Assuming category is a BlogCategory type with blog_categories_id
+				},
+				tags: {
+					connect: data.tag_ids.map((tag_id) => ({ blog_tags_id: tag_id })), // Assuming tags is a BlogTag type with blog_tag_id
+				},
+				image_file: data.image_file_id ? { connect: { files_id: data.image_file_id } } : undefined, // Assuming image_file is a File type with files_id
 			},
 			include: {
 				category: true,
@@ -129,9 +157,56 @@ export async function createBlogPost(data: CreateBlogPostInput): Promise<BlogPos
 
 export async function updateBlogPost(blog_posts_id: string, data: UpdateBlogPostInput): Promise<BlogPost> {
 	try {
+		let existingPost1 = await prisma.blog_posts.findUnique({
+			where: { blog_posts_id },
+			select: { slug: true },
+		});
+		if (!existingPost1) {
+			throw new Error(`Blog post with ID ${blog_posts_id} not found`);
+		}
+		// Generate slug from title
+		let slug =
+			existingPost1.slug ||
+			data.title
+				.toLowerCase()
+				.replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric characters with hyphens
+				.replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+
+		// Ensure slug is unique
+		let existingPost = await prisma.blog_posts.findFirst({
+			where: { slug, blog_posts_id: { not: blog_posts_id } }, // Exclude current post
+			select: { blog_posts_id: true },
+		});
+		let counter = 1;
+		while (existingPost) {
+			slug = `${slug}-${counter}`;
+			existingPost = await prisma.blog_posts.findFirst({
+				where: { slug, blog_posts_id: { not: blog_posts_id } }, // Exclude current post
+				select: { blog_posts_id: true },
+			});
+			counter++;
+		}
+
 		return await prisma.blog_posts.update({
 			where: { blog_posts_id },
-			data,
+			data: {
+				title: data.title,
+				short_content: data.short_content || null,
+				content: data.content,
+				publish_at: data.publish_at ? new Date(data.publish_at) : undefined, // Update only if provided
+				slug,
+				category: data.category_id ? { connect: { blog_categories_id: data.category_id } } : undefined,
+				tags: data.tag_ids
+					? {
+							connect: data.tag_ids.map((tag_id) => ({ blog_tags_id: tag_id })),
+							disconnect:
+								data.tag_ids.length === 0
+									? { blog_tags_id: { not: { in: data.tag_ids } } } // Disconnect all tags not in the provided list
+									: undefined, // If tag_ids is empty, disconnect all tags
+						}
+					: undefined,
+				image_file: data.image_file_id ? { connect: { files_id: data.image_file_id } } : undefined,
+			},
 			include: {
 				category: true,
 				image: true,

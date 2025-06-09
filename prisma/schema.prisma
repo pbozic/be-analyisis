@@ -1387,14 +1387,14 @@ model payments {
 }
 
 model payment_splits {
-  split_id         String                @id @default(uuid()) @db.Uuid
+  payment_split_id         String                @id @default(uuid()) @db.Uuid
   status                    SPLIT_STATUS               @default(RESERVED)
   payment_id String                @db.Uuid
   destination_type SPLIT_DESTINATION_TYPE
   destination_id   String?
-  amount           Int
+  amount_regular   Int
+  amount_credits   Int                     @default(0)
   metadata         Json?
-  is_credits        Boolean @default(false)
   created_at                DateTime                     @default(now()) @db.Timestamptz(6)
   updated_at                DateTime                     @default(now()) @updatedAt @db.Timestamptz(6)
   
