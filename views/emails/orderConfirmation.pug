@@ -36,6 +36,7 @@ html
         margin-top: 20px;
         border-top: 1px solid #ccc;
         padding-top: 10px;
+        flex-direction: column;
       }
       .summary-row {
         display: flex;
@@ -69,7 +70,9 @@ html
           .summary-row
             strong Total
             strong EUR #{total.toFixed(2)}
-
+          .summary-row
+            | DELIVERY
+            | EUR #{delivery_cost.toFixed(2)}
           .summary-row
             | #{paymentMethod}
             | EUR #{subtotal.toFixed(2)}

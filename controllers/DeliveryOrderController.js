@@ -893,29 +893,7 @@ async function completeOrder(req, res) {
 		await handleReferral(order.user_id);
 		sendDeliveryOrderNotifications(order.user, null, order.user_id, null, order.status);
 		// send email
-		let template = 'orderConfirmation';
-		let pdf = await getOrderAndPDF(order.order_id);
-		let templateData = {
-			userName: order.user.first_name,
-			restaurant: order.business.name,
-			orderDate: moment(order.created_at).format('DD/MM/YYYY HH:mm'),
-			orderId: order.order_id,
-			subtotal: order.details.sub_total_price,
-			total: order.details.total_price,
-			discount: order.details.discount_savings,
-			paymentMethod: order.payment.type,
-		};
-		EmailHelper.sendEmailTemplate(
-			'Order confirmation ' + order.order_id,
-			template,
-			order.user.email,
-			templateData,
-			{
-				filename: 'Order_confirmation_' + order.order_id + '.pdf',
-				content: Buffer.isBuffer(pdf) ? pdf : Buffer.from(pdf, 'binary'),
-				contentType: 'application/pdf',
-			}
-		);
+		sendPdfDeliveryOrder(order);
 		// order = await DeliveryOrderDao.updateOrderStatus(order.order_id,DELIVERY_ORDER_STATUS.SUCCESS)
 		io.to('order_' + order.order_id).emit('order_completed__delivery', order);
 		io.emit('driver_available', driver);
@@ -925,6 +903,26 @@ async function completeOrder(req, res) {
 		console.log(e);
 		res.status(500).json(e);
 	}
+}
+async function sendPdfDeliveryOrder(order) {
+	let template = 'orderConfirmation';
+	let pdf = await getOrderAndPDF(order.order_id);
+	let templateData = {
+		userName: order.user.first_name,
+		restaurant: order.business.name,
+		orderDate: moment(order.created_at).format('DD/MM/YYYY HH:mm'),
+		orderId: order.order_id,
+		subtotal: order.details.sub_total_price,
+		total: order.details.total_price,
+		discount: order.details.discount_savings,
+		delivery_cost: order.details.delivery_cost,
+		paymentMethod: order.payment.type,
+	};
+	EmailHelper.sendEmailTemplate('Order confirmation ' + order.order_id, template, order.user.email, templateData, {
+		filename: 'Order_confirmation_' + order.order_id + '.pdf',
+		content: Buffer.isBuffer(pdf) ? pdf : Buffer.from(pdf, 'binary'),
+		contentType: 'application/pdf',
+	});
 }
 /**
  * GET /delivery/orders/driver/:driver_id

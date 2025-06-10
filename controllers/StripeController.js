@@ -126,7 +126,9 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 		}
 		case 'promo_section': {
 			// 1) fetch the promo_sections_buy record by PI id
-			const promoBuy = await PromoDao.getPromoSectionBuyByStripeIntentId(piId);
+			const promoBuy = await PromoDao.getPromoSectionBuyByStripeIntentId(
+				paymentIntent.metadata.promo_section_buys_id
+			);
 			if (!promoBuy) {
 				console.error('No promo_sections_buy found for PI:', piId);
 				break;
@@ -144,6 +146,48 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 				expires_at: expires,
 			});
 			break;
+		}
+		case 'word_buy': {
+			const invoice = event.data.object;
+			const subId = invoice.subscription;
+			if (!subId) return res.json({ received: true });
+
+			// 1) Find your word_buy record by subscription ID
+			const wb = await prisma.word_buy.findFirst({
+				where: { stripe_subscription_id: subId },
+			});
+			if (!wb) {
+				// not one of ours
+				return res.json({ received: true });
+			}
+
+			// 2) Extract the billing period from the first line item
+			const line = invoice.lines.data[0];
+			if (!line?.period) {
+				console.error('No period info on invoice line for subscription:', subId);
+				return res.json({ received: true });
+			}
+
+			const periodStart = new Date(line.period.start * 1000);
+			const periodEnd = new Date(line.period.end * 1000);
+
+			// 3) Decide if this is the first payment or a renewal
+			const isFirstPayment = !wb.paid;
+
+			// 4) Build the update payload
+			const updateData = {
+				paid: true,
+				expires_at: periodEnd,
+			};
+			if (isFirstPayment) {
+				updateData.active_at = periodStart;
+			}
+
+			// 5) Persist updates
+			await prisma.word_buy.update({
+				where: { word_buy_id: wb.word_buy_id },
+				data: updateData,
+			});
 		}
 	}
 }
@@ -426,7 +470,7 @@ async function handleWebhook(req, res) {
 		case 'invoice.paid':
 		case 'customer.subscription.updated': {
 			const subscription = event.data.object;
-			if (subscription.metadata.type === 'word_buys') {
+			if (subscription.metadata.type === 'word_buy') {
 				console.log(`Updating word_buys for subscription ${subscription.id}`);
 				// Get new expiration date
 				const newExpiresAt = new Date(subscription.current_period_end * 1000);
@@ -439,7 +483,7 @@ async function handleWebhook(req, res) {
 					where: { word_buy_stripe_subscription_id: subscription.id },
 					data: { word_buy_stripe_subscription_id: null },
 				});
-				console.log('Updated expires_at for all word_buys in subscription:', subscription.id);
+				console.log('Updated expires_at for all word_buy in subscription:', subscription.id);
 			}
 			break;
 		}

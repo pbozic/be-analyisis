@@ -221,6 +221,60 @@ async function createWordBuy(args) {
 		},
 	});
 }
+export async function createWordBuySubscription(word_id, business_id, price, stripe_price_id, userId) {
+	try {
+		// 1) Load business & verify Stripe customer
+		const business = await prisma.business.findUnique({
+			where: { business_id },
+		});
+		if (!business?.stripe_customer_id) {
+			return res.status(400).json({ error: 'Business has no Stripe customer on file' });
+		}
+
+		// 2) Create the subscription in “incomplete” mode so we get a PaymentIntent
+		const subscription = await stripe.subscriptions.create({
+			customer: business.stripe_customer_id,
+			items: [{ price: stripe_price_id }],
+			payment_behavior: 'default_incomplete',
+			expand: ['latest_invoice.payment_intent'],
+			metadata: {
+				type: 'word_buy',
+				word_id: word_id,
+				business_id: business_id,
+				user_id: userId,
+				price: price.toString(),
+			},
+		});
+
+		// grab the PaymentIntent so the front‐end can confirm it
+		const paymentIntent = subscription.latest_invoice.payment_intent;
+		if (!paymentIntent?.client_secret) {
+			console.error('No PaymentIntent client_secret on subscription:', subscription.id);
+			return res.status(500).json({ error: 'PaymentIntent not created' });
+		}
+
+		// 3) Create your DB record (paid defaults to false)
+		const wordBuy = await prisma.word_buy.create({
+			data: {
+				word: { connect: { word_id } },
+				business: { connect: { business_id } },
+				price,
+				stripe_subscription_id: subscription.id,
+				// paid: false by default
+			},
+		});
+
+		// 4) Return the subscription + client secret
+		return {
+			wordBuyId: wordBuy.word_buy_id,
+			subscriptionId: subscription.id,
+			clientSecret: paymentIntent.client_secret,
+		};
+	} catch (err) {
+		console.error('createWordBuySubscription error:', err);
+		res.status(500).json({ error: err.message });
+	}
+}
 async function addStripeSubToWordBuy(id, stripe_subscription_id) {
 	return await prisma.word_buy.update({
 		where: {
@@ -288,4 +342,5 @@ export default {
 	getAllWordBuysByBusiness,
 	removeCategoryFromWord,
 	addCategoryToWord,
+	createWordBuySubscription,
 };

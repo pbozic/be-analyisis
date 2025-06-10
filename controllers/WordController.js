@@ -100,8 +100,9 @@ async function addCategoryToWord(req, res) {
 }
 async function createWordBuy(req, res) {
 	try {
-		const result = await WordDao.createWordBuy(req.body);
-		let stripeResult = await updateUserSubscription(userId);
+		let { word_id, business_id, price } = req.body;
+		const result = await WordDao.createWordBuySubscription(word_id, business_id, price, userId);
+
 		res.status(201).json(result);
 	} catch (error) {
 		console.error('Error creating word buy:', error);
