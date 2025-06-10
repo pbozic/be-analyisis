@@ -1665,7 +1665,15 @@ async function cancelOrder(req, res) {
 	const { order_id, status, cancellation_reason } = req.body;
 	console.info('TaxiOrderController', 'CANCEL ORDER', req.body);
 	try {
+		if (!order_id || !status) {
+			console.error('Order ID and status are required.')
+			return res.status(400).json({ error: 'Order ID and status are required.' });
+		}
 		let order = await TaxiOrderDao.getOrder(order_id);
+		if(!order){
+			console.error(`Order not found for order_id: ${order_id}`)
+			return res.status(400).json({ error: `Order not found for order_id: ${order_id}` });
+		}
 		console.info('TaxiOrderController', 'GET ORDER BY ID', order);
 		let user_id = order?.user_id;
 		let driver_id = order?.driver_id;
