@@ -1058,6 +1058,7 @@ model word_buy {
   price                  Float
   active_at              DateTime
   expires_at             DateTime
+  paid                   Boolean   @default(false)
   business_id            String    @db.Uuid
   business               business  @relation(fields: [business_id], references: [business_id])
   created_at             DateTime  @default(now()) @db.Timestamptz(6)

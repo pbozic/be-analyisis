@@ -903,6 +903,7 @@ async function completeOrder(req, res) {
 			subtotal: order.details.sub_total_price,
 			total: order.details.total_price,
 			discount: order.details.discount_savings,
+			delivery_cost: order.details.delivery_cost,
 			paymentMethod: order.payment.type,
 		};
 		EmailHelper.sendEmailTemplate(

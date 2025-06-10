@@ -77,6 +77,37 @@ async function getOrder(req, res) {
 async function getActiveTaxiOrders(req, res) {
 	const { user_id, type } = req.params;
 	try {
+		const activeOrders = await getActiveOrdersHelper(user_id, type);
+		res.status(200).json(activeOrders);
+	} catch (e) {
+		console.error('TaxiOrderController', e);
+		res.status(500).json({ message: 'Error fetching active orders' });
+	}
+}
+/**
+ * GET /taxi/orders/active/me/:type
+ * @tag Taxi
+ * @summary Get active taxi orders.
+ * @description This fetches all completed orders for a specific user.
+ * @operationId getCompletedDeliveryOrders
+ * @response 200 - Successful operation. Returns a list of completed orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+export async function getMyActiveTaxiOrders(req, res) {
+	const { type } = req.params;
+	const { user_id } = req.user;
+	try {
+		const activeOrders = await getActiveOrdersHelper(user_id, type);
+		res.status(200).json(activeOrders);
+	} catch (e) {
+		console.error('TaxiOrderController', e);
+		res.status(500).json({ message: 'Error fetching active orders' });
+	}
+}
+
+async function getActiveOrdersHelper(user_id, type) {
+	try {
 		const activeOrders = await TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, type);
 		if (activeOrders) {
 			// Iterate over the list of active orders
@@ -131,10 +162,10 @@ async function getActiveTaxiOrders(req, res) {
 				}
 			}
 		}
-		res.status(200).json(activeOrders);
-	} catch (e) {
-		console.error('TaxiOrderController', e);
-		res.status(500).json(e);
+		return activeOrders;
+		//res.status(200).json(activeOrders);
+	} catch {
+		throw new Error('Error fetching active orders');
 	}
 }
 /**
@@ -2458,4 +2489,5 @@ export default {
 	getTaxiOrdersWithPagination,
 	calculateTransferPrice,
 	requestTransferOrderPrice,
+	getMyActiveTaxiOrders,
 };

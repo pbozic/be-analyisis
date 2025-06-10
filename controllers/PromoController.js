@@ -398,7 +398,16 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 		if (unitPrice <= 0) {
 			return res.status(400).json({ error: 'Promo tier not priced' });
 		}
-
+		const buyRecord = await prisma.promo_sections_buy.create({
+			data: {
+				promo_sections_id,
+				business_id: businessUser.business_id,
+				user_id: userId,
+				payment_intent_id: paymentIntent.id, // we’re re-using this field to hold the PI id
+				tier,
+				// paid: false, active_at and expires_at are null by default
+			},
+		});
 		// 1c) Create the PaymentIntent
 		const amount = unitPrice * 100 * duration; // in cents
 		const paymentIntent = await stripe.paymentIntents.create({
@@ -410,6 +419,7 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 				business_id: businessUser.business_id,
 				promo_sections_id,
 				promo_section_name: promoSection.name,
+				promo_section_buys_id: buyRecord.promo_sections_buy_id,
 				tier: tier.toString(),
 				duration: duration.toString() * 30,
 				type: 'promo_section',
@@ -417,16 +427,6 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 		});
 
 		// 1d) Create the DB record for the purchase (paid defaults to false)
-		const buyRecord = await prisma.promo_sections_buy.create({
-			data: {
-				promo_sections_id,
-				business_id: businessUser.business_id,
-				user_id: userId,
-				payment_intent_id: paymentIntent.id, // we’re re-using this field to hold the PI id
-				tier,
-				// paid: false, active_at and expires_at are null by default
-			},
-		});
 
 		return res.json({
 			clientSecret: paymentIntent.client_secret,
