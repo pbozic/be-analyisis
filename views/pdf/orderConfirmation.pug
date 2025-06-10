@@ -87,6 +87,6 @@ html(lang="sl")
       br
       | VAT ID: #{order.business.tax_id}
       br
-      | Address: #{order.business.address?.addresss || order.details.provider_address.address}
+      | Address: #{order.business.address.address || order.details.provider_address.address}
 
     p.footer This document is digitally signed.
