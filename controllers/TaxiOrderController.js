@@ -1697,12 +1697,12 @@ async function cancelOrder(req, res) {
 	console.info('TaxiOrderController', 'CANCEL ORDER', req.body);
 	try {
 		if (!order_id || !status) {
-			console.error('Order ID and status are required.')
+			console.error('Order ID and status are required.');
 			return res.status(400).json({ error: 'Order ID and status are required.' });
 		}
 		let order = await TaxiOrderDao.getOrder(order_id);
-		if(!order){
-			console.error(`Order not found for order_id: ${order_id}`)
+		if (!order) {
+			console.error(`Order not found for order_id: ${order_id}`);
 			return res.status(400).json({ error: `Order not found for order_id: ${order_id}` });
 		}
 		console.info('TaxiOrderController', 'GET ORDER BY ID', order);
@@ -1773,14 +1773,19 @@ async function cancelOrder(req, res) {
 			}
 		}
 		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);
-		await TaxiHelper.handlePaymentRefund(
-			order.order_id,
-			order.user_id,
-			order.payment,
-			order?.cargo_preferences?.additional_workers,
-			order?.preferences?.vehicle_class,
-			skip_cancellation_fee
-		);
+		try {
+			await TaxiHelper.handlePaymentRefund(
+				order.order_id,
+				order.user_id,
+				order.payment,
+				order?.cargo_preferences?.additional_workers,
+				order?.preferences?.vehicle_class,
+				skip_cancellation_fee
+			);
+		} catch (error) {
+			console.error('Error handling payment refund: ', error);
+		}
+
 		if (order.driver_id) {
 			let driver = await DriverDao.getDriverById(order.driver_id);
 			await TaxiOrderDao.updateOrder(order_id, {
