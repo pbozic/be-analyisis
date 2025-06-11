@@ -897,7 +897,9 @@ async function completeOrder(req, res) {
 		// order = await DeliveryOrderDao.updateOrderStatus(order.order_id,DELIVERY_ORDER_STATUS.SUCCESS)
 		io.to('order_' + order.order_id).emit('order_completed__delivery', order);
 		io.emit('driver_available', driver);
-		SocketStore.closeRoom(`order_${order.order_id}`);
+		setTimeout(() => {
+			SocketStore.closeRoom(`order_${order.order_id}`);
+		}, 10000);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);
