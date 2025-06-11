@@ -101,6 +101,7 @@ async function addCategoryToWord(req, res) {
 async function createWordBuy(req, res) {
 	try {
 		let { word_id, business_id, price } = req.body;
+		let userId = req.user?.user_id;
 		const result = await WordDao.createWordBuySubscription(word_id, business_id, price, userId);
 
 		res.status(201).json(result);
