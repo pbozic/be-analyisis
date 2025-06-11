@@ -408,7 +408,7 @@ async function createDailyMeals(req, res) {
 		const subscriptions = await DeliveryOrderDao.getTodayDailyMealSubscriptionsByBusinessId(
 			deliveryDriver.daily_meal_business_id
 		);
-		if (!subscriptions) {
+		if (!subscriptions || subscriptions.length === 0) {
 			return res.status(404).json({ message: 'No subscriptions found.' });
 		}
 		const convertAddressToLocation = (address) => {
