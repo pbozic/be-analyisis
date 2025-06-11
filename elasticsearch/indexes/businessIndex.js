@@ -211,16 +211,16 @@ async function indexBusinesses(business_id = null, force = false) {
 				}
 			}
 			//fs.writeFileSync('business.json', JSON.stringify(business, null, 2))
-			let categoriesIds = [];
-			for (let menu of business.menus) {
-				for (let category of menu.categories) {
-					if (category.menu_categories_categories.length > 0) {
-						for (let cat of category.menu_categories_categories) {
-							categoriesIds.push(cat.category.categories_id);
-						}
-					}
-				}
-			}
+			// let categoriesIds = [];
+			// for (let menu of business.menus) {
+			// 	for (let category of menu.categories) {
+			// 		if (category.menu_categories_categories.length > 0) {
+			// 			for (let cat of category.menu_categories_categories) {
+			// 				categoriesIds.push(cat.category.categories_id);
+			// 			}
+			// 		}
+			// 	}
+			// }
 			console.log(categoriesIds?.length);
 			const doc = {
 				business_id: business.business_id,
@@ -263,7 +263,13 @@ async function indexBusinesses(business_id = null, force = false) {
 								if (!cat.names) return [];
 								return Object.values(cat.names).filter((value) => value !== '') || [];
 							}),
-							menu_category_id: categoriesIds,
+							menu_category_id: menu.categories.map((category) => {
+								if (category.menu_categories_categories.length > 0) {
+									for (let cat of category.menu_categories_categories) {
+										categoriesIds.push(cat.category.categories_id);
+									}
+								}
+							}),
 							translations: menu.categories.flatMap((cat) =>
 								cat.menu_categories_categories.flatMap(
 									(rel) => rel.category.translatable?.translations.map((t) => t.translation) || []
