@@ -1835,7 +1835,7 @@ async function rejectOrder(req, res) {
 		let userDriver = await DriverDao.getDriverByUserId(req.user.user_id);
 		console.log('user console.log', user?.user_id);
 		console.log('Driver console.log', driver?.user?.user_id);
-		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO)
+		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO && driver.driver_id === order.driver_id)
 			sendOrderNotifications(user, driver?.user, user_id, driver_id, status);
 		if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
 			new_status = TAXI_ORDER_STATUS.PENDING;
