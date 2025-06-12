@@ -1894,7 +1894,7 @@ async function rejectOrder(req, res) {
 			});
 			io.emit('driver_available', driver);
 		}
-		io.to('order_' + order.order_id).emit('order_rejected__taxi', order);
+		io.to('order_' + order.order_id).emit('order_rejected__taxi', { order, driver_id: order_driver_id });
 		io.to('order_' + order.order_id).emit('order_status_change__taxi', order);
 		let userActiveOrders = await TaxiOrderDao.userActiveOrders(order.user_id);
 		let pending = true;
