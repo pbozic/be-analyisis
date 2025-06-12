@@ -37,6 +37,9 @@ async function getCategoriesByType(type) {
 				icon: true,
 				sub_categories: true,
 			},
+			orderBy: {
+				name: 'asc',
+			},
 		});
 		for (let category of categories) {
 			category.translations = category.translatable.translations;

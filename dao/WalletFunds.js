@@ -116,9 +116,9 @@ async function getReservedWalletFunds(userId, order_id, reserveType = 'order') {
 		const walletFunds = await prisma.wallet_funds.findMany({
 			where: {
 				user_id: userId,
-				...(reserveType === 'order' ? { reserved_order: orderId } : {}),
+				...(reserveType === 'order' ? { reserved_order: order_id } : {}),
 				...(reserveType === 'daily_meals_subscription_payment'
-					? { reserved_daily_meals_subscription: orderId }
+					? { reserved_daily_meals_subscription: order_id }
 					: {}),
 			},
 			orderBy: {

@@ -316,198 +316,202 @@ async function handleWebhook(req, res) {
 		console.error('Webhook signature verification failed.', err.message);
 		return res.status(400).send(`Webhook Error: ${err.message}`);
 	}
-	let data = event.data.object;
-	let paymentIntent;
-	console.info('WEBHOOK', event.type);
-	// Handle the event
-	switch (event.type) {
-		case 'payment_intent.succeeded':
-			paymentIntent = event.data.object;
-			handlePaymentIntentSuccess(paymentIntent);
-			break;
-		case 'payment_intent.payment_failed':
-			paymentIntent = event.data.object;
-			console.log('FAIL', paymentIntent);
-			handlePaymentIntentFaliure(paymentIntent);
-			break;
-		case 'payment_intent.amount_capturable_updated': {
-			paymentIntent = event.data.object;
-			const { amount_capturable, metadata: { order_id, order_type, type } = {} } = paymentIntent;
-			switch (type) {
-				case 'order_payment':
-					// Check if conditions are met
-					if (amount_capturable > 0 && order_id && order_type === 'TRANSFER_PRIVATE') {
+	try {
+		let data = event.data.object;
+		let paymentIntent;
+		console.info('WEBHOOK', event.type);
+		// Handle the event
+		switch (event.type) {
+			case 'payment_intent.succeeded':
+				paymentIntent = event.data.object;
+				handlePaymentIntentSuccess(paymentIntent);
+				break;
+			case 'payment_intent.payment_failed':
+				paymentIntent = event.data.object;
+				console.log('FAIL', paymentIntent);
+				handlePaymentIntentFaliure(paymentIntent);
+				break;
+			case 'payment_intent.amount_capturable_updated': {
+				paymentIntent = event.data.object;
+				const { amount_capturable, metadata: { order_id, order_type, type } = {} } = paymentIntent;
+				switch (type) {
+					case 'order_payment':
+						// Check if conditions are met
+						if (amount_capturable > 0 && order_id && order_type === 'TRANSFER_PRIVATE') {
+							try {
+								await stripe.client.paymentIntents.capture(paymentIntent.id);
+								console.log(`Captured PaymentIntent for order ${order_id}`);
+							} catch (err) {
+								console.error(`Failed to capture PaymentIntent ${paymentIntent.id}:`, err);
+							}
+						} else if (amount_capturable > 0 && order_id && order_type === 'DELIVERY') {
+							try {
+								const order = await DeliveryOrderDao.updateOrderStatus(
+									order_id,
+									DELIVERY_ORDER_STATUS.PENDING
+								);
+								io.to('orders_' + order.business_id).emit('new_order', order);
+								io.to('orders_' + order.order_id).emit('order_status_change__delivery', order);
+								console.log(`Processed order ${order_id} into PENDING state.`);
+							} catch (err) {
+								console.error(`Failed to process order ${paymentIntent.id} into PENDING state: `, err);
+							}
+						}
+						break;
+					case 'daily_meals_subscription_payment':
 						try {
-							await stripe.client.paymentIntents.capture(paymentIntent.id);
+							// await stripe.client.paymentIntents.capture(paymentIntent.id);
 							console.log(`Captured PaymentIntent for order ${order_id}`);
 						} catch (err) {
 							console.error(`Failed to capture PaymentIntent ${paymentIntent.id}:`, err);
 						}
-					} else if (amount_capturable > 0 && order_id && order_type === 'DELIVERY') {
-						try {
-							const order = await DeliveryOrderDao.updateOrderStatus(
-								order_id,
-								DELIVERY_ORDER_STATUS.PENDING
-							);
-							io.to('orders_' + order.business_id).emit('new_order', order);
-							io.to('orders_' + order.order_id).emit('order_status_change__delivery', order);
-							console.log(`Processed order ${order_id} into PENDING state.`);
-						} catch (err) {
-							console.error(`Failed to process order ${paymentIntent.id} into PENDING state: `, err);
-						}
-					}
-					break;
-				case 'daily_meals_subscription_payment':
-					try {
-						// await stripe.client.paymentIntents.capture(paymentIntent.id);
-						console.log(`Captured PaymentIntent for order ${order_id}`);
-					} catch (err) {
-						console.error(`Failed to capture PaymentIntent ${paymentIntent.id}:`, err);
-					}
-					break;
+						break;
 
-				case 'wallet_topup':
-					break;
-				default:
-					console.error('Unsupported payment_intent.metadata.type');
-					break;
-			}
+					case 'wallet_topup':
+						break;
+					default:
+						console.error('Unsupported payment_intent.metadata.type');
+						break;
+				}
 
-			break;
-		}
-		case 'charge.succeeded':
-			paymentIntent = event.data.object;
-			break;
-		case 'charge.updated':
-			console.log(event.data.object);
-			handleChargeUpdate(event.data.object);
-			break;
-		/*** PRODUCT EVENTS ***/
-		case 'product.created': {
-			let product = await ProductDao.getProductByStripeId(data.id);
-			if (!product) {
-				product = await ProductDao.createProduct({
-					name: data.name,
-					description: data.description,
-					stripe_product_id: data.id,
-				});
+				break;
 			}
-			console.log(`Product added: ${data.name}`);
-			break;
-		}
-		case 'product.updated': {
-			let updatedProduct = await ProductDao.getProductByStripeId(data.id);
-			if (!updatedProduct) {
-				updatedProduct = await ProductDao.createProduct({
-					name: data.name,
-					description: data.description,
-					stripe_product_id: data.id,
-				});
-			} else {
-				updatedProduct = await ProductDao.updateProduct({
-					name: data.name,
-					description: data.description,
-					stripe_product_id: data.id,
-				});
+			case 'charge.succeeded':
+				paymentIntent = event.data.object;
+				break;
+			case 'charge.updated':
+				console.log(event.data.object);
+				handleChargeUpdate(event.data.object);
+				break;
+			/*** PRODUCT EVENTS ***/
+			case 'product.created': {
+				let product = await ProductDao.getProductByStripeId(data.id);
+				if (!product) {
+					product = await ProductDao.createProduct({
+						name: data.name,
+						description: data.description,
+						stripe_product_id: data.id,
+					});
+				}
+				console.log(`Product added: ${data.name}`);
+				break;
 			}
-			console.log(`Product updated: ${data.name}`);
-			break;
-		}
-		case 'product.deleted': {
-			let deletedProduct = await ProductDao.getProductByStripeId(data.id);
-			if (deletedProduct) {
-				await ProductDao.deleteProduct(data.id);
+			case 'product.updated': {
+				let updatedProduct = await ProductDao.getProductByStripeId(data.id);
+				if (!updatedProduct) {
+					updatedProduct = await ProductDao.createProduct({
+						name: data.name,
+						description: data.description,
+						stripe_product_id: data.id,
+					});
+				} else {
+					updatedProduct = await ProductDao.updateProduct({
+						name: data.name,
+						description: data.description,
+						stripe_product_id: data.id,
+					});
+				}
+				console.log(`Product updated: ${data.name}`);
+				break;
 			}
-			console.log(`Product deleted: ${data.id}`);
-			break;
-		}
-		/*** PRICE EVENTS ***/
-		case 'price.created': {
-			let price = await ProductDao.getPriceByStripeId(data.id);
-			if (!price) {
-				price = await ProductDao.createPrice({
-					amount: data.unit_amount,
-					currency: data.currency,
-					stripe_price_id: data.id,
-					stripe_product_id: data.product,
-				});
+			case 'product.deleted': {
+				let deletedProduct = await ProductDao.getProductByStripeId(data.id);
+				if (deletedProduct) {
+					await ProductDao.deleteProduct(data.id);
+				}
+				console.log(`Product deleted: ${data.id}`);
+				break;
 			}
-			console.log(`Price added: ${data.unit_amount / 100} ${data.currency}`);
-			break;
-		}
-		case 'price.updated': {
-			let updatedPrice = await ProductDao.getPriceByStripeId(data.id);
-			if (!updatedPrice) {
-				updatedPrice = await ProductDao.createPrice({
-					amount: data.unit_amount,
-					currency: data.currency,
-					stripe_price_id: data.id,
-					stripe_product_id: data.product,
-				});
-			} else {
-				updatedPrice = await ProductDao.updatePrice({
-					amount: data.unit_amount,
-					currency: data.currency,
-					stripe_price_id: data.id,
-					stripe_product_id: data.product,
-				});
+			/*** PRICE EVENTS ***/
+			case 'price.created': {
+				let price = await ProductDao.getPriceByStripeId(data.id);
+				if (!price) {
+					price = await ProductDao.createPrice({
+						amount: data.unit_amount,
+						currency: data.currency,
+						stripe_price_id: data.id,
+						stripe_product_id: data.product,
+					});
+				}
+				console.log(`Price added: ${data.unit_amount / 100} ${data.currency}`);
+				break;
 			}
-			console.log(`Price updated: ${data.unit_amount / 100} ${data.currency}`);
-			break;
-		}
-		case 'price.deleted': {
-			let deletedPrice = await ProductDao.getPriceByStripeId(data.id);
-			if (deletedPrice) {
-				await ProductDao.deletePrice(data.id);
+			case 'price.updated': {
+				let updatedPrice = await ProductDao.getPriceByStripeId(data.id);
+				if (!updatedPrice) {
+					updatedPrice = await ProductDao.createPrice({
+						amount: data.unit_amount,
+						currency: data.currency,
+						stripe_price_id: data.id,
+						stripe_product_id: data.product,
+					});
+				} else {
+					updatedPrice = await ProductDao.updatePrice({
+						amount: data.unit_amount,
+						currency: data.currency,
+						stripe_price_id: data.id,
+						stripe_product_id: data.product,
+					});
+				}
+				console.log(`Price updated: ${data.unit_amount / 100} ${data.currency}`);
+				break;
 			}
-			console.log(`Price deleted: ${data.id}`);
-			break;
-		}
-		// ... handle other event types
-		case 'checkout.session.completed':
-			handleSessionCompleted(data);
-			break;
-		case 'invoice.paid':
-		case 'customer.subscription.updated': {
-			const subscription = event.data.object;
-			if (subscription.metadata.type === 'word_buy') {
-				console.log(`Updating word_buys for subscription ${subscription.id}`);
-				// Get new expiration date
-				const newExpiresAt = new Date(subscription.current_period_end * 1000);
-				// Update `expires_at` in all word_buys linked to this subscription
-				await prisma.word_buy.updateMany({
-					where: { stripe_subscription_id: subscription.id },
-					data: { expires_at: newExpiresAt },
-				});
-				await prisma.business.updateMany({
-					where: { word_buy_stripe_subscription_id: subscription.id },
-					data: { word_buy_stripe_subscription_id: null },
-				});
-				console.log('Updated expires_at for all word_buy in subscription:', subscription.id);
+			case 'price.deleted': {
+				let deletedPrice = await ProductDao.getPriceByStripeId(data.id);
+				if (deletedPrice) {
+					await ProductDao.deletePrice(data.id);
+				}
+				console.log(`Price deleted: ${data.id}`);
+				break;
 			}
-			break;
-		}
-		case 'customer.subscription.deleted': {
-			const subscription = event.data.object;
-			if (subscription.metadata.type === 'word_buys') {
-				// Remove subscription ID from `word_buys` and set `deleted_at`
-				await prisma.word_buy.updateMany({
-					where: { stripe_subscription_id: subscription.id },
-					data: { stripe_subscription_id: null },
-				});
-				// Also update business record to remove subscription
-				await prisma.business.updateMany({
-					where: { word_buy_stripe_subscription_id: subscription.id },
-					data: { word_buy_stripe_subscription_id: null },
-				});
-				console.log('Subscription deleted, word_buys marked as deleted:', subscription.id);
+			// ... handle other event types
+			case 'checkout.session.completed':
+				handleSessionCompleted(data);
+				break;
+			case 'invoice.paid':
+			case 'customer.subscription.updated': {
+				const subscription = event.data.object;
+				if (subscription.metadata.type === 'word_buy') {
+					console.log(`Updating word_buys for subscription ${subscription.id}`);
+					// Get new expiration date
+					const newExpiresAt = new Date(subscription.current_period_end * 1000);
+					// Update `expires_at` in all word_buys linked to this subscription
+					await prisma.word_buy.updateMany({
+						where: { stripe_subscription_id: subscription.id },
+						data: { expires_at: newExpiresAt },
+					});
+					await prisma.business.updateMany({
+						where: { word_buy_stripe_subscription_id: subscription.id },
+						data: { word_buy_stripe_subscription_id: null },
+					});
+					console.log('Updated expires_at for all word_buy in subscription:', subscription.id);
+				}
+				break;
 			}
-			break;
+			case 'customer.subscription.deleted': {
+				const subscription = event.data.object;
+				if (subscription.metadata.type === 'word_buys') {
+					// Remove subscription ID from `word_buys` and set `deleted_at`
+					await prisma.word_buy.updateMany({
+						where: { stripe_subscription_id: subscription.id },
+						data: { stripe_subscription_id: null },
+					});
+					// Also update business record to remove subscription
+					await prisma.business.updateMany({
+						where: { word_buy_stripe_subscription_id: subscription.id },
+						data: { word_buy_stripe_subscription_id: null },
+					});
+					console.log('Subscription deleted, word_buys marked as deleted:', subscription.id);
+				}
+				break;
+			}
+			default:
+				console.log(`Unhandled event type ${event.type}`);
 		}
-		default:
-			console.log(`Unhandled event type ${event.type}`);
+		res.json({ received: true });
+	} catch (error) {
+		console.error(`Error handling webhook event ${event.type}: ${error}`);
 	}
-	res.json({ received: true });
 }
 export { handleWebhook };
 export default {

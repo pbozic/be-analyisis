@@ -211,17 +211,6 @@ async function indexBusinesses(business_id = null, force = false) {
 				}
 			}
 			//fs.writeFileSync('business.json', JSON.stringify(business, null, 2))
-			let categoriesIds = [];
-			for (let menu of business.menus) {
-				for (let category of menu.categories) {
-					if (category.menu_categories_categories.length > 0) {
-						for (let cat of category.menu_categories_categories) {
-							categoriesIds.push(cat.category.categories_id);
-						}
-					}
-				}
-			}
-			console.log(categoriesIds?.length);
 			const doc = {
 				business_id: business.business_id,
 				name: business.name,
@@ -244,37 +233,56 @@ async function indexBusinesses(business_id = null, force = false) {
 							lon: parseFloat(business.delivery_address.longitude),
 						}
 					: { lat: parseFloat(business.address.latitude), lon: parseFloat(usiness.address.longitude) },
-				menus: business.menus.map((menu) => {
-					// if (menu.isDailyMeal) {
-					// }
-					let menu1 = {
-						menu_category_name: menu.categories.flatMap((cat) => {
-							if (!cat.names) return [];
-							return Object.values(cat.names).filter((value) => value !== '') || [];
-						}),
-						menu_category_id: categoriesIds,
-						translations: menu.categories.flatMap((cat) =>
-							cat.menu_categories_categories.flatMap(
-								(rel) => rel.category.translatable?.translations.map((t) => t.translation) || []
-							)
-						),
-						menu_items: menu.categories.flatMap((cat) =>
-							cat.menu_items.map((item) => ({
-								menu_item_id: item.menu_item_id,
-								name: Object.values(item.names).filter((value) => value !== ''),
-								translations: item.menu_category?.menu_categories_categories.flatMap(
+				menus: business.menus
+					.filter((menu) => {
+						if (!menu.isDailyMeal) return true;
+
+						if (menu.date) {
+							const menuDate = new Date(menu.date);
+							menuDate.setHours(0, 0, 0, 0);
+							const today = new Date();
+							today.setHours(0, 0, 0, 0);
+							return menuDate >= today;
+						}
+						return false; // Skip daily meals with no date
+					})
+					.map((menu) => {
+						const menuCategoryIds = [];
+						menu.categories.forEach((category) => {
+							if (category.menu_categories_categories.length > 0) {
+								for (let cat of category.menu_categories_categories) {
+									menuCategoryIds.push(cat.categories_id);
+								}
+							}
+						});
+						let menu1 = {
+							menu_category_name: menu.categories.flatMap((cat) => {
+								if (!cat.names) return [];
+								return Object.values(cat.names).filter((value) => value !== '') || [];
+							}),
+							menu_category_id: menuCategoryIds,
+							translations: menu.categories.flatMap((cat) =>
+								cat.menu_categories_categories.flatMap(
 									(rel) => rel.category.translatable?.translations.map((t) => t.translation) || []
-								),
-								description: Object.values(item.description).filter((value) => value !== ''),
-							}))
-						),
-					};
-					if (menu.isDailyMeal) {
-						menu1.isDailyMeal = true;
-						menu1.date = menu.date;
-					}
-					return menu1;
-				}),
+								)
+							),
+							menu_items: menu.categories.flatMap((cat) =>
+								cat.menu_items.map((item) => ({
+									menu_item_id: item.menu_item_id,
+									name: Object.values(item.names).filter((value) => value !== ''),
+									translations: item.menu_category?.menu_categories_categories.flatMap(
+										(rel) => rel.category.translatable?.translations.map((t) => t.translation) || []
+									),
+									description: Object.values(item.description).filter((value) => value !== ''),
+								}))
+							),
+						};
+						if (menu.isDailyMeal) {
+							menu1.isDailyMeal = true;
+							menu1.date = menu.date;
+						}
+						return menu1;
+					}),
 				promo_sections: business.promo_sections.map((section) => {
 					return {
 						name: section.promo_section.name,
