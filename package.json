@@ -22,6 +22,7 @@
         "seed": "node prisma/seed.js",
         "generate:business": "node lib/generateBusnisses.js",
         "es-tunnel": "ssh -L 19200:localhost:9200 KlikniLive",
+         "es-tunnel-dev": "ssh -L 29200:localhost:9200 KlikniDev",
         "d": "docker compose --env-file .env -f ./Docker/docker-compose.yml exec node-app",
         "postinstall": "node ./setup-aliases.js && node ./install-wkhtmltopdf.js",
         "alias:setup": "node ./setup-aliases.js",

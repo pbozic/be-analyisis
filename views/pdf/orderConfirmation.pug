@@ -66,7 +66,13 @@ html(lang="sl")
             td #{item.quantity}
             td.right #{item.price.toFixed(2)}
             td.right #{(item.price * item.quantity).toFixed(2)}
-
+        if order.details.minimum_order_fee
+          tr
+            td Minimum Order Fee
+            td 9.50%
+            td 1
+            td.right #{order.details.minimum_order_fee.toFixed(2)}
+            td.right #{order.details.minimum_order_fee.toFixed(2)}
         // Add delivery row
         tr
           td Delivery

@@ -68,14 +68,14 @@ html
 
         .summary
           .summary-row
-            strong Total
+            strong Total 
             strong EUR #{total.toFixed(2)}
           .summary-row
             | DELIVERY
             | EUR #{delivery_cost.toFixed(2)}
           .summary-row
             | #{paymentMethod}
-            | EUR #{subtotal.toFixed(2)}
+            | EUR #{total.toFixed(2)}
 
           .summary-row
             | Discount
