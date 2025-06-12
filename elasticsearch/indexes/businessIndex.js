@@ -258,18 +258,20 @@ async function indexBusinesses(business_id = null, force = false) {
 						return false; // Skip daily meals with no date
 					})
 					.map((menu) => {
+						const menuCategoryIds = [];
+						menu.categories.forEach((category) => {
+							if (category.menu_categories_categories.length > 0) {
+								for (let cat of category.menu_categories_categories) {
+									menuCategoryIds.push(cat.categories_id);
+								}
+							}
+						});
 						let menu1 = {
 							menu_category_name: menu.categories.flatMap((cat) => {
 								if (!cat.names) return [];
 								return Object.values(cat.names).filter((value) => value !== '') || [];
 							}),
-							menu_category_id: menu.categories.map((category) => {
-								if (category.menu_categories_categories.length > 0) {
-									for (let cat of category.menu_categories_categories) {
-										categoriesIds.push(cat.category.categories_id);
-									}
-								}
-							}),
+							menu_category_id: menuCategoryIds,
 							translations: menu.categories.flatMap((cat) =>
 								cat.menu_categories_categories.flatMap(
 									(rel) => rel.category.translatable?.translations.map((t) => t.translation) || []
