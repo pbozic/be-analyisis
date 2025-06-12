@@ -1828,15 +1828,15 @@ async function rejectOrder(req, res) {
 				.status(410)
 				.json({ error: 'Order was already canceled by customer.', error_type: 'ERR_ORDER_ALREADY_CANCELED' });
 		}
-		let user_id = order?.user_id;
-		let driver_id = order?.driver_id;
-		let user = await UsersDao.getUserById(user_id);
-		let driver = driver_id ? await DriverDao.getDriverById(driver_id) : null;
-		let userDriver = await DriverDao.getDriverByUserId(req.user.user_id);
+		let customer_user_id = order?.user_id;
+		let order_driver_id = order?.driver_id;
+		let user = await UsersDao.getUserById(customer_user_id);
+		let orderDriver = order_driver_id ? await DriverDao.getDriverById(order_driver_id) : null;
+		let rejectingDriver = await DriverDao.getDriverByUserId(req.user.user_id);
 		console.log('user console.log', user?.user_id);
-		console.log('Driver console.log', driver?.user?.user_id);
-		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO && driver.driver_id === order.driver_id)
-			sendOrderNotifications(user, driver?.user, user_id, driver_id, status);
+		console.log('Driver console.log', orderDriver?.user?.user_id);
+		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO && rejectingDriver.driver_id === order.driver_id)
+			sendOrderNotifications(user, rejectingDriver?.user, customer_user_id, order_driver_id, status);
 		if (status === TAXI_ORDER_STATUS.TAXI_REJECTED) {
 			new_status = TAXI_ORDER_STATUS.PENDING;
 			await TaxiOrderDao.updateOrder(order_id, {
@@ -1844,11 +1844,11 @@ async function rejectOrder(req, res) {
 				last_sent_at: null,
 			});
 		}
-		SocketStore.removeUserFromRoom(userDriver?.user_id, `order_${order_id}`);
-		if (userDriver && userDriver.driver_id) {
-			await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, userDriver.driver_id);
+		SocketStore.removeUserFromRoom(rejectingDriver?.user_id, `order_${order_id}`);
+		if (rejectingDriver && rejectingDriver.driver_id) {
+			await TaxiHelper.revokeTaxiOrderFromDriver(order.order_id, rejectingDriver.driver_id);
 			await ScoringPointsDao.createScoringPoints(
-				userDriver.business_id,
+				rejectingDriver.business_id,
 				req.user.user_id,
 				null,
 				order.order_id,
@@ -1860,7 +1860,7 @@ async function rejectOrder(req, res) {
 				where: {
 					taxi_order_sent_driver_unique: {
 						order_id,
-						driver_id: userDriver.driver_id,
+						driver_id: rejectingDriver.driver_id,
 					},
 				},
 			});
@@ -1907,7 +1907,7 @@ async function rejectOrder(req, res) {
 		if (pending) {
 			if (UserSockets.get(order.user_id) && order.creating_user_id !== order.user_id) {
 				console.log('EMITTING order_restart_search');
-				UserSockets.get(order.user_id).emit('order_restart_search', order);
+				UserSockets.get(order.user_id).emit('order_restart_search', { order, driver_id: order_driver_id });
 			}
 		}
 		console.log('order_status_change__taxi', 'order_rejected__taxi');
