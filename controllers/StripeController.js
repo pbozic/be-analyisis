@@ -9,7 +9,7 @@ import BusinessDao from '../dao/Business.js';
 import PromoDao from '../dao/Promo.js';
 import ProductDao from '../dao/Product.js';
 import PaymentDao from '../dao/Payment.ts';
-import UserDao from '../dao/User.ts';
+import UserDao from '../dao/User.js';
 import WalletFundsHelpers from '../lib/WalletFundsHelpers.js';
 import { DELIVERY_ORDER_STATUS, FUNDS_TYPE, SERVICE_TYPE, ORDER_TYPE, TAXI_ORDER_STATUS } from '../lib/constants.js';
 import { calculateDeliveryOrderPaymentCuts } from '../lib/deliveryHelpers.js';
