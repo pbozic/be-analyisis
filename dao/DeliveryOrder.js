@@ -407,12 +407,10 @@ async function acceptOrderDelivery(order, deliverer_id, vehicle_id) {
 		throw new Error(e);
 	}
 }
-export async function acceptOrderDeliveryWithRawLock(order, delivererId, vehicleId, isDeliveryDriver) {
-	const { order_id: orderId, timeline: oldTimeline } = order;
-
+export async function acceptOrderDeliveryWithRawLock(order_id, delivererId, vehicleId, isDeliveryDriver) {
 	// Validate the UUID format to prevent SQL injection
-	if (!isUuid(orderId)) {
-		throw new Error(`Invalid order_id format: ${orderId}`);
+	if (!isUuid(order_id)) {
+		throw new Error(`Invalid order_id format: ${order_id}`);
 	}
 
 	return prisma.$transaction(async (tx) => {
@@ -424,7 +422,10 @@ export async function acceptOrderDeliveryWithRawLock(order, delivererId, vehicle
           FOR UPDATE NOWAIT`,
 			orderId
 		);
-
+		let orderOld = await tx.delivery_orders.findUnique({
+			where: { order_id: orderId },
+			select: { timeline: true },
+		});
 		// 2) Update the delivery_order_sent record and mark driver on_order
 		if (isDeliveryDriver) {
 			await tx.delivery_order_sent.update({
@@ -454,7 +455,7 @@ export async function acceptOrderDeliveryWithRawLock(order, delivererId, vehicle
 		const updated = await tx.delivery_orders.update({
 			where: { order_id: orderId },
 			data: {
-				timeline: addEntryToDeliveryOrderTimeline(oldTimeline, DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED, {
+				timeline: addEntryToDeliveryOrderTimeline(orderOld.timeline, DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED, {
 					driver_id: delivererId,
 				}),
 				delivery_driver: isDeliveryDriver ? { connect: { delivery_driver_id: delivererId } } : undefined,
