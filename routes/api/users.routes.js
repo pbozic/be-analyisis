@@ -79,5 +79,5 @@ router.patch('/me/marketing-notifications', UserController.updateMarketingNotifi
 router.patch('/me/ads-personalization', UserController.updateAdsPersonalization);
 router.patch('/me/newsletter', UserController.updateNewsletter);
 router.post('/me/request-data', UserController.requestData);
-router.post('/me/remove-payment-method/:pm_id', StripeController.removePaymentMethod);
+router.delete('/me/remove-payment-method/:pm_id', StripeController.removePaymentMethod);
 export default router;

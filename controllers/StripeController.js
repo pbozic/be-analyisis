@@ -9,6 +9,7 @@ import BusinessDao from '../dao/Business.js';
 import PromoDao from '../dao/Promo.js';
 import ProductDao from '../dao/Product.js';
 import PaymentDao from '../dao/Payment.ts';
+import UserDao from '../dao/User.ts';
 import WalletFundsHelpers from '../lib/WalletFundsHelpers.js';
 import { DELIVERY_ORDER_STATUS, FUNDS_TYPE, SERVICE_TYPE, ORDER_TYPE, TAXI_ORDER_STATUS } from '../lib/constants.js';
 import { calculateDeliveryOrderPaymentCuts } from '../lib/deliveryHelpers.js';
@@ -515,21 +516,29 @@ async function handleWebhook(req, res) {
 }
 
 /**
- * DELETE /users/me/payment-methods/{pm_id}
- * @tag Users
- * @summary Remove a payment method from the authenticated user's Stripe customer account
- * @description Removes the specified Stripe payment method from the authenticated user's Stripe customer account.
- * @operationId removePaymentMethod
- * @pathParam {string} pm_id - The Stripe payment method ID to remove
- * @response 200 - Payment method removed successfully
- * @responseContent {object} 200.application/json
- * @responseExample 200.application/json {
- *   "message": "Payment method removed successfully"
- * }
- * @response 400 - Error removing payment method
- * @responseContent {object} 400.application/json
- * @prisma_model users
+ *
+ * - DELETE /me/remove-payment-method/:pm_id
+ * - @tag Users
+ * - @summary Remove a payment method from the authenticated user's Stripe customer account
+ * - @description Removes the specified Stripe payment method from the authenticated user's Stripe customer account. Returns the updated list of payment methods.
+ * - @operationId removePaymentMethod
+ * - @pathParam {string} pm_id - The Stripe payment method ID to remove
+ * - @response 200 - Payment method removed successfully, returns updated payment methods
+ * - @responseContent {object} 200.application/json
+ * - @responseExample 200.application/json {
+ *     "message": "Payment method removed successfully",
+ *     "paymentMethods": [
+ *       {
+ *         "id": "pm_1...",
+ *         "card": { "brand": "visa", "last4": "4242" }
+ *       }
+ *     ]
+ *   }
+ * - @response 400 - Error removing payment method
+ * - @responseContent {object} 400.application/json
+ * - @prisma_model users
  */
+
 async function removePaymentMethod(req, res) {
 	try {
 		const { pm_id } = req.params;
@@ -540,8 +549,19 @@ async function removePaymentMethod(req, res) {
 		if (!user?.stripe_customer_id) {
 			return res.status(400).json({ error: 'User does not have a Stripe customer ID' });
 		}
+		// List all payment methods for the customer
+		const paymentMethods = await stripe.getPaymentMethods(user.stripe_customer_id);
+		const hasPaymentMethod = paymentMethods.some((pm) => pm.id === pm_id);
+		if (!hasPaymentMethod) {
+			return res.status(400).json({ error: 'Payment method not found for this user' });
+		}
 		await stripe.client.paymentMethods.detach(pm_id);
-		return res.status(200).json({ message: 'Payment method removed successfully' });
+		// Return updated payment methods
+		const updatedPaymentMethods = await stripe.getPaymentMethods(user.stripe_customer_id);
+		return res.status(200).json({
+			message: 'Payment method removed successfully',
+			paymentMethods: updatedPaymentMethods,
+		});
 	} catch (error) {
 		console.error('Error removing payment method:', error);
 		return res.status(400).json({ error: 'Error removing payment method' });
