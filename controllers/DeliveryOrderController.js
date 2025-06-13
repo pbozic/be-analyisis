@@ -676,6 +676,12 @@ async function acceptOrderDelivery(req, res) {
 	const isDD = !!user.delivery_driver;
 
 	try {
+		let order = await DeliveryOrderDao.getOrder(order_id, {
+			include: {
+				delivery_driver: true,
+				driver: true,
+			},
+		});
 		let deliverer = user?.delivery_driver?.delivery_driver_id
 			? await DeliveryDriverDao.getDeliveryDriverById(deliverer_id)
 			: await DriverDao.getDriverById(deliverer_id);
@@ -704,13 +710,13 @@ async function acceptOrderDelivery(req, res) {
 				.status(400)
 				.json({ error: 'Order is already accepted.', errorType: 'ERR_ORDER_ALREADY_ACCEPTED' });
 		}
-		const order = await DeliveryOrderDao.acceptOrderDeliveryWithRawLock(
+		const order2 = await DeliveryOrderDao.acceptOrderDeliveryWithRawLock(
 			order_id,
 			deliverer_id,
 			user.current_vehicle?.vehicle_id,
 			isDD
 		);
-		let newOrder = await DeliveryOrderDao.getOrder(order.order_id, {
+		let newOrder = await DeliveryOrderDao.getOrder(order2.order_id, {
 			include: {
 				delivery_driver: true,
 				driver: true,
