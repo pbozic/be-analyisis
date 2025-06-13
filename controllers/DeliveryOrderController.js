@@ -676,6 +676,34 @@ async function acceptOrderDelivery(req, res) {
 	const isDD = !!user.delivery_driver;
 
 	try {
+		let deliverer = user?.delivery_driver?.delivery_driver_id
+			? await DeliveryDriverDao.getDeliveryDriverById(deliverer_id)
+			: await DriverDao.getDriverById(deliverer_id);
+		if (!deliverer.online) {
+			return res.status(400).json({ error: `You are offline!.`, errorType: 'ERR_DRIVER_OFFLINE' });
+		} else if (
+			//TODO: handle dispatcher canceled.
+			[].includes(order.status)
+		) {
+			return res
+				.status(400)
+				.json({ error: `Order has been canceled: ${order.status}.`, errorType: 'ERR_ORDER_ALREADY_CANCELED' });
+		} else if (
+			![DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(
+				order.status
+			)
+		) {
+			return res
+				.status(400)
+				.json({ error: 'Order cannot be accepted in this state.', errorType: 'ERR_ORDER_UNACCEPTABLE' });
+		} else if (
+			(order.driver?.driver_id && order.driver?.driver_id !== deliverer_id) ||
+			(order.delivery_driver?.delivery_driver_id && order.delivery_driver?.delivery_driver_id !== deliverer_id)
+		) {
+			return res
+				.status(400)
+				.json({ error: 'Order is already accepted.', errorType: 'ERR_ORDER_ALREADY_ACCEPTED' });
+		}
 		const order = await DeliveryOrderDao.acceptOrderDeliveryWithRawLock(
 			order_id,
 			deliverer_id,

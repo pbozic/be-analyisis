@@ -457,7 +457,6 @@ export async function acceptOrderDeliveryWithRawLock(order, delivererId, vehicle
 				timeline: addEntryToDeliveryOrderTimeline(oldTimeline, DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED, {
 					driver_id: delivererId,
 				}),
-				status: DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,
 				delivery_driver: isDeliveryDriver ? { connect: { delivery_driver_id: delivererId } } : undefined,
 				driver: !isDeliveryDriver ? { connect: { driver_id: delivererId } } : undefined,
 				vehicle: vehicleId ? { connect: { vehicle_id: vehicleId } } : undefined,
