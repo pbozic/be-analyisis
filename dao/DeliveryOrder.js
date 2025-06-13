@@ -417,7 +417,7 @@ export async function acceptOrderDeliveryWithRawLock(orderId, delivererId, vehic
 		await tx.$executeRawUnsafe(
 			`SELECT 1
          FROM delivery_orders
-        WHERE order_id = $1
+        WHERE order_id = $1::uuid
           FOR UPDATE NOWAIT`,
 			orderId
 		);
