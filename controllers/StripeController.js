@@ -513,7 +513,44 @@ async function handleWebhook(req, res) {
 		console.error(`Error handling webhook event ${event.type}: ${error}`);
 	}
 }
+
+/**
+ * DELETE /users/me/payment-methods/{pm_id}
+ * @tag Users
+ * @summary Remove a payment method from the authenticated user's Stripe customer account
+ * @description Removes the specified Stripe payment method from the authenticated user's Stripe customer account.
+ * @operationId removePaymentMethod
+ * @pathParam {string} pm_id - The Stripe payment method ID to remove
+ * @response 200 - Payment method removed successfully
+ * @responseContent {object} 200.application/json
+ * @responseExample 200.application/json {
+ *   "message": "Payment method removed successfully"
+ * }
+ * @response 400 - Error removing payment method
+ * @responseContent {object} 400.application/json
+ * @prisma_model users
+ */
+async function removePaymentMethod(req, res) {
+	try {
+		const { pm_id } = req.params;
+		if (!pm_id) {
+			return res.status(400).json({ error: 'Missing payment method ID' });
+		}
+		const user = await UserDao.getUserById(req.user.user_id);
+		if (!user?.stripe_customer_id) {
+			return res.status(400).json({ error: 'User does not have a Stripe customer ID' });
+		}
+		await stripe.client.paymentMethods.detach(pm_id);
+		return res.status(200).json({ message: 'Payment method removed successfully' });
+	} catch (error) {
+		console.error('Error removing payment method:', error);
+		return res.status(400).json({ error: 'Error removing payment method' });
+	}
+}
+
 export { handleWebhook };
+export { removePaymentMethod };
 export default {
 	handleWebhook,
+	removePaymentMethod,
 };
