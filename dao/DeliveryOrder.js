@@ -420,17 +420,17 @@ export async function acceptOrderDeliveryWithRawLock(order_id, delivererId, vehi
          FROM delivery_orders
         WHERE order_id = $1::uuid
           FOR UPDATE NOWAIT`,
-			orderId
+			order_id
 		);
 		let orderOld = await tx.delivery_orders.findUnique({
-			where: { order_id: orderId },
+			where: { order_id: order_id },
 			select: { timeline: true },
 		});
 		// 2) Update the delivery_order_sent record and mark driver on_order
 		if (isDeliveryDriver) {
 			await tx.delivery_order_sent.update({
 				where: {
-					delivery_order_sent_delivery_driver_unique: { order_id: orderId, delivery_driver_id: delivererId },
+					delivery_order_sent_delivery_driver_unique: { order_id: order_id, delivery_driver_id: delivererId },
 				},
 				data: { accepted: true },
 			});
@@ -441,7 +441,7 @@ export async function acceptOrderDeliveryWithRawLock(order_id, delivererId, vehi
 		} else {
 			await tx.delivery_order_sent.update({
 				where: {
-					delivery_order_sent_driver_unique: { order_id: orderId, driver_id: delivererId },
+					delivery_order_sent_driver_unique: { order_id: order_id, driver_id: delivererId },
 				},
 				data: { accepted: true },
 			});
@@ -453,7 +453,7 @@ export async function acceptOrderDeliveryWithRawLock(order_id, delivererId, vehi
 
 		// 3) Update the delivery_orders row itself, including timeline and associations
 		const updated = await tx.delivery_orders.update({
-			where: { order_id: orderId },
+			where: { order_id: order_id },
 			data: {
 				timeline: addEntryToDeliveryOrderTimeline(orderOld.timeline, DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED, {
 					driver_id: delivererId,
