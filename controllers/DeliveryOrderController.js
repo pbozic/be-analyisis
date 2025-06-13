@@ -589,7 +589,7 @@ async function createDailyMeals(req, res) {
  * @responseContent {DeliveryOrder} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
-async function acceptOrderDelivery(req, res) {
+async function acceptOrderDeliveryOld(req, res) {
 	//console.log("accept order user_id", req.body.user?.user_id);
 	const { order_id, user } = req.body;
 	const deliverer_id = user?.delivery_driver?.delivery_driver_id || user?.driver?.driver_id;
@@ -667,6 +667,39 @@ async function acceptOrderDelivery(req, res) {
 	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
+	}
+}
+
+async function acceptOrderDelivery(req, res) {
+	const { order_id, user } = req.body;
+	const deliverer_id = user.delivery_driver?.delivery_driver_id ?? user.driver?.driver_id;
+	const isDD = !!user.delivery_driver;
+
+	try {
+		const order = await DeliveryOrderDao.acceptOrderDeliveryWithRawLock(
+			order_id,
+			deliverer_id,
+			user.current_vehicle?.vehicle_id,
+			isDD
+		);
+
+		// sockets, notifications, etc.
+		SocketStore.addUserToRoom(deliverer_id, `order_${order_id}`);
+		io.to(`order_${order_id}`).emit('order_accepted__delivery', order);
+		io.emit('driver_unavailable', deliverer_id);
+		await revokeDeliveryOrderFromDrivers(order_id);
+
+		res.status(200).json(order);
+	} catch (err) {
+		// Postgres NOWAIT lock error will bubble up here
+		const msg = err.code === '55P03' ? 'Order is already being claimed' : err.message;
+
+		if (err.code === '55P03' /* lock_not_available */) {
+			return res.status(409).json({ error: msg, errorType: 'ERR_ORDER_ALREADY_ACCEPTED' });
+		}
+
+		console.error(err);
+		res.status(500).json({ error: msg });
 	}
 }
 /**
