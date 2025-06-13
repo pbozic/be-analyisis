@@ -407,13 +407,16 @@ async function acceptOrderDelivery(order, deliverer_id, vehicle_id) {
 		throw new Error(e);
 	}
 }
-export async function acceptOrderDeliveryWithRawLock(orderId, delivererId, vehicleId, isDeliveryDriver) {
+export async function acceptOrderDeliveryWithRawLock(order, delivererId, vehicleId, isDeliveryDriver) {
+	const { order_id: orderId, timeline: oldTimeline } = order;
+
+	// Validate the UUID format to prevent SQL injection
 	if (!isUuid(orderId)) {
 		throw new Error(`Invalid order_id format: ${orderId}`);
 	}
 
 	return prisma.$transaction(async (tx) => {
-		// 1) acquire the row‐level lock (will throw immediately if someone else has it)
+		// 1) Acquire a row-level lock on the delivery_orders row
 		await tx.$executeRawUnsafe(
 			`SELECT 1
          FROM delivery_orders
@@ -422,14 +425,11 @@ export async function acceptOrderDeliveryWithRawLock(orderId, delivererId, vehic
 			orderId
 		);
 
-		// 2) mark the "sent" ping accepted + flag the driver as on_order
+		// 2) Update the delivery_order_sent record and mark driver on_order
 		if (isDeliveryDriver) {
 			await tx.delivery_order_sent.update({
 				where: {
-					delivery_order_sent_delivery_driver_unique: {
-						order_id: orderId,
-						delivery_driver_id: delivererId,
-					},
+					delivery_order_sent_delivery_driver_unique: { order_id: orderId, delivery_driver_id: delivererId },
 				},
 				data: { accepted: true },
 			});
@@ -440,10 +440,7 @@ export async function acceptOrderDeliveryWithRawLock(orderId, delivererId, vehic
 		} else {
 			await tx.delivery_order_sent.update({
 				where: {
-					delivery_order_sent_driver_unique: {
-						order_id: orderId,
-						driver_id: delivererId,
-					},
+					delivery_order_sent_driver_unique: { order_id: orderId, driver_id: delivererId },
 				},
 				data: { accepted: true },
 			});
@@ -453,20 +450,17 @@ export async function acceptOrderDeliveryWithRawLock(orderId, delivererId, vehic
 			});
 		}
 
-		// 3) finally, update the order row itself
+		// 3) Update the delivery_orders row itself, including timeline and associations
 		const updated = await tx.delivery_orders.update({
 			where: { order_id: orderId },
 			data: {
+				timeline: addEntryToDeliveryOrderTimeline(oldTimeline, DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED, {
+					driver_id: delivererId,
+				}),
+				status: DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,
 				delivery_driver: isDeliveryDriver ? { connect: { delivery_driver_id: delivererId } } : undefined,
 				driver: !isDeliveryDriver ? { connect: { driver_id: delivererId } } : undefined,
 				vehicle: vehicleId ? { connect: { vehicle_id: vehicleId } } : undefined,
-				status: DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,
-				timeline: addEntryToDeliveryOrderTimeline(
-					// you can fetch the old timeline first or pass it in
-					/* oldTimeline */ [],
-					DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,
-					{ driver_id: delivererId }
-				),
 			},
 			include: {
 				delivery_driver: true,
@@ -475,7 +469,7 @@ export async function acceptOrderDeliveryWithRawLock(orderId, delivererId, vehic
 			},
 		});
 
-		// 4) returning from the transaction commits it → releasing the lock
+		// 4) Commit (implicit) releases the lock
 		return updated;
 	});
 }

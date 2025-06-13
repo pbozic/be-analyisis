@@ -682,14 +682,19 @@ async function acceptOrderDelivery(req, res) {
 			user.current_vehicle?.vehicle_id,
 			isDD
 		);
-
+		let newOrder = await DeliveryOrderDao.getOrder(order.order_id, {
+			include: {
+				delivery_driver: true,
+				driver: true,
+			},
+		});
 		// sockets, notifications, etc.
 		SocketStore.addUserToRoom(deliverer_id, `order_${order_id}`);
-		io.to(`order_${order_id}`).emit('order_accepted__delivery', order);
+		io.to(`order_${order_id}`).emit('order_accepted__delivery', newOrder);
 		io.emit('driver_unavailable', deliverer_id);
 		await revokeDeliveryOrderFromDrivers(order_id);
 
-		res.status(200).json(order);
+		res.status(200).json(newOrder);
 	} catch (err) {
 		// Postgres NOWAIT lock error will bubble up here
 		const msg = err.code === '55P03' ? 'Order is already being claimed' : err.message;
