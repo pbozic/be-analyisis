@@ -890,7 +890,7 @@ async function createOrder(req, res) {
 			let { price } = await TaxiHelper.calculateTransferRidePrice(route, preferences.vehicle_category);
 			if (price !== orderData.payment.price) {
 				console.error(`Price mismatch, got ${orderData.payment.price}, calculated ${price}`);
-				throw new Error('Price mismatch');
+				return res.status(500).json({ error: 'Price mismatch' });
 			}
 			if (orderData.payment.price >= 25) {
 				orderData.status = TAXI_ORDER_STATUS.AWAITING_PAYMENT;
