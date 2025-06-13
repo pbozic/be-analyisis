@@ -1,3 +1,5 @@
+import { validate as isUuid } from 'uuid';
+
 import prisma from '../prisma/prisma.js';
 import { DOCUMENT_TYPE, DELIVERY_ORDER_STATUS, DELIVERY_ORDER_END_STATES } from '../lib/constants.js';
 import gApi from '../lib/gApis.js';
@@ -404,6 +406,72 @@ async function acceptOrderDelivery(order, deliverer_id, vehicle_id) {
 	} catch (e) {
 		throw new Error(e);
 	}
+}
+export async function acceptOrderDeliveryWithRawLock(order_id, delivererId, vehicleId, isDeliveryDriver) {
+	// Validate the UUID format to prevent SQL injection
+	if (!isUuid(order_id)) {
+		throw new Error(`Invalid order_id format: ${order_id}`);
+	}
+
+	return prisma.$transaction(async (tx) => {
+		// 1) Acquire a row-level lock on the delivery_orders row
+		await tx.$executeRawUnsafe(
+			`SELECT 1
+         FROM delivery_orders
+        WHERE order_id = $1::uuid
+          FOR UPDATE NOWAIT`,
+			order_id
+		);
+		let orderOld = await tx.delivery_orders.findUnique({
+			where: { order_id: order_id },
+			select: { timeline: true },
+		});
+		// 2) Update the delivery_order_sent record and mark driver on_order
+		if (isDeliveryDriver) {
+			await tx.delivery_order_sent.update({
+				where: {
+					delivery_order_sent_delivery_driver_unique: { order_id: order_id, delivery_driver_id: delivererId },
+				},
+				data: { accepted: true },
+			});
+			await tx.delivery_drivers.update({
+				where: { delivery_driver_id: delivererId },
+				data: { on_order: true },
+			});
+		} else {
+			await tx.delivery_order_sent.update({
+				where: {
+					delivery_order_sent_driver_unique: { order_id: order_id, driver_id: delivererId },
+				},
+				data: { accepted: true },
+			});
+			await tx.drivers.update({
+				where: { driver_id: delivererId },
+				data: { on_order: true },
+			});
+		}
+
+		// 3) Update the delivery_orders row itself, including timeline and associations
+		const updated = await tx.delivery_orders.update({
+			where: { order_id: order_id },
+			data: {
+				timeline: addEntryToDeliveryOrderTimeline(orderOld.timeline, DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED, {
+					driver_id: delivererId,
+				}),
+				delivery_driver: isDeliveryDriver ? { connect: { delivery_driver_id: delivererId } } : undefined,
+				driver: !isDeliveryDriver ? { connect: { driver_id: delivererId } } : undefined,
+				vehicle: vehicleId ? { connect: { vehicle_id: vehicleId } } : undefined,
+			},
+			include: {
+				delivery_driver: true,
+				driver: true,
+				vehicle: true,
+			},
+		});
+
+		// 4) Commit (implicit) releases the lock
+		return updated;
+	});
 }
 async function connectOrderWithDriver(order_id, delivery_driver_id) {
 	try {
@@ -1119,4 +1187,5 @@ export default {
 	getDailyMealsSubscriptionsByGroupedId,
 	updateDailyMealsSubscriptionsStatusByGroupedId,
 	updateDailyMealSubscriptionOrderCreatedById,
+	acceptOrderDeliveryWithRawLock,
 };
