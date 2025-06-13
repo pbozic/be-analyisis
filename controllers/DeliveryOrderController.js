@@ -589,7 +589,7 @@ async function createDailyMeals(req, res) {
  * @responseContent {DeliveryOrder} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
-async function acceptOrderDelivery(req, res) {
+async function acceptOrderDeliveryOld(req, res) {
 	//console.log("accept order user_id", req.body.user?.user_id);
 	const { order_id, user } = req.body;
 	const deliverer_id = user?.delivery_driver?.delivery_driver_id || user?.driver?.driver_id;
@@ -667,6 +667,78 @@ async function acceptOrderDelivery(req, res) {
 	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
+	}
+}
+
+async function acceptOrderDelivery(req, res) {
+	const { order_id, user } = req.body;
+	const deliverer_id = user.delivery_driver?.delivery_driver_id ?? user.driver?.driver_id;
+	const isDD = !!user.delivery_driver;
+
+	try {
+		let order = await DeliveryOrderDao.getOrder(order_id, {
+			include: {
+				delivery_driver: true,
+				driver: true,
+			},
+		});
+		let deliverer = user?.delivery_driver?.delivery_driver_id
+			? await DeliveryDriverDao.getDeliveryDriverById(deliverer_id)
+			: await DriverDao.getDriverById(deliverer_id);
+		if (!deliverer.online) {
+			return res.status(400).json({ error: `You are offline!.`, errorType: 'ERR_DRIVER_OFFLINE' });
+		} else if (
+			//TODO: handle dispatcher canceled.
+			[].includes(order.status)
+		) {
+			return res
+				.status(400)
+				.json({ error: `Order has been canceled: ${order.status}.`, errorType: 'ERR_ORDER_ALREADY_CANCELED' });
+		} else if (
+			![DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(
+				order.status
+			)
+		) {
+			return res
+				.status(400)
+				.json({ error: 'Order cannot be accepted in this state.', errorType: 'ERR_ORDER_UNACCEPTABLE' });
+		} else if (
+			(order.driver?.driver_id && order.driver?.driver_id !== deliverer_id) ||
+			(order.delivery_driver?.delivery_driver_id && order.delivery_driver?.delivery_driver_id !== deliverer_id)
+		) {
+			return res
+				.status(400)
+				.json({ error: 'Order is already accepted.', errorType: 'ERR_ORDER_ALREADY_ACCEPTED' });
+		}
+		const order2 = await DeliveryOrderDao.acceptOrderDeliveryWithRawLock(
+			order_id,
+			deliverer_id,
+			user.current_vehicle?.vehicle_id,
+			isDD
+		);
+		let newOrder = await DeliveryOrderDao.getOrder(order2.order_id, {
+			include: {
+				delivery_driver: true,
+				driver: true,
+			},
+		});
+		// sockets, notifications, etc.
+		SocketStore.addUserToRoom(deliverer_id, `order_${order_id}`);
+		io.to(`order_${order_id}`).emit('order_accepted__delivery', newOrder);
+		io.emit('driver_unavailable', deliverer_id);
+		await revokeDeliveryOrderFromDrivers(order_id);
+
+		res.status(200).json(newOrder);
+	} catch (err) {
+		// Postgres NOWAIT lock error will bubble up here
+		const msg = err.code === '55P03' ? 'Order is already being claimed' : err.message;
+
+		if (err.code === '55P03' /* lock_not_available */) {
+			return res.status(409).json({ error: msg, errorType: 'ERR_ORDER_ALREADY_ACCEPTED' });
+		}
+
+		console.error(err);
+		res.status(500).json({ error: msg });
 	}
 }
 /**

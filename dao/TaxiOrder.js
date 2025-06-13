@@ -1,3 +1,5 @@
+import { validate as isUuid } from 'uuid';
+
 import prisma from '../prisma/prisma.js';
 import { TIME_LIMIT, TAXI_ORDER_STATUS, ORDER_TYPE, ORDER_SUBTYPE } from '../lib/constants.js';
 async function getOrders(args) {
@@ -355,6 +357,78 @@ async function getAlreadySentOrdersByDriverId(driver_id) {
 		console.error('Error fetching pending orders for driver:', e);
 		throw new Error(e);
 	}
+}
+export async function acceptTaxiOrderWithRawLock(order, driver) {
+	const { order_id: orderId, is_scheduled } = order;
+	const driverId = driver.driver_id;
+
+	// Validate UUID format to prevent SQL injection
+	if (!isUuid(orderId)) {
+		throw new Error(`Invalid order_id format: ${orderId}`);
+	}
+
+	return prisma.$transaction(async (tx) => {
+		// 1) Acquire a row-level lock on the taxi_orders row
+		await tx.$executeRawUnsafe(
+			`SELECT 1
+         FROM taxi_orders
+        WHERE order_id = $1::uuid
+          FOR UPDATE NOWAIT`,
+			orderId
+		);
+
+		// 2) Mark the taxi_order_sent record as accepted
+		await tx.taxi_order_sent.update({
+			where: {
+				taxi_order_sent_driver_unique: {
+					order_id: orderId,
+					driver_id: driverId,
+				},
+			},
+			data: { accepted: true },
+		});
+
+		// 3) Update driver availability
+		await tx.drivers.update({
+			where: { driver_id: driverId },
+			data: { on_order: !is_scheduled },
+		});
+
+		// 4) Update the taxi_orders row itself
+		const updated = await tx.taxi_orders.update({
+			where: { order_id: orderId },
+			data: {
+				status: 'TAXI_ACCEPTED',
+				driver: { connect: { driver_id: driverId } },
+				vehicle: { connect: { vehicle_id: driver.current_vehicle.vehicle_id } },
+			},
+			include: {
+				user: true,
+				driver: {
+					include: {
+						user: {
+							include: {
+								documents: {
+									include: { files: true },
+								},
+							},
+						},
+						vehicles: {
+							include: {
+								vehicle: {
+									include: { vehicle_specification: true },
+								},
+							},
+						},
+						current_vehicle: true,
+					},
+				},
+			},
+		});
+
+		// 5) Committing the transaction releases the lock
+		return updated;
+	});
 }
 async function acceptOrder(order, driver) {
 	const order_id = order.order_id;
@@ -1066,4 +1140,5 @@ export default {
 	getActiveOrderIdsForUser,
 	getDeliveryOrdersByDriverId,
 	deleteOrderSent,
+	acceptTaxiOrderWithRawLock,
 };

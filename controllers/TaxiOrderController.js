@@ -890,7 +890,7 @@ async function createOrder(req, res) {
 			let { price } = await TaxiHelper.calculateTransferRidePrice(route, preferences.vehicle_category);
 			if (price !== orderData.payment.price) {
 				console.error(`Price mismatch, got ${orderData.payment.price}, calculated ${price}`);
-				throw new Error('Price mismatch');
+				return res.status(400).json({ error: 'Price mismatch' });
 			}
 			if (orderData.payment.price >= 25) {
 				orderData.status = TAXI_ORDER_STATUS.AWAITING_PAYMENT;
@@ -1088,7 +1088,7 @@ async function acceptOrder(req, res) {
 				await TaxiOrderDao.createOrderSent(order.order_id, driver);
 			}
 		}
-		await TaxiOrderDao.acceptOrder(order, driver);
+		await TaxiOrderDao.acceptTaxiOrderWithRawLock(order, driver);
 		driver.vehicle = driver.current_vehicle;
 		order.driver = driver;
 		const { result, distance, duration } = await gApi.distanceBetweenTwoPoints(
