@@ -272,7 +272,7 @@ export async function searchBlogPosts(query: SearchBlogPostsInput): Promise<Blog
 						{ short_content: { contains: query.query, mode: 'insensitive' } },
 					],
 				}),
-				...(query.tag_ids && { tags: { some: { blog_tag_id: { in: query.tag_ids } } } }),
+				...(query.tag_ids && { tags: { some: { blog_tags_id: { in: query.tag_ids } } } }),
 				...(query.category_ids && { category_id: { in: query.category_ids } }),
 				status: 'PUBLISHED', // Only include published posts
 				publish_at: {
