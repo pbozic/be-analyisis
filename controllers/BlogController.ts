@@ -837,7 +837,7 @@ export async function createBlogImageByFile(req: ValidatedRequest, res: Response
 		const mime_type = file.mimetype;
 		console.log('File MIME type:', mime_type);
 		const newImage = await createFileHelper(req.user?.user_id, {
-			file_type: 'image',
+			file_type: 'IMAGE',
 			mime_type,
 			base64,
 			public: true,
