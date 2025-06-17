@@ -843,8 +843,9 @@ export async function createBlogImageByFile(req: ValidatedRequest, res: Response
 			public: true,
 		});
 		res.status(201).json(newImage);
-	} catch (error) {
-		res.status(500).json({ message: 'Error creating image', error });
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	} catch (error: any) {
+		res.status(500).json({ message: 'Error creating image', error: error.message });
 	}
 }
 

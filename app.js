@@ -34,6 +34,15 @@ if (process.env.NODE_ENV !== 'test') {
 	startCronJobs();
 }
 // ─── Middleware Setup ───────────────────────────────────────────────
+
+app.post('/api/blog/upload/file', authMiddleware, upload.single('image'), BlogController.createBlogImageByFile);
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
+app.use(logger('dev'));
+app.disable('etag');
+app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
+app.use(express.urlencoded({ limit: '512mb', extended: false }));
 app.use(
 	compression({
 		filter: (req, res) => {
@@ -44,14 +53,6 @@ app.use(
 		threshold: 10 * 1024,
 	})
 );
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
-app.use(logger('dev'));
-app.disable('etag');
-app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
-app.post('/api/blog/upload/file', authMiddleware, upload.single('image'), BlogController.createBlogImageByFile);
-app.use(express.urlencoded({ limit: '512mb', extended: false }));
-
 //app.use(fileUploadLib());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
