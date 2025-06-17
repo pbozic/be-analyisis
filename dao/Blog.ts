@@ -11,16 +11,11 @@ import type { CreateBlogPostInput, UpdateBlogPostInput } from '../types/blog/Blo
 export async function getBlogPosts(): Promise<BlogPost[]> {
 	try {
 		return await prisma.blog_posts.findMany({
-			where: {
-				publish_at: {
-					// Ensure we only fetch posts that are published or will be published in the future
-					lte: new Date(),
-				},
-			},
 			include: {
 				category: true,
 				image: true,
 				tags: true,
+				author: true,
 			},
 			orderBy: {
 				publish_at: 'desc', // Order by publish date descending
@@ -50,6 +45,7 @@ export async function getBlogPostById(blog_posts_id: string): Promise<BlogPost |
 				category: true,
 				image: true,
 				tags: true,
+				author: true,
 			},
 		});
 	} catch (error) {
@@ -76,6 +72,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost | null> 
 				category: true,
 				image: true,
 				tags: true,
+				author: true,
 			},
 		});
 	} catch (error) {
@@ -122,6 +119,7 @@ export async function createBlogPost(data: CreateBlogPostInput, author_id: strin
 				content: data.content,
 				publish_at: data.publish_at ? new Date(data.publish_at) : new Date(), // Default to now if not provided
 				slug,
+				status: data.status || 'DRAFT', // Default to DRAFT if not provided
 				author: {
 					connect: { user_id: author_id }, // Assuming author is a User type with user_id
 				},
@@ -137,6 +135,7 @@ export async function createBlogPost(data: CreateBlogPostInput, author_id: strin
 				category: true,
 				image: true,
 				tags: true,
+				author: true,
 			},
 		});
 	} catch (error) {
@@ -164,27 +163,32 @@ export async function updateBlogPost(blog_posts_id: string, data: UpdateBlogPost
 		if (!existingPost1) {
 			throw new Error(`Blog post with ID ${blog_posts_id} not found`);
 		}
-		// Generate slug from title
-		let slug =
-			existingPost1.slug ||
-			data.title
-				.toLowerCase()
-				.replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric characters with hyphens
-				.replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
+		let slug;
+		if (data.slug && data.slug !== existingPost1.slug) {
+			// Generate slug from title
+			slug =
+				existingPost1.slug ||
+				data.title
+					.toLowerCase()
+					.replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric characters with hyphens
+					.replace(/^-|-$/g, ''); // Remove leading/trailing hyphens
 
-		// Ensure slug is unique
-		let existingPost = await prisma.blog_posts.findFirst({
-			where: { slug, blog_posts_id: { not: blog_posts_id } }, // Exclude current post
-			select: { blog_posts_id: true },
-		});
-		let counter = 1;
-		while (existingPost) {
-			slug = `${slug}-${counter}`;
-			existingPost = await prisma.blog_posts.findFirst({
+			// Ensure slug is unique
+			let existingPost = await prisma.blog_posts.findFirst({
 				where: { slug, blog_posts_id: { not: blog_posts_id } }, // Exclude current post
 				select: { blog_posts_id: true },
 			});
-			counter++;
+			let counter = 1;
+			while (existingPost) {
+				slug = `${slug}-${counter}`;
+				existingPost = await prisma.blog_posts.findFirst({
+					where: { slug, blog_posts_id: { not: blog_posts_id } }, // Exclude current post
+					select: { blog_posts_id: true },
+				});
+				counter++;
+			}
+		} else {
+			slug = existingPost1.slug; // Use existing slug if not provided or unchanged
 		}
 
 		return await prisma.blog_posts.update({
@@ -195,6 +199,7 @@ export async function updateBlogPost(blog_posts_id: string, data: UpdateBlogPost
 				content: data.content,
 				publish_at: data.publish_at ? new Date(data.publish_at) : undefined, // Update only if provided
 				slug,
+				status: data.status || existingPost1.status, // Default to DRAFT if not provided
 				category: data.category_id ? { connect: { blog_categories_id: data.category_id } } : undefined,
 				tags: data.tag_ids
 					? {
@@ -211,6 +216,7 @@ export async function updateBlogPost(blog_posts_id: string, data: UpdateBlogPost
 				category: true,
 				image: true,
 				tags: true,
+				author: true,
 			},
 		});
 	} catch (error) {
@@ -237,6 +243,7 @@ export async function deleteBlogPost(blog_posts_id: string): Promise<BlogPost> {
 				category: true,
 				image: true,
 				tags: true,
+				author: true,
 			},
 		});
 	} catch (error) {
@@ -267,20 +274,23 @@ export async function searchBlogPosts(query: SearchBlogPostsInput): Promise<Blog
 				}),
 				...(query.tag_ids && { tags: { some: { blog_tag_id: { in: query.tag_ids } } } }),
 				...(query.category_ids && { category_id: { in: query.category_ids } }),
-				...(query.year && {
-					publish_at: { gte: new Date(`${query.year}-01-01`), lt: new Date(`${query.year + 1}-01-01`) },
-				}),
-				...(query.month && {
-					publish_at: {
+				status: 'PUBLISHED', // Only include published posts
+				publish_at: {
+					lt: new Date(), // always exclude future posts
+					...(query.year && {
+						gte: new Date(`${query.year}-01-01`),
+					}),
+					...(query.month && {
 						gte: new Date(`${query.year}-${String(query.month).padStart(2, '0')}-01`),
-						lt: new Date(`${query.year}-${String(query.month).padStart(2, '0') + 1}-01`),
-					},
-				}),
+						lt: new Date(`${query.year}-${String(query.month + 1).padStart(2, '0')}-01`),
+					}),
+				},
 			},
 			include: {
 				category: true,
 				image: true,
 				tags: true,
+				author: true,
 			},
 		});
 	} catch (error) {

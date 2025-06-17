@@ -44,6 +44,7 @@ export const CreateBlogPostSchema = z.object({
 	image_file_id: z.string().uuid().optional(),
 	publish_at: z.string().datetime().optional(),
 	tag_ids: z.array(z.string().uuid()),
+	status: z.nativeEnum(BLOG_POST_STATUS).default(BLOG_POST_STATUS.DRAFT),
 });
 
 export const UpdateBlogPostSchema = CreateBlogPostSchema.extend({
@@ -51,15 +52,14 @@ export const UpdateBlogPostSchema = CreateBlogPostSchema.extend({
 });
 
 export const SearchBlogPostsSchema = z.object({
-	page: z.number().int().min(1).default(1),
-	limit: z.number().int().min(1).max(100).default(10),
-	query: z.string().optional(),
-	tag_ids: z.array(z.string().uuid()).optional(),
-	category_ids: z.array(z.string().uuid()).optional(),
-	year: z.number().int().optional(),
-	month: z.number().int().min(1).max(12).optional(),
+	page: z.number().int().min(1).default(1).nullable(),
+	limit: z.number().int().min(1).max(100).default(10).nullable(),
+	query: z.string().nullable(),
+	tag_ids: z.array(z.string().uuid()).nullable(),
+	category_ids: z.array(z.string().uuid()).nullable(),
+	year: z.number().int().nullable(),
+	month: z.number().int().min(1).max(12).nullable(),
 });
-
 // =======================
 // Inferred Types from Schemas
 // =======================
