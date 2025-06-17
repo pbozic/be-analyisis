@@ -129,7 +129,7 @@ export async function createBlogPost(data: CreateBlogPostInput, author_id: strin
 				tags: {
 					connect: data.tag_ids.map((tag_id) => ({ blog_tags_id: tag_id })), // Assuming tags is a BlogTag type with blog_tag_id
 				},
-				image: data.image_file_id ? { connect: { files_id: data.image_file_id } } : undefined, // Assuming image_file is a File type with files_id
+				image: data.image_file_id ? { connect: { file_id: data.image_file_id } } : undefined, // Assuming image_file is a File type with files_id
 			},
 			include: {
 				category: true,
@@ -210,7 +210,7 @@ export async function updateBlogPost(blog_posts_id: string, data: UpdateBlogPost
 									: undefined, // If tag_ids is empty, disconnect all tags
 						}
 					: undefined,
-				image: data.image_file_id ? { connect: { files_id: data.image_file_id } } : undefined,
+				image: data.image_file_id ? { connect: { file_id: data.image_file_id } } : undefined,
 			},
 			include: {
 				category: true,
