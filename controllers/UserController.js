@@ -1043,8 +1043,8 @@ async function requestToAddFundsToWallet(req, res) {
 			currency,
 			payment_method_id,
 			user.stripe_customer_id,
-			user.user_id,
-			return_url
+			user.user_id
+			// return_url
 		);
 		// const newWalletFunds = await WalletFundsDao.createWalletFunds(req.user.user_id,paymentIntent.latest_charge, amount * 100);
 		res.status(200).json(paymentIntent);
