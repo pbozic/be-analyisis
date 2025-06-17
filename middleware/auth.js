@@ -14,7 +14,7 @@ const authMiddleware = (req, res, next) => {
 	try {
 		const decoded = jwt.verify(token, process.env.JWT_TOKEN_SECRET);
 		req.user = decoded.user;
-		req.socket = UserSockets.get(decoded.user_id);
+		req.userSocket = UserSockets.get(decoded.user_id);
 		// const userId = decoded.user.user_id; // Your logic
 		// const routePath = req.route?.path || req.originalUrl;
 		next();

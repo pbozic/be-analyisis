@@ -591,7 +591,7 @@ async function update(req, res) {
 	try {
 		let business = await BusinessDao.updateBusiness(business_id, req.body);
 		if (business) {
-			if (req.socket) req.socket.emit('updateBusiness', business);
+			if (req.userSocket) req.userSocket.emit('updateBusiness', business);
 			if (business.type === Constants.BUSINESS_TYPE.MERCHANT) {
 				businessIndex(business.business_id);
 			}
