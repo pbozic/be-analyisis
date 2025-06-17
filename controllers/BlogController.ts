@@ -843,7 +843,7 @@ export async function createBlogImageByFile(req: ValidatedRequest, res: Response
 			base64,
 			public: true,
 		});
-		const savedFile = FileDao.getFile(newImage.file_id);
+		const savedFile = await FileDao.getFile(newImage.file_id);
 		res.status(201).json(savedFile);
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (error: any) {
