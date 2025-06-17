@@ -90,14 +90,19 @@ app.use(express.urlencoded({ limit: '512mb', extended: false }));
 //app.use(fileUploadLib());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(
-	express.json({
+app.use((req, res, next) => {
+	const contentType = req.headers['content-type'] || '';
+	if (contentType.startsWith('multipart/form-data')) {
+		return next(); // skip JSON parser for file uploads
+	}
+	req.on('data', () => console.log('Reading request stream'));
+	return express.json({
 		verify: function (req, res, buf) {
 			req.rawBody = buf;
 		},
 		limit: '512mb',
-	})
-);
+	})(req, res, next);
+});
 
 // ─── Routes ─────────────────────────────────────────────────────────
 app.use(mainRouter);
