@@ -7,6 +7,7 @@ import { CreateBlogCategoryInput, UpdateBlogCategoryInput } from '../types/blog/
 import { CreateBlogTagInput, DeleteBlogTagInput, UpdateBlogTagInput } from '../types/blog/BlogTag';
 import { createFileHelper } from './FilesController';
 import BlogDao from '../dao/Blog';
+import FileDao from '../dao/File';
 
 /**
  * POST /blog/search
@@ -842,7 +843,8 @@ export async function createBlogImageByFile(req: ValidatedRequest, res: Response
 			base64,
 			public: true,
 		});
-		res.status(201).json(newImage);
+		const savedFile = FileDao.getFile(newImage.file_id);
+		res.status(201).json(savedFile);
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	} catch (error: any) {
 		res.status(500).json({ message: 'Error creating image', error: error.message });
