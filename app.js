@@ -95,7 +95,6 @@ app.use((req, res, next) => {
 	if (contentType.startsWith('multipart/form-data')) {
 		return next(); // skip JSON parser for file uploads
 	}
-	req.on('data', () => console.log('Reading request stream'));
 	return express.json({
 		verify: function (req, res, buf) {
 			req.rawBody = buf;
