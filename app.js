@@ -34,8 +34,10 @@ if (process.env.NODE_ENV !== 'test') {
 	startCronJobs();
 }
 // ─── Middleware Setup ───────────────────────────────────────────────
+app.disable('etag');
+app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
 
-app.post('/api/blog/upload/file', authMiddleware, upload.single('image'), (req, res) => {
+app.post('/api/blog/upload/file', upload.single('image'), (req, res) => {
 	console.log('File upload request received:', req.file);
 	BlogController.createBlogImageByFile(req, res);
 });
@@ -43,8 +45,7 @@ app.post('/api/blog/upload/file', authMiddleware, upload.single('image'), (req, 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(logger('dev'));
-app.disable('etag');
-app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
+
 app.use(express.urlencoded({ limit: '512mb', extended: false }));
 app.use(
 	compression({
