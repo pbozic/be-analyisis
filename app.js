@@ -35,7 +35,10 @@ if (process.env.NODE_ENV !== 'test') {
 }
 // ─── Middleware Setup ───────────────────────────────────────────────
 
-app.post('/api/blog/upload/file', authMiddleware, upload.single('image'), BlogController.createBlogImageByFile);
+app.post('/api/blog/upload/file', authMiddleware, upload.single('image'), (req, res) => {
+	console.log('File upload request received:', req.file);
+	BlogController.createBlogImageByFile(req, res);
+});
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
