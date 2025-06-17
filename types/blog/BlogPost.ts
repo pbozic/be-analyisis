@@ -9,7 +9,7 @@ import { BlogTag } from './BlogTag.js';
 // =======================
 // Editor.js Zod Schemas
 // =======================
-export const EditorJSBlockSchema = z.discriminatedUnion('type', [
+export const EditorJSBlockSchemaKnown = z.discriminatedUnion('type', [
 	z.object({
 		type: z.literal('paragraph'),
 		id: z.string().optional(),
@@ -26,7 +26,14 @@ export const EditorJSBlockSchema = z.discriminatedUnion('type', [
 		}),
 	}),
 ]);
+// Fallback for unknown tools
+const fallbackBlockSchema = z.object({
+	type: z.string(),
+	data: z.unknown(),
+});
 
+// Combined (fallback enabled)
+const EditorJSBlockSchema = z.union([EditorJSBlockSchemaKnown, fallbackBlockSchema]);
 export const EditorJSDataSchema = z.object({
 	time: z.number(),
 	version: z.string(),
