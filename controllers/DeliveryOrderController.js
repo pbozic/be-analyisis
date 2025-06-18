@@ -758,55 +758,67 @@ async function acceptOrderDelivery(req, res) {
  */
 async function cancelOrderDelivery(req, res) {
 	const { order_id } = req.body;
-	const user = req.user;
-	const deliverer_id = user?.delivery_driver?.delivery_driver_id || user?.driver?.driver_id;
-	let deliverer = null;
 	try {
-		// 1. Condition check: Fetch the order and verify the driver and order status
-		let order = await DeliveryOrderDao.getOrder(order_id, {
-			include: {
-				delivery_driver: true,
-				driver: true,
-			},
+		const old_order = await DeliveryOrderDao.getOrder(order_id, {
+			include: { user: true, driver: true, delivery_driver: true },
 		});
-		deliverer = order.delivery_driver || order.driver || null;
-		if (order.driver?.driver_id !== deliverer_id && order.delivery_driver?.delivery_driver_id !== deliverer_id) {
-			return res.status(400).json({
-				error: 'You are not authorized to cancel this order delivery.',
-				errorType: 'ERR_NOT_AUTHORIZED',
-			});
-		}
 		if (
-			![DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(
-				order.status
-			)
+			[
+				DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED,
+				DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
+				DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED,
+				DELIVERY_ORDER_STATUS.CUSTOMER_PICKED_UP,
+				DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				...DELIVERY_ORDER_END_STATES,
+			].includes(old_order.status)
 		) {
-			return res.status(400).json({
-				error: 'Order delivery cannot be canceled in its current state.',
-				errorType: 'ERR_DELIVERY_CANNOT_BE_CANCELED',
+			throw new Error('This order is not in a cancelable state.');
+		}
+		let new_order = await DeliveryOrderDao.updateOrderStatus(
+			old_order.order_id,
+			DELIVERY_ORDER_STATUS.DELIVERY_CANCELED
+		);
+		let driver;
+		if (old_order.driver_id) {
+			driver = await DriverDao.getDriverById(old_order.driver_id);
+			await prisma.drivers.update({
+				where: {
+					driver_id: driver.driver_id,
+				},
+				data: {
+					on_order: false,
+				},
+			});
+		} else if (old_order.delivery_driver_id) {
+			driver = await DeliveryDriverDao.getDeliveryDriverById(old_order.delivery_driver_id);
+			await prisma.delivery_drivers.update({
+				where: {
+					driver_id: driver.delivery_driver_id,
+				},
+				data: {
+					on_order: false,
+				},
 			});
 		}
-		// 3. Remove driver from order
-		order = await DeliveryOrderDao.updateOrder(order_id, {
-			driver_id: null,
-			delivery_driver_id: null,
-		});
-		// 4. Add DELIVERY_CANCELED to timeline
-		order = await DeliveryOrderDao.addTimelineEntry(
-			order.order_id,
-			DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
-			user?.delivery_driver
-				? { delivery_driver_id: user?.delivery_driver?.delivery_driver_id }
-				: { driver_id: user.driver.driver_id }
+		revokeDeliveryOrderFromDrivers(new_order.order_id);
+		sendDeliveryOrderNotifications(
+			old_order.user,
+			driver?.user,
+			old_order.user_id,
+			driver?.user_id,
+			new_order.status
 		);
-		// 5. Emit event to sockets with updated order
-		io.to('order_' + order.order_id).emit('order_delivery_canceled', order);
-		SocketStore.removeUserFromRoom(order.user_id, `order_${order.order_id}`);
-		SocketStore.removeUserFromRoom(req.user?.user_id, `order_${order.order_id}`);
-		res.status(200).json(order);
+
+		io.to('order_' + new_order.order_id).emit('order_status_change__delivery', new_order);
+		new_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.FAIL);
+		io.to('order_' + new_order.order_id).emit('order_status_change__delivery', new_order);
+		//TODO: hnadle cash payment -> refund merchant
+		io.to('order_' + new_order.order_id).emit('order_canceled', new_order);
+		SocketStore.closeRoom(`order_${new_order.order_id}`);
+		res.status(200).json(new_order);
 	} catch (e) {
-		console.log(e);
-		res.status(500).json({ error: 'Something went wrong...', errorType: 'ERR_SERVER_ERROR' });
+		console.error('Error canceling order', e);
+		res.status(500).json(e);
 	}
 }
 /**
