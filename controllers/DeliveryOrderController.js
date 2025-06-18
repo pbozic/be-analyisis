@@ -1471,15 +1471,15 @@ async function merchantAcceptOrder(req, res) {
 async function updateOrderPickupTime(req, res) {
 	const { order_id, pickup_time } = req.body;
 	try {
+		let order = await DeliveryOrderDao.getOrder(order_id);
 		if (req.user?.user_id) {
 			const businessUser = await BusinessUsersDao.getBusinessUserByUserId(req.user.user_id);
 			if (businessUser?.business_id !== order?.business_id) {
-				const o = await DeliveryOrderDao.getOrder(order_id);
-				if (!o) {
+				if (!order) {
 					return res.status(400).json({ error: 'Order not found' });
 				} else if (
-					o?.details?.ready_for_pickup_at &&
-					new Date(o.details.ready_for_pickup_at) > new Date(pickup_time)
+					order?.details?.ready_for_pickup_at &&
+					new Date(order.details.ready_for_pickup_at) > new Date(pickup_time)
 				) {
 					return res
 						.status(400)
@@ -1489,7 +1489,7 @@ async function updateOrderPickupTime(req, res) {
 		} else {
 			return res.status(403).json({ error: 'Unauthorized' });
 		}
-		let order = await DeliveryOrderDao.updateOrderPickupTime(order_id, pickup_time);
+		order = await DeliveryOrderDao.updateOrderPickupTime(order_id, pickup_time);
 		io.to('order_' + order.order_id).emit('order_pickup_time', order);
 		const totalDelay = order.timeline.reduce((sum, entry) => {
 			if (entry.status === DELIVERY_ORDER_STATUS.MERCHANT_DELAYED) {
