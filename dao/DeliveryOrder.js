@@ -109,8 +109,30 @@ async function getDeliveryOrdersIfNotCompleted(user_id) {
 				},
 			},
 			include: {
-				delivery_driver: true,
-				driver: true,
+				delivery_driver: {
+					include: {
+						user: {
+							select: {
+								first_name: true,
+								last_name: true,
+								telephone: true,
+								email: true,
+							},
+						},
+					},
+				},
+				driver: {
+					include: {
+						user: {
+							select: {
+								first_name: true,
+								last_name: true,
+								telephone: true,
+								email: true,
+							},
+						},
+					},
+				},
 				user: true,
 				business: {
 					select: {
