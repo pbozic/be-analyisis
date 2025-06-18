@@ -541,14 +541,6 @@ async function updateOrderPickupTime(order_id, pickup_time) {
 				details: true,
 			},
 		});
-		if (!order) {
-			throw new Error('Order not found');
-		} else if (
-			order?.details?.ready_for_pickup_at &&
-			new Date(order.details.ready_for_pickup_at) > new Date(pickup_time)
-		) {
-			throw new Error('New ready for pickup time cannot be earlier than the currently set time.');
-		}
 		console.log(pickup_time, 'setting pickup time');
 		// Merge new pickup_time with existing details
 		const updatedDetails = {

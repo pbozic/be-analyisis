@@ -57,6 +57,7 @@ import LateEventsDao from '../dao/LateEvents.js';
 import BusinessHelpers from '../lib/businessHelpers.js';
 import Helpers from '../lib/helpersLib.js';
 import PaymentDao from '../dao/Payment.ts';
+import BusinessUsersDao from '../dao/BusinessUsers.js';
 const { UserSockets, io, SocketStore } = socket;
 const uuidv4 = { v4 }.v4;
 /**
@@ -1290,24 +1291,6 @@ async function updateOrderStatus(req, res) {
 		let order = await DeliveryOrderDao.getOrder(req.body.order_id, { include: { user: true } });
 		let user;
 		if (order) user = order.user;
-		// if (req.body.status === DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED) {
-		// 	if (order.payment.type === "CARD") {
-		// 		await stripe.client.paymentIntents.capture(order.payment_intent_id);
-		// 	}else if(order.payment.type === "WALLET"){
-		// 		const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id)
-		// 		const {PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT} = calculateDeliveryOrderPaymentCuts(order)
-		//
-		// 		const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id,restaurant_stripe, MERCHANT_CUT+MERCHANT_CREDIT_CUT, order.order_id,"delivery");
-		// 		const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id,"platform", PLATFORM_CUT + PLATFORM_CREDIT_CUT, order.order_id,"delivery");
-		//
-		// 		order = await DeliveryOrderDao.updateOrder(order.order_id, {
-		// 			payment: {
-		// 				...order.payment,
-		// 				status: "PAID"
-		// 			}
-		// 		});
-		// 	}
-		// }
 		if (req.body.status === DELIVERY_ORDER_STATUS.MERCHANT_REJECTED) {
 			await handlePaymentCleanup(order);
 		}
@@ -1476,6 +1459,24 @@ async function merchantAcceptOrder(req, res) {
 async function updateOrderPickupTime(req, res) {
 	const { order_id, pickup_time } = req.body;
 	try {
+		if (req.user?.user_id) {
+			const businessUser = await BusinessUsersDao.getBusinessUserByUserId(req.user.user_id);
+			if (businessUser?.business_id !== order?.business_id) {
+				const o = await DeliveryOrderDao.getOrder(order_id);
+				if (!o) {
+					return res.status(400).json({ error: 'Order not found' });
+				} else if (
+					o?.details?.ready_for_pickup_at &&
+					new Date(o.details.ready_for_pickup_at) > new Date(pickup_time)
+				) {
+					return res
+						.status(400)
+						.json({ error: 'Pickup time cannot be earlier than the ready for pickup time' });
+				}
+			}
+		} else {
+			return res.status(403).json({ error: 'Unauthorized' });
+		}
 		let order = await DeliveryOrderDao.updateOrderPickupTime(order_id, pickup_time);
 		io.to('order_' + order.order_id).emit('order_pickup_time', order);
 		const totalDelay = order.timeline.reduce((sum, entry) => {
