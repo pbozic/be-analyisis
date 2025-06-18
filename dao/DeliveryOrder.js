@@ -523,6 +523,30 @@ async function updateOrderStatus(order_id, status) {
 				},
 				include: {
 					user: true,
+					driver: {
+						include: {
+							user: {
+								select: {
+									first_name: true,
+									last_name: true,
+									telephone: true,
+									email: true,
+								},
+							},
+						},
+					},
+					delivery_driver: {
+						include: {
+							user: {
+								select: {
+									first_name: true,
+									last_name: true,
+									telephone: true,
+									email: true,
+								},
+							},
+						},
+					},
 				},
 			});
 		});
