@@ -7,6 +7,7 @@ import VehicleDao from '../dao/Vehicle.js';
 import UserDao from '../dao/User.js';
 import socket from '../socket.js';
 import TaxiOrderDao from '../dao/TaxiOrder.js';
+import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import taxiHelpers from '../lib/taxiHelpers.js';
 import { updateAddressByAddressId, addAddress, addUserAddress } from '../dao/Address.js';
 import {
@@ -21,9 +22,15 @@ import { updateFileInDocument, addFileToDocument } from '../dao/File.js';
 import FileDao from '../dao/File.js';
 import S3Helper from '../lib/s3.js';
 import DocumentDao from '../dao/Document.js';
-import { TAXI_ORDER_STATUS, DELIVERY_ORDER_STATUS, DOCUMENT_TYPE, ACTIVITY_TYPE } from '../lib/constants.js';
+import {
+	TAXI_ORDER_STATUS,
+	DELIVERY_ORDER_STATUS,
+	DOCUMENT_TYPE,
+	ACTIVITY_TYPE,
+	TAXI_ORDER_AUTO_UPDATE_STATUS_DISTANCE,
+} from '../lib/constants.js';
 import { createNewVehicle } from '../dao/Vehicle.js';
-import { calculateTotalEarnings, calculateDriversEarnings } from '../lib/helpersLib.js';
+import { calculateTotalEarnings, calculateDriversEarnings, calculateDistance } from '../lib/helpersLib.js';
 import deliveryHelpers from '../lib/deliveryHelpers.js';
 import stripe from '../lib/stripe.js';
 import SMSHelper from '../lib/SMS.js';
@@ -397,8 +404,8 @@ async function updateDriverLocation(req, res) {
 		const driver = await DriverDao.getDriverByUserId(userId);
 		let driverUpdatedLocation = await DriverDao.updateDriverLocation(driver.driver_id, locationData);
 		// Emit the driver's updated location to each order's specific channel
-		const orders = await TaxiOrderDao.getOrdersByDriverId(driver.driver_id);
-		const deliveryOrders = await TaxiOrderDao.getDeliveryOrdersByDriverId(driver.driver_id);
+		const orders = await TaxiOrderDao.getActiveOrdersByDriverId(driver.driver_id);
+		const deliveryOrders = await DeliveryOrderDao.getActiveOrdersByDeliveryDriverId(driver.driver_id);
 		let allOrders = orders.concat(deliveryOrders);
 		let orderStatus = null;
 		let orderId = null;
@@ -415,7 +422,19 @@ async function updateDriverLocation(req, res) {
 				orderType = latestOrder?.type;
 			}
 		}
+		let acceptedOrder = null;
 		for (let order of allOrders) {
+			if (order.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED) {
+				acceptedOrder = order;
+			} else if (
+				[
+					TAXI_ORDER_STATUS.TAXI_ARRIVED,
+					TAXI_ORDER_STATUS.TAXI_DRIVING,
+					TAXI_ORDER_STATUS.TAXI_WAITING,
+				].includes(order.status)
+			) {
+				acceptedOrder = null;
+			}
 			try {
 				io.to(`order_${order.order_id}`).emit('driver_location', {
 					...driver,
@@ -427,6 +446,21 @@ async function updateDriverLocation(req, res) {
 			}
 		}
 		console.info('ORDERS LENGTH driver_location', orders.length);
+		if (acceptedOrder?.order_id) {
+			const pickupLocation = acceptedOrder.pickup_location;
+			const distance = calculateDistance(
+				locationData?.coordinates?.latitude,
+				locationData?.coordinates?.longitude,
+				pickupLocation?.coordinates?.latitude,
+				pickupLocation?.coordinates?.longitude
+			);
+			if (distance < TAXI_ORDER_AUTO_UPDATE_STATUS_DISTANCE) {
+				console.log('Driver is within 300 meters of pickup location, setting order status to waiting');
+				await TaxiOrderDao.updateOrderStatus(acceptedOrder.order_id, TAXI_ORDER_STATUS.TAXI_WAITING);
+			} else {
+				console.log(`Driver is ${distance} km from pickup location, keeping order status as accepted`);
+			}
+		}
 		if (!driver?.on_order) {
 			console.info('EMIT DRIVER_LOCATION');
 			io.emit('driver_location', {
