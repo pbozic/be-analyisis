@@ -422,10 +422,11 @@ async function updateDriverLocation(req, res) {
 				orderType = latestOrder?.type;
 			}
 		}
-		let acceptedOrder = null;
+		let acceptedOrder;
+		let onOrder = false;
 		for (let order of allOrders) {
 			if (order.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED) {
-				acceptedOrder = order;
+				acceptedOrder = acceptedOrder === -1 && order;
 			} else if (
 				[
 					TAXI_ORDER_STATUS.TAXI_ARRIVED,
@@ -433,7 +434,7 @@ async function updateDriverLocation(req, res) {
 					TAXI_ORDER_STATUS.TAXI_WAITING,
 				].includes(order.status)
 			) {
-				acceptedOrder = null;
+				onOrder = true;
 			}
 			try {
 				io.to(`order_${order.order_id}`).emit('driver_location', {
@@ -446,7 +447,7 @@ async function updateDriverLocation(req, res) {
 			}
 		}
 		console.info('ORDERS LENGTH driver_location', orders.length);
-		if (acceptedOrder?.order_id) {
+		if (acceptedOrder?.order_id && !onOrder) {
 			const pickupLocation = acceptedOrder.pickup_location;
 			const distance = calculateDistance(
 				locationData?.coordinates?.latitude,
