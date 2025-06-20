@@ -426,7 +426,7 @@ async function updateDriverLocation(req, res) {
 		let onOrder = false;
 		for (let order of allOrders) {
 			if (order.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED) {
-				acceptedOrder = acceptedOrder === -1 && order;
+				acceptedOrder = order;
 			} else if (
 				[
 					TAXI_ORDER_STATUS.TAXI_ARRIVED,
