@@ -16,6 +16,7 @@ const en = {
 		lobby_removed: 'You have been removed from a lobby',
 		lobby_canceled: 'A lobby you were invited to has been canceled',
 		lobby_completed: 'A lobby you were invited to has been completed',
+		revoked: 'The selected driver is no longer available.',
 	},
 	DRIVER_NOTIFICATIONS: {
 		offline: 'You are now offline, please open KlikniApp',
