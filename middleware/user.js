@@ -13,7 +13,7 @@ const withUserMiddleware = (req, res, next) => {
 		try {
 			const decoded = jwt.verify(token, process.env.JWT_TOKEN_SECRET);
 			req.user = decoded.user;
-			req.socket = UserSockets.get(decoded.user_id);
+			req.userSocket = UserSockets.get(decoded.user_id);
 		} catch (error) {
 			// Invalid token — log but do not block
 		}

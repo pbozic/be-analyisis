@@ -57,6 +57,7 @@ import LateEventsDao from '../dao/LateEvents.js';
 import BusinessHelpers from '../lib/businessHelpers.js';
 import Helpers from '../lib/helpersLib.js';
 import PaymentDao from '../dao/Payment.ts';
+import BusinessUsersDao from '../dao/BusinessUsers.js';
 const { UserSockets, io, SocketStore } = socket;
 const uuidv4 = { v4 }.v4;
 /**
@@ -589,7 +590,7 @@ async function createDailyMeals(req, res) {
  * @responseContent {DeliveryOrder} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
-async function acceptOrderDelivery(req, res) {
+async function acceptOrderDeliveryOld(req, res) {
 	//console.log("accept order user_id", req.body.user?.user_id);
 	const { order_id, user } = req.body;
 	const deliverer_id = user?.delivery_driver?.delivery_driver_id || user?.driver?.driver_id;
@@ -669,6 +670,78 @@ async function acceptOrderDelivery(req, res) {
 		res.status(500).json(e);
 	}
 }
+
+async function acceptOrderDelivery(req, res) {
+	const { order_id, user } = req.body;
+	const deliverer_id = user.delivery_driver?.delivery_driver_id ?? user.driver?.driver_id;
+	const isDD = !!user.delivery_driver;
+
+	try {
+		let order = await DeliveryOrderDao.getOrder(order_id, {
+			include: {
+				delivery_driver: true,
+				driver: true,
+			},
+		});
+		let deliverer = user?.delivery_driver?.delivery_driver_id
+			? await DeliveryDriverDao.getDeliveryDriverById(deliverer_id)
+			: await DriverDao.getDriverById(deliverer_id);
+		if (!deliverer.online) {
+			return res.status(400).json({ error: `You are offline!.`, errorType: 'ERR_DRIVER_OFFLINE' });
+		} else if (
+			//TODO: handle dispatcher canceled.
+			[].includes(order.status)
+		) {
+			return res
+				.status(400)
+				.json({ error: `Order has been canceled: ${order.status}.`, errorType: 'ERR_ORDER_ALREADY_CANCELED' });
+		} else if (
+			![DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(
+				order.status
+			)
+		) {
+			return res
+				.status(400)
+				.json({ error: 'Order cannot be accepted in this state.', errorType: 'ERR_ORDER_UNACCEPTABLE' });
+		} else if (
+			(order.driver?.driver_id && order.driver?.driver_id !== deliverer_id) ||
+			(order.delivery_driver?.delivery_driver_id && order.delivery_driver?.delivery_driver_id !== deliverer_id)
+		) {
+			return res
+				.status(400)
+				.json({ error: 'Order is already accepted.', errorType: 'ERR_ORDER_ALREADY_ACCEPTED' });
+		}
+		const order2 = await DeliveryOrderDao.acceptOrderDeliveryWithRawLock(
+			order_id,
+			deliverer_id,
+			user.current_vehicle?.vehicle_id,
+			isDD
+		);
+		let newOrder = await DeliveryOrderDao.getOrder(order2.order_id, {
+			include: {
+				delivery_driver: true,
+				driver: true,
+			},
+		});
+		// sockets, notifications, etc.
+		SocketStore.addUserToRoom(deliverer_id, `order_${order_id}`);
+		io.to(`order_${order_id}`).emit('order_accepted__delivery', newOrder);
+		io.emit('driver_unavailable', deliverer_id);
+		await revokeDeliveryOrderFromDrivers(order_id);
+
+		res.status(200).json(newOrder);
+	} catch (err) {
+		// Postgres NOWAIT lock error will bubble up here
+		const msg = err.code === '55P03' ? 'Order is already being claimed' : err.message;
+
+		if (err.code === '55P03' /* lock_not_available */) {
+			return res.status(409).json({ error: msg, errorType: 'ERR_ORDER_ALREADY_ACCEPTED' });
+		}
+
+		console.error(err);
+		res.status(500).json({ error: msg });
+	}
+}
 /**
  * POST /delivery/order/cancel_delivery
  * @tag Delivery
@@ -685,55 +758,67 @@ async function acceptOrderDelivery(req, res) {
  */
 async function cancelOrderDelivery(req, res) {
 	const { order_id } = req.body;
-	const user = req.user;
-	const deliverer_id = user?.delivery_driver?.delivery_driver_id || user?.driver?.driver_id;
-	let deliverer = null;
 	try {
-		// 1. Condition check: Fetch the order and verify the driver and order status
-		let order = await DeliveryOrderDao.getOrder(order_id, {
-			include: {
-				delivery_driver: true,
-				driver: true,
-			},
+		const old_order = await DeliveryOrderDao.getOrder(order_id, {
+			include: { user: true, driver: true, delivery_driver: true },
 		});
-		deliverer = order.delivery_driver || order.driver || null;
-		if (order.driver?.driver_id !== deliverer_id && order.delivery_driver?.delivery_driver_id !== deliverer_id) {
-			return res.status(400).json({
-				error: 'You are not authorized to cancel this order delivery.',
-				errorType: 'ERR_NOT_AUTHORIZED',
-			});
-		}
 		if (
-			![DELIVERY_ORDER_STATUS.MERCHANT_PREPARING, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP].includes(
-				order.status
-			)
+			[
+				DELIVERY_ORDER_STATUS.DISPATCHER_CANCELED,
+				DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
+				DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED,
+				DELIVERY_ORDER_STATUS.CUSTOMER_PICKED_UP,
+				DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
+				...DELIVERY_ORDER_END_STATES,
+			].includes(old_order.status)
 		) {
-			return res.status(400).json({
-				error: 'Order delivery cannot be canceled in its current state.',
-				errorType: 'ERR_DELIVERY_CANNOT_BE_CANCELED',
+			throw new Error('This order is not in a cancelable state.');
+		}
+		let new_order = await DeliveryOrderDao.updateOrderStatus(
+			old_order.order_id,
+			DELIVERY_ORDER_STATUS.DELIVERY_CANCELED
+		);
+		let driver;
+		if (old_order.driver_id) {
+			driver = await DriverDao.getDriverById(old_order.driver_id);
+			await prisma.drivers.update({
+				where: {
+					driver_id: driver.driver_id,
+				},
+				data: {
+					on_order: false,
+				},
+			});
+		} else if (old_order.delivery_driver_id) {
+			driver = await DeliveryDriverDao.getDeliveryDriverById(old_order.delivery_driver_id);
+			await prisma.delivery_drivers.update({
+				where: {
+					driver_id: driver.delivery_driver_id,
+				},
+				data: {
+					on_order: false,
+				},
 			});
 		}
-		// 3. Remove driver from order
-		order = await DeliveryOrderDao.updateOrder(order_id, {
-			driver_id: null,
-			delivery_driver_id: null,
-		});
-		// 4. Add DELIVERY_CANCELED to timeline
-		order = await DeliveryOrderDao.addTimelineEntry(
-			order.order_id,
-			DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
-			user?.delivery_driver
-				? { delivery_driver_id: user?.delivery_driver?.delivery_driver_id }
-				: { driver_id: user.driver.driver_id }
+		revokeDeliveryOrderFromDrivers(new_order.order_id);
+		sendDeliveryOrderNotifications(
+			old_order.user,
+			driver?.user,
+			old_order.user_id,
+			driver?.user_id,
+			new_order.status
 		);
-		// 5. Emit event to sockets with updated order
-		io.to('order_' + order.order_id).emit('order_delivery_canceled', order);
-		SocketStore.removeUserFromRoom(order.user_id, `order_${order.order_id}`);
-		SocketStore.removeUserFromRoom(req.user?.user_id, `order_${order.order_id}`);
-		res.status(200).json(order);
+
+		io.to('order_' + new_order.order_id).emit('order_status_change__delivery', new_order);
+		new_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.FAIL);
+		io.to('order_' + new_order.order_id).emit('order_status_change__delivery', new_order);
+		//TODO: hnadle cash payment -> refund merchant
+		io.to('order_' + new_order.order_id).emit('order_canceled', new_order);
+		SocketStore.closeRoom(`order_${new_order.order_id}`);
+		res.status(200).json(new_order);
 	} catch (e) {
-		console.log(e);
-		res.status(500).json({ error: 'Something went wrong...', errorType: 'ERR_SERVER_ERROR' });
+		console.error('Error canceling order', e);
+		res.status(500).json(e);
 	}
 }
 /**
@@ -1218,24 +1303,6 @@ async function updateOrderStatus(req, res) {
 		let order = await DeliveryOrderDao.getOrder(req.body.order_id, { include: { user: true } });
 		let user;
 		if (order) user = order.user;
-		// if (req.body.status === DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED) {
-		// 	if (order.payment.type === "CARD") {
-		// 		await stripe.client.paymentIntents.capture(order.payment_intent_id);
-		// 	}else if(order.payment.type === "WALLET"){
-		// 		const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id)
-		// 		const {PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT} = calculateDeliveryOrderPaymentCuts(order)
-		//
-		// 		const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id,restaurant_stripe, MERCHANT_CUT+MERCHANT_CREDIT_CUT, order.order_id,"delivery");
-		// 		const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(order.user_id,"platform", PLATFORM_CUT + PLATFORM_CREDIT_CUT, order.order_id,"delivery");
-		//
-		// 		order = await DeliveryOrderDao.updateOrder(order.order_id, {
-		// 			payment: {
-		// 				...order.payment,
-		// 				status: "PAID"
-		// 			}
-		// 		});
-		// 	}
-		// }
 		if (req.body.status === DELIVERY_ORDER_STATUS.MERCHANT_REJECTED) {
 			await handlePaymentCleanup(order);
 		}
@@ -1404,7 +1471,25 @@ async function merchantAcceptOrder(req, res) {
 async function updateOrderPickupTime(req, res) {
 	const { order_id, pickup_time } = req.body;
 	try {
-		let order = await DeliveryOrderDao.updateOrderPickupTime(order_id, pickup_time);
+		let order = await DeliveryOrderDao.getOrder(order_id);
+		if (req.user?.user_id) {
+			const businessUser = await BusinessUsersDao.getBusinessUserByUserId(req.user.user_id);
+			if (businessUser?.business_id !== order?.business_id) {
+				if (!order) {
+					return res.status(400).json({ error: 'Order not found' });
+				} else if (
+					order?.details?.ready_for_pickup_at &&
+					new Date(order.details.ready_for_pickup_at) > new Date(pickup_time)
+				) {
+					return res
+						.status(400)
+						.json({ error: 'Pickup time cannot be earlier than the ready for pickup time' });
+				}
+			}
+		} else {
+			return res.status(403).json({ error: 'Unauthorized' });
+		}
+		order = await DeliveryOrderDao.updateOrderPickupTime(order_id, pickup_time);
 		io.to('order_' + order.order_id).emit('order_pickup_time', order);
 		const totalDelay = order.timeline.reduce((sum, entry) => {
 			if (entry.status === DELIVERY_ORDER_STATUS.MERCHANT_DELAYED) {

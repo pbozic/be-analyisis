@@ -16,6 +16,7 @@ const sl = {
 		lobby_removed: 'Odstranjeni ste iz sobe',
 		lobby_canceled: 'Soba, v katero ste bili povabljeni, je bila preklicana',
 		lobby_completed: 'Soba, v katero ste bili povabljeni, je bila zaključena',
+		revoked: 'Izbrani voznik ni več na voljo.',
 	},
 	DRIVER_NOTIFICATIONS: {
 		offline: 'Zdaj niste več prijavljeni, prosimo, odprite KlikniApp',

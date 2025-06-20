@@ -16,6 +16,7 @@ const es = {
 		lobby_removed: 'Has sido eliminado de un lobby',
 		lobby_canceled: 'Un lobby al que fuiste invitado ha sido cancelado',
 		lobby_completed: 'Un lobby al que fuiste invitado ha sido completado',
+		revoked: 'El conductor seleccionado ya no está disponible.',
 	},
 	DRIVER_NOTIFICATIONS: {
 		offline: 'Ahora estás desconectado, por favor abre KlikniApp',

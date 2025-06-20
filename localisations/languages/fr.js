@@ -16,6 +16,7 @@ const fr = {
 		lobby_removed: "Vous avez été retiré d'un lobby",
 		lobby_canceled: 'Un lobby auquel vous avez été invité a été annulé',
 		lobby_completed: 'Un lobby auquel vous avez été invité a été complété',
+		revoked: "Le chauffeur sélectionné n'est plus disponible.",
 	},
 	DRIVER_NOTIFICATIONS: {
 		offline: 'Vous êtes maintenant hors ligne, veuillez ouvrir KlikniApp',

@@ -16,6 +16,7 @@ import {
 } from '../../joi/userSchemas.js';
 import { reviewUserSchema } from '../../joi/reviewSchemas.js';
 import { registerChildSchema } from '../../joi/authSchemas.js';
+import StripeController from '../../controllers/StripeController.js';
 config();
 const router = express.Router();
 router.get('/', UserController.listUsers);
@@ -78,4 +79,5 @@ router.patch('/me/marketing-notifications', UserController.updateMarketingNotifi
 router.patch('/me/ads-personalization', UserController.updateAdsPersonalization);
 router.patch('/me/newsletter', UserController.updateNewsletter);
 router.post('/me/request-data', UserController.requestData);
+router.delete('/me/remove-payment-method/:pm_id', StripeController.removePaymentMethod);
 export default router;

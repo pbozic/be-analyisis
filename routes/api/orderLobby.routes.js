@@ -3,6 +3,7 @@ import express from 'express';
 import OrderLobbyController from '../../controllers/OrderLobbyController.js';
 const router = express.Router();
 router.get('/:order_lobbies_id', OrderLobbyController.getOrderLobbyById);
+router.get('/actives/:business_id', OrderLobbyController.getActiveOrderLobbiesByBusinessId);
 router.post('/create', OrderLobbyController.createLobby);
 router.post('/submit/:order_lobbies_id', OrderLobbyController.submitLobby);
 router.put('/users/:order_lobbies_id', OrderLobbyController.setLobbyUsersWithLimits);

@@ -269,7 +269,7 @@ async function updateMe(req, res) {
 	try {
 		let user = await UserDao.updateUser(req.user.user_id, req.body);
 		if (user) {
-			if (req.socket) req.socket.emit('updateUser', user);
+			if (req.userSocket) req.userSocket.emit('updateUser', user);
 			return res.status(200).json(user);
 		}
 		res.status(400).json({ error: 'Error updating user information' });
@@ -1043,8 +1043,8 @@ async function requestToAddFundsToWallet(req, res) {
 			currency,
 			payment_method_id,
 			user.stripe_customer_id,
-			user.user_id,
-			return_url
+			user.user_id
+			// return_url
 		);
 		// const newWalletFunds = await WalletFundsDao.createWalletFunds(req.user.user_id,paymentIntent.latest_charge, amount * 100);
 		res.status(200).json(paymentIntent);

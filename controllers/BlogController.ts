@@ -7,6 +7,7 @@ import { CreateBlogCategoryInput, UpdateBlogCategoryInput } from '../types/blog/
 import { CreateBlogTagInput, DeleteBlogTagInput, UpdateBlogTagInput } from '../types/blog/BlogTag';
 import { createFileHelper } from './FilesController';
 import BlogDao from '../dao/Blog';
+import FileDao from '../dao/File';
 
 /**
  * POST /blog/search
@@ -252,7 +253,7 @@ export async function getBlogPostBySlug(req: Request, res: Response): Promise<vo
  */
 export async function createBlogPost(req: ValidatedRequest<CreateBlogPostInput>, res: Response): Promise<void> {
 	try {
-		const { title, short_content, content, category_id, image_file_id, publish_at, tag_ids } = req.body;
+		const { title, short_content, content, category_id, image_file_id, publish_at, tag_ids, status } = req.body;
 		const newBlogPost = await BlogDao.createBlogPost(
 			{
 				title,
@@ -262,6 +263,7 @@ export async function createBlogPost(req: ValidatedRequest<CreateBlogPostInput>,
 				category_id,
 				image_file_id,
 				tag_ids: tag_ids || [],
+				status: status,
 			},
 			req.user?.user_id as string
 		);
@@ -320,7 +322,7 @@ export async function updateBlogPost(
 			res.status(400).json({ message: 'Blog post ID is required' });
 			return;
 		}
-		const { title, short_content, content, category_id, image_file_id, publish_at } = req.body;
+		const { title, short_content, content, category_id, image_file_id, publish_at, status } = req.body;
 		const updatedBlogPost = await BlogDao.updateBlogPost(blog_posts_id, {
 			title,
 			short_content,
@@ -329,6 +331,7 @@ export async function updateBlogPost(
 			image_file_id,
 			publish_at,
 			tag_ids: req.body.tag_ids || [],
+			status,
 		});
 		res.status(200).json(updatedBlogPost);
 	} catch (error) {
@@ -835,14 +838,16 @@ export async function createBlogImageByFile(req: ValidatedRequest, res: Response
 		const mime_type = file.mimetype;
 		console.log('File MIME type:', mime_type);
 		const newImage = await createFileHelper(req.user?.user_id, {
-			file_type: 'image',
+			file_type: 'IMAGE',
 			mime_type,
 			base64,
 			public: true,
 		});
-		res.status(201).json(newImage);
-	} catch (error) {
-		res.status(500).json({ message: 'Error creating image', error });
+		const savedFile = await FileDao.getFile(newImage.file_id);
+		res.status(201).json(savedFile);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	} catch (error: any) {
+		res.status(500).json({ message: 'Error creating image', error: error.message });
 	}
 }
 

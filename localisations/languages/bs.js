@@ -16,6 +16,7 @@ const bs = {
 		lobby_removed: 'Uklonjeni ste iz sobe',
 		lobby_canceled: 'Soba u koju ste pozvani je otkazana',
 		lobby_completed: 'Soba u koju ste pozvani je završena',
+		revoked: 'Odabrani vozač više nije dostupan.',
 	},
 	DRIVER_NOTIFICATIONS: {
 		offline: 'Sada ste offline, molimo otvorite KlikniApp',

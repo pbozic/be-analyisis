@@ -19,8 +19,6 @@ import multer from 'multer';
 import startCronJobs from './cron.js';
 import mainRouter from './routes/index.routes.js';
 import apiRouter from './routes/api.routes.js';
-import { asyncLocalStorage, log } from './lib/logger.js';
-import CustomConsole from './lib/logger.js';
 import BlogController from './controllers/BlogController.js';
 import authMiddleware from './middleware/auth.js';
 const upload = multer({ storage: multer.memoryStorage() });
@@ -29,46 +27,26 @@ const __dirname = path.dirname(__filename);
 // app.js
 config();
 const isDev = process.env.NODE_ENV !== 'production';
-console.socket = console.log;
 const REST_API_ENDPOINT = '/api';
 const app = express();
 // ─── Cron Jobs ──────────────────────────────────────────────────────
 if (process.env.NODE_ENV !== 'test') {
 	startCronJobs();
 }
-if (process.env.NODE_ENV === 'test') {
-	console = {
-		log: () => {},
-		error: () => {},
-		warn: () => {},
-		info: () => {},
-		debug: () => {},
-		socket: () => {},
-	};
-}
-// ─── Logging override ───────────────────────────────────────────────
-function formatArg(arg) {
-	if (typeof arg === 'string') return arg;
-	if (typeof arg === 'object') return isDev ? flatted.stringify(arg, null, 2) : JSON.stringify(arg);
-	return String(arg);
-}
-function makeConsoleOverride(level = 'info') {
-	return (...args) => {
-		const formattedArgs = args.map(formatArg);
-		if (isDev) {
-			log[level](...args);
-		} else {
-			const structuredLog = {};
-			args.forEach((arg) => {
-				if (typeof arg === 'object' && arg !== null) {
-					Object.assign(structuredLog, arg);
-				}
-			});
-			log[level](structuredLog);
-		}
-	};
-}
 // ─── Middleware Setup ───────────────────────────────────────────────
+app.disable('etag');
+app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
+
+app.post('/api/blog/upload/file', authMiddleware, upload.single('image'), (req, res) => {
+	console.log('File upload request received:', req.file);
+	BlogController.createBlogImageByFile(req, res);
+});
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
+app.use(logger('dev'));
+
+app.use(express.urlencoded({ limit: '512mb', extended: false }));
 app.use(
 	compression({
 		filter: (req, res) => {
@@ -79,25 +57,21 @@ app.use(
 		threshold: 10 * 1024,
 	})
 );
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
-app.use(logger('dev'));
-app.disable('etag');
-app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
-app.post('/api/blog/upload/file', authMiddleware, upload.single('image'), BlogController.createBlogImageByFile);
-app.use(express.urlencoded({ limit: '512mb', extended: false }));
-
 //app.use(fileUploadLib());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(
-	express.json({
+app.use((req, res, next) => {
+	const contentType = req.headers['content-type'] || '';
+	if (contentType.startsWith('multipart/form-data')) {
+		return next(); // skip JSON parser for file uploads
+	}
+	return express.json({
 		verify: function (req, res, buf) {
 			req.rawBody = buf;
 		},
 		limit: '512mb',
-	})
-);
+	})(req, res, next);
+});
 
 // ─── Routes ─────────────────────────────────────────────────────────
 app.use(mainRouter);

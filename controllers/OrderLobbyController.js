@@ -339,6 +339,49 @@ async function getOrderLobbyById(req, res) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
 }
+
+/**
+ * GET /order_lobbies/actives/:business_id
+ * Get the order lobby by ID
+ * @param {Object} req - Express request object
+ * @param {Object} req.params - Request parameters
+ * @param {string} req.params.business_id - The ID of the business
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>} Returns 200 status with active order lobbies data, or error with 500 status
+ */
+async function getActiveOrderLobbiesByBusinessId(req, res) {
+	try {
+		const { business_id } = req.params;
+		const orderLobbies = await OrderLobbyDao.getAllActiveOrderLobbiesByBusinessId(business_id);
+
+		if (!orderLobbies || orderLobbies.length === 0) {
+			return res.status(404).json({ success: false, error: 'No active order lobbies found for this business' });
+		}
+
+		const updatedLobbies = await Promise.all(
+			orderLobbies.map(async (lobby) => {
+				const updatedUsers = await Promise.all(
+					lobby.order_lobby_users.map(async (user) => {
+						let profile = await DocumentDao.getDocumentsForUserByType(
+							user.user_id,
+							DOCUMENT_TYPE.PROFILE_PICTURE
+						);
+						return {
+							...user,
+							profile_picture: profile[0]?.files[0]?.url,
+						};
+					})
+				);
+				return { ...lobby, order_lobby_users: updatedUsers };
+			})
+		);
+
+		return res.status(200).json(updatedLobbies);
+	} catch (error) {
+		return new Error(error);
+	}
+}
+
 export { createLobby };
 export { submitLobby };
 export { setLobbyUsersWithLimits };
@@ -346,6 +389,7 @@ export { setUserOrderLobbyItems };
 export { cancelLobby };
 export { deleteUserFromLobby };
 export { getOrderLobbyById };
+export { getActiveOrderLobbiesByBusinessId };
 export default {
 	createLobby,
 	submitLobby,
@@ -354,4 +398,5 @@ export default {
 	cancelLobby,
 	deleteUserFromLobby,
 	getOrderLobbyById,
+	getActiveOrderLobbiesByBusinessId,
 };
