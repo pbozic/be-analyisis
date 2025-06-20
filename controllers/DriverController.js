@@ -456,7 +456,11 @@ async function updateDriverLocation(req, res) {
 			);
 			if (distance < TAXI_ORDER_AUTO_UPDATE_STATUS_DISTANCE) {
 				console.log('Driver is within 300 meters of pickup location, setting order status to waiting');
-				await TaxiOrderDao.updateOrderStatus(acceptedOrder.order_id, TAXI_ORDER_STATUS.TAXI_WAITING);
+				const updatedOrder = await TaxiOrderDao.updateOrderStatus(
+					acceptedOrder.order_id,
+					TAXI_ORDER_STATUS.TAXI_WAITING
+				);
+				io.to(`order_${acceptedOrder.order_id}`).emit('order_status_change__taxi', updatedOrder);
 			} else {
 				console.log(`Driver is ${distance} km from pickup location, keeping order status as accepted`);
 			}
