@@ -36,7 +36,15 @@ const getOrderLobbyById = async (orderLobbiesId) => {
 			include: {
 				order_lobby_items: {
 					include: {
-						menu_items: true,
+						menu_items: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									},
+								},
+							},
+						},
 					},
 				},
 				order_lobby_users: {
@@ -63,7 +71,15 @@ const getAllOrderLobbies = async () => {
 			include: {
 				order_lobby_items: {
 					include: {
-						menu_items: true,
+						menu_items: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									},
+								},
+							},
+						},
 					},
 				},
 				order_lobby_users: {
@@ -95,7 +111,15 @@ const getOrderLobbiesForBusiness = async (business_id) => {
 			include: {
 				order_lobby_items: {
 					include: {
-						menu_items: true,
+						menu_items: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									},
+								},
+							},
+						},
 					},
 				},
 				order_lobby_users: {
@@ -132,7 +156,15 @@ const getActiveOrderLobbiesByUserID = async (userId) => {
 			include: {
 				order_lobby_items: {
 					include: {
-						menu_items: true,
+						menu_items: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									},
+								},
+							},
+						},
 					},
 				},
 				order_lobby_users: {
@@ -260,7 +292,15 @@ const getAllActiveOrderLobbiesByBusinessId = async (businessId) => {
 			include: {
 				order_lobby_items: {
 					include: {
-						menu_items: true,
+						menu_items: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									},
+								},
+							},
+						},
 					},
 				},
 				order_lobby_users: {
