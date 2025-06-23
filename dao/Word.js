@@ -1,5 +1,5 @@
 import prisma from '../prisma/prisma.js';
-import stripe from './lib/stripe.js';
+import stripe from '../lib/stripe.js';
 
 async function createWord(word, category_id, translations) {
 	// Create a new translatable record
