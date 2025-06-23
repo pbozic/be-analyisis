@@ -307,13 +307,29 @@ async function getAllWordBuysByWord(word) {
 	});
 }
 async function getAllWordBuysByBusiness(business) {
-	return await prisma.word_buy.findMany({
+	const wbs = await prisma.word_buy.findMany({
 		where: {
 			business: {
 				business_id: business,
 			},
 		},
+		include: {
+			word: {
+				include: {
+					translatable: {
+						include: {
+							translations: true,
+						},
+					},
+				},
+			},
+		},
 	});
+	for (let wb of wbs) {
+		wb.word.translations = wb.word.translatable.translations;
+		delete wb.word.translatable;
+	}
+	return wbs;
 }
 export { createWord };
 export { updateWord };
