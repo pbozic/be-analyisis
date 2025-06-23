@@ -34,7 +34,11 @@ const getOrderLobbyById = async (orderLobbiesId) => {
 		return await prisma.order_lobbies.findUnique({
 			where: { order_lobbies_id: orderLobbiesId },
 			include: {
-				order_lobby_items: true,
+				order_lobby_items: {
+					include: {
+						menu_items: true,
+					},
+				},
 				order_lobby_users: {
 					include: {
 						users: {

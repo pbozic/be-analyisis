@@ -246,16 +246,6 @@ async function setUserOrderLobbyItems(req, res) {
 		if (!orderLobby) {
 			return res.status(404).json({ success: false, error: 'Order lobby not found' });
 		}
-		const menuItemIds = items.map((item) => item.menu_item_id);
-
-		console.log('Menu item IDs for lobby:', menuItemIds);
-
-		const menuItems = await MenuItemDao.getMenuItemsByIds(menuItemIds);
-
-		console.log('Menu items for lobby:', menuItems);
-
-		orderLobby.order_lobby_items = menuItems;
-
 		await lobbySocketOrNotification(orderLobby.creator_id, 'lobby_updated', orderLobby);
 
 		return res.status(200).json({ success: true, message: 'Order lobby items updated successfully' });
