@@ -2,15 +2,17 @@ import OrderLobbyDao from '../dao/OrderLobby.js';
 import OrderLobbyUserDao from '../dao/OrderLobbyUser.js';
 import OrderLobbyItemDao from '../dao/OrderLobbyItem.js';
 import UserDao from '../dao/User.js';
-import MenuItemDao from '../dao/MenuItem.js';
+import BusinessDao from '../dao/Business.js';
 import DocumentDao from '../dao/Document.js';
 import socket from '../socket.js';
 import OneSignal from '../lib/oneSignal.js';
 import { getLocalisedTexts } from '../localisations/languages.js';
+import { CalculateOrderDetails, generateOrder } from '../lib/deliveryHelpers.js';
 import DeliveryOrderController from './DeliveryOrderController.js';
 import { DOCUMENT_TYPE } from '../lib/constants.js';
-import { getMenuItemsByIds } from '../dao/MenuItem.js';
+import MenuItemDao, { getMenuItemsByIds } from '../dao/MenuItem.js';
 const { UserSockets, io } = socket;
+
 async function lobbySocketOrNotification(user_id, event, order_lobby) {
 	const userSocket = UserSockets.get(user_id);
 	if (userSocket) {
@@ -53,32 +55,46 @@ async function addUserToLobby(user_id, order_lobby, limit) {
 	}
 	return ol_user;
 }
-// async function generateOrderDataFromLobby( lobbyOrderData,creator_id ){
-// 	//generate orderData - items, details...
-// 	const orderData = {}
-// 	orderData.items = lobbyOrderData.items.reduce((order_items,item)=>{
-// 		// const {
-// 		// 	menu_item_id,
-// 		// 	quantity,
-// 		// 	comment,
-// 		// 	extras,
-// 		// 	sides,
-// 		//
-// 		// 	names,
-// 		// 	image_url,
-// 		// 	discount,
-// 		// 	price
-// 		// } = item
-// 		const found_index = order_items.findIndex((i)=> i.menu_item_id===item.menu_item_id)
-// 		if(found_index === -1 || !OrderLobbyItemDao.areItemsEqual(item,order_items(found_index))){
-// 			order_items.push(item)
-// 		}else{
-// 			order_items[found_index].quantity += item.quantity
-// 		}
-// 	}, [])
-//
-// 	return orderData
-// }
+
+async function generateOrderDataFromLobby(orderLobby, paymentMethod) {
+	const items = await Promise.all(
+		orderLobby.order_lobby_items.map(async (item) => {
+			return {
+				...item.menu_items,
+				sides: await MenuItemDao.getMenuItemsByIds(item.sides || []),
+				extras: await MenuItemDao.getMenuItemsByIds(item.extras || []),
+				quantity: item.quantity,
+				customer_note: item.customer_note || '',
+			};
+		})
+	);
+
+	const restaurant = await BusinessDao.getBusinessById(orderLobby.restaurant_id);
+
+	const restaurantAddress = {
+		address: restaurant.address,
+		coordinates: {
+			latitude: restaurant.latitude,
+			longitude: restaurant.longitude,
+		},
+	};
+	const orderRoute = [restaurantAddress, orderLobby.delivery_location];
+
+	const paymentType = paymentMethod.type;
+	const orderDetails = CalculateOrderDetails(restaurant, items, orderLobby.delivery_location, paymentType);
+
+	return {
+		items: items,
+		details: orderDetails,
+		payment: paymentMethod,
+		courier_instructions: orderLobby.courier_note,
+		restaurant_message: '', // TODO: Check if this is needed
+		scheduled: false,
+		pickup_location: restaurantAddress,
+		delivery_location: orderLobby.delivery_location,
+		route: orderRoute,
+	};
+}
 /**
  * POST /order_lobby/create
  * Create a new order lobby
@@ -140,7 +156,7 @@ async function createLobby(req, res) {
  * @param {Object} req.params - Request parameters
  * @param {string} req.params.order_lobbies_id - ID of the order lobby
  * @param {Object} req.body - Request body
- * @param {Object} req.body.orderBody - Order details for delivery order creation
+ * @param {Object} req.body.paymentMethod - Payment method for delivery order
  * @param {Object} res - Express response object
  * @returns {Promise<Object>} Returns created order with 201 status, or error with 500 status
  */
@@ -148,21 +164,26 @@ async function submitLobby(req, res) {
 	try {
 		const { order_lobbies_id } = req.params;
 		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
-		const { orderBody } = req.body;
-		// const { lobbyOrderData } = req.body
-		// const orderData = await generateOrderDataFromLobby(lobbyOrderData)
+		const paymentMethod = req.body.paymentMethod;
+
+		const orderData = await generateOrderDataFromLobby(order_lobby, paymentMethod);
+
 		// Generate a delivery order
-		//TODO: Decide how to improve to not send whole order from FE, but rather generate from DB data about lobby
-		const order = await DeliveryOrderController.createOrder(
-			{ orderBody, user: { user_id: order_lobby.creator_id } },
-			res
+		const { order, payment_intent } = await DeliveryOrderController.generateOrder(
+			orderData,
+			order_lobby.creator_id
 		);
-		// Update the lobby status
+
+		/*
 		await OrderLobbyDao.setOrderLobbyActive(order_lobbies_id, false);
 		for (const ol_user of order_lobby.order_lobby_users) {
 			await lobbySocketOrNotification(ol_user.user_id, 'lobby_completed', order_lobby);
 		}
-		return res.status(201).json(order);
+		*/
+		res.status(200).json({
+			...order,
+			payment_intent,
+		});
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
