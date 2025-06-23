@@ -61,7 +61,11 @@ const getAllOrderLobbies = async () => {
 	try {
 		return await prisma.order_lobbies.findMany({
 			include: {
-				order_lobby_items: true,
+				order_lobby_items: {
+					include: {
+						menu_items: true,
+					},
+				},
 				order_lobby_users: {
 					include: {
 						users: {
@@ -89,7 +93,11 @@ const getOrderLobbiesForBusiness = async (business_id) => {
 				business_id: business_id,
 			},
 			include: {
-				order_lobby_items: true,
+				order_lobby_items: {
+					include: {
+						menu_items: true,
+					},
+				},
 				order_lobby_users: {
 					include: {
 						users: {
@@ -122,7 +130,11 @@ const getActiveOrderLobbiesByUserID = async (userId) => {
 				},
 			},
 			include: {
-				order_lobby_items: true,
+				order_lobby_items: {
+					include: {
+						menu_items: true,
+					},
+				},
 				order_lobby_users: {
 					include: {
 						users: {
@@ -246,7 +258,11 @@ const getAllActiveOrderLobbiesByBusinessId = async (businessId) => {
 				active: true,
 			},
 			include: {
-				order_lobby_items: true,
+				order_lobby_items: {
+					include: {
+						menu_items: true,
+					},
+				},
 				order_lobby_users: {
 					include: {
 						users: {
