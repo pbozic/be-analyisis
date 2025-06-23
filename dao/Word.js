@@ -1,4 +1,6 @@
 import prisma from '../prisma/prisma.js';
+import stripe from './lib/stripe.js';
+
 async function createWord(word, category_id, translations) {
 	// Create a new translatable record
 	let translatable = await prisma.translatable.create({
@@ -233,7 +235,7 @@ export async function createWordBuySubscription(word_id, business_id, price, str
 		}
 
 		// 2) Create the subscription in “incomplete” mode so we get a PaymentIntent
-		const subscription = await stripe.subscriptions.create({
+		const subscription = await stripe.client.subscriptions.create({
 			customer: business.stripe_customer_id,
 			items: [{ price: stripe_price_id }],
 			payment_behavior: 'default_incomplete',
