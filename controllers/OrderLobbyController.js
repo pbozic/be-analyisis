@@ -235,11 +235,15 @@ async function setUserOrderLobbyItems(req, res) {
 					sides: item.sides,
 					extras: item.extras,
 					quantity: item.quantity,
-					customer_note: item.customer_note,
+					customer_note: item.customer_note || '',
 				});
 			}
 		}
-		return res.status(200);
+
+		const orderLobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
+		await lobbySocketOrNotification(orderLobby.creator_id, 'lobby_updated', orderLobby);
+
+		return res.status(200).json({ success: true, message: 'Order lobby items updated successfully' });
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
