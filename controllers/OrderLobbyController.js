@@ -2,12 +2,14 @@ import OrderLobbyDao from '../dao/OrderLobby.js';
 import OrderLobbyUserDao from '../dao/OrderLobbyUser.js';
 import OrderLobbyItemDao from '../dao/OrderLobbyItem.js';
 import UserDao from '../dao/User.js';
+import MenuItemDao from '../dao/MenuItem.js';
 import DocumentDao from '../dao/Document.js';
 import socket from '../socket.js';
 import OneSignal from '../lib/oneSignal.js';
 import { getLocalisedTexts } from '../localisations/languages.js';
 import DeliveryOrderController from './DeliveryOrderController.js';
 import { DOCUMENT_TYPE } from '../lib/constants.js';
+import { getMenuItemsByIds } from '../dao/MenuItem.js';
 const { UserSockets, io } = socket;
 async function lobbySocketOrNotification(user_id, event, order_lobby) {
 	const userSocket = UserSockets.get(user_id);
@@ -235,11 +237,18 @@ async function setUserOrderLobbyItems(req, res) {
 					sides: item.sides,
 					extras: item.extras,
 					quantity: item.quantity,
-					customer_note: item.customer_note,
+					customer_note: item.customer_note || '',
 				});
 			}
 		}
-		return res.status(200);
+
+		let orderLobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
+		if (!orderLobby) {
+			return res.status(404).json({ success: false, error: 'Order lobby not found' });
+		}
+		await lobbySocketOrNotification(orderLobby.creator_id, 'lobby_updated', orderLobby);
+
+		return res.status(200).json({ success: true, message: 'Order lobby items updated successfully' });
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
