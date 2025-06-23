@@ -228,7 +228,8 @@ export async function createWordBuySubscription(word_id, business_id, price, str
 			where: { business_id },
 		});
 		if (!business?.stripe_customer_id) {
-			return res.status(400).json({ error: 'Business has no Stripe customer on file' });
+			throw new Error('Business has no Stripe customer on file');
+			// return res.status(400).json({ error: 'Business has no Stripe customer on file' });
 		}
 
 		// 2) Create the subscription in “incomplete” mode so we get a PaymentIntent
@@ -250,7 +251,8 @@ export async function createWordBuySubscription(word_id, business_id, price, str
 		const paymentIntent = subscription.latest_invoice.payment_intent;
 		if (!paymentIntent?.client_secret) {
 			console.error('No PaymentIntent client_secret on subscription:', subscription.id);
-			return res.status(500).json({ error: 'PaymentIntent not created' });
+			throw new Error('PaymentIntent not created');
+			// return res.status(500).json({ error: 'PaymentIntent not created' });
 		}
 
 		// 3) Create your DB record (paid defaults to false)
@@ -272,7 +274,7 @@ export async function createWordBuySubscription(word_id, business_id, price, str
 		};
 	} catch (err) {
 		console.error('createWordBuySubscription error:', err);
-		res.status(500).json({ error: err.message });
+		throw new Error(err.message);
 	}
 }
 async function addStripeSubToWordBuy(id, stripe_subscription_id) {
