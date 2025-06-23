@@ -288,23 +288,36 @@ async function addStripeSubToWordBuy(id, stripe_subscription_id) {
 	});
 }
 async function getWordBuyById(id) {
-	return await prisma.word_buy.findUnique({
+	const wb = await prisma.word_buy.findUnique({
 		where: {
 			word_buy_id: id,
 		},
 	});
+	wb.translations = wb.translatable.translations;
+	delete wb.translatable;
+	return wb;
 }
 async function getAllWordBuys() {
-	return await prisma.word_buy.findMany();
+	const wbs = await prisma.word_buy.findMany();
+	for (let wb of wbs) {
+		wb.word.translations = wb.word.translatable.translations;
+		delete wb.word.translatable;
+	}
+	return wbs;
 }
 async function getAllWordBuysByWord(word) {
-	return await prisma.word_buy.findMany({
+	const wbs = await prisma.word_buy.findMany({
 		where: {
 			word: {
 				word_id: word,
 			},
 		},
 	});
+	for (let wb of wbs) {
+		wb.word.translations = wb.word.translatable.translations;
+		delete wb.word.translatable;
+	}
+	return wbs;
 }
 async function getAllWordBuysByBusiness(business) {
 	const wbs = await prisma.word_buy.findMany({
