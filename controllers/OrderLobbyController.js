@@ -123,7 +123,12 @@ async function createLobby(req, res) {
 				lobby_users.push(user);
 			}
 		}
-		return res.status(200).json({ new_lobby, lobby_users });
+		const lobby = {
+			...new_lobby,
+			order_lobby_users: lobby_users,
+			order_lobby_items: [],
+		};
+		return res.status(200).json({ lobby });
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
