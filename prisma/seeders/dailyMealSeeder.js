@@ -49,6 +49,7 @@ async function populateDailyMeals(business_id) {
 			const menuCategory = await MenuCategoryDao.createMenuCategory(dailyMenu.menu_id, {
 				business_id,
 				category_ids: [category.categories_id],
+				price: 9 + j,
 			});
 
 			// Prepare daily meal item data
