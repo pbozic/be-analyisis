@@ -174,12 +174,11 @@ async function submitLobby(req, res) {
 			order_lobby.creator_id
 		);
 
-		/*
 		await OrderLobbyDao.setOrderLobbyActive(order_lobbies_id, false);
 		for (const ol_user of order_lobby.order_lobby_users) {
 			await lobbySocketOrNotification(ol_user.user_id, 'lobby_completed', order_lobby);
 		}
-		*/
+
 		res.status(200).json({
 			...order,
 			payment_intent,
