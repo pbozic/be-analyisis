@@ -389,7 +389,7 @@ async function getActiveOrderLobbiesByBusinessId(req, res) {
 		const orderLobbies = await OrderLobbyDao.getAllActiveOrderLobbiesByBusinessId(business_id);
 
 		if (!orderLobbies || orderLobbies.length === 0) {
-			return res.status(404).json({ success: false, error: 'No active order lobbies found for this business' });
+			return res.status(204).json([]);
 		}
 
 		const updatedLobbies = await Promise.all(
