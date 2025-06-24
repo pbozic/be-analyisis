@@ -72,12 +72,13 @@ async function generateOrderDataFromLobby(orderLobby, paymentMethod) {
 	const restaurant = await BusinessDao.getBusinessById(orderLobby.restaurant_id);
 
 	const restaurantAddress = {
-		address: restaurant.address,
+		address: restaurant.address.address,
 		coordinates: {
-			latitude: restaurant.latitude,
-			longitude: restaurant.longitude,
+			latitude: restaurant.address.latitude,
+			longitude: restaurant.address.longitude,
 		},
 	};
+
 	const orderRoute = [restaurantAddress, orderLobby.delivery_location];
 
 	const paymentType = paymentMethod.type;
