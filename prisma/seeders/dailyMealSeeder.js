@@ -69,7 +69,7 @@ async function populateDailyMeals(business_id) {
 			};
 
 			// Create the daily meal menu item
-			await MenuItemDao.createMenuItem(menuCategory.menu_category_id, newMenuData, false);
+			await MenuItemDao.createMenuItem(menuCategory.menu_category_id, newMenuData, true);
 			console.log(
 				`Created daily meal item for ${date.toISOString().slice(0, 10)}: ${item.names?.en || '[no name]'} in category ${category.name || category.categories_id}`
 			);
