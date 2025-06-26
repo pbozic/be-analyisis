@@ -1082,6 +1082,14 @@ async function getDailyMealsSubscriptionByUserId(user_id, start_date) {
 						name: true,
 						telephone: true,
 						email: true,
+						documents: {
+							where: {
+								document_type: DOCUMENT_TYPE.LOGO,
+							},
+							select: {
+								files: true,
+							},
+						},
 					},
 				},
 			},
