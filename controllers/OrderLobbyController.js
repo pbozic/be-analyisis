@@ -431,7 +431,7 @@ async function getOrderLobbiesByUserId(req, res) {
 	try {
 		const orderLobbies = await OrderLobbyDao.getOrderLobbiesByUserId(userId);
 
-		if (orderLobbies || orderLobbies.length === 0) {
+		if (orderLobbies && orderLobbies.length === 0) {
 			return res.status(204).json([]);
 		}
 

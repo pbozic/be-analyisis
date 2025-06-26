@@ -342,13 +342,7 @@ const getOrderLobbiesByUserId = async (userId) => {
 						},
 					},
 				},
-				order_lobby_users: {
-					include: {
-						users: {
-							select: cropped_user_columns,
-						},
-					},
-				},
+				order_lobby_users: true,
 			},
 		});
 	} catch (error) {
