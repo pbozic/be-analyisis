@@ -1029,6 +1029,7 @@ async function getDailyMealsSubscriptionByBusinessId(business_id, start_date) {
 								category: true,
 							},
 						},
+						menu_items: true,
 					},
 				},
 				user: {
@@ -1074,6 +1075,7 @@ async function getDailyMealsSubscriptionByUserId(user_id, start_date) {
 								category: true,
 							},
 						},
+						menu_items: true,
 					},
 				},
 				business: {
