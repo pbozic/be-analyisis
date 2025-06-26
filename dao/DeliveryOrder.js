@@ -1,4 +1,5 @@
 import { validate as isUuid } from 'uuid';
+import { SUBSCRIPTION_STATUS } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 import { DOCUMENT_TYPE, DELIVERY_ORDER_STATUS, DELIVERY_ORDER_END_STATES } from '../lib/constants.js';
@@ -1016,6 +1017,7 @@ async function getDailyMealsSubscriptionByBusinessId(business_id, start_date) {
 					gte: normalizedDate,
 				},
 				order_created: null,
+				status: SUBSCRIPTION_STATUS.ACTIVE,
 			},
 			include: {
 				address: true,
@@ -1060,6 +1062,7 @@ async function getDailyMealsSubscriptionByUserId(user_id, start_date) {
 					gte: normalizedDate,
 				},
 				order_created: null,
+				status: SUBSCRIPTION_STATUS.ACTIVE,
 			},
 			include: {
 				address: true,
