@@ -376,7 +376,7 @@ async function getOrderLobbyById(req, res) {
 }
 
 /**
- * GET /order_lobbies/actives/:business_id
+ * GET /order_lobby/actives/:business_id
  * Get the order lobby by ID
  * @param {Object} req - Express request object
  * @param {Object} req.params - Request parameters
@@ -417,6 +417,31 @@ async function getActiveOrderLobbiesByBusinessId(req, res) {
 	}
 }
 
+/**
+ * GET /order_lobby/user/:user_id
+ * Get the order lobbies where user is included
+ * @param {Object} req - Express request object
+ * @param {Object} req.params - Request parameters
+ * @param {string} req.params.user_id - The ID of the user
+ * @param {Object} res - Express response object
+ * @returns {Promise<void>} Returns 200 status with active order lobbies data where user is included, or error with 500 status
+ */
+async function getOrderLobbiesByUserId(req, res) {
+	const userId = req.params.user_id;
+	try {
+		const orderLobbies = await OrderLobbyDao.getOrderLobbiesByUserId(userId);
+
+		if (orderLobbies && orderLobbies.length === 0) {
+			return res.status(204).json([]);
+		}
+
+		return res.status(200).json(orderLobbies);
+	} catch (e) {
+		console.error(`Error fetching lobbies for user ${userId}: `, e);
+		return res.status(500).json({ success: false, error: e.message });
+	}
+}
+
 export { createLobby };
 export { submitLobby };
 export { setLobbyUsersWithLimits };
@@ -425,6 +450,7 @@ export { cancelLobby };
 export { deleteUserFromLobby };
 export { getOrderLobbyById };
 export { getActiveOrderLobbiesByBusinessId };
+export { getOrderLobbiesByUserId };
 export default {
 	createLobby,
 	submitLobby,
@@ -434,4 +460,5 @@ export default {
 	deleteUserFromLobby,
 	getOrderLobbyById,
 	getActiveOrderLobbiesByBusinessId,
+	getOrderLobbiesByUserId,
 };
