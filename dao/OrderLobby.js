@@ -327,6 +327,7 @@ const getOrderLobbiesByUserId = async (userId) => {
 						user_id: userId,
 					},
 				},
+				active: true,
 			},
 			include: {
 				order_lobby_items: {
