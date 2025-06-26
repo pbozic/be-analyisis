@@ -376,7 +376,7 @@ async function getOrderLobbyById(req, res) {
 }
 
 /**
- * GET /order_lobbies/actives/:business_id
+ * GET /order_lobby/actives/:business_id
  * Get the order lobby by ID
  * @param {Object} req - Express request object
  * @param {Object} req.params - Request parameters
@@ -418,7 +418,7 @@ async function getActiveOrderLobbiesByBusinessId(req, res) {
 }
 
 /**
- * GET /order_lobbies/user/:user_id
+ * GET /order_lobby/user/:user_id
  * Get the order lobbies where user is included
  * @param {Object} req - Express request object
  * @param {Object} req.params - Request parameters
