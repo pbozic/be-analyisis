@@ -318,6 +318,45 @@ const getAllActiveOrderLobbiesByBusinessId = async (businessId) => {
 	}
 };
 
+const getOrderLobbiesByUserId = async (userId) => {
+	try {
+		return await prisma.order_lobbies.findMany({
+			where: {
+				order_lobby_users: {
+					some: {
+						user_id: userId,
+					},
+				},
+			},
+			include: {
+				order_lobby_items: {
+					include: {
+						menu_items: {
+							include: {
+								documents: {
+									include: {
+										files: true,
+									},
+								},
+							},
+						},
+					},
+				},
+				order_lobby_users: {
+					include: {
+						users: {
+							select: cropped_user_columns,
+						},
+					},
+				},
+			},
+		});
+	} catch (error) {
+		console.error('Error getting order lobbies by user ID:', error);
+		throw error;
+	}
+};
+
 export { createOrderLobby };
 export { getOrderLobbyById };
 export { getOrderLobbiesForBusiness };
@@ -328,6 +367,7 @@ export { setOrderLobbyActive };
 export { deleteOrderLobby };
 export { editUsersInOrderLobby };
 export { getAllActiveOrderLobbiesByBusinessId };
+export { getOrderLobbiesByUserId };
 export default {
 	createOrderLobby,
 	getOrderLobbyById,
@@ -339,4 +379,5 @@ export default {
 	deleteOrderLobby,
 	editUsersInOrderLobby,
 	getAllActiveOrderLobbiesByBusinessId,
+	getOrderLobbiesByUserId,
 };
