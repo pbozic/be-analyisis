@@ -338,7 +338,8 @@ async function deleteUserFromLobby(req, res) {
 		}
 		// Send notification to the user
 		await lobbySocketOrNotification(deleted_ol_user.user_id, 'removed_from_lobby', order_lobby);
-		return res.status(200).json({ success: true, deleted_user: deleted_ol_user });
+		const lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
+		return res.status(200).json({ success: true, lobby: lobby });
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
