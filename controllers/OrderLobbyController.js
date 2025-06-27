@@ -64,7 +64,7 @@ async function generateOrderDataFromLobby(orderLobby, paymentMethod) {
 				sides: await MenuItemDao.getMenuItemsByIds(item.sides || []),
 				extras: await MenuItemDao.getMenuItemsByIds(item.extras || []),
 				quantity: item.quantity,
-				customer_note: item.customer_note || '',
+				comment: item.customer_note || '',
 			};
 		})
 	);
