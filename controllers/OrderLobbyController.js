@@ -89,7 +89,7 @@ async function generateOrderDataFromLobby(orderLobby, paymentMethod) {
 		details: orderDetails,
 		payment: paymentMethod,
 		courier_instructions: orderLobby.courier_note,
-		restaurant_message: '', // TODO: Check if this is needed
+		restaurant_message: orderLobby.restaurant_message,
 		scheduled: false,
 		pickup_location: restaurantAddress,
 		delivery_location: orderLobby.delivery_location,
@@ -121,6 +121,7 @@ async function createLobby(req, res) {
 			lobby_description,
 			business_id,
 			restaurant_id,
+			restaurant_message,
 			courier_note,
 			delivery_location,
 		} = req.body;
@@ -130,6 +131,7 @@ async function createLobby(req, res) {
 			business: { connect: { business_id: business_id } },
 			restaurant_id,
 			creator_id: req.user.user_id,
+			restaurant_message,
 			courier_note: courier_note,
 			delivery_location: delivery_location,
 		});

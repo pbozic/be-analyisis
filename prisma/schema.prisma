@@ -1084,6 +1084,7 @@ model order_lobbies {
   active             Boolean  @default(true)
   delivery_location  Json?
   courier_note       String?
+  restaurant_message String?
   business_id        String   @db.Uuid
   restaurant_id      String   @db.Uuid
   creator_id         String   @db.Uuid
