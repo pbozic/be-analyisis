@@ -62,20 +62,14 @@ router.delete('/:business_id', BusinessController.deleteBusiness);
 router.post('/scoring_points', BusinessController.createScoringPointsHandler);
 router.post(
 	'/:business_id/daily-meal-categories',
-	authMiddleware,
 	validate(CreateDailyMealCategoryWithPriceSchema, 'body'),
 	DailyMealCategoryController.createDailyMealCategoryWithPrice
 );
 
-router.get(
-	'/:business_id/daily-meal-categories',
-	authMiddleware,
-	DailyMealCategoryController.getActiveDailyMealCategoriesForBusiness
-);
+router.get('/:business_id/daily-meal-categories', DailyMealCategoryController.getActiveDailyMealCategoriesForBusiness);
 
 router.post(
 	'/daily-meal-categories/:dmc_id/price',
-	authMiddleware,
 	validate(AddPriceToDailyMealCategorySchema, 'body'),
 	DailyMealCategoryController.addPriceToDailyMealCategory
 );
