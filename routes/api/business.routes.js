@@ -5,6 +5,12 @@ import { updateSchema, paymentIntentSchema } from '../../joi/businessSchemas.js'
 import { reviewBusinessSchema } from '../../joi/reviewSchemas.js';
 import BusinessController from '../../controllers/BusinessController.js';
 import FinanceController from '../../controllers/FinancesController.js';
+import * as DailyMealCategoryController from '../../controllers/DailyMealCategoryController';
+import {
+	CreateDailyMealCategoryWithPriceSchema,
+	AddPriceToDailyMealCategorySchema,
+} from '../../types/dailyMeals/DailyMealCategory';
+
 const router = express.Router();
 router.post('/businesses/ids', BusinessController.getBusinessesByIds);
 router.post('/businesses/sections/merchant', BusinessController.listPromoSectionsWithMerchants);
@@ -54,4 +60,26 @@ router.patch('/stripe/generate/:business_id', BusinessController.generateBusines
 router.post('/paymentIntent', joi(paymentIntentSchema), BusinessController.createPaymentIntent);
 router.delete('/:business_id', BusinessController.deleteBusiness);
 router.post('/scoring_points', BusinessController.createScoringPointsHandler);
+router.post(
+	'/:business_id/daily-meal-categories',
+	authMiddleware,
+	validate(CreateDailyMealCategoryWithPriceSchema, 'body'),
+	DailyMealCategoryController.createDailyMealCategoryWithPrice
+);
+
+router.get(
+	'/:business_id/daily-meal-categories',
+	authMiddleware,
+	DailyMealCategoryController.getActiveDailyMealCategoriesForBusiness
+);
+
+router.post(
+	'/daily-meal-categories/:dmc_id/price',
+	authMiddleware,
+	validate(AddPriceToDailyMealCategorySchema, 'body'),
+	DailyMealCategoryController.addPriceToDailyMealCategory
+);
+
+router.delete('/daily-meal-categories/:dmc_id', authMiddleware, DailyMealCategoryController.deleteDailyMealCategory);
+
 export default router;

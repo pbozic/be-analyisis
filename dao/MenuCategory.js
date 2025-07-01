@@ -42,6 +42,8 @@ const createMenuCategory = async (menuId, categoryData) => {
 					category: true,
 				},
 			},
+
+			daily_meal_category_price: true,
 		},
 	});
 	return menu_categoryR;
@@ -102,6 +104,8 @@ const getMenuCategoriesByMenuId = async (menu_id) => {
 					category: true,
 				},
 			},
+
+			daily_meal_category_price: true,
 		},
 	});
 	// Sort menu items within each category based on the ordered JSON field
@@ -298,9 +302,35 @@ const getMenuCategoryById = async (menu_category_id) => {
 					category: true,
 				},
 			},
+			daily_meal_category_price: true,
 		},
 	});
 };
+
+/**
+ * Updates all menu_categories for a given daily_meal_category_id where the related menu.date is >= valid_from,
+ * setting daily_meal_category_price_id to the provided priceId.
+ * @param {string} dailyMealCategoryId
+ * @param {string} priceId
+ * @param {Date} validFrom
+ * @returns {Promise<{ count: number }>} The result of updateMany
+ */
+const updateMenuCategoriesWithNewPrice = async (dailyMealCategoryId, priceId, validFrom) => {
+	return await prisma.menu_categories.updateMany({
+		where: {
+			daily_meal_category_id: dailyMealCategoryId,
+			menu: {
+				date: {
+					gte: validFrom,
+				},
+			},
+		},
+		data: {
+			daily_meal_category_price_id: priceId,
+		},
+	});
+};
+
 export { updateDailyMealMenuPrice };
 export { createMenuCategory };
 export { addMenuCategoryIdToOrder };
@@ -315,6 +345,8 @@ export { updateMenuItemsOrder };
 export { addCategoryToMenuCategory };
 export { removeCategoryFromMenuCategory };
 export { getMenuCategoryById };
+export { updateMenuCategoriesWithNewPrice };
+
 export default {
 	updateDailyMealMenuPrice,
 	createMenuCategory,
@@ -330,4 +362,5 @@ export default {
 	addCategoryToMenuCategory,
 	removeCategoryFromMenuCategory,
 	getMenuCategoryById,
+	updateMenuCategoriesWithNewPrice,
 };

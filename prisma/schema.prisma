@@ -103,6 +103,8 @@ model business {
   business_clients            business_clients[]
   purchase_order_limit_amount Float?
   drivers                     drivers[]
+
+  daily_meal_categories daily_meal_categories[]
 }
 
 model business_users {
@@ -734,6 +736,9 @@ model menu_categories {
   menu_order_index           Int?
   daily_meal_subscribers     daily_meals_subscriptions[]
 
+  daily_meal_category_price_id String?                     @db.Uuid
+  daily_meal_category_price    daily_meal_category_prices? @relation(fields: [daily_meal_category_price_id], references: [daily_meal_category_prices_id])
+
   @@unique([menu_category_id])
 }
 
@@ -934,24 +939,25 @@ model local_prices {
 }
 
 model categories {
-  categories_id        String                       @id @default(uuid()) @db.Uuid
-  name                 String
-  description          String?
-  tag                  String
-  icon_file_id         String?                      @db.Uuid
-  icon                 files?                       @relation(fields: [icon_file_id], references: [file_id])
-  category_type        CATEGORY_TYPE
-  menu_categories      menu_categories_categories[]
-  promo_ads_category   promo_ads_category[]
-  parent_categories_id String?                      @db.Uuid
-  parent_category      categories?                  @relation("sub_categories", fields: [parent_categories_id], references: [categories_id])
-  sub_categories       categories[]                 @relation("sub_categories")
-  translatable_id      String                       @db.Uuid
-  translatable         translatable                 @relation(fields: [translatable_id], references: [translatable_id], onDelete: Cascade)
-  words                words[]
-  created_at           DateTime                     @default(now()) @db.Timestamptz(6)
-  updated_at           DateTime                     @default(now()) @updatedAt @db.Timestamptz(6)
-  deleted_at           DateTime?                    @db.Timestamptz(6)
+  categories_id         String                       @id @default(uuid()) @db.Uuid
+  name                  String
+  description           String?
+  tag                   String
+  icon_file_id          String?                      @db.Uuid
+  icon                  files?                       @relation(fields: [icon_file_id], references: [file_id])
+  category_type         CATEGORY_TYPE
+  menu_categories       menu_categories_categories[]
+  promo_ads_category    promo_ads_category[]
+  parent_categories_id  String?                      @db.Uuid
+  parent_category       categories?                  @relation("sub_categories", fields: [parent_categories_id], references: [categories_id])
+  sub_categories        categories[]                 @relation("sub_categories")
+  translatable_id       String                       @db.Uuid
+  translatable          translatable                 @relation(fields: [translatable_id], references: [translatable_id], onDelete: Cascade)
+  words                 words[]
+  created_at            DateTime                     @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                     @default(now()) @updatedAt @db.Timestamptz(6)
+  deleted_at            DateTime?                    @db.Timestamptz(6)
+  daily_meal_categories daily_meal_categories[]
 
   @@unique([tag, category_type])
 }
@@ -1405,6 +1411,32 @@ model payment_splits {
   updated_at       DateTime               @default(now()) @updatedAt @db.Timestamptz(6)
 
   payment payments @relation(fields: [payment_id], references: [payment_id], onDelete: Cascade)
+}
+
+model daily_meal_categories {
+  daily_meal_category_id String @id @default(uuid()) @db.Uuid
+  business_id            String @db.Uuid
+  category_id            String @db.Uuid
+
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  start_date DateTime @db.Timestamptz(6)
+
+  category categories @relation(fields: [category_id], references: [categories_id], onDelete: Cascade)
+  business business   @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+
+  daily_meal_category_prices daily_meal_category_prices[]
+}
+
+model daily_meal_category_prices {
+  daily_meal_category_prices_id String   @id @default(uuid()) @db.Uuid
+  daily_meal_category_id        String   @db.Uuid
+  price                         Int
+  valid_from                    DateTime @db.Timestamptz(6)
+
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  daily_meal_category daily_meal_categories @relation(fields: [daily_meal_category_id], references: [daily_meal_category_id], onDelete: Cascade)
+  menu_categories     menu_categories[]
 }
 
 enum PAYMENT_METHOD {
