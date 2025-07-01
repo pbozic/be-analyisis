@@ -1,5 +1,6 @@
 import express from 'express';
 
+import { validate } from '../../middleware/zod.js';
 import joi from '../../middleware/joi.js';
 import { updateSchema, paymentIntentSchema } from '../../joi/businessSchemas.js';
 import { reviewBusinessSchema } from '../../joi/reviewSchemas.js';
