@@ -7,13 +7,16 @@ export default [
 	{
 		ignores: ['node_modules', 'dist', 'types/zod', '**/prisma/seeders/**', 'docs', 'dist'],
 	},
+	// TypeScript files: full type-checking
 	{
-		files: ['**/*.ts', '**/*.js'],
+		files: ['**/*.ts', '**/*.tsx'],
 		languageOptions: {
+			parser: tsParser,
+			parserOptions: {
+				project: './tsconfig.json', // enable full TS type-checking
+			},
 			ecmaVersion: 2020,
 			sourceType: 'module',
-			parser: tsParser,
-			parserOptions: process.env.ESLINT_STRICT ? { project: './tsconfig.json' } : {},
 		},
 		plugins: {
 			'@typescript-eslint': eslintPluginTs,
@@ -37,6 +40,32 @@ export default [
 					'newlines-between': 'always',
 				},
 			],
+		},
+	},
+	// JS files: only lint, no TS type-checking
+	{
+		files: ['**/*.js'],
+		languageOptions: {
+			parser: tsParser,
+			parserOptions: {
+				// No `project` here = no type-checking
+			},
+			ecmaVersion: 2020,
+			sourceType: 'module',
+		},
+		plugins: {
+			'@typescript-eslint': eslintPluginTs,
+			import: pluginImport,
+			prettier: pluginPrettier,
+		},
+		rules: {
+			...js.configs.recommended.rules,
+			'prettier/prettier': 'error',
+			'no-unused-vars': 'warn',
+			// Disable TS-specific rules for JS
+			'@typescript-eslint/no-unused-vars': 'off',
+			'@typescript-eslint/no-var-requires': 'off',
+			'@typescript-eslint/explicit-module-boundary-types': 'off',
 		},
 	},
 ];

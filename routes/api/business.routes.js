@@ -75,6 +75,6 @@ router.post(
 	DailyMealCategoryController.addPriceToDailyMealCategory
 );
 
-router.delete('/daily-meal-categories/:dmc_id', authMiddleware, DailyMealCategoryController.deleteDailyMealCategory);
+router.delete('/daily-meal-categories/:dmc_id', DailyMealCategoryController.deleteDailyMealCategory);
 
 export default router;
