@@ -64,7 +64,7 @@ async function generateOrderDataFromLobby(orderLobby, paymentMethod) {
 				sides: await MenuItemDao.getMenuItemsByIds(item.sides || []),
 				extras: await MenuItemDao.getMenuItemsByIds(item.extras || []),
 				quantity: item.quantity,
-				customer_note: item.customer_note || '',
+				comment: item.customer_note || '',
 			};
 		})
 	);
@@ -89,7 +89,7 @@ async function generateOrderDataFromLobby(orderLobby, paymentMethod) {
 		details: orderDetails,
 		payment: paymentMethod,
 		courier_instructions: orderLobby.courier_note,
-		restaurant_message: '', // TODO: Check if this is needed
+		restaurant_message: orderLobby.restaurant_message,
 		scheduled: false,
 		pickup_location: restaurantAddress,
 		delivery_location: orderLobby.delivery_location,
@@ -121,6 +121,7 @@ async function createLobby(req, res) {
 			lobby_description,
 			business_id,
 			restaurant_id,
+			restaurant_message,
 			courier_note,
 			delivery_location,
 		} = req.body;
@@ -130,6 +131,7 @@ async function createLobby(req, res) {
 			business: { connect: { business_id: business_id } },
 			restaurant_id,
 			creator_id: req.user.user_id,
+			restaurant_message,
 			courier_note: courier_note,
 			delivery_location: delivery_location,
 		});
@@ -338,7 +340,8 @@ async function deleteUserFromLobby(req, res) {
 		}
 		// Send notification to the user
 		await lobbySocketOrNotification(deleted_ol_user.user_id, 'removed_from_lobby', order_lobby);
-		return res.status(200).json({ success: true, deleted_user: deleted_ol_user });
+		const lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
+		return res.status(200).json({ success: true, lobby: lobby });
 	} catch (error) {
 		return res.status(500).json({ success: false, error: error.message });
 	}
