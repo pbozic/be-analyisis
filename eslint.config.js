@@ -25,12 +25,12 @@ export default [
 		},
 		rules: {
 			...js.configs.recommended.rules,
-			...eslintPluginTs.configs.recommended.rules,
+			...eslintPluginTs.configs.recommended?.rules,
 			'no-async-promise-executor': 'warn',
 			'prettier/prettier': 'error',
 			'no-unused-vars': 'off',
 			'@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-			'no-undef': 'off',
+			'no-undef': 'warn',
 			'@typescript-eslint/no-require-imports': 'off',
 			'@typescript-eslint/ban-ts-comment': 'off',
 			'import/order': [
