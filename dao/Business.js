@@ -190,6 +190,7 @@ const getBusinessForSearchById = async (business_id) => {
 				// ✅ Select specific fields from the root
 				business_id: true,
 				name: true,
+				type: true,
 				description: true,
 				telephone: true,
 				working_hours: true,
