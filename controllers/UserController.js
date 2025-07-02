@@ -332,7 +332,7 @@ async function updatePassword(req, res) {
 		let correctPw = await bcrypt.compare(postData.password, userCheck.password);
 		if (!correctPw) return res.status(400).json({ error: 'Wrong password..' });
 		let hash = await bcrypt.hash(postData.new_password, Number(process.env.BCRYPT_SALT_ROUNDS));
-		user = await UserDao.updateUserPassword(req.user.user_id, hash);
+		let user = await UserDao.updateUserPassword(req.user.user_id, hash);
 		if (user) return res.status(200).json(user);
 		res.status(400).json({ error: 'Error updating user information' });
 	} catch (e) {
