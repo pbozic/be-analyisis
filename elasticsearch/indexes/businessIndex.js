@@ -225,6 +225,7 @@ async function indexBusinesses(business_id = null, force = false) {
 				seats: business.seats,
 				restaurant_overwhelmed: business.restaurant_overwhelmed,
 				logo: logo,
+				type: business.type,
 				banner: banner,
 				telephone: business.telephone,
 				location: business.delivery_address

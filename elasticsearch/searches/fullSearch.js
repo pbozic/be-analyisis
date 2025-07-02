@@ -1,3 +1,5 @@
+import { type } from 'os';
+
 import esClient from '../client.js';
 import { ES_RADIUS_LIMIT_KM } from '../../lib/constants.js';
 const SCORING_WEIGHTS = {
@@ -365,6 +367,7 @@ async function searchBusinesses(
 					banner: hit._source.banner,
 					telephone: hit._source.telephone,
 					promo_sections: hit._source.promo_sections,
+					type: hit._source.type,
 					scores,
 				};
 			}),
