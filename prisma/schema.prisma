@@ -13,13 +13,13 @@ datasource db {
 //   onlyModel  = true
 //    relationModel = false
 // }
-generator zod {
-  provider                  = "npx zod-prisma-types"
-  output                    = "../types/zod"
-  createRelationValuesTypes = true
-  useMultipleFiles          = true
-  addInputTypeValidation    = true
-}
+// generator zod {
+//   provider                  = "npx zod-prisma-types"
+//   output                    = "../types/zod"
+//   createRelationValuesTypes = true
+//   useMultipleFiles          = true
+//   addInputTypeValidation    = true
+// }
 
 model finances {
   finance_id          String     @id @default(uuid()) @db.Uuid
@@ -766,7 +766,7 @@ model menu_items {
   is_copy                   Boolean             @default(false)
   menu_category_order_index Int?
   order_lobby_items         order_lobby_items[] @relation("lobby_item_to_menu_item")
-  alergens_text            Json?           
+  allergens_text            Json?           
   ingredients_text         Json?             
   usage_text               Json?           
   origin_text              Json?            
