@@ -748,8 +748,8 @@ model menu_items {
   image                     String?
   description               Json // l10n descriptions
   allergens                 String[]
-  spicy_level               Int
-  unit_size                 String
+  spicy_level               Int?
+  unit_size                 String?
   price                     Float               @default(0)
   discount                  Float?
   sides                     String[] // Optional, for sides
@@ -766,6 +766,12 @@ model menu_items {
   is_copy                   Boolean             @default(false)
   menu_category_order_index Int?
   order_lobby_items         order_lobby_items[] @relation("lobby_item_to_menu_item")
+  alergens_text            Json?           
+  ingredients_text         Json?             
+  usage_text               Json?           
+  origin_text              Json?            
+  isWeighted             Boolean             @default(false) // Indicates if the item is weighted (e.g., meat, fish)
+  weightQuantity         Float?              // Quantity for weighted items
 
   @@unique([menu_item_id])
 }
