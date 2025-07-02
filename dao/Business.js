@@ -390,10 +390,15 @@ const getBusinessesByGroupName = async (search) => {
 	}
 };
 const getBusinessesByTypeMainInformation = async (type) => {
+	if (!Array.isArray(type)) {
+		type = [type];
+	}
 	try {
 		return await prisma.business.findMany({
 			where: {
-				type: type,
+				type: {
+					in: type,
+				},
 			},
 		});
 	} catch (error) {
@@ -402,6 +407,9 @@ const getBusinessesByTypeMainInformation = async (type) => {
 	}
 };
 const getBusinessesByType = async (type, args = {}) => {
+	if (!Array.isArray(type)) {
+		type = [type];
+	}
 	try {
 		const includeOptions = {
 			address: true,
@@ -419,7 +427,7 @@ const getBusinessesByType = async (type, args = {}) => {
 			taxi_orders: false,
 			delivery_orders: false,
 		};
-		if (type === Constants.BUSINESS_TYPE.MERCHANT) {
+		if (type.includes(Constants.BUSINESS_TYPE.MERCHANT) || type.includes(Constants.BUSINESS_TYPE.RESTAURANT)) {
 			includeOptions.menus = {
 				include: {
 					categories: {
@@ -440,7 +448,9 @@ const getBusinessesByType = async (type, args = {}) => {
 		}
 		const businesses = await prisma.business.findMany({
 			where: {
-				type: type,
+				type: {
+					in: type,
+				},
 				...args,
 			},
 			include: includeOptions,

@@ -48,7 +48,10 @@ async function activateBusiness(req, res) {
 		}
 		const business = await BusinessDao.activateBusiness(business_id, req.user.user_id, reason);
 		if (business) {
-			if (business.type === Constants.BUSINESS_TYPE.MERCHANT) {
+			if (
+				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.RESTAURANT
+			) {
 				businessIndex(business.business_id);
 			}
 			res.status(200).json(business);
@@ -84,7 +87,10 @@ async function deactivateBusiness(req, res) {
 		}
 		const business = await BusinessDao.deactivateBusiness(business_id, req.user.user_id, reason);
 		if (business) {
-			if (business.type === Constants.BUSINESS_TYPE.MERCHANT) {
+			if (
+				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.RESTAURANT
+			) {
 				businessIndex(business.business_id);
 			}
 			res.status(200).json(business);
@@ -226,7 +232,10 @@ async function searchBusinesses(req, res) {
 async function listMerchantBusinesses(req, res) {
 	//TODO: elastic search
 	try {
-		const merchantBusinesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT);
+		const merchantBusinesses = await BusinessDao.getBusinessesByType([
+			Constants.BUSINESS_TYPE.MERCHANT,
+			Constants.BUSINESS_TYPE.RESTAURANT,
+		]);
 		res.status(200).json(merchantBusinesses);
 	} catch (e) {
 		console.error('Error listing merchant businesses:', e);
@@ -339,9 +348,12 @@ async function listPromoSectionsWithMerchants(req, res) {
  */
 async function listMerchantBusinessesWithDailyMeals(req, res) {
 	try {
-		const merchantBusinesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT, {
-			offers_daily_meals: true,
-		});
+		const merchantBusinesses = await BusinessDao.getBusinessesByType(
+			[Constants.BUSINESS_TYPE.MERCHANT, Constants.BUSINESS_TYPE.RESTAURANT],
+			{
+				offers_daily_meals: true,
+			}
+		);
 		res.status(200).json(merchantBusinesses);
 	} catch (e) {
 		console.error('Error listing merchant businesses with daily meals:', e);
@@ -360,9 +372,10 @@ async function listMerchantBusinessesWithDailyMeals(req, res) {
  */
 async function listMerchantBusinessesMainInfo(req, res) {
 	try {
-		const merchantBusinesses = await BusinessDao.getBusinessesByTypeMainInformation(
-			Constants.BUSINESS_TYPE.MERCHANT
-		);
+		const merchantBusinesses = await BusinessDao.getBusinessesByTypeMainInformation([
+			Constants.BUSINESS_TYPE.MERCHANT,
+			Constants.BUSINESS_TYPE.RESTAURANT,
+		]);
 		res.status(200).json(merchantBusinesses);
 	} catch (e) {
 		console.error('Error listing merchant businesses with daily meals:', e);
@@ -592,7 +605,10 @@ async function update(req, res) {
 		let business = await BusinessDao.updateBusiness(business_id, req.body);
 		if (business) {
 			if (req.userSocket) req.userSocket.emit('updateBusiness', business);
-			if (business.type === Constants.BUSINESS_TYPE.MERCHANT) {
+			if (
+				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.RESTAURANT
+			) {
 				businessIndex(business.business_id);
 			}
 			return res.status(200).json(business);
@@ -620,7 +636,10 @@ async function updateBusinessType(req, res) {
 	try {
 		let business = await BusinessDao.updateBusinessType(req.params.business_id, req.body.type);
 		if (business) {
-			if (business.type === Constants.BUSINESS_TYPE.MERCHANT) {
+			if (
+				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.RESTAURANT
+			) {
 				businessIndex(business.business_id);
 			}
 			return res.status(200).json(business);
@@ -648,7 +667,10 @@ async function updateIsBusinessUnit(req, res) {
 	try {
 		let business = await BusinessDao.updateIsBusinessUnit(req.params.business_id, req.body.is_business_unit);
 		if (business) {
-			if (business.type === Constants.BUSINESS_TYPE.MERCHANT) {
+			if (
+				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.RESTAURANT
+			) {
 				businessIndex(business.business_id);
 			}
 			return res.status(200).json(business);
@@ -676,7 +698,10 @@ async function updateBusinessGroupName(req, res) {
 	try {
 		let business = await BusinessDao.updateBusinessGroupName(req.params.business_id, req.body.business_group_name);
 		if (business) {
-			if (business.type === Constants.BUSINESS_TYPE.MERCHANT) {
+			if (
+				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.RESTAURANT
+			) {
 				businessIndex(business.business_id);
 			}
 			return res.status(200).json(business);
@@ -705,7 +730,10 @@ async function updateBusinessEmail(req, res) {
 	try {
 		let business = await BusinessDao.updateBusinessEmail(req.params.business_id, req.body.email);
 		if (business) {
-			if (business.type === Constants.BUSINESS_TYPE.MERCHANT) {
+			if (
+				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.RESTAURANT
+			) {
 				businessIndex(business.business_id);
 			}
 			return res.status(200).json(business);
@@ -739,7 +767,10 @@ async function updateBusinessTelephone(req, res) {
 			req.body.telephone_number
 		);
 		if (business) {
-			if (business.type === Constants.BUSINESS_TYPE.MERCHANT) {
+			if (
+				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.RESTAURANT
+			) {
 				businessIndex(business.business_id);
 			}
 			return res.status(200).json(business);
@@ -768,7 +799,10 @@ async function updateBusinessWorkingHours(req, res) {
 	try {
 		let business = await BusinessDao.updateBusinessWorkingHours(req.params.business_id, req.body.working_hours);
 		if (business) {
-			if (business.type === Constants.BUSINESS_TYPE.MERCHANT) {
+			if (
+				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.RESTAURANT
+			) {
 				businessIndex(business.business_id);
 			}
 			return res.status(200).json(business);
@@ -832,7 +866,10 @@ async function updateBusinessIsNew(req, res) {
 	try {
 		let business = await BusinessDao.updateBusinessIsNew(req.params.business_id, req.body.new);
 		if (business) {
-			if (business.type === Constants.BUSINESS_TYPE.MERCHANT) {
+			if (
+				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.RESTAURANT
+			) {
 				businessIndex(business.business_id);
 			}
 			return res.status(200).json(business);
@@ -861,7 +898,10 @@ async function updateBusinessIsPopular(req, res) {
 	try {
 		let business = await BusinessDao.updateBusinessIsPopular(req.params.business_id, req.body.popular);
 		if (business) {
-			if (business.type === Constants.BUSINESS_TYPE.MERCHANT) {
+			if (
+				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.RESTAURANT
+			) {
 				businessIndex(business.business_id);
 			}
 			return res.status(200).json(business);
@@ -937,7 +977,10 @@ async function addBusinessAddress(req, res) {
 		const { business_id } = req.params;
 		const addressData = req.body;
 		const updatedBusiness = await BusinessDao.addBusinessAddress(business_id, addressData);
-		if (updatedBusiness.type === Constants.BUSINESS_TYPE.MERCHANT) {
+		if (
+			updatedBusiness.type === Constants.BUSINESS_TYPE.MERCHANT ||
+			updatedBusiness.type === Constants.BUSINESS_TYPE.RESTAURANT
+		) {
 			businessIndex(updatedBusiness.business_id);
 		}
 		res.status(200).json(updatedBusiness);
@@ -963,7 +1006,10 @@ async function addDeliveryAddress(req, res) {
 		const { business_id } = req.params;
 		const addressData = req.body;
 		const updatedBusiness = await BusinessDao.addDeliveryAddress(business_id, addressData);
-		if (updatedBusiness.type === Constants.BUSINESS_TYPE.MERCHANT) {
+		if (
+			updatedBusiness.type === Constants.BUSINESS_TYPE.MERCHANT ||
+			updatedBusiness.type === Constants.BUSINESS_TYPE.RESTAURANT
+		) {
 			businessIndex(updatedBusiness.business_id);
 		}
 		res.status(200).json(updatedBusiness);
@@ -1287,7 +1333,10 @@ async function getAllBusinessesEarnings(req, res) {
 		return res.status(400).json({ message: 'Missing required parameters' });
 	}
 	try {
-		const businesses = await BusinessDao.getBusinessesByType(Constants.BUSINESS_TYPE.MERCHANT);
+		const businesses = await BusinessDao.getBusinessesByType([
+			Constants.BUSINESS_TYPE.MERCHANT,
+			Constants.BUSINESS_TYPE.RESTAURANT,
+		]);
 		const earningsPromises = businesses.map(async (business) => {
 			const businessDeliveryOrders = await DeliveryOrderDao.getOrders({
 				where: {
@@ -1512,7 +1561,10 @@ async function editBusiness(req, res) {
 			updatedBusiness = await BusinessDao.updateBusinessIsPopular(business_id, popular);
 		}
 		// Return the updated business details
-		if (updatedBusiness.type === Constants.BUSINESS_TYPE.MERCHANT) {
+		if (
+			updatedBusiness.type === Constants.BUSINESS_TYPE.MERCHANT ||
+			updatedBusiness.type === Constants.BUSINESS_TYPE.RESTAURANT
+		) {
 			businessIndex(updatedBusiness.business_id);
 		}
 		res.status(200).json(updatedBusiness);
@@ -1635,11 +1687,11 @@ async function addBusinessToFavorites(req, res) {
 		if (!business) {
 			return res.status(400).json({ message: 'Business not found.' });
 		}
-		if (![business.type].includes(type)) {
-			// made as array for future upgrade to array business.types
-			return res.status(400).json({ message: 'Business does not have the given type.' });
-		}
-		const new_entry = await UserFavoriteBusinessDao.addFavoriteBusiness(user_id, business_id, type);
+		// if (![business.type].includes(type)) {
+		// 	// made as array for future upgrade to array business.types
+		// 	return res.status(400).json({ message: 'Business does not have the given type.' });
+		// }
+		const new_entry = await UserFavoriteBusinessDao.addFavoriteBusiness(user_id, business_id, business.type);
 		res.status(200).json(new_entry);
 	} catch (error) {
 		console.error(error);
