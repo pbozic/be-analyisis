@@ -9,7 +9,10 @@ import PaymentHelpers from '../lib/paymentHelpers.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import { createDailyMealsSubscriptions } from '../lib/deliveryHelpers.js';
 import { ValidatedRequest } from '../types/validatedRequest.js';
-import { DailyMealsSubscriptionRequest } from '../types/dailymeal/DailyMealSubscription.ts';
+import {
+	DailyMealsSubscriptionRequest,
+	GetUserDailyMealSubscriptionsrequest,
+} from '../types/dailymeal/DailyMealSubscription.ts';
 import prisma from '../prisma/prisma.js';
 import DailyMealDao from '../dao/DailyMealDao.ts';
 import AddressDao from '../dao/Address.js';
@@ -216,6 +219,69 @@ export async function dailyMealsSubscriptionPayment(
 	}
 }
 
+/**
+ *
+ * - GET /delivery/orders/daily_meals/subscriptions
+ * - @tag Delivery
+ * - @summary Get all daily meal subscriptions for the current user
+ * - @description Returns all daily meal subscriptions for the authenticated user, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances.
+ * - @operationId getUserDailyMealSubscriptions
+ * - @response 200 - List of daily meal subscriptions for the current user
+ * - @responseContent {object} 200.application/json
+ * - @responseExample 200.application/json [
+ *     {
+ *       "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *       "user_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *       "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *       "delivery_address_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *       "start_date": "2025-07-01T00:00:00.000Z",
+ *       "end_date": null,
+ *       "type": "DATED",
+ *       "status": "ACTIVE",
+ *       "courier_comment": "Leave at the door",
+ *       "created_at": "2025-07-01T00:00:00.000Z",
+ *       "updated_at": "2025-07-01T00:00:00.000Z",
+ *       "user": { ... },
+ *       "business": { ... },
+ *       "delivery_address": { ... },
+ *       "customers": [ ... ],
+ *       "days": [ ... ],
+ *       "weekdays": [ ... ],
+ *       "daily_meal_instances": [ ... ]
+ *     }
+ *   ]
+ * - @response 500 - Error fetching daily meal subscriptions
+ * - @prisma_model daily_meal_subscriptions
+ * - @prisma_model users
+ * - @prisma_model business
+ * - @prisma_model addresses
+ * - @prisma_model daily_meal_subscription_customers
+ * - @prisma_model daily_meal_subscription_days
+ * - @prisma_model daily_meal_subscription_weekdays
+ * - @prisma_model daily_meal_instances
+ *
+ * ./prisma/schema.prisma
+ */
+export async function getUserDailyMealSubscriptions(
+	req: ValidatedRequest<GetUserDailyMealSubscriptionsrequest>,
+	res: Response
+): Promise<void> {
+	try {
+		const user_id = req.user?.user_id;
+		if (!user_id) {
+			res.status(401).json({ message: 'Unauthorized' });
+			return;
+		}
+		const { start_date } = req.body;
+		const subscriptions = await DailyMealDao.getDailyMealSubscriptionsByUserId(user_id, start_date);
+		res.status(200).json(subscriptions);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error fetching daily meal subscriptions', error: message });
+	}
+}
+
 export default {
 	dailyMealsSubscriptionPayment,
+	getUserDailyMealSubscriptions,
 };

@@ -25,10 +25,14 @@ router.get('/order/user/:order_id', DeliveryOrderController.getUserByDeliveryOrd
 router.post('/order', DeliveryOrderController.createOrder);
 router.post(
 	'/daily_meals/subscription/payment',
-	[validate(DailyMealsSubscriptionRequestSchema)],
+	validate(DailyMealsSubscriptionRequestSchema),
 	DailyMealController.dailyMealsSubscriptionPayment
 );
-router.post('/daily_meals/user', DeliveryOrderController.getDailyMealsSubscriptionsByUserId);
+router.post(
+	'/daily_meals/user',
+	validate(DailyMealsSubscriptionRequestSchema),
+	DailyMealController.getUserDailyMealSubscriptions
+);
 router.post('/daily_meals/business', DeliveryOrderController.getDailyMealsSubscriptionsByBusinessId);
 router.post('/daily_meals', DeliveryOrderController.createDailyMeals);
 router.post('/order/merchant_accept', DeliveryOrderController.merchantAcceptOrder);

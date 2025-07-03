@@ -104,6 +104,11 @@ export const DailyMealsSubscriptionRequestSchema = z.object({
 	allow_credits_usage: z.boolean(),
 });
 
+export const GetUserDailyMealSubscriptionsSchema = z.object({
+	start_date: z.string().datetime().optional(),
+});
+
+export type GetUserDailyMealSubscriptionsrequest = z.infer<typeof GetUserDailyMealSubscriptionsSchema>;
 export type DailyMealsCartPerson = z.infer<typeof DailyMealsCartPersonSchema>;
 export type DailyMealsCart = z.infer<typeof DailyMealsCartSchema>;
 export type DailyMealsSubscriptionRequest = z.infer<typeof DailyMealsSubscriptionRequestSchema>;
