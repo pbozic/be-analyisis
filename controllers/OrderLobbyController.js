@@ -86,8 +86,11 @@ async function generateOrderDataFromLobby(orderLobby, paymentMethod) {
 
 	return {
 		items: items,
-		details: orderDetails,
 		payment: paymentMethod,
+		details: {
+			...orderDetails,
+			type: 'delivery',
+		},
 		courier_instructions: orderLobby.courier_note,
 		restaurant_message: orderLobby.restaurant_message,
 		scheduled: false,
