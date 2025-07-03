@@ -33,32 +33,16 @@ export async function createDailyMealCategoryWithPrice({
 
 export async function getActiveDailyMealCategoriesForBusiness(business_id: string) {
 	const now = new Date();
-	const categories = await prisma.daily_meal_categories.findMany({
+	return await prisma.daily_meal_categories.findMany({
 		where: { business_id },
 		include: {
 			category: true,
 			daily_meal_category_prices: {
-				where: { valid_from: { lte: now } },
 				orderBy: { valid_from: 'desc' },
 				take: 1,
 			},
 		},
 	});
-
-	for (const category of categories) {
-		if (category.daily_meal_category_prices.length === 0) {
-			const fallbackPrice = await prisma.daily_meal_category_prices.findFirst({
-				where: { daily_meal_category_id: category.daily_meal_category_id },
-				orderBy: { valid_from: 'asc' },
-			});
-
-			if (fallbackPrice) {
-				category.daily_meal_category_prices = [fallbackPrice];
-			}
-		}
-	}
-
-	return categories;
 }
 
 export async function addPriceToDailyMealCategory({
