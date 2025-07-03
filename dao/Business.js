@@ -204,6 +204,7 @@ const getBusinessForSearchById = async (business_id) => {
 				restaurant_overwhelmed: true,
 				address: true, // Full object
 				delivery_address: true, // Full object
+
 				documents: {
 					include: {
 						files: true, // Full nested objects
