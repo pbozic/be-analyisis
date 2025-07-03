@@ -82,7 +82,13 @@ async function generateOrderDataFromLobby(orderLobby, paymentMethod) {
 	const orderRoute = [restaurantAddress, orderLobby.delivery_location];
 
 	const paymentType = paymentMethod.type;
-	const orderDetails = CalculateOrderDetails(restaurant, items, orderLobby.delivery_location, paymentType);
+	const orderDetails = CalculateOrderDetails(
+		restaurant,
+		items,
+		orderLobby.delivery_location,
+		paymentType,
+		orderLobby
+	);
 
 	return {
 		items: items,
