@@ -2,6 +2,7 @@ import WordDao from '../dao/Word.js';
 import BusinessUserDao from '../dao/BusinessUsers.js';
 import BusinessDao from '../dao/Business.js';
 import stripe from '../lib/stripe.js';
+import prisma from '../prisma/prisma.js';
 async function createWord(req, res) {
 	try {
 		const { wordData, translations } = req.body;
@@ -103,7 +104,6 @@ async function createWordBuy(req, res) {
 		let { word_id, business_id, price } = req.body;
 		let userId = req.user?.user_id;
 		const result = await WordDao.createWordBuySubscription(word_id, business_id, price, userId);
-
 		res.status(201).json(result);
 	} catch (error) {
 		console.error('Error creating word buy:', error);
@@ -248,27 +248,25 @@ async function updateUserSubscription(userId) {
 		});
 		// If payment is required, create a Stripe Checkout Session
 		if (paymentRequired) {
-			const checkoutSession = await stripe.checkout.sessions.create({
-				mode: 'subscription',
+			const paymentIntent = await stripe.paymentIntents.create({
+				amount: Math.round(totalPrice * 100), // cents
+				currency: 'eur',
 				customer: business.stripe_customer_id,
-				line_items: [
-					{
-						price: newPriceData.id,
-						quantity: 1,
-					},
-				],
-				success_url: process.env.FRONTEND_URL + '/success?session_id={CHECKOUT_SESSION_ID}',
-				cancel_url: process.env.FRONTEND_URL + '/cancel',
-				metadata: { business_id: business.business_id, type: 'word_buys' },
+				metadata: {
+					business_id: business.business_id,
+					type: 'word_buys',
+				},
+				automatic_payment_methods: { enabled: true },
 			});
-			checkoutUrl = checkoutSession.url; // Redirect user to this URL
+
+			clientSecret = paymentIntent.client_secret;
+			console.log('🟢 Created PaymentIntent:', paymentIntent.id);
 		}
 		return {
 			success: true,
 			subscriptionId: subscription.id,
 			paymentRequired,
 			clientSecret,
-			checkoutUrl, // Return Checkout URL if required
 		};
 	} catch (error) {
 		console.error('Error updating subscription:', error);
