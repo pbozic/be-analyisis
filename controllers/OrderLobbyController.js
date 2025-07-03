@@ -82,26 +82,27 @@ async function generateOrderDataFromLobby(orderLobby, paymentMethod) {
 	const orderRoute = [restaurantAddress, orderLobby.delivery_location];
 
 	const paymentType = paymentMethod.type;
+	const deliveryOrderLobby = {
+		...orderLobby.details,
+		type: 'delivery',
+	};
 	const orderDetails = CalculateOrderDetails(
 		restaurant,
 		items,
-		orderLobby.delivery_location,
+		deliveryOrderLobby.delivery_location,
 		paymentType,
-		orderLobby
+		deliveryOrderLobby
 	);
 
 	return {
 		items: items,
 		payment: paymentMethod,
-		details: {
-			...orderDetails,
-			type: 'delivery',
-		},
-		courier_instructions: orderLobby.courier_note,
-		restaurant_message: orderLobby.restaurant_message,
+		details: orderDetails,
+		courier_instructions: deliveryOrderLobby.courier_note,
+		restaurant_message: deliveryOrderLobby.restaurant_message,
 		scheduled: false,
 		pickup_location: restaurantAddress,
-		delivery_location: orderLobby.delivery_location,
+		delivery_location: deliveryOrderLobby.delivery_location,
 		route: orderRoute,
 	};
 }
