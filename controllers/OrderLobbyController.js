@@ -7,7 +7,7 @@ import DocumentDao from '../dao/Document.js';
 import socket from '../socket.js';
 import OneSignal from '../lib/oneSignal.js';
 import { getLocalisedTexts } from '../localisations/languages.js';
-import { CalculateOrderDetails, generateOrder } from '../lib/deliveryHelpers.js';
+import { CalculateOrderLobbyOrderDetails } from '../lib/deliveryHelpers.js';
 import DeliveryOrderController from './DeliveryOrderController.js';
 import { DOCUMENT_TYPE } from '../lib/constants.js';
 import MenuItemDao, { getMenuItemsByIds } from '../dao/MenuItem.js';
@@ -82,17 +82,34 @@ async function generateOrderDataFromLobby(orderLobby, paymentMethod) {
 	const orderRoute = [restaurantAddress, orderLobby.delivery_location];
 
 	const paymentType = paymentMethod.type;
-	const orderDetails = CalculateOrderDetails(restaurant, items, orderLobby.delivery_location, paymentType);
+	const order = {
+		...orderLobby,
+		details: {
+			...orderLobby.details,
+			type: 'delivery',
+			delivery_address: orderLobby.delivery_location,
+		},
+		delivery_location: orderLobby.delivery_location,
+		pickup_location: restaurantAddress,
+	};
+
+	const orderDetails = CalculateOrderLobbyOrderDetails(
+		restaurant,
+		items,
+		order.delivery_location,
+		paymentType,
+		order
+	);
 
 	return {
 		items: items,
-		details: orderDetails,
 		payment: paymentMethod,
-		courier_instructions: orderLobby.courier_note,
-		restaurant_message: orderLobby.restaurant_message,
+		details: orderDetails,
+		courier_instructions: order.courier_note,
+		restaurant_message: order.restaurant_message,
 		scheduled: false,
 		pickup_location: restaurantAddress,
-		delivery_location: orderLobby.delivery_location,
+		delivery_location: order.delivery_location,
 		route: orderRoute,
 	};
 }

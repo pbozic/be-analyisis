@@ -103,8 +103,8 @@ model business {
   business_clients            business_clients[]
   purchase_order_limit_amount Float?
   drivers                     drivers[]
-
-  daily_meal_categories daily_meal_categories[]
+  daily_meal_categories       daily_meal_categories[]
+  daily_meal_subscriptions    daily_meal_subscriptions[]
 }
 
 model business_users {
@@ -226,6 +226,8 @@ model users {
   blog_posts              blog_posts[]
 
   payments payments[]
+
+  daily_meal_subscriptions daily_meal_subscriptions[]
 }
 
 model user_roles {
@@ -389,6 +391,7 @@ model addresses {
   businesses_delivery_address business[]                  @relation(name: "delivery_address")
   business_users              business_users[]            @relation("business_users_operating_address")
   daily_meals_subscriptions   daily_meals_subscriptions[]
+  daily_meal_subscriptions    daily_meal_subscriptions[]
 
   @@unique([address, latitude, longitude], name: "uniqueAddressIdentifier")
 }
@@ -736,8 +739,11 @@ model menu_categories {
   menu_order_index           Int?
   daily_meal_subscribers     daily_meals_subscriptions[]
 
+  daily_meal_category_id       String?                     @db.Uuid
   daily_meal_category_price_id String?                     @db.Uuid
+  daily_meal_category          daily_meal_categories?      @relation("daily_meal_categories_to_menu_categories", fields: [daily_meal_category_id], references: [daily_meal_category_id])
   daily_meal_category_price    daily_meal_category_prices? @relation(fields: [daily_meal_category_price_id], references: [daily_meal_category_prices_id])
+  daily_meal_instances         daily_meal_instances[]
 
   @@unique([menu_category_id])
 }
@@ -945,24 +951,25 @@ model local_prices {
 }
 
 model categories {
-  categories_id         String                       @id @default(uuid()) @db.Uuid
-  name                  String
-  description           String?
-  tag                   String
-  icon_file_id          String?                      @db.Uuid
-  icon                  files?                       @relation(fields: [icon_file_id], references: [file_id])
-  category_type         CATEGORY_TYPE
-  menu_categories       menu_categories_categories[]
-  promo_ads_category    promo_ads_category[]
-  parent_categories_id  String?                      @db.Uuid
-  parent_category       categories?                  @relation("sub_categories", fields: [parent_categories_id], references: [categories_id])
-  sub_categories        categories[]                 @relation("sub_categories")
-  translatable_id       String                       @db.Uuid
-  translatable          translatable                 @relation(fields: [translatable_id], references: [translatable_id], onDelete: Cascade)
-  words                 words[]
-  created_at            DateTime                     @default(now()) @db.Timestamptz(6)
-  updated_at            DateTime                     @default(now()) @updatedAt @db.Timestamptz(6)
-  deleted_at            DateTime?                    @db.Timestamptz(6)
+  categories_id        String                       @id @default(uuid()) @db.Uuid
+  name                 String
+  description          String?
+  tag                  String
+  icon_file_id         String?                      @db.Uuid
+  icon                 files?                       @relation(fields: [icon_file_id], references: [file_id])
+  category_type        CATEGORY_TYPE
+  menu_categories      menu_categories_categories[]
+  promo_ads_category   promo_ads_category[]
+  parent_categories_id String?                      @db.Uuid
+  parent_category      categories?                  @relation("sub_categories", fields: [parent_categories_id], references: [categories_id])
+  sub_categories       categories[]                 @relation("sub_categories")
+  translatable_id      String                       @db.Uuid
+  translatable         translatable                 @relation(fields: [translatable_id], references: [translatable_id], onDelete: Cascade)
+  words                words[]
+  created_at           DateTime                     @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime                     @default(now()) @updatedAt @db.Timestamptz(6)
+  deleted_at           DateTime?                    @db.Timestamptz(6)
+
   daily_meal_categories daily_meal_categories[]
 
   @@unique([tag, category_type])
@@ -1379,6 +1386,94 @@ model daily_meals_subscriptions {
   payment payments? @relation("PaymentGroup", fields: [grouped_id], references: [subscription_grouped_id])
 }
 
+model daily_meal_subscriptions {
+  id                  String              @id @default(uuid()) @db.Uuid
+  user_id             String              @db.Uuid
+  business_id         String              @db.Uuid
+  delivery_address_id String              @db.Uuid
+  start_date          DateTime
+  end_date            DateTime? // null = indefinite
+  type                SUBSCRIPTION_TYPE
+  status              SUBSCRIPTION_STATUS @default(AWAITING_PAYMENT)
+  courier_comment     String?
+
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  user                 users                               @relation(fields: [user_id], references: [user_id])
+  delivery_address     addresses                           @relation(fields: [delivery_address_id], references: [address_id])
+  business             business                            @relation(fields: [business_id], references: [business_id])
+  customers            daily_meal_subscription_customers[]
+  days                 daily_meal_subscription_days[]
+  weekdays             daily_meal_subscription_weekdays[]
+  daily_meal_instances daily_meal_instances[]
+}
+
+model daily_meal_subscription_customers {
+  id                     String  @id @default(uuid()) @db.Uuid
+  subscription_id        String  @db.Uuid
+  daily_meal_category_id String  @db.Uuid
+  first_name             String
+  last_name              String
+  telephone              String
+  restaurant_comment     String?
+
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  subscription          daily_meal_subscriptions @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
+  daily_meal_instances  daily_meal_instances[]
+  daily_meal_categories daily_meal_categories?   @relation(fields: [daily_meal_category_id], references: [daily_meal_category_id])
+}
+
+model daily_meal_subscription_days {
+  id              String   @id @default(uuid()) @db.Uuid
+  subscription_id String   @db.Uuid
+  intended_date   DateTime
+  delivery_date   DateTime
+
+  subscription daily_meal_subscriptions @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
+
+  @@unique([subscription_id, intended_date])
+  @@index([delivery_date])
+  @@index([intended_date])
+}
+
+model daily_meal_subscription_weekdays {
+  id               String @id @default(uuid()) @db.Uuid
+  subscription_id  String @db.Uuid
+  intended_weekday Int // 0 (Sunday) to 6 (Saturday)
+  delivery_weekday Int // 0 (Sunday) to 6 (Saturday)
+
+  subscription daily_meal_subscriptions @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
+
+  @@unique([subscription_id, intended_weekday])
+  @@index([intended_weekday])
+  @@index([delivery_weekday])
+}
+
+model daily_meal_instances {
+  id                       String                     @id @default(uuid()) @db.Uuid
+  subscription_id          String                     @db.Uuid
+  subscription_customer_id String                     @db.Uuid
+  menu_category_id         String                     @db.Uuid
+  status                   DAILY_MEAL_INSTANCE_STATUS @default(PLANNED)
+  intended_date            DateTime
+  delivery_date            DateTime
+
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  subscription  daily_meal_subscriptions          @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
+  customer      daily_meal_subscription_customers @relation(fields: [subscription_customer_id], references: [id])
+  menu_category menu_categories                   @relation(fields: [menu_category_id], references: [menu_category_id])
+
+  @@unique([subscription_customer_id, intended_date])
+  @@index([delivery_date])
+  @@index([intended_date])
+  @@index([status])
+}
+
 model payments {
   payment_id        String         @id @default(uuid()) @db.Uuid
   amount            Int
@@ -1428,8 +1523,10 @@ model daily_meal_categories {
   created_at DateTime @default(now()) @db.Timestamptz(6)
   start_date DateTime @db.Timestamptz(6)
 
-  category categories @relation(fields: [category_id], references: [categories_id], onDelete: Cascade)
-  business business   @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  category                          categories                          @relation(fields: [category_id], references: [categories_id], onDelete: Cascade)
+  business                          business                            @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  menu_categories                   menu_categories[]                   @relation("daily_meal_categories_to_menu_categories")
+  daily_meal_subscription_customers daily_meal_subscription_customers[]
 
   daily_meal_category_prices daily_meal_category_prices[]
 }
@@ -1479,6 +1576,18 @@ enum SUBSCRIPTION_STATUS {
   CANCELED
   EXPIRED
   FAILED
+}
+
+enum SUBSCRIPTION_TYPE {
+  DATED
+  RECURRING
+}
+
+enum DAILY_MEAL_INSTANCE_STATUS {
+  PLANNED
+  CANCELED
+  SKIPPED // system skipped (e.g., holiday)
+  DELIVERED
 }
 
 model blog_tags {

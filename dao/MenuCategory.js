@@ -316,19 +316,37 @@ const getMenuCategoryById = async (menu_category_id) => {
  * @returns {Promise<{ count: number }>} The result of updateMany
  */
 const updateMenuCategoriesWithNewPrice = async (dailyMealCategoryId, priceId, validFrom) => {
-	return await prisma.menu_categories.updateMany({
+	const eligibleMenuCategories = await prisma.menu_categories.findMany({
 		where: {
 			daily_meal_category_id: dailyMealCategoryId,
 			menu: {
-				date: {
-					gte: validFrom,
+				is: {
+					isDailyMeal: true,
+					date: {
+						gte: validFrom,
+					},
 				},
 			},
 		},
-		data: {
-			daily_meal_category_price_id: priceId,
+		select: {
+			menu_category_id: true,
 		},
 	});
+
+	const updates = await Promise.all(
+		eligibleMenuCategories.map((cat) =>
+			prisma.menu_categories.update({
+				where: { menu_category_id: cat.menu_category_id },
+				data: {
+					daily_meal_category_price: {
+						connect: { daily_meal_category_prices_id: priceId },
+					},
+				},
+			})
+		)
+	);
+
+	return updates;
 };
 
 export { updateDailyMealMenuPrice };
