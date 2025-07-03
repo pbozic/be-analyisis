@@ -170,7 +170,7 @@ export async function createPaymentHelper(
 	return_url: string | null = null,
 	product_identifier?: string
 	// business_id: string,
-): Promise<{ payment: payments; payment_intent: TStripe.PaymentIntent | null }> {
+): Promise<{ payment: payments & { payment_splits: payment_splits[] }; payment_intent: TStripe.PaymentIntent | null }> {
 	const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user_id);
 	if (payment_method === 'WALLET') {
 		if (

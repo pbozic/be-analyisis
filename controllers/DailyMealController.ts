@@ -1,0 +1,221 @@
+import { Request, Response } from 'express';
+import { v4 as uuidv4 } from 'uuid';
+import { SPLIT_DESTINATION_TYPE, PAYMENT_STATUS, SUBSCRIPTION_STATUS, SUBSCRIPTION_TYPE } from '@prisma/client';
+import { date } from 'joi';
+
+import UsersDao from '../dao/User.js';
+import BusinessDao from '../dao/Business.js';
+import PaymentHelpers from '../lib/paymentHelpers.js';
+import DeliveryOrderDao from '../dao/DeliveryOrder.js';
+import { createDailyMealsSubscriptions } from '../lib/deliveryHelpers.js';
+import { ValidatedRequest } from '../types/validatedRequest.js';
+import { DailyMealsSubscriptionRequest } from '../types/dailymeal/DailyMealSubscription.ts';
+import prisma from '../prisma/prisma.js';
+import DailyMealDao from '../dao/DailyMealDao.ts';
+import AddressDao from '../dao/Address.js';
+import { RESTAURANT_SHARE_PERC } from '../lib/constants.js';
+
+/**
+ * Maps a date to an earlier date according to the given weekday:weekday mapping.
+ * @param {Date} date
+ * @param {Record<number,number>} mapping
+ * @returns {Date}
+ */
+function mapDateToEarlierWeekday(date: Date, mapping: Record<number, number>): Date {
+	const currentWeekday = date.getDay();
+
+	const targetWeekday = mapping[currentWeekday];
+
+	if (typeof targetWeekday !== 'number') {
+		// Mapping is undefined or invalid
+		return date;
+	}
+
+	const diff = (currentWeekday - targetWeekday + 7) % 7 || 7; // Ensure it's at least 1 day back
+	const result = new Date(date);
+	result.setDate(date.getDate() - diff);
+	return result;
+}
+
+/**
+ *
+ * - POST /delivery/orders/daily_meals/subscription/payment
+ * - @tag Delivery
+ * - @summary Create a daily meals subscription payment
+ * - @description Creates a payment intent for a daily meals subscription, creates the subscription (with nested customers, days, weekdays), and returns the subscription id and payment intent.
+ * - @operationId dailyMealsSubscriptionPayment
+ * - @bodyDescription The daily meals subscription payment details to create
+ * - @bodyContent {
+ *     "cart": {
+ *       "start_date": "2025-07-01T00:00:00.000Z",
+ *       "end_date": null,
+ *       "isRecurring": false,
+ *       "daysOfWeek": [1, 3, 5],
+ *       "dates": ["2025-07-01T00:00:00.000Z", "2025-07-03T00:00:00.000Z"],
+ *       "peopleData": [
+ *         {
+ *           "first_name": "John",
+ *           "last_name": "Doe",
+ *           "telephone": "+123456789",
+ *           "menu_category_id": "c9b1e7c2-1234-4f8a-9b2e-abcdef123456",
+ *           "restaurant_comment": "No onions"
+ *         }
+ *       ],
+ *       "courier_comment": "Leave at the door"
+ *     },
+ *     "details": {
+ *       "total_price": 100.0,
+ *       "delivery_cost": 10.0,
+ *       "sub_total_price": 90.0,
+ *       "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf"
+ *     },
+ *     "delivery_location": {
+ *       "address": "123 Main St",
+ *       "coordinates": { "latitude": 45.8150, "longitude": 15.9819 }
+ *     },
+ *     "payment": {
+ *       "payment_type": "CARD",
+ *       "payment_method_id": "pm_123456789"
+ *     },
+ *     "return_url": "https://example.com/return",
+ *     "allow_credits_usage": true
+ *   } application/json
+ * - @bodyRequired
+ * - @response 200 - Daily meals subscription payment created successfully
+ * - @responseContent {object} 200.application/json
+ * - @responseExample 200.application/json {
+ *     "status": "Success",
+ *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "payment_intent": { "id": "pi_...", ... }
+ *   }
+ * - @response 500 - Error creating daily meals subscription payment
+ * - @prisma_model users
+ * - @prisma_model business
+ * - @prisma_model payments
+ * - @prisma_model daily_meal_subscriptions
+ * - @prisma_model daily_meal_subscription_customers
+ * - @prisma_model daily_meal_subscription_days
+ * - @prisma_model daily_meal_subscription_weekdays
+ * - @prisma_model address
+ * - @prisma_model payment_splits
+ * - @prisma_model wallet_funds
+ * - @prisma_model payment_intent_logs
+ *
+ * ./prisma/schema.prisma
+ */
+export async function dailyMealsSubscriptionPayment(
+	req: ValidatedRequest<DailyMealsSubscriptionRequest>,
+	res: Response
+): Promise<void> {
+	const {
+		cart,
+		details: { total_price, delivery_cost, sub_total_price, business_id },
+		delivery_location,
+		payment: { payment_type, payment_method_id },
+		return_url,
+		allow_credits_usage,
+	} = req.body;
+	let payment = null;
+	try {
+		const user = await UsersDao.getUserById(req.user?.user_id);
+		const business = await BusinessDao.getBusinessById(business_id);
+		const deliverydaymapping: Record<number, number> = business.delivery_day_mapping || {};
+
+		const restaurant_acc = business.stripe_account_id;
+		const delivery_address = await AddressDao.addAddress({
+			address: delivery_location.address,
+			latitude: `${delivery_location.coordinates.latitude}`,
+			longitude: `${delivery_location.coordinates.longitude}`,
+		});
+
+		const new_subscription = await DailyMealDao.createDailyMealSubscription(
+			user.user_id,
+			business_id,
+			delivery_address.address_id,
+			cart.isRecurring ? SUBSCRIPTION_TYPE.RECURRING : SUBSCRIPTION_TYPE.DATED,
+			cart.peopleData,
+			cart.start_date,
+			cart.end_date,
+			!cart.isRecurring
+				? cart.dates.map((datestr) => {
+						const date = new Date(datestr);
+						return {
+							intended_date: date,
+							delivery_date: mapDateToEarlierWeekday(date, deliverydaymapping),
+						};
+					})
+				: [],
+			cart.isRecurring
+				? cart.daysOfWeek.map((day_i) => ({
+						intended_weekday: day_i,
+						delivery_weekday: deliverydaymapping[day_i] || day_i,
+					}))
+				: [],
+			cart.courier_comment
+		);
+
+		//TODO: calculate price form menuitems linked to the created subscription customers
+
+		//TODO: verify price
+		const TOTAL_PRICE_CENTS = Math.round(total_price * 100);
+
+		let payment_response = null;
+		if (new_subscription.type === SUBSCRIPTION_TYPE.DATED) {
+			payment_response = await PaymentHelpers.createPaymentHelper(
+				user.user_id,
+				TOTAL_PRICE_CENTS,
+				'DELIVERY',
+				'daily_meals_subscription_payment',
+				payment_type,
+				payment_method_id,
+				'automatic',
+				allow_credits_usage,
+				cart.dates.map(() => ({
+					destination_type: SPLIT_DESTINATION_TYPE.DRIVER,
+					value: Math.round(delivery_cost * 100),
+				})),
+				[
+					{
+						destination_type: SPLIT_DESTINATION_TYPE.MERCHANT,
+						destination_id: restaurant_acc,
+						value: RESTAURANT_SHARE_PERC,
+					},
+				],
+				return_url,
+				new_subscription.id
+			);
+
+			//TODO:     on payment success generate planned meals for up to 2 weeks
+			payment = payment_response?.payment;
+			if (payment.status === PAYMENT_STATUS.SUCCEEDED) {
+				// await DeliveryOrderDao.updateDailyMealsSubscriptionsStatusByGroupedId(
+				// 	new_subscription.id,
+				// 	SUBSCRIPTION_STATUS.ACTIVE
+				// );
+			}
+		}
+
+		const payment_intent = payment_response?.payment_intent;
+
+		res.status(200).json({
+			status: 'Success',
+			id: new_subscription.id,
+			payment_intent,
+		});
+		return;
+	} catch (e) {
+		console.error('Error creating daily meals subscription payment', e);
+		if (payment) {
+			try {
+				await PaymentHelpers.handlePaymentRefund(payment);
+			} catch (error) {
+				console.error('Error cleaning daily meals subscription payment', error);
+			}
+		}
+		res.status(500).json(e);
+	}
+}
+
+export default {
+	dailyMealsSubscriptionPayment,
+};
