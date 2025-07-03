@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
 
-import { ValidatedRequest } from '../types/validatedRequest';
-import type { CreateBlogPostInput, UpdateBlogPostInput, SearchBlogPostsInput } from '../types/blog/BlogPost';
-import { CreateBlogCategoryInput, UpdateBlogCategoryInput } from '../types/blog/BlogCategory';
-import { CreateBlogTagInput, DeleteBlogTagInput, UpdateBlogTagInput } from '../types/blog/BlogTag';
-import { createFileHelper } from './FilesController';
-import BlogDao from '../dao/Blog';
-import FileDao from '../dao/File';
+import { ValidatedRequest } from '../types/validatedRequest.ts';
+import type { CreateBlogPostInput, UpdateBlogPostInput, SearchBlogPostsInput } from '../types/blog/BlogPost.ts';
+import { CreateBlogCategoryInput, UpdateBlogCategoryInput } from '../types/blog/BlogCategory.ts';
+import { CreateBlogTagInput, DeleteBlogTagInput, UpdateBlogTagInput } from '../types/blog/BlogTag.ts';
+import { createFileHelper } from './FilesController.js';
+import BlogDao from '../dao/Blog.ts';
+import FileDao from '../dao/File.js';
 
 /**
  * POST /blog/search

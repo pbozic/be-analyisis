@@ -1,14 +1,13 @@
 import express from 'express';
 import multer from 'multer';
 
-import BlogController from '../../controllers/BlogController';
-import { validate } from '../../middleware/zod';
-import { CreateBlogPostSchema, UpdateBlogPostSchema, SearchBlogPostsSchema } from '../../types/blog/BlogPost';
-import { CreateBlogCategorySchema, UpdateBlogCategorySchema } from '../../types/blog/BlogCategory';
-import { CreateBlogTagSchema, UpdateBlogTagSchema } from '../../types/blog/BlogTag';
-import authMiddleware from '../../middleware/auth';
+import BlogController from '../../controllers/BlogController.ts';
+import { validate } from '../../middleware/zod.ts';
+import { CreateBlogPostSchema, UpdateBlogPostSchema, SearchBlogPostsSchema } from '../../types/blog/BlogPost.ts';
+import { CreateBlogCategorySchema, UpdateBlogCategorySchema } from '../../types/blog/BlogCategory.ts';
+import { CreateBlogTagSchema, UpdateBlogTagSchema } from '../../types/blog/BlogTag.ts';
+import authMiddleware from '../../middleware/auth.js';
 const router = express.Router();
-const upload = multer({ storage: multer.memoryStorage() });
 
 router.post('/upload/url', [authMiddleware], BlogController.createBlogImageByFile);
 
