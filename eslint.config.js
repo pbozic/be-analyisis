@@ -5,9 +5,10 @@ import eslintPluginTs from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 import pluginImport from 'eslint-plugin-import';
 import pluginPrettier from 'eslint-plugin-prettier';
+
 export default [
 	{
-		ignores: ['node_modules', 'dist', 'types/zod', '**/prisma/seeders/**', 'docs'],
+		ignores: ['node_modules', 'dist', 'types/zod', '**/prisma/seeders/**', 'docs', '**/*.test.*'],
 	},
 
 	// JS files — only linting
@@ -22,6 +23,11 @@ export default [
 			globals: {
 				console: 'readonly', // ✅ explicitly define `console` as a global
 				process: 'readonly', // ✅ explicitly define `process` as a global
+				require: 'readonly', // ✅ explicitly define `require` as a global
+				module: 'readonly', // ✅ explicitly define `module` as a global
+				__dirname: 'readonly', // ✅ explicitly define `__dirname` as a global
+				beforeAll: 'readonly', // ✅ explicitly define `beforeAll` as a global
+				afterAll: 'readonly', // ✅ explicitly define `afterAll` as a global
 			},
 		},
 		plugins: {
@@ -66,13 +72,14 @@ export default [
 			import: pluginImport,
 			prettier: pluginPrettier,
 		},
-		...eslintPluginTs.configs.recommended,
+
 		rules: {
+			...eslintPluginTs.configs.recommended.rules,
 			'no-async-promise-executor': 'warn',
 			'prettier/prettier': 'error',
-			'no-unused-vars': 'off',
+			'no-unused-vars': 'warn',
 			'@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
-			'no-undef': 'off',
+			'no-undef': 'warn',
 			'@typescript-eslint/no-require-imports': 'off',
 			'@typescript-eslint/ban-ts-comment': 'off',
 			'import/order': [

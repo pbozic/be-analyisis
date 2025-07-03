@@ -247,7 +247,10 @@ async function updateBusinessUserOnlineStatus(req, res) {
 	try {
 		const { business_users_id, online } = req.body;
 		const updatedBusinessUser = await BusinessUsersDao.updateBusinessUserOnlineStatus(business_users_id, online);
-		if (updatedBusinessUser?.business?.type === Constants.BUSINESS_TYPE.MERCHANT) {
+		if (
+			updatedBusinessUser?.business?.type === Constants.BUSINESS_TYPE.MERCHANT ||
+			updatedBusinessUser?.business?.type === Constants.BUSINESS_TYPE.RESTAURANT
+		) {
 			businessIndex(updatedBusinessUser?.business_id);
 		}
 		res.status(200).json(updatedBusinessUser);

@@ -126,7 +126,11 @@ async function indexBusinesses(business_id = null, force = false) {
 	try {
 		await createBusinessIndex(force);
 		console.log('🚀 Fetching businesses from database...');
-		const whereClause = { type: 'MERCHANT' };
+		const whereClause = {
+			type: {
+				in: [Constants.BUSINESS_TYPE.MERCHANT, Constants.BUSINESS_TYPE.RESTAURANT],
+			},
+		};
 		if (business_id) {
 			whereClause.business_id = business_id;
 		}
@@ -225,6 +229,7 @@ async function indexBusinesses(business_id = null, force = false) {
 				seats: business.seats,
 				restaurant_overwhelmed: business.restaurant_overwhelmed,
 				logo: logo,
+				type: business.type,
 				banner: banner,
 				telephone: business.telephone,
 				location: business.delivery_address
