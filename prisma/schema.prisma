@@ -57,6 +57,7 @@ model business {
   minimum_order                   Int
   offers_daily_meals              Boolean              @default(false)
   daily_meals_days                DAY_OF_WEEK[]        @default([])
+  daily_meals_delivery_mapping    Json?                @default("{\"0\": 0, \"1\": 1, \"2\": 2, \"3\": 3, \"4\": 4, \"5\": 5, \"6\": 6}")
   maximum_daily_meals_subscribers Int?
   popular                         Boolean              @default(true)
   new                             Boolean              @default(false)
@@ -772,12 +773,12 @@ model menu_items {
   is_copy                   Boolean             @default(false)
   menu_category_order_index Int?
   order_lobby_items         order_lobby_items[] @relation("lobby_item_to_menu_item")
-  allergens_text            Json?           
-  ingredients_text         Json?             
-  usage_text               Json?           
-  origin_text              Json?            
-  is_weighted             Boolean             @default(false) // Indicates if the item is weighted (e.g., meat, fish)
-  weight_quantity         Float?              // Quantity for weighted items
+  allergens_text            Json?
+  ingredients_text          Json?
+  usage_text                Json?
+  origin_text               Json?
+  is_weighted               Boolean             @default(false) // Indicates if the item is weighted (e.g., meat, fish)
+  weight_quantity           Float? // Quantity for weighted items
 
   @@unique([menu_item_id])
 }
