@@ -1,13 +1,13 @@
 import moment from 'moment';
 
 import prisma from '../prisma/prisma.js';
-const createMenu = async (business_id, isDailyMeal = false, date = null) => {
+const createMenu = async (business_id, isDailyMeal = false, date) => {
 	return await prisma.menus.create({
 		data: {
 			business_id: business_id,
 			active: true, // Assuming we want to create it as active by default
 			isDailyMeal: isDailyMeal,
-			date: date,
+			date: date ? date : null,
 		},
 	});
 };

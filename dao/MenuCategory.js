@@ -48,6 +48,56 @@ const createMenuCategory = async (menuId, categoryData) => {
 	});
 	return menu_categoryR;
 };
+const createDailyMealMenuCategory = async (menuId, daily_meal_category_price_id) => {
+	const existing_dmc_price = await prisma.daily_meal_category_prices.findUnique({
+		where: {
+			daily_meal_category_prices_id,
+		},
+		include: {
+			daily_meal_category: true,
+		},
+	});
+	if (!existing_dmc_price) {
+		throw new Error('Unknown daily_meal_category_price_id');
+	}
+	let menu_category = await prisma.menu_categories.create({
+		data: {
+			business_id: existing_dmc_price.daily_meal_category.business_id,
+			menu: {
+				connect: { menu_id: menuId },
+			},
+			daily_meal_category_price: {
+				connect: {
+					daily_meal_category_price_id: daily_meal_category_price_id,
+				},
+			},
+			daily_meal_category: {
+				connect: {
+					daily_meal_category_id: existing_dmc_price.daily_meal_category_id,
+				},
+			},
+			menu_categories_categories: {
+				create: {
+					categories_id: existing_dmc_price.daily_meal_category.category_id,
+				},
+			},
+		},
+		include: {
+			menu_categories_categories: {
+				include: {
+					category: true,
+				},
+			},
+			daily_meal_category_price: {
+				include: {
+					daily_meal_category: true,
+				},
+			},
+		},
+	});
+	return menu_category;
+};
+
 const addMenuCategoryIdToOrder = async (menu_id, menuCategoryIdToAdd) => {
 	try {
 		const menu = await prisma.menus.findUnique({
@@ -351,6 +401,7 @@ const updateMenuCategoriesWithNewPrice = async (dailyMealCategoryId, priceId, va
 
 export { updateDailyMealMenuPrice };
 export { createMenuCategory };
+export { createDailyMealMenuCategory };
 export { addMenuCategoryIdToOrder };
 export { removeMenuCategoryIdFromOrder };
 export { getMenuCategoriesByMenuId };
@@ -368,6 +419,7 @@ export { updateMenuCategoriesWithNewPrice };
 export default {
 	updateDailyMealMenuPrice,
 	createMenuCategory,
+	createDailyMealMenuCategory,
 	addMenuCategoryIdToOrder,
 	removeMenuCategoryIdFromOrder,
 	getMenuCategoriesByMenuId,
