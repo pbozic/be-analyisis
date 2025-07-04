@@ -67,7 +67,7 @@ export const DailyMealsCartPersonSchema = z.object({
 	first_name: z.string(),
 	last_name: z.string(),
 	telephone: z.string(),
-	menu_category_id: z.string().uuid(),
+	daily_meal_category_id: z.string().uuid(),
 	restaurant_comment: z.string(),
 });
 
@@ -86,8 +86,8 @@ export const DailyMealsSubscriptionRequestSchema = z.object({
 	delivery_location: z.object({
 		address: z.string(),
 		coordinates: z.object({
-			longitude: z.number(),
-			latitude: z.number(),
+			longitude: z.string(),
+			latitude: z.string(),
 		}),
 	}),
 	details: z.object({
@@ -100,7 +100,7 @@ export const DailyMealsSubscriptionRequestSchema = z.object({
 		payment_type: z.nativeEnum(PAYMENT_METHOD),
 		payment_method_id: z.string().nullable(),
 	}),
-	return_url: z.string().nullable(),
+	return_url: z.string().optional(),
 	allow_credits_usage: z.boolean(),
 });
 
