@@ -1077,10 +1077,10 @@ model word_buy {
   word_buy_id            String    @id @default(uuid()) @db.Uuid
   word_id                String    @db.Uuid
   word                   words     @relation(fields: [word_id], references: [word_id])
-  stripe_subscription_id String
+  stripe_subscription_id String?
   price                  Float
-  active_at              DateTime
-  expires_at             DateTime
+  active_at              DateTime?  
+  expires_at             DateTime?
   paid                   Boolean   @default(false)
   business_id            String    @db.Uuid
   business               business  @relation(fields: [business_id], references: [business_id])
