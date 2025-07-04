@@ -51,9 +51,9 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 				},
 			},
 			include: {
-				menu_categories: true,
+				categories: true,
 			},
-		})) as Array<menus & { date: Date; menu_categories: menu_categories[] }>;
+		})) as Array<menus & { date: Date; categories: menu_categories[] }>;
 
 		// CEHCK ALL valid menus if they have all the menucategories that they should. If not, create them
 		//TODO:make function for single day geenration for single business
@@ -67,7 +67,7 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 				);
 				const relevant_price = sorted_prices.find((p) => menu.date.getTime() >= p.valid_from.getTime());
 				if (relevant_price) {
-					const existing_mc = menu.menu_categories.find(
+					const existing_mc = menu.categories.find(
 						(mc) => mc.daily_meal_category_id === dmc.daily_meal_category_id
 					);
 					if (!existing_mc) {
@@ -107,7 +107,7 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 
 		for (let date of create_dates) {
 			try {
-				const new_menu: menus & { date: Date; menu_categories: menu_categories[] } = await MenuDao.createMenu(
+				const new_menu: menus & { date: Date; categories: menu_categories[] } = await MenuDao.createMenu(
 					business.business_id,
 					true,
 					date
