@@ -97,13 +97,32 @@ const deleteMenuItem = async (menuItemId) => {
 	});
 };
 const updateMenuItem = async (menuItemId, data) => {
-	// Exclude price from the data object if it exists
-	const { price, ...updateData } = data;
+	// exclude stock from the data object if it exists
+	let { stock, ...rest } = data;
+	data = rest;
+	let existingItem = await prisma.menu_items.findUnique({
+		where: {
+			menu_item_id: menuItemId,
+		},
+	});
+	if (stock !== undefined) {
+		let stockChange = stock - existingItem.stock; // Ensure stock is initialized to 0 if it doesn't exist
+		// If stock is provided, update the stock in the menu_items table
+		await prisma.menu_item_stock_change.create({
+			data: {
+				menu_item_id: menuItemId,
+				quantity: stockChange, // Adjust stock based on the existing stock
+				order_id: null, // Assuming this is not linked to an order
+				reason: 'Manual stock update', // You can customize this reason
+			},
+		});
+	}
+
 	return await prisma.menu_items.update({
 		where: {
 			menu_item_id: menuItemId,
 		},
-		data: updateData,
+		data: data,
 	});
 };
 const updateMenuItemPrice = async (menuItemId, price) => {

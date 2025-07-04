@@ -690,6 +690,7 @@ model delivery_orders {
   order_number                      Int                                 @default(0)
   scoring_points                    scoring_points[]                    @relation("scoring_points_to_delivery_order")
   late_events                       late_events[]                       @relation("late_events_to_delivery_order")
+  stock_movements                   menu_item_stock_change[]
 }
 
 model delivery_order_sent {
@@ -780,6 +781,7 @@ model menu_items {
   is_weighted               Boolean             @default(false) // Indicates if the item is weighted (e.g., meat, fish)
   weight_quantity           Float? // Quantity for weighted items
   stock                    Int? // Stock for the item, if applicable
+  stock_movements           menu_item_stock_change[]
   @@unique([menu_item_id])
 }
 
@@ -1622,6 +1624,18 @@ model blog_posts {
   author        users            @relation(fields: [author_id], references: [user_id])
   category      blog_categories? @relation("blog_posts_in_category", fields: [category_id], references: [blog_categories_id])
   tags          blog_tags[]      @relation("blog_posts_in_tag")
+}
+model menu_item_stock_change {
+    id            String      @id @default(uuid()) @db.Uuid
+    menu_item_id  String      @db.Uuid  
+    quantity      Int
+    reason        String
+    menu_item     menu_items @relation(fields: [menu_item_id], references: [menu_item_id])
+    order_id      String?     @db.Uuid
+    order         delivery_orders? @relation(fields: [order_id], references: [order_id])
+    created_at    DateTime @default(now())
+    // Table has postgresql trigger "update_menu_item_stock" to update menu_items stock after insert
+    @@unique([menu_item_id, order_id], name: "unique_menu_item_stock_change")
 }
 
 enum BLOG_POST_STATUS {
