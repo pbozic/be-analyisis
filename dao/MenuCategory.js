@@ -68,7 +68,7 @@ const createDailyMealMenuCategory = async (menuId, daily_meal_category_price_id)
 			},
 			daily_meal_category_price: {
 				connect: {
-					daily_meal_category_price_id: daily_meal_category_price_id,
+					daily_meal_category_prices_id: daily_meal_category_price_id,
 				},
 			},
 			daily_meal_category: {
