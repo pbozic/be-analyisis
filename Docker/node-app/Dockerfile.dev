@@ -23,9 +23,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/*
 
 # Install wkhtmltopdf for Bullseye (0.12.6-1 is the latest stable for Bullseye)
-RUN curl -L -o wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.bullseye_amd64.deb && \
+RUN curl -fSL -o wkhtmltox.deb https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.bullseye_amd64.deb && \
     apt-get update && apt-get install -y ./wkhtmltox.deb && \
     rm wkhtmltox.deb
+
+
 
 # Set working directory
 WORKDIR /app
