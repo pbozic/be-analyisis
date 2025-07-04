@@ -1,5 +1,5 @@
 -- Drop old trigger and function (optional cleanup)
-DROP TRIGGER IF EXISTS update_menu_item_stock_insert ON menu_item_stock_change;
+DROP TRIGGER IF EXISTS update_menu_item_stock ON menu_item_stock_change;
 DROP FUNCTION IF EXISTS update_menu_item_stock;
 
 -- New unified trigger function
