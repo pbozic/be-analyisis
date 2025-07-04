@@ -51,7 +51,7 @@ const createMenuCategory = async (menuId, categoryData) => {
 const createDailyMealMenuCategory = async (menuId, daily_meal_category_price_id) => {
 	const existing_dmc_price = await prisma.daily_meal_category_prices.findUnique({
 		where: {
-			daily_meal_category_price_id,
+			daily_meal_category_prices_id,
 		},
 		include: {
 			daily_meal_category: true,
