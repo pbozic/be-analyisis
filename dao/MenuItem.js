@@ -105,6 +105,7 @@ const updateMenuItem = async (menuItemId, data) => {
 			menu_item_id: menuItemId,
 		},
 	});
+	console.log(`Updating menu item ${menuItemId} with data:`, data);
 	if (stock !== undefined) {
 		let stockChange = stock - existingItem.stock; // Ensure stock is initialized to 0 if it doesn't exist
 		// If stock is provided, update the stock in the menu_items table
