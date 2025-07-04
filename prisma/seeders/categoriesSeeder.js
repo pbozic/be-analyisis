@@ -4,6 +4,9 @@ import prisma from '../prisma.js';
 import { upsertFileOnS3Helper } from '../../controllers/FilesController.js';
 import CategoriesDao from '../../dao/Categories.js';
 import WordDao from '../../dao/Word.js';
+import url from 'node:url';
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 let languages = {
 	en: {
 		fastFood: 'Fast food',
