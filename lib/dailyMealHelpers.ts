@@ -40,6 +40,7 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 	});
 	//TODO:make function for day range generation for each business
 	for (let business of DM_businesses) {
+		console.log('Generating categories for business ', business.business_id);
 		const valid_menus = (await prisma.menus.findMany({
 			where: {
 				business_id: business.business_id,
@@ -71,6 +72,12 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 					);
 					if (!existing_mc) {
 						try {
+							console.log(
+								'Generating menu_category for ',
+								menu.date,
+								relevant_price.daily_meal_category_id
+							);
+
 							//TODO: make function that generates menucategory and dm_instances.
 							const new_menu_category = await MenuCategoryDao.createDailyMealMenuCategory(
 								menu.menu_id,
@@ -115,6 +122,12 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 					const relevant_price = sorted_prices.find((p) => new_menu.date.getTime() >= p.valid_from.getTime());
 					if (relevant_price) {
 						try {
+							console.log(
+								'Generating menu_category for ',
+								new_menu.date,
+								relevant_price.daily_meal_category_id
+							);
+
 							//make function for creating all necessary instances when creating menu_categories
 							const new_menu_category = await MenuCategoryDao.createDailyMealMenuCategory(
 								new_menu.menu_id,
@@ -139,7 +152,11 @@ export async function generateDailyMealMenuCategoriesUpToToday() {
 	futureDate.setHours(0, 0, 0, 0);
 
 	console.log('Generating MenuCategories up to ', futureDate.toISOString());
-	await generateDailyMealMenuCategoriesUpToDate(futureDate);
+	try {
+		await generateDailyMealMenuCategoriesUpToDate(futureDate);
+	} catch (error) {
+		console.error(error);
+	}
 }
 
 export default {
