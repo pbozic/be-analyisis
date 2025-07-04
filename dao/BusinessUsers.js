@@ -17,7 +17,7 @@ const getAllBusinessUsers = async () => {
 };
 const getBusinessUserByUserId = async (userId) => {
 	try {
-		return await prisma.business_users.findUnique({
+		return await prisma.business_users.findFirst({
 			where: {
 				user_id: userId,
 			},
