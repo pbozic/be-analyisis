@@ -351,6 +351,7 @@ export async function createWordBuySubscription(word_id, business_id, price, str
 		if (business.word_buy_stripe_subscription_id) {
 			console.log('🔁 Business already has word-buy subscription. Updating it.');
 			const result = await updateUserSubscription(userId); // this also updates wordBuy with sub ID
+			console.log(result, 'testing1313');
 			return {
 				wordBuyId: wordBuy.word_buy_id,
 				subscriptionId: result.subscriptionId,
