@@ -224,7 +224,7 @@ export async function createDailyMealSubscription(
 				courier_comment: courier_comment ?? null,
 				customers: {
 					create: customers.map((c) => ({
-						menu_category_id: c.menu_category_id,
+						daily_meal_category_id: c.daily_meal_category_id,
 						first_name: c.first_name,
 						last_name: c.last_name,
 						telephone: c.telephone,
