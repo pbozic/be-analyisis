@@ -779,7 +779,7 @@ model menu_items {
   origin_text               Json?
   is_weighted               Boolean             @default(false) // Indicates if the item is weighted (e.g., meat, fish)
   weight_quantity           Float? // Quantity for weighted items
-
+  stock                    Int? // Stock for the item, if applicable
   @@unique([menu_item_id])
 }
 
