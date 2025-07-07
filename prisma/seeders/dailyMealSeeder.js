@@ -1,7 +1,7 @@
 import MenuDao from '../../dao/Menu.js';
 import MenuItemDao from '../../dao/MenuItem.js';
 import MenuCategoryDao from '../../dao/MenuCategory.js';
-import DailyMealCategory from '../../dao/DailyMealCategory.ts';
+import * as DmcDao from '../dao/DailyMealCategory';
 
 /**
  * Populates existing daily meal menus with menu items based on their existing menu categories.
@@ -14,7 +14,7 @@ import DailyMealCategory from '../../dao/DailyMealCategory.ts';
  */
 async function populateDailyMeals(business_id) {
 	// Get active daily meal categories count for this business
-	const activeDailyMealCategories = await DailyMealCategory.getActiveDailyMealCategoriesForBusiness(business_id);
+	const activeDailyMealCategories = await DmcDao.getActiveDailyMealCategoriesForBusiness(business_id);
 	const requiredItemsCount = activeDailyMealCategories.length;
 
 	if (requiredItemsCount === 0) {
