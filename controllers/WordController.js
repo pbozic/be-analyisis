@@ -101,10 +101,13 @@ async function addCategoryToWord(req, res) {
 	}
 }
 async function createWordBuy(req, res) {
+	console.log('hello from createWordBuy');
 	try {
 		let { word_id, business_id, price } = req.body;
 		let userId = req.user?.user_id;
+		console.log(userId, 'userId12');
 		const result = await WordDao.createWordBuySubscription(word_id, business_id, price, userId);
+		console.log(result, 'result from createWordBuy');
 		res.status(201).json(result);
 	} catch (error) {
 		console.error('Error creating word buy:', error);
