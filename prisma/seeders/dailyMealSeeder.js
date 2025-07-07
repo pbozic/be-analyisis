@@ -1,7 +1,7 @@
 import MenuDao from '../../dao/Menu.js';
 import MenuItemDao from '../../dao/MenuItem.js';
 import MenuCategoryDao from '../../dao/MenuCategory.js';
-import DailyMealCategory from '../../dao/DailyMealCategory.js';
+import DailyMealCategory from '../../dao/DailyMealCategory.ts';
 
 /**
  * Populates existing daily meal menus with menu items based on their existing menu categories.
