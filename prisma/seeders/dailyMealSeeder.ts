@@ -40,7 +40,11 @@ async function populateDailyMeals(business_id: string): Promise<void> {
 		return;
 	}
 
+	console.log(`Found ${existingMenus.length} existing daily meal menus to populate.`);
+
 	for (const menu of existingMenus) {
+		console.log(`Processing menu for date: ${menu.date?.toISOString().slice(0, 10) || 'no date'}`);
+
 		const categoriesToPopulate = menu.categories.filter(
 			(category: any) => !category.menu_items || category.menu_items.length === 0
 		);
@@ -49,12 +53,21 @@ async function populateDailyMeals(business_id: string): Promise<void> {
 			continue;
 		}
 
+		console.log(
+			`Found ${categoriesToPopulate.length} empty categories to populate for ${menu.date?.toISOString().slice(0, 10)}`
+		);
+
 		// For each empty category, add a menu item
 		for (let j = 0; j < categoriesToPopulate.length && j < selectedItems.length; j++) {
 			const category = categoriesToPopulate[j];
-			const item = selectedItems[j % selectedItems.length]; // Cycle through items if needed
+			const item = selectedItems[j % selectedItems.length];
 
-			// Prepare daily meal item data
+			// Double-check that this category really doesn't have items
+			if (category.menu_items && category.menu_items.length > 0) {
+				console.log(`Category ${category.menu_category_id} already has items, skipping...`);
+				continue;
+			}
+
 			const newMenuData = {
 				daily_date: menu.date,
 				names: item.names,
