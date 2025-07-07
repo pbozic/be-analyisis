@@ -1,7 +1,6 @@
 import MenuDao from '../../dao/Menu.js';
 import MenuItemDao from '../../dao/MenuItem.js';
-import MenuCategoryDao from '../../dao/MenuCategory.js';
-import * as DmcDao from '../../dao/DailyMealCategory';
+import DmcDao from '../../dao/DailyMealCategory.js';
 
 /**
  * Populates existing daily meal menus with menu items based on their existing menu categories.
@@ -12,7 +11,7 @@ import * as DmcDao from '../../dao/DailyMealCategory';
  *
  * @param {string} business_id
  */
-async function populateDailyMeals(business_id) {
+async function populateDailyMeals(business_id: string): Promise<void> {
 	// Get active daily meal categories count for this business
 	const activeDailyMealCategories = await DmcDao.getActiveDailyMealCategoriesForBusiness(business_id);
 	const requiredItemsCount = activeDailyMealCategories.length;
@@ -43,7 +42,7 @@ async function populateDailyMeals(business_id) {
 
 	for (const menu of existingMenus) {
 		const categoriesToPopulate = menu.categories.filter(
-			(category) => !category.menu_items || category.menu_items.length === 0
+			(category: any) => !category.menu_items || category.menu_items.length === 0
 		);
 
 		if (categoriesToPopulate.length === 0) {
