@@ -32,7 +32,6 @@ export async function createDailyMealCategoryWithPrice({
 }
 
 export async function getActiveDailyMealCategoriesForBusiness(business_id: string) {
-	const now = new Date();
 	return await prisma.daily_meal_categories.findMany({
 		where: { business_id },
 		include: {
