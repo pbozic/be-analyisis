@@ -53,6 +53,7 @@ const getMenuByBusinessId = async (business_id, isDailyMeal = false, startDate =
 							category: true,
 						},
 					},
+					daily_meal_category_price: true,
 				},
 			},
 		},
