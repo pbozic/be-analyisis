@@ -1,7 +1,7 @@
 {
     "watch": [
         "app.js",
-        "server.js",
+        "server.ts",
         "socket.js",
         "controllers",
         "dao",

@@ -1,41 +1,15 @@
 import { Request, Response } from 'express';
-import { v4 as uuidv4 } from 'uuid';
-import { SPLIT_DESTINATION_TYPE, PAYMENT_STATUS, SUBSCRIPTION_STATUS, SUBSCRIPTION_TYPE } from '@prisma/client';
-import { date } from 'joi';
+import { SPLIT_DESTINATION_TYPE, PAYMENT_STATUS, SUBSCRIPTION_TYPE } from '@prisma/client';
 
 import UsersDao from '../dao/User.js';
 import BusinessDao from '../dao/Business.js';
 import PaymentHelpers from '../lib/paymentHelpers.js';
-import DeliveryOrderDao from '../dao/DeliveryOrder.js';
-import { createDailyMealsSubscriptions } from '../lib/deliveryHelpers.js';
 import { ValidatedRequest } from '../types/validatedRequest.js';
 import { DailyMealsSubscriptionRequest } from '../types/dailymeal/DailyMealSubscription.ts';
-import prisma from '../prisma/prisma.js';
 import DailyMealDao from '../dao/DailyMealDao.ts';
 import AddressDao from '../dao/Address.js';
 import { RESTAURANT_SHARE_PERC } from '../lib/constants.js';
-
-/**
- * Maps a date to an earlier date according to the given weekday:weekday mapping.
- * @param {Date} date
- * @param {Record<number,number>} mapping
- * @returns {Date}
- */
-function mapDateToEarlierWeekday(date: Date, mapping: Record<number, number>): Date {
-	const currentWeekday = date.getDay();
-
-	const targetWeekday = mapping[currentWeekday];
-
-	if (typeof targetWeekday !== 'number') {
-		// Mapping is undefined or invalid
-		return date;
-	}
-
-	const diff = (currentWeekday - targetWeekday + 7) % 7 || 7; // Ensure it's at least 1 day back
-	const result = new Date(date);
-	result.setDate(date.getDate() - diff);
-	return result;
-}
+import { mapDateToEarlierWeekday } from '../lib/dailyMealHelpers.ts';
 
 /**
  *
@@ -119,7 +93,7 @@ export async function dailyMealsSubscriptionPayment(
 	try {
 		const user = await UsersDao.getUserById(req.user?.user_id);
 		const business = await BusinessDao.getBusinessById(business_id);
-		const deliverydaymapping: Record<number, number> = business.delivery_day_mapping || {};
+		const deliverydaymapping: Record<number, number> = business.daily_meals_delivery_mapping || {};
 
 		const restaurant_acc = business.stripe_account_id;
 		const delivery_address = await AddressDao.addAddress({

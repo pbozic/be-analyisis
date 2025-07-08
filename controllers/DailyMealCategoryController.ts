@@ -1,7 +1,7 @@
 import { Response } from 'express';
 
-import { ValidatedRequest } from '../types/validatedRequest';
-import * as DmcDao from '../dao/DailyMealCategory';
+import { ValidatedRequest } from '../types/validatedRequest.ts';
+import DmcDao from '../dao/DailyMealCategory.ts';
 import type {
 	CreateDailyMealCategoryWithPriceInput,
 	AddPriceToDailyMealCategoryInput,
@@ -9,6 +9,7 @@ import type {
 	DailyMealCategoryPrice,
 } from '../types/dailyMeals/DailyMealCategory.ts';
 import MenuCategory from '../dao/MenuCategory.js';
+import dailyMealHelpers from '../lib/dailyMealHelpers.ts';
 
 /**
  * POST /business/:business_id/daily-meal-categories
@@ -63,6 +64,15 @@ export async function createDailyMealCategoryWithPrice(
 			price,
 			start_date: new Date(start_date),
 		});
+
+		const futureDate = new Date();
+		futureDate.setUTCHours(0, 0, 0, 0);
+		futureDate.setUTCDate(futureDate.getUTCDate() + 13);
+		await dailyMealHelpers.generateDailyMealMenuCategoriesUpToDateForCategory(
+			dmc.daily_meal_category_id,
+			futureDate
+		);
+
 		res.status(201).json(dmc);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';

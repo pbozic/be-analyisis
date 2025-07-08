@@ -719,7 +719,7 @@ model menus {
   categories              menu_categories[]
   menu_categories_ordered Json? // JSON field to store ordered category IDs
   isDailyMeal             Boolean                     @default(false)
-  date                    DateTime?                   @db.Timestamptz(6)
+  date                    DateTime?                   @db.Timestamp(0)
   daily_meal_subscribers  daily_meals_subscriptions[]
 
   @@unique([menu_id])

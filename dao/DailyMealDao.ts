@@ -1,4 +1,4 @@
-import { Prisma, SUBSCRIPTION_STATUS, SUBSCRIPTION_TYPE, DAILY_MEAL_INSTANCE_STATUS } from '@prisma/client';
+import { Prisma, SUBSCRIPTION_STATUS, SUBSCRIPTION_TYPE } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 import { DailyMealsCartPerson } from '../types/dailymeal/DailyMealSubscription.ts';
@@ -276,71 +276,30 @@ export async function createDailyMealSubscription(
 	}
 }
 
-// /**
-//  * Create daily meal instances for all customers of a subscription for a given date.
-//  * - For DATED subscriptions: verifies the date is in the subscription's days.
-//  * - For RECURRING subscriptions: verifies the weekday is in the subscription's weekdays.
-//  * Returns the created daily_meal_instances.
-//  *
-//  * @param subscriptionId - The subscription ID
-//  * @param date - The date for which to create instances (Date or ISO string)
-//  * @returns Array of created daily_meal_instances
-//  */
-// export async function createDailyMealInstancesForDate(subscriptionId: string, date: Date | string) {
-//     const targetDate = new Date(date);
-//     const weekday = targetDate.getDay(); // 0 (Sun) - 6 (Sat)
+export async function getSubscriptionById(id: string, includeObj?: Prisma.daily_meal_subscriptionsInclude) {
+	return await prisma.daily_meal_subscriptions.findUnique({
+		where: { id },
+		include: includeObj,
+	});
+}
 
-//     // Fetch subscription with customers, days, weekdays
-//     const subscription = await prisma.daily_meal_subscriptions.findUnique({
-//         where: { id: subscriptionId },
-//         include: {
-//             customers: true,
-//             days: true,
-//             weekdays: true,
-//         },
-//     });
-
-//     if (!subscription) {
-//         throw new Error('Subscription not found');
-//     }
-
-//     let isValidDate = false;
-
-//     if (subscription.type === SUBSCRIPTION_TYPE.DATED) {
-//         isValidDate = subscription.days.some(
-//             (day) => new Date(day.intended_date).toDateString() === targetDate.toDateString()
-//         );
-//     } else if (subscription.type === SUBSCRIPTION_TYPE.RECURRING) {
-//         isValidDate = subscription.weekdays.some(
-//             (wd) => wd.intended_weekday === weekday
-//         );
-//     }
-
-//     if (!isValidDate) {
-//         throw new Error('Date is not valid for this subscription');
-//     }
-
-//     // Create one instance per customer for this date
-//     const createdInstances = await Promise.all(
-//         subscription.customers.map((customer) =>
-//             prisma.daily_meal_instances.create({
-//                 data: {
-//                     customer_id: customer.id,
-//                     menu_category_id: customer.menu_categoriesMenu_category_id || customer.category_id,
-//                     subscription_id: subscription.id,
-//                     date: targetDate,
-//                     status: DAILY_MEAL_INSTANCE_STATUS.PLANNED,
-//                 },
-//             })
-//         )
-//     );
-
-//     return createdInstances;
-// }
+export async function updateSubscriptionStatus(
+	id: string,
+	status: SUBSCRIPTION_STATUS,
+	includeObj?: Prisma.daily_meal_subscriptionsInclude
+) {
+	return await prisma.daily_meal_subscriptions.update({
+		where: { id },
+		data: { status: status },
+		include: includeObj,
+	});
+}
 
 export default {
 	getDailyMealSubscriptionsByBusinessId,
 	getDailyMealSubscriptionsByUserId,
 	getTodayDailyMealSubscriptionsByBusinessId,
 	createDailyMealSubscription,
+	getSubscriptionById,
+	updateSubscriptionStatus,
 };
