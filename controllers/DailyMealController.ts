@@ -85,11 +85,13 @@ export async function dailyMealsSubscriptionPayment(
 		cart,
 		details: { total_price, delivery_cost, sub_total_price, business_id },
 		delivery_location,
-		payment: { payment_type, payment_method_id },
+		payment,
 		return_url,
 		allow_credits_usage,
 	} = req.body;
-	let payment = null;
+	const { payment_type, payment_method_id } = payment ? payment : {};
+
+	let created_payment = null;
 	try {
 		const user = await UsersDao.getUserById(req.user?.user_id);
 		const business = await BusinessDao.getBusinessById(business_id);
@@ -135,6 +137,9 @@ export async function dailyMealsSubscriptionPayment(
 
 		let payment_response = null;
 		if (new_subscription.type === SUBSCRIPTION_TYPE.DATED) {
+			if (!(payment_type && payment_method_id)) {
+				throw new Error('Missing Payment Data');
+			}
 			payment_response = await PaymentHelpers.createPaymentHelper(
 				user.user_id,
 				TOTAL_PRICE_CENTS,
@@ -160,8 +165,8 @@ export async function dailyMealsSubscriptionPayment(
 			);
 
 			//TODO:     on payment success generate planned meals for up to 2 weeks
-			payment = payment_response?.payment;
-			if (payment.status === PAYMENT_STATUS.SUCCEEDED) {
+			created_payment = payment_response?.payment;
+			if (created_payment.status === PAYMENT_STATUS.SUCCEEDED) {
 				// await DeliveryOrderDao.updateDailyMealsSubscriptionsStatusByGroupedId(
 				// 	new_subscription.id,
 				// 	SUBSCRIPTION_STATUS.ACTIVE
@@ -179,9 +184,9 @@ export async function dailyMealsSubscriptionPayment(
 		return;
 	} catch (e) {
 		console.error('Error creating daily meals subscription payment', e);
-		if (payment) {
+		if (created_payment) {
 			try {
-				await PaymentHelpers.handlePaymentRefund(payment);
+				await PaymentHelpers.handlePaymentRefund(created_payment);
 			} catch (error) {
 				console.error('Error cleaning daily meals subscription payment', error);
 			}
