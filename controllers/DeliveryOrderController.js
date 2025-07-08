@@ -1248,6 +1248,7 @@ async function merchantAcceptOrder(req, res) {
 		sendDeliveryOrderNotifications(user, null, order.user_id, null, order.status);
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_PREPARING);
 		let business = await BusinessDao.getBusinessById(order.business_id);
+		console.log('Accept business type', business?.type);
 		if ([BUSINESS_TYPE.MERCHANT].includes(business?.type)) {
 			let stock_update = await handleStockSync(order, business);
 		}
