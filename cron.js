@@ -27,7 +27,7 @@ function startCronJobs() {
 	cron.schedule('0 9 * * *', WalletFundsHelper.notifyUpcomingCreditExpirations);
 	cron.schedule('0 0 * * *', BusinessHelper.aggregateScoringPoints);
 	cron.schedule('* */1 * * *', getSettlementsWeatherForecast);
-	cron.schedule('0 0 * * *', DailyMealHelper.generateDailyMealMenuCategoriesUpToToday);
+	cron.schedule('0 0 * * *', DailyMealHelper.generateDailyMealMenuCategoriesAndInstancesFor14Days);
 	//Every 10 days
 	cron.schedule('0 0 */10 * *', stripe.payoutAvailableBalanceToBusinesses);
 	cron.schedule('59 23 * * *', BusinessHelper.setNewBusinesses);

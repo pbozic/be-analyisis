@@ -17,6 +17,8 @@ import WalletFundsDao from '../dao/WalletFunds.js';
 import TaxiOrderDao from '../dao/TaxiOrder.js';
 import { calculateTransferOrderPaymentCuts } from '../lib/taxiHelpers.js';
 import PaymentHelpers from '../lib/paymentHelpers.ts';
+import DailyMealDao from '../dao/DailyMealDao.ts';
+import dailyMealHelpers from '../lib/dailyMealHelpers.ts';
 import { handleStockSync } from './DeliveryOrderController.js';
 dotenv.config();
 const { io, UserSockets, SocketStore } = socket;
@@ -120,11 +122,9 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 				SPLIT_DESTINATION_TYPE.MERCHANT,
 			]);
 			//any remaining reserved funds are meant for delivery driver and should be handled on order completion
-			const updated_subs = await DeliveryOrderDao.updateDailyMealsSubscriptionsStatusByGroupedId(
-				paymentIntent.transfer_group,
-				'ACTIVE'
-			);
-			if (!updated_subs || updated_subs.length === 0) {
+
+			const updated_sub = await dailyMealHelpers.activateSubscriptionById(paymentIntent.transfer_group);
+			if (!updated_sub) {
 				console.warn(
 					'No DM subscriptions found after transfers for grouped_id: ',
 					payment_intent.transfer_group
@@ -247,6 +247,7 @@ async function handlePaymentIntentFaliure(paymentIntent) {
 			break;
 		case 'daily_meals_subscription_payment': {
 			let payment = await PaymentDao.getPaymentByGroupedId(paymentIntent.transfer_group);
+			//TODO: handle dm failed
 			const updated_subs = await DeliveryOrderDao.updateDailyMealsSubscriptionsStatusByGroupedId(
 				paymentIntent.transfer_group,
 				'FAILED'

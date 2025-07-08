@@ -719,7 +719,7 @@ model menus {
   categories              menu_categories[]
   menu_categories_ordered Json? // JSON field to store ordered category IDs
   isDailyMeal             Boolean                     @default(false)
-  date                    DateTime?                   @db.Timestamptz(6)
+  date                    DateTime?                   @db.Timestamp(0)
   daily_meal_subscribers  daily_meals_subscriptions[]
 
   @@unique([menu_id])
@@ -733,7 +733,7 @@ model menu_categories {
   business_id                String                       @db.Uuid
   menu_items                 menu_items[]                 @relation("menu_items_in_category")
   menu_id                    String?                      @db.Uuid
-  menu                       menus?                       @relation(fields: [menu_id], references: [menu_id])
+  menu                       menus?                       @relation(fields: [menu_id], references: [menu_id], onDelete: Cascade)
   order                      Int?
   price                      Float?
   menu_items_ordered         Json? // JSON field to store ordered menu item IDs
@@ -767,7 +767,7 @@ model menu_items {
   business_id               String                   @db.Uuid
   menu_category_id          String?                  @db.Uuid
   daily_date                DateTime?                @db.Timestamptz(6)
-  menu_category             menu_categories?         @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id])
+  menu_category             menu_categories?         @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id], onDelete: Cascade)
   documents                 documents[]
   requires_id_check         Boolean                  @default(false)
   is_enabled                Boolean                  @default(true)

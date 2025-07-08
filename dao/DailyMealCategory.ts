@@ -1,4 +1,16 @@
+import type { Prisma } from '@prisma/client';
+
 import prisma from '../prisma/prisma.js';
+
+export async function getDailyMealCategoryById(
+	daily_meal_category_id: string,
+	includeObj?: Prisma.daily_meal_categoriesInclude
+): Promise<Prisma.daily_meal_categoriesGetPayload<{ include: Prisma.daily_meal_categoriesInclude }>> {
+	return await prisma.daily_meal_categories.findUnique({
+		where: { daily_meal_category_id },
+		include: includeObj,
+	});
+}
 
 export async function createDailyMealCategoryWithPrice({
 	business_id,
@@ -83,6 +95,7 @@ export async function deactivateDailyMealCategory(daily_meal_category_id: string
 }
 
 export default {
+	getDailyMealCategoryById,
 	createDailyMealCategoryWithPrice,
 	getActiveDailyMealCategoriesForBusiness,
 	getDailyMealCategoriesForBusiness,
