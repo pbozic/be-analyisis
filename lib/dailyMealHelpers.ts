@@ -1,8 +1,41 @@
-import type { menus, menu_categories, daily_meal_categories, daily_meal_category_prices } from '@prisma/client';
+import type {
+	menus,
+	menu_categories,
+	daily_meal_categories,
+	daily_meal_category_prices,
+	daily_meal_instances,
+	business,
+	daily_meal_subscriptions,
+	daily_meal_subscription_customers,
+	daily_meal_subscription_days,
+	daily_meal_subscription_weekdays,
+} from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 import MenuDao from '../dao/Menu.js';
 import MenuCategoryDao from '../dao/MenuCategory.js';
+
+/**
+ * Maps a date to an earlier date according to the given weekday:weekday mapping.
+ * @param {Date} date
+ * @param {Record<number,number>} mapping
+ * @returns {Date}
+ */
+export function mapDateToEarlierWeekday(date: Date, mapping: Record<number, number>): Date {
+	const currentWeekday = date.getDay();
+	const targetWeekday = mapping[currentWeekday];
+
+	if (typeof targetWeekday !== 'number' || targetWeekday === currentWeekday) {
+		// No mapping or mapping to same day, return original
+		return date;
+	}
+
+	// Calculate days to subtract to reach the earlier day
+	const diff = (currentWeekday - targetWeekday + 7) % 7;
+	const result = new Date(date);
+	result.setDate(date.getDate() - diff);
+	return result;
+}
 
 function getDateRangeMidnight(date1: Date, date2: Date): Date[] {
 	const start = new Date(date1);
@@ -159,7 +192,188 @@ export async function generateDailyMealMenuCategoriesUpToToday() {
 	}
 }
 
+export async function generateDMInstancesForDateSimple(datestring: string) {
+	const intended_date = new Date(new Date(datestring).setHours(0, 0, 0, 0));
+	const intended_weekday = intended_date.getDay();
+	console.log('Generating DM instances for ', intended_date);
+	const subscriptions = await prisma.daily_meal_subscriptions.findMany({
+		where: {
+			status: 'ACTIVE',
+			AND: [
+				{ start_date: { lte: intended_date } },
+				{
+					OR: [{ end_date: null }, { end_date: { gte: intended_date } }],
+				},
+			],
+			OR: [
+				{
+					type: 'DATED',
+					days: { some: { intended_date: intended_date } },
+				},
+				{
+					type: 'RECURRING',
+					weekdays: { some: { intended_weekday: intended_weekday } },
+				},
+			],
+		},
+		include: {
+			days: true,
+			weekdays: true,
+			customers: {
+				include: { daily_meal_instances: true },
+			},
+		},
+	});
+	const business_id_set = new Set<string>();
+	subscriptions.forEach((sub: { business_id: string }) => {
+		business_id_set.add(sub.business_id);
+	});
+
+	const businesses = await prisma.business.findMany({
+		where: {
+			business_id: { in: Array.from(business_id_set) },
+		},
+	});
+	type DeliveryDayMapping = {
+		'0': number;
+		'1': number;
+		'2': number;
+		'3': number;
+		'4': number;
+		'5': number;
+		'6': number;
+	};
+	// Create a mapping: business_id -> business object
+	const businessDeliveryMappingMap = new Map<string, DeliveryDayMapping>();
+	businesses.forEach((business: business) => {
+		businessDeliveryMappingMap.set(
+			business.business_id,
+			business.daily_meals_delivery_mapping as DeliveryDayMapping
+		);
+	});
+
+	const menus = await prisma.menus.findMany({
+		where: {
+			business_id: { in: Array.from(business_id_set) },
+			isDailyMeal: true,
+		},
+		include: {
+			categories: {
+				include: {
+					daily_meal_category_price: true,
+					daily_meal_instances: true,
+				},
+			},
+		},
+	});
+
+	// Create menuCategoryMap: key is `${business_id},${daily_meal_category_id}`, value is menu_category_id
+	const menuCategoryMap = new Map<
+		string,
+		menu_categories & {
+			daily_meal_category_price: daily_meal_category_prices;
+			daily_meal_instances: daily_meal_instances[];
+		}
+	>();
+	menus.forEach(
+		(
+			menu: menus & {
+				categories: (menu_categories & {
+					daily_meal_category_price: daily_meal_category_prices;
+					daily_meal_instances: daily_meal_instances[];
+				})[];
+			}
+		) => {
+			menu.categories.forEach(
+				(
+					menu_category: menu_categories & {
+						daily_meal_category_price: daily_meal_category_prices;
+						daily_meal_instances: daily_meal_instances[];
+					}
+				) => {
+					if (menu_category.daily_meal_category_price.daily_meal_category_id) {
+						const key = `${menu.business_id},${menu_category.daily_meal_category_price.daily_meal_category_id}`;
+						menuCategoryMap.set(key, menu_category);
+					}
+				}
+			);
+		}
+	);
+
+	const dailyMealInstanceCreateData: Array<{
+		subscription_id: string;
+		subscription_customer_id: string;
+		menu_category_id: string;
+		intended_date: Date;
+		delivery_date: Date;
+	}> = [];
+
+	subscriptions.forEach(
+		(
+			sub: daily_meal_subscriptions & {
+				customers: Array<daily_meal_subscription_customers & { daily_meal_instances: daily_meal_instances[] }>;
+				days: daily_meal_subscription_days[];
+				weekdays: daily_meal_subscription_weekdays[];
+			}
+		) => {
+			sub.customers.forEach(
+				(
+					sub_customer: daily_meal_subscription_customers & { daily_meal_instances: daily_meal_instances[] }
+				) => {
+					const menuCategoryMapKey = `${sub.business_id},${sub_customer.daily_meal_category_id}`;
+					const menuCategory = menuCategoryMap.get(menuCategoryMapKey);
+					if (menuCategory) {
+						if (
+							!sub_customer.daily_meal_instances.some(
+								(instance) =>
+									instance.intended_date === intended_date &&
+									instance.menu_category_id === menuCategory.menu_category_id
+							)
+						) {
+							const delivery_date = businessDeliveryMappingMap.get(sub.business_id)
+								? mapDateToEarlierWeekday(
+										intended_date,
+										businessDeliveryMappingMap.get(sub.business_id) as Record<number, number>
+									)
+								: intended_date;
+
+							dailyMealInstanceCreateData.push({
+								subscription_id: sub.id,
+								subscription_customer_id: sub_customer.id,
+								menu_category_id: menuCategory.menu_category_id,
+								intended_date: intended_date,
+								delivery_date: delivery_date,
+							});
+						} else {
+							console.info(
+								`Instance for mc:${menuCategory.menu_category_id} and sub_cust:${sub_customer.id} already exists`
+							);
+						}
+					} else {
+						console.warn(
+							`Missing menu_category ${`${sub.business_id},${sub_customer.daily_meal_category_id}`} for date ${intended_date}`
+						);
+					}
+				}
+			);
+		}
+	);
+	console.info(JSON.stringify(dailyMealInstanceCreateData, null, 2));
+	try {
+		const created_instances = await prisma.daily_meal_instances.createMany({
+			data: dailyMealInstanceCreateData,
+		});
+	} catch (e) {
+		console.error(e);
+	}
+}
+export async function generateDailyMealInstancesForToday() {
+	await generateDMInstancesForDateSimple(new Date().toDateString());
+}
+
 export default {
 	generateDailyMealMenuCategoriesUpToDate,
 	generateDailyMealMenuCategoriesUpToToday,
+	generateDMInstancesForDateSimple,
+	generateDailyMealInstancesForToday,
 };
