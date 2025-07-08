@@ -98,7 +98,7 @@ export const DailyMealsSubscriptionRequestSchema = z.object({
 		business_id: z.string().uuid(),
 	}),
 	payment: z.object({
-		payment_type: z.nativeEnum(PAYMENT_METHOD),
+		payment_type: z.nativeEnum(PAYMENT_METHOD).nullable(),
 		payment_method_id: z.string().nullable(),
 		status: z.string().optional(),
 		credit_card: z
