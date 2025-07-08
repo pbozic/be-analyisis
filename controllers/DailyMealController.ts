@@ -13,7 +13,7 @@ import { DailyMealsSubscriptionRequest } from '../types/dailymeal/DailyMealSubsc
 import prisma from '../prisma/prisma.js';
 import DailyMealDao from '../dao/DailyMealDao.ts';
 import AddressDao from '../dao/Address.js';
-import { RESTAURANT_SHARE_PERC } from '../lib/constants.js';
+import { DAILY_MEAL_DELIVERY_COST_CENTS, RESTAURANT_SHARE_PERC } from '../lib/constants.js';
 
 /**
  * Maps a date to an earlier date according to the given weekday:weekday mapping.
@@ -172,7 +172,7 @@ export async function dailyMealsSubscriptionPayment(
 				allow_credits_usage,
 				cart.dates.map(() => ({
 					destination_type: SPLIT_DESTINATION_TYPE.DRIVER,
-					value: Math.round(delivery_cost * 100),
+					value: DAILY_MEAL_DELIVERY_COST_CENTS,
 				})),
 				[
 					{
