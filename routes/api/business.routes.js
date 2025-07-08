@@ -67,7 +67,7 @@ router.post(
 	DailyMealCategoryController.createDailyMealCategoryWithPrice
 );
 
-router.get('/:business_id/daily-meal-categories', DailyMealCategoryController.getActiveDailyMealCategoriesForBusiness);
+router.get('/:business_id/daily-meal-categories', DailyMealCategoryController.getDailyMealCategoriesForBusiness);
 
 router.post(
 	'/daily-meal-categories/:dmc_id/price',
@@ -75,6 +75,6 @@ router.post(
 	DailyMealCategoryController.addPriceToDailyMealCategory
 );
 
-router.delete('/daily-meal-categories/:dmc_id', DailyMealCategoryController.deleteDailyMealCategory);
+router.delete('/daily-meal-categories/:dmc_id', DailyMealCategoryController.deactivateDailyMealCategory);
 
 export default router;

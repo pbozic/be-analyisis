@@ -85,7 +85,7 @@ export async function createDailyMealCategoryWithPrice(
  * @tag DailyMealCategories
  * @summary List active daily meal categories for a business
  * @description Lists all currently active daily meal categories for a business, including their latest price.
- * @operationId getActiveDailyMealCategoriesForBusiness
+ * @operationId getDailyMealCategoriesForBusiness
  * @response 200 - List of active daily meal categories
  * @responseContent {object} 200.application/json
  * @responseExample 200.application/json [
@@ -95,6 +95,7 @@ export async function createDailyMealCategoryWithPrice(
  *     "category_id": "uuid",
  *     "created_at": "2024-07-01T00:00:00.000Z",
  *     "start_date": "2024-07-01T00:00:00.000Z",
+ * 	   "active": true,
  *     "category": {
  *       "categories_id": "uuid",
  *       "name": "string",
@@ -115,13 +116,13 @@ export async function createDailyMealCategoryWithPrice(
  * @response 500 - Error fetching daily meal categories
  * @prisma_model daily_meal_categories
  */
-export async function getActiveDailyMealCategoriesForBusiness(
+export async function getDailyMealCategoriesForBusiness(
 	req: ValidatedRequest<unknown, { business_id: string }>,
 	res: Response<DailyMealCategory[] | { message: string; error?: string }>
 ) {
 	try {
 		const { business_id } = req.params;
-		const dmcs = await DmcDao.getActiveDailyMealCategoriesForBusiness(business_id);
+		const dmcs = await DmcDao.getDailyMealCategoriesForBusiness(business_id);
 		res.status(200).json(dmcs);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';
@@ -187,7 +188,7 @@ export async function addPriceToDailyMealCategory(
  * @tag DailyMealCategories
  * @summary Remove a daily meal category from a business
  * @description Deletes a daily meal category from a business.
- * @operationId deleteDailyMealCategory
+ * @operationId deactivateDailyMealCategory
  * @response 200 - Daily meal category deleted successfully
  * @responseContent {object} 200.application/json
  * @responseExample 200.application/json {
@@ -200,13 +201,13 @@ export async function addPriceToDailyMealCategory(
  * @response 500 - Error deleting daily meal category
  * @prisma_model daily_meal_categories
  */
-export async function deleteDailyMealCategory(
+export async function deactivateDailyMealCategory(
 	req: ValidatedRequest<unknown, { dmc_id: string }>,
 	res: Response<DailyMealCategory | { message: string; error?: string }>
 ) {
 	try {
 		const { dmc_id } = req.params;
-		const deleted = await DmcDao.deleteDailyMealCategory(dmc_id);
+		const deleted = await DmcDao.deactivateDailyMealCategory(dmc_id);
 		res.status(200).json(deleted);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';

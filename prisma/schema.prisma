@@ -751,37 +751,38 @@ model menu_categories {
 }
 
 model menu_items {
-  menu_item_id              String              @id @default(uuid()) @db.Uuid
+  menu_item_id              String                   @id @default(uuid()) @db.Uuid
   names                     Json // l10n names
   image                     String?
   description               Json // l10n descriptions
   allergens                 String[]
   spicy_level               Int?
   unit_size                 String?
-  price                     Float               @default(0)
+  price                     Float                    @default(0)
   discount                  Float?
   sides                     String[] // Optional, for sides
   extras                    String[] // Optional, for extras, inside are menu_ids
   ingredients               Json // Includes allergen and multilingual names
   availability              String[] // Array of availability -> ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
-  business_id               String              @db.Uuid
-  menu_category_id          String?             @db.Uuid
-  daily_date                DateTime?           @db.Timestamptz(6)
-  menu_category             menu_categories?    @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id], onDelete: Cascade)
+  business_id               String                   @db.Uuid
+  menu_category_id          String?                  @db.Uuid
+  daily_date                DateTime?                @db.Timestamptz(6)
+  menu_category             menu_categories?         @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id], onDelete: Cascade)
   documents                 documents[]
-  requires_id_check         Boolean             @default(false)
-  is_enabled                Boolean             @default(true)
-  is_copy                   Boolean             @default(false)
+  requires_id_check         Boolean                  @default(false)
+  is_enabled                Boolean                  @default(true)
+  is_copy                   Boolean                  @default(false)
   menu_category_order_index Int?
-  order_lobby_items         order_lobby_items[] @relation("lobby_item_to_menu_item")
+  order_lobby_items         order_lobby_items[]      @relation("lobby_item_to_menu_item")
   allergens_text            Json?
   ingredients_text          Json?
   usage_text                Json?
   origin_text               Json?
-  is_weighted               Boolean             @default(false) // Indicates if the item is weighted (e.g., meat, fish)
+  is_weighted               Boolean                  @default(false) // Indicates if the item is weighted (e.g., meat, fish)
   weight_quantity           Float? // Quantity for weighted items
-  stock                    Int? // Stock for the item, if applicable
+  stock                     Int? // Stock for the item, if applicable
   stock_movements           menu_item_stock_change[]
+
   @@unique([menu_item_id])
 }
 
@@ -1081,7 +1082,7 @@ model word_buy {
   word                   words     @relation(fields: [word_id], references: [word_id])
   stripe_subscription_id String?
   price                  Float
-  active_at              DateTime?  
+  active_at              DateTime?
   expires_at             DateTime?
   paid                   Boolean   @default(false)
   business_id            String    @db.Uuid
@@ -1525,6 +1526,7 @@ model daily_meal_categories {
 
   created_at DateTime @default(now()) @db.Timestamptz(6)
   start_date DateTime @db.Timestamptz(6)
+  active     Boolean  @default(true)
 
   category                          categories                          @relation(fields: [category_id], references: [categories_id], onDelete: Cascade)
   business                          business                            @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
@@ -1625,17 +1627,19 @@ model blog_posts {
   category      blog_categories? @relation("blog_posts_in_category", fields: [category_id], references: [blog_categories_id])
   tags          blog_tags[]      @relation("blog_posts_in_tag")
 }
+
 model menu_item_stock_change {
-    id            String      @id @default(uuid()) @db.Uuid
-    menu_item_id  String      @db.Uuid  
-    quantity      Int
-    reason        String
-    menu_item     menu_items @relation(fields: [menu_item_id], references: [menu_item_id])
-    order_id      String?     @db.Uuid
-    order         delivery_orders? @relation(fields: [order_id], references: [order_id])
-    created_at    DateTime @default(now())
-    // Table has postgresql trigger "update_menu_item_stock" to update menu_items stock after insert
-    @@unique([menu_item_id, order_id], name: "unique_menu_item_stock_change")
+  id           String           @id @default(uuid()) @db.Uuid
+  menu_item_id String           @db.Uuid
+  quantity     Int
+  reason       String
+  menu_item    menu_items       @relation(fields: [menu_item_id], references: [menu_item_id])
+  order_id     String?          @db.Uuid
+  order        delivery_orders? @relation(fields: [order_id], references: [order_id])
+  created_at   DateTime         @default(now())
+
+  // Table has postgresql trigger "update_menu_item_stock" to update menu_items stock after insert
+  @@unique([menu_item_id, order_id], name: "unique_menu_item_stock_change")
 }
 
 enum BLOG_POST_STATUS {

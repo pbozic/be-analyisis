@@ -8,7 +8,7 @@ import { ValidatedRequest } from '../types/validatedRequest.js';
 import { DailyMealsSubscriptionRequest } from '../types/dailymeal/DailyMealSubscription.ts';
 import DailyMealDao from '../dao/DailyMealDao.ts';
 import AddressDao from '../dao/Address.js';
-import { RESTAURANT_SHARE_PERC } from '../lib/constants.js';
+import { DAILY_MEAL_DELIVERY_COST_CENTS, RESTAURANT_SHARE_PERC } from '../lib/constants.js';
 import { mapDateToEarlierWeekday } from '../lib/dailyMealHelpers.ts';
 
 /**
@@ -146,7 +146,7 @@ export async function dailyMealsSubscriptionPayment(
 				allow_credits_usage,
 				cart.dates.map(() => ({
 					destination_type: SPLIT_DESTINATION_TYPE.DRIVER,
-					value: Math.round(delivery_cost * 100),
+					value: DAILY_MEAL_DELIVERY_COST_CENTS,
 				})),
 				[
 					{
@@ -192,7 +192,7 @@ export async function dailyMealsSubscriptionPayment(
 
 /**
  *
- * - GET /delivery/orders/daily_meals/subscriptions
+ * - GET /delivery/orders/daily_meals/user
  * - @tag Delivery
  * - @summary Get all daily meal subscriptions for the current user
  * - @description Returns all daily meal subscriptions for the authenticated user, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances.
@@ -254,7 +254,7 @@ export async function getUserDailyMealSubscriptions(
 
 /**
  *
- * - GET /delivery/orders/daily_meals/subscriptions/business/{business_id}
+ * - GET /delivery/orders/daily_meals/business/{business_id}
  * - @tag Delivery
  * - @summary Get all daily meal subscriptions for a business
  * - @description Returns all daily meal subscriptions for the given business, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances. Optionally filter by start_date in the request body.

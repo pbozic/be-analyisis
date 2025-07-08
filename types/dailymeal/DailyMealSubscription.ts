@@ -94,11 +94,19 @@ export const DailyMealsSubscriptionRequestSchema = z.object({
 		total_price: z.number(),
 		delivery_cost: z.number(),
 		sub_total_price: z.number(),
+		box_fee: z.number(),
 		business_id: z.string().uuid(),
 	}),
 	payment: z.object({
-		payment_type: z.nativeEnum(PAYMENT_METHOD),
+		payment_type: z.nativeEnum(PAYMENT_METHOD).nullable(),
 		payment_method_id: z.string().nullable(),
+		status: z.string().optional(),
+		credit_card: z
+			.object({
+				issuer: z.string(),
+				number: z.string(),
+			})
+			.optional(),
 	}),
 	return_url: z.string().optional(),
 	allow_credits_usage: z.boolean(),
