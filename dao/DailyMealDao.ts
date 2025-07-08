@@ -253,7 +253,7 @@ export async function createDailyMealSubscription(
 			include: {
 				customers: {
 					include: {
-						menu_category: true,
+						daily_meal_categories: true,
 					},
 				},
 				days: true,
