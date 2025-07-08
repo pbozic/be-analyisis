@@ -9,7 +9,7 @@ import { DailyMealsSubscriptionRequest } from '../types/dailymeal/DailyMealSubsc
 import DailyMealDao from '../dao/DailyMealDao.ts';
 import AddressDao from '../dao/Address.js';
 import { DAILY_MEAL_DELIVERY_COST_CENTS, RESTAURANT_SHARE_PERC } from '../lib/constants.js';
-import { mapDateToEarlierWeekday } from '../lib/dailyMealHelpers.ts';
+import dailyMealHelpers, { mapDateToEarlierWeekday } from '../lib/dailyMealHelpers.ts';
 
 /**
  *
@@ -164,13 +164,12 @@ export async function dailyMealsSubscriptionPayment(
 				new_subscription.id
 			);
 
-			//TODO:     on payment success generate planned meals for up to 2 weeks
 			created_payment = payment_response?.payment;
 			if (created_payment.status === PAYMENT_STATUS.SUCCEEDED) {
-				// await DeliveryOrderDao.updateDailyMealsSubscriptionsStatusByGroupedId(
-				// 	new_subscription.id,
-				// 	SUBSCRIPTION_STATUS.ACTIVE
-				// );
+				const future_date = new Date();
+				future_date.setUTCHours(0, 0, 0, 0);
+				future_date.setUTCDate(future_date.getUTCDate() + 13);
+				await dailyMealHelpers.generateDailyMealInstancesUpToDate(future_date);
 			}
 		}
 
