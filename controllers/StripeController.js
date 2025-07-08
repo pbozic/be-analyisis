@@ -19,6 +19,8 @@ import { calculateTransferOrderPaymentCuts } from '../lib/taxiHelpers.js';
 import PaymentHelpers from '../lib/paymentHelpers.ts';
 import DailyMealDao from '../dao/DailyMealDao.ts';
 import dailyMealHelpers from '../lib/dailyMealHelpers.ts';
+import { handleStockSync } from './DeliveryOrderController.js';
+import { BUSINESS_TYPE } from '../lib/constants.js';
 dotenv.config();
 const { io, UserSockets, SocketStore } = socket;
 async function handlePaymentIntentSuccess(paymentIntent) {
@@ -88,6 +90,12 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 					order.order_id,
 					DELIVERY_ORDER_STATUS.MERCHANT_PREPARING
 				);
+				// handle stock sync if the business is a merchant
+				let business = await BusinessDao.getBusinessById(order.business_id);
+				console.log('Accept business type', business?.type);
+				if ([BUSINESS_TYPE.MERCHANT].includes(business?.type)) {
+					let stock_update = await handleStockSync(order, business);
+				}
 				// if(paymentIntent?.metadata?.preparation_time){
 				// 	order = await DeliveryOrderDao.updateOrderPickupTime(order.order_id, paymentIntent.metadata.preparation_time);
 				// 	io.to("order_" + order.order_id).emit("order_pickup_time", order);
@@ -256,7 +264,7 @@ async function handlePaymentIntentFaliure(paymentIntent) {
 		}
 	}
 }
-async function handleChargeUpdate(charge) {
+export async function handleChargeUpdate(charge) {
 	switch (charge.metadata.type) {
 		case 'wallet_topup':
 			if (charge.status === 'succeeded' && charge.balance_transaction !== null) {
