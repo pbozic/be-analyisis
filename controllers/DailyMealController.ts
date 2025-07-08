@@ -137,8 +137,8 @@ export async function dailyMealsSubscriptionPayment(
 
 		let payment_response = null;
 		if (new_subscription.type === SUBSCRIPTION_TYPE.DATED) {
-			if (!(payment_type && payment_method_id)) {
-				throw new Error('Missing Payment Data');
+			if (!payment_type) {
+				throw new Error('Missing Payment type');
 			}
 			payment_response = await PaymentHelpers.createPaymentHelper(
 				user.user_id,
