@@ -243,6 +243,11 @@ const getBusinessForSearchById = async (business_id) => {
 											},
 										},
 									},
+									where: {
+										stock: {
+											gt: 0, // Only include items with stock greater than 0
+										},
+									},
 								},
 							},
 						},
