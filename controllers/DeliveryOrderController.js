@@ -1174,6 +1174,7 @@ async function merchantAcceptOrder(req, res) {
 		const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
 		const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT } =
 			await calculateDeliveryOrderPaymentCuts(order);
+
 		if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
 			if (Math.round(order.details.total_price * 100) === order.details.credit_discount) {
 				const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
@@ -1247,6 +1248,7 @@ async function merchantAcceptOrder(req, res) {
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED);
 		sendDeliveryOrderNotifications(user, null, order.user_id, null, order.status);
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_PREPARING);
+		// handle stock sync if the business is a merchant
 		let business = await BusinessDao.getBusinessById(order.business_id);
 		console.log('Accept business type', business?.type);
 		if ([BUSINESS_TYPE.MERCHANT].includes(business?.type)) {
