@@ -218,7 +218,7 @@ export async function dailyMealsSubscriptionPayment(
 
 /**
  *
- * - GET /delivery/orders/daily_meals/subscriptions
+ * - GET /delivery/orders/daily_meals/user
  * - @tag Delivery
  * - @summary Get all daily meal subscriptions for the current user
  * - @description Returns all daily meal subscriptions for the authenticated user, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances.
@@ -280,7 +280,7 @@ export async function getUserDailyMealSubscriptions(
 
 /**
  *
- * - GET /delivery/orders/daily_meals/subscriptions/business/{business_id}
+ * - GET /delivery/orders/daily_meals/business/{business_id}
  * - @tag Delivery
  * - @summary Get all daily meal subscriptions for a business
  * - @description Returns all daily meal subscriptions for the given business, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances. Optionally filter by start_date in the request body.
