@@ -1325,7 +1325,7 @@ function getMenuItemStockChange(item, order, business) {
  * @param {Object} business - The business object related to the order.
  * @returns {Promise<boolean>} Returns true if synchronization succeeds, false otherwise.
  */
-async function handleStockSync(order, business) {
+export async function handleStockSync(order, business) {
 	try {
 		// 1. Delete all existing stock movements linked to the order
 		console.info('Removing stock changes for order:', order.order_id);
