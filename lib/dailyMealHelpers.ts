@@ -11,6 +11,7 @@ import {
 	type daily_meal_subscription_weekdays,
 	SUBSCRIPTION_STATUS,
 	Prisma,
+	SUBSCRIPTION_TYPE,
 } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
@@ -495,6 +496,32 @@ export async function generateDailyMealInstancesUpToDate(max_date: Date) {
 		await generateDMInstancesForDateSimple(currentDate.toISOString());
 	}
 }
+
+function getUTCWeekdayDatesInRange(
+	startDate: string | Date,
+	endDate: string | Date,
+	weekdays: { intended_weekday: number }[]
+): Date[] {
+	const start = new Date(startDate);
+	const end = new Date(endDate);
+
+	// Normalize time to UTC midnight
+	start.setUTCHours(0, 0, 0, 0);
+	end.setUTCHours(0, 0, 0, 0);
+
+	const weekdaySet = new Set(weekdays.map((w) => w.intended_weekday));
+	const result: Date[] = [];
+
+	for (let dt = new Date(start); dt <= end; dt.setUTCDate(dt.getUTCDate() + 1)) {
+		const weekday = dt.getUTCDay();
+		if (weekdaySet.has(weekday)) {
+			result.push(new Date(Date.UTC(dt.getUTCFullYear(), dt.getUTCMonth(), dt.getUTCDate())));
+		}
+	}
+
+	return result;
+}
+
 // /**
 //  * Create daily meal instances for all customers of a subscription for a given date.
 //  * - For DATED subscriptions: verifies the date is in the subscription's days.
@@ -519,6 +546,14 @@ export async function generateInstancesForSubscription(subscription_id: string) 
 	startDate.setUTCHours(0, 0, 0, 0);
 	const endDate = new Date(startDate);
 	endDate.setUTCDate(endDate.getUTCDate() + 13);
+	const create_dates =
+		sub.type === SUBSCRIPTION_TYPE.DATED
+			? sub.days.filter(
+					(day: daily_meal_subscription_days) =>
+						day.intended_date >= startDate && day.intended_date <= endDate
+				)
+			: getUTCWeekdayDatesInRange(startDate, endDate, sub.weekdays);
+
 	const dailyMealInstanceCreateData: Array<{
 		subscription_id: string;
 		subscription_customer_id: string;
@@ -526,11 +561,7 @@ export async function generateInstancesForSubscription(subscription_id: string) 
 		intended_date: Date;
 		delivery_date: Date;
 	}> = [];
-	for (
-		let intended_date = new Date(startDate);
-		intended_date <= endDate;
-		intended_date = new Date(intended_date.getTime() + 24 * 60 * 60 * 1000) // add 1 day
-	) {
+	for (let intended_date of create_dates) {
 		console.log(intended_date.toISOString());
 		const menus = await prisma.menus.findMany({
 			where: {

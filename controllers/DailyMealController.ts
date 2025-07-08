@@ -169,7 +169,7 @@ export async function dailyMealsSubscriptionPayment(
 				const future_date = new Date();
 				future_date.setUTCHours(0, 0, 0, 0);
 				future_date.setUTCDate(future_date.getUTCDate() + 13);
-				await dailyMealHelpers.generateDailyMealInstancesUpToDate(future_date);
+				await dailyMealHelpers.generateInstancesForSubscription(new_subscription.id);
 			}
 		}
 
