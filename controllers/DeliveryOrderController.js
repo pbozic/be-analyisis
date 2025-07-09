@@ -1297,8 +1297,6 @@ function getMenuItemStockChange(item, order, business) {
 		quantity = -item.quantity;
 	}
 	return {
-		product_id: item.menu_item_id,
-		business_id: business.business_id,
 		quantity,
 		reason: 'ORDER',
 		order: {
@@ -1330,7 +1328,7 @@ export async function handleStockSync(order, business) {
 		// 1. Delete all existing stock movements linked to the order
 		console.info('Removing stock changes for order:', order.order_id);
 		await removeOrderStockChange(order);
-		const stockUpdates = order.menu_items.map((item) => getMenuItemStockChange(item, order, business));
+		const stockUpdates = order.items.map((item) => getMenuItemStockChange(item, order, business));
 		console.info('Creating stock changes for order:', order.order_id, 'with updates:', stockUpdates);
 		// 2. Create new stock movements based on the current order items
 		for (const update of stockUpdates) {
