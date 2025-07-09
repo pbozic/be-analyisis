@@ -94,6 +94,13 @@ export async function deactivateDailyMealCategory(daily_meal_category_id: string
 	});
 }
 
+export async function activateDailyMealCategory(daily_meal_category_id: string) {
+	return prisma.daily_meal_categories.update({
+		where: { daily_meal_category_id },
+		data: { active: true },
+	});
+}
+
 export default {
 	getDailyMealCategoryById,
 	createDailyMealCategoryWithPrice,
@@ -101,4 +108,5 @@ export default {
 	getDailyMealCategoriesForBusiness,
 	addPriceToDailyMealCategory,
 	deactivateDailyMealCategory,
+	activateDailyMealCategory,
 };

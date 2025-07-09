@@ -277,32 +277,41 @@ async function refreshToken(req, res) {
 	if (!refreshToken) {
 		return res.status(400).send('Access Denied. No refresh token provided.');
 	}
-	jwt.verify(refreshToken, process.env.JWT_TOKEN_SECRET, async function (err, decoded) {
-		if (err) {
-			return res.status(401).json({ error: 'Access Denied. Token expired.', e: err });
-		}
-		delete decoded['iat'];
-		delete decoded['exp'];
-		const access_token = generateAccessToken({
-			user_id: decoded.user.user_id,
+	try {
+		jwt.verify(refreshToken, process.env.JWT_TOKEN_SECRET, async function (err, decoded) {
+			try {
+				if (err) {
+					return res.status(401).json({ error: 'Access Denied. Token expired.', e: err });
+				}
+				delete decoded['iat'];
+				delete decoded['exp'];
+				const access_token = generateAccessToken({
+					user_id: decoded.user.user_id,
+				});
+				const refresh_token = generateRefreshToken({
+					user_id: decoded.user.user_id,
+				});
+				let userDb = await UserDao.getUserById(decoded.user.user_id, {
+					include: {
+						addresses: true,
+						user_roles: true,
+					},
+				});
+				delete userDb['password'];
+				let user = {
+					...userDb,
+					access_token,
+					refresh_token,
+				};
+				res.status(200).header('Authorization', access_token).json(user);
+			} catch (error) {
+				return res.status(400).send('Access Denied. Unknown error.');
+			}
 		});
-		const refresh_token = generateRefreshToken({
-			user_id: decoded.user.user_id,
-		});
-		let userDb = await UserDao.getUserById(decoded.user.user_id, {
-			include: {
-				addresses: true,
-				user_roles: true,
-			},
-		});
-		delete userDb['password'];
-		let user = {
-			...userDb,
-			access_token,
-			refresh_token,
-		};
-		res.status(200).header('Authorization', access_token).json(user);
-	});
+	} catch (error) {
+		console.error(error);
+		return res.status(400).send('Access Denied. Unknown error.');
+	}
 }
 /**
  * POST /auth/password-reset

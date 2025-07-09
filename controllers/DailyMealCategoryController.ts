@@ -184,10 +184,10 @@ export async function addPriceToDailyMealCategory(
 }
 
 /**
- * DELETE /daily-meal-categories/:dmc_id
+ * PATCH /daily-meal-categories/:dmc_id/deactivate
  * @tag DailyMealCategories
  * @summary Remove a daily meal category from a business
- * @description Deletes a daily meal category from a business.
+ * @description Deactivates a daily meal category from a business.
  * @operationId deactivateDailyMealCategory
  * @response 200 - Daily meal category deleted successfully
  * @responseContent {object} 200.application/json
@@ -197,6 +197,7 @@ export async function addPriceToDailyMealCategory(
  *   "category_id": "uuid",
  *   "created_at": "2024-07-01T00:00:00.000Z",
  *   "start_date": "2024-07-01T00:00:00.000Z"
+ *   "active": false,
  * }
  * @response 500 - Error deleting daily meal category
  * @prisma_model daily_meal_categories
@@ -211,6 +212,39 @@ export async function deactivateDailyMealCategory(
 		res.status(200).json(deleted);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';
-		res.status(500).json({ message: 'Error deleting daily meal category', error: message });
+		res.status(500).json({ message: 'Error deactivating daily meal category', error: message });
+	}
+}
+
+/**
+ * PATCH /daily-meal-categories/:dmc_id/activate
+ * @tag DailyMealCategories
+ * @summary Add a daily meal category back to business
+ * @description Activates a daily meal category of a business.
+ * @operationId activateDailyMealCategory
+ * @response 200 - Daily meal category activated successfully
+ * @responseContent {object} 200.application/json
+ * @responseExample 200.application/json {
+ *   "daily_meal_category_id": "uuid",
+ *   "business_id": "uuid",
+ *   "category_id": "uuid",
+ *   "created_at": "2024-07-01T00:00:00.000Z",
+ *   "start_date": "2024-07-01T00:00:00.000Z"
+ *   "active": true,
+ * }
+ * @response 500 - Error deleting daily meal category
+ * @prisma_model daily_meal_categories
+ */
+export async function activateDailyMealCategory(
+	req: ValidatedRequest<unknown, { dmc_id: string }>,
+	res: Response<DailyMealCategory | { message: string; error?: string }>
+) {
+	try {
+		const { dmc_id } = req.params;
+		const deleted = await DmcDao.activateDailyMealCategory(dmc_id);
+		res.status(200).json(deleted);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error activating daily meal category', error: message });
 	}
 }
