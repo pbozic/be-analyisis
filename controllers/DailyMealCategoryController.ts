@@ -184,10 +184,10 @@ export async function addPriceToDailyMealCategory(
 }
 
 /**
- * DELETE /daily-meal-categories/:dmc_id
+ * PATCH /daily-meal-categories/:dmc_id
  * @tag DailyMealCategories
  * @summary Remove a daily meal category from a business
- * @description Deletes a daily meal category from a business.
+ * @description Deactivates a daily meal category from a business.
  * @operationId deactivateDailyMealCategory
  * @response 200 - Daily meal category deleted successfully
  * @responseContent {object} 200.application/json
@@ -197,6 +197,7 @@ export async function addPriceToDailyMealCategory(
  *   "category_id": "uuid",
  *   "created_at": "2024-07-01T00:00:00.000Z",
  *   "start_date": "2024-07-01T00:00:00.000Z"
+ *   "active": false,
  * }
  * @response 500 - Error deleting daily meal category
  * @prisma_model daily_meal_categories
