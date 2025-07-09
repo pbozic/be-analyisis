@@ -2,6 +2,7 @@ import { Prisma, SUBSCRIPTION_STATUS, SUBSCRIPTION_TYPE } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 import { DailyMealsCartPerson } from '../types/dailymeal/DailyMealSubscription.ts';
+import { DOCUMENT_TYPE } from '../lib/constants.js';
 
 /**
  * Get daily meal subscriptions by business_id and optional start_date.
@@ -19,7 +20,6 @@ export async function getDailyMealSubscriptionsByBusinessId(business_id: string,
 		},
 		include: {
 			user: true,
-			business: true,
 			delivery_address: true,
 			customers: true,
 			days: true,
@@ -46,8 +46,22 @@ export async function getDailyMealSubscriptionsByUserId(user_id: string, start_d
 			status: SUBSCRIPTION_STATUS.ACTIVE,
 		},
 		include: {
-			user: true,
-			business: true,
+			business: {
+				select: {
+					business_group_name: true,
+					name: true,
+					telephone: true,
+					email: true,
+					documents: {
+						where: {
+							document_type: DOCUMENT_TYPE.LOGO,
+						},
+						select: {
+							files: true,
+						},
+					},
+				},
+			},
 			delivery_address: true,
 			customers: true,
 			days: true,
