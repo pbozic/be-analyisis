@@ -24,7 +24,20 @@ export async function getDailyMealSubscriptionsByBusinessId(business_id: string,
 			customers: true,
 			days: true,
 			weekdays: true,
-			daily_meal_instances: true,
+			daily_meal_instances: {
+				include: {
+					menu_category: {
+						include: {
+							menu_categories_categories: {
+								include: {
+									category: true,
+								},
+							},
+							menu_items: true,
+						},
+					},
+				},
+			},
 		},
 		orderBy: { start_date: 'asc' },
 	});
@@ -66,7 +79,20 @@ export async function getDailyMealSubscriptionsByUserId(user_id: string, start_d
 			customers: true,
 			days: true,
 			weekdays: true,
-			daily_meal_instances: true,
+			daily_meal_instances: {
+				include: {
+					menu_category: {
+						include: {
+							menu_categories_categories: {
+								include: {
+									category: true,
+								},
+							},
+							menu_items: true,
+						},
+					},
+				},
+			},
 		},
 		orderBy: { start_date: 'asc' },
 	});
@@ -95,7 +121,20 @@ export async function getTodayDailyMealSubscriptionsByBusinessId(business_id: st
 			customers: true,
 			days: true,
 			weekdays: true,
-			daily_meal_instances: true,
+			daily_meal_instances: {
+				include: {
+					menu_category: {
+						include: {
+							menu_categories_categories: {
+								include: {
+									category: true,
+								},
+							},
+							menu_items: true,
+						},
+					},
+				},
+			},
 		},
 	});
 }
