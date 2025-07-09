@@ -47,8 +47,8 @@ function getDateRangeMidnight(date1: Date, date2: Date): Date[] {
 	const end = new Date(date2);
 
 	// Set both to UTC midnight
-	start.setHours(0, 0, 0, 0);
-	end.setHours(0, 0, 0, 0);
+	start.setUTCHours(0, 0, 0, 0);
+	end.setUTCHours(0, 0, 0, 0);
 
 	const result: Date[] = [];
 	let current = new Date(start);
