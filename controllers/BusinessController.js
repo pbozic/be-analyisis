@@ -1795,6 +1795,42 @@ async function getPurchaseOrderLimit(req, res) {
 		return res.status(500).json({ error: 'Internal server error' });
 	}
 }
+async function removeBusinessPaymentMethod(req, res) {
+	try {
+		const { pm_id } = req.params;
+		if (!pm_id) {
+			return res.status(400).json({ error: 'Missing payment method ID' });
+		}
+		const user = await UserDao.getUserById(req.user.user_id);
+		console.log(user, 'usrTest');
+		const businessId = user?.business_users[0]?.business_id;
+		if (!businessId) {
+			return res.status(400).json({ error: 'User does not belong to any business' });
+		}
+		// Check if the business has a Stripe customer ID
+		const business = await BusinessDao.getBusinessById(user?.business_users[0]?.business_id);
+		if (!business?.stripe_customer_id) {
+			return res.status(400).json({ error: 'Business does not have a Stripe customer ID' });
+		}
+		// List all payment methods for the customer
+		const paymentMethods = await stripe.getPaymentMethods(business.stripe_customer_id);
+		const hasPaymentMethod = paymentMethods.some((pm) => pm.id === pm_id);
+		if (!hasPaymentMethod) {
+			return res.status(400).json({ error: 'Payment method not found for this business' });
+		}
+		await stripe.client.paymentMethods.detach(pm_id);
+		// Return updated payment methods
+		const updatedPaymentMethods = await stripe.getPaymentMethods(business.stripe_customer_id);
+		return res.status(200).json({
+			message: 'Payment method removed successfully',
+			paymentMethods: updatedPaymentMethods,
+		});
+	} catch (error) {
+		console.error('Error removing payment method:', error);
+		return res.status(400).json({ error: 'Error removing payment method' });
+	}
+}
+
 export { getScheduledUsersByBusinessId };
 export { listBusinesses };
 export { listTransferBusinesses };
@@ -1836,6 +1872,7 @@ export { getTotalEarnings };
 export { getBusinessTotalEarnings };
 export { getBusinessReviewsById };
 export { editBusiness };
+export { removeBusinessPaymentMethod };
 export { getBusinessStripeStatusByBusinessId };
 export { generateBusinessStripeByBusinessId };
 export { getBusynessFactorsBusinessIdList };
@@ -1854,6 +1891,7 @@ export { getPurchaseOrderLimit };
 export default {
 	getScheduledUsersByBusinessId,
 	listBusinesses,
+	removeBusinessPaymentMethod,
 	listTransferBusinesses,
 	listMerchantBusinesses,
 	listMerchantBusinessesWithDailyMeals,

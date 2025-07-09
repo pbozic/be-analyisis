@@ -66,6 +66,8 @@ export async function getDailyMealSubscriptionsByUserId(user_id: string, start_d
 					name: true,
 					telephone: true,
 					email: true,
+					daily_meals_days: true,
+					daily_meals_delivery_mapping: true,
 					documents: {
 						where: {
 							document_type: DOCUMENT_TYPE.LOGO,
