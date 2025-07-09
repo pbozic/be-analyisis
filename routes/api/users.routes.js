@@ -54,7 +54,7 @@ router.patch('/me/address/:address_id/primary', UserController.setPrimaryAddress
 router.get('/me/verify/phone', UserController.requestSMSVerification);
 router.post('/me/verify/phone', joi(verifyPhoneSchema), UserController.verifyMe);
 router.post('/review', joi(reviewUserSchema), UserController.reviewUser);
-router.get('/me/payment-sheet', UserController.getPaymentSheetCredentials);
+router.get('/me/payment-sheet/:type?/:business_id?', UserController.getPaymentSheetCredentials);
 router.post('/me/requestToAddFunds', UserController.requestToAddFundsToWallet);
 router.get('/me/scheduled_orders', UserController.getSelfScheduledOrders);
 router.delete('/delete/:user_id', UserController.softDeleteUserByUserId);
