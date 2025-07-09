@@ -1,41 +1,15 @@
 import { Request, Response } from 'express';
-import { v4 as uuidv4 } from 'uuid';
-import { SPLIT_DESTINATION_TYPE, PAYMENT_STATUS, SUBSCRIPTION_STATUS, SUBSCRIPTION_TYPE } from '@prisma/client';
-import { date } from 'joi';
+import { SPLIT_DESTINATION_TYPE, PAYMENT_STATUS, SUBSCRIPTION_TYPE } from '@prisma/client';
 
 import UsersDao from '../dao/User.js';
 import BusinessDao from '../dao/Business.js';
 import PaymentHelpers from '../lib/paymentHelpers.js';
-import DeliveryOrderDao from '../dao/DeliveryOrder.js';
-import { createDailyMealsSubscriptions } from '../lib/deliveryHelpers.js';
 import { ValidatedRequest } from '../types/validatedRequest.js';
 import { DailyMealsSubscriptionRequest } from '../types/dailymeal/DailyMealSubscription.ts';
-import prisma from '../prisma/prisma.js';
 import DailyMealDao from '../dao/DailyMealDao.ts';
 import AddressDao from '../dao/Address.js';
-import { RESTAURANT_SHARE_PERC } from '../lib/constants.js';
-
-/**
- * Maps a date to an earlier date according to the given weekday:weekday mapping.
- * @param {Date} date
- * @param {Record<number,number>} mapping
- * @returns {Date}
- */
-function mapDateToEarlierWeekday(date: Date, mapping: Record<number, number>): Date {
-	const currentWeekday = date.getDay();
-
-	const targetWeekday = mapping[currentWeekday];
-
-	if (typeof targetWeekday !== 'number') {
-		// Mapping is undefined or invalid
-		return date;
-	}
-
-	const diff = (currentWeekday - targetWeekday + 7) % 7 || 7; // Ensure it's at least 1 day back
-	const result = new Date(date);
-	result.setDate(date.getDate() - diff);
-	return result;
-}
+import { DAILY_MEAL_DELIVERY_COST_CENTS, RESTAURANT_SHARE_PERC } from '../lib/constants.js';
+import dailyMealHelpers, { mapDateToEarlierWeekday } from '../lib/dailyMealHelpers.ts';
 
 /**
  *
@@ -111,15 +85,17 @@ export async function dailyMealsSubscriptionPayment(
 		cart,
 		details: { total_price, delivery_cost, sub_total_price, business_id },
 		delivery_location,
-		payment: { payment_type, payment_method_id },
+		payment,
 		return_url,
 		allow_credits_usage,
 	} = req.body;
-	let payment = null;
+	const { payment_type, payment_method_id } = payment ? payment : {};
+
+	let created_payment = null;
 	try {
 		const user = await UsersDao.getUserById(req.user?.user_id);
 		const business = await BusinessDao.getBusinessById(business_id);
-		const deliverydaymapping: Record<number, number> = business.delivery_day_mapping || {};
+		const deliverydaymapping: Record<number, number> = business.daily_meals_delivery_mapping || {};
 
 		const restaurant_acc = business.stripe_account_id;
 		const delivery_address = await AddressDao.addAddress({
@@ -161,6 +137,9 @@ export async function dailyMealsSubscriptionPayment(
 
 		let payment_response = null;
 		if (new_subscription.type === SUBSCRIPTION_TYPE.DATED) {
+			if (!payment_type) {
+				throw new Error('Missing Payment type');
+			}
 			payment_response = await PaymentHelpers.createPaymentHelper(
 				user.user_id,
 				TOTAL_PRICE_CENTS,
@@ -172,7 +151,7 @@ export async function dailyMealsSubscriptionPayment(
 				allow_credits_usage,
 				cart.dates.map(() => ({
 					destination_type: SPLIT_DESTINATION_TYPE.DRIVER,
-					value: Math.round(delivery_cost * 100),
+					value: DAILY_MEAL_DELIVERY_COST_CENTS,
 				})),
 				[
 					{
@@ -185,13 +164,12 @@ export async function dailyMealsSubscriptionPayment(
 				new_subscription.id
 			);
 
-			//TODO:     on payment success generate planned meals for up to 2 weeks
-			payment = payment_response?.payment;
-			if (payment.status === PAYMENT_STATUS.SUCCEEDED) {
-				// await DeliveryOrderDao.updateDailyMealsSubscriptionsStatusByGroupedId(
-				// 	new_subscription.id,
-				// 	SUBSCRIPTION_STATUS.ACTIVE
-				// );
+			created_payment = payment_response?.payment;
+			if (created_payment.status === PAYMENT_STATUS.SUCCEEDED) {
+				const future_date = new Date();
+				future_date.setUTCHours(0, 0, 0, 0);
+				future_date.setUTCDate(future_date.getUTCDate() + 13);
+				await dailyMealHelpers.generateInstancesForSubscription(new_subscription.id);
 			}
 		}
 
@@ -205,9 +183,9 @@ export async function dailyMealsSubscriptionPayment(
 		return;
 	} catch (e) {
 		console.error('Error creating daily meals subscription payment', e);
-		if (payment) {
+		if (created_payment) {
 			try {
-				await PaymentHelpers.handlePaymentRefund(payment);
+				await PaymentHelpers.handlePaymentRefund(created_payment);
 			} catch (error) {
 				console.error('Error cleaning daily meals subscription payment', error);
 			}
@@ -218,7 +196,7 @@ export async function dailyMealsSubscriptionPayment(
 
 /**
  *
- * - GET /delivery/orders/daily_meals/subscriptions
+ * - GET /delivery/orders/daily_meals/user
  * - @tag Delivery
  * - @summary Get all daily meal subscriptions for the current user
  * - @description Returns all daily meal subscriptions for the authenticated user, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances.
@@ -280,7 +258,7 @@ export async function getUserDailyMealSubscriptions(
 
 /**
  *
- * - GET /delivery/orders/daily_meals/subscriptions/business/{business_id}
+ * - GET /delivery/orders/daily_meals/business/{business_id}
  * - @tag Delivery
  * - @summary Get all daily meal subscriptions for a business
  * - @description Returns all daily meal subscriptions for the given business, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances. Optionally filter by start_date in the request body.

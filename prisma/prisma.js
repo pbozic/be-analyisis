@@ -8,10 +8,12 @@ import { handleS3LinkForFiles } from './middlewares/file.js';
 import { handleS3LinkForDocuments } from './middlewares/documents.js';
 import { generateS3LinksRecursively } from './middlewares/$allModels.js';
 config();
-console.log(process.env.DATABASE_URL);
-const prisma = new PrismaClient({
+const basePrisma = new PrismaClient({
 	log: ['warn', 'error'],
-}).$extends({
+});
+
+console.log(process.env.DATABASE_URL);
+const prisma = basePrisma.$extends({
 	query: {
 		$allModels: {
 			async $allOperations({ model, operation, args, query }) {

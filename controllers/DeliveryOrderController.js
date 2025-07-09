@@ -1,6 +1,9 @@
+import { skip } from 'node:test';
+
 import moment from 'moment';
 import { v4 } from 'uuid';
 import { PAYMENT_STATUS, SUBSCRIPTION_STATUS, SPLIT_DESTINATION_TYPE, SPLIT_STATUS } from '@prisma/client';
+import { getPrismaClient } from '@prisma/client/runtime/library';
 
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import DeliveryDriverDao from '../dao/DeliveryDriver.js';
@@ -30,6 +33,7 @@ import {
 	SERVICE_TYPE,
 	USER_ROLE,
 	MAX_DELIVERY_RADIUS_KM,
+	BUSINESS_TYPE,
 } from '../lib/constants.js';
 import { getUsers } from '../dao/User.js';
 import {
@@ -1170,6 +1174,7 @@ async function merchantAcceptOrder(req, res) {
 		const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
 		const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT } =
 			await calculateDeliveryOrderPaymentCuts(order);
+
 		if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
 			if (Math.round(order.details.total_price * 100) === order.details.credit_discount) {
 				const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
@@ -1243,9 +1248,12 @@ async function merchantAcceptOrder(req, res) {
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED);
 		sendDeliveryOrderNotifications(user, null, order.user_id, null, order.status);
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_PREPARING);
-		// if(order.business_id){
-		// 	io.to("orders_" + order.business_id).emit("order_status_change__delivery", order);
-		// }
+		// handle stock sync if the business is a merchant
+		let business = await BusinessDao.getBusinessById(order.business_id);
+		console.log('Accept business type', business?.type);
+		if ([BUSINESS_TYPE.MERCHANT].includes(business?.type)) {
+			let stock_update = await handleStockSync(order, business);
+		}
 		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 		res.status(200).json(order);
 	} catch (e) {
@@ -1257,6 +1265,91 @@ async function merchantAcceptOrder(req, res) {
 		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 		SocketStore.closeRoom(`order_${order.order_id}`);
 		res.status(500).json(e);
+	}
+}
+
+/**
+ * Calculates the stock change for a menu item based on the order and business context.
+ * And returns the object for stock change creation.
+ *
+ * @param {Object} item - The menu item object.
+ * @param {number} item.menu_item_id - The unique identifier for the menu item.
+ * @param {number} item.quantity - The quantity of the item ordered (in grams if weighted).
+ * @param {boolean} item.is_weighted - Indicates if the item is sold by weight.
+ * @param {Object} order - The order object.
+ * @param {number} order.order_id - The unique identifier for the order.
+ * @param {Object} business - The business object.
+ * @param {number} business.business_id - The unique identifier for the business.
+ * @returns {Object} An object representing the stock change for the menu item.
+ * @returns {number} return.quantity - The negative quantity to subtract from stock.
+ * @returns {string} return.reason - The reason for the stock change ("ORDER").
+ * @returns {Object} return.order - The order connection object.
+ * @returns {Object} return.menu_item - The menu item connection object.
+ */
+function getMenuItemStockChange(item, order, business) {
+	let quantity;
+	if (item.is_weighted) {
+		// Convert grams to kg and round to nearest 0.1 kg
+		const kilos = item.quantity / 1000;
+		const roundedKilos = Math.round(kilos * 10) / 10;
+		quantity = -roundedKilos;
+	} else {
+		quantity = -item.quantity;
+	}
+	return {
+		quantity,
+		reason: 'ORDER',
+		order: {
+			connect: {
+				order_id: order.order_id,
+			},
+		},
+		menu_item: {
+			connect: {
+				menu_item_id: item.menu_item_id,
+			},
+		},
+	};
+}
+
+/**
+ * Synchronizes stock movements for a given order by:
+ * 1. Deleting all existing stock movement records linked to the order.
+ * 2. Creating new stock movement records based on the current order items.
+ *
+ * @async
+ * @function handleStockSync
+ * @param {Object} order - The order object containing order details and menu items.
+ * @param {Object} business - The business object related to the order.
+ * @returns {Promise<boolean>} Returns true if synchronization succeeds, false otherwise.
+ */
+export async function handleStockSync(order, business) {
+	try {
+		// 1. Delete all existing stock movements linked to the order
+		console.info('Removing stock changes for order:', order.order_id);
+		await removeOrderStockChange(order);
+		const stockUpdates = order.items.map((item) => getMenuItemStockChange(item, order, business));
+		console.info('Creating stock changes for order:', order.order_id, 'with updates:', stockUpdates);
+		// 2. Create new stock movements based on the current order items
+		for (const update of stockUpdates) {
+			await prisma.menu_item_stock_change.create({ data: update });
+		}
+
+		return true;
+	} catch (error) {
+		console.error('Error in handleStockRemove:', error);
+		return false;
+	}
+}
+async function removeOrderStockChange(order) {
+	try {
+		await prisma.menu_item_stock_change.deleteMany({
+			where: {
+				order_id: order.order_id,
+			},
+		});
+	} catch (error) {
+		console.error('Error in removeOrderStockChange:', error);
 	}
 }
 /**
