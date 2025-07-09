@@ -258,7 +258,7 @@ export async function getUserDailyMealSubscriptions(
  *
  * - GET /delivery/orders/daily_meals/business/{business_id}
  * - @tag Delivery
- * - @summary Get all daily meal subscriptions for a business
+ * - @summary Get active daily meal subscriptions for a business
  * - @description Returns all daily meal subscriptions for the given business, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances. Optionally filter by start_date in the request body.
  * - @operationId getDailyMealsSubscriptionsByBusinessId
  * - @pathParam {string} business_id - The ID of the business to fetch subscriptions for
@@ -303,6 +303,70 @@ export async function getUserDailyMealSubscriptions(
  *
  * ./prisma/schema.prisma
  */
+export async function getActiveDailyMealsSubscriptionsByBusinessId(
+	req: ValidatedRequest<{ start_date?: string }, { business_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const { business_id } = req.params;
+		const { start_date } = req.body;
+		const subscriptions = await DailyMealDao.getActiveDailyMealSubscriptionsByBusinessId(business_id, start_date);
+		res.status(200).json(subscriptions);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error fetching active daily meal subscriptions', error: message });
+	}
+}
+
+/**
+ *
+ * - GET /business/daily_meal_subscriptions/{business_id}
+ * - @tag Delivery
+ * - @summary Get all daily meal subscriptions for a business
+ * - @description Returns all daily meal subscriptions for the given business, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances. Optionally filter by start_date in the request body.
+ * - @operationId getDailyMealsSubscriptionsByBusinessId
+ * - @pathParam {string} business_id - The ID of the business to fetch subscriptions for
+ * - @bodyDescription Optionally filter by start_date (ISO string)
+ * - @bodyContent {
+ *     "start_date": "2025-07-01T00:00:00.000Z"
+ *   } application/json
+ * - @bodyRequired false
+ * - @response 200 - List of daily meal subscriptions for the business
+ * - @responseContent {object} 200.application/json
+ * - @responseExample 200.application/json [
+ *     {
+ *       "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *       "user_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *       "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *       "delivery_address_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *       "start_date": "2025-07-01T00:00:00.000Z",
+ *       "end_date": null,
+ *       "type": "DATED",
+ *       "status": "AWAITING_PAYMENT",
+ *       "courier_comment": "Leave at the door",
+ *       "created_at": "2025-07-01T00:00:00.000Z",
+ *       "updated_at": "2025-07-01T00:00:00.000Z",
+ *       "user": { ... },
+ *       "business": { ... },
+ *       "delivery_address": { ... },
+ *       "customers": [ ... ],
+ *       "days": [ ... ],
+ *       "weekdays": [ ... ],
+ *       "daily_meal_instances": [ ... ]
+ *     }
+ *   ]
+ * - @response 500 - Error fetching daily meal subscriptions
+ * - @prisma_model daily_meal_subscriptions
+ * - @prisma_model users
+ * - @prisma_model business
+ * - @prisma_model addresses
+ * - @prisma_model daily_meal_subscription_customers
+ * - @prisma_model daily_meal_subscription_days
+ * - @prisma_model daily_meal_subscription_weekdays
+ * - @prisma_model daily_meal_instances
+ *
+ * ./prisma/schema.prisma
+ */
 export async function getDailyMealsSubscriptionsByBusinessId(
 	req: ValidatedRequest<{ start_date?: string }, { business_id: string }>,
 	res: Response
@@ -314,12 +378,13 @@ export async function getDailyMealsSubscriptionsByBusinessId(
 		res.status(200).json(subscriptions);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';
-		res.status(500).json({ message: 'Error fetching daily meal subscriptions', error: message });
+		res.status(500).json({ message: 'Error fetching active daily meal subscriptions', error: message });
 	}
 }
 
 export default {
 	dailyMealsSubscriptionPayment,
 	getUserDailyMealSubscriptions,
+	getActiveDailyMealsSubscriptionsByBusinessId,
 	getDailyMealsSubscriptionsByBusinessId,
 };

@@ -29,7 +29,7 @@ router.post(
 	DailyMealController.dailyMealsSubscriptionPayment
 );
 router.post('/daily_meals/user', DailyMealController.getUserDailyMealSubscriptions);
-router.post('/daily_meals/business/:business_id', DailyMealController.getDailyMealsSubscriptionsByBusinessId);
+router.post('/daily_meals/business/:business_id', DailyMealController.getActiveDailyMealsSubscriptionsByBusinessId);
 router.post('/daily_meals', DeliveryOrderController.createDailyMeals);
 router.post('/order/merchant_accept', DeliveryOrderController.merchantAcceptOrder);
 router.post('/order/dispatcher_cancel', DeliveryOrderController.dispatcherCancel);

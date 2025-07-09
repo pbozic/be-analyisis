@@ -70,7 +70,7 @@ router.post(
 );
 
 router.get('/:business_id/daily-meal-categories', DailyMealCategoryController.getDailyMealCategoriesForBusiness);
-
+router.get('/daily_meal_subscriptions/:business_id', DailyMealController.getDailyMealsSubscriptionsByBusinessId);
 router.post(
 	'/daily-meal-categories/:dmc_id/price',
 	validate(AddPriceToDailyMealCategorySchema, 'body'),
