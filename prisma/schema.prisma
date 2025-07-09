@@ -982,7 +982,7 @@ model categories {
 model menu_categories_categories {
   menu_categories_id String          @db.Uuid
   categories_id      String          @db.Uuid
-  menu_category      menu_categories @relation(fields: [menu_categories_id], references: [menu_category_id])
+  menu_category      menu_categories @relation(fields: [menu_categories_id], references: [menu_category_id], onDelete: Cascade)
   category           categories      @relation(fields: [categories_id], references: [categories_id])
 
   @@id([menu_categories_id, categories_id])
