@@ -167,7 +167,6 @@ async function getUserById(req, res) {
  */
 async function me(req, res) {
 	try {
-		//console.log("/me req: ",req)
 		let user = await UserDao.getUserById(req.user.user_id, {
 			include: {
 				addresses: {
@@ -230,6 +229,19 @@ async function me(req, res) {
 			if (user.stripe_customer_id) {
 				payment_methods = await stripe.getPaymentMethods(user.stripe_customer_id);
 			}
+			console.log(user.business_users, 'business_users from this user');
+			if (user.business_users) {
+				for (const businessUser of user.business_users) {
+					if (businessUser.business) {
+						const paymentMethods = await stripe.getPaymentMethods(businessUser.business.stripe_customer_id);
+						console.log(businessUser.business.stripe_customer_id, 'business_id');
+						if (paymentMethods && paymentMethods.length > 0) {
+							businessUser.business.payment_methods = paymentMethods;
+						}
+					}
+				}
+			}
+
 			delete user['password'];
 			// const access_token = generateAccessToken(user);
 			// const refresh_token = generateRefreshToken(user);
@@ -245,8 +257,6 @@ async function me(req, res) {
 		} else {
 			res.status(400).json({ error: 'Error obtaining user information' });
 		}
-		// if (user) return res.status(200).json(user);
-		// res.status(400).json({ error: "Error obtaining user information" });
 	} catch (e) {
 		console.error(e);
 		res.status(400).json({ error: 'Error obtaining user information', e });
@@ -1020,7 +1030,15 @@ async function reviewUser(req, res) {
 async function getPaymentSheetCredentials(req, res) {
 	try {
 		let user = await UserDao.getUserById(req.user.user_id);
-		let credentials = await stripe.generatePaymentSheetCredentials(user);
+		const { type, business_id } = req.params;
+		let credentials = null;
+		if (type == 'business') {
+			console.log(credentials, 'business credentials12');
+			credentials = await stripe.generateBusinessPaymentSheetCredentials(business_id);
+		} else {
+			console.log(credentials, 'credentials12');
+			credentials = await stripe.generatePaymentSheetCredentials(user);
+		}
 		if (credentials) {
 			return res.status(200).json(credentials);
 		}

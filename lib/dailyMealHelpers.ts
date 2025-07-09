@@ -27,7 +27,7 @@ import DailyMealCategory from '../dao/DailyMealCategory.js';
  * @returns {Date}
  */
 export function mapDateToEarlierWeekday(date: Date, mapping: Record<number, number>): Date {
-	const currentWeekday = date.getDay();
+	const currentWeekday = date.getUTCDay();
 	const targetWeekday = mapping[currentWeekday];
 
 	if (typeof targetWeekday !== 'number' || targetWeekday === currentWeekday) {
@@ -38,7 +38,7 @@ export function mapDateToEarlierWeekday(date: Date, mapping: Record<number, numb
 	// Calculate days to subtract to reach the earlier day
 	const diff = (currentWeekday - targetWeekday + 7) % 7;
 	const result = new Date(date);
-	result.setDate(date.getDate() - diff);
+	result.setUTCDate(date.getUTCDate() - diff);
 	return result;
 }
 
@@ -63,8 +63,8 @@ function getDateRangeMidnight(date1: Date, date2: Date): Date[] {
 
 export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date | string) {
 	//TODO: make function for date range for all busiensses that offer DMs
-	const now = new Date(new Date().setHours(0, 0, 0, 0));
-	const max_date = new Date(new Date(future_date).setHours(23, 59, 59, 999));
+	const now = new Date(new Date().setUTCHours(0, 0, 0, 0));
+	const max_date = new Date(new Date(future_date).setUTCHours(23, 59, 59, 999));
 
 	const DM_businesses = await prisma.business.findMany({
 		where: {
@@ -132,7 +132,7 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 		const validMenuDatesSet: Set<number> = new Set(
 			valid_menus
 				.filter((menu) => menu.date) // guard against null
-				.map((menu) => new Date(menu.date!.setHours(0, 0, 0, 0)).getTime())
+				.map((menu) => new Date(menu.date!.setUTCHours(0, 0, 0, 0)).getTime())
 		);
 
 		// Filter out any date that already exists in menus
@@ -184,8 +184,8 @@ export async function generateDailyMealMenuCategoriesUpToDateForCategory(
 	future_date: Date | string
 ) {
 	//TODO: make function for date range for all busiensses that offer DMs
-	const now = new Date(new Date().setHours(0, 0, 0, 0));
-	const max_date = new Date(new Date(future_date).setHours(23, 59, 59, 999));
+	const now = new Date(new Date().setUTCHours(0, 0, 0, 0));
+	const max_date = new Date(new Date(future_date).setUTCHours(23, 59, 59, 999));
 	const daily_meal_category = await DailyMealCategory.getDailyMealCategoryById(daily_meal_category_id);
 
 	//TODO:make function for day range generation for each business
@@ -297,7 +297,7 @@ export async function generateDailyMealMenuCategoriesAndInstancesFor14Days() {
 export async function generateDMInstancesForDateSimple(datestring: string) {
 	const intended_date = new Date(datestring);
 	intended_date.setUTCHours(0, 0, 0, 0);
-	const intended_weekday = intended_date.getDay();
+	const intended_weekday = intended_date.getUTCDay();
 	console.log('Generating DM instances for ', intended_date);
 	const subscriptions = await prisma.daily_meal_subscriptions.findMany({
 		where: {
@@ -327,7 +327,7 @@ export async function generateDMInstancesForDateSimple(datestring: string) {
 			},
 		},
 	});
-	console.log(JSON.stringify(subscriptions, null, 2));
+	// console.log(JSON.stringify(subscriptions, null, 2));
 	const business_id_set = new Set<string>();
 	subscriptions.forEach((sub: { business_id: string }) => {
 		business_id_set.add(sub.business_id);
@@ -360,6 +360,7 @@ export async function generateDMInstancesForDateSimple(datestring: string) {
 		where: {
 			business_id: { in: Array.from(business_id_set) },
 			isDailyMeal: true,
+			date: intended_date,
 		},
 		include: {
 			categories: {
@@ -435,14 +436,14 @@ export async function generateDMInstancesForDateSimple(datestring: string) {
 									instance.menu_category_id === menuCategory.menu_category_id
 							)
 						) {
-							console.log(JSON.stringify(sub_customer, null, 2));
-							console.log(
-								!sub_customer.daily_meal_instances.some(
-									(instance) =>
-										instance.intended_date.getTime() === intended_date.getTime() &&
-										instance.menu_category_id === menuCategory.menu_category_id
-								)
-							);
+							// console.log(JSON.stringify(sub_customer, null, 2));
+							// console.log(
+							// 	!sub_customer.daily_meal_instances.some(
+							// 		(instance) =>
+							// 			instance.intended_date.getTime() === intended_date.getTime() &&
+							// 			instance.menu_category_id === menuCategory.menu_category_id
+							// 	)
+							// );
 							const delivery_date = businessDeliveryMappingMap.get(sub.business_id)
 								? mapDateToEarlierWeekday(
 										intended_date,
@@ -471,7 +472,7 @@ export async function generateDMInstancesForDateSimple(datestring: string) {
 			);
 		}
 	);
-	console.info(JSON.stringify(dailyMealInstanceCreateData, null, 2));
+	// console.info(JSON.stringify(dailyMealInstanceCreateData, null, 2));
 	try {
 		const created_instances = await prisma.daily_meal_instances.createMany({
 			data: dailyMealInstanceCreateData,
@@ -548,10 +549,9 @@ export async function generateInstancesForSubscription(subscription_id: string) 
 	endDate.setUTCDate(endDate.getUTCDate() + 13);
 	const create_dates =
 		sub.type === SUBSCRIPTION_TYPE.DATED
-			? sub.days.filter(
-					(day: daily_meal_subscription_days) =>
-						day.intended_date >= startDate && day.intended_date <= endDate
-				)
+			? sub.days
+					.map((day: daily_meal_subscription_days) => day.intended_date)
+					.filter((date: Date) => date >= startDate && date <= endDate)
 			: getUTCWeekdayDatesInRange(startDate, endDate, sub.weekdays);
 
 	const dailyMealInstanceCreateData: Array<{

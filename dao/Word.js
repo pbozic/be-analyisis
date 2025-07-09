@@ -1,7 +1,8 @@
 import prisma from '../prisma/prisma.js';
-import stripe from '../lib/stripe.js';
+import { client as stripe } from '../lib/stripe.js';
 import BusinessUserDao from './BusinessUsers.js';
 import BusinessDao from './Business.js';
+
 async function createWord(word, category_id, translations) {
 	// Create a new translatable record
 	let translatable = await prisma.translatable.create({
@@ -224,13 +225,14 @@ async function createWordBuy(args) {
 		},
 	});
 }
-export async function updateUserSubscription(userId) {
+export async function updateUserSubscription(userId, business_id) {
 	try {
 		// Fetch business & word buys
+		console.log(userId, 'userId');
 		const businessUser = await BusinessUserDao.getBusinessUserByUserId(userId);
-		const business = await BusinessDao.getBusinessById(businessUser.business_id);
-		const wordBuys = await getAllWordBuysByBusiness(business.business_id);
-		const stripe = stripe.client;
+		console.log(businessUser, 'businessUser');
+		const business = await BusinessDao.getBusinessById(business_id || businessUser?.business_id);
+		const wordBuys = await getAllWordBuysByBusiness(business_id || businessUser?.business_id);
 		// If no active word buys, cancel the subscription if it exists
 		if (wordBuys.length === 0) {
 			if (business?.word_buy_stripe_subscription_id) {
@@ -284,6 +286,7 @@ export async function updateUserSubscription(userId) {
 				expand: ['latest_invoice.payment_intent'],
 				metadata: { business_id: business.business_id, type: 'word_buys' },
 			});
+			console.log(subscription, 'subscription123');
 			await prisma.business.update({
 				where: { business_id: business.business_id },
 				data: { word_buy_stripe_subscription_id: subscription.id },
@@ -326,7 +329,7 @@ export async function updateUserSubscription(userId) {
 		return { success: false, error: error.message };
 	}
 }
-export async function createWordBuySubscription(word_id, business_id, price, stripe_price_id, userId) {
+export async function createWordBuySubscription(word_id, business_id, price, userId) {
 	try {
 		// 1) Load business & verify Stripe customer
 		const business = await prisma.business.findUnique({
@@ -346,11 +349,11 @@ export async function createWordBuySubscription(word_id, business_id, price, str
 			},
 		});
 		console.log(wordBuy, 'testing1212');
-		wordBuy.wordBuy;
+
 		// 3) Check if this business already has an active word-buy subscription
 		if (business.word_buy_stripe_subscription_id) {
 			console.log('🔁 Business already has word-buy subscription. Updating it.');
-			const result = await updateUserSubscription(userId); // this also updates wordBuy with sub ID
+			const result = await updateUserSubscription(userId, business_id); // this also updates wordBuy with sub ID
 			console.log(result, 'testing1313');
 			return {
 				wordBuyId: wordBuy.word_buy_id,
@@ -363,8 +366,8 @@ export async function createWordBuySubscription(word_id, business_id, price, str
 
 		// 4) No existing subscription, create a new one via updateUserSubscription
 		console.log('🆕 No existing word-buy subscription. Creating a new one.');
-		const result = await updateUserSubscription(userId);
-
+		const result = await updateUserSubscription(userId, business_id);
+		console.log(result, 'testing1414');
 		return {
 			wordBuyId: wordBuy.word_buy_id,
 			subscriptionId: result.subscriptionId,

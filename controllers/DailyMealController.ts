@@ -115,6 +115,7 @@ export async function dailyMealsSubscriptionPayment(
 			!cart.isRecurring
 				? cart.dates.map((datestr) => {
 						const date = new Date(datestr);
+						date.setUTCHours(0, 0, 0, 0);
 						return {
 							intended_date: date,
 							delivery_date: mapDateToEarlierWeekday(date, deliverydaymapping),
@@ -130,7 +131,7 @@ export async function dailyMealsSubscriptionPayment(
 			cart.courier_comment
 		);
 
-		//TODO: calculate price form menuitems linked to the created subscription customers
+		//TODO: calculate price form menu_categories linked to the created subscription customers
 
 		//TODO: verify price
 		const TOTAL_PRICE_CENTS = Math.round(total_price * 100);
@@ -166,9 +167,6 @@ export async function dailyMealsSubscriptionPayment(
 
 			created_payment = payment_response?.payment;
 			if (created_payment.status === PAYMENT_STATUS.SUCCEEDED) {
-				const future_date = new Date();
-				future_date.setUTCHours(0, 0, 0, 0);
-				future_date.setUTCDate(future_date.getUTCDate() + 13);
 				await dailyMealHelpers.generateInstancesForSubscription(new_subscription.id);
 			}
 		}
