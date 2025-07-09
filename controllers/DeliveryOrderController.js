@@ -1297,8 +1297,6 @@ function getMenuItemStockChange(item, order, business) {
 		quantity = -item.quantity;
 	}
 	return {
-		product_id: item.menu_item_id,
-		business_id: business.business_id,
 		quantity,
 		reason: 'ORDER',
 		order: {
