@@ -27,7 +27,7 @@ import DailyMealCategory from '../dao/DailyMealCategory.js';
  * @returns {Date}
  */
 export function mapDateToEarlierWeekday(date: Date, mapping: Record<number, number>): Date {
-	const currentWeekday = date.getDay();
+	const currentWeekday = date.getUTCDay();
 	const targetWeekday = mapping[currentWeekday];
 
 	if (typeof targetWeekday !== 'number' || targetWeekday === currentWeekday) {
@@ -38,7 +38,7 @@ export function mapDateToEarlierWeekday(date: Date, mapping: Record<number, numb
 	// Calculate days to subtract to reach the earlier day
 	const diff = (currentWeekday - targetWeekday + 7) % 7;
 	const result = new Date(date);
-	result.setDate(date.getDate() - diff);
+	result.setUTCDate(date.getUTCDate() - diff);
 	return result;
 }
 
@@ -549,10 +549,9 @@ export async function generateInstancesForSubscription(subscription_id: string) 
 	endDate.setUTCDate(endDate.getUTCDate() + 13);
 	const create_dates =
 		sub.type === SUBSCRIPTION_TYPE.DATED
-			? sub.days.filter(
-					(day: daily_meal_subscription_days) =>
-						day.intended_date >= startDate && day.intended_date <= endDate
-				)
+			? sub.days
+					.map((day: daily_meal_subscription_days) => day.intended_date)
+					.filter((date: Date) => date >= startDate && date <= endDate)
 			: getUTCWeekdayDatesInRange(startDate, endDate, sub.weekdays);
 
 	const dailyMealInstanceCreateData: Array<{
