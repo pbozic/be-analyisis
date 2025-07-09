@@ -1433,8 +1433,8 @@ model daily_meal_subscription_customers {
 model daily_meal_subscription_days {
   id              String   @id @default(uuid()) @db.Uuid
   subscription_id String   @db.Uuid
-  intended_date   DateTime
-  delivery_date   DateTime
+  intended_date   DateTime @db.Timestamp(0)
+  delivery_date   DateTime @db.Timestamp(0)
 
   subscription daily_meal_subscriptions @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
 
@@ -1462,8 +1462,8 @@ model daily_meal_instances {
   subscription_customer_id String                     @db.Uuid
   menu_category_id         String                     @db.Uuid
   status                   DAILY_MEAL_INSTANCE_STATUS @default(PLANNED)
-  intended_date            DateTime
-  delivery_date            DateTime
+  intended_date            DateTime                   @db.Timestamp(0)
+  delivery_date            DateTime                   @db.Timestamp(0)
 
   created_at DateTime @default(now()) @db.Timestamptz(6)
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
