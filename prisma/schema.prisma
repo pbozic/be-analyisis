@@ -106,6 +106,8 @@ model business {
   drivers                     drivers[]
   daily_meal_categories       daily_meal_categories[]
   daily_meal_subscriptions    daily_meal_subscriptions[]
+
+  business_money_flows business_money_flows[]
 }
 
 model business_users {
@@ -229,6 +231,8 @@ model users {
   payments payments[]
 
   daily_meal_subscriptions daily_meal_subscriptions[]
+
+  user_money_flows user_money_flows[]
 }
 
 model user_roles {
@@ -804,6 +808,28 @@ model transactions {
   documents      documents[]      @relation("Documents_transaction")
 
   wallet_funds wallet_funds? @relation("wallet_funds_transaction", fields: [wallet_fund_id], references: [wallet_funds_id])
+}
+
+model user_money_flows {
+  balance_change_id String           @id @default(uuid()) @db.Uuid
+  user_id           String          @db.Uuid
+  amount            Float
+  stripe_fee        Float
+  type              TRANSACTION_TYPE
+  payment_method    PAYMENT_METHOD?
+  created_at        DateTime         @default(now()) @db.Timestamptz(6)
+  user              users            @relation(fields: [user_id], references: [user_id])
+}
+
+model business_money_flows {
+  balance_change_id String           @id @default(uuid()) @db.Uuid
+  business_id       String          @db.Uuid
+  amount            Float
+  stripe_fee        Float
+  type              TRANSACTION_TYPE
+  payment_method    PAYMENT_METHOD?
+  created_at        DateTime         @default(now()) @db.Timestamptz(6)
+  business          business        @relation(fields: [business_id], references: [business_id])
 }
 
 model payment_intent_logs {
