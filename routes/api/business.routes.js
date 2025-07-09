@@ -11,6 +11,7 @@ import {
 	CreateDailyMealCategoryWithPriceSchema,
 	AddPriceToDailyMealCategorySchema,
 } from '../../types/dailyMeals/DailyMealCategory';
+import StripeController from '../../controllers/StripeController.js';
 
 const router = express.Router();
 router.post('/businesses/ids', BusinessController.getBusinessesByIds);
@@ -37,6 +38,7 @@ router.post('/register', BusinessController.createNewBusiness);
 router.post('/review', joi(reviewBusinessSchema), BusinessController.reviewBusiness);
 router.post('/activate', BusinessController.activateBusiness);
 router.post('/deactivate', BusinessController.deactivateBusiness);
+router.delete('/remove-payment-method/:pm_id', BusinessController.removeBusinessPaymentMethod);
 router.post('/address/add', BusinessController.addBusinessAddress);
 router.post('/delivery-address/add', BusinessController.addDeliveryAddress);
 router.get('/daily-meal-users/:business_id', BusinessController.getScheduledUsersByBusinessId);
