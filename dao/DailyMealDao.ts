@@ -11,7 +11,7 @@ import { DOCUMENT_TYPE } from '../lib/constants.js';
  * @returns daily_meal_subscriptions[]
  */
 export async function getDailyMealSubscriptionsByBusinessId(business_id: string, start_date?: string) {
-	const normalizedDate = start_date ? new Date(start_date).setHours(0, 0, 0, 0) : null;
+	const normalizedDate = start_date ? new Date(new Date(start_date).setUTCHours(0, 0, 0, 0)) : null;
 	return prisma.daily_meal_subscriptions.findMany({
 		where: {
 			business_id,
@@ -51,7 +51,7 @@ export async function getDailyMealSubscriptionsByBusinessId(business_id: string,
  * @returns daily_meal_subscriptions[]
  */
 export async function getDailyMealSubscriptionsByUserId(user_id: string, start_date?: string) {
-	const normalizedDate = start_date ? new Date(start_date).setHours(0, 0, 0, 0) : null;
+	const normalizedDate = start_date ? new Date(new Date(start_date).setUTCHours(0, 0, 0, 0)) : null;
 
 	return prisma.daily_meal_subscriptions.findMany({
 		where: {
