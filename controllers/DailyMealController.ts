@@ -167,7 +167,7 @@ export async function dailyMealsSubscriptionPayment(
 
 			created_payment = payment_response?.payment;
 			if (created_payment.status === PAYMENT_STATUS.SUCCEEDED) {
-				await dailyMealHelpers.generateInstancesForSubscription(new_subscription.id);
+				const updated_sub = await dailyMealHelpers.activateSubscriptionById(new_subscription.id);
 			}
 		}
 
