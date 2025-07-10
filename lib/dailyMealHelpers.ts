@@ -10,7 +10,7 @@ import {
 	type daily_meal_subscription_days,
 	type daily_meal_subscription_weekdays,
 	SUBSCRIPTION_STATUS,
-	Prisma,
+	DAILY_MEAL_INSTANCE_STATUS,
 	SUBSCRIPTION_TYPE,
 } from '@prisma/client';
 
@@ -523,16 +523,53 @@ function getUTCWeekdayDatesInRange(
 	return result;
 }
 
-// /**
-//  * Create daily meal instances for all customers of a subscription for a given date.
-//  * - For DATED subscriptions: verifies the date is in the subscription's days.
-//  * - For RECURRING subscriptions: verifies the weekday is in the subscription's weekdays.
-//  * Returns the created daily_meal_instances.
-//  *
-//  * @param subscriptionId - The subscription ID
-//  * @param date - The date for which to create instances (Date or ISO string)
-//  * @returns Array of created daily_meal_instances
-//  */
+/** * Cancel all daily meal instances for a subscription that are in PLANNED status.
+ * This will not delete the instances, but only update their status to CANCELED.
+ * It will also log the number of instances canceled.
+ * If no instances are found, it will log that no instances were found for the subscription.
+ * If the subscription is not found, it will throw an error.
+ * @param subscription_id - The ID of the subscription for which to cancel instances
+ * @throws {Error} If the subscription is not found
+ */
+export async function cancelInstancesForSubscription(subscription_id: string) {
+	const sub = await DailyMealDao.getSubscriptionById(subscription_id, {
+		daily_meal_instances: true,
+	});
+	if (!sub) {
+		throw new Error(`Subscription with ID ${subscription_id} not found`);
+	}
+	if (sub.daily_meal_instances.length === 0) {
+		console.log(`No daily meal instances found for subscription ${subscription_id}`);
+		return;
+	}
+	const instanceIds = sub.daily_meal_instances.map((instance) => instance.id);
+	try {
+		await prisma.daily_meal_instances.updateMany({
+			where: {
+				id: { in: instanceIds },
+				status: DAILY_MEAL_INSTANCE_STATUS.PLANNED,
+			},
+			data: {
+				status: DAILY_MEAL_INSTANCE_STATUS.CANCELED,
+			},
+		});
+		console.info(`Canceled ${instanceIds.length} daily meal instances for subscription ${subscription_id}`);
+	} catch (error) {
+		console.error(`Error canceling daily meal instances for subscription ${subscription_id}:`, error);
+		throw error;
+	}
+}
+
+/**
+ * Create daily meal instances for all customers of a subscription for a given date.
+ * - For DATED subscriptions: verifies the date is in the subscription's days.
+ * - For RECURRING subscriptions: verifies the weekday is in the subscription's weekdays.
+ * Returns the created daily_meal_instances.
+ *
+ * @param subscriptionId - The subscription ID
+ * @param date - The date for which to create instances (Date or ISO string)
+ * @returns Array of created daily_meal_instances
+ */
 export async function generateInstancesForSubscription(subscription_id: string) {
 	const sub = await DailyMealDao.getSubscriptionById(subscription_id, {
 		days: true,
@@ -655,6 +692,19 @@ export async function activateSubscriptionById(subscription_id: string) {
 	}
 }
 
+export async function cancelSubscriptionById(subscription_id: string) {
+	try {
+		await cancelInstancesForSubscription(subscription_id);
+		const updated_subscription = await DailyMealDao.updateSubscriptionStatus(
+			subscription_id,
+			SUBSCRIPTION_STATUS.CANCELED
+		);
+		return updated_subscription;
+	} catch (error) {
+		console.error(error);
+	}
+}
+
 export default {
 	generateDailyMealMenuCategoriesUpToDate,
 	generateDailyMealMenuCategoriesUpToDateForCategory,
@@ -663,4 +713,5 @@ export default {
 	generateDailyMealInstancesUpToDate,
 	generateInstancesForSubscription,
 	activateSubscriptionById,
+	cancelSubscriptionById,
 };

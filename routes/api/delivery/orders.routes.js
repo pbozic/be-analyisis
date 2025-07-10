@@ -1,12 +1,6 @@
 import express from 'express';
 
-import { createOrderSchema } from '../../../joi/taxiOrderSchemas.js';
-import joi from '../../../middleware/joi.js';
 import DeliveryOrderController from '../../../controllers/DeliveryOrderController.js';
-import DailyMealController from '../../../controllers/DailyMealController.ts';
-import { validate } from '../../../middleware/zod.ts';
-import { DailyMealsSubscriptionRequestSchema } from '../../../types/dailymeal/DailyMealSubscription.ts';
-import { CreateBlogPostSchema, UpdateBlogPostSchema, SearchBlogPostsSchema } from '../../../types/blog/BlogPost.ts';
 
 const router = express.Router();
 router.get('/today', DeliveryOrderController.getDeliveryOrdersToday);
@@ -22,15 +16,9 @@ router.get('/order/:order_id', DeliveryOrderController.getOrder);
 router.get('/order/user/:order_id', DeliveryOrderController.getUserByDeliveryOrderId);
 router.get('/business/:business_id', DeliveryOrderController.getDeliveryOrdersByBusinessId);
 router.get('/:daily_meals', DeliveryOrderController.getDeliveryOrders);
-router.post('/order', DeliveryOrderController.createOrder);
-router.post(
-	'/daily_meals/subscription/payment',
-	validate(DailyMealsSubscriptionRequestSchema),
-	DailyMealController.dailyMealsSubscriptionPayment
-);
-router.post('/daily_meals/user', DailyMealController.getUserDailyMealSubscriptions);
-router.post('/daily_meals/business/:business_id', DailyMealController.getActiveDailyMealsSubscriptionsByBusinessId);
+
 router.post('/daily_meals', DeliveryOrderController.createDailyMeals);
+router.post('/order', DeliveryOrderController.createOrder);
 router.post('/order/merchant_accept', DeliveryOrderController.merchantAcceptOrder);
 router.post('/order/dispatcher_cancel', DeliveryOrderController.dispatcherCancel);
 router.post('/order/dispatcher_revoke', DeliveryOrderController.dispatcherRevoke);
@@ -43,4 +31,5 @@ router.post('/order/complete', DeliveryOrderController.completeOrder);
 router.post('/timeline', DeliveryOrderController.updateDeliveryOrderTimeline);
 router.post('/add_to_timeline', DeliveryOrderController.addToDeliveryOrderTimeline);
 router.post('/order/update', DeliveryOrderController.updateDeliveryOrder);
+
 export default router;
