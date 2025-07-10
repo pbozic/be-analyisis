@@ -568,6 +568,16 @@ export async function getSubscriptionById(
 			weekdays: true,
 			daily_meal_instances: {
 				include: {
+					menu_category: {
+						include: {
+							menu_categories_categories: {
+								include: {
+									category: true,
+								},
+							},
+							menu_items: true,
+						},
+					},
 					customer: true,
 				},
 			},
