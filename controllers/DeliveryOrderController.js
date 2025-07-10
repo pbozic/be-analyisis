@@ -1537,6 +1537,7 @@ async function getDeliveryOrdersToday(req, res) {
 			where: {
 				status: DELIVERY_ORDER_STATUS.SUCCESS,
 				created_at: { gte: new Date(new Date().setHours(0, 0, 0, 0)) },
+				is_daily_meal: req.query?.dailyMeals === 'true' ? true : false,
 			},
 		});
 		return res
