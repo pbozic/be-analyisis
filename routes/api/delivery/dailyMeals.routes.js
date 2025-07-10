@@ -4,6 +4,7 @@ import DailyMealController from '../../../controllers/DailyMealController.ts';
 import { validate } from '../../../middleware/zod.ts';
 import { DailyMealsSubscriptionRequestSchema } from '../../../types/dailymeal/DailyMealSubscription.ts';
 
+const router = express.Router();
 router.post(
 	'/subscription/payment',
 	validate(DailyMealsSubscriptionRequestSchema),
