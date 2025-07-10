@@ -9,10 +9,8 @@ import { DailyMealsSubscriptionRequestSchema } from '../../../types/dailymeal/Da
 import { CreateBlogPostSchema, UpdateBlogPostSchema, SearchBlogPostsSchema } from '../../../types/blog/BlogPost.ts';
 
 const router = express.Router();
-router.get('/:daily_meals', DeliveryOrderController.getDeliveryOrders);
 router.get('/today', DeliveryOrderController.getDeliveryOrdersToday);
 router.get('/active', DeliveryOrderController.getActiveDeliveryOrders);
-router.get('/:business_id', DeliveryOrderController.getDeliveryOrdersByBusinessId);
 router.get('/active/:user_id', DeliveryOrderController.getActiveDeliveryOrdersByUserId);
 router.get('/active/business/:business_id', DeliveryOrderController.getActiveDeliveryOrdersByBusinessId);
 router.get('/active/driver/:driver_id', DeliveryOrderController.getActiveDeliveryOrdersByDriverId);
@@ -22,6 +20,8 @@ router.get('/completed/user/:user_id', DeliveryOrderController.getCompletedDeliv
 router.get('/completed/business/:business_id', DeliveryOrderController.getCompletedDeliveryOrdersByBusinessId);
 router.get('/order/:order_id', DeliveryOrderController.getOrder);
 router.get('/order/user/:order_id', DeliveryOrderController.getUserByDeliveryOrderId);
+router.get('/business/:business_id', DeliveryOrderController.getDeliveryOrdersByBusinessId);
+router.get('/:daily_meals', DeliveryOrderController.getDeliveryOrders);
 router.post('/order', DeliveryOrderController.createOrder);
 router.post(
 	'/daily_meals/subscription/payment',
