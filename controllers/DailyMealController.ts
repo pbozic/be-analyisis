@@ -580,6 +580,9 @@ export async function getSubscriptionById(
 					},
 					customer: true,
 				},
+				orderBy: {
+					intended_date: 'asc',
+				},
 			},
 		});
 		if (!subscription) {
