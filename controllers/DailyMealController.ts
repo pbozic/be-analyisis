@@ -368,13 +368,12 @@ export async function getActiveDailyMealsSubscriptionsByBusinessId(
  * ./prisma/schema.prisma
  */
 export async function getDailyMealsSubscriptionsByBusinessId(
-	req: ValidatedRequest<{ start_date?: string }, { business_id: string }>,
+	req: ValidatedRequest<unknown, { business_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
 		const { business_id } = req.params;
-		const { start_date } = req.body;
-		const subscriptions = await DailyMealDao.getDailyMealSubscriptionsByBusinessId(business_id, start_date);
+		const subscriptions = await DailyMealDao.getDailyMealSubscriptionsByBusinessId(business_id);
 		res.status(200).json(subscriptions);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';

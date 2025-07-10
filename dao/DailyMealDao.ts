@@ -5,17 +5,14 @@ import { DailyMealsCartPerson } from '../types/dailymeal/DailyMealSubscription.t
 import { DOCUMENT_TYPE } from '../lib/constants.js';
 
 /**
- * Get active daily meal subscriptions by business_id and optional start_date.
+ * Get active daily meal subscriptions by business_id
  * @param business_id
- * @param start_date
  * @returns daily_meal_subscriptions[]
  */
-export async function getDailyMealSubscriptionsByBusinessId(business_id: string, start_date?: string) {
-	const normalizedDate = start_date ? new Date(new Date(start_date).setUTCHours(0, 0, 0, 0)) : null;
+export async function getDailyMealSubscriptionsByBusinessId(business_id: string) {
 	return prisma.daily_meal_subscriptions.findMany({
 		where: {
 			business_id,
-			start_date: normalizedDate ? { gte: normalizedDate } : undefined,
 		},
 		include: {
 			user: true,
