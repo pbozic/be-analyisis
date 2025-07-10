@@ -12,6 +12,7 @@ import {
 	AddPriceToDailyMealCategorySchema,
 } from '../../types/dailyMeals/DailyMealCategory';
 import StripeController from '../../controllers/StripeController.js';
+import DailyMealController from '../../controllers/DailyMealController.js';
 
 const router = express.Router();
 router.post('/businesses/ids', BusinessController.getBusinessesByIds);
