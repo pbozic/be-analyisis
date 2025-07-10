@@ -502,6 +502,87 @@ export async function cancelDailyMealInstanceById(
 	}
 }
 
+/** * - GET /delivery/orders/daily_meals/subscription/{subscription_id}
+ * - @tag Delivery
+ * - @summary Get a daily meal subscription by ID
+ * - @description Returns a daily meal subscription by its ID, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances.
+ * - @operationId getSubscriptionById
+ * - @pathParam {string} subscription_id - The ID of the daily meal subscription to fetch
+ * - @response 200 - Daily meal subscription found
+ * - @responseContent {object} 200.application/json
+ * - @responseExample 200.application/json {
+ *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "user_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "delivery_address_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "start_date": "2025-07-01T00:00:00.000Z",
+ *     "end_date": null,
+ *     "type": "DATED",
+ *     "status": "ACTIVE",
+ *     "courier_comment": "Leave at the door",
+ *     "created_at": "2025-07-01T00:00:00.000Z",
+ *     "updated_at": "2025-07-01T00:00:00.000Z",
+ *     "user": { ... },
+ *     "business": { ... },
+ *     "delivery_address": { ... },
+ *     "customers": [ ... ],
+ *     "days": [ ... ],
+ *     "weekdays": [ ... ],
+ *     "daily_meal_instances": [ ... ],
+ *     "payment": { ... }
+ *   }
+ * - @response 404 - Daily meal subscription not found
+ * - @responseContent {object} 404.application/json
+ * - @responseExample 404.application/json {
+ *     "message": "Daily meal subscription not found"
+ *   }
+ * - @response 500 - Error fetching daily meal subscription
+ * - @responseContent {object} 500.application/json
+ * - @responseExample 500.application/json {
+ *     "message": "Error fetching daily meal subscription",
+ *     "error": "Error message here"
+ *   }
+ * - @prisma_model daily_meal_subscriptions
+ * - @prisma_model users
+ * - @prisma_model business
+ * - @prisma_model addresses
+ * - @prisma_model daily_meal_subscription_customers
+ * - @prisma_model daily_meal_subscription_days
+ * - @prisma_model daily_meal_subscription_weekdays
+ * - @prisma_model daily_meal_instances
+ * - @prisma_model payments
+ * ./prisma/schema.prisma
+ */
+export async function getSubscriptionById(
+	req: ValidatedRequest<unknown, { subscription_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const { subscription_id } = req.params;
+		const subscription = await DailyMealDao.getSubscriptionById(subscription_id, {
+			user: true,
+			business: true,
+			delivery_address: true,
+			customers: true,
+			days: true,
+			weekdays: true,
+			daily_meal_instances: {
+				include: {
+					customer: true,
+				},
+			},
+		});
+		if (!subscription) {
+			res.status(40).json({ message: 'Daily meal subscription not found' });
+			return;
+		}
+		res.status(200).json(subscription);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error fetching daily meal subscription', error: message });
+	}
+}
+
 export default {
 	dailyMealsSubscriptionPayment,
 	getUserDailyMealSubscriptions,
@@ -510,4 +591,5 @@ export default {
 	activateSubscriptionById,
 	cancelSubscriptionById,
 	cancelDailyMealInstanceById,
+	getSubscriptionById,
 };
