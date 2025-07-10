@@ -1539,11 +1539,9 @@ async function getDeliveryOrdersToday(req, res) {
 				created_at: { gte: new Date(new Date().setHours(0, 0, 0, 0)) },
 			},
 		});
-		if (orders) {
-			return res
-				.status(200)
-				.json({ orders: orders.length, amount: todaysEarnings(orders, DELIVERY_ORDER_STATUS.SUCCESS) });
-		}
+		return res
+			.status(200)
+			.json({ orders: orders?.length || 0, amount: todaysEarnings(orders, DELIVERY_ORDER_STATUS.SUCCESS) });
 	} catch (e) {
 		console.error('DeliveryOrderController', e);
 		res.status(500).json(e);
