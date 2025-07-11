@@ -290,7 +290,9 @@ async function createDailyMeals(req, res) {
 				continue;
 			}
 
-			const subItems = sortedSubscriptions[i].daily_meal_instances.map((instance) => instance.menu_items).flat();
+			const subItems = sortedSubscriptions[i].daily_meal_instances
+				.map((instance) => instance.menu_category.menu_items)
+				.flat();
 			const menuItemsMap = new Map();
 			subItems.forEach((item) => {
 				const itemId = item.menu_item_id;
@@ -343,7 +345,7 @@ async function createDailyMeals(req, res) {
 					duration: cumulativeTime,
 					distance: distanceValue,
 					subscription_id: sortedSubscriptions[i].id,
-					instance_id: sortedSubscriptions[i].daily_meal_instances[j].id,
+					instance_ids: sortedSubscriptions[i].daily_meal_instances.map((instance) => instance.id),
 				},
 				payment: {
 					status: 'SUCCESSFUL',
@@ -358,7 +360,7 @@ async function createDailyMeals(req, res) {
 					text: sortedSubscriptions[i]?.courier_comment || '',
 				},
 				restaurant_message: {
-					text: sortedSubscriptions[i].daily_meal_instances[j].customer?.restaurant_comment || '',
+					text: '',
 				},
 				delivery_location: deliveryLocation,
 				pickup_location: providerLocation,
