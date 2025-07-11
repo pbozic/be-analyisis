@@ -336,14 +336,11 @@ async function createDailyMeals(req, res) {
 					business_id: business.business_id,
 					delivery_cost: DAILY_MEAL_DELIVERY_COST_CENTS / 100,
 					delivery_earnings: 0,
-					// provider_delivery_cost: 2.4,
 					ready_for_pickup_at: readyForPickupAt,
 					customer_expected_delivery_at: customerExpectedDeliveryAt.toISOString(),
-					// floor_number: user.details?.floor_number,
-					// door_number: user.details?.door_number,
 					daily_meal_delivery_order: scheduledMealsRoute.length > 1,
 					duration: cumulativeTime,
-					distance: distanceValue,
+					distance: distanceValue / 1000,
 					subscription_id: sortedSubscriptions[i].id,
 					instance_ids: sortedSubscriptions[i].daily_meal_instances.map((instance) => instance.id),
 				},
@@ -377,12 +374,6 @@ async function createDailyMeals(req, res) {
 				},
 				user.user_id
 			);
-			// for (const daily_meals_subscriptions_id of sortedSubscriptions[i].subscription_ids) {
-			// 	await DeliveryOrderDao.updateDailyMealSubscriptionOrderCreatedById(
-			// 		daily_meals_subscriptions_id,
-			// 		order.created_at
-			// 	);
-			// }
 			await DeliveryOrderDao.createOrderSent(order.order_id, deliveryDriver);
 			await DeliveryOrderDao.connectOrderWithDriver(order.order_id, deliveryDriver.delivery_driver_id);
 			SocketStore.addUserToRoom(order.user_id, `order_${order.order_id}`);
@@ -802,6 +793,11 @@ async function completeOrder(req, res) {
 					}
 				}
 			}
+		} else {
+			await DailyMealDao.updateDailyMealInstances(
+				order.details.instance_ids,
+				DAILY_MEAL_INSTANCE_STATUS.DELIVERED
+			);
 		}
 		await handleReferral(order.user_id);
 		sendDeliveryOrderNotifications(order.user, null, order.user_id, null, order.status);
