@@ -52,7 +52,7 @@ router.use('/delivery/auth', authDeliveryRoutes);
 router.use('/merchant/auth', authMerchantRoutes);
 router.use('/merchant/reservations', reservationsMerchantRoutes);
 router.use('/delivery/orders', [authMiddleware], deliveryRoutes);
-router.use('/delivery/daily_meals', dailyMealsRoutes);
+router.use('/delivery/daily_meals', [authMiddleware], dailyMealsRoutes);
 router.use('/taxi', [authMiddleware], taxiRoutes);
 router.use('/business/auth', authBusinessRoutes);
 router.use('/business/search', [withUserMiddleware], searchRoutes);
