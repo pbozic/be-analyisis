@@ -148,10 +148,11 @@ export async function getTodayDailyMealSubscriptionsByBusinessId(business_id: st
 	todayStart.setHours(0, 0, 0, 0);
 	const todayEnd = new Date();
 	todayEnd.setHours(23, 59, 59, 999);
+	console.log('Today start:', todayStart, 'Today end:', todayEnd);
 	return prisma.daily_meal_subscriptions.findMany({
 		where: {
 			business_id,
-			start_date: { gte: todayStart, lte: todayEnd },
+			start_date: { lte: todayEnd },
 			status: SUBSCRIPTION_STATUS.ACTIVE,
 		},
 		include: {
@@ -162,6 +163,12 @@ export async function getTodayDailyMealSubscriptionsByBusinessId(business_id: st
 			days: true,
 			weekdays: true,
 			daily_meal_instances: {
+				where: {
+					delivery_date: {
+						gte: todayStart,
+						lte: todayEnd,
+					},
+				},
 				include: {
 					menu_category: {
 						include: {
