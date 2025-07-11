@@ -44,7 +44,6 @@ import {
 	handlePaymentCleanup,
 	handlePaymentRefund,
 	verifyOrderCosts,
-	groupSubscriptionsForDailyMeals,
 	generateOrder,
 } from '../lib/deliveryHelpers.js';
 import PaymentHelpers from '../lib/paymentHelpers.ts';
@@ -228,18 +227,24 @@ async function createDailyMeals(req, res) {
 			};
 		};
 		const getRouteDuration = async (locationA, locationB, departure_time) => {
-			let { result } = await gApi.distanceBetweenTwoPoints(
-				locationA.coordinates,
-				locationB.coordinates,
-				'driving',
-				departure_time,
-				'best_guess'
-			);
-			return result.rows[0].elements[0].duration.value;
+			try {
+				let { result } = await gApi.distanceBetweenTwoPoints(
+					locationA.coordinates,
+					locationB.coordinates,
+					'driving',
+					departure_time,
+					'best_guess'
+				);
+				return {
+					duration: result.rows[0].elements[0].duration.value,
+					distance: result.rows[0].elements[0].distance.value,
+				};
+			} catch (error) {
+				console.error('Error calculating route duration:', error);
+				return res.status(500).json({ message: 'Error calculating route duration.' });
+			}
 		};
 		const providerLocation = convertAddressToLocation(business.address);
-
-		// const groupedSubscriptions = groupSubscriptionsForDailyMeals(subscriptions);
 
 		let sortedSubscriptions = [];
 		if (business.daily_users_sorting_type === 'MANUAL') {
@@ -270,10 +275,10 @@ async function createDailyMeals(req, res) {
 			console.info('sortedUserAddresses AUTOMATIC', sortedSubscriptions);
 			console.info('sortedUserAddresses AUTOMATIC', sortedSubscriptions[0].address);
 		}
-		console.log('sortedSubscriptions:', sortedSubscriptions);
 		const orders = [];
 		const start_time = new Date();
-		let cumulativeTime = await getRouteDuration(deliveryDriver.location, providerLocation, start_time); // Track the total elapsed time
+		let cumulativeTime =
+			(await getRouteDuration(deliveryDriver.location, providerLocation, start_time)?.duration) || 0; // Track the total elapsed time
 		let scheduledMealsRoute = [providerLocation];
 
 		for (let i = 0; i < sortedSubscriptions.length; i++) {
@@ -285,92 +290,105 @@ async function createDailyMeals(req, res) {
 				continue;
 			}
 
-			for (let j = 0; j < sortedSubscriptions[i].daily_meal_instances.length; j++) {
-				try {
-					const durationValue = await getRouteDuration(
-						scheduledMealsRoute[scheduledMealsRoute.length - 1],
-						deliveryLocation,
-						new Date(start_time.getTime() + cumulativeTime * 1000)
-					);
-				} catch (error) {
-					console.error('Error calculating route duration:', error);
-					return res.status(500).json({ message: 'Error calculating route duration.' });
+			const subItems = sortedSubscriptions[i].daily_meal_instances.map((instance) => instance.menu_items).flat();
+			const menuItemsMap = new Map();
+			subItems.forEach((item) => {
+				const itemId = item.menu_item_id;
+				if (!menuItemsMap.has(itemId)) {
+					menuItemsMap.set(itemId, {
+						item: item,
+						count: 1,
+					});
+				} else {
+					menuItemsMap.get(itemId).count++;
 				}
+			});
+			const items = Array.from(menuItemsMap.values()).map(({ item, count }) => ({
+				...item,
+				quantity: count,
+			}));
 
-				// Calculate expected delivery time based on cumulative time
-				const customerExpectedDeliveryAt = new Date(
-					start_time.getTime() + cumulativeTime * 1000 + durationValue * 1000 + 5 * 60 * 1000
-				);
-				cumulativeTime += durationValue;
-				const readyForPickupAt = start_time.toISOString();
-				const orderData = {
-					is_daily_meal: true,
-					items: sortedSubscriptions[i].daily_meal_instances[j].menu_category.menu_items,
-					details: {
-						type: 'delivery',
-						sub_total_price: 0,
-						total_price: 0,
-						discount_savings: 0,
-						provider_address: providerLocation,
-						business_id: business.business_id,
-						delivery_cost: DAILY_MEAL_DELIVERY_COST_CENTS / 100,
-						delivery_earnings: 0,
-						// provider_delivery_cost: 2.4,
-						ready_for_pickup_at: readyForPickupAt,
-						customer_expected_delivery_at: customerExpectedDeliveryAt.toISOString(),
-						// floor_number: user.details?.floor_number,
-						// door_number: user.details?.door_number,
-						daily_meal_delivery_order: i * (j + 1), // Add sorted order number (1-based index)
-						duration: cumulativeTime,
-						subscription_id: sortedSubscriptions[i].id,
-						instance_id: sortedSubscriptions[i].daily_meal_instances[j].id,
+			const route = await getRouteDuration(
+				scheduledMealsRoute[scheduledMealsRoute.length - 1],
+				deliveryLocation,
+				new Date(start_time.getTime() + cumulativeTime * 1000)
+			);
+			const durationValue = route?.duration || 0;
+			const distanceValue = route?.distance || 0;
+
+			// Calculate expected delivery time based on cumulative time
+			const customerExpectedDeliveryAt = new Date(
+				start_time.getTime() + cumulativeTime * 1000 + durationValue * 1000 + 5 * 60 * 1000
+			);
+			cumulativeTime += durationValue;
+			const readyForPickupAt = start_time.toISOString();
+			const orderData = {
+				is_daily_meal: true,
+				items: items,
+				details: {
+					type: 'delivery',
+					sub_total_price: 0,
+					total_price: 0,
+					discount_savings: 0,
+					provider_address: providerLocation,
+					business_id: business.business_id,
+					delivery_cost: DAILY_MEAL_DELIVERY_COST_CENTS / 100,
+					delivery_earnings: 0,
+					// provider_delivery_cost: 2.4,
+					ready_for_pickup_at: readyForPickupAt,
+					customer_expected_delivery_at: customerExpectedDeliveryAt.toISOString(),
+					// floor_number: user.details?.floor_number,
+					// door_number: user.details?.door_number,
+					daily_meal_delivery_order: scheduledMealsRoute.length > 1,
+					duration: cumulativeTime,
+					distance: distanceValue,
+					subscription_id: sortedSubscriptions[i].id,
+					instance_id: sortedSubscriptions[i].daily_meal_instances[j].id,
+				},
+				payment: {
+					status: 'SUCCESSFUL',
+					type: 'ALREADY PAID',
+					cash: {
+						type: 'CHANGE_NOT_NEEDED',
+						amount: 0,
 					},
-					payment: {
-						status: 'SUCCESSFUL',
-						type: 'ALREADY PAID',
-						cash: {
-							type: 'CHANGE_NOT_NEEDED',
-							amount: 0,
-						},
-						date: new Date().toISOString(),
-					},
-					courier_instructions: {
-						text: sortedSubscriptions[i]?.courier_comment || '',
-					},
-					restaurant_message: {
-						text: sortedSubscriptions[i].daily_meal_instances[j].customer?.restaurant_message || '',
-					},
-					delivery_location: deliveryLocation,
-					pickup_location: providerLocation,
-					scheduled: {
-						date: null,
-						time: null,
-					},
-					route: [providerLocation, deliveryLocation],
-				};
-				const order = await DeliveryOrderDao.createOrder(
-					{
-						...orderData,
-						status: DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP,
-					},
-					user.user_id
-				);
-				// for (const daily_meals_subscriptions_id of sortedSubscriptions[i].subscription_ids) {
-				// 	await DeliveryOrderDao.updateDailyMealSubscriptionOrderCreatedById(
-				// 		daily_meals_subscriptions_id,
-				// 		order.created_at
-				// 	);
-				// }
-				await DeliveryOrderDao.createOrderSent(order.order_id, deliveryDriver);
-				await DeliveryOrderDao.connectOrderWithDriver(order.order_id, deliveryDriver.delivery_driver_id);
-				SocketStore.addUserToRoom(order.user_id, `order_${order.order_id}`);
-				SocketStore.addUserToRoom(deliveryDriver.user_id, `order_${order.order_id}`);
-				orders.push(order);
-				scheduledMealsRoute.push(deliveryLocation);
-			}
+					date: new Date().toISOString(),
+				},
+				courier_instructions: {
+					text: sortedSubscriptions[i]?.courier_comment || '',
+				},
+				restaurant_message: {
+					text: sortedSubscriptions[i].daily_meal_instances[j].customer?.restaurant_comment || '',
+				},
+				delivery_location: deliveryLocation,
+				pickup_location: providerLocation,
+				scheduled: {
+					date: null,
+					time: null,
+				},
+				route: [providerLocation, deliveryLocation],
+			};
+			const order = await DeliveryOrderDao.createOrder(
+				{
+					...orderData,
+					status: DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP,
+				},
+				user.user_id
+			);
+			// for (const daily_meals_subscriptions_id of sortedSubscriptions[i].subscription_ids) {
+			// 	await DeliveryOrderDao.updateDailyMealSubscriptionOrderCreatedById(
+			// 		daily_meals_subscriptions_id,
+			// 		order.created_at
+			// 	);
+			// }
+			await DeliveryOrderDao.createOrderSent(order.order_id, deliveryDriver);
+			await DeliveryOrderDao.connectOrderWithDriver(order.order_id, deliveryDriver.delivery_driver_id);
+			SocketStore.addUserToRoom(order.user_id, `order_${order.order_id}`);
+			SocketStore.addUserToRoom(deliveryDriver.user_id, `order_${order.order_id}`);
+			orders.push(order);
+			scheduledMealsRoute.push(deliveryLocation);
 		}
 		scheduledMealsRoute.push(providerLocation);
-		console.log('Scheduled meals route:', scheduledMealsRoute);
 		await DeliveryDriverDao.updateDeliveryDriver(deliveryDriver?.delivery_driver_id, {
 			scheduled_meals_route: scheduledMealsRoute,
 			delivery_timeline: [],

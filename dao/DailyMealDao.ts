@@ -1,4 +1,4 @@
-import { Prisma, SUBSCRIPTION_STATUS, SUBSCRIPTION_TYPE } from '@prisma/client';
+import { Prisma, SUBSCRIPTION_STATUS, SUBSCRIPTION_TYPE, DAILY_MEAL_INSTANCE_STATUS } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 import { DailyMealsCartPerson } from '../types/dailymeal/DailyMealSubscription.ts';
@@ -148,7 +148,6 @@ export async function getTodayDailyMealSubscriptionsByBusinessId(business_id: st
 	todayStart.setHours(0, 0, 0, 0);
 	const todayEnd = new Date();
 	todayEnd.setHours(23, 59, 59, 999);
-	console.log('Today start:', todayStart, 'Today end:', todayEnd);
 	return prisma.daily_meal_subscriptions.findMany({
 		where: {
 			business_id,
@@ -164,6 +163,7 @@ export async function getTodayDailyMealSubscriptionsByBusinessId(business_id: st
 			weekdays: true,
 			daily_meal_instances: {
 				where: {
+					status: DAILY_MEAL_INSTANCE_STATUS.PLANNED,
 					delivery_date: {
 						gte: todayStart,
 						lte: todayEnd,
