@@ -312,6 +312,7 @@ async function listPromoSectionsWithMerchants(req, res) {
 				10,
 				favorite ? favoriteBusinessIds : null
 			);
+			console.log('esResults for promoSection', promoSection.tag, esResults);
 			promoSection.translations = translations;
 			if (!esResults || !esResults.results || esResults.results.length === 0) {
 				esResults.results = [];
