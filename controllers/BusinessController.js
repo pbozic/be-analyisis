@@ -307,7 +307,7 @@ async function listPromoSectionsWithMerchants(req, res) {
 				req.body.radius,
 				req.body.filterOperator || 'OR',
 				req.body.isDailyMealSearch || false,
-				favorite ? null : promoSection.promo_sections_id,
+				null, //favorite ? null : promoSection.promo_sections_id,
 				1,
 				10,
 				favorite ? favoriteBusinessIds : null
