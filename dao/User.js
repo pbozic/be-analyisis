@@ -26,6 +26,17 @@ const getUserById = async (user_id, args) => {
 			where: {
 				user_id: user_id,
 			},
+			include: {
+				business_users: {
+					include: {
+						business: {
+							include: {
+								address: true,
+							},
+						},
+					},
+				},
+			},
 			...args,
 		});
 	} catch (error) {

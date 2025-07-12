@@ -1,17 +1,53 @@
-import { Prisma, SUBSCRIPTION_STATUS, SUBSCRIPTION_TYPE } from '@prisma/client';
+import { Prisma, SUBSCRIPTION_STATUS, SUBSCRIPTION_TYPE, DAILY_MEAL_INSTANCE_STATUS } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 import { DailyMealsCartPerson } from '../types/dailymeal/DailyMealSubscription.ts';
 import { DOCUMENT_TYPE } from '../lib/constants.js';
 
 /**
- * Get daily meal subscriptions by business_id and optional start_date.
+ * Get active daily meal subscriptions by business_id
+ * @param business_id
+ * @returns daily_meal_subscriptions[]
+ */
+export async function getDailyMealSubscriptionsByBusinessId(business_id: string) {
+	return prisma.daily_meal_subscriptions.findMany({
+		where: {
+			business_id,
+		},
+		include: {
+			user: true,
+			delivery_address: true,
+			customers: true,
+			days: true,
+			weekdays: true,
+			daily_meal_instances: {
+				include: {
+					menu_category: {
+						include: {
+							menu_categories_categories: {
+								include: {
+									category: true,
+								},
+							},
+							menu_items: true,
+						},
+					},
+					customer: true,
+				},
+			},
+		},
+		orderBy: { start_date: 'asc' },
+	});
+}
+
+/**
+ * Get active daily meal subscriptions by business_id and optional start_date.
  * @param business_id
  * @param start_date
  * @returns daily_meal_subscriptions[]
  */
-export async function getDailyMealSubscriptionsByBusinessId(business_id: string, start_date?: string) {
-	const normalizedDate = start_date ? new Date(start_date).setHours(0, 0, 0, 0) : null;
+export async function getActiveDailyMealSubscriptionsByBusinessId(business_id: string, start_date?: string) {
+	const normalizedDate = start_date ? new Date(new Date(start_date).setUTCHours(0, 0, 0, 0)) : null;
 	return prisma.daily_meal_subscriptions.findMany({
 		where: {
 			business_id,
@@ -51,7 +87,7 @@ export async function getDailyMealSubscriptionsByBusinessId(business_id: string,
  * @returns daily_meal_subscriptions[]
  */
 export async function getDailyMealSubscriptionsByUserId(user_id: string, start_date?: string) {
-	const normalizedDate = start_date ? new Date(start_date).setHours(0, 0, 0, 0) : null;
+	const normalizedDate = start_date ? new Date(new Date(start_date).setUTCHours(0, 0, 0, 0)) : null;
 
 	return prisma.daily_meal_subscriptions.findMany({
 		where: {
@@ -66,6 +102,8 @@ export async function getDailyMealSubscriptionsByUserId(user_id: string, start_d
 					name: true,
 					telephone: true,
 					email: true,
+					daily_meals_days: true,
+					daily_meals_delivery_mapping: true,
 					documents: {
 						where: {
 							document_type: DOCUMENT_TYPE.LOGO,
@@ -113,7 +151,7 @@ export async function getTodayDailyMealSubscriptionsByBusinessId(business_id: st
 	return prisma.daily_meal_subscriptions.findMany({
 		where: {
 			business_id,
-			start_date: { gte: todayStart, lte: todayEnd },
+			start_date: { lte: todayEnd },
 			status: SUBSCRIPTION_STATUS.ACTIVE,
 		},
 		include: {
@@ -124,6 +162,13 @@ export async function getTodayDailyMealSubscriptionsByBusinessId(business_id: st
 			days: true,
 			weekdays: true,
 			daily_meal_instances: {
+				where: {
+					status: DAILY_MEAL_INSTANCE_STATUS.PLANNED,
+					delivery_date: {
+						gte: todayStart,
+						lte: todayEnd,
+					},
+				},
 				include: {
 					menu_category: {
 						include: {
@@ -351,11 +396,22 @@ export async function updateSubscriptionStatus(
 	});
 }
 
+export async function updateDailyMealInstances(instance_ids: string[], status: DAILY_MEAL_INSTANCE_STATUS) {
+	return await prisma.daily_meal_instances.updateMany({
+		where: {
+			id: { in: instance_ids },
+		},
+		data: { status: status },
+	});
+}
+
 export default {
 	getDailyMealSubscriptionsByBusinessId,
+	getActiveDailyMealSubscriptionsByBusinessId,
 	getDailyMealSubscriptionsByUserId,
 	getTodayDailyMealSubscriptionsByBusinessId,
 	createDailyMealSubscription,
 	getSubscriptionById,
 	updateSubscriptionStatus,
+	updateDailyMealInstances,
 };

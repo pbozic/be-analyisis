@@ -44,7 +44,6 @@ import {
 	handlePaymentCleanup,
 	handlePaymentRefund,
 	verifyOrderCosts,
-	groupSubscriptionsForDailyMeals,
 	generateOrder,
 } from '../lib/deliveryHelpers.js';
 import PaymentHelpers from '../lib/paymentHelpers.ts';
@@ -62,6 +61,7 @@ import BusinessHelpers from '../lib/businessHelpers.js';
 import Helpers from '../lib/helpersLib.js';
 import PaymentDao from '../dao/Payment.ts';
 import BusinessUsersDao from '../dao/BusinessUsers.js';
+import DailyMealDao from '../dao/DailyMealDao.ts';
 const { UserSockets, io, SocketStore } = socket;
 const uuidv4 = { v4 }.v4;
 /**
@@ -190,20 +190,17 @@ async function createOrder(req, res) {
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function createDailyMeals(req, res) {
-	const { user_id, delivery_driver } = req.body;
-	console.info('DELIVERY DRIVER', user_id, delivery_driver);
+	const user_id = req.user?.user_id;
+	if (!user_id) {
+		return res.status(401).json({ message: 'Unauthorized user.' });
+	}
 	const userSocket = UserSockets.get(user_id);
 	if (!userSocket) {
 		console.info('User is not connected to the socket');
 		return res.status(400).json({ message: 'User is not connected to the socket.' });
 	}
 	try {
-		//TODO: check what business the driver is driving for
-		// - get all subscriptions for today for that business
-		// - generate orders for each subscription
-		// - flag subs as order_created (order_created -> datetime, so where null)
-		// - send orders to driver
-		const deliveryDriver = await DeliveryDriverDao.getDeliveryDriverById(delivery_driver.delivery_driver_id);
+		const deliveryDriver = await DeliveryDriverDao.getDeliveryDriverByUserId(user_id);
 		const business = await BusinessDao.getBusinessById(deliveryDriver.daily_meal_business_id);
 		if (!business) {
 			return res.status(404).json({ message: 'Business not found.' });
@@ -214,7 +211,7 @@ async function createDailyMeals(req, res) {
 		if (!deliveryDriver?.location?.coordinates) {
 			return res.status(400).json({ message: 'Delivery driver location not set.' });
 		}
-		const subscriptions = await DeliveryOrderDao.getTodayDailyMealSubscriptionsByBusinessId(
+		const subscriptions = await DailyMealDao.getTodayDailyMealSubscriptionsByBusinessId(
 			deliveryDriver.daily_meal_business_id
 		);
 		if (!subscriptions || subscriptions.length === 0) {
@@ -230,20 +227,26 @@ async function createDailyMeals(req, res) {
 			};
 		};
 		const getRouteDuration = async (locationA, locationB, departure_time) => {
-			let { result } = await gApi.distanceBetweenTwoPoints(
-				locationA.coordinates,
-				locationB.coordinates,
-				'driving',
-				departure_time,
-				'best_guess'
-			);
-			return result.rows[0].elements[0].duration.value;
+			try {
+				let { result } = await gApi.distanceBetweenTwoPoints(
+					locationA.coordinates,
+					locationB.coordinates,
+					'driving',
+					departure_time,
+					'best_guess'
+				);
+				return {
+					duration: result.rows[0].elements[0].duration.value,
+					distance: result.rows[0].elements[0].distance.value,
+				};
+			} catch (error) {
+				console.error('Error calculating route duration:', error);
+				return res.status(500).json({ message: 'Error calculating route duration.' });
+			}
 		};
 		const providerLocation = convertAddressToLocation(business.address);
 
-		const groupedSubscriptions = groupSubscriptionsForDailyMeals(subscriptions);
-
-		let sortedGroupedSubscriptions = [];
+		let sortedSubscriptions = [];
 		if (business.daily_users_sorting_type === 'MANUAL') {
 			// Manual sorting based on provider.daily_users_sorted
 			//FIXME: business.daily_users_sorted deprecated?
@@ -255,50 +258,65 @@ async function createDailyMeals(req, res) {
 			const sortIndexMap = new Map(business.daily_users_sorted.map((user_id, index) => [user_id, index]));
 
 			// Step 2: Sort with fallback for unknown users
-			sortedGroupedSubscriptions = [...groupedSubscriptions].sort((a, b) => {
+			sortedSubscriptions = [...subscriptions].sort((a, b) => {
 				const indexA = sortIndexMap.has(a.user_id) ? sortIndexMap.get(a.user_id) : Infinity;
 				const indexB = sortIndexMap.has(b.user_id) ? sortIndexMap.get(b.user_id) : Infinity;
 				return indexA - indexB;
 			});
 
-			console.info('sortedUserAddresses MANUAL', sortedGroupedSubscriptions);
-			console.info('sortedUserAddresses MANUAL', sortedGroupedSubscriptions[0].address);
+			console.info('sortedUserAddresses MANUAL', sortedSubscriptions);
+			console.info('sortedUserAddresses MANUAL', sortedSubscriptions[0].address);
 		} else {
 			// Automatic sorting by nearest neighbor
-			sortedGroupedSubscriptions = sortObjectsByNearestNeighbor([
+			sortedSubscriptions = sortObjectsByNearestNeighbor([
 				{ address: business.address },
-				...groupedSubscriptions,
+				...subscriptions.map((sub) => ({ ...sub, address: sub.delivery_address })),
 			]).slice(1);
-			console.info('sortedUserAddresses AUTOMATIC', sortedGroupedSubscriptions);
-			console.info('sortedUserAddresses AUTOMATIC', sortedGroupedSubscriptions[0].address);
+			console.info('sortedUserAddresses AUTOMATIC', sortedSubscriptions);
+			console.info('sortedUserAddresses AUTOMATIC', sortedSubscriptions[0].address);
 		}
 		const orders = [];
 		const start_time = new Date();
-		let cumulativeTime = await getRouteDuration(deliveryDriver.location, providerLocation, start_time); // Track the total elapsed time
+		let cumulativeTime =
+			(await getRouteDuration(deliveryDriver.location, providerLocation, start_time)?.duration) || 0; // Track the total elapsed time
 		let scheduledMealsRoute = [providerLocation];
 
-		for (let i = 0; i < sortedGroupedSubscriptions.length; i++) {
-			const deliveryLocation = convertAddressToLocation(sortedGroupedSubscriptions[i].address);
-			const user = sortedGroupedSubscriptions[i].user;
+		for (let i = 0; i < sortedSubscriptions.length; i++) {
+			const deliveryLocation = convertAddressToLocation(sortedSubscriptions[i].address);
+			const user = sortedSubscriptions[i].user;
 
-			//TODO: generate from subscription
-			// const dailyMealItemsFromSub = sortedSubscriptions[i].menu_category.menu_items.map(
-			// 	(m_i) => {
-			// 		return {
-			// 			...m_i,
-			// 			quantity: sortedSubscriptions[i].quantity,
-			// 			price: 0,
-			// 			discount: 0
-			// 		};
-			// 	}
+			if (sortedSubscriptions[i].daily_meal_instances.length === 0) {
+				console.warn(`No daily meal instances found for subscription ID ${sortedSubscriptions[i].id}`);
+				continue;
+			}
 
-			// );
+			const subItems = sortedSubscriptions[i].daily_meal_instances
+				.map((instance) => instance.menu_category.menu_items)
+				.flat();
+			const menuItemsMap = new Map();
+			subItems.forEach((item) => {
+				const itemId = item.menu_item_id;
+				if (!menuItemsMap.has(itemId)) {
+					menuItemsMap.set(itemId, {
+						item: item,
+						count: 1,
+					});
+				} else {
+					menuItemsMap.get(itemId).count++;
+				}
+			});
+			const items = Array.from(menuItemsMap.values()).map(({ item, count }) => ({
+				...item,
+				quantity: count,
+			}));
 
-			const durationValue = await getRouteDuration(
-				scheduledMealsRoute[i],
+			const route = await getRouteDuration(
+				scheduledMealsRoute[scheduledMealsRoute.length - 1],
 				deliveryLocation,
 				new Date(start_time.getTime() + cumulativeTime * 1000)
 			);
+			const durationValue = route?.duration || 0;
+			const distanceValue = route?.distance || 0;
 
 			// Calculate expected delivery time based on cumulative time
 			const customerExpectedDeliveryAt = new Date(
@@ -308,7 +326,7 @@ async function createDailyMeals(req, res) {
 			const readyForPickupAt = start_time.toISOString();
 			const orderData = {
 				is_daily_meal: true,
-				items: sortedGroupedSubscriptions[i].dm_items,
+				items: items,
 				details: {
 					type: 'delivery',
 					sub_total_price: 0,
@@ -316,16 +334,15 @@ async function createDailyMeals(req, res) {
 					discount_savings: 0,
 					provider_address: providerLocation,
 					business_id: business.business_id,
-					delivery_cost: 2.4,
+					delivery_cost: DAILY_MEAL_DELIVERY_COST_CENTS / 100,
 					delivery_earnings: 0,
-					provider_delivery_cost: 2.4,
 					ready_for_pickup_at: readyForPickupAt,
 					customer_expected_delivery_at: customerExpectedDeliveryAt.toISOString(),
-					floor_number: user.details?.floor_number,
-					door_number: user.details?.door_number,
-					daily_meal_delivery_order: i + 1, // Add sorted order number (1-based index)
+					daily_meal_delivery_order: scheduledMealsRoute.length > 1,
 					duration: cumulativeTime,
-					subscription_grouped_id: sortedGroupedSubscriptions[i].grouped_id,
+					distance: distanceValue / 1000,
+					subscription_id: sortedSubscriptions[i].id,
+					instance_ids: sortedSubscriptions[i].daily_meal_instances.map((instance) => instance.id),
 				},
 				payment: {
 					status: 'SUCCESSFUL',
@@ -337,10 +354,10 @@ async function createDailyMeals(req, res) {
 					date: new Date().toISOString(),
 				},
 				courier_instructions: {
-					text: sortedGroupedSubscriptions[i]?.courier_comment,
+					text: sortedSubscriptions[i]?.courier_comment || '',
 				},
 				restaurant_message: {
-					text: null,
+					text: '',
 				},
 				delivery_location: deliveryLocation,
 				pickup_location: providerLocation,
@@ -357,12 +374,6 @@ async function createDailyMeals(req, res) {
 				},
 				user.user_id
 			);
-			for (const daily_meals_subscriptions_id of sortedGroupedSubscriptions[i].subscription_ids) {
-				await DeliveryOrderDao.updateDailyMealSubscriptionOrderCreatedById(
-					daily_meals_subscriptions_id,
-					order.created_at
-				);
-			}
 			await DeliveryOrderDao.createOrderSent(order.order_id, deliveryDriver);
 			await DeliveryOrderDao.connectOrderWithDriver(order.order_id, deliveryDriver.delivery_driver_id);
 			SocketStore.addUserToRoom(order.user_id, `order_${order.order_id}`);
@@ -782,6 +793,11 @@ async function completeOrder(req, res) {
 					}
 				}
 			}
+		} else {
+			await DailyMealDao.updateDailyMealInstances(
+				order.details.instance_ids,
+				DAILY_MEAL_INSTANCE_STATUS.DELIVERED
+			);
 		}
 		await handleReferral(order.user_id);
 		sendDeliveryOrderNotifications(order.user, null, order.user_id, null, order.status);
@@ -1537,13 +1553,12 @@ async function getDeliveryOrdersToday(req, res) {
 			where: {
 				status: DELIVERY_ORDER_STATUS.SUCCESS,
 				created_at: { gte: new Date(new Date().setHours(0, 0, 0, 0)) },
+				is_daily_meal: req.query?.dailyMeals === 'true' ? true : false,
 			},
 		});
-		if (orders) {
-			return res
-				.status(200)
-				.json({ orders: orders.length, amount: todaysEarnings(orders, DELIVERY_ORDER_STATUS.SUCCESS) });
-		}
+		return res
+			.status(200)
+			.json({ orders: orders?.length || 0, amount: todaysEarnings(orders, DELIVERY_ORDER_STATUS.SUCCESS) });
 	} catch (e) {
 		console.error('DeliveryOrderController', e);
 		res.status(500).json(e);

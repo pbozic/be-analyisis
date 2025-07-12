@@ -738,6 +738,7 @@ async function getTotalEarnings(req, res) {
 		const orders = await DeliveryOrderDao.getOrders({
 			where: {
 				status: DELIVERY_ORDER_STATUS.SUCCESS,
+				is_daily_meal: req.query?.dailyMeals === 'true' ? true : false,
 			},
 		});
 		const totalEarnings = calculateTotalEarnings(orders);

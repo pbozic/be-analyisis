@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { SPLIT_DESTINATION_TYPE, PAYMENT_STATUS, SUBSCRIPTION_TYPE } from '@prisma/client';
+import { SPLIT_DESTINATION_TYPE, PAYMENT_STATUS, SUBSCRIPTION_TYPE, DAILY_MEAL_INSTANCE_STATUS } from '@prisma/client';
 
 import UsersDao from '../dao/User.js';
 import BusinessDao from '../dao/Business.js';
@@ -10,6 +10,7 @@ import DailyMealDao from '../dao/DailyMealDao.ts';
 import AddressDao from '../dao/Address.js';
 import { DAILY_MEAL_DELIVERY_COST_CENTS, RESTAURANT_SHARE_PERC } from '../lib/constants.js';
 import dailyMealHelpers, { mapDateToEarlierWeekday } from '../lib/dailyMealHelpers.ts';
+import prisma from '../prisma/prisma.js';
 
 /**
  *
@@ -167,7 +168,7 @@ export async function dailyMealsSubscriptionPayment(
 
 			created_payment = payment_response?.payment;
 			if (created_payment.status === PAYMENT_STATUS.SUCCEEDED) {
-				await dailyMealHelpers.generateInstancesForSubscription(new_subscription.id);
+				const updated_sub = await dailyMealHelpers.activateSubscriptionById(new_subscription.id);
 			}
 		}
 
@@ -258,7 +259,7 @@ export async function getUserDailyMealSubscriptions(
  *
  * - GET /delivery/orders/daily_meals/business/{business_id}
  * - @tag Delivery
- * - @summary Get all daily meal subscriptions for a business
+ * - @summary Get active daily meal subscriptions for a business
  * - @description Returns all daily meal subscriptions for the given business, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances. Optionally filter by start_date in the request body.
  * - @operationId getDailyMealsSubscriptionsByBusinessId
  * - @pathParam {string} business_id - The ID of the business to fetch subscriptions for
@@ -303,23 +304,305 @@ export async function getUserDailyMealSubscriptions(
  *
  * ./prisma/schema.prisma
  */
-export async function getDailyMealsSubscriptionsByBusinessId(
+export async function getActiveDailyMealsSubscriptionsByBusinessId(
 	req: ValidatedRequest<{ start_date?: string }, { business_id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
 		const { business_id } = req.params;
 		const { start_date } = req.body;
-		const subscriptions = await DailyMealDao.getDailyMealSubscriptionsByBusinessId(business_id, start_date);
+		const subscriptions = await DailyMealDao.getActiveDailyMealSubscriptionsByBusinessId(business_id, start_date);
 		res.status(200).json(subscriptions);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';
-		res.status(500).json({ message: 'Error fetching daily meal subscriptions', error: message });
+		res.status(500).json({ message: 'Error fetching active daily meal subscriptions', error: message });
+	}
+}
+
+/**
+ *
+ * - GET /business/daily_meal_subscriptions/{business_id}
+ * - @tag Delivery
+ * - @summary Get all daily meal subscriptions for a business
+ * - @description Returns all daily meal subscriptions for the given business, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances. Optionally filter by start_date in the request body.
+ * - @operationId getDailyMealsSubscriptionsByBusinessId
+ * - @pathParam {string} business_id - The ID of the business to fetch subscriptions for
+ * - @bodyDescription Optionally filter by start_date (ISO string)
+ * - @bodyContent {
+ *     "start_date": "2025-07-01T00:00:00.000Z"
+ *   } application/json
+ * - @bodyRequired false
+ * - @response 200 - List of daily meal subscriptions for the business
+ * - @responseContent {object} 200.application/json
+ * - @responseExample 200.application/json [
+ *     {
+ *       "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *       "user_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *       "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *       "delivery_address_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *       "start_date": "2025-07-01T00:00:00.000Z",
+ *       "end_date": null,
+ *       "type": "DATED",
+ *       "status": "AWAITING_PAYMENT",
+ *       "courier_comment": "Leave at the door",
+ *       "created_at": "2025-07-01T00:00:00.000Z",
+ *       "updated_at": "2025-07-01T00:00:00.000Z",
+ *       "user": { ... },
+ *       "business": { ... },
+ *       "delivery_address": { ... },
+ *       "customers": [ ... ],
+ *       "days": [ ... ],
+ *       "weekdays": [ ... ],
+ *       "daily_meal_instances": [ ... ]
+ *     }
+ *   ]
+ * - @response 500 - Error fetching daily meal subscriptions
+ * - @prisma_model daily_meal_subscriptions
+ * - @prisma_model users
+ * - @prisma_model business
+ * - @prisma_model addresses
+ * - @prisma_model daily_meal_subscription_customers
+ * - @prisma_model daily_meal_subscription_days
+ * - @prisma_model daily_meal_subscription_weekdays
+ * - @prisma_model daily_meal_instances
+ *
+ * ./prisma/schema.prisma
+ */
+export async function getDailyMealsSubscriptionsByBusinessId(
+	req: ValidatedRequest<unknown, { business_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const { business_id } = req.params;
+		const subscriptions = await DailyMealDao.getDailyMealSubscriptionsByBusinessId(business_id);
+		res.status(200).json(subscriptions);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error fetching active daily meal subscriptions', error: message });
+	}
+}
+
+/** *
+ * - PATCH /delivery/orders/daily_meals/subscription/{subscription_id}/activate
+ * - @tag Delivery
+ * - @summary Activate a daily meal subscription by ID
+ * - @description Activates a daily meal subscription by its ID, marking it as active and ready for delivery.
+ * - @operationId activateSubscriptionById
+ * - @pathParam {string} subscription_id - The ID of the daily meal subscription to activate
+ * - @response 200 - Daily meal subscription activated successfully
+ * - @responseContent {object} 200.application/json
+ * - @responseExample 200.application/json {
+ *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "status": "ACTIVE",
+ *     "updated_at": "2025-07-01T00:00:00.000Z",
+ *     "daily_meal_instances": [ ... ]
+ *   }
+ * - @response 500 - Error activating daily meal subscription
+ * - @prisma_model daily_meal_subscriptions
+ * - @prisma_model daily_meal_instances
+ * - @prisma_model daily_meal_subscription_customers
+ * - @prisma_model daily_meal_subscription_days
+ * - @prisma_model daily_meal_subscription_weekdays
+ * ./prisma/schema.prisma
+ */
+export async function activateSubscriptionById(
+	req: ValidatedRequest<unknown, { subscription_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const { subscription_id } = req.params;
+		const updated_subscription = await dailyMealHelpers.activateSubscriptionById(subscription_id);
+		res.status(200).json(updated_subscription);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error activating daily meal subscription', error: message });
+	}
+}
+
+/** * - PATCH /delivery/orders/daily_meals/subscription/{subscription_id}/cancel
+ * - @tag Delivery
+ * - @summary Cancel a daily meal subscription by ID
+ * - @description Cancels a daily meal subscription by its ID, marking it as canceled and updating all related daily meal instances to CANCELED status.
+ * - @operationId cancelSubscriptionById
+ * - @pathParam {string} subscription_id - The ID of the daily meal subscription to cancel
+ * - @response 200 - Daily meal subscription canceled successfully
+ * - @responseContent {object} 200.application/json
+ * - @responseExample 200.application/json {
+ *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "status": "CANCELED",
+ *     "updated_at": "2025-07-01T00:00:00.000Z",
+ *     "daily_meal_instances": [ ... ]
+ *   }
+ * - @response 500 - Error canceling daily meal subscription
+ * - @prisma_model daily_meal_subscriptions
+ * - @prisma_model daily_meal_instances
+ * - @prisma_model daily_meal_subscription_customers
+ * - @prisma_model daily_meal_subscription_days
+ * - @prisma_model daily_meal_subscription_weekdays
+ * ./prisma/schema.prisma
+ */
+export async function cancelSubscriptionById(
+	req: ValidatedRequest<unknown, { subscription_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const { subscription_id } = req.params;
+		const updated_subscription = await dailyMealHelpers.cancelSubscriptionById(subscription_id);
+		res.status(200).json(updated_subscription);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error canceling daily meal subscription', error: message });
+	}
+}
+
+/** * - PATCH /delivery/orders/daily_meals/instance/{instance_id}/cancel
+ * - @tag Delivery
+ * - @summary Cancel a daily meal instance by ID
+ * - @description Cancels a daily meal instance by its ID, marking it as canceled.
+ * - @operationId cancelDailyMealInstanceById
+ * - @pathParam {string} instance_id - The ID of the daily meal instance to cancel
+ * - @response 200 - Daily meal instance canceled successfully
+ * - @responseContent {object} 200.application/json
+ * - @responseExample 200.application/json {
+ *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "status": "CANCELED",
+ *     "updated_at": "2025-07-01T00:00:00.000Z",
+ *     "daily_meal_subscription_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "daily_meal_subscription": { ... },
+ *     "daily_meal_subscription_customer": { ... },
+ *     "daily_meal_subscription_day": { ... },
+ *     "daily_meal_subscription_weekday": { ... },
+ *     "delivery_address": { ... },
+ *     "created_at": "2025-07-01T00:00:00.000Z",
+ *     "updated_at": "2025-07-01T00:00:00.000Z"
+ * *   }
+ * - @response 500 - Error canceling daily meal instance
+ * - @prisma_model daily_meal_instances
+ * - @prisma_model daily_meal_subscriptions
+ * - @prisma_model daily_meal_subscription_customers
+ * - @prisma_model daily_meal_subscription_days
+ * - @prisma_model daily_meal_subscription_weekdays
+ * - @prisma_model addresses
+ * ./prisma/schema.prisma
+ */
+export async function cancelDailyMealInstanceById(
+	req: ValidatedRequest<unknown, { instance_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const { instance_id } = req.params;
+		const updated_instance = await prisma.daily_meal_instances.update({
+			where: { id: instance_id },
+			data: { status: DAILY_MEAL_INSTANCE_STATUS.CANCELED },
+		});
+		res.status(200).json(updated_instance);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error canceling daily meal instance', error: message });
+	}
+}
+
+/** * - GET /delivery/orders/daily_meals/subscription/{subscription_id}
+ * - @tag Delivery
+ * - @summary Get a daily meal subscription by ID
+ * - @description Returns a daily meal subscription by its ID, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances.
+ * - @operationId getSubscriptionById
+ * - @pathParam {string} subscription_id - The ID of the daily meal subscription to fetch
+ * - @response 200 - Daily meal subscription found
+ * - @responseContent {object} 200.application/json
+ * - @responseExample 200.application/json {
+ *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "user_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "business_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "delivery_address_id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "start_date": "2025-07-01T00:00:00.000Z",
+ *     "end_date": null,
+ *     "type": "DATED",
+ *     "status": "ACTIVE",
+ *     "courier_comment": "Leave at the door",
+ *     "created_at": "2025-07-01T00:00:00.000Z",
+ *     "updated_at": "2025-07-01T00:00:00.000Z",
+ *     "user": { ... },
+ *     "business": { ... },
+ *     "delivery_address": { ... },
+ *     "customers": [ ... ],
+ *     "days": [ ... ],
+ *     "weekdays": [ ... ],
+ *     "daily_meal_instances": [ ... ],
+ *     "payment": { ... }
+ *   }
+ * - @response 404 - Daily meal subscription not found
+ * - @responseContent {object} 404.application/json
+ * - @responseExample 404.application/json {
+ *     "message": "Daily meal subscription not found"
+ *   }
+ * - @response 500 - Error fetching daily meal subscription
+ * - @responseContent {object} 500.application/json
+ * - @responseExample 500.application/json {
+ *     "message": "Error fetching daily meal subscription",
+ *     "error": "Error message here"
+ *   }
+ * - @prisma_model daily_meal_subscriptions
+ * - @prisma_model users
+ * - @prisma_model business
+ * - @prisma_model addresses
+ * - @prisma_model daily_meal_subscription_customers
+ * - @prisma_model daily_meal_subscription_days
+ * - @prisma_model daily_meal_subscription_weekdays
+ * - @prisma_model daily_meal_instances
+ * - @prisma_model payments
+ * ./prisma/schema.prisma
+ */
+export async function getSubscriptionById(
+	req: ValidatedRequest<unknown, { subscription_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const { subscription_id } = req.params;
+		const subscription = await DailyMealDao.getSubscriptionById(subscription_id, {
+			user: true,
+			business: true,
+			delivery_address: true,
+			customers: true,
+			days: true,
+			weekdays: true,
+			daily_meal_instances: {
+				include: {
+					menu_category: {
+						include: {
+							menu_categories_categories: {
+								include: {
+									category: true,
+								},
+							},
+							menu_items: true,
+						},
+					},
+					customer: true,
+				},
+				orderBy: {
+					intended_date: 'asc',
+				},
+			},
+		});
+		if (!subscription) {
+			res.status(40).json({ message: 'Daily meal subscription not found' });
+			return;
+		}
+		res.status(200).json(subscription);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error fetching daily meal subscription', error: message });
 	}
 }
 
 export default {
 	dailyMealsSubscriptionPayment,
 	getUserDailyMealSubscriptions,
+	getActiveDailyMealsSubscriptionsByBusinessId,
 	getDailyMealsSubscriptionsByBusinessId,
+	activateSubscriptionById,
+	cancelSubscriptionById,
+	cancelDailyMealInstanceById,
+	getSubscriptionById,
 };
