@@ -189,9 +189,9 @@ async function createOrder(req, res) {
  * POST /delivery/orders/daily_meals
  * @tag Delivery
  * @summary Create daily meals.
- * @description This creates the daily meals for the subscribed users. Returns list of orders if successful.
+ * @description This creates the daily meals for the subscribed users.
  * @operationId createDailyMeals
- * @response 200 - Successful operation. Returns the newly created daily meals in the response body.
+ * @response 200 - Successful operation. Returns updated delivery driver.
  * @responseContent {DeliveryOrder} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
@@ -390,7 +390,7 @@ async function createDailyMeals(req, res) {
 			return res.status(404).json({ message: 'No daily meals could be created.' });
 		}
 		scheduledMealsRoute.push(providerLocation);
-		await DeliveryDriverDao.updateDeliveryDriver(deliveryDriver?.delivery_driver_id, {
+		const updatedDriver = await DeliveryDriverDao.updateDeliveryDriver(deliveryDriver?.delivery_driver_id, {
 			scheduled_meals_route: scheduledMealsRoute,
 			delivery_timeline: [],
 			on_daily_meals: true,
@@ -399,7 +399,7 @@ async function createDailyMeals(req, res) {
 			orders: orders,
 			scheduled_meals_route: scheduledMealsRoute,
 		});
-		res.status(200).json(orders);
+		res.status(200).json(updatedDriver);
 	} catch (error) {
 		console.error(error);
 		res.status(500).json({ message: 'Something went wrong with creating daily meals...' });
