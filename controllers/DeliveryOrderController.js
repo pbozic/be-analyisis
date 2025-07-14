@@ -2,7 +2,13 @@ import { skip } from 'node:test';
 
 import moment from 'moment';
 import { v4 } from 'uuid';
-import { PAYMENT_STATUS, SUBSCRIPTION_STATUS, SPLIT_DESTINATION_TYPE, SPLIT_STATUS } from '@prisma/client';
+import {
+	PAYMENT_STATUS,
+	SUBSCRIPTION_STATUS,
+	SPLIT_DESTINATION_TYPE,
+	SPLIT_STATUS,
+	DAILY_MEAL_INSTANCE_STATUS,
+} from '@prisma/client';
 import { getPrismaClient } from '@prisma/client/runtime/library';
 
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
@@ -375,11 +381,13 @@ async function createDailyMeals(req, res) {
 				user.user_id
 			);
 			await DeliveryOrderDao.createOrderSent(order.order_id, deliveryDriver);
-			await DeliveryOrderDao.connectOrderWithDriver(order.order_id, deliveryDriver.delivery_driver_id);
 			SocketStore.addUserToRoom(order.user_id, `order_${order.order_id}`);
 			SocketStore.addUserToRoom(deliveryDriver.user_id, `order_${order.order_id}`);
 			orders.push(order);
 			scheduledMealsRoute.push(deliveryLocation);
+		}
+		if (orders.length === 0) {
+			return res.status(404).json({ message: 'No daily meals could be created.' });
 		}
 		scheduledMealsRoute.push(providerLocation);
 		await DeliveryDriverDao.updateDeliveryDriver(deliveryDriver?.delivery_driver_id, {
