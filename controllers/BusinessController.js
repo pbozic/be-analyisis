@@ -307,11 +307,12 @@ async function listPromoSectionsWithMerchants(req, res) {
 				req.body.radius,
 				req.body.filterOperator || 'OR',
 				req.body.isDailyMealSearch || false,
-				favorite ? null : promoSection.promo_sections_id,
+				null, //favorite ? null : promoSection.promo_sections_id,
 				1,
 				10,
 				favorite ? favoriteBusinessIds : null
 			);
+			console.log('esResults for promoSection', promoSection.tag, esResults);
 			promoSection.translations = translations;
 			if (!esResults || !esResults.results || esResults.results.length === 0) {
 				esResults.results = [];
