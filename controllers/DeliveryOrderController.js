@@ -393,6 +393,7 @@ async function createDailyMeals(req, res) {
 		await DeliveryDriverDao.updateDeliveryDriver(deliveryDriver?.delivery_driver_id, {
 			scheduled_meals_route: scheduledMealsRoute,
 			delivery_timeline: [],
+			on_daily_meals: true,
 		});
 		userSocket.emit('daily_meals', {
 			orders: orders,
