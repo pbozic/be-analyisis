@@ -21,6 +21,7 @@ import DailyMealDao from '../dao/DailyMealDao.ts';
 import dailyMealHelpers from '../lib/dailyMealHelpers.ts';
 import { handleStockSync } from './DeliveryOrderController.js';
 import { BUSINESS_TYPE } from '../lib/constants.js';
+import prisma from '../prisma/prisma.js';
 dotenv.config();
 const { io, UserSockets, SocketStore } = socket;
 async function handlePaymentIntentSuccess(paymentIntent) {
@@ -478,7 +479,7 @@ async function handleWebhook(req, res) {
 			case 'checkout.session.completed':
 				handleSessionCompleted(data);
 				break;
-			case 'invoice.paid':
+			case 'customer.subscription.created':
 			case 'customer.subscription.updated': {
 				const subscription = event.data.object;
 				if (subscription.metadata.type === 'word_buy') {
@@ -489,10 +490,6 @@ async function handleWebhook(req, res) {
 					await prisma.word_buy.updateMany({
 						where: { stripe_subscription_id: subscription.id },
 						data: { expires_at: newExpiresAt },
-					});
-					await prisma.business.updateMany({
-						where: { word_buy_stripe_subscription_id: subscription.id },
-						data: { word_buy_stripe_subscription_id: null },
 					});
 					console.log('Updated expires_at for all word_buy in subscription:', subscription.id);
 				}
