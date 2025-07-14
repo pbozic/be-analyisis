@@ -117,12 +117,13 @@ export async function createDailyMealCategoryWithPrice(
  * @prisma_model daily_meal_categories
  */
 export async function getDailyMealCategoriesForBusiness(
-	req: ValidatedRequest<unknown, { business_id: string }>,
+	req: ValidatedRequest<unknown, { business_id: string }, { detailed?: string }>,
 	res: Response<DailyMealCategory[] | { message: string; error?: string }>
 ) {
 	try {
 		const { business_id } = req.params;
-		const dmcs = await DmcDao.getDailyMealCategoriesForBusiness(business_id);
+		const detailed = req.query?.detailed === 'true';
+		const dmcs = await DmcDao.getDailyMealCategoriesForBusiness(business_id, detailed);
 		res.status(200).json(dmcs);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';

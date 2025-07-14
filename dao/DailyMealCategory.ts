@@ -43,14 +43,14 @@ export async function createDailyMealCategoryWithPrice({
 	return dmc;
 }
 
-export async function getDailyMealCategoriesForBusiness(business_id: string) {
+export async function getDailyMealCategoriesForBusiness(business_id: string, detailed: boolean = false) {
 	return await prisma.daily_meal_categories.findMany({
 		where: { business_id },
 		include: {
 			category: true,
 			daily_meal_category_prices: {
 				orderBy: { valid_from: 'desc' },
-				take: 1,
+				take: detailed ? undefined : 1,
 			},
 		},
 	});
