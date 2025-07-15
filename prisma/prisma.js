@@ -12,7 +12,6 @@ const basePrisma = new PrismaClient({
 	log: ['warn', 'error'],
 });
 
-console.log(process.env.DATABASE_URL);
 const prisma = basePrisma.$extends({
 	query: {
 		$allModels: {
