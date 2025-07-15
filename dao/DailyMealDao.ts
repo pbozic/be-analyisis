@@ -162,6 +162,7 @@ export async function getTodayDailyMealSubscriptionsByBusinessId(business_id: st
 		},
 		include: {
 			user: true,
+			delivery_driver: true,
 			business: true,
 			delivery_address: true,
 			customers: true,
