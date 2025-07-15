@@ -120,7 +120,7 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 		//TODO:make function for single day geenration for single business
 		for (let menu of valid_menus) {
 			for (let dmc of business.daily_meal_categories.filter(
-				(cat: daily_meal_categories) => cat.start_date.getTime() <= menu.date.getTime()
+				(cat: daily_meal_categories) => cat.start_date.getTime() <= menu.date.getTime() && cat.active
 			)) {
 				const sorted_prices: daily_meal_category_prices[] = dmc.daily_meal_category_prices.sort(
 					(p1: daily_meal_category_prices, p2: daily_meal_category_prices) =>
@@ -302,7 +302,7 @@ export async function generateDailyMealMenuCategoriesAndInstancesFor14Days() {
 	const now = new Date();
 	now.setUTCHours(0, 0, 0, 0);
 	const futureDate = new Date(now);
-	futureDate.setUTCDate(futureDate.getUTCDate() + 13);
+	futureDate.setUTCDate(futureDate.getUTCDate() + 14);
 
 	console.log('Generating MenuCategories up to ', futureDate.toISOString());
 	try {
