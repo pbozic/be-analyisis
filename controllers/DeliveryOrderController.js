@@ -314,6 +314,13 @@ async function startDailyMeals(req, res) {
 					duration: cumulativeTime,
 					distance: distanceValue / 1000,
 				},
+				timeline: [
+					{
+						status: DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED,
+						driver_id: deliveryDriver.delivery_driver_id,
+						timestamp: new Date().toISOString(),
+					},
+				],
 			};
 			const updatedOrder = await DeliveryOrderDao.updateOrder(order.order_id, orderData);
 			if (updatedOrder) orders.push(updatedOrder);
