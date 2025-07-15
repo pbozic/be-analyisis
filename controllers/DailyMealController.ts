@@ -1,5 +1,11 @@
 import { Request, Response } from 'express';
-import { SPLIT_DESTINATION_TYPE, PAYMENT_STATUS, SUBSCRIPTION_TYPE, DAILY_MEAL_INSTANCE_STATUS } from '@prisma/client';
+import {
+	SPLIT_DESTINATION_TYPE,
+	PAYMENT_STATUS,
+	SUBSCRIPTION_STATUS,
+	SUBSCRIPTION_TYPE,
+	DAILY_MEAL_INSTANCE_STATUS,
+} from '@prisma/client';
 
 import UsersDao from '../dao/User.js';
 import BusinessDao from '../dao/Business.js';
@@ -97,6 +103,17 @@ export async function dailyMealsSubscriptionPayment(
 		const user = await UsersDao.getUserById(req.user?.user_id);
 		const business = await BusinessDao.getBusinessById(business_id);
 		const deliverydaymapping: Record<number, number> = business.daily_meals_delivery_mapping || {};
+
+		const subscriptions = await DailyMealDao.getDailyMealSubscriptionsByBusinessId(business_id, {
+			status: {
+				in: [SUBSCRIPTION_STATUS.ACTIVE, SUBSCRIPTION_STATUS.AWAITING_PAYMENT],
+			},
+		});
+		const customers = subscriptions.flatMap((sub) => sub.customers);
+		if (customers.length > business.maximum_daily_meals_subscribers) {
+			res.status(400).json({ message: `Business has reached the maximum number of daily meal subscribers` });
+			return;
+		}
 
 		const restaurant_acc = business.stripe_account_id;
 		const delivery_address = await AddressDao.addAddress({
@@ -586,7 +603,7 @@ export async function getSubscriptionById(
 			},
 		});
 		if (!subscription) {
-			res.status(40).json({ message: 'Daily meal subscription not found' });
+			res.status(400).json({ message: 'Daily meal subscription not found' });
 			return;
 		}
 		res.status(200).json(subscription);

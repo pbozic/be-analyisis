@@ -109,7 +109,7 @@ async function deactivateBusiness(req, res) {
  * @tag Business
  * @summary Get a list of businesses
  * @description Returns a list of businesses.
- * @operationId getBusinesses
+ * @operationId getBusinessesByType
  * @response 200 - successful operation
  * @responseContent {User[]} 200.application/json
  * @response 400 - Error occurred while obtaining the business list

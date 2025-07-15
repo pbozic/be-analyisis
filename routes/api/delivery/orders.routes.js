@@ -17,7 +17,7 @@ router.get('/order/user/:order_id', DeliveryOrderController.getUserByDeliveryOrd
 router.get('/business/:business_id', DeliveryOrderController.getDeliveryOrdersByBusinessId);
 router.get('/:daily_meals', DeliveryOrderController.getDeliveryOrders);
 
-router.post('/daily_meals', DeliveryOrderController.createDailyMeals);
+router.post('/daily_meals', DeliveryOrderController.startDailyMeals);
 router.post('/order', DeliveryOrderController.createOrder);
 router.post('/order/merchant_accept', DeliveryOrderController.merchantAcceptOrder);
 router.post('/order/dispatcher_cancel', DeliveryOrderController.dispatcherCancel);

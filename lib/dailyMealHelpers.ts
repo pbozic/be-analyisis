@@ -12,6 +12,10 @@ import {
 	SUBSCRIPTION_STATUS,
 	DAILY_MEAL_INSTANCE_STATUS,
 	SUBSCRIPTION_TYPE,
+	menu_items,
+	addresses,
+	DELIVERY_ORDER_STATUS,
+	delivery_drivers,
 } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
@@ -19,6 +23,27 @@ import MenuDao from '../dao/Menu.js';
 import MenuCategoryDao from '../dao/MenuCategory.js';
 import DailyMealDao from '../dao/DailyMealDao.js';
 import DailyMealCategory from '../dao/DailyMealCategory.js';
+import BusinessDao from '../dao/Business.js';
+import DeliveryOrderDao from '../dao/DeliveryOrder.js';
+import { DAILY_MEAL_DELIVERY_COST_CENTS } from './constants.js';
+
+/**
+ * Convert JavaScript's weekday (Sunday=0) to our system's weekday (Monday=0)
+ * @param jsWeekday JavaScript weekday (0-6, Sunday=0)
+ * @returns Our system weekday (0-6, Monday=0)
+ */
+function jsWeekdayToOurWeekday(jsWeekday: number): number {
+	return (jsWeekday + 6) % 7;
+}
+
+/**
+ * Convert our system's weekday (Monday=0) to JavaScript's weekday (Sunday=0)
+ * @param ourWeekday Our system weekday (0-6, Monday=0)
+ * @returns JavaScript weekday (0-6, Sunday=0)
+ */
+function ourWeekdayToJsWeekday(ourWeekday: number): number {
+	return (ourWeekday + 1) % 7;
+}
 
 /**
  * Maps a date to an earlier date according to the given weekday:weekday mapping.
@@ -27,7 +52,9 @@ import DailyMealCategory from '../dao/DailyMealCategory.js';
  * @returns {Date}
  */
 export function mapDateToEarlierWeekday(date: Date, mapping: Record<number, number>): Date {
-	const currentWeekday = date.getUTCDay();
+	const jsWeekday = date.getUTCDay();
+	const currentWeekday = jsWeekdayToOurWeekday(jsWeekday);
+
 	const targetWeekday = mapping[currentWeekday];
 
 	if (typeof targetWeekday !== 'number' || targetWeekday === currentWeekday) {
@@ -35,8 +62,11 @@ export function mapDateToEarlierWeekday(date: Date, mapping: Record<number, numb
 		return date;
 	}
 
+	const jsCurrentWeekday = ourWeekdayToJsWeekday(currentWeekday);
+	const jsTargetWeekday = ourWeekdayToJsWeekday(targetWeekday);
+
 	// Calculate days to subtract to reach the earlier day
-	const diff = (currentWeekday - targetWeekday + 7) % 7;
+	const diff = (jsCurrentWeekday - jsTargetWeekday + 7) % 7;
 	const result = new Date(date);
 	result.setUTCDate(date.getUTCDate() - diff);
 	return result;
@@ -97,7 +127,7 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 		//TODO:make function for single day geenration for single business
 		for (let menu of valid_menus) {
 			for (let dmc of business.daily_meal_categories.filter(
-				(cat: daily_meal_categories) => cat.start_date.getTime() <= menu.date.getTime()
+				(cat: daily_meal_categories) => cat.start_date.getTime() <= menu.date.getTime() && cat.active
 			)) {
 				const sorted_prices: daily_meal_category_prices[] = dmc.daily_meal_category_prices.sort(
 					(p1: daily_meal_category_prices, p2: daily_meal_category_prices) =>
@@ -148,7 +178,7 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 					date
 				);
 				for (let dmc of business.daily_meal_categories.filter(
-					(cat: daily_meal_categories) => cat.start_date.getTime() <= new_menu.date.getTime()
+					(cat: daily_meal_categories) => cat.start_date.getTime() <= new_menu.date.getTime() && cat.active
 				)) {
 					const sorted_prices: daily_meal_category_prices[] = dmc.daily_meal_category_prices.sort(
 						(p1: daily_meal_category_prices, p2: daily_meal_category_prices) =>
@@ -279,7 +309,7 @@ export async function generateDailyMealMenuCategoriesAndInstancesFor14Days() {
 	const now = new Date();
 	now.setUTCHours(0, 0, 0, 0);
 	const futureDate = new Date(now);
-	futureDate.setUTCDate(futureDate.getUTCDate() + 13);
+	futureDate.setUTCDate(futureDate.getUTCDate() + 14);
 
 	console.log('Generating MenuCategories up to ', futureDate.toISOString());
 	try {
@@ -297,8 +327,9 @@ export async function generateDailyMealMenuCategoriesAndInstancesFor14Days() {
 export async function generateDMInstancesForDateSimple(datestring: string) {
 	const intended_date = new Date(datestring);
 	intended_date.setUTCHours(0, 0, 0, 0);
-	const intended_weekday = intended_date.getUTCDay();
-	console.log('Generating DM instances for ', intended_date);
+	const jsWeekday = intended_date.getUTCDay();
+	const intended_weekday = jsWeekdayToOurWeekday(jsWeekday);
+	console.log('Generating DM instances for ', intended_date, 'weekday:', intended_weekday);
 	const subscriptions = await prisma.daily_meal_subscriptions.findMany({
 		where: {
 			status: 'ACTIVE',
@@ -431,7 +462,7 @@ export async function generateDMInstancesForDateSimple(datestring: string) {
 					if (menuCategory) {
 						if (
 							!sub_customer.daily_meal_instances.some(
-								(instance) =>
+								(instance: daily_meal_instances) =>
 									instance.intended_date.getTime() === intended_date.getTime() &&
 									instance.menu_category_id === menuCategory.menu_category_id
 							)
@@ -510,12 +541,14 @@ function getUTCWeekdayDatesInRange(
 	start.setUTCHours(0, 0, 0, 0);
 	end.setUTCHours(0, 0, 0, 0);
 
-	const weekdaySet = new Set(weekdays.map((w) => w.intended_weekday));
+	const ourWeekdaySet = new Set(weekdays.map((w) => w.intended_weekday));
 	const result: Date[] = [];
 
 	for (let dt = new Date(start); dt <= end; dt.setUTCDate(dt.getUTCDate() + 1)) {
-		const weekday = dt.getUTCDay();
-		if (weekdaySet.has(weekday)) {
+		const jsWeekday = dt.getUTCDay();
+		const ourWeekday = jsWeekdayToOurWeekday(jsWeekday);
+
+		if (ourWeekdaySet.has(ourWeekday)) {
 			result.push(new Date(Date.UTC(dt.getUTCFullYear(), dt.getUTCMonth(), dt.getUTCDate())));
 		}
 	}
@@ -542,7 +575,7 @@ export async function cancelInstancesForSubscription(subscription_id: string) {
 		console.log(`No daily meal instances found for subscription ${subscription_id}`);
 		return;
 	}
-	const instanceIds = sub.daily_meal_instances.map((instance) => instance.id);
+	const instanceIds = sub.daily_meal_instances.map((instance: daily_meal_instances) => instance.id);
 	try {
 		await prisma.daily_meal_instances.updateMany({
 			where: {
@@ -634,7 +667,7 @@ export async function generateInstancesForSubscription(subscription_id: string) 
 				if (menuCategoryId) {
 					if (
 						!sub_customer.daily_meal_instances.some(
-							(instance) =>
+							(instance: daily_meal_instances) =>
 								instance.intended_date.getTime() === intended_date.getTime() &&
 								instance.menu_category_id === menuCategoryId
 						)
@@ -705,6 +738,146 @@ export async function cancelSubscriptionById(subscription_id: string) {
 	}
 }
 
+function assignDeliveryDriver(delivery_drivers: delivery_drivers[]) {
+	if (!delivery_drivers || delivery_drivers.length === 0) {
+		throw new Error('No delivery drivers available for assignment.');
+	}
+	const driver = delivery_drivers.reduce((prev, current) => {
+		return (prev.subscriptions?.length || 0) < (current.subscriptions?.length || 0) ? prev : current;
+	});
+	if (!driver) {
+		throw new Error('No delivery driver found with the least active subscriptions.');
+	}
+	console.log(
+		`Assigned delivery driver: ${driver.delivery_driver_id} with ${driver.subscriptions?.length} active subscriptions.`
+	);
+	return driver;
+}
+
+export async function createDailyMeals() {
+	try {
+		const businesses = await BusinessDao.getBusinesses({
+			where: {
+				offers_daily_meals: true,
+			},
+		});
+		if (!businesses) {
+			throw new Error('Businesses not found.');
+		}
+		for (const business of businesses) {
+			const subscriptions = await DailyMealDao.getTodayDailyMealSubscriptionsByBusinessId(business.business_id);
+			if (!subscriptions || subscriptions.length === 0) {
+				throw new Error(`No daily meal subscriptions found for business ${business.business_id}.`);
+			}
+			const convertAddressToLocation = (address: addresses) => {
+				return {
+					address: address.address,
+					coordinates: {
+						latitude: address.latitude,
+						longitude: address.longitude,
+					},
+				};
+			};
+
+			const providerLocation = convertAddressToLocation(business.delivery_address);
+			for (const subscription of subscriptions) {
+				const deliveryLocation = convertAddressToLocation(subscription.delivery_address);
+				if (subscription.daily_meal_instances.length === 0) {
+					console.warn(`No daily meal instances found for subscription ID ${subscription.id}`);
+					continue;
+				}
+
+				const subItems = subscription.daily_meal_instances
+					.map((instance: daily_meal_instances) => instance.menu_category.menu_items)
+					.flat();
+				const menuItemsMap = new Map();
+				subItems.forEach((item: menu_items) => {
+					const itemId = item.menu_item_id;
+					if (!menuItemsMap.has(itemId)) {
+						menuItemsMap.set(itemId, {
+							item: item,
+							count: 1,
+						});
+					} else {
+						menuItemsMap.get(itemId).count++;
+					}
+				});
+				const items = Array.from(menuItemsMap.values()).map(({ item, count }) => ({
+					...item,
+					quantity: count,
+				}));
+
+				let connectObj = {};
+				let driver = subscription.delivery_driver;
+				if (!driver && subscription.type === SUBSCRIPTION_TYPE.DATED) {
+					driver = assignDeliveryDriver(business.delivery_drivers);
+					if (driver.delivery_driver_id) {
+						connectObj = {
+							delivery_driver: {
+								connect: {
+									delivery_driver_id: driver.delivery_driver_id,
+								},
+							},
+						};
+					}
+				}
+
+				const orderData = {
+					is_daily_meal: true,
+					status: DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP,
+					items: items,
+					details: {
+						type: 'delivery',
+						sub_total_price: 0,
+						total_price: 0,
+						discount_savings: 0,
+						provider_address: providerLocation,
+						business_id: business.business_id,
+						delivery_cost: DAILY_MEAL_DELIVERY_COST_CENTS / 100,
+						delivery_earnings: 0,
+						customer_expected_delivery_at: null,
+						subscription_id: subscription.id,
+						instance_ids: subscription.daily_meal_instances.map(
+							(instance: daily_meal_instances) => instance.id
+						),
+					},
+					payment: {
+						status: 'SUCCESSFUL',
+						type: 'ALREADY PAID',
+						cash: {
+							type: 'CHANGE_NOT_NEEDED',
+							amount: 0,
+						},
+						date: new Date().toISOString(),
+					},
+					courier_instructions: {
+						text: subscription?.courier_comment || '',
+					},
+					restaurant_message: {
+						text: '',
+					},
+					delivery_location: deliveryLocation,
+					pickup_location: providerLocation,
+					scheduled: {
+						date: null,
+						time: null,
+					},
+					route: [providerLocation, deliveryLocation],
+					...connectObj,
+				};
+
+				const order = await DeliveryOrderDao.createOrder(orderData, subscription.user_id);
+				if (!order) {
+					throw new Error(`Failed to create order for subscription ID ${subscription.id}`);
+				}
+			}
+			console.log(`Daily meals created for business ${business.business_id}`);
+		}
+	} catch (error) {
+		throw new Error(`Error creating daily meals: ${error}`);
+	}
+}
+
 export default {
 	generateDailyMealMenuCategoriesUpToDate,
 	generateDailyMealMenuCategoriesUpToDateForCategory,
@@ -714,4 +887,5 @@ export default {
 	generateInstancesForSubscription,
 	activateSubscriptionById,
 	cancelSubscriptionById,
+	createDailyMeals,
 };

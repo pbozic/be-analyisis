@@ -7,12 +7,17 @@ import { DOCUMENT_TYPE } from '../lib/constants.js';
 /**
  * Get active daily meal subscriptions by business_id
  * @param business_id
+ * @param args
  * @returns daily_meal_subscriptions[]
  */
-export async function getDailyMealSubscriptionsByBusinessId(business_id: string) {
+export async function getDailyMealSubscriptionsByBusinessId(
+	business_id: string,
+	args: Prisma.daily_meal_subscriptionsWhereArgs = {}
+) {
 	return prisma.daily_meal_subscriptions.findMany({
 		where: {
 			business_id,
+			...args,
 		},
 		include: {
 			user: true,
@@ -93,17 +98,18 @@ export async function getDailyMealSubscriptionsByUserId(user_id: string, start_d
 		where: {
 			user_id,
 			start_date: normalizedDate ? { gte: normalizedDate } : undefined,
-			status: SUBSCRIPTION_STATUS.ACTIVE,
 		},
 		include: {
 			business: {
 				select: {
+					business_id: true,
 					business_group_name: true,
 					name: true,
 					telephone: true,
 					email: true,
 					daily_meals_days: true,
 					daily_meals_delivery_mapping: true,
+					delivery_address: true,
 					documents: {
 						where: {
 							document_type: DOCUMENT_TYPE.LOGO,
@@ -156,6 +162,7 @@ export async function getTodayDailyMealSubscriptionsByBusinessId(business_id: st
 		},
 		include: {
 			user: true,
+			delivery_driver: true,
 			business: true,
 			delivery_address: true,
 			customers: true,
