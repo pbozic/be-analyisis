@@ -21,13 +21,33 @@ import DailyMealDao from '../dao/DailyMealDao.js';
 import DailyMealCategory from '../dao/DailyMealCategory.js';
 
 /**
+ * Convert JavaScript's weekday (Sunday=0) to our system's weekday (Monday=0)
+ * @param jsWeekday JavaScript weekday (0-6, Sunday=0)
+ * @returns Our system weekday (0-6, Monday=0)
+ */
+function jsWeekdayToOurWeekday(jsWeekday: number): number {
+	return (jsWeekday + 6) % 7;
+}
+
+/**
+ * Convert our system's weekday (Monday=0) to JavaScript's weekday (Sunday=0)
+ * @param ourWeekday Our system weekday (0-6, Monday=0)
+ * @returns JavaScript weekday (0-6, Sunday=0)
+ */
+function ourWeekdayToJsWeekday(ourWeekday: number): number {
+	return (ourWeekday + 1) % 7;
+}
+
+/**
  * Maps a date to an earlier date according to the given weekday:weekday mapping.
  * @param {Date} date
  * @param {Record<number,number>} mapping
  * @returns {Date}
  */
 export function mapDateToEarlierWeekday(date: Date, mapping: Record<number, number>): Date {
-	const currentWeekday = date.getUTCDay();
+	const jsWeekday = date.getUTCDay();
+	const currentWeekday = jsWeekdayToOurWeekday(jsWeekday);
+
 	const targetWeekday = mapping[currentWeekday];
 
 	if (typeof targetWeekday !== 'number' || targetWeekday === currentWeekday) {
@@ -35,8 +55,11 @@ export function mapDateToEarlierWeekday(date: Date, mapping: Record<number, numb
 		return date;
 	}
 
+	const jsCurrentWeekday = ourWeekdayToJsWeekday(currentWeekday);
+	const jsTargetWeekday = ourWeekdayToJsWeekday(targetWeekday);
+
 	// Calculate days to subtract to reach the earlier day
-	const diff = (currentWeekday - targetWeekday + 7) % 7;
+	const diff = (jsCurrentWeekday - jsTargetWeekday + 7) % 7;
 	const result = new Date(date);
 	result.setUTCDate(date.getUTCDate() - diff);
 	return result;
@@ -297,8 +320,9 @@ export async function generateDailyMealMenuCategoriesAndInstancesFor14Days() {
 export async function generateDMInstancesForDateSimple(datestring: string) {
 	const intended_date = new Date(datestring);
 	intended_date.setUTCHours(0, 0, 0, 0);
-	const intended_weekday = intended_date.getUTCDay();
-	console.log('Generating DM instances for ', intended_date);
+	const jsWeekday = intended_date.getUTCDay();
+	const intended_weekday = jsWeekdayToOurWeekday(jsWeekday);
+	console.log('Generating DM instances for ', intended_date, 'weekday:', intended_weekday);
 	const subscriptions = await prisma.daily_meal_subscriptions.findMany({
 		where: {
 			status: 'ACTIVE',
@@ -431,7 +455,7 @@ export async function generateDMInstancesForDateSimple(datestring: string) {
 					if (menuCategory) {
 						if (
 							!sub_customer.daily_meal_instances.some(
-								(instance) =>
+								(instance: daily_meal_instances) =>
 									instance.intended_date.getTime() === intended_date.getTime() &&
 									instance.menu_category_id === menuCategory.menu_category_id
 							)
@@ -510,12 +534,14 @@ function getUTCWeekdayDatesInRange(
 	start.setUTCHours(0, 0, 0, 0);
 	end.setUTCHours(0, 0, 0, 0);
 
-	const weekdaySet = new Set(weekdays.map((w) => w.intended_weekday));
+	const ourWeekdaySet = new Set(weekdays.map((w) => w.intended_weekday));
 	const result: Date[] = [];
 
 	for (let dt = new Date(start); dt <= end; dt.setUTCDate(dt.getUTCDate() + 1)) {
-		const weekday = dt.getUTCDay();
-		if (weekdaySet.has(weekday)) {
+		const jsWeekday = dt.getUTCDay();
+		const ourWeekday = jsWeekdayToOurWeekday(jsWeekday);
+
+		if (ourWeekdaySet.has(ourWeekday)) {
 			result.push(new Date(Date.UTC(dt.getUTCFullYear(), dt.getUTCMonth(), dt.getUTCDate())));
 		}
 	}
@@ -542,7 +568,7 @@ export async function cancelInstancesForSubscription(subscription_id: string) {
 		console.log(`No daily meal instances found for subscription ${subscription_id}`);
 		return;
 	}
-	const instanceIds = sub.daily_meal_instances.map((instance) => instance.id);
+	const instanceIds = sub.daily_meal_instances.map((instance: daily_meal_instances) => instance.id);
 	try {
 		await prisma.daily_meal_instances.updateMany({
 			where: {
@@ -634,7 +660,7 @@ export async function generateInstancesForSubscription(subscription_id: string) 
 				if (menuCategoryId) {
 					if (
 						!sub_customer.daily_meal_instances.some(
-							(instance) =>
+							(instance: daily_meal_instances) =>
 								instance.intended_date.getTime() === intended_date.getTime() &&
 								instance.menu_category_id === menuCategoryId
 						)
