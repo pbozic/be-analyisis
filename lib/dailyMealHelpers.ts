@@ -810,7 +810,7 @@ export async function createDailyMeals() {
 				let connectObj = {};
 				let driver = subscription.delivery_driver;
 				if (!driver && subscription.type === SUBSCRIPTION_TYPE.DATED) {
-					driver = assignDeliveryDriver(business.delivery_drivers);
+					driver = assignDeliveryDriver(business.daily_meal_drivers);
 					if (driver.delivery_driver_id) {
 						connectObj = {
 							delivery_driver: {
@@ -874,7 +874,7 @@ export async function createDailyMeals() {
 			console.log(`Daily meals created for business ${business.business_id}`);
 		}
 	} catch (error) {
-		throw new Error(`Error creating daily meals: ${error}`);
+		console.error('Error creating daily meals:', error);
 	}
 }
 
