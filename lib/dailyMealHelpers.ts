@@ -171,7 +171,7 @@ export async function generateDailyMealMenuCategoriesUpToDate(future_date: Date 
 					date
 				);
 				for (let dmc of business.daily_meal_categories.filter(
-					(cat: daily_meal_categories) => cat.start_date.getTime() <= new_menu.date.getTime()
+					(cat: daily_meal_categories) => cat.start_date.getTime() <= new_menu.date.getTime() && cat.active
 				)) {
 					const sorted_prices: daily_meal_category_prices[] = dmc.daily_meal_category_prices.sort(
 						(p1: daily_meal_category_prices, p2: daily_meal_category_prices) =>
