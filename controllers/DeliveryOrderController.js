@@ -846,7 +846,6 @@ async function getCompletedDeliveryOrdersByDriverId(req, res) {
  */
 async function getActiveDeliveryOrdersByDriverId(req, res) {
 	const { driver_id } = req.params;
-	console.log('getActiveDeliveryOrdersByDriverId', driver_id);
 	try {
 		const allActiveOrders = await DeliveryOrderDao.getOrders({
 			where: {
@@ -859,9 +858,7 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 		const activeOrders = [];
 		const pendingOrders = [];
 		for (let order of allActiveOrders) {
-			if (order.is_daily_meal && !order.timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED)) {
-				pendingOrders.push(order);
-			} else {
+			if (!order.is_daily_meal || order.timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED)) {
 				activeOrders.push(order);
 			}
 		}
@@ -883,7 +880,7 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 			pending: pendingOrders,
 		});
 	} catch (e) {
-		console.log(e);
+		console.error(e);
 		res.status(500).json(e);
 	}
 }
