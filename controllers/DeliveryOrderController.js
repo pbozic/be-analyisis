@@ -249,8 +249,8 @@ async function startDailyMeals(req, res) {
 				return res.status(500).json({ message: 'Error calculating route duration.' });
 			}
 		};
-		const providerLocation = convertAddressToLocation(business.address);
-
+		const business = await BusinessDao.getBusinessById(deliveryDriver.daily_meal_business_id);
+		const providerLocation = convertAddressToLocation(business.delivery_address);
 		let sortedOrders = [];
 		if (business.daily_users_sorting_type === 'MANUAL') {
 			// Manual sorting based on provider.daily_users_sorted
