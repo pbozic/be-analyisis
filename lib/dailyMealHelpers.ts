@@ -12,6 +12,10 @@ import {
 	SUBSCRIPTION_STATUS,
 	DAILY_MEAL_INSTANCE_STATUS,
 	SUBSCRIPTION_TYPE,
+	menu_items,
+	addresses,
+	DELIVERY_ORDER_STATUS,
+	delivery_drivers,
 } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
@@ -19,6 +23,9 @@ import MenuDao from '../dao/Menu.js';
 import MenuCategoryDao from '../dao/MenuCategory.js';
 import DailyMealDao from '../dao/DailyMealDao.js';
 import DailyMealCategory from '../dao/DailyMealCategory.js';
+import BusinessDao from '../dao/Business.js';
+import DeliveryOrderDao from '../dao/DeliveryOrder.js';
+import { DAILY_MEAL_DELIVERY_COST_CENTS } from './constants.js';
 
 /**
  * Convert JavaScript's weekday (Sunday=0) to our system's weekday (Monday=0)
@@ -731,6 +738,146 @@ export async function cancelSubscriptionById(subscription_id: string) {
 	}
 }
 
+function assignDeliveryDriver(delivery_drivers: delivery_drivers[]) {
+	if (!delivery_drivers || delivery_drivers.length === 0) {
+		throw new Error('No delivery drivers available for assignment.');
+	}
+	const driver = delivery_drivers.reduce((prev, current) => {
+		return (prev.subscriptions?.length || 0) < (current.subscriptions?.length || 0) ? prev : current;
+	});
+	if (!driver) {
+		throw new Error('No delivery driver found with the least active subscriptions.');
+	}
+	console.log(
+		`Assigned delivery driver: ${driver.delivery_driver_id} with ${driver.subscriptions?.length} active subscriptions.`
+	);
+	return driver;
+}
+
+export async function createDailyMeals() {
+	try {
+		const businesses = await BusinessDao.getBusinesses({
+			where: {
+				offers_daily_meals: true,
+			},
+		});
+		if (!businesses) {
+			throw new Error('Businesses not found.');
+		}
+		for (const business of businesses) {
+			const subscriptions = await DailyMealDao.getTodayDailyMealSubscriptionsByBusinessId(business.business_id);
+			if (!subscriptions || subscriptions.length === 0) {
+				throw new Error(`No daily meal subscriptions found for business ${business.business_id}.`);
+			}
+			const convertAddressToLocation = (address: addresses) => {
+				return {
+					address: address.address,
+					coordinates: {
+						latitude: address.latitude,
+						longitude: address.longitude,
+					},
+				};
+			};
+
+			const providerLocation = convertAddressToLocation(business.delivery_address);
+			for (const subscription of subscriptions) {
+				const deliveryLocation = convertAddressToLocation(subscription.delivery_address);
+				if (subscription.daily_meal_instances.length === 0) {
+					console.warn(`No daily meal instances found for subscription ID ${subscription.id}`);
+					continue;
+				}
+
+				const subItems = subscription.daily_meal_instances
+					.map((instance: daily_meal_instances) => instance.menu_category.menu_items)
+					.flat();
+				const menuItemsMap = new Map();
+				subItems.forEach((item: menu_items) => {
+					const itemId = item.menu_item_id;
+					if (!menuItemsMap.has(itemId)) {
+						menuItemsMap.set(itemId, {
+							item: item,
+							count: 1,
+						});
+					} else {
+						menuItemsMap.get(itemId).count++;
+					}
+				});
+				const items = Array.from(menuItemsMap.values()).map(({ item, count }) => ({
+					...item,
+					quantity: count,
+				}));
+
+				let connectObj = {};
+				let driver = subscription.delivery_driver;
+				if (!driver && subscription.type === SUBSCRIPTION_TYPE.DATED) {
+					driver = assignDeliveryDriver(business.daily_meal_drivers);
+					if (driver.delivery_driver_id) {
+						connectObj = {
+							delivery_driver: {
+								connect: {
+									delivery_driver_id: driver.delivery_driver_id,
+								},
+							},
+						};
+					}
+				}
+
+				const orderData = {
+					is_daily_meal: true,
+					status: DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP,
+					items: items,
+					details: {
+						type: 'delivery',
+						sub_total_price: 0,
+						total_price: 0,
+						discount_savings: 0,
+						provider_address: providerLocation,
+						business_id: business.business_id,
+						delivery_cost: DAILY_MEAL_DELIVERY_COST_CENTS / 100,
+						delivery_earnings: 0,
+						customer_expected_delivery_at: null,
+						subscription_id: subscription.id,
+						instance_ids: subscription.daily_meal_instances.map(
+							(instance: daily_meal_instances) => instance.id
+						),
+					},
+					payment: {
+						status: 'SUCCESSFUL',
+						type: 'ALREADY PAID',
+						cash: {
+							type: 'CHANGE_NOT_NEEDED',
+							amount: 0,
+						},
+						date: new Date().toISOString(),
+					},
+					courier_instructions: {
+						text: subscription?.courier_comment || '',
+					},
+					restaurant_message: {
+						text: '',
+					},
+					delivery_location: deliveryLocation,
+					pickup_location: providerLocation,
+					scheduled: {
+						date: null,
+						time: null,
+					},
+					route: [providerLocation, deliveryLocation],
+					...connectObj,
+				};
+
+				const order = await DeliveryOrderDao.createOrder(orderData, subscription.user_id);
+				if (!order) {
+					throw new Error(`Failed to create order for subscription ID ${subscription.id}`);
+				}
+			}
+			console.log(`Daily meals created for business ${business.business_id}`);
+		}
+	} catch (error) {
+		console.error('Error creating daily meals:', error);
+	}
+}
+
 export default {
 	generateDailyMealMenuCategoriesUpToDate,
 	generateDailyMealMenuCategoriesUpToDateForCategory,
@@ -740,4 +887,5 @@ export default {
 	generateInstancesForSubscription,
 	activateSubscriptionById,
 	cancelSubscriptionById,
+	createDailyMeals,
 };

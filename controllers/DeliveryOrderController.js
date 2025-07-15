@@ -49,7 +49,6 @@ import {
 	calculateDeliveryOrderPaymentCuts,
 	handlePaymentCleanup,
 	handlePaymentRefund,
-	verifyOrderCosts,
 	generateOrder,
 } from '../lib/deliveryHelpers.js';
 import PaymentHelpers from '../lib/paymentHelpers.ts';
@@ -190,12 +189,12 @@ async function createOrder(req, res) {
  * @tag Delivery
  * @summary Create daily meals.
  * @description This creates the daily meals for the subscribed users.
- * @operationId createDailyMeals
+ * @operationId startDailyMeals
  * @response 200 - Successful operation. Returns updated delivery driver.
  * @responseContent {DeliveryOrder} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
-async function createDailyMeals(req, res) {
+async function startDailyMeals(req, res) {
 	const user_id = req.user?.user_id;
 	if (!user_id) {
 		return res.status(401).json({ message: 'Unauthorized user.' });
@@ -207,21 +206,21 @@ async function createDailyMeals(req, res) {
 	}
 	try {
 		const deliveryDriver = await DeliveryDriverDao.getDeliveryDriverByUserId(user_id);
-		const business = await BusinessDao.getBusinessById(deliveryDriver.daily_meal_business_id);
-		if (!business) {
-			return res.status(404).json({ message: 'Business not found.' });
-		}
 		if (!deliveryDriver) {
 			return res.status(404).json({ message: 'Delivery driver not found.' });
 		}
 		if (!deliveryDriver?.location?.coordinates) {
 			return res.status(400).json({ message: 'Delivery driver location not set.' });
 		}
-		const subscriptions = await DailyMealDao.getTodayDailyMealSubscriptionsByBusinessId(
-			deliveryDriver.daily_meal_business_id
-		);
-		if (!subscriptions || subscriptions.length === 0) {
-			return res.status(404).json({ message: 'No subscriptions found.' });
+		const dailyMealOrders = await DeliveryOrderDao.getOrders({
+			where: {
+				is_daily_meal: true,
+				delivery_driver_id: deliveryDriver.delivery_driver_id,
+				status: DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP,
+			},
+		});
+		if (!dailyMealOrders || dailyMealOrders.length === 0) {
+			return res.status(404).json({ message: 'No daily meal orders found.' });
 		}
 		const convertAddressToLocation = (address) => {
 			return {
@@ -252,7 +251,7 @@ async function createDailyMeals(req, res) {
 		};
 		const providerLocation = convertAddressToLocation(business.address);
 
-		let sortedSubscriptions = [];
+		let sortedOrders = [];
 		if (business.daily_users_sorting_type === 'MANUAL') {
 			// Manual sorting based on provider.daily_users_sorted
 			//FIXME: business.daily_users_sorted deprecated?
@@ -264,58 +263,33 @@ async function createDailyMeals(req, res) {
 			const sortIndexMap = new Map(business.daily_users_sorted.map((user_id, index) => [user_id, index]));
 
 			// Step 2: Sort with fallback for unknown users
-			sortedSubscriptions = [...subscriptions].sort((a, b) => {
+			sortedOrders = [...dailyMealOrders].sort((a, b) => {
 				const indexA = sortIndexMap.has(a.user_id) ? sortIndexMap.get(a.user_id) : Infinity;
 				const indexB = sortIndexMap.has(b.user_id) ? sortIndexMap.get(b.user_id) : Infinity;
 				return indexA - indexB;
 			});
 
-			console.info('sortedUserAddresses MANUAL', sortedSubscriptions);
-			console.info('sortedUserAddresses MANUAL', sortedSubscriptions[0].address);
+			console.info('sortedUserAddresses MANUAL', sortedOrders);
+			console.info('sortedUserAddresses MANUAL', sortedOrders[0].address);
 		} else {
 			// Automatic sorting by nearest neighbor
-			sortedSubscriptions = sortObjectsByNearestNeighbor([
+			sortedOrders = sortObjectsByNearestNeighbor([
 				{ address: business.address },
-				...subscriptions.map((sub) => ({ ...sub, address: sub.delivery_address })),
+				...dailyMealOrders.map((order) => ({ ...order, address: order.delivery_location })),
 			]).slice(1);
-			console.info('sortedUserAddresses AUTOMATIC', sortedSubscriptions);
-			console.info('sortedUserAddresses AUTOMATIC', sortedSubscriptions[0].address);
+			console.info('sortedUserAddresses AUTOMATIC', sortedOrders);
+			console.info('sortedUserAddresses AUTOMATIC', sortedOrders[0].address);
 		}
-		const orders = [];
-		const start_time = new Date();
+
+		const now = new Date();
+		const start_time = new Date(now.setHours(10, 45, 0, 0));
+		console.log('Start time for daily meals:', start_time.toISOString());
 		let cumulativeTime =
 			(await getRouteDuration(deliveryDriver.location, providerLocation, start_time)?.duration) || 0; // Track the total elapsed time
 		let scheduledMealsRoute = [providerLocation];
 
-		for (let i = 0; i < sortedSubscriptions.length; i++) {
-			const deliveryLocation = convertAddressToLocation(sortedSubscriptions[i].address);
-			const user = sortedSubscriptions[i].user;
-
-			if (sortedSubscriptions[i].daily_meal_instances.length === 0) {
-				console.warn(`No daily meal instances found for subscription ID ${sortedSubscriptions[i].id}`);
-				continue;
-			}
-
-			const subItems = sortedSubscriptions[i].daily_meal_instances
-				.map((instance) => instance.menu_category.menu_items)
-				.flat();
-			const menuItemsMap = new Map();
-			subItems.forEach((item) => {
-				const itemId = item.menu_item_id;
-				if (!menuItemsMap.has(itemId)) {
-					menuItemsMap.set(itemId, {
-						item: item,
-						count: 1,
-					});
-				} else {
-					menuItemsMap.get(itemId).count++;
-				}
-			});
-			const items = Array.from(menuItemsMap.values()).map(({ item, count }) => ({
-				...item,
-				quantity: count,
-			}));
-
+		for (const order of sortedOrders) {
+			const deliveryLocation = order.delivery_location;
 			const route = await getRouteDuration(
 				scheduledMealsRoute[scheduledMealsRoute.length - 1],
 				deliveryLocation,
@@ -331,63 +305,20 @@ async function createDailyMeals(req, res) {
 			cumulativeTime += durationValue;
 			const readyForPickupAt = start_time.toISOString();
 			const orderData = {
-				is_daily_meal: true,
-				items: items,
 				details: {
-					type: 'delivery',
-					sub_total_price: 0,
-					total_price: 0,
-					discount_savings: 0,
-					provider_address: providerLocation,
-					business_id: business.business_id,
-					delivery_cost: DAILY_MEAL_DELIVERY_COST_CENTS / 100,
-					delivery_earnings: 0,
+					...order.details,
 					ready_for_pickup_at: readyForPickupAt,
 					customer_expected_delivery_at: customerExpectedDeliveryAt.toISOString(),
-					daily_meal_delivery_order: scheduledMealsRoute.length > 1,
+					daily_meal_delivery_order: scheduledMealsRoute.length - 1,
 					duration: cumulativeTime,
 					distance: distanceValue / 1000,
-					subscription_id: sortedSubscriptions[i].id,
-					instance_ids: sortedSubscriptions[i].daily_meal_instances.map((instance) => instance.id),
 				},
-				payment: {
-					status: 'SUCCESSFUL',
-					type: 'ALREADY PAID',
-					cash: {
-						type: 'CHANGE_NOT_NEEDED',
-						amount: 0,
-					},
-					date: new Date().toISOString(),
-				},
-				courier_instructions: {
-					text: sortedSubscriptions[i]?.courier_comment || '',
-				},
-				restaurant_message: {
-					text: '',
-				},
-				delivery_location: deliveryLocation,
-				pickup_location: providerLocation,
-				scheduled: {
-					date: null,
-					time: null,
-				},
-				route: [providerLocation, deliveryLocation],
 			};
-			const order = await DeliveryOrderDao.createOrder(
-				{
-					...orderData,
-					status: DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP,
-				},
-				user.user_id
-			);
+			const order = await DeliveryOrderDao.updateOrder(order.order_id, orderData);
 			await DeliveryOrderDao.createOrderSent(order.order_id, deliveryDriver);
 			SocketStore.addUserToRoom(order.user_id, `order_${order.order_id}`);
 			SocketStore.addUserToRoom(deliveryDriver.user_id, `order_${order.order_id}`);
-			orders.push(order);
 			scheduledMealsRoute.push(deliveryLocation);
-		}
-		if (orders.length === 0) {
-			return res.status(404).json({ message: 'No daily meals could be created.' });
 		}
 		scheduledMealsRoute.push(providerLocation);
 		const updatedDriver = await DeliveryDriverDao.updateDeliveryDriver(deliveryDriver?.delivery_driver_id, {
@@ -917,40 +848,31 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 	const { driver_id } = req.params;
 	console.log('getActiveDeliveryOrdersByDriverId', driver_id);
 	try {
-		const activeOrders = await DeliveryOrderDao.getOrders({
+		const allActiveOrders = await DeliveryOrderDao.getOrders({
 			where: {
 				status: {
 					notIn: DELIVERY_ORDER_END_STATES,
-					// notIn: [
-					// 	DELIVERY_ORDER_STATUS.MERCHANT_REJECTED,
-					// 	DELIVERY_ORDER_STATUS.MERCHANT_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.CUSTOMER_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.DELIVERY_REJECTED,
-					// 	DELIVERY_ORDER_STATUS.DELIVERY_CANCELED,
-					// 	DELIVERY_ORDER_STATUS.MERCHANT_REFUNDED,
-					// 	DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED
-					// ]
 				},
 				OR: [{ delivery_driver_id: driver_id }, { driver_id: driver_id }],
 			},
 		});
+		const activeOrders = [];
 		const pendingOrders = [];
+		for (let order of allActiveOrders) {
+			if (order.is_daily_meal && !order.timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED)) {
+				pendingOrders.push(order);
+			} else {
+				activeOrders.push(order);
+			}
+		}
 		const sentOrders = await DeliveryOrderDao.getAlreadySentOrdersByDeliveryDriverId(driver_id);
 		for (let sentOrder of sentOrders) {
 			const order = await DeliveryOrderDao.getOrder(sentOrder.order.order_id);
-			// if ([
-			// 	DELIVERY_ORDER_STATUS.PENDING,
-			// 	DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_PENDING,
-			// 	DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL,
-			// 	DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED,
-			// 	DELIVERY_ORDER_STATUS.MERCHANT_PREPARING,
-			// 	DELIVERY_ORDER_STATUS.MERCHANT_DELAYED,
-			// 	DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP
-			// ].includes(order.status)) {
 			if (
 				!DELIVERY_ORDER_END_STATES.includes(order.status) &&
 				!order.timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP) &&
-				!order.driver_id
+				!order.driver_id &&
+				!order.delivery_driver_id
 			) {
 				pendingOrders.push(order);
 				console.info('Re-sending pending order: ', order.order_id, ' to driver: ', driver_id);
@@ -1862,7 +1784,7 @@ export { getActiveDeliveryOrdersByUserId };
 export { getCompletedDeliveryOrdersByUserId };
 export { getActiveDeliveryOrdersByDriverId };
 export { updateDeliveryOrder };
-export { createDailyMeals };
+export { startDailyMeals };
 export { getActiveDeliveryOrdersByBusinessId };
 export { getCompletedDeliveryOrdersByBusinessId };
 export { dailyMealsSubscriptionPayment };
@@ -1894,7 +1816,7 @@ export default {
 	getCompletedDeliveryOrdersByUserId,
 	getActiveDeliveryOrdersByDriverId,
 	updateDeliveryOrder,
-	createDailyMeals,
+	startDailyMeals,
 	getActiveDeliveryOrdersByBusinessId,
 	getCompletedDeliveryOrdersByBusinessId,
 	dailyMealsSubscriptionPayment,

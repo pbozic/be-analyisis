@@ -44,7 +44,7 @@
         ]
     },
     "prisma": {
-        "schema": "./prisma/schema.prisma",
+        "schema": "./prisma/schemas",
         "seed": "node prisma/seed.js"
     },
     "dependencies": {

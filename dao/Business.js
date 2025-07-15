@@ -10,7 +10,7 @@ const getBusinesses = async (args) => {
 			...args,
 			include: {
 				address: true,
-				finances: true,
+				delivery_address: true,
 				business_users: {
 					include: {
 						users: {
@@ -23,9 +23,11 @@ const getBusinesses = async (args) => {
 				},
 				parent_business: true,
 				child_businesses: true,
-				documents: false,
-				taxi_orders: false,
-				delivery_orders: false,
+				daily_meal_drivers: {
+					include: {
+						subscriptions: true,
+					},
+				},
 			},
 		});
 	} catch (error) {
