@@ -330,6 +330,7 @@ export async function updateUserSubscription(userId, business_id) {
 	}
 }
 export async function createWordBuySubscription(word_id, business_id, price, userId) {
+	console.log('createWordBuySubscription called with:', { word_id, business_id, price, userId });
 	try {
 		// 1) Load business & verify Stripe customer
 		const business = await prisma.business.findUnique({
@@ -348,13 +349,33 @@ export async function createWordBuySubscription(word_id, business_id, price, use
 				// stripe_subscription_id will be updated in `updateUserSubscription`
 			},
 		});
-		console.log(wordBuy, 'testing1212');
 
-		// 3) Check if this business already has an active word-buy subscription
+		async function updateExpiresAt(subscriptionId) {
+			const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+			if (subscription && subscription.current_period_end) {
+				const expiresAt = new Date(subscription.current_period_end * 1000);
+				console.log('Updating expires_at to:', expiresAt);
+				await prisma.word_buy.update({
+					where: { word_buy_id: wordBuy.word_buy_id },
+					data: { expires_at: expiresAt },
+				});
+				console.log(`expires_at updated for word_buy_id: ${wordBuy.word_buy_id}`);
+			} else {
+				console.log('No current_period_end found on subscription');
+			}
+		}
+
+		// 3) Check if existing subscription
 		if (business.word_buy_stripe_subscription_id) {
-			console.log('🔁 Business already has word-buy subscription. Updating it.');
-			const result = await updateUserSubscription(userId, business_id); // this also updates wordBuy with sub ID
-			console.log(result, 'testing1313');
+			console.log('🔁 Existing subscription found. Updating...');
+			const result = await updateUserSubscription(userId, business_id);
+			console.log('updateUserSubscription result:', result);
+
+			if (result.subscriptionId) {
+				await updateExpiresAt(result.subscriptionId);
+			}
+
+			console.log('✅ createWordBuySubscription succeeded (reused subscription)');
 			return {
 				wordBuyId: wordBuy.word_buy_id,
 				subscriptionId: result.subscriptionId,
@@ -364,10 +385,15 @@ export async function createWordBuySubscription(word_id, business_id, price, use
 			};
 		}
 
-		// 4) No existing subscription, create a new one via updateUserSubscription
-		console.log('🆕 No existing word-buy subscription. Creating a new one.');
+		// 4) No subscription, create new one
 		const result = await updateUserSubscription(userId, business_id);
-		console.log(result, 'testing1414');
+
+		if (result.subscriptionId) {
+			console.log('getting expires_at ( about to trigger function )')
+			await updateExpiresAt(result.subscriptionId);
+		}else{
+			console.log('No subscriptionId returned');
+		}
 		return {
 			wordBuyId: wordBuy.word_buy_id,
 			subscriptionId: result.subscriptionId,
@@ -376,10 +402,13 @@ export async function createWordBuySubscription(word_id, business_id, price, use
 			reusedSubscription: false,
 		};
 	} catch (err) {
-		console.error('createWordBuySubscription error:', err);
+		console.error('❌ createWordBuySubscription error:', err);
 		throw new Error(err.message);
 	}
 }
+
+
+
 async function addStripeSubToWordBuy(id, stripe_subscription_id) {
 	return await prisma.word_buy.update({
 		where: {
@@ -447,6 +476,18 @@ async function getAllWordBuysByBusiness(business) {
 	}
 	return wbs;
 }
+async function deleteWordBuy(word_buy_id){
+	const deletedWordBuy = await prisma.word_buy.update({
+		where:{
+			word_buy_id: word_buy_id,
+		},
+		data:{
+			stripe_subscription_id:null
+		}
+	})
+	console.log(deletedWordBuy, 'deletedWordBuy');
+}
+
 export { createWord };
 export { updateWord };
 export { deleteWord };
@@ -461,6 +502,7 @@ export { getAllWordBuysByWord };
 export { getAllWordBuysByBusiness };
 export { removeCategoryFromWord };
 export { addCategoryToWord };
+export {deleteWordBuy};
 export default {
 	createWord,
 	updateWord,
@@ -478,4 +520,5 @@ export default {
 	addCategoryToWord,
 	createWordBuySubscription,
 	updateUserSubscription,
+	deleteWordBuy,
 };
