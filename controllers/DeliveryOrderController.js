@@ -281,6 +281,7 @@ async function startDailyMeals(req, res) {
 			console.info('sortedUserAddresses AUTOMATIC', sortedOrders[0].address);
 		}
 
+		const orders = [];
 		const now = new Date();
 		const start_time = new Date(now.setHours(10, 45, 0, 0));
 		console.log('Start time for daily meals:', start_time.toISOString());
@@ -314,10 +315,11 @@ async function startDailyMeals(req, res) {
 					distance: distanceValue / 1000,
 				},
 			};
-			const order = await DeliveryOrderDao.updateOrder(order.order_id, orderData);
-			await DeliveryOrderDao.createOrderSent(order.order_id, deliveryDriver);
-			SocketStore.addUserToRoom(order.user_id, `order_${order.order_id}`);
-			SocketStore.addUserToRoom(deliveryDriver.user_id, `order_${order.order_id}`);
+			const updatedOrder = await DeliveryOrderDao.updateOrder(order.order_id, orderData);
+			if (updatedOrder) orders.push(updatedOrder);
+			await DeliveryOrderDao.createOrderSent(updatedOrder.order_id, deliveryDriver);
+			SocketStore.addUserToRoom(updatedOrder.user_id, `order_${updatedOrder.order_id}`);
+			SocketStore.addUserToRoom(deliveryDriver.user_id, `order_${updatedOrder.order_id}`);
 			scheduledMealsRoute.push(deliveryLocation);
 		}
 		scheduledMealsRoute.push(providerLocation);
