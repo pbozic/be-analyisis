@@ -784,18 +784,17 @@ export async function createDailyMeals() {
 
 			const providerLocation = convertAddressToLocation(business.delivery_address);
 			for (const subscription of subscriptions) {
-				if (new Date(subscription.end_date) < new Date()) {
-					console.warn(
-						`Skipping subscription ${subscription.id} as it has ended on ${subscription.end_date}`
-					);
+				const endDate = subscription.end_date ? new Date(subscription.end_date) : null;
+				if (endDate && new Date(endDate.setHours(23, 59, 59, 999)) < new Date()) {
+					console.log(`Skipping subscription ${subscription.id} as it has ended`);
 					await updateSubscriptionStatus(subscription.id, SUBSCRIPTION_STATUS.EXPIRED);
 					continue;
 				}
-				const deliveryLocation = convertAddressToLocation(subscription.delivery_address);
 				if (subscription.daily_meal_instances.length === 0) {
-					console.warn(`No daily meal instances found for subscription ID ${subscription.id}`);
+					console.log(`No daily meal instances found for subscription ID ${subscription.id}`);
 					continue;
 				}
+				const deliveryLocation = convertAddressToLocation(subscription.delivery_address);
 
 				const subItems = subscription.daily_meal_instances
 					.map((instance: daily_meal_instances) => instance.menu_category.menu_items)
@@ -893,6 +892,51 @@ export async function createDailyMeals() {
 	}
 }
 
+export async function disconnectDriverFromAllSubscriptions(delivery_driver_id: string) {
+	try {
+		const subscriptions = await prisma.daily_meal_subscriptions.findMany({
+			where: {
+				delivery_driver_id: delivery_driver_id,
+			},
+		});
+		if (subscriptions.length === 0) {
+			console.log(`No daily meal subscriptions found for driver ${delivery_driver_id}`);
+			return;
+		}
+		await prisma.daily_meal_subscriptions.updateMany({
+			where: {
+				delivery_driver_id: delivery_driver_id,
+			},
+			data: {
+				delivery_driver_id: {
+					disconnect: true,
+				},
+			},
+		});
+		console.log(`Disconnected driver ${delivery_driver_id} from ${subscriptions.length} subscriptions`);
+
+		const allBusinessDrivers = await prisma.delivery_drivers.findMany({
+			where: {
+				business_id: subscriptions[0].business_id,
+				delivery_driver_id: { not: delivery_driver_id },
+			},
+			include: {
+				subscriptions: true,
+			},
+		});
+		for (const subscription of subscriptions) {
+			const deliveryDriver = assignDeliveryDriver(allBusinessDrivers);
+			if (!deliveryDriver) {
+				console.warn(`No delivery driver found to assign for subscription ${subscription.id}`);
+				continue;
+			}
+			await DailyMealDao.connectSubscriptionWithDriver(subscription.id, deliveryDriver.delivery_driver_id);
+		}
+	} catch (error) {
+		console.error(`Error disconnecting driver ${delivery_driver_id} from subscriptions:`, error);
+	}
+}
+
 export default {
 	generateDailyMealMenuCategoriesUpToDate,
 	generateDailyMealMenuCategoriesUpToDateForCategory,
@@ -903,4 +947,5 @@ export default {
 	activateSubscriptionById,
 	cancelSubscriptionById,
 	createDailyMeals,
+	disconnectDriverFromAllSubscriptions,
 };
