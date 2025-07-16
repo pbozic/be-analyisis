@@ -19,6 +19,7 @@ generator docs {
 generator typescriptInterfaces {
   provider = "prisma-generator-typescript-interfaces"
   prettier = true
+  modelType = "type"
 }
 // generator zod {
 //   provider = "prisma-zod-generator"

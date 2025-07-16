@@ -512,6 +512,35 @@ async function handleWebhook(req, res) {
 				}
 				break;
 			}
+			case 'subscription_schedule.released': {
+				const schedule = event.data.object;
+
+				// schedule.subscription gives you the active subscription ID
+				const subscriptionId = schedule.subscription;
+
+				// Update all downgraded word_buys
+				const wordBuys = await prisma.word_buy.findMany({
+					where: {
+						stripe_subscription_id: subscriptionId,
+						pending_price: { not: null },
+						pending_price_id: { not: null },
+					},
+				});
+
+				for (const wb of wordBuys) {
+					await prisma.word_buy.update({
+						where: { id: wb.id },
+						data: {
+							price: wb.pending_price,
+							stripe_price_id: wb.pending_price_id,
+							pending_price: null,
+							pending_price_id: null,
+						},
+					});
+				}
+
+				break;
+			}
 			default:
 				console.log(`Unhandled event type ${event.type}`);
 		}

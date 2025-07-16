@@ -195,7 +195,7 @@ export type CATEGORY_LEVEL = 'category' | 'subcategory' | 'sub_subcategory';
 
 export type SCHEDULE_SLOT_EXCEPTION_TYPE = 'vacation' | 'location_closed' | 'other' | 'health' | 'break' | 'lunch';
 
-export interface finances {
+export type finances = {
 	finance_id: string;
 	bank_name: string;
 	account_holder: string;
@@ -204,9 +204,9 @@ export interface finances {
 	created_at: Date;
 	updated_at: Date;
 	business?: business[];
-}
+};
 
-export interface business {
+export type business = {
 	business_id: string;
 	address_id: string | null;
 	delivery_address_id: string | null;
@@ -278,9 +278,9 @@ export interface business {
 	daily_meal_subscriptions?: daily_meal_subscriptions[];
 	business_money_flows?: business_money_flows[];
 	reservation_module?: reservation_module | null;
-}
+};
 
-export interface business_users {
+export type business_users = {
 	business_users_id: string;
 	online: boolean | null;
 	company_role: COMPANY_ROLE;
@@ -295,9 +295,9 @@ export interface business_users {
 	allowance?: allowances | null;
 	taxi_orders?: taxi_orders[];
 	employee?: employee | null;
-}
+};
 
-export interface business_clients {
+export type business_clients = {
 	business_clients_id: string;
 	created_at: Date;
 	updated_at: Date;
@@ -310,9 +310,9 @@ export interface business_clients {
 	telephone_code: string;
 	telephone_number: string;
 	taxi_orders?: taxi_orders[];
-}
+};
 
-export interface cashback {
+export type cashback = {
 	cashback_id: string;
 	user_id: string;
 	amount: number;
@@ -328,9 +328,9 @@ export interface cashback {
 	user?: users;
 	taxi_order?: taxi_orders | null;
 	delivery_order?: delivery_orders | null;
-}
+};
 
-export interface referrals {
+export type referrals = {
 	referral_id: string;
 	referral_code: string;
 	referrer_user_id: string;
@@ -342,9 +342,9 @@ export interface referrals {
 	referrer?: users;
 	referred?: users;
 	credits?: wallet_funds[];
-}
+};
 
-export interface group_users {
+export type group_users = {
 	group_user_id: string;
 	parent_user_id: string;
 	child_user_id: string;
@@ -354,9 +354,9 @@ export interface group_users {
 	child_user?: users;
 	allowance?: allowances | null;
 	enabled: boolean;
-}
+};
 
-export interface allowances {
+export type allowances = {
 	allowance_id: string;
 	group_user_id: string | null;
 	business_users_id: string | null;
@@ -372,9 +372,9 @@ export interface allowances {
 	updated_at: Date;
 	user?: group_users | null;
 	business_user?: business_users | null;
-}
+};
 
-export interface documents {
+export type documents = {
 	document_id: string;
 	document_type: DOCUMENT_TYPE;
 	created_at: Date;
@@ -400,9 +400,9 @@ export interface documents {
 	lost_items?: lost_items | null;
 	transaction_id: string | null;
 	transactions?: transactions | null;
-}
+};
 
-export interface files {
+export type files = {
 	file_id: string;
 	url: string | null;
 	file_type: FILE_TYPE;
@@ -415,9 +415,9 @@ export interface files {
 	categories?: categories[];
 	blog_posts?: blog_posts[];
 	promo_banners?: promo_banners[];
-}
+};
 
-export interface tokens {
+export type tokens = {
 	token_id: string;
 	user_id: string;
 	type: TokenType;
@@ -427,9 +427,9 @@ export interface tokens {
 	updated_at: Date;
 	active: boolean;
 	users?: users;
-}
+};
 
-export interface addresses {
+export type addresses = {
 	address_id: string;
 	address: string;
 	latitude: string;
@@ -445,9 +445,9 @@ export interface addresses {
 	business_users?: business_users[];
 	daily_meals_subscriptions?: daily_meals_subscriptions[];
 	daily_meal_subscriptions?: daily_meal_subscriptions[];
-}
+};
 
-export interface user_address {
+export type user_address = {
 	user_id: string;
 	address_id: string;
 	name: string | null;
@@ -455,9 +455,9 @@ export interface user_address {
 	primary: boolean;
 	users?: users;
 	address?: addresses;
-}
+};
 
-export interface driver_activity_settings {
+export type driver_activity_settings = {
 	driver_activity_settings_id: string;
 	first_offline_lockout: number;
 	second_offline_lockout: number;
@@ -465,9 +465,9 @@ export interface driver_activity_settings {
 	created_at: Date;
 	updated_at: Date;
 	active: boolean;
-}
+};
 
-export interface driver_activity_logs {
+export type driver_activity_logs = {
 	driver_activity_log_id: string;
 	driver_id: string;
 	activity_type: ACTIVITY_TYPE;
@@ -476,9 +476,9 @@ export interface driver_activity_logs {
 	timeout_at: Date | null;
 	lockout_until: Date | null;
 	driver?: drivers;
-}
+};
 
-export interface delivery_drivers {
+export type delivery_drivers = {
 	delivery_driver_id: string;
 	online: boolean | null;
 	on_order: boolean | null;
@@ -505,9 +505,9 @@ export interface delivery_drivers {
 	daily_meal_business_id: string | null;
 	daily_meal_business?: business | null;
 	subscriptions?: daily_meal_subscriptions[];
-}
+};
 
-export interface drivers {
+export type drivers = {
 	driver_id: string;
 	business_id: string | null;
 	online: boolean | null;
@@ -545,9 +545,9 @@ export interface drivers {
 	current_vehicle?: vehicles | null;
 	activity_logs?: driver_activity_logs[];
 	business?: business | null;
-}
+};
 
-export interface vehicle_drivers {
+export type vehicle_drivers = {
 	vehicle_drivers_id: string;
 	vehicle_id: string;
 	driver_id: string;
@@ -556,9 +556,9 @@ export interface vehicle_drivers {
 	updated_at: Date;
 	vehicle?: vehicles;
 	driver?: drivers;
-}
+};
 
-export interface vehicles {
+export type vehicles = {
 	vehicle_id: string;
 	business_id: string | null;
 	active: boolean | null;
@@ -579,9 +579,9 @@ export interface vehicles {
 	taxi_orders?: taxi_orders[];
 	delivery_orders?: delivery_orders[];
 	current_driver?: drivers | null;
-}
+};
 
-export interface vehicle_specifications {
+export type vehicle_specifications = {
 	vehicle_specification_id: string;
 	class: VEHICLE_CLASS;
 	category: VEHICLE_CATEGORY;
@@ -591,16 +591,16 @@ export interface vehicle_specifications {
 	per_minute: string;
 	vehicle_id: string | null;
 	vehicle?: vehicles | null;
-}
+};
 
-export interface reviewable {
+export type reviewable = {
 	reviewable_id: string;
 	reviews?: reviews[];
 	user?: users[];
 	business?: business[];
-}
+};
 
-export interface reviews {
+export type reviews = {
 	review_id: string;
 	reviewable_id: string;
 	author_id: string;
@@ -611,16 +611,16 @@ export interface reviews {
 	updated_at: Date;
 	reviewable?: reviewable;
 	author?: users;
-}
+};
 
-export interface allergens {
+export type allergens = {
 	allergen_id: string;
 	name: string;
 	description: string | null;
 	code: number;
-}
+};
 
-export interface taxi_orders {
+export type taxi_orders = {
 	order_id: string;
 	user_id: string;
 	business_users_id: string | null;
@@ -670,9 +670,9 @@ export interface taxi_orders {
 	order_number: number;
 	scoring_points?: scoring_points[];
 	late_events?: late_events[];
-}
+};
 
-export interface taxi_order_sent {
+export type taxi_order_sent = {
 	taxi_order_sent_id: string;
 	order_id: string;
 	driver_id: string;
@@ -684,9 +684,9 @@ export interface taxi_order_sent {
 	order?: taxi_orders | null;
 	driver?: drivers | null;
 	rejected: boolean;
-}
+};
 
-export interface delivery_orders {
+export type delivery_orders = {
 	order_id: string;
 	user_id: string | null;
 	route: JsonValue;
@@ -729,9 +729,9 @@ export interface delivery_orders {
 	scoring_points?: scoring_points[];
 	late_events?: late_events[];
 	stock_movements?: menu_item_stock_change[];
-}
+};
 
-export interface delivery_order_sent {
+export type delivery_order_sent = {
 	delivery_order_sent_id: string;
 	order_id: string;
 	accepted: boolean;
@@ -744,9 +744,9 @@ export interface delivery_order_sent {
 	delivery_driver?: delivery_drivers | null;
 	driver_id: string | null;
 	driver?: drivers | null;
-}
+};
 
-export interface menus {
+export type menus = {
 	menu_id: string;
 	business_id: string;
 	active: boolean;
@@ -756,9 +756,9 @@ export interface menus {
 	isDailyMeal: boolean;
 	date: Date | null;
 	daily_meal_subscribers?: daily_meals_subscriptions[];
-}
+};
 
-export interface menu_categories {
+export type menu_categories = {
 	menu_category_id: string;
 	names: JsonValue | null;
 	description: JsonValue | null;
@@ -778,9 +778,9 @@ export interface menu_categories {
 	daily_meal_category?: daily_meal_categories | null;
 	daily_meal_category_price?: daily_meal_category_prices | null;
 	daily_meal_instances?: daily_meal_instances[];
-}
+};
 
-export interface menu_items {
+export type menu_items = {
 	menu_item_id: string;
 	names: JsonValue;
 	image: string | null;
@@ -812,9 +812,9 @@ export interface menu_items {
 	weight_quantity: number | null;
 	stock: number | null;
 	stock_movements?: menu_item_stock_change[];
-}
+};
 
-export interface transactions {
+export type transactions = {
 	transaction_id: string;
 	user_id: string;
 	amount: number;
@@ -830,9 +830,9 @@ export interface transactions {
 	user?: users;
 	documents?: documents[];
 	wallet_funds?: wallet_funds | null;
-}
+};
 
-export interface user_money_flows {
+export type user_money_flows = {
 	balance_change_id: string;
 	user_id: string;
 	amount: number;
@@ -841,9 +841,9 @@ export interface user_money_flows {
 	payment_method: PAYMENT_METHOD | null;
 	created_at: Date;
 	user?: users;
-}
+};
 
-export interface business_money_flows {
+export type business_money_flows = {
 	balance_change_id: string;
 	business_id: string;
 	amount: number;
@@ -852,15 +852,15 @@ export interface business_money_flows {
 	payment_method: PAYMENT_METHOD | null;
 	created_at: Date;
 	business?: business;
-}
+};
 
-export interface payment_intent_logs {
+export type payment_intent_logs = {
 	payment_intent_logs_id: string;
 	stripe_id: string;
 	created_at: Date;
-}
+};
 
-export interface reservations {
+export type reservations = {
 	reservation_id: string;
 	seats: number;
 	date: Date;
@@ -874,9 +874,9 @@ export interface reservations {
 	user?: users;
 	status: RESERVATION_STATUS;
 	table: number | null;
-}
+};
 
-export interface lost_items {
+export type lost_items = {
 	lost_item_id: string;
 	user_id: string | null;
 	status: LOST_FOUND_STATUS;
@@ -886,18 +886,18 @@ export interface lost_items {
 	created_at: Date;
 	updated_at: Date;
 	user?: users | null;
-}
+};
 
-export interface flags {
+export type flags = {
 	flag_id: string;
 	name: string;
 	status: boolean;
 	created_at: Date;
 	updated_at: Date;
 	history?: flag_history[];
-}
+};
 
-export interface flag_history {
+export type flag_history = {
 	flag_history_id: string;
 	flag_id: string;
 	user_id: string;
@@ -906,9 +906,9 @@ export interface flag_history {
 	updated_at: Date;
 	flag?: flags;
 	user?: users;
-}
+};
 
-export interface driver_history_locations {
+export type driver_history_locations = {
 	driver_history_location_id: string;
 	driver_id: string;
 	taxi_order_id: string | null;
@@ -920,9 +920,9 @@ export interface driver_history_locations {
 	delivery_order?: delivery_orders | null;
 	created_at: Date;
 	updated_at: Date;
-}
+};
 
-export interface delivery_driver_history_locations {
+export type delivery_driver_history_locations = {
 	delivery_driver_history_location_id: string;
 	delivery_driver_id: string;
 	order_id: string | null;
@@ -932,9 +932,9 @@ export interface delivery_driver_history_locations {
 	order?: delivery_orders | null;
 	created_at: Date;
 	updated_at: Date;
-}
+};
 
-export interface wallet_transfer_history {
+export type wallet_transfer_history = {
 	wallet_transfer_history_id: string;
 	order_id: string;
 	amount: number;
@@ -943,9 +943,9 @@ export interface wallet_transfer_history {
 	success: boolean;
 	delivery_order?: delivery_orders | null;
 	taxi_order?: taxi_orders | null;
-}
+};
 
-export interface wallet_funds {
+export type wallet_funds = {
 	wallet_funds_id: string;
 	user_id: string;
 	referral_id: string | null;
@@ -962,9 +962,9 @@ export interface wallet_funds {
 	referral?: referrals | null;
 	user?: users;
 	transactions?: transactions[];
-}
+};
 
-export interface local_products {
+export type local_products = {
 	local_product_id: string;
 	name: string;
 	description: string | null;
@@ -975,9 +975,9 @@ export interface local_products {
 	business?: business;
 	created_at: Date;
 	updated_at: Date;
-}
+};
 
-export interface local_prices {
+export type local_prices = {
 	local_prices_id: string;
 	local_product_id: string;
 	product?: local_products;
@@ -987,9 +987,9 @@ export interface local_prices {
 	tier: string | null;
 	created_at: Date;
 	updated_at: Date;
-}
+};
 
-export interface categories {
+export type categories = {
 	categories_id: string;
 	name: string;
 	description: string | null;
@@ -1009,16 +1009,16 @@ export interface categories {
 	updated_at: Date;
 	deleted_at: Date | null;
 	daily_meal_categories?: daily_meal_categories[];
-}
+};
 
-export interface menu_categories_categories {
+export type menu_categories_categories = {
 	menu_categories_id: string;
 	categories_id: string;
 	menu_category?: menu_categories;
 	category?: categories;
-}
+};
 
-export interface promo_sections {
+export type promo_sections = {
 	promo_sections_id: string;
 	name: string;
 	tag: string;
@@ -1038,9 +1038,9 @@ export interface promo_sections {
 	translatable_id: string;
 	translatable?: translatable;
 	display_cards_per_page: number | null;
-}
+};
 
-export interface promo_banners {
+export type promo_banners = {
 	promo_banners_id: string;
 	type: string;
 	size: string | null;
@@ -1051,9 +1051,9 @@ export interface promo_banners {
 	files?: files;
 	promo_ads_id: string | null;
 	promo_ads?: promo_ads | null;
-}
+};
 
-export interface promo_sections_buy {
+export type promo_sections_buy = {
 	promo_sections_buy_id: string;
 	promo_sections_id: string;
 	promo_section?: promo_sections;
@@ -1066,9 +1066,9 @@ export interface promo_sections_buy {
 	active_at: Date | null;
 	expires_at: Date | null;
 	tier: number;
-}
+};
 
-export interface promo_ads {
+export type promo_ads = {
 	promo_ads_id: string;
 	title: string;
 	text: string;
@@ -1082,17 +1082,17 @@ export interface promo_ads {
 	created_at: Date;
 	active_at: Date | null;
 	active_until: Date | null;
-}
+};
 
-export interface promo_ads_category {
+export type promo_ads_category = {
 	promo_ads_category_id: string;
 	promo_ads_id: string;
 	categories_id: string;
 	promo_ad?: promo_ads;
 	category?: categories;
-}
+};
 
-export interface words {
+export type words = {
 	word_id: string;
 	word: string;
 	popularity: number;
@@ -1104,14 +1104,15 @@ export interface words {
 	bundles?: word_bundles[];
 	created_at: Date;
 	updated_at: Date;
-}
+};
 
-export interface word_buy {
+export type word_buy = {
 	word_buy_id: string;
 	word_id: string;
 	word?: words;
 	stripe_subscription_id: string | null;
 	stripe_price_id: string | null;
+	pending_stripe_price_id: string | null;
 	price: number;
 	active_at: Date | null;
 	expires_at: Date | null;
@@ -1121,17 +1122,17 @@ export interface word_buy {
 	created_at: Date;
 	updated_at: Date;
 	deleted_at: Date | null;
-}
+};
 
-export interface word_bundles {
+export type word_bundles = {
 	id: string;
 	name: string;
 	description: string | null;
 	words?: words[];
 	created_at: Date;
-}
+};
 
-export interface order_lobbies {
+export type order_lobbies = {
 	order_lobbies_id: string;
 	lobby_name: string;
 	lobby_description: string;
@@ -1149,9 +1150,9 @@ export interface order_lobbies {
 	order_lobby_users?: order_lobby_users[];
 	delivery_orders?: delivery_orders | null;
 	business?: business | null;
-}
+};
 
-export interface order_lobby_items {
+export type order_lobby_items = {
 	order_lobby_items_id: string;
 	order_lobbies_id: string;
 	menu_item_id: string;
@@ -1164,9 +1165,9 @@ export interface order_lobby_items {
 	updated_at: Date;
 	menu_items?: menu_items | null;
 	order_lobbies?: order_lobbies;
-}
+};
 
-export interface order_lobby_users {
+export type order_lobby_users = {
 	order_lobby_users_id: string;
 	user_id: string;
 	order_lobbies_id: string;
@@ -1175,9 +1176,9 @@ export interface order_lobby_users {
 	updated_at: Date;
 	order_lobbies?: order_lobbies;
 	users?: users;
-}
+};
 
-export interface business_teams {
+export type business_teams = {
 	business_teams_id: string;
 	team_name: string;
 	business_id: string;
@@ -1186,17 +1187,17 @@ export interface business_teams {
 	updated_at: Date;
 	users?: users[];
 	business?: business;
-}
+};
 
-export interface translatable {
+export type translatable = {
 	translatable_id: string;
 	translations?: translations[];
 	words?: words[];
 	categories?: categories[];
 	promo_sections?: promo_sections[];
-}
+};
 
-export interface translations {
+export type translations = {
 	translations_id: string;
 	translatable_id: string;
 	translatable?: translatable;
@@ -1205,9 +1206,9 @@ export interface translations {
 	translation: string;
 	created_at: Date;
 	updated_at: Date;
-}
+};
 
-export interface user_favorite_businesses {
+export type user_favorite_businesses = {
 	user_favorite_businesses_id: string;
 	user_id: string;
 	business_id: string;
@@ -1216,9 +1217,9 @@ export interface user_favorite_businesses {
 	updated_at: Date;
 	users?: users;
 	businesses?: business;
-}
+};
 
-export interface scoring_points {
+export type scoring_points = {
 	scoring_points_id: string;
 	business_id: string;
 	user_id: string | null;
@@ -1235,9 +1236,9 @@ export interface scoring_points {
 	delivery_orders?: delivery_orders | null;
 	taxi_orders?: taxi_orders | null;
 	late_events?: late_events[];
-}
+};
 
-export interface late_events {
+export type late_events = {
 	late_events_id: string;
 	business_id: string;
 	user_id: string;
@@ -1252,9 +1253,9 @@ export interface late_events {
 	delivery_orders?: delivery_orders | null;
 	taxi_orders?: taxi_orders | null;
 	scoring_points?: scoring_points | null;
-}
+};
 
-export interface municipalities {
+export type municipalities = {
 	municipalities_id: string;
 	name: string;
 	geojson: JsonValue;
@@ -1267,17 +1268,17 @@ export interface municipalities {
 	driver_municipalities?: driver_municipalities[];
 	settlements?: settlements[];
 	weather_data?: weather_data[];
-}
+};
 
-export interface fiscal_devices {
+export type fiscal_devices = {
 	fiscal_devices_id: string;
 	name: string;
 	created_at: Date;
 	updated_at: Date;
 	businesses?: business[];
-}
+};
 
-export interface driver_municipalities {
+export type driver_municipalities = {
 	driver_municipalities_id: string;
 	driver_id: string;
 	municipalities_id: string;
@@ -1285,9 +1286,9 @@ export interface driver_municipalities {
 	updated_at: Date;
 	drivers?: drivers;
 	municipalities?: municipalities;
-}
+};
 
-export interface settlements {
+export type settlements = {
 	settlement_id: string;
 	name: string;
 	municipalities_id: string;
@@ -1298,9 +1299,9 @@ export interface settlements {
 	updated_at: Date;
 	municipality?: municipalities;
 	weather_data?: weather_data[];
-}
+};
 
-export interface weather_data {
+export type weather_data = {
 	weather_data_id: string;
 	time_epoch: bigint;
 	time: Date;
@@ -1335,9 +1336,9 @@ export interface weather_data {
 	municipality?: municipalities | null;
 	settlement_id: string | null;
 	settlement?: settlements | null;
-}
+};
 
-export interface account_actions {
+export type account_actions = {
 	account_action_id: string;
 	business_id: string | null;
 	user_id: string | null;
@@ -1348,9 +1349,9 @@ export interface account_actions {
 	business?: business | null;
 	user?: users | null;
 	action_creator?: users | null;
-}
+};
 
-export interface daily_meals_subscriptions {
+export type daily_meals_subscriptions = {
 	daily_meals_subscriptions_id: string;
 	grouped_id: string;
 	user_id: string;
@@ -1372,9 +1373,9 @@ export interface daily_meals_subscriptions {
 	address?: addresses;
 	status: SUBSCRIPTION_STATUS;
 	payment?: payments | null;
-}
+};
 
-export interface daily_meal_subscriptions {
+export type daily_meal_subscriptions = {
 	id: string;
 	user_id: string;
 	business_id: string;
@@ -1395,9 +1396,9 @@ export interface daily_meal_subscriptions {
 	days?: daily_meal_subscription_days[];
 	weekdays?: daily_meal_subscription_weekdays[];
 	daily_meal_instances?: daily_meal_instances[];
-}
+};
 
-export interface daily_meal_subscription_customers {
+export type daily_meal_subscription_customers = {
 	id: string;
 	subscription_id: string;
 	daily_meal_category_id: string;
@@ -1410,25 +1411,25 @@ export interface daily_meal_subscription_customers {
 	subscription?: daily_meal_subscriptions;
 	daily_meal_instances?: daily_meal_instances[];
 	daily_meal_categories?: daily_meal_categories | null;
-}
+};
 
-export interface daily_meal_subscription_days {
+export type daily_meal_subscription_days = {
 	id: string;
 	subscription_id: string;
 	intended_date: Date;
 	delivery_date: Date;
 	subscription?: daily_meal_subscriptions;
-}
+};
 
-export interface daily_meal_subscription_weekdays {
+export type daily_meal_subscription_weekdays = {
 	id: string;
 	subscription_id: string;
 	intended_weekday: number;
 	delivery_weekday: number;
 	subscription?: daily_meal_subscriptions;
-}
+};
 
-export interface daily_meal_instances {
+export type daily_meal_instances = {
 	id: string;
 	subscription_id: string;
 	subscription_customer_id: string;
@@ -1441,9 +1442,9 @@ export interface daily_meal_instances {
 	subscription?: daily_meal_subscriptions;
 	customer?: daily_meal_subscription_customers;
 	menu_category?: menu_categories;
-}
+};
 
-export interface payments {
+export type payments = {
 	payment_id: string;
 	amount: number;
 	credits_amount: number;
@@ -1459,9 +1460,9 @@ export interface payments {
 	user_id: string;
 	user?: users;
 	payment_splits?: payment_splits[];
-}
+};
 
-export interface payment_splits {
+export type payment_splits = {
 	payment_split_id: string;
 	status: SPLIT_STATUS;
 	payment_id: string;
@@ -1473,9 +1474,9 @@ export interface payment_splits {
 	created_at: Date;
 	updated_at: Date;
 	payment?: payments;
-}
+};
 
-export interface daily_meal_categories {
+export type daily_meal_categories = {
 	daily_meal_category_id: string;
 	business_id: string;
 	category_id: string;
@@ -1487,9 +1488,9 @@ export interface daily_meal_categories {
 	menu_categories?: menu_categories[];
 	daily_meal_subscription_customers?: daily_meal_subscription_customers[];
 	daily_meal_category_prices?: daily_meal_category_prices[];
-}
+};
 
-export interface daily_meal_category_prices {
+export type daily_meal_category_prices = {
 	daily_meal_category_prices_id: string;
 	daily_meal_category_id: string;
 	price: number;
@@ -1497,23 +1498,23 @@ export interface daily_meal_category_prices {
 	created_at: Date;
 	daily_meal_category?: daily_meal_categories;
 	menu_categories?: menu_categories[];
-}
+};
 
-export interface blog_tags {
+export type blog_tags = {
 	blog_tags_id: string;
 	name: string;
 	description: string | null;
 	blog_posts?: blog_posts[];
-}
+};
 
-export interface blog_categories {
+export type blog_categories = {
 	blog_categories_id: string;
 	name: string;
 	description: string | null;
 	blog_posts?: blog_posts[];
-}
+};
 
-export interface blog_posts {
+export type blog_posts = {
 	blog_posts_id: string;
 	slug: string;
 	title: string;
@@ -1530,9 +1531,9 @@ export interface blog_posts {
 	author?: users;
 	category?: blog_categories | null;
 	tags?: blog_tags[];
-}
+};
 
-export interface menu_item_stock_change {
+export type menu_item_stock_change = {
 	id: string;
 	menu_item_id: string;
 	quantity: number;
@@ -1541,9 +1542,9 @@ export interface menu_item_stock_change {
 	order_id: string | null;
 	order?: delivery_orders | null;
 	created_at: Date;
-}
+};
 
-export interface reservation_module {
+export type reservation_module = {
 	reservation_module_id: string;
 	business_id: string;
 	subscription_id: string;
@@ -1556,9 +1557,9 @@ export interface reservation_module {
 	employees?: employee[];
 	bookings?: booking[];
 	customers?: customers[];
-}
+};
 
-export interface location {
+export type location = {
 	location_id: string;
 	reservation_module_id: string;
 	name: string;
@@ -1571,20 +1572,20 @@ export interface location {
 	reservation_module?: reservation_module;
 	schedules?: schedule[];
 	bookings?: booking[];
-}
+};
 
-export interface category {
+export type service_category = {
 	category_id: string;
 	name: JsonValue;
 	parent_id: string | null;
 	level: CATEGORY_LEVEL;
 	color: string | null;
-	parent?: category | null;
-	children?: category[];
+	parent?: service_category | null;
+	children?: service_category[];
 	services?: service[];
-}
+};
 
-export interface service {
+export type service = {
 	service_id: string;
 	reservation_module_id: string;
 	category_id: string | null;
@@ -1599,12 +1600,12 @@ export interface service {
 	skd_codes: string[];
 	created_at: Date;
 	reservation_module?: reservation_module;
-	category?: category | null;
+	category?: service_category | null;
 	assigned_employees?: service_assignment[];
 	bookings?: booking[];
-}
+};
 
-export interface employee {
+export type employee = {
 	employee_id: string;
 	reservation_module_id: string;
 	reservation_module?: reservation_module;
@@ -1615,9 +1616,9 @@ export interface employee {
 	business_user?: business_users | null;
 	created_at: Date;
 	deleted_at: Date | null;
-}
+};
 
-export interface customers {
+export type customers = {
 	customer_id: string;
 	reservation_module_id: string;
 	first_name: string;
@@ -1630,16 +1631,16 @@ export interface customers {
 	bookings?: booking[];
 	user_id: string | null;
 	user?: users | null;
-}
+};
 
-export interface service_assignment {
+export type service_assignment = {
 	employee_id: string;
 	service_id: string;
 	employee?: employee;
 	service?: service;
-}
+};
 
-export interface schedule {
+export type schedule = {
 	schedule_id: string;
 	location_id: string;
 	name: string;
@@ -1649,18 +1650,18 @@ export interface schedule {
 	location?: location;
 	schedule_employees?: schedule_employee[];
 	schedule_slots?: schedule_slot[];
-}
+};
 
-export interface schedule_employee {
+export type schedule_employee = {
 	schedule_employee_id: string;
 	schedule_id: string;
 	employee_id: string;
 	schedule?: schedule;
 	employee?: employee;
 	schedule_slots?: schedule_slot[];
-}
+};
 
-export interface schedule_slot {
+export type schedule_slot = {
 	schedule_slot_id: string;
 	schedule_id: string;
 	schedule_employee_id: string;
@@ -1671,9 +1672,9 @@ export interface schedule_slot {
 	schedule?: schedule;
 	schedule_employee?: schedule_employee;
 	schedule_slot_exceptions?: schedule_slot_exceptions[];
-}
+};
 
-export interface schedule_slot_exceptions {
+export type schedule_slot_exceptions = {
 	schedule_slot_exception_id: string;
 	schedule_slot_id: string;
 	date: Date;
@@ -1682,17 +1683,17 @@ export interface schedule_slot_exceptions {
 	reason: string | null;
 	type: SCHEDULE_SLOT_EXCEPTION_TYPE;
 	schedule_slot?: schedule_slot;
-}
+};
 
-export interface booking_slots {
+export type booking_slots = {
 	booking_slot_id: string;
 	schedule_slot_id: string;
 	schedule_slot?: schedule_slot;
 	start_time: Date;
 	end_time: Date;
-}
+};
 
-export interface booking {
+export type booking = {
 	booking_id: string;
 	customer_id: string;
 	reservation_module_id: string;
@@ -1715,9 +1716,9 @@ export interface booking {
 	service?: service | null;
 	customer?: customers;
 	booking_history_log?: booking_history_log[];
-}
+};
 
-export interface booking_history_log {
+export type booking_history_log = {
 	booking_history_id: string;
 	booking_id: string;
 	status: BOOKING_STATUS;
@@ -1730,9 +1731,9 @@ export interface booking_history_log {
 	user_id: string | null;
 	user?: users | null;
 	booking?: booking;
-}
+};
 
-export interface subscription {
+export type subscription = {
 	subscription_id: string;
 	module: MODULE_TYPE;
 	name: string;
@@ -1740,9 +1741,9 @@ export interface subscription {
 	stripe_price_id: string;
 	actions?: subscription_action[];
 	business_modules?: reservation_module[];
-}
+};
 
-export interface addon {
+export type addon = {
 	addon_id: string;
 	module: MODULE_TYPE;
 	name: string;
@@ -1750,18 +1751,18 @@ export interface addon {
 	stripe_price_id: string;
 	actions?: addon_action[];
 	business_addons?: business_addon[];
-}
+};
 
-export interface action {
+export type action = {
 	action_id: string;
 	module: MODULE_TYPE;
 	name: string;
 	subscription_actions?: subscription_action[];
 	addon_actions?: addon_action[];
 	business_usages?: business_usage[];
-}
+};
 
-export interface subscription_action {
+export type subscription_action = {
 	subscription_action_id: string;
 	subscription_id: string;
 	action_id: string;
@@ -1769,9 +1770,9 @@ export interface subscription_action {
 	limit: number | null;
 	subscription?: subscription;
 	action?: action;
-}
+};
 
-export interface addon_action {
+export type addon_action = {
 	addon_action_id: string;
 	addon_id: string;
 	action_id: string;
@@ -1779,9 +1780,9 @@ export interface addon_action {
 	limit: number | null;
 	addon?: addon;
 	action?: action;
-}
+};
 
-export interface business_addon {
+export type business_addon = {
 	business_addon_id: string;
 	addon_id: string;
 	reservation_module_id: string | null;
@@ -1789,9 +1790,9 @@ export interface business_addon {
 	ads_module_id: string | null;
 	addon?: addon;
 	reservation_module?: reservation_module | null;
-}
+};
 
-export interface business_usage {
+export type business_usage = {
 	business_usage_id: string;
 	action_id: string;
 	used: number;
@@ -1799,9 +1800,9 @@ export interface business_usage {
 	reservation_module_id: string | null;
 	action?: action;
 	reservation_module?: reservation_module | null;
-}
+};
 
-export interface users {
+export type users = {
 	user_id: string;
 	first_name: string | null;
 	last_name: string | null;
@@ -1882,14 +1883,14 @@ export interface users {
 	user_money_flows?: user_money_flows[];
 	customer?: customers[];
 	booking_history_log?: booking_history_log[];
-}
+};
 
-export interface user_roles {
+export type user_roles = {
 	user_roles_id: string;
 	user_id: string;
 	user?: users;
 	role: USER_ROLES;
 	primary: boolean | null;
-}
+};
 
 type JsonValue = string | number | boolean | { [key in string]?: JsonValue } | Array<JsonValue> | null;

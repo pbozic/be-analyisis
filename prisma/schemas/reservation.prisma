@@ -45,14 +45,14 @@ model location {
   bookings         booking[]
 }
 
-model category {
+model service_category {
   category_id   String         @id @default(uuid()) @db.Uuid
   name          Json           // Translations: { "en": "Hair", "sl": "Frizer" }
   parent_id     String?        @db.Uuid
   level         CATEGORY_LEVEL
   color         String?
-  parent        category?      @relation("SubCategory", fields: [parent_id], references: [category_id])
-  children      category[]     @relation("SubCategory")
+  parent        service_category?      @relation("SubCategory", fields: [parent_id], references: [category_id])
+  children      service_category[]     @relation("SubCategory")
   services      service[]
 }
 
@@ -72,7 +72,7 @@ model service {
   created_at         DateTime  @default(now())
 
   reservation_module           reservation_module  @relation(fields: [reservation_module_id], references: [reservation_module_id])
-  category           category? @relation(fields: [category_id], references: [category_id])
+  category           service_category? @relation(fields: [category_id], references: [category_id])
   assigned_employees service_assignment[]
   bookings          booking[]
 }
