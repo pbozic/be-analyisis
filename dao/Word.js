@@ -207,23 +207,25 @@ async function addCategoryToWord(id, category) {
 	});
 }
 async function createWordBuy(args) {
-	return await prisma.word_buy.upsert({
-  where: {
-    word_id_business_id: {
-      word_id,
-      business_id,
-    },
-  },
-  update: {
-    price,
-  },
-  create: {
-    word: { connect: { word_id } },
-    business: { connect: { business_id } },
-    price,
-  },
-});
+	return await prisma.word_buy.create({
+		data: {
+			word_buy_id: args.word_buyer_id,
+			word: {
+				connect: {
+					word_id: args.word,
+				},
+			},
+			business: {
+				connect: {
+					business_id: args.business_id,
+				},
+			},
+			price: args.price,
+			stripe_subscription_id: args.stripe_subscription_id || null,
+		},
+	});
 }
+
 export async function updateUserSubscription(userId, business_id) {
 	try {
 		// Fetch business & word buys
@@ -340,14 +342,22 @@ export async function createWordBuySubscription(word_id, business_id, price, use
 		}
 
 		// 2) Create new word_buy entry (unpaid, no stripe_sub yet)
-		const wordBuy = await prisma.word_buy.create({
-			data: {
-				word: { connect: { word_id } },
-				business: { connect: { business_id } },
-				price,
-				// stripe_subscription_id will be updated in `updateUserSubscription`
-			},
-		});
+		const wordBuy = await prisma.word_buy.upsert({
+  where: {
+    word_id_business_id: {
+      word_id,
+      business_id,
+    },
+  },
+  update: {
+    price,
+  },
+  create: {
+    word: { connect: { word_id } },
+    business: { connect: { business_id } },
+    price,
+  },
+});
 
 		async function updateExpiresAt(subscriptionId) {
 			const subscription = await stripe.subscriptions.retrieve(subscriptionId);
