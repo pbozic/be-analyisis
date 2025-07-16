@@ -2,91 +2,225 @@
 enum MODULE_TYPE {
   reservations
 }
+enum BOOKING_STATUS {
+  reserved
+  cancelled
+  no_show
+}
+
+enum CATEGORY_LEVEL {
+  category
+  subcategory
+  sub_subcategory
+}
 // --- MODELS ---
 
 model reservation_module {
   reservation_module_id String    @id @default(uuid()) @db.Uuid
   business_id           String    @db.Uuid @unique
-  subscription_id       String
+  subscription_id       String    @db.Uuid
 
   business              business     @relation(fields: [business_id], references: [business_id])
   subscription          subscription @relation(fields: [subscription_id], references: [subscription_id])
   addons                business_addon[]
   usages                business_usage[]
+  locations     location[]
+  services      service[]
+  employees     employee[]
+  bookings     booking[]
+  customers    customers[]
+}
+model location {
+  location_id       String    @id @default(uuid()) @db.Uuid
+  reservation_module_id       String    @db.Uuid
+  name              String
+  address           String
+  phone             String?
+  color             String?
+  accepts_online    Boolean   @default(false)
+  closed_on_holidays Boolean  @default(false)
+  working_days      Json
+  reservation_module          reservation_module  @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  schedules         schedule[]
+  bookings         booking[]
 }
 
-// --- SUBSCRIPTION + ADDON SYSTEM ---
-model subscription {
-  subscription_id  String                 @id @default(uuid())
-  module           MODULE_TYPE
-  name             String
-  price_cents      Int
-  stripe_price_id  String
-  actions          subscription_action[]
-  business_modules reservation_module[]
+model category {
+  category_id   String         @id @default(uuid()) @db.Uuid
+  name          Json           // Translations: { "en": "Hair", "sl": "Frizer" }
+  parent_id     String?        @db.Uuid
+  level         CATEGORY_LEVEL
+  color         String?
+  parent        category?      @relation("SubCategory", fields: [parent_id], references: [category_id])
+  children      category[]     @relation("SubCategory")
+  services      service[]
 }
 
-model addon {
-  addon_id         String             @id @default(uuid())
-  module           MODULE_TYPE
-  name             String
-  price_cents      Int
-  stripe_price_id  String
-  actions          addon_action[]
-  business_addons  business_addon[]
+model service {
+  service_id         String    @id @default(uuid()) @db.Uuid
+  reservation_module_id        String    @db.Uuid
+  category_id        String?   @db.Uuid
+  name               Json      // Multilang
+  description        Json?
+  image_url          String?
+  price_cents        Int
+  discount_percent   Int?
+  discount_amount    Int?
+  duration_minutes   Int
+  available_online   Boolean   @default(false)
+  skd_codes          String[]
+  created_at         DateTime  @default(now())
+
+  reservation_module           reservation_module  @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  category           category? @relation(fields: [category_id], references: [category_id])
+  assigned_employees service_assignment[]
+  bookings          booking[]
 }
 
-model action {
-  action_id             String       @id @default(uuid())
-  module                MODULE_TYPE
-  name                  String       @unique
-  subscription_actions  subscription_action[]
-  addon_actions         addon_action[]
-  business_usages       business_usage[]
+model employee {
+  employee_id     String     @id @default(uuid()) @db.Uuid
+  reservation_module_id     String     @db.Uuid
+  reservation_module        reservation_module   @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  assignments       service_assignment[]
+  schedules         schedule_employee[]
+  bookings          booking[]
+  business_users_id        String?   @db.Uuid @unique // Optional link to user account
+  business_user            business_users?     @relation(fields: [business_users_id], references: [business_users_id])
+  created_at        DateTime  @default(now())
+  deleted_at        DateTime? @db.Timestamptz
 }
 
-model subscription_action {
-  subscription_action_id               String        @id @default(uuid())
-  subscription_id  String
-  action_id        String
-  module           MODULE_TYPE
-  limit            Int?          // null = unlimited
+model customers {
+  customer_id     String    @id @default(uuid()) @db.Uuid
+  reservation_module_id     String    @db.Uuid
+  first_name      String
+  last_name       String
+  email           String?   @unique
+  phone           String?   @unique
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  
+  reservation_module        reservation_module   @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  bookings         booking[]
+  user_id        String?   @db.Uuid // Optional link to user account
+  user            users? @relation(fields: [user_id], references: [user_id])
+}
+model service_assignment {
+  employee_id String @db.Uuid
+  service_id  String @db.Uuid
 
-  subscription     subscription  @relation(fields: [subscription_id], references: [subscription_id])
-  action           action        @relation(fields: [action_id], references: [action_id])
+  employee    employee @relation(fields: [employee_id], references: [employee_id])
+  service     service  @relation(fields: [service_id], references: [service_id])
+
+  @@id([employee_id, service_id])
 }
 
-model addon_action {
-  addon_action_id         String   @id @default(uuid())
-  addon_id   String
-  action_id  String
-  module     MODULE_TYPE
-  limit      Int?
-
-  addon      addon    @relation(fields: [addon_id], references: [addon_id])
-  action     action   @relation(fields: [action_id], references: [action_id])
+model schedule {
+  schedule_id   String   @id @default(uuid()) @db.Uuid
+  location_id   String   @db.Uuid
+  //employee_id   String?  @db.Uuid
+  name          String
+  color         String?
+  start_date   DateTime  // Start date of the schedule, e.g. 2023-10-01T00:00:00Z
+  end_date     DateTime  // End date of the schedule, e.g. 202
+  location      location @relation(fields: [location_id], references: [location_id])
+  //employee      employee? @relation(fields: [employee_id], references: [employee_id])
+  schedule_employees schedule_employee[]
+  schedule_slots schedule_slot[]
 }
 
-model business_addon {
-  business_addon_id     String   @id @default(uuid())
-  addon_id              String
-  reservation_module_id String?   @db.Uuid
-  sms_module_id         String?
-  ads_module_id         String?
+model schedule_employee {
+  schedule_employee_id String   @id @default(uuid()) @db.Uuid
+  schedule_id   String   @db.Uuid
+  employee_id   String   @db.Uuid
 
-  addon                 addon               @relation(fields: [addon_id], references: [addon_id])
-  reservation_module    reservation_module? @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  schedule      schedule @relation(fields: [schedule_id], references: [schedule_id])
+  employee      employee @relation(fields: [employee_id], references: [employee_id])
+  schedule_slots schedule_slot[]
 }
 
-model business_usage {
-  business_usage_id     String   @id @default(uuid())
-  action_id             String
-  used                  Int
-  reset_date            DateTime?
-  reservation_module_id String? @db.Uuid
-
-  action                action             @relation(fields: [action_id], references: [action_id])
-  reservation_module   reservation_module? @relation(fields: [reservation_module_id], references: [reservation_module_id])
-
-  @@unique([business_usage_id, action_id])
+model schedule_slot {
+  schedule_slot_id String   @id @default(uuid()) @db.Uuid
+  schedule_id   String   @db.Uuid
+  schedule_employee_id String   @db.Uuid
+  date           DateTime // Date of the slot, e.g. 2023-10-01T09:00:00Z
+  start_time      DateTime
+  end_time        DateTime
+ 
+  booking_slots booking_slots[]
+  schedule      schedule @relation(fields: [schedule_id], references: [schedule_id])
+  schedule_employee schedule_employee @relation(fields: [schedule_employee_id], references: [schedule_employee_id])
+  // schedule_id and employee_id are combined in schedule_employee
+  // to allow multiple employees to share the same schedule slot
+  schedule_slot_exceptions schedule_slot_exceptions[]
+  @@unique([schedule_id, schedule_employee_id], name: "unique_schedule_slot")
+  
 }
+enum SCHEDULE_SLOT_EXCEPTION_TYPE {
+  vacation
+  location_closed
+  other
+  health
+  break
+  lunch
+}
+model schedule_slot_exceptions {
+  schedule_slot_exception_id String   @id @default(uuid()) @db.Uuid
+  schedule_slot_id String   @db.Uuid
+  date           DateTime // Date of the exception, e.g. 2023-10-01T09:00:00Z
+  start_time      DateTime // Start time of the exception, e.g. 2023-10-01T09:00:00Z
+  end_time        DateTime // End time of the exception, e.g. 2023-10-01T10:00:00Z
+  reason          String? // Reason for the exception, e.g. "Vacation", "Location closed"
+  type SCHEDULE_SLOT_EXCEPTION_TYPE
+  schedule_slot    schedule_slot @relation(fields: [schedule_slot_id], references: [schedule_slot_id])
+}
+model booking_slots {
+  booking_slot_id String   @id @default(uuid()) @db.Uuid
+  schedule_slot_id String   @db.Uuid
+
+  schedule_slot    schedule_slot @relation(fields: [schedule_slot_id], references: [schedule_slot_id])
+  start_time      DateTime // Start time of the booking slot, e.g. 2023-10-01T09:00:00Z
+  end_time        DateTime // End time of the booking slot, e.g. 2023-10-01T10:00:00Z
+
+
+}
+model booking {
+  booking_id      String    @id @default(uuid()) @db.Uuid
+  customer_id     String    @db.Uuid
+  reservation_module_id     String    @db.Uuid
+  location_id     String?   @db.Uuid
+  status          BOOKING_STATUS
+  service_id        String @db.Uuid      // serviceId[], quantities, etc
+  comment         String?
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  price_cents     Int?
+  start_time      DateTime? // Start time of the booking, e.g. 2023-10-01T09:00:00Z
+  end_time        DateTime? // End time of the booking, e.g. 2023-10-01T10:00:00Z - calculated from start time + service duration
+  assigned_employee_id String? @db.Uuid
+  parent__booking_id String? @db.Uuid // For rescheduled bookings
+  parent_booking   booking? @relation("RescheduledBooking", fields: [parent__booking_id], references: [booking_id])
+  child_bookings booking[] @relation("RescheduledBooking")
+  reservation_module        reservation_module  @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  location        location? @relation(fields: [location_id], references: [location_id])
+  employee        employee? @relation(fields: [assigned_employee_id], references: [employee_id])
+  service        service? @relation(fields: [service_id], references: [service_id])
+  customer      customers @relation(fields: [customer_id], references: [customer_id])
+  booking_history_log booking_history_log[]
+}
+
+model booking_history_log {
+  booking_history_id String   @id @default(uuid()) @db.Uuid
+  booking_id         String   @db.Uuid
+  status             BOOKING_STATUS
+  comment            String?
+  type               String? // e.g. "created", "updated", "cancelled", "no_show"
+  title             String? // e.g. "Booking Created", "Booking Updated", "Booking Cancelled", "No Show"
+  description       String? // e.g. "Booking created by user", "Booking updated by
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+  user_id           String?  @db.Uuid // Optional link to user account
+  user              users? @relation(fields: [user_id], references: [user_id])
+  booking            booking  @relation(fields: [booking_id], references: [booking_id])
+}
+

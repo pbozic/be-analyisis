@@ -68,7 +68,7 @@ const config: Config = {
 		// Replace with your project's social card
 		image: 'img/docusaurus-social-card.jpg',
 		navbar: {
-			title: 'My Site',
+			title: 'Klikni Docs',
 			logo: {
 				alt: 'My Site Logo',
 				src: 'img/logo.svg',
@@ -91,6 +91,12 @@ const config: Config = {
 					sidebarId: 'daos',
 					position: 'left',
 					label: 'Daos Docs',
+				},
+				{
+					type: 'docSidebar',
+					sidebarId: 'prisma',
+					position: 'left',
+					label: 'Prisma Docs',
 				},
 			],
 		},

@@ -2761,4 +2761,5 @@ module.exports = {
 			label: 'Word',
 		},
 	],
+	prisma: ['prisma'],
 };

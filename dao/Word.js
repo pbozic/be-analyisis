@@ -227,58 +227,69 @@ async function createWordBuy(args) {
 }
 export async function updateUserSubscription(userId, business_id) {
 	try {
-		// Fetch business & word buys
 		console.log(userId, 'userId');
+
+		// Fetch business & word buys
 		const businessUser = await BusinessUserDao.getBusinessUserByUserId(userId);
-		console.log(businessUser, 'businessUser');
 		const business = await BusinessDao.getBusinessById(business_id || businessUser?.business_id);
 		const wordBuys = await getAllWordBuysByBusiness(business_id || businessUser?.business_id);
+
 		// If no active word buys, cancel the subscription if it exists
 		if (wordBuys.length === 0) {
 			if (business?.word_buy_stripe_subscription_id) {
 				await stripe.subscriptions.del(business.word_buy_stripe_subscription_id);
-				// Remove subscription ID from the business in the database
+
 				await prisma.business.update({
 					where: { business_id: business.business_id },
 					data: { word_buy_stripe_subscription_id: null },
 				});
+
 				console.log('Subscription canceled as last word_buy was removed.');
 			}
 			return { success: true, message: 'No active word buys' };
 		}
+
 		if (!business?.stripe_customer_id) throw new Error('User does not have a Stripe customer ID');
-		// Calculate total price of all `word_buys`
+
+		// Calculate total price of all word buys
 		const totalPrice = wordBuys.reduce((sum, wb) => sum + wb.price, 0);
+
 		// Create a new Stripe price
 		const newPriceData = await stripe.prices.create({
-			unit_amount: Math.round(totalPrice * 100), // Convert to cents
+			unit_amount: Math.round(totalPrice * 100),
 			currency: 'eur',
 			recurring: { interval: 'month' },
 			product_data: { name: 'Klikni Word Advertise' },
 		});
+
 		let subscription;
 		let paymentRequired = false;
 		let clientSecret = null;
-		let checkoutUrl = null;
+
 		if (business.word_buy_stripe_subscription_id) {
+			// Update existing subscription
 			subscription = await stripe.subscriptions.retrieve(business.word_buy_stripe_subscription_id);
 			if (subscription.items.data.length === 0) {
 				throw new Error('Subscription has no items, cannot update price.');
 			}
-			// Update the subscription price & trigger proration
+
 			const updatedSubscription = await stripe.subscriptions.update(subscription.id, {
 				items: [{ id: subscription.items.data[0].id, price: newPriceData.id }],
 				proration_behavior: 'create_prorations',
 				expand: ['latest_invoice.payment_intent'],
 				metadata: { business_id: business.business_id, type: 'word_buys' },
 			});
+
 			console.log('🟡 Subscription updated:', updatedSubscription.id);
+
 			if (updatedSubscription.latest_invoice?.payment_intent?.status === 'requires_payment_method') {
 				paymentRequired = true;
 				clientSecret = updatedSubscription.latest_invoice.payment_intent.client_secret;
 			}
+
+			subscription = updatedSubscription;
 		} else {
-			// Create a new subscription with Stripe Checkout
+			// Create new subscription
 			subscription = await stripe.subscriptions.create({
 				customer: business.stripe_customer_id,
 				items: [{ price: newPriceData.id }],
@@ -286,38 +297,26 @@ export async function updateUserSubscription(userId, business_id) {
 				expand: ['latest_invoice.payment_intent'],
 				metadata: { business_id: business.business_id, type: 'word_buys' },
 			});
-			console.log(subscription, 'subscription123');
+
 			await prisma.business.update({
 				where: { business_id: business.business_id },
 				data: { word_buy_stripe_subscription_id: subscription.id },
 			});
-			console.log('New subscription created:', subscription.id);
+
+			console.log('🟢 New subscription created:', subscription.id);
+
 			if (subscription.latest_invoice?.payment_intent?.status === 'requires_payment_method') {
 				paymentRequired = true;
 				clientSecret = subscription.latest_invoice.payment_intent.client_secret;
 			}
 		}
-		// Update `word_buys` with the subscription ID
+
+		// Update word_buys with subscription ID
 		await prisma.word_buy.updateMany({
 			where: { business_id: business.business_id, deleted_at: null },
 			data: { stripe_subscription_id: subscription.id },
 		});
-		// If payment is required, create a Stripe Checkout Session
-		if (paymentRequired) {
-			const paymentIntent = await stripe.paymentIntents.create({
-				amount: Math.round(totalPrice * 100), // cents
-				currency: 'eur',
-				customer: business.stripe_customer_id,
-				metadata: {
-					business_id: business.business_id,
-					type: 'word_buys',
-				},
-				automatic_payment_methods: { enabled: true },
-			});
 
-			clientSecret = paymentIntent.client_secret;
-			console.log('🟢 Created PaymentIntent:', paymentIntent.id);
-		}
 		return {
 			success: true,
 			subscriptionId: subscription.id,
@@ -329,6 +328,7 @@ export async function updateUserSubscription(userId, business_id) {
 		return { success: false, error: error.message };
 	}
 }
+
 export async function createWordBuySubscription(word_id, business_id, price, userId) {
 	console.log('createWordBuySubscription called with:', { word_id, business_id, price, userId });
 	try {
@@ -389,9 +389,9 @@ export async function createWordBuySubscription(word_id, business_id, price, use
 		const result = await updateUserSubscription(userId, business_id);
 
 		if (result.subscriptionId) {
-			console.log('getting expires_at ( about to trigger function )')
+			console.log('getting expires_at ( about to trigger function )');
 			await updateExpiresAt(result.subscriptionId);
-		}else{
+		} else {
 			console.log('No subscriptionId returned');
 		}
 		return {
@@ -406,8 +406,6 @@ export async function createWordBuySubscription(word_id, business_id, price, use
 		throw new Error(err.message);
 	}
 }
-
-
 
 async function addStripeSubToWordBuy(id, stripe_subscription_id) {
 	return await prisma.word_buy.update({
@@ -476,15 +474,15 @@ async function getAllWordBuysByBusiness(business) {
 	}
 	return wbs;
 }
-async function deleteWordBuy(word_buy_id){
+async function deleteWordBuy(word_buy_id) {
 	const deletedWordBuy = await prisma.word_buy.update({
-		where:{
+		where: {
 			word_buy_id: word_buy_id,
 		},
-		data:{
-			stripe_subscription_id:null
-		}
-	})
+		data: {
+			stripe_subscription_id: null,
+		},
+	});
 	console.log(deletedWordBuy, 'deletedWordBuy');
 }
 
@@ -502,7 +500,7 @@ export { getAllWordBuysByWord };
 export { getAllWordBuysByBusiness };
 export { removeCategoryFromWord };
 export { addCategoryToWord };
-export {deleteWordBuy};
+export { deleteWordBuy };
 export default {
 	createWord,
 	updateWord,
