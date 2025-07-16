@@ -21,7 +21,7 @@ import {
 import prisma from '../prisma/prisma.js';
 import MenuDao from '../dao/Menu.js';
 import MenuCategoryDao from '../dao/MenuCategory.js';
-import DailyMealDao from '../dao/DailyMealDao.js';
+import DailyMealDao, { updateSubscriptionStatus } from '../dao/DailyMealDao.js';
 import DailyMealCategory from '../dao/DailyMealCategory.js';
 import BusinessDao from '../dao/Business.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
@@ -784,6 +784,13 @@ export async function createDailyMeals() {
 
 			const providerLocation = convertAddressToLocation(business.delivery_address);
 			for (const subscription of subscriptions) {
+				if (new Date(subscription.end_date) < new Date()) {
+					console.warn(
+						`Skipping subscription ${subscription.id} as it has ended on ${subscription.end_date}`
+					);
+					await updateSubscriptionStatus(subscription.id, SUBSCRIPTION_STATUS.EXPIRED);
+					continue;
+				}
 				const deliveryLocation = convertAddressToLocation(subscription.delivery_address);
 				if (subscription.daily_meal_instances.length === 0) {
 					console.warn(`No daily meal instances found for subscription ID ${subscription.id}`);

@@ -52,26 +52,8 @@ export async function getDailyMealSubscriptionsByBusinessId(
 			...args,
 		},
 		include: {
-			user: true,
-			delivery_address: true,
-			customers: true,
-			days: true,
-			weekdays: true,
-			daily_meal_instances: {
-				include: {
-					menu_category: {
-						include: {
-							menu_categories_categories: {
-								include: {
-									category: true,
-								},
-							},
-							menu_items: true,
-						},
-					},
-					customer: true,
-				},
-			},
+			...defaultIncludeObj,
+			business: false,
 		},
 		orderBy: { start_date: 'asc' },
 	});
@@ -92,26 +74,8 @@ export async function getActiveDailyMealSubscriptionsByBusinessId(business_id: s
 			status: SUBSCRIPTION_STATUS.ACTIVE,
 		},
 		include: {
-			user: true,
-			delivery_address: true,
-			customers: true,
-			days: true,
-			weekdays: true,
-			daily_meal_instances: {
-				include: {
-					menu_category: {
-						include: {
-							menu_categories_categories: {
-								include: {
-									category: true,
-								},
-							},
-							menu_items: true,
-						},
-					},
-					customer: true,
-				},
-			},
+			...defaultIncludeObj,
+			business: false,
 		},
 		orderBy: { start_date: 'asc' },
 	});
@@ -132,6 +96,7 @@ export async function getDailyMealSubscriptionsByUserId(user_id: string, start_d
 			start_date: normalizedDate ? { gte: normalizedDate } : undefined,
 		},
 		include: {
+			...defaultIncludeObj,
 			business: {
 				select: {
 					business_id: true,
@@ -150,25 +115,6 @@ export async function getDailyMealSubscriptionsByUserId(user_id: string, start_d
 							files: true,
 						},
 					},
-				},
-			},
-			delivery_address: true,
-			customers: true,
-			days: true,
-			weekdays: true,
-			daily_meal_instances: {
-				include: {
-					menu_category: {
-						include: {
-							menu_categories_categories: {
-								include: {
-									category: true,
-								},
-							},
-							menu_items: true,
-						},
-					},
-					customer: true,
 				},
 			},
 		},
@@ -193,13 +139,7 @@ export async function getTodayDailyMealSubscriptionsByBusinessId(business_id: st
 			status: SUBSCRIPTION_STATUS.ACTIVE,
 		},
 		include: {
-			user: true,
-			delivery_driver: true,
-			business: true,
-			delivery_address: true,
-			customers: true,
-			days: true,
-			weekdays: true,
+			...defaultIncludeObj,
 			daily_meal_instances: {
 				where: {
 					status: DAILY_MEAL_INSTANCE_STATUS.PLANNED,
