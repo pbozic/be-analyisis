@@ -207,23 +207,22 @@ async function addCategoryToWord(id, category) {
 	});
 }
 async function createWordBuy(args) {
-	return await prisma.word_buy.create({
-		data: {
-			word_buy_id: args.word_buyer_id,
-			word: {
-				connect: {
-					word_id: args.word,
-				},
-			},
-			business: {
-				connect: {
-					business_id: args.business_id,
-				},
-			},
-			price: args.price,
-			stripe_subscription_id: args.stripe_subscription_id || null,
-		},
-	});
+	return await prisma.word_buy.upsert({
+  where: {
+    word_id_business_id: {
+      word_id,
+      business_id,
+    },
+  },
+  update: {
+    price,
+  },
+  create: {
+    word: { connect: { word_id } },
+    business: { connect: { business_id } },
+    price,
+  },
+});
 }
 export async function updateUserSubscription(userId, business_id) {
 	try {
