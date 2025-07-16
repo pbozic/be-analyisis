@@ -738,13 +738,15 @@ export async function cancelSubscriptionById(subscription_id: string) {
 	}
 }
 
-function assignDeliveryDriver(delivery_drivers: delivery_drivers[]) {
+function assignDeliveryDriver(delivery_drivers: delivery_drivers[], id_to_ignore?: string) {
 	if (!delivery_drivers || delivery_drivers.length === 0) {
 		throw new Error('No delivery drivers available for assignment.');
 	}
-	const driver = delivery_drivers.reduce((prev, current) => {
-		return (prev.subscriptions?.length || 0) < (current.subscriptions?.length || 0) ? prev : current;
-	});
+	const driver = delivery_drivers
+		.filter((d: delivery_drivers) => d.delivery_driver_id !== id_to_ignore)
+		.reduce((prev, current) => {
+			return (prev.subscriptions?.length || 0) < (current.subscriptions?.length || 0) ? prev : current;
+		});
 	if (!driver) {
 		throw new Error('No delivery driver found with the least active subscriptions.');
 	}
@@ -895,6 +897,17 @@ export async function disconnectDriverFromAllSubscriptions(delivery_driver_id: s
 			where: {
 				delivery_driver_id: delivery_driver_id,
 			},
+			include: {
+				business: {
+					include: {
+						daily_meal_drivers: {
+							include: {
+								subscriptions: true,
+							},
+						},
+					},
+				},
+			},
 		});
 		if (subscriptions.length === 0) {
 			console.log(`No daily meal subscriptions found for driver ${delivery_driver_id}`);
@@ -910,17 +923,11 @@ export async function disconnectDriverFromAllSubscriptions(delivery_driver_id: s
 		});
 		console.log(`Disconnected driver ${delivery_driver_id} from ${subscriptions.length} subscriptions`);
 
-		const allBusinessDrivers = await prisma.delivery_drivers.findMany({
-			where: {
-				business_id: subscriptions[0].business_id,
-				delivery_driver_id: { not: delivery_driver_id },
-			},
-			include: {
-				subscriptions: true,
-			},
-		});
 		for (const subscription of subscriptions) {
-			const deliveryDriver = assignDeliveryDriver(allBusinessDrivers);
+			const deliveryDriver = assignDeliveryDriver(
+				subscriptions[0].business.daily_meal_drivers,
+				delivery_driver_id
+			);
 			if (!deliveryDriver) {
 				console.warn(`No delivery driver found to assign for subscription ${subscription.id}`);
 				continue;
