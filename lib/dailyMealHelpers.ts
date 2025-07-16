@@ -905,9 +905,7 @@ export async function disconnectDriverFromAllSubscriptions(delivery_driver_id: s
 				delivery_driver_id: delivery_driver_id,
 			},
 			data: {
-				delivery_driver: {
-					disconnect: true,
-				},
+				delivery_driver_id: null,
 			},
 		});
 		console.log(`Disconnected driver ${delivery_driver_id} from ${subscriptions.length} subscriptions`);
