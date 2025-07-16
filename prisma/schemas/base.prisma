@@ -1029,6 +1029,7 @@ model word_buy {
   word                   words     @relation(fields: [word_id], references: [word_id])
   stripe_subscription_id String?
   stripe_price_id        String?
+  pending_stripe_price_id       String?  // ← optional: store upcoming Stripe price ID
   price                  Float
   active_at              DateTime?
   expires_at             DateTime?

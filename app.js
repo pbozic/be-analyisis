@@ -38,9 +38,9 @@ if (process.env.NODE_ENV !== 'test') {
 app.disable('etag');
 app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
 
-app.use((req, res, next) => {
-	req.prisma = prisma;
-});
+// app.use((req, res, next) => {
+// 	req.prisma = prisma;
+// });
 
 app.post('/api/blog/upload/file', authMiddleware, upload.single('image'), (req, res) => {
 	console.log('File upload request received:', req.file);
