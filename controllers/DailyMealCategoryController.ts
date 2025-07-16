@@ -209,8 +209,8 @@ export async function deactivateDailyMealCategory(
 ) {
 	try {
 		const { dmc_id } = req.params;
-		const deleted = await DmcDao.deactivateDailyMealCategory(dmc_id);
-		res.status(200).json(deleted);
+		const deactivated = await DmcDao.deactivateDailyMealCategory(dmc_id);
+		res.status(200).json(deactivated);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';
 		res.status(500).json({ message: 'Error deactivating daily meal category', error: message });
@@ -242,8 +242,15 @@ export async function activateDailyMealCategory(
 ) {
 	try {
 		const { dmc_id } = req.params;
-		const deleted = await DmcDao.activateDailyMealCategory(dmc_id);
-		res.status(200).json(deleted);
+		const activated = await DmcDao.activateDailyMealCategory(dmc_id);
+		const futureDate = new Date();
+		futureDate.setUTCHours(0, 0, 0, 0);
+		futureDate.setUTCDate(futureDate.getUTCDate() + 13);
+		await dailyMealHelpers.generateDailyMealMenuCategoriesUpToDateForCategory(
+			activated.daily_meal_category_id,
+			futureDate
+		);
+		res.status(200).json(activated);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';
 		res.status(500).json({ message: 'Error activating daily meal category', error: message });
