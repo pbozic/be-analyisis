@@ -217,10 +217,8 @@ export async function generateDailyMealMenuCategoriesUpToDateForCategory(
 	const now = new Date(new Date().setUTCHours(0, 0, 0, 0));
 	const max_date = new Date(new Date(future_date).setUTCHours(23, 59, 59, 999));
 	const daily_meal_category = await DailyMealCategory.getDailyMealCategoryById(daily_meal_category_id, {
-		include: {
-			business: true,
-			daily_meal_category_prices: true,
-		},
+		business: true,
+		daily_meal_category_prices: true,
 	});
 
 	//TODO:make function for day range generation for each business
