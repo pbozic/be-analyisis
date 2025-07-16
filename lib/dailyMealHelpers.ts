@@ -872,6 +872,11 @@ export async function createDailyMeals() {
 				const order = await DeliveryOrderDao.createOrder(orderData, subscription.user_id);
 				if (!order) {
 					throw new Error(`Failed to create order for subscription ID ${subscription.id}`);
+				} else if (Object.keys(connectObj).length > 0) {
+					await DailyMealDao.connectSubscriptionWithDriver(
+						subscription.id,
+						connectObj.delivery_driver.connect.delivery_driver_id
+					);
 				}
 			}
 			console.log(`Daily meals created for business ${business.business_id}`);

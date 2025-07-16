@@ -399,7 +399,8 @@ export async function getDailyMealsSubscriptionsByBusinessId(
 	}
 }
 
-/** *
+/**
+ *
  * - PATCH /delivery/orders/daily_meals/subscription/{subscription_id}/activate
  * - @tag Delivery
  * - @summary Activate a daily meal subscription by ID
@@ -436,7 +437,8 @@ export async function activateSubscriptionById(
 	}
 }
 
-/** * - PATCH /delivery/orders/daily_meals/subscription/{subscription_id}/cancel
+/**
+ * - PATCH /delivery/orders/daily_meals/subscription/{subscription_id}/cancel
  * - @tag Delivery
  * - @summary Cancel a daily meal subscription by ID
  * - @description Cancels a daily meal subscription by its ID, marking it as canceled and updating all related daily meal instances to CANCELED status.
@@ -472,7 +474,8 @@ export async function cancelSubscriptionById(
 	}
 }
 
-/** * - PATCH /delivery/orders/daily_meals/instance/{instance_id}/cancel
+/**
+ * - PATCH /delivery/orders/daily_meals/instance/{instance_id}/cancel
  * - @tag Delivery
  * - @summary Cancel a daily meal instance by ID
  * - @description Cancels a daily meal instance by its ID, marking it as canceled.
@@ -519,7 +522,8 @@ export async function cancelDailyMealInstanceById(
 	}
 }
 
-/** * - GET /delivery/orders/daily_meals/subscription/{subscription_id}
+/**
+ * - GET /delivery/orders/daily_meals/subscription/{subscription_id}
  * - @tag Delivery
  * - @summary Get a daily meal subscription by ID
  * - @description Returns a daily meal subscription by its ID, including related user, business, delivery_address, customers, days, weekdays, and daily_meal_instances.
@@ -576,32 +580,7 @@ export async function getSubscriptionById(
 ): Promise<void> {
 	try {
 		const { subscription_id } = req.params;
-		const subscription = await DailyMealDao.getSubscriptionById(subscription_id, {
-			user: true,
-			business: true,
-			delivery_address: true,
-			customers: true,
-			days: true,
-			weekdays: true,
-			daily_meal_instances: {
-				include: {
-					menu_category: {
-						include: {
-							menu_categories_categories: {
-								include: {
-									category: true,
-								},
-							},
-							menu_items: true,
-						},
-					},
-					customer: true,
-				},
-				orderBy: {
-					intended_date: 'asc',
-				},
-			},
-		});
+		const subscription = await DailyMealDao.getSubscriptionById(subscription_id);
 		if (!subscription) {
 			res.status(400).json({ message: 'Daily meal subscription not found' });
 			return;
@@ -610,6 +589,58 @@ export async function getSubscriptionById(
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';
 		res.status(500).json({ message: 'Error fetching daily meal subscription', error: message });
+	}
+}
+
+/**
+ * - PATCH /delivery/orders/daily_meals/subscription/{subscription_id}/assign_driver
+ * - @tag Delivery
+ * - @summary Assign a delivery driver to a daily meal subscription
+ * - @description Assigns a delivery driver to a daily meal subscription by its ID, updating the subscription with the driver's ID.
+ * - @operationId assignDeliveryDriverToSubscription
+ * - @pathParam {string} subscription_id - The ID of the daily meal subscription to assign a driver to
+ * - @bodyDescription The delivery driver ID to assign
+ * - @bodyContent {
+ *     "delivery_driver_id": "driver_id_here"
+ *   } application/json
+ * - @bodyRequired true
+ * - @response 200 - Delivery driver assigned to daily meal subscription successfully
+ * - @responseContent {object} 200.application/json
+ * - @responseExample 200.application/json {
+ *     "id": "b6842fce-5e7f-4ee6-9467-56b3654475cf",
+ *     "delivery_driver_id": "driver_id_here",
+ *     "updated_at": "2025-07-01T00:00:00.000Z",
+ *     "daily_meal_instances": [ ... ]
+ *   }
+ * - @response 500 - Error assigning delivery driver to daily meal subscription
+ * - @responseContent {object} 500.application/json
+ * - @responseExample 500.application/json {
+ *     "message": "Error assigning delivery driver to subscription",
+ *     "error": "Error message here"
+ *   }
+ * - @prisma_model daily_meal_subscriptions
+ * - @prisma_model daily_meal_instances
+ * - @prisma_model daily_meal_subscription_customers
+ * - @prisma_model daily_meal_subscription_days
+ * - @prisma_model daily_meal_subscription_weekdays
+ * - @prisma_model delivery_drivers
+ * ./prisma/schema.prisma
+ */
+export async function assignDeliveryDriverToSubscription(
+	req: ValidatedRequest<{ delivery_driver_id: string }, { subscription_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const { subscription_id } = req.params;
+		const { delivery_driver_id } = req.body;
+		const updated_subscription = await DailyMealDao.connectSubscriptionWithDriver(
+			subscription_id,
+			delivery_driver_id
+		);
+		res.status(200).json(updated_subscription);
+	} catch (error) {
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error assigning delivery driver to subscription', error: message });
 	}
 }
 
@@ -622,4 +653,5 @@ export default {
 	cancelSubscriptionById,
 	cancelDailyMealInstanceById,
 	getSubscriptionById,
+	assignDeliveryDriverToSubscription,
 };

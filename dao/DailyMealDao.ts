@@ -4,6 +4,38 @@ import prisma from '../prisma/prisma.js';
 import { DailyMealsCartPerson } from '../types/dailymeal/DailyMealSubscription.ts';
 import { DOCUMENT_TYPE } from '../lib/constants.js';
 
+const defaultIncludeObj = {
+	user: true,
+	business: true,
+	delivery_address: true,
+	customers: true,
+	days: true,
+	weekdays: true,
+	daily_meal_instances: {
+		include: {
+			menu_category: {
+				include: {
+					menu_categories_categories: {
+						include: {
+							category: true,
+						},
+					},
+					menu_items: true,
+				},
+			},
+			customer: true,
+		},
+		orderBy: {
+			intended_date: 'asc',
+		},
+	},
+	delivery_driver: {
+		include: {
+			user: true,
+		},
+	},
+};
+
 /**
  * Get active daily meal subscriptions by business_id
  * @param business_id
@@ -387,7 +419,7 @@ export async function createDailyMealSubscription(
 export async function getSubscriptionById(id: string, includeObj?: Prisma.daily_meal_subscriptionsInclude) {
 	return await prisma.daily_meal_subscriptions.findUnique({
 		where: { id },
-		include: includeObj,
+		include: includeObj || defaultIncludeObj,
 	});
 }
 
@@ -399,7 +431,25 @@ export async function updateSubscriptionStatus(
 	return await prisma.daily_meal_subscriptions.update({
 		where: { id },
 		data: { status: status },
-		include: includeObj,
+		include: includeObj || defaultIncludeObj,
+	});
+}
+
+export async function connectSubscriptionWithDriver(
+	id: string,
+	delivery_driver_id: string,
+	includeObj?: Prisma.daily_meal_subscriptionsInclude
+) {
+	return await prisma.daily_meal_subscriptions.update({
+		where: { id },
+		data: {
+			delivery_driver: {
+				connect: {
+					delivery_driver_id: delivery_driver_id,
+				},
+			},
+		},
+		include: includeObj || defaultIncludeObj,
 	});
 }
 
@@ -421,4 +471,5 @@ export default {
 	getSubscriptionById,
 	updateSubscriptionStatus,
 	updateDailyMealInstances,
+	connectSubscriptionWithDriver,
 };
