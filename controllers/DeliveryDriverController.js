@@ -497,7 +497,7 @@ async function updateDeliveryDriverDailyMealBusiness(req, res) {
 		} else {
 			updateData = {
 				delivers_daily_meals: false,
-				daily_meal_business_id: {
+				daily_meal_business: {
 					disconnect: true,
 				},
 			};

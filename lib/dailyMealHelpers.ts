@@ -717,10 +717,7 @@ export async function activateSubscriptionById(subscription_id: string) {
 		await generateInstancesForSubscription(subscription_id);
 		const updated_subscription = await DailyMealDao.updateSubscriptionStatus(
 			subscription_id,
-			SUBSCRIPTION_STATUS.ACTIVE,
-			{
-				daily_meal_instances: true,
-			}
+			SUBSCRIPTION_STATUS.ACTIVE
 		);
 		return updated_subscription;
 	} catch (error) {
