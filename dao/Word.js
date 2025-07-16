@@ -225,6 +225,7 @@ async function createWordBuy(args) {
 		},
 	});
 }
+
 export async function updateUserSubscription(userId, business_id) {
 	try {
 		console.log(userId, 'userId');
@@ -341,14 +342,22 @@ export async function createWordBuySubscription(word_id, business_id, price, use
 		}
 
 		// 2) Create new word_buy entry (unpaid, no stripe_sub yet)
-		const wordBuy = await prisma.word_buy.create({
-			data: {
-				word: { connect: { word_id } },
-				business: { connect: { business_id } },
-				price,
-				// stripe_subscription_id will be updated in `updateUserSubscription`
-			},
-		});
+		const wordBuy = await prisma.word_buy.upsert({
+  where: {
+    word_id_business_id: {
+      word_id,
+      business_id,
+    },
+  },
+  update: {
+    price,
+  },
+  create: {
+    word: { connect: { word_id } },
+    business: { connect: { business_id } },
+    price,
+  },
+});
 
 		async function updateExpiresAt(subscriptionId) {
 			const subscription = await stripe.subscriptions.retrieve(subscriptionId);

@@ -4,6 +4,38 @@ import prisma from '../prisma/prisma.js';
 import { DailyMealsCartPerson } from '../types/dailymeal/DailyMealSubscription.ts';
 import { DOCUMENT_TYPE } from '../lib/constants.js';
 
+const defaultIncludeObj = {
+	user: true,
+	business: true,
+	delivery_address: true,
+	customers: true,
+	days: true,
+	weekdays: true,
+	daily_meal_instances: {
+		include: {
+			menu_category: {
+				include: {
+					menu_categories_categories: {
+						include: {
+							category: true,
+						},
+					},
+					menu_items: true,
+				},
+			},
+			customer: true,
+		},
+		orderBy: {
+			intended_date: 'asc',
+		},
+	},
+	delivery_driver: {
+		include: {
+			user: true,
+		},
+	},
+};
+
 /**
  * Get active daily meal subscriptions by business_id
  * @param business_id
@@ -20,26 +52,8 @@ export async function getDailyMealSubscriptionsByBusinessId(
 			...args,
 		},
 		include: {
-			user: true,
-			delivery_address: true,
-			customers: true,
-			days: true,
-			weekdays: true,
-			daily_meal_instances: {
-				include: {
-					menu_category: {
-						include: {
-							menu_categories_categories: {
-								include: {
-									category: true,
-								},
-							},
-							menu_items: true,
-						},
-					},
-					customer: true,
-				},
-			},
+			...defaultIncludeObj,
+			business: false,
 		},
 		orderBy: { start_date: 'asc' },
 	});
@@ -60,26 +74,8 @@ export async function getActiveDailyMealSubscriptionsByBusinessId(business_id: s
 			status: SUBSCRIPTION_STATUS.ACTIVE,
 		},
 		include: {
-			user: true,
-			delivery_address: true,
-			customers: true,
-			days: true,
-			weekdays: true,
-			daily_meal_instances: {
-				include: {
-					menu_category: {
-						include: {
-							menu_categories_categories: {
-								include: {
-									category: true,
-								},
-							},
-							menu_items: true,
-						},
-					},
-					customer: true,
-				},
-			},
+			...defaultIncludeObj,
+			business: false,
 		},
 		orderBy: { start_date: 'asc' },
 	});
@@ -100,6 +96,7 @@ export async function getDailyMealSubscriptionsByUserId(user_id: string, start_d
 			start_date: normalizedDate ? { gte: normalizedDate } : undefined,
 		},
 		include: {
+			...defaultIncludeObj,
 			business: {
 				select: {
 					business_id: true,
@@ -118,25 +115,6 @@ export async function getDailyMealSubscriptionsByUserId(user_id: string, start_d
 							files: true,
 						},
 					},
-				},
-			},
-			delivery_address: true,
-			customers: true,
-			days: true,
-			weekdays: true,
-			daily_meal_instances: {
-				include: {
-					menu_category: {
-						include: {
-							menu_categories_categories: {
-								include: {
-									category: true,
-								},
-							},
-							menu_items: true,
-						},
-					},
-					customer: true,
 				},
 			},
 		},
@@ -161,13 +139,7 @@ export async function getTodayDailyMealSubscriptionsByBusinessId(business_id: st
 			status: SUBSCRIPTION_STATUS.ACTIVE,
 		},
 		include: {
-			user: true,
-			delivery_driver: true,
-			business: true,
-			delivery_address: true,
-			customers: true,
-			days: true,
-			weekdays: true,
+			...defaultIncludeObj,
 			daily_meal_instances: {
 				where: {
 					status: DAILY_MEAL_INSTANCE_STATUS.PLANNED,
@@ -387,7 +359,7 @@ export async function createDailyMealSubscription(
 export async function getSubscriptionById(id: string, includeObj?: Prisma.daily_meal_subscriptionsInclude) {
 	return await prisma.daily_meal_subscriptions.findUnique({
 		where: { id },
-		include: includeObj,
+		include: includeObj || defaultIncludeObj,
 	});
 }
 
@@ -399,7 +371,25 @@ export async function updateSubscriptionStatus(
 	return await prisma.daily_meal_subscriptions.update({
 		where: { id },
 		data: { status: status },
-		include: includeObj,
+		include: includeObj || defaultIncludeObj,
+	});
+}
+
+export async function connectSubscriptionWithDriver(
+	id: string,
+	delivery_driver_id: string,
+	includeObj?: Prisma.daily_meal_subscriptionsInclude
+) {
+	return await prisma.daily_meal_subscriptions.update({
+		where: { id },
+		data: {
+			delivery_driver: {
+				connect: {
+					delivery_driver_id: delivery_driver_id,
+				},
+			},
+		},
+		include: includeObj || defaultIncludeObj,
 	});
 }
 
@@ -421,4 +411,5 @@ export default {
 	getSubscriptionById,
 	updateSubscriptionStatus,
 	updateDailyMealInstances,
+	connectSubscriptionWithDriver,
 };

@@ -21,7 +21,7 @@ import {
 import prisma from '../prisma/prisma.js';
 import MenuDao from '../dao/Menu.js';
 import MenuCategoryDao from '../dao/MenuCategory.js';
-import DailyMealDao from '../dao/DailyMealDao.js';
+import DailyMealDao, { updateSubscriptionStatus } from '../dao/DailyMealDao.js';
 import DailyMealCategory from '../dao/DailyMealCategory.js';
 import BusinessDao from '../dao/Business.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
@@ -216,7 +216,10 @@ export async function generateDailyMealMenuCategoriesUpToDateForCategory(
 	//TODO: make function for date range for all busiensses that offer DMs
 	const now = new Date(new Date().setUTCHours(0, 0, 0, 0));
 	const max_date = new Date(new Date(future_date).setUTCHours(23, 59, 59, 999));
-	const daily_meal_category = await DailyMealCategory.getDailyMealCategoryById(daily_meal_category_id);
+	const daily_meal_category = await DailyMealCategory.getDailyMealCategoryById(daily_meal_category_id, {
+		business: true,
+		daily_meal_category_prices: true,
+	});
 
 	//TODO:make function for day range generation for each business
 	const business = daily_meal_category.business;
@@ -714,10 +717,7 @@ export async function activateSubscriptionById(subscription_id: string) {
 		await generateInstancesForSubscription(subscription_id);
 		const updated_subscription = await DailyMealDao.updateSubscriptionStatus(
 			subscription_id,
-			SUBSCRIPTION_STATUS.ACTIVE,
-			{
-				daily_meal_instances: true,
-			}
+			SUBSCRIPTION_STATUS.ACTIVE
 		);
 		return updated_subscription;
 	} catch (error) {
@@ -738,13 +738,15 @@ export async function cancelSubscriptionById(subscription_id: string) {
 	}
 }
 
-function assignDeliveryDriver(delivery_drivers: delivery_drivers[]) {
+function assignDeliveryDriver(delivery_drivers: delivery_drivers[], id_to_ignore?: string) {
 	if (!delivery_drivers || delivery_drivers.length === 0) {
 		throw new Error('No delivery drivers available for assignment.');
 	}
-	const driver = delivery_drivers.reduce((prev, current) => {
-		return (prev.subscriptions?.length || 0) < (current.subscriptions?.length || 0) ? prev : current;
-	});
+	const driver = delivery_drivers
+		.filter((d: delivery_drivers) => d.delivery_driver_id !== id_to_ignore)
+		.reduce((prev, current) => {
+			return (prev.subscriptions?.length || 0) < (current.subscriptions?.length || 0) ? prev : current;
+		});
 	if (!driver) {
 		throw new Error('No delivery driver found with the least active subscriptions.');
 	}
@@ -781,11 +783,17 @@ export async function createDailyMeals() {
 
 			const providerLocation = convertAddressToLocation(business.delivery_address);
 			for (const subscription of subscriptions) {
-				const deliveryLocation = convertAddressToLocation(subscription.delivery_address);
-				if (subscription.daily_meal_instances.length === 0) {
-					console.warn(`No daily meal instances found for subscription ID ${subscription.id}`);
+				const endDate = subscription.end_date ? new Date(subscription.end_date) : null;
+				if (endDate && new Date(endDate.setHours(23, 59, 59, 999)) < new Date()) {
+					console.log(`Skipping subscription ${subscription.id} as it has ended`);
+					await updateSubscriptionStatus(subscription.id, SUBSCRIPTION_STATUS.EXPIRED);
 					continue;
 				}
+				if (subscription.daily_meal_instances.length === 0) {
+					console.log(`No daily meal instances found for subscription ID ${subscription.id}`);
+					continue;
+				}
+				const deliveryLocation = convertAddressToLocation(subscription.delivery_address);
 
 				const subItems = subscription.daily_meal_instances
 					.map((instance: daily_meal_instances) => instance.menu_category.menu_items)
@@ -808,18 +816,15 @@ export async function createDailyMeals() {
 				}));
 
 				let connectObj = {};
-				let driver = subscription.delivery_driver;
-				if (!driver && subscription.type === SUBSCRIPTION_TYPE.DATED) {
-					driver = assignDeliveryDriver(business.daily_meal_drivers);
-					if (driver.delivery_driver_id) {
-						connectObj = {
-							delivery_driver: {
-								connect: {
-									delivery_driver_id: driver.delivery_driver_id,
-								},
+				const driver = subscription.delivery_driver || assignDeliveryDriver(business.daily_meal_drivers);
+				if (driver?.delivery_driver_id) {
+					connectObj = {
+						delivery_driver: {
+							connect: {
+								delivery_driver_id: driver.delivery_driver_id,
 							},
-						};
-					}
+						},
+					};
 				}
 
 				const orderData = {
@@ -870,11 +875,62 @@ export async function createDailyMeals() {
 				if (!order) {
 					throw new Error(`Failed to create order for subscription ID ${subscription.id}`);
 				}
+				if (!subscription.delivery_driver_id && driver?.delivery_driver_id) {
+					await DailyMealDao.connectSubscriptionWithDriver(subscription.id, driver.delivery_driver_id);
+				}
 			}
 			console.log(`Daily meals created for business ${business.business_id}`);
 		}
 	} catch (error) {
 		console.error('Error creating daily meals:', error);
+	}
+}
+
+export async function disconnectDriverFromAllSubscriptions(delivery_driver_id: string) {
+	try {
+		const subscriptions = await prisma.daily_meal_subscriptions.findMany({
+			where: {
+				delivery_driver_id: delivery_driver_id,
+			},
+			include: {
+				business: {
+					include: {
+						daily_meal_drivers: {
+							include: {
+								subscriptions: true,
+							},
+						},
+					},
+				},
+			},
+		});
+		if (subscriptions.length === 0) {
+			console.log(`No daily meal subscriptions found for driver ${delivery_driver_id}`);
+			return;
+		}
+		await prisma.daily_meal_subscriptions.updateMany({
+			where: {
+				delivery_driver_id: delivery_driver_id,
+			},
+			data: {
+				delivery_driver_id: null,
+			},
+		});
+		console.log(`Disconnected driver ${delivery_driver_id} from ${subscriptions.length} subscriptions`);
+
+		for (const subscription of subscriptions) {
+			const deliveryDriver = assignDeliveryDriver(
+				subscriptions[0].business.daily_meal_drivers,
+				delivery_driver_id
+			);
+			if (!deliveryDriver) {
+				console.warn(`No delivery driver found to assign for subscription ${subscription.id}`);
+				continue;
+			}
+			await DailyMealDao.connectSubscriptionWithDriver(subscription.id, deliveryDriver.delivery_driver_id);
+		}
+	} catch (error) {
+		console.error(`Error disconnecting driver ${delivery_driver_id} from subscriptions:`, error);
 	}
 }
 
@@ -888,4 +944,5 @@ export default {
 	activateSubscriptionById,
 	cancelSubscriptionById,
 	createDailyMeals,
+	disconnectDriverFromAllSubscriptions,
 };
