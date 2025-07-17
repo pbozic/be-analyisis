@@ -1032,6 +1032,7 @@ model word_buy {
   stripe_price_id        String?
   pending_stripe_price_id       String?  // ← optional: store upcoming Stripe price ID
   price                  Float
+  pending_price          Float?
   active_at              DateTime?
   expires_at             DateTime?
   paid                   Boolean   @default(false)
