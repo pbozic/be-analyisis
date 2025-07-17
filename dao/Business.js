@@ -1,9 +1,8 @@
 import prisma from '../prisma/prisma.js';
 import AddressDao from './Address.js';
-import DocumentDao from './Document.js';
 import Constants from '../lib/constants.js';
 import { reorderMenusAndCategories } from '../lib/businessHelpers.js';
-import { ACCOUNT_ACTIONS_REASON, ACCOUNT_ACTIONS } from '../lib/constants.js';
+import { ACCOUNT_ACTIONS } from '../lib/constants.js';
 const getBusinesses = async (args) => {
 	try {
 		return await prisma.business.findMany({
@@ -669,9 +668,9 @@ const updateBusinessIsPopular = async (business_id, popular) => {
 		throw new Error(error);
 	}
 };
-const createNewBusiness = async (business) => {
+const createNewBusiness = async (business, tx = prisma) => {
 	try {
-		return await prisma.business.create({
+		return await tx.business.create({
 			data: business,
 		});
 	} catch (error) {

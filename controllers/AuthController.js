@@ -1108,9 +1108,10 @@ async function registerReservationBusiness(req, res) {
 			business = await BusinessDao.createNewBusiness({
 				...businessData,
 				stripe_customer_id: stripeCustomer.id,
+				tx,
 			});
 			// Create reservation module for the business
-			let reservationModule = await req.prisma.reservation_module.create({
+			let reservationModule = await tx.reservation_module.create({
 				data: {
 					business: {
 						connect: {
