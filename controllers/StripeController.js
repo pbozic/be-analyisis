@@ -153,48 +153,48 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			});
 			break;
 		}
-		case 'word_buy': {
-			const invoice = event.data.object;
-			const subId = invoice.subscription;
-			if (!subId) return res.json({ received: true });
+		// case 'word_buy': {
+		// 	const invoice = event.data.object;
+		// 	const subId = invoice.subscription;
+		// 	if (!subId) return res.json({ received: true });
 
-			// 1) Find your word_buy record by subscription ID
-			const wb = await prisma.word_buy.findFirst({
-				where: { stripe_subscription_id: subId },
-			});
-			if (!wb) {
-				// not one of ours
-				return res.json({ received: true });
-			}
+		// 	// 1) Find your word_buy record by subscription ID
+		// 	const wb = await prisma.word_buy.findFirst({
+		// 		where: { stripe_subscription_id: subId },
+		// 	});
+		// 	if (!wb) {
+		// 		// not one of ours
+		// 		return res.json({ received: true });
+		// 	}
 
-			// 2) Extract the billing period from the first line item
-			const line = invoice.lines.data[0];
-			if (!line?.period) {
-				console.error('No period info on invoice line for subscription:', subId);
-				return res.json({ received: true });
-			}
+		// 	// 2) Extract the billing period from the first line item
+		// 	const line = invoice.lines.data[0];
+		// 	if (!line?.period) {
+		// 		console.error('No period info on invoice line for subscription:', subId);
+		// 		return res.json({ received: true });
+		// 	}
 
-			const periodStart = new Date(line.period.start * 1000);
-			const periodEnd = new Date(line.period.end * 1000);
+		// 	const periodStart = new Date(line.period.start * 1000);
+		// 	const periodEnd = new Date(line.period.end * 1000);
 
-			// 3) Decide if this is the first payment or a renewal
-			const isFirstPayment = !wb.paid;
+		// 	// 3) Decide if this is the first payment or a renewal
+		// 	const isFirstPayment = !wb.paid;
 
-			// 4) Build the update payload
-			const updateData = {
-				paid: true,
-				expires_at: periodEnd,
-			};
-			if (isFirstPayment) {
-				updateData.active_at = periodStart;
-			}
+		// 	// 4) Build the update payload
+		// 	const updateData = {
+		// 		paid: true,
+		// 		expires_at: periodEnd,
+		// 	};
+		// 	if (isFirstPayment) {
+		// 		updateData.active_at = periodStart;
+		// 	}
 
-			// 5) Persist updates
-			await prisma.word_buy.update({
-				where: { word_buy_id: wb.word_buy_id },
-				data: updateData,
-			});
-		}
+		// 	// 5) Persist updates
+		// 	await prisma.word_buy.update({
+		// 		where: { word_buy_id: wb.word_buy_id },
+		// 		data: updateData,
+		// 	});
+		// }
 	}
 }
 async function handlePaymentIntentFaliure(paymentIntent) {
@@ -442,7 +442,7 @@ async function handleWebhook(req, res) {
 					where: {
 						stripe_subscription_id: subscriptionId,
 						pending_price: { not: null },
-						pending_price_id: { not: null },
+						pending_stripe_price_id: { not: null },
 					},
 				});
 
@@ -453,7 +453,7 @@ async function handleWebhook(req, res) {
 							price: wb.pending_price,
 							stripe_price_id: wb.pending_price_id,
 							pending_price: null,
-							pending_price_id: null,
+							pending_stripe_price_id: null,
 						},
 					});
 				}
