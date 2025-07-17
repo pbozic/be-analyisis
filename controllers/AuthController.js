@@ -1124,6 +1124,7 @@ async function registerReservationBusiness(req, res) {
 		const userExists = await UserDao.getUserByTelephone(phoneNumber);
 		let businessUserData;
 		await req.prisma.$transaction(async (tx) => {
+			console.log('Creating business user for reservation business:', userObj);
 			if (userExists) {
 				// If user exists, connect to existing user
 				const { businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id, tx);
@@ -1146,6 +1147,7 @@ async function registerReservationBusiness(req, res) {
 				await UserDao.linkRolesToUser(newUser?.user_id, userRoles, tx);
 			}
 			//create employee user
+			console.log('Creating employee for reservation business:', businessUserData);
 			let employee = await tx.employee.create({
 				data: {
 					business_user: {
@@ -1162,6 +1164,7 @@ async function registerReservationBusiness(req, res) {
 			});
 
 			//create demo location
+			console.log('Creating location for reservation business:', reservationModule.reservation_module_id);
 			await tx.location.create({
 				data: {
 					reservation_module: {
@@ -1176,6 +1179,7 @@ async function registerReservationBusiness(req, res) {
 			});
 
 			//create demo service
+			console.log('Creating service for reservation business:', employee.employee_id);
 			await tx.service.create({
 				data: {
 					reservation_module: {
