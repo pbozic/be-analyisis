@@ -191,8 +191,6 @@ export type MODULE_TYPE = 'reservations';
 
 export type BOOKING_STATUS = 'reserved' | 'cancelled' | 'no_show';
 
-export type CATEGORY_LEVEL = 'category' | 'subcategory' | 'sub_subcategory';
-
 export type SCHEDULE_SLOT_EXCEPTION_TYPE = 'vacation' | 'location_closed' | 'other' | 'health' | 'break' | 'lunch';
 
 export type finances = {
@@ -1579,7 +1577,6 @@ export type service_category = {
 	service_category_id: string;
 	name: JsonValue;
 	parent_id: string | null;
-	level: CATEGORY_LEVEL;
 	color: string | null;
 	parent?: service_category | null;
 	children?: service_category[];

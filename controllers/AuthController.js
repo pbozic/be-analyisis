@@ -1119,15 +1119,33 @@ async function registerReservationBusiness(req, res) {
 			user_role: 'ADMIN',
 		};
 		delete userObj.data.user_roles;
-		const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id);
-		const userRoles = userObj.data.user_roles || [{ role: userObj.user_role || 'BUSINESS_USER', primary: true }];
-		await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
+		//TODO: is this ok or should we tell them this is happening?
+		const phoneNumber = req.body.telephone_number;
+		const userExists = await UserDao.getUserByTelephone(phoneNumber);
+		let businessUserData;
+		if (userExists) {
+			// If user exists, connect to existing user
+			const { businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id);
+			businessUserData = businessUser;
+			const userRoles = userObj.data.user_roles || [
+				{ role: userObj.user_role || 'BUSINESS_USER', primary: true },
+			];
+			await UserDao.linkRolesToUser(userExists.user_id, userRoles);
+		} else {
+			// If user does not exist, create new user
+			const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id);
+			businessUserData = businessUser;
+			const userRoles = userObj.data.user_roles || [
+				{ role: userObj.user_role || 'BUSINESS_USER', primary: true },
+			];
+			await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
+		}
 		//create employee user
 		let employee = await req.prisma.employee.create({
 			data: {
 				business_user: {
 					connect: {
-						business_user_id: businessUser.business_user_id,
+						business_user_id: businessUserData.business_user_id,
 					},
 				},
 				reservation_module: {
@@ -1171,7 +1189,7 @@ async function registerReservationBusiness(req, res) {
 				},
 			},
 		});
-		businessUsers.push({ businessUser });
+		businessUsers.push({ businessUser: businessUserData });
 		// TODO: select user to login,
 		res.status(201).json({
 			message: 'Business registered successfully',

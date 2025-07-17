@@ -1,0 +1,140 @@
+import { Response } from 'express';
+
+import CustomerDao from '../../dao/reservation/Customer.ts';
+import { ValidatedRequest } from '../../types/validatedRequest.ts';
+import { CreateCustomerInput, UpdateCustomerInput } from '../../types/reservation/Customer';
+/**
+ * GET /reservation/customers
+ * @tag Reservation
+ * @summary Get all reservation customers for a business
+ * @description Retrieves all reservation customers for a specific business.
+ * @operationId getReservationCustomers
+ * @response 200 - Reservation customers retrieved successfully
+ * @responseContent {Customer[]} 200.application/json
+ * @response 500 - Error retrieving customers
+ */
+export async function getCustomers(req: ValidatedRequest, res: Response): Promise<void> {
+	try {
+		let businessId = req.user?.business_id as string;
+		if (!businessId) {
+			res.status(400).json({ message: 'User has no business' });
+			return;
+		}
+		let customers = await CustomerDao.getCustomersByBusinessId(businessId);
+		res.status(200).json(customers);
+	} catch (error) {
+		res.status(500).json({ message: 'Error retrieving customers', error });
+	}
+}
+
+/**
+ * POST /reservation/customers
+ * @tag Reservation
+ * @summary Create a new reservation customer
+ * @description Creates a new reservation customer.
+ * @operationId createReservationCustomer
+ * @requestBody {CreateCustomerInput} requestBody - The customer data to create.
+ * @response 201 - Customer created successfully
+ * @responseContent {Customer} 201.application/json
+ * @response 400 - Invalid input data
+ * @response 500 - Error creating customer
+ */
+export async function createCustomer(req: ValidatedRequest<CreateCustomerInput>, res: Response): Promise<void> {
+	try {
+		let customerData = req.body;
+		let customer = await CustomerDao.createCustomer(customerData);
+		res.status(201).json(customer);
+	} catch (error) {
+		res.status(500).json({ message: 'Error creating customer', error });
+	}
+}
+
+/**
+ * PUT /reservation/customers/{customer_id}
+ * @tag Reservation
+ * @summary Update a reservation customer
+ * @description Updates an existing reservation customer.
+ * @operationId updateReservationCustomer
+ * @pathParam {string} customer_id - The ID of the customer to update.
+ * @requestBody {UpdateCustomerInput} requestBody - The data to update the customer with.
+ * @response 200 - Customer updated successfully
+ * @responseContent {Customer} 200.application/json
+ * @response 400 - Invalid input data
+ * @response 404 - Customer not found
+ * @response 500 - Error updating customer
+ */
+export async function updateCustomer(
+	req: ValidatedRequest<UpdateCustomerInput, { customer_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		let customerId = req.params.customer_id;
+		let customerData = req.body;
+		let customer = await CustomerDao.updateCustomer(customerId, customerData);
+		res.status(200).json(customer);
+	} catch (error) {
+		res.status(500).json({ message: 'Error updating customer', error });
+	}
+}
+
+/**
+ * DELETE /reservation/customers/{customer_id}
+ * @tag Reservation
+ * @summary Delete a reservation customer
+ * @description Deletes a reservation customer by its ID.
+ * @operationId deleteReservationCustomer
+ * @pathParam {string} customer_id - The ID of the customer to delete.
+ * @response 204 - Customer deleted successfully
+ * @response 404 - Customer not found
+ * @response 500 - Error deleting customer
+ */
+export async function deleteCustomer(
+	req: ValidatedRequest<null, { customer_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		let customerId = req.params.customer_id as string;
+		await CustomerDao.deleteCustomer(customerId);
+		res.status(204).send();
+	} catch (error) {
+		res.status(500).json({ message: 'Error deleting customer', error });
+	}
+}
+
+/**
+ * GET /reservation/customers/{customer_id}
+ * @tag Reservation
+ * @summary Get a reservation customer by ID
+ * @description Retrieves a reservation customer by its ID.
+ * @operationId getReservationCustomerById
+ * @pathParam {string} customer_id - The ID of the customer to retrieve.
+ * @response 200 - Customer retrieved successfully
+ * @responseContent {Customer} 200.application/json
+ * @response 404 - Customer not found
+ * @response 500 - Error retrieving customer
+ */
+
+export async function getCustomerById(
+	req: ValidatedRequest<null, { customer_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		let customerId = req.params.customer_id as string;
+		let customer = await CustomerDao.getCustomerById(customerId);
+		if (!customer) {
+			res.status(404).json({ message: 'Customer not found' });
+			return;
+		}
+		res.status(200).json(customer);
+	} catch (error) {
+		res.status(500).json({ message: 'Error retrieving customer', error });
+	}
+}
+
+export default {
+	getCustomers,
+	createCustomer,
+	updateCustomer,
+	deleteCustomer,
+	getCustomerById,
+};

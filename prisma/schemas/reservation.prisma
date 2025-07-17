@@ -8,11 +8,6 @@ enum BOOKING_STATUS {
   no_show
 }
 
-enum CATEGORY_LEVEL {
-  category
-  subcategory
-  sub_subcategory
-}
 // --- MODELS ---
 
 model reservation_module {
@@ -49,7 +44,6 @@ model service_category {
   service_category_id   String         @id @default(uuid()) @db.Uuid
   name          Json           // Translations: { "en": "Hair", "sl": "Frizer" }
   parent_id     String?        @db.Uuid
-  level         CATEGORY_LEVEL
   color         String?
   parent        service_category?      @relation("SubCategory", fields: [parent_id], references: [service_category_id])
   children      service_category[]     @relation("SubCategory")
