@@ -1,23 +1,19 @@
 import dotenv from 'dotenv';
 import { SPLIT_DESTINATION_TYPE } from '@prisma/client';
 
-import DeliveryOrderDao, { updateDailyMealsSubscriptionsStatusByGroupedId } from '../dao/DeliveryOrder.js';
-import UsersDao from '../dao/User.js';
+import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import socket from '../socket.js';
 import stripe from '../lib/stripe.js';
 import BusinessDao from '../dao/Business.js';
 import PromoDao from '../dao/Promo.js';
-import ProductDao from '../dao/Product.js';
 import PaymentDao from '../dao/Payment.ts';
 import UserDao from '../dao/User.js';
 import WalletFundsHelpers from '../lib/WalletFundsHelpers.js';
-import { DELIVERY_ORDER_STATUS, FUNDS_TYPE, SERVICE_TYPE, ORDER_TYPE, TAXI_ORDER_STATUS } from '../lib/constants.js';
+import { DELIVERY_ORDER_STATUS, SERVICE_TYPE, ORDER_TYPE, TAXI_ORDER_STATUS } from '../lib/constants.js';
 import { calculateDeliveryOrderPaymentCuts } from '../lib/deliveryHelpers.js';
 import WalletFundsDao from '../dao/WalletFunds.js';
 import TaxiOrderDao from '../dao/TaxiOrder.js';
-import { calculateTransferOrderPaymentCuts } from '../lib/taxiHelpers.js';
 import PaymentHelpers from '../lib/paymentHelpers.ts';
-import DailyMealDao from '../dao/DailyMealDao.ts';
 import dailyMealHelpers from '../lib/dailyMealHelpers.ts';
 import { handleStockSync } from './DeliveryOrderController.js';
 import { BUSINESS_TYPE } from '../lib/constants.js';
@@ -395,86 +391,9 @@ async function handleWebhook(req, res) {
 				handleChargeUpdate(event.data.object);
 				break;
 			/*** PRODUCT EVENTS ***/
-			case 'product.created': {
-				let product = await ProductDao.getProductByStripeId(data.id);
-				if (!product) {
-					product = await ProductDao.createProduct({
-						name: data.name,
-						description: data.description,
-						stripe_product_id: data.id,
-					});
-				}
-				console.log(`Product added: ${data.name}`);
-				break;
-			}
-			case 'product.updated': {
-				let updatedProduct = await ProductDao.getProductByStripeId(data.id);
-				if (!updatedProduct) {
-					updatedProduct = await ProductDao.createProduct({
-						name: data.name,
-						description: data.description,
-						stripe_product_id: data.id,
-					});
-				} else {
-					updatedProduct = await ProductDao.updateProduct({
-						name: data.name,
-						description: data.description,
-						stripe_product_id: data.id,
-					});
-				}
-				console.log(`Product updated: ${data.name}`);
-				break;
-			}
-			case 'product.deleted': {
-				let deletedProduct = await ProductDao.getProductByStripeId(data.id);
-				if (deletedProduct) {
-					await ProductDao.deleteProduct(data.id);
-				}
-				console.log(`Product deleted: ${data.id}`);
-				break;
-			}
+
 			/*** PRICE EVENTS ***/
-			case 'price.created': {
-				let price = await ProductDao.getPriceByStripeId(data.id);
-				if (!price) {
-					price = await ProductDao.createPrice({
-						amount: data.unit_amount,
-						currency: data.currency,
-						stripe_price_id: data.id,
-						stripe_product_id: data.product,
-					});
-				}
-				console.log(`Price added: ${data.unit_amount / 100} ${data.currency}`);
-				break;
-			}
-			case 'price.updated': {
-				let updatedPrice = await ProductDao.getPriceByStripeId(data.id);
-				if (!updatedPrice) {
-					updatedPrice = await ProductDao.createPrice({
-						amount: data.unit_amount,
-						currency: data.currency,
-						stripe_price_id: data.id,
-						stripe_product_id: data.product,
-					});
-				} else {
-					updatedPrice = await ProductDao.updatePrice({
-						amount: data.unit_amount,
-						currency: data.currency,
-						stripe_price_id: data.id,
-						stripe_product_id: data.product,
-					});
-				}
-				console.log(`Price updated: ${data.unit_amount / 100} ${data.currency}`);
-				break;
-			}
-			case 'price.deleted': {
-				let deletedPrice = await ProductDao.getPriceByStripeId(data.id);
-				if (deletedPrice) {
-					await ProductDao.deletePrice(data.id);
-				}
-				console.log(`Price deleted: ${data.id}`);
-				break;
-			}
+
 			// ... handle other event types
 			case 'checkout.session.completed':
 				handleSessionCompleted(data);
