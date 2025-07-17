@@ -94,6 +94,9 @@ async function getActiveDeliveryOrdersForBusiness(business_id) {
 				driver: true,
 				user: true,
 			},
+			orderBy: {
+				created_at: 'desc',
+			},
 		});
 	} catch (e) {
 		console.error('Error fetching order:', e);
