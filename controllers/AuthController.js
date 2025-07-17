@@ -1102,7 +1102,7 @@ async function registerReservationBusiness(req, res) {
 			stripe_customer_id: stripeCustomer.id,
 		});
 		// Create reservation module for the business
-		let reservationModule = await req.prisma.reservation_modules.create({
+		let reservationModule = await req.prisma.reservation_module.create({
 			data: {
 				business: {
 					connect: {
