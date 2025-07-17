@@ -1546,9 +1546,9 @@ export type menu_item_stock_change = {
 export type reservation_module = {
 	reservation_module_id: string;
 	business_id: string;
-	subscription_id: string;
+	subscription_id: string | null;
 	business?: business;
-	subscription?: subscription;
+	subscription?: subscription | null;
 	addons?: business_addon[];
 	usages?: business_usage[];
 	locations?: location[];
