@@ -1105,11 +1105,13 @@ async function registerReservationBusiness(req, res) {
 				tax_id: req.body.tax_id,
 				registration_id: req.body.registration_id,
 			};
-			business = await BusinessDao.createNewBusiness({
-				...businessData,
-				stripe_customer_id: stripeCustomer.id,
-				tx,
-			});
+			business = await BusinessDao.createNewBusiness(
+				{
+					...businessData,
+					stripe_customer_id: stripeCustomer.id,
+				},
+				tx
+			);
 			// Create reservation module for the business
 			let reservationModule = await tx.reservation_module.create({
 				data: {
