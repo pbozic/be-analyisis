@@ -1323,6 +1323,7 @@ export default {
 	registerDeliveryService,
 	registerMerchantService,
 	registerBusiness,
+	registerReservationBusiness,
 	createScheduledUser,
 	getScheduledUsers,
 	updateScheduledUser,
