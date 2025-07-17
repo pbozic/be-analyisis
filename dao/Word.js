@@ -263,7 +263,7 @@ export async function updateUserSubscription(userId, business_id) {
 						unit_amount: newAmount,
 						currency: 'eur',
 						recurring: { interval: 'month' },
-						product_data: { name: `Klikni Word: ${wb.word}` },
+						product_data: { name: `Klikni Word: ${wb.word.word}` },
 						metadata: { word_buy_id: wb.word_buy_id },
 					});
 					await prisma.word_buy.update({
@@ -282,7 +282,7 @@ export async function updateUserSubscription(userId, business_id) {
 						unit_amount: newAmount,
 						currency: 'eur',
 						recurring: { interval: 'month' },
-						product_data: { name: `Klikni Word: ${wb.word}` },
+						product_data: { name: `Klikni Word: ${wb.word.word}` },
 						metadata: { word_buy_id: wb.word_buy_id },
 					});
 					await prisma.word_buy.update({
@@ -309,7 +309,7 @@ export async function updateUserSubscription(userId, business_id) {
 
 			if (nextPhaseItems.length > 0) {
 				await stripe.subscriptionSchedules.create({
-					subscription: currentSub.id,
+					customer: business.stripe_customer_id,
 					start_date: 'now',
 					end_behavior: 'release',
 					phases: [
@@ -322,6 +322,10 @@ export async function updateUserSubscription(userId, business_id) {
 							items: nextPhaseItems,
 						},
 					],
+					metadata: {
+						business_id: business.business_id,
+						word_buy_schedule: 'true',
+					},
 				});
 				subscription = currentSub;
 			} else {
