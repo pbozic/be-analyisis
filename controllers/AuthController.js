@@ -1134,6 +1134,9 @@ async function registerReservationBusiness(req, res) {
 					password: req.body.password,
 					user_role: 'ADMIN',
 					date_of_birth: req.body.date_of_birth,
+					telephone: req.body.business_telephone,
+					telephone_number: req.body.business_telephone_number,
+					telephone_code: req.body.business_telephone_code,
 				},
 			};
 			//TODO: is this ok or should we tell them this is happening?
