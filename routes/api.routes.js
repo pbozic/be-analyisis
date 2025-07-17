@@ -3,10 +3,9 @@ import fs from 'fs';
 import express from 'express';
 
 import prisma from '../prisma/prisma.js';
-import joi from '../middleware/joi.js';
 import authMiddleware from '../middleware/auth.js';
 import adminMiddleware from '../middleware/admin.js';
-import { SaveObject, GetObject, isAllowedToSeeObject } from '../lib/s3.js';
+import { SaveObject } from '../lib/s3.js';
 import adminRoutes from './api/admin.routes.js';
 import userRoutes from './api/users.routes.js';
 import authRoutes from './api/auth.routes.js';
@@ -38,6 +37,7 @@ import orderLobbyRoutes from './api/orderLobby.routes.js';
 import searchRoutes from './api/search.routes.js';
 import overwatchRoutes from './api/overwatch.routes.js';
 import blogRoutes from './api/blog.routes.js';
+import reservationRoutes from './api/reservations/index.routes.js';
 import { sendNotificationToUser } from '../lib/oneSignal.js';
 import withUserMiddleware from '../middleware/user.js';
 const router = express.Router();
@@ -74,6 +74,7 @@ router.use('/google_maps', googleMaps);
 router.use('/categories', categoriesRoutes);
 router.use('/promo', [authMiddleware], promoRoutes);
 router.use('/blog', blogRoutes);
+router.use('/reservation', [authMiddleware], reservationRoutes);
 router.use('/reviews', [authMiddleware], async (req, res) => {
 	let reviews = await prisma.reviews.findMany({
 		include: {
