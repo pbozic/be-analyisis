@@ -83,6 +83,7 @@ async function getActiveDeliveryOrdersForBusiness(business_id) {
 	try {
 		return await prisma.delivery_orders.findMany({
 			where: {
+				is_daily_meal: false,
 				business_id: business_id,
 				status: {
 					notIn: DELIVERY_ORDER_END_STATES,
@@ -92,6 +93,9 @@ async function getActiveDeliveryOrdersForBusiness(business_id) {
 				delivery_driver: true,
 				driver: true,
 				user: true,
+			},
+			orderBy: {
+				created_at: 'desc',
 			},
 		});
 	} catch (e) {
@@ -358,15 +362,7 @@ async function acceptOrderDelivery(order, deliverer_id, vehicle_id) {
 					on_order: true,
 				},
 			});
-			const vehicleData = vehicle_id
-				? {
-						vehicle: {
-							connect: {
-								vehicle_id: vehicle_id,
-							},
-						},
-					}
-				: {};
+			const vehicleData = vehicle_id ? { vehicle: { connect: { vehicle_id: vehicle_id } } } : {};
 			return prisma.delivery_orders.update({
 				where: {
 					order_id,
