@@ -1062,6 +1062,128 @@ async function registerBusiness(req, res) {
 	}
 }
 /**
+ * POST /auth/reservation/register
+ * @tag Auth
+ * @summary Register a new reservation business
+ * @description Creates a new reservation business.
+ * @operationId registerBusiness
+ * @bodyContent {BusinessRegistration} application/json
+ * @bodyRequired
+ * @response 201 - Business registered successfully
+ * @responseContent {BusinessRegistrationResponse} 201.application/json
+ * @response 400 - Error registering business
+ */
+async function registerReservationBusiness(req, res) {
+	try {
+		if (req.body.email) {
+			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.email);
+			if (existingBusinessEmail) {
+				console.error('Business with this email already exists.');
+				return res.status(400).json({ error: 'Business with this email already exists.' });
+			}
+		}
+		let stripeCustomer = await stripe.createCustomer(
+			req.body.email,
+			req.body.business_name,
+			req.body.business_telephone
+		);
+		const businessData = {
+			name: req.body.business_name,
+			email: req.body.email,
+			telephone: req.body.business_telephone,
+			telephone_number: req.body.business_telephone_number,
+			telephone_code: req.body.business_telephone_code,
+			type: 'RESERVATION',
+			tax_id: req.body.tax_id,
+			registration_id: req.body.registration_id,
+		};
+		const business = await BusinessDao.createNewBusiness({
+			...businessData,
+			stripe_customer_id: stripeCustomer.id,
+		});
+		// Create reservation module for the business
+		let reservationModule = await req.prisma.reservation_modules.create({
+			data: {
+				business: {
+					connect: {
+						business_id: business.business_id,
+					},
+				},
+			},
+		});
+
+		let businessUsers = [];
+		const userObj = {
+			email: req.body.email,
+			password: req.body.password,
+			user_role: 'ADMIN',
+		};
+		delete userObj.data.user_roles;
+		const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id);
+		const userRoles = userObj.data.user_roles || [{ role: userObj.user_role || 'BUSINESS_USER', primary: true }];
+		await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
+		//create employee user
+		let employee = await req.prisma.employee.create({
+			data: {
+				business_user: {
+					connect: {
+						business_user_id: businessUser.business_user_id,
+					},
+				},
+				reservation_module: {
+					connect: {
+						reservation_module_id: reservationModule.reservation_module_id,
+					},
+				},
+			},
+		});
+
+		//create demo location
+		await req.prisma.location.create({
+			data: {
+				reservation_module: {
+					connect: {
+						reservation_module_id: reservationModule.reservation_module_id,
+					},
+				},
+				name: 'Main Location',
+				address: 'Testna ulica 123',
+				working_days: [],
+			},
+		});
+
+		//create demo service
+		await req.prisma.service.create({
+			data: {
+				reservation_module: {
+					connect: {
+						reservation_module_id: reservationModule.reservation_module_id,
+					},
+				},
+				name: { en: 'Test Service' },
+				description: { en: 'This is a test service' },
+				duration: 60,
+				price_cents: 1000,
+				employee: {
+					connect: {
+						employee_id: employee.employee_id,
+					},
+				},
+			},
+		});
+		businessUsers.push({ businessUser });
+		// TODO: select user to login,
+		res.status(201).json({
+			message: 'Business registered successfully',
+			business,
+			businessUsers,
+		});
+	} catch (error) {
+		console.error('Error registering business:', error);
+		res.status(400).json({ error: 'Error registering business', detail: error.message });
+	}
+}
+/**
  * POST /auth/create/scheduled_user
  * @tag User
  * @summary Create a new scheduled user.

@@ -92,12 +92,12 @@ const config: Config = {
 					position: 'left',
 					label: 'Daos Docs',
 				},
-				{
-					type: 'docSidebar',
-					sidebarId: 'prisma',
-					position: 'left',
-					label: 'Prisma Docs',
-				},
+				// {
+				// 	type: 'docSidebar',
+				// 	sidebarId: 'prisma',
+				// 	position: 'left',
+				// 	label: 'Prisma Docs',
+				// },
 			],
 		},
 		footer: {

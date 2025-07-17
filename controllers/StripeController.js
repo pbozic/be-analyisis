@@ -448,7 +448,7 @@ async function handleWebhook(req, res) {
 
 				for (const wb of wordBuys) {
 					await prisma.word_buy.update({
-						where: { id: wb.id },
+						where: { word_buy_id: wb.id },
 						data: {
 							price: wb.pending_price,
 							stripe_price_id: wb.pending_price_id,

@@ -53,7 +53,7 @@ export type USER_ROLES =
 
 export type TokenType = 'EMAIL' | 'PHONE_VERIFICATION' | 'API' | 'PASSWORD_RESET';
 
-export type BUSINESS_TYPE = 'TRANSFER' | 'MERCHANT' | 'RESTAURANT' | 'BUSINESS' | 'DISPATCHER';
+export type BUSINESS_TYPE = 'TRANSFER' | 'MERCHANT' | 'RESTAURANT' | 'BUSINESS' | 'DISPATCHER' | 'RESERVATION';
 
 export type MERCHANT_TYPE = 'RESTAURANT' | 'BAR' | 'MARKET' | 'STORE';
 
@@ -1114,6 +1114,7 @@ export type word_buy = {
 	stripe_price_id: string | null;
 	pending_stripe_price_id: string | null;
 	price: number;
+	pending_price: number | null;
 	active_at: Date | null;
 	expires_at: Date | null;
 	paid: boolean;
@@ -1575,7 +1576,7 @@ export type location = {
 };
 
 export type service_category = {
-	category_id: string;
+	service_category_id: string;
 	name: JsonValue;
 	parent_id: string | null;
 	level: CATEGORY_LEVEL;
@@ -1588,7 +1589,7 @@ export type service_category = {
 export type service = {
 	service_id: string;
 	reservation_module_id: string;
-	category_id: string | null;
+	service_category_id: string | null;
 	name: JsonValue;
 	description: JsonValue | null;
 	image_url: string | null;
@@ -1600,7 +1601,7 @@ export type service = {
 	skd_codes: string[];
 	created_at: Date;
 	reservation_module?: reservation_module;
-	category?: service_category | null;
+	service_category?: service_category | null;
 	assigned_employees?: service_assignment[];
 	bookings?: booking[];
 };
