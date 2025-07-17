@@ -256,7 +256,7 @@ export async function updateUserSubscription(userId, business_id) {
 			if (wb.stripe_price_id) {
 				currentPrice = await stripe.prices.retrieve(wb.stripe_price_id);
 			}
-
+			console.log('Processing word buy:', wb.word.word, 'with price:', newAmount, currentPrice);
 			if (!currentPrice || currentPrice.unit_amount !== newAmount) {
 				if (!currentPrice || newAmount > currentPrice.unit_amount) {
 					const newPrice = await stripe.prices.create({
@@ -264,10 +264,10 @@ export async function updateUserSubscription(userId, business_id) {
 						currency: 'eur',
 						recurring: { interval: 'month' },
 						product_data: { name: `Klikni Word: ${wb.word}` },
-						metadata: { word_buy_id: wb.id },
+						metadata: { word_buy_id: wb.word_buy_id },
 					});
 					await prisma.word_buy.update({
-						where: { word_buy_id: wb.id },
+						where: { word_buy_id: wb.word_buy_id },
 						data: {
 							stripe_price_id: newPrice.id,
 							price: wb.price,
@@ -283,10 +283,10 @@ export async function updateUserSubscription(userId, business_id) {
 						currency: 'eur',
 						recurring: { interval: 'month' },
 						product_data: { name: `Klikni Word: ${wb.word}` },
-						metadata: { word_buy_id: wb.id },
+						metadata: { word_buy_id: wb.word_buy_id },
 					});
 					await prisma.word_buy.update({
-						where: { id: wb.id },
+						where: { word_buy_id: wb.word_buy_id },
 						data: {
 							pending_price: wb.price,
 							pending_stripe_price_id: downgradePrice.id,
