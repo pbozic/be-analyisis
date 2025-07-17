@@ -6,13 +6,14 @@ import serviceRoutes from './services.routes';
 import serviceCategoryRoutes from './serviceCategory.routes';
 import locationRoutes from './location.routes';
 import authRoutes from './auth.routes';
+import authMiddleware from '../../../middleware/auth';
 const router = express.Router();
 
-router.use('/customers', customerRoutes);
-router.use('/employees', employeeRoutes);
-router.use('/services', serviceRoutes);
-router.use('/service-categories', serviceCategoryRoutes);
-router.use('/locations', locationRoutes);
+router.use('/customers', [authMiddleware], customerRoutes);
+router.use('/employees', [authMiddleware], employeeRoutes);
+router.use('/services', [authMiddleware], serviceRoutes);
+router.use('/service-categories', [authMiddleware], serviceCategoryRoutes);
+router.use('/locations', [authMiddleware], locationRoutes);
 router.use('/auth', authRoutes);
 
 export default router;
