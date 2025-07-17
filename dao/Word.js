@@ -267,7 +267,7 @@ export async function updateUserSubscription(userId, business_id) {
 						metadata: { word_buy_id: wb.id },
 					});
 					await prisma.word_buy.update({
-						where: { id: wb.id },
+						where: { word_buy_id: wb.id },
 						data: {
 							stripe_price_id: newPrice.id,
 							price: wb.price,
