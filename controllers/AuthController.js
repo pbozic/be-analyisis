@@ -1075,6 +1075,7 @@ async function registerBusiness(req, res) {
  */
 async function registerReservationBusiness(req, res) {
 	try {
+		console.log('Registering reservation business with data:', req.body);
 		if (req.body.email) {
 			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.email);
 			if (existingBusinessEmail) {
@@ -1087,43 +1088,46 @@ async function registerReservationBusiness(req, res) {
 			req.body.business_name,
 			req.body.business_telephone
 		);
-		const businessData = {
-			name: req.body.business_name,
-			email: req.body.email,
-			telephone: req.body.business_telephone,
-			telephone_number: req.body.business_telephone_number,
-			telephone_code: req.body.business_telephone_code,
-			type: 'RESERVATION',
-			tax_id: req.body.tax_id,
-			registration_id: req.body.registration_id,
-		};
-		const business = await BusinessDao.createNewBusiness({
-			...businessData,
-			stripe_customer_id: stripeCustomer.id,
-		});
-		// Create reservation module for the business
-		let reservationModule = await req.prisma.reservation_module.create({
-			data: {
-				business: {
-					connect: {
-						business_id: business.business_id,
-					},
-				},
-			},
-		});
-
-		let businessUsers = [];
-		const userObj = {
-			email: req.body.email,
-			password: req.body.password,
-			user_role: 'ADMIN',
-		};
-		delete userObj.data.user_roles;
-		//TODO: is this ok or should we tell them this is happening?
 		const phoneNumber = req.body.telephone_number;
 		const userExists = await UserDao.getUserByTelephone(phoneNumber);
+
 		let businessUserData;
+		let businessUsers = [];
+		let business;
 		await req.prisma.$transaction(async (tx) => {
+			const businessData = {
+				name: req.body.business_name,
+				email: req.body.email,
+				telephone: req.body.business_telephone,
+				telephone_number: req.body.business_telephone_number,
+				telephone_code: req.body.business_telephone_code,
+				type: 'RESERVATION',
+				tax_id: req.body.tax_id,
+				registration_id: req.body.registration_id,
+			};
+			business = await BusinessDao.createNewBusiness({
+				...businessData,
+				stripe_customer_id: stripeCustomer.id,
+			});
+			// Create reservation module for the business
+			let reservationModule = await req.prisma.reservation_module.create({
+				data: {
+					business: {
+						connect: {
+							business_id: business.business_id,
+						},
+					},
+				},
+			});
+
+			const userObj = {
+				email: req.body.email,
+				password: req.body.password,
+				user_role: 'ADMIN',
+			};
+			delete userObj.data.user_roles;
+			//TODO: is this ok or should we tell them this is happening?
+
 			console.log('Creating business user for reservation business:', userObj);
 			if (userExists) {
 				// If user exists, connect to existing user
