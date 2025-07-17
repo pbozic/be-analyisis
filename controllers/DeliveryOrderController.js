@@ -1,5 +1,3 @@
-import { skip } from 'node:test';
-
 import moment from 'moment';
 import { v4 } from 'uuid';
 import {
@@ -9,13 +7,10 @@ import {
 	SPLIT_STATUS,
 	DAILY_MEAL_INSTANCE_STATUS,
 } from '@prisma/client';
-import { getPrismaClient } from '@prisma/client/runtime/library';
 
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import DeliveryDriverDao from '../dao/DeliveryDriver.js';
-import FlagDao from '../dao/Flags.js';
 import BusinessDao from '../dao/Business.js';
-import AddressDao from '../dao/Address.js';
 import UsersDao from '../dao/User.js';
 import EmailHelper from '../lib/emailSender.js';
 import gApi from '../lib/gApis.js';
@@ -25,9 +20,7 @@ import { getOrderAndPDF } from '../lib/orderPdf.js';
 import {
 	DELIVERY_ORDER_STATUS,
 	DOCUMENT_TYPE,
-	TAXI_ORDER_STATUS,
 	CREDITS,
-	PARENT_USER_TYPE,
 	ORDER_TYPE,
 	CASHBACK_SOURCE,
 	DRIVE_FEE,
@@ -35,16 +28,11 @@ import {
 	DAILY_MEAL_DELIVERY_COST_CENTS,
 	DELIVERY_ORDER_END_STATES,
 	SCORING_POINTS_REASON,
-	FUNDS_TYPE,
 	SERVICE_TYPE,
-	USER_ROLE,
-	MAX_DELIVERY_RADIUS_KM,
 	BUSINESS_TYPE,
 } from '../lib/constants.js';
-import { getUsers } from '../dao/User.js';
 import {
 	createDailyMealsSubscriptions,
-	generateItemsFromPreferences,
 	revokeDeliveryOrderFromDrivers,
 	calculateDeliveryOrderPaymentCuts,
 	handlePaymentCleanup,
@@ -62,8 +50,6 @@ import WalletFundsDao from '../dao/WalletFunds.js';
 import { handleReferral } from '../lib/referralHelper.js';
 import ScoringPointsDao from '../dao/ScoringPoints.js';
 import LateEventsDao from '../dao/LateEvents.js';
-import BusinessHelpers from '../lib/businessHelpers.js';
-import Helpers from '../lib/helpersLib.js';
 import PaymentDao from '../dao/Payment.ts';
 import BusinessUsersDao from '../dao/BusinessUsers.js';
 import DailyMealDao from '../dao/DailyMealDao.ts';
@@ -154,7 +140,7 @@ async function getUserByDeliveryOrderId(req, res) {
 			res.status(404).send('User not found for this order');
 		}
 	} catch (error) {
-		res.status(500).send('Failed to fetch user data');
+		res.status(500).send('Failed to fetch user data', error);
 	}
 }
 
@@ -928,12 +914,7 @@ async function getCompletedDeliveryOrdersByUserId(req, res) {
 		const result = completedOrders.map((order) => {
 			const business = order.business;
 			const logoDocument = business.documents.find((doc) => doc.document_type === DOCUMENT_TYPE.LOGO);
-			const logo = logoDocument
-				? {
-						...logoDocument,
-						files: logoDocument.files,
-					}
-				: null;
+			const logo = logoDocument ? { ...logoDocument, files: logoDocument.files } : null;
 			return {
 				...order,
 				business: {
@@ -962,7 +943,10 @@ async function getActiveDeliveryOrdersByUserId(req, res) {
 	const { user_id } = req.params;
 	try {
 		const activeOrders = await DeliveryOrderDao.getDeliveryOrdersIfNotCompleted(user_id);
-		res.status(200).json(activeOrders);
+		const filteredOrders = activeOrders.filter(
+			(order) => !order.is_daily_meal || order.timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED)
+		);
+		res.status(200).json(filteredOrders);
 	} catch (e) {
 		console.log(e);
 		res.status(500).json(e);
@@ -1224,15 +1208,13 @@ async function merchantAcceptOrder(req, res) {
  * @param {boolean} item.is_weighted - Indicates if the item is sold by weight.
  * @param {Object} order - The order object.
  * @param {number} order.order_id - The unique identifier for the order.
- * @param {Object} business - The business object.
- * @param {number} business.business_id - The unique identifier for the business.
  * @returns {Object} An object representing the stock change for the menu item.
  * @returns {number} return.quantity - The negative quantity to subtract from stock.
  * @returns {string} return.reason - The reason for the stock change ("ORDER").
  * @returns {Object} return.order - The order connection object.
  * @returns {Object} return.menu_item - The menu item connection object.
  */
-function getMenuItemStockChange(item, order, business) {
+function getMenuItemStockChange(item, order) {
 	let quantity;
 	if (item.is_weighted) {
 		// Convert grams to kg and round to nearest 0.1 kg
@@ -1731,7 +1713,7 @@ async function dailyMealsSubscriptionPayment(req, res) {
 			try {
 				await PaymentHelpers.handlePaymentRefund(payment);
 			} catch (error) {
-				console.error('Error cleaning daily meals subscription payment', e);
+				console.error('Error cleaning daily meals subscription payment', error);
 			}
 		}
 		res.status(500).json(e);

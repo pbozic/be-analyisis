@@ -4,9 +4,7 @@ import DeliveryDriverDao from '../dao/DeliveryDriver.js';
 import UserDao from '../dao/User.js';
 import socket from '../socket.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
-import taxiHelpers from '../lib/taxiHelpers.js';
 import { resendPendingOrdersToDeliveryDriver, sendActiveOrdersToDeliveryDriver } from '../lib/deliveryHelpers.js';
-import DriverDao from '../dao/Driver.js';
 import { updateAddressByAddressId, addAddress, addUserAddress } from '../dao/Address.js';
 import {
 	updateDocumentByDocumentId,
@@ -21,7 +19,6 @@ import { updateFileInDocument, addFileToDocument } from '../dao/File.js';
 import S3Helper from '../lib/s3.js';
 import VehicleDao from '../dao/Vehicle.js';
 import { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE } from '../lib/constants.js';
-import { createVehicle } from './VehiclesController.js';
 import { createNewVehicle } from '../dao/Vehicle.js';
 import { calculateTotalEarnings, calculateDeliveryDriversEarnings } from '../lib/helpersLib.js';
 import dailyMealHelpers from '../lib/dailyMealHelpers.js';
