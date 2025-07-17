@@ -1,7 +1,7 @@
 import prisma from '../prisma/prisma.js';
 import UserDao from './User.js';
-import { client } from '../lib/stripe.js';
 import { SERVICE_TYPE } from '../lib/constants.js';
+import { createCustomer } from '../lib/stripe.js';
 const getAllBusinessUsers = async () => {
 	try {
 		return await prisma.business_users.findMany({
@@ -94,7 +94,7 @@ const getAllBusinessUsersForBusinessByCompanyRole = async (business_id, company_
 };
 const createBusinessUser = async (userData, business_id, createNewUser = true, tx = prisma) => {
 	try {
-		let stripeCustomer = await client.createCustomer(
+		let stripeCustomer = await createCustomer(
 			userData.data.email,
 			userData.data.first_name + ' ' + userData.data.last_name,
 			userData.data.telephone
