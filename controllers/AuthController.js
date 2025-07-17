@@ -1090,7 +1090,7 @@ async function registerReservationBusiness(req, res) {
 			req.body.business_telephone
 		);
 		console.log('Stripe customer created:', stripeCustomer.id);
-		const phoneNumber = req.body.telephone_number;
+		const phoneNumber = req.body.business_telephone;
 		const userExists = await UserDao.getUserByTelephone(phoneNumber);
 
 		let businessUserData;
