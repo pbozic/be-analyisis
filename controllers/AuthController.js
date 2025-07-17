@@ -1132,7 +1132,6 @@ async function registerReservationBusiness(req, res) {
 				password: req.body.password,
 				user_role: 'ADMIN',
 			};
-			delete userObj.data.user_roles;
 			//TODO: is this ok or should we tell them this is happening?
 
 			console.log('Creating business user for reservation business:', userObj);
