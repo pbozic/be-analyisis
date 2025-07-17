@@ -272,7 +272,7 @@ export async function updateUserSubscription(userId, business_id) {
 							stripe_price_id: newPrice.id,
 							price: wb.price,
 							pending_price: null,
-							pending_price_id: null,
+							pending_stripe_price_id: null,
 						},
 					});
 					subscriptionItems.push({ price: newPrice.id, quantity: 1 });
@@ -289,7 +289,7 @@ export async function updateUserSubscription(userId, business_id) {
 						where: { id: wb.id },
 						data: {
 							pending_price: wb.price,
-							pending_price_id: downgradePrice.id,
+							pending_stripe_price_id: downgradePrice.id,
 						},
 					});
 					subscriptionItems.push({ price: wb.stripe_price_id, quantity: 1 });
