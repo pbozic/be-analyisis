@@ -1141,7 +1141,7 @@ async function registerReservationBusiness(req, res) {
 			};
 			//TODO: is this ok or should we tell them this is happening?
 
-			console.log('Creating business user for reservation business:', userObj);
+			console.log('Creating business user for reservation business:', userObj, business);
 			if (userExists) {
 				// If user exists, connect to existing user
 				const { businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id, tx);
