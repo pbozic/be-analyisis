@@ -1083,11 +1083,13 @@ async function registerReservationBusiness(req, res) {
 				return res.status(400).json({ error: 'Business with this email already exists.' });
 			}
 		}
+		console.log('Creating Stripe customer for reservation business with email:', req.body.email);
 		let stripeCustomer = await stripe.createCustomer(
 			req.body.email,
 			req.body.business_name,
 			req.body.business_telephone
 		);
+		console.log('Stripe customer created:', stripeCustomer.id);
 		const phoneNumber = req.body.telephone_number;
 		const userExists = await UserDao.getUserByTelephone(phoneNumber);
 
@@ -1105,6 +1107,7 @@ async function registerReservationBusiness(req, res) {
 				tax_id: req.body.tax_id,
 				registration_id: req.body.registration_id,
 			};
+			console.log('Creating new business with data:', businessData);
 			business = await BusinessDao.createNewBusiness(
 				{
 					...businessData,
@@ -1112,6 +1115,7 @@ async function registerReservationBusiness(req, res) {
 				},
 				tx
 			);
+			console.log('Business created:', business.business_id);
 			// Create reservation module for the business
 			let reservationModule = await tx.reservation_module.create({
 				data: {
@@ -1122,7 +1126,7 @@ async function registerReservationBusiness(req, res) {
 					},
 				},
 			});
-
+			console.log('Reservation module created:', reservationModule.reservation_module_id);
 			const userObj = {
 				email: req.body.email,
 				password: req.body.password,
