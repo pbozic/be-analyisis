@@ -1096,6 +1096,7 @@ async function registerReservationBusiness(req, res) {
 		let businessUserData;
 		let businessUsers = [];
 		let business;
+		let transactionSucceeded = false;
 		await req.prisma.$transaction(async (tx) => {
 			const businessData = {
 				name: req.body.business_name,
@@ -1209,8 +1210,17 @@ async function registerReservationBusiness(req, res) {
 				},
 			});
 		});
+		transactionSucceeded = true;
 		businessUsers.push({ businessUser: businessUserData });
 		// TODO: select user to login,
+		if (!transactionSucceeded && stripeCustomer?.id) {
+			try {
+				await stripe.customers.del(stripeCustomer.id);
+				console.log('Stripe customer deleted after failed tx');
+			} catch (stripeError) {
+				console.error('Failed to delete Stripe customer:', stripeError);
+			}
+		}
 		res.status(201).json({
 			message: 'Business registered successfully',
 			business,
