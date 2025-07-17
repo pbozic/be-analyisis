@@ -1123,71 +1123,77 @@ async function registerReservationBusiness(req, res) {
 		const phoneNumber = req.body.telephone_number;
 		const userExists = await UserDao.getUserByTelephone(phoneNumber);
 		let businessUserData;
-		if (userExists) {
-			// If user exists, connect to existing user
-			const { businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id);
-			businessUserData = businessUser;
-			const userRoles = userObj.data.user_roles || [
-				{ role: userObj.user_role || 'BUSINESS_USER', primary: true },
-			];
-			await UserDao.linkRolesToUser(userExists.user_id, userRoles);
-		} else {
-			// If user does not exist, create new user
-			const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id);
-			businessUserData = businessUser;
-			const userRoles = userObj.data.user_roles || [
-				{ role: userObj.user_role || 'BUSINESS_USER', primary: true },
-			];
-			await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
-		}
-		//create employee user
-		let employee = await req.prisma.employee.create({
-			data: {
-				business_user: {
-					connect: {
-						business_user_id: businessUserData.business_user_id,
+		await req.prisma.$transaction(async (tx) => {
+			if (userExists) {
+				// If user exists, connect to existing user
+				const { businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id, tx);
+				businessUserData = businessUser;
+				const userRoles = userObj.data.user_roles || [
+					{ role: userObj.user_role || 'BUSINESS_USER', primary: true },
+				];
+				await UserDao.linkRolesToUser(userExists.user_id, userRoles, tx);
+			} else {
+				// If user does not exist, create new user
+				const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(
+					userObj,
+					business.business_id,
+					tx
+				);
+				businessUserData = businessUser;
+				const userRoles = userObj.data.user_roles || [
+					{ role: userObj.user_role || 'BUSINESS_USER', primary: true },
+				];
+				await UserDao.linkRolesToUser(newUser?.user_id, userRoles, tx);
+			}
+			//create employee user
+			let employee = await tx.employee.create({
+				data: {
+					business_user: {
+						connect: {
+							business_user_id: businessUserData.business_user_id,
+						},
+					},
+					reservation_module: {
+						connect: {
+							reservation_module_id: reservationModule.reservation_module_id,
+						},
 					},
 				},
-				reservation_module: {
-					connect: {
-						reservation_module_id: reservationModule.reservation_module_id,
-					},
-				},
-			},
-		});
+			});
 
-		//create demo location
-		await req.prisma.location.create({
-			data: {
-				reservation_module: {
-					connect: {
-						reservation_module_id: reservationModule.reservation_module_id,
+			//create demo location
+			await tx.location.create({
+				data: {
+					reservation_module: {
+						connect: {
+							reservation_module_id: reservationModule.reservation_module_id,
+						},
 					},
+					name: 'Main Location',
+					address: 'Testna ulica 123',
+					working_days: [],
 				},
-				name: 'Main Location',
-				address: 'Testna ulica 123',
-				working_days: [],
-			},
-		});
+			});
 
-		//create demo service
-		await req.prisma.service.create({
-			data: {
-				reservation_module: {
-					connect: {
-						reservation_module_id: reservationModule.reservation_module_id,
+			//create demo service
+			await tx.service.create({
+				data: {
+					reservation_module: {
+						connect: {
+							reservation_module_id: reservationModule.reservation_module_id,
+						},
+					},
+					name: { en: 'Test Service' },
+					description: { en: 'This is a test service' },
+					duration: 60,
+					price_cents: 1000,
+					employee: {
+						connect: {
+							employee_id: employee.employee_id,
+						},
 					},
 				},
-				name: { en: 'Test Service' },
-				description: { en: 'This is a test service' },
-				duration: 60,
-				price_cents: 1000,
-				employee: {
-					connect: {
-						employee_id: employee.employee_id,
-					},
-				},
-			},
+			});
 		});
 		businessUsers.push({ businessUser: businessUserData });
 		// TODO: select user to login,

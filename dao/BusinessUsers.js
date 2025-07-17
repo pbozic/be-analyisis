@@ -92,7 +92,7 @@ const getAllBusinessUsersForBusinessByCompanyRole = async (business_id, company_
 		throw new Error(error);
 	}
 };
-const createBusinessUser = async (userData, business_id, createNewUser = true) => {
+const createBusinessUser = async (userData, business_id, createNewUser = true, tx = prisma) => {
 	try {
 		let stripeCustomer = await client.createCustomer(
 			userData.data.email,
@@ -106,14 +106,14 @@ const createBusinessUser = async (userData, business_id, createNewUser = true) =
 		};
 		let user;
 		if (createNewUser) {
-			user = await UserDao.createNewUser(userObj, true);
+			user = await UserDao.createNewUser(userObj, true, tx);
 			if (!user) {
 				throw new Error('Failed to create user for new driver');
 			}
 		} else {
 			user = await UserDao.getUserByTelephone(userData.telephone);
 		}
-		const businessUser = await prisma.business_users.create({
+		const businessUser = await tx.business_users.create({
 			data: {
 				business_id,
 				user_id: user.user_id,
