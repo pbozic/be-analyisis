@@ -1129,9 +1129,11 @@ async function registerReservationBusiness(req, res) {
 			});
 			console.log('Reservation module created:', reservationModule.reservation_module_id);
 			const userObj = {
-				email: req.body.email,
-				password: req.body.password,
-				user_role: 'ADMIN',
+				data: {
+					email: req.body.email,
+					password: req.body.password,
+					user_role: 'ADMIN',
+				},
 			};
 			//TODO: is this ok or should we tell them this is happening?
 
@@ -1141,7 +1143,7 @@ async function registerReservationBusiness(req, res) {
 				const { businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id, tx);
 				businessUserData = businessUser;
 				const userRoles = userObj.data.user_roles || [
-					{ role: userObj.user_role || 'BUSINESS_USER', primary: true },
+					{ role: userObj.data.user_role || 'BUSINESS_USER', primary: true },
 				];
 				await UserDao.linkRolesToUser(userExists.user_id, userRoles, tx);
 			} else {
@@ -1153,7 +1155,7 @@ async function registerReservationBusiness(req, res) {
 				);
 				businessUserData = businessUser;
 				const userRoles = userObj.data.user_roles || [
-					{ role: userObj.user_role || 'BUSINESS_USER', primary: true },
+					{ role: userObj.data.user_role || 'BUSINESS_USER', primary: true },
 				];
 				await UserDao.linkRolesToUser(newUser?.user_id, userRoles, tx);
 			}
