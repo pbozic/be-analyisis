@@ -1203,7 +1203,7 @@ async function registerReservationBusiness(req, res) {
 
 			//create demo service
 			console.log('Creating service for reservation business:', employee.employee_id);
-			await tx.service.create({
+			let service = await tx.service.create({
 				data: {
 					reservation_module: {
 						connect: {
@@ -1217,6 +1217,20 @@ async function registerReservationBusiness(req, res) {
 					employee: {
 						connect: {
 							employee_id: employee.employee_id,
+						},
+					},
+				},
+			});
+			await tx.service_assignment.create({
+				data: {
+					employee: {
+						connect: {
+							employee_id: employee.employee_id,
+						},
+					},
+					service: {
+						connect: {
+							service_id: service.service_id,
 						},
 					},
 				},
