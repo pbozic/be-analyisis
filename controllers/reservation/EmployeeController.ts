@@ -48,13 +48,15 @@ export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>,
 		let reservation_module_id = req.user?.reservation_module_id as string;
 		const { businessUser } = await BusinessUsersDao.createBusinessUser(
 			{
-				email: employeeData.email,
-				password: employeeData.password,
-				first_name: employeeData.first_name,
-				last_name: employeeData.last_name,
-				telephone: employeeData.telephone,
-				telephone_country_code: employeeData.telephone_code,
-				telephone_number: employeeData.telephone_number,
+				data: {
+					email: employeeData.email,
+					password: employeeData.password,
+					first_name: employeeData.first_name,
+					last_name: employeeData.last_name,
+					telephone: employeeData.telephone,
+					telephone_country_code: employeeData.telephone_code,
+					telephone_number: employeeData.telephone_number,
+				},
 			},
 			businessId
 		);
