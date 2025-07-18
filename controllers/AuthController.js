@@ -1175,7 +1175,7 @@ async function registerReservationBusiness(req, res) {
 				data: {
 					business_user: {
 						connect: {
-							business_user_id: businessUserData.business_user_id,
+							business_users_id: businessUserData.business_users_id,
 						},
 					},
 					reservation_module: {
