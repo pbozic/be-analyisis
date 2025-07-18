@@ -17,8 +17,8 @@ import { ValidatedRequest } from '../../types/validatedRequest.ts';
  */
 export async function getEmployees(req: Request, res: Response): Promise<void> {
 	try {
-		let businessId = req.body.businessId as string;
-		let employees = await EmployeeDao.getEmployeesByBusinessId(businessId);
+		let reservationModuleId = req.body.reservation_module_id as string;
+		let employees = await EmployeeDao.getEmployeesByReservationModuleId(reservationModuleId);
 		res.status(200).json(employees);
 	} catch (error) {
 		res.status(500).json({ message: 'Error retrieving employees', error });

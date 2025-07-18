@@ -16,8 +16,8 @@ import { ValidatedRequest } from '../../types/validatedRequest.ts';
  */
 export async function getServiceCategories(req: Request, res: Response): Promise<void> {
 	try {
-		let businessId = req.body.businessId as string;
-		let serviceCategories = await ServiceCategoryDao.getServiceCategoriesByBusinessId(businessId);
+		let reservationModuleId = req.body.reservation_module_id as string;
+		let serviceCategories = await ServiceCategoryDao.getServiceCategoriesByReservationModuleId(reservationModuleId);
 		res.status(200).json(serviceCategories);
 	} catch (error) {
 		res.status(500).json({ message: 'Error retrieving service categories', error });

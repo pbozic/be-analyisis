@@ -1,5 +1,3 @@
-import { connect } from 'node:http2';
-
 import prisma from '../../prisma/prisma';
 import type { Service, CreateServiceInput, UpdateServiceInput } from '../../types/reservation/Service.ts';
 /**
@@ -8,11 +6,11 @@ import type { Service, CreateServiceInput, UpdateServiceInput } from '../../type
  * @returns {Promise<Service[]>} A promise that resolves to an array of services.
  * @throws {Error} If there is an error retrieving the services.
  */
-export async function getServicesByBusinessId(businessId: string): Promise<Service[]> {
+export async function getServicesByReservationModuleId(reservationModuleId: string): Promise<Service[]> {
 	try {
 		let services = await prisma.service.findMany({
 			where: {
-				business_id: businessId,
+				reservation_module_id: reservationModuleId,
 			},
 			include: {
 				service_category: true,
@@ -197,7 +195,7 @@ export async function getServicesByCategoryId(serviceCategoryId: string): Promis
 	}
 }
 export default {
-	getServicesByBusinessId,
+	getServicesByReservationModuleId,
 	createService,
 	updateService,
 	deleteService,

@@ -17,8 +17,8 @@ import { ValidatedRequest } from '../../types/validatedRequest.ts';
  */
 export async function getServices(req: Request, res: Response): Promise<void> {
 	try {
-		let businessId = req.body.businessId as string;
-		let services = await ServiceDao.getServicesByBusinessId(businessId);
+		let reservationModuleId = req.body.reservation_module_id as string;
+		let services = await ServiceDao.getServicesByReservationModuleId(reservationModuleId);
 		res.status(200).json(services);
 	} catch (error) {
 		res.status(500).json({ message: 'Error retrieving services', error });

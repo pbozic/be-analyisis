@@ -15,12 +15,12 @@ import { CreateCustomerInput, UpdateCustomerInput } from '../../types/reservatio
  */
 export async function getCustomers(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
-		let businessId = req.user?.business_id as string;
-		if (!businessId) {
-			res.status(400).json({ message: 'User has no business' });
+		let reservationModuleId = req.user?.reservation_module_id as string;
+		if (!reservationModuleId) {
+			res.status(400).json({ message: 'User has no reservation module' });
 			return;
 		}
-		let customers = await CustomerDao.getCustomersByBusinessId(businessId);
+		let customers = await CustomerDao.getCustomersByReservationModuleId(reservationModuleId);
 		res.status(200).json(customers);
 	} catch (error) {
 		res.status(500).json({ message: 'Error retrieving customers', error });

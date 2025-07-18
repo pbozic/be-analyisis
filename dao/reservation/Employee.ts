@@ -7,11 +7,11 @@ import type { Employee, UpdateEmployeeInput } from '../../types/reservation/Empl
  * @returns {Promise<Employee[]>} A promise that resolves to an array of employees.
  * @throws {Error} If there is an error retrieving the employees.
  */
-export async function getEmployeesByBusinessId(businessId: string): Promise<Employee[]> {
+export async function getEmployeesByReservationModuleId(reservationModuleId: string): Promise<Employee[]> {
 	try {
 		let employees = await prisma.employee.findMany({
 			where: {
-				business_id: businessId,
+				reservation_module_id: reservationModuleId,
 			},
 			include: {
 				reservation_module: true,
@@ -108,7 +108,7 @@ export async function getEmployeeById(employeeId: string): Promise<Employee | nu
 }
 
 export default {
-	getEmployeesByBusinessId,
+	getEmployeesByReservationModuleId,
 	createEmployee,
 	deleteEmployee,
 	updateEmployee,

@@ -6,11 +6,11 @@ import type { Customer, CreateCustomerInput, UpdateCustomerInput } from '../../t
  * @returns {Promise<Customer[]>} A promise that resolves to an array of customers.
  * @throws {Error} If there is an error retrieving the customers.
  */
-export async function getCustomersByBusinessId(businessId: string): Promise<Customer[]> {
+export async function getCustomersByReservationModuleId(reservationModuleId: string): Promise<Customer[]> {
 	try {
 		let customers = await prisma.customers.findMany({
 			where: {
-				business_id: businessId,
+				reservation_module_id: reservationModuleId,
 			},
 			include: {
 				reservation_module: true,
@@ -120,7 +120,7 @@ export async function getCustomerById(customerId: string): Promise<Customer | nu
 }
 
 export default {
-	getCustomersByBusinessId,
+	getCustomersByReservationModuleId,
 	createCustomer,
 	updateCustomer,
 	deleteCustomer,

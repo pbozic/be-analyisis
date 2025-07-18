@@ -11,11 +11,13 @@ import type {
  * @returns {Promise<ServiceCategory[]>} A promise that resolves to an array of service categories.
  * @throws {Error} If there is an error retrieving the service categories.
  */
-export async function getServiceCategoriesByBusinessId(businessId: string): Promise<ServiceCategory[]> {
+export async function getServiceCategoriesByReservationModuleId(
+	reservationModuleId: string
+): Promise<ServiceCategory[]> {
 	try {
 		let serviceCategories = await prisma.serviceCategory.findMany({
 			where: {
-				business_id: businessId,
+				reservation_module_id: reservationModuleId,
 			},
 			include: {
 				services: true,
@@ -116,7 +118,7 @@ export async function getServiceCategoryById(serviceCategoryId: string): Promise
 	}
 }
 export default {
-	getServiceCategoriesByBusinessId,
+	getServiceCategoriesByReservationModuleId,
 	createServiceCategory,
 	updateServiceCategory,
 	deleteServiceCategory,
