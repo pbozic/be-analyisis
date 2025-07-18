@@ -1214,11 +1214,6 @@ async function registerReservationBusiness(req, res) {
 					description: { en: 'This is a test service' },
 					duration_minutes: 60,
 					price_cents: 1000,
-					employee: {
-						connect: {
-							employee_id: employee.employee_id,
-						},
-					},
 				},
 			});
 			await tx.service_assignment.create({
