@@ -1,17 +1,10 @@
 import moment from 'moment';
 import { v4 } from 'uuid';
-import {
-	PAYMENT_STATUS,
-	SUBSCRIPTION_STATUS,
-	SPLIT_DESTINATION_TYPE,
-	SPLIT_STATUS,
-	DAILY_MEAL_INSTANCE_STATUS,
-} from '@prisma/client';
+import { SPLIT_DESTINATION_TYPE, SPLIT_STATUS, DAILY_MEAL_INSTANCE_STATUS } from '@prisma/client';
 
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import DeliveryDriverDao from '../dao/DeliveryDriver.js';
 import BusinessDao from '../dao/Business.js';
-import UsersDao from '../dao/User.js';
 import EmailHelper from '../lib/emailSender.js';
 import gApi from '../lib/gApis.js';
 import socket from '../socket.js';
@@ -24,15 +17,12 @@ import {
 	ORDER_TYPE,
 	CASHBACK_SOURCE,
 	DRIVE_FEE,
-	RESTAURANT_SHARE_PERC,
-	DAILY_MEAL_DELIVERY_COST_CENTS,
 	DELIVERY_ORDER_END_STATES,
 	SCORING_POINTS_REASON,
 	SERVICE_TYPE,
 	BUSINESS_TYPE,
 } from '../lib/constants.js';
 import {
-	createDailyMealsSubscriptions,
 	revokeDeliveryOrderFromDrivers,
 	calculateDeliveryOrderPaymentCuts,
 	handlePaymentCleanup,
@@ -1044,6 +1034,9 @@ async function updateOrderStatus(req, res) {
 		if (req.body.status === DELIVERY_ORDER_STATUS.MERCHANT_REJECTED) {
 			await handlePaymentCleanup(order);
 		}
+		if (req.body.status === DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP) {
+			await handleStockSync(order);
+		}
 		order = await DeliveryOrderDao.updateOrderStatus(req.body.order_id, req.body.status);
 		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 		if (
@@ -1054,7 +1047,8 @@ async function updateOrderStatus(req, res) {
 			].includes(order.status)
 		) {
 			order = await DeliveryOrderDao.updateOrderStatus(req.body.order_id, DELIVERY_ORDER_STATUS.FAIL);
-			//TODO: handle payment cleanup
+			await handleStockSync(order);
+			//TODO: handle payment cleanup here?
 			io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 		} else if (
 			[DELIVERY_ORDER_STATUS.CUSTOMER_PICKED_UP, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED].includes(order.status)
@@ -1180,9 +1174,8 @@ async function merchantAcceptOrder(req, res) {
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_PREPARING);
 		// handle stock sync if the business is a merchant
 		let business = await BusinessDao.getBusinessById(order.business_id);
-		console.log('Accept business type', business?.type);
 		if ([BUSINESS_TYPE.MERCHANT].includes(business?.type)) {
-			let stock_update = await handleStockSync(order, business);
+			await handleStockSync(order);
 		}
 		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 		res.status(200).json(order);
@@ -1251,12 +1244,12 @@ function getMenuItemStockChange(item, order) {
  * @param {Object} business - The business object related to the order.
  * @returns {Promise<boolean>} Returns true if synchronization succeeds, false otherwise.
  */
-export async function handleStockSync(order, business) {
+export async function handleStockSync(order) {
 	try {
 		// 1. Delete all existing stock movements linked to the order
 		console.info('Removing stock changes for order:', order.order_id);
 		await removeOrderStockChange(order);
-		const stockUpdates = order.items.map((item) => getMenuItemStockChange(item, order, business));
+		const stockUpdates = order.items.filter((i) => !i.removed).map((item) => getMenuItemStockChange(item, order));
 		console.info('Creating stock changes for order:', order.order_id, 'with updates:', stockUpdates);
 		// 2. Create new stock movements based on the current order items
 		for (const update of stockUpdates) {
@@ -1540,6 +1533,7 @@ async function dispatcherCancel(req, res) {
 		io.to('order_' + new_order.order_id).emit('order_status_change__delivery', new_order);
 		new_order = await DeliveryOrderDao.updateOrderStatus(old_order.order_id, DELIVERY_ORDER_STATUS.FAIL);
 		io.to('order_' + new_order.order_id).emit('order_status_change__delivery', new_order);
+		await handleStockSync(new_order);
 		await handlePaymentRefund(new_order);
 		//TODO: handle on FE if needed.
 		io.to('order_' + new_order.order_id).emit('order_canceled', new_order);
@@ -1629,118 +1623,7 @@ async function dispatcherRevoke(req, res) {
 		res.status(500).json(e);
 	}
 }
-async function dailyMealsSubscriptionPayment(req, res) {
-	const {
-		daysData,
-		details: { total_price, delivery_cost, sub_total_price, business_id },
-		delivery_location,
-		payment: { payment_type, payment_method_id },
-		return_url,
-		allow_credits_usage,
-	} = req.body;
-	let payment = null;
-	try {
-		let user = await UsersDao.getUserById(req.user.user_id);
-		let grouped_id = uuidv4();
-		let hasUuid = false;
-		while (!hasUuid) {
-			const sub = await prisma.daily_meals_subscriptions.findFirst({
-				where: {
-					grouped_id: grouped_id,
-				},
-			});
-			if (!sub) {
-				hasUuid = true;
-			} else {
-				grouped_id = uuidv4();
-			}
-		}
 
-		const business = await BusinessDao.getBusinessById(business_id);
-		const restaurant_acc = business.stripe_account_id;
-		const TOTAL_PRICE_CENTS = Math.round(total_price * 100);
-		let payment_response = await PaymentHelpers.createPaymentHelper(
-			user.user_id,
-			TOTAL_PRICE_CENTS,
-			'DELIVERY',
-			'daily_meals_subscription_payment',
-			payment_type,
-			payment_method_id,
-			'automatic',
-			allow_credits_usage,
-			daysData
-				.filter((day) => Object.values(day.menu).reduce((acc, menuData) => acc + (menuData.people || 0), 0) > 0)
-				.map((_, index) => {
-					return {
-						destination_type: SPLIT_DESTINATION_TYPE.DRIVER,
-						value: DAILY_MEAL_DELIVERY_COST_CENTS,
-					};
-				}),
-			[
-				{
-					destination_type: SPLIT_DESTINATION_TYPE.MERCHANT,
-					destination_id: restaurant_acc,
-					value: RESTAURANT_SHARE_PERC,
-				},
-			],
-			null,
-			grouped_id
-		);
-		payment = payment_response.payment;
-		let payment_intent = payment_response.payment_intent;
-		//create sub with status awaiting payment.
-		await createDailyMealsSubscriptions(delivery_location, daysData, user.user_id, grouped_id, {
-			total_price,
-			delivery_cost,
-			sub_total_price,
-			business_id,
-		});
-		if (payment.status === PAYMENT_STATUS.SUCCEEDED) {
-			await DeliveryOrderDao.updateDailyMealsSubscriptionsStatusByGroupedId(
-				grouped_id,
-				SUBSCRIPTION_STATUS.ACTIVE
-			);
-		}
-		//FIXME: return all data that the FE needs
-		return res.status(200).json({
-			status: 'Success',
-			grouped_id: grouped_id,
-			payment_intent: payment_intent,
-		});
-	} catch (e) {
-		console.error('Error creating daily meals subscription payment', e);
-		if (payment) {
-			try {
-				await PaymentHelpers.handlePaymentRefund(payment);
-			} catch (error) {
-				console.error('Error cleaning daily meals subscription payment', error);
-			}
-		}
-		res.status(500).json(e);
-	}
-}
-
-async function getDailyMealsSubscriptionsByUserId(req, res) {
-	const { start_date } = req.body;
-	const userId = req.user?.user_id;
-	try {
-		const dailyMeals = await DeliveryOrderDao.getDailyMealsSubscriptionByUserId(userId, start_date);
-		res.status(200).json(dailyMeals);
-	} catch (e) {
-		console.log(e);
-		res.status(500).json(e);
-	}
-}
-async function getDailyMealsSubscriptionsByBusinessId(req, res) {
-	const { business_id, start_date } = req.body;
-	try {
-		const dailyMeals = await DeliveryOrderDao.getDailyMealsSubscriptionByBusinessId(business_id, start_date);
-		res.status(200).json(dailyMeals);
-	} catch (e) {
-		console.log(e);
-		res.status(500).json(e);
-	}
-}
 export { getDeliveryOrders };
 export { getDeliveryOrdersToday };
 export { getActiveDeliveryOrders };
@@ -1768,9 +1651,6 @@ export { updateDeliveryOrder };
 export { startDailyMeals };
 export { getActiveDeliveryOrdersByBusinessId };
 export { getCompletedDeliveryOrdersByBusinessId };
-export { dailyMealsSubscriptionPayment };
-export { getDailyMealsSubscriptionsByUserId };
-export { getDailyMealsSubscriptionsByBusinessId };
 export { generateOrder };
 export default {
 	getDeliveryOrders,
@@ -1800,8 +1680,5 @@ export default {
 	startDailyMeals,
 	getActiveDeliveryOrdersByBusinessId,
 	getCompletedDeliveryOrdersByBusinessId,
-	dailyMealsSubscriptionPayment,
-	getDailyMealsSubscriptionsByUserId,
-	getDailyMealsSubscriptionsByBusinessId,
 	generateOrder,
 };
