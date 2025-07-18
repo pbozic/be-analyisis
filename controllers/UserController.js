@@ -19,6 +19,7 @@ import S3Helper from '../lib/s3.js';
 import {
 	DOCUMENT_TYPE,
 	TAXI_ORDER_STATUS,
+	DELIVERY_ORDER_STATUS,
 	USER_ROLE,
 	CREDITS,
 	FUNDS_TYPE,
