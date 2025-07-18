@@ -1144,7 +1144,12 @@ async function registerReservationBusiness(req, res) {
 			console.log('Creating business user for reservation business:', userObj, business);
 			if (userExists) {
 				// If user exists, connect to existing user
-				const { businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id, tx);
+				const { businessUser } = await BusinessUsersDao.createBusinessUser(
+					userObj,
+					business.business_id,
+					false,
+					tx
+				);
 				businessUserData = businessUser;
 				const userRoles = userObj.data.user_roles || [
 					{ role: userObj.data.user_role || 'BUSINESS_USER', primary: true },
@@ -1155,6 +1160,7 @@ async function registerReservationBusiness(req, res) {
 				const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(
 					userObj,
 					business.business_id,
+					true,
 					tx
 				);
 				businessUserData = businessUser;
@@ -1215,8 +1221,9 @@ async function registerReservationBusiness(req, res) {
 					},
 				},
 			});
+			transactionSucceeded = true;
 		});
-		transactionSucceeded = true;
+
 		businessUsers.push({ businessUser: businessUserData });
 		// TODO: select user to login,
 		if (!transactionSucceeded && stripeCustomer?.id) {
