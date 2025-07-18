@@ -20,7 +20,6 @@ import {
 	DELIVERY_ORDER_END_STATES,
 	SCORING_POINTS_REASON,
 	SERVICE_TYPE,
-	BUSINESS_TYPE,
 } from '../lib/constants.js';
 import {
 	revokeDeliveryOrderFromDrivers,
@@ -1172,11 +1171,6 @@ async function merchantAcceptOrder(req, res) {
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED);
 		sendDeliveryOrderNotifications(user, null, order.user_id, null, order.status);
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_PREPARING);
-		// handle stock sync if the business is a merchant
-		let business = await BusinessDao.getBusinessById(order.business_id);
-		if ([BUSINESS_TYPE.MERCHANT].includes(business?.type)) {
-			await handleStockSync(order);
-		}
 		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 		res.status(200).json(order);
 	} catch (e) {
