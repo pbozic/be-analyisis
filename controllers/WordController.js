@@ -101,11 +101,11 @@ async function addCategoryToWord(req, res) {
 	}
 }
 async function createWordBuy(req, res) {
+	/* gets an array of words (word_id,word_price) */
 	try {
-		let { word_id, business_id, price } = req.body;
+		let { words, business_id } = req.body;
 		let userId = req.user?.user_id;
-		console.log(userId, 'userId12');
-		const result = await WordDao.createWordBuySubscription(word_id, business_id, price, userId);
+		const result = await WordDao.createWordBuySubscription(business_id, words);
 		res.status(201).json(result);
 	} catch (error) {
 		console.error('Error creating word buy:', error);
@@ -138,7 +138,7 @@ async function deleteWordBuy(req, res) {
 	try {
 		/* word buy id */
 		const { id } = req.params;
-		console.log(id,'word_buy_id')
+		console.log(id, 'word_buy_id')
 		const result = await WordDao.deleteWordBuy(id);
 		let stripeResult = await updateUserSubscription(req.user?.user_id);
 		if (!result) {
