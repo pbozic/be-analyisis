@@ -228,106 +228,158 @@ async function createWordBuy(args) {
 
 export async function updateUserSubscription(userId, business_id) {
 	try {
-		// Fetch business & word buys
-		console.log(userId, 'userId');
 		const businessUser = await BusinessUserDao.getBusinessUserByUserId(userId);
-		console.log(businessUser, 'businessUser');
 		const business = await BusinessDao.getBusinessById(business_id || businessUser?.business_id);
-		const wordBuys = await getAllWordBuysByBusiness(business_id || businessUser?.business_id);
-		// If no active word buys, cancel the subscription if it exists
+		const wordBuys = await getAllWordBuysByBusiness(business.business_id);
+
+		if (!business?.stripe_customer_id) throw new Error('User does not have a Stripe customer ID');
+
 		if (wordBuys.length === 0) {
-			if (business?.word_buy_stripe_subscription_id) {
+			if (business.word_buy_stripe_subscription_id) {
 				await stripe.subscriptions.del(business.word_buy_stripe_subscription_id);
-				// Remove subscription ID from the business in the database
 				await prisma.business.update({
 					where: { business_id: business.business_id },
 					data: { word_buy_stripe_subscription_id: null },
 				});
-				console.log('Subscription canceled as last word_buy was removed.');
 			}
 			return { success: true, message: 'No active word buys' };
 		}
-		if (!business?.stripe_customer_id) throw new Error('User does not have a Stripe customer ID');
-		// Calculate total price of all `word_buys`
-		const totalPrice = wordBuys.reduce((sum, wb) => sum + wb.price, 0);
-		// Create a new Stripe price
-		const newPriceData = await stripe.prices.create({
-			unit_amount: Math.round(totalPrice * 100), // Convert to cents
-			currency: 'eur',
-			recurring: { interval: 'month' },
-			product_data: { name: 'Klikni Word Advertise' },
-		});
-		let subscription;
-		let paymentRequired = false;
-		let clientSecret = null;
-		let checkoutUrl = null;
-		if (business.word_buy_stripe_subscription_id) {
-			subscription = await stripe.subscriptions.retrieve(business.word_buy_stripe_subscription_id);
-			if (subscription.items.data.length === 0) {
-				throw new Error('Subscription has no items, cannot update price.');
+
+		const subscriptionItems = [];
+		const nextPhaseItems = [];
+		let hasUpgrades = false;
+
+		for (const wb of wordBuys) {
+			const newAmount = Math.round(wb.price * 100);
+			let currentPrice = null;
+
+			if (wb.stripe_price_id) {
+				currentPrice = await stripe.prices.retrieve(wb.stripe_price_id);
 			}
-			// Update the subscription price & trigger proration
-			const updatedSubscription = await stripe.subscriptions.update(subscription.id, {
-				items: [{ id: subscription.items.data[0].id, price: newPriceData.id }],
-				proration_behavior: 'create_prorations',
-				expand: ['latest_invoice.payment_intent'],
-				metadata: { business_id: business.business_id, type: 'word_buys' },
-			});
-			console.log('🟡 Subscription updated:', updatedSubscription.id);
-			if (updatedSubscription.latest_invoice?.payment_intent?.status === 'requires_payment_method') {
-				paymentRequired = true;
-				clientSecret = updatedSubscription.latest_invoice.payment_intent.client_secret;
+			console.log('Processing word buy:', wb.word.word, 'with price:', newAmount, currentPrice);
+			if (!currentPrice || currentPrice.unit_amount !== newAmount) {
+				if (!currentPrice || newAmount > currentPrice.unit_amount) {
+					const newPrice = await stripe.prices.create({
+						unit_amount: newAmount,
+						currency: 'eur',
+						recurring: { interval: 'month' },
+						product_data: { name: `Klikni Word: ${wb.word.word}` },
+						metadata: { word_buy_id: wb.word_buy_id },
+					});
+					await prisma.word_buy.update({
+						where: { word_buy_id: wb.word_buy_id },
+						data: {
+							stripe_price_id: newPrice.id,
+							price: wb.price,
+							pending_price: null,
+							pending_stripe_price_id: null,
+						},
+					});
+					subscriptionItems.push({ price: newPrice.id, quantity: 1 });
+					hasUpgrades = true;
+				} else {
+					const downgradePrice = await stripe.prices.create({
+						unit_amount: newAmount,
+						currency: 'eur',
+						recurring: { interval: 'month' },
+						product_data: { name: `Klikni Word: ${wb.word.word}` },
+						metadata: { word_buy_id: wb.word_buy_id },
+					});
+					await prisma.word_buy.update({
+						where: { word_buy_id: wb.word_buy_id },
+						data: {
+							pending_price: wb.price,
+							pending_stripe_price_id: downgradePrice.id,
+						},
+					});
+					subscriptionItems.push({ price: wb.stripe_price_id, quantity: 1 });
+					nextPhaseItems.push({ price: downgradePrice.id, quantity: 1 });
+				}
+			} else {
+				subscriptionItems.push({ price: currentPrice.id, quantity: 1 });
+			}
+		}
+
+		let subscription;
+		let clientSecret = null;
+		let paymentRequired = false;
+
+		if (business.word_buy_stripe_subscription_id) {
+			const currentSub = await stripe.subscriptions.retrieve(business.word_buy_stripe_subscription_id);
+
+			if (nextPhaseItems.length > 0) {
+				await stripe.subscriptionSchedules.create({
+					customer: business.stripe_customer_id,
+					start_date: 'now',
+					end_behavior: 'release',
+					phases: [
+						{
+							items: subscriptionItems,
+							start_date: currentSub.current_period_start,
+							end_date: currentSub.current_period_end,
+						},
+						{
+							items: nextPhaseItems,
+						},
+					],
+					metadata: {
+						business_id: business.business_id,
+						word_buy_schedule: 'true',
+					},
+				});
+				subscription = currentSub;
+			} else {
+				const updated = await stripe.subscriptions.update(currentSub.id, {
+					items: [...currentSub.items.data.map((i) => ({ id: i.id, deleted: true })), ...subscriptionItems],
+					proration_behavior: hasUpgrades ? 'create_prorations' : 'none',
+					expand: ['latest_invoice.payment_intent'],
+				});
+				subscription = updated;
+
+				if (hasUpgrades && subscription.latest_invoice?.id) {
+					const invoice = await stripe.invoices.retrieve(subscription.latest_invoice.id);
+					if (invoice.status === 'open' || invoice.status === 'draft') {
+						await stripe.invoices.finalizeInvoice(invoice.id);
+						await stripe.invoices.pay(invoice.id);
+					}
+				}
 			}
 		} else {
-			// Create a new subscription with Stripe Checkout
-			subscription = await stripe.subscriptions.create({
+			const subscription = await stripe.subscriptions.create({
 				customer: business.stripe_customer_id,
-				items: [{ price: newPriceData.id }],
-				payment_behavior: 'default_incomplete',
+				items: subscriptionItems,
+				payment_behavior: 'default_incomplete', // wait for frontend confirm
+				collection_method: 'charge_automatically',
+				billing_cycle_anchor: 'now',
+				proration_behavior: 'none', // important to avoid 2x charges
 				expand: ['latest_invoice.payment_intent'],
 				metadata: { business_id: business.business_id, type: 'word_buys' },
 			});
-			console.log(subscription, 'subscription123');
 			await prisma.business.update({
 				where: { business_id: business.business_id },
 				data: { word_buy_stripe_subscription_id: subscription.id },
 			});
-			console.log('New subscription created:', subscription.id);
-			if (subscription.latest_invoice?.payment_intent?.status === 'requires_payment_method') {
-				paymentRequired = true;
-				clientSecret = subscription.latest_invoice.payment_intent.client_secret;
-			}
 		}
-		// Update `word_buys` with the subscription ID
+
+		if (subscription.latest_invoice?.payment_intent?.status === 'requires_payment_method') {
+			paymentRequired = true;
+			clientSecret = subscription.latest_invoice.payment_intent.client_secret;
+		}
+
 		await prisma.word_buy.updateMany({
 			where: { business_id: business.business_id, deleted_at: null },
 			data: { stripe_subscription_id: subscription.id },
 		});
-		// If payment is required, create a Stripe Checkout Session
-		if (paymentRequired) {
-			const paymentIntent = await stripe.paymentIntents.create({
-				amount: Math.round(totalPrice * 100), // cents
-				currency: 'eur',
-				customer: business.stripe_customer_id,
-				metadata: {
-					business_id: business.business_id,
-					type: 'word_buys',
-				},
-				automatic_payment_methods: { enabled: true },
-			});
 
-			clientSecret = paymentIntent.client_secret;
-			console.log('🟢 Created PaymentIntent:', paymentIntent.id);
-		}
 		return {
 			success: true,
 			subscriptionId: subscription.id,
 			paymentRequired,
 			clientSecret,
 		};
-	} catch (error) {
-		console.error('Error updating subscription:', error);
-		return { success: false, error: error.message };
+	} catch (err) {
+		console.error('❌ updateUserSubscription failed:', err);
+		return { success: false, error: err.message };
 	}
 }
 export async function createWordBuySubscription(words, business_id) {
