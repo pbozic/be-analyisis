@@ -30,7 +30,7 @@ export async function getServicesByReservationModuleId(reservationModuleId: stri
  * @returns {Promise<Service>} A promise that resolves to the created service.
  * @throws {Error} If there is an error creating the service.
  */
-export async function createService(serviceData: CreateServiceInput): Promise<Service> {
+export async function createService(serviceData: CreateServiceInput, reservationModuleId: string): Promise<Service> {
 	try {
 		let service = await prisma.service.create({
 			data: {
@@ -43,7 +43,7 @@ export async function createService(serviceData: CreateServiceInput): Promise<Se
 				duration_minutes: serviceData.duration_minutes,
 				available_online: serviceData.available_online,
 				reservation_module: {
-					connect: { reservation_module_id: serviceData.reservation_module_id },
+					connect: { reservation_module_id: reservationModuleId },
 				},
 				service_category: {
 					connect: serviceData.service_category_id

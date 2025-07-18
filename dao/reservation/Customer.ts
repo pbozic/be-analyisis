@@ -28,7 +28,10 @@ export async function getCustomersByReservationModuleId(reservationModuleId: str
  * @returns {Promise<Customer>} A promise that resolves to the created customer.
  * @throws {Error} If there is an error creating the customer.
  */
-export async function createCustomer(customerData: CreateCustomerInput): Promise<Customer> {
+export async function createCustomer(
+	customerData: CreateCustomerInput,
+	reservationModuleId: string
+): Promise<Customer> {
 	try {
 		let userExists = await prisma.users.findUnique({
 			where: { telephone: customerData.phone },
@@ -41,7 +44,7 @@ export async function createCustomer(customerData: CreateCustomerInput): Promise
 				email: customerData.email,
 				telephone: customerData.phone,
 				reservation_module: {
-					connect: { reservation_module_id: customerData.reservation_module_id },
+					connect: { reservation_module_id: reservationModuleId },
 				},
 				...userRelation,
 			},
