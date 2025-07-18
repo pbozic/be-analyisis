@@ -71,12 +71,12 @@ async function updateWord(id, word, categories_id, translations) {
 			word,
 			...(categories_id
 				? {
-					category: {
-						connect: {
-							categories_id: categories_id,
+						category: {
+							connect: {
+								categories_id: categories_id,
+							},
 						},
-					},
-				}
+					}
 				: {}),
 		},
 		include: {
@@ -340,7 +340,7 @@ export async function createWordBuySubscription(words, business_id) {
 			throw new Error('Business has no Stripe customer on file');
 		}
 		// 2) Create new word_buy entry (unpaid, no stripe_sub yet)
-		words.map((word) => {
+		words.map(async (word) => {
 			try {
 				const { word_id, price } = word;
 				const wordBuy = await prisma.word_buy.upsert({
@@ -362,8 +362,7 @@ export async function createWordBuySubscription(words, business_id) {
 			} catch (error) {
 				console.error('Error creating/updating word_buy:', error);
 			}
-
-		})
+		});
 		async function updateExpiresAt(subscriptionId) {
 			const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 			if (subscription && subscription.current_period_end) {
@@ -403,9 +402,8 @@ export async function createWordBuySubscription(words, business_id) {
 		const result = await updateUserSubscription(userId, business_id);
 
 		if (result.subscriptionId) {
-			console.log('getting expires_at ( about to trigger function )')
+			console.log('getting expires_at ( about to trigger function )');
 			await updateExpiresAt(result.subscriptionId);
-		} else {
 		} else {
 			console.log('No subscriptionId returned');
 		}
@@ -421,8 +419,6 @@ export async function createWordBuySubscription(words, business_id) {
 		throw new Error(err.message);
 	}
 }
-
-
 
 async function addStripeSubToWordBuy(id, stripe_subscription_id) {
 	return await prisma.word_buy.update({
@@ -491,17 +487,16 @@ async function getAllWordBuysByBusiness(business) {
 	}
 	return wbs;
 }
-async function deleteWordBuy(word_buy_id) {
+
 async function deleteWordBuy(word_buy_id) {
 	const deletedWordBuy = await prisma.word_buy.update({
-		where: {
 		where: {
 			word_buy_id: word_buy_id,
 		},
 		data: {
-			stripe_subscription_id: null
-		}
-	})
+			stripe_subscription_id: null,
+		},
+	});
 	console.log(deletedWordBuy, 'deletedWordBuy');
 }
 
