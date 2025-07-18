@@ -515,7 +515,6 @@ export { getAllWordBuysByBusiness };
 export { removeCategoryFromWord };
 export { addCategoryToWord };
 export { deleteWordBuy };
-export { deleteWordBuy };
 export default {
 	createWord,
 	updateWord,
