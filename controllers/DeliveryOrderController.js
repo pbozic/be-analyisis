@@ -147,8 +147,12 @@ async function getUserByDeliveryOrderId(req, res) {
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function createOrder(req, res) {
-	const { orderBody, user_id, return_url } = req.body;
+	const { orderBody, return_url } = req.body;
 	try {
+		const user_id = req.user?.user_id;
+		if (!user_id) {
+			return res.status(403).json({ message: 'Unauthorized' });
+		}
 		const { order, payment_intent } = await generateOrder(orderBody, user_id, return_url);
 		res.status(200).json({
 			...order,
@@ -1204,8 +1208,7 @@ async function merchantAcceptOrder(req, res) {
 function getMenuItemStockChange(item, order) {
 	let quantity;
 	if (item.is_weighted) {
-		// Convert grams to kg and round to nearest 0.1 kg
-		const kilos = item.quantity / item.weight_quantity;
+		const kilos = item.quantity * 1000;
 		const roundedKilos = Math.round(kilos * 1000) / 1000;
 		quantity = -roundedKilos;
 	} else {
