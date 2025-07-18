@@ -71,12 +71,12 @@ async function updateWord(id, word, categories_id, translations) {
 			word,
 			...(categories_id
 				? {
-						category: {
-							connect: {
-								categories_id: categories_id,
-							},
+					category: {
+						connect: {
+							categories_id: categories_id,
 						},
-					}
+					},
+				}
 				: {}),
 		},
 		include: {
