@@ -12,7 +12,6 @@ const authMiddleware = async (req, res, next) => {
 	}
 	try {
 		const decoded = jwt.verify(token, process.env.JWT_TOKEN_SECRET);
-		req.user = decoded.user;
 		console.log('Decoded user:', decoded);
 		const businessUser = await req.prisma.business_users.findFirst({
 			where: {
