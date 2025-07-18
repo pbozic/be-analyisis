@@ -1,8 +1,4 @@
 import WordDao from '../dao/Word.js';
-import BusinessUserDao from '../dao/BusinessUsers.js';
-import BusinessDao from '../dao/Business.js';
-import stripe from '../lib/stripe.js';
-import prisma from '../prisma/prisma.js';
 import { updateUserSubscription } from '../dao/Word.js';
 async function createWord(req, res) {
 	try {
@@ -104,8 +100,9 @@ async function createWordBuy(req, res) {
 	/* gets an array of words (word_id,word_price) */
 	try {
 		let { words, business_id } = req.body;
+		console.log(req.body,'body')
 		let userId = req.user?.user_id;
-		const result = await WordDao.createWordBuySubscription(business_id, words);
+		const result = await WordDao.createWordBuySubscription(words,business_id);
 		res.status(201).json(result);
 	} catch (error) {
 		console.error('Error creating word buy:', error);
