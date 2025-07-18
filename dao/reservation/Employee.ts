@@ -15,7 +15,7 @@ export async function getEmployeesByReservationModuleId(reservationModuleId: str
 			},
 			include: {
 				reservation_module: true,
-				services: true,
+				assignments: true,
 				schedules: {
 					include: {
 						schedule_slots: {
