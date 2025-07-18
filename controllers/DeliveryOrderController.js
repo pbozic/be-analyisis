@@ -1243,13 +1243,16 @@ export async function handleStockSync(order) {
 		// 1. Delete all existing stock movements linked to the order
 		console.info('Removing stock changes for order:', order.order_id);
 		await removeOrderStockChange(order);
-		const stockUpdates = order.items.filter((i) => !i.removed).map((item) => getMenuItemStockChange(item, order));
-		console.info('Creating stock changes for order:', order.order_id, 'with updates:', stockUpdates);
-		// 2. Create new stock movements based on the current order items
-		for (const update of stockUpdates) {
-			await prisma.menu_item_stock_change.create({ data: update });
+		if (order.status !== DELIVERY_ORDER_STATUS.FAIL) {
+			const stockUpdates = order.items
+				.filter((i) => !i.removed)
+				.map((item) => getMenuItemStockChange(item, order));
+			console.info('Creating stock changes for order:', order.order_id, 'with updates:', stockUpdates);
+			// 2. Create new stock movements based on the current order items
+			for (const update of stockUpdates) {
+				await prisma.menu_item_stock_change.create({ data: update });
+			}
 		}
-
 		return true;
 	} catch (error) {
 		console.error('Error in handleStockRemove:', error);
