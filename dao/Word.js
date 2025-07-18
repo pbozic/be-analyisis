@@ -382,7 +382,7 @@ export async function updateUserSubscription(userId, business_id) {
 		return { success: false, error: err.message };
 	}
 }
-export async function createWordBuySubscription(words, business_id) {
+export async function createWordBuySubscription(words, business_id,userId) {
 	try {
 		// 1) Load business & verify Stripe customer
 		const business = await prisma.business.findUnique({
