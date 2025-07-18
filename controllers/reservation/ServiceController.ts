@@ -41,7 +41,8 @@ export async function getServices(req: Request, res: Response): Promise<void> {
 export async function createService(req: ValidatedRequest<CreateServiceInput>, res: Response): Promise<void> {
 	try {
 		let serviceData = req.body;
-		let service = await ServiceDao.createService(serviceData);
+		let reservationModuleId = req.user?.reservation_module_id as string;
+		let service = await ServiceDao.createService(serviceData, reservationModuleId);
 		res.status(201).json(service);
 	} catch (error) {
 		res.status(500).json({ message: 'Error creating service', error });

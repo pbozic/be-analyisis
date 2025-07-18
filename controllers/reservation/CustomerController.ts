@@ -42,7 +42,12 @@ export async function getCustomers(req: ValidatedRequest, res: Response): Promis
 export async function createCustomer(req: ValidatedRequest<CreateCustomerInput>, res: Response): Promise<void> {
 	try {
 		let customerData = req.body;
-		let customer = await CustomerDao.createCustomer(customerData);
+		let reservationModuleId = req.user?.reservation_module_id as string;
+		if (!reservationModuleId) {
+			res.status(400).json({ message: 'User has no reservation module' });
+			return;
+		}
+		let customer = await CustomerDao.createCustomer(customerData, reservationModuleId);
 		res.status(201).json(customer);
 	} catch (error) {
 		res.status(500).json({ message: 'Error creating customer', error });
