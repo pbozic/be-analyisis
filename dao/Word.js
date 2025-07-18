@@ -390,7 +390,7 @@ export async function createWordBuySubscription(words, business_id, userId) {
 			where: { business_id },
 		});
 		if (!business?.stripe_customer_id) {
-			throw new Error("Business has no Stripe customer on file");
+			throw new Error('Business has no Stripe customer on file');
 		}
 
 		// 2) Create or update word_buy entries
@@ -416,7 +416,7 @@ export async function createWordBuySubscription(words, business_id, userId) {
 					});
 					return wordBuy;
 				} catch (error) {
-					console.error("Error creating/updating word_buy:", error);
+					console.error('Error creating/updating word_buy:', error);
 					throw error;
 				}
 			})
@@ -427,7 +427,7 @@ export async function createWordBuySubscription(words, business_id, userId) {
 			const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 			if (subscription?.current_period_end) {
 				const expiresAt = new Date(subscription.current_period_end * 1000);
-				console.log("Updating expires_at to:", expiresAt);
+				console.log('Updating expires_at to:', expiresAt);
 
 				// Update all created wordBuys
 				await Promise.all(
@@ -438,9 +438,9 @@ export async function createWordBuySubscription(words, business_id, userId) {
 						})
 					)
 				);
-				console.log("✅ expires_at updated for all word_buy entries");
+				console.log('✅ expires_at updated for all word_buy entries');
 			} else {
-				console.log("No current_period_end found on subscription");
+				console.log('No current_period_end found on subscription');
 			}
 		}
 
@@ -449,7 +449,7 @@ export async function createWordBuySubscription(words, business_id, userId) {
 		let result;
 
 		if (business.word_buy_stripe_subscription_id) {
-			console.log("🔁 Existing subscription found. Updating...");
+			console.log('🔁 Existing subscription found. Updating...');
 			reusedSubscription = true;
 			result = await updateUserSubscription(userId, business_id);
 		} else {
@@ -470,11 +470,10 @@ export async function createWordBuySubscription(words, business_id, userId) {
 			reusedSubscription,
 		};
 	} catch (err) {
-		console.error("❌ createWordBuySubscription error:", err);
+		console.error('❌ createWordBuySubscription error:', err);
 		throw new Error(err.message);
 	}
 }
-
 
 async function addStripeSubToWordBuy(id, stripe_subscription_id) {
 	return await prisma.word_buy.update({
