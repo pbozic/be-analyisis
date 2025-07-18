@@ -1,5 +1,4 @@
 import express from 'express';
-import multer from 'multer';
 
 import BlogController from '../../controllers/BlogController.ts';
 import { validate } from '../../middleware/zod.ts';

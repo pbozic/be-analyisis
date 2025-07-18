@@ -2,9 +2,8 @@ import { config } from 'dotenv';
 import jwt from 'jsonwebtoken';
 
 import { UserSockets } from '../socket.js';
-import { asyncLocalStorage } from '../lib/logger.js';
 config();
-const authMiddleware = (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
 	const authHeader = req.headers['authorization'];
 	const token = authHeader && authHeader.split(' ')[1];
 	if (!token) {
@@ -12,9 +11,27 @@ const authMiddleware = (req, res, next) => {
 		return res.status(401).send('Access Denied. No token provided.');
 	}
 	try {
+		console.log('auth token', token);
 		const decoded = jwt.verify(token, process.env.JWT_TOKEN_SECRET);
-		req.user = decoded.user;
-		req.userSocket = UserSockets.get(decoded.user_id);
+		const businessUser = await req.prisma.business_users.findFirst({
+			where: {
+				user_id: decoded.user.user_id,
+			},
+			include: {
+				business: {
+					include: {
+						reservation_module: true,
+					},
+				},
+			},
+		});
+		req.user = {
+			...decoded.user,
+			business_id: businessUser?.business?.business_id || null,
+			business_user_id: businessUser?.business_user_id || null,
+			reservation_module_id: businessUser?.business?.reservation_module?.reservation_module_id || null,
+		};
+		req.userSocket = UserSockets.get(decoded.user.user_id);
 		// const userId = decoded.user.user_id; // Your logic
 		// const routePath = req.route?.path || req.originalUrl;
 		next();

@@ -1,9 +1,7 @@
 import { validate as isUuid } from 'uuid';
-import { SUBSCRIPTION_STATUS } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 import { DOCUMENT_TYPE, DELIVERY_ORDER_STATUS, DELIVERY_ORDER_END_STATES } from '../lib/constants.js';
-import gApi from '../lib/gApis.js';
 /**
  *
  * @param {Object} timeline - the order timeline object with entries which must have status and timestamp and can have additional fields
@@ -84,6 +82,7 @@ async function getActiveDeliveryOrdersForBusiness(business_id) {
 	try {
 		return await prisma.delivery_orders.findMany({
 			where: {
+				is_daily_meal: false,
 				business_id: business_id,
 				status: {
 					notIn: DELIVERY_ORDER_END_STATES,
@@ -93,6 +92,9 @@ async function getActiveDeliveryOrdersForBusiness(business_id) {
 				delivery_driver: true,
 				driver: true,
 				user: true,
+			},
+			orderBy: {
+				created_at: 'desc',
 			},
 		});
 	} catch (e) {
@@ -359,15 +361,7 @@ async function acceptOrderDelivery(order, deliverer_id, vehicle_id) {
 					on_order: true,
 				},
 			});
-			const vehicleData = vehicle_id
-				? {
-						vehicle: {
-							connect: {
-								vehicle_id: vehicle_id,
-							},
-						},
-					}
-				: {};
+			const vehicleData = vehicle_id ? { vehicle: { connect: { vehicle_id: vehicle_id } } } : {};
 			return prisma.delivery_orders.update({
 				where: {
 					order_id,
@@ -919,260 +913,6 @@ async function removeDriverFromOrder(order_id) {
 		throw new Error(e.message);
 	}
 }
-async function getTodayDailyMealSubscriptionsByBusinessId(business_id) {
-	try {
-		return await prisma.daily_meals_subscriptions.findMany({
-			where: {
-				business_id: business_id,
-				date: {
-					gte: new Date(new Date().setHours(0, 0, 0, 0)),
-					lte: new Date(new Date().setHours(23, 59, 59, 999)),
-				},
-				order_created: null,
-			},
-			include: {
-				address: true,
-				menu: true,
-				menu_category: {
-					include: {
-						menu_items: true,
-					},
-				},
-				user: true,
-			},
-		});
-	} catch (e) {
-		console.error('Error fetching orders:', e);
-		throw new Error(e.message);
-	}
-}
-async function createDailyMealsSubscription(
-	grouped_id,
-	user_id,
-	business_id,
-	menu_id,
-	address_id,
-	menu_category_id,
-	commentCourier,
-	commentRestaurant,
-	date,
-	quantity
-) {
-	try {
-		if (!quantity || quantity <= 0) {
-			throw new Error('Queantity must be defined and greater than 0');
-		}
-
-		return await prisma.daily_meals_subscriptions.create({
-			data: {
-				courier_comment: commentCourier,
-				restaurant_comment: commentRestaurant,
-				date,
-				quantity,
-				user: {
-					connect: {
-						user_id: user_id,
-					},
-				},
-				address: {
-					connect: {
-						address_id: address_id,
-					},
-				},
-				menu: {
-					connect: {
-						menu_id: menu_id,
-					},
-				},
-				business: {
-					connect: {
-						business_id: business_id,
-					},
-				},
-				menu_category: {
-					connect: {
-						menu_category_id: menu_category_id,
-					},
-				},
-				payment: {
-					connect: {
-						subscription_grouped_id: grouped_id,
-					},
-				},
-			},
-		});
-	} catch (e) {
-		console.error('Error creating daily meals subscription:', e);
-		throw new Error(e.message);
-	}
-}
-async function getDailyMealsSubscriptionByBusinessId(business_id, start_date) {
-	const dateToUse = start_date ? new Date(start_date) : new Date();
-	const normalizedDate = new Date(dateToUse.setHours(0, 0, 0, 0));
-	try {
-		return await prisma.daily_meals_subscriptions.findMany({
-			where: {
-				business_id: business_id,
-				date: {
-					gte: normalizedDate,
-				},
-				order_created: null,
-				status: SUBSCRIPTION_STATUS.ACTIVE,
-			},
-			include: {
-				address: true,
-				menu: true,
-				menu_category: {
-					include: {
-						menu_categories_categories: {
-							include: {
-								category: true,
-							},
-						},
-						menu_items: true,
-					},
-				},
-				user: {
-					select: {
-						first_name: true,
-						last_name: true,
-						telephone: true,
-						email: true,
-						daily_meal_preferences: true,
-						daily_meal_day_preferences: true,
-					},
-				},
-			},
-			orderBy: {
-				date: 'asc',
-			},
-		});
-	} catch (e) {
-		console.error('Error fetching orders:', e);
-		throw new Error(e.message);
-	}
-}
-async function getDailyMealsSubscriptionByUserId(user_id, start_date) {
-	const dateToUse = start_date ? new Date(start_date) : new Date();
-	const normalizedDate = new Date(dateToUse.setHours(0, 0, 0, 0));
-	try {
-		return await prisma.daily_meals_subscriptions.findMany({
-			where: {
-				user_id: user_id,
-				date: {
-					gte: normalizedDate,
-				},
-				order_created: null,
-				status: SUBSCRIPTION_STATUS.ACTIVE,
-			},
-			include: {
-				address: true,
-				menu: true,
-				menu_category: {
-					include: {
-						menu_categories_categories: {
-							include: {
-								category: true,
-							},
-						},
-						menu_items: true,
-					},
-				},
-				business: {
-					select: {
-						business_group_name: true,
-						name: true,
-						telephone: true,
-						email: true,
-						documents: {
-							where: {
-								document_type: DOCUMENT_TYPE.LOGO,
-							},
-							select: {
-								files: true,
-							},
-						},
-					},
-				},
-			},
-			orderBy: {
-				date: 'asc',
-			},
-		});
-	} catch (e) {
-		console.error('Error fetching orders:', e);
-		throw new Error(e.message);
-	}
-}
-
-async function getDailyMealsSubscriptionsByGroupedId(grouped_id) {
-	try {
-		return await prisma.daily_meals_subscriptions.findMany({
-			where: {
-				grouped_id: grouped_id,
-			},
-			include: {
-				address: true,
-				menu: true,
-				menu_category: {
-					include: {
-						menu_categories_categories: {
-							include: {
-								category: true,
-							},
-						},
-					},
-				},
-				business: {
-					select: {
-						business_group_name: true,
-						name: true,
-						telephone: true,
-						email: true,
-					},
-				},
-			},
-			orderBy: {
-				date: 'asc',
-			},
-		});
-	} catch (e) {
-		console.error('Error fetching subscriptions by grouped id:', e);
-		throw new Error(e.message);
-	}
-}
-
-async function updateDailyMealsSubscriptionsStatusByGroupedId(grouped_id, status) {
-	try {
-		return await prisma.daily_meals_subscriptions.updateMany({
-			where: {
-				grouped_id: grouped_id,
-			},
-			data: {
-				status: status,
-			},
-		});
-	} catch (e) {
-		console.error('Error updating subscriptions status by grouped id:', e);
-		throw new Error(e.message);
-	}
-}
-
-async function updateDailyMealSubscriptionOrderCreatedById(daily_meals_subscriptions_id, date) {
-	try {
-		return await prisma.daily_meals_subscriptions.update({
-			where: {
-				daily_meals_subscriptions_id: daily_meals_subscriptions_id,
-			},
-			data: {
-				order_created: date,
-			},
-		});
-	} catch (e) {
-		console.error('Error updating subscriptions status by grouped id:', e);
-		throw new Error(e.message);
-	}
-}
 
 export { getOrders };
 export { getActiveDeliveryOrders };
@@ -1201,13 +941,6 @@ export { getActiveDeliveryOrdersForBusiness };
 export { getInProgressDeliveryOrdersCountForBusinessId };
 export { getActiveOrderIdsForUser };
 export { removeDriverFromOrder };
-export { getTodayDailyMealSubscriptionsByBusinessId };
-export { createDailyMealsSubscription };
-export { getDailyMealsSubscriptionByBusinessId };
-export { getDailyMealsSubscriptionByUserId };
-export { getDailyMealsSubscriptionsByGroupedId };
-export { updateDailyMealsSubscriptionsStatusByGroupedId };
-export { updateDailyMealSubscriptionOrderCreatedById };
 export default {
 	getOrders,
 	getActiveDeliveryOrders,
@@ -1236,12 +969,5 @@ export default {
 	getInProgressDeliveryOrdersCountForBusinessId,
 	getActiveOrderIdsForUser,
 	removeDriverFromOrder,
-	getTodayDailyMealSubscriptionsByBusinessId,
-	createDailyMealsSubscription,
-	getDailyMealsSubscriptionByBusinessId,
-	getDailyMealsSubscriptionByUserId,
-	getDailyMealsSubscriptionsByGroupedId,
-	updateDailyMealsSubscriptionsStatusByGroupedId,
-	updateDailyMealSubscriptionOrderCreatedById,
 	acceptOrderDeliveryWithRawLock,
 };

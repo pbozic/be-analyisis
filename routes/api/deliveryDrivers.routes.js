@@ -18,6 +18,7 @@ router.get('/earnings/total', DeliveryDriverController.getTotalEarnings);
 router.get('/earnings/:delivery_driver_id', DeliveryDriverController.getDriverEarnings);
 router.get('/earnings/:delivery_driver_id/total', DeliveryDriverController.getDriverTotalEarnings);
 router.patch('/edit', DeliveryDriverController.editDeliveryDriver);
+router.patch('/assign/:delivery_driver_id', DeliveryDriverController.updateDeliveryDriverDailyMealBusiness);
 router.patch('/update/:delivery_driver_id', DeliveryDriverController.updateDeliveryDriver);
 router.patch('/location', DeliveryDriverController.updateDeliveryDriverLocation);
 router.patch('/online', DeliveryDriverController.updateDeliveryDriverOnlineStatus);

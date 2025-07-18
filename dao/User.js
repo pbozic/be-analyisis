@@ -402,7 +402,7 @@ const updateUserTelephoneVerified = async (user_id, telephoneVerified) => {
 		return new Error(error);
 	}
 };
-const createNewUser = async (user, hashPassword = false) => {
+const createNewUser = async (user, hashPassword = false, tx = prisma) => {
 	try {
 		let newUser = user;
 		if (newUser?.user_role && [USER_ROLE.DRIVER, USER_ROLE.DELIVERY_DRIVER].includes(newUser?.user_role)) {
@@ -432,7 +432,7 @@ const createNewUser = async (user, hashPassword = false) => {
 			delete newUser.confirm_password;
 		}
 		// Create the user with the potentially hashed password
-		return await prisma.users.create({
+		return await tx.users.create({
 			data: newUser,
 			include: {
 				child_users: true,
@@ -769,12 +769,12 @@ const updateUserNewsletter = async (user_id, data) => {
 		return new Error(err);
 	}
 };
-const linkRolesToUser = async (user_id, roles) => {
+const linkRolesToUser = async (user_id, roles, tx = prisma) => {
 	try {
 		if (Array.isArray(roles)) {
 			let user_roles = [];
 			for (let role of roles) {
-				const user_role = prisma.user_roles.create({
+				const user_role = tx.user_roles.create({
 					data: {
 						...role,
 						user: {

@@ -16,6 +16,7 @@ import compression from 'compression';
 import * as flatted from 'flatted';
 import multer from 'multer';
 
+import prisma from './prisma/prisma.js';
 import startCronJobs from './cron.js';
 import mainRouter from './routes/index.routes.js';
 import apiRouter from './routes/api.routes.js';
@@ -36,6 +37,11 @@ if (process.env.NODE_ENV !== 'test') {
 // ─── Middleware Setup ───────────────────────────────────────────────
 app.disable('etag');
 app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
+
+app.use((req, res, next) => {
+	req.prisma = prisma;
+	next();
+});
 
 app.post('/api/blog/upload/file', authMiddleware, upload.single('image'), (req, res) => {
 	console.log('File upload request received:', req.file);

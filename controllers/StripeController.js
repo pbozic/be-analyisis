@@ -1,27 +1,23 @@
 import dotenv from 'dotenv';
-import { SPLIT_DESTINATION_TYPE } from '@prisma/client';
+import { SUBSCRIPTION_STATUS } from '@prisma/client';
 
-import DeliveryOrderDao, { updateDailyMealsSubscriptionsStatusByGroupedId } from '../dao/DeliveryOrder.js';
-import UsersDao from '../dao/User.js';
+import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import socket from '../socket.js';
 import stripe from '../lib/stripe.js';
 import BusinessDao from '../dao/Business.js';
 import PromoDao from '../dao/Promo.js';
-import ProductDao from '../dao/Product.js';
-import PaymentDao from '../dao/Payment.ts';
 import UserDao from '../dao/User.js';
 import WalletFundsHelpers from '../lib/WalletFundsHelpers.js';
-import { DELIVERY_ORDER_STATUS, FUNDS_TYPE, SERVICE_TYPE, ORDER_TYPE, TAXI_ORDER_STATUS } from '../lib/constants.js';
+import { DELIVERY_ORDER_STATUS, SERVICE_TYPE, ORDER_TYPE, TAXI_ORDER_STATUS } from '../lib/constants.js';
 import { calculateDeliveryOrderPaymentCuts } from '../lib/deliveryHelpers.js';
 import WalletFundsDao from '../dao/WalletFunds.js';
 import TaxiOrderDao from '../dao/TaxiOrder.js';
-import { calculateTransferOrderPaymentCuts } from '../lib/taxiHelpers.js';
 import PaymentHelpers from '../lib/paymentHelpers.ts';
-import DailyMealDao from '../dao/DailyMealDao.ts';
 import dailyMealHelpers from '../lib/dailyMealHelpers.ts';
 import { handleStockSync } from './DeliveryOrderController.js';
 import { BUSINESS_TYPE } from '../lib/constants.js';
 import prisma from '../prisma/prisma.js';
+import DailyMealDao from '../dao/DailyMealDao.ts';
 dotenv.config();
 const { io, UserSockets, SocketStore } = socket;
 async function handlePaymentIntentSuccess(paymentIntent) {
@@ -118,14 +114,15 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			break;
 		}
 		case 'daily_meals_subscription_payment': {
-			let payment = await PaymentDao.getPaymentByGroupedId(paymentIntent.transfer_group);
-			await PaymentHelpers.transferSplitsForTypes(payment.payment_id, [
-				SPLIT_DESTINATION_TYPE.PLATFORM,
-				SPLIT_DESTINATION_TYPE.MERCHANT,
-			]);
-			//any remaining reserved funds are meant for delivery driver and should be handled on order completion
+			//TODO: Marcel fix this
+			// let payment = await PaymentDao.getPaymentByGroupedId(paymentIntent.transfer_group);
+			// await PaymentHelpers.transferSplitsForTypes(payment.payment_id, [
+			// 	SPLIT_DESTINATION_TYPE.PLATFORM,
+			// 	SPLIT_DESTINATION_TYPE.MERCHANT,
+			// ]);
+			// //any remaining reserved funds are meant for delivery driver and should be handled on order completion
 
-			const updated_sub = await dailyMealHelpers.activateSubscriptionById(paymentIntent.transfer_group);
+			const updated_sub = await dailyMealHelpers.activateSubscriptionById(paymentIntent.subscription_id);
 			if (!updated_sub) {
 				console.warn(
 					'No DM subscriptions found after transfers for grouped_id: ',
@@ -157,48 +154,48 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			});
 			break;
 		}
-		case 'word_buy': {
-			const invoice = event.data.object;
-			const subId = invoice.subscription;
-			if (!subId) return res.json({ received: true });
+		// case 'word_buy': {
+		// 	const invoice = event.data.object;
+		// 	const subId = invoice.subscription;
+		// 	if (!subId) return res.json({ received: true });
 
-			// 1) Find your word_buy record by subscription ID
-			const wb = await prisma.word_buy.findFirst({
-				where: { stripe_subscription_id: subId },
-			});
-			if (!wb) {
-				// not one of ours
-				return res.json({ received: true });
-			}
+		// 	// 1) Find your word_buy record by subscription ID
+		// 	const wb = await prisma.word_buy.findFirst({
+		// 		where: { stripe_subscription_id: subId },
+		// 	});
+		// 	if (!wb) {
+		// 		// not one of ours
+		// 		return res.json({ received: true });
+		// 	}
 
-			// 2) Extract the billing period from the first line item
-			const line = invoice.lines.data[0];
-			if (!line?.period) {
-				console.error('No period info on invoice line for subscription:', subId);
-				return res.json({ received: true });
-			}
+		// 	// 2) Extract the billing period from the first line item
+		// 	const line = invoice.lines.data[0];
+		// 	if (!line?.period) {
+		// 		console.error('No period info on invoice line for subscription:', subId);
+		// 		return res.json({ received: true });
+		// 	}
 
-			const periodStart = new Date(line.period.start * 1000);
-			const periodEnd = new Date(line.period.end * 1000);
+		// 	const periodStart = new Date(line.period.start * 1000);
+		// 	const periodEnd = new Date(line.period.end * 1000);
 
-			// 3) Decide if this is the first payment or a renewal
-			const isFirstPayment = !wb.paid;
+		// 	// 3) Decide if this is the first payment or a renewal
+		// 	const isFirstPayment = !wb.paid;
 
-			// 4) Build the update payload
-			const updateData = {
-				paid: true,
-				expires_at: periodEnd,
-			};
-			if (isFirstPayment) {
-				updateData.active_at = periodStart;
-			}
+		// 	// 4) Build the update payload
+		// 	const updateData = {
+		// 		paid: true,
+		// 		expires_at: periodEnd,
+		// 	};
+		// 	if (isFirstPayment) {
+		// 		updateData.active_at = periodStart;
+		// 	}
 
-			// 5) Persist updates
-			await prisma.word_buy.update({
-				where: { word_buy_id: wb.word_buy_id },
-				data: updateData,
-			});
-		}
+		// 	// 5) Persist updates
+		// 	await prisma.word_buy.update({
+		// 		where: { word_buy_id: wb.word_buy_id },
+		// 		data: updateData,
+		// 	});
+		// }
 	}
 }
 async function handlePaymentIntentFaliure(paymentIntent) {
@@ -248,11 +245,12 @@ async function handlePaymentIntentFaliure(paymentIntent) {
 			}
 			break;
 		case 'daily_meals_subscription_payment': {
-			let payment = await PaymentDao.getPaymentByGroupedId(paymentIntent.transfer_group);
+			//TODO: Marcel fix this
+			// let payment = await PaymentDao.getPaymentByGroupedId(paymentIntent.transfer_group);
 			//TODO: handle dm failed
-			const updated_subs = await DeliveryOrderDao.updateDailyMealsSubscriptionsStatusByGroupedId(
-				paymentIntent.transfer_group,
-				'FAILED'
+			const updated_subs = await DailyMealDao.updateSubscriptionStatus(
+				paymentIntent.subscription_id,
+				SUBSCRIPTION_STATUS.FAILED
 			);
 			if (!updated_subs || updated_subs.length === 0) {
 				console.warn(
@@ -395,86 +393,9 @@ async function handleWebhook(req, res) {
 				handleChargeUpdate(event.data.object);
 				break;
 			/*** PRODUCT EVENTS ***/
-			case 'product.created': {
-				let product = await ProductDao.getProductByStripeId(data.id);
-				if (!product) {
-					product = await ProductDao.createProduct({
-						name: data.name,
-						description: data.description,
-						stripe_product_id: data.id,
-					});
-				}
-				console.log(`Product added: ${data.name}`);
-				break;
-			}
-			case 'product.updated': {
-				let updatedProduct = await ProductDao.getProductByStripeId(data.id);
-				if (!updatedProduct) {
-					updatedProduct = await ProductDao.createProduct({
-						name: data.name,
-						description: data.description,
-						stripe_product_id: data.id,
-					});
-				} else {
-					updatedProduct = await ProductDao.updateProduct({
-						name: data.name,
-						description: data.description,
-						stripe_product_id: data.id,
-					});
-				}
-				console.log(`Product updated: ${data.name}`);
-				break;
-			}
-			case 'product.deleted': {
-				let deletedProduct = await ProductDao.getProductByStripeId(data.id);
-				if (deletedProduct) {
-					await ProductDao.deleteProduct(data.id);
-				}
-				console.log(`Product deleted: ${data.id}`);
-				break;
-			}
+
 			/*** PRICE EVENTS ***/
-			case 'price.created': {
-				let price = await ProductDao.getPriceByStripeId(data.id);
-				if (!price) {
-					price = await ProductDao.createPrice({
-						amount: data.unit_amount,
-						currency: data.currency,
-						stripe_price_id: data.id,
-						stripe_product_id: data.product,
-					});
-				}
-				console.log(`Price added: ${data.unit_amount / 100} ${data.currency}`);
-				break;
-			}
-			case 'price.updated': {
-				let updatedPrice = await ProductDao.getPriceByStripeId(data.id);
-				if (!updatedPrice) {
-					updatedPrice = await ProductDao.createPrice({
-						amount: data.unit_amount,
-						currency: data.currency,
-						stripe_price_id: data.id,
-						stripe_product_id: data.product,
-					});
-				} else {
-					updatedPrice = await ProductDao.updatePrice({
-						amount: data.unit_amount,
-						currency: data.currency,
-						stripe_price_id: data.id,
-						stripe_product_id: data.product,
-					});
-				}
-				console.log(`Price updated: ${data.unit_amount / 100} ${data.currency}`);
-				break;
-			}
-			case 'price.deleted': {
-				let deletedPrice = await ProductDao.getPriceByStripeId(data.id);
-				if (deletedPrice) {
-					await ProductDao.deletePrice(data.id);
-				}
-				console.log(`Price deleted: ${data.id}`);
-				break;
-			}
+
 			// ... handle other event types
 			case 'checkout.session.completed':
 				handleSessionCompleted(data);
@@ -510,6 +431,35 @@ async function handleWebhook(req, res) {
 					});
 					console.log('Subscription deleted, word_buys marked as deleted:', subscription.id);
 				}
+				break;
+			}
+			case 'subscription_schedule.released': {
+				const schedule = event.data.object;
+
+				// schedule.subscription gives you the active subscription ID
+				const subscriptionId = schedule.subscription;
+
+				// Update all downgraded word_buys
+				const wordBuys = await prisma.word_buy.findMany({
+					where: {
+						stripe_subscription_id: subscriptionId,
+						pending_price: { not: null },
+						pending_stripe_price_id: { not: null },
+					},
+				});
+
+				for (const wb of wordBuys) {
+					await prisma.word_buy.update({
+						where: { word_buy_id: wb.id },
+						data: {
+							price: wb.pending_price,
+							stripe_price_id: wb.pending_price_id,
+							pending_price: null,
+							pending_stripe_price_id: null,
+						},
+					});
+				}
+
 				break;
 			}
 			default:

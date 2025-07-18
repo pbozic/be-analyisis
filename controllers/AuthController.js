@@ -1062,6 +1062,198 @@ async function registerBusiness(req, res) {
 	}
 }
 /**
+ * POST /auth/reservation/register
+ * @tag Auth
+ * @summary Register a new reservation business
+ * @description Creates a new reservation business.
+ * @operationId registerBusiness
+ * @bodyContent {BusinessRegistration} application/json
+ * @bodyRequired
+ * @response 201 - Business registered successfully
+ * @responseContent {BusinessRegistrationResponse} 201.application/json
+ * @response 400 - Error registering business
+ */
+async function registerReservationBusiness(req, res) {
+	try {
+		console.log('Registering reservation business with data:', req.body);
+		if (req.body.email) {
+			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.email);
+			if (existingBusinessEmail) {
+				console.error('Business with this email already exists.');
+				return res.status(400).json({ error: 'Business with this email already exists.' });
+			}
+		}
+		console.log('Creating Stripe customer for reservation business with email:', req.body.email);
+		let stripeCustomer = await stripe.createCustomer(
+			req.body.email,
+			req.body.business_name,
+			req.body.business_telephone
+		);
+		console.log('Stripe customer created:', stripeCustomer.id);
+		const phoneNumber = req.body.business_telephone;
+		const userExists = await UserDao.getUserByTelephone(phoneNumber);
+
+		let businessUserData;
+		let businessUsers = [];
+		let business;
+		let transactionSucceeded = false;
+		await req.prisma.$transaction(async (tx) => {
+			const businessData = {
+				name: req.body.business_name,
+				email: req.body.email,
+				telephone: req.body.business_telephone,
+				telephone_number: req.body.business_telephone_number,
+				telephone_code: req.body.business_telephone_code,
+				type: 'RESERVATION',
+				tax_id: req.body.tax_id,
+				registration_id: req.body.registration_id,
+			};
+			console.log('Creating new business with data:', businessData);
+			business = await BusinessDao.createNewBusiness(
+				{
+					...businessData,
+					stripe_customer_id: stripeCustomer.id,
+				},
+				tx
+			);
+			console.log('Business created:', business.business_id);
+			// Create reservation module for the business
+			let reservationModule = await tx.reservation_module.create({
+				data: {
+					business: {
+						connect: {
+							business_id: business.business_id,
+						},
+					},
+				},
+			});
+			console.log('Reservation module created:', reservationModule.reservation_module_id);
+			const userObj = {
+				data: {
+					email: req.body.email,
+					password: req.body.password,
+					user_role: 'ADMIN',
+					date_of_birth: req.body.date_of_birth,
+					telephone: req.body.business_telephone,
+					telephone_number: req.body.business_telephone_number,
+					telephone_code: req.body.business_telephone_code,
+				},
+			};
+			//TODO: is this ok or should we tell them this is happening?
+
+			console.log('Creating business user for reservation business:', userObj, business);
+			if (userExists) {
+				// If user exists, connect to existing user
+				const { businessUser } = await BusinessUsersDao.createBusinessUser(
+					userObj,
+					business.business_id,
+					false,
+					tx
+				);
+				businessUserData = businessUser;
+				const userRoles = userObj.data.user_roles || [
+					{ role: userObj.data.user_role || 'BUSINESS_USER', primary: true },
+				];
+				await UserDao.linkRolesToUser(userExists.user_id, userRoles, tx);
+			} else {
+				// If user does not exist, create new user
+				const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(
+					userObj,
+					business.business_id,
+					true,
+					tx
+				);
+				businessUserData = businessUser;
+				const userRoles = userObj.data.user_roles || [
+					{ role: userObj.data.user_role || 'BUSINESS_USER', primary: true },
+				];
+				await UserDao.linkRolesToUser(newUser?.user_id, userRoles, tx);
+			}
+			//create employee user
+			console.log('Creating employee for reservation business:', businessUserData);
+			let employee = await tx.employee.create({
+				data: {
+					business_user: {
+						connect: {
+							business_users_id: businessUserData.business_users_id,
+						},
+					},
+					reservation_module: {
+						connect: {
+							reservation_module_id: reservationModule.reservation_module_id,
+						},
+					},
+				},
+			});
+
+			//create demo location
+			console.log('Creating location for reservation business:', reservationModule.reservation_module_id);
+			await tx.location.create({
+				data: {
+					reservation_module: {
+						connect: {
+							reservation_module_id: reservationModule.reservation_module_id,
+						},
+					},
+					name: 'Main Location',
+					address: 'Testna ulica 123',
+					working_days: [],
+				},
+			});
+
+			//create demo service
+			console.log('Creating service for reservation business:', employee.employee_id);
+			let service = await tx.service.create({
+				data: {
+					reservation_module: {
+						connect: {
+							reservation_module_id: reservationModule.reservation_module_id,
+						},
+					},
+					name: { en: 'Test Service' },
+					description: { en: 'This is a test service' },
+					duration_minutes: 60,
+					price_cents: 1000,
+				},
+			});
+			await tx.service_assignment.create({
+				data: {
+					employee: {
+						connect: {
+							employee_id: employee.employee_id,
+						},
+					},
+					service: {
+						connect: {
+							service_id: service.service_id,
+						},
+					},
+				},
+			});
+			transactionSucceeded = true;
+		});
+
+		businessUsers.push({ businessUser: businessUserData });
+		// TODO: select user to login,
+		if (!transactionSucceeded && stripeCustomer?.id) {
+			try {
+				await stripe.customers.del(stripeCustomer.id);
+				console.log('Stripe customer deleted after failed tx');
+			} catch (stripeError) {
+				console.error('Failed to delete Stripe customer:', stripeError);
+			}
+		}
+		res.status(201).json({
+			message: 'Business registered successfully',
+			business,
+			businessUsers,
+		});
+	} catch (error) {
+		console.error('Error registering business:', error);
+		res.status(400).json({ error: 'Error registering business', detail: error.message });
+	}
+}
+/**
  * POST /auth/create/scheduled_user
  * @tag User
  * @summary Create a new scheduled user.
@@ -1183,6 +1375,7 @@ export default {
 	registerDeliveryService,
 	registerMerchantService,
 	registerBusiness,
+	registerReservationBusiness,
 	createScheduledUser,
 	getScheduledUsers,
 	updateScheduledUser,

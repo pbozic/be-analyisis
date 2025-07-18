@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "prisma.prisma",
+    "kuscamara.remove-unused-imports",
+    "PKief.material-icon-theme",
+    "rvest.vs-code-prettier-eslint",
+    "ducfilan.pug-formatter",
+    "mechatroner.rainbow-csv",
+    "Gruntfuggly.todo-tree",
+    "redhat.vscode-yaml"
+  ],
+}

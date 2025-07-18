@@ -3,7 +3,8 @@
 // --- CREATE/UPDATE/DELETE SCHEMAS ---
 import { z } from 'zod';
 // --- TYPES ---
-import type { business, MODULE_TYPE } from '@prisma/client';
+import type { business } from '@prisma/client';
+import { MODULE_TYPE } from '@prisma/client';
 
 export const CreateSubscriptionSchema = z.object({
 	module: z.nativeEnum(MODULE_TYPE),
@@ -59,6 +60,15 @@ export const CreateBusinessUsageSchema = z.object({
 	reset_date: z.string().datetime().optional(),
 	reservation_module_id: z.string().uuid().optional(),
 });
+export type CreateSubscriptionSchema = z.infer<typeof CreateSubscriptionSchema>;
+export type UpdateSubscriptionSchema = z.infer<typeof UpdateSubscriptionSchema>;
+export type CreateAddonSchema = z.infer<typeof CreateAddonSchema>;
+export type UpdateAddonSchema = z.infer<typeof UpdateAddonSchema>;
+export type CreateActionSchema = z.infer<typeof CreateActionSchema>;
+export type CreateSubscriptionActionSchema = z.infer<typeof CreateSubscriptionActionSchema>;
+export type CreateAddonActionSchema = z.infer<typeof CreateAddonActionSchema>;
+export type CreateBusinessAddonSchema = z.infer<typeof CreateBusinessAddonSchema>;
+export type CreateBusinessUsageSchema = z.infer<typeof CreateBusinessUsageSchema>;
 
 export type ReservationModule = {
 	business_id: string;

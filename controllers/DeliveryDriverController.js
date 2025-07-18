@@ -4,9 +4,7 @@ import DeliveryDriverDao from '../dao/DeliveryDriver.js';
 import UserDao from '../dao/User.js';
 import socket from '../socket.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
-import taxiHelpers from '../lib/taxiHelpers.js';
 import { resendPendingOrdersToDeliveryDriver, sendActiveOrdersToDeliveryDriver } from '../lib/deliveryHelpers.js';
-import DriverDao from '../dao/Driver.js';
 import { updateAddressByAddressId, addAddress, addUserAddress } from '../dao/Address.js';
 import {
 	updateDocumentByDocumentId,
@@ -21,9 +19,9 @@ import { updateFileInDocument, addFileToDocument } from '../dao/File.js';
 import S3Helper from '../lib/s3.js';
 import VehicleDao from '../dao/Vehicle.js';
 import { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE } from '../lib/constants.js';
-import { createVehicle } from './VehiclesController.js';
 import { createNewVehicle } from '../dao/Vehicle.js';
 import { calculateTotalEarnings, calculateDeliveryDriversEarnings } from '../lib/helpersLib.js';
+import dailyMealHelpers from '../lib/dailyMealHelpers.js';
 config();
 const { UserSockets, io } = socket;
 /**
@@ -467,6 +465,49 @@ async function getDeliveryDriverLocation(req, res) {
 	}
 }
 /**
+ * PATCH /delivery_drivers/assign/:delivery_driver_id
+ * @tag DeliveryDrivers
+ * @summary Update a delivery driver daily_meal_business
+ * @description Updates information about a specific delivery driver.
+ * @operationId updateDeliveryDriverDailyMealBusiness
+ * @pathParam {string} delivery_driver_id - The ID of the delivery driver to update
+ * @bodyContent {DeliveryDriverUpdate} application/json
+ * @bodyRequired
+ * @response 200 - Delivery driver updated successfully
+ * @responseContent {DeliveryDriver} 200.application/json
+ * @response 400 - Error updating delivery driver
+ */
+async function updateDeliveryDriverDailyMealBusiness(req, res) {
+	const { delivery_driver_id } = req.params;
+	const { businessId } = req.body;
+	try {
+		let updateData = {};
+		if (businessId) {
+			updateData = {
+				delivers_daily_meals: true,
+				daily_meal_business: {
+					connect: {
+						business_id: businessId,
+					},
+				},
+			};
+		} else {
+			updateData = {
+				delivers_daily_meals: false,
+				daily_meal_business: {
+					disconnect: true,
+				},
+			};
+			await dailyMealHelpers.disconnectDriverFromAllSubscriptions(delivery_driver_id);
+		}
+		const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriver(delivery_driver_id, updateData);
+		res.status(200).json(updatedDeliveryDriver);
+	} catch (error) {
+		console.error('Error updating delivery driver:', error);
+		res.status(400).json({ error: 'Error updating delivery driver', detail: error.message });
+	}
+}
+/**
  * PATCH /delivery_drivers/update/:delivery_driver_id
  * @tag DeliveryDrivers
  * @summary Update a delivery driver
@@ -481,22 +522,8 @@ async function getDeliveryDriverLocation(req, res) {
  */
 async function updateDeliveryDriver(req, res) {
 	const { delivery_driver_id } = req.params;
-	const { delivers, businessId, ...otherFields } = req.body;
 	try {
-		const updateData = { ...otherFields };
-		if (delivers === true && businessId) {
-			updateData.daily_meal_business = {
-				connect: {
-					business_id: businessId,
-				},
-			};
-			updateData.delivers_daily_meals = true;
-		} else if (delivers === false) {
-			updateData.daily_meal_business = {
-				disconnect: true,
-			};
-			updateData.delivers_daily_meals = true;
-		}
+		const updateData = { ...req.body };
 		const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriver(delivery_driver_id, updateData);
 		res.status(200).json(updatedDeliveryDriver);
 	} catch (error) {
@@ -803,6 +830,7 @@ export { listOnlineDeliveryDrivers };
 export { listDeliveryDriversWithDailyMeals };
 export { getDeliveryDriverById };
 export { getDeliveryDriverLocation };
+export { updateDeliveryDriverDailyMealBusiness };
 export { updateDeliveryDriver };
 export { updateDeliveryDriverLocation };
 export { updateDeliveryDriverOnlineStatus };
@@ -824,6 +852,7 @@ export default {
 	getDeliveryDriverById,
 	getDeliveryDriverLocation,
 	updateDeliveryDriver,
+	updateDeliveryDriverDailyMealBusiness,
 	updateDeliveryDriverLocation,
 	updateDeliveryDriverOnlineStatus,
 	createDeliveryDriver,

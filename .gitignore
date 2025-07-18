@@ -16,3 +16,5 @@ mycert.*
 types/zod/
 .mdx
 dist
+prisma/schemas/interfaces.ts
+prisma/docs
