@@ -340,7 +340,10 @@ export async function updateUserSubscription(userId, business_id) {
 			subscription = await stripe.subscriptions.create({
 				customer: business.stripe_customer_id,
 				items: subscriptionItems,
-				payment_behavior: 'default_incomplete',
+				payment_behavior: 'default_incomplete', // We'll confirm via client_secret on FE
+				collection_method: 'charge_automatically',
+				billing_cycle_anchor: 'now', // <- Ensures correct monthly cycle
+				proration_behavior: 'none', // <- ⛔ Disable weird invoice lines like in screenshot
 				expand: ['latest_invoice.payment_intent'],
 				metadata: { business_id: business.business_id, type: 'word_buys' },
 			});
