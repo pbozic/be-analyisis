@@ -310,7 +310,7 @@ export async function updateUserSubscription(userId, business_id) {
 			if (nextPhaseItems.length > 0) {
 				await stripe.subscriptionSchedules.create({
 					customer: business.stripe_customer_id,
-					start_date: 'now',
+					start_date: Math.floor(Date.now() / 1000),
 					end_behavior: 'release',
 					phases: [
 						{
@@ -335,7 +335,6 @@ export async function updateUserSubscription(userId, business_id) {
 					expand: ['latest_invoice.payment_intent'],
 				});
 				subscription = updated;
-
 				if (hasUpgrades && subscription.latest_invoice?.id) {
 					const invoice = await stripe.invoices.retrieve(subscription.latest_invoice.id);
 					if (invoice.status === 'open' || invoice.status === 'draft') {
@@ -348,10 +347,10 @@ export async function updateUserSubscription(userId, business_id) {
 			const subscription = await stripe.subscriptions.create({
 				customer: business.stripe_customer_id,
 				items: subscriptionItems,
-				payment_behavior: 'default_incomplete', // wait for frontend confirm
+				payment_behavior: 'default_incomplete',
 				collection_method: 'charge_automatically',
-				billing_cycle_anchor: 'now',
-				proration_behavior: 'none', // important to avoid 2x charges
+				billing_cycle_anchor: Math.floor(Date.now() / 1000),
+				proration_behavior: 'none',
 				expand: ['latest_invoice.payment_intent'],
 				metadata: { business_id: business.business_id, type: 'word_buys' },
 			});
