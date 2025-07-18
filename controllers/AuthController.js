@@ -1212,7 +1212,7 @@ async function registerReservationBusiness(req, res) {
 					},
 					name: { en: 'Test Service' },
 					description: { en: 'This is a test service' },
-					duration: 60,
+					duration_minutes: 60,
 					price_cents: 1000,
 					employee: {
 						connect: {
