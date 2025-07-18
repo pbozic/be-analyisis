@@ -147,8 +147,12 @@ async function getUserByDeliveryOrderId(req, res) {
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function createOrder(req, res) {
-	const { orderBody, user_id, return_url } = req.body;
+	const { orderBody, return_url } = req.body;
 	try {
+		const user_id = req.user?.user_id;
+		if (!user_id) {
+			return res.status(403).json({ message: 'Unauthorized' });
+		}
 		const { order, payment_intent } = await generateOrder(orderBody, user_id, return_url);
 		res.status(200).json({
 			...order,
