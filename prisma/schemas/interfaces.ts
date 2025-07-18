@@ -1705,7 +1705,7 @@ export type booking = {
 	start_time: Date | null;
 	end_time: Date | null;
 	assigned_employee_id: string | null;
-	parent__booking_id: string | null;
+	parent_booking_id: string | null;
 	parent_booking?: booking | null;
 	child_bookings?: booking[];
 	reservation_module?: reservation_module;

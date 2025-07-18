@@ -17,7 +17,7 @@ export const CreateBookingSchema = z.object({
 	start_time: z.string().datetime().optional(),
 	end_time: z.string().datetime().optional(),
 	assigned_employee_id: z.string().uuid().optional(),
-	parent__booking_id: z.string().uuid().optional(),
+	parent_booking_id: z.string().uuid().optional(),
 });
 
 export const UpdateBookingSchema = CreateBookingSchema.partial();

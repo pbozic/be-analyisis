@@ -4,7 +4,6 @@ import { z } from 'zod';
 import type { location } from '../../prisma/schemas/interfaces';
 
 export const CreateLocationSchema = z.object({
-	reservation_module_id: z.string().uuid(),
 	name: z.string().min(1),
 	address: z.string().min(1),
 	phone: z.string().optional(),

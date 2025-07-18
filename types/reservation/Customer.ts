@@ -4,7 +4,6 @@ import { z } from 'zod';
 import type { customers } from '../../prisma/schemas/interfaces';
 
 export const CreateCustomerSchema = z.object({
-	reservation_module_id: z.string().uuid(),
 	first_name: z.string(),
 	last_name: z.string(),
 	email: z.string().email().optional(),
