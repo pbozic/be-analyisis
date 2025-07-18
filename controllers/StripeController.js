@@ -1,12 +1,11 @@
 import dotenv from 'dotenv';
-import { SPLIT_DESTINATION_TYPE } from '@prisma/client';
+import { SUBSCRIPTION_STATUS } from '@prisma/client';
 
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import socket from '../socket.js';
 import stripe from '../lib/stripe.js';
 import BusinessDao from '../dao/Business.js';
 import PromoDao from '../dao/Promo.js';
-import PaymentDao from '../dao/Payment.ts';
 import UserDao from '../dao/User.js';
 import WalletFundsHelpers from '../lib/WalletFundsHelpers.js';
 import { DELIVERY_ORDER_STATUS, SERVICE_TYPE, ORDER_TYPE, TAXI_ORDER_STATUS } from '../lib/constants.js';
@@ -18,6 +17,7 @@ import dailyMealHelpers from '../lib/dailyMealHelpers.ts';
 import { handleStockSync } from './DeliveryOrderController.js';
 import { BUSINESS_TYPE } from '../lib/constants.js';
 import prisma from '../prisma/prisma.js';
+import DailyMealDao from '../dao/DailyMealDao.ts';
 dotenv.config();
 const { io, UserSockets, SocketStore } = socket;
 async function handlePaymentIntentSuccess(paymentIntent) {
@@ -114,14 +114,15 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			break;
 		}
 		case 'daily_meals_subscription_payment': {
-			let payment = await PaymentDao.getPaymentByGroupedId(paymentIntent.transfer_group);
-			await PaymentHelpers.transferSplitsForTypes(payment.payment_id, [
-				SPLIT_DESTINATION_TYPE.PLATFORM,
-				SPLIT_DESTINATION_TYPE.MERCHANT,
-			]);
-			//any remaining reserved funds are meant for delivery driver and should be handled on order completion
+			//TODO: Marcel fix this
+			// let payment = await PaymentDao.getPaymentByGroupedId(paymentIntent.transfer_group);
+			// await PaymentHelpers.transferSplitsForTypes(payment.payment_id, [
+			// 	SPLIT_DESTINATION_TYPE.PLATFORM,
+			// 	SPLIT_DESTINATION_TYPE.MERCHANT,
+			// ]);
+			// //any remaining reserved funds are meant for delivery driver and should be handled on order completion
 
-			const updated_sub = await dailyMealHelpers.activateSubscriptionById(paymentIntent.transfer_group);
+			const updated_sub = await dailyMealHelpers.activateSubscriptionById(paymentIntent.subscription_id);
 			if (!updated_sub) {
 				console.warn(
 					'No DM subscriptions found after transfers for grouped_id: ',
@@ -244,11 +245,12 @@ async function handlePaymentIntentFaliure(paymentIntent) {
 			}
 			break;
 		case 'daily_meals_subscription_payment': {
-			let payment = await PaymentDao.getPaymentByGroupedId(paymentIntent.transfer_group);
+			//TODO: Marcel fix this
+			// let payment = await PaymentDao.getPaymentByGroupedId(paymentIntent.transfer_group);
 			//TODO: handle dm failed
-			const updated_subs = await DeliveryOrderDao.updateDailyMealsSubscriptionsStatusByGroupedId(
-				paymentIntent.transfer_group,
-				'FAILED'
+			const updated_subs = await DailyMealDao.updateSubscriptionStatus(
+				paymentIntent.subscription_id,
+				SUBSCRIPTION_STATUS.FAILED
 			);
 			if (!updated_subs || updated_subs.length === 0) {
 				console.warn(
