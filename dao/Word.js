@@ -71,12 +71,12 @@ async function updateWord(id, word, categories_id, translations) {
 			word,
 			...(categories_id
 				? {
-						category: {
-							connect: {
-								categories_id: categories_id,
-							},
+					category: {
+						connect: {
+							categories_id: categories_id,
 						},
-					}
+					},
+				}
 				: {}),
 		},
 		include: {
@@ -256,7 +256,9 @@ export async function updateUserSubscription(userId, business_id) {
 			if (wb.stripe_price_id) {
 				currentPrice = await stripe.prices.retrieve(wb.stripe_price_id);
 			}
+
 			console.log('Processing word buy:', wb.word.word, 'with price:', newAmount, currentPrice);
+
 			if (!currentPrice || currentPrice.unit_amount !== newAmount) {
 				if (!currentPrice || newAmount > currentPrice.unit_amount) {
 					const newPrice = await stripe.prices.create({
@@ -330,11 +332,15 @@ export async function updateUserSubscription(userId, business_id) {
 				subscription = currentSub;
 			} else {
 				const updated = await stripe.subscriptions.update(currentSub.id, {
-					items: [...currentSub.items.data.map((i) => ({ id: i.id, deleted: true })), ...subscriptionItems],
+					items: [
+						...currentSub.items.data.map((i) => ({ id: i.id, deleted: true })),
+						...subscriptionItems,
+					],
 					proration_behavior: hasUpgrades ? 'create_prorations' : 'none',
 					expand: ['latest_invoice.payment_intent'],
 				});
 				subscription = updated;
+
 				if (hasUpgrades && subscription.latest_invoice?.id) {
 					const invoice = await stripe.invoices.retrieve(subscription.latest_invoice.id);
 					if (invoice.status === 'open' || invoice.status === 'draft') {
@@ -344,7 +350,7 @@ export async function updateUserSubscription(userId, business_id) {
 				}
 			}
 		} else {
-			const subscription = await stripe.subscriptions.create({
+			subscription = await stripe.subscriptions.create({
 				customer: business.stripe_customer_id,
 				items: subscriptionItems,
 				payment_behavior: 'default_incomplete',
@@ -381,6 +387,7 @@ export async function updateUserSubscription(userId, business_id) {
 		return { success: false, error: err.message };
 	}
 }
+
 
 export async function createWordBuySubscription(words, business_id, userId) {
 	try {
