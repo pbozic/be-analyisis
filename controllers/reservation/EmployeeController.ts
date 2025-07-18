@@ -56,6 +56,7 @@ export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>,
 					telephone: employeeData.telephone,
 					telephone_country_code: employeeData.telephone_code,
 					telephone_number: employeeData.telephone_number,
+					date_of_birth: employeeData.date_of_birth,
 				},
 			},
 			businessId

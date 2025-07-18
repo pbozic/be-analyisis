@@ -13,6 +13,7 @@ export const CreateEmployeeSchema = z
 		telephone_number: z.string().optional(),
 		password: z.string().min(6, 'Password must be at least 6 characters long'),
 		confirm_password: z.string().min(6, 'Confirm password must be at least 6 characters long'),
+		date_of_birth: z.string().datetime().optional(),
 		//TODO: add roles when system ready
 	})
 	.refine((data) => data.password === data.confirm_password, {
@@ -29,6 +30,7 @@ export const UpdateEmployeeSchema = z
 		telephone_number: z.string().optional(),
 		password: z.string().min(6, 'Password must be at least 6 characters long').optional(),
 		confirm_password: z.string().min(6, 'Confirm password must be at least 6 characters long').optional(),
+		date_of_birth: z.string().datetime().optional(),
 		//TODO: add roles when system ready
 	})
 	.refine((data) => data.password === data.confirm_password, {
