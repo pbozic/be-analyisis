@@ -16,12 +16,12 @@ import { CreateLocationInput, UpdateLocationInput } from '../../types/reservatio
  */
 export async function getLocations(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
-		let businessId = req.user?.business_id as string;
-		if (!businessId) {
-			res.status(400).json({ message: 'User has no business' });
+		let reservationModuleId = req.user?.reservation_module_id as string;
+		if (!reservationModuleId) {
+			res.status(400).json({ message: 'User has no reservation module' });
 			return;
 		}
-		let locations = await LocationDao.getLocationsByBusinessId(businessId);
+		let locations = await LocationDao.getLocationsByReservationModuleId(reservationModuleId);
 		res.status(200).json(locations);
 	} catch (error) {
 		res.status(500).json({ message: 'Error retrieving locations', error });

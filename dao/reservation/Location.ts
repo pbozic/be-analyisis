@@ -7,11 +7,11 @@ import type { Location, CreateLocationInput, UpdateLocationInput } from '../../t
  * @returns {Promise<Location[]>} A promise that resolves to an array of locations.
  * @throws {Error} If there is an error retrieving the locations.
  */
-export async function getLocationsByBusinessId(businessId: string): Promise<Location[]> {
+export async function getLocationsByReservationModuleId(reservationModuleId: string): Promise<Location[]> {
 	try {
 		let locations = await prisma.location.findMany({
 			where: {
-				business_id: businessId,
+				reservation_module_id: reservationModuleId,
 			},
 			include: {
 				reservation_module: true,
@@ -118,7 +118,7 @@ export async function getLocationById(locationId: string): Promise<Location | nu
 }
 
 export default {
-	getLocationsByBusinessId,
+	getLocationsByReservationModuleId,
 	getLocationById,
 	createLocation,
 	updateLocation,
