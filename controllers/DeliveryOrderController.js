@@ -1208,8 +1208,7 @@ async function merchantAcceptOrder(req, res) {
 function getMenuItemStockChange(item, order) {
 	let quantity;
 	if (item.is_weighted) {
-		const kilos = item.quantity * 1000;
-		const roundedKilos = Math.round(kilos * 1000) / 1000;
+		const roundedKilos = item.quantity / 1000;
 		quantity = -roundedKilos;
 	} else {
 		quantity = -item.quantity;
