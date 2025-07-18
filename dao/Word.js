@@ -71,12 +71,12 @@ async function updateWord(id, word, categories_id, translations) {
 			word,
 			...(categories_id
 				? {
-						category: {
-							connect: {
-								categories_id: categories_id,
-							},
+					category: {
+						connect: {
+							categories_id: categories_id,
 						},
-					}
+					},
+				}
 				: {}),
 		},
 		include: {
@@ -374,9 +374,7 @@ export async function updateUserSubscription(userId, business_id) {
 		return { success: false, error: err.message };
 	}
 }
-
-export async function createWordBuySubscription(word_id, business_id, price, userId) {
-	console.log('createWordBuySubscription called with:', { word_id, business_id, price, userId });
+export async function createWordBuySubscription(words, business_id) {
 	try {
 		// 1) Load business & verify Stripe customer
 		const business = await prisma.business.findUnique({
@@ -385,25 +383,31 @@ export async function createWordBuySubscription(word_id, business_id, price, use
 		if (!business?.stripe_customer_id) {
 			throw new Error('Business has no Stripe customer on file');
 		}
-
 		// 2) Create new word_buy entry (unpaid, no stripe_sub yet)
-		const wordBuy = await prisma.word_buy.upsert({
-			where: {
-				word_id_business_id: {
-					word_id,
-					business_id,
-				},
-			},
-			update: {
-				price,
-			},
-			create: {
-				word: { connect: { word_id } },
-				business: { connect: { business_id } },
-				price,
-			},
-		});
+		words.map((word) => {
+			try {
+				const { word_id, price } = word;
+				const wordBuy = await prisma.word_buy.upsert({
+					where: {
+						word_id_business_id: {
+							word_id,
+							business_id,
+						},
+					},
+					update: {
+						price,
+					},
+					create: {
+						word: { connect: { word_id } },
+						business: { connect: { business_id } },
+						price,
+					},
+				});
+			} catch (error) {
+				console.error('Error creating/updating word_buy:', error);
+			}
 
+		})
 		async function updateExpiresAt(subscriptionId) {
 			const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 			if (subscription && subscription.current_period_end) {
@@ -445,6 +449,7 @@ export async function createWordBuySubscription(word_id, business_id, price, use
 		if (result.subscriptionId) {
 			console.log('getting expires_at ( about to trigger function )');
 			await updateExpiresAt(result.subscriptionId);
+		} else {
 		} else {
 			console.log('No subscriptionId returned');
 		}
@@ -529,14 +534,16 @@ async function getAllWordBuysByBusiness(business) {
 	return wbs;
 }
 async function deleteWordBuy(word_buy_id) {
+async function deleteWordBuy(word_buy_id) {
 	const deletedWordBuy = await prisma.word_buy.update({
+		where: {
 		where: {
 			word_buy_id: word_buy_id,
 		},
 		data: {
-			stripe_subscription_id: null,
-		},
-	});
+			stripe_subscription_id: null
+		}
+	})
 	console.log(deletedWordBuy, 'deletedWordBuy');
 }
 
@@ -554,6 +561,7 @@ export { getAllWordBuysByWord };
 export { getAllWordBuysByBusiness };
 export { removeCategoryFromWord };
 export { addCategoryToWord };
+export { deleteWordBuy };
 export { deleteWordBuy };
 export default {
 	createWord,
