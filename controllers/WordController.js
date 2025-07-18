@@ -100,9 +100,9 @@ async function createWordBuy(req, res) {
 	/* gets an array of words (word_id,word_price) */
 	try {
 		let { words, business_id } = req.body;
-		console.log(req.body,'body')
+		console.log(req.body,'body');
 		let userId = req.user?.user_id;
-		const result = await WordDao.createWordBuySubscription(words,business_id);
+		const result = await WordDao.createWordBuySubscription(words,business_id,userId);
 		res.status(201).json(result);
 	} catch (error) {
 		console.error('Error creating word buy:', error);
