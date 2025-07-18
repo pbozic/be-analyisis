@@ -1206,7 +1206,7 @@ function getMenuItemStockChange(item, order) {
 	if (item.is_weighted) {
 		// Convert grams to kg and round to nearest 0.1 kg
 		const kilos = item.quantity / item.weight_quantity;
-		const roundedKilos = Math.round(kilos * 10) / 10;
+		const roundedKilos = Math.round(kilos * 1000) / 1000;
 		quantity = -roundedKilos;
 	} else {
 		quantity = -item.quantity;
