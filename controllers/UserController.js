@@ -3,7 +3,6 @@ import bcrypt from 'bcrypt';
 
 import prisma from '../prisma/prisma.js';
 import UserDao from '../dao/User.js';
-import BusinessUsersDao from '../dao/BusinessUsers.js';
 import BusinessDao from '../dao/Business.js';
 import TokenDao from '../dao/Token.js';
 import ReviewDao from '../dao/Review.js';
@@ -22,15 +21,12 @@ import {
 	TAXI_ORDER_STATUS,
 	USER_ROLE,
 	CREDITS,
-	CASHBACK_SOURCE,
 	FUNDS_TYPE,
 	SERVICE_TYPE_TO_FUNDS_TYPE,
 	CASHBACK_TYPE,
 	ACCOUNT_ACTIONS_REASON,
 	ORDER_TYPE,
 } from '../lib/constants.js';
-import { generateAccessToken, generateRefreshToken } from '../lib/jwt.js';
-import { getOrders } from '../dao/TaxiOrder.js';
 import TaxiOrderDao from '../dao/TaxiOrder.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import ReservationDao from '../dao/Reservation.js';
@@ -1842,7 +1838,9 @@ async function getMyActiveOrders(req, res) {
 			ReservationDao.getReservationIfNotCompleted(user_id),
 		]);
 		return res.status(200).json({
-			delivery_orders,
+			delivery_orders: delivery_orders.filter(
+				(order) => !order.is_daily_meal || order.timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED)
+			),
 			taxi_orders,
 			transfer_orders,
 			first_reservation,
