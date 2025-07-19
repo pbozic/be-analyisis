@@ -53,7 +53,7 @@ export async function canPerformActionReservation(
 					},
 				},
 			},
-			business_addons: {
+			addons: {
 				select: {
 					addon: {
 						select: {

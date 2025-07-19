@@ -13,6 +13,7 @@ const FLATTENED_ACTIONS: { name: string; module: MODULE_TYPE }[] = Object.entrie
 			module: module as MODULE_TYPE,
 		}))
 );
+
 type ActionLimit = {
 	action: keyof typeof RESERVATION_ACTIONS;
 	limit: number | null;
