@@ -88,17 +88,17 @@ export async function canPerformActionReservation(
 	}, 0);
 
 	// 4. Check current usage
-	const usage = await prisma.business_usage.findUnique({
+	const result = await prisma.business_usage.aggregate({
 		where: {
-			reservation_module_id_action_id: {
-				reservation_module_id: reservationModuleId,
-				action_id: actionId,
-			},
+			reservation_module_id: reservationModuleId,
+			action_id: actionId,
 		},
-		select: { used: true },
+		_sum: {
+			used: true,
+		},
 	});
 
-	const used = usage?.used ?? 0;
+	const used = result._sum.used ?? 0;
 	const allowed = totalLimit === null ? true : used < totalLimit;
 
 	return {
