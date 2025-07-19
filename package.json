@@ -19,7 +19,7 @@
         "node:restart": "docker compose --env-file .env -f ./Docker/docker-compose.yml restart node-app",
         "node:recreate": "docker compose --env-file .env -f ./Docker/docker-compose.yml up -d --force-recreate node-app",
         "node:down": "docker compose --env-file .env -f ./Docker/docker-compose.yml down node-app",
-        "seed": "node prisma/seed.js",
+        "seed": "npx --yes tsx prisma/seed.ts",
         "generate:business": "node lib/generateBusnisses.js",
         "es-tunnel": "ssh -L 19200:localhost:9200 KlikniLive",
         "es-tunnel-dev": "ssh -L 29200:localhost:9200 KlikniDev",
@@ -45,7 +45,7 @@
     },
     "prisma": {
         "schema": "./prisma/schemas",
-        "seed": "node prisma/seed.js"
+        "seed": "npx --yes tsx prisma/seed.ts"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.596.0",

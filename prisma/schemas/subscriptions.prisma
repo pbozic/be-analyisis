@@ -1,8 +1,13 @@
+// --- ENUMS ---
+enum MODULE_TYPE {
+  reservations
+}
+
 // --- SUBSCRIPTION + ADDON SYSTEM ---
 model subscription {
   subscription_id  String                 @id @default(uuid()) @db.Uuid
   module           MODULE_TYPE
-  name             String
+  name             String @unique
   price_cents      Int
   stripe_price_id  String
   actions          subscription_action[]
@@ -12,7 +17,7 @@ model subscription {
 model addon {
   addon_id         String             @id @default(uuid()) @db.Uuid
   module           MODULE_TYPE
-  name             String
+  name             String @unique
   price_cents      Int
   stripe_price_id  String
   actions          addon_action[]

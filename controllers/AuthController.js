@@ -1185,6 +1185,26 @@ async function registerReservationBusiness(req, res) {
 					},
 				},
 			});
+			let employeeAction = await tx.action.findFirst({
+				where: {
+					name: 'add_employee',
+				},
+			});
+			await tx.business_usage.create({
+				data: {
+					action: {
+						connect: {
+							action_id: employeeAction.action_id,
+						},
+					},
+					reservation_module: {
+						connect: {
+							reservation_module_id: reservationModule.reservation_module_id,
+						},
+					},
+					used: 1,
+				},
+			});
 
 			//create demo location
 			console.log('Creating location for reservation business:', reservationModule.reservation_module_id);
@@ -1200,7 +1220,26 @@ async function registerReservationBusiness(req, res) {
 					working_days: [],
 				},
 			});
-
+			let locationAction = await tx.action.findFirst({
+				where: {
+					name: 'add_location',
+				},
+			});
+			await tx.business_usage.create({
+				data: {
+					action: {
+						connect: {
+							action_id: locationAction.action_id,
+						},
+					},
+					reservation_module: {
+						connect: {
+							reservation_module_id: reservationModule.reservation_module_id,
+						},
+					},
+					used: 1,
+				},
+			});
 			//create demo service
 			console.log('Creating service for reservation business:', employee.employee_id);
 			let service = await tx.service.create({

@@ -187,11 +187,11 @@ export type ACTIVITY_TYPE = 'ONLINE' | 'OFFLINE' | 'LOCKED_OUT';
 
 export type DAY_OF_WEEK = 'MON' | 'TUE' | 'WED' | 'THU' | 'FRI' | 'SAT' | 'SUN';
 
-export type MODULE_TYPE = 'reservations';
-
 export type BOOKING_STATUS = 'reserved' | 'cancelled' | 'no_show';
 
 export type SCHEDULE_SLOT_EXCEPTION_TYPE = 'vacation' | 'location_closed' | 'other' | 'health' | 'break' | 'lunch';
+
+export type MODULE_TYPE = 'reservations';
 
 export type finances = {
 	finance_id: string;
@@ -1547,6 +1547,7 @@ export type reservation_module = {
 	reservation_module_id: string;
 	business_id: string;
 	subscription_id: string | null;
+	subscription_active_until: Date | null;
 	business?: business;
 	subscription?: subscription | null;
 	addons?: business_addon[];
