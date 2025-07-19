@@ -78,7 +78,7 @@ export async function canPerformActionReservation(
 	// 3. Aggregate all limits
 	const subscriptionLimit = module.subscription?.actions[0]?.limit ?? 0;
 
-	const addonLimits = module.business_addons.flatMap((ba: BusinessAddon) =>
+	const addonLimits = module.addons.flatMap((ba: BusinessAddon) =>
 		ba.addon.actions.map((aa: AddonAction) => aa.limit ?? 0)
 	);
 
