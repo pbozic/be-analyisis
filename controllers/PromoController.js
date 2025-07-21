@@ -350,7 +350,7 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 						promo_sections_id,
 						business_id: businessUser.business_id,
 						user_id: userId,
-						activeTier,
+						tier:activeTier,
 						payment_intent_id: paymentIntent.id,
 						// Optionally add more fields like duration, active_at, expires_at here if needed
 					},
