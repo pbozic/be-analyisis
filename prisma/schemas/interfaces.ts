@@ -1575,6 +1575,7 @@ export type reservation_module = {
 	employees?: employee[];
 	bookings?: booking[];
 	customers?: customers[];
+	service_categories?: service_category[];
 };
 
 export type location = {
@@ -1594,12 +1595,14 @@ export type location = {
 
 export type service_category = {
 	service_category_id: string;
+	reservation_module_id: string;
 	name: JsonValue;
 	parent_id: string | null;
 	color: string | null;
 	parent?: service_category | null;
 	children?: service_category[];
 	services?: service[];
+	reservation_module?: reservation_module;
 };
 
 export type service = {

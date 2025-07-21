@@ -15,6 +15,7 @@ model reservation_module {
   business              business     @relation(fields: [business_id], references: [business_id])
   subscription          subscription? @relation(fields: [subscription_id], references: [subscription_id])
   subscription_exires_at DateTime? // Optional, if the business has a subscription
+
   addons                business_addon[]
   usages                business_usage[]
   locations     location[]
@@ -22,6 +23,7 @@ model reservation_module {
   employees     employee[]
   bookings     booking[]
   customers    customers[]
+  service_categories service_category[]
 }
 model location {
   location_id       String    @id @default(uuid()) @db.Uuid
@@ -40,12 +42,14 @@ model location {
 
 model service_category {
   service_category_id   String         @id @default(uuid()) @db.Uuid
+  reservation_module_id String         @db.Uuid
   name          Json           // Translations: { "en": "Hair", "sl": "Frizer" }
   parent_id     String?        @db.Uuid
   color         String?
   parent        service_category?      @relation("SubCategory", fields: [parent_id], references: [service_category_id])
   children      service_category[]     @relation("SubCategory")
   services      service[]
+  reservation_module          reservation_module  @relation(fields: [reservation_module_id], references: [reservation_module_id])
 }
 
 model service {
