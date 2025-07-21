@@ -351,7 +351,7 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 						payment_intent_id: paymentIntent.id,
 					},
 				});
-				return { clientSecret: paymentIntent.client_secret };
+				return  paymentIntent.client_secret 
 			})
 		);
 
