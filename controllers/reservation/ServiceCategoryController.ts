@@ -14,13 +14,16 @@ import { ValidatedRequest } from '../../types/validatedRequest.ts';
  * @responseContent {ServiceCategory[]} 200.application/json
  * @response 500 - Error retrieving service categories
  */
-export async function getServiceCategories(req: Request, res: Response): Promise<void> {
+export async function getServiceCategories(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
-		let reservationModuleId = req.body.reservation_module_id as string;
+		let reservationModuleId = req.user?.reservation_module_id as string;
 		let serviceCategories = await ServiceCategoryDao.getServiceCategoriesByReservationModuleId(reservationModuleId);
 		res.status(200).json(serviceCategories);
 	} catch (error) {
-		res.status(500).json({ message: 'Error retrieving service categories', error });
+		res.status(500).json({
+			message: 'Error retrieving service categories',
+			m: error instanceof Error ? error.message : 'Unknown error',
+		});
 	}
 }
 /**

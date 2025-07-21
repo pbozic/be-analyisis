@@ -1,6 +1,5 @@
 import prisma from '../../prisma/prisma';
 import type { Employee, UpdateEmployeeInput } from '../../types/reservation/Employee.ts';
-
 /**
  * Retrieves all employees for a given business ID.
  * @param {string} businessId - The ID of the business to retrieve employees for.
@@ -64,6 +63,21 @@ export async function createEmployee(employeeData: {
  */
 export async function deleteEmployee(employeeId: string): Promise<void> {
 	try {
+		let employee = await prisma.employee.findUnique({
+			where: {
+				employee_id: employeeId,
+			},
+		});
+		if (!employee) {
+			throw new Error('Employee not found');
+		}
+		// Delete the employee and all related data
+
+		await prisma.business_users.delete({
+			where: {
+				business_users_id: employee.business_user_id,
+			},
+		});
 		await prisma.employee.delete({
 			where: {
 				employee_id: employeeId,
@@ -82,12 +96,47 @@ export async function deleteEmployee(employeeId: string): Promise<void> {
  */
 export async function updateEmployee(employeeId: string, employeeData: UpdateEmployeeInput): Promise<Employee> {
 	try {
-		let employee = await prisma.employee.update({
+		let employee = await prisma.employee.findFirst({
 			where: {
 				employee_id: employeeId,
 			},
-			data: employeeData,
 		});
+		if (!employee) {
+			throw new Error('Employee not found');
+		}
+		let businessUser = await prisma.business_users.findFirst({
+			where: {
+				business_users_id: employee.business_user_id,
+			},
+		});
+
+		if (!businessUser) {
+			throw new Error('Business user not found');
+		}
+		// TODO: cannot delete ADMIN user
+		let user = await prisma.users.findFirst({
+			where: {
+				user_id: businessUser.user_id,
+			},
+		});
+		if (!user) {
+			throw new Error('User not found');
+		}
+		await prisma.users.update({
+			where: {
+				user_id: user.user_id,
+			},
+			data: {
+				first_name: employeeData.first_name,
+				last_name: employeeData.last_name,
+				email: employeeData.email,
+				telephone: employeeData.telephone,
+				telephone_code: employeeData.telephone_code,
+				telephone_number: employeeData.telephone_number,
+				date_of_birth: employeeData.date_of_birth,
+			},
+		});
+
 		return employee;
 	} catch (error) {
 		throw new Error('Error updating employee');
@@ -108,7 +157,21 @@ export async function getEmployeeById(employeeId: string): Promise<Employee | nu
 			},
 			include: {
 				reservation_module: true,
-				assigned_services: true,
+				assignments: {
+					include: {
+						service: true,
+						schedule: {
+							include: {
+								schedule_slots: {
+									include: {
+										schedule_slot_exceptions: true,
+										booking_slots: true,
+									},
+								},
+							},
+						},
+					},
+				},
 			},
 		});
 		return employee;

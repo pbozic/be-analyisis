@@ -243,6 +243,7 @@ const getBusinessForSearchById = async (business_id) => {
 												files: true,
 											},
 										},
+										tax_rate: true,
 									},
 									where: {
 										stock: {
@@ -449,6 +450,7 @@ const getBusinessesByType = async (type, args = {}) => {
 											files: true,
 										},
 									},
+									tax_rate: true,
 								},
 							},
 						},

@@ -101,7 +101,7 @@ model service_assignment {
   employee_id String @db.Uuid
   service_id  String @db.Uuid
 
-  employee    employee @relation(fields: [employee_id], references: [employee_id])
+  employee    employee @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
   service     service  @relation(fields: [service_id], references: [service_id])
 
   @@id([employee_id, service_id])
@@ -127,7 +127,7 @@ model schedule_employee {
   employee_id   String   @db.Uuid
 
   schedule      schedule @relation(fields: [schedule_id], references: [schedule_id])
-  employee      employee @relation(fields: [employee_id], references: [employee_id])
+  employee      employee @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
   schedule_slots schedule_slot[]
 }
 
@@ -140,7 +140,7 @@ model schedule_slot {
   end_time        DateTime
  
   booking_slots booking_slots[]
-  schedule      schedule @relation(fields: [schedule_id], references: [schedule_id])
+  schedule      schedule @relation(fields: [schedule_id], references: [schedule_id], onDelete: Cascade)
   schedule_employee schedule_employee @relation(fields: [schedule_employee_id], references: [schedule_employee_id])
   // schedule_id and employee_id are combined in schedule_employee
   // to allow multiple employees to share the same schedule slot
@@ -164,13 +164,13 @@ model schedule_slot_exceptions {
   end_time        DateTime // End time of the exception, e.g. 2023-10-01T10:00:00Z
   reason          String? // Reason for the exception, e.g. "Vacation", "Location closed"
   type SCHEDULE_SLOT_EXCEPTION_TYPE
-  schedule_slot    schedule_slot @relation(fields: [schedule_slot_id], references: [schedule_slot_id])
+  schedule_slot    schedule_slot @relation(fields: [schedule_slot_id], references: [schedule_slot_id], onDelete: Cascade)
 }
 model booking_slots {
   booking_slot_id String   @id @default(uuid()) @db.Uuid
   schedule_slot_id String   @db.Uuid
 
-  schedule_slot    schedule_slot @relation(fields: [schedule_slot_id], references: [schedule_slot_id])
+  schedule_slot    schedule_slot @relation(fields: [schedule_slot_id], references: [schedule_slot_id], onDelete: Cascade)
   start_time      DateTime // Start time of the booking slot, e.g. 2023-10-01T09:00:00Z
   end_time        DateTime // End time of the booking slot, e.g. 2023-10-01T10:00:00Z
 
@@ -195,7 +195,7 @@ model booking {
   child_bookings booking[] @relation("RescheduledBooking")
   reservation_module        reservation_module  @relation(fields: [reservation_module_id], references: [reservation_module_id])
   location        location? @relation(fields: [location_id], references: [location_id])
-  employee        employee? @relation(fields: [assigned_employee_id], references: [employee_id])
+  employee        employee? @relation(fields: [assigned_employee_id], references: [employee_id], onDelete: SetNull)
   service        service? @relation(fields: [service_id], references: [service_id])
   customer      customers @relation(fields: [customer_id], references: [customer_id])
   booking_history_log booking_history_log[]
