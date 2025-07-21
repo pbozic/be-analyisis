@@ -358,7 +358,7 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 					clientSecret: paymentIntent.client_secret,
 					promoBuyId: buyRecord.promo_sections_buy_id,
 					promoSectionName,
-					tier,
+					tier:buyRecord.tier,
 					duration,
 				}))
 			)
@@ -371,7 +371,6 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 		return res.status(500).json({ error: error.message });
 	}
 }
-
 
 async function createPromoSectionBuy(req, res) {
 	try {
