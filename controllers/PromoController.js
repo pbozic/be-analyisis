@@ -505,7 +505,6 @@ export { getAllPromoSectionBuysByBusiness };
 export { getAllPromoSectionBuysByTier };
 export { getAllPromoSectionBuysByStripeSub };
 export { addStripeSubToPromoSectionBuy };
-export { createPaymentIntentForPromoBuy };
 export default {
 	createPromoSection,
 	updatePromoSection,
