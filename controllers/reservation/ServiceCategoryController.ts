@@ -20,7 +20,10 @@ export async function getServiceCategories(req: ValidatedRequest, res: Response)
 		let serviceCategories = await ServiceCategoryDao.getServiceCategoriesByReservationModuleId(reservationModuleId);
 		res.status(200).json(serviceCategories);
 	} catch (error) {
-		res.status(500).json({ message: 'Error retrieving service categories', error });
+		res.status(500).json({
+			message: 'Error retrieving service categories',
+			m: error instanceof Error ? error.message : 'Unknown error',
+		});
 	}
 }
 /**
