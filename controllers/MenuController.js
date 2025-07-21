@@ -3,6 +3,7 @@ import MenuCategoryDao from '../dao/MenuCategory.js';
 import MenuItemDao from '../dao/MenuItem.js';
 import DocumentDao from '../dao/Document.js';
 import FileDao from '../dao/File.js';
+import TaxDao from '../dao/Tax.js';
 import S3Helper from '../lib/s3.js';
 import { linkDocumentToBusiness } from '../dao/Document.js';
 import elasticsearch from '../elasticsearch/index.js';
@@ -846,6 +847,19 @@ const getMenuItemsByIds = async (req, res) => {
 		res.status(400).json({ error: 'Error fetching menu items', e });
 	}
 };
+const getActiveTaxRates = async (req, res) => {
+	try {
+		const taxRates = await TaxDao.getActiveTaxRates();
+		if (taxRates) {
+			res.status(200).json(taxRates);
+		} else {
+			res.status(400).json({ error: 'No active tax rates found' });
+		}
+	} catch (e) {
+		console.error('Error fetching tax rates:', e);
+		res.status(500).json({ error: 'Error fetching tax rates', e });
+	}
+};
 export { getMenuItemsByIds };
 export { updateDailyMealMenuPrice };
 export { getMenuItemsByDate };
@@ -881,6 +895,7 @@ export { getLastUploadedDailyMealsMenu };
 export { deleteDocumentsAndFilesByDocumentId };
 export { getDailyMenuByBusinessId };
 export { updateMenuItemEnabled };
+export { getActiveTaxRates };
 export default {
 	getMenuItemsByIds,
 	updateDailyMealMenuPrice,
@@ -917,4 +932,5 @@ export default {
 	deleteDocumentsAndFilesByDocumentId,
 	getDailyMenuByBusinessId,
 	updateMenuItemEnabled,
+	getActiveTaxRates,
 };
