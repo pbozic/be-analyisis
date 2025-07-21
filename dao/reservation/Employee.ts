@@ -157,7 +157,21 @@ export async function getEmployeeById(employeeId: string): Promise<Employee | nu
 			},
 			include: {
 				reservation_module: true,
-				assignments: true,
+				assignments: {
+					include: {
+						service: true,
+						schedule: {
+							include: {
+								schedule_slots: {
+									include: {
+										schedule_slot_exceptions: true,
+										booking_slots: true,
+									},
+								},
+							},
+						},
+					},
+				},
 			},
 		});
 		return employee;
