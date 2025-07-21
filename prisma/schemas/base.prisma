@@ -5,22 +5,23 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-
 }
+
 // generator dbml {
 //   provider = "prisma-dbml-generator"
 // }
 
 generator docs {
   provider = "node node_modules/prisma-docs-generator"
-  output = "../../docs/static/prisma"
+  output   = "../../docs/static/prisma"
 }
 
 generator typescriptInterfaces {
-  provider = "prisma-generator-typescript-interfaces"
-  prettier = true
+  provider  = "prisma-generator-typescript-interfaces"
+  prettier  = true
   modelType = "type"
 }
+
 // generator zod {
 //   provider = "prisma-zod-generator"
 //   output   = "../types/zod"
@@ -68,7 +69,7 @@ model business {
   website_url                     String?
   working_hours                   Json?
   seats                           Int?
-  minimum_order                   Int                  @default(0) 
+  minimum_order                   Int                  @default(0)
   offers_daily_meals              Boolean              @default(false)
   daily_meals_days                DAY_OF_WEEK[]        @default([])
   daily_meals_delivery_mapping    Json?                @default("{\"0\": 0, \"1\": 1, \"2\": 2, \"3\": 3, \"4\": 4, \"5\": 5, \"6\": 6}")
@@ -122,7 +123,7 @@ model business {
   daily_meal_subscriptions    daily_meal_subscriptions[]
 
   business_money_flows business_money_flows[]
-  reservation_module    reservation_module?
+  reservation_module   reservation_module?
 }
 
 model business_users {
@@ -161,8 +162,6 @@ model business_clients {
 
   @@unique([telephone, business_id], name: "uniqueBusinessClient")
 }
-
-
 
 model cashback {
   cashback_id       String           @id @unique @default(uuid()) @db.Uuid
@@ -706,8 +705,11 @@ model menu_items {
   origin_text               Json?
   is_weighted               Boolean                  @default(false) // Indicates if the item is weighted (e.g., meat, fish)
   weight_quantity           Float? // Quantity for weighted items
-  stock                     Float?                     @default(1) // Stock for the item, if applicable 
+  stock                     Float?                   @default(1) // Stock for the item, if applicable 
   stock_movements           menu_item_stock_change[]
+
+  tax_rates_id String?    @db.Uuid
+  tax_rate     tax_rates? @relation(fields: [tax_rates_id], references: [tax_rates_id])
 
   @@unique([menu_item_id])
 }
@@ -1025,22 +1027,23 @@ model words {
 }
 
 model word_buy {
-  word_buy_id            String    @id @default(uuid()) @db.Uuid
-  word_id                String    @db.Uuid
-  word                   words     @relation(fields: [word_id], references: [word_id])
-  stripe_subscription_id String?
-  stripe_price_id        String?
-  pending_stripe_price_id       String?  // ← optional: store upcoming Stripe price ID
-  price                  Float
-  pending_price          Float?
-  active_at              DateTime?
-  expires_at             DateTime?
-  paid                   Boolean   @default(false)
-  business_id            String    @db.Uuid
-  business               business  @relation(fields: [business_id], references: [business_id])
-  created_at             DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at             DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
-  deleted_at             DateTime? @db.Timestamptz(6)
+  word_buy_id             String    @id @default(uuid()) @db.Uuid
+  word_id                 String    @db.Uuid
+  word                    words     @relation(fields: [word_id], references: [word_id])
+  stripe_subscription_id  String?
+  stripe_price_id         String?
+  pending_stripe_price_id String? // ← optional: store upcoming Stripe price ID
+  price                   Float
+  pending_price           Float?
+  active_at               DateTime?
+  expires_at              DateTime?
+  paid                    Boolean   @default(false)
+  business_id             String    @db.Uuid
+  business                business  @relation(fields: [business_id], references: [business_id])
+  created_at              DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+  deleted_at              DateTime? @db.Timestamptz(6)
+
   @@unique([word_id, business_id])
 }
 
@@ -1594,6 +1597,22 @@ model menu_item_stock_change {
 
   // Table has postgresql trigger "update_menu_item_stock" to update menu_items stock after insert
   @@unique([menu_item_id, order_id], name: "unique_menu_item_stock_change")
+}
+
+model tax_rates {
+  tax_rates_id String   @id @default(uuid()) @db.Uuid
+  name         String
+  description  String?
+  country      String?
+  rate         Float
+  active       Boolean  @default(true)
+  valid_from   DateTime @db.Timestamptz(6)
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  menu_items menu_items[]
+
+  @@unique([name, rate, valid_from], name: "unique_tax_rate")
 }
 
 enum BLOG_POST_STATUS {

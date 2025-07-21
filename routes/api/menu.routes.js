@@ -28,6 +28,7 @@ router.post('/daily-meals-menu/create', MenuController.createDailyMealsMenu);
 router.post('/menu-items/create', MenuController.createMenuItem);
 router.patch('/menu-items/add-order', MenuController.addMenuItemIdToOrder);
 router.patch('/menu-items/remove-order', MenuController.removeMenuItemIdFromOrder);
+router.get('/menu-items/tax-rates', MenuController.getActiveTaxRates);
 router.get('/menu-items/:category_id', MenuController.getMenuItemsByCategoryId);
 router.get('/menu-items/business/:business_id', MenuController.getMenuItemsByBusinessId);
 router.get('/menu-items/:business_id/:date', MenuController.getMenuItemsByDate);
