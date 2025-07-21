@@ -1,5 +1,4 @@
 import PromoDao from '../dao/Promo.js';
-import ProductDao from '../dao/Product.js';
 import BusinessUsersDao from '../dao/BusinessUsers.js';
 import BusinessDao from '../dao/Business.js';
 import stripe from '../lib/stripe.js';
@@ -287,72 +286,70 @@ async function getPromoBannersByServiceType(req, res) {
 		res.status(500).json({ error: error.message });
 	}
 }
-async function createCheckoutSessionForPromoBuy(req, res) {
+async function createCheckoutSessionForPromoSectionBuy(req, res) {
 	try {
-		const { promo_sections_id, duration, tier } = req.body;
+		const { promoSections } = req.body;
 		const userId = req.user.user_id;
-		// Fetch promo section details (optional)
-		const promoSection = await prisma.promo_sections.findUnique({
-			where: { promo_sections_id: promo_sections_id },
-		});
 		const businessUser = await BusinessUsersDao.getBusinessUserByUserId(userId);
+		if (!businessUser) {
+			return res.status(404).json({ error: 'Business user not found' });
+		}
 		const business = await BusinessDao.getBusinessById(businessUser.business_id);
-		if (!promoSection) {
-			return res.status(404).json({ error: 'Promo section not found' });
+		if (!business) {
+			return res.status(404).json({ error: 'Business not found' });
 		}
-		let price = 0;
-		switch (tier) {
-			case 1:
-				price = promoSection.t1Price;
-				break;
-			case 2:
-				price = promoSection.t2Price;
-				break;
-			case 3:
-				price = promoSection.t3Price;
-				break;
-			default:
-				return res.status(400).json({ error: 'Invalid tier' });
-		}
-		if (price === 0) {
-			return res.status(400).json({ error: 'Something went wrong' });
-		}
-		// Create Stripe Checkout Session
-		const session = await stripe.checkout.sessions.create({
-			customer: business.stripe_customer_id, // Business customer ID
-			payment_method_types: ['card'],
-			line_items: [
-				{
-					price_data: {
-						currency: 'eur',
-						product_data: {
-							name: promoSection.name, // ✅ Add custom name
-							description: `Promo Section Tier: ${tier} for ${duration * 30} days`, // ✅ Add custom description
+		const sessions = await Promise.all(
+			promoSections.map(async (section) => {
+				const promoSection = await prisma.promo_sections.findUnique({
+					where: { promo_sections_id: section.promo_sections_id },
+				});
+
+				if (!promoSection) {
+					throw new Error(`Promo section with ID ${section.promo_sections_id} not found`);
+				}
+
+				const session = await stripe.checkout.sessions.create({
+					customer: business.stripe_customer_id,
+					payment_method_types: ['card'],
+					line_items: [
+						{
+							price_data: {
+								currency: 'eur',
+								product_data: {
+									name: promoSection.name,
+									description: `Promo Section Tier: ${section.activeTier} for ${section.duration * 30} days`,
+								},
+								unit_amount: section.activePrice * 100, // in cents
+							},
+							quantity: section.duration,
 						},
-						unit_amount: price * 100, // Convert to cents
+					],
+					mode: 'payment',
+					success_url: `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+					cancel_url: `${process.env.FRONTEND_URL}/cancel`,
+					metadata: {
+						user_id: userId,
+						promo_sections_id: section.promo_sections_id,
+						duration: section.duration,
+						promo_section_name: promoSection.name,
+						business_id: businessUser.business_id,
+						type: 'promo_section',
+						tier: section.activeTier,
 					},
-					quantity: duration,
-				},
-			],
-			mode: 'payment', // One-time payment
-			success_url: `${process.env.FRONTEND_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-			cancel_url: `${process.env.FRONTEND_URL}/cancel`,
-			metadata: {
-				user_id: userId,
-				promo_sections_id: promo_sections_id,
-				duration: duration,
-				promo_section_name: promoSection.name,
-				business_id: businessUser.business_id,
-				type: 'promo_section',
-				tier: tier,
-			},
+				});
+
+				return session;
+			})
+		);
+		res.json({
+			checkoutUrls: sessions.map((s) => s.url),
 		});
-		res.json({ checkoutUrl: session.url });
 	} catch (error) {
 		console.error('Checkout Error:', error);
 		res.status(500).json({ error: error.message });
 	}
 }
+
 export async function createPaymentIntentForPromoBuy(req, res) {
 	try {
 		const { promo_sections_id, duration, tier } = req.body;
@@ -439,10 +436,13 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 }
 async function createPromoSectionBuy(req, res) {
 	try {
+		const { promoSections } = req.body
 		let business_id = req.body.business_id;
 		let tier = req.body.tier;
 		let promo_section_id = req.body.promo_section_id;
-		const promoSectionBuy = await PromoDao.createPromoSectionBuy(req.body);
+		promoSections.map((section) => {
+			const promoSectionBuy = await PromoDao.createPromoSectionBuy(section.business_id, section.promo_section_id, section.active_at, section.expires_at, section.tier);
+		})
 		res.json(promoSectionBuy);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
@@ -565,7 +565,7 @@ export { getAllPromoSectionBuysByBusiness };
 export { getAllPromoSectionBuysByTier };
 export { getAllPromoSectionBuysByStripeSub };
 export { addStripeSubToPromoSectionBuy };
-export { createCheckoutSessionForPromoBuy };
+export { createCheckoutSessionForPromoSectionBuy };
 export default {
 	createPromoSection,
 	updatePromoSection,
@@ -600,5 +600,5 @@ export default {
 	getAllPromoSectionBuysByTier,
 	getAllPromoSectionBuysByStripeSub,
 	addStripeSubToPromoSectionBuy,
-	createCheckoutSessionForPromoBuy,
+	createCheckoutSessionForPromoSectionBuy,
 };
