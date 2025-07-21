@@ -328,7 +328,7 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 			})
 		);
 
-		const paymentIntent = await stripe.paymentIntents.create({
+		const paymentIntent = await stripe.client.paymentIntents.create({
 			amount: totalAmountCents,
 			currency: 'eur',
 			customer: business.stripe_customer_id,
