@@ -21,7 +21,7 @@ async function seedTaxRates(taxRates: TaxRateData[]): Promise<void> {
 			// Create new tax rate
 			const newTaxRate = await TaxDao.createTaxRate(taxRateData);
 			if (newTaxRate) {
-				console.log(`✅ Created tax rate: ${newTaxRate.name} (${newTaxRate.rate * 100}%)`);
+				console.log(`✅ Created tax rate: ${newTaxRate.name} (${newTaxRate.rate}%)`);
 				await TaxRateHelpers.scheduleUpcomingTaxRateChange(newTaxRate);
 			}
 		} catch (error) {
@@ -41,6 +41,7 @@ const TAX_RATES: TaxRateData[] = [
 	{
 		name: 'Higher Rate',
 		rate: 22,
+		// valid_from: new Date('2026-01-01T00:00:00Z'),
 		valid_from: new Date(),
 	},
 ];

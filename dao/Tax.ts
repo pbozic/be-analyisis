@@ -5,7 +5,7 @@ import prisma from '../prisma/prisma.js';
 export async function createTaxRate(data: Prisma.tax_ratesCreateInput) {
 	try {
 		return await prisma.tax_rates.create({
-			data: { data },
+			data: { ...data },
 		});
 	} catch (error) {
 		throw new Error(`❌ Error creating tax rate:' ${error}`);

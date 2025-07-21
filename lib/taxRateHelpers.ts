@@ -10,13 +10,14 @@ export async function scheduleUpcomingTaxRateChange(taxRate: tax_rates): Promise
 	try {
 		const validFromDate = new Date(taxRate.valid_from);
 		const now = new Date();
+		const oneYearFromNow = new Date(now);
+		oneYearFromNow.setFullYear(now.getFullYear() + 1);
 
-		// Only schedule if the date is in the future
-		if (validFromDate > now) {
+		if (validFromDate > now && validFromDate <= oneYearFromNow) {
 			const cronExpression = generateCronExpression(validFromDate);
 
 			console.log(
-				`Scheduling tax rate change for ${taxRate.name} (${taxRate.rate}%) on ${validFromDate.toISOString()}`
+				`Scheduling tax rate change for ${taxRate.name} (${taxRate.rate}%), valid from: ${validFromDate.toISOString()}`
 			);
 
 			const job = cron.schedule(
@@ -37,7 +38,7 @@ export async function scheduleUpcomingTaxRateChange(taxRate: tax_rates): Promise
 	}
 }
 
-async function generateCronExpression(date: Date): Promise<string> {
+function generateCronExpression(date: Date): string {
 	const day = date.getDate();
 	const month = date.getMonth() + 1;
 	return `0 0 ${day} ${month} *`;
