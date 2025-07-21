@@ -34,16 +34,22 @@ export async function getServiceCategoriesByReservationModuleId(
  * @returns {Promise<ServiceCategory>} A promise that resolves to the created service category.
  * @throws {Error} If there is an error creating the service category.
  */
-export async function createServiceCategory(serviceCategoryData: CreateServiceCategoryInput): Promise<ServiceCategory> {
+export async function createServiceCategory(
+	serviceCategoryData: CreateServiceCategoryInput,
+	reservationModuleId: string
+): Promise<ServiceCategory> {
 	try {
 		const parentRelation = serviceCategoryData.parent_id
 			? { parent: { connect: { parent_id: serviceCategoryData.parent_id } } }
-			: { parent: { disconnect: true } };
+			: {};
 		let serviceCategory = await prisma.service_category.create({
 			data: {
 				name: serviceCategoryData.name,
 				color: serviceCategoryData.color,
 				...parentRelation,
+				reservation_module: {
+					connect: { reservation_module_id: reservationModuleId },
+				},
 			},
 		});
 		return serviceCategory;

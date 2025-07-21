@@ -44,7 +44,8 @@ export async function createServiceCategory(
 ): Promise<void> {
 	try {
 		let serviceCategoryData = req.body;
-		let serviceCategory = await ServiceCategoryDao.createServiceCategory(serviceCategoryData);
+		let reservationModuleId = req.user?.reservation_module_id as string;
+		let serviceCategory = await ServiceCategoryDao.createServiceCategory(serviceCategoryData, reservationModuleId);
 		res.status(201).json(serviceCategory);
 	} catch (error) {
 		res.status(500).json({ message: 'Error creating service category', error });
