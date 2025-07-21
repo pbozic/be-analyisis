@@ -14,6 +14,7 @@ model reservation_module {
   subscription_active_until DateTime? // Optional, if the business has a subscription
   business              business     @relation(fields: [business_id], references: [business_id])
   subscription          subscription? @relation(fields: [subscription_id], references: [subscription_id])
+  subscription_exires_at DateTime? // Optional, if the business has a subscription
   addons                business_addon[]
   usages                business_usage[]
   locations     location[]

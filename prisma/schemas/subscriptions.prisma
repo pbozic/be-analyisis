@@ -1,6 +1,9 @@
 // --- ENUMS ---
 enum MODULE_TYPE {
   reservations
+  delivery
+  crm
+  taxi
 }
 
 // --- SUBSCRIPTION + ADDON SYSTEM ---
@@ -31,6 +34,7 @@ model action {
   subscription_actions  subscription_action[]
   addon_actions         addon_action[]
   business_usages       business_usage[]
+  permissions           permission[]
 }
 
 model subscription_action {
