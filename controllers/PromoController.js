@@ -372,7 +372,6 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 	}
 }
 
-
 async function createPromoSectionBuy(req, res) {
 	try {
 		const { promoSections } = req.body
