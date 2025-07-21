@@ -63,6 +63,21 @@ export async function createEmployee(employeeData: {
  */
 export async function deleteEmployee(employeeId: string): Promise<void> {
 	try {
+		let employee = await prisma.employee.findUnique({
+			where: {
+				employee_id: employeeId,
+			},
+		});
+		if (!employee) {
+			throw new Error('Employee not found');
+		}
+		// Delete the employee and all related data
+
+		await prisma.business_users.delete({
+			where: {
+				business_users_id: employee.business_user_id,
+			},
+		});
 		await prisma.employee.delete({
 			where: {
 				employee_id: employeeId,
@@ -98,7 +113,7 @@ export async function updateEmployee(employeeId: string, employeeData: UpdateEmp
 		if (!businessUser) {
 			throw new Error('Business user not found');
 		}
-
+		// TODO: cannot delete ADMIN user
 		let user = await prisma.users.findFirst({
 			where: {
 				user_id: businessUser.user_id,
@@ -142,7 +157,7 @@ export async function getEmployeeById(employeeId: string): Promise<Employee | nu
 			},
 			include: {
 				reservation_module: true,
-				assigned_services: true,
+				assignments: true,
 			},
 		});
 		return employee;
