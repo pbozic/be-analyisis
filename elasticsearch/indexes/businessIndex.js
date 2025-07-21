@@ -1,5 +1,3 @@
-import fs from 'fs';
-
 import esClient from '../client.js';
 import prisma from '../../prisma/prisma.js';
 import Constants from '../../lib/constants.js';
