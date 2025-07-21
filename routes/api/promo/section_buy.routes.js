@@ -3,7 +3,7 @@ import express from 'express';
 import PromoController from '../../../controllers/PromoController.js';
 const router = express.Router();
 router.get('/', PromoController.getAllPromoSectionBuys);
-router.post('/request', PromoController.createCheckoutSessionForPromoBuy);
+router.post('/request', PromoController.createCheckoutSessionForPromoSectionBuy);
 router.get('/section/:section', PromoController.getAllPromoSectionBuysBySection);
 router.get('/business/:business_id', PromoController.getAllPromoSectionBuysByBusiness);
 router.get('/tier/:tier', PromoController.getAllPromoSectionBuysByTier);

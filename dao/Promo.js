@@ -1,8 +1,4 @@
-import { name } from 'ejs';
-
 import prisma from '../prisma/prisma.js';
-import stripe from '../lib/stripe.js';
-import { update } from '../controllers/BusinessController.js';
 async function createPromoSection(args, translations) {
 	// Create a new translatable record
 	let translatable = await prisma.translatable.create({
@@ -190,17 +186,17 @@ async function createPromoAd(promoAdData, categories_ids, promo_banners_ids) {
 			categories: {
 				create: categories_ids
 					? categories_ids.map((cat_id) => ({
-							category: {
-								connect: { categories_id: cat_id },
-							},
-						}))
+						category: {
+							connect: { categories_id: cat_id },
+						},
+					}))
 					: [],
 			},
 			banner: {
 				connect: promo_banners_ids
 					? promo_banners_ids.map((banner_id) => ({
-							promo_banners_id: banner_id,
-						}))
+						promo_banners_id: banner_id,
+					}))
 					: [],
 			},
 		},
@@ -221,17 +217,17 @@ async function updatePromoAd(id, promoAdData, categories_ids, promo_banners_ids)
 				deleteMany: {}, // Clear existing relations
 				create: categories_ids
 					? categories_ids.map((cat_id) => ({
-							category: {
-								connect: { categories_id: cat_id },
-							},
-						}))
+						category: {
+							connect: { categories_id: cat_id },
+						},
+					}))
 					: [],
 			},
 			banner: {
 				set: promo_banners_ids
 					? promo_banners_ids.map((banner_id) => ({
-							promo_banners_id: banner_id,
-						}))
+						promo_banners_id: banner_id,
+					}))
 					: [],
 			},
 		},
@@ -318,23 +314,23 @@ async function createPromoBanner(promoBannerData, imageFileData) {
 			size: promoBannerData.size || null,
 			...(promoBannerData.promo_ads_id
 				? {
-						promo_ads: {
-							connect: {
-								promo_ads_id: promoBannerData.promo_ads_id,
-							},
+					promo_ads: {
+						connect: {
+							promo_ads_id: promoBannerData.promo_ads_id,
 						},
-					}
+					},
+				}
 				: {}),
 			...(file_type && mime_type
 				? {
-						files: {
-							create: {
-								file_type,
-								mime_type,
-								public: true,
-							},
+					files: {
+						create: {
+							file_type,
+							mime_type,
+							public: true,
 						},
-					}
+					},
+				}
 				: {}),
 		},
 		include: {
@@ -461,28 +457,32 @@ async function getAllPromoBannersByAd(ad) {
 //         }
 //     });
 // }
-async function createPromoSectionBuy(args) {
+async function createPromoSectionBuy(business_id, promo_sections_id, active_at, expires_at,tier) {
 	const data = {
 		business: {
 			connect: {
-				business_id: args.business_id,
+				business_id: business_id,
 			},
 		},
 		promo_section: {
 			connect: {
-				promo_sections_id: args.promo_sections_id,
+				promo_sections_id: promo_sections_id,
 			},
 		},
-		tier: args.tier,
+		tier: tier,
 	};
-	if (args.active_at) {
-		data.active_at = args.active_at;
+
+	if (active_at) {
+		/* stripe */
+		data.active_at = active_at;
 	}
-	if (args.expires_at) {
-		data.expires_at = args.expires_at;
+	if (expires_at) {
+		/* stripe */
+		data.expires_at = expires_at;
 	}
 	return await prisma.promo_sections_buy.create({ data });
 }
+
 async function getPromoSectionBuyById(id) {
 	return await prisma.promo_sections_buy.findUnique({
 		where: {
