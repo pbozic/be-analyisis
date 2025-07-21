@@ -29,9 +29,6 @@ export async function updateMenuItemsWithNewTaxRates() {
 							in: menuItemsToUpdate.map((item: menu_items) => item.menu_item_id),
 						},
 					},
-					include: {
-						tax_rates: true,
-					},
 					data: {
 						tax_rates_id: taxRateId,
 					},
