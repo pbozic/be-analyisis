@@ -20,7 +20,11 @@ const defaultIncludeObj = {
 							category: true,
 						},
 					},
-					menu_items: true,
+					menu_items: {
+						include: {
+							tax_rate: true,
+						},
+					},
 				},
 			},
 			customer: true,
@@ -156,7 +160,11 @@ export async function getTodayDailyMealSubscriptionsByBusinessId(business_id: st
 									category: true,
 								},
 							},
-							menu_items: true,
+							menu_items: {
+								include: {
+									tax_rate: true,
+								},
+							},
 						},
 					},
 					customer: true,
