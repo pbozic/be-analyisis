@@ -191,7 +191,9 @@ export type BOOKING_STATUS = 'reserved' | 'cancelled' | 'no_show';
 
 export type SCHEDULE_SLOT_EXCEPTION_TYPE = 'vacation' | 'location_closed' | 'other' | 'health' | 'break' | 'lunch';
 
-export type MODULE_TYPE = 'reservations';
+export type MODULE_TYPE = 'reservations' | 'delivery' | 'crm' | 'taxi';
+
+export type PERMISSION_SCOPE = 'GLOBAL' | 'BUSINESS' | 'USER';
 
 export type finances = {
 	finance_id: string;
@@ -810,6 +812,8 @@ export type menu_items = {
 	weight_quantity: number | null;
 	stock: number | null;
 	stock_movements?: menu_item_stock_change[];
+	tax_rates_id: string | null;
+	tax_rate?: tax_rates | null;
 };
 
 export type transactions = {
@@ -1543,6 +1547,19 @@ export type menu_item_stock_change = {
 	created_at: Date;
 };
 
+export type tax_rates = {
+	tax_rates_id: string;
+	name: string;
+	description: string | null;
+	country: string | null;
+	rate: number;
+	active: boolean;
+	valid_from: Date;
+	created_at: Date;
+	updated_at: Date;
+	menu_items?: menu_items[];
+};
+
 export type reservation_module = {
 	reservation_module_id: string;
 	business_id: string;
@@ -1550,6 +1567,7 @@ export type reservation_module = {
 	subscription_active_until: Date | null;
 	business?: business;
 	subscription?: subscription | null;
+	subscription_exires_at: Date | null;
 	addons?: business_addon[];
 	usages?: business_usage[];
 	locations?: location[];
@@ -1759,6 +1777,7 @@ export type action = {
 	subscription_actions?: subscription_action[];
 	addon_actions?: addon_action[];
 	business_usages?: business_usage[];
+	permissions?: permission[];
 };
 
 export type subscription_action = {
@@ -1882,6 +1901,7 @@ export type users = {
 	user_money_flows?: user_money_flows[];
 	customer?: customers[];
 	booking_history_log?: booking_history_log[];
+	roles?: user_role[];
 };
 
 export type user_roles = {
@@ -1890,6 +1910,34 @@ export type user_roles = {
 	user?: users;
 	role: USER_ROLES;
 	primary: boolean | null;
+};
+
+export type role = {
+	role_id: string;
+	name: string;
+	module: MODULE_TYPE;
+	business_id: string | null;
+	permissions?: permission[];
+	users?: user_role[];
+};
+
+export type user_role = {
+	user_id: string;
+	role_id: string;
+	user?: users;
+	role?: role;
+};
+
+export type permission = {
+	permission_id: string;
+	role_id: string;
+	action_id: string | null;
+	name: string | null;
+	module: MODULE_TYPE;
+	limit: number | null;
+	scope: PERMISSION_SCOPE;
+	role?: role;
+	action?: action | null;
 };
 
 type JsonValue = string | number | boolean | { [key in string]?: JsonValue } | Array<JsonValue> | null;
