@@ -465,7 +465,7 @@ async function updateMenuItemsOrder(req, res) {
  * @response 400 - Error creating new menu item
  */
 async function createMenuItem(req, res) {
-	const { category_id, data, image, is_copy } = req.body;
+	const { category_id, tax_rate_id, data, image, is_copy } = req.body;
 	try {
 		let document = null;
 		if (image?.documentData) {
@@ -482,7 +482,7 @@ async function createMenuItem(req, res) {
 				}
 			}
 		}
-		const menuItem = await MenuItemDao.createMenuItem(category_id, data, is_copy);
+		const menuItem = await MenuItemDao.createMenuItem(category_id, tax_rate_id, data, is_copy);
 		if (document) await DocumentDao.linkDocumentToMenuItem(document.document_id, menuItem.menu_item_id);
 		businessIndex(menuItem.business_id);
 		res.status(201).json(menuItem);

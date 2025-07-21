@@ -160,7 +160,11 @@ async function indexBusinesses(business_id = null, force = false) {
 					include: {
 						categories: {
 							include: {
-								menu_items: true,
+								menu_items: {
+									include: {
+										tax_rate: true,
+									},
+								},
 								menu_categories_categories: {
 									include: {
 										category: {

@@ -147,6 +147,7 @@ const getMenuCategoriesByMenuId = async (menu_id) => {
 							files: true,
 						},
 					},
+					tax_rate: true,
 				},
 			},
 			menu_categories_categories: {
@@ -189,6 +190,7 @@ const getMenuCategoriesByBusinessId = async (business_id) => {
 							files: true,
 						},
 					},
+					tax_rate: true,
 				},
 			},
 			menu_categories_categories: {
@@ -346,7 +348,11 @@ const getMenuCategoryById = async (menu_category_id) => {
 			menu_category_id: menu_category_id,
 		},
 		include: {
-			menu_items: true,
+			menu_items: {
+				include: {
+					tax_rate: true,
+				},
+			},
 			menu_categories_categories: {
 				include: {
 					category: true,

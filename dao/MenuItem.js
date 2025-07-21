@@ -1,9 +1,12 @@
 import prisma from '../prisma/prisma.js';
-const createMenuItem = async (categoryId, menuItemData, is_copy) => {
+const createMenuItem = async (categoryId, taxRateId, menuItemData, is_copy) => {
 	return await prisma.menu_items.create({
 		data: {
 			menu_category: {
 				connect: { menu_category_id: categoryId },
+			},
+			tax_rates: {
+				connect: { tax_rates_id: taxRateId },
 			},
 			...menuItemData,
 			is_copy: is_copy || false,

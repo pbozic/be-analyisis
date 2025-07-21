@@ -1,4 +1,5 @@
 import TaxDao from '../../dao/Tax.js';
+import TaxRateHelpers from '../../lib/taxRateHelpers.js';
 
 interface TaxRateData {
 	name: string;
@@ -6,7 +7,7 @@ interface TaxRateData {
 	valid_from: Date;
 }
 
-async function seedTaxRates(taxRates: TaxRateData[]): Promise<void> {
+async function seedTaxRates(taxRates: TaxRateData[], shouldPopulate: boolean): Promise<void> {
 	console.log('🔄 Starting tax rates seeding...');
 	for (const taxRate of taxRates) {
 		try {
@@ -26,23 +27,39 @@ async function seedTaxRates(taxRates: TaxRateData[]): Promise<void> {
 			console.error(`❌ Error creating tax rate ${taxRate.name}:`, error);
 		}
 	}
+	if (shouldPopulate) {
+		await TaxRateHelpers.updateMenuItemsWithNewTaxRates();
+	}
 	console.log('✅ Tax rates seeding completed!');
 }
 
 // Example usage:
 const TAX_RATES: TaxRateData[] = [
 	{
-		name: 'Standard Rate',
-		rate: 9.5,
+		name: 'Oproščeno',
+		rate: 0,
+		// valid_from: new Date('2026-01-01T00:00:00Z'),
 		valid_from: new Date(),
 	},
 	{
-		name: 'Higher Rate',
+		name: 'Kategorija 1',
+		rate: 5,
+		// valid_from: new Date('2026-01-01T00:00:00Z'),
+		valid_from: new Date(),
+	},
+	{
+		name: 'Kategorija 2',
+		rate: 9.5,
+		// valid_from: new Date('2026-01-01T00:00:00Z'),
+		valid_from: new Date(),
+	},
+	{
+		name: 'Kategorija 3',
 		rate: 22,
 		// valid_from: new Date('2026-01-01T00:00:00Z'),
 		valid_from: new Date(),
 	},
 ];
-seedTaxRates(TAX_RATES)
+seedTaxRates(TAX_RATES, true)
 	.then(() => console.log('Done!'))
 	.catch((err) => console.error(err));

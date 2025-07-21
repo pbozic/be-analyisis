@@ -46,6 +46,7 @@ const getMenuByBusinessId = async (business_id, isDailyMeal = false, startDate =
 									files: true,
 								},
 							},
+							tax_rate: true,
 						},
 					},
 					menu_categories_categories: {
@@ -149,7 +150,11 @@ const getMenuByDate = async (business_id, date) => {
 		include: {
 			categories: {
 				include: {
-					menu_items: true,
+					menu_items: {
+						include: {
+							tax_rate: true,
+						},
+					},
 					menu_categories_categories: {
 						include: {
 							category: true,
@@ -168,7 +173,11 @@ const getMenuById = async (menu_id) => {
 		include: {
 			categories: {
 				include: {
-					menu_items: true,
+					menu_items: {
+						include: {
+							tax_rate: true,
+						},
+					},
 					menu_categories_categories: {
 						include: {
 							category: true,
