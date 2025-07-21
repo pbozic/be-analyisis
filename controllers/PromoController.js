@@ -307,13 +307,13 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 		let totalAmountCents = 0;
 
 		const enrichedPromoSections = await Promise.all(
-			promoSections.map(async ({ promo_sections_id, duration, activeTier }) => {
+			promoSections.map(async ({ promo_sections_id, duration, activeTier, activePrice }) => {
 				const promoSection = await prisma.promo_sections.findUnique({ where: { promo_sections_id } });
 				if (!promoSection) {
 					throw new Error(`Promo section not found: ${promo_sections_id}`);
 				}
 
-				const amountCents = unitPrice * 100 * duration;
+				const amountCents = activePrice * 100; // Convert to cents
 
 				// Add to total amount
 				totalAmountCents += amountCents;
@@ -322,7 +322,7 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 					promo_sections_id,
 					duration,
 					activeTier,
-					unitPrice,
+					activePrice,
 					promoSectionName: promoSection.name,
 					amountCents,
 				};
