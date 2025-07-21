@@ -8,6 +8,7 @@ import DailyMealHelper from './lib/dailyMealHelpers.js';
 import { getSettlementsWeatherForecast } from './lib/weatherHelpers.js';
 import { checkPingStatus } from './lib/driverHelpers.js';
 import stripe from './lib/stripe.js';
+import TaxRateHelpers from './lib/taxRateHelpers.js';
 function startCronJobs() {
 	// Every minute
 	cron.schedule('* * * * *', TaxiHelpers.checkIfOrdersNeedSending);
@@ -22,6 +23,7 @@ function startCronJobs() {
 	cron.schedule('* * * * *', TaxiHelpers.closeScheduledOrders);
 
 	// Every day at midnight - check for expired credits
+	cron.schedule('0 0 * * *', TaxRateHelpers.checkTaxRateChanges);
 	cron.schedule('0 0 * * *', WalletFundsHelper.handleCreditExpiration);
 	cron.schedule('0 0 * * *', DeliveryHelpers.releaseWFForFailedOrders);
 	cron.schedule('0 9 * * *', WalletFundsHelper.notifyUpcomingCreditExpirations);
