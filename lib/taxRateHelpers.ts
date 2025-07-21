@@ -1,48 +1,7 @@
-import cron from 'node-cron';
 import type { menu_items, tax_rates } from '@prisma/client';
 
+import TaxDao from '../dao/Tax.js';
 import prisma from '../prisma/prisma.js';
-
-/**
- * Schedule cron jobs for upcoming tax rate change
- */
-export async function scheduleUpcomingTaxRateChange(taxRate: tax_rates): Promise<void> {
-	try {
-		const validFromDate = new Date(taxRate.valid_from);
-		const now = new Date();
-		const oneYearFromNow = new Date(now);
-		oneYearFromNow.setFullYear(now.getFullYear() + 1);
-
-		if (validFromDate > now && validFromDate <= oneYearFromNow) {
-			const cronExpression = generateCronExpression(validFromDate);
-
-			console.log(
-				`Scheduling tax rate change for ${taxRate.name} (${taxRate.rate}%), valid from: ${validFromDate.toISOString()}`
-			);
-
-			const job = cron.schedule(
-				cronExpression,
-				async () => {
-					await executeTaxRateChange(taxRate);
-					job.destroy();
-				},
-				{
-					scheduled: true,
-					timezone: 'Europe/Ljubljana',
-				}
-			);
-		}
-	} catch (error) {
-		console.error('Error in scheduleUpcomingTaxRateChange:', error);
-		throw error;
-	}
-}
-
-function generateCronExpression(date: Date): string {
-	const day = date.getDate();
-	const month = date.getMonth() + 1;
-	return `0 0 ${day} ${month} *`;
-}
 
 /**
  * Execute tax rate change
@@ -119,4 +78,25 @@ async function executeTaxRateChange(newTaxRate: tax_rates): Promise<void> {
 	}
 }
 
-export default { scheduleUpcomingTaxRateChange };
+/**
+ * Check for upcoming tax rate changes and execute them if due
+ */
+export async function checkTaxRateChanges() {
+	try {
+		const upcomingTaxRates = await TaxDao.getInactiveTaxRates();
+
+		for (const taxRate of upcomingTaxRates) {
+			const validFromDate = new Date(taxRate.valid_from);
+			const now = new Date();
+
+			if (now >= validFromDate) {
+				await executeTaxRateChange(taxRate);
+			}
+		}
+	} catch (error) {
+		console.error('Error checking tax rate changes:', error);
+		throw error;
+	}
+}
+
+export default { checkTaxRateChanges };

@@ -1,5 +1,4 @@
 import TaxDao from '../../dao/Tax.js';
-import TaxRateHelpers from '../../lib/taxRateHelpers.js';
 
 interface TaxRateData {
 	name: string;
@@ -22,7 +21,6 @@ async function seedTaxRates(taxRates: TaxRateData[]): Promise<void> {
 			const newTaxRate = await TaxDao.createTaxRate(taxRateData);
 			if (newTaxRate) {
 				console.log(`✅ Created tax rate: ${newTaxRate.name} (${newTaxRate.rate}%)`);
-				await TaxRateHelpers.scheduleUpcomingTaxRateChange(newTaxRate);
 			}
 		} catch (error) {
 			console.error(`❌ Error creating tax rate ${taxRate.name}:`, error);

@@ -40,4 +40,16 @@ export async function getActiveTaxRates() {
 	}
 }
 
-export default { createTaxRate, getTaxByName, getActiveTaxRates };
+export async function getInactiveTaxRates() {
+	try {
+		return await prisma.tax_rates.findMany({
+			where: {
+				active: false,
+			},
+		});
+	} catch (error) {
+		throw new Error(`❌ Error fetching inactive tax rates: ${error}`);
+	}
+}
+
+export default { createTaxRate, getTaxByName, getActiveTaxRates, getInactiveTaxRates };
