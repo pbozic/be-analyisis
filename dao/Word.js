@@ -559,8 +559,9 @@ async function deleteWordBuy(word_buy_id) {
 				stripe_subscription_id: null,
 			},
 		});
+		console.log/(deletedWordBuy, 'deleted word buy');
 	} catch (error) {
-		return res.status(404).json({ error: 'Word buy not found / other error' });
+		return res.status(404).json({ error: 'Word buy not found / other error' }); 
 	}
 }
 
