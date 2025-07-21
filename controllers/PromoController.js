@@ -290,7 +290,6 @@ async function getPromoBannersByServiceType(req, res) {
 async function createCheckoutSessionForPromoSectionBuy(req, res) {
 	try {
 		const { promoSections } = req.body;
-		console.log(promoSections, 'promoSections');
 		const userId = req.user.user_id;
 		const businessUser = await BusinessUsersDao.getBusinessUserByUserId(userId);
 		if (!businessUser) {
@@ -309,7 +308,7 @@ async function createCheckoutSessionForPromoSectionBuy(req, res) {
 				if (!promoSection) {
 					throw new Error(`Promo section with ID ${section.promo_sections_id} not found`);
 				}
-
+				console.log('stripe.checkout:', stripe.checkout);
 				const session = await stripe.checkout.sessions.create({
 					customer: business.stripe_customer_id,
 					payment_method_types: ['card'],
