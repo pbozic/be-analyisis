@@ -1,0 +1,43 @@
+doctype html
+html(lang="sl")
+  head
+    meta(charset="UTF-8")
+    title Jedilnik
+    style.
+      body {
+        font-family: 'Inter-Black';
+        //- font-size: 12px;
+        color: #000;
+        background: #fff;
+        padding: 20px;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        
+      }
+      h1 {
+        text-align: center;
+        margin: 0 0 30px 0;
+      }
+      h2 {
+        font-size: 16px;
+        margin: 0 0 10px 0;
+        text-align: center;
+      }
+      
+      p {
+        font-size: 14px;
+        margin: 0 auto 20px;
+        text-align: center;
+        width: 100%;
+      }
+      .footer { margin-top: 30px; font-size: 10px; text-align: center}
+
+  body
+    h1= data.title
+    each day in data.menu
+      h2= day.date
+      p= day.items.map(item => item.name).join(', ')
+
+    p.footer= data.footNote
