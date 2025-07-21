@@ -15,7 +15,7 @@ export async function getServiceCategoriesByReservationModuleId(
 	reservationModuleId: string
 ): Promise<ServiceCategory[]> {
 	try {
-		let serviceCategories = await prisma.serviceCategory.findMany({
+		let serviceCategories = await prisma.service_category.findMany({
 			where: {
 				reservation_module_id: reservationModuleId,
 			},
@@ -39,7 +39,7 @@ export async function createServiceCategory(serviceCategoryData: CreateServiceCa
 		const parentRelation = serviceCategoryData.parent_id
 			? { parent: { connect: { parent_id: serviceCategoryData.parent_id } } }
 			: { parent: { disconnect: true } };
-		let serviceCategory = await prisma.serviceCategory.create({
+		let serviceCategory = await prisma.service_category.create({
 			data: {
 				name: serviceCategoryData.name,
 				color: serviceCategoryData.color,
@@ -67,7 +67,7 @@ export async function updateServiceCategory(
 		const parentRelation = serviceCategoryData.parent_id
 			? { parent: { connect: { parent_id: serviceCategoryData.parent_id } } }
 			: { parent: { disconnect: true } };
-		let serviceCategory = await prisma.serviceCategory.update({
+		let serviceCategory = await prisma.service_category.update({
 			where: { service_category_id: serviceCategoryId },
 			data: {
 				name: serviceCategoryData.name,
@@ -88,7 +88,7 @@ export async function updateServiceCategory(
  */
 export async function deleteServiceCategory(serviceCategoryId: string): Promise<void> {
 	try {
-		await prisma.serviceCategory.delete({
+		await prisma.service_category.delete({
 			where: { service_category_id: serviceCategoryId },
 		});
 	} catch (error) {
@@ -104,7 +104,7 @@ export async function deleteServiceCategory(serviceCategoryId: string): Promise<
  */
 export async function getServiceCategoryById(serviceCategoryId: string): Promise<ServiceCategory | null> {
 	try {
-		let serviceCategory = await prisma.serviceCategory.findUnique({
+		let serviceCategory = await prisma.service_category.findUnique({
 			where: { service_category_id: serviceCategoryId },
 			include: {
 				services: true,
