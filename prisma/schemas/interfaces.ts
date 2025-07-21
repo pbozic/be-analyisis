@@ -812,6 +812,8 @@ export type menu_items = {
 	weight_quantity: number | null;
 	stock: number | null;
 	stock_movements?: menu_item_stock_change[];
+	tax_rates_id: string | null;
+	tax_rate?: tax_rates | null;
 };
 
 export type transactions = {
@@ -1543,6 +1545,19 @@ export type menu_item_stock_change = {
 	order_id: string | null;
 	order?: delivery_orders | null;
 	created_at: Date;
+};
+
+export type tax_rates = {
+	tax_rates_id: string;
+	name: string;
+	description: string | null;
+	country: string | null;
+	rate: number;
+	active: boolean;
+	valid_from: Date;
+	created_at: Date;
+	updated_at: Date;
+	menu_items?: menu_items[];
 };
 
 export type reservation_module = {
