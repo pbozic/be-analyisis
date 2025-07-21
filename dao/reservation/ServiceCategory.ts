@@ -41,7 +41,7 @@ export async function createServiceCategory(
 	try {
 		const parentRelation = serviceCategoryData.parent_id
 			? { parent: { connect: { parent_id: serviceCategoryData.parent_id } } }
-			: { parent: { disconnect: true } };
+			: {};
 		let serviceCategory = await prisma.service_category.create({
 			data: {
 				name: serviceCategoryData.name,
