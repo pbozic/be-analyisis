@@ -3,6 +3,7 @@ import BusinessUsersDao from '../dao/BusinessUsers.js';
 import BusinessDao from '../dao/Business.js';
 import stripe from '../lib/stripe.js';
 import S3Helper from '../lib/s3.js';
+import prisma from '../prisma/prisma.js';
 const discountRules = {
 	2: 0, // 0% discount (Full price for 1-2 units)
 	4: 5, // 5% discount for 3-4 units
