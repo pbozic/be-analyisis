@@ -30,9 +30,7 @@ export async function updateMenuItemsWithNewTaxRates() {
 						},
 					},
 					data: {
-						tax_rate: {
-							connect: { tax_rates_id: taxRateId },
-						},
+						tax_rates_id: taxRateId,
 					},
 				});
 				console.log(`✅ Updated ${menuItemsToUpdate.length} menu items with new tax rate ID: ${taxRateId}`);
