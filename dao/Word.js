@@ -550,14 +550,18 @@ async function getAllWordBuysByBusiness(business) {
 }
 
 async function deleteWordBuy(word_buy_id) {
-	const deletedWordBuy = await prisma.word_buy.update({
-		where: {
-			word_buy_id: word_buy_id,
-		},
-		data: {
-			stripe_subscription_id: null,
-		},
-	});
+	try {
+		const deletedWordBuy = await prisma.word_buy.update({
+			where: {
+				word_buy_id: word_buy_id,
+			},
+			data: {
+				stripe_subscription_id: null,
+			},
+		});
+	} catch (error) {
+		return res.status(404).json({ error: 'Word buy not found / other error' });
+	}
 	console.log(deletedWordBuy, 'deletedWordBuy');
 }
 

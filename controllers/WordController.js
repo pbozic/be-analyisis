@@ -135,12 +135,9 @@ async function deleteWordBuy(req, res) {
 	try {
 		/* word buy id */
 		const { id } = req.params;
-		console.log(id, 'word_buy_id')
+		console.log(id, 'word_buy_id');
 		const result = await WordDao.deleteWordBuy(id);
 		let stripeResult = await updateUserSubscription(req.user?.user_id);
-		if (!result) {
-			return res.status(404).json({ error: 'Word buy not found / other error' });
-		}
 		res.status(200).json({ message: 'Word buy subscription id deleted successfully' });
 	} catch (error) {
 		console.error('Error deleting word buy:', error);
