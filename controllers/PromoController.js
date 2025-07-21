@@ -299,6 +299,7 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 		if (!businessUser) {
 			return res.status(404).json({ error: 'Business user not found' });
 		}
+
 		const business = await prisma.business.findUnique({ where: { business_id: businessUser.business_id } });
 		if (!business?.stripe_customer_id) {
 			return res.status(400).json({ error: 'No Stripe customer on file' });
@@ -313,9 +314,7 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 					throw new Error(`Promo section not found: ${promo_sections_id}`);
 				}
 
-				const amountCents = activePrice * 100; // Convert to cents
-
-				// Add to total amount
+				const amountCents = activePrice * 100 * duration;
 				totalAmountCents += amountCents;
 
 				return {
@@ -328,9 +327,8 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 				};
 			})
 		);
-		console.log('Enriched promo sections:', stripe.paymentIntents);
-		/* create payment intent */
-		const paymentIntent = await stripe.client.paymentIntents.create({
+
+		const paymentIntent = await stripe.paymentIntents.create({
 			amount: totalAmountCents,
 			currency: 'eur',
 			customer: business.stripe_customer_id,
@@ -342,35 +340,28 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 			},
 		});
 
-		// Now create buy records for each promo section, linking to the same PaymentIntent ID
 		const results = await Promise.all(
-			enrichedPromoSections.map(({ promo_sections_id, duration, activeTier, promoSectionName }) =>
-				prisma.promo_sections_buy.create({
+			enrichedPromoSections.map(async ({ promo_sections_id, activeTier }) => {
+				await prisma.promo_sections_buy.create({
 					data: {
 						promo_sections_id,
 						business_id: businessUser.business_id,
 						user_id: userId,
-						tier:activeTier,
+						tier: activeTier,
 						payment_intent_id: paymentIntent.id,
-						// Optionally add more fields like duration, active_at, expires_at here if needed
 					},
-				}).then(buyRecord => ({
-					clientSecret: paymentIntent.client_secret,
-					promoBuyId: buyRecord.promo_sections_buy_id,
-					promoSectionName,
-					tier:buyRecord.tier,
-					duration,
-				}))
-			)
+				});
+				return { clientSecret: paymentIntent.client_secret };
+			})
 		);
 
-		// Return array of buy records all sharing same client secret
 		return res.json({ results });
 	} catch (error) {
 		console.error('createPaymentIntentForPromoBuy:', error);
 		return res.status(500).json({ error: error.message });
 	}
 }
+
 
 async function createPromoSectionBuy(req, res) {
 	try {
