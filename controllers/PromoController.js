@@ -351,11 +351,10 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 						payment_intent_id: paymentIntent.id,
 					},
 				});
-				return  paymentIntent.client_secret 
 			})
 		);
 
-		return res.json({ results });
+		return res.json({ clientSecret: paymentIntent.client_secret });
 	} catch (error) {
 		console.error('createPaymentIntentForPromoBuy:', error);
 		return res.status(500).json({ error: error.message });
