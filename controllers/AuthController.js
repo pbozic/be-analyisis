@@ -305,7 +305,8 @@ async function refreshToken(req, res) {
 				};
 				res.status(200).header('Authorization', access_token).json(user);
 			} catch (error) {
-				return res.status(400).send('Access Denied. Unknown error.');
+				console.error(error);
+				return res.status(400).send('Access Denied. Unknown error.', error);
 			}
 		});
 	} catch (error) {
@@ -603,10 +604,10 @@ async function registerTaxiService(req, res) {
 			onboardLink: accountLink.url,
 		});
 		/*let finances = {};
-        if (req.body.finances) {
-            finances = await FinancesDao.addFinances(req.body.finances);
-            await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
-        }*/
+		if (req.body.finances) {
+			finances = await FinancesDao.addFinances(req.body.finances);
+			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
+		}*/
 		let businessAddress = {};
 		if (req.body.addresses) {
 			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
@@ -796,10 +797,10 @@ async function registerDeliveryService(req, res) {
 			}
 		}
 		/*let finances = {};
-        if (req.body.finances) {
-            finances = await FinancesDao.addFinances(req.body.finances);
-            await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
-        }*/
+		if (req.body.finances) {
+			finances = await FinancesDao.addFinances(req.body.finances);
+			await FinancesDao.linkFinancesToBusiness(business.business_id, finances.finance_id);
+		}*/
 		let businessAddress = {};
 		if (req.body.addresses) {
 			businessAddress = await BusinessDao.addBusinessAddress(business.business_id, req.body.addresses.business);
@@ -873,16 +874,16 @@ async function registerMerchantService(req, res) {
 		for (const userInfo of req.body.users) {
 			const userObj = userInfo.user;
 			delete userObj.data.user_roles;
-			const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id);
+			const { user, businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id);
 			const userRoles = userInfo.user.data.user_roles || [
 				{ role: userInfo.user.user_role || 'BUSINESS_USER', primary: true },
 			];
-			await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
+			await UserDao.linkRolesToUser(user?.user_id, userRoles);
 			let addresses = [];
 			if (userInfo.user.addresses) {
 				for (const addressInfo of userInfo.user.addresses) {
 					const address = await AddressDao.addAddress(addressInfo);
-					await AddressDao.addUserAddress(newUser.user_id, address.address_id);
+					await AddressDao.addUserAddress(user?.user_id, address.address_id);
 					addresses.push(address);
 				}
 			}
@@ -1004,16 +1005,16 @@ async function registerBusiness(req, res) {
 		for (const userInfo of req.body.users) {
 			const userObj = userInfo.user;
 			delete userObj.data.user_roles;
-			const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id);
+			const { user, businessUser } = await BusinessUsersDao.createBusinessUser(userObj, business.business_id);
 			const userRoles = userInfo.user.data.user_roles || [
 				{ role: userInfo.user.user_role || 'BUSINESS_USER', primary: true },
 			];
-			await UserDao.linkRolesToUser(newUser?.user_id, userRoles);
+			await UserDao.linkRolesToUser(user?.user_id, userRoles);
 			let addresses = [];
 			if (userInfo.user.addresses) {
 				for (const addressInfo of userInfo.user.addresses) {
 					const address = await AddressDao.addAddress(addressInfo);
-					await AddressDao.addUserAddress(newUser.user_id, address.address_id);
+					await AddressDao.addUserAddress(user?.user_id, address.address_id);
 					addresses.push(address);
 				}
 			}
@@ -1157,7 +1158,7 @@ async function registerReservationBusiness(req, res) {
 				await UserDao.linkRolesToUser(userExists.user_id, userRoles, tx);
 			} else {
 				// If user does not exist, create new user
-				const { newUser, businessUser } = await BusinessUsersDao.createBusinessUser(
+				const { user, businessUser } = await BusinessUsersDao.createBusinessUser(
 					userObj,
 					business.business_id,
 					true,
@@ -1167,7 +1168,7 @@ async function registerReservationBusiness(req, res) {
 				const userRoles = userObj.data.user_roles || [
 					{ role: userObj.data.user_role || 'BUSINESS_USER', primary: true },
 				];
-				await UserDao.linkRolesToUser(newUser?.user_id, userRoles, tx);
+				await UserDao.linkRolesToUser(user?.user_id, userRoles, tx);
 			}
 			//create employee user
 			console.log('Creating employee for reservation business:', businessUserData);
