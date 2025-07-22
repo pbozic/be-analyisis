@@ -1,5 +1,4 @@
 import { config } from 'dotenv';
-import bcrypt from 'bcrypt';
 
 import BusinessDao from '../dao/Business.js';
 import ReviewDao from '../dao/Review.js';
@@ -9,20 +8,15 @@ import UserDao from '../dao/User.js';
 import DriverDao from '../dao/Driver.js';
 import DeliveryDriverDao from '../dao/DeliveryDriver.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
-import {
-	BUSINESS_TYPE,
-	DELIVERY_ORDER_STATUS,
-	SCORING_POINTS_REASON,
-	ACCOUNT_ACTIONS_REASON,
-} from '../lib/constants.js';
+import { DELIVERY_ORDER_STATUS, SCORING_POINTS_REASON, ACCOUNT_ACTIONS_REASON } from '../lib/constants.js';
 import { calculateBusinessEarnings, calculateTotalEarnings } from '../lib/helpersLib.js';
 import prisma from '../prisma/prisma.js';
-import BusinessUsersDao from '../dao/BusinessUsers.js';
 import EmailHelper from '../lib/emailSender.js';
 import socket from '../socket.js';
 import elasticsearch from '../elasticsearch/index.js';
 import UserFavoriteBusinessDao from '../dao/UserFavoriteBusiness.js';
 import ScoringPointsDao from '../dao/ScoringPoints.js';
+import LocalLocationDao from '../dao/LocalLocation.js';
 config();
 const { UserSockets, io } = socket;
 const { businessIndex, categorySearch, fullSearch } = elasticsearch;
@@ -1832,6 +1826,50 @@ async function removeBusinessPaymentMethod(req, res) {
 	}
 }
 
+/**
+ * GET /business/local/locations
+ * @tag Business
+ * @summary Get local locations with address_id
+ * @description Retrieves all local locations that have an associated address_id.
+ * @operationId getLocalLocations
+ * @response 200 - Successful operation, returns the list of local locations with address_id
+ * @responseContent {LocalLocation[]} 200.application/json
+ * @response 400 - Error retrieving local locations
+ * @responseContent {object} 400.application/json The error object
+ */
+async function getLocalLocations(req, res) {
+	try {
+		const locations = await LocalLocationDao.getAllLocalLocations();
+		if (locations) {
+			return res.status(200).json(locations);
+		} else {
+			return res.status(400).json({ error: 'No locations found for the given business ID' });
+		}
+	} catch (e) {
+		console.error('Error getting local locations by business ID:', e);
+		res.status(400).json({ error: 'Error getting local locations by business ID', e });
+	}
+}
+
+async function createBusinessLocalLocation(req, res) {
+	try {
+		const { business_id } = req.params;
+		const { locations } = req.body;
+		if (!locations || locations.length === 0) {
+			return res.status(400).json({ error: 'Missing locations' });
+		}
+		const newLocations = await Promise.all(
+			locations.map((location) =>
+				LocalLocationDao.createBusinessLocalLocation(business_id, location.local_location_id, location.time)
+			)
+		);
+		return res.status(201).json(newLocations);
+	} catch (e) {
+		console.error('Error creating local location:', e);
+		res.status(500).json({ error: 'Error creating local location', e });
+	}
+}
+
 export { getScheduledUsersByBusinessId };
 export { listBusinesses };
 export { listTransferBusinesses };
@@ -1889,6 +1927,8 @@ export { getFavoriteBusinesses };
 export { onboardingEnd };
 export { createScoringPointsHandler };
 export { getPurchaseOrderLimit };
+export { getLocalLocations };
+export { createBusinessLocalLocation };
 export default {
 	getScheduledUsersByBusinessId,
 	listBusinesses,
@@ -1947,4 +1987,6 @@ export default {
 	onboardingEnd,
 	createScoringPointsHandler,
 	getPurchaseOrderLimit,
+	getLocalLocations,
+	createBusinessLocalLocation,
 };

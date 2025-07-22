@@ -211,6 +211,16 @@ async function me(req, res) {
 						business: {
 							include: {
 								address: true,
+								delivery_address: true,
+								business_local_locations: {
+									include: {
+										local_location: {
+											include: {
+												address: true,
+											},
+										},
+									},
+								},
 							},
 						},
 					},

@@ -143,6 +143,15 @@ const getBusinessesForSearchById = async (business_id) => {
 				restaurant_overwhelmed: true,
 				address: true, // Full object
 				delivery_address: true, // Full object
+				business_local_locations: {
+					include: {
+						local_location: {
+							include: {
+								address: true,
+							},
+						},
+					},
+				},
 				documents: {
 					include: {
 						files: true, // Full nested objects
@@ -207,7 +216,15 @@ const getBusinessForSearchById = async (business_id) => {
 				restaurant_overwhelmed: true,
 				address: true, // Full object
 				delivery_address: true, // Full object
-
+				business_local_locations: {
+					include: {
+						local_location: {
+							include: {
+								address: true,
+							},
+						},
+					},
+				},
 				documents: {
 					include: {
 						files: true, // Full nested objects

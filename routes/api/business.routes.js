@@ -2,16 +2,14 @@ import express from 'express';
 
 import { validate } from '../../middleware/zod.js';
 import joi from '../../middleware/joi.js';
-import { updateSchema, paymentIntentSchema } from '../../joi/businessSchemas.js';
+import { paymentIntentSchema } from '../../joi/businessSchemas.js';
 import { reviewBusinessSchema } from '../../joi/reviewSchemas.js';
 import BusinessController from '../../controllers/BusinessController.js';
-import FinanceController from '../../controllers/FinancesController.js';
 import * as DailyMealCategoryController from '../../controllers/DailyMealCategoryController';
 import {
 	CreateDailyMealCategoryWithPriceSchema,
 	AddPriceToDailyMealCategorySchema,
 } from '../../types/dailyMeals/DailyMealCategory';
-import StripeController from '../../controllers/StripeController.js';
 import DailyMealController from '../../controllers/DailyMealController.js';
 
 const router = express.Router();
@@ -27,9 +25,9 @@ router.get('/favorites/:type', BusinessController.getFavoriteBusinesses);
 router.post('/favorites', BusinessController.addBusinessToFavorites);
 router.delete('/favorites', BusinessController.removeBusinessFromFavorites);
 router.get('/purchase_order_limit/:business_id', BusinessController.getPurchaseOrderLimit);
+router.get('/parent', BusinessController.getParentBusiness);
 router.get('/:business_id', BusinessController.getBusinessById);
 router.get('/:business_id/reviews', BusinessController.getBusinessReviewsById);
-router.get('/parent', BusinessController.getParentBusiness);
 router.get('/stripe/:business_id', BusinessController.getBusinessStripeStatusByBusinessId);
 router.get('/earnings/all', BusinessController.getAllBusinessesEarnings);
 router.get('/earnings/total', BusinessController.getTotalEarnings);
@@ -79,5 +77,8 @@ router.post(
 );
 router.patch('/daily-meal-categories/:dmc_id/activate', DailyMealCategoryController.activateDailyMealCategory);
 router.patch('/daily-meal-categories/:dmc_id/deactivate', DailyMealCategoryController.deactivateDailyMealCategory);
+
+router.get('/local/locations', BusinessController.getLocalLocations);
+router.post('/local/locations/:business_id', BusinessController.createBusinessLocalLocation);
 
 export default router;

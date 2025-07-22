@@ -283,8 +283,29 @@ export type business = {
 	drivers?: drivers[];
 	daily_meal_categories?: daily_meal_categories[];
 	daily_meal_subscriptions?: daily_meal_subscriptions[];
+	business_local_locations?: business_local_locations[];
 	business_money_flows?: business_money_flows[];
 	reservation_module?: reservation_module | null;
+};
+
+export type local_locations = {
+	local_location_id: string;
+	address_id: string;
+	created_at: Date;
+	updated_at: Date;
+	address?: addresses;
+	business_local_locations?: business_local_locations[];
+};
+
+export type business_local_locations = {
+	business_local_location_id: string;
+	business_id: string;
+	local_location_id: string;
+	created_at: Date;
+	updated_at: Date;
+	time: Date;
+	local_location?: local_locations;
+	business?: business;
 };
 
 export type business_users = {
@@ -452,6 +473,7 @@ export type addresses = {
 	business_users?: business_users[];
 	daily_meals_subscriptions?: daily_meals_subscriptions[];
 	daily_meal_subscriptions?: daily_meal_subscriptions[];
+	local_locations?: local_locations | null;
 };
 
 export type user_address = {
