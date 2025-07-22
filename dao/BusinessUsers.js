@@ -36,6 +36,15 @@ const getBusinessUserByUserId = async (userId) => {
 							},
 						},
 						business_clients: true,
+						business_local_locations: {
+							include: {
+								local_location: {
+									include: {
+										address: true,
+									},
+								},
+							},
+						},
 					},
 				},
 				allowance: true,
