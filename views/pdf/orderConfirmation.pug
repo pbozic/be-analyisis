@@ -41,7 +41,7 @@ html(lang="sl")
       br
       | Order type: #{order.details.type.charAt(0).toUpperCase() + order.details.type.slice(1)}
       br
-      | Delivery time: #{new Date(order.details.customer_expected_delivery_at).toLocaleString('sl-SI')}
+      | #{order.details.type === 'pickup' ? 'Pickup' : 'Delivery'} time: #{new Date(order.details.customer_expected_delivery_at).toLocaleString('sl-SI')}
 
     h2 Payment method
     p
@@ -77,13 +77,13 @@ html(lang="sl")
             td 1
             td.right #{order.details.minimum_order_fee.toFixed(2)}
             td.right #{order.details.minimum_order_fee.toFixed(2)}
-        // Add delivery row
-        tr
-          td Delivery
-          td 9.50%
-          td 1
-          td.right #{order.details.delivery_cost.toFixed(2)}
-          td.right #{order.details.delivery_cost.toFixed(2)}
+        if order.details.type === 'delivery' && order.details.delivery_cost
+          tr
+            td Delivery
+            td 9.50%
+            td 1
+            td.right #{order.details.delivery_cost.toFixed(2)}
+            td.right #{order.details.delivery_cost.toFixed(2)}
 
 
     p.right(style="font-weight: bold; margin-top: 10px")
