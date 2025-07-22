@@ -1854,16 +1854,16 @@ async function getLocalLocations(req, res) {
 async function createBusinessLocalLocation(req, res) {
 	try {
 		const { business_id } = req.params;
-		const { locations } = req.body;
-		if (!locations || locations.length === 0) {
-			return res.status(400).json({ error: 'Missing locations' });
+		const { location } = req.body;
+		if (!location?.local_location_id || !location?.time) {
+			return res.status(400).json({ error: 'Missing location' });
 		}
-		const newLocations = await Promise.all(
-			locations.map((location) =>
-				LocalLocationDao.createBusinessLocalLocation(business_id, location.local_location_id, location.time)
-			)
+		const newLocation = await LocalLocationDao.createBusinessLocalLocation(
+			business_id,
+			location.local_location_id,
+			location.time
 		);
-		return res.status(201).json(newLocations);
+		return res.status(201).json(newLocation);
 	} catch (e) {
 		console.error('Error creating local location:', e);
 		res.status(500).json({ error: 'Error creating local location', e });
