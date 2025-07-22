@@ -60,12 +60,16 @@ html(lang="sl")
           th Price (€)
       tbody
         each item in order.items
+          - var displayQuantity = item.is_weighted ? (item.quantity / 1000).toFixed(3) + ' kg' : item.quantity
+          - var unitPrice = item.is_weighted ? item.price.toFixed(2) + '/kg' : item.price.toFixed(2)
+          - var totalPrice = item.is_weighted ? (item.price * (item.quantity / 1000)) : (item.price * item.quantity)
+          - var taxRate = item.tax_rate?.rate || 9.50
           tr
             td #{item.names.sl || item.names.en}
-            td #{item.vat ? item.vat.toFixed(2) : 9.50.toFixed(2)}%
-            td #{item.quantity}
-            td.right #{item.price.toFixed(2)}
-            td.right #{(item.price * item.quantity).toFixed(2)}
+            td #{taxRate.toFixed(2)}%
+            td #{displayQuantity}
+            td.right #{unitPrice}
+            td.right #{totalPrice.toFixed(2)}
         if order.details.minimum_order_fee
           tr
             td Minimum Order Fee
