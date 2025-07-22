@@ -5,7 +5,8 @@ import prisma from '../prisma/prisma.js';
 const getAllLocalLocations = async () => {
 	try {
 		return await prisma.local_locations.findMany({
-			where: { address_id: { not: null } },
+			where: { address_id: { not: undefined } },
+			include: { address: true },
 		});
 	} catch (error) {
 		throw new Error(`Error fetching all local locations: ${error}`);
@@ -22,6 +23,7 @@ const createLocation = async (address: addresses) => {
 					},
 				},
 			},
+			include: { address: true },
 		});
 		return localLocation;
 	} catch (error) {
