@@ -44,6 +44,7 @@ async function activateBusiness(req, res) {
 		if (business) {
 			if (
 				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.LOCAL ||
 				business.type === Constants.BUSINESS_TYPE.RESTAURANT
 			) {
 				businessIndex(business.business_id);
@@ -83,6 +84,7 @@ async function deactivateBusiness(req, res) {
 		if (business) {
 			if (
 				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.LOCAL ||
 				business.type === Constants.BUSINESS_TYPE.RESTAURANT
 			) {
 				businessIndex(business.business_id);
@@ -229,6 +231,7 @@ async function listMerchantBusinesses(req, res) {
 		const merchantBusinesses = await BusinessDao.getBusinessesByType([
 			Constants.BUSINESS_TYPE.MERCHANT,
 			Constants.BUSINESS_TYPE.RESTAURANT,
+			Constants.BUSINESS_TYPE.LOCAL,
 		]);
 		res.status(200).json(merchantBusinesses);
 	} catch (e) {
@@ -344,7 +347,7 @@ async function listPromoSectionsWithMerchants(req, res) {
 async function listMerchantBusinessesWithDailyMeals(req, res) {
 	try {
 		const merchantBusinesses = await BusinessDao.getBusinessesByType(
-			[Constants.BUSINESS_TYPE.MERCHANT, Constants.BUSINESS_TYPE.RESTAURANT],
+			[Constants.BUSINESS_TYPE.MERCHANT, Constants.BUSINESS_TYPE.RESTAURANT, Constants.BUSINESS_TYPE.LOCAL],
 			{
 				offers_daily_meals: true,
 			}
@@ -370,6 +373,7 @@ async function listMerchantBusinessesMainInfo(req, res) {
 		const merchantBusinesses = await BusinessDao.getBusinessesByTypeMainInformation([
 			Constants.BUSINESS_TYPE.MERCHANT,
 			Constants.BUSINESS_TYPE.RESTAURANT,
+			Constants.BUSINESS_TYPE.LOCAL,
 		]);
 		res.status(200).json(merchantBusinesses);
 	} catch (e) {
@@ -607,6 +611,7 @@ async function update(req, res) {
 			if (req.userSocket) req.userSocket.emit('updateBusiness', business);
 			if (
 				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.LOCAL ||
 				business.type === Constants.BUSINESS_TYPE.RESTAURANT
 			) {
 				businessIndex(business.business_id);
@@ -638,6 +643,7 @@ async function updateBusinessType(req, res) {
 		if (business) {
 			if (
 				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.LOCAL ||
 				business.type === Constants.BUSINESS_TYPE.RESTAURANT
 			) {
 				businessIndex(business.business_id);
@@ -669,6 +675,7 @@ async function updateIsBusinessUnit(req, res) {
 		if (business) {
 			if (
 				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.LOCAL ||
 				business.type === Constants.BUSINESS_TYPE.RESTAURANT
 			) {
 				businessIndex(business.business_id);
@@ -700,6 +707,7 @@ async function updateBusinessGroupName(req, res) {
 		if (business) {
 			if (
 				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.LOCAL ||
 				business.type === Constants.BUSINESS_TYPE.RESTAURANT
 			) {
 				businessIndex(business.business_id);
@@ -732,6 +740,7 @@ async function updateBusinessEmail(req, res) {
 		if (business) {
 			if (
 				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.LOCAL ||
 				business.type === Constants.BUSINESS_TYPE.RESTAURANT
 			) {
 				businessIndex(business.business_id);
@@ -769,6 +778,7 @@ async function updateBusinessTelephone(req, res) {
 		if (business) {
 			if (
 				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.LOCAL ||
 				business.type === Constants.BUSINESS_TYPE.RESTAURANT
 			) {
 				businessIndex(business.business_id);
@@ -801,6 +811,7 @@ async function updateBusinessWorkingHours(req, res) {
 		if (business) {
 			if (
 				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
+				business.type === Constants.BUSINESS_TYPE.LOCAL ||
 				business.type === Constants.BUSINESS_TYPE.RESTAURANT
 			) {
 				businessIndex(business.business_id);
@@ -868,7 +879,8 @@ async function updateBusinessIsNew(req, res) {
 		if (business) {
 			if (
 				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
-				business.type === Constants.BUSINESS_TYPE.RESTAURANT
+				business.type === Constants.BUSINESS_TYPE.RESTAURANT ||
+				business.type === Constants.BUSINESS_TYPE.LOCAL
 			) {
 				businessIndex(business.business_id);
 			}
@@ -900,7 +912,8 @@ async function updateBusinessIsPopular(req, res) {
 		if (business) {
 			if (
 				business.type === Constants.BUSINESS_TYPE.MERCHANT ||
-				business.type === Constants.BUSINESS_TYPE.RESTAURANT
+				business.type === Constants.BUSINESS_TYPE.RESTAURANT ||
+				business.type === Constants.BUSINESS_TYPE.LOCAL
 			) {
 				businessIndex(business.business_id);
 			}
@@ -979,7 +992,8 @@ async function addBusinessAddress(req, res) {
 		const updatedBusiness = await BusinessDao.addBusinessAddress(business_id, addressData);
 		if (
 			updatedBusiness.type === Constants.BUSINESS_TYPE.MERCHANT ||
-			updatedBusiness.type === Constants.BUSINESS_TYPE.RESTAURANT
+			updatedBusiness.type === Constants.BUSINESS_TYPE.RESTAURANT ||
+			updatedBusiness.type === Constants.BUSINESS_TYPE.LOCAL
 		) {
 			businessIndex(updatedBusiness.business_id);
 		}
@@ -1008,7 +1022,8 @@ async function addDeliveryAddress(req, res) {
 		const updatedBusiness = await BusinessDao.addDeliveryAddress(business_id, addressData);
 		if (
 			updatedBusiness.type === Constants.BUSINESS_TYPE.MERCHANT ||
-			updatedBusiness.type === Constants.BUSINESS_TYPE.RESTAURANT
+			updatedBusiness.type === Constants.BUSINESS_TYPE.RESTAURANT ||
+			updatedBusiness.type === Constants.BUSINESS_TYPE.LOCAL
 		) {
 			businessIndex(updatedBusiness.business_id);
 		}
@@ -1335,6 +1350,7 @@ async function getAllBusinessesEarnings(req, res) {
 	try {
 		const businesses = await BusinessDao.getBusinessesByType([
 			Constants.BUSINESS_TYPE.MERCHANT,
+			Constants.BUSINESS_TYPE.LOCAL,
 			Constants.BUSINESS_TYPE.RESTAURANT,
 		]);
 		const earningsPromises = businesses.map(async (business) => {
@@ -1563,7 +1579,8 @@ async function editBusiness(req, res) {
 		// Return the updated business details
 		if (
 			updatedBusiness.type === Constants.BUSINESS_TYPE.MERCHANT ||
-			updatedBusiness.type === Constants.BUSINESS_TYPE.RESTAURANT
+			updatedBusiness.type === Constants.BUSINESS_TYPE.RESTAURANT ||
+			updatedBusiness.type === Constants.BUSINESS_TYPE.LOCAL
 		) {
 			businessIndex(updatedBusiness.business_id);
 		}

@@ -464,7 +464,11 @@ const getBusinessesByType = async (type, args = {}) => {
 			taxi_orders: false,
 			delivery_orders: false,
 		};
-		if (type.includes(Constants.BUSINESS_TYPE.MERCHANT) || type.includes(Constants.BUSINESS_TYPE.RESTAURANT)) {
+		if (
+			type.includes(Constants.BUSINESS_TYPE.MERCHANT) ||
+			type.includes(Constants.BUSINESS_TYPE.RESTAURANT) ||
+			type.includes(Constants.BUSINESS_TYPE.LOCAL)
+		) {
 			includeOptions.menus = {
 				include: {
 					categories: {
