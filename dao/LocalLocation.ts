@@ -1,4 +1,4 @@
-import { addresses } from '@prisma/client';
+import { addresses, business_local_locations } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 
@@ -51,7 +51,7 @@ const createBusinessLocalLocation = async (businessId: string, localLocationId: 
 	}
 };
 
-const updateBusinessLocalLocation = async (locationId: string, time: Partial<addresses>) => {
+const updateBusinessLocalLocation = async (locationId: string, time: Partial<business_local_locations>) => {
 	try {
 		const updatedLocation = await prisma.business_local_locations.update({
 			where: { local_location_id: locationId },

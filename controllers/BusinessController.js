@@ -1894,7 +1894,7 @@ async function updateBusinessLocalLocation(req, res) {
 		if (!location_id || !time) {
 			return res.status(400).json({ error: 'Missing location' });
 		}
-		const updatedLocation = await LocalLocationDao.updateBusinessLocalLocation(location_id, time);
+		const updatedLocation = await LocalLocationDao.updateBusinessLocalLocation(location_id, new Date(time));
 		return res.status(200).json(updatedLocation);
 	} catch (e) {
 		console.error('Error updating local location:', e);
