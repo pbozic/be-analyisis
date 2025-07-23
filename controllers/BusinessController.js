@@ -435,13 +435,9 @@ async function listTransferBusinesses(req, res) {
  */
 async function getBusinessById(req, res) {
 	try {
-		console.log('getBusinessById test', req.params.business_id);
 		const business = await BusinessDao.getBusinessById(req.params.business_id);
-		console.log('business fetched successfully', business);
 		const paymentMethods = await stripe.getPaymentMethods(business.stripe_customer_id);
-		console.log('paymentMethodsfetchforbusiness', paymentMethods);
 		business.paymentMethods = paymentMethods;
-		console.log(business, 'business for getBusinessById');
 		if (business) {
 			res.status(200).json(business);
 		} else {
