@@ -95,7 +95,7 @@ export async function deleteCustomer(customerId: string): Promise<void> {
 			},
 		});
 	} catch (error) {
-		throw new Error('Error deleting customer');
+		throw new Error(error instanceof Error ? error.message : 'Error deleting customer');
 	}
 }
 
