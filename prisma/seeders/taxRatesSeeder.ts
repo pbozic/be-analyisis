@@ -7,7 +7,7 @@ interface TaxRateData {
 	valid_from: Date;
 }
 
-async function seedTaxRates(taxRates: TaxRateData[], shouldPopulate: boolean): Promise<void> {
+export default async function seedTaxRates(taxRates: TaxRateData[], shouldPopulate: boolean): Promise<void> {
 	console.log('🔄 Starting tax rates seeding...');
 	for (const taxRate of taxRates) {
 		try {
@@ -34,29 +34,29 @@ async function seedTaxRates(taxRates: TaxRateData[], shouldPopulate: boolean): P
 }
 
 // Example usage:
-const TAX_RATES: TaxRateData[] = [
+export const TAX_RATES: TaxRateData[] = [
 	{
 		name: 'Oproščeno',
 		rate: 0,
-		// valid_from: new Date('2026-01-01T00:00:00Z'),
+		// valid_from: new Date('2026-01-01T00:00:00'),
 		valid_from: new Date(),
 	},
 	{
 		name: 'Kategorija 1',
 		rate: 5,
-		// valid_from: new Date('2026-01-01T00:00:00Z'),
+		// valid_from: new Date('2026-01-01T00:00:00'),
 		valid_from: new Date(),
 	},
 	{
 		name: 'Kategorija 2',
 		rate: 9.5,
-		// valid_from: new Date('2026-01-01T00:00:00Z'),
+		// valid_from: new Date('2026-01-01T00:00:00'),
 		valid_from: new Date(),
 	},
 	{
 		name: 'Kategorija 3',
 		rate: 22,
-		// valid_from: new Date('2026-01-01T00:00:00Z'),
+		// valid_from: new Date('2026-01-01T00:00:00'),
 		valid_from: new Date(),
 	},
 ];

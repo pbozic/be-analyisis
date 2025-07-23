@@ -9,6 +9,9 @@ import promoSectionSeed from './seeders/promoSectionSeeder.js';
 import municipalitiesSeeder from './seeders/municipalitiesSeeder.js';
 import settlementSeeder from './seeders/settlementSeeder.js';
 import subscriptionSeeder from './seeders/subscriptionSeeder.ts';
+import taxRatesSeeder, { TAX_RATES } from './seeders/taxRatesSeeder.ts';
+import localLocationsSeeder, { LOCATIONS } from './seeders/localLocationsSeeder.ts';
+
 ({ config }).config();
 async function main() {
 	if (process.env.ENVIRONMENT === 'development') {
@@ -23,6 +26,8 @@ async function main() {
 	await fiscalDevicesSeeder();
 	await settlementSeeder();
 	await subscriptionSeeder();
+	await taxRatesSeeder(TAX_RATES, false);
+	await localLocationsSeeder(LOCATIONS, false);
 }
 main()
 	.then(async () => {

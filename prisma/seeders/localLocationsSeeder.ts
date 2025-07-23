@@ -9,7 +9,7 @@ interface Location {
 	longitude: string;
 }
 
-async function seedLocations(locations: Location[], shouldPopulate: boolean): Promise<void> {
+export default async function seedLocations(locations: Location[], shouldPopulate: boolean): Promise<void> {
 	console.log('🔄 Starting locations seeding...');
 	for (const location of locations) {
 		try {
@@ -51,7 +51,7 @@ async function seedLocations(locations: Location[], shouldPopulate: boolean): Pr
 }
 
 // Example usage:
-const LOCATIONS: Location[] = [
+export const LOCATIONS: Location[] = [
 	{
 		address: 'Tržnica Koseze, Vodnikova cesta 187, 1000 Ljubljana',
 		latitude: '46.074148443126965',
