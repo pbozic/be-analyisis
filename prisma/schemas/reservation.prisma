@@ -92,7 +92,7 @@ model customers {
   first_name      String
   last_name       String
   email           String?   @unique
-  phone           String?   @unique
+  telephone       String?   @unique
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt
   

@@ -34,7 +34,7 @@ export async function createCustomer(
 ): Promise<Customer> {
 	try {
 		let userExists = await prisma.users.findUnique({
-			where: { telephone: customerData.phone },
+			where: { telephone: customerData.telephone },
 		});
 		let userRelation = userExists ? { user: { connect: { user_id: userExists.user_id } } } : {};
 		let customer = await prisma.customers.create({
@@ -42,7 +42,7 @@ export async function createCustomer(
 				first_name: customerData.first_name,
 				last_name: customerData.last_name,
 				email: customerData.email,
-				telephone: customerData.phone,
+				telephone: customerData.telephone,
 				reservation_module: {
 					connect: { reservation_module_id: reservationModuleId },
 				},
@@ -72,7 +72,7 @@ export async function updateCustomer(customerId: string, customerData: UpdateCus
 				first_name: customerData.first_name,
 				last_name: customerData.last_name,
 				email: customerData.email,
-				telephone: customerData.phone,
+				telephone: customerData.telephone,
 			},
 		});
 		return customer;

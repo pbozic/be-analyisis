@@ -1673,7 +1673,7 @@ export type customers = {
 	first_name: string;
 	last_name: string;
 	email: string | null;
-	phone: string | null;
+	telephone: string | null;
 	created_at: Date;
 	updated_at: Date;
 	reservation_module?: reservation_module;

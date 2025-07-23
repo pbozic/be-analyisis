@@ -7,7 +7,7 @@ export const CreateCustomerSchema = z.object({
 	first_name: z.string(),
 	last_name: z.string(),
 	email: z.string().email().optional(),
-	phone: z.string().optional(),
+	telephone: z.string().optional(),
 	user_id: z.string().uuid().optional(),
 });
 
