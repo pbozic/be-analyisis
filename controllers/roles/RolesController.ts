@@ -35,8 +35,7 @@ export async function getRoles(req: ValidatedRequest, res: Response): Promise<vo
  */
 export async function createRole(req: ValidatedRequest<CreateRoleInput>, res: Response): Promise<void> {
 	try {
-		let reservationModuleId = req.user?.reservation_module_id || null;
-		let role = await RoleDao.createRole(req.body, reservationModuleId);
+		let role = await RoleDao.createRole(req.body);
 		res.status(201).json(role);
 	} catch (error) {
 		res.status(500).json({ message: 'Error creating role', error });

@@ -17,12 +17,11 @@ export async function getRoles(reservationModuleId: string | null): Promise<Role
 	}
 }
 
-export async function createRole(data: CreateRoleInput, reservationModuleId: string | null): Promise<Role> {
+export async function createRole(data: CreateRoleInput): Promise<Role> {
 	try {
 		return await prisma.role.create({
 			data: {
 				...data,
-				reservation_module_id: reservationModuleId,
 			},
 		});
 	} catch (error) {
