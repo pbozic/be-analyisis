@@ -51,9 +51,23 @@ const createBusinessLocalLocation = async (businessId: string, localLocationId: 
 	}
 };
 
-export { createLocation, createBusinessLocalLocation, getAllLocalLocations };
+const updateBusinessLocalLocation = async (locationId: string, time: Partial<addresses>) => {
+	try {
+		const updatedLocation = await prisma.business_local_locations.update({
+			where: { local_location_id: locationId },
+			data: { time },
+			include: { local_locations: { include: { address: true } } },
+		});
+		return updatedLocation;
+	} catch (error) {
+		throw new Error(`Error updating business local location: ${error}`);
+	}
+};
+
+export { createLocation, createBusinessLocalLocation, getAllLocalLocations, updateBusinessLocalLocation };
 export default {
 	createLocation,
 	createBusinessLocalLocation,
 	getAllLocalLocations,
+	updateBusinessLocalLocation,
 };
