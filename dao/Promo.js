@@ -186,17 +186,17 @@ async function createPromoAd(promoAdData, categories_ids, promo_banners_ids) {
 			categories: {
 				create: categories_ids
 					? categories_ids.map((cat_id) => ({
-						category: {
-							connect: { categories_id: cat_id },
-						},
-					}))
+							category: {
+								connect: { categories_id: cat_id },
+							},
+						}))
 					: [],
 			},
 			banner: {
 				connect: promo_banners_ids
 					? promo_banners_ids.map((banner_id) => ({
-						promo_banners_id: banner_id,
-					}))
+							promo_banners_id: banner_id,
+						}))
 					: [],
 			},
 		},
@@ -217,17 +217,17 @@ async function updatePromoAd(id, promoAdData, categories_ids, promo_banners_ids)
 				deleteMany: {}, // Clear existing relations
 				create: categories_ids
 					? categories_ids.map((cat_id) => ({
-						category: {
-							connect: { categories_id: cat_id },
-						},
-					}))
+							category: {
+								connect: { categories_id: cat_id },
+							},
+						}))
 					: [],
 			},
 			banner: {
 				set: promo_banners_ids
 					? promo_banners_ids.map((banner_id) => ({
-						promo_banners_id: banner_id,
-					}))
+							promo_banners_id: banner_id,
+						}))
 					: [],
 			},
 		},
@@ -314,23 +314,23 @@ async function createPromoBanner(promoBannerData, imageFileData) {
 			size: promoBannerData.size || null,
 			...(promoBannerData.promo_ads_id
 				? {
-					promo_ads: {
-						connect: {
-							promo_ads_id: promoBannerData.promo_ads_id,
+						promo_ads: {
+							connect: {
+								promo_ads_id: promoBannerData.promo_ads_id,
+							},
 						},
-					},
-				}
+					}
 				: {}),
 			...(file_type && mime_type
 				? {
-					files: {
-						create: {
-							file_type,
-							mime_type,
-							public: true,
+						files: {
+							create: {
+								file_type,
+								mime_type,
+								public: true,
+							},
 						},
-					},
-				}
+					}
 				: {}),
 		},
 		include: {
@@ -457,7 +457,7 @@ async function getAllPromoBannersByAd(ad) {
 //         }
 //     });
 // }
-async function createPromoSectionBuy(business_id, promo_sections_id, active_at, expires_at,tier) {
+async function createPromoSectionBuy(business_id, promo_sections_id, active_at, expires_at, tier) {
 	const data = {
 		business: {
 			connect: {
