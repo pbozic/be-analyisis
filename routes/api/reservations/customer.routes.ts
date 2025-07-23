@@ -8,8 +8,8 @@ const router = express.Router();
 
 router.get('/', CustomerController.getCustomers);
 router.post('/', validate(CreateCustomerSchema), CustomerController.createCustomer);
-router.put('/:customerId', validate(UpdateCustomerSchema), CustomerController.updateCustomer);
-router.delete('/:customerId', CustomerController.deleteCustomer);
-router.get('/:customerId', CustomerController.getCustomerById);
+router.put('/:customer_id', validate(UpdateCustomerSchema), CustomerController.updateCustomer);
+router.delete('/:customer_id', CustomerController.deleteCustomer);
+router.get('/:customer_id', CustomerController.getCustomerById);
 
 export default router;
