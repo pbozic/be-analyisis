@@ -1851,6 +1851,23 @@ async function getLocalLocations(req, res) {
 	}
 }
 
+/**
+ * POST /business/local/locations/:business_id
+ * @tag Business
+ * @summary Create a new local location for a business
+ * @description Creates a new local location for a business with the specified local_location_id and time.
+ * @operationId createBusinessLocalLocation
+ * @pathParam {string} business_id - The ID of the business to create the local location for
+ * @bodyDescription The local location data to create.
+ * @bodyContent {CreateLocalLocationRequest} application/json
+ * @bodyRequired
+ * @response 201 - Local location created successfully.
+ * @responseContent {LocalLocation} 201.application/json
+ * @response 400 - Missing required fields in the request body
+ * @responseContent {object} 400.application/json The error object
+ * @response 500 - Error creating local location
+ * @responseContent {object} 500.application/json The error object
+ */
 async function createBusinessLocalLocation(req, res) {
 	try {
 		const { business_id } = req.params;
@@ -1867,6 +1884,38 @@ async function createBusinessLocalLocation(req, res) {
 	} catch (e) {
 		console.error('Error creating local location:', e);
 		res.status(500).json({ error: 'Error creating local location', e });
+	}
+}
+
+/**
+ * PATCH /business/local/locations/:location_id
+ * @tag Business
+ * @summary Update a local location for a business
+ * @description Updates the time of a local location for a business with the specified location_id.
+ * @operationId updateBusinessLocalLocation
+ * @pathParam {string} location_id - The ID of the local location to update
+ * @bodyDescription The new time for the local location.
+ * @bodyContent {UpdateLocalLocationRequest} application/json
+ * @bodyRequired
+ * @response 200 - Local location updated successfully.
+ * @responseContent {LocalLocation} 200.application/json
+ * @response 400 - Missing required fields in the request body
+ * @responseContent {object} 400.application/json The error object
+ * @response 500 - Error updating local location
+ * @responseContent {object} 500.application/json The error object
+ */
+async function updateBusinessLocalLocation(req, res) {
+	try {
+		const { location_id } = req.params;
+		const { time } = req.body;
+		if (!location_id || !time) {
+			return res.status(400).json({ error: 'Missing location' });
+		}
+		const updatedLocation = await LocalLocationDao.updateBusinessLocalLocation(location_id, new Date(time));
+		return res.status(200).json(updatedLocation);
+	} catch (e) {
+		console.error('Error updating local location:', e);
+		res.status(500).json({ error: 'Error updating local location', e });
 	}
 }
 
@@ -1929,6 +1978,7 @@ export { createScoringPointsHandler };
 export { getPurchaseOrderLimit };
 export { getLocalLocations };
 export { createBusinessLocalLocation };
+export { updateBusinessLocalLocation };
 export default {
 	getScheduledUsersByBusinessId,
 	listBusinesses,
@@ -1989,4 +2039,5 @@ export default {
 	getPurchaseOrderLimit,
 	getLocalLocations,
 	createBusinessLocalLocation,
+	updateBusinessLocalLocation,
 };

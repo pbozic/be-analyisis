@@ -80,5 +80,6 @@ router.patch('/daily-meal-categories/:dmc_id/deactivate', DailyMealCategoryContr
 
 router.get('/local/locations', BusinessController.getLocalLocations);
 router.post('/local/locations/:business_id', BusinessController.createBusinessLocalLocation);
+router.patch('/local/locations/:location_id', BusinessController.updateBusinessLocalLocation);
 
 export default router;
