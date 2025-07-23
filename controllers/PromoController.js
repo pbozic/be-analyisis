@@ -361,16 +361,21 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 	}
 }
 
-
 async function createPromoSectionBuy(req, res) {
 	try {
-		const { promoSections } = req.body
+		const { promoSections } = req.body;
 		let business_id = req.body.business_id;
 		let tier = req.body.tier;
 		let promo_section_id = req.body.promo_section_id;
 		promoSections.map(async (section) => {
-			const promoSectionBuy = await PromoDao.createPromoSectionBuy(section.business_id, section.promo_section_id, section.active_at, section.expires_at, section.tier);
-		})
+			const promoSectionBuy = await PromoDao.createPromoSectionBuy(
+				section.business_id,
+				section.promo_section_id,
+				section.active_at,
+				section.expires_at,
+				section.tier
+			);
+		});
 		res.json(promoSectionBuy);
 	} catch (error) {
 		res.status(500).json({ error: error.message });

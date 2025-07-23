@@ -102,7 +102,10 @@ export async function deleteCustomer(
 		await CustomerDao.deleteCustomer(customerId);
 		res.status(204).send();
 	} catch (error) {
-		res.status(500).json({ message: 'Error deleting customer', error });
+		res.status(500).json({
+			message: 'Error retrieving service categories',
+			m: error instanceof Error ? error.message : 'Unknown error',
+		});
 	}
 }
 
