@@ -35,6 +35,7 @@ model action {
   addon_actions         addon_action[]
   business_usages       business_usage[]
   permissions           permission[]
+  user_permissions      user_permission[]
 }
 
 model subscription_action {

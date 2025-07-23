@@ -1608,6 +1608,8 @@ export type reservation_module = {
 	bookings?: booking[];
 	customers?: customers[];
 	service_categories?: service_category[];
+	user_roles?: user_role[];
+	user_permissions?: user_permission[];
 };
 
 export type location = {
@@ -1813,6 +1815,7 @@ export type action = {
 	addon_actions?: addon_action[];
 	business_usages?: business_usage[];
 	permissions?: permission[];
+	user_permissions?: user_permission[];
 };
 
 export type subscription_action = {
@@ -1937,6 +1940,7 @@ export type users = {
 	customer?: customers[];
 	booking_history_log?: booking_history_log[];
 	roles?: user_role[];
+	user_permissions?: user_permission[];
 };
 
 export type user_roles = {
@@ -1959,8 +1963,10 @@ export type role = {
 export type user_role = {
 	user_id: string;
 	role_id: string;
+	reservation_module_id: string | null;
 	user?: users;
 	role?: role;
+	reservation_module?: reservation_module | null;
 };
 
 export type permission = {
@@ -1973,6 +1979,20 @@ export type permission = {
 	scope: PERMISSION_SCOPE;
 	role?: role;
 	action?: action | null;
+};
+
+export type user_permission = {
+	user_permission_id: string;
+	user_id: string;
+	reservation_module_id: string | null;
+	action_id: string | null;
+	name: string | null;
+	module: MODULE_TYPE;
+	limit: number | null;
+	scope: PERMISSION_SCOPE;
+	user?: users;
+	action?: action | null;
+	reservation_module?: reservation_module | null;
 };
 
 type JsonValue = string | number | boolean | { [key in string]?: JsonValue } | Array<JsonValue> | null;

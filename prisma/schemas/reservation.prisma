@@ -24,6 +24,8 @@ model reservation_module {
   bookings     booking[]
   customers    customers[]
   service_categories service_category[]
+  user_roles user_role[]
+  user_permissions user_permission[]
 }
 model location {
   location_id       String    @id @default(uuid()) @db.Uuid

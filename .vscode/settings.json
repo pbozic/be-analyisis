@@ -11,4 +11,12 @@
 		"**/docs": true,
 		"**/node_modules": true
 	},
+	"[typescript]": {
+    "editor.insertSpaces": false,
+    "editor.tabSize": 4
+  },
+  "[javascript]": {
+    "editor.insertSpaces": false,
+    "editor.tabSize": 4
+  },
 }
