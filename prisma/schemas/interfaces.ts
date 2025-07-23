@@ -306,6 +306,7 @@ export type business_local_locations = {
 	time: Date;
 	local_location?: local_locations;
 	business?: business;
+	orders?: delivery_orders[];
 };
 
 export type business_users = {
@@ -758,6 +759,8 @@ export type delivery_orders = {
 	scoring_points?: scoring_points[];
 	late_events?: late_events[];
 	stock_movements?: menu_item_stock_change[];
+	business_local_location_id: string | null;
+	business_local_locations?: business_local_locations | null;
 };
 
 export type delivery_order_sent = {
