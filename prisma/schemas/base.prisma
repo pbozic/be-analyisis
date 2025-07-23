@@ -146,9 +146,10 @@ model business_local_locations {
   created_at                 DateTime @default(now()) @db.Timestamptz(6)
   updated_at                 DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
-  time           DateTime        @db.Timestamptz(6)
-  local_location local_locations @relation(fields: [local_location_id], references: [local_location_id])
-  business       business        @relation(fields: [business_id], references: [business_id])
+  time           DateTime          @db.Timestamptz(6)
+  local_location local_locations   @relation(fields: [local_location_id], references: [local_location_id])
+  business       business          @relation(fields: [business_id], references: [business_id])
+  orders         delivery_orders[]
 
   @@unique([business_id, local_location_id, time], name: "uniqueBusinessLocalLocation")
 }
@@ -644,6 +645,8 @@ model delivery_orders {
   scoring_points                    scoring_points[]                    @relation("scoring_points_to_delivery_order")
   late_events                       late_events[]                       @relation("late_events_to_delivery_order")
   stock_movements                   menu_item_stock_change[]
+  business_local_location_id        String?                             @db.Uuid
+  business_local_locations          business_local_locations?           @relation(fields: [business_local_location_id], references: [business_local_location_id])
 }
 
 model delivery_order_sent {

@@ -39,6 +39,11 @@ const createBusinessLocalLocation = async (businessId: string, localLocationId: 
 				local_location: { connect: { local_location_id: localLocationId } },
 				time: new Date(time),
 			},
+			include: {
+				local_location: {
+					include: { address: true },
+				},
+			},
 		});
 		return businessLocalLocation;
 	} catch (error) {
