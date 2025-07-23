@@ -44,12 +44,20 @@ const getBusinessById = async (business_id) => {
 				address: true,
 				delivery_address: true,
 				business_local_locations: {
+					where: {
+						time: {
+							gte: new Date(),
+						},
+					},
 					include: {
 						local_location: {
 							include: {
 								address: true,
 							},
 						},
+					},
+					orderBy: {
+						time: 'asc',
 					},
 				},
 				finances: true,
@@ -153,12 +161,20 @@ const getBusinessesForSearchById = async (business_id) => {
 				address: true, // Full object
 				delivery_address: true, // Full object
 				business_local_locations: {
+					where: {
+						time: {
+							gte: new Date(),
+						},
+					},
 					include: {
 						local_location: {
 							include: {
 								address: true,
 							},
 						},
+					},
+					orderBy: {
+						time: 'asc',
 					},
 				},
 				documents: {
@@ -226,12 +242,20 @@ const getBusinessForSearchById = async (business_id) => {
 				address: true, // Full object
 				delivery_address: true, // Full object
 				business_local_locations: {
+					where: {
+						time: {
+							gte: new Date(),
+						},
+					},
 					include: {
 						local_location: {
 							include: {
 								address: true,
 							},
 						},
+					},
+					orderBy: {
+						time: 'asc',
 					},
 				},
 				documents: {

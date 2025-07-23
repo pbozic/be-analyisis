@@ -213,12 +213,20 @@ async function me(req, res) {
 								address: true,
 								delivery_address: true,
 								business_local_locations: {
+									where: {
+										time: {
+											gte: new Date(),
+										},
+									},
 									include: {
 										local_location: {
 											include: {
 												address: true,
 											},
 										},
+									},
+									orderBy: {
+										time: 'asc',
 									},
 								},
 							},
