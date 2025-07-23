@@ -16,7 +16,6 @@ export const CreateServiceSchema = z.object({
 });
 
 export const UpdateServiceSchema = z.object({
-	service_id: z.string().uuid(),
 	name: z.record(z.string()).optional(),
 	description: z.record(z.string()).optional(),
 	image_url: z.string().url().optional(),
