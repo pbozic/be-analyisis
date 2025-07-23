@@ -1887,6 +1887,23 @@ async function createBusinessLocalLocation(req, res) {
 	}
 }
 
+/**
+ * PATCH /business/local/locations/:location_id
+ * @tag Business
+ * @summary Update a local location for a business
+ * @description Updates the time of a local location for a business with the specified location_id.
+ * @operationId updateBusinessLocalLocation
+ * @pathParam {string} location_id - The ID of the local location to update
+ * @bodyDescription The new time for the local location.
+ * @bodyContent {UpdateLocalLocationRequest} application/json
+ * @bodyRequired
+ * @response 200 - Local location updated successfully.
+ * @responseContent {LocalLocation} 200.application/json
+ * @response 400 - Missing required fields in the request body
+ * @responseContent {object} 400.application/json The error object
+ * @response 500 - Error updating local location
+ * @responseContent {object} 500.application/json The error object
+ */
 async function updateBusinessLocalLocation(req, res) {
 	try {
 		const { location_id } = req.params;

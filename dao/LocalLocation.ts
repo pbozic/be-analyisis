@@ -56,7 +56,7 @@ const updateBusinessLocalLocation = async (locationId: string, time: Partial<bus
 		const updatedLocation = await prisma.business_local_locations.update({
 			where: { business_local_location_id: locationId },
 			data: { time },
-			include: { local_locations: { include: { address: true } } },
+			include: { local_location: { include: { address: true } } },
 		});
 		return updatedLocation;
 	} catch (error) {
