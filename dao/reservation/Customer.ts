@@ -89,7 +89,7 @@ export async function updateCustomer(customerId: string, customerData: UpdateCus
  */
 export async function deleteCustomer(customerId: string): Promise<void> {
 	try {
-		await prisma.customer.delete({
+		await prisma.customers.delete({
 			where: {
 				customer_id: customerId,
 			},
