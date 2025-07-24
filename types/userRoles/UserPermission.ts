@@ -10,6 +10,7 @@ export const CreateUserPermissionSchema = z.object({
 	module: z.nativeEnum(MODULE_TYPE),
 	limit: z.number().int().optional(),
 	scope: z.nativeEnum(PERMISSION_SCOPE).default(PERMISSION_SCOPE.GLOBAL),
+	is_blocked: z.boolean().default(false),
 });
 
 export const UpdateUserPermissionSchema = CreateUserPermissionSchema.partial();
