@@ -5,7 +5,7 @@ import { ValidatedRequest } from '../../types/validatedRequest';
 import { AssignUserRoleInput } from '../../types/userRoles/UserRole';
 
 /**
- * GET /roles/users/{user_id}/roles
+ * GET /roles/user-roles
  * @tag UserRoles
  * @summary Get all roles assigned to a user for a reservation module
  * @description Retrieves roles assigned to the user, optionally filtered by reservation module.
@@ -26,7 +26,7 @@ export async function getUserRoles(req: ValidatedRequest<null, { user_id: string
 }
 
 /**
- * POST /roles/users/{user_id}/roles
+ * POST /roles/user-roles
  * @tag UserRoles
  * @summary Assign a role to a user
  * @description Assigns a role to the user, optionally scoped to a reservation module.
@@ -37,15 +37,11 @@ export async function getUserRoles(req: ValidatedRequest<null, { user_id: string
  * @response 400 - Invalid input data
  * @response 500 - Error assigning role
  */
-export async function assignUserRole(
-	req: ValidatedRequest<AssignUserRoleInput, { user_id: string }>,
-	res: Response
-): Promise<void> {
+export async function assignUserRole(req: ValidatedRequest<AssignUserRoleInput>, res: Response): Promise<void> {
 	try {
-		let userId = req.params.user_id;
-		let { role_id } = req.body;
+		let { role_id, user_id } = req.body;
 		let reservationModuleId = req.user?.reservation_module_id as string;
-		let role = await UserRoleDao.createUserRole({ user_id: userId, role_id }, reservationModuleId);
+		let role = await UserRoleDao.createUserRole({ user_id, role_id }, reservationModuleId);
 		res.status(201).json(role);
 	} catch (error) {
 		res.status(500).json({ message: 'Error assigning role', error });
@@ -53,7 +49,7 @@ export async function assignUserRole(
 }
 
 /**
- * DELETE /roles/users/{user_id}/roles/{role_id}
+ * DELETE /roles/user-roles/{user_id}/roles/{role_id}
  * @tag UserRoles
  * @summary Remove a role from a user
  * @description Removes the specified role from the user.
