@@ -83,6 +83,6 @@ export const LOCATIONS: Location[] = [
 		longitude: '14.50864762608861',
 	},
 ];
-seedLocations(LOCATIONS, false)
-	.then(() => console.log('Done!'))
-	.catch((err) => console.error(err));
+// seedLocations(LOCATIONS, false)
+// 	.then(() => console.log('Done!'))
+// 	.catch((err) => console.error(err));

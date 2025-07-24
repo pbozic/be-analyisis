@@ -1631,15 +1631,16 @@ model menu_item_stock_change {
 }
 
 model tax_rates {
-  tax_rates_id String   @id @default(uuid()) @db.Uuid
+  tax_rates_id String    @id @default(uuid()) @db.Uuid
   name         String
   description  String?
   country      String?
   rate         Float
-  active       Boolean  @default(true)
-  valid_from   DateTime @db.Timestamptz(6)
-  created_at   DateTime @default(now()) @db.Timestamptz(6)
-  updated_at   DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  active       Boolean   @default(true)
+  valid_from   DateTime  @db.Timestamptz(6)
+  created_at   DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+  activated_at DateTime? @db.Timestamptz(6)
 
   menu_items menu_items[]
 
