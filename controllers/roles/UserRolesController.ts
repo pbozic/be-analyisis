@@ -41,6 +41,7 @@ export async function assignUserRole(req: ValidatedRequest<AssignUserRoleInput>,
 	try {
 		let { role_id, user_id } = req.body;
 		let reservationModuleId = req.user?.reservation_module_id as string;
+		console.log('Assigning role:', { user_id, role_id, reservationModuleId });
 		let role = await UserRoleDao.createUserRole({ user_id, role_id }, reservationModuleId);
 		res.status(201).json(role);
 	} catch (error) {
