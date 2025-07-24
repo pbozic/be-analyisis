@@ -18,3 +18,4 @@ types/zod/
 dist
 prisma/schemas/interfaces.ts
 prisma/docs
+docs/static/prisma/
