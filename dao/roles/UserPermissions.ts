@@ -35,15 +35,20 @@ export async function getUserPermissions(reservationModuleId: string | null): Pr
  */
 export async function createUserPermission(data: CreateUserPermissionInput): Promise<UserPermission> {
 	try {
-		let action = await prisma.action.findFirst({
+		const action = await prisma.action.findFirst({
 			where: {
 				name: data.name,
 			},
 		});
+
+		// Ensure we do not pass both name and action_id
+		const { name, ...rest } = data;
+
 		return await prisma.user_permission.create({
 			data: {
-				...data,
-				action: action ? { connect: { action_id: action.action_id } } : undefined,
+				...rest,
+				// if action found, connect it; otherwise, use name
+				...(action ? { action: { connect: { action_id: action.action_id } } } : { name }),
 			},
 			include: {
 				user: true,
@@ -51,6 +56,7 @@ export async function createUserPermission(data: CreateUserPermissionInput): Pro
 			},
 		});
 	} catch (error) {
+		console.error(error);
 		throw new Error('Error creating user permission');
 	}
 }
