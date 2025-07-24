@@ -140,8 +140,8 @@ model permission {
   role   role    @relation(fields: [role_id], references: [role_id])
   action action? @relation(fields: [action_id], references: [action_id])
 
-  @@index([name, module])
-  @@index([action_id, module])
+  @@unique([role_id, action_id])
+  @@unique([role_id, name, module])
 }
 
 model user_permission {
@@ -150,6 +150,7 @@ model user_permission {
   reservation_module_id String?   @db.Uuid
   action_id             String?  @db.Uuid // optional for non-action permission
   name                  String?  // for non-action override
+  display_name          String? 
   module                MODULE_TYPE
   limit                 Int?     // optional limit override
   scope                 PERMISSION_SCOPE @default(GLOBAL)

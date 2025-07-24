@@ -18,6 +18,7 @@ export default async function seedLocations(locations: Location[], shouldPopulat
 				console.error(`❌ Error creating address for location ${location.address}`);
 				continue;
 			}
+
 			const local_location = await LocalLocationDao.createLocation(addr);
 			if (local_location) {
 				console.log(`✅ Created location: ${local_location.address.address}`);
@@ -83,6 +84,3 @@ export const LOCATIONS: Location[] = [
 		longitude: '14.50864762608861',
 	},
 ];
-seedLocations(LOCATIONS, false)
-	.then(() => console.log('Done!'))
-	.catch((err) => console.error(err));

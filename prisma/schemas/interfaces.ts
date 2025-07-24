@@ -1987,6 +1987,7 @@ export type user_permission = {
 	reservation_module_id: string | null;
 	action_id: string | null;
 	name: string | null;
+	display_name: string | null;
 	module: MODULE_TYPE;
 	limit: number | null;
 	scope: PERMISSION_SCOPE;
