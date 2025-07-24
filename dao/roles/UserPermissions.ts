@@ -35,8 +35,16 @@ export async function getUserPermissions(reservationModuleId: string | null): Pr
  */
 export async function createUserPermission(data: CreateUserPermissionInput): Promise<UserPermission> {
 	try {
+		let action = await prisma.action.findFirst({
+			where: {
+				name: data.name,
+			},
+		});
 		return await prisma.user_permission.create({
-			data,
+			data: {
+				...data,
+				action: action ? { connect: { action_id: action.action_id } } : undefined,
+			},
 			include: {
 				user: true,
 				action: true,
