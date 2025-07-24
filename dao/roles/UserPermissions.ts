@@ -48,7 +48,7 @@ export async function createUserPermission(data: CreateUserPermissionInput): Pro
 			data: {
 				...rest,
 				// if action found, connect it; otherwise, use name
-				...(action ? { action: { connect: { action_id: action.action_id } } } : { name }),
+				...(action ? { action_id: action.action_id } : { name }),
 			},
 			include: {
 				user: true,
