@@ -7,11 +7,31 @@ export async function userHasPermission(
 	permissionName: string,
 	module: MODULE_TYPE = 'reservations'
 ): Promise<boolean> {
-	// Check direct user permissions
+	// Check if user has an explicitly blocked permission
+	const blocked = await prisma.user_permission.findFirst({
+		where: {
+			user_id: userId,
+			module,
+			is_blocked: true,
+			OR: [
+				{ name: permissionName },
+				{
+					action: {
+						name: permissionName,
+					},
+				},
+			],
+		},
+	});
+
+	if (blocked) return false;
+
+	// Check direct user permissions (non-blocked)
 	const userPermission = await prisma.user_permission.findFirst({
 		where: {
 			user_id: userId,
 			module,
+			is_blocked: false,
 			OR: [
 				{ name: permissionName },
 				{

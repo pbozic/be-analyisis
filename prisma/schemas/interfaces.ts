@@ -1992,6 +1992,7 @@ export type user_permission = {
 	module: MODULE_TYPE;
 	limit: number | null;
 	scope: PERMISSION_SCOPE;
+	is_blocked: boolean;
 	user?: users;
 	action?: action | null;
 	reservation_module?: reservation_module | null;

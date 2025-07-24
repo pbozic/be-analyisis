@@ -23,7 +23,6 @@ export const UpdateUserRoleSchema = z.object({
 
 // Optional: backward-compatible alias if you still use "assign/remove" terminology
 export const AssignUserRoleSchema = CreateUserRoleSchema;
-export const RemoveUserRoleSchema = CreateUserRoleSchema;
 
 // --- TYPES ---
 
@@ -33,4 +32,3 @@ export type Permission = permission;
 export type CreateUserRoleInput = z.infer<typeof CreateUserRoleSchema>;
 export type UpdateUserRoleInput = z.infer<typeof UpdateUserRoleSchema>;
 export type AssignUserRoleInput = z.infer<typeof AssignUserRoleSchema>;
-export type RemoveUserRoleInput = z.infer<typeof RemoveUserRoleSchema>;

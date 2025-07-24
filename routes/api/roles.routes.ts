@@ -32,6 +32,6 @@ router.delete('/roles/:role_id', RoleController.deleteRole);
 // ----- USER ROLES -----
 router.get('/user-roles', UserRoleController.getUserRoles);
 router.post('/user-roles', validate(CreateUserRoleSchema), UserRoleController.assignUserRole);
-router.delete('/user-roles/:user_id/roles/:role_id', validate(CreateUserRoleSchema), UserRoleController.removeUserRole);
+router.delete('/user-roles/:user_id/roles/:role_id', UserRoleController.removeUserRole);
 
 export default router;

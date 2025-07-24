@@ -129,14 +129,14 @@ model user_role {
 }
 
 model permission {
-  permission_id String   @id @default(uuid()) @db.Uuid
-  role_id       String   @db.Uuid
-  action_id     String?  @db.Uuid // null = non-action permission
-  name          String?  // for non-action permissions
-  module        MODULE_TYPE
-  limit         Int?     // for action usage limits
-  scope         PERMISSION_SCOPE @default(GLOBAL)
-
+  permission_id  String   @id @default(uuid()) @db.Uuid
+  role_id        String   @db.Uuid
+  action_id      String?  @db.Uuid // null = non-action permission
+  name           String?  // for non-action permissions
+  module         MODULE_TYPE
+  limit          Int?     // for action usage limits
+  scope          PERMISSION_SCOPE @default(GLOBAL)
+  group          String?  // for grouping permissions
   role   role    @relation(fields: [role_id], references: [role_id])
   action action? @relation(fields: [action_id], references: [action_id])
 
@@ -154,10 +154,10 @@ model user_permission {
   module                MODULE_TYPE
   limit                 Int?     // optional limit override
   scope                 PERMISSION_SCOPE @default(GLOBAL)
-
-  user                users              @relation(fields: [user_id], references: [user_id])
-  action              action?            @relation(fields: [action_id], references: [action_id])
-  reservation_module reservation_module? @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  is_blocked            Boolean @default(false)
+  user                  users              @relation(fields: [user_id], references: [user_id])
+  action                action?            @relation(fields: [action_id], references: [action_id])
+  reservation_module    reservation_module? @relation(fields: [reservation_module_id], references: [reservation_module_id])
 
   @@index([name, module])
   @@index([action_id, module])
