@@ -45,6 +45,7 @@ export async function getInactiveTaxRates() {
 		return await prisma.tax_rates.findMany({
 			where: {
 				active: false,
+				activated_at: null,
 			},
 		});
 	} catch (error) {

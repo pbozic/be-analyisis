@@ -90,8 +90,8 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 				// handle stock sync if the business is a merchant
 				let business = await BusinessDao.getBusinessById(order.business_id);
 				console.log('Accept business type', business?.type);
-				if ([BUSINESS_TYPE.MERCHANT].includes(business?.type)) {
-					let stock_update = await handleStockSync(order, business);
+				if ([BUSINESS_TYPE.MERCHANT, BUSINESS_TYPE.LOCAL].includes(business?.type)) {
+					await handleStockSync(order);
 				}
 				// if(paymentIntent?.metadata?.preparation_time){
 				// 	order = await DeliveryOrderDao.updateOrderPickupTime(order.order_id, paymentIntent.metadata.preparation_time);

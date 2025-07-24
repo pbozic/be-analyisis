@@ -17,6 +17,7 @@ export default async function seedTaxRates(taxRates: TaxRateData[], shouldPopula
 			const taxRateData = {
 				...taxRate,
 				active: !existingTaxRate,
+				activated_at: existingTaxRate ? null : new Date(),
 			};
 			// Create new tax rate
 			const newTaxRate = await TaxDao.createTaxRate(taxRateData);
@@ -38,7 +39,7 @@ export const TAX_RATES: TaxRateData[] = [
 	{
 		name: 'Oproščeno',
 		rate: 0,
-		// valid_from: new Date('2026-01-01T00:00:00'),
+		// valid_from: new Date('2026-01-01T00:00:00'), <--IMPORTANT: leave out 'Z' so that comparison works correctly
 		valid_from: new Date(),
 	},
 	{
@@ -60,6 +61,6 @@ export const TAX_RATES: TaxRateData[] = [
 		valid_from: new Date(),
 	},
 ];
-seedTaxRates(TAX_RATES, true)
-	.then(() => console.log('Done!'))
-	.catch((err) => console.error(err));
+// seedTaxRates(TAX_RATES, true)
+// 	.then(() => console.log('Done!'))
+// 	.catch((err) => console.error(err));

@@ -97,7 +97,10 @@ async function executeTaxRateChange(newTaxRate: tax_rates): Promise<void> {
 			// Activate the new tax rate
 			await tx.tax_rates.update({
 				where: { tax_rates_id: taxRateId },
-				data: { active: true },
+				data: {
+					active: true,
+					activated_at: new Date(),
+				},
 			});
 
 			console.log(`Tax rate change completed successfully for: ${newTaxRate.name} (${newTaxRate.rate}%)`);
@@ -118,8 +121,9 @@ export async function checkTaxRateChanges() {
 		for (const taxRate of upcomingTaxRates) {
 			const validFromDate = new Date(taxRate.valid_from);
 			const now = new Date();
+			now.setHours(0, 0, 0, 0);
 
-			if (now >= validFromDate) {
+			if (now.toISOString() >= validFromDate.toISOString()) {
 				await executeTaxRateChange(taxRate);
 			}
 		}

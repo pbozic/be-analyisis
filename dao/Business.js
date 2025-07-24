@@ -44,12 +44,20 @@ const getBusinessById = async (business_id) => {
 				address: true,
 				delivery_address: true,
 				business_local_locations: {
+					where: {
+						time: {
+							gte: new Date(),
+						},
+					},
 					include: {
 						local_location: {
 							include: {
 								address: true,
 							},
 						},
+					},
+					orderBy: {
+						time: 'asc',
 					},
 				},
 				finances: true,
@@ -153,12 +161,20 @@ const getBusinessesForSearchById = async (business_id) => {
 				address: true, // Full object
 				delivery_address: true, // Full object
 				business_local_locations: {
+					where: {
+						time: {
+							gte: new Date(),
+						},
+					},
 					include: {
 						local_location: {
 							include: {
 								address: true,
 							},
 						},
+					},
+					orderBy: {
+						time: 'asc',
 					},
 				},
 				documents: {
@@ -226,12 +242,20 @@ const getBusinessForSearchById = async (business_id) => {
 				address: true, // Full object
 				delivery_address: true, // Full object
 				business_local_locations: {
+					where: {
+						time: {
+							gte: new Date(),
+						},
+					},
 					include: {
 						local_location: {
 							include: {
 								address: true,
 							},
 						},
+					},
+					orderBy: {
+						time: 'asc',
 					},
 				},
 				documents: {
@@ -464,7 +488,11 @@ const getBusinessesByType = async (type, args = {}) => {
 			taxi_orders: false,
 			delivery_orders: false,
 		};
-		if (type.includes(Constants.BUSINESS_TYPE.MERCHANT) || type.includes(Constants.BUSINESS_TYPE.RESTAURANT)) {
+		if (
+			type.includes(Constants.BUSINESS_TYPE.MERCHANT) ||
+			type.includes(Constants.BUSINESS_TYPE.RESTAURANT) ||
+			type.includes(Constants.BUSINESS_TYPE.LOCAL)
+		) {
 			includeOptions.menus = {
 				include: {
 					categories: {

@@ -1589,6 +1589,7 @@ export type tax_rates = {
 	valid_from: Date;
 	created_at: Date;
 	updated_at: Date;
+	activated_at: Date | null;
 	menu_items?: menu_items[];
 };
 

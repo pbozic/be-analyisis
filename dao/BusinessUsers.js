@@ -37,12 +37,20 @@ const getBusinessUserByUserId = async (userId) => {
 						},
 						business_clients: true,
 						business_local_locations: {
+							where: {
+								time: {
+									gte: new Date(),
+								},
+							},
 							include: {
 								local_location: {
 									include: {
 										address: true,
 									},
 								},
+							},
+							orderBy: {
+								time: 'asc',
 							},
 						},
 					},

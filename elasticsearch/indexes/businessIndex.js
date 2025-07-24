@@ -126,7 +126,11 @@ async function indexBusinesses(business_id = null, force = false) {
 		console.log('🚀 Fetching businesses from database...');
 		const whereClause = {
 			type: {
-				in: [Constants.BUSINESS_TYPE.MERCHANT, Constants.BUSINESS_TYPE.RESTAURANT],
+				in: [
+					Constants.BUSINESS_TYPE.MERCHANT,
+					Constants.BUSINESS_TYPE.RESTAURANT,
+					Constants.BUSINESS_TYPE.LOCAL,
+				],
 			},
 		};
 		if (business_id) {
@@ -239,7 +243,7 @@ async function indexBusinesses(business_id = null, force = false) {
 							lat: parseFloat(business.delivery_address.latitude),
 							lon: parseFloat(business.delivery_address.longitude),
 						}
-					: { lat: parseFloat(business.address.latitude), lon: parseFloat(usiness.address.longitude) },
+					: { lat: parseFloat(business.address.latitude), lon: parseFloat(business.address.longitude) },
 				menus: business.menus
 					.filter((menu) => {
 						if (!menu.isDailyMeal) return true;
