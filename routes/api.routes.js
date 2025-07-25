@@ -73,7 +73,7 @@ router.use('/lost_items', lostItemsRoutes);
 router.use('/flags', [authMiddleware], flagRoutes);
 router.use('/google_maps', googleMaps);
 router.use('/categories', categoriesRoutes);
-router.use('/promo', [authMiddleware], promoRoutes);
+router.use('/promo', promoRoutes);
 router.use('/blog', blogRoutes);
 router.use('/reservation', reservationRoutes);
 router.use('/roles', [authMiddleware], RolesRoutes);
