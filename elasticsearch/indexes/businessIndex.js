@@ -32,6 +32,7 @@ async function createBusinessIndex(force = false) {
 						business_id: { type: 'keyword' },
 						name: { type: 'text', analyzer: 'custom_text_analyzer' },
 						description: { type: 'text', analyzer: 'custom_text_analyzer' },
+						type: { type: 'keyword' }, // Business type (LOCAL, MERCHANT, etc.)
 						location: { type: 'geo_point' }, // Allows geo-based queries
 						popular: { type: 'boolean' },
 						active: { type: 'boolean' },

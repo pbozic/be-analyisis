@@ -168,11 +168,13 @@ async function getBusinessesByIds(req, res) {
 /**
  * POST /businesses/search
  * @tag Business
- * @summary Get a list of businesses by query, location and categories
- * @description Returns a list of businesses.
+ * @summary Get a list of businesses by query, location, categories, radius, etc.
+ * @description Returns a list of businesses filtered by search criteria.
  * @operationId getBusinessesSearch
+ * @bodyContent {SearchBusinessesRequest} application/json
+ * @bodyRequired
  * @response 200 - successful operation
- * @responseContent {User[]} 200.application/json
+ * @responseContent {SearchBusinessesResponse} 200.application/json
  * @response 400 - Error occurred while obtaining the business list
  * @responseContent {object} 400.application/json The error object
  */
@@ -188,7 +190,9 @@ async function searchBusinesses(req, res) {
 			req.body.isDailyMealSearch,
 			null,
 			req.body.page,
-			req.body.pageSize || 10
+			req.body.pageSize || 10,
+			[],
+			req.body.type || null
 		);
 		console.log('esResults', esResults);
 		esResults.results.sort((a, b) => b.score - a.score);
@@ -288,6 +292,8 @@ async function listPromoSectionsWithMerchants(req, res) {
 
 		for (let promoSection of finalPromoSections) {
 			let favorite = promoSection.tag === 'favorite';
+			let local = promoSection.tag === 'local';
+			let merchants = promoSection.tag === 'merchants';
 			let translations = {};
 			if (!favorite) {
 				for (let translation of promoSection.translatable.translations) {
@@ -307,7 +313,8 @@ async function listPromoSectionsWithMerchants(req, res) {
 				null, //favorite ? null : promoSection.promo_sections_id,
 				1,
 				10,
-				favorite ? favoriteBusinessIds : null
+				favorite ? favoriteBusinessIds : null,
+				local ? Constants.BUSINESS_TYPE.LOCAL : merchants ? Constants.BUSINESS_TYPE.MERCHANT : null
 			);
 			console.log('esResults for promoSection', promoSection.tag, esResults);
 			promoSection.translations = translations;

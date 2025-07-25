@@ -1,5 +1,3 @@
-import { type } from 'os';
-
 import esClient from '../client.js';
 import { ES_RADIUS_LIMIT_KM } from '../../lib/constants.js';
 const SCORING_WEIGHTS = {
@@ -17,6 +15,32 @@ const SCORING_WEIGHTS = {
 	menu_item_name_weight: 2, // Weight for matching menu items
 	menu_item_description_weight: 1, // Weight for matching menu item descriptions
 };
+/**
+ * Search for businesses in Elasticsearch with comprehensive filtering and scoring
+ * @param {string} query - Search query text
+ * @param {number} userLat - User latitude for location-based scoring
+ * @param {number} userLon - User longitude for location-based scoring
+ * @param {Array} categoryIds - Array of category IDs to filter by
+ * @param {number} radius - Search radius in kilometers
+ * @param {string} filterOperator - 'AND' or 'OR' for category filtering
+ * @param {boolean} isDailyMealSearch - Whether to filter for daily meals
+ * @param {string} promoSectionId - Promo section ID to filter by
+ * @param {number} page - Page number for pagination
+ * @param {number} pageSize - Number of results per page
+ * @param {Array} businessIds - Array of specific business IDs to filter by
+ * @param {string} businessType - Business type to filter by (e.g., 'LOCAL', 'MERCHANT')
+ * @returns {Object} Search results with businesses and scoring details
+ *
+ * @example
+ * // Search for LOCAL businesses only
+ * const localBusinesses = await searchBusinesses('pizza', 46.063, 14.525, [], 10, 'OR', false, null, 1, 10, [], 'LOCAL');
+ *
+ * // Search for MERCHANT businesses only
+ * const merchantBusinesses = await searchBusinesses('coffee', 46.063, 14.525, [], 10, 'OR', false, null, 1, 10, [], 'MERCHANT');
+ *
+ * // Search for multiple business types
+ * const multipleTypes = await searchBusinesses('food', 46.063, 14.525, [], 10, 'OR', false, null, 1, 10, [], null);
+ */
 async function searchBusinesses(
 	query,
 	userLat = 46.0660617,
@@ -28,7 +52,8 @@ async function searchBusinesses(
 	promoSectionId = null,
 	page = 1,
 	pageSize = 10,
-	businessIds = []
+	businessIds = [],
+	businessType
 ) {
 	try {
 		userLat = userLat ?? 46.0660617;
@@ -40,6 +65,7 @@ async function searchBusinesses(
 		page = page || 1;
 		pageSize = pageSize || 10;
 		businessIds = businessIds || [];
+		businessType = businessType || null;
 		const from = (page - 1) * pageSize;
 		const queryWords = query ? query.split(' ').filter((word) => word.trim() !== '') : [];
 		const hasQuery = queryWords.length > 0;
@@ -61,6 +87,13 @@ async function searchBusinesses(
 		if (hasBusinessIds) {
 			boolQuery.bool.filter.push({
 				terms: { business_id: businessIds },
+			});
+		}
+
+		// **Filter by business type if provided**
+		if (businessType) {
+			boolQuery.bool.filter.push({
+				term: { type: businessType },
 			});
 		}
 
@@ -326,6 +359,7 @@ async function searchBusinesses(
 					'telephone',
 					'promo_sections',
 					'online',
+					'type',
 				],
 				sort: [{ _score: 'desc' }],
 			},
