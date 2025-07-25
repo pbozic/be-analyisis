@@ -65,19 +65,22 @@ const updateBusinessLocalLocation = async (locationId: string, time: Date) => {
 				orders: true,
 			},
 		});
-		if (updatedLocation?.orders?.length > 0) {
-			await prisma.delivery_orders.updateMany({
+		for (const order of updatedLocation.orders) {
+			const updatedDetails = {
+				...order.details,
+				ready_for_pickup_at: time,
+				customer_expected_delivery_at: order.details.duration
+					? new Date(time.getTime() + order.details.duration * 1000)
+					: time,
+			};
+			await prisma.delivery_orders.update({
 				where: {
-					business_local_location_id: locationId,
+					order_id: order.order_id,
 				},
 				data: {
+					details: updatedDetails,
 					scheduled: {
-						date: time.toLocaleDateString('en-GB', {
-							timeZone: 'Europe/Ljubljana',
-							year: 'numeric',
-							month: 'long',
-							day: '2-digit',
-						}),
+						...order.scheduled,
 						time: updatedLocation.time,
 					},
 				},
