@@ -1900,6 +1900,9 @@ async function createBusinessLocalLocation(req, res) {
 			location.local_location_id,
 			location.time
 		);
+		if (newLocation?.business_id) {
+			businessIndex(newLocation.business_id);
+		}
 		return res.status(201).json(newLocation);
 	} catch (e) {
 		console.error('Error creating local location:', e);
@@ -1932,6 +1935,9 @@ async function updateBusinessLocalLocation(req, res) {
 			return res.status(400).json({ error: 'Missing location' });
 		}
 		const updatedLocation = await LocalLocationDao.updateBusinessLocalLocation(location_id, new Date(time));
+		if (updatedLocation?.business_id) {
+			businessIndex(updatedLocation.business_id);
+		}
 		return res.status(200).json(updatedLocation);
 	} catch (e) {
 		console.error('Error updating local location:', e);
