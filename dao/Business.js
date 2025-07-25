@@ -60,7 +60,7 @@ const getBusinessById = async (business_id) => {
 						time: 'asc',
 					},
 				},
-				finances: true,
+				menus: true,
 				business_users: {
 					include: {
 						users: true,
@@ -69,9 +69,6 @@ const getBusinessById = async (business_id) => {
 				business_clients: true,
 				parent_business: true,
 				child_businesses: true,
-				documents: false,
-				taxi_orders: false,
-				delivery_orders: false,
 			},
 		});
 	} catch (error) {
@@ -88,7 +85,6 @@ const getBusinessAdminDataById = async (business_id) => {
 			include: {
 				address: true,
 				delivery_address: true,
-				finances: true,
 				business_users: {
 					include: {
 						users: {
@@ -101,9 +97,6 @@ const getBusinessAdminDataById = async (business_id) => {
 				},
 				parent_business: true,
 				child_businesses: true,
-				documents: false,
-				taxi_orders: false,
-				delivery_orders: false,
 				word_buy_stripe_product: {
 					include: {
 						prices: true,
@@ -328,7 +321,6 @@ const getBusinessByEmail = async (email) => {
 			},
 			include: {
 				address: true,
-				finances: true,
 				business_users: {
 					include: {
 						users: {
@@ -341,9 +333,6 @@ const getBusinessByEmail = async (email) => {
 				},
 				parent_business: true,
 				child_businesses: true,
-				documents: false,
-				taxi_orders: false,
-				delivery_orders: false,
 			},
 		});
 	} catch (error) {
@@ -359,7 +348,6 @@ const getBusinessByTelephone = async (telephone_number) => {
 			},
 			include: {
 				address: true,
-				finances: true,
 				business_users: {
 					include: {
 						users: {
@@ -372,9 +360,6 @@ const getBusinessByTelephone = async (telephone_number) => {
 				},
 				parent_business: true,
 				child_businesses: true,
-				documents: false,
-				taxi_orders: false,
-				delivery_orders: false,
 			},
 		});
 	} catch (error) {
@@ -393,7 +378,6 @@ const getBusinessesByNameSearch = async (search) => {
 			},
 			include: {
 				address: true,
-				finances: true,
 				business_users: {
 					include: {
 						users: {
@@ -406,9 +390,6 @@ const getBusinessesByNameSearch = async (search) => {
 				},
 				parent_business: true,
 				child_businesses: true,
-				documents: false,
-				taxi_orders: false,
-				delivery_orders: false,
 			},
 		});
 	} catch (error) {
@@ -427,7 +408,6 @@ const getBusinessesByGroupName = async (search) => {
 			},
 			include: {
 				address: true,
-				finances: true,
 				business_users: {
 					include: {
 						users: {
@@ -440,9 +420,6 @@ const getBusinessesByGroupName = async (search) => {
 				},
 				parent_business: true,
 				child_businesses: true,
-				documents: false,
-				taxi_orders: false,
-				delivery_orders: false,
 			},
 		});
 	} catch (error) {
@@ -475,7 +452,6 @@ const getBusinessesByType = async (type, args = {}) => {
 		const includeOptions = {
 			address: true,
 			delivery_address: true,
-			finances: true,
 			business_users: {
 				include: {
 					users: true,
@@ -484,9 +460,6 @@ const getBusinessesByType = async (type, args = {}) => {
 			business_clients: true,
 			parent_business: true,
 			child_businesses: true,
-			documents: false,
-			taxi_orders: false,
-			delivery_orders: false,
 		};
 		if (
 			type.includes(Constants.BUSINESS_TYPE.MERCHANT) ||
