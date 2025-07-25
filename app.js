@@ -38,7 +38,7 @@ if (process.env.NODE_ENV !== 'test') {
 // ─── Middleware Setup ───────────────────────────────────────────────
 app.disable('etag');
 app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
-
+app.use(cookieParser());
 app.use((req, res, next) => {
 	req.prisma = prisma;
 	next();
@@ -84,7 +84,7 @@ app.use(
 	})
 );
 //app.use(fileUploadLib());
-app.use(cookieParser());
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use((req, res, next) => {
 	const contentType = req.headers['content-type'] || '';
