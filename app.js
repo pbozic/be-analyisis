@@ -13,8 +13,8 @@ import merge from 'lodash.merge';
 import cors from 'cors';
 import openapi from 'openapi-comment-parser';
 import compression from 'compression';
-import * as flatted from 'flatted';
 import multer from 'multer';
+import { v4 as uuidv4 } from 'uuid';
 
 import prisma from './prisma/prisma.js';
 import startCronJobs from './cron.js';
@@ -22,6 +22,7 @@ import mainRouter from './routes/index.routes.js';
 import apiRouter from './routes/api.routes.js';
 import BlogController from './controllers/BlogController.js';
 import authMiddleware from './middleware/auth.js';
+
 const upload = multer({ storage: multer.memoryStorage() });
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -37,12 +38,38 @@ if (process.env.NODE_ENV !== 'test') {
 // ─── Middleware Setup ───────────────────────────────────────────────
 app.disable('etag');
 app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
-
+app.use(cookieParser());
 app.use((req, res, next) => {
 	req.prisma = prisma;
 	next();
 });
-
+app.use((req, res, next) => {
+	if (!req.cookies.session_id) {
+		const sessionId = uuidv4();
+		const isProd = process.env.NODE_ENV === 'production';
+		res.cookie('session_id', sessionId, {
+			path: '/',
+			...(isProd && { domain: '.klikni-web.eu' }), // ✅ shared across subdomains
+			httpOnly: true,
+			sameSite: 'lax',
+			secure: isProd,
+		});
+		res.cookie('session_id', sessionId, {
+			path: '/',
+			...(isProd && { domain: '.klikni.si' }), // ✅ shared across subdomains
+			httpOnly: true,
+			sameSite: 'lax',
+			secure: isProd,
+		});
+		res.cookie('session_id', sessionId, {
+			path: '/',
+			httpOnly: true,
+			sameSite: 'lax',
+			secure: process.env.NODE_ENV === 'production',
+		});
+	}
+	next();
+});
 app.post('/api/blog/upload/file', authMiddleware, upload.single('image'), (req, res) => {
 	console.log('File upload request received:', req.file);
 	BlogController.createBlogImageByFile(req, res);
@@ -64,7 +91,7 @@ app.use(
 	})
 );
 //app.use(fileUploadLib());
-app.use(cookieParser());
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use((req, res, next) => {
 	const contentType = req.headers['content-type'] || '';

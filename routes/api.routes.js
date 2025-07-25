@@ -41,6 +41,7 @@ import reservationRoutes from './api/reservations/index.routes.js';
 import RolesRoutes from './api/roles.routes.js';
 import { sendNotificationToUser } from '../lib/oneSignal.js';
 import withUserMiddleware from '../middleware/user.js';
+import sessionRoutes from './api/session.routes.js';
 const router = express.Router();
 const authUserRoutes = authRoutes;
 router.use('/stripe', stripeRoutes);
@@ -77,6 +78,7 @@ router.use('/promo', promoRoutes);
 router.use('/blog', blogRoutes);
 router.use('/reservation', reservationRoutes);
 router.use('/roles', [authMiddleware], RolesRoutes);
+router.use('/session', sessionRoutes);
 router.use('/reviews', [authMiddleware], async (req, res) => {
 	let reviews = await prisma.reviews.findMany({
 		include: {
