@@ -60,10 +60,51 @@ const getBusinessById = async (business_id) => {
 						time: 'asc',
 					},
 				},
-				menus: true,
+				menus: {
+					include: {
+						categories: {
+							orderBy: {
+								menu_order_index: 'asc',
+							},
+							include: {
+								menu_items: {
+									orderBy: {
+										menu_category_order_index: 'asc',
+									},
+									include: {
+										documents: {
+											include: {
+												files: true,
+											},
+										},
+										tax_rate: true,
+									},
+								},
+								menu_categories_categories: {
+									include: {
+										category: true,
+									},
+								},
+								daily_meal_category_price: true,
+							},
+						},
+					},
+				},
 				business_users: {
 					include: {
 						users: true,
+					},
+				},
+				delivery_orders: {
+					include: {
+						delivery_driver: true,
+						driver: true,
+						user: true,
+					},
+				},
+				reservations: {
+					include: {
+						user: true,
 					},
 				},
 				business_clients: true,
