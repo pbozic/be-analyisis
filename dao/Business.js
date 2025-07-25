@@ -95,13 +95,6 @@ const getBusinessById = async (business_id) => {
 						users: true,
 					},
 				},
-				delivery_orders: {
-					include: {
-						delivery_driver: true,
-						driver: true,
-						user: true,
-					},
-				},
 				reservations: {
 					include: {
 						user: true,
