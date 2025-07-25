@@ -73,19 +73,14 @@ const updateBusinessLocalLocation = async (locationId: string, time: Date) => {
 					? new Date(time.getTime() + order.details.duration * 1000)
 					: time,
 			};
-			return await prisma.delivery_orders.update({
+			await prisma.delivery_orders.update({
 				where: {
 					order_id: order.order_id,
 				},
 				data: {
 					details: updatedDetails,
 					scheduled: {
-						date: time.toLocaleDateString('en-GB', {
-							timeZone: 'Europe/Ljubljana',
-							year: 'numeric',
-							month: 'long',
-							day: '2-digit',
-						}),
+						...order.scheduled,
 						time: updatedLocation.time,
 					},
 				},
