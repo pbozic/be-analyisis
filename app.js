@@ -46,23 +46,23 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
 	if (!req.cookies.session_id) {
 		const sessionId = uuidv4();
+		const isProd = process.env.NODE_ENV === 'production';
 		res.cookie('session_id', sessionId, {
 			path: '/',
-			domain: '.klikni-web.eu', // ✅ shared across subdomains
+			...(isProd && { domain: '.klikni-web.eu' }), // ✅ shared across subdomains
 			httpOnly: true,
 			sameSite: 'lax',
-			secure: process.env.NODE_ENV === 'production',
+			secure: isProd,
 		});
 		res.cookie('session_id', sessionId, {
 			path: '/',
-			domain: '.klikni.si', // ✅ shared across subdomains
+			...(isProd && { domain: '.klikni.si' }), // ✅ shared across subdomains
 			httpOnly: true,
 			sameSite: 'lax',
-			secure: process.env.NODE_ENV === 'production',
+			secure: isProd,
 		});
 		res.cookie('session_id', sessionId, {
 			path: '/',
-			domain: '.127.0.0.1.nip.io', // ✅ shared across subdomains
 			httpOnly: true,
 			sameSite: 'lax',
 			secure: process.env.NODE_ENV === 'production',
