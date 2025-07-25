@@ -89,6 +89,35 @@ async function createBusinessIndex(force = false) {
 								expires_at: { type: 'date' },
 							},
 						},
+						business_local_locations: {
+							type: 'nested',
+							properties: {
+								business_local_location_id: { type: 'keyword' },
+								local_location_id: { type: 'keyword' },
+								time: { type: 'date' },
+								local_location: {
+									type: 'object',
+									properties: {
+										local_location_id: { type: 'keyword' },
+										address_id: { type: 'keyword' },
+										address: {
+											type: 'object',
+											properties: {
+												address_id: { type: 'keyword' },
+												address: { type: 'text' },
+												latitude: { type: 'keyword' },
+												longitude: { type: 'keyword' },
+												street: { type: 'text' },
+												house_number: { type: 'text' },
+												city: { type: 'text' },
+												country: { type: 'text' },
+												postal: { type: 'text' },
+											},
+										},
+									},
+								},
+							},
+						},
 					},
 				},
 			},
@@ -202,6 +231,15 @@ async function indexBusinesses(business_id = null, force = false) {
 						promo_section: true,
 					},
 				},
+				business_local_locations: {
+					include: {
+						local_location: {
+							include: {
+								address: true,
+							},
+						},
+					},
+				},
 			},
 		});
 		console.log(`Found ${businesses.length} businesses. Preparing data for indexing...`);
@@ -301,6 +339,28 @@ async function indexBusinesses(business_id = null, force = false) {
 						promo_sections_id: section.promo_sections_id,
 						tier: section.tier,
 						expires_at: section.expires_at,
+					};
+				}),
+				business_local_locations: business.business_local_locations.map((localLocation) => {
+					return {
+						business_local_location_id: localLocation.business_local_location_id,
+						local_location_id: localLocation.local_location_id,
+						time: localLocation.time,
+						local_location: {
+							local_location_id: localLocation.local_location.local_location_id,
+							address_id: localLocation.local_location.address_id,
+							address: {
+								address_id: localLocation.local_location.address.address_id,
+								address: localLocation.local_location.address.address,
+								latitude: localLocation.local_location.address.latitude,
+								longitude: localLocation.local_location.address.longitude,
+								street: localLocation.local_location.address.street,
+								house_number: localLocation.local_location.address.house_number,
+								city: localLocation.local_location.address.city,
+								country: localLocation.local_location.address.country,
+								postal: localLocation.local_location.address.postal,
+							},
+						},
 					};
 				}),
 			};

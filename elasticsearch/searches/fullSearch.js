@@ -28,18 +28,18 @@ const SCORING_WEIGHTS = {
  * @param {number} page - Page number for pagination
  * @param {number} pageSize - Number of results per page
  * @param {Array} businessIds - Array of specific business IDs to filter by
- * @param {string} businessType - Business type to filter by (e.g., 'LOCAL', 'MERCHANT')
+ * @param {string} businessType - Business type to filter by (e.g., 'LOCAL', 'MERCHANT'). For 'LOCAL' type, also filters by available local locations.
  * @returns {Object} Search results with businesses and scoring details
  *
  * @example
- * // Search for LOCAL businesses only
+ * // Search for LOCAL businesses only (with available local locations tomorrow or later)
  * const localBusinesses = await searchBusinesses('pizza', 46.063, 14.525, [], 10, 'OR', false, null, 1, 10, [], 'LOCAL');
  *
  * // Search for MERCHANT businesses only
  * const merchantBusinesses = await searchBusinesses('coffee', 46.063, 14.525, [], 10, 'OR', false, null, 1, 10, [], 'MERCHANT');
  *
- * // Search for multiple business types
- * const multipleTypes = await searchBusinesses('food', 46.063, 14.525, [], 10, 'OR', false, null, 1, 10, [], null);
+ * // Search for all business types (no type filter)
+ * const allBusinesses = await searchBusinesses('food', 46.063, 14.525, [], 10, 'OR', false, null, 1, 10, [], null);
  */
 async function searchBusinesses(
 	query,
@@ -83,7 +83,6 @@ async function searchBusinesses(
 				must_not: [],
 			},
 		};
-		boolQuery.bool.filter.push({ term: { active: true } });
 		if (hasBusinessIds) {
 			boolQuery.bool.filter.push({
 				terms: { business_id: businessIds },
@@ -95,6 +94,24 @@ async function searchBusinesses(
 			boolQuery.bool.filter.push({
 				term: { type: businessType },
 			});
+
+			// **Additional filter for LOCAL businesses - check for available local locations**
+			if (businessType === 'LOCAL') {
+				const tomorrow = new Date();
+				tomorrow.setDate(tomorrow.getDate() + 1);
+				const tomorrowISOString = tomorrow.toISOString();
+
+				boolQuery.bool.filter.push({
+					nested: {
+						path: 'business_local_locations',
+						query: {
+							range: {
+								'business_local_locations.time': { gte: tomorrowISOString },
+							},
+						},
+					},
+				});
+			}
 		}
 
 		if (typeof isDailyMealSearch === 'boolean') {
@@ -360,6 +377,7 @@ async function searchBusinesses(
 					'promo_sections',
 					'online',
 					'type',
+					'business_local_locations',
 				],
 				sort: [{ _score: 'desc' }],
 			},
@@ -402,6 +420,7 @@ async function searchBusinesses(
 					telephone: hit._source.telephone,
 					promo_sections: hit._source.promo_sections,
 					type: hit._source.type,
+					business_local_locations: hit._source.business_local_locations,
 					scores,
 				};
 			}),
