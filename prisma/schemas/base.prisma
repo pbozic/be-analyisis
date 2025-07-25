@@ -646,7 +646,7 @@ model delivery_orders {
   late_events                       late_events[]                       @relation("late_events_to_delivery_order")
   stock_movements                   menu_item_stock_change[]
   business_local_location_id        String?                             @db.Uuid
-  business_local_locations          business_local_locations?           @relation(fields: [business_local_location_id], references: [business_local_location_id])
+  business_local_location           business_local_locations?           @relation(fields: [business_local_location_id], references: [business_local_location_id])
 }
 
 model delivery_order_sent {
