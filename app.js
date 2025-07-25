@@ -60,6 +60,13 @@ app.use((req, res, next) => {
 			sameSite: 'lax',
 			secure: process.env.NODE_ENV === 'production',
 		});
+		res.cookie('session_id', sessionId, {
+			path: '/',
+			domain: '.127.0.0.1.nip.io', // ✅ shared across subdomains
+			httpOnly: true,
+			sameSite: 'lax',
+			secure: process.env.NODE_ENV === 'production',
+		});
 	}
 	next();
 });
