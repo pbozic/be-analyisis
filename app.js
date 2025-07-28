@@ -65,22 +65,11 @@ app.use((req, res, next) => {
 	next();
 });
 app.use((req, res, next) => {
-	console.log('Hostname:', req.hostname);
 	if (!req.cookies.session_id) {
 		const sessionId = uuidv4();
 		let isProd = process.env.NODE_ENV === 'production';
 
-		const hostname = req.hostname; // e.g. klikni.localhost or dev.klikni-web.eu
-
-		let cookieDomain;
-		if (hostname.endsWith('.klikni-web.eu')) {
-			cookieDomain = '.klikni-web.eu'; // production
-		} else if (hostname.endsWith('.klikni.localhost')) {
-			cookieDomain = '.klikni.localhost'; // local dev
-			isProd = true;
-		} else {
-			cookieDomain = undefined; // fallback: no domain, default to host
-		}
+		const cookieDomain = isProd ? '.klikni-web.eu' : '.klikni.localhost';
 
 		res.cookie('session_id', sessionId, {
 			path: '/',
