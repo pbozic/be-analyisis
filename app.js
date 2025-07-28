@@ -42,10 +42,10 @@ const allowedOrigins = [
 	'https://klikni.lcl.host:3000',
 	'http://localhost:3000',
 	'https://klikni-web.eu', // etc.
-	'https://taxi.klikni.local', // etc.
-	'https://transfer.klikni.local', // etc.
-	'https://dostava.klikni.local', // etc.
-	'https://rezervacije.klikni.local', // etc.
+	'https://taxi.klikni.localhost', // etc.
+	'https://transfer.klikni.localhost', // etc.
+	'https://dostava.klikni.localhost', // etc.
+	'https://rezervacije.klikni.localhost', // etc.
 ];
 
 app.use(
