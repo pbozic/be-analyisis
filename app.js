@@ -80,8 +80,8 @@ app.use((req, res, next) => {
 			// Detect if connection is secure
 			const isSecure = req.secure || req.headers['x-forwarded-proto'] === 'https';
 
-			const sameSite = isSecure ? 'none' : 'lax';
-			const secure = isSecure;
+			const sameSite = 'none';
+			const secure = true;
 
 			const serializedCookie = cookie.serialize('session_id', sessionId, {
 				path: '/',
