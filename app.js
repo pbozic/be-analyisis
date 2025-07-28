@@ -37,7 +37,30 @@ if (process.env.NODE_ENV !== 'test') {
 }
 // ─── Middleware Setup ───────────────────────────────────────────────
 app.disable('etag');
-app.use(cors({ exposedHeaders: ['Content-Disposition'] }));
+const allowedOrigins = [
+	'https://klikni.lcl.host:44301',
+	'https://klikni.lcl.host:3000',
+	'http://localhost:3000',
+	'https://klikni-web.eu', // etc.
+	'https://taxi.klikni-web.eu', // etc.
+	'https://transfer.klikni-web.eu', // etc.
+	'https://dostava.klikni-web.eu', // etc.
+	'https://rezervacije.klikni-web.eu', // etc.
+];
+
+app.use(
+	cors({
+		origin: function (origin, callback) {
+			if (!origin || allowedOrigins.includes(origin)) {
+				callback(null, true);
+			} else {
+				callback(new Error('Not allowed by CORS: ' + origin));
+			}
+		},
+		credentials: true,
+		exposedHeaders: ['Content-Disposition'],
+	})
+);
 app.use(cookieParser());
 app.use((req, res, next) => {
 	req.prisma = prisma;
