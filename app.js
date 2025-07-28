@@ -5,7 +5,7 @@ import url from 'node:url';
 import { config } from 'dotenv';
 import express from 'express';
 import createError from 'http-errors';
-import cookieParser from 'cookie-parser';
+import cookie from 'cookie';
 import logger from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'js-yaml';
@@ -31,6 +31,12 @@ config();
 const isDev = process.env.NODE_ENV !== 'production';
 const REST_API_ENDPOINT = '/api';
 const app = express();
+
+app.use((req, res, next) => {
+	const header = req.headers.cookie || '';
+	req.cookies = cookie.parse(header);
+	next();
+});
 // ─── Cron Jobs ──────────────────────────────────────────────────────
 if (process.env.NODE_ENV !== 'test') {
 	startCronJobs();
@@ -59,7 +65,6 @@ app.use(
 		exposedHeaders: ['Content-Disposition'],
 	})
 );
-app.use(cookieParser());
 app.use((req, res, next) => {
 	req.prisma = prisma;
 	next();
