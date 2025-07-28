@@ -303,9 +303,15 @@ export async function createDailyMealSubscription(
 	try {
 		return await prisma.daily_meal_subscriptions.create({
 			data: {
-				user_id,
-				business_id,
-				delivery_address_id,
+				user: {
+					connect: { user_id },
+				},
+				business: {
+					connect: { business_id },
+				},
+				delivery_address: {
+					connect: { address_id: delivery_address_id },
+				},
 				start_date: new Date(start_date),
 				end_date: end_date ? new Date(end_date) : null,
 				type,

@@ -174,7 +174,9 @@ export async function createPaymentHelper(
 	const available_wallet_balances = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(user_id);
 	if (payment_method === 'WALLET') {
 		if (
-			available_wallet_balances['CREDITS_DELIVERY'] + available_wallet_balances['CREDITS_ANY'] <
+			available_wallet_balances['CREDITS_DELIVERY'] +
+				available_wallet_balances['CREDITS_ANY'] +
+				available_wallet_balances['FUNDS'] <
 			total_price_cents
 		) {
 			throw new Error('Insufficient funds');
