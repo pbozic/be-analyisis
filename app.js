@@ -67,16 +67,23 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
 	if (!req.cookies.session_id) {
 		const sessionId = uuidv4();
-		let isProd = process.env.NODE_ENV === 'production';
+		const isProd = process.env.NODE_ENV === 'production';
 
-		const cookieDomain = isProd ? '.klikni-web.eu' : '.klikni.localhost';
+		// In prod, set domain to your main domain
+		// In dev, omit domain to default to host (safer)
+		const cookieDomain = isProd ? '.klikni-web.eu' : undefined;
+
+		// Adjust sameSite and secure depending on prod/dev
+		// Use 'none' + secure=true if you do cross-site cookies (prod with HTTPS)
+		const sameSite = isProd ? 'none' : 'lax';
+		const secure = isProd; // true in prod (HTTPS), false in dev (HTTP)
 
 		res.cookie('session_id', sessionId, {
 			path: '/',
 			domain: cookieDomain,
 			httpOnly: true,
-			sameSite: 'lax',
-			secure: isProd,
+			sameSite,
+			secure,
 		});
 	}
 	next();
