@@ -78,8 +78,6 @@ model users {
   user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_user")
   scoring_points           scoring_points[]           @relation("scoring_points_to_user")
 
-  daily_meals_subscriptions daily_meals_subscriptions[]
-
   late_events late_events[] @relation("late_events_to_user")
 
   account_actions         account_actions[] @relation("action_to_affected_user")

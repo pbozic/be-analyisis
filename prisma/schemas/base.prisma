@@ -114,7 +114,6 @@ model business {
   late_events                 late_events[]               @relation("late_events_to_business")
   fiscal_device               fiscal_devices?             @relation(fields: [fiscal_devices_id], references: [fiscal_devices_id])
   fiscal_devices_id           String?                     @db.Uuid
-  daily_meals_subscribers     daily_meals_subscriptions[]
   account_actions             account_actions[]
   business_clients            business_clients[]
   purchase_order_limit_amount Float?
@@ -343,7 +342,6 @@ model addresses {
   businesses                  business[]                  @relation(name: "address")
   businesses_delivery_address business[]                  @relation(name: "delivery_address")
   business_users              business_users[]            @relation("business_users_operating_address")
-  daily_meals_subscriptions   daily_meals_subscriptions[]
   daily_meal_subscriptions    daily_meal_subscriptions[]
   local_locations             local_locations?
 
@@ -676,7 +674,6 @@ model menus {
   menu_categories_ordered Json? // JSON field to store ordered category IDs
   isDailyMeal             Boolean                     @default(false)
   date                    DateTime?                   @db.Timestamp(0)
-  daily_meal_subscribers  daily_meals_subscriptions[]
 
   @@unique([menu_id])
 }
@@ -695,7 +692,6 @@ model menu_categories {
   menu_items_ordered         Json? // JSON field to store ordered menu item IDs
   menu_categories_categories menu_categories_categories[]
   menu_order_index           Int?
-  daily_meal_subscribers     daily_meals_subscriptions[]
 
   daily_meal_category_id       String?                     @db.Uuid
   daily_meal_category_price_id String?                     @db.Uuid
@@ -1351,31 +1347,6 @@ model account_actions {
   action_creator users?    @relation("action_to_creator", fields: [action_creator_user_id], references: [user_id])
 }
 
-model daily_meals_subscriptions {
-  daily_meals_subscriptions_id String              @id @default(uuid()) @db.Uuid
-  grouped_id                   String              @db.Uuid
-  user_id                      String              @db.Uuid
-  business_id                  String              @db.Uuid
-  menu_id                      String              @db.Uuid
-  address_id                   String              @db.Uuid
-  menu_categories_id           String              @db.Uuid
-  created_at                   DateTime            @default(now()) @db.Timestamptz(6)
-  updated_at                   DateTime            @default(now()) @updatedAt @db.Timestamptz(6)
-  date                         DateTime            @db.Timestamptz(6)
-  quantity                     Int                 @default(1)
-  order_created                DateTime?
-  restaurant_comment           String?
-  courier_comment              String?
-  menu_category                menu_categories     @relation(fields: [menu_categories_id], references: [menu_category_id])
-  user                         users               @relation(fields: [user_id], references: [user_id])
-  business                     business            @relation(fields: [business_id], references: [business_id])
-  menu                         menus               @relation(fields: [menu_id], references: [menu_id])
-  address                      addresses           @relation(fields: [address_id], references: [address_id])
-  status                       SUBSCRIPTION_STATUS @default(AWAITING_PAYMENT)
-
-  payment payments? @relation("PaymentGroup", fields: [grouped_id], references: [subscription_grouped_id])
-}
-
 model daily_meal_subscriptions {
   id                  String              @id @default(uuid()) @db.Uuid
   user_id             String              @db.Uuid
@@ -1399,6 +1370,7 @@ model daily_meal_subscriptions {
   days                 daily_meal_subscription_days[]
   weekdays             daily_meal_subscription_weekdays[]
   daily_meal_instances daily_meal_instances[]
+  payment              payments?                           @relation("PaymentToDMSubscription", fields: [id], references: [subscription_grouped_id])
 }
 
 model daily_meal_subscription_customers {
@@ -1480,7 +1452,7 @@ model payments {
 
   // For daily meals subscriptions
   subscription_grouped_id String?                     @unique @db.Uuid
-  subscriptions           daily_meals_subscriptions[] @relation("PaymentGroup")
+  subscriptions           daily_meal_subscriptions[] @relation("PaymentToDMSubscription")
 
   // delivery_order_id         String?                      @db.Uuid
   // delivery_order            delivery_orders?             @relation(fields: [delivery_order_id], references: [order_id])

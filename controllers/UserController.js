@@ -2699,23 +2699,23 @@ async function requestData(req, res) {
 						updated_at: true,
 					},
 				},
-				daily_meals_subscriptions: {
-					select: {
-						daily_meals_subscriptions_id: true,
-						grouped_id: true,
-						// business_id: true, // Only include business ID
-						menu_id: true, // Only include menu ID
-						address_id: true, // Only include address ID
-						menu_categories_id: true, // Only include menu category ID
-						created_at: true,
-						updated_at: true,
-						date: true,
-						quantity: true,
-						order_created: true,
-						restaurant_comment: true,
-						courier_comment: true,
-					},
-				},
+				// daily_meals_subscriptions: {
+				// 	select: {
+				// 		daily_meals_subscriptions_id: true,
+				// 		grouped_id: true,
+				// 		// business_id: true, // Only include business ID
+				// 		menu_id: true, // Only include menu ID
+				// 		address_id: true, // Only include address ID
+				// 		menu_categories_id: true, // Only include menu category ID
+				// 		created_at: true,
+				// 		updated_at: true,
+				// 		date: true,
+				// 		quantity: true,
+				// 		order_created: true,
+				// 		restaurant_comment: true,
+				// 		courier_comment: true,
+				// 	},
+				// },
 				late_events: {
 					select: {
 						late_events_id: true,
