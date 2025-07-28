@@ -114,7 +114,6 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			break;
 		}
 		case 'daily_meals_subscription_payment': {
-			//TODO: Marcel fix this
 			let payment = await PaymentDao.getPaymentByGroupedId(paymentIntent.transfer_group);
 			await PaymentHelpers.transferSplitsForTypes(payment.payment_id, [
 				SPLIT_DESTINATION_TYPE.PLATFORM,
