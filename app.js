@@ -65,10 +65,11 @@ app.use((req, res, next) => {
 	next();
 });
 app.use((req, res, next) => {
+	console.log('Hostname:', req.hostname);
 	if (!req.cookies.session_id) {
 		const sessionId = uuidv4();
 		let isProd = process.env.NODE_ENV === 'production';
-		console.log('Hostname:', hostname);
+
 		const hostname = req.hostname; // e.g. klikni.localhost or dev.klikni-web.eu
 
 		let cookieDomain;
