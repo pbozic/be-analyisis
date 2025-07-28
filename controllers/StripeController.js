@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { SUBSCRIPTION_STATUS } from '@prisma/client';
+import { SUBSCRIPTION_STATUS, SPLIT_DESTINATION_TYPE } from '@prisma/client';
 
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import socket from '../socket.js';
