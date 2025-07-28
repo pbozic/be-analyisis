@@ -75,7 +75,7 @@ app.use((req, res, next) => {
 
 		// Adjust sameSite and secure depending on prod/dev
 		// Use 'none' + secure=true if you do cross-site cookies (prod with HTTPS)
-		const sameSite = isProd ? 'none' : 'lax';
+		const sameSite = isProd ? 'lax' : 'none';
 		const secure = isProd; // true in prod (HTTPS), false in dev (HTTP)
 
 		res.cookie('session_id', sessionId, {
