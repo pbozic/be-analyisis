@@ -1358,6 +1358,7 @@ model daily_meal_subscriptions {
   type                SUBSCRIPTION_TYPE
   status              SUBSCRIPTION_STATUS @default(AWAITING_PAYMENT)
   courier_comment     String?
+  payment_id          String?              @db.Uuid
 
   created_at DateTime @default(now()) @db.Timestamptz(6)
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
@@ -1370,7 +1371,7 @@ model daily_meal_subscriptions {
   days                 daily_meal_subscription_days[]
   weekdays             daily_meal_subscription_weekdays[]
   daily_meal_instances daily_meal_instances[]
-  payment              payments?                           @relation("PaymentToDMSubscription", fields: [id], references: [subscription_grouped_id])
+  payment              payments?                           @relation("PaymentToDMSubscription", fields: [payment_id], references: [subscription_grouped_id])
 }
 
 model daily_meal_subscription_customers {
