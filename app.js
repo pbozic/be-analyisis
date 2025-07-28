@@ -88,7 +88,13 @@ app.use((req, res, next) => {
 			path: '/',
 			httpOnly: true,
 			sameSite: 'lax',
-			secure: process.env.NODE_ENV === 'production',
+			secure: true,
+		});
+		res.cookie('session_id', sessionId, {
+			path: '/',
+			httpOnly: true,
+			sameSite: 'lax',
+			secure: false, // For local development
 		});
 	}
 	next();
