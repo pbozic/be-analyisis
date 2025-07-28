@@ -38,14 +38,12 @@ if (process.env.NODE_ENV !== 'test') {
 // ─── Middleware Setup ───────────────────────────────────────────────
 app.disable('etag');
 const allowedOrigins = [
-	'https://klikni.lcl.host:44301',
-	'https://klikni.lcl.host:3000',
 	'http://localhost:3000',
 	'https://klikni-web.eu', // etc.
-	'https://taxi.klikni-web.eu', // etc.
-	'https://transfer.klikni-web.eu', // etc.
-	'https://dostava.klikni-web.eu', // etc.
-	'https://rezervacije.klikni-web.eu', // etc.
+	'https://taxi.klikni.localhost', // etc.
+	'https://transfer.klikni.localhost', // etc.
+	'https://dostava.klikni.localhost', // etc.
+	'https://rezervacije.klikni.localhost', // etc.
 ];
 
 app.use(
@@ -69,26 +67,16 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
 	if (!req.cookies.session_id) {
 		const sessionId = uuidv4();
-		const isProd = process.env.NODE_ENV === 'production';
+		let isProd = process.env.NODE_ENV === 'production';
+
+		const cookieDomain = isProd ? '.klikni-web.eu' : '.klikni.localhost';
+
 		res.cookie('session_id', sessionId, {
 			path: '/',
-			...(isProd && { domain: '.klikni-web.eu' }), // ✅ shared across subdomains
+			domain: cookieDomain,
 			httpOnly: true,
 			sameSite: 'lax',
 			secure: isProd,
-		});
-		res.cookie('session_id', sessionId, {
-			path: '/',
-			...(isProd && { domain: '.klikni.si' }), // ✅ shared across subdomains
-			httpOnly: true,
-			sameSite: 'lax',
-			secure: isProd,
-		});
-		res.cookie('session_id', sessionId, {
-			path: '/',
-			httpOnly: true,
-			sameSite: 'lax',
-			secure: process.env.NODE_ENV === 'production',
 		});
 	}
 	next();

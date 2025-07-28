@@ -144,7 +144,7 @@ model schedule_slot {
   date           DateTime // Date of the slot, e.g. 2023-10-01T09:00:00Z
   start_time      DateTime
   end_time        DateTime
- 
+
   booking_slots booking_slots[]
   schedule      schedule @relation(fields: [schedule_id], references: [schedule_id], onDelete: Cascade)
   schedule_employee schedule_employee @relation(fields: [schedule_employee_id], references: [schedule_employee_id])
