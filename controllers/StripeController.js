@@ -18,6 +18,8 @@ import { handleStockSync } from './DeliveryOrderController.js';
 import { BUSINESS_TYPE } from '../lib/constants.js';
 import prisma from '../prisma/prisma.js';
 import DailyMealDao from '../dao/DailyMealDao.ts';
+import PaymentDao from '../dao/Payment.ts';
+
 dotenv.config();
 const { io, UserSockets, SocketStore } = socket;
 async function handlePaymentIntentSuccess(paymentIntent) {
@@ -245,7 +247,7 @@ async function handlePaymentIntentFaliure(paymentIntent) {
 			break;
 		case 'daily_meals_subscription_payment': {
 			//TODO: Marcel fix this
-			// let payment = await PaymentDao.getPaymentByGroupedId(paymentIntent.transfer_group);
+			let payment = await PaymentDao.getPaymentByGroupedId(paymentIntent.transfer_group);
 			//TODO: handle dm failed
 			const updated_subs = await DailyMealDao.updateSubscriptionStatus(
 				paymentIntent.subscription_id,
