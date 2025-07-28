@@ -82,7 +82,7 @@ async function populateDailyMeals(business_id: string): Promise<void> {
 			};
 
 			try {
-				await MenuItemDao.createMenuItem(category.menu_category_id, newMenuData, true);
+				await MenuItemDao.createMenuItem(category.menu_category_id, item.tax_rates_id, newMenuData, true);
 			} catch (error) {
 				console.error(`Error creating menu item for category ${category.menu_category_id}:`, error);
 			}

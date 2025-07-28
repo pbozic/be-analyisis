@@ -28,17 +28,17 @@ const SCORING_WEIGHTS = {
  * @param {number} page - Page number for pagination
  * @param {number} pageSize - Number of results per page
  * @param {Array} businessIds - Array of specific business IDs to filter by
- * @param {string} businessType - Business type to filter by (e.g., 'LOCAL', 'MERCHANT'). For 'LOCAL' type, also filters by available local locations.
+ * @param {string} businessType - Business type to filter by (e.g., 'LOCAL', 'MERCHANT'). Note: LOCAL businesses are automatically filtered to only show those with available local locations.
  * @returns {Object} Search results with businesses and scoring details
  *
  * @example
- * // Search for LOCAL businesses only (with available local locations tomorrow or later)
+ * // Search for LOCAL businesses only (automatically filtered for available local locations tomorrow or later)
  * const localBusinesses = await searchBusinesses('pizza', 46.063, 14.525, [], 10, 'OR', false, null, 1, 10, [], 'LOCAL');
  *
  * // Search for MERCHANT businesses only
  * const merchantBusinesses = await searchBusinesses('coffee', 46.063, 14.525, [], 10, 'OR', false, null, 1, 10, [], 'MERCHANT');
  *
- * // Search for all business types (no type filter)
+ * // Search for all business types (LOCAL businesses automatically filtered for available locations)
  * const allBusinesses = await searchBusinesses('food', 46.063, 14.525, [], 10, 'OR', false, null, 1, 10, [], null);
  */
 async function searchBusinesses(
@@ -94,25 +94,40 @@ async function searchBusinesses(
 			boolQuery.bool.filter.push({
 				term: { type: businessType },
 			});
+		}
 
-			// **Additional filter for LOCAL businesses - check for available local locations**
-			if (businessType === 'LOCAL') {
-				const tomorrow = new Date();
-				tomorrow.setDate(tomorrow.getDate() + 1);
-				const tomorrowISOString = tomorrow.toISOString();
+		// **Always filter LOCAL businesses to only show those with available local locations**
+		// This applies to all searches, regardless of businessType parameter
+		boolQuery.bool.should.push({
+			bool: {
+				must_not: [{ term: { type: 'LOCAL' } }],
+			},
+		});
 
-				boolQuery.bool.filter.push({
-					nested: {
-						path: 'business_local_locations',
-						query: {
-							range: {
-								'business_local_locations.time': { gte: tomorrowISOString },
+		const tomorrow = new Date();
+		tomorrow.setDate(tomorrow.getDate() + 1);
+		const tomorrowISOString = tomorrow.toISOString();
+
+		boolQuery.bool.should.push({
+			bool: {
+				must: [
+					{ term: { type: 'LOCAL' } },
+					{
+						nested: {
+							path: 'business_local_locations',
+							query: {
+								range: {
+									'business_local_locations.time': { gte: tomorrowISOString },
+								},
 							},
 						},
 					},
-				});
-			}
-		}
+				],
+			},
+		});
+
+		// Ensure at least one of the should clauses matches
+		boolQuery.bool.minimum_should_match = 1;
 
 		if (typeof isDailyMealSearch === 'boolean') {
 			if (isDailyMealSearch) {
