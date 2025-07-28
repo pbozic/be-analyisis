@@ -5,7 +5,7 @@ import url from 'node:url';
 import { config } from 'dotenv';
 import express from 'express';
 import createError from 'http-errors';
-import cookieParser from 'cookie-parser';
+import cookie from 'cookie';
 import logger from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'js-yaml';
@@ -31,6 +31,12 @@ config();
 const isDev = process.env.NODE_ENV !== 'production';
 const REST_API_ENDPOINT = '/api';
 const app = express();
+
+app.use((req, res, next) => {
+	const header = req.headers.cookie || '';
+	req.cookies = cookie.parse(header);
+	next();
+});
 // ─── Cron Jobs ──────────────────────────────────────────────────────
 if (process.env.NODE_ENV !== 'test') {
 	startCronJobs();
@@ -59,34 +65,38 @@ app.use(
 		exposedHeaders: ['Content-Disposition'],
 	})
 );
-app.use(cookieParser());
 app.use((req, res, next) => {
 	req.prisma = prisma;
 	next();
 });
 app.use((req, res, next) => {
-	if (!req.cookies.session_id) {
-		const sessionId = uuidv4();
-		const isProd = process.env.NODE_ENV === 'production';
+	try {
+		if (!req.cookies.session_id) {
+			const sessionId = uuidv4();
+			const isProd = process.env.NODE_ENV === 'production';
 
-		// In prod, set domain to your main domain
-		// In dev, omit domain to default to host (safer)
-		const cookieDomain = isProd ? '.klikni-web.eu' : undefined;
+			// In prod, set domain to your main domain
+			// In dev, omit domain to default to host (safer)
+			const cookieDomain = isProd ? '.klikni-web.eu' : undefined;
 
-		// Adjust sameSite and secure depending on prod/dev
-		// Use 'none' + secure=true if you do cross-site cookies (prod with HTTPS)
-		const sameSite = isProd ? 'none' : 'lax';
-		const secure = isProd; // true in prod (HTTPS), false in dev (HTTP)
+			// Adjust sameSite and secure depending on prod/dev
+			// Use 'none' + secure=true if you do cross-site cookies (prod with HTTPS)
+			const sameSite = 'none';
+			const secure = true; // true in prod (HTTPS), false in dev (HTTP)
 
-		res.cookie('session_id', sessionId, {
-			path: '/',
-			domain: cookieDomain,
-			httpOnly: true,
-			sameSite,
-			secure,
-		});
+			res.cookie('session_id', sessionId, {
+				path: '/',
+				domain: cookieDomain,
+				httpOnly: true,
+				sameSite,
+				secure,
+			});
+			next();
+		}
+	} catch (err) {
+		console.error('Error setting session cookie:', err);
+		next();
 	}
-	next();
 });
 app.post('/api/blog/upload/file', authMiddleware, upload.single('image'), (req, res) => {
 	console.log('File upload request received:', req.file);
