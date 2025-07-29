@@ -250,7 +250,7 @@ async function handlePaymentIntentFaliure(paymentIntent) {
 			let payment = await PaymentDao.getPaymentByGroupedId(paymentIntent.transfer_group);
 			//TODO: handle dm failed
 			const updated_subs = await DailyMealDao.updateSubscriptionStatus(
-				paymentIntent.subscription_id,
+				paymentIntent.transfer_group,
 				SUBSCRIPTION_STATUS.FAILED
 			);
 			if (!updated_subs || updated_subs.length === 0) {
