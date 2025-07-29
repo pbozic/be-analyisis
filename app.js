@@ -75,24 +75,27 @@ app.use((req, res, next) => {
 			const sessionId = uuidv4();
 			const isProd = process.env.NODE_ENV === 'production';
 
-			// In prod, set domain to your main domain
-			// In dev, omit domain to default to host (safer)
 			const cookieDomain = isProd ? '.klikni-web.eu' : undefined;
 
-			// Adjust sameSite and secure depending on prod/dev
-			// Use 'none' + secure=true if you do cross-site cookies (prod with HTTPS)
-			const sameSite = 'none';
-			const secure = true; // true in prod (HTTPS), false in dev (HTTP)
+			// Detect if connection is secure
+			const isSecure = req.secure || req.headers['x-forwarded-proto'] === 'https';
 
-			res.cookie('session_id', sessionId, {
+			const sameSite = 'none';
+			const secure = true;
+
+			const serializedCookie = cookie.serialize('session_id', sessionId, {
 				path: '/',
 				domain: cookieDomain,
 				httpOnly: true,
 				sameSite,
 				secure,
+				maxAge: 60 * 60 * 24 * 7, // 1 week (optional)
 			});
-			next();
+
+			// Set header manually; if multiple cookies, append
+			res.setHeader('Set-Cookie', serializedCookie);
 		}
+		next();
 	} catch (err) {
 		console.error('Error setting session cookie:', err);
 		next();
