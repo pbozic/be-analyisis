@@ -1,7 +1,7 @@
 import prisma from '../../prisma/prisma';
 import type {
 	CreateScheduleEmployeeInput,
-	UpdatecheduleEmployeeInput,
+	UpdateScheduleEmployeeInput,
 	ScheduleEmployee,
 } from '../../types/reservation/Schedule.ts';
 
@@ -49,7 +49,7 @@ export async function createScheduleEmployee(data: CreateScheduleEmployeeInput):
  * @returns {Promise<ScheduleEmployee>} A promise that resolves to the updated schedule-employee record.
  * @throws {Error} If there is an error updating the schedule employee.
  */
-export async function updateScheduleEmployee(id: string, data: UpdatecheduleEmployeeInput): Promise<ScheduleEmployee> {
+export async function updateScheduleEmployee(id: string, data: UpdateScheduleEmployeeInput): Promise<ScheduleEmployee> {
 	try {
 		const record = await prisma.schedule_employee.update({
 			where: { schedule_employee_id: id },

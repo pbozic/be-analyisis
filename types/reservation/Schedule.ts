@@ -70,4 +70,4 @@ export type ScheduleSlotException = schedule_slot_exceptions;
 export type BookingSlot = booking_slots;
 
 export type UpdateScheduleInput = z.infer<typeof UpdateScheduleSchema>;
-export type UpdatecheduleEmployeeInput = z.infer<typeof UpdateScheduleEmployeeSchema>;
+export type UpdateScheduleEmployeeInput = z.infer<typeof UpdateScheduleEmployeeSchema>;

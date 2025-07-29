@@ -2,7 +2,7 @@ import { Response } from 'express';
 
 import ScheduleEmployeeDao from '../../dao/reservation/ScheduleEmployeeDao';
 import { ValidatedRequest } from '../../types/validatedRequest';
-import { CreateScheduleEmployeeInput, UpdatecheduleEmployeeInput } from '../../types/reservation/Schedule';
+import { CreateScheduleEmployeeInput, UpdateScheduleEmployeeInput } from '../../types/reservation/Schedule';
 
 /**
  * GET /reservation/schedule-employees/list/{schedule_id}
@@ -59,14 +59,14 @@ export async function createScheduleEmployee(
  * @description Updates an existing schedule-employee assignment.
  * @operationId updateScheduleEmployee
  * @pathParam {string} id - The ID of the assignment to update.
- * @requestBody {UpdatecheduleEmployeeInput} requestBody - The data to update the assignment with.
+ * @requestBody {UpdateScheduleEmployeeInput} requestBody - The data to update the assignment with.
  * @response 200 - Schedule-employee updated successfully
  * @responseContent {ScheduleEmployee} 200.application/json
  * @response 404 - Schedule-employee not found
  * @response 500 - Error updating schedule employee
  */
 export async function updateScheduleEmployee(
-	req: ValidatedRequest<UpdatecheduleEmployeeInput, { id: string }>,
+	req: ValidatedRequest<UpdateScheduleEmployeeInput, { id: string }>,
 	res: Response
 ): Promise<void> {
 	try {
