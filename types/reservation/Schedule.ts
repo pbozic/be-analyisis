@@ -49,10 +49,11 @@ export const CreateBookingSlotSchema = z.object({
 });
 
 export const UpdateScheduleSchema = CreateScheduleSchema.partial();
+export const UpdateScheduleEmployeeSchema = CreateScheduleEmployeeSchema.partial();
 
 export type CreateScheduleInput = z.infer<typeof CreateScheduleSchema>;
-
 export type CreateScheduleEmployeeInput = z.infer<typeof CreateScheduleEmployeeSchema>;
+
 export type CreateScheduleSlotInput = z.infer<typeof CreateScheduleSlotSchema>;
 export type CreateScheduleSlotExceptionInput = z.infer<typeof CreateScheduleSlotExceptionSchema>;
 export type CreateBookingSlotInput = z.infer<typeof CreateBookingSlotSchema>;
@@ -69,3 +70,4 @@ export type ScheduleSlotException = schedule_slot_exceptions;
 export type BookingSlot = booking_slots;
 
 export type UpdateScheduleInput = z.infer<typeof UpdateScheduleSchema>;
+export type UpdatecheduleEmployeeInput = z.infer<typeof UpdateScheduleEmployeeSchema>;
