@@ -86,6 +86,7 @@ model employee {
   business_user            business_users?     @relation(fields: [business_users_id], references: [business_users_id])
   created_at        DateTime  @default(now())
   deleted_at        DateTime? @db.Timestamptz
+  schedule_slots schedule_slot[]
 }
 
 model customers {
@@ -141,6 +142,7 @@ model schedule_slot {
   schedule_slot_id String   @id @default(uuid()) @db.Uuid
   schedule_id   String   @db.Uuid
   schedule_employee_id String   @db.Uuid
+  employee_id   String   @db.Uuid
   date           DateTime // Date of the slot, e.g. 2023-10-01T09:00:00Z
   start_time      DateTime
   end_time        DateTime
@@ -148,6 +150,7 @@ model schedule_slot {
   booking_slots booking_slots[]
   schedule      schedule @relation(fields: [schedule_id], references: [schedule_id], onDelete: Cascade)
   schedule_employee schedule_employee @relation(fields: [schedule_employee_id], references: [schedule_employee_id])
+  employee employee @relation(fields: [employee_id], references: [employee_id])
   // schedule_id and employee_id are combined in schedule_employee
   // to allow multiple employees to share the same schedule slot
   schedule_slot_exceptions schedule_slot_exceptions[]

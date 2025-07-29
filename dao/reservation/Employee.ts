@@ -1,5 +1,12 @@
 import prisma from '../../prisma/prisma';
 import type { Employee, UpdateEmployeeInput } from '../../types/reservation/Employee.ts';
+
+const cropped_user_columns = {
+	first_name: true,
+	last_name: true,
+	user_id: true,
+};
+
 /**
  * Retrieves all employees for a given business ID.
  * @param {string} businessId - The ID of the business to retrieve employees for.
@@ -25,10 +32,21 @@ export async function getEmployeesByReservationModuleId(reservationModuleId: str
 						},
 					},
 				},
+				business_user: {
+					select: {
+						business_users_id: true,
+						business_id: true,
+						user_id: true,
+						users: {
+							select: cropped_user_columns,
+						},
+					},
+				},
 			},
 		});
 		return employees;
 	} catch (error) {
+		console.log('Error retrieving employees:', error);
 		throw new Error('Error retrieving employees');
 	}
 }
@@ -170,6 +188,11 @@ export async function getEmployeeById(employeeId: string): Promise<Employee | nu
 								},
 							},
 						},
+					},
+				},
+				business_users: {
+					include: {
+						users: true,
 					},
 				},
 			},
