@@ -1,6 +1,6 @@
 import { Response } from 'express';
 
-import ScheduleEmployeeDao from '../../dao/reservation/ScheduleEmployeeDao';
+import ScheduleEmployeeDao from '../../dao/reservation/ScheduleEmployee';
 import { ValidatedRequest } from '../../types/validatedRequest';
 import { CreateScheduleEmployeeInput, UpdateScheduleEmployeeInput } from '../../types/reservation/Schedule';
 
