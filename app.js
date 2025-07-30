@@ -46,14 +46,15 @@ app.disable('etag');
 const allowedOrigins = [
 	'http://localhost:3000',
 	'https://klikni-web.eu', // etc.
+	'https://klikni.localhost', // etc.
 	'https://taxi.klikni.localhost', // etc.
 	'https://transfer.klikni.localhost', // etc.
 	'https://dostava.klikni.localhost', // etc.
 	'https://rezervacije.klikni.localhost', // etc.
-	'https://taxi.klikni.localhost:3000', // etc.
-	'https://transfer.klikni.localhost:3000', // etc.
-	'https://dostava.klikni.localhost:3000', // etc.
-	'https://rezervacije.klikni.localhost:3000', // etc.
+	'http://taxi.klikni.localhost:3000', // etc.
+	'http://transfer.klikni.localhost:3000', // etc.
+	'http://dostava.klikni.localhost:3000', // etc.
+	'http://rezervacije.klikni.localhost:3000', // etc.
 ];
 
 app.use(
