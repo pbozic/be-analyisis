@@ -52,11 +52,11 @@ export const UpdateScheduleSchema = CreateScheduleSchema.partial();
 export const UpdateScheduleEmployeeSchema = CreateScheduleEmployeeSchema.partial();
 export const UpdateScheduleSlotSchema = CreateScheduleSlotSchema.partial();
 export const UpdateScheduleSlotExceptionSchema = CreateScheduleSlotExceptionSchema.partial();
+export const UpdateCreateBookingSlotSchema = CreateBookingSlotSchema.partial();
 
 export type CreateScheduleInput = z.infer<typeof CreateScheduleSchema>;
 export type CreateScheduleEmployeeInput = z.infer<typeof CreateScheduleEmployeeSchema>;
 export type CreateScheduleSlotInput = z.infer<typeof CreateScheduleSlotSchema>;
-
 export type CreateScheduleSlotExceptionInput = z.infer<typeof CreateScheduleSlotExceptionSchema>;
 export type CreateBookingSlotInput = z.infer<typeof CreateBookingSlotSchema>;
 
@@ -75,3 +75,4 @@ export type UpdateScheduleInput = z.infer<typeof UpdateScheduleSchema>;
 export type UpdateScheduleEmployeeInput = z.infer<typeof UpdateScheduleEmployeeSchema>;
 export type UpdateScheduleSlotInput = z.infer<typeof UpdateScheduleSlotSchema>;
 export type UpdateScheduleSlotExceptionInput = z.infer<typeof UpdateScheduleSlotExceptionSchema>;
+export type UpdateBookingSlotSchemaInput = z.infer<typeof UpdateCreateBookingSlotSchema>;
