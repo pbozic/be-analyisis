@@ -1099,11 +1099,11 @@ async function rejectOrder(req, res) {
 		let user;
 		if (order) user = order.user;
 		await handlePaymentCleanup(order);
-		await handleStockSync(order);
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_REJECTED);
 		io.to('order_' + order.order_id).emit('order_rejected__delivery', order);
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.FAIL);
 		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
+		await handleStockSync(order);
 		sendDeliveryOrderNotifications(user, null, user?.user_id, null, DELIVERY_ORDER_STATUS.MERCHANT_REJECTED);
 		res.status(200).json(order);
 	} catch (e) {
