@@ -154,7 +154,7 @@ model schedule_slot {
   // schedule_id and employee_id are combined in schedule_employee
   // to allow multiple employees to share the same schedule slot
   schedule_slot_exceptions schedule_slot_exceptions[]
-  @@unique([schedule_id, schedule_employee_id], name: "unique_schedule_slot")
+  @@unique([schedule_id, schedule_employee_id, date], name: "unique_schedule_slot")
   
 }
 enum SCHEDULE_SLOT_EXCEPTION_TYPE {
