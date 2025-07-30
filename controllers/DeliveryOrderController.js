@@ -1086,17 +1086,16 @@ async function updateOrderStatus(req, res) {
  * @response 500 - Server error. Returns error message if any exception is encountered during execution
  */
 async function rejectOrder(req, res) {
-	const { order_id, items } = req.body;
+	const { order_id, reason, items } = req.body;
 	try {
 		if (!order_id) {
 			return res.status(400).json({ error: 'order_id is required.' });
 		}
-		let order;
+		let updateData = { rejection_reason: reason || '' };
 		if (Array.isArray(items) && items.length > 0) {
-			order = await DeliveryOrderDao.updateOrder(order_id, items);
-		} else {
-			order = await DeliveryOrderDao.getOrder(order_id, { include: { user: true } });
+			updateData.items = items;
 		}
+		let order = await DeliveryOrderDao.updateOrder(order_id, updateData);
 		let user;
 		if (order) user = order.user;
 		await handlePaymentCleanup(order);
