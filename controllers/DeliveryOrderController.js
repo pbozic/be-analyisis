@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { v4 } from 'uuid';
-import { SPLIT_DESTINATION_TYPE, SPLIT_STATUS, DAILY_MEAL_INSTANCE_STATUS } from '@prisma/client';
+import { SPLIT_DESTINATION_TYPE, SPLIT_STATUS, DAILY_MEAL_INSTANCE_STATUS, BUSINESS_TYPE } from '@prisma/client';
 
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import DeliveryDriverDao from '../dao/DeliveryDriver.js';
@@ -22,6 +22,7 @@ import {
 	SERVICE_TYPE,
 } from '../lib/constants.js';
 import {
+	calculateAndVerifyPriceForOrderItems,
 	revokeDeliveryOrderFromDrivers,
 	calculateDeliveryOrderPaymentCuts,
 	handlePaymentCleanup,
@@ -1072,23 +1073,59 @@ async function updateOrderStatus(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * POST /delivery/order/merchant_accept
  * @tag Delivery
- * @summary Process a delivery order from PENDING status.
- * @description Processes the order payment capture and moves the order to the next state accordingly.
+ * @summary Merchant accepts a delivery order and processes payment.
+ * @description
+ * Processes a delivery order from PENDING status.
+ * Captures payment (if neccessary), updates order status, and emits relevant events.
+ * Handles payment via CARD, WALLET, PLATFORM, or CASH, and moves the order through the correct state transitions.
+ * In the case of a CARD or PLATFORM payment, the payment and state transitions are left up to the stripe webhook handler.
+ * If preparation_time is provided, updates the order's pickup time.
+ *
  * @operationId merchantAcceptOrder
- * @bodyDescription Request body must include 'order_id' to identify the order.
- * @bodyContent {ProcessOrderRequest} application/json
+ * @bodyDescription The request body must include 'order_id' to identify the order and optionally 'preparation_time' (ISO string or timestamp).
+ * @bodyContent {
+ *   "order_id": 123,
+ *   "preparation_time": "2025-07-30T12:00:00.000Z"
+ * } application/json
  * @bodyRequired
- * @response 200 - Successful operation. Returns the processed order in the response body.
- * @responseContent {DeliveryOrder} 200.application/json
- * @response 500 - Server error. Returns error message if any exception is encountered during execution.
+ * @response 200 - Order processed and moved to next state. Returns the updated DeliveryOrder object.
+ * @responseContent {
+ *   "order_id": 123,
+ *   "user_id": 456,
+ *   "business_id": 789,
+ *   "details": { ... },
+ *   "status": "MERCHANT_PREPARING",
+ *   "payment": { ... },
+ *   "items": [ ... ],
+ *   "timeline": [ ... ],
+ *   "created_at": "...",
+ *   "updated_at": "..."
+ * } 200.application/json
+ * @responseExample 200.application/json {
+ *   "order_id": 123,
+ *   "user_id": 456,
+ *   "business_id": 789,
+ *   "details": { "total_price": 1000, "delivery_cost": 100, ... },
+ *   "status": "MERCHANT_PREPARING",
+ *   "payment": { "type": "CARD", "status": "IN_PAYMENT_PROCESSING", ... },
+ *   "items": [ { "menu_item_id": 1, "quantity": 2, ... } ],
+ *   "timeline": [ { "status": "MERCHANT_ACCEPTED", "timestamp": "..." } ],
+ *   "created_at": "...",
+ *   "updated_at": "..."
+ * }
+ * @response 400 - Preparation time must be set if not scheduled.
+ * @response 500 - Error processing the order.
+ * @prisma_model delivery_orders
+ * @prisma_model businesses
  */
 async function merchantAcceptOrder(req, res) {
 	const { order_id, preparation_time } = req.body;
 	try {
-		let order = await DeliveryOrderDao.getOrder(order_id);
+		let order = await DeliveryOrderDao.getOrder(order_id, { include: { business: true } });
 		const user = order?.user;
 		if (preparation_time) {
 			order = await DeliveryOrderDao.updateOrderPickupTime(order_id, preparation_time);
@@ -1097,84 +1134,262 @@ async function merchantAcceptOrder(req, res) {
 			console.error('Preparation time must be set');
 			return res.status(400).json(order_id);
 		}
+		order = await DeliveryOrderDao.getOrder(order_id, { include: { business: true } });
 		console.info('got into merchantAcceptOrder', JSON.stringify(order.payment_intent_id));
-		const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
-		const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT } =
-			await calculateDeliveryOrderPaymentCuts(order);
+		console.log(order.business.type);
+		if (![BUSINESS_TYPE.MERCHANT, BUSINESS_TYPE.LOCAL].includes(order.business.type)) {
+			const restaurant_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
+			const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT } =
+				await calculateDeliveryOrderPaymentCuts(order);
 
-		if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
-			if (Math.round(order.details.total_price * 100) === order.details.credit_discount) {
+			if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
+				if (Math.round(order.details.total_price * 100) === order.details.credit_discount) {
+					const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+						order.user_id,
+						restaurant_stripe,
+						MERCHANT_CREDIT_CUT,
+						order.order_id,
+						SERVICE_TYPE.DELIVERY
+					);
+					const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+						order.user_id,
+						'platform',
+						PLATFORM_CREDIT_CUT,
+						order.order_id,
+						SERVICE_TYPE.DELIVERY
+					);
+				} else {
+					order = await DeliveryOrderDao.updateOrder(order.order_id, {
+						payment: {
+							...order.payment,
+							status: 'IN_PAYMENT_PROCESSING',
+						},
+					});
+					// Status update happens elsewhere for CARD payments
+					await stripe.client.paymentIntents.capture(order.payment_intent_id, {
+						metadata: {
+							preparation_time: preparation_time,
+						},
+					});
+					return res.status(200).json(order);
+				}
+			} else if (order.payment.type === 'WALLET') {
 				const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 					order.user_id,
 					restaurant_stripe,
-					MERCHANT_CREDIT_CUT,
+					MERCHANT_CUT + MERCHANT_CREDIT_CUT,
 					order.order_id,
 					SERVICE_TYPE.DELIVERY
 				);
 				const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
 					order.user_id,
 					'platform',
-					PLATFORM_CREDIT_CUT,
+					PLATFORM_CUT + PLATFORM_CREDIT_CUT,
 					order.order_id,
 					SERVICE_TYPE.DELIVERY
 				);
+			} else if (order.payment.type === 'CASH') {
+				if (MERCHANT_CREDIT_CUT > 0) {
+					const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+						order.user_id,
+						restaurant_stripe,
+						MERCHANT_CREDIT_CUT,
+						order.order_id,
+						SERVICE_TYPE.DELIVERY
+					);
+				}
+				if (PLATFORM_CREDIT_CUT > 0) {
+					const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+						order.user_id,
+						'platform',
+						PLATFORM_CREDIT_CUT,
+						order.order_id,
+						SERVICE_TYPE.DELIVERY
+					);
+				}
 			} else {
-				order = await DeliveryOrderDao.updateOrder(order.order_id, {
-					payment: {
-						...order.payment,
-						status: 'IN_PAYMENT_PROCESSING',
-					},
-				});
-				// Status update happens elsewhere for CARD payments
-				await stripe.client.paymentIntents.capture(order.payment_intent_id, {
-					metadata: {
-						preparation_time: preparation_time,
-					},
-				});
-				return res.status(200).json(order);
+				// TODO: reject
+				throw new Error('Payment type not supported');
 			}
-		} else if (order.payment.type === 'WALLET') {
-			const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-				order.user_id,
-				restaurant_stripe,
-				MERCHANT_CUT + MERCHANT_CREDIT_CUT,
-				order.order_id,
-				SERVICE_TYPE.DELIVERY
+			order = await DeliveryOrderDao.updateOrderStatus(
+				order_id,
+				DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL
 			);
-			const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-				order.user_id,
-				'platform',
-				PLATFORM_CUT + PLATFORM_CREDIT_CUT,
-				order.order_id,
-				SERVICE_TYPE.DELIVERY
-			);
-		} else if (order.payment.type === 'CASH') {
-			if (MERCHANT_CREDIT_CUT > 0) {
-				const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-					order.user_id,
-					restaurant_stripe,
-					MERCHANT_CREDIT_CUT,
-					order.order_id,
-					SERVICE_TYPE.DELIVERY
-				);
-			}
-			if (PLATFORM_CREDIT_CUT > 0) {
-				const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-					order.user_id,
-					'platform',
-					PLATFORM_CREDIT_CUT,
-					order.order_id,
-					SERVICE_TYPE.DELIVERY
-				);
-			}
-		} else {
-			// TODO: reject
-			throw new Error('Payment type not supported');
 		}
-		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL);
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_ACCEPTED);
 		sendDeliveryOrderNotifications(user, null, order.user_id, null, order.status);
 		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_PREPARING);
+		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
+		res.status(200).json(order);
+	} catch (e) {
+		console.log(e);
+		await handlePaymentCleanup(order_id);
+		let order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED);
+		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
+		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.FAIL);
+		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
+		SocketStore.closeRoom(`order_${order.order_id}`);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * POST /delivery/order/merchant_ready
+ * @tag Delivery
+ * @summary Merchant confirms order is ready for pickup.
+ * @description
+ * If needed recalculates pricing and processes payment then updates the order
+ * as ready for pickup and if needed, and emits relevant events.
+ * Handles payment via CARD, WALLET, PLATFORM, or CASH, and moves the order through the correct state transitions.
+ * In the case of a CARD or PLATFORM payment, the payment and state transitions are left up to the stripe webhook handler.
+ *
+ * @operationId merchantConfirmOrderReady
+ * @bodyDescription The request body must include 'order_id' to identify the order.
+ * @bodyContent {
+ *   "order_id": 123
+ * } application/json
+ * @bodyRequired
+ * @response 200 - Order marked as ready for pickup. Returns the updated DeliveryOrder object.
+ * @responseContent {
+ *   "order_id": 123,
+ *   "user_id": 456,
+ *   "business_id": 789,
+ *   "details": { ... },
+ *   "status": "MERCHANT_READY_FOR_PICKUP",
+ *   "payment": { ... },
+ *   "items": [ ... ],
+ *   "timeline": [ ... ],
+ *   "created_at": "...",
+ *   "updated_at": "..."
+ * } 200.application/json
+ * @responseExample 200.application/json {
+ *   "order_id": 123,
+ *   "user_id": 456,
+ *   "business_id": 789,
+ *   "details": { "total_price": 1000, "delivery_cost": 100, ... },
+ *   "status": "MERCHANT_READY_FOR_PICKUP",
+ *   "payment": { "type": "CARD", "status": "IN_PAYMENT_PROCESSING", ... },
+ *   "items": [ { "menu_item_id": 1, "quantity": 2, ... } ],
+ *   "timeline": [ { "status": "MERCHANT_READY_FOR_PICKUP", "timestamp": "..." } ],
+ *   "created_at": "...",
+ *   "updated_at": "..."
+ * }
+ * @response 500 - Error processing the order.
+ * @prisma_model delivery_orders
+ * @prisma_model businesses
+ */
+async function merchantConfirmOrderReady(req, res) {
+	const { order_id } = req.body;
+	try {
+		let order = await DeliveryOrderDao.getOrder(order_id, { include: { business: true } });
+		if (order.status !== DELIVERY_ORDER_STATUS.MERCHANT_PREPARING) {
+			return res.status(409).json({ message: 'Order is not in MERCHANT_PREPARING state.' });
+		}
+		const user = order?.user;
+		console.info('got into merchantAcceptOrder', JSON.stringify(order.payment_intent_id));
+
+		if ([BUSINESS_TYPE.MERCHANT, BUSINESS_TYPE.LOCAL].includes(order.business.type)) {
+			const { items, grand_total, discount_total, delivery_cost, total_price, is_student } =
+				await calculateAndVerifyPriceForOrderItems(order);
+			order = await DeliveryOrderDao.updateOrder(order.order_id, {
+				details: {
+					...order.details,
+					delivery_cost: delivery_cost,
+					total_price: total_price,
+					sub_total_price: grand_total,
+					discount_savings: discount_total,
+				},
+			});
+			console.log(JSON.stringify(order.items, null, 2), JSON.stringify(items, null, 2), {
+				delivery_cost: delivery_cost,
+				total_price: total_price,
+				sub_total_price: grand_total,
+				discount_savings: discount_total,
+			});
+			order = await DeliveryOrderDao.getOrder(order.order_id, { include: { business: true } });
+			const restaurant_stripe = order.business.stripe_account_id;
+			const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT, DRIVER_CUT } =
+				await calculateDeliveryOrderPaymentCuts(order);
+
+			if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
+				if (Math.round(order.details.total_price * 100) === order.details.credit_discount) {
+					const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+						order.user_id,
+						restaurant_stripe,
+						MERCHANT_CREDIT_CUT,
+						order.order_id,
+						SERVICE_TYPE.DELIVERY
+					);
+					const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+						order.user_id,
+						'platform',
+						PLATFORM_CREDIT_CUT,
+						order.order_id,
+						SERVICE_TYPE.DELIVERY
+					);
+				} else {
+					order = await DeliveryOrderDao.updateOrder(order.order_id, {
+						payment: {
+							...order.payment,
+							status: 'IN_PAYMENT_PROCESSING',
+						},
+					});
+					console.log('capturing PI', order.payment_intent_id, {
+						amount_to_capture: PLATFORM_CUT + MERCHANT_CUT + DRIVER_CUT,
+					});
+					await stripe.client.paymentIntents.capture(order.payment_intent_id, {
+						amount_to_capture: PLATFORM_CUT + MERCHANT_CUT + DRIVER_CUT,
+					});
+					// Status update happens elsewhere for CARD payments
+					return res.status(200).json(order);
+				}
+			} else if (order.payment.type === 'WALLET') {
+				const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+					order.user_id,
+					restaurant_stripe,
+					MERCHANT_CUT + MERCHANT_CREDIT_CUT,
+					order.order_id,
+					SERVICE_TYPE.DELIVERY
+				);
+				const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+					order.user_id,
+					'platform',
+					PLATFORM_CUT + PLATFORM_CREDIT_CUT,
+					order.order_id,
+					SERVICE_TYPE.DELIVERY
+				);
+			} else if (order.payment.type === 'CASH') {
+				if (MERCHANT_CREDIT_CUT > 0) {
+					const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+						order.user_id,
+						restaurant_stripe,
+						MERCHANT_CREDIT_CUT,
+						order.order_id,
+						SERVICE_TYPE.DELIVERY
+					);
+				}
+				if (PLATFORM_CREDIT_CUT > 0) {
+					const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+						order.user_id,
+						'platform',
+						PLATFORM_CREDIT_CUT,
+						order.order_id,
+						SERVICE_TYPE.DELIVERY
+					);
+				}
+			} else {
+				// TODO: reject
+				throw new Error('Payment type not supported');
+			}
+			order = await DeliveryOrderDao.updateOrderStatus(
+				order_id,
+				DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL
+			);
+		}
+		order = await DeliveryOrderDao.updateOrderPickupTime(order_id, new Date().toISOString());
+		io.to('order_' + order.order_id).emit('order_pickup_time', order);
+		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP);
+		sendDeliveryOrderNotifications(user, null, order.user_id, null, order.status);
 		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 		res.status(200).json(order);
 	} catch (e) {
@@ -1629,6 +1844,7 @@ export { getActiveDeliveryOrders };
 export { getOrder };
 export { createOrder };
 export { merchantAcceptOrder };
+export { merchantConfirmOrderReady };
 export { acceptOrderDelivery };
 export { cancelOrderDelivery };
 export { completeOrder };
@@ -1658,6 +1874,7 @@ export default {
 	getOrder,
 	createOrder,
 	merchantAcceptOrder,
+	merchantConfirmOrderReady,
 	acceptOrderDelivery,
 	cancelOrderDelivery,
 	completeOrder,
