@@ -50,6 +50,10 @@ const allowedOrigins = [
 	'https://transfer.klikni.localhost', // etc.
 	'https://dostava.klikni.localhost', // etc.
 	'https://rezervacije.klikni.localhost', // etc.
+	'https://taxi.klikni.localhost:3000', // etc.
+	'https://transfer.klikni.localhost:3000', // etc.
+	'https://dostava.klikni.localhost:3000', // etc.
+	'https://rezervacije.klikni.localhost:3000', // etc.
 ];
 
 app.use(
