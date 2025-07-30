@@ -564,6 +564,7 @@ async function updateOrderStatus(order_id, status) {
 							},
 						},
 					},
+					business: true,
 				},
 			});
 		});
