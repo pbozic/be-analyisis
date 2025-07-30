@@ -20,6 +20,7 @@ router.get('/:daily_meals', DeliveryOrderController.getDeliveryOrders);
 router.post('/daily_meals', DeliveryOrderController.startDailyMeals);
 router.post('/order', DeliveryOrderController.createOrder);
 router.post('/order/merchant_accept', DeliveryOrderController.merchantAcceptOrder);
+router.post('/order/reject', DeliveryOrderController.rejectOrder);
 router.post('/order/dispatcher_cancel', DeliveryOrderController.dispatcherCancel);
 router.post('/order/dispatcher_revoke', DeliveryOrderController.dispatcherRevoke);
 router.post('/order/status', DeliveryOrderController.updateOrderStatus);

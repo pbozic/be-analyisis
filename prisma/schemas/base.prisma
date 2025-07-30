@@ -108,12 +108,12 @@ model business {
   active                          Boolean              @default(false)
   sales_representative_id         String?
 
-  user_favorite_businesses    user_favorite_businesses[]  @relation("user_favorite_businesses_to_business")
-  scoring_points              scoring_points[]            @relation("scoring_points_to_business")
+  user_favorite_businesses    user_favorite_businesses[] @relation("user_favorite_businesses_to_business")
+  scoring_points              scoring_points[]           @relation("scoring_points_to_business")
   daily_meal_drivers          delivery_drivers[]
-  late_events                 late_events[]               @relation("late_events_to_business")
-  fiscal_device               fiscal_devices?             @relation(fields: [fiscal_devices_id], references: [fiscal_devices_id])
-  fiscal_devices_id           String?                     @db.Uuid
+  late_events                 late_events[]              @relation("late_events_to_business")
+  fiscal_device               fiscal_devices?            @relation(fields: [fiscal_devices_id], references: [fiscal_devices_id])
+  fiscal_devices_id           String?                    @db.Uuid
   account_actions             account_actions[]
   business_clients            business_clients[]
   purchase_order_limit_amount Float?
@@ -329,7 +329,7 @@ model tokens {
 }
 
 model addresses {
-  address_id                  String                      @id @default(uuid()) @db.Uuid
+  address_id                  String                     @id @default(uuid()) @db.Uuid
   address                     String
   latitude                    String
   longitude                   String
@@ -339,9 +339,9 @@ model addresses {
   country                     String?
   postal                      String?
   users                       user_address[]
-  businesses                  business[]                  @relation(name: "address")
-  businesses_delivery_address business[]                  @relation(name: "delivery_address")
-  business_users              business_users[]            @relation("business_users_operating_address")
+  businesses                  business[]                 @relation(name: "address")
+  businesses_delivery_address business[]                 @relation(name: "delivery_address")
+  business_users              business_users[]           @relation("business_users_operating_address")
   daily_meal_subscriptions    daily_meal_subscriptions[]
   local_locations             local_locations?
 
@@ -612,6 +612,7 @@ model delivery_orders {
   details                           Json?
   courier_instructions              Json?
   restaurant_message                Json?
+  rejection_reason                  String?
   scheduled                         Json?
   timeline                          Json                                @default("[]")
   status                            DELIVERY_ORDER_STATUS
@@ -666,14 +667,14 @@ model delivery_order_sent {
 }
 
 model menus {
-  menu_id                 String                      @id @default(uuid()) @db.Uuid
-  business_id             String                      @db.Uuid
-  active                  Boolean                     @default(true)
-  business                business                    @relation(fields: [business_id], references: [business_id])
+  menu_id                 String            @id @default(uuid()) @db.Uuid
+  business_id             String            @db.Uuid
+  active                  Boolean           @default(true)
+  business                business          @relation(fields: [business_id], references: [business_id])
   categories              menu_categories[]
   menu_categories_ordered Json? // JSON field to store ordered category IDs
-  isDailyMeal             Boolean                     @default(false)
-  date                    DateTime?                   @db.Timestamp(0)
+  isDailyMeal             Boolean           @default(false)
+  date                    DateTime?         @db.Timestamp(0)
 
   @@unique([menu_id])
 }
@@ -1358,7 +1359,7 @@ model daily_meal_subscriptions {
   type                SUBSCRIPTION_TYPE
   status              SUBSCRIPTION_STATUS @default(AWAITING_PAYMENT)
   courier_comment     String?
-  payment_id          String?              @db.Uuid
+  payment_id          String?             @db.Uuid
 
   created_at DateTime @default(now()) @db.Timestamptz(6)
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
@@ -1452,7 +1453,7 @@ model payments {
   payment_type      String?
 
   // For daily meals subscriptions
-  subscription_grouped_id String?                     @unique @db.Uuid
+  subscription_grouped_id String?                    @unique @db.Uuid
   subscriptions           daily_meal_subscriptions[] @relation("PaymentToDMSubscription")
 
   // delivery_order_id         String?                      @db.Uuid

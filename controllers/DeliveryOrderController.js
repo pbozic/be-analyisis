@@ -1073,6 +1073,46 @@ async function updateOrderStatus(req, res) {
 	}
 }
 /**
+ * POST /delivery/orders/order/reject
+ * @tag Delivery
+ * @summary Reject a delivery order.
+ * @description Rejects a delivery order by updating its status to MERCHANT_REJECTED and FAIL, and emits the order status change event.
+ * @operationId rejectOrder
+ * @bodyDescription Request body must include 'order_id' to identify the order.
+ * @bodyContent {RejectOrderRequest} application/json
+ * @bodyRequired
+ * @response 200 - Successful operation. Returns the updated order in the response body.
+ * @responseContent {DeliveryOrder} 200.application/json
+ * @response 500 - Server error. Returns error message if any exception is encountered during execution
+ */
+async function rejectOrder(req, res) {
+	const { order_id, items } = req.body;
+	try {
+		if (!order_id) {
+			return res.status(400).json({ error: 'order_id is required.' });
+		}
+		let order;
+		if (Array.isArray(items) && items.length > 0) {
+			order = await DeliveryOrderDao.updateOrder(order_id, items);
+		} else {
+			order = await DeliveryOrderDao.getOrder(order_id, { include: { user: true } });
+		}
+		let user;
+		if (order) user = order.user;
+		await handlePaymentCleanup(order);
+		await handleStockSync(order);
+		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_REJECTED);
+		io.to('order_' + order.order_id).emit('order_rejected__delivery', order);
+		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.FAIL);
+		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
+		sendDeliveryOrderNotifications(user, null, user?.user_id, null, DELIVERY_ORDER_STATUS.MERCHANT_REJECTED);
+		res.status(200).json(order);
+	} catch (e) {
+		console.log(e);
+		res.status(500).json(e);
+	}
+}
+/**
  * POST /delivery/order/merchant_accept
  * @tag Delivery
  * @summary Process a delivery order from PENDING status.
@@ -1629,6 +1669,7 @@ export { getActiveDeliveryOrders };
 export { getOrder };
 export { createOrder };
 export { merchantAcceptOrder };
+export { rejectOrder };
 export { acceptOrderDelivery };
 export { cancelOrderDelivery };
 export { completeOrder };
@@ -1658,6 +1699,7 @@ export default {
 	getOrder,
 	createOrder,
 	merchantAcceptOrder,
+	rejectOrder,
 	acceptOrderDelivery,
 	cancelOrderDelivery,
 	completeOrder,
