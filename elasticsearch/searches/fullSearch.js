@@ -73,7 +73,8 @@ async function searchBusinesses(
 		const hasPromoSection = promoSectionId !== null;
 		const radius_limited = radius ? Math.min(radius, ES_RADIUS_LIMIT_KM) : ES_RADIUS_LIMIT_KM;
 		const hasBusinessIds = Array.isArray(businessIds) && businessIds.length > 0;
-		console.log('latlng', userLat, userLon);
+		// console.log('latlng', userLat, userLon);
+
 		// Base Query
 		const boolQuery = {
 			bool: {
