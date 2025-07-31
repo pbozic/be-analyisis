@@ -32,6 +32,6 @@ router.post('/order/cancel_delivery', DeliveryOrderController.cancelOrderDeliver
 router.post('/order/complete', DeliveryOrderController.completeOrder);
 router.post('/timeline', DeliveryOrderController.updateDeliveryOrderTimeline);
 router.post('/add_to_timeline', DeliveryOrderController.addToDeliveryOrderTimeline);
-router.post('/order/update', DeliveryOrderController.updateDeliveryOrder);
+router.post('/order/update', DeliveryOrderController.updateDeliveryOrderItems);
 
 export default router;

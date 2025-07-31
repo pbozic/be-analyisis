@@ -1093,11 +1093,12 @@ async function rejectOrder(req, res) {
 		if (!order_id) {
 			return res.status(400).json({ error: 'order_id is required.' });
 		}
-		let updateData = { rejection_reason: reason || '' };
 		if (Array.isArray(items) && items.length > 0) {
-			updateData.items = items;
+			await DeliveryOrderDao.updateOrderItems(order_id, items);
 		}
-		let order = await DeliveryOrderDao.updateOrder(order_id, updateData);
+		let order = await DeliveryOrderDao.updateOrder(order_id, {
+			rejection_reason: reason,
+		});
 		let user;
 		if (order) user = order.user;
 		await handlePaymentCleanup(order);
@@ -1672,23 +1673,23 @@ async function addToDeliveryOrderTimeline(req, res) {
 	}
 }
 /**
- * POST /delivery/order/update
+ * POST /delivery/orders/order/update/items
  * @tag Taxi
- * @summary Update a delivery order.
+ * @summary Update delivery order items.
  * @description Updates a delivery order.
- * @operationId updateDeliveryOrderTimeline
- * @bodyDescription Request body must include 'order_id', and the new 'timeline' details.
- * @bodyContent {updateDeliveryOrderTimelineRequest} application/json
+ * @operationId updateDeliveryOrderItems
+ * @bodyDescription Request body must include 'order_id'
+ * @bodyContent {updateDeliveryOrderItemsRequest} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new timeline in the response body.
  * @responseContent {TaxiOrder} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
-async function updateDeliveryOrder(req, res) {
+async function updateDeliveryOrderItems(req, res) {
 	const { order } = req.body;
-	const { order_id, ...data } = order;
+	const { order_id, items } = order;
 	try {
-		let order = await DeliveryOrderDao.updateOrder(order_id, data);
+		let order = await DeliveryOrderDao.updateOrderItems(order_id, items);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);
@@ -1902,7 +1903,7 @@ export { updateOrderDeliveryTime };
 export { getActiveDeliveryOrdersByUserId };
 export { getCompletedDeliveryOrdersByUserId };
 export { getActiveDeliveryOrdersByDriverId };
-export { updateDeliveryOrder };
+export { updateDeliveryOrderItems };
 export { startDailyMeals };
 export { getActiveDeliveryOrdersByBusinessId };
 export { getCompletedDeliveryOrdersByBusinessId };
@@ -1933,7 +1934,7 @@ export default {
 	getActiveDeliveryOrdersByUserId,
 	getCompletedDeliveryOrdersByUserId,
 	getActiveDeliveryOrdersByDriverId,
-	updateDeliveryOrder,
+	updateDeliveryOrderItems,
 	startDailyMeals,
 	getActiveDeliveryOrdersByBusinessId,
 	getCompletedDeliveryOrdersByBusinessId,
