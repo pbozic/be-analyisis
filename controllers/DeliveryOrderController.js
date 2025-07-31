@@ -1686,8 +1686,7 @@ async function addToDeliveryOrderTimeline(req, res) {
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
 async function updateDeliveryOrderItems(req, res) {
-	const { order } = req.body;
-	const { order_id, items } = order;
+	const { order_id, items } = req.body;
 	try {
 		let order = await DeliveryOrderDao.updateOrderItems(order_id, items);
 		res.status(200).json(order);
