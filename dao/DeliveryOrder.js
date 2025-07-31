@@ -564,7 +564,12 @@ async function updateOrderStatus(order_id, status) {
 							},
 						},
 					},
-					business: true,
+					business: {
+						include: {
+							address: true,
+							delivery_address: true,
+						},
+					},
 				},
 			});
 		});
