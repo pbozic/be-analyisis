@@ -934,6 +934,24 @@ async function removeDriverFromOrder(order_id) {
 	}
 }
 
+async function getOrdersByBusinessLocalLocation(business_local_location_id, status) {
+	try {
+		return await prisma.delivery_orders.findMany({
+			where: {
+				business_local_location_id,
+				status,
+			},
+			include: {
+				business: true,
+				user: true,
+			},
+		});
+	} catch (e) {
+		console.error('Error fetching orders by business local location:', e);
+		throw new Error(e.message);
+	}
+}
+
 export { getOrders };
 export { getActiveDeliveryOrders };
 export { getOrder };
@@ -962,6 +980,7 @@ export { getActiveDeliveryOrdersForBusiness };
 export { getInProgressDeliveryOrdersCountForBusinessId };
 export { getActiveOrderIdsForUser };
 export { removeDriverFromOrder };
+export { getOrdersByBusinessLocalLocation };
 export default {
 	getOrders,
 	getActiveDeliveryOrders,
@@ -991,5 +1010,6 @@ export default {
 	getInProgressDeliveryOrdersCountForBusinessId,
 	getActiveOrderIdsForUser,
 	removeDriverFromOrder,
+	getOrdersByBusinessLocalLocation,
 	acceptOrderDeliveryWithRawLock,
 };

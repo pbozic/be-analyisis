@@ -43,6 +43,7 @@ import LateEventsDao from '../dao/LateEvents.js';
 import PaymentDao from '../dao/Payment.ts';
 import BusinessUsersDao from '../dao/BusinessUsers.js';
 import DailyMealDao from '../dao/DailyMealDao.ts';
+import UserDao from '../dao/User.js';
 const { UserSockets, io, SocketStore } = socket;
 const uuidv4 = { v4 }.v4;
 /**
@@ -1274,7 +1275,140 @@ async function merchantAcceptOrder(req, res) {
 }
 
 /**
- * POST /delivery/order/merchant_ready
+ * Helper function to process order ready for pickup
+ * @param {string} order_id - The order ID to process
+ * @returns {Promise<Object>} The processed order
+ */
+async function processOrderReady(order_id) {
+	let order = await DeliveryOrderDao.getOrder(order_id, { include: { business: true } });
+	if (order.status !== DELIVERY_ORDER_STATUS.MERCHANT_PREPARING) {
+		throw new Error(`Order ${order_id} is not in MERCHANT_PREPARING state.`);
+	}
+	const user = order?.user;
+	console.info('got into processOrderReady', JSON.stringify(order.payment_intent_id));
+
+	if ([BUSINESS_TYPE.MERCHANT, BUSINESS_TYPE.LOCAL].includes(order.business.type)) {
+		const { items, grand_total, discount_total, delivery_cost, total_price, is_student } =
+			await calculateAndVerifyPriceForOrderItems(order);
+		order = await DeliveryOrderDao.updateOrder(order.order_id, {
+			details: {
+				...order.details,
+				delivery_cost: delivery_cost,
+				total_price: total_price,
+				sub_total_price: grand_total,
+				discount_savings: discount_total,
+			},
+		});
+		console.log(JSON.stringify(order.items, null, 2), JSON.stringify(items, null, 2), {
+			delivery_cost: delivery_cost,
+			total_price: total_price,
+			sub_total_price: grand_total,
+			discount_savings: discount_total,
+		});
+		order = await DeliveryOrderDao.getOrder(order.order_id, { include: { business: true } });
+		const restaurant_stripe = order.business.stripe_account_id;
+		const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT, DRIVER_CUT } =
+			await calculateDeliveryOrderPaymentCuts(order);
+
+		if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
+			if (Math.round(order.details.total_price * 100) === order.details.credit_discount) {
+				const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+					order.user_id,
+					restaurant_stripe,
+					MERCHANT_CREDIT_CUT,
+					order.order_id,
+					SERVICE_TYPE.DELIVERY
+				);
+				const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+					order.user_id,
+					'platform',
+					PLATFORM_CREDIT_CUT,
+					order.order_id,
+					SERVICE_TYPE.DELIVERY
+				);
+			} else {
+				order = await DeliveryOrderDao.updateOrder(order.order_id, {
+					payment: {
+						...order.payment,
+						status: 'IN_PAYMENT_PROCESSING',
+					},
+				});
+				console.log('capturing PI', order.payment_intent_id, {
+					amount_to_capture: PLATFORM_CUT + MERCHANT_CUT + DRIVER_CUT,
+				});
+				await stripe.client.paymentIntents.capture(order.payment_intent_id, {
+					amount_to_capture: PLATFORM_CUT + MERCHANT_CUT + DRIVER_CUT,
+				});
+				// Status update happens elsewhere for CARD payments - return early for single order processing
+				return order;
+			}
+		} else if (order.payment.type === 'WALLET') {
+			const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+				order.user_id,
+				restaurant_stripe,
+				MERCHANT_CUT + MERCHANT_CREDIT_CUT,
+				order.order_id,
+				SERVICE_TYPE.DELIVERY
+			);
+			const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+				order.user_id,
+				'platform',
+				PLATFORM_CUT + PLATFORM_CREDIT_CUT,
+				order.order_id,
+				SERVICE_TYPE.DELIVERY
+			);
+		} else if (order.payment.type === 'CASH') {
+			if (MERCHANT_CREDIT_CUT > 0) {
+				const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+					order.user_id,
+					restaurant_stripe,
+					MERCHANT_CREDIT_CUT,
+					order.order_id,
+					SERVICE_TYPE.DELIVERY
+				);
+			}
+			if (PLATFORM_CREDIT_CUT > 0) {
+				const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
+					order.user_id,
+					'platform',
+					PLATFORM_CREDIT_CUT,
+					order.order_id,
+					SERVICE_TYPE.DELIVERY
+				);
+			}
+		} else {
+			// TODO: reject
+			throw new Error('Payment type not supported');
+		}
+		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL);
+	}
+
+	order = await DeliveryOrderDao.updateOrderPickupTime(order_id, new Date().toISOString());
+	io.to('order_' + order.order_id).emit('order_pickup_time', order);
+	order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP);
+	sendDeliveryOrderNotifications(user, null, order.user_id, null, order.status);
+	io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
+
+	return order;
+}
+
+/**
+ * Helper function to handle order processing failure
+ * @param {string} order_id - The order ID that failed
+ * @returns {Promise<Object>} The failed order
+ */
+async function handleOrderProcessingFailure(order_id) {
+	await handlePaymentCleanup(order_id);
+	let order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED);
+	io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
+	order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.FAIL);
+	io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
+	SocketStore.closeRoom(`order_${order.order_id}`);
+	return order;
+}
+
+/**
+ * POST /delivery/orders/order/merchant_ready
  * @tag Delivery
  * @summary Merchant confirms order is ready for pickup.
  * @description
@@ -1321,126 +1455,190 @@ async function merchantAcceptOrder(req, res) {
 async function merchantConfirmOrderReady(req, res) {
 	const { order_id } = req.body;
 	try {
-		let order = await DeliveryOrderDao.getOrder(order_id, { include: { business: true } });
-		if (order.status !== DELIVERY_ORDER_STATUS.MERCHANT_PREPARING) {
-			return res.status(409).json({ message: 'Order is not in MERCHANT_PREPARING state.' });
-		}
-		const user = order?.user;
-		console.info('got into merchantAcceptOrder', JSON.stringify(order.payment_intent_id));
-
-		if ([BUSINESS_TYPE.MERCHANT, BUSINESS_TYPE.LOCAL].includes(order.business.type)) {
-			const { items, grand_total, discount_total, delivery_cost, total_price, is_student } =
-				await calculateAndVerifyPriceForOrderItems(order);
-			order = await DeliveryOrderDao.updateOrder(order.order_id, {
-				details: {
-					...order.details,
-					delivery_cost: delivery_cost,
-					total_price: total_price,
-					sub_total_price: grand_total,
-					discount_savings: discount_total,
-				},
-			});
-			console.log(JSON.stringify(order.items, null, 2), JSON.stringify(items, null, 2), {
-				delivery_cost: delivery_cost,
-				total_price: total_price,
-				sub_total_price: grand_total,
-				discount_savings: discount_total,
-			});
-			order = await DeliveryOrderDao.getOrder(order.order_id, { include: { business: true } });
-			const restaurant_stripe = order.business.stripe_account_id;
-			const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT, DRIVER_CUT } =
-				await calculateDeliveryOrderPaymentCuts(order);
-
-			if (order.payment.type === 'CARD' || order.payment.type === 'PLATFORM') {
-				if (Math.round(order.details.total_price * 100) === order.details.credit_discount) {
-					const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-						order.user_id,
-						restaurant_stripe,
-						MERCHANT_CREDIT_CUT,
-						order.order_id,
-						SERVICE_TYPE.DELIVERY
-					);
-					const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-						order.user_id,
-						'platform',
-						PLATFORM_CREDIT_CUT,
-						order.order_id,
-						SERVICE_TYPE.DELIVERY
-					);
-				} else {
-					order = await DeliveryOrderDao.updateOrder(order.order_id, {
-						payment: {
-							...order.payment,
-							status: 'IN_PAYMENT_PROCESSING',
-						},
-					});
-					console.log('capturing PI', order.payment_intent_id, {
-						amount_to_capture: PLATFORM_CUT + MERCHANT_CUT + DRIVER_CUT,
-					});
-					await stripe.client.paymentIntents.capture(order.payment_intent_id, {
-						amount_to_capture: PLATFORM_CUT + MERCHANT_CUT + DRIVER_CUT,
-					});
-					// Status update happens elsewhere for CARD payments
-					return res.status(200).json(order);
-				}
-			} else if (order.payment.type === 'WALLET') {
-				const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-					order.user_id,
-					restaurant_stripe,
-					MERCHANT_CUT + MERCHANT_CREDIT_CUT,
-					order.order_id,
-					SERVICE_TYPE.DELIVERY
-				);
-				const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-					order.user_id,
-					'platform',
-					PLATFORM_CUT + PLATFORM_CREDIT_CUT,
-					order.order_id,
-					SERVICE_TYPE.DELIVERY
-				);
-			} else if (order.payment.type === 'CASH') {
-				if (MERCHANT_CREDIT_CUT > 0) {
-					const transfersForMerchant = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-						order.user_id,
-						restaurant_stripe,
-						MERCHANT_CREDIT_CUT,
-						order.order_id,
-						SERVICE_TYPE.DELIVERY
-					);
-				}
-				if (PLATFORM_CREDIT_CUT > 0) {
-					const transfersForPlatform = await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-						order.user_id,
-						'platform',
-						PLATFORM_CREDIT_CUT,
-						order.order_id,
-						SERVICE_TYPE.DELIVERY
-					);
-				}
-			} else {
-				// TODO: reject
-				throw new Error('Payment type not supported');
-			}
-			order = await DeliveryOrderDao.updateOrderStatus(
-				order_id,
-				DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_SUCCESSFUL
-			);
-		}
-		order = await DeliveryOrderDao.updateOrderPickupTime(order_id, new Date().toISOString());
-		io.to('order_' + order.order_id).emit('order_pickup_time', order);
-		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP);
-		sendDeliveryOrderNotifications(user, null, order.user_id, null, order.status);
-		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
+		const order = await processOrderReady(order_id);
 		res.status(200).json(order);
 	} catch (e) {
 		console.log(e);
-		await handlePaymentCleanup(order_id);
-		let order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.CUSTOMER_PAYMENT_FAILED);
-		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
-		order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.FAIL);
-		io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
-		SocketStore.closeRoom(`order_${order.order_id}`);
+		try {
+			await handleOrderProcessingFailure(order_id);
+		} catch (cleanupError) {
+			console.error('Error during cleanup:', cleanupError);
+		}
 		res.status(500).json(e);
+	}
+}
+
+/**
+ * POST /delivery/orders/order/local_ready
+ * @tag Delivery
+ * @summary LOCAL business confirms multiple orders are ready for pickup.
+ * @description
+ * Sets all preparing orders for a specific business_local_location as ready for pickup.
+ * Only works for LOCAL business type. Recalculates pricing and processes payments for all orders,
+ * then updates them as ready for pickup and emits relevant events.
+ * Handles payment via CARD, WALLET, PLATFORM, or CASH for each order.
+ *
+ * @operationId localConfirmMultipleOrdersReady
+ * @bodyDescription The request body must include 'business_local_location_id' to identify which location's orders to process.
+ * @bodyContent {
+ *   "business_local_location_id": "uuid-string"
+ * } application/json
+ * @bodyRequired
+ * @response 200 - Orders marked as ready for pickup. Returns summary of processed orders.
+ * @responseContent {
+ *   "success": true,
+ *   "processed_orders": 5,
+ *   "successful_orders": 4,
+ *   "failed_orders": 1,
+ *   "orders": [
+ *     {
+ *       "order_id": 123,
+ *       "status": "success",
+ *       "order": { ... }
+ *     },
+ *     {
+ *       "order_id": 124,
+ *       "status": "failed",
+ *       "error": "Payment processing failed"
+ *     }
+ *   ]
+ * } 200.application/json
+ * @responseExample 200.application/json {
+ *   "success": true,
+ *   "processed_orders": 2,
+ *   "successful_orders": 2,
+ *   "failed_orders": 0,
+ *   "orders": [
+ *     {
+ *       "order_id": 123,
+ *       "status": "success",
+ *       "order": {
+ *         "order_id": 123,
+ *         "user_id": 456,
+ *         "business_id": 789,
+ *         "status": "MERCHANT_READY_FOR_PICKUP"
+ *       }
+ *     },
+ *     {
+ *       "order_id": 124,
+ *       "status": "success",
+ *       "order": {
+ *         "order_id": 124,
+ *         "user_id": 457,
+ *         "business_id": 789,
+ *         "status": "MERCHANT_READY_FOR_PICKUP"
+ *       }
+ *     }
+ *   ]
+ * }
+ * @response 400 - Invalid business_local_location_id or no preparing orders found.
+ * @response 500 - Error processing the orders.
+ * @prisma_model delivery_orders
+ * @prisma_model business_local_locations
+ * @prisma_model businesses
+ */
+async function localConfirmMultipleOrdersReady(req, res) {
+	const { business_local_location_id } = req.body;
+	if (!business_local_location_id) {
+		return res.status(400).json({ error: 'business_local_location_id is required' });
+	}
+
+	try {
+		const userId = req.user?.user_id;
+		if (!userId) {
+			return res.status(403).json({ error: 'Unauthorized' });
+		}
+		const user = await UserDao.getUserById(userId);
+		if (!user) {
+			return res.status(404).json({ error: 'User not found' });
+		}
+		if (user.business_users.business.type !== BUSINESS_TYPE.LOCAL) {
+			return res.status(400).json({ error: 'This endpoint is only for LOCAL business type' });
+		}
+
+		const businessLocalLocation = await prisma.business_local_locations.findUnique({
+			where: { business_local_location_id },
+			include: {
+				business: true,
+			},
+		});
+		if (!businessLocalLocation) {
+			return res.status(400).json({ error: 'Invalid business_local_location_id' });
+		}
+
+		const preparingOrders = await DeliveryOrderDao.getOrdersByBusinessLocalLocation(
+			business_local_location_id,
+			DELIVERY_ORDER_STATUS.MERCHANT_PREPARING
+		);
+		if (!preparingOrders || preparingOrders.length === 0) {
+			return res.status(400).json({
+				error: 'No preparing orders found for this business_local_location_id',
+				processed_orders: 0,
+				successful_orders: 0,
+				failed_orders: 0,
+				orders: [],
+			});
+		}
+
+		console.log(
+			`Processing ${preparingOrders.length} orders for business_local_location_id: ${business_local_location_id}`
+		);
+
+		const results = {
+			success: true,
+			processed_orders: preparingOrders.length,
+			successful_orders: 0,
+			failed_orders: 0,
+			orders: [],
+		};
+
+		for (const order of preparingOrders) {
+			try {
+				const processedOrder = await processOrderReady(order.order_id);
+				results.successful_orders++;
+				results.orders.push({
+					order_id: order.order_id,
+					status: 'success',
+					order: processedOrder,
+				});
+			} catch (e) {
+				console.error(`Failed to process order ${order.order_id}:`, e);
+				results.failed_orders++;
+				try {
+					await handleOrderProcessingFailure(order.order_id);
+					results.orders.push({
+						order_id: order.order_id,
+						status: 'failed',
+						error: e.message || 'Order processing failed',
+					});
+				} catch (cleanupError) {
+					console.error(`Cleanup failed for order ${order.order_id}:`, cleanupError);
+					results.orders.push({
+						order_id: order.order_id,
+						status: 'failed',
+						error: `Order processing and cleanup failed: ${e.message}`,
+					});
+				}
+			}
+		}
+		results.success = results.failed_orders === 0;
+		console.log(`Completed processing for business_local_location_id: ${business_local_location_id}`, {
+			total: results.processed_orders,
+			successful: results.successful_orders,
+			failed: results.failed_orders,
+		});
+		res.status(200).json(results);
+	} catch (e) {
+		console.error('Error in localConfirmMultipleOrdersReady:', e);
+		res.status(500).json({
+			error: 'Failed to process orders',
+			message: e.message,
+			success: false,
+			processed_orders: 0,
+			successful_orders: 0,
+			failed_orders: 0,
+			orders: [],
+		});
 	}
 }
 
@@ -1907,6 +2105,7 @@ export { startDailyMeals };
 export { getActiveDeliveryOrdersByBusinessId };
 export { getCompletedDeliveryOrdersByBusinessId };
 export { generateOrder };
+export { localConfirmMultipleOrdersReady };
 export default {
 	getDeliveryOrders,
 	getDeliveryOrdersToday,
@@ -1937,5 +2136,6 @@ export default {
 	startDailyMeals,
 	getActiveDeliveryOrdersByBusinessId,
 	getCompletedDeliveryOrdersByBusinessId,
+	localConfirmMultipleOrdersReady,
 	generateOrder,
 };
