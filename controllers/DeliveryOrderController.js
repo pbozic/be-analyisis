@@ -1552,7 +1552,7 @@ async function localConfirmMultipleOrdersReady(req, res) {
 		if (!user) {
 			return res.status(404).json({ error: 'User not found' });
 		}
-		if (user.business_users.business.type !== BUSINESS_TYPE.LOCAL) {
+		if (user.business_users?.[0]?.business?.type !== BUSINESS_TYPE.LOCAL) {
 			return res.status(400).json({ error: 'This endpoint is only for LOCAL business type' });
 		}
 
