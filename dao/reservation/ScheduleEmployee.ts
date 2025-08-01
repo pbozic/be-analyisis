@@ -5,6 +5,12 @@ import type {
 	ScheduleEmployee,
 } from '../../types/reservation/Schedule.ts';
 
+const cropped_user_columns = {
+	first_name: true,
+	last_name: true,
+	user_id: true,
+};
+
 /**
  * Retrieves all schedule-employee assignments for a given schedule ID.
  * @param {string} scheduleId - The schedule ID.
@@ -94,10 +100,60 @@ export async function getScheduleEmployeeById(id: string): Promise<ScheduleEmplo
 	}
 }
 
+/**
+ * Retrieves all employees with slots for schedule.
+ * @param {string} scheduleId - The ID of the schedule slots to retrieve employees for.
+ * @returns {Promise<ScheduleEmployee[]>} A promise that resolves to an array of employees.
+ * @throws {Error} If there is an error retrieving the employees.
+ */
+export async function getEmployeesByScheduleIdWithSlots(scheduleId: string): Promise<ScheduleEmployee[]> {
+	try {
+		let employees = await prisma.schedule_employee.findMany({
+			where: {
+				schedule_id: scheduleId,
+			},
+			include: {
+				schedule: true,
+				employee: {
+					select: {
+						employee_id: true,
+						reservation_module: true,
+						business_users_id: true,
+						business_user: {
+							select: {
+								business_users_id: true,
+								business_id: true,
+								user_id: true,
+								users: {
+									select: cropped_user_columns,
+								},
+							},
+						},
+					},
+				},
+				schedule_slots: {
+					include: {
+						schedule_slot_exceptions: true,
+						booking_slots: {
+							orderBy: {
+								start_time: 'asc',
+							},
+						},
+					},
+				},
+			},
+		});
+		return employees;
+	} catch (error) {
+		throw new Error('Error retrieving employees');
+	}
+}
+
 export default {
 	getScheduleEmployeesByScheduleId,
 	createScheduleEmployee,
 	updateScheduleEmployee,
 	deleteScheduleEmployee,
 	getScheduleEmployeeById,
+	getEmployeesByScheduleIdWithSlots,
 };

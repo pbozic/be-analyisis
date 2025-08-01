@@ -10,5 +10,6 @@ router.post('/', validate(CreateScheduleEmployeeSchema), ScheduleEmployeeControl
 router.put('/:id', validate(UpdateScheduleEmployeeSchema), ScheduleEmployeeController.updateScheduleEmployee);
 router.delete('/:id', ScheduleEmployeeController.deleteScheduleEmployee);
 router.get('/:id', ScheduleEmployeeController.getScheduleEmployeeById);
+router.get('/schedule-slots/:schedule_id', ScheduleEmployeeController.getEmployeesByScheduleIdWithSlots);
 
 export default router;

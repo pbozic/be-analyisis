@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 
 import ScheduleEmployeeDao from '../../dao/reservation/ScheduleEmployee';
 import { ValidatedRequest } from '../../types/validatedRequest';
@@ -128,10 +128,38 @@ export async function getScheduleEmployeeById(
 	}
 }
 
+/**
+ * GET /reservation/employees/{employee_id}
+ * @tag Reservation
+ * @summary Get a reservation employee by ID
+ * @description Retrieves a reservation employee by its ID.
+ * @operationId getReservationEmployeeById
+ * @pathParam {string} employee_id - The ID of the employee to retrieve.
+ * @response 200 - Employee retrieved successfully
+ * @responseContent {Employee} 200.application/json
+ * @response 404 - Employee not found
+ * @response 500 - Error retrieving employee
+ */
+
+export async function getEmployeesByScheduleIdWithSlots(req: Request, res: Response): Promise<void> {
+	try {
+		let scheduleId = req.params.schedule_id as string;
+		let employee = await ScheduleEmployeeDao.getEmployeesByScheduleIdWithSlots(scheduleId);
+		if (!employee) {
+			res.status(404).json({ message: 'Employee not found' });
+			return;
+		}
+		res.status(200).json(employee);
+	} catch (error) {
+		res.status(500).json({ message: 'Error retrieving employee', error });
+	}
+}
+
 export default {
 	getScheduleEmployeesByScheduleId,
 	createScheduleEmployee,
 	updateScheduleEmployee,
 	deleteScheduleEmployee,
 	getScheduleEmployeeById,
+	getEmployeesByScheduleIdWithSlots,
 };
