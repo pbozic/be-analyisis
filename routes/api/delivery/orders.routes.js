@@ -21,6 +21,7 @@ router.post('/daily_meals', DeliveryOrderController.startDailyMeals);
 router.post('/order', DeliveryOrderController.createOrder);
 router.post('/order/merchant_accept', DeliveryOrderController.merchantAcceptOrder);
 router.post('/order/merchant_ready', DeliveryOrderController.merchantConfirmOrderReady);
+router.post('/order/local_ready', DeliveryOrderController.localConfirmMultipleOrdersReady);
 router.post('/order/reject', DeliveryOrderController.rejectOrder);
 router.post('/order/dispatcher_cancel', DeliveryOrderController.dispatcherCancel);
 router.post('/order/dispatcher_revoke', DeliveryOrderController.dispatcherRevoke);
@@ -32,6 +33,6 @@ router.post('/order/cancel_delivery', DeliveryOrderController.cancelOrderDeliver
 router.post('/order/complete', DeliveryOrderController.completeOrder);
 router.post('/timeline', DeliveryOrderController.updateDeliveryOrderTimeline);
 router.post('/add_to_timeline', DeliveryOrderController.addToDeliveryOrderTimeline);
-router.post('/order/update', DeliveryOrderController.updateDeliveryOrder);
+router.post('/order/update/items', DeliveryOrderController.updateDeliveryOrderItems);
 
 export default router;

@@ -564,7 +564,12 @@ async function updateOrderStatus(order_id, status) {
 							},
 						},
 					},
-					business: true,
+					business: {
+						include: {
+							address: true,
+							delivery_address: true,
+						},
+					},
 				},
 			});
 		});
@@ -811,6 +816,20 @@ async function addTimelineEntry(order_id, status, entry_data = {}) {
 		throw new Error(e);
 	}
 }
+async function updateOrderItems(order_id, items) {
+	try {
+		return await prisma.delivery_orders.update({
+			where: {
+				order_id,
+			},
+			data: {
+				items,
+			},
+		});
+	} catch (e) {
+		throw new Error(e);
+	}
+}
 async function updateOrder(order_id, order) {
 	let newOrder = { ...order };
 	delete newOrder.user_id;
@@ -915,6 +934,24 @@ async function removeDriverFromOrder(order_id) {
 	}
 }
 
+async function getOrdersByBusinessLocalLocation(business_local_location_id, status) {
+	try {
+		return await prisma.delivery_orders.findMany({
+			where: {
+				business_local_location_id,
+				status,
+			},
+			include: {
+				business: true,
+				user: true,
+			},
+		});
+	} catch (e) {
+		console.error('Error fetching orders by business local location:', e);
+		throw new Error(e.message);
+	}
+}
+
 export { getOrders };
 export { getActiveDeliveryOrders };
 export { getOrder };
@@ -932,6 +969,7 @@ export { updateDeliveryOrderTimeline };
 export { addTimelineEntry };
 export { getUserByDeliveryOrderId };
 export { updateOrder };
+export { updateOrderItems };
 export { updateOrderPickupTime };
 export { updateOrderDeliveryTime };
 export { getDeliveryOrdersIfNotCompleted };
@@ -942,6 +980,7 @@ export { getActiveDeliveryOrdersForBusiness };
 export { getInProgressDeliveryOrdersCountForBusinessId };
 export { getActiveOrderIdsForUser };
 export { removeDriverFromOrder };
+export { getOrdersByBusinessLocalLocation };
 export default {
 	getOrders,
 	getActiveDeliveryOrders,
@@ -960,6 +999,7 @@ export default {
 	addTimelineEntry,
 	getUserByDeliveryOrderId,
 	updateOrder,
+	updateOrderItems,
 	updateOrderPickupTime,
 	updateOrderDeliveryTime,
 	getDeliveryOrdersIfNotCompleted,
@@ -970,5 +1010,6 @@ export default {
 	getInProgressDeliveryOrdersCountForBusinessId,
 	getActiveOrderIdsForUser,
 	removeDriverFromOrder,
+	getOrdersByBusinessLocalLocation,
 	acceptOrderDeliveryWithRawLock,
 };

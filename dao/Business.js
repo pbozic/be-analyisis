@@ -326,6 +326,7 @@ const getBusinessForSearchById = async (business_id) => {
 										stock: {
 											gt: 0, // Only include items with stock greater than 0
 										},
+										is_enabled: true, // Only include enabled items
 									},
 								},
 							},
