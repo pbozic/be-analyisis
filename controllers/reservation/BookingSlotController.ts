@@ -2,7 +2,15 @@ import { Response } from 'express';
 
 import BookingSlotDao from '../../dao/reservation/BookingSlot';
 import { ValidatedRequest } from '../../types/validatedRequest';
-import { CreateBookingSlotInput, UpdateBookingSlotSchemaInput } from '../../types/reservation/Schedule';
+import {
+	CreateBookingSlotInput,
+	UpdateBookingSlotSchemaInput,
+	CreateOrUpdateBookingSlotInput,
+	BookingSlotWithoutId,
+	BookingSlotWithId,
+	CreateScheduleSlotWithBookingSlotsInput,
+} from '../../types/reservation/Schedule';
+import ScheduleSlotDao from '../../dao/reservation/ScheduleSlot';
 
 /**
  * GET /reservation/booking-slots/list/:schedule_slot_id
@@ -119,10 +127,138 @@ export async function getBookingSlotById(req: ValidatedRequest<null, { id: strin
 	}
 }
 
+/**
+ * Splits booking slots into two arrays: those with a booking ID and those without.
+ * @param {BookingSlotWithoutId[]} slots - The array of booking slots to split.
+ * @returns {{ withBookingId: BookingSlotWithId[], withoutBookingId: BookingSlotWithoutId[] }}
+ * @description This function iterates through the provided booking slots and separates them into two categories:
+ * - `withBookingId`: Contains booking slots that have a `booking_slot_id`.
+ * - `withoutBookingId`: Contains booking slots that do not have a `booking_slot_id
+ * @returns {Object} An object containing two arrays:
+ * @throws {Error} If the input is not an array or if any slot does not match the expected structure.
+ */
+function splitByBookingId(slots: BookingSlotWithoutId[]) {
+	try {
+		const withBookingId: BookingSlotWithId[] = [];
+		const withoutBookingId: BookingSlotWithoutId[] = [];
+
+		for (const slot of slots) {
+			if (slot?.booking_slot_id) {
+				withBookingId.push(slot as BookingSlotWithId);
+			} else {
+				withoutBookingId.push(slot);
+			}
+		}
+
+		return { withBookingId, withoutBookingId };
+	} catch (error) {
+		throw new Error(
+			'Error splitting booking slots by booking ID: ' + (error instanceof Error ? error.message : 'Unknown error')
+		);
+	}
+}
+
+/**
+ * POST /reservation/booking-slots/update-or-create
+ * @tag Reservation
+ * @summary Create a new booking slot or update an existing one
+ * @description Creates a new booking slot or updates an existing one if it already exists.
+ * @operationId updateOrCreateBookingSlots
+ * @requestBody {CreateOrUpdateBookingSlotInput} requestBody - The booking slot data to create or update.
+ * @response 201 - Booking slots created or updated successfully
+ * @responseContent {BookingSlot} 201.application/json
+ * @response 400 - Invalid input data
+ * @response 500 - Error creating booking slot
+ */
+export async function updateOrCreateBookingSlots(
+	req: ValidatedRequest<CreateOrUpdateBookingSlotInput>,
+	res: Response
+): Promise<void> {
+	try {
+		const { withBookingId, withoutBookingId } = splitByBookingId(req.body.bookingSlots.newOrChanged);
+		const updatedSlots = await Promise.all(
+			withBookingId.map(async (el) => {
+				let data = await BookingSlotDao.updateBookingSlot(el.booking_slot_id, el);
+				return {
+					data,
+				};
+			})
+		);
+		const createdSlots = await Promise.all(
+			withoutBookingId.map(async (el) => {
+				let data = await BookingSlotDao.createBookingSlot(el);
+				return {
+					data,
+				};
+			})
+		);
+		const removedSlots = await Promise.all(
+			req.body.bookingSlots.removed.map(async (el) => {
+				let data = await BookingSlotDao.deleteBookingSlot(el.booking_slot_id);
+				return {
+					data,
+				};
+			})
+		);
+		const record = { updatedSlots, createdSlots, removedSlots };
+		res.status(200).json(record);
+	} catch (error) {
+		res.status(500).json({ message: 'Error updating or creating booking slot', error });
+	}
+}
+
+/**
+ * POST /reservation/booking-slots/create-schedule-slot-with-booking-slots
+ * @tag Reservation
+ * @summary Create a new schedule slot with booking slots
+ * @description Creates a new schedule slot and associated booking slots.
+ * @operationId createScheduleSlotWithBookingSlots
+ * @requestBody {CreateScheduleSlotWithBookingSlotsInput} requestBody - The schedule slot and booking slots data to create.
+ * @response 201 - Schedule slot with booking slots created successfully
+ * @responseContent {ScheduleSlot} 201.application/json
+ * @response 400 - Invalid input data
+ * @response 500 - Error creating schedule slot with booking slots
+ */
+export async function createScheduleSlotWithBookingSlots(
+	req: ValidatedRequest<CreateScheduleSlotWithBookingSlotsInput>,
+	res: Response
+): Promise<void> {
+	try {
+		const { schedule, bookingSlots } = req.body;
+		const createdScheduleSlot = await ScheduleSlotDao.createScheduleSlot(schedule);
+		const schedule_slot_id = createdScheduleSlot.schedule_slot_id;
+		const withoutId = bookingSlots;
+		const bookingSlotsToCreate = withoutId.map((el) => ({
+			...el,
+			schedule_slot_id,
+		}));
+		const createdSlots = await Promise.all(
+			bookingSlotsToCreate.map(async (el) => {
+				let data = await BookingSlotDao.createBookingSlot(el);
+				return {
+					data,
+				};
+			})
+		);
+
+		const record = {
+			schedule_slot: {
+				...createdScheduleSlot,
+				booking_slots: createdSlots,
+			},
+		};
+		res.status(200).json(record);
+	} catch (error) {
+		res.status(500).json({ message: 'Error updating or creating booking slot', error });
+	}
+}
+
 export default {
 	getBookingSlotsByScheduleSlotId,
 	createBookingSlot,
 	updateBookingSlot,
 	deleteBookingSlot,
 	getBookingSlotById,
+	updateOrCreateBookingSlots,
+	createScheduleSlotWithBookingSlots,
 };

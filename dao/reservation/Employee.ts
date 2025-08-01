@@ -46,7 +46,6 @@ export async function getEmployeesByReservationModuleId(reservationModuleId: str
 		});
 		return employees;
 	} catch (error) {
-		console.log('Error retrieving employees:', error);
 		throw new Error('Error retrieving employees');
 	}
 }
@@ -55,14 +54,14 @@ export async function getEmployeesByReservationModuleId(reservationModuleId: str
  * Creates a new employee.
  * @param {{
  * 	reservation_module_id: string;
- * 	business_user_id: string;
+ * 	business_users_id: string;
  * }} employeeData - The data for the new employee.
  * @returns {Promise<Employee>} A promise that resolves to the created employee.
  * @throws {Error} If there is an error creating the employee.
  */
 export async function createEmployee(employeeData: {
 	reservation_module_id: string;
-	business_user_id: string;
+	business_users_id: string;
 }): Promise<Employee> {
 	try {
 		let employee = await prisma.employee.create({
@@ -93,7 +92,7 @@ export async function deleteEmployee(employeeId: string): Promise<void> {
 
 		await prisma.business_users.delete({
 			where: {
-				business_users_id: employee.business_user_id,
+				business_users_id: employee.business_users_id,
 			},
 		});
 		await prisma.employee.delete({
@@ -124,7 +123,7 @@ export async function updateEmployee(employeeId: string, employeeData: UpdateEmp
 		}
 		let businessUser = await prisma.business_users.findFirst({
 			where: {
-				business_users_id: employee.business_user_id,
+				business_users_id: employee.business_users_id,
 			},
 		});
 

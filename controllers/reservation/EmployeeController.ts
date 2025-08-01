@@ -63,7 +63,7 @@ export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>,
 		);
 		let employee = await EmployeeDao.createEmployee({
 			reservation_module_id: reservation_module_id,
-			business_user_id: businessUser.business_user_id,
+			business_users_id: businessUser.business_users_id,
 		});
 		res.status(201).json(employee);
 	} catch (error) {
