@@ -165,6 +165,7 @@ async function createOrder(req, res) {
 		res.status(500).json({ message: e.message });
 	}
 }
+
 /**
  * POST /delivery/orders/daily_meals
  * @tag Delivery
@@ -1299,12 +1300,16 @@ async function processOrderReady(order_id) {
 				discount_savings: discount_total,
 			},
 		});
-		console.log(JSON.stringify(order.items, null, 2), JSON.stringify(items, null, 2), {
-			delivery_cost: delivery_cost,
-			total_price: total_price,
-			sub_total_price: grand_total,
-			discount_savings: discount_total,
-		});
+		console.log(
+			// 	JSON.stringify(order.items, null, 2),
+			// JSON.stringify(items, null, 2),
+			{
+				delivery_cost: delivery_cost,
+				total_price: total_price,
+				sub_total_price: grand_total,
+				discount_savings: discount_total,
+			}
+		);
 		order = await DeliveryOrderDao.getOrder(order.order_id, { include: { business: true } });
 		const restaurant_stripe = order.business.stripe_account_id;
 		const { PLATFORM_CREDIT_CUT, PLATFORM_CUT, MERCHANT_CREDIT_CUT, MERCHANT_CUT, DRIVER_CUT } =
@@ -1333,6 +1338,14 @@ async function processOrderReady(order_id) {
 						status: 'IN_PAYMENT_PROCESSING',
 					},
 				});
+				const pi = await stripe.paymentIntents.retrieve(paymentIntentId);
+				await stripe.paymentIntents.update(paymentIntentId, {
+					metadata: {
+						...pi.metadata,
+						merchant_cut: MERCHANT_CUT,
+					},
+				});
+
 				console.log('capturing PI', order.payment_intent_id, {
 					amount_to_capture: PLATFORM_CUT + MERCHANT_CUT + DRIVER_CUT,
 				});
