@@ -1338,8 +1338,8 @@ async function processOrderReady(order_id) {
 						status: 'IN_PAYMENT_PROCESSING',
 					},
 				});
-				const pi = await stripe.paymentIntents.retrieve(paymentIntentId);
-				await stripe.paymentIntents.update(paymentIntentId, {
+				const pi = await stripe.client.paymentIntents.retrieve(paymentIntentId);
+				await stripe.client.paymentIntents.update(paymentIntentId, {
 					metadata: {
 						...pi.metadata,
 						merchant_cut: MERCHANT_CUT,
