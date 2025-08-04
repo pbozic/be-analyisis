@@ -245,6 +245,8 @@ const getBusinessesForSearchById = async (business_id) => {
 };
 const getBusinessForSearchById = async (business_id) => {
 	try {
+		const tomorrow = new Date();
+		tomorrow.setDate(tomorrow.getDate() + 1);
 		let business = await prisma.business.findUnique({
 			where: {
 				business_id: business_id,
@@ -271,7 +273,7 @@ const getBusinessForSearchById = async (business_id) => {
 				business_local_locations: {
 					where: {
 						time: {
-							gte: new Date(),
+							gte: tomorrow,
 						},
 					},
 					include: {
