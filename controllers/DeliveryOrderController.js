@@ -1416,6 +1416,7 @@ async function handleOrderProcessingFailure(order_id) {
 	io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 	order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.FAIL);
 	io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
+	await handleStockSync(order);
 	SocketStore.closeRoom(`order_${order.order_id}`);
 	return order;
 }
