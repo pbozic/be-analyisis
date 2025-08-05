@@ -26,11 +26,11 @@ const getUserById = async (user_id, args) => {
 			where: {
 				user_id: user_id,
 			},
-			select: {
+			include: {
 				business_users: {
-					select: {
+					include: {
 						business: {
-							select: {
+							include: {
 								address: true,
 							},
 						},
