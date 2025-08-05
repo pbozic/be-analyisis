@@ -10,7 +10,7 @@ import { getLocalisedTexts } from '../localisations/languages.js';
 import { CalculateOrderLobbyOrderDetails } from '../lib/deliveryHelpers.js';
 import DeliveryOrderController from './DeliveryOrderController.js';
 import { DOCUMENT_TYPE } from '../lib/constants.js';
-import MenuItemDao, { getMenuItemsByIds } from '../dao/MenuItem.js';
+import MenuItemDao from '../dao/MenuItem.js';
 const { UserSockets, io } = socket;
 
 async function lobbySocketOrNotification(user_id, event, order_lobby) {
