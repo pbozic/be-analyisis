@@ -1,8 +1,8 @@
 import { Prisma, SUBSCRIPTION_STATUS, SUBSCRIPTION_TYPE, DAILY_MEAL_INSTANCE_STATUS } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
-import { DailyMealsCartPerson } from '../types/dailymeal/DailyMealSubscription.ts';
 import { DOCUMENT_TYPE } from '../lib/constants.js';
+import { DailyMealsCartPersonWithPrice } from '../types/dailymeal/DailyMealSubscription.js';
 
 const defaultIncludeObj = {
 	user: true,
@@ -288,7 +288,7 @@ export async function createDailyMealSubscription(
 	business_id: string,
 	delivery_address_id: string,
 	type: SUBSCRIPTION_TYPE,
-	customers: Array<DailyMealsCartPerson>,
+	customers: Array<DailyMealsCartPersonWithPrice>,
 	start_date: Date | string,
 	end_date?: Date | string | null,
 	days?: Array<{
@@ -320,6 +320,7 @@ export async function createDailyMealSubscription(
 				customers: {
 					create: customers.map((c) => ({
 						daily_meal_category_id: c.daily_meal_category_id,
+						daily_meal_category_price_id: c.daily_meal_category_price_id,
 						first_name: c.first_name,
 						last_name: c.last_name,
 						telephone: c.telephone,

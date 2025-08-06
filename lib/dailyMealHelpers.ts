@@ -443,6 +443,7 @@ export async function generateDMInstancesForDateSimple(datestring: string) {
 	const dailyMealInstanceCreateData: Array<{
 		subscription_id: string;
 		subscription_customer_id: string;
+		daily_meal_category_price_id: string;
 		menu_category_id: string;
 		intended_date: Date;
 		delivery_date: Date;
@@ -488,6 +489,7 @@ export async function generateDMInstancesForDateSimple(datestring: string) {
 							dailyMealInstanceCreateData.push({
 								subscription_id: sub.id,
 								subscription_customer_id: sub_customer.id,
+								daily_meal_category_price_id: sub_customer.daily_meal_category_price_id,
 								menu_category_id: menuCategory.menu_category_id,
 								intended_date: intended_date,
 								delivery_date: delivery_date,
@@ -633,6 +635,7 @@ export async function generateInstancesForSubscription(subscription_id: string) 
 		menu_category_id: string;
 		intended_date: Date;
 		delivery_date: Date;
+		daily_meal_category_price_id: string;
 	}> = [];
 	for (let intended_date of create_dates) {
 		console.log(intended_date.toISOString());
@@ -685,6 +688,7 @@ export async function generateInstancesForSubscription(subscription_id: string) 
 						dailyMealInstanceCreateData.push({
 							subscription_id: sub.id,
 							subscription_customer_id: sub_customer.id,
+							daily_meal_category_price_id: sub_customer.daily_meal_category_price_id,
 							menu_category_id: menuCategoryId,
 							intended_date: intended_date,
 							delivery_date: delivery_date,
@@ -822,7 +826,8 @@ export async function createDailyMeals() {
 						(
 							sum: number,
 							dmi: daily_meal_instances & { daily_meal_category_price: daily_meal_category_prices }
-						) => sum + dmi.daily_meal_category_price.price
+						) => sum + dmi.daily_meal_category_price.price,
+						0
 					) / 100;
 				const delivery_cost = DAILY_MEAL_DELIVERY_COST_CENTS / 100;
 

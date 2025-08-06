@@ -685,6 +685,7 @@ async function completeOrder(req, res) {
 								},
 								{
 									destination_type: SPLIT_DESTINATION_TYPE.PLATFORM,
+									destination_id: 'platform',
 									amount: amount_platform,
 								},
 								{

@@ -1376,20 +1376,22 @@ model daily_meal_subscriptions {
 }
 
 model daily_meal_subscription_customers {
-  id                     String  @id @default(uuid()) @db.Uuid
-  subscription_id        String  @db.Uuid
-  daily_meal_category_id String  @db.Uuid
-  first_name             String
-  last_name              String
-  telephone              String
-  restaurant_comment     String?
+  id                           String  @id @default(uuid()) @db.Uuid
+  subscription_id              String  @db.Uuid
+  daily_meal_category_id       String  @db.Uuid
+  daily_meal_category_price_id String  @db.Uuid
+  first_name                   String
+  last_name                    String
+  telephone                    String
+  restaurant_comment           String?
 
   created_at DateTime @default(now()) @db.Timestamptz(6)
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
-  subscription          daily_meal_subscriptions @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
-  daily_meal_instances  daily_meal_instances[]
-  daily_meal_categories daily_meal_categories?   @relation(fields: [daily_meal_category_id], references: [daily_meal_category_id])
+  subscription              daily_meal_subscriptions   @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
+  daily_meal_instances      daily_meal_instances[]
+  daily_meal_categories     daily_meal_categories?     @relation(fields: [daily_meal_category_id], references: [daily_meal_category_id])
+  daily_meal_category_price daily_meal_category_prices @relation(fields: [daily_meal_category_price_id], references: [daily_meal_category_prices_id])
 }
 
 model daily_meal_subscription_days {
@@ -1500,7 +1502,7 @@ model payment_transfer_groups {
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   payment_splits payment_splits[]
-  payment        payments @relation("PaymentToTransferGroups", fields: [payment_id], references: [payment_id], onDelete: Cascade)
+  payment        payments         @relation("PaymentToTransferGroups", fields: [payment_id], references: [payment_id], onDelete: Cascade)
 }
 
 model daily_meal_categories {
@@ -1532,6 +1534,8 @@ model daily_meal_category_prices {
   menu_categories     menu_categories[]
 
   daily_meal_instances daily_meal_instances[]
+
+  daily_meal_subscription_customers daily_meal_subscription_customers[]
 }
 
 enum PAYMENT_METHOD {

@@ -1,4 +1,4 @@
-import type { Prisma } from '@prisma/client';
+import type { daily_meal_categories, daily_meal_category_prices, Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 
@@ -101,7 +101,28 @@ export async function activateDailyMealCategory(daily_meal_category_id: string) 
 	});
 }
 
+/**
+ * Returns the price for a given date for a daily_meal_category object with included daily_meal_category_prices.
+ * The price is the one with the latest valid_from that is less than or equal to the given date.
+ * Returns null if no valid price is found.
+ *
+ * @param dailyMealCategory - The daily_meal_category object (must include daily_meal_category_prices: { price: number, valid_from: Date }[])
+ * @param date - The date to check the price for
+ * @returns number | null
+ */
+export function getDailyMealCategoryPriceForDate(
+	dailyMealCategory: daily_meal_categories & { daily_meal_category_prices: daily_meal_category_prices[] },
+	date: Date
+): daily_meal_category_prices | null {
+	if (!dailyMealCategory?.daily_meal_category_prices?.length) return null;
+	const validPrices = dailyMealCategory.daily_meal_category_prices
+		.filter((p) => new Date(p.valid_from) <= date)
+		.sort((a, b) => new Date(b.valid_from).getTime() - new Date(a.valid_from).getTime());
+	return validPrices.length > 0 ? validPrices[0]! : null;
+}
+
 export default {
+	getDailyMealCategoryPriceForDate,
 	getDailyMealCategoryById,
 	createDailyMealCategoryWithPrice,
 	getActiveDailyMealCategoriesForBusiness,

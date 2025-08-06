@@ -58,5 +58,6 @@ export const GetUserDailyMealSubscriptionsSchema = z.object({
 
 export type GetUserDailyMealSubscriptionsrequest = z.infer<typeof GetUserDailyMealSubscriptionsSchema>;
 export type DailyMealsCartPerson = z.infer<typeof DailyMealsCartPersonSchema>;
+export type DailyMealsCartPersonWithPrice = DailyMealsCartPerson & { daily_meal_category_price_id: string };
 export type DailyMealsCart = z.infer<typeof DailyMealsCartSchema>;
 export type DailyMealsSubscriptionRequest = z.infer<typeof DailyMealsSubscriptionRequestSchema>;

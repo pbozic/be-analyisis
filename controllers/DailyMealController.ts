@@ -5,7 +5,6 @@ import {
 	SUBSCRIPTION_STATUS,
 	SUBSCRIPTION_TYPE,
 	DAILY_MEAL_INSTANCE_STATUS,
-	TRANSFER_GROUP_TYPE,
 	subscription,
 	daily_meal_subscription_customers,
 } from '@prisma/client';
@@ -20,6 +19,8 @@ import AddressDao from '../dao/Address.js';
 import { DAILY_MEAL_DELIVERY_COST_CENTS, RESTAURANT_SHARE_PERC } from '../lib/constants.js';
 import dailyMealHelpers, { mapDateToEarlierWeekday } from '../lib/dailyMealHelpers.ts';
 import prisma from '../prisma/prisma.js';
+import stripe from '../lib/stripe.js';
+import DailyMealCategoryDao from '../dao/DailyMealCategory.ts';
 
 /**
  *
@@ -119,6 +120,17 @@ export async function dailyMealsSubscriptionPayment(
 			res.status(400).json({ message: `Business has reached the maximum number of daily meal subscribers` });
 			return;
 		}
+		const today = new Date();
+		const dailyMealCategoryPriceMap = new Map<string, string>();
+		const daily_meal_categories = await DailyMealCategoryDao.getDailyMealCategoriesForBusiness(business_id, true);
+
+		for (const dmc of daily_meal_categories) {
+			const dmc_price = DailyMealCategoryDao.getDailyMealCategoryPriceForDate(dmc, today);
+			if (!dmc_price) {
+				throw new Error(`No valid price for dmc: ${dmc.daily_meal_category_id}`);
+			}
+			dailyMealCategoryPriceMap.set(dmc.daily_meal_category_id, dmc_price.daily_meal_category_prices_id);
+		}
 
 		const restaurant_acc = business.stripe_account_id;
 		const delivery_address = await AddressDao.addAddress({
@@ -132,7 +144,10 @@ export async function dailyMealsSubscriptionPayment(
 			business_id,
 			delivery_address.address_id,
 			cart.isRecurring ? SUBSCRIPTION_TYPE.RECURRING : SUBSCRIPTION_TYPE.DATED,
-			cart.peopleData,
+			cart.peopleData.map((person) => ({
+				...person,
+				daily_meal_category_price_id: dailyMealCategoryPriceMap.get(person.daily_meal_category_id)!,
+			})),
 			cart.start_date,
 			cart.end_date,
 			!cart.isRecurring
