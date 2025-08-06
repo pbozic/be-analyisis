@@ -10,7 +10,7 @@ import { getLocalisedTexts } from '../localisations/languages.js';
 import { CalculateOrderLobbyOrderDetails } from '../lib/deliveryHelpers.js';
 import DeliveryOrderController from './DeliveryOrderController.js';
 import { DOCUMENT_TYPE } from '../lib/constants.js';
-import MenuItemDao, { getMenuItemsByIds } from '../dao/MenuItem.js';
+import MenuItemDao from '../dao/MenuItem.js';
 const { UserSockets, io } = socket;
 
 async function lobbySocketOrNotification(user_id, event, order_lobby) {
@@ -18,7 +18,7 @@ async function lobbySocketOrNotification(user_id, event, order_lobby) {
 	if (userSocket) {
 		userSocket.emit(event, order_lobby);
 	} else {
-		const user = await UserDao.getUserById(user_id, { select: { language: true } });
+		const user = await UserDao.getUserById(user_id);
 		if (user) {
 			const l10nNotification = getLocalisedTexts('USER_NOTIFICATIONS', user);
 			const l10nHeading = getLocalisedTexts('HEADING', user);

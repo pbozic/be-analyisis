@@ -81,5 +81,4 @@ model business_usage {
   action                action             @relation(fields: [action_id], references: [action_id])
   reservation_module   reservation_module? @relation(fields: [reservation_module_id], references: [reservation_module_id])
 
-
 }

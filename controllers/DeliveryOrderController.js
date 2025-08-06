@@ -1364,8 +1364,8 @@ async function processOrderReady(order_id) {
 						status: 'IN_PAYMENT_PROCESSING',
 					},
 				});
-				const pi = await stripe.paymentIntents.retrieve(paymentIntentId);
-				await stripe.paymentIntents.update(paymentIntentId, {
+				const pi = await stripe.client.paymentIntents.retrieve(order.payment_intent_id);
+				await stripe.client.paymentIntents.update(order.payment_intent_id, {
 					metadata: {
 						...pi.metadata,
 						merchant_cut: MERCHANT_CUT,
@@ -1442,6 +1442,7 @@ async function handleOrderProcessingFailure(order_id) {
 	io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
 	order = await DeliveryOrderDao.updateOrderStatus(order_id, DELIVERY_ORDER_STATUS.FAIL);
 	io.to('order_' + order.order_id).emit('order_status_change__delivery', order);
+	await handleStockSync(order);
 	SocketStore.closeRoom(`order_${order.order_id}`);
 	return order;
 }
