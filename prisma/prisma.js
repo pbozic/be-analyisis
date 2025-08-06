@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import * as turf from '@turf/turf';
 
 import { handleAddressPivotTable, addAddressPivotTable } from './middlewares/address.js';
-import { handleHidePassword, alwaysAddWalletBalance, handleWalletBalance } from './middlewares/user.js';
+import { handleHidePassword } from './middlewares/user.js';
 import { handleS3LinkForFiles } from './middlewares/file.js';
 import { handleS3LinkForDocuments } from './middlewares/documents.js';
 import { generateS3LinksRecursively } from './middlewares/$allModels.js';
@@ -18,7 +18,8 @@ const prisma = basePrisma.$extends({
 			async $allOperations({ model, operation, args, query }) {
 				// Proceed with the operation
 				let result = await query(args);
-				if (args.include && args.include.user) {
+				const sensitiveRelations = ['user', 'users'];
+				if (args.include && Object.keys(args.include).some((key) => sensitiveRelations.includes(key))) {
 					result = removeSensitiveProperties(result);
 				}
 				result = await generateS3LinksRecursively(args, result, model, operation);
