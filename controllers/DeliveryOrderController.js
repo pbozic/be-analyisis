@@ -20,6 +20,7 @@ import {
 	DELIVERY_ORDER_END_STATES,
 	SCORING_POINTS_REASON,
 	SERVICE_TYPE,
+	RESTAURANT_SHARE_PERC,
 } from '../lib/constants.js';
 import {
 	calculateAndVerifyPriceForOrderItems,
@@ -29,7 +30,7 @@ import {
 	handlePaymentRefund,
 	generateOrder,
 } from '../lib/deliveryHelpers.js';
-import PaymentHelpers from '../lib/paymentHelpers.ts';
+import { createAndTransferGroupSplits } from '../lib/paymentHelpers.ts';
 import { sortObjectsByNearestNeighbor, todaysEarnings } from '../lib/helpersLib.js';
 import prisma from '../prisma/prisma.js';
 import WalletFundsHelpers from '../lib/WalletFundsHelpers.js';
@@ -667,10 +668,35 @@ async function completeOrder(req, res) {
 							split.destination_type === SPLIT_DESTINATION_TYPE.DRIVER &&
 							split.status === SPLIT_STATUS.RESERVED
 					);
-					await PaymentHelpers.transferSplitById(
-						first_available_driver_split.payment_split_id,
-						delivery_business_stripe
+
+					const amount_merchant = Math.floor(
+						((order.details.sub_total_price * RESTAURANT_SHARE_PERC) / 100) * 100
 					);
+					const amount_platform = Math.floor((order.details.sub_total_price - amount_merchant) * 100);
+					const amount_driver =
+						first_available_driver_split.amount_regular +
+						(await createAndTransferGroupSplits(
+							subscription_payment.payment_id,
+							[
+								{
+									destination_type: SPLIT_DESTINATION_TYPE.MERCHANT,
+									destination_id: restaurant_acc,
+									amount: amount_merchant,
+								},
+								{
+									destination_type: SPLIT_DESTINATION_TYPE.PLATFORM,
+									amount: amount_platform,
+								},
+								{
+									destination_type: SPLIT_DESTINATION_TYPE.DRIVER,
+									amount:
+										first_available_driver_split.amount_regular +
+										first_available_driver_split.amount_credits,
+									destination_id: delivery_business_stripe,
+								},
+							],
+							TRANSFER_GROUP_TYPE.TRANSFER
+						));
 				}
 			}
 		}

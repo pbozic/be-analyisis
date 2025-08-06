@@ -123,12 +123,6 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 		}
 		case 'daily_meals_subscription_payment': {
 			let payment = await PaymentDao.getPaymentByGroupedId(paymentIntent.transfer_group);
-			await PaymentHelpers.transferSplitsForTypes(payment.payment_id, [
-				SPLIT_DESTINATION_TYPE.PLATFORM,
-				SPLIT_DESTINATION_TYPE.MERCHANT,
-			]);
-			//any remaining reserved funds are meant for delivery driver and should be handled on order completion
-
 			const updated_sub = await dailyMealHelpers.activateSubscriptionById(paymentIntent.transfer_group);
 			if (!updated_sub) {
 				console.warn(

@@ -738,7 +738,10 @@ export async function cancelSubscriptionById(subscription_id: string) {
 	}
 }
 
-function assignDeliveryDriver(delivery_drivers: delivery_drivers[], id_to_ignore?: string) {
+function assignDeliveryDriver(
+	delivery_drivers: (delivery_drivers & { subscriptions: daily_meal_subscriptions[] })[],
+	id_to_ignore?: string
+) {
 	if (!delivery_drivers || delivery_drivers.length === 0) {
 		throw new Error('No delivery drivers available for assignment.');
 	}
@@ -814,6 +817,14 @@ export async function createDailyMeals() {
 					...item,
 					quantity: count,
 				}));
+				const subtotal_price_for_order =
+					subscription.daily_meal_instances.reduce(
+						(
+							sum: number,
+							dmi: daily_meal_instances & { daily_meal_category_price: daily_meal_category_prices }
+						) => sum + dmi.daily_meal_category_price.price
+					) / 100;
+				const delivery_cost = DAILY_MEAL_DELIVERY_COST_CENTS / 100;
 
 				let connectObj = {};
 				const driver = subscription.delivery_driver || assignDeliveryDriver(business.daily_meal_drivers);
@@ -833,12 +844,12 @@ export async function createDailyMeals() {
 					items: items,
 					details: {
 						type: 'delivery',
-						sub_total_price: 0,
-						total_price: 0,
+						sub_total_price: subtotal_price_for_order,
+						total_price: subtotal_price_for_order + delivery_cost,
 						discount_savings: 0,
 						provider_address: providerLocation,
 						business_id: business.business_id,
-						delivery_cost: DAILY_MEAL_DELIVERY_COST_CENTS / 100,
+						delivery_cost: delivery_cost,
 						delivery_earnings: 0,
 						customer_expected_delivery_at: null,
 						subscription_id: subscription.id,

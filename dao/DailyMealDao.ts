@@ -168,6 +168,7 @@ export async function getTodayDailyMealSubscriptionsByBusinessId(business_id: st
 						},
 					},
 					customer: true,
+					daily_meal_category_price: true,
 				},
 			},
 		},

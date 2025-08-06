@@ -1419,20 +1419,22 @@ model daily_meal_subscription_weekdays {
 }
 
 model daily_meal_instances {
-  id                       String                     @id @default(uuid()) @db.Uuid
-  subscription_id          String                     @db.Uuid
-  subscription_customer_id String                     @db.Uuid
-  menu_category_id         String                     @db.Uuid
-  status                   DAILY_MEAL_INSTANCE_STATUS @default(PLANNED)
-  intended_date            DateTime                   @db.Timestamp(0)
-  delivery_date            DateTime                   @db.Timestamp(0)
+  id                           String                     @id @default(uuid()) @db.Uuid
+  subscription_id              String                     @db.Uuid
+  subscription_customer_id     String                     @db.Uuid
+  menu_category_id             String                     @db.Uuid
+  status                       DAILY_MEAL_INSTANCE_STATUS @default(PLANNED)
+  intended_date                DateTime                   @db.Timestamp(0)
+  delivery_date                DateTime                   @db.Timestamp(0)
+  daily_meal_category_price_id String                     @db.Uuid
 
   created_at DateTime @default(now()) @db.Timestamptz(6)
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
-  subscription  daily_meal_subscriptions          @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
-  customer      daily_meal_subscription_customers @relation(fields: [subscription_customer_id], references: [id])
-  menu_category menu_categories                   @relation(fields: [menu_category_id], references: [menu_category_id])
+  subscription              daily_meal_subscriptions          @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
+  customer                  daily_meal_subscription_customers @relation(fields: [subscription_customer_id], references: [id])
+  menu_category             menu_categories                   @relation(fields: [menu_category_id], references: [menu_category_id])
+  daily_meal_category_price daily_meal_category_prices        @relation(fields: [daily_meal_category_price_id], references: [daily_meal_category_prices_id])
 
   @@unique([subscription_customer_id, intended_date])
   @@index([delivery_date])
@@ -1464,21 +1466,41 @@ model payments {
   user_id        String           @db.Uuid
   user           users            @relation(fields: [user_id], references: [user_id])
   payment_splits payment_splits[]
+
+  payment_transfer_groups payment_transfer_groups[] @relation("PaymentToTransferGroups")
 }
 
 model payment_splits {
-  payment_split_id String                 @id @default(uuid()) @db.Uuid
-  status           SPLIT_STATUS           @default(RESERVED)
-  payment_id       String                 @db.Uuid
-  destination_type SPLIT_DESTINATION_TYPE
-  destination_id   String?
-  amount_regular   Int
-  amount_credits   Int                    @default(0)
-  metadata         Json?
-  created_at       DateTime               @default(now()) @db.Timestamptz(6)
-  updated_at       DateTime               @default(now()) @updatedAt @db.Timestamptz(6)
+  payment_split_id          String                 @id @default(uuid()) @db.Uuid
+  status                    SPLIT_STATUS           @default(RESERVED)
+  payment_id                String                 @db.Uuid
+  destination_type          SPLIT_DESTINATION_TYPE
+  destination_id            String?
+  payment_transfer_group_id String?                @db.Uuid
+  amount_regular            Int
+  amount_credits            Int                    @default(0)
+  metadata                  Json?
+  external_id               String?                @unique
+  created_at                DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime               @default(now()) @updatedAt @db.Timestamptz(6)
 
-  payment payments @relation(fields: [payment_id], references: [payment_id], onDelete: Cascade)
+  payment                payments                 @relation(fields: [payment_id], references: [payment_id], onDelete: Cascade)
+  payment_transfer_group payment_transfer_groups? @relation(fields: [payment_transfer_group_id], references: [payment_transfer_group_id], onDelete: Cascade)
+}
+
+model payment_transfer_groups {
+  payment_transfer_group_id String                @id @default(uuid()) @db.Uuid
+  status                    TRANSFER_GROUP_STATUS @default(PENDING)
+  type                      TRANSFER_GROUP_TYPE
+  amount                    Int
+  metadata                  Json?
+  payment_id                String                @db.Uuid
+
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  payment_splits payment_splits[]
+  payment        payments @relation("PaymentToTransferGroups", fields: [payment_id], references: [payment_id], onDelete: Cascade)
 }
 
 model daily_meal_categories {
@@ -1508,6 +1530,8 @@ model daily_meal_category_prices {
 
   daily_meal_category daily_meal_categories @relation(fields: [daily_meal_category_id], references: [daily_meal_category_id], onDelete: Cascade)
   menu_categories     menu_categories[]
+
+  daily_meal_instances daily_meal_instances[]
 }
 
 enum PAYMENT_METHOD {
@@ -1532,9 +1556,23 @@ enum SPLIT_DESTINATION_TYPE {
 
 enum SPLIT_STATUS {
   RESERVED
+  PENDING
   TRANSFERED
-  CANCELED
   REFUNDED
+  CANCELED
+  FAILED
+  PARTIAL_FAILURE
+}
+
+enum TRANSFER_GROUP_STATUS {
+  PENDING
+  SUCCEEDED
+  FAILED
+}
+
+enum TRANSFER_GROUP_TYPE {
+  REFUND
+  TRANSFER
 }
 
 enum SUBSCRIPTION_STATUS {

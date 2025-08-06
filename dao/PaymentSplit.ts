@@ -135,7 +135,7 @@ export async function updatePaymentSplitById(
 		Partial<TPrisma.payment_splitsUpdateInput>,
 		'amount_regular' | 'amount_credits' | 'destination_type' | 'payment_split_id' | 'payment_id'
 	>
-): Promise<TPrisma.payment_splitsUpdateInput> {
+): Promise<payment_splits> {
 	// If destination_id is included in the update, check whether it's allowed
 	if ('destination_id' in data) {
 		const existing_split = await prisma.payment_splits.findUnique({

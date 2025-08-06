@@ -5,6 +5,9 @@ import {
 	SUBSCRIPTION_STATUS,
 	SUBSCRIPTION_TYPE,
 	DAILY_MEAL_INSTANCE_STATUS,
+	TRANSFER_GROUP_TYPE,
+	subscription,
+	daily_meal_subscription_customers,
 } from '@prisma/client';
 
 import UsersDao from '../dao/User.js';
@@ -109,7 +112,9 @@ export async function dailyMealsSubscriptionPayment(
 				in: [SUBSCRIPTION_STATUS.ACTIVE, SUBSCRIPTION_STATUS.AWAITING_PAYMENT],
 			},
 		});
-		const customers = subscriptions.flatMap((sub) => sub.customers);
+		const customers = subscriptions.flatMap(
+			(sub: subscription & { customers: daily_meal_subscription_customers }) => sub.customers
+		);
 		if (customers.length > business.maximum_daily_meals_subscribers) {
 			res.status(400).json({ message: `Business has reached the maximum number of daily meal subscribers` });
 			return;
