@@ -2481,7 +2481,6 @@ export { getScheduledOrdersByUserId };
 export { getTaxiOrdersWithPagination };
 export { calculateTransferPrice };
 export { requestTransferOrderPrice };
-export { getActiveTaxiOrdersForBusinessUser };
 export default {
 	getTaxiOrders,
 	getTaxiOrdersToday,
