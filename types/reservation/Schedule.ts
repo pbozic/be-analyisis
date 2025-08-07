@@ -63,6 +63,41 @@ export const CreateOrUpdateBookingSlotSchema = z.object({
 	}),
 });
 
+export const CreateExceptionsSchemaWithId = CreateScheduleSlotExceptionSchema.extend({
+	schedule_slot_exception_id: z.string().uuid().optional(),
+});
+
+export const CreateExceptionsSchemaWithExceptionId = CreateScheduleSlotExceptionSchema.extend({
+	schedule_slot_exception_id: z.string().uuid(),
+});
+
+export const CreateOrUpdateExceptionsSchema = z.object({
+	exceptions: z.object({
+		changes: z.array(CreateExceptionsSchemaWithId),
+		removed: z.array(CreateExceptionsSchemaWithExceptionId),
+	}),
+});
+
+export const CreateOrUpdateExceptionsAndBookingsSchema = z.object({
+	exceptions: z.object({
+		changes: z.array(CreateExceptionsSchemaWithId),
+		removed: z.array(CreateExceptionsSchemaWithExceptionId),
+	}),
+	bookingSlots: z.object({
+		newOrChanged: z.array(CreateBookingSlotSchemaWithId),
+		removed: z.array(CreateBookingSlotSchemaWithBookingId),
+	}),
+});
+
+export const CreateExceptionNoIds = CreateScheduleSlotExceptionSchema.extend({
+	schedule_slot_id: z.string().uuid().optional(),
+});
+
+export const CreateScheduleSlotWithExceptionsSchema = z.object({
+	schedule: CreateScheduleSlotSchema,
+	exceptions: z.array(CreateExceptionNoIds),
+});
+
 export const CreateBookingSlotNoIds = CreateBookingSlotSchema.extend({
 	schedule_slot_id: z.string().uuid().optional(),
 });
@@ -78,6 +113,32 @@ export const UpdateScheduleSlotSchema = CreateScheduleSlotSchema.partial();
 export const UpdateScheduleSlotExceptionSchema = CreateScheduleSlotExceptionSchema.partial();
 export const UpdateCreateBookingSlotSchema = CreateBookingSlotSchema.partial();
 
+export const UpdateScheduleSlotWithBookingSlotsSchema = z.object({
+	schedule: UpdateScheduleSlotSchema,
+	bookingSlots: z.object({
+		newOrChanged: z.array(CreateBookingSlotSchemaWithId),
+		removed: z.array(CreateBookingSlotSchemaWithBookingId),
+	}),
+});
+
+export const CreateScheduleSlotWithExceptionsAndBookingSlotsSchema = z.object({
+	schedule: CreateScheduleSlotSchema,
+	exceptions: z.array(CreateExceptionNoIds),
+	bookingSlots: z.array(CreateBookingSlotNoIds),
+});
+
+export const UpdateScheduleSlotWithBookingSlotsAndExceptionsSchema = z.object({
+	schedule: UpdateScheduleSlotSchema,
+	exceptions: z.object({
+		changes: z.array(CreateExceptionsSchemaWithId),
+		removed: z.array(CreateExceptionsSchemaWithExceptionId),
+	}),
+	bookingSlots: z.object({
+		newOrChanged: z.array(CreateBookingSlotSchemaWithId),
+		removed: z.array(CreateBookingSlotSchemaWithBookingId),
+	}),
+});
+
 export type CreateScheduleInput = z.infer<typeof CreateScheduleSchema>;
 export type CreateScheduleEmployeeInput = z.infer<typeof CreateScheduleEmployeeSchema>;
 export type CreateScheduleSlotInput = z.infer<typeof CreateScheduleSlotSchema>;
@@ -87,6 +148,19 @@ export type CreateOrUpdateBookingSlotInput = z.infer<typeof CreateOrUpdateBookin
 export type CreateBookingSlotSchemaWithIdInput = z.infer<typeof CreateBookingSlotSchemaWithId>;
 export type CreateBookingSlotSchemaWithBookingIdInput = z.infer<typeof CreateBookingSlotSchemaWithBookingId>;
 export type CreateScheduleSlotWithBookingSlotsInput = z.infer<typeof CreateScheduleSlotWithBookingSlotsSchema>;
+export type UpdateScheduleSlotWithBookingSlotsInput = z.infer<typeof UpdateScheduleSlotWithBookingSlotsSchema>;
+
+export type CreateOrUpdateExceptionsInput = z.infer<typeof CreateOrUpdateExceptionsSchema>;
+export type CreateOrUpdateExceptionsSchemaWithIdInput = z.infer<typeof CreateExceptionsSchemaWithId>;
+export type CreateOrUpdateExceptionsSchemaWithExceptionIdInput = z.infer<typeof CreateExceptionsSchemaWithExceptionId>;
+export type CreateOrUpdateExceptionsAndBookingsInput = z.infer<typeof CreateOrUpdateExceptionsAndBookingsSchema>;
+export type CreateScheduleSlotWithExceptionsInput = z.infer<typeof CreateScheduleSlotWithExceptionsSchema>;
+export type CreateScheduleSlotWithExceptionsAndBookingSlotsInput = z.infer<
+	typeof CreateScheduleSlotWithExceptionsAndBookingSlotsSchema
+>;
+export type UpdateScheduleSlotWithBookingSlotsAndExceptionsInput = z.infer<
+	typeof UpdateScheduleSlotWithBookingSlotsAndExceptionsSchema
+>;
 
 export type Schedule = schedule;
 export type ScheduleWithoutEmployees = Omit<schedule, 'schedule_employees'>;
@@ -101,6 +175,9 @@ export type BookingSlot = booking_slots;
 export type BookingSlotWithoutId = CreateBookingSlotSchemaWithIdInput;
 export type BookingSlotWithId = CreateBookingSlotSchemaWithBookingIdInput;
 export type CreateScheduleSlotWithBookingSlots = CreateScheduleSlotWithBookingSlotsInput;
+
+export type ExceptionWithoutId = CreateOrUpdateExceptionsSchemaWithIdInput;
+export type ExceptionWithId = CreateOrUpdateExceptionsSchemaWithExceptionIdInput;
 
 export type UpdateScheduleInput = z.infer<typeof UpdateScheduleSchema>;
 export type UpdateScheduleEmployeeInput = z.infer<typeof UpdateScheduleEmployeeSchema>;

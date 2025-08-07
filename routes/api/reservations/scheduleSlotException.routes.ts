@@ -5,6 +5,10 @@ import { validate } from '../../../middleware/zod';
 import {
 	CreateScheduleSlotExceptionSchema,
 	UpdateScheduleSlotExceptionSchema,
+	CreateOrUpdateExceptionsSchema,
+	CreateOrUpdateExceptionsAndBookingsSchema,
+	CreateScheduleSlotWithExceptionsAndBookingSlotsSchema,
+	UpdateScheduleSlotWithBookingSlotsAndExceptionsSchema,
 } from '../../../types/reservation/Schedule';
 
 const router = express.Router();
@@ -22,5 +26,24 @@ router.put(
 );
 router.delete('/:id', ScheduleSlotExceptionController.deleteScheduleSlotException);
 router.get('/:id', ScheduleSlotExceptionController.getScheduleSlotExceptionById);
-
+router.post(
+	'/update-exceptions',
+	validate(CreateOrUpdateExceptionsSchema),
+	ScheduleSlotExceptionController.updateOrCreateScheduleSlotExceptions
+);
+router.post(
+	'/update-exceptions-booking-slots',
+	validate(CreateOrUpdateExceptionsAndBookingsSchema),
+	ScheduleSlotExceptionController.updateOrCreateScheduleSlotExceptionsAndBookingSlots
+);
+router.post(
+	'/create-schedule-slot-with-booking-slots-and-exceptions',
+	validate(CreateScheduleSlotWithExceptionsAndBookingSlotsSchema),
+	ScheduleSlotExceptionController.createScheduleSlotWithBookingSlotsAndExceptions
+);
+router.put(
+	'/update-schedule-slot-with-booking-slots-and-exceptions/:id',
+	validate(UpdateScheduleSlotWithBookingSlotsAndExceptionsSchema),
+	ScheduleSlotExceptionController.updateScheduleSlotWithBookingSlotsAndExceptions
+);
 export default router;

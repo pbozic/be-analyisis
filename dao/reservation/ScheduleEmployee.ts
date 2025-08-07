@@ -133,7 +133,11 @@ export async function getEmployeesByScheduleIdWithSlots(scheduleId: string): Pro
 				},
 				schedule_slots: {
 					include: {
-						schedule_slot_exceptions: true,
+						schedule_slot_exceptions: {
+							orderBy: {
+								start_time: 'asc',
+							},
+						},
 						booking_slots: {
 							orderBy: {
 								start_time: 'asc',

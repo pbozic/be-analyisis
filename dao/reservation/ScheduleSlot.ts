@@ -57,7 +57,14 @@ export async function updateScheduleSlot(id: string, data: UpdateScheduleSlotInp
 	try {
 		const record = await prisma.schedule_slot.update({
 			where: { schedule_slot_id: id },
-			data,
+			data: {
+				schedule_id: data.schedule_id,
+				schedule_employee_id: data.schedule_employee_id,
+				employee_id: data.employee_id,
+				date: data.date,
+				start_time: data.start_time,
+				end_time: data.end_time,
+			},
 		});
 		return record;
 	} catch (error) {

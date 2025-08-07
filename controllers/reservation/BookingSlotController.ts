@@ -9,6 +9,7 @@ import {
 	BookingSlotWithoutId,
 	BookingSlotWithId,
 	CreateScheduleSlotWithBookingSlotsInput,
+	UpdateScheduleSlotWithBookingSlotsInput,
 } from '../../types/reservation/Schedule';
 import ScheduleSlotDao from '../../dao/reservation/ScheduleSlot';
 
@@ -253,6 +254,60 @@ export async function createScheduleSlotWithBookingSlots(
 	}
 }
 
+/**
+ * PUT /reservation/booking-slots/update-schedule-slot-with-booking-slots:id
+ * @tag Reservation
+ * @summary Update a new schedule slot with booking slots
+ * @description Updates schedule slot and associated booking slots.
+ * @operationId updateScheduleSlotWithBookingSlots
+ * @requestBody {UpdateScheduleSlotWithBookingSlotsInput} requestBody - The schedule slot and booking slots data to update.
+ * @response 201 - Schedule slot with booking slots updated successfully
+ * @responseContent {ScheduleSlot} 201.application/json
+ * @response 400 - Invalid input data
+ * @response 500 - Error updating schedule slot with booking slots
+ */
+export async function updateScheduleSlotWithBookingSlots(
+	req: ValidatedRequest<UpdateScheduleSlotWithBookingSlotsInput, { id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const record = await ScheduleSlotDao.updateScheduleSlot(req.params.id, req.body.schedule);
+		const { withBookingId, withoutBookingId } = splitByBookingId(req.body.bookingSlots.newOrChanged);
+		const updatedSlots = await Promise.all(
+			withBookingId.map(async (el) => {
+				let data = await BookingSlotDao.updateBookingSlot(el.booking_slot_id, el);
+				return {
+					data,
+				};
+			})
+		);
+		const createdSlots = await Promise.all(
+			withoutBookingId.map(async (el) => {
+				let data = await BookingSlotDao.createBookingSlot(el);
+				return {
+					data,
+				};
+			})
+		);
+		const removedSlots = await Promise.all(
+			req.body.bookingSlots.removed.map(async (el) => {
+				let data = await BookingSlotDao.deleteBookingSlot(el.booking_slot_id);
+				return {
+					data,
+				};
+			})
+		);
+
+		const data = {
+			schedule_slot: record,
+			booking_slots: [...updatedSlots, ...createdSlots, ...removedSlots],
+		};
+		res.status(200).json(data);
+	} catch (error) {
+		res.status(500).json({ message: 'Error updating or creating booking slot', error });
+	}
+}
+
 export default {
 	getBookingSlotsByScheduleSlotId,
 	createBookingSlot,
@@ -261,4 +316,5 @@ export default {
 	getBookingSlotById,
 	updateOrCreateBookingSlots,
 	createScheduleSlotWithBookingSlots,
+	updateScheduleSlotWithBookingSlots,
 };
