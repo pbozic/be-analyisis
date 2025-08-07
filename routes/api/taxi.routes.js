@@ -17,6 +17,7 @@ router.get('/orders/canceled/:driver_id', TaxiOrderController.getCanceledTaxiOrd
 router.get('/orders/canceled/user/:user_id', TaxiOrderController.getCanceledTaxiOrdersByUserId);
 router.get('/orders/active/driver/:driver_id', TaxiOrderController.getActiveTaxiOrdersByDriverId);
 router.get('/orders/active/me/:type', TaxiOrderController.getMyActiveTaxiOrders);
+router.get('/orders/active/business_user/:type', TaxiOrderController.getActiveTaxiOrdersForBusinessUser);
 router.get('/orders/active/:user_id/:type', TaxiOrderController.getActiveTaxiOrders);
 router.get('/orders/driver/:driver_id', TaxiOrderController.getTaxiOrdersByDriverId);
 router.post('/transfer_price', TaxiOrderController.requestTransferOrderPrice);
