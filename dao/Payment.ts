@@ -1,4 +1,4 @@
-import { type payments, type payment_splits, type PAYMENT_METHOD, type PAYMENT_STATUS, Prisma } from '@prisma/client';
+import { type payments, type payment_splits, type PAYMENT_METHOD, Prisma } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 
@@ -12,7 +12,7 @@ import prisma from '../prisma/prisma.js';
  * @param {PAYMENT_METHOD} payment_method
  * @param {number} [credits_amount=0]
  * @param {(string | null)} [payment_intent_id=null]
- * @param {(string | null)} [subscription_grouped_id=null]
+ * @param {(string | null)} [daily_meal_subscription_id=null]
  * @returns {Promise<payments>}
  */
 export async function createPayment(
@@ -21,11 +21,18 @@ export async function createPayment(
 	payment_method: PAYMENT_METHOD,
 	credits_amount: number = 0,
 	payment_intent_id: string | null = null,
-	subscription_grouped_id: string | null = null
+	daily_meal_subscription_id: string | null = null
 ): Promise<payments> {
 	try {
 		return await prisma.payments.create({
-			data: { user_id, amount, payment_method, credits_amount, payment_intent_id, subscription_grouped_id },
+			data: {
+				user_id,
+				amount,
+				payment_method,
+				credits_amount,
+				payment_intent_id,
+				daily_meal_subscription_id: daily_meal_subscription_id ? daily_meal_subscription_id : undefined,
+			},
 		});
 	} catch (error) {
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -80,14 +87,14 @@ export async function getPaymentById(
  *
  * @export
  * @async
- * @param {string} subscription_grouped_id
+ * @param {string} daily_meal_subscription_id
  * @returns {Promise<payments | null>}
  */
-export async function getPaymentByGroupedId(subscription_grouped_id: string): Promise<payments | null> {
+export async function getPaymentByGroupedId(daily_meal_subscription_id: string): Promise<payments | null> {
 	try {
 		return await prisma.payments.findUnique({
-			where: { subscription_grouped_id },
-			include: { subscriptions: true, payment_splits: true },
+			where: { daily_meal_subscription_id },
+			include: { daily_meal_subscription: true, payment_splits: true },
 		});
 	} catch (error) {
 		if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -168,13 +175,13 @@ export async function deletePayment(payment_id: string): Promise<payments> {
  *
  * @export
  * @async
- * @param {(string | null)} [subscription_grouped_id=null]
+ * @param {(string | null)} [daily_meal_subscription_id=null]
  * @returns {Promise<payments[]>}
  */
-export async function listPayments(subscription_grouped_id: string | null = null): Promise<payments[]> {
+export async function listPayments(daily_meal_subscription_id: string | null = null): Promise<payments[]> {
 	try {
 		return await prisma.payments.findMany({
-			where: subscription_grouped_id ? { subscription_grouped_id } : undefined,
+			where: daily_meal_subscription_id ? { daily_meal_subscription_id } : undefined,
 			orderBy: { created_at: 'desc' },
 		});
 	} catch (error) {
@@ -189,7 +196,7 @@ export async function listPayments(subscription_grouped_id: string | null = null
 			console.error('Unexpected error:', error);
 		}
 		const message = error instanceof Error ? error.message : 'Unknown error';
-		throw new Error(`Error listing payments for subscription_grouped_id: ${message}`);
+		throw new Error(`Error listing payments for daily_meal_subscription_id: ${message}`);
 	}
 }
 

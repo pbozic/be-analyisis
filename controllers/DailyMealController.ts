@@ -7,6 +7,9 @@ import {
 	DAILY_MEAL_INSTANCE_STATUS,
 	subscription,
 	daily_meal_subscription_customers,
+	TRANSFER_GROUP_TYPE,
+	payment_splits,
+	SPLIT_STATUS,
 } from '@prisma/client';
 
 import UsersDao from '../dao/User.js';
@@ -531,11 +534,101 @@ export async function cancelDailyMealInstanceById(
 ): Promise<void> {
 	try {
 		const { instance_id } = req.params;
-		const updated_instance = await prisma.daily_meal_instances.update({
+		let instance = await prisma.daily_meal_instances.findUnique({
+			where: { id: instance_id },
+			include: {
+				daily_meal_category_price: true,
+				subscription: {
+					include: {
+						payment: {
+							include: {
+								payment_splits: true,
+							},
+						},
+					},
+				},
+			},
+		});
+		if (instance.status !== DAILY_MEAL_INSTANCE_STATUS.PLANNED) {
+			res.status(400).json({ message: 'Daily meal instance is not in a cancellable state' });
+			return;
+		}
+
+		if (instance.subscription.type === SUBSCRIPTION_TYPE.DATED) {
+			const deliveryDateStart = new Date(instance.delivery_date);
+			deliveryDateStart.setHours(0, 0, 0, 0);
+			const deliveryDateEnd = new Date(instance.delivery_date);
+			deliveryDateEnd.setHours(23, 59, 59, 999);
+			const remaining_dmi_exist = !!(await prisma.daily_meal_instances.findFirst({
+				where: {
+					id: { not: instance.id },
+					subscription_id: instance.subscription_id,
+					delivery_date: {
+						gte: deliveryDateStart,
+						lte: deliveryDateEnd,
+					},
+					status: DAILY_MEAL_INSTANCE_STATUS.PLANNED,
+				},
+			}));
+			const restaurant_business_stripe = await BusinessDao.getBusinessStripeByBusinessId(
+				instance.subscription.business_id
+			);
+
+			const price = instance.daily_meal_category_price.price;
+			const amount_merchant = Math.floor((price * RESTAURANT_SHARE_PERC) / 100);
+			const amount_platform = price - amount_merchant;
+			let amount_driver = 0;
+			if (!remaining_dmi_exist) {
+				const first_available_driver_split = instance.subscription.payment.payment_splits.find(
+					(split: payment_splits) =>
+						split.destination_type === SPLIT_DESTINATION_TYPE.DRIVER &&
+						split.status === SPLIT_STATUS.RESERVED
+				);
+				if (!first_available_driver_split) {
+					console.warn('No available driver split left but there are remaining instances for the day.');
+					throw new Error('No available driver split left but there are remaining instances for the day.');
+				}
+				amount_driver =
+					first_available_driver_split.amount_regular + first_available_driver_split.amount_credits;
+			}
+
+			const splitDefs: Array<{
+				destination_type: SPLIT_DESTINATION_TYPE;
+				destination_id?: string;
+				new_destination_id?: string;
+				amount: number;
+			}> = [
+				{
+					destination_type: SPLIT_DESTINATION_TYPE.MERCHANT,
+					destination_id: restaurant_business_stripe,
+					amount: amount_merchant,
+				},
+				{
+					destination_type: SPLIT_DESTINATION_TYPE.PLATFORM,
+					destination_id: 'platform',
+					amount: amount_platform,
+				},
+			];
+			if (!remaining_dmi_exist) {
+				splitDefs.push({
+					destination_type: SPLIT_DESTINATION_TYPE.DRIVER,
+					amount: amount_driver,
+				});
+			}
+			console.log(splitDefs);
+			await PaymentHelpers.createAndProcessTransferGroupSplits(
+				instance.subscription.payment.payment_id,
+				splitDefs,
+				TRANSFER_GROUP_TYPE.REFUND,
+				0.9
+			);
+		}
+
+		instance = await prisma.daily_meal_instances.update({
 			where: { id: instance_id },
 			data: { status: DAILY_MEAL_INSTANCE_STATUS.CANCELED },
 		});
-		res.status(200).json(updated_instance);
+		res.status(200).json(instance);
 	} catch (error) {
 		const message = error instanceof Error ? error.message : 'Unknown error';
 		res.status(500).json({ message: 'Error canceling daily meal instance', error: message });

@@ -1,6 +1,12 @@
 import moment from 'moment';
 import { v4 } from 'uuid';
-import { SPLIT_DESTINATION_TYPE, SPLIT_STATUS, DAILY_MEAL_INSTANCE_STATUS, BUSINESS_TYPE } from '@prisma/client';
+import {
+	TRANSFER_GROUP_TYPE,
+	SPLIT_DESTINATION_TYPE,
+	SPLIT_STATUS,
+	DAILY_MEAL_INSTANCE_STATUS,
+	BUSINESS_TYPE,
+} from '@prisma/client';
 
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import DeliveryDriverDao from '../dao/DeliveryDriver.js';
@@ -30,7 +36,7 @@ import {
 	handlePaymentRefund,
 	generateOrder,
 } from '../lib/deliveryHelpers.js';
-import { createAndTransferGroupSplits } from '../lib/paymentHelpers.ts';
+import { createAndProcessTransferGroupSplits } from '../lib/paymentHelpers.ts';
 import { sortObjectsByNearestNeighbor, todaysEarnings } from '../lib/helpersLib.js';
 import prisma from '../prisma/prisma.js';
 import WalletFundsHelpers from '../lib/WalletFundsHelpers.js';
@@ -657,47 +663,65 @@ async function completeOrder(req, res) {
 					}
 				}
 			} else {
-				let delivery_business_stripe = await BusinessDao.getBusinessStripeByBusinessId(driver.business_id);
-				const grouped_id = order.details.subscription_grouped_id;
+				const delivery_business_stripe = await BusinessDao.getBusinessStripeByBusinessId(driver.business_id);
+				const restaurant_business_stripe = await BusinessDao.getBusinessStripeByBusinessId(order.business_id);
+				const grouped_id = order.details.subscription_id;
 				if (!grouped_id) {
 					console.warn('Daily meal order details do not contain subscription_grouped_id');
 				} else {
 					const subscription_payment = await PaymentDao.getPaymentByGroupedId(grouped_id);
+					const sub_total_price = Math.round(order.details.sub_total_price * 100);
 					const first_available_driver_split = subscription_payment.payment_splits.find(
 						(split) =>
 							split.destination_type === SPLIT_DESTINATION_TYPE.DRIVER &&
 							split.status === SPLIT_STATUS.RESERVED
 					);
-
-					const amount_merchant = Math.floor(
-						((order.details.sub_total_price * RESTAURANT_SHARE_PERC) / 100) * 100
-					);
-					const amount_platform = Math.floor((order.details.sub_total_price - amount_merchant) * 100);
+					const amount_merchant = Math.floor((sub_total_price * RESTAURANT_SHARE_PERC) / 100);
+					const amount_platform = sub_total_price - amount_merchant;
 					const amount_driver =
-						first_available_driver_split.amount_regular +
-						(await createAndTransferGroupSplits(
-							subscription_payment.payment_id,
-							[
-								{
-									destination_type: SPLIT_DESTINATION_TYPE.MERCHANT,
-									destination_id: restaurant_acc,
-									amount: amount_merchant,
-								},
-								{
-									destination_type: SPLIT_DESTINATION_TYPE.PLATFORM,
-									destination_id: 'platform',
-									amount: amount_platform,
-								},
-								{
-									destination_type: SPLIT_DESTINATION_TYPE.DRIVER,
-									amount:
-										first_available_driver_split.amount_regular +
-										first_available_driver_split.amount_credits,
-									destination_id: delivery_business_stripe,
-								},
-							],
-							TRANSFER_GROUP_TYPE.TRANSFER
-						));
+						first_available_driver_split.amount_regular + first_available_driver_split.amount_credits;
+					// console.log([
+					// 	{
+					// 		destination_type: SPLIT_DESTINATION_TYPE.MERCHANT,
+					// 		destination_id: restaurant_business_stripe,
+					// 		amount: amount_merchant,
+					// 	},
+					// 	{
+					// 		destination_type: SPLIT_DESTINATION_TYPE.PLATFORM,
+					// 		destination_id: 'platform',
+					// 		amount: amount_platform,
+					// 	},
+					// 	{
+					// 		destination_type: SPLIT_DESTINATION_TYPE.DRIVER,
+					// 		amount:
+					// 			first_available_driver_split.amount_regular +
+					// 			first_available_driver_split.amount_credits,
+					// 		destination_id: delivery_business_stripe,
+					// 	},
+					// ])
+					await createAndProcessTransferGroupSplits(
+						subscription_payment.payment_id,
+						[
+							{
+								destination_type: SPLIT_DESTINATION_TYPE.MERCHANT,
+								destination_id: restaurant_business_stripe,
+								amount: amount_merchant,
+							},
+							{
+								destination_type: SPLIT_DESTINATION_TYPE.PLATFORM,
+								destination_id: 'platform',
+								amount: amount_platform,
+							},
+							{
+								destination_type: SPLIT_DESTINATION_TYPE.DRIVER,
+								amount:
+									first_available_driver_split.amount_regular +
+									first_available_driver_split.amount_credits,
+								new_destination_id: delivery_business_stripe,
+							},
+						],
+						TRANSFER_GROUP_TYPE.TRANSFER
+					);
 				}
 			}
 		}

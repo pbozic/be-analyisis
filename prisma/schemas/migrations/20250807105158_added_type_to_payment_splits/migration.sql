@@ -1,0 +1,5 @@
+-- CreateEnum
+CREATE TYPE "SPLIT_TYPE" AS ENUM ('TRANSFER', 'REFUND');
+
+-- AlterTable
+ALTER TABLE "payment_splits" ADD COLUMN     "type" "SPLIT_TYPE" NOT NULL DEFAULT 'TRANSFER';

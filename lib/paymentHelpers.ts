@@ -8,6 +8,7 @@ import {
 	TRANSFER_GROUP_TYPE,
 	type Prisma as TPrisma,
 	TRANSFER_GROUP_STATUS,
+	SPLIT_TYPE,
 } from '@prisma/client';
 import { type Stripe as TStripe } from 'stripe';
 
@@ -316,9 +317,9 @@ async function transferSplit(
 			payment.user_id,
 			destination,
 			split.amount_credits,
-			payment.subscription_grouped_id || payment.payment_id,
+			payment.daily_meal_subscription_id || payment.payment_id,
 			payment.order_type,
-			payment.subscription_grouped_id ? 'daily_meals_subscription_payment' : 'order'
+			payment.daily_meal_subscription_id ? 'daily_meals_subscription_payment' : 'order'
 		);
 	}
 	if (split.amount_regular > 0) {
@@ -340,9 +341,9 @@ async function transferSplit(
 					payment.user_id,
 					destination,
 					split.amount_regular,
-					payment.subscription_grouped_id || payment.payment_id,
+					payment.daily_meal_subscription_id || payment.payment_id,
 					payment.order_type,
-					payment.subscription_grouped_id ? 'daily_meals_subscription_payment' : 'order'
+					payment.daily_meal_subscription_id ? 'daily_meals_subscription_payment' : 'order'
 				);
 				break;
 			case 'CASH':
@@ -417,6 +418,74 @@ export async function transferSplitById(
 }
 
 /**
+ * Refunds a single payment split.
+ * - For credits: If already transferred, creates new credits for the user; if not, releases reserved credits.
+ * - For regular funds: Only refunds (does not cancel) the payment intent for the split's amount_regular.
+ * - Does not cancel the payment intent.
+ * - Updates the split status to REFUNDED.
+ *
+ * @param split - The payment split to refund (must include payment relation).
+ * @returns Promise<void>
+ */
+export async function refundSinglePaymentSplit(
+	split: payment_splits & { payment: payments },
+	payment: payments
+): Promise<payment_splits> {
+	if (split.amount_credits > 0) {
+		if (split.status === SPLIT_STATUS.TRANSFERED) {
+			await WalletFundsDao.createCredit({
+				user: { connect: { user_id: payment.user_id } },
+				amount: split.amount_credits,
+				type: 'CREDITS_DELIVERY',
+			});
+		} else {
+			await WalletFundsHelpers.releaseReservedWalletFundsForOrder(
+				payment.user_id,
+				payment.payment_id,
+				split.amount_credits,
+				payment.daily_meal_subscription_id ? 'daily_meals_subscription_payment' : 'order'
+			);
+		}
+	}
+
+	let external_id = undefined;
+	if (split.amount_regular > 0) {
+		switch (payment.payment_method) {
+			case PAYMENT_METHOD.CARD:
+				const refund = await stripe.client.refunds.create({
+					payment_intent: payment.payment_intent_id,
+					amount: split.amount_regular,
+				});
+				external_id = refund.id;
+				break;
+			case PAYMENT_METHOD.WALLET:
+				if (split.status === SPLIT_STATUS.TRANSFERED) {
+					await WalletFundsDao.createWalletFunds(payment.user_id, split.amount_regular, null);
+				} else {
+					await WalletFundsHelpers.releaseReservedWalletFundsForOrder(
+						payment.user_id,
+						payment.payment_id,
+						split.amount_regular,
+						payment.daily_meal_subscription_id ? 'daily_meals_subscription_payment' : 'order'
+					);
+				}
+				break;
+
+			case 'CASH':
+				// TODO: Handle cash transfer logic?
+				break;
+			default:
+				throw new Error('Unsupported payment method for split');
+		}
+	}
+
+	return await PaymentSplitDao.updatePaymentSplitById(split.payment_split_id, {
+		external_id,
+		status: SPLIT_STATUS.REFUNDED,
+	});
+}
+
+/**
  * Handles payment refund by releasing reserved wallet funds and refunding/canceling payment intents.
  * Also restores credits or wallet funds if needed, based on payment splits.
  * Updates split status to 'REFUNDED' or 'CANCELED' depending on transfer state.
@@ -440,7 +509,7 @@ export async function handlePaymentRefund(payment: payments & { payment_splits: 
 					payment.user_id,
 					payment.payment_id,
 					split.amount_credits,
-					payment.subscription_grouped_id ? 'daily_meals_subscription_payment' : 'order'
+					payment.daily_meal_subscription_id ? 'daily_meals_subscription_payment' : 'order'
 				);
 			}
 		}
@@ -480,7 +549,7 @@ export async function handlePaymentRefund(payment: payments & { payment_splits: 
 							payment.user_id,
 							payment.payment_id,
 							split.amount_regular,
-							payment.subscription_grouped_id ? 'daily_meals_subscription_payment' : 'order'
+							payment.daily_meal_subscription_id ? 'daily_meals_subscription_payment' : 'order'
 						);
 					}
 				}
@@ -508,8 +577,14 @@ export async function handlePaymentRefund(payment: payments & { payment_splits: 
  */
 export async function createTransferGroupSplits(
 	payment_id: string,
-	splitDefs: Array<{ destination_type: SPLIT_DESTINATION_TYPE; destination_id?: string; amount: number }>,
-	transfer_group_type: TRANSFER_GROUP_TYPE
+	splitDefs: Array<{
+		destination_type: SPLIT_DESTINATION_TYPE;
+		destination_id?: string;
+		new_destination_id?: string;
+		amount: number;
+	}>,
+	transfer_group_type: TRANSFER_GROUP_TYPE,
+	refund_percentage: number = 1 // Optional refund amount to use for refunds, if applicable
 ): Promise<payment_splits[]> {
 	const newsplits: payment_splits[] = await prisma.$transaction(async (tx: TPrisma.TransactionClient) => {
 		const payment_transfer_group = await tx.payment_transfer_groups.create({
@@ -551,27 +626,83 @@ export async function createTransferGroupSplits(
 					amount_regular: { decrement: amount_regular },
 				},
 			});
-			let newPS = await tx.payment_splits.create({
-				data: {
-					destination_type: mainSplit.destination_type,
-					destination_id: mainSplit.destination_id,
-					metadata: mainSplit.metadata ?? undefined,
-					amount_credits,
-					amount_regular,
-					status: SPLIT_STATUS.PENDING,
-					payment_transfer_group: {
-						connect: {
-							payment_transfer_group_id: payment_transfer_group.payment_transfer_group_id,
+			if (transfer_group_type === 'REFUND') {
+				// If refunding, we need to create a new split with the refund percentage applied
+				const refund_amount_credits = Math.floor(amount_credits * refund_percentage);
+				const refund_amount_regular = Math.floor(amount_regular * refund_percentage);
+				const transfer_amount_credits = amount_credits - refund_amount_credits;
+				const transfer_amount_regular = amount_regular - refund_amount_regular;
+				createdSplits.push(
+					await tx.payment_splits.create({
+						data: {
+							destination_type: mainSplit.destination_type,
+							destination_id: mainSplit.destination_id ?? splitDef.new_destination_id,
+							metadata: mainSplit.metadata ?? undefined,
+							amount_credits: refund_amount_credits,
+							amount_regular: refund_amount_regular,
+							status: SPLIT_STATUS.PENDING,
+							type: SPLIT_TYPE.REFUND,
+							payment_transfer_group: {
+								connect: {
+									payment_transfer_group_id: payment_transfer_group.payment_transfer_group_id,
+								},
+							},
+							payment: {
+								connect: {
+									payment_id: mainSplit.payment_id,
+								},
+							},
+						},
+					})
+				);
+				if (transfer_amount_credits > 0 || transfer_amount_regular > 0) {
+					createdSplits.push(
+						await tx.payment_splits.create({
+							data: {
+								destination_type: mainSplit.destination_type,
+								destination_id: 'platform',
+								metadata: mainSplit.metadata ?? undefined,
+								amount_credits: transfer_amount_credits,
+								amount_regular: transfer_amount_regular,
+								status: SPLIT_STATUS.PENDING,
+								payment_transfer_group: {
+									connect: {
+										payment_transfer_group_id: payment_transfer_group.payment_transfer_group_id,
+									},
+								},
+								payment: {
+									connect: {
+										payment_id: mainSplit.payment_id,
+									},
+								},
+							},
+						})
+					);
+				}
+			} else {
+				let newPS = await tx.payment_splits.create({
+					data: {
+						destination_type: mainSplit.destination_type,
+						destination_id: mainSplit.destination_id ?? splitDef.new_destination_id,
+						metadata: mainSplit.metadata ?? undefined,
+						amount_credits,
+						amount_regular,
+						status: SPLIT_STATUS.PENDING,
+						payment_transfer_group: {
+							connect: {
+								payment_transfer_group_id: payment_transfer_group.payment_transfer_group_id,
+							},
+						},
+						payment: {
+							connect: {
+								payment_id: mainSplit.payment_id,
+							},
 						},
 					},
-					payment: {
-						connect: {
-							payment_id: mainSplit.payment_id,
-						},
-					},
-				},
-			});
-			createdSplits.push(newPS);
+				});
+
+				createdSplits.push(newPS);
+			}
 		}
 		return createdSplits;
 	});
@@ -607,64 +738,6 @@ export async function transferSplitsForTransferGroup(
 					transfer_group_id: transfer_group.payment_transfer_group_id,
 				})
 			);
-			// updatedSplits.push(await PaymentSplitDao.updatePaymentSplitById(split.payment_split_id, updateData));
-			// // Transfer credits if present
-			// if (split.amount_credits > 0) {
-			// 	await WalletFundsHelpers.transferReservedCreditsForOrder(
-			// 		payment.user_id,
-			// 		split.destination_id!,
-			// 		split.amount_credits,
-			// 		payment.subscription_grouped_id || payment.payment_id,
-			// 		payment.order_type,
-			// 		payment.subscription_grouped_id ? 'daily_meals_subscription_payment' : 'order'
-			// 	);
-			// }
-
-			// // Transfer regular funds if present
-			// if (split.amount_regular > 0) {
-			// 	switch (payment.payment_method) {
-			// 		case 'CARD':
-			// 		case 'PLATFORM': {
-			// 			const payment_intent = await stripe.client.paymentIntents.retrieve(payment.payment_intent_id);
-			// 			if (split.destination_id !== 'platform') {
-			// 				const transfer = await stripe.splitCutFromPaymentIntent(
-			// 					payment_intent,
-			// 					split.destination_id!,
-			// 					split.amount_regular,
-			// 					{
-			// 						payment_split_id: split.payment_split_id,
-			// 						payment_transfer_group_id,
-			// 					}
-			// 				);
-			// 				external_id = transfer.id;
-			// 			}
-			// 			break;
-			// 		}
-			// 		case 'WALLET':
-			// 			await WalletFundsHelpers.transferReservedWalletFundsForOrder(
-			// 				payment.user_id,
-			// 				split.destination_id!,
-			// 				split.amount_regular,
-			// 				payment.subscription_grouped_id || payment.payment_id,
-			// 				payment.order_type,
-			// 				payment.subscription_grouped_id ? 'daily_meals_subscription_payment' : 'order'
-			// 			);
-			// 			await PaymentSplitDao.updatePaymentSplitById(split.payment_split_id, {
-			// 				status: SPLIT_STATUS.TRANSFERED,
-			// 			});
-			// 			break;
-			// 		// case 'CASH':
-			// 		// 	// No-op for cash
-			// 		// 	break;
-			// 		default:
-			// 			throw new Error('Unsupported payment method for split transfer');
-			// 	}
-			// } else if (split.amount_regular === 0) {
-			// 	await PaymentSplitDao.updatePaymentSplitById(split.payment_split_id, {
-			// 		status: SPLIT_STATUS.TRANSFERED,
-			// 		...(external_id ? { external_id } : {}),
-			// 	});
-			// }
 		} catch (err) {
 			console.error(`Split transfer failed for split ID ${split.payment_split_id}:`, err);
 			updatedSplits.push(
@@ -689,19 +762,134 @@ export async function transferSplitsForTransferGroup(
 		});
 	}
 	return transfer_group.payment_transfer_group_id;
-	// let refreshed_transfer_group = await prisma.payment_transfer_groups.findUnique({
-	// 	where: { payment_transfer_group_id },
-	// 	include: { payment_splits: true },
-	// });
-	// if (refreshed_transfer_group.payment_splits.every((s:payment_splits) => s.status === SPLIT_STATUS.TRANSFERED)) {
-	// 	// Perform group completion logic (e.g., mark order as complete)
-	// 	console.log('Updating transfer_group: ', payment_transfer_group_id);
-	// 	refreshed_transfer_group = await prisma.payment_transfer_groups.update({
-	// 		where: { payment_transfer_group_id },
-	// 		data: { status: TRANSFER_GROUP_STATUS.SUCCEEDED },
-	// 	});
-	// }
-	// return refreshed_transfer_group.payment_transfer_group_id;
+}
+
+/**
+ * Transfers all splits for a given transfer group asynchronously.
+ * On error, marks group as failed and TODO: reverse all transfers.
+ * @param transfer_group_id
+ */
+export async function refundSplitsForTransferGroup(
+	payment_transfer_group_id: string,
+	splits?: payment_splits[]
+): Promise<void> {
+	const transfer_group = await prisma.payment_transfer_groups.findFirst({
+		where: { payment_transfer_group_id },
+		include: {
+			payment: true,
+			payment_splits: true,
+		},
+	});
+	const relevantSplits = splits || transfer_group.payment_splits;
+
+	const payment = transfer_group.payment;
+	const updatedSplits: payment_splits[] = [];
+	for (let i = 0; i < (relevantSplits?.length ?? 0); i++) {
+		let external_id: string | undefined = undefined;
+		const split = relevantSplits[i];
+		try {
+			updatedSplits.push(await refundSinglePaymentSplit(split, payment));
+		} catch (err) {
+			console.error(`Split refund failed for split ID ${split.payment_split_id}:`, err);
+			updatedSplits.push(
+				await PaymentSplitDao.updatePaymentSplitById(split.payment_split_id, { status: SPLIT_STATUS.FAILED })
+			);
+			for (let j = i + 1; j < relevantSplits!.length; j++) {
+				updatedSplits.push(
+					await PaymentSplitDao.updatePaymentSplitById(relevantSplits[j].payment_split_id, {
+						status: SPLIT_STATUS.CANCELED,
+					})
+				);
+			}
+			break;
+		}
+	}
+	if (updatedSplits.every((s: payment_splits) => s.status === SPLIT_STATUS.REFUNDED)) {
+		// Perform group completion logic (e.g., mark order as complete)
+		console.log('Updating transfer_group: ', payment_transfer_group_id);
+		await prisma.payment_transfer_groups.update({
+			where: { payment_transfer_group_id },
+			data: { status: TRANSFER_GROUP_STATUS.SUCCEEDED },
+		});
+	}
+	return transfer_group.payment_transfer_group_id;
+}
+
+const ps_type_success_map: Record<SPLIT_TYPE, SPLIT_STATUS> = {
+	[SPLIT_TYPE.TRANSFER]: SPLIT_STATUS.TRANSFERED,
+	[SPLIT_TYPE.REFUND]: SPLIT_STATUS.REFUNDED,
+};
+/**
+ * Transfers all splits for a given transfer group asynchronously.
+ * On error, marks group as failed and TODO: reverse all transfers.
+ * @param transfer_group_id
+ */
+export async function processSplitsForTransferGroup(
+	payment_transfer_group_id: string,
+	splits?: payment_splits[]
+): Promise<void> {
+	const transfer_group = await prisma.payment_transfer_groups.findFirst({
+		where: { payment_transfer_group_id },
+		include: {
+			payment: true,
+			payment_splits: true,
+		},
+	});
+	const relevantSplits = splits || transfer_group.payment_splits;
+
+	const payment = transfer_group.payment;
+	const updatedSplits: payment_splits[] = [];
+	for (let i = 0; i < (relevantSplits?.length ?? 0); i++) {
+		const split = relevantSplits[i];
+		try {
+			switch (transfer_group.type) {
+				case TRANSFER_GROUP_TYPE.TRANSFER:
+					break;
+				case TRANSFER_GROUP_TYPE.REFUND:
+					switch (split.type) {
+						case SPLIT_TYPE.TRANSFER:
+							updatedSplits.push(
+								await transferSplit(split, payment, {
+									transfer_group_id: transfer_group.payment_transfer_group_id,
+								})
+							);
+							break;
+						case SPLIT_TYPE.REFUND:
+							updatedSplits.push(await refundSinglePaymentSplit(split, payment));
+							break;
+
+						default:
+							console.error(`Unsupported split type for split ID ${split.payment_split_id}:`, split.type);
+							break;
+					}
+					break;
+
+				default:
+					break;
+			}
+		} catch (err) {
+			console.error(`Split transfer failed for split ID ${split.payment_split_id}:`, err);
+			updatedSplits.push(
+				await PaymentSplitDao.updatePaymentSplitById(split.payment_split_id, { status: SPLIT_STATUS.FAILED })
+			);
+			for (let j = i + 1; j < relevantSplits!.length; j++) {
+				updatedSplits.push(
+					await PaymentSplitDao.updatePaymentSplitById(relevantSplits[j].payment_split_id, {
+						status: SPLIT_STATUS.CANCELED,
+					})
+				);
+			}
+			break;
+		}
+	}
+	if (updatedSplits.every((s: payment_splits) => s.status === ps_type_success_map[s.type])) {
+		console.log('Updating transfer_group: ', payment_transfer_group_id);
+		await prisma.payment_transfer_groups.update({
+			where: { payment_transfer_group_id },
+			data: { status: TRANSFER_GROUP_STATUS.SUCCEEDED },
+		});
+	}
+	return transfer_group.payment_transfer_group_id;
 }
 
 /**
@@ -715,13 +903,19 @@ export async function transferSplitsForTransferGroup(
  * @prisma_model payment_splits
  * @prisma_model payment_transfer_groups
  */
-export async function createAndTransferGroupSplits(
+export async function createAndProcessTransferGroupSplits(
 	payment_id: string,
-	splitDefs: Array<{ destination_type: SPLIT_DESTINATION_TYPE; destination_id?: string; amount: number }>,
-	transfer_group_type: TRANSFER_GROUP_TYPE
+	splitDefs: Array<{
+		destination_type: SPLIT_DESTINATION_TYPE;
+		destination_id?: string;
+		new_destination_id?: string;
+		amount: number;
+	}>,
+	transfer_group_type: TRANSFER_GROUP_TYPE,
+	refund_percentage: number = 1 // Optional refund amount to use for refunds, if applicable
 ): Promise<string> {
 	// Step 1: Create the splits and transfer group
-	const splits = await createTransferGroupSplits(payment_id, splitDefs, transfer_group_type);
+	const splits = await createTransferGroupSplits(payment_id, splitDefs, transfer_group_type, refund_percentage);
 
 	// Step 2: Get the transfer group id from the first split (all splits share the same group)
 	const payment_transfer_group_id = splits[0]?.payment_transfer_group_id;
@@ -730,9 +924,29 @@ export async function createAndTransferGroupSplits(
 	}
 
 	// Step 3: Transfer all splits in the group
-	await transferSplitsForTransferGroup(payment_transfer_group_id, splits);
+	await processSplitsForTransferGroup(payment_transfer_group_id, splits);
+	// switch (transfer_group_type) {
+	// 	case TRANSFER_GROUP_TYPE.TRANSFER:
+	// 		await transferSplitsForTransferGroup(payment_transfer_group_id, splits);
+
+	// 		break;
+	// 	case TRANSFER_GROUP_TYPE.REFUND:
+	// 		await refundSplitsForTransferGroup(payment_transfer_group_id, splits);
+
+	// 		break;
+
+	// 	default:
+	// 		console.error('Unsupported transfer group type.');
+	// 		break;
+	// }
 
 	return payment_transfer_group_id;
 }
 
-export default { createPaymentHelper, transferSplitsForTypes, transferSplitById, handlePaymentRefund };
+export default {
+	createPaymentHelper,
+	transferSplitsForTypes,
+	transferSplitById,
+	handlePaymentRefund,
+	createAndProcessTransferGroupSplits,
+};
