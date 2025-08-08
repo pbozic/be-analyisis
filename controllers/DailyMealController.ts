@@ -545,9 +545,10 @@ export async function cancelDailyMealInstanceById(
 	req: ValidatedRequest<unknown, { instance_id: string }>,
 	res: Response
 ): Promise<void> {
+	let instance = null;
 	try {
 		const { instance_id } = req.params;
-		let instance = await prisma.daily_meal_instances.findUnique({
+		instance = await prisma.daily_meal_instances.findUnique({
 			where: { id: instance_id },
 			include: {
 				daily_meal_category_price: true,
@@ -566,6 +567,10 @@ export async function cancelDailyMealInstanceById(
 			res.status(400).json({ message: 'Daily meal instance is not in a cancellable state' });
 			return;
 		}
+		await DailyMealDao.updateDailyMealInstanceStatusById(
+			instance.id,
+			DAILY_MEAL_INSTANCE_STATUS.PENDING_CANCELLATION
+		);
 
 		if (instance.subscription.type === SUBSCRIPTION_TYPE.DATED) {
 			const deliveryDateStart = new Date(instance.delivery_date);
@@ -643,6 +648,9 @@ export async function cancelDailyMealInstanceById(
 		});
 		res.status(200).json(instance);
 	} catch (error) {
+		if (instance) {
+			await DailyMealDao.updateDailyMealInstanceStatusById(instance.id, DAILY_MEAL_INSTANCE_STATUS.PLANNED);
+		}
 		const message = error instanceof Error ? error.message : 'Unknown error';
 		res.status(500).json({ message: 'Error canceling daily meal instance', error: message });
 	}

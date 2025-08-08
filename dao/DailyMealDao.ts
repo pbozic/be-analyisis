@@ -418,6 +418,15 @@ export async function updateDailyMealInstances(instance_ids: string[], status: D
 	});
 }
 
+export async function updateDailyMealInstanceStatusById(instance_id: string, status: DAILY_MEAL_INSTANCE_STATUS) {
+	return await prisma.daily_meal_instances.update({
+		where: {
+			id: instance_id,
+		},
+		data: { status: status },
+	});
+}
+
 export default {
 	getDailyMealSubscriptionsByBusinessId,
 	getActiveDailyMealSubscriptionsByBusinessId,
@@ -428,4 +437,5 @@ export default {
 	updateSubscriptionStatus,
 	updateDailyMealInstances,
 	connectSubscriptionWithDriver,
+	updateDailyMealInstanceStatusById,
 };
