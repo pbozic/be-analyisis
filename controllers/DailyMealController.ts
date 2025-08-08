@@ -489,6 +489,19 @@ export async function cancelSubscriptionById(
 ): Promise<void> {
 	try {
 		const { subscription_id } = req.params;
+		const subscription = await DailyMealDao.getSubscriptionById(subscription_id, { payment: true });
+		console.log(subscription);
+		if (!subscription) {
+			res.status(400).json({ message: 'Daily meal subscription not found.' });
+		}
+		if (![SUBSCRIPTION_STATUS.AWAITING_PAYMENT, SUBSCRIPTION_STATUS.ACTIVE].includes(subscription.status)) {
+			res.status(400).json({ message: 'Daily meal subscription is not in a cancellable state' });
+			return;
+		}
+		if (subscription.type === SUBSCRIPTION_TYPE.DATED) {
+			await PaymentHelpers.createAndProcessRefundSplits(subscription.payment.payment_id, 0.9);
+		}
+
 		const updated_subscription = await dailyMealHelpers.cancelSubscriptionById(subscription_id);
 		res.status(200).json(updated_subscription);
 	} catch (error) {

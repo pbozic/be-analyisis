@@ -428,7 +428,7 @@ export async function transferSplitById(
  * @returns Promise<void>
  */
 export async function refundSinglePaymentSplit(
-	split: payment_splits & { payment: payments },
+	split: payment_splits | (payment_splits & { payment: payments }),
 	payment: payments
 ): Promise<payment_splits> {
 	if (split.amount_credits > 0) {
@@ -485,6 +485,163 @@ export async function refundSinglePaymentSplit(
 	});
 }
 
+export async function createAndProcessRefundSplits(
+	payment_id: string,
+	refund_percentage: number
+): Promise<payment_splits[]> {
+	const { splits, transfer_group } = await prisma.$transaction(async (tx: TPrisma.TransactionClient) => {
+		const reservedSplits = await tx.payment_splits.findMany({
+			where: {
+				payment_id,
+				status: SPLIT_STATUS.RESERVED,
+				payment_transfer_group_id: null,
+			},
+		});
+		const payment_transfer_group = await tx.payment_transfer_groups.create({
+			data: {
+				payment: { connect: { payment_id } },
+				type: TRANSFER_GROUP_TYPE.REFUND,
+				amount: reservedSplits.reduce(
+					(sum: number, s: payment_splits) => sum + s.amount_credits + s.amount_regular,
+					0
+				),
+			},
+		});
+
+		const groupMap = new Map<
+			string,
+			{ destination_type: SPLIT_DESTINATION_TYPE; destination_id?: string; splits: typeof reservedSplits }
+		>();
+
+		for (const split of reservedSplits) {
+			const key = `${split.destination_type}:${split.destination_id ?? 'null'}`;
+			if (!groupMap.has(key)) {
+				groupMap.set(key, {
+					destination_type: split.destination_type,
+					destination_id: split.destination_id ?? undefined,
+					splits: [],
+				});
+			}
+			groupMap.get(key)!.splits.push(split);
+		}
+
+		const newSplits: payment_splits[] = [];
+		const updatedSplits: payment_splits[] = [];
+		// let totalRefundAmount = 0;
+
+		for (const { destination_type, destination_id, splits } of groupMap.values()) {
+			let total_refund_regular = 0;
+			let total_refund_credits = 0;
+
+			for (const split of splits) {
+				const refund_amount_regular = Math.floor(split.amount_regular * refund_percentage);
+				const refund_amount_credits = Math.floor(split.amount_credits * refund_percentage);
+				const decrease_regular = split.amount_regular - refund_amount_regular;
+				const decrease_credits = split.amount_credits - refund_amount_credits;
+
+				total_refund_regular += refund_amount_regular;
+				total_refund_credits += refund_amount_credits;
+
+				updatedSplits.push(
+					await tx.payment_splits.update({
+						where: { payment_split_id: split.payment_split_id },
+						data: {
+							destination_id: 'platform',
+							amount_regular: decrease_regular,
+							amount_credits: decrease_credits,
+							status: SPLIT_STATUS.PENDING,
+							payment_transfer_group: {
+								connect: {
+									payment_transfer_group_id: payment_transfer_group.payment_transfer_group_id,
+								},
+							},
+						},
+					})
+				);
+			}
+
+			// Create the new split for the decrease amount, connected to the transfer group
+			if (total_refund_regular > 0 || total_refund_credits > 0) {
+				const newSplit = await tx.payment_splits.create({
+					data: {
+						destination_type,
+						destination_id,
+						amount_regular: total_refund_regular,
+						amount_credits: total_refund_credits,
+						status: SPLIT_STATUS.PENDING,
+						type: SPLIT_TYPE.REFUND,
+						payment_transfer_group: {
+							connect: {
+								payment_transfer_group_id: payment_transfer_group.payment_transfer_group_id,
+							},
+						},
+						payment: {
+							connect: {
+								payment_id: splits[0]!.payment_id,
+							},
+						},
+					},
+				});
+				newSplits.push(newSplit);
+				// totalRefundAmount += total_regular + total_credits;
+			}
+		}
+
+		console.log('TEST', JSON.stringify([...updatedSplits, ...newSplits], null, 2));
+
+		return { splits: [...updatedSplits, ...newSplits], transfer_group: payment_transfer_group };
+	});
+	await processSplitsForTransferGroup(transfer_group.payment_transfer_group_id, splits);
+	return splits;
+}
+
+export async function refundRemainingPayment(payment_id: string): Promise<payment_splits[]> {
+	const payment: TPrisma.paymentsGetPayload<{
+		include: {
+			payment_splits: {
+				include: {
+					payment_transfer_group: true;
+				};
+			};
+		};
+	}> | null = await prisma.findUnique({
+		where: { payment_id },
+
+		include: {
+			payment_splits: { include: { payment_transfer_group: true } },
+		},
+	});
+	if (!payment) {
+		throw new Error(`Payment not found for id: ${payment_id}`);
+	}
+
+	const refundedSplits: payment_splits[] = [];
+
+	const reservedSplits = payment.payment_splits.filter(
+		(split) =>
+			split.status === SPLIT_STATUS.RESERVED &&
+			(!split.payment_transfer_group || split.payment_transfer_group.type !== TRANSFER_GROUP_TYPE.REFUND)
+	);
+
+	for (const split of reservedSplits) {
+		try {
+			// Refund the split
+			const updatedSplit = await refundSinglePaymentSplit(split, payment);
+			refundedSplits.push(updatedSplit);
+		} catch (err) {
+			console.error(`Failed to refund split ${split.payment_split_id}:`, err);
+
+			// Mark as FAILED so it doesn't remain RESERVED
+			const failedSplit = await PaymentSplitDao.updatePaymentSplitById(split.payment_split_id, {
+				status: SPLIT_STATUS.FAILED,
+			});
+			refundedSplits.push(failedSplit);
+		}
+	}
+
+	return refundedSplits;
+}
+
 /**
  * Handles payment refund by releasing reserved wallet funds and refunding/canceling payment intents.
  * Also restores credits or wallet funds if needed, based on payment splits.
@@ -497,14 +654,14 @@ export async function handlePaymentRefund(payment: payments & { payment_splits: 
 		// If split was already transferred, we need to create new wallet credits for the user
 		// If not transferred, just release reserved credits
 		if (split.amount_credits > 0) {
-			if (split.status === 'TRANSFERED') {
+			if (split.status === SPLIT_STATUS.TRANSFERED) {
 				// Refund credits to user
 				await WalletFundsDao.createCredit({
 					user: { connect: { user_id: payment.user_id } },
 					amount: split.amount_credits,
 					type: 'CREDITS_DELIVERY',
 				});
-			} else {
+			} else if (split.status === SPLIT_STATUS.RESERVED) {
 				await WalletFundsHelpers.releaseReservedWalletFundsForOrder(
 					payment.user_id,
 					payment.payment_id,
@@ -541,10 +698,10 @@ export async function handlePaymentRefund(payment: payments & { payment_splits: 
 				// If split was already transferred, we need to create new wallet funds/credits for the user
 				// If not transferred, just release reserved funds/credits
 				if (split.amount_regular) {
-					if (split.status === 'TRANSFERED') {
+					if (split.status === SPLIT_STATUS.TRANSFERED) {
 						// Refund wallet funds to user
 						await WalletFundsDao.createWalletFunds(payment.user_id, split.amount_regular, null);
-					} else {
+					} else if (split.status === SPLIT_STATUS.RESERVED) {
 						await WalletFundsHelpers.releaseReservedWalletFundsForOrder(
 							payment.user_id,
 							payment.payment_id,
@@ -555,7 +712,7 @@ export async function handlePaymentRefund(payment: payments & { payment_splits: 
 				}
 				// Mark split as refunded
 				await PaymentSplitDao.updatePaymentSplitById(split.payment_split_id, {
-					status: split.status === 'TRANSFERED' ? SPLIT_STATUS.REFUNDED : SPLIT_STATUS.CANCELED,
+					status: split.status === SPLIT_STATUS.TRANSFERED ? SPLIT_STATUS.REFUNDED : SPLIT_STATUS.CANCELED,
 				});
 			}
 			break;
@@ -826,15 +983,18 @@ const ps_type_success_map: Record<SPLIT_TYPE, SPLIT_STATUS> = {
  */
 export async function processSplitsForTransferGroup(
 	payment_transfer_group_id: string,
-	splits?: payment_splits[]
+	splits?: payment_splits[] | null,
+	tx?: TPrisma.TransactionClient
 ): Promise<void> {
-	const transfer_group = await prisma.payment_transfer_groups.findFirst({
+	const prismaClient = tx ?? prisma;
+	const transfer_group = await prismaClient.payment_transfer_groups.findFirst({
 		where: { payment_transfer_group_id },
 		include: {
 			payment: true,
 			payment_splits: true,
 		},
 	});
+	console.log('transfer_group', transfer_group);
 	const relevantSplits = splits || transfer_group.payment_splits;
 
 	const payment = transfer_group.payment;
@@ -884,7 +1044,7 @@ export async function processSplitsForTransferGroup(
 	}
 	if (updatedSplits.every((s: payment_splits) => s.status === ps_type_success_map[s.type])) {
 		console.log('Updating transfer_group: ', payment_transfer_group_id);
-		await prisma.payment_transfer_groups.update({
+		await prismaClient.payment_transfer_groups.update({
 			where: { payment_transfer_group_id },
 			data: { status: TRANSFER_GROUP_STATUS.SUCCEEDED },
 		});
@@ -949,4 +1109,5 @@ export default {
 	transferSplitById,
 	handlePaymentRefund,
 	createAndProcessTransferGroupSplits,
+	createAndProcessRefundSplits,
 };

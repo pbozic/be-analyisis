@@ -134,11 +134,14 @@ export async function updatePaymentSplitById(
 	data: Omit<
 		Partial<TPrisma.payment_splitsUpdateInput>,
 		'amount_regular' | 'amount_credits' | 'destination_type' | 'payment_split_id' | 'payment_id'
-	>
+	>,
+	tx?: TPrisma.TransactionClient
 ): Promise<payment_splits> {
+	const prismaClient = tx ?? prisma;
+
 	// If destination_id is included in the update, check whether it's allowed
 	if ('destination_id' in data) {
-		const existing_split = await prisma.payment_splits.findUnique({
+		const existing_split = await prismaClient.payment_splits.findUnique({
 			where: { payment_split_id },
 			select: { destination_id: true },
 		});
@@ -152,7 +155,7 @@ export async function updatePaymentSplitById(
 		}
 	}
 
-	return await prisma.payment_splits.update({
+	return await prismaClient.payment_splits.update({
 		where: { payment_split_id },
 		data,
 	});
