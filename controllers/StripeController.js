@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import { SUBSCRIPTION_STATUS, SPLIT_DESTINATION_TYPE } from '@prisma/client';
+import { SUBSCRIPTION_STATUS } from '@prisma/client';
 
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import socket from '../socket.js';
@@ -127,7 +127,7 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			if (!updated_sub) {
 				console.warn(
 					'No DM subscriptions found after transfers for grouped_id: ',
-					payment_intent.transfer_group
+					paymentIntent.transfer_group
 				);
 			}
 			break;
