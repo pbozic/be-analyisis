@@ -29,7 +29,7 @@ import {
 	ORDER_SUBTYPE,
 } from '../lib/constants.js';
 import { sendOrderNotifications } from '../lib/notifications.js';
-import { range, todaysEarnings } from '../lib/helpersLib.js';
+import { todaysEarnings } from '../lib/helpersLib.js';
 import prisma from '../prisma/prisma.js';
 import BusinessDao from '../dao/Business.js';
 import WalletFundsHelpers from '../lib/WalletFundsHelpers.js';
@@ -38,10 +38,8 @@ import { getLocalisedTexts } from '../localisations/languages.js';
 import { handleReferral } from '../lib/referralHelper.js';
 import ScoringPointsDao from '../dao/ScoringPoints.js';
 import LateEventsDao from '../dao/LateEvents.js';
-import { createAndStorePaymentIntent, validatePaymentIntent, splitCutFromPaymentIntent } from '../lib/stripe.js';
 import stripe from '../lib/stripe.js';
 import { calculateTransferOrderPaymentCuts } from '../lib/taxiHelpers.js';
-import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 const { UserSockets, io, SocketStore } = socket;
 /**
  * GET /taxi/order/{orderId}
@@ -105,14 +103,32 @@ export async function getMyActiveTaxiOrders(req, res) {
 		res.status(500).json({ message: 'Error fetching active orders' });
 	}
 }
-
-async function getActiveOrdersHelper(user_id, type) {
+/**
+ * GET /taxi/orders/active/business_user/:type
+ * @tag Taxi
+ * @summary Get active taxi orders.
+ * @description This fetches all completed orders for a specific user.
+ * @operationId getCompletedDeliveryOrders
+ * @response 200 - Successful operation. Returns a list of completed orders in the response body.
+ * @responseContent {Order[]} 200.application/json
+ * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
+ */
+export async function getActiveTaxiOrdersForBusinessUser(req, res) {
+	const { type } = req.params;
+	const { user_id } = req.user;
 	try {
-		const activeOrders = await TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, type);
+		const activeOrders = await getActiveOrdersHelper(user_id, type, true);
+		res.status(200).json(activeOrders);
+	} catch (e) {
+		console.error('TaxiOrderController', e);
+		res.status(500).json({ message: 'Error fetching active orders' });
+	}
+}
+async function getActiveOrdersHelper(user_id, type, isBusinessUser = false) {
+	try {
+		const activeOrders = await TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, type, isBusinessUser);
 		if (activeOrders) {
-			// Iterate over the list of active orders
-			for (let i = 0; i < activeOrders.length; i++) {
-				const activeOrder = activeOrders[i];
+			for (const activeOrder of activeOrders) {
 				if (activeOrder && activeOrder.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED) {
 					const driver = activeOrder.driver;
 					const { result, distance, duration } = await gApi.distanceBetweenTwoPoints(
@@ -2503,4 +2519,5 @@ export default {
 	calculateTransferPrice,
 	requestTransferOrderPrice,
 	getMyActiveTaxiOrders,
+	getActiveTaxiOrdersForBusinessUser,
 };

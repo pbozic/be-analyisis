@@ -7,6 +7,7 @@ import {
 	UpdateCreateBookingSlotSchema,
 	CreateOrUpdateBookingSlotSchema,
 	CreateScheduleSlotWithBookingSlotsSchema,
+	UpdateScheduleSlotWithBookingSlotsSchema,
 } from '../../../types/reservation/Schedule';
 
 const router = express.Router();
@@ -20,6 +21,11 @@ router.post(
 	'/update-slots',
 	validate(CreateOrUpdateBookingSlotSchema),
 	BookingSlotController.updateOrCreateBookingSlots
+);
+router.put(
+	'/update-schedule-slot-with-booking-slots/:id',
+	validate(UpdateScheduleSlotWithBookingSlotsSchema),
+	BookingSlotController.updateScheduleSlotWithBookingSlots
 );
 router.post(
 	'/create-schedule-slot-with-booking-slots',

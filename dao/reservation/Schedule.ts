@@ -13,6 +13,9 @@ export async function getSchedulesByLocationId(): Promise<Schedule[]> {
 			// where: {
 			// 	location_id: locationId,
 			// },
+			include: {
+				location: true,
+			},
 		});
 		return schedules;
 	} catch (error) {

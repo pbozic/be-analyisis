@@ -76,24 +76,33 @@ async function getOrder(order_id) {
 		throw new Error(e);
 	}
 }
-async function getTaxiOrdersIfNotCompleted(user_id, type) {
+async function getTaxiOrdersIfNotCompleted(user_id, type, isBusinessUser = false) {
 	try {
+		const whereClause = {
+			type: type,
+			status: {
+				notIn: [
+					TAXI_ORDER_STATUS.TAXI_CANCELED,
+					TAXI_ORDER_STATUS.TAXI_COMPLETED,
+					TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+					TAXI_ORDER_STATUS.TAXI_REJECTED,
+					//TODO: Should exclude status AWAITING_PAYMENT or not?
+					TAXI_ORDER_STATUS.AWAITING_PAYMENT,
+				],
+			},
+			subtype: isBusinessUser ? ORDER_SUBTYPE.CREATED_BY_BUSINESS : ORDER_SUBTYPE.CREATED_BY_USER,
+		};
 		return await prisma.taxi_orders.findMany({
 			where: {
-				type: type,
-				user_id: user_id,
-				subtype: ORDER_SUBTYPE.CREATED_BY_USER,
-				status: {
-					notIn: [
-						TAXI_ORDER_STATUS.TAXI_CANCELED,
-						TAXI_ORDER_STATUS.TAXI_COMPLETED,
-						TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
-						TAXI_ORDER_STATUS.TAXI_REJECTED,
-						//TODO: Should exclude status AWAITING_PAYMENT or not?
-						TAXI_ORDER_STATUS.AWAITING_PAYMENT,
-					],
-				},
-				OR: [{ creating_user_id: null }, { creating_user_id: { not: user_id } }],
+				...whereClause,
+				...(isBusinessUser
+					? {
+							OR: [{ user_id: user_id }, { creating_user_id: user_id }],
+						}
+					: {
+							user_id: user_id,
+							OR: [{ creating_user_id: null }, { creating_user_id: { not: user_id } }],
+						}),
 			},
 			include: {
 				user: true,
