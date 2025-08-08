@@ -455,7 +455,8 @@ function preprocessOrderData(orderData) {
 		type: orderData.type,
 	};
 	const prefs = cleanedOrderData.preferences;
-	const is_repeat = !!prefs.repeat_ride && !prefs.repeat_ride.some((item) => item.value === 'do_not_repeat');
+	const is_repeat =
+		prefs.repeat_ride?.length > 0 && !prefs.repeat_ride.some((item) => item.value === 'do_not_repeat');
 	if (prefs.vehicle_class === VEHICLE_CLASS.CARGO_VAN) {
 		cleanedOrderData.payment = {
 			...cleanedOrderData.payment,
