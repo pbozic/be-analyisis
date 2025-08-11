@@ -474,24 +474,41 @@ function preprocessOrderData(orderData) {
 	}
 	return orderDataArray;
 }
-async function generateVehicleTransferOrder(orderData) {
-	let vehicleTransferOrderData = orderData.vehicle_transfer_order;
-	vehicleTransferOrderData = {
-		...vehicleTransferOrderData,
-		status: 'PENDING',
-		telephone: orderData.telephone,
-		first_name: orderData.first_name,
-		last_name: orderData.last_name,
-		is_scheduled: !!orderData.preferences?.departure_date,
-	};
-	const vehicle_transfer_order = await TaxiOrderDao.createOrder({
-		...vehicleTransferOrderData,
-		user: {
-			connect: {
-				user_id: orderData.user_id,
+async function generateVehicleTransferOrder(orderData, userId, businessUserId, businessClientId) {
+	const vehicleTransferOrderData = {
+		...orderData,
+		type: ORDER_TYPE.VEHICLE_TRANSFER_COMBO,
+		preferences: {
+			...orderData.preferences,
+			adults: 0,
+			children_under_140: 0,
+			ride_requirements: {
+				traveling_with_pet: false,
+				air_conditioning: false,
+				child_seats: false,
+				quiet_ride: false,
+				luggage: false,
+				wheelchair_accessibility: false,
+				language_en: false,
+				language_it: false,
+				language_de: false,
+				language_es: false,
+				language_hr: false,
+				language_fr: false,
+				language_ru: false,
 			},
+			vehicle_class: VEHICLE_CLASS.ANY,
+			vehicle_category: VEHICLE_CATEGORY.ANY,
 		},
-	});
+	};
+	const vehicle_transfer_order = await makeOrder(
+		vehicleTransferOrderData,
+		userId,
+		null,
+		null,
+		businessUserId,
+		businessClientId
+	);
 	return vehicle_transfer_order;
 }
 function subdivideOrder(vehicle_class, vehicle_category, n_adults, n_children) {
@@ -634,7 +651,12 @@ async function cleanedCreateOrderHelper(orderData) {
 		console.log('fetched grouped_orders', order.grouped_orders);
 		let vehicle_transfer_order;
 		if (order && order.preferences.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
-			vehicle_transfer_order = await generateVehicleTransferOrder(orderData);
+			vehicle_transfer_order = await generateVehicleTransferOrder(
+				cleanedOrderDataArray[0],
+				user_id,
+				businessUserId,
+				businessClientId
+			);
 		}
 		return { order, vehicle_transfer_order };
 	} catch (error) {
