@@ -5,11 +5,11 @@ import { findSlots } from '../../../lib/bookingHelpers';
 const router = express.Router();
 
 router.post('/find-slots', async (req, res) => {
-	const { services, locationId, employeeId, reservationModuleId, date } = req.body;
+	const { serviceIds, locationId, employeeId, reservationModuleId, date } = req.body;
 
 	try {
 		const slots = await findSlots({
-			serviceIds: services,
+			serviceIds,
 			locationId,
 			employeeId,
 			reservationModuleId,
