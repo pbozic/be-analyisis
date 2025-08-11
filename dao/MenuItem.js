@@ -5,9 +5,11 @@ const createMenuItem = async (categoryId, taxRateId, menuItemData, is_copy) => {
 			menu_category: {
 				connect: { menu_category_id: categoryId },
 			},
-			tax_rate: {
-				connect: { tax_rates_id: taxRateId },
-			},
+			tax_rate: taxRateId
+				? {
+						connect: { tax_rates_id: taxRateId },
+					}
+				: undefined,
 			...menuItemData,
 			is_copy: is_copy || false,
 		},
