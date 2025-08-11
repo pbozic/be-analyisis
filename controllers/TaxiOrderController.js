@@ -500,6 +500,11 @@ async function generateVehicleTransferOrder(orderData, userId, businessUserId, b
 			vehicle_class: VEHICLE_CLASS.ANY,
 			vehicle_category: VEHICLE_CATEGORY.ANY,
 		},
+		payment: {
+			...orderData.payment,
+			extras: null,
+			status: 'PAID',
+		},
 	};
 	const vehicle_transfer_order = await makeOrder(
 		vehicleTransferOrderData,
