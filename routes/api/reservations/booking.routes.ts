@@ -5,7 +5,7 @@ import { findSlots } from '../../../lib/bookingHelpers';
 const router = express.Router();
 
 router.post('/find-slots', async (req, res) => {
-	const { serviceIds, locationId, employeeId, reservationModuleId, date } = req.body;
+	const { serviceIds, locationId, employeeId, reservationModuleId, date, returnFirst } = req.body;
 
 	try {
 		const slots = await findSlots({
@@ -14,6 +14,7 @@ router.post('/find-slots', async (req, res) => {
 			employeeId,
 			reservationModuleId,
 			date,
+			returnFirst,
 		});
 		res.json(slots);
 	} catch (error) {
