@@ -107,6 +107,12 @@ export const CreateScheduleSlotWithBookingSlotsSchema = z.object({
 	bookingSlots: z.array(CreateBookingSlotNoIds),
 });
 
+export const GetSchedulesWithSlotsSchema = z.object({
+	schedule_id: z.string().uuid(),
+	startDate: z.string().datetime(),
+	endDate: z.string().datetime(),
+});
+
 export const UpdateScheduleSchema = CreateScheduleSchema.partial();
 export const UpdateScheduleEmployeeSchema = CreateScheduleEmployeeSchema.partial();
 export const UpdateScheduleSlotSchema = CreateScheduleSlotSchema.partial();
@@ -161,6 +167,7 @@ export type CreateScheduleSlotWithExceptionsAndBookingSlotsInput = z.infer<
 export type UpdateScheduleSlotWithBookingSlotsAndExceptionsInput = z.infer<
 	typeof UpdateScheduleSlotWithBookingSlotsAndExceptionsSchema
 >;
+export type GetSchedulesWithSlotsInput = z.infer<typeof GetSchedulesWithSlotsSchema>;
 
 export type Schedule = schedule;
 export type ScheduleWithoutEmployees = Omit<schedule, 'schedule_employees'>;

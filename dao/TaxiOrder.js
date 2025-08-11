@@ -79,7 +79,7 @@ async function getOrder(order_id) {
 async function getTaxiOrdersIfNotCompleted(user_id, type, isBusinessUser = false) {
 	try {
 		const whereClause = {
-			type: type,
+			...(type && { type: type }),
 			status: {
 				notIn: [
 					TAXI_ORDER_STATUS.TAXI_CANCELED,

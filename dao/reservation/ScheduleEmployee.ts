@@ -21,6 +21,26 @@ export async function getScheduleEmployeesByScheduleId(scheduleId: string): Prom
 	try {
 		const records = await prisma.schedule_employee.findMany({
 			where: { schedule_id: scheduleId },
+			include: {
+				schedule: true,
+				employee: {
+					select: {
+						employee_id: true,
+						reservation_module: true,
+						business_users_id: true,
+						business_user: {
+							select: {
+								business_users_id: true,
+								business_id: true,
+								user_id: true,
+								users: {
+									select: cropped_user_columns,
+								},
+							},
+						},
+					},
+				},
+			},
 		});
 		return records;
 	} catch (error) {
@@ -143,6 +163,9 @@ export async function getEmployeesByScheduleIdWithSlots(scheduleId: string): Pro
 								start_time: 'asc',
 							},
 						},
+					},
+					orderBy: {
+						start_time: 'asc',
 					},
 				},
 			},

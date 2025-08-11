@@ -2,7 +2,10 @@ import { Request, Response } from 'express';
 
 import EmployeeDao from '../../dao/reservation/Employee.ts';
 import BusinessUsersDao from '../../dao/BusinessUsers.js';
+import ScheduleDao from '../../dao/reservation/Schedule.ts';
+import ScheduleEmployeeDao from '../../dao/reservation/ScheduleEmployee.ts';
 import { CreateEmployeeInput, UpdateEmployeeInput } from '../../types/reservation/Employee.ts';
+import { GetSchedulesWithSlotsInput } from '../../types/reservation/Schedule.ts';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
 
 /**
@@ -146,10 +149,57 @@ export async function getEmployeeById(req: Request, res: Response): Promise<void
 	}
 }
 
+/**
+ * POST /reservation/employees/employees-with-schedule-slots
+ * @tag Reservation
+ * @summary Get all reservation employees with schedule slots
+ * @description Retrieves all reservation employees with their schedule slots.
+ * @operationId getEmployeesWithScheduleSlots
+ * @response 200 - Reservation employees with schedule slots retrieved successfully
+ * @responseContent {Employee[]} 200.application/json
+ * @response 500 - Error retrieving employees with schedule slots
+ */
+export async function getEmployeesWithScheduleSlots(
+	req: ValidatedRequest<GetSchedulesWithSlotsInput>,
+	res: Response
+): Promise<void> {
+	try {
+		let reservationModuleId = req.user?.reservation_module_id as string;
+		let schedule_id = req.body.schedule_id as string;
+		let startDate = req.body.startDate as string;
+		let endDate = req.body.endDate as string;
+
+		if (!reservationModuleId) {
+			res.status(400).json({ message: 'User has no reservation module' });
+			return;
+		}
+		let schedule = await ScheduleDao.getScheduleById(schedule_id);
+		let employee = await ScheduleEmployeeDao.getScheduleEmployeesByScheduleId(schedule_id);
+		const employee_ids = employee.map((emp) => emp.employee_id);
+		let employeesData = await EmployeeDao.getEmployeesByReservationModuleIdWithSlots(
+			reservationModuleId,
+			startDate,
+			endDate,
+			employee_ids
+		);
+		const employees = employeesData.map((emp) => {
+			const fEmployee = employee.find((e) => e.employee_id === emp.employee_id);
+			return {
+				...emp,
+				...fEmployee,
+			};
+		});
+		res.status(200).json({ employees, schedule });
+	} catch (error) {
+		res.status(500).json({ message: 'Error retrieving employees with schedule slots', error });
+	}
+}
+
 export default {
 	getEmployees,
 	createEmployee,
 	deleteEmployee,
 	updateEmployee,
 	getEmployeeById,
+	getEmployeesWithScheduleSlots,
 };
