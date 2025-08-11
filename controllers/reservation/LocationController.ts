@@ -131,10 +131,35 @@ export async function getLocationById(
 	}
 }
 
+/**
+ * GET /reservation/locations/schedule-list
+ * @tag Reservation
+ * @summary Get all reservation locations with schedules with schedules
+ * @description Retrieves all reservation locations with their schedules.
+ * @operationId getLocationsWithSchedules
+ * @response 200 - Reservation locations with schedules retrieved successfully
+ * @responseContent {Location[]} 200.application/json
+ * @response 500 - Error retrieving locations with schedules
+ */
+export async function getLocationsWithSchedules(req: ValidatedRequest, res: Response): Promise<void> {
+	try {
+		let reservationModuleId = req.user?.reservation_module_id as string;
+		if (!reservationModuleId) {
+			res.status(400).json({ message: 'User has no reservation module' });
+			return;
+		}
+		let locations = await LocationDao.getLocationsByReservationModuleIdWithSchedules(reservationModuleId);
+		res.status(200).json(locations);
+	} catch (error) {
+		res.status(500).json({ message: 'Error retrieving locations with schedules', error });
+	}
+}
+
 export default {
 	getLocations,
 	createLocation,
 	updateLocation,
 	deleteLocation,
 	getLocationById,
+	getLocationsWithSchedules,
 };

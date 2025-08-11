@@ -42,7 +42,6 @@ export async function getScheduleSlotsByScheduleId(
  */
 export async function createScheduleSlot(req: ValidatedRequest<CreateScheduleSlotInput>, res: Response): Promise<void> {
 	try {
-		console.log('Creating schedule slot with data:', req.body);
 		const record = await ScheduleSlotDao.createScheduleSlot(req.body);
 		res.status(201).json(record);
 	} catch (error) {

@@ -97,6 +97,9 @@ export async function getScheduleById(scheduleId: string): Promise<Schedule | nu
 	try {
 		let schedule = await prisma.schedule.findUnique({
 			where: { schedule_id: scheduleId },
+			include: {
+				location: true,
+			},
 		});
 		return schedule;
 	} catch (error) {

@@ -19,7 +19,6 @@ export async function getSchedule(req: Request, res: Response): Promise<void> {
 		let schedules = await ScheduleDao.getSchedulesByLocationId();
 		res.status(200).json(schedules);
 	} catch (error) {
-		console.log('Error retrieving schedules:', error);
 		res.status(500).json({ message: 'Error retrieving schedules', error });
 	}
 }

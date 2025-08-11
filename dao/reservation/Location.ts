@@ -117,10 +117,34 @@ export async function getLocationById(locationId: string): Promise<Location | nu
 	}
 }
 
+/**
+ * Retrieves all locations for a given reservation module ID, including their schedules.
+ * @param {string} reservationModuleId - The ID of the reservation module to retrieve locations for.
+ * @returns {Promise<Location[]>} A promise that resolves to an array of locations with their schedules.
+ * @throws {Error} If there is an error retrieving the locations with schedules.
+ */
+export async function getLocationsByReservationModuleIdWithSchedules(reservationModuleId: string): Promise<Location[]> {
+	try {
+		let locations = await prisma.location.findMany({
+			where: {
+				reservation_module_id: reservationModuleId,
+			},
+			include: {
+				reservation_module: true,
+				schedules: true,
+			},
+		});
+		return locations;
+	} catch (error) {
+		throw new Error('Error retrieving locations with schedules');
+	}
+}
+
 export default {
 	getLocationsByReservationModuleId,
 	getLocationById,
 	createLocation,
 	updateLocation,
 	deleteLocation,
+	getLocationsByReservationModuleIdWithSchedules,
 };

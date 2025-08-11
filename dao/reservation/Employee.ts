@@ -26,8 +26,19 @@ export async function getEmployeesByReservationModuleId(reservationModuleId: str
 					include: {
 						schedule_slots: {
 							include: {
-								schedule_slot_exceptions: true,
-								booking_slots: true,
+								schedule_slot_exceptions: {
+									orderBy: {
+										start_time: 'asc',
+									},
+								},
+								booking_slots: {
+									orderBy: {
+										start_time: 'asc',
+									},
+								},
+							},
+							orderBy: {
+								start_time: 'asc',
 							},
 						},
 					},
@@ -181,8 +192,19 @@ export async function getEmployeeById(employeeId: string): Promise<Employee | nu
 							include: {
 								schedule_slots: {
 									include: {
-										schedule_slot_exceptions: true,
-										booking_slots: true,
+										schedule_slot_exceptions: {
+											orderBy: {
+												start_time: 'asc',
+											},
+										},
+										booking_slots: {
+											orderBy: {
+												start_time: 'asc',
+											},
+										},
+									},
+									orderBy: {
+										start_time: 'asc',
 									},
 								},
 							},
@@ -202,10 +224,78 @@ export async function getEmployeeById(employeeId: string): Promise<Employee | nu
 	}
 }
 
+/**
+ * Retrieves all employees for a given reservation module ID, including their schedules and slots.
+ * @param {string} reservationModuleId - The ID of the business to retrieve employees for.
+ * @returns {Promise<Employee[]>} A promise that resolves to an array of employees.
+ * @throws {Error} If there is an error retrieving the employees.
+ */
+export async function getEmployeesByReservationModuleIdWithSlots(
+	reservationModuleId: string,
+	startDate: string,
+	endDate: string,
+	employee_ids: string[]
+): Promise<Employee[]> {
+	try {
+		let employees = await prisma.employee.findMany({
+			where: {
+				reservation_module_id: reservationModuleId,
+				employee_id: {
+					in: employee_ids,
+				},
+			},
+			include: {
+				reservation_module: true,
+				//assignments: true,
+				schedule_slots: {
+					where: {
+						date: {
+							gte: new Date(startDate), // startDate = '2025-08-01'
+							lte: new Date(endDate), // endDate = '2025-08-08'
+						},
+					},
+					include: {
+						schedule_employee: true,
+						schedule_slot_exceptions: {
+							orderBy: {
+								start_time: 'asc',
+							},
+						},
+						booking_slots: {
+							orderBy: {
+								start_time: 'asc',
+							},
+						},
+						schedule: {
+							include: {
+								location: true,
+							},
+						},
+					},
+				},
+				//business_user: {
+				//	select: {
+				//		business_users_id: true,
+				//		business_id: true,
+				//		user_id: true,
+				//		users: {
+				//			select: cropped_user_columns,
+				//		},
+				//	},
+				//},
+			},
+		});
+		return employees;
+	} catch (error) {
+		throw new Error('Error retrieving employees');
+	}
+}
+
 export default {
 	getEmployeesByReservationModuleId,
 	createEmployee,
 	deleteEmployee,
 	updateEmployee,
 	getEmployeeById,
+	getEmployeesByReservationModuleIdWithSlots,
 };
