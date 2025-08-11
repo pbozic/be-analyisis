@@ -59,7 +59,9 @@ export async function findSlots({
 	const totalDurationMinutes = services.reduce((sum: number, s: Service) => sum + s.duration_minutes, 0);
 	const startOfDay = moment(date).startOf('day').toDate();
 	const endOfDay = moment(date).endOf('day').toDate();
-
+	console.log(
+		`Searching slots for ${moment(startOfDay).format('YYYY-MM-DD')} with total duration ${totalDurationMinutes} minutes`
+	);
 	// --- Fetch schedule slots ---
 	const scheduleSlots = await prisma.schedule_slot.findMany({
 		where: {
@@ -78,7 +80,7 @@ export async function findSlots({
 		},
 		orderBy: { start_time: 'asc' },
 	});
-
+	console.log(`Found ${scheduleSlots.length} schedule slots for the day`);
 	// --- Fetch bookings ---
 	const bookings = await prisma.booking.findMany({
 		where: {
@@ -91,7 +93,7 @@ export async function findSlots({
 		},
 		select: { start_time: true, end_time: true },
 	});
-
+	console.log(`Found ${bookings.length} bookings overlapping with the day`);
 	const results: {
 		start: Date;
 		end: Date;
