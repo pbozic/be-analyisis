@@ -93,11 +93,10 @@ async function getActiveTaxiOrders(req, res) {
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 export async function getMyActiveTaxiOrders(req, res) {
-	const { type } = req.params;
 	const { user_id } = req.user;
 	try {
 		const businessUser = await BusinessUsersDao.getBusinessUserByUserId(user_id);
-		const activeOrders = await getActiveOrdersHelper(user_id, type, !!businessUser);
+		const activeOrders = await getActiveOrdersHelper(user_id, undefined, !!businessUser);
 		res.status(200).json(activeOrders);
 	} catch (e) {
 		console.error('TaxiOrderController', e);
@@ -633,10 +632,11 @@ async function cleanedCreateOrderHelper(orderData) {
 		});
 		console.log('parentOrderId', firstOrderId);
 		console.log('fetched grouped_orders', order.grouped_orders);
+		let vehicle_transfer_order;
 		if (order && order.preferences.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
-			await generateVehicleTransferOrder(orderData);
+			vehicle_transfer_order = await generateVehicleTransferOrder(orderData);
 		}
-		return order;
+		return { order, vehicle_transfer_order };
 	} catch (error) {
 		console.error('TaxiOrderController', error);
 		throw new Error('Error in cleanedCreateOrderHelper!');
@@ -924,7 +924,8 @@ async function createOrder(req, res) {
 				}
 			}
 		}
-		let order = await cleanedCreateOrderHelper(orderData);
+		const orderCreated = await cleanedCreateOrderHelper(orderData);
+		let order = orderCreated?.order;
 		//TODO: payment management for order
 		let payment_intent =
 			orderData.status === TAXI_ORDER_STATUS.AWAITING_PAYMENT
@@ -944,6 +945,7 @@ async function createOrder(req, res) {
 		res.status(200).json({
 			...order,
 			payment_intent,
+			vehicle_transfer_order: orderCreated?.vehicle_transfer_order || null,
 		});
 	} catch (e) {
 		console.log('TaxiOrderController', e);
