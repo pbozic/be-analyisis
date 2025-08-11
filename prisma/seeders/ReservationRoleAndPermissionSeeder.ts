@@ -4,13 +4,13 @@ const prisma = new PrismaClient();
 
 const MODULE: MODULE_TYPE = 'reservations';
 
-const PERMISSIONS: { name: string }[] = [
-	{ name: 'view_dashboard' },
-	{ name: 'manage_booking' },
-	{ name: 'add_employee' },
-	{ name: 'add_location' },
-	{ name: 'add_service' },
-	{ name: 'send_sms' },
+const PERMISSIONS: { name: string; display_name: string }[] = [
+	{ name: 'view_dashboard', display_name: 'View Dashboard' },
+	{ name: 'manage_booking', display_name: 'Manage Booking' },
+	{ name: 'add_employee', display_name: 'Add Employee' },
+	{ name: 'add_location', display_name: 'Add Location' },
+	{ name: 'add_service', display_name: 'Add Service' },
+	{ name: 'send_sms', display_name: 'Send SMS' },
 ];
 
 const ROLES: {
@@ -96,6 +96,13 @@ export async function seedRolesAndPermissions(): Promise<void> {
 							role_id: roleRecord.role_id,
 							module: MODULE,
 							name: permName,
+						},
+					});
+				} else {
+					await prisma.permission.update({
+						where: { permission_id: existingPermission.permission_id },
+						data: {
+							display_name: role.permissions.find((p) => p === permName)?.display_name || permName,
 						},
 					});
 				}
