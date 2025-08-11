@@ -131,6 +131,8 @@ model permission {
   role_id        String   @db.Uuid
   action_id      String?  @db.Uuid // null = non-action permission
   name           String?  // for non-action permissions
+  description   String?  
+  display_name   String?  
   module         MODULE_TYPE
   limit          Int?     // for action usage limits
   scope          PERMISSION_SCOPE @default(GLOBAL)
