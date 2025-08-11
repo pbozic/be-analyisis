@@ -5,6 +5,7 @@ import BusinessUsersDao from '../../dao/BusinessUsers.js';
 import ScheduleDao from '../../dao/reservation/Schedule.ts';
 import ScheduleEmployeeDao from '../../dao/reservation/ScheduleEmployee.ts';
 import { CreateEmployeeInput, UpdateEmployeeInput } from '../../types/reservation/Employee.ts';
+import { GetSchedulesWithSlotsInput } from '../../types/reservation/Schedule.ts';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
 
 /**
@@ -149,7 +150,7 @@ export async function getEmployeeById(req: Request, res: Response): Promise<void
 }
 
 /**
- * GET /reservation/employees/employees-with-schedule-slots
+ * POST /reservation/employees/employees-with-schedule-slots
  * @tag Reservation
  * @summary Get all reservation employees with schedule slots
  * @description Retrieves all reservation employees with their schedule slots.
@@ -158,7 +159,10 @@ export async function getEmployeeById(req: Request, res: Response): Promise<void
  * @responseContent {Employee[]} 200.application/json
  * @response 500 - Error retrieving employees with schedule slots
  */
-export async function getEmployeesWithScheduleSlots(req: Request, res: Response): Promise<void> {
+export async function getEmployeesWithScheduleSlots(
+	req: ValidatedRequest<GetSchedulesWithSlotsInput>,
+	res: Response
+): Promise<void> {
 	try {
 		let reservationModuleId = req.user?.reservation_module_id as string;
 		let schedule_id = req.body.schedule_id as string;
