@@ -12,6 +12,7 @@ import scheduleSlotExceptionRoutes from './scheduleSlotException.routes';
 import bookingSlotRoutes from './bookingSlot.routes';
 import authRoutes from './auth.routes';
 import authMiddleware from '../../../middleware/auth';
+import bookingRoutes from './booking.routes';
 const router = express.Router();
 
 router.use('/customers', [authMiddleware], customerRoutes);
@@ -25,5 +26,5 @@ router.use('/booking-slots', [authMiddleware], bookingSlotRoutes);
 router.use('/service-categories', [authMiddleware], serviceCategoryRoutes);
 router.use('/locations', [authMiddleware], locationRoutes);
 router.use('/auth', authRoutes);
-
+router.use('/reservations', [authMiddleware], bookingRoutes);
 export default router;

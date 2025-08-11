@@ -26,6 +26,12 @@ model reservation_module {
   service_categories service_category[]
   user_roles user_role[]
   user_permissions user_permission[]
+
+  notification_templates             notification_template[]
+  notification_mappings              notification_mapping[]
+  notification_preferences           notification_preference[]
+  notification_provider_credentials  notification_provider_credential[]
+  notification_messages              notification_message[]
 }
 model location {
   location_id       String    @id @default(uuid()) @db.Uuid

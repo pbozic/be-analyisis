@@ -1,0 +1,183 @@
+/// ------------ Enums ------------
+
+enum NOTIFICATION_CHANNEL {
+  EMAIL
+  SMS
+  PUSH
+  INAPP
+}
+
+enum TEMPLATE_VERSION_STATUS {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum MESSAGE_STATUS {
+  QUEUED
+  SENT
+  DELIVERED
+  BOUNCED
+  FAILED
+  SUPPRESSED
+}
+
+/// ------------ Master data (events) ------------
+
+model notification_event {
+  notification_event_id String  @id @default(uuid()) @db.Uuid
+  key                   String  @unique                  // e.g. "booking.confirmed"
+  name                  Json                             // i18n label { "en": "...", "sl": "..." }
+  description           Json?
+
+  mappings              notification_mapping[]
+  preferences           notification_preference[]
+  messages              notification_message[]
+}
+
+/// ------------ Authoring (logical template + versions) ------------
+
+model notification_template {
+  notification_template_id String @id @default(uuid()) @db.Uuid
+  reservation_module_id    String @db.Uuid
+  key                      String                       // e.g. "booking_confirmation"
+  name                     String
+  created_at               DateTime @default(now())
+  updated_at               DateTime @updatedAt
+
+  reservation_module reservation_module @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  versions           notification_template_version[]
+  messages          notification_message[]
+  @@unique([reservation_module_id, key])
+}
+
+model notification_template_version {
+  notification_template_version_id String @id @default(uuid()) @db.Uuid
+  notification_template_id         String @db.Uuid
+  version                          Int
+  status                           TEMPLATE_VERSION_STATUS @default(DRAFT)
+  variables_json_schema            Json                    // JSON Schema for allowed variables
+  default_locale                   String?                 // e.g. "sl-SI"
+  compiled_artifacts               Json?                   // optional cache of compiled HTML, etc.
+  created_by_user_id               String? @db.Uuid
+  created_at                       DateTime @default(now())
+
+  template  notification_template @relation(fields: [notification_template_id], references: [notification_template_id])
+  contents  notification_template_channel_content[]
+  mappings  notification_mapping[]
+
+  @@unique([notification_template_id, version])
+}
+
+/// Per-version, per-channel, per-locale content
+model notification_template_channel_content {
+  notification_template_channel_content_id String @id @default(uuid()) @db.Uuid
+  notification_template_version_id         String @db.Uuid
+  channel                                  NOTIFICATION_CHANNEL
+  locale                                   String                 // "sl-SI", "en"
+  subject                                  String?                // email only
+  body_text                                String?                // SMS / email text
+  body_html                                String?                // email HTML (store compiled)
+  metadata                                 Json?                  // headers, deeplinks, utm, etc.
+
+  version notification_template_version @relation(fields: [notification_template_version_id], references: [notification_template_version_id])
+
+  @@unique([notification_template_version_id, channel, locale])
+}
+
+/// ------------ Mapping & toggles ------------
+
+/// Which version to use for a given event (optionally per channel/locale/conditions)
+model notification_mapping {
+  notification_mapping_id          String @id @default(uuid()) @db.Uuid
+  reservation_module_id            String @db.Uuid
+  notification_event_id            String @db.Uuid
+  notification_template_version_id String @db.Uuid
+  channel                          NOTIFICATION_CHANNEL?
+  locale                           String?           // if null -> resolve from recipient/customer
+  conditions                       Json?            // e.g. {"serviceCategoryId": "..."}
+  is_active                        Boolean @default(true)
+  created_at                       DateTime @default(now())
+
+  reservation_module reservation_module               @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  event              notification_event               @relation(fields: [notification_event_id], references: [notification_event_id])
+  version            notification_template_version    @relation(fields: [notification_template_version_id], references: [notification_template_version_id])
+
+  @@unique([reservation_module_id, notification_event_id, channel, locale], map: "uniq_active_slot")
+  @@index([reservation_module_id, notification_event_id])
+}
+
+/// On/off checkbox per event+channel - kar se nastavi v tabeli
+model notification_preference {
+  notification_preference_id String @id @default(uuid()) @db.Uuid
+  reservation_module_id      String @db.Uuid
+  notification_event_id      String @db.Uuid
+  channel                    NOTIFICATION_CHANNEL
+  enabled                    Boolean  @default(true)
+  updated_at                 DateTime @updatedAt
+
+  reservation_module reservation_module @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  event              notification_event @relation(fields: [notification_event_id], references: [notification_event_id])
+
+  @@unique([reservation_module_id, notification_event_id, channel])
+}
+
+/// ------------ Provider config ------------
+
+model notification_provider_credential {
+  notification_provider_credential_id String @id @default(uuid()) @db.Uuid
+  reservation_module_id               String @db.Uuid
+  channel                             NOTIFICATION_CHANNEL
+  provider                            String        // "twilio", "sendgrid", "mailgun", ...
+  config                              Json          // keys, sender, domain, rate limits
+  is_default                          Boolean @default(false)
+  created_at                          DateTime @default(now())
+
+  reservation_module reservation_module @relation(fields: [reservation_module_id], references: [reservation_module_id])
+
+  @@index([reservation_module_id, channel, is_default])
+  @@unique([reservation_module_id, channel, provider])
+}
+
+/// ------------ Runtime (audit trail) ------------
+
+model notification_message {
+  notification_message_id  String @id @default(uuid()) @db.Uuid
+  reservation_module_id    String @db.Uuid
+  notification_event_id    String @db.Uuid
+  channel                  NOTIFICATION_CHANNEL
+  locale                   String?
+  notification_template_id String?   @db.Uuid
+  template_version         Int?      // denormalized for quick analytics
+  to_address               String?   // email/phone/push token
+  subject                  String?
+  body_text                String?
+  body_html                String?
+  variables                Json      // actual payload used to render
+  rendered_at              DateTime
+  provider_message_id      String?
+  status                   MESSAGE_STATUS @default(QUEUED)
+  error                    String?
+  created_at               DateTime @default(now())
+
+  reservation_module reservation_module @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  event              notification_event @relation(fields: [notification_event_id], references: [notification_event_id])
+  template           notification_template? @relation(fields: [notification_template_id], references: [notification_template_id])
+
+  events notification_message_event[]
+
+  @@index([reservation_module_id, notification_event_id, created_at])
+  @@index([channel, status, created_at])
+}
+
+model notification_message_event {
+  notification_message_event_id String   @id @default(uuid()) @db.Uuid
+  notification_message_id       String   @db.Uuid
+  type                          String   // "sent","delivered","open","click","bounce",...
+  provider_raw                  Json?
+  occurred_at                   DateTime @default(now())
+
+  message notification_message @relation(fields: [notification_message_id], references: [notification_message_id], onDelete: Cascade)
+
+  @@index([notification_message_id, occurred_at])
+}
