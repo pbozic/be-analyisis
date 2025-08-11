@@ -96,28 +96,8 @@ export async function getMyActiveTaxiOrders(req, res) {
 	const { type } = req.params;
 	const { user_id } = req.user;
 	try {
-		const activeOrders = await getActiveOrdersHelper(user_id, type);
-		res.status(200).json(activeOrders);
-	} catch (e) {
-		console.error('TaxiOrderController', e);
-		res.status(500).json({ message: 'Error fetching active orders' });
-	}
-}
-/**
- * GET /taxi/orders/active/business_user/:type
- * @tag Taxi
- * @summary Get active taxi orders.
- * @description This fetches all completed orders for a specific user.
- * @operationId getCompletedDeliveryOrders
- * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {Order[]} 200.application/json
- * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
- */
-export async function getActiveTaxiOrdersForBusinessUser(req, res) {
-	const { type } = req.params;
-	const { user_id } = req.user;
-	try {
-		const activeOrders = await getActiveOrdersHelper(user_id, type, true);
+		const businessUser = await BusinessUsersDao.getBusinessUserByUserId(user_id);
+		const activeOrders = await getActiveOrdersHelper(user_id, type, !!businessUser);
 		res.status(200).json(activeOrders);
 	} catch (e) {
 		console.error('TaxiOrderController', e);
@@ -2520,5 +2500,4 @@ export default {
 	calculateTransferPrice,
 	requestTransferOrderPrice,
 	getMyActiveTaxiOrders,
-	getActiveTaxiOrdersForBusinessUser,
 };

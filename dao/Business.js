@@ -1058,7 +1058,6 @@ const getPurchaseOrderLimit = async (business_id) => {
 			},
 		});
 		const totalTaxiOrders = taxiOrders.reduce((acc, order) => acc + (parseFloat(order.payment.price) || 0), 0);
-		console.log('Total taxi orders:', totalTaxiOrders);
 		if (business.purchase_order_limit_amount > 0) {
 			return Math.max(0, business.purchase_order_limit_amount - totalTaxiOrders);
 		}
