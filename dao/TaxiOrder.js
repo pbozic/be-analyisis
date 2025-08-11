@@ -90,7 +90,6 @@ async function getTaxiOrdersIfNotCompleted(user_id, type, isBusinessUser = false
 					TAXI_ORDER_STATUS.AWAITING_PAYMENT,
 				],
 			},
-			subtype: isBusinessUser ? ORDER_SUBTYPE.CREATED_BY_BUSINESS : ORDER_SUBTYPE.CREATED_BY_USER,
 		};
 		return await prisma.taxi_orders.findMany({
 			where: {
@@ -101,6 +100,7 @@ async function getTaxiOrdersIfNotCompleted(user_id, type, isBusinessUser = false
 						}
 					: {
 							user_id: user_id,
+							subtype: ORDER_SUBTYPE.CREATED_BY_USER,
 							OR: [{ creating_user_id: null }, { creating_user_id: { not: user_id } }],
 						}),
 			},
