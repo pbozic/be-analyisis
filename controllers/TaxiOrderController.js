@@ -83,7 +83,7 @@ async function getActiveTaxiOrders(req, res) {
 	}
 }
 /**
- * GET /taxi/orders/active/me/:type
+ * GET /taxi/orders/active/me
  * @tag Taxi
  * @summary Get active taxi orders.
  * @description This fetches all completed orders for a specific user.
