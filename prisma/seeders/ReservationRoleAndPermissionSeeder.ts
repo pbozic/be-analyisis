@@ -3,8 +3,11 @@ import { PrismaClient, MODULE_TYPE } from '@prisma/client';
 const prisma = new PrismaClient();
 
 const MODULE: MODULE_TYPE = 'reservations';
-
-const PERMISSIONS: { name: string; display_name: string }[] = [
+type perm = {
+	name: string;
+	display_name?: string;
+};
+const PERMISSIONS: perm[] = [
 	{ name: 'view_dashboard', display_name: 'View Dashboard' },
 	{ name: 'manage_booking', display_name: 'Manage Booking' },
 	{ name: 'add_employee', display_name: 'Add Employee' },
@@ -63,7 +66,12 @@ export async function seedRolesAndPermissions(): Promise<void> {
 
 		for (const permName of role.permissions) {
 			const action = actionMap.get(permName);
+			const perm = PERMISSIONS.find((p) => p.name === permName);
 
+			if (!perm) {
+				console.warn(`Permission ${permName} not found in PERMISSIONS array.`);
+				continue;
+			}
 			if (action?.action_id) {
 				const existingPermission = await prisma.permission.findFirst({
 					where: {
@@ -85,7 +93,7 @@ export async function seedRolesAndPermissions(): Promise<void> {
 				const existingPermission = await prisma.permission.findFirst({
 					where: {
 						role_id: roleRecord.role_id,
-						name: permName,
+						name: perm.name,
 						module: MODULE,
 					},
 				});
@@ -102,7 +110,7 @@ export async function seedRolesAndPermissions(): Promise<void> {
 					await prisma.permission.update({
 						where: { permission_id: existingPermission.permission_id },
 						data: {
-							display_name: role.permissions.find((p) => p === permName)?.display_name || permName,
+							display_name: PERMISSIONS.find((p) => p.name === perm.name)?.display_name || perm.name,
 						},
 					});
 				}
