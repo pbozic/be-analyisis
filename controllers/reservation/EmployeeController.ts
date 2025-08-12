@@ -59,7 +59,6 @@ export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>,
 					telephone: employeeData.telephone,
 					telephone_code: employeeData.telephone_code,
 					telephone_number: employeeData.telephone_number,
-					date_of_birth: employeeData.date_of_birth,
 				},
 			},
 			businessId
@@ -67,6 +66,12 @@ export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>,
 		let employee = await EmployeeDao.createEmployee({
 			reservation_module_id: reservation_module_id,
 			business_users_id: businessUser.business_users_id,
+			first_name: employeeData.first_name,
+			last_name: employeeData.last_name,
+			email: employeeData.email,
+			telephone: employeeData.telephone as string,
+			telephone_code: employeeData.telephone_code as string,
+			telephone_number: employeeData.telephone_number as string,
 		});
 		res.status(201).json(employee);
 	} catch (error) {

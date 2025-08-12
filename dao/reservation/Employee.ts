@@ -73,6 +73,12 @@ export async function getEmployeesByReservationModuleId(reservationModuleId: str
 export async function createEmployee(employeeData: {
 	reservation_module_id: string;
 	business_users_id: string;
+	first_name: string;
+	last_name: string;
+	email: string;
+	telephone: string;
+	telephone_code?: string;
+	telephone_number?: string;
 }): Promise<Employee> {
 	try {
 		let employee = await prisma.employee.create({
@@ -150,7 +156,7 @@ export async function updateEmployee(employeeId: string, employeeData: UpdateEmp
 		if (!user) {
 			throw new Error('User not found');
 		}
-		await prisma.users.update({
+		await prisma.employee.update({
 			where: {
 				user_id: user.user_id,
 			},
@@ -161,7 +167,6 @@ export async function updateEmployee(employeeId: string, employeeData: UpdateEmp
 				telephone: employeeData.telephone,
 				telephone_code: employeeData.telephone_code,
 				telephone_number: employeeData.telephone_number,
-				date_of_birth: employeeData.date_of_birth,
 			},
 		});
 

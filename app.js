@@ -46,6 +46,8 @@ app.disable('etag');
 const allowedOrigins = [
 	'http://localhost:3000',
 	'https://klikni-web.eu', // etc.
+	'https://api.klikni-web.eu', // etc.
+	'https://dev.klikni-web.eu', // etc.
 	'https://klikni.localhost', // etc.
 	'https://taxi.klikni.localhost', // etc.
 	'https://transfer.klikni.localhost', // etc.

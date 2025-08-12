@@ -88,6 +88,12 @@ model employee {
   assignments       service_assignment[]
   schedules         schedule_employee[]
   bookings          booking[]
+  first_name        String?
+  last_name         String?
+  email             String?
+  telephone         String?
+  telephone_code    String?
+  telephone_number  String?
   business_users_id        String?   @db.Uuid @unique // Optional link to user account
   business_user            business_users?     @relation(fields: [business_users_id], references: [business_users_id])
   created_at        DateTime  @default(now())
@@ -100,8 +106,8 @@ model customers {
   reservation_module_id     String    @db.Uuid
   first_name      String
   last_name       String
-  email           String?   @unique
-  telephone       String?   @unique
+  email           String?   
+  telephone       String? 
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt
   
@@ -109,6 +115,9 @@ model customers {
   bookings         booking[]
   user_id        String?   @db.Uuid // Optional link to user account
   user            users? @relation(fields: [user_id], references: [user_id])
+
+  @@unique([reservation_module_id, email], name: "unique_customer_email")
+  @@unique([reservation_module_id, telephone], name: "unique_customer_telephone")
 }
 model service_assignment {
   employee_id String @db.Uuid
