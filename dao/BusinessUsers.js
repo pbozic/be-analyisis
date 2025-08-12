@@ -56,6 +56,7 @@ const getBusinessUserByUserId = async (userId) => {
 					},
 				},
 				allowance: true,
+				operating_address: true,
 			},
 		});
 	} catch (error) {

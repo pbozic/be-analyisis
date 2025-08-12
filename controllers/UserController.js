@@ -231,6 +231,7 @@ async function me(req, res) {
 								},
 							},
 						},
+						operating_address: true,
 					},
 				},
 			},
