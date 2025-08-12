@@ -130,14 +130,14 @@ const createBusinessUser = async (userData, business_id, createNewUser = true, t
 			}
 		} else {
 			console.log('Creating business user without creating a new user');
-			user = await UserDao.getUserByTelephone(userData.telephone);
+			user = await UserDao.getUserByTelephone(userData.data.telephone);
 			console.log('User found by telephone:', user);
 		}
 		const businessUser = await tx.business_users.create({
 			data: {
 				business_id,
 				user_id: user.user_id,
-				company_role: userData.company_role,
+				company_role: userData.data.company_role,
 			},
 		});
 		return { user, businessUser };
