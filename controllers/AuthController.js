@@ -1406,7 +1406,7 @@ async function getMunicipalitiesWithLicenseRequirements(req, res) {
  */
 async function checkEmailAvailability(req, res) {
 	try {
-		const { email } = req.body;
+		const { email } = req.params;
 		if (!email) {
 			return res.status(400).json({ error: 'Email must be provided.' });
 		}
