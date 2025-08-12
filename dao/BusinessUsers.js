@@ -130,6 +130,7 @@ const createBusinessUser = async (userData, business_id, createNewUser = true, t
 			}
 		} else {
 			user = await UserDao.getUserByTelephone(userData.telephone);
+			console.log('User found by telephone:', user);
 		}
 		const businessUser = await tx.business_users.create({
 			data: {
