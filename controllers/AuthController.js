@@ -1392,6 +1392,63 @@ async function getMunicipalitiesWithLicenseRequirements(req, res) {
 		res.status(400).json({ error: 'Error fetching municipalities', e });
 	}
 }
+
+/**
+ * POST auth/email_availability/:email
+ * @tag Authentication
+ * @summary Check if an email is already taken
+ * @description Checks if the provided email is already registered in the system.
+ * @operationId checkEmailAvailability
+ * @bodyContent { "email": "user@example.com" } application/json
+ * @bodyRequired
+ * @response 200 - Returns the availability status for email.
+ * @responseContent { "emailTaken": false } 200.application/json
+ */
+async function checkEmailAvailability(req, res) {
+	try {
+		const { email } = req.body;
+		if (!email) {
+			return res.status(400).json({ error: 'Email must be provided.' });
+		}
+
+		const userByEmail = await UserDao.getUserByEmail(email.toLowerCase());
+		const emailTaken = !!userByEmail;
+
+		return res.status(200).json({ emailTaken });
+	} catch (error) {
+		console.error('Error checking email availability:', error);
+		return res.status(500).json({ error: 'Error checking email availability', detail: error.message });
+	}
+}
+
+/**
+ * POST auth/telephone_availability/:telephone
+ * @tag Authentication
+ * @summary Check if a telephone number is already taken
+ * @description Checks if the provided telephone number is already registered in the system.
+ * @operationId checkTelephoneAvailability
+ * @bodyContent { "telephone": "+123456789" } application/json
+ * @bodyRequired
+ * @response 200 - Returns the availability status for telephone.
+ * @responseContent { "telephoneTaken": true } 200.application/json
+ */
+async function checkTelephoneAvailability(req, res) {
+	try {
+		const { telephone } = req.params;
+		if (!telephone) {
+			return res.status(400).json({ error: 'Telephone must be provided.' });
+		}
+
+		const userByPhone = await UserDao.getUserByTelephone(telephone);
+		const telephoneTaken = !!userByPhone;
+
+		return res.status(200).json({ telephoneTaken });
+	} catch (error) {
+		console.error('Error checking telephone availability:', error);
+		return res.status(500).json({ error: 'Error checking telephone availability', detail: error.message });
+	}
+}
+
 export { login };
 export { register };
 export { refreshToken };
@@ -1406,6 +1463,8 @@ export { createScheduledUser };
 export { getScheduledUsers };
 export { updateScheduledUser };
 export { getMunicipalitiesWithLicenseRequirements };
+export { checkEmailAvailability };
+export { checkTelephoneAvailability };
 export default {
 	login,
 	register,
@@ -1422,4 +1481,6 @@ export default {
 	getScheduledUsers,
 	updateScheduledUser,
 	getMunicipalitiesWithLicenseRequirements,
+	checkEmailAvailability,
+	checkTelephoneAvailability,
 };
