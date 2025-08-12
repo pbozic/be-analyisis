@@ -88,12 +88,12 @@ model employee {
   assignments       service_assignment[]
   schedules         schedule_employee[]
   bookings          booking[]
-  first_name        String
-  last_name         String
-  email             String
-  telephone         String
-  telephone_code    String
-  telephone_number  String
+  first_name        String?
+  last_name         String?
+  email             String?
+  telephone         String?
+  telephone_code    String?
+  telephone_number  String?
   business_users_id        String?   @db.Uuid @unique // Optional link to user account
   business_user            business_users?     @relation(fields: [business_users_id], references: [business_users_id])
   created_at        DateTime  @default(now())
