@@ -143,6 +143,7 @@ async function login(req, res) {
 								delivery_address: true,
 							},
 						},
+						operating_address: true,
 					},
 				},
 			},
