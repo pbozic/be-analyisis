@@ -1230,7 +1230,6 @@ async function completeOrder(req, res) {
 				SCORING_POINTS_REASON.INSUFFICIENT_DATA
 			);
 		}
-		io.emit('driver_available', driver);
 		let user = order.user;
 		if (order.type === ORDER_TYPE.VEHICLE_TRANSFER_COMBO) {
 			const l10nText = getLocalisedTexts('USER_NOTIFICATIONS', order.user);
@@ -1603,6 +1602,7 @@ async function completeOrder(req, res) {
 			order = await TaxiOrderDao.completeOrder(req.body.order_id);
 			await handleReferral(orderingUser.user_id);
 		}
+		io.emit('driver_available', driver);
 		// io.to("order_" + order.order_id).emit('order_status_change__taxi', order);
 		io.to('order_' + order.order_id).emit('order_completed__taxi', order);
 		SocketStore.closeRoom('order_' + order.order_id);
