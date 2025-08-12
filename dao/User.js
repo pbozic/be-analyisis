@@ -132,12 +132,15 @@ const getUserByEmail = async (query, args) => {
 };
 const getUserByTelephone = async (query, args) => {
 	try {
-		return prisma.users.findFirst({
+		console.log('getUserByTelephone called with query:', query);
+		let user = await prisma.users.findFirst({
 			where: {
 				telephone: query,
 			},
 			...args,
 		});
+		console.log('User found by telephone:', user);
+		return user;
 	} catch (error) {
 		return new Error(error);
 	}
