@@ -6,12 +6,11 @@ import {
 	CreateBookingSlotInput,
 	UpdateBookingSlotSchemaInput,
 	CreateOrUpdateBookingSlotInput,
-	BookingSlotWithoutId,
-	BookingSlotWithId,
 	CreateScheduleSlotWithBookingSlotsInput,
 	UpdateScheduleSlotWithBookingSlotsInput,
 } from '../../types/reservation/Schedule';
 import ScheduleSlotDao from '../../dao/reservation/ScheduleSlot';
+import { splitByBookingId } from '../../lib/bookingHelpers';
 
 /**
  * GET /reservation/booking-slots/list/:schedule_slot_id
@@ -125,37 +124,6 @@ export async function getBookingSlotById(req: ValidatedRequest<null, { id: strin
 		res.status(200).json(record);
 	} catch (error) {
 		res.status(500).json({ message: 'Error retrieving booking slot', error });
-	}
-}
-
-/**
- * Splits booking slots into two arrays: those with a booking ID and those without.
- * @param {BookingSlotWithoutId[]} slots - The array of booking slots to split.
- * @returns {{ withBookingId: BookingSlotWithId[], withoutBookingId: BookingSlotWithoutId[] }}
- * @description This function iterates through the provided booking slots and separates them into two categories:
- * - `withBookingId`: Contains booking slots that have a `booking_slot_id`.
- * - `withoutBookingId`: Contains booking slots that do not have a `booking_slot_id
- * @returns {Object} An object containing two arrays:
- * @throws {Error} If the input is not an array or if any slot does not match the expected structure.
- */
-function splitByBookingId(slots: BookingSlotWithoutId[]) {
-	try {
-		const withBookingId: BookingSlotWithId[] = [];
-		const withoutBookingId: BookingSlotWithoutId[] = [];
-
-		for (const slot of slots) {
-			if (slot?.booking_slot_id) {
-				withBookingId.push(slot as BookingSlotWithId);
-			} else {
-				withoutBookingId.push(slot);
-			}
-		}
-
-		return { withBookingId, withoutBookingId };
-	} catch (error) {
-		throw new Error(
-			'Error splitting booking slots by booking ID: ' + (error instanceof Error ? error.message : 'Unknown error')
-		);
 	}
 }
 

@@ -62,7 +62,14 @@ export async function updateScheduleSlotException(
 	try {
 		const record = await prisma.schedule_slot_exceptions.update({
 			where: { schedule_slot_exception_id: id },
-			data,
+			data: {
+				schedule_slot_id: data.schedule_slot_id,
+				date: data.date,
+				start_time: data.start_time,
+				end_time: data.end_time,
+				reason: data.reason,
+				type: data.type,
+			},
 		});
 		return record;
 	} catch (error) {

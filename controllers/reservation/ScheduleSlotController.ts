@@ -2,7 +2,16 @@ import { Response } from 'express';
 
 import ScheduleSlotDao from '../../dao/reservation/ScheduleSlot';
 import { ValidatedRequest } from '../../types/validatedRequest';
-import { CreateScheduleSlotInput, UpdateScheduleSlotInput } from '../../types/reservation/Schedule';
+import {
+	CreateScheduleSlotInput,
+	UpdateScheduleSlotInput,
+	CreateMultipleSchedulesInput,
+	OverwriteMultipleSchedulesInput,
+	UpdateMultipleSchedulesInput,
+	ScheduleSlotException,
+	BookingSlot,
+} from '../../types/reservation/Schedule';
+import { createScheduleSlotWithData, updateScheduleSlotWithData } from './ScheduleSlotExceptionController.ts';
 
 /**
  * GET /reservation/schedule-slots/list/{schedule_id}
@@ -119,10 +128,263 @@ export async function getScheduleSlotById(req: ValidatedRequest<null, { id: stri
 	}
 }
 
+function removeMatchingIsoDates(firstArray: string[], secondArray: string[]): string[] {
+	const firstSet = new Set(firstArray);
+	return secondArray.filter((date) => !firstSet.has(date));
+}
+
+/**
+ * POST /reservation/schedule-slots/create-multiple-schedules
+ * @tag Reservation
+ * @summary Create a new location schedules
+ * @description Creates a new location schedules.
+ * @operationId createLocationSchedule
+ * @requestBody {CreateScheduleInput} requestBody - The schedule data to create.
+ * @response 201 - Schedule created successfully
+ * @responseContent {Schedule} 201.application/json
+ * @response 400 - Invalid input data
+ * @response 500 - Error creating schedule
+ */
+export async function createMultipleSchedules(
+	req: ValidatedRequest<CreateMultipleSchedulesInput>,
+	res: Response
+): Promise<void> {
+	try {
+		const { schedule, bookingSlots, exceptions, dates } = req.body;
+		const existingSchedules = await ScheduleSlotDao.getScheduleSlotsByEmployeeIdAndDates(
+			schedule.schedule_employee_id,
+			dates
+		);
+		const existingDates = existingSchedules.map((el) => el.date.toISOString());
+		const datesToCreate = removeMatchingIsoDates(existingDates, dates);
+
+		const schedules = await Promise.all(
+			datesToCreate.map(async (el) => {
+				const updateSchedule = {
+					...schedule,
+					date: el,
+					start_time: updateUtcDateRetainTime(schedule.start_time, el),
+					end_time: updateUtcDateRetainTime(schedule.end_time, el),
+				};
+				const updatedExceptions = exceptions.map((exception) => ({
+					...exception,
+					date: el,
+					start_time: updateUtcDateRetainTime(exception.start_time, el),
+					end_time: updateUtcDateRetainTime(exception.end_time, el),
+				}));
+				const updatedBookingSlots = bookingSlots.map((slot) => ({
+					...slot,
+					date: el,
+					start_time: updateUtcDateRetainTime(slot.start_time, el),
+					end_time: updateUtcDateRetainTime(slot.end_time, el),
+				}));
+
+				let data = await createScheduleSlotWithData({
+					schedule: updateSchedule,
+					bookingSlots: updatedBookingSlots,
+					exceptions: updatedExceptions,
+				});
+				return { data };
+			})
+		);
+		//let location = await ScheduleDao.createSchedule(scheduleData);
+		res.status(201).json({ schedules, existingSchedules });
+	} catch (error) {
+		res.status(500).json({ message: 'Error creating schedule', error });
+	}
+}
+
+/**
+ * POST /reservation/schedule-slots/overwrite-multiple-schedules
+ * @tag Reservation
+ * @summary Overwrite multiple schedules with new data
+ * @description Overwrites multiple schedules with new data based on the provided dates.
+ * @operationId overwriteMultipleSchedules
+ * @requestBody {OverwriteMultipleSchedulesInput} requestBody - The schedule data to overwrite.
+ * @response 201 - Schedule created successfully
+ * @responseContent {Schedule} 201.application/json
+ * @response 400 - Invalid input data
+ * @response 500 - Error overwriting schedules
+ */
+export async function overwriteMultipleSchedules(
+	req: ValidatedRequest<OverwriteMultipleSchedulesInput>,
+	res: Response
+): Promise<void> {
+	try {
+		const { schedule, bookingSlots, exceptions, dates, ids } = req.body;
+		const removedSlots = await Promise.all(
+			ids.map(async (el) => {
+				let data = await ScheduleSlotDao.deleteScheduleSlot(el);
+				return {
+					data,
+				};
+			})
+		);
+
+		if (removedSlots) {
+			const schedules = await Promise.all(
+				dates.map(async (el) => {
+					const updateSchedule = {
+						...schedule,
+						date: el,
+						start_time: updateUtcDateRetainTime(schedule.start_time, el),
+						end_time: updateUtcDateRetainTime(schedule.end_time, el),
+					};
+					const updatedExceptions = exceptions.map((exception) => ({
+						...exception,
+						date: el,
+						start_time: updateUtcDateRetainTime(exception.start_time, el),
+						end_time: updateUtcDateRetainTime(exception.end_time, el),
+					}));
+					const updatedBookingSlots = bookingSlots.map((slot) => ({
+						...slot,
+						date: el,
+						start_time: updateUtcDateRetainTime(slot.start_time, el),
+						end_time: updateUtcDateRetainTime(slot.end_time, el),
+					}));
+
+					let data = await createScheduleSlotWithData({
+						schedule: updateSchedule,
+						bookingSlots: updatedBookingSlots,
+						exceptions: updatedExceptions,
+					});
+					return { data };
+				})
+			);
+			res.status(201).json({ schedules });
+		} else {
+			res.status(500).json({ message: 'No slots to remove' });
+		}
+
+		//let location = await ScheduleDao.createSchedule(scheduleData);
+	} catch (error) {
+		res.status(500).json({ message: 'Error overwriting schedule', error });
+	}
+}
+
+/**
+ * Updates the date while retaining the time.
+ * @param {string} startTimeUtc - The original start time in UTC.
+ * @param {string} newDateUtc - The new date in UTC to set.
+ * @description This function updates the date part of a UTC date string while keeping the time part intact.
+ * @returns {string} The updated date string in ISO format with the original time retained.
+ * @throws {Error} If the input date strings are invalid.
+ */
+function updateUtcDateRetainTime(startTimeUtc: string, newDateUtc: string): string {
+	const original = new Date(startTimeUtc); // has both date + time in UTC
+	const newDate = new Date(newDateUtc); // only date matters here
+
+	// Replace date part while keeping original time (in UTC)
+	newDate.setUTCHours(
+		original.getUTCHours(),
+		original.getUTCMinutes(),
+		original.getUTCSeconds(),
+		original.getUTCMilliseconds()
+	);
+
+	return newDate.toISOString();
+}
+
+/**
+ * PUT /reservation/schedule-slots/update-multiple-schedules/{id}
+ * @tag Reservation
+ * @summary Update schedule with new data and creates new schedules
+ * @description Updates existing schedules with new data and creates new schedules based on the provided dates.
+ * @operationId updateMultipleSchedules
+ * @pathParam {string} id - The ID of the schedule slot to update.
+ * @requestBody {UpdateMultipleSchedulesInput} requestBody - The schedule data to create.
+ * @response 201 - Schedule updated successfully and new schedules created
+ * @responseContent {Schedule} 201.application/json
+ * @response 400 - Invalid input data
+ * @response 500 - Error updating schedules and creating new schedules
+ */
+export async function updateMultipleSchedules(
+	req: ValidatedRequest<UpdateMultipleSchedulesInput, { id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const { schedule, bookingSlots, exceptions, dates, update } = req.body;
+		const existingSchedules = await ScheduleSlotDao.getScheduleSlotsByEmployeeIdAndDates(
+			schedule.schedule_employee_id,
+			dates
+		);
+		const existingDates = existingSchedules.map((el) => el.date.toISOString());
+		const datesToCreate = removeMatchingIsoDates([...existingDates, schedule.date], dates);
+
+		const scheduleData = update
+			? { schedule, bookingSlots, exceptions }
+			: { schedule: {}, bookingSlots, exceptions };
+		const record = await updateScheduleSlotWithData(scheduleData, req.params.id);
+		if (record) {
+			const updatedSchedule = await ScheduleSlotDao.getScheduleSlotById(req.params.id);
+			if (updatedSchedule) {
+				const updatedScheduleData = updatedSchedule.schedule ?? schedule;
+				const updatedScheduleDataExceptions: ScheduleSlotException[] =
+					updatedSchedule?.schedule_slot_exceptions ?? [];
+				const updatedScheduleDataBookingSlots: BookingSlot[] = updatedSchedule?.booking_slots ?? [];
+				const schedules = await Promise.all(
+					datesToCreate.map(async (el) => {
+						const updateSchedule = {
+							...updatedScheduleData,
+							date: el,
+							start_time: updateUtcDateRetainTime(schedule.start_time, el),
+							end_time: updateUtcDateRetainTime(schedule.end_time, el),
+							schedule_employee_id:
+								'schedule_employee_id' in updatedScheduleData
+									? updatedScheduleData.schedule_employee_id
+									: schedule.schedule_employee_id,
+							employee_id:
+								'employee_id' in updatedScheduleData
+									? updatedScheduleData.employee_id
+									: schedule.employee_id,
+						};
+						const updatedExceptions = updatedScheduleDataExceptions.map((exception) => ({
+							...exception,
+							date: el,
+							start_time: updateUtcDateRetainTime(exception.start_time.toISOString(), el),
+							end_time: updateUtcDateRetainTime(exception.end_time.toISOString(), el),
+							reason: exception.reason === null ? undefined : exception.reason,
+						}));
+						const updatedBookingSlots = updatedScheduleDataBookingSlots.map((slot) => ({
+							...slot,
+							date: el,
+							start_time: updateUtcDateRetainTime(slot.start_time.toISOString(), el),
+							end_time: updateUtcDateRetainTime(slot.end_time.toISOString(), el),
+						}));
+
+						let data = await createScheduleSlotWithData({
+							schedule: updateSchedule,
+							bookingSlots: updatedBookingSlots,
+							exceptions: updatedExceptions,
+						});
+						return { data };
+					})
+				);
+				//let location = await ScheduleDao.createSchedule(scheduleData);
+				res.status(201).json({
+					schedules,
+					existingSchedules,
+					updatedScheduleDataExceptions,
+					updatedScheduleDataBookingSlots,
+				});
+			} else {
+				res.status(404).json({ message: 'Schedule not found' });
+			}
+		} else {
+			res.status(404).json({ message: 'Error updating schedule slot' });
+		}
+	} catch (error) {
+		res.status(500).json({ message: 'Error creating schedule', error });
+	}
+}
+
 export default {
 	getScheduleSlotsByScheduleId,
 	createScheduleSlot,
 	updateScheduleSlot,
 	deleteScheduleSlot,
 	getScheduleSlotById,
+	createMultipleSchedules,
+	overwriteMultipleSchedules,
+	updateMultipleSchedules,
 };

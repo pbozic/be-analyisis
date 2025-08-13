@@ -98,10 +98,47 @@ export async function getScheduleSlotById(id: string): Promise<ScheduleSlot | nu
 	try {
 		const record = await prisma.schedule_slot.findUnique({
 			where: { schedule_slot_id: id },
+			include: {
+				booking_slots: true,
+				schedule_slot_exceptions: true,
+			},
 		});
 		return record;
 	} catch (error) {
 		throw new Error('Error retrieving schedule slot');
+	}
+}
+
+/**
+ * Retrieves all schedule slots for a given employee ID and dates.
+ * @param {string} employee_id - The employee ID.
+ * @param {Array} dates - An array of dates to filter the schedule slots.
+ * @returns {Promise<ScheduleSlot[]>} A promise that resolves to an array of schedule slot records.
+ * @throws {Error} If there is an error retrieving the schedule slots.
+ */
+export async function getScheduleSlotsByEmployeeIdAndDates(
+	employee_id: string,
+	dates: Array<string>
+): Promise<ScheduleSlot[]> {
+	try {
+		const records = await prisma.schedule_slot.findMany({
+			where: {
+				schedule_employee_id: employee_id,
+				date: {
+					in: dates,
+				},
+			},
+			include: {
+				schedule: {
+					include: {
+						location: true,
+					},
+				},
+			},
+		});
+		return records;
+	} catch (error) {
+		throw new Error('Error retrieving schedule slots');
 	}
 }
 
@@ -111,4 +148,5 @@ export default {
 	updateScheduleSlot,
 	deleteScheduleSlot,
 	getScheduleSlotById,
+	getScheduleSlotsByEmployeeIdAndDates,
 };

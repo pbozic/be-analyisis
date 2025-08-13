@@ -6,16 +6,13 @@ import {
 	CreateScheduleSlotExceptionInput,
 	UpdateScheduleSlotExceptionInput,
 	CreateOrUpdateExceptionsInput,
-	ExceptionWithoutId,
-	ExceptionWithId,
 	CreateOrUpdateExceptionsAndBookingsInput,
-	BookingSlotWithoutId,
-	BookingSlotWithId,
 	CreateScheduleSlotWithExceptionsAndBookingSlotsInput,
 	UpdateScheduleSlotWithBookingSlotsAndExceptionsInput,
 } from '../../types/reservation/Schedule';
 import BookingSlotDao from '../../dao/reservation/BookingSlot';
 import ScheduleSlotDao from '../../dao/reservation/ScheduleSlot';
+import { splitByBookingId, splitByExceptionsId } from '../../lib/bookingHelpers';
 
 /**
  * GET /reservation/schedule-slot-exceptions/list/{schedule_slot_id}
@@ -135,68 +132,6 @@ export async function getScheduleSlotExceptionById(
 		res.status(200).json(record);
 	} catch (error) {
 		res.status(500).json({ message: 'Error retrieving schedule slot exception', error });
-	}
-}
-
-/**
- * Splits exceptions into two arrays: those with a exception ID and those without.
- * @param {ExceptionWithoutId[]} slots - The array of exceptions to split.
- * @returns {{ withExceptionId: ExceptionWithId[], withoutExceptionId: ExceptionWithoutId[] }}
- * @description This function takes an array of exceptions and splits it into two arrays:
- * - `withExceptionId`: Contains exceptions that have a `schedule_slot_exception_id`.
- * - `withoutExceptionId`: Contains exceptions that do not have a `schedule_slot_exception_id
- * @returns {Object} An object containing two arrays:
- * @throws {Error} If the input is not an array or if any slot does not match the expected structure.
- */
-function splitByExceptionsId(slots: ExceptionWithoutId[]) {
-	try {
-		const withExceptionId: ExceptionWithId[] = [];
-		const withoutExceptionId: ExceptionWithoutId[] = [];
-
-		for (const slot of slots) {
-			if (slot?.schedule_slot_exception_id) {
-				withExceptionId.push(slot as ExceptionWithId);
-			} else {
-				withoutExceptionId.push(slot);
-			}
-		}
-
-		return { withExceptionId, withoutExceptionId };
-	} catch (error) {
-		throw new Error(
-			'Error splitting exceptions by exception ID: ' + (error instanceof Error ? error.message : 'Unknown error')
-		);
-	}
-}
-
-/**
- * Splits booking slots into two arrays: those with a booking ID and those without.
- * @param {BookingSlotWithoutId[]} slots - The array of booking slots to split.
- * @returns {{ withBookingId: BookingSlotWithId[], withoutBookingId: BookingSlotWithoutId[] }}
- * @description This function iterates through the provided booking slots and separates them into two categories:
- * - `withBookingId`: Contains booking slots that have a `booking_slot_id`.
- * - `withoutBookingId`: Contains booking slots that do not have a `booking_slot_id
- * @returns {Object} An object containing two arrays:
- * @throws {Error} If the input is not an array or if any slot does not match the expected structure.
- */
-function splitByBookingId(slots: BookingSlotWithoutId[]) {
-	try {
-		const withBookingId: BookingSlotWithId[] = [];
-		const withoutBookingId: BookingSlotWithoutId[] = [];
-
-		for (const slot of slots) {
-			if (slot?.booking_slot_id) {
-				withBookingId.push(slot as BookingSlotWithId);
-			} else {
-				withoutBookingId.push(slot);
-			}
-		}
-
-		return { withBookingId, withoutBookingId };
-	} catch (error) {
-		throw new Error(
-			'Error splitting booking slots by booking ID: ' + (error instanceof Error ? error.message : 'Unknown error')
-		);
 	}
 }
 
@@ -338,23 +273,15 @@ export async function updateOrCreateScheduleSlotExceptionsAndBookingSlots(
 }
 
 /**
- * POST /reservation/schedule-slot-exceptions/create-schedule-slot-with-booking-slots-and-exceptions
- * @tag Reservation
- * @summary Create a new schedule slot with booking slots and exceptions
- * @description Creates a new schedule slot and associated booking slots and exceptions.
- * @operationId createScheduleSlotWithBookingSlotsAndExceptions
- * @requestBody {CreateScheduleSlotWithExceptionsAndBookingSlotsInput} requestBody - The schedule slot, booking slots, and exceptions data to create.
- * @response 201 - Schedule slot with booking slots and exceptions created successfully
- * @responseContent {ScheduleSlot} 201.application/json
- * @response 400 - Invalid input data
- * @response 500 - Error creating schedule slot with booking slots and exceptions
+ * Creates a new schedule slot with booking slots and exceptions.
+ * @param {CreateScheduleSlotWithExceptionsAndBookingSlotsInput} data - The data for the new schedule slot, booking slots, and exceptions.
+ * @description This function creates a new schedule slot and associates it with booking slots and exceptions.
+ * @returns {Object} An object containing the created schedule slot, booking slots, and exceptions.
+ * @throws {Error} If the input is not an array or if any slot does not match the expected structure.
  */
-export async function createScheduleSlotWithBookingSlotsAndExceptions(
-	req: ValidatedRequest<CreateScheduleSlotWithExceptionsAndBookingSlotsInput>,
-	res: Response
-): Promise<void> {
+export async function createScheduleSlotWithData(data: CreateScheduleSlotWithExceptionsAndBookingSlotsInput) {
 	try {
-		const { schedule, bookingSlots, exceptions } = req.body;
+		const { schedule, bookingSlots, exceptions } = data;
 		const createdScheduleSlot = await ScheduleSlotDao.createScheduleSlot(schedule);
 		const schedule_slot_id = createdScheduleSlot.schedule_slot_id;
 		const withoutId = bookingSlots;
@@ -391,6 +318,34 @@ export async function createScheduleSlotWithBookingSlotsAndExceptions(
 				schedule_exceptions: createdExceptions,
 			},
 		};
+
+		return record;
+	} catch (error) {
+		throw new Error(
+			'Error Creating Schedule Slot With Booking Slots and Exceptions: ' +
+				(error instanceof Error ? error.message : 'Unknown error')
+		);
+	}
+}
+
+/**
+ * POST /reservation/schedule-slot-exceptions/create-schedule-slot-with-booking-slots-and-exceptions
+ * @tag Reservation
+ * @summary Create a new schedule slot with booking slots and exceptions
+ * @description Creates a new schedule slot and associated booking slots and exceptions.
+ * @operationId createScheduleSlotWithBookingSlotsAndExceptions
+ * @requestBody {CreateScheduleSlotWithExceptionsAndBookingSlotsInput} requestBody - The schedule slot, booking slots, and exceptions data to create.
+ * @response 201 - Schedule slot with booking slots and exceptions created successfully
+ * @responseContent {ScheduleSlot} 201.application/json
+ * @response 400 - Invalid input data
+ * @response 500 - Error creating schedule slot with booking slots and exceptions
+ */
+export async function createScheduleSlotWithBookingSlotsAndExceptions(
+	req: ValidatedRequest<CreateScheduleSlotWithExceptionsAndBookingSlotsInput>,
+	res: Response
+): Promise<void> {
+	try {
+		const record = await createScheduleSlotWithData(req.body);
 		res.status(200).json(record);
 	} catch (error) {
 		res.status(500).json({ message: 'Error updating or creating booking slot', error });
@@ -398,28 +353,23 @@ export async function createScheduleSlotWithBookingSlotsAndExceptions(
 }
 
 /**
- * PUT /reservation/schedule-slot-exceptions/update-schedule-slot-with-booking-slots-and-exceptions:id
- * @tag Reservation
- * @summary Update a new schedule slot with booking slots and exceptions
- * @description Updates schedule slot with associated booking slots and exceptions.
- * @operationId updateScheduleSlotWithBookingSlotsAndExceptions
- * @requestBody {UpdateScheduleSlotWithBookingSlotsAndExceptionsInput} requestBody - The schedule slot with booking slots and exceptions data to update.
- * @response 201 - Schedule slot with booking slots and exceptions updated successfully
- * @responseContent {ScheduleSlot} 201.application/json
- * @response 400 - Invalid input data
- * @response 500 - Error updating schedule slot with booking slots and exceptions
+ * Updates a schedule slot with booking slots and exceptions.
+ * @param {string} id - The ID of the schedule slot to update.
+ * @param {UpdateScheduleSlotWithBookingSlotsAndExceptionsInput} data - The data for the update, including schedule, booking slots, and exceptions.
+ * @description This function updates an existing schedule slot and associates it with booking slots and exceptions.
+ * @returns {Object} An object containing the updated schedule slot, booking slots, and exceptions.
+ * @throws {Error} If the input is not an array or if any slot does not match the expected structure.
  */
-export async function updateScheduleSlotWithBookingSlotsAndExceptions(
-	req: ValidatedRequest<UpdateScheduleSlotWithBookingSlotsAndExceptionsInput, { id: string }>,
-	res: Response
-): Promise<void> {
+export async function updateScheduleSlotWithData(
+	data: UpdateScheduleSlotWithBookingSlotsAndExceptionsInput,
+	id: string
+) {
 	try {
-		const record = req.body.schedule
-			? await ScheduleSlotDao.updateScheduleSlot(req.params.id, req.body.schedule)
-			: {};
+		const { schedule, bookingSlots, exceptions } = data;
+		const record = Object.keys(schedule).length !== 0 ? await ScheduleSlotDao.updateScheduleSlot(id, schedule) : {};
 
-		const { withExceptionId, withoutExceptionId } = splitByExceptionsId(req.body.exceptions.changes);
-		const { withBookingId, withoutBookingId } = splitByBookingId(req.body.bookingSlots.newOrChanged);
+		const { withExceptionId, withoutExceptionId } = splitByExceptionsId(exceptions.changes);
+		const { withBookingId, withoutBookingId } = splitByBookingId(bookingSlots.newOrChanged);
 		const updatedExceptions = await Promise.all(
 			withExceptionId.map(async (el) => {
 				let data = await ScheduleSlotExceptionDao.updateScheduleSlotException(
@@ -440,7 +390,7 @@ export async function updateScheduleSlotWithBookingSlotsAndExceptions(
 			})
 		);
 		const removedExceptions = await Promise.all(
-			req.body.exceptions.removed.map(async (el) => {
+			exceptions.removed.map(async (el) => {
 				let data = await ScheduleSlotExceptionDao.deleteScheduleSlotException(el.schedule_slot_exception_id);
 				return {
 					data,
@@ -464,7 +414,7 @@ export async function updateScheduleSlotWithBookingSlotsAndExceptions(
 			})
 		);
 		const removedSlots = await Promise.all(
-			req.body.bookingSlots.removed.map(async (el) => {
+			bookingSlots.removed.map(async (el) => {
 				let data = await BookingSlotDao.deleteBookingSlot(el.booking_slot_id);
 				return {
 					data,
@@ -472,12 +422,39 @@ export async function updateScheduleSlotWithBookingSlotsAndExceptions(
 			})
 		);
 
-		const data = {
+		const resultData = {
 			schedule_slot: record,
 			booking_slots: [...updatedSlots, ...createdSlots, ...removedSlots],
 			exceptions: [...updatedExceptions, ...createdExceptions, ...removedExceptions],
 		};
-		res.status(200).json(data);
+		return resultData;
+	} catch (error) {
+		throw new Error(
+			'Error Creating Schedule Slot With Booking Slots and Exceptions: ' +
+				(error instanceof Error ? error.message : 'Unknown error')
+		);
+	}
+}
+
+/**
+ * PUT /reservation/schedule-slot-exceptions/update-schedule-slot-with-booking-slots-and-exceptions:id
+ * @tag Reservation
+ * @summary Update a new schedule slot with booking slots and exceptions
+ * @description Updates schedule slot with associated booking slots and exceptions.
+ * @operationId updateScheduleSlotWithBookingSlotsAndExceptions
+ * @requestBody {UpdateScheduleSlotWithBookingSlotsAndExceptionsInput} requestBody - The schedule slot with booking slots and exceptions data to update.
+ * @response 201 - Schedule slot with booking slots and exceptions updated successfully
+ * @responseContent {ScheduleSlot} 201.application/json
+ * @response 400 - Invalid input data
+ * @response 500 - Error updating schedule slot with booking slots and exceptions
+ */
+export async function updateScheduleSlotWithBookingSlotsAndExceptions(
+	req: ValidatedRequest<UpdateScheduleSlotWithBookingSlotsAndExceptionsInput, { id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const record = await updateScheduleSlotWithData(req.body, req.params.id);
+		res.status(200).json(record);
 	} catch (error) {
 		res.status(500).json({
 			message: 'Error updating on updating schedule slot with booking slots and exceptions',
@@ -496,4 +473,6 @@ export default {
 	updateOrCreateScheduleSlotExceptionsAndBookingSlots,
 	createScheduleSlotWithBookingSlotsAndExceptions,
 	updateScheduleSlotWithBookingSlotsAndExceptions,
+	createScheduleSlotWithData,
+	updateScheduleSlotWithData,
 };
