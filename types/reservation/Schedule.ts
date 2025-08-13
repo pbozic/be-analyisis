@@ -145,6 +145,35 @@ export const UpdateScheduleSlotWithBookingSlotsAndExceptionsSchema = z.object({
 	}),
 });
 
+export const CreateMultipleSchedulesSchema = z.object({
+	schedule: CreateScheduleSlotSchema,
+	exceptions: z.array(CreateExceptionNoIds),
+	bookingSlots: z.array(CreateBookingSlotNoIds),
+	dates: z.array(z.string().datetime()),
+});
+
+export const UpdateMultipleSchedulesSchema = z.object({
+	schedule: CreateScheduleSlotSchema,
+	exceptions: z.object({
+		changes: z.array(CreateExceptionsSchemaWithId),
+		removed: z.array(CreateExceptionsSchemaWithExceptionId),
+	}),
+	bookingSlots: z.object({
+		newOrChanged: z.array(CreateBookingSlotSchemaWithId),
+		removed: z.array(CreateBookingSlotSchemaWithBookingId),
+	}),
+	dates: z.array(z.string().datetime()),
+	update: z.boolean(),
+});
+
+export const OverwriteMultipleSchedulesSchema = z.object({
+	schedule: CreateScheduleSlotSchema,
+	exceptions: z.array(CreateExceptionNoIds),
+	bookingSlots: z.array(CreateBookingSlotNoIds),
+	dates: z.array(z.string().datetime()),
+	ids: z.array(z.string().uuid()),
+});
+
 export type CreateScheduleInput = z.infer<typeof CreateScheduleSchema>;
 export type CreateScheduleEmployeeInput = z.infer<typeof CreateScheduleEmployeeSchema>;
 export type CreateScheduleSlotInput = z.infer<typeof CreateScheduleSlotSchema>;
@@ -168,6 +197,10 @@ export type UpdateScheduleSlotWithBookingSlotsAndExceptionsInput = z.infer<
 	typeof UpdateScheduleSlotWithBookingSlotsAndExceptionsSchema
 >;
 export type GetSchedulesWithSlotsInput = z.infer<typeof GetSchedulesWithSlotsSchema>;
+
+export type CreateMultipleSchedulesInput = z.infer<typeof CreateMultipleSchedulesSchema>;
+export type UpdateMultipleSchedulesInput = z.infer<typeof UpdateMultipleSchedulesSchema>;
+export type OverwriteMultipleSchedulesInput = z.infer<typeof OverwriteMultipleSchedulesSchema>;
 
 export type Schedule = schedule;
 export type ScheduleWithoutEmployees = Omit<schedule, 'schedule_employees'>;

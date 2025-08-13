@@ -4,7 +4,14 @@ import prisma from '../prisma/prisma';
 import type { Location } from '../types/reservation/Location';
 import type { Employee } from '../types/reservation/Employee';
 import { Service } from '../types/reservation/Service';
-import { BookingSlot, ScheduleSlotException } from '../types/reservation/Schedule';
+import {
+	BookingSlot,
+	ScheduleSlotException,
+	BookingSlotWithoutId,
+	BookingSlotWithId,
+	ExceptionWithoutId,
+	ExceptionWithId,
+} from '../types/reservation/Schedule';
 import { Booking } from '../types/reservation/Booking';
 
 const SLOT_INTERVAL_MINUTES = 30;
@@ -195,4 +202,66 @@ export async function findSlots({
 
 	// return all slots for the given date only
 	return (await processDay(seed, false)) as SlotResult[];
+}
+
+/**
+ * Splits booking slots into two arrays: those with a booking ID and those without.
+ * @param {BookingSlotWithoutId[]} slots - The array of booking slots to split.
+ * @returns {{ withBookingId: BookingSlotWithId[], withoutBookingId: BookingSlotWithoutId[] }}
+ * @description This function iterates through the provided booking slots and separates them into two categories:
+ * - `withBookingId`: Contains booking slots that have a `booking_slot_id`.
+ * - `withoutBookingId`: Contains booking slots that do not have a `booking_slot_id
+ * @returns {Object} An object containing two arrays:
+ * @throws {Error} If the input is not an array or if any slot does not match the expected structure.
+ */
+export function splitByBookingId(slots: BookingSlotWithoutId[]) {
+	try {
+		const withBookingId: BookingSlotWithId[] = [];
+		const withoutBookingId: BookingSlotWithoutId[] = [];
+
+		for (const slot of slots) {
+			if (slot?.booking_slot_id) {
+				withBookingId.push(slot as BookingSlotWithId);
+			} else {
+				withoutBookingId.push(slot);
+			}
+		}
+
+		return { withBookingId, withoutBookingId };
+	} catch (error) {
+		throw new Error(
+			'Error splitting booking slots by booking ID: ' + (error instanceof Error ? error.message : 'Unknown error')
+		);
+	}
+}
+
+/**
+ * Splits exceptions into two arrays: those with a exception ID and those without.
+ * @param {ExceptionWithoutId[]} slots - The array of exceptions to split.
+ * @returns {{ withExceptionId: ExceptionWithId[], withoutExceptionId: ExceptionWithoutId[] }}
+ * @description This function takes an array of exceptions and splits it into two arrays:
+ * - `withExceptionId`: Contains exceptions that have a `schedule_slot_exception_id`.
+ * - `withoutExceptionId`: Contains exceptions that do not have a `schedule_slot_exception_id
+ * @returns {Object} An object containing two arrays:
+ * @throws {Error} If the input is not an array or if any slot does not match the expected structure.
+ */
+export function splitByExceptionsId(slots: ExceptionWithoutId[]) {
+	try {
+		const withExceptionId: ExceptionWithId[] = [];
+		const withoutExceptionId: ExceptionWithoutId[] = [];
+
+		for (const slot of slots) {
+			if (slot?.schedule_slot_exception_id) {
+				withExceptionId.push(slot as ExceptionWithId);
+			} else {
+				withoutExceptionId.push(slot);
+			}
+		}
+
+		return { withExceptionId, withoutExceptionId };
+	} catch (error) {
+		throw new Error(
+			'Error splitting exceptions by exception ID: ' + (error instanceof Error ? error.message : 'Unknown error')
+		);
+	}
 }

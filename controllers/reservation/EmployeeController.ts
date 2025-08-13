@@ -160,6 +160,7 @@ export async function getEmployeeById(req: Request, res: Response): Promise<void
  * @summary Get all reservation employees with schedule slots
  * @description Retrieves all reservation employees with their schedule slots.
  * @operationId getEmployeesWithScheduleSlots
+ * @requestBody {GetSchedulesWithSlotsInput} requestBody - The input data for retrieving employees with schedule slots.
  * @response 200 - Reservation employees with schedule slots retrieved successfully
  * @responseContent {Employee[]} 200.application/json
  * @response 500 - Error retrieving employees with schedule slots

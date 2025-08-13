@@ -79,7 +79,10 @@ export async function updateScheduleEmployee(id: string, data: UpdateScheduleEmp
 	try {
 		const record = await prisma.schedule_employee.update({
 			where: { schedule_employee_id: id },
-			data,
+			data: {
+				schedule_id: data.schedule_id,
+				employee_id: data.employee_id,
+			},
 		});
 		return record;
 	} catch (error) {
