@@ -5,10 +5,10 @@ import prisma from '../../prisma/prisma.js';
 import type {
 	Booking,
 	BookingHistoryLog,
-	CreateBookingInput,
 	UpdateBookingInput,
 	CreateBookingHistoryLogInput,
 	ListBookingsParams,
+	CreateBookingSingleInput,
 } from '../../types/reservation/Booking.ts'; // <-- adjust path if different
 
 /**
@@ -137,7 +137,7 @@ async function resolveOrCreateCustomer(
  * @param {CreateBookingInput} input
  * @returns {Promise<Booking>}
  */
-export async function createBooking(input: CreateBookingInput): Promise<Booking> {
+export async function createBooking(input: CreateBookingSingleInput): Promise<Booking> {
 	try {
 		const tel = composeTelephone(input);
 

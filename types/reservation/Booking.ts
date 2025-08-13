@@ -36,7 +36,7 @@ export const CreateBookingSchema = z
 		reservation_module_id: z.string().uuid(),
 		location_id: z.string().uuid().optional(),
 		status: z.nativeEnum(BOOKING_STATUS),
-		services_ids: z.array(z.string().uuid()).min(1, 'At least one service ID is required'),
+		service_ids: z.array(z.string().uuid()).min(1, 'At least one service ID is required'),
 		comment: z.string().optional(),
 		price_cents: z.number().int().optional(),
 		start_time: z.string().datetime().optional(),
@@ -176,6 +176,7 @@ export type Booking = booking;
 export type BookingHistoryLog = booking_history_log;
 
 export type CreateBookingInput = z.infer<typeof CreateBookingSchema>;
+export type CreateBookingSingleInput = Omit<CreateBookingInput, 'service_ids'> & { service_id: string };
 export type UpdateBookingInput = z.infer<typeof UpdateBookingSchema>;
 export type CreateBookingHistoryLogInput = z.infer<typeof CreateBookingHistoryLogSchema>;
 export type FindBookingSlotsInput = z.infer<typeof FindBookingSlotsSchema>;

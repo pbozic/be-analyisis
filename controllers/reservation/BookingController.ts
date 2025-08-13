@@ -8,8 +8,8 @@ import {
 	CreateBookingHistoryLogInput,
 	ListBookingsParams,
 	FindBookingSlotsInput,
-	CreateBookingInput,
 	Booking,
+	CreateBookingInput,
 } from '../../types/reservation/Booking.ts';
 import { findSlots } from '../../lib/bookingHelpers.ts';
 
@@ -77,7 +77,7 @@ export async function getBooking(req: ValidatedRequest<null, { booking_id: strin
  */
 export async function createBooking(req: ValidatedRequest<CreateBookingInput>, res: Response): Promise<void> {
 	// Body already validated by Zod middleware.
-	const { services_ids, parent_booking_id, ...base } = req.body;
+	const { service_ids, parent_booking_id, ...base } = req.body;
 
 	// Enforce multi-tenant: prefer authenticated module over body to prevent tenant hopping
 	const reservation_module_id = req.user?.reservation_module_id ?? base.reservation_module_id;
@@ -85,11 +85,11 @@ export async function createBooking(req: ValidatedRequest<CreateBookingInput>, r
 	const created: Booking[] = [];
 	try {
 		// Parent booking (first service)
-		const firstServiceId = services_ids[0];
+		const firstServiceId = service_ids[0];
 		const first = await BookingDao.createBooking({
 			...base,
 			reservation_module_id,
-			service_id: firstServiceId,
+			service_id: firstServiceId as string,
 			parent_booking_id: parent_booking_id ?? undefined,
 		});
 		created.push(first);
@@ -97,12 +97,12 @@ export async function createBooking(req: ValidatedRequest<CreateBookingInput>, r
 		const parentIdForChildren = parent_booking_id ?? first.booking_id;
 
 		// Children bookings (remaining services)
-		for (let i = 1; i < services_ids.length; i++) {
-			const srvId = services_ids[i];
+		for (let i = 1; i < service_ids.length; i++) {
+			const srvId = service_ids[i];
 			const child = await BookingDao.createBooking({
 				...base,
 				reservation_module_id,
-				service_id: srvId,
+				service_id: srvId as string,
 				parent_booking_id: parentIdForChildren,
 			});
 			created.push(child);
