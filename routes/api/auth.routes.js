@@ -1,5 +1,4 @@
 import fs from 'fs';
-import { Console } from 'console';
 
 import dotenv from 'dotenv';
 import express from 'express';
@@ -16,8 +15,6 @@ import joi from '../../middleware/joi.js';
 import { updateUserLanguageSchema } from '../../joi/userSchemas.js';
 import UserController from '../../controllers/UserController.js';
 import UserDao from '../../dao/User.js';
-import DocumentDao from '../../dao/Document.js';
-import { DOCUMENT_TYPE } from '../../lib/constants.js';
 import stripe from '../../lib/stripe.js';
 dotenv.config();
 const router = express.Router();
@@ -86,6 +83,8 @@ router.get('/', function (req, res, next) {
 	res.render('index', { title: 'Express' });
 });
 router.patch('/language', joi(updateUserLanguageSchema), UserController.updateUserLanguage);
+router.get('/telephone_availability/:telephone', AuthController.checkTelephoneAvailability);
+router.get('/email_availability/:email', AuthController.checkEmailAvailability);
 router.get('/scheduled_users', AuthController.getScheduledUsers);
 router.post('/login', joi(loginSchema), AuthController.login);
 router.post('/register', joi(registerSchema), AuthController.register);
