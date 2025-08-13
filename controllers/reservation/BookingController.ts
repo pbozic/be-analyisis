@@ -77,7 +77,7 @@ export async function getBooking(req: ValidatedRequest<null, { booking_id: strin
  */
 export async function createBooking(req: ValidatedRequest<CreateBookingInput>, res: Response): Promise<void> {
 	// Body already validated by Zod middleware.
-	const { service_ids, parent_booking_id, ...base } = req.body;
+	const { service_ids, ...base } = req.body;
 
 	// Enforce multi-tenant: prefer authenticated module over body to prevent tenant hopping
 	const reservation_module_id = req.user?.reservation_module_id ?? base.reservation_module_id;
@@ -90,11 +90,10 @@ export async function createBooking(req: ValidatedRequest<CreateBookingInput>, r
 			...base,
 			reservation_module_id,
 			service_id: firstServiceId as string,
-			parent_booking_id: parent_booking_id ?? undefined,
 		});
 		created.push(first);
 
-		const parentIdForChildren = parent_booking_id ?? first.booking_id;
+		const parentIdForChildren = first.booking_id;
 
 		// Children bookings (remaining services)
 		for (let i = 1; i < service_ids.length; i++) {
@@ -109,8 +108,8 @@ export async function createBooking(req: ValidatedRequest<CreateBookingInput>, r
 		}
 
 		res.status(201).json({
-			parent: parent_booking_id ? null : first,
-			children: parent_booking_id ? created : created.slice(1),
+			parent: first,
+			children: created.slice(1),
 			all: created,
 		});
 	} catch (error) {

@@ -1,5 +1,5 @@
 // src/dao/bookingDao.ts
-import { Prisma } from '@prisma/client';
+import { BOOKING_STATUS, Prisma } from '@prisma/client';
 
 import prisma from '../../prisma/prisma.js';
 import type {
@@ -157,12 +157,17 @@ export async function createBooking(input: CreateBookingSingleInput): Promise<Bo
 				email: input.email ?? undefined,
 				telephone: tel ?? undefined,
 			});
+			const service = await tx.service.findUnique({
+				where: { service_id: input.service_id },
+				select: { service_id: true, price_cents: true, reservation_module_id: true },
+			});
+			if (!service) throw new Error('Service not found');
 			// TODO: check if booking slot is still empty before creating
 			const created = await tx.booking.create({
 				data: {
-					status: input.status,
+					status: BOOKING_STATUS.reserved, // Default status
 					comment: input.comment ?? null,
-					price_cents: input.price_cents ?? null,
+					price_cents: service.price_cents ?? null,
 					start_time: input.start_time ? new Date(input.start_time) : null,
 					end_time: input.end_time ? new Date(input.end_time) : null,
 
@@ -220,7 +225,11 @@ export async function updateBooking(input: UpdateBookingInput): Promise<Booking>
 			if (input.reservation_module_id && input.reservation_module_id !== existing.reservation_module_id) {
 				throw new Error('Cannot move booking across reservation modules');
 			}
-
+			const service = await tx.service.findUnique({
+				where: { service_id: input.service_id },
+				select: { service_id: true, price_cents: true, reservation_module_id: true },
+			});
+			if (!service) throw new Error('Service not found');
 			// Handle customer linkage / patch
 			if (input.customer_id) {
 				await tx.booking.update({
@@ -263,7 +272,7 @@ export async function updateBooking(input: UpdateBookingInput): Promise<Booking>
 				data: {
 					status: input.status ?? undefined,
 					comment: input.comment ?? undefined,
-					price_cents: input.price_cents ?? undefined,
+					price_cents: service.price_cents ?? undefined,
 					start_time: input.start_time ? new Date(input.start_time) : undefined,
 					end_time: input.end_time ? new Date(input.end_time) : undefined,
 
