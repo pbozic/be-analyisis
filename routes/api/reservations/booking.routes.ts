@@ -29,7 +29,7 @@ router.post('/bookings/list', [validate(ListBookingsParamsSchema)], listBookings
  * Create booking
  * POST /bookings
  */
-router.post('/bookings', [validate(CreateBookingSchema)], createBooking);
+router.post('/bookings', validate(CreateBookingSchema), createBooking);
 
 /**
  * Get booking by id
