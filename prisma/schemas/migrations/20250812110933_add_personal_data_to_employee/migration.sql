@@ -10,9 +10,10 @@
 
 */
 -- AlterTable
-ALTER TABLE "employee" ADD COLUMN     "email" TEXT NOT NULL,
-ADD COLUMN     "first_name" TEXT NOT NULL,
-ADD COLUMN     "last_name" TEXT NOT NULL,
-ADD COLUMN     "telephone" TEXT NOT NULL,
-ADD COLUMN     "telephone_code" TEXT NOT NULL,
-ADD COLUMN     "telephone_number" TEXT NOT NULL;
+ALTER TABLE "employee"
+  ADD COLUMN "email" TEXT,
+  ADD COLUMN "first_name" TEXT,
+  ADD COLUMN "last_name" TEXT,
+  ADD COLUMN "telephone" TEXT,
+  ADD COLUMN "telephone_code" TEXT,
+  ADD COLUMN "telephone_number" TEXT;

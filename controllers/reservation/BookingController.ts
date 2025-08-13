@@ -4,11 +4,12 @@ import { Response } from 'express';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
 import BookingDao from '../../dao/reservation/Booking.ts';
 import {
-	CreateBookingInput,
 	UpdateBookingInput,
 	CreateBookingHistoryLogInput,
 	ListBookingsParams,
 	FindBookingSlotsInput,
+	CreateBookingInput,
+	Booking,
 } from '../../types/reservation/Booking.ts';
 import { findSlots } from '../../lib/bookingHelpers.ts';
 
@@ -75,20 +76,52 @@ export async function getBooking(req: ValidatedRequest<null, { booking_id: strin
  * @response 500 - Error creating booking
  */
 export async function createBooking(req: ValidatedRequest<CreateBookingInput>, res: Response): Promise<void> {
+	// Body already validated by Zod middleware.
+	const { services_ids, parent_booking_id, ...base } = req.body;
+
+	// Enforce multi-tenant: prefer authenticated module over body to prevent tenant hopping
+	const reservation_module_id = req.user?.reservation_module_id ?? base.reservation_module_id;
+
+	const created: Booking[] = [];
 	try {
-		let reservationModuleId = req.user?.reservation_module_id;
-		if (!reservationModuleId) {
-			res.status(400).json({ message: 'Reservation module ID is required' });
-			return;
+		// Parent booking (first service)
+		const firstServiceId = services_ids[0];
+		const first = await BookingDao.createBooking({
+			...base,
+			reservation_module_id,
+			service_id: firstServiceId,
+			parent_booking_id: parent_booking_id ?? undefined,
+		});
+		created.push(first);
+
+		const parentIdForChildren = parent_booking_id ?? first.booking_id;
+
+		// Children bookings (remaining services)
+		for (let i = 1; i < services_ids.length; i++) {
+			const srvId = services_ids[i];
+			const child = await BookingDao.createBooking({
+				...base,
+				reservation_module_id,
+				service_id: srvId,
+				parent_booking_id: parentIdForChildren,
+			});
+			created.push(child);
 		}
 
-		const booking = await BookingDao.createBooking({
-			...req.body,
-			reservation_module_id: reservationModuleId,
+		res.status(201).json({
+			parent: parent_booking_id ? null : first,
+			children: parent_booking_id ? created : created.slice(1),
+			all: created,
 		});
-		res.status(201).json(booking);
 	} catch (error) {
-		res.status(500).json({ message: 'Error creating booking', error });
+		// best-effort cleanup on partial failure
+		try {
+			for (const row of created) await BookingDao.deleteBooking({ booking_id: row.booking_id });
+		} catch (cleanupErr) {
+			console.error('Cleanup after partial failure failed:', cleanupErr);
+		}
+		console.error('Error creating booking(s):', error);
+		res.status(500).json({ message: 'Error creating booking(s)', error });
 	}
 }
 

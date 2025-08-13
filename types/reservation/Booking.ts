@@ -36,7 +36,7 @@ export const CreateBookingSchema = z
 		reservation_module_id: z.string().uuid(),
 		location_id: z.string().uuid().optional(),
 		status: z.nativeEnum(BOOKING_STATUS),
-		service_id: z.string().uuid(),
+		services_ids: z.array(z.string().uuid()).min(1, 'At least one service ID is required'),
 		comment: z.string().optional(),
 		price_cents: z.number().int().optional(),
 		start_time: z.string().datetime().optional(),
