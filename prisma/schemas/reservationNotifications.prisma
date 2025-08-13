@@ -4,7 +4,6 @@ enum NOTIFICATION_CHANNEL {
   EMAIL
   SMS
   PUSH
-  INAPP
 }
 
 enum TEMPLATE_VERSION_STATUS {
@@ -55,7 +54,7 @@ model notification_template_version {
   notification_template_version_id String @id @default(uuid()) @db.Uuid
   notification_template_id         String @db.Uuid
   version                          Int
-  status                           TEMPLATE_VERSION_STATUS @default(DRAFT)
+  status                           TEMPLATE_VERSION_STATUS @default(PUBLISHED)
   variables_json_schema            Json                    // JSON Schema for allowed variables
   default_locale                   String?                 // e.g. "sl-SI"
   compiled_artifacts               Json?                   // optional cache of compiled HTML, etc.
@@ -65,7 +64,7 @@ model notification_template_version {
   template  notification_template @relation(fields: [notification_template_id], references: [notification_template_id])
   contents  notification_template_channel_content[]
   mappings  notification_mapping[]
-
+  messages  notification_message[]
   @@unique([notification_template_id, version])
 }
 
@@ -163,8 +162,8 @@ model notification_message {
   reservation_module reservation_module @relation(fields: [reservation_module_id], references: [reservation_module_id])
   event              notification_event @relation(fields: [notification_event_id], references: [notification_event_id])
   template           notification_template? @relation(fields: [notification_template_id], references: [notification_template_id])
-
-  events notification_message_event[]
+  version            notification_template_version? @relation(fields: [notification_template_id, template_version], references: [notification_template_id, version])
+  events             notification_message_event[]
 
   @@index([reservation_module_id, notification_event_id, created_at])
   @@index([channel, status, created_at])

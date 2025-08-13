@@ -129,9 +129,7 @@ const createBusinessUser = async (userData, business_id, createNewUser = true, t
 				throw new Error('Failed to create user for new driver');
 			}
 		} else {
-			console.log('Creating business user without creating a new user');
 			user = await UserDao.getUserByTelephone(userData.data.telephone);
-			console.log('User found by telephone:', user);
 		}
 		const businessUser = await tx.business_users.create({
 			data: {

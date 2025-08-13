@@ -4,6 +4,7 @@ import { z } from 'zod';
 import type { service } from '../../prisma/schemas/interfaces';
 
 export const CreateServiceSchema = z.object({
+	service_category_id: z.string().uuid().optional(),
 	name: z.record(z.string()),
 	description: z.record(z.string()).optional(),
 	image_url: z.string().url().optional(),
@@ -16,6 +17,7 @@ export const CreateServiceSchema = z.object({
 });
 
 export const UpdateServiceSchema = z.object({
+	service_category_id: z.string().uuid().optional(),
 	name: z.record(z.string()).optional(),
 	description: z.record(z.string()).optional(),
 	image_url: z.string().url().optional(),

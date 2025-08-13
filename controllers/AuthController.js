@@ -1078,7 +1078,6 @@ async function registerBusiness(req, res) {
  */
 async function registerReservationBusiness(req, res) {
 	try {
-		console.log('Registering reservation business with data:', req.body);
 		if (req.body.email) {
 			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.email);
 			if (existingBusinessEmail) {
@@ -1086,13 +1085,11 @@ async function registerReservationBusiness(req, res) {
 				return res.status(400).json({ error: 'Business with this email already exists.' });
 			}
 		}
-		console.log('Creating Stripe customer for reservation business with email:', req.body.email);
 		let stripeCustomer = await stripe.createCustomer(
 			req.body.email,
 			req.body.business_name,
 			req.body.business_telephone
 		);
-		console.log('Stripe customer created:', stripeCustomer.id);
 		const phoneNumber = req.body.business_telephone;
 		const userExists = await UserDao.getUserByTelephone(phoneNumber);
 
@@ -1111,7 +1108,6 @@ async function registerReservationBusiness(req, res) {
 				tax_id: req.body.tax_id,
 				registration_id: req.body.registration_id,
 			};
-			console.log('Creating new business with data:', businessData);
 			business = await BusinessDao.createNewBusiness(
 				{
 					...businessData,
@@ -1119,7 +1115,6 @@ async function registerReservationBusiness(req, res) {
 				},
 				tx
 			);
-			console.log('Business created:', business.business_id);
 			// Create reservation module for the business
 			let reservationModule = await tx.reservation_module.create({
 				data: {
@@ -1130,7 +1125,6 @@ async function registerReservationBusiness(req, res) {
 					},
 				},
 			});
-			console.log('Reservation module created:', reservationModule.reservation_module_id);
 			const userObj = {
 				data: {
 					email: userExists.email || req.body.email,
@@ -1144,7 +1138,6 @@ async function registerReservationBusiness(req, res) {
 			};
 			//TODO: is this ok or should we tell them this is happening?
 
-			console.log('Creating business user for reservation business:', userObj, business);
 			if (userExists) {
 				// If user exists, connect to existing user
 				const { businessUser } = await BusinessUsersDao.createBusinessUser(
@@ -1173,7 +1166,6 @@ async function registerReservationBusiness(req, res) {
 				await UserDao.linkRolesToUser(user?.user_id, userRoles, tx);
 			}
 			//create employee user
-			console.log('Creating employee for reservation business:', businessUserData);
 			let employee = await tx.employee.create({
 				data: {
 					business_user: {
@@ -1210,7 +1202,6 @@ async function registerReservationBusiness(req, res) {
 			});
 
 			//create demo location
-			console.log('Creating location for reservation business:', reservationModule.reservation_module_id);
 			await tx.location.create({
 				data: {
 					reservation_module: {
@@ -1244,7 +1235,6 @@ async function registerReservationBusiness(req, res) {
 				},
 			});
 			//create demo service
-			console.log('Creating service for reservation business:', employee.employee_id);
 			let service = await tx.service.create({
 				data: {
 					reservation_module: {
@@ -1280,7 +1270,6 @@ async function registerReservationBusiness(req, res) {
 		if (!transactionSucceeded && stripeCustomer?.id) {
 			try {
 				await stripe.customers.del(stripeCustomer.id);
-				console.log('Stripe customer deleted after failed tx');
 			} catch (stripeError) {
 				console.error('Failed to delete Stripe customer:', stripeError);
 			}
