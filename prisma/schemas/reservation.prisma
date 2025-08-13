@@ -3,6 +3,7 @@ enum BOOKING_STATUS {
   reserved
   cancelled
   no_show
+  deleted
 }
 
 // --- MODELS ---

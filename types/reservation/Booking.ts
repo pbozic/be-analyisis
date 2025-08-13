@@ -89,7 +89,6 @@ export const CreateBookingSchema = z
 
 export const UpdateBookingSchema = z
 	.object({
-		booking_id: z.string().uuid(),
 		customer_id: z.string().uuid().optional(),
 		first_name: z.string().min(1, 'First name is required').optional(),
 		last_name: z.string().min(1, 'Last name is required').optional(),
