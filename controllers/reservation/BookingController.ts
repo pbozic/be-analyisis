@@ -140,11 +140,13 @@ export async function updateBooking(
 	res: Response
 ): Promise<void> {
 	try {
-		const booking = await BookingDao.updateBooking({
-			...req.body,
-			booking_id: req.params.booking_id,
-			reservation_module_id: req.user?.reservation_module_id,
-		});
+		const booking = await BookingDao.updateBooking(
+			{
+				...req.body,
+				reservation_module_id: req.user?.reservation_module_id,
+			},
+			req.params.booking_id
+		);
 		res.status(200).json(booking);
 	} catch (error) {
 		res.status(500).json({ message: 'Error updating booking', error });

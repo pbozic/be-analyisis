@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { Prisma, BOOKING_STATUS } from '@prisma/client';
 
 import prisma from '../prisma/prisma';
 import type { Location } from '../types/reservation/Location';
@@ -264,4 +265,45 @@ export function splitByExceptionsId(slots: ExceptionWithoutId[]) {
 			'Error splitting exceptions by exception ID: ' + (error instanceof Error ? error.message : 'Unknown error')
 		);
 	}
+}
+
+/**
+ * Check if a time window is free for a given resource within a module.
+ * - If both employee_id and location_id are missing, we skip hard blocking (return true)
+ *   because we don't have a concrete resource to check (avoid overblocking the whole module).
+ */
+export async function isBookingSlotAvailable(
+	tx: Prisma.TransactionClient,
+	args: {
+		reservation_module_id: string;
+		start_time: string | Date | null | undefined;
+		end_time: string | Date | null | undefined;
+		assigned_employee_id?: string | null;
+		location_id?: string | null;
+	}
+): Promise<boolean> {
+	const { reservation_module_id, start_time, end_time, assigned_employee_id, location_id } = args;
+
+	// If we don't have a concrete time range, nothing to block against.
+	if (!start_time || !end_time) return true;
+
+	const st = new Date(start_time);
+	const et = new Date(end_time);
+	if (!(st < et)) return false; // invalid window => treat as not available
+
+	// We need at least one concrete resource dimension to avoid blocking the entire module
+	if (!assigned_employee_id && !location_id) return true;
+
+	const where: Prisma.bookingWhereInput = {
+		reservation_module_id,
+		status: { notIn: [BOOKING_STATUS.cancelled, BOOKING_STATUS.no_show] },
+		// Overlap condition: existing.start < new.end && existing.end > new.start
+		start_time: { lt: et },
+		end_time: { gt: st },
+		...(assigned_employee_id ? { assigned_employee_id } : {}),
+		...(location_id ? { location_id } : {}),
+	};
+
+	const conflicts = await tx.booking.count({ where });
+	return conflicts === 0;
 }

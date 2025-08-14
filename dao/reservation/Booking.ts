@@ -10,7 +10,7 @@ import type {
 	ListBookingsParams,
 	CreateBookingSingleInput,
 } from '../../types/reservation/Booking.ts'; // <-- adjust path if different
-
+import { isBookingSlotAvailable } from '../../lib/bookingHelpers.ts';
 /**
  * Narrow and rethrow Prisma errors with a consistent message prefix.
  * Logs useful context for known Prisma error types.
@@ -163,6 +163,16 @@ export async function createBooking(input: CreateBookingSingleInput): Promise<Bo
 			});
 			if (!service) throw new Error('Service not found');
 			// TODO: check if booking slot is still empty before creating
+			let isAvailable = await isBookingSlotAvailable(tx, {
+				reservation_module_id: input.reservation_module_id,
+				start_time: input.start_time ? new Date(input.start_time) : null,
+				end_time: input.end_time ? new Date(input.end_time) : null,
+				location_id: input.location_id ?? undefined,
+				assigned_employee_id: input.assigned_employee_id ?? undefined,
+			});
+			if (!isAvailable) {
+				throw new Error('Booking slot is not available for the selected time and resources');
+			}
 			const created = await tx.booking.create({
 				data: {
 					status: BOOKING_STATUS.reserved, // Default status
@@ -211,13 +221,13 @@ export async function createBooking(input: CreateBookingSingleInput): Promise<Bo
  * @param {UpdateBookingInput} input
  * @returns {Promise<Booking>}
  */
-export async function updateBooking(input: UpdateBookingInput): Promise<Booking> {
+export async function updateBooking(input: UpdateBookingInput, booking_id: string): Promise<Booking> {
 	try {
 		const tel = composeTelephone(input);
 
 		return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 			const existing = await tx.booking.findUnique({
-				where: { booking_id: input.booking_id },
+				where: { booking_id: booking_id },
 				select: { booking_id: true, reservation_module_id: true, customer_id: true },
 			});
 			if (!existing) throw new Error('Booking not found');
@@ -233,7 +243,7 @@ export async function updateBooking(input: UpdateBookingInput): Promise<Booking>
 			// Handle customer linkage / patch
 			if (input.customer_id) {
 				await tx.booking.update({
-					where: { booking_id: input.booking_id },
+					where: { booking_id: booking_id },
 					data: { customer: { connect: { customer_id: input.customer_id } } },
 				});
 			} else if (
@@ -261,14 +271,14 @@ export async function updateBooking(input: UpdateBookingInput): Promise<Booking>
 						telephone: tel ?? undefined,
 					});
 					await tx.booking.update({
-						where: { booking_id: input.booking_id },
+						where: { booking_id: booking_id },
 						data: { customer: { connect: { customer_id: newCustomerId } } },
 					});
 				}
 			}
 
 			const updated = await tx.booking.update({
-				where: { booking_id: input.booking_id },
+				where: { booking_id: booking_id },
 				data: {
 					status: input.status ?? undefined,
 					comment: input.comment ?? undefined,
