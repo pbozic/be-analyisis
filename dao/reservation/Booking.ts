@@ -169,6 +169,7 @@ async function createBookingTx(
 			employee_id: input.employee_id ?? null,
 			start_time: input.start_time ? new Date(input.start_time) : null,
 			end_time: input.end_time ? new Date(input.end_time) : null,
+			location_id: input.location_id ?? null,
 		});
 	}
 	if (!schedule) throw new Error('Employee is not scheduled for the selected time');
