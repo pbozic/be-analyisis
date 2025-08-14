@@ -16,6 +16,7 @@ import { updateUserLanguageSchema } from '../../joi/userSchemas.js';
 import UserController from '../../controllers/UserController.js';
 import UserDao from '../../dao/User.js';
 import stripe from '../../lib/stripe.js';
+import authMiddleware from '../../middleware/auth.js';
 dotenv.config();
 const router = express.Router();
 
@@ -280,4 +281,7 @@ const generateAppleClientSecret = () => {
 	console.log('New APPLE_CLIENT_SECRET:', token);
 	return token;
 };
+
+router.post('/authenticate_registration', authMiddleware, AuthController.authenticateRegistrationSession);
+
 export default router;
