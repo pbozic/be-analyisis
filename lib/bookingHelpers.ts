@@ -347,17 +347,14 @@ export async function isEmployeeScheduledForWindow(
 	const et = new Date(end_time);
 	if (!(st < et)) return false;
 
-	// constrain to the start day; if you support cross-midnight, handle that separately
-	const dayStart = new Date(st);
-	dayStart.setHours(0, 0, 0, 0);
-	const dayEnd = new Date(st);
-	dayEnd.setHours(23, 59, 59, 999);
-
-	// Pull schedule slots for that employee (and location if given) on the day
+	// Fetch candidate schedule slots that *overlap* the requested window
+	// (we’ll enforce full containment below).
 	const slots = await tx.schedule_slot.findMany({
 		where: {
-			date: { gte: dayStart, lte: dayEnd },
-			employee_id: employee_id,
+			employee_id,
+			// overlap: slot.start < req.end AND slot.end > req.start
+			start_time: { lt: et },
+			end_time: { gt: st },
 			schedule: {
 				...(location_id ? { location_id } : {}),
 				location: { reservation_module_id },
@@ -369,36 +366,35 @@ export async function isEmployeeScheduledForWindow(
 		},
 		orderBy: { start_time: 'asc' },
 	});
-	console.log('Found schedule slots:', slots.length);
 
-	if (slots.length === 0) return false; // no schedule slots for that employee
-	// We require: [st, et] fully contained within one schedule slot,
-	// not overlapped by an exception, and (optionally) inside one booking_slot window.
+	if (slots.length === 0) return false;
+
 	for (const slot of slots) {
 		const sst = new Date(slot.start_time);
 		const set = new Date(slot.end_time);
+
+		// Require the request window to be fully inside a single schedule slot
 		const insideSchedule = st >= sst && et <= set;
 		if (!insideSchedule) continue;
 
-		// exceptions: any overlap => invalid
+		// Exceptions: any overlap blocks
 		const blockedByException = slot.schedule_slot_exceptions.some((ex: ScheduleSlotException) => {
 			const xst = new Date(ex.start_time);
 			const xet = new Date(ex.end_time);
 			return st < xet && et > xst;
 		});
-		// if any exception overlaps, we cannot book this slot
-		console.log('Blocked by exception:', blockedByException);
 		if (blockedByException) continue;
 
-		// booking windows: require containment in at least one booking_slot
-		if (!slot.booking_slots || slot.booking_slots.length === 0) return true; // if you allow booking entire slot
+		// Booking windows: if none defined, allow whole slot;
+		// otherwise require containment in at least one booking window.
+		if (!slot.booking_slots || slot.booking_slots.length === 0) return true;
 
 		const insideBookingWindow = slot.booking_slots.some((bs: BookingSlot) => {
 			const bst = new Date(bs.start_time);
 			const bet = new Date(bs.end_time);
 			return st >= bst && et <= bet;
 		});
-		console.log('Inside booking window:', insideBookingWindow);
+
 		if (insideBookingWindow) return true;
 	}
 
