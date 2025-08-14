@@ -565,9 +565,9 @@ async function toggleDriverOrders(driver_id, types) {
 		return await prisma.drivers.update({
 			where: { driver_id: driver_id },
 			data: {
-				taxi_orders_toggled: types?.taxi || true,
-				transfer_orders_toggled: types?.transfer || false,
-				delivery_orders_toggled: types?.delivery || false,
+				taxi_orders_toggled: !!types?.taxi,
+				transfer_orders_toggled: !!types?.transfer,
+				delivery_orders_toggled: !!types?.delivery,
 			},
 		});
 	} catch (error) {
