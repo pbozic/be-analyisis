@@ -174,6 +174,18 @@ export const OverwriteMultipleSchedulesSchema = z.object({
 	ids: z.array(z.string().uuid()),
 });
 
+export const UpdateScheduleWithEmployeesSchema = z.object({
+	formData: UpdateScheduleSchema,
+	removed: z.array(z.string().uuid()),
+	added: z.array(z.string().uuid()),
+});
+
+export const CreateScheduleWithEmployeesSchema = z.object({
+	formData: CreateScheduleSchema,
+	removed: z.array(z.string().uuid()),
+	added: z.array(z.string().uuid()),
+});
+
 export type CreateScheduleInput = z.infer<typeof CreateScheduleSchema>;
 export type CreateScheduleEmployeeInput = z.infer<typeof CreateScheduleEmployeeSchema>;
 export type CreateScheduleSlotInput = z.infer<typeof CreateScheduleSlotSchema>;
@@ -201,6 +213,9 @@ export type GetSchedulesWithSlotsInput = z.infer<typeof GetSchedulesWithSlotsSch
 export type CreateMultipleSchedulesInput = z.infer<typeof CreateMultipleSchedulesSchema>;
 export type UpdateMultipleSchedulesInput = z.infer<typeof UpdateMultipleSchedulesSchema>;
 export type OverwriteMultipleSchedulesInput = z.infer<typeof OverwriteMultipleSchedulesSchema>;
+
+export type UpdateScheduleWithEmployeesInput = z.infer<typeof UpdateScheduleWithEmployeesSchema>;
+export type CreateScheduleWithEmployeesInput = z.infer<typeof CreateScheduleWithEmployeesSchema>;
 
 export type Schedule = schedule;
 export type ScheduleWithoutEmployees = Omit<schedule, 'schedule_employees'>;
