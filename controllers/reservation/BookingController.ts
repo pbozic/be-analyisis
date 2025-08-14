@@ -95,7 +95,7 @@ export async function createBooking(req: ValidatedRequest<CreateBookingInput>, r
 	if (reservation_module && user_id) {
 		isEmployeeOfModule = reservation_module.employees.some((e: Employee) => e.business_user?.user_id === user_id);
 	}
-
+	console.log('isEmployeeOfModule:', isEmployeeOfModule);
 	// map to DAO’s single-service input
 	const inputs = service_ids.map((sid) => ({
 		...base,
@@ -105,11 +105,16 @@ export async function createBooking(req: ValidatedRequest<CreateBookingInput>, r
 	})) as CreateBookingSingleInput[];
 
 	try {
-		const all = await BookingDao.createBookingGroup(inputs);
+		const all = await BookingDao.createBookingGroup(inputs, {
+			validateSchedule: !isEmployeeOfModule, // <- only enforce schedules for externals
+		});
 		res.status(201).json({ parent: all[0], children: all.slice(1), all });
 	} catch (error) {
 		console.error('Error creating booking group:', error);
-		res.status(500).json({ message: 'Error creating booking(s)', error });
+		res.status(500).json({
+			message: error instanceof Error ? error.message : 'Error creating booking group',
+			error,
+		});
 	}
 }
 
