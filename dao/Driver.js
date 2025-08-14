@@ -1,7 +1,6 @@
 import prisma from '../prisma/prisma.js';
 import UserDao from './User.js';
 import { calculateDistance, calculateTimeDifference } from '../lib/helpersLib.js';
-import { TAXI_ORDER_STATUS } from '../lib/constants.js';
 const getDrivers = async (args) => {
 	try {
 		return await prisma.drivers.findMany({
@@ -357,10 +356,21 @@ const createNewDriver = async (driverData, userData) => {
 		throw new Error(error.message); // Adjust error handling as needed
 	}
 };
-const getAvailableDrivers = async () => {
+const getAvailableDrivers = async (type) => {
 	try {
+		const whereObj = {
+			online: true,
+			on_order: false,
+		};
+		if (type === 'TAXI') {
+			whereObj.handles_taxi_orders = true;
+			whereObj.taxi_orders_toggled = true;
+		} else if (type === 'TRANSFER') {
+			whereObj.handles_transfer_orders = true;
+			whereObj.transfer_orders_toggled = true;
+		}
 		return await prisma.drivers.findMany({
-			where: { online: true, on_order: false },
+			where: whereObj,
 			include: {
 				user: true,
 				vehicles: {
@@ -555,9 +565,9 @@ async function toggleDriverOrders(driver_id, types) {
 		return await prisma.drivers.update({
 			where: { driver_id: driver_id },
 			data: {
-				taxi_orders_toggled: types?.taxi || true,
-				transfer_orders_toggled: types?.transfer || false,
-				delivery_orders_toggled: types?.delivery || false,
+				taxi_orders_toggled: !!types?.taxi,
+				transfer_orders_toggled: !!types?.transfer,
+				delivery_orders_toggled: !!types?.delivery,
 			},
 		});
 	} catch (error) {

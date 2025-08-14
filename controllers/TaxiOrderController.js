@@ -1795,7 +1795,16 @@ async function cancelOrder(req, res) {
 				}
 				await TaxiHelper.revokeTaxiOrderFromDrivers(vehicle_transfer_order.order_id);
 				io.to('order_' + vehicle_transfer_order.order_id).emit('order_cancelled__taxi', vehicle_transfer_order);
-				SocketStore.removeUserFromRoom(driver?.user_id, `order_${order_id}`);
+				if (vehicle_transfer_order.driver_id) {
+					let driver = await DriverDao.getDriverById(vehicle_transfer_order.driver_id);
+					await TaxiOrderDao.updateOrder(order_id, {
+						driver: {
+							disconnect: true,
+						},
+					});
+					io.emit('driver_available', driver);
+					SocketStore.removeUserFromRoom(driver?.user_id, `order_${order_id}`);
+				}
 			}
 		}
 		order = await TaxiOrderDao.cancelOrder(order_id, status, reason);

@@ -1,4 +1,3 @@
-
 enum BOOKING_STATUS {
   reserved
   cancelled
@@ -9,170 +8,173 @@ enum BOOKING_STATUS {
 // --- MODELS ---
 
 model reservation_module {
-  reservation_module_id String    @id @default(uuid()) @db.Uuid
-  business_id           String    @db.Uuid @unique
-  subscription_id       String?    @db.Uuid
+  reservation_module_id     String        @id @default(uuid()) @db.Uuid
+  business_id               String        @unique @db.Uuid
+  subscription_id           String?       @db.Uuid
   subscription_active_until DateTime? // Optional, if the business has a subscription
-  business              business     @relation(fields: [business_id], references: [business_id])
-  subscription          subscription? @relation(fields: [subscription_id], references: [subscription_id])
-  subscription_exires_at DateTime? // Optional, if the business has a subscription
+  business                  business      @relation(fields: [business_id], references: [business_id])
+  subscription              subscription? @relation(fields: [subscription_id], references: [subscription_id])
+  subscription_expires_at   DateTime? // Optional, if the business has a subscription
 
-  addons                business_addon[]
-  usages                business_usage[]
-  locations     location[]
-  services      service[]
-  employees     employee[]
-  bookings     booking[]
-  customers    customers[]
+  addons             business_addon[]
+  usages             business_usage[]
+  locations          location[]
+  services           service[]
+  employees          employee[]
+  bookings           booking[]
+  customers          customers[]
   service_categories service_category[]
-  user_roles user_role[]
-  user_permissions user_permission[]
+  user_roles         user_role[]
+  user_permissions   user_permission[]
 
-  notification_templates             notification_template[]
-  notification_mappings              notification_mapping[]
-  notification_preferences           notification_preference[]
-  notification_provider_credentials  notification_provider_credential[]
-  notification_messages              notification_message[]
+  notification_templates            notification_template[]
+  notification_mappings             notification_mapping[]
+  notification_preferences          notification_preference[]
+  notification_provider_credentials notification_provider_credential[]
+  notification_messages             notification_message[]
 }
+
 model location {
-  location_id       String    @id @default(uuid()) @db.Uuid
-  reservation_module_id       String    @db.Uuid
-  name              String
-  address           String
-  phone             String?
-  color             String?
-  accepts_online    Boolean   @default(false)
-  closed_on_holidays Boolean  @default(false)
-  working_days      Json
-  reservation_module          reservation_module  @relation(fields: [reservation_module_id], references: [reservation_module_id])
-  schedules         schedule[]
-  bookings         booking[]
+  location_id           String             @id @default(uuid()) @db.Uuid
+  reservation_module_id String             @db.Uuid
+  name                  String
+  address               String
+  phone                 String?
+  color                 String?
+  accepts_online        Boolean            @default(false)
+  closed_on_holidays    Boolean            @default(false)
+  working_days          Json
+  reservation_module    reservation_module @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  schedules             schedule[]
+  bookings              booking[]
 }
 
 model service_category {
-  service_category_id   String         @id @default(uuid()) @db.Uuid
-  reservation_module_id String         @db.Uuid
-  name          Json           // Translations: { "en": "Hair", "sl": "Frizer" }
-  parent_id     String?        @db.Uuid
-  color         String?
-  parent        service_category?      @relation("SubCategory", fields: [parent_id], references: [service_category_id])
-  children      service_category[]     @relation("SubCategory")
-  services      service[]
-  reservation_module          reservation_module  @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  service_category_id   String             @id @default(uuid()) @db.Uuid
+  reservation_module_id String             @db.Uuid
+  name                  Json // Translations: { "en": "Hair", "sl": "Frizer" }
+  parent_id             String?            @db.Uuid
+  color                 String?
+  parent                service_category?  @relation("SubCategory", fields: [parent_id], references: [service_category_id])
+  children              service_category[] @relation("SubCategory")
+  services              service[]
+  reservation_module    reservation_module @relation(fields: [reservation_module_id], references: [reservation_module_id])
 }
 
 model service {
-  service_id         String    @id @default(uuid()) @db.Uuid
-  reservation_module_id        String    @db.Uuid
-  service_category_id        String?   @db.Uuid
-  name               Json      // Multilang
-  description        Json?
-  image_url          String?
-  price_cents        Int
-  discount_percent   Int?
-  discount_amount    Int?
-  duration_minutes   Int
-  available_online   Boolean   @default(false)
-  skd_codes          String[]
-  created_at         DateTime  @default(now())
+  service_id            String   @id @default(uuid()) @db.Uuid
+  reservation_module_id String   @db.Uuid
+  service_category_id   String?  @db.Uuid
+  name                  Json // Multilang
+  description           Json?
+  image_url             String?
+  price_cents           Int
+  discount_percent      Int?
+  discount_amount       Int?
+  duration_minutes      Int
+  available_online      Boolean  @default(false)
+  skd_codes             String[]
+  created_at            DateTime @default(now())
 
-  reservation_module           reservation_module  @relation(fields: [reservation_module_id], references: [reservation_module_id])
-  service_category           service_category? @relation(fields: [service_category_id], references: [service_category_id])
+  reservation_module reservation_module   @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  service_category   service_category?    @relation(fields: [service_category_id], references: [service_category_id])
   assigned_employees service_assignment[]
-  bookings          booking[]
+  bookings           booking[]
 }
 
 model employee {
-  employee_id     String     @id @default(uuid()) @db.Uuid
-  reservation_module_id     String     @db.Uuid
-  reservation_module        reservation_module   @relation(fields: [reservation_module_id], references: [reservation_module_id])
-  assignments       service_assignment[]
-  schedules         schedule_employee[]
-  bookings          booking[]
-  first_name        String?
-  last_name         String?
-  email             String?
-  telephone         String?
-  telephone_code    String?
-  telephone_number  String?
-  business_users_id        String?   @db.Uuid @unique // Optional link to user account
-  business_user            business_users?     @relation(fields: [business_users_id], references: [business_users_id])
-  created_at        DateTime  @default(now())
-  deleted_at        DateTime? @db.Timestamptz
-  schedule_slots schedule_slot[]
+  employee_id           String               @id @default(uuid()) @db.Uuid
+  reservation_module_id String               @db.Uuid
+  reservation_module    reservation_module   @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  assignments           service_assignment[]
+  schedules             schedule_employee[]
+  bookings              booking[]
+  first_name            String?
+  last_name             String?
+  email                 String?
+  telephone             String?
+  telephone_code        String?
+  telephone_number      String?
+  business_users_id     String?              @unique @db.Uuid // Optional link to user account
+  business_user         business_users?      @relation(fields: [business_users_id], references: [business_users_id])
+  created_at            DateTime             @default(now())
+  deleted_at            DateTime?            @db.Timestamptz
+  schedule_slots        schedule_slot[]
 }
 
 model customers {
-  customer_id     String    @id @default(uuid()) @db.Uuid
-  reservation_module_id     String    @db.Uuid
-  first_name      String
-  last_name       String
-  email           String?   
-  telephone       String? 
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
-  
-  reservation_module        reservation_module   @relation(fields: [reservation_module_id], references: [reservation_module_id])
-  bookings         booking[]
-  user_id        String?   @db.Uuid // Optional link to user account
-  user            users? @relation(fields: [user_id], references: [user_id])
+  customer_id           String   @id @default(uuid()) @db.Uuid
+  reservation_module_id String   @db.Uuid
+  first_name            String
+  last_name             String
+  email                 String?
+  telephone             String?
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+
+  reservation_module reservation_module @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  bookings           booking[]
+  user_id            String?            @db.Uuid // Optional link to user account
+  user               users?             @relation(fields: [user_id], references: [user_id])
 
   @@unique([reservation_module_id, email], name: "unique_customer_email")
   @@unique([reservation_module_id, telephone], name: "unique_customer_telephone")
 }
+
 model service_assignment {
   employee_id String @db.Uuid
   service_id  String @db.Uuid
 
-  employee    employee @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
-  service     service  @relation(fields: [service_id], references: [service_id])
+  employee employee @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
+  service  service  @relation(fields: [service_id], references: [service_id])
 
   @@id([employee_id, service_id])
 }
 
 model schedule {
-  schedule_id   String   @id @default(uuid()) @db.Uuid
-  location_id   String   @db.Uuid
+  schedule_id        String              @id @default(uuid()) @db.Uuid
+  location_id        String              @db.Uuid
   //employee_id   String?  @db.Uuid
-  name          String
-  color         String?
-  start_date   DateTime  // Start date of the schedule, e.g. 2023-10-01T00:00:00Z
-  end_date     DateTime  // End date of the schedule, e.g. 202
-  location      location @relation(fields: [location_id], references: [location_id])
+  name               String
+  color              String?
+  start_date         DateTime // Start date of the schedule, e.g. 2023-10-01T00:00:00Z
+  end_date           DateTime // End date of the schedule, e.g. 202
+  location           location            @relation(fields: [location_id], references: [location_id])
   //employee      employee? @relation(fields: [employee_id], references: [employee_id])
   schedule_employees schedule_employee[]
-  schedule_slots schedule_slot[]
+  schedule_slots     schedule_slot[]
 }
 
 model schedule_employee {
-  schedule_employee_id String   @id @default(uuid()) @db.Uuid
-  schedule_id   String   @db.Uuid
-  employee_id   String   @db.Uuid
+  schedule_employee_id String @id @default(uuid()) @db.Uuid
+  schedule_id          String @db.Uuid
+  employee_id          String @db.Uuid
 
-  schedule      schedule @relation(fields: [schedule_id], references: [schedule_id])
-  employee      employee @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
+  schedule       schedule        @relation(fields: [schedule_id], references: [schedule_id])
+  employee       employee        @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
   schedule_slots schedule_slot[]
 }
 
 model schedule_slot {
-  schedule_slot_id String   @id @default(uuid()) @db.Uuid
-  schedule_id   String   @db.Uuid
+  schedule_slot_id     String   @id @default(uuid()) @db.Uuid
+  schedule_id          String   @db.Uuid
   schedule_employee_id String   @db.Uuid
-  employee_id   String   @db.Uuid
-  date           DateTime // Date of the slot, e.g. 2023-10-01T09:00:00Z
-  start_time      DateTime
-  end_time        DateTime
+  employee_id          String   @db.Uuid
+  date                 DateTime // Date of the slot, e.g. 2023-10-01T09:00:00Z
+  start_time           DateTime
+  end_time             DateTime
 
-  booking_slots booking_slots[]
-  schedule      schedule @relation(fields: [schedule_id], references: [schedule_id], onDelete: Cascade)
-  schedule_employee schedule_employee @relation(fields: [schedule_employee_id], references: [schedule_employee_id])
-  employee employee @relation(fields: [employee_id], references: [employee_id])
+  booking_slots            booking_slots[]
+  schedule                 schedule                   @relation(fields: [schedule_id], references: [schedule_id], onDelete: Cascade)
+  schedule_employee        schedule_employee          @relation(fields: [schedule_employee_id], references: [schedule_employee_id])
+  employee                 employee                   @relation(fields: [employee_id], references: [employee_id])
   // schedule_id and employee_id are combined in schedule_employee
   // to allow multiple employees to share the same schedule slot
   schedule_slot_exceptions schedule_slot_exceptions[]
+
   @@unique([schedule_id, schedule_employee_id, date], name: "unique_schedule_slot")
-  
 }
+
 enum SCHEDULE_SLOT_EXCEPTION_TYPE {
   vacation
   location_closed
@@ -181,64 +183,65 @@ enum SCHEDULE_SLOT_EXCEPTION_TYPE {
   break
   lunch
 }
+
 model schedule_slot_exceptions {
-  schedule_slot_exception_id String   @id @default(uuid()) @db.Uuid
-  schedule_slot_id String   @db.Uuid
-  date           DateTime // Date of the exception, e.g. 2023-10-01T09:00:00Z
-  start_time      DateTime // Start time of the exception, e.g. 2023-10-01T09:00:00Z
-  end_time        DateTime // End time of the exception, e.g. 2023-10-01T10:00:00Z
-  reason          String? // Reason for the exception, e.g. "Vacation", "Location closed"
-  type SCHEDULE_SLOT_EXCEPTION_TYPE
-  schedule_slot    schedule_slot @relation(fields: [schedule_slot_id], references: [schedule_slot_id], onDelete: Cascade)
+  schedule_slot_exception_id String                       @id @default(uuid()) @db.Uuid
+  schedule_slot_id           String                       @db.Uuid
+  date                       DateTime // Date of the exception, e.g. 2023-10-01T09:00:00Z
+  start_time                 DateTime // Start time of the exception, e.g. 2023-10-01T09:00:00Z
+  end_time                   DateTime // End time of the exception, e.g. 2023-10-01T10:00:00Z
+  reason                     String? // Reason for the exception, e.g. "Vacation", "Location closed"
+  type                       SCHEDULE_SLOT_EXCEPTION_TYPE
+  schedule_slot              schedule_slot                @relation(fields: [schedule_slot_id], references: [schedule_slot_id], onDelete: Cascade)
+
   @@unique([schedule_slot_id, date, start_time, end_time, type], name: "unique_schedule_slot")
 }
+
 model booking_slots {
-  booking_slot_id String   @id @default(uuid()) @db.Uuid
-  schedule_slot_id String   @db.Uuid
+  booking_slot_id  String @id @default(uuid()) @db.Uuid
+  schedule_slot_id String @db.Uuid
 
-  schedule_slot    schedule_slot @relation(fields: [schedule_slot_id], references: [schedule_slot_id], onDelete: Cascade)
-  start_time      DateTime // Start time of the booking slot, e.g. 2023-10-01T09:00:00Z
-  end_time        DateTime // End time of the booking slot, e.g. 2023-10-01T10:00:00Z
-
-
+  schedule_slot schedule_slot @relation(fields: [schedule_slot_id], references: [schedule_slot_id], onDelete: Cascade)
+  start_time    DateTime // Start time of the booking slot, e.g. 2023-10-01T09:00:00Z
+  end_time      DateTime // End time of the booking slot, e.g. 2023-10-01T10:00:00Z
 }
+
 model booking {
-  booking_id      String    @id @default(uuid()) @db.Uuid
-  customer_id     String    @db.Uuid
-  reservation_module_id     String    @db.Uuid
-  location_id     String?   @db.Uuid
-  status          BOOKING_STATUS
-  service_id        String @db.Uuid      // serviceId[], quantities, etc
-  comment         String?
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
-  price_cents     Int?
-  start_time      DateTime? // Start time of the booking, e.g. 2023-10-01T09:00:00Z
-  end_time        DateTime? // End time of the booking, e.g. 2023-10-01T10:00:00Z - calculated from start time + service duration
-  assigned_employee_id String? @db.Uuid
-  parent_booking_id String? @db.Uuid // For rescheduled bookings
-  parent_booking   booking? @relation("RescheduledBooking", fields: [parent_booking_id], references: [booking_id])
-  child_bookings booking[] @relation("RescheduledBooking")
-  reservation_module        reservation_module  @relation(fields: [reservation_module_id], references: [reservation_module_id])
-  location        location? @relation(fields: [location_id], references: [location_id])
-  employee        employee? @relation(fields: [assigned_employee_id], references: [employee_id], onDelete: SetNull)
-  service        service? @relation(fields: [service_id], references: [service_id])
-  customer      customers @relation(fields: [customer_id], references: [customer_id])
-  booking_history_log booking_history_log[]
+  booking_id            String                @id @default(uuid()) @db.Uuid
+  customer_id           String                @db.Uuid
+  reservation_module_id String                @db.Uuid
+  location_id           String?               @db.Uuid
+  status                BOOKING_STATUS
+  service_id            String                @db.Uuid // serviceId[], quantities, etc
+  comment               String?
+  created_at            DateTime              @default(now())
+  updated_at            DateTime              @updatedAt
+  price_cents           Int?
+  start_time            DateTime? // Start time of the booking, e.g. 2023-10-01T09:00:00Z
+  end_time              DateTime? // End time of the booking, e.g. 2023-10-01T10:00:00Z - calculated from start time + service duration
+  assigned_employee_id  String?               @db.Uuid
+  parent_booking_id     String?               @db.Uuid // For rescheduled bookings
+  parent_booking        booking?              @relation("RescheduledBooking", fields: [parent_booking_id], references: [booking_id])
+  child_bookings        booking[]             @relation("RescheduledBooking")
+  reservation_module    reservation_module    @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  location              location?             @relation(fields: [location_id], references: [location_id])
+  employee              employee?             @relation(fields: [assigned_employee_id], references: [employee_id], onDelete: SetNull)
+  service               service?              @relation(fields: [service_id], references: [service_id])
+  customer              customers             @relation(fields: [customer_id], references: [customer_id])
+  booking_history_log   booking_history_log[]
 }
 
 model booking_history_log {
-  booking_history_id String   @id @default(uuid()) @db.Uuid
-  booking_id         String   @db.Uuid
+  booking_history_id String         @id @default(uuid()) @db.Uuid
+  booking_id         String         @db.Uuid
   status             BOOKING_STATUS
   comment            String?
   type               String? // e.g. "created", "updated", "cancelled", "no_show"
-  title             String? // e.g. "Booking Created", "Booking Updated", "Booking Cancelled", "No Show"
-  description       String? // e.g. "Booking created by user", "Booking updated by
-  created_at         DateTime @default(now())
-  updated_at         DateTime @updatedAt
-  user_id           String?  @db.Uuid // Optional link to user account
-  user              users? @relation(fields: [user_id], references: [user_id])
-  booking            booking  @relation(fields: [booking_id], references: [booking_id])
+  title              String? // e.g. "Booking Created", "Booking Updated", "Booking Cancelled", "No Show"
+  description        String? // e.g. "Booking created by user", "Booking updated by
+  created_at         DateTime       @default(now())
+  updated_at         DateTime       @updatedAt
+  user_id            String?        @db.Uuid // Optional link to user account
+  user               users?         @relation(fields: [user_id], references: [user_id])
+  booking            booking        @relation(fields: [booking_id], references: [booking_id])
 }
-
