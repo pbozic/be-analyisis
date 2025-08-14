@@ -911,7 +911,7 @@ async function createOrder(req, res) {
 		if (orderData.type === ORDER_TYPE.TRANSFER_PRIVATE) {
 			const { route, preferences } = orderData;
 			let { price } = await TaxiHelper.calculateTransferRidePrice(route, preferences.vehicle_category);
-			if (price !== orderData.payment.price) {
+			if (price > 25 && price !== orderData.payment.price) {
 				console.error(`Price mismatch, got ${orderData.payment.price}, calculated ${price}`);
 				return res.status(400).json({ error: 'Price mismatch' });
 			}

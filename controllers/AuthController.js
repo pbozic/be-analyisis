@@ -1438,6 +1438,38 @@ async function checkTelephoneAvailability(req, res) {
 	}
 }
 
+async function authenticateRegistrationSession(req, res) {
+	try {
+		if (!req.user) {
+			return res.status(400).json({ error: 'User not authenticated.' });
+		}
+
+		const { email, password } = req.body;
+		if (!email || !password) {
+			return res.status(400).json({ error: 'Email and password are required.' });
+		}
+
+		const user = await UserDao.getUserByEmailOrTelephone(email.toLowerCase(), {
+			select: { user_id: true, password: true },
+		});
+
+		if (!user) {
+			return res.status(400).json({ error: 'Wrong email / password combination.' });
+		}
+		const correctPw = await bcrypt.compare(password, user.password);
+		if (!correctPw) {
+			return res.status(400).json({ error: 'Wrong email / password combination.' });
+		}
+
+		const token = await TokenDao.generateRegistrationSessionToken(user);
+
+		return res.status(200).json({ token });
+	} catch (err) {
+		console.error('Error authenticating registration session:', err);
+		return res.status(500).json({ error: 'Internal server error.' });
+	}
+}
+
 export { login };
 export { register };
 export { refreshToken };
@@ -1454,6 +1486,7 @@ export { updateScheduledUser };
 export { getMunicipalitiesWithLicenseRequirements };
 export { checkEmailAvailability };
 export { checkTelephoneAvailability };
+export { authenticateRegistrationSession };
 export default {
 	login,
 	register,
@@ -1472,4 +1505,5 @@ export default {
 	getMunicipalitiesWithLicenseRequirements,
 	checkEmailAvailability,
 	checkTelephoneAvailability,
+	authenticateRegistrationSession,
 };

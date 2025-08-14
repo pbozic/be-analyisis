@@ -1,5 +1,7 @@
 import crypto from 'crypto';
 
+import { TokenType } from '@prisma/client';
+
 import prisma from '../prisma/prisma.js';
 async function getPasswordToken(token) {
 	try {
@@ -119,6 +121,15 @@ async function generatePaswordResetToken(user) {
 	//TODO: send email
 	return token;
 }
+async function generateRegistrationSessionToken(user) {
+	let tokenObj = {
+		user_id: user.user_id,
+		token: crypto.randomBytes(20).toString('hex'),
+		type: TokenType.BUSINESS_REGISTRATION,
+		expires_at: new Date(Date.now() + 600000), // 10 minutes from now
+	};
+	return await prisma.tokens.create({ data: tokenObj });
+}
 export { getActiveSMSToken };
 export { saveSMSToken };
 export { updateToken };
@@ -126,6 +137,7 @@ export { savePasswordResetToken };
 export { generateSMSVerificationToken };
 export { generatePaswordResetToken };
 export { getPasswordToken };
+export { generateRegistrationSessionToken };
 export default {
 	getActiveSMSToken,
 	saveSMSToken,
@@ -134,4 +146,5 @@ export default {
 	generateSMSVerificationToken,
 	generatePaswordResetToken,
 	getPasswordToken,
+	generateRegistrationSessionToken,
 };
