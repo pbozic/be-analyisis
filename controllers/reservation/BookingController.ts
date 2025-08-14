@@ -120,7 +120,9 @@ export async function createBooking(req: ValidatedRequest<CreateBookingInput>, r
 			console.error('Cleanup after partial failure failed:', cleanupErr);
 		}
 		console.error('Error creating booking(s):', error);
-		res.status(500).json({ message: 'Error creating booking(s)', error });
+		res.status(500).json({
+			message: error instanceof Error ? error.message : 'Unknown error',
+		});
 	}
 }
 
