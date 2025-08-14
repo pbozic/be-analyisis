@@ -9,7 +9,7 @@ import type {
 	ListBookingsParams,
 	CreateBookingSingleInput,
 } from '../../types/reservation/Booking.ts'; // <-- adjust path if different
-import { isBookingSlotAvailable } from '../../lib/bookingHelpers.ts';
+import { isBookingSlotAvailable, isEmployeeScheduledForWindow } from '../../lib/bookingHelpers.ts';
 /**
  * Narrow and rethrow Prisma errors with a consistent message prefix.
  * Logs useful context for known Prisma error types.
@@ -153,12 +153,18 @@ async function createBookingTx(tx: Prisma.TransactionClient, input: CreateBookin
 	// employee double-booking guard
 	const ok = await isBookingSlotAvailable(tx, {
 		reservation_module_id: input.reservation_module_id,
-		assigned_employee_id: input.assigned_employee_id ?? null,
+		employee_id: input.assigned_employee_id ?? null,
 		start_time: input.start_time ?? null,
 		end_time: input.end_time ?? null,
 	});
 	if (!ok) throw new Error('Booking slot already taken');
-
+	const schedule = isEmployeeScheduledForWindow(tx, {
+		reservation_module_id: input.reservation_module_id,
+		employee_id: input.assigned_employee_id ?? null,
+		start_time: input.start_time ? new Date(input.start_time) : null,
+		end_time: input.end_time ? new Date(input.end_time) : null,
+	});
+	if (!schedule) throw new Error('Employee is not scheduled for the selected time');
 	const created = await tx.booking.create({
 		data: {
 			status: BOOKING_STATUS.reserved,
@@ -284,7 +290,7 @@ export async function updateBooking(input: UpdateBookingInput, booking_id: strin
 				start_time: input.start_time ? new Date(input.start_time) : null,
 				end_time: input.end_time ? new Date(input.end_time) : null,
 				location_id: input.location_id ?? undefined,
-				assigned_employee_id: input.assigned_employee_id ?? undefined,
+				employee_id: input.assigned_employee_id ?? undefined,
 			});
 			if (!isAvailable) {
 				throw new Error('Booking slot is not available for the selected time and resources');

@@ -11,7 +11,9 @@ import {
 	CreateBookingInput,
 	CreateBookingSingleInput,
 } from '../../types/reservation/Booking.ts';
+import { Employee } from '../../types/reservation/Employee.ts';
 import { findSlots } from '../../lib/bookingHelpers.ts';
+import prisma from '../../prisma/prisma.js';
 
 /**
  * POST /bookings/list
@@ -78,6 +80,21 @@ export async function getBooking(req: ValidatedRequest<null, { booking_id: strin
 export async function createBooking(req: ValidatedRequest<CreateBookingInput>, res: Response): Promise<void> {
 	const { service_ids, ...base } = req.body;
 	const reservation_module_id = req.user?.reservation_module_id ?? base.reservation_module_id;
+	let user_id = req.user?.user_id;
+	let reservation_module = await prisma.reservation_module.findUnique({
+		where: { id: reservation_module_id },
+		include: {
+			employees: {
+				include: {
+					business_user: true,
+				},
+			},
+		},
+	});
+	let isEmployeeOfModule = false;
+	if (reservation_module && user_id) {
+		isEmployeeOfModule = reservation_module.employees.some((e: Employee) => e.business_user?.user_id === user_id);
+	}
 
 	// map to DAO’s single-service input
 	const inputs = service_ids.map((sid) => ({
