@@ -366,7 +366,7 @@ export async function isEmployeeScheduledForWindow(
 		},
 		orderBy: { start_time: 'asc' },
 	});
-
+	console.log('Found schedule slots:', slots.length);
 	if (slots.length === 0) return false;
 
 	for (const slot of slots) {
@@ -383,6 +383,7 @@ export async function isEmployeeScheduledForWindow(
 			const xet = new Date(ex.end_time);
 			return st < xet && et > xst;
 		});
+		console.log('Blocked by exception:', blockedByException);
 		if (blockedByException) continue;
 
 		// Booking windows: if none defined, allow whole slot;
@@ -394,6 +395,7 @@ export async function isEmployeeScheduledForWindow(
 			const bet = new Date(bs.end_time);
 			return st >= bst && et <= bet;
 		});
+		console.log('Inside booking window:', insideBookingWindow);
 
 		if (insideBookingWindow) return true;
 	}
