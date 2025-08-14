@@ -16,7 +16,6 @@ import {
 	createDocument,
 	linkDocumentToDriver,
 	linkDocumentToUser,
-	linkDocumentToVehicle,
 } from '../dao/Document.js';
 import { updateFileInDocument, addFileToDocument } from '../dao/File.js';
 import FileDao from '../dao/File.js';
@@ -29,7 +28,6 @@ import {
 	ACTIVITY_TYPE,
 	TAXI_ORDER_AUTO_UPDATE_STATUS_DISTANCE,
 } from '../lib/constants.js';
-import { createNewVehicle } from '../dao/Vehicle.js';
 import { calculateTotalEarnings, calculateDriversEarnings, calculateDistance } from '../lib/helpersLib.js';
 import deliveryHelpers from '../lib/deliveryHelpers.js';
 import stripe from '../lib/stripe.js';
@@ -117,9 +115,20 @@ async function listOnlineDrivers(req, res) {
 		res.status(400).json({ error: 'Error listing online drivers', detail: error.message });
 	}
 }
+/**
+ * GET /drivers/available
+ * @tag Drivers
+ * @summary Get available drivers
+ * @description Returns a list of available drivers based on the specified type.
+ * @operationId getAvailableDrivers
+ * @response 200 - Successful operation, returns a list of available drivers
+ * @responseContent {Driver[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the available drivers list
+ */
 async function getAvailableDrivers(req, res) {
+	const { type } = req.query;
 	try {
-		const drivers = await DriverDao.getAvailableDrivers();
+		const drivers = await DriverDao.getAvailableDrivers(type);
 		res.status(200).json(drivers);
 	} catch (error) {
 		console.error('Error getting available drivers:', error);
