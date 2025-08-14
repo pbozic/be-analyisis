@@ -124,11 +124,11 @@ async function generatePaswordResetToken(user) {
 async function generateRegistrationSessionToken(user) {
 	let tokenObj = {
 		user_id: user.user_id,
-		token: (Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000).toString(),
+		token: crypto.randomBytes(20).toString('hex'),
 		type: TokenType.BUSINESS_REGISTRATION,
 		expires_at: new Date(Date.now() + 600000), // 10 minutes from now
 	};
-	return await prisma.tokens.create(tokenObj);
+	return await prisma.tokens.create({ data: tokenObj });
 }
 export { getActiveSMSToken };
 export { saveSMSToken };
