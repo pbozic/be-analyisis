@@ -125,7 +125,11 @@ async function resolveOrCreateCustomer(
 
 	return created.customer_id;
 }
-async function createBookingTx(tx: Prisma.TransactionClient, input: CreateBookingSingleInput): Promise<Booking> {
+async function createBookingTx(
+	tx: Prisma.TransactionClient,
+	input: CreateBookingSingleInput,
+	opts: { validateSchedule: boolean }
+): Promise<Booking> {
 	const tel = composeTelephone(input);
 
 	// guard module
@@ -158,12 +162,15 @@ async function createBookingTx(tx: Prisma.TransactionClient, input: CreateBookin
 		end_time: input.end_time ?? null,
 	});
 	if (!ok) throw new Error('Booking slot already taken');
-	const schedule = isEmployeeScheduledForWindow(tx, {
-		reservation_module_id: input.reservation_module_id,
-		employee_id: input.employee_id ?? null,
-		start_time: input.start_time ? new Date(input.start_time) : null,
-		end_time: input.end_time ? new Date(input.end_time) : null,
-	});
+	let schedule = true;
+	if (opts.validateSchedule) {
+		schedule = await isEmployeeScheduledForWindow(tx, {
+			reservation_module_id: input.reservation_module_id,
+			employee_id: input.employee_id ?? null,
+			start_time: input.start_time ? new Date(input.start_time) : null,
+			end_time: input.end_time ? new Date(input.end_time) : null,
+		});
+	}
 	if (!schedule) throw new Error('Employee is not scheduled for the selected time');
 	const created = await tx.booking.create({
 		data: {
@@ -197,24 +204,37 @@ async function createBookingTx(tx: Prisma.TransactionClient, input: CreateBookin
 }
 
 // 2) Public: single create (kept for callers that need 1 booking)
-export async function createBooking(input: CreateBookingSingleInput): Promise<Booking> {
-	return prisma.$transaction((tx: Prisma.TransactionClient) => createBookingTx(tx, input));
+export async function createBooking(
+	input: CreateBookingSingleInput,
+	opts: { validateSchedule?: boolean } = {}
+): Promise<Booking> {
+	return prisma.$transaction((tx: Prisma.TransactionClient) =>
+		createBookingTx(tx, input, { validateSchedule: !!opts.validateSchedule })
+	);
 }
 
 // 3) Public: group create (parent + children) atomically
-export async function createBookingGroup(inputs: CreateBookingSingleInput[]): Promise<Booking[]> {
+export async function createBookingGroup(
+	inputs: CreateBookingSingleInput[],
+	opts: { validateSchedule?: boolean } = {}
+): Promise<Booking[]> {
 	if (!inputs.length) throw new Error('No services to create');
+	const validateSchedule = !!opts.validateSchedule;
 	return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 		const created: Booking[] = [];
 		// parent
-		const parent = await createBookingTx(tx, inputs[0] as CreateBookingSingleInput);
+		const parent = await createBookingTx(tx, inputs[0] as CreateBookingSingleInput, { validateSchedule });
 		created.push(parent);
 		// children
 		for (let i = 1; i < inputs.length; i++) {
-			const child = await createBookingTx(tx, {
-				...inputs[i],
-				parent_booking_id: parent.booking_id,
-			} as CreateBookingSingleInput);
+			const child = await createBookingTx(
+				tx,
+				{
+					...inputs[i],
+					parent_booking_id: parent.booking_id,
+				} as CreateBookingSingleInput,
+				{ validateSchedule }
+			);
 			created.push(child);
 		}
 		return created;
