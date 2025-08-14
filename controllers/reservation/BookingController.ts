@@ -82,7 +82,7 @@ export async function createBooking(req: ValidatedRequest<CreateBookingInput>, r
 	const reservation_module_id = req.user?.reservation_module_id ?? base.reservation_module_id;
 	let user_id = req.user?.user_id;
 	let reservation_module = await prisma.reservation_module.findUnique({
-		where: { id: reservation_module_id },
+		where: { reservation_module_id: reservation_module_id },
 		include: {
 			employees: {
 				include: {
