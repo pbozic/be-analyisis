@@ -111,7 +111,10 @@ export async function createBooking(req: ValidatedRequest<CreateBookingInput>, r
 		res.status(201).json({ parent: all[0], children: all.slice(1), all });
 	} catch (error) {
 		console.error('Error creating booking group:', error);
-		res.status(500).json({ message: 'Error creating booking(s)', error });
+		res.status(500).json({
+			message: error instanceof Error ? error.message : 'Error creating booking group',
+			error,
+		});
 	}
 }
 

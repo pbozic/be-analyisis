@@ -369,7 +369,9 @@ export async function isEmployeeScheduledForWindow(
 		},
 		orderBy: { start_time: 'asc' },
 	});
+	console.log('Found schedule slots:', slots.length);
 
+	if (slots.length === 0) return false; // no schedule slots for that employee
 	// We require: [st, et] fully contained within one schedule slot,
 	// not overlapped by an exception, and (optionally) inside one booking_slot window.
 	for (const slot of slots) {
@@ -384,6 +386,8 @@ export async function isEmployeeScheduledForWindow(
 			const xet = new Date(ex.end_time);
 			return st < xet && et > xst;
 		});
+		// if any exception overlaps, we cannot book this slot
+		console.log('Blocked by exception:', blockedByException);
 		if (blockedByException) continue;
 
 		// booking windows: require containment in at least one booking_slot
@@ -394,7 +398,7 @@ export async function isEmployeeScheduledForWindow(
 			const bet = new Date(bs.end_time);
 			return st >= bst && et <= bet;
 		});
-
+		console.log('Inside booking window:', insideBookingWindow);
 		if (insideBookingWindow) return true;
 	}
 
