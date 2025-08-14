@@ -14,7 +14,7 @@ ALTER TYPE "MODULE_TYPE" ADD VALUE 'crm';
 ALTER TYPE "MODULE_TYPE" ADD VALUE 'taxi';
 
 -- AlterTable
-ALTER TABLE "reservation_module" ADD COLUMN     "subscription_expires_at" TIMESTAMP(3);
+ALTER TABLE "reservation_module" ADD COLUMN     "subscription_exires_at" TIMESTAMP(3);
 
 -- CreateTable
 CREATE TABLE "role" (
