@@ -276,7 +276,20 @@ export async function updateBooking(input: UpdateBookingInput, booking_id: strin
 					});
 				}
 			}
+			let isAvailable = await isBookingSlotAvailable(tx, {
+				reservation_module_id: input.reservation_module_id as string,
+				start_time: input.start_time ? new Date(input.start_time) : null,
+				end_time: input.end_time ? new Date(input.end_time) : null,
+				location_id: input.location_id ?? undefined,
+				assigned_employee_id: input.assigned_employee_id ?? undefined,
+			});
+			if (!isAvailable) {
+				throw new Error('Booking slot is not available for the selected time and resources');
+			}
 
+			// Update booking with new data
+			// Note: we use `?? undefined` to avoid sending nulls to Prisma
+			// which would overwrite existing values with null.
 			const updated = await tx.booking.update({
 				where: { booking_id: booking_id },
 				data: {
