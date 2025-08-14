@@ -619,7 +619,6 @@ async function buildOrder(cleanOrderData, userId, parentOrderId, driverId, busin
 }
 async function requestTransferOrderPrice(req, res) {
 	try {
-		//TODO: update to use route
 		const { route, vehicle_category } = req.body;
 		let priceData = await TaxiHelper.calculateTransferRidePrice(route, vehicle_category);
 		res.status(200).json(priceData);
