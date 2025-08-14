@@ -460,57 +460,57 @@ let languages = {
 	},
 };
 let CATEGORIES_FULL = {
-	fastFood: { key: 'fastFood', tag: 'fast-food', source: './icons/fast-food.png', name: 'Fast food' },
-	pizza: { key: 'pizza', tag: 'pizza', source: './icons/pizza.png', name: 'Pizza' },
-	burger: { key: 'burger', tag: 'burger', source: './icons/burger.png', name: 'Burger' },
-	salads: { key: 'salads', tag: 'salads', source: './icons/salads.png', name: 'Salads' },
-	soups: { key: 'soups', tag: 'soups', source: './icons/ladle.png', name: 'Soups' },
-	vegetarian: { key: 'vegetarian', tag: 'vegetarian', source: './icons/vegetarian.png', name: 'Vegetarian' },
-	vegan: { key: 'vegan', tag: 'vegan', source: './icons/vegan-2.png', name: 'Vegan' },
-	bakery: { key: 'bakery', tag: 'bakery', source: './icons/bakery.png', name: 'Bakeries' },
-	sandwiches: { key: 'sandwiches', tag: 'sandwiches', source: './icons/sandwich.png', name: 'Sandwiches' },
-	bbq: { key: 'bbq', tag: 'bbq', source: './icons/bbq.png', name: 'BBQ' },
-	steak: { key: 'steak', tag: 'steak', source: './icons/meat.png', name: 'Steak' },
-	chicken: { key: 'chicken', tag: 'chicken', source: './icons/chicken.png', name: 'Chicken' },
-	kebab: { key: 'kebab', tag: 'kebab', source: './icons/kebab.png', name: 'Kebab' },
-	fish: { key: 'fish', tag: 'fish', source: './icons/fish.png', name: 'Fish' },
-	sushi: { key: 'sushi', tag: 'sushi', source: './icons/sushi.png', name: 'Sushi' },
-	bowl: { key: 'bowl', tag: 'bowl', source: './icons/poke-bowl.png', name: 'Poke bowl' },
-	seafood: { key: 'seafood', tag: 'seafood', source: './icons/seafood.png', name: 'Seafood' },
-	risotto: { key: 'risotto', tag: 'risotto', source: './icons/risotto.png', name: 'Risotto' },
-	italian: { key: 'italian', tag: 'italian', source: './icons/italian.png', name: 'Italian' },
-	mexican: { key: 'mexican', tag: 'mexican', source: './icons/mexican.png', name: 'Mexican' },
-	chinese: { key: 'chinese', tag: 'chinese', source: './icons/chinese.png', name: 'Chinese' },
-	japanese: { key: 'japanese', tag: 'japanese', source: './icons/japanese-food.png', name: 'Japanese' },
-	thai: { key: 'thai', tag: 'thai', source: './icons/thai.png', name: 'Thai' },
-	korean: { key: 'korean', tag: 'korean', source: './icons/korean.png', name: 'Korean' },
-	indian: { key: 'indian', tag: 'indian', source: './icons/indian.png', name: 'Indian' },
-	arabic: { key: 'arabic', tag: 'arabic', source: './icons/arabic.png', name: 'Arabic' },
-	kosher: { key: 'kosher', tag: 'kosher', source: './icons/kosher.png', name: 'Kosher' },
-	halal: { key: 'halal', tag: 'halal', source: './icons/halal.png', name: 'Halal' },
-	breakfast: { key: 'breakfast', tag: 'breakfast', source: './icons/breakfast.png', name: 'Breakfast' },
-	lunch: { key: 'lunch', tag: 'lunch', source: './icons/dish.png', name: 'Lunch' },
+	fastFood: { key: 'fastFood', tag: 'fast-food', source: './categoryIcons/restaurantIcons/fast-food.png', name: 'Fast food' },
+	pizza: { key: 'pizza', tag: 'pizza', source: './categoryIcons/restaurantIcons/pizza-1.png', name: 'Pizza' },
+	burger: { key: 'burger', tag: 'burger', source: './categoryIcons/restaurantIcons/hamburger-1.png', name: 'Burger' },
+	salads: { key: 'salads', tag: 'salads', source: './categoryIcons/restaurantIcons/salad.png', name: 'Salads' },
+	soups: { key: 'soups', tag: 'soups', source: './categoryIcons/restaurantIcons/ladlle.png', name: 'Soups' }, //TODO: fix icon
+	vegetarian: { key: 'vegetarian', tag: 'vegetarian', source: './categoryIcons/restaurantIcons/vegetarian-1.png', name: 'Vegetarian' },
+	vegan: { key: 'vegan', tag: 'vegan', source: './categoryIcons/restaurantIcons/vegan-1.png', name: 'Vegan' },
+	bakery: { key: 'bakery', tag: 'bakery', source: './categoryIcons/restaurantIcons/bakery-1.png', name: 'Bakeries' },
+	sandwiches: { key: 'sandwiches', tag: 'sandwiches', source: './categoryIcons/restaurantIcons/sandwich.png', name: 'Sandwiches' },
+	bbq: { key: 'bbq', tag: 'bbq', source: './categoryIcons/restaurantIcons/bbq-1.png', name: 'BBQ' },
+	steak: { key: 'steak', tag: 'steak', source: './categoryIcons/restaurantIcons/steak-1.png', name: 'Steak' },
+	chicken: { key: 'chicken', tag: 'chicken', source: './categoryIcons/restaurantIcons/chicken-1.png', name: 'Chicken' },
+	kebab: { key: 'kebab', tag: 'kebab', source: './categoryIcons/restaurantIcons/kebab.png', name: 'Kebab' },
+	fish: { key: 'fish', tag: 'fish', source: './categoryIcons/restaurantIcons/fish-1.png', name: 'Fish' },
+	sushi: { key: 'sushi', tag: 'sushi', source: './categoryIcons/restaurantIcons/sushi-1.png', name: 'Sushi' },
+	bowl: { key: 'bowl', tag: 'bowl', source: './categoryIcons/restaurantIcons/bowl-1.png', name: 'Poke bowl' },
+	seafood: { key: 'seafood', tag: 'seafood', source: './categoryIcons/restaurantIcons/seafood-1.png', name: 'Seafood' },
+	risotto: { key: 'risotto', tag: 'risotto', source: './categoryIcons/restaurantIcons/risotto-1.png', name: 'Risotto' },
+	italian: { key: 'italian', tag: 'italian', source: './categoryIcons/restaurantIcons/italian-1.png', name: 'Italian' },
+	mexican: { key: 'mexican', tag: 'mexican', source: './categoryIcons/restaurantIcons/mexican-1.png', name: 'Mexican' },
+	chinese: { key: 'chinese', tag: 'chinese', source: './categoryIcons/restaurantIcons/chinese-1.png', name: 'Chinese' },
+	japanese: { key: 'japanese', tag: 'japanese', source: './categoryIcons/restaurantIcons/japanese-1.png', name: 'Japanese' },
+	thai: { key: 'thai', tag: 'thai', source: './categoryIcons/restaurantIcons/thai-1.png', name: 'Thai' },
+	korean: { key: 'korean', tag: 'korean', source: './categoryIcons/restaurantIcons/korean-1.png', name: 'Korean' },
+	indian: { key: 'indian', tag: 'indian', source: './categoryIcons/restaurantIcons/indian-1.png', name: 'Indian' },
+	arabic: { key: 'arabic', tag: 'arabic', source: './categoryIcons/restaurantIcons/arabic-1.png', name: 'Arabic' },
+	kosher: { key: 'kosher', tag: 'kosher', source: './categoryIcons/restaurantIcons/kosher-1.png', name: 'Kosher' },
+	halal: { key: 'halal', tag: 'halal', source: './categoryIcons/restaurantIcons/halal-1.png', name: 'Halal' },
+	breakfast: { key: 'breakfast', tag: 'breakfast', source: './categoryIcons/restaurantIcons/breakfast-1.png', name: 'Breakfast' },
+	lunch: { key: 'lunch', tag: 'lunch', source: './categoryIcons/restaurantIcons/dish.png', name: 'Lunch' }, //TODO: fix icon
 	gourmetCuisine: {
 		key: 'gourmetCuisine',
 		tag: 'gourmet-cuisine',
-		source: './icons/fine-dining.png',
+		source: './categoryIcons/restaurantIcons/gourmet.png',
 		name: 'Fine dining',
 	},
-	traditional: { key: 'traditional', tag: 'traditional', source: './icons/traditional.png', name: 'Traditional' },
-	healthy: { key: 'healthy', tag: 'healthy', source: './icons/healthy-food.png', name: 'Healthy' },
-	snacksExtras: { key: 'snacksExtras', tag: 'extras', source: './icons/snacks_extras.png', name: 'Snacks & extras' },
-	desserts: { key: 'desserts', tag: 'desserts', source: './icons/dessert.png', name: 'Desserts' },
-	iceCream: { key: 'iceCream', tag: 'ice-cream', source: './icons/ice-cream.png', name: 'Ice cream' },
-	hotDrinks: { key: 'hotDrinks', tag: 'hot-drinks', source: './icons/hot-drinks.png', name: 'Coffee & Tea' },
-	pubs: { key: 'pubs', tag: 'pubs', source: './icons/pub.png', name: 'Pubs' },
-	wine: { key: 'wine', tag: 'wine', source: './icons/wine.png', name: 'Wine' },
-	cocktail: { key: 'cocktail', tag: 'cocktail', source: './icons/cocktail.png', name: 'Cocktails' },
-	drinks: { key: 'drinks', tag: 'soft-drinks', source: './icons/drinks.png', name: 'Soft drinks' },
-	kidsMeals: { key: 'kidsMeals', tag: 'kids-meals', source: './icons/kids-meals.png', name: 'Kids meals' },
+	traditional: { key: 'traditional', tag: 'traditional', source: './categoryIcons/restaurantIcons/traditional-1.png', name: 'Traditional' },
+	healthy: { key: 'healthy', tag: 'healthy', source: './categoryIcons/restaurantIcons/healthy-1.png', name: 'Healthy' },
+	snacksExtras: { key: 'snacksExtras', tag: 'extras', source: './categoryIcons/restaurantIcons/snacks_extras.png', name: 'Snacks & extras' }, //TODO: fix icon
+	desserts: { key: 'desserts', tag: 'desserts', source: './categoryIcons/restaurantIcons/desserts-1.png', name: 'Desserts' },
+	iceCream: { key: 'iceCream', tag: 'ice-cream', source: './categoryIcons/restaurantIcons/ice_cream.png', name: 'Ice cream' },
+	hotDrinks: { key: 'hotDrinks', tag: 'hot-drinks', source: './categoryIcons/restaurantIcons/hot-drinks.png', name: 'Coffee & Tea' },
+	pubs: { key: 'pubs', tag: 'pubs', source: './categoryIcons/restaurantIcons/pub-1.png', name: 'Pubs' },
+	wine: { key: 'wine', tag: 'wine', source: './categoryIcons/restaurantIcons/wine-1.png', name: 'Wine' },
+	cocktail: { key: 'cocktail', tag: 'cocktail', source: './categoryIcons/restaurantIcons/cocktail-1.png', name: 'Cocktails' },
+	drinks: { key: 'drinks', tag: 'soft-drinks', source: './categoryIcons/restaurantIcons/drinks.png', name: 'Soft drinks' }, //TODO: fix icon
+	kidsMeals: { key: 'kidsMeals', tag: 'kids-meals', source: './categoryIcons/restaurantIcons/kids-meals.png', name: 'Kids meals' },//TODO: fix icon
 	studentMeals: {
 		key: 'studentMeals',
 		tag: 'student-meals',
-		source: './icons/icon-student.png',
+		source: './categoryIcons/restaurantIcons/student-meal.png',
 		name: 'Student meals',
 	},
 };
@@ -568,7 +568,21 @@ async function seedCategories() {
 			});
 			let category_id = categoryExists?.categories_id;
 			if (categoryExists) {
-				console.log(`Category ${categoryExists.tag} already exists.`);
+				const cat = await CategoriesDao.updateCategory( //TODO: delete old
+					category_id,
+					categoryObj.categoryData,
+					categoryObj.translations,
+					categoryObj.subcategories,
+					categoryObj.parent_categories_id,
+					categoryObj.iconFileData
+				);
+				category_id = cat.categories_id;
+				if (categoryObj.iconFileData) {
+					const { file_type, mime_type, base64 } = categoryObj.iconFileData;
+					await upsertFileOnS3Helper(null, cat.icon, file_type, mime_type, base64);
+				}
+				console.log(`Category ${cat.categories_id} updated.`);
+				console.log(`Category ${categoryExists.tag} tag updated.`);
 			} else {
 				const cat = await CategoriesDao.createCategory(
 					categoryObj.categoryData,
