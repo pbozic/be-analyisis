@@ -355,13 +355,18 @@ export async function isEmployeeScheduledForWindow(
 			start_time: { lt: et.toDate() },
 			end_time: { gt: st.toDate() },
 			schedule: {
+				// First filter only by module
 				location: {
-					...(location_id ? { location_id } : {}),
-					reservation_module_id,
+					reservation_module_id: reservation_module_id,
 				},
 			},
 		},
 		include: {
+			schedule: {
+				include: {
+					location: true,
+				},
+			},
 			schedule_slot_exceptions: true,
 			booking_slots: true,
 		},
