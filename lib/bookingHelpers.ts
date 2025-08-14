@@ -354,10 +354,12 @@ export async function isEmployeeScheduledForWindow(
 			employee_id,
 			start_time: { lt: et.toDate() },
 			end_time: { gt: st.toDate() },
-			// schedule: {
-			// 	...(location_id ? { location_id } : {}),
-			// 	location: { reservation_module_id },
-			// },
+			schedule: {
+				...(location_id ? { location_id: { equals: location_id } } : {}),
+				location: {
+					is: { reservation_module_id: reservation_module_id },
+				},
+			},
 		},
 		include: {
 			schedule_slot_exceptions: true,
