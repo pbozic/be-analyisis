@@ -342,7 +342,7 @@ export async function isEmployeeScheduledForWindow(
 ): Promise<boolean> {
 	const { reservation_module_id, employee_id, location_id, start_time, end_time } = args;
 	if (!employee_id || !start_time || !end_time) return true; // nothing to validate
-
+	console.log('Checking schedule for:', { reservation_module_id, employee_id, location_id, start_time, end_time });
 	const st = new Date(start_time);
 	const et = new Date(end_time);
 	if (!(st < et)) return false;
