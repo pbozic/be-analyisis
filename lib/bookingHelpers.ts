@@ -103,7 +103,7 @@ export async function findSlots({
 				start_time: { lt: endOfDay },
 				end_time: { gt: startOfDay },
 				status: { notIn: ['cancelled', 'no_show'] },
-				...(employeeId && { assigned_employee_id: employeeId }),
+				...(employeeId && { employee_id: employeeId }),
 				...(locationId && { location_id: locationId }),
 			},
 			select: { start_time: true, end_time: true },
@@ -268,9 +268,20 @@ export function splitByExceptionsId(slots: ExceptionWithoutId[]) {
 }
 
 /**
- * Check if a time window is free for a given resource within a module.
- * - If both employee_id and location_id are missing, we skip hard blocking (return true)
- *   because we don't have a concrete resource to check (avoid overblocking the whole module).
+ * Checks if a booking slot is available for the given parameters.
+ * This function checks if a booking slot is available based on the provided parameters.
+ * It considers the reservation module, start and end times, assigned employee, and location.
+ * If no concrete time range is provided, it returns true (available).
+ * If the start time is not before the end time, it returns false (invalid window).
+ * If no assigned employee or location is provided, it returns true (available).
+ * It checks for existing bookings that overlap with the provided time range.
+ * @param tx Prisma.TransactionClient - Prisma transaction client to use for the query
+ * @param args - Arguments for checking booking slot availability
+ * @param args.reservation_module_id - ID of the reservation module
+ * @param args.start_time - Start time of the booking slot (Date or ISO string)
+ * @param args.end_time - End time of the booking slot (Date or ISO string)
+ * @param args
+ * @returns
  */
 export async function isBookingSlotAvailable(
 	tx: Prisma.TransactionClient,
@@ -278,11 +289,11 @@ export async function isBookingSlotAvailable(
 		reservation_module_id: string;
 		start_time: string | Date | null | undefined;
 		end_time: string | Date | null | undefined;
-		assigned_employee_id?: string | null;
+		employee_id?: string | null;
 		location_id?: string | null;
 	}
 ): Promise<boolean> {
-	const { reservation_module_id, start_time, end_time, assigned_employee_id, location_id } = args;
+	const { reservation_module_id, start_time, end_time, employee_id, location_id } = args;
 
 	// If we don't have a concrete time range, nothing to block against.
 	if (!start_time || !end_time) return true;
@@ -292,7 +303,7 @@ export async function isBookingSlotAvailable(
 	if (!(st < et)) return false; // invalid window => treat as not available
 
 	// We need at least one concrete resource dimension to avoid blocking the entire module
-	if (!assigned_employee_id && !location_id) return true;
+	if (!employee_id && !location_id) return true;
 
 	const where: Prisma.bookingWhereInput = {
 		reservation_module_id,
@@ -300,10 +311,92 @@ export async function isBookingSlotAvailable(
 		// Overlap condition: existing.start < new.end && existing.end > new.start
 		start_time: { lt: et },
 		end_time: { gt: st },
-		...(assigned_employee_id ? { assigned_employee_id } : {}),
+		...(employee_id ? { employee_id } : {}),
 		...(location_id ? { location_id } : {}),
 	};
 
 	const conflicts = await tx.booking.count({ where });
 	return conflicts === 0;
+}
+/**
+ * Checks if an employee is scheduled for a specific time window.
+ * This function checks if an employee is scheduled for a given time window within a reservation module.
+ * It considers the assigned employee, location, and the start and end times of the window.
+ * If no assigned employee or time range is provided, it returns true (no schedule to validate).
+ * If the start time is not before the end time, it returns false (invalid window).
+ * It checks for schedule slots that match the criteria and ensures there are no exceptions blocking the window.
+ * If the employee is scheduled for the window, it returns true; otherwise, it returns false.
+ * @param tx Prisma.TransactionClient - Prisma transaction client to use for the query
+ * @param args - Arguments for checking employee schedule
+ * @returns True if the employee is scheduled for the window, false otherwise
+ */
+export async function isEmployeeScheduledForWindow(
+	tx: Prisma.TransactionClient,
+	args: {
+		reservation_module_id: string;
+		employee_id?: string | null;
+		location_id?: string | null;
+		start_time?: string | Date | null;
+		end_time?: string | Date | null;
+	}
+): Promise<boolean> {
+	const { reservation_module_id, employee_id, location_id, start_time, end_time } = args;
+	if (!employee_id || !start_time || !end_time) return true; // nothing to validate
+
+	const st = new Date(start_time);
+	const et = new Date(end_time);
+	if (!(st < et)) return false;
+
+	// constrain to the start day; if you support cross-midnight, handle that separately
+	const dayStart = new Date(st);
+	dayStart.setHours(0, 0, 0, 0);
+	const dayEnd = new Date(st);
+	dayEnd.setHours(23, 59, 59, 999);
+
+	// Pull schedule slots for that employee (and location if given) on the day
+	const slots = await tx.schedule_slot.findMany({
+		where: {
+			date: { gte: dayStart, lte: dayEnd },
+			employee_id: employee_id,
+			schedule: {
+				...(location_id ? { location_id } : {}),
+				location: { reservation_module_id },
+			},
+		},
+		include: {
+			schedule_slot_exceptions: true,
+			booking_slots: true,
+		},
+		orderBy: { start_time: 'asc' },
+	});
+
+	// We require: [st, et] fully contained within one schedule slot,
+	// not overlapped by an exception, and (optionally) inside one booking_slot window.
+	for (const slot of slots) {
+		const sst = new Date(slot.start_time);
+		const set = new Date(slot.end_time);
+		const insideSchedule = st >= sst && et <= set;
+		if (!insideSchedule) continue;
+
+		// exceptions: any overlap => invalid
+		const blockedByException = slot.schedule_slot_exceptions.some((ex: ScheduleSlotException) => {
+			const xst = new Date(ex.start_time);
+			const xet = new Date(ex.end_time);
+			return st < xet && et > xst;
+		});
+		if (blockedByException) continue;
+
+		// booking windows: require containment in at least one booking_slot
+		if (!slot.booking_slots || slot.booking_slots.length === 0) return true; // if you allow booking entire slot
+
+		const insideBookingWindow = slot.booking_slots.some((bs: BookingSlot) => {
+			const bst = new Date(bs.start_time);
+			const bet = new Date(bs.end_time);
+			return st >= bst && et <= bet;
+		});
+
+		if (insideBookingWindow) return true;
+	}
+
+	return false;
 }

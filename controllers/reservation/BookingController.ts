@@ -8,10 +8,12 @@ import {
 	CreateBookingHistoryLogInput,
 	ListBookingsParams,
 	FindBookingSlotsInput,
-	Booking,
 	CreateBookingInput,
+	CreateBookingSingleInput,
 } from '../../types/reservation/Booking.ts';
+import { Employee } from '../../types/reservation/Employee.ts';
 import { findSlots } from '../../lib/bookingHelpers.ts';
+import prisma from '../../prisma/prisma.js';
 
 /**
  * POST /bookings/list
@@ -76,50 +78,37 @@ export async function getBooking(req: ValidatedRequest<null, { booking_id: strin
  * @response 500 - Error creating booking
  */
 export async function createBooking(req: ValidatedRequest<CreateBookingInput>, res: Response): Promise<void> {
-	// Body already validated by Zod middleware.
 	const { service_ids, ...base } = req.body;
-
-	// Enforce multi-tenant: prefer authenticated module over body to prevent tenant hopping
 	const reservation_module_id = req.user?.reservation_module_id ?? base.reservation_module_id;
+	let user_id = req.user?.user_id;
+	let reservation_module = await prisma.reservation_module.findUnique({
+		where: { reservation_module_id: reservation_module_id },
+		include: {
+			employees: {
+				include: {
+					business_user: true,
+				},
+			},
+		},
+	});
+	let isEmployeeOfModule = false;
+	if (reservation_module && user_id) {
+		isEmployeeOfModule = reservation_module.employees.some((e: Employee) => e.business_user?.user_id === user_id);
+	}
 
-	const created: Booking[] = [];
+	// map to DAO’s single-service input
+	const inputs = service_ids.map((sid) => ({
+		...base,
+		reservation_module_id,
+		service_id: sid,
+		// parent_booking_id set inside DAO for children
+	})) as CreateBookingSingleInput[];
+
 	try {
-		// Parent booking (first service)
-		const firstServiceId = service_ids[0];
-		const first = await BookingDao.createBooking({
-			...base,
-			reservation_module_id,
-			service_id: firstServiceId as string,
-		});
-		created.push(first);
-
-		const parentIdForChildren = first.booking_id;
-
-		// Children bookings (remaining services)
-		for (let i = 1; i < service_ids.length; i++) {
-			const srvId = service_ids[i];
-			const child = await BookingDao.createBooking({
-				...base,
-				reservation_module_id,
-				service_id: srvId as string,
-				parent_booking_id: parentIdForChildren,
-			});
-			created.push(child);
-		}
-
-		res.status(201).json({
-			parent: first,
-			children: created.slice(1),
-			all: created,
-		});
+		const all = await BookingDao.createBookingGroup(inputs);
+		res.status(201).json({ parent: all[0], children: all.slice(1), all });
 	} catch (error) {
-		// best-effort cleanup on partial failure
-		try {
-			for (const row of created) await BookingDao.deleteBooking({ booking_id: row.booking_id });
-		} catch (cleanupErr) {
-			console.error('Cleanup after partial failure failed:', cleanupErr);
-		}
-		console.error('Error creating booking(s):', error);
+		console.error('Error creating booking group:', error);
 		res.status(500).json({ message: 'Error creating booking(s)', error });
 	}
 }

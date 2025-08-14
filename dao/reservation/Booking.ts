@@ -1,4 +1,3 @@
-// src/dao/bookingDao.ts
 import { BOOKING_STATUS, Prisma } from '@prisma/client';
 
 import prisma from '../../prisma/prisma.js';
@@ -10,7 +9,7 @@ import type {
 	ListBookingsParams,
 	CreateBookingSingleInput,
 } from '../../types/reservation/Booking.ts'; // <-- adjust path if different
-import { isBookingSlotAvailable } from '../../lib/bookingHelpers.ts';
+import { isBookingSlotAvailable, isEmployeeScheduledForWindow } from '../../lib/bookingHelpers.ts';
 /**
  * Narrow and rethrow Prisma errors with a consistent message prefix.
  * Logs useful context for known Prisma error types.
@@ -126,90 +125,100 @@ async function resolveOrCreateCustomer(
 
 	return created.customer_id;
 }
+async function createBookingTx(tx: Prisma.TransactionClient, input: CreateBookingSingleInput): Promise<Booking> {
+	const tel = composeTelephone(input);
 
-/** Input for list; built to keep things simple (no cursor) */
+	// guard module
+	const mod = await tx.reservation_module.findUnique({
+		where: { reservation_module_id: input.reservation_module_id },
+		select: { reservation_module_id: true },
+	});
+	if (!mod) throw new Error('Reservation module not found');
 
-/**
- * Create a booking (creates or connects a customer). Uses Prisma connect for all relations.
- *
- * @export
- * @async
- * @param {CreateBookingInput} input
- * @returns {Promise<Booking>}
- */
+	const customerId = await resolveOrCreateCustomer(tx, {
+		reservation_module_id: input.reservation_module_id,
+		customer_id: input.customer_id ?? undefined,
+		first_name: input.first_name ?? undefined,
+		last_name: input.last_name ?? undefined,
+		email: input.email ?? undefined,
+		telephone: tel ?? undefined,
+	});
+
+	const service = await tx.service.findUnique({
+		where: { service_id: input.service_id },
+		select: { service_id: true, price_cents: true },
+	});
+	if (!service) throw new Error('Service not found');
+
+	// employee double-booking guard
+	const ok = await isBookingSlotAvailable(tx, {
+		reservation_module_id: input.reservation_module_id,
+		employee_id: input.employee_id ?? null,
+		start_time: input.start_time ?? null,
+		end_time: input.end_time ?? null,
+	});
+	if (!ok) throw new Error('Booking slot already taken');
+	const schedule = isEmployeeScheduledForWindow(tx, {
+		reservation_module_id: input.reservation_module_id,
+		employee_id: input.employee_id ?? null,
+		start_time: input.start_time ? new Date(input.start_time) : null,
+		end_time: input.end_time ? new Date(input.end_time) : null,
+	});
+	if (!schedule) throw new Error('Employee is not scheduled for the selected time');
+	const created = await tx.booking.create({
+		data: {
+			status: BOOKING_STATUS.reserved,
+			comment: input.comment ?? null,
+			price_cents: service.price_cents ?? null,
+			start_time: input.start_time ? new Date(input.start_time) : null,
+			end_time: input.end_time ? new Date(input.end_time) : null,
+
+			reservation_module: { connect: { reservation_module_id: input.reservation_module_id } },
+			service: { connect: { service_id: input.service_id } },
+			customer: { connect: { customer_id: customerId } },
+
+			location: input.location_id ? { connect: { location_id: input.location_id } } : undefined,
+			employee: input.employee_id ? { connect: { employee_id: input.employee_id } } : undefined,
+			parent_booking: input.parent_booking_id ? { connect: { booking_id: input.parent_booking_id } } : undefined,
+		},
+	});
+
+	await tx.booking_history_log.create({
+		data: {
+			status: created.status,
+			type: 'created',
+			title: 'Booking Created',
+			description: input.comment ?? null,
+			booking: { connect: { booking_id: created.booking_id } },
+		},
+	});
+
+	return created as Booking;
+}
+
+// 2) Public: single create (kept for callers that need 1 booking)
 export async function createBooking(input: CreateBookingSingleInput): Promise<Booking> {
-	try {
-		const tel = composeTelephone(input);
+	return prisma.$transaction((tx: Prisma.TransactionClient) => createBookingTx(tx, input));
+}
 
-		return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-			// guard module
-			const mod = await tx.reservation_module.findUnique({
-				where: { reservation_module_id: input.reservation_module_id },
-				select: { reservation_module_id: true },
-			});
-			if (!mod) throw new Error('Reservation module not found');
-
-			const customerId = await resolveOrCreateCustomer(tx, {
-				reservation_module_id: input.reservation_module_id,
-				customer_id: input.customer_id ?? undefined,
-				first_name: input.first_name ?? undefined,
-				last_name: input.last_name ?? undefined,
-				email: input.email ?? undefined,
-				telephone: tel ?? undefined,
-			});
-			const service = await tx.service.findUnique({
-				where: { service_id: input.service_id },
-				select: { service_id: true, price_cents: true, reservation_module_id: true },
-			});
-			if (!service) throw new Error('Service not found');
-			// TODO: check if booking slot is still empty before creating
-			let isAvailable = await isBookingSlotAvailable(tx, {
-				reservation_module_id: input.reservation_module_id,
-				start_time: input.start_time ? new Date(input.start_time) : null,
-				end_time: input.end_time ? new Date(input.end_time) : null,
-				location_id: input.location_id ?? undefined,
-				assigned_employee_id: input.assigned_employee_id ?? undefined,
-			});
-			if (!isAvailable) {
-				throw new Error('Booking slot is not available for the selected time and resources');
-			}
-			const created = await tx.booking.create({
-				data: {
-					status: BOOKING_STATUS.reserved, // Default status
-					comment: input.comment ?? null,
-					price_cents: service.price_cents ?? null,
-					start_time: input.start_time ? new Date(input.start_time) : null,
-					end_time: input.end_time ? new Date(input.end_time) : null,
-
-					reservation_module: { connect: { reservation_module_id: input.reservation_module_id } },
-					service: { connect: { service_id: input.service_id } },
-					customer: { connect: { customer_id: customerId } },
-
-					location: input.location_id ? { connect: { location_id: input.location_id } } : undefined,
-					employee: input.assigned_employee_id
-						? { connect: { employee_id: input.assigned_employee_id } }
-						: undefined,
-					parent_booking: input.parent_booking_id
-						? { connect: { booking_id: input.parent_booking_id } }
-						: undefined,
-				},
-			});
-
-			await tx.booking_history_log.create({
-				data: {
-					status: created.status,
-					type: 'created',
-					title: 'Booking Created',
-					description: input.comment ?? null,
-					booking: { connect: { booking_id: created.booking_id } },
-				},
-			});
-
-			return created as Booking;
-		});
-	} catch (error) {
-		throwPrisma('Error creating booking', error);
-	}
+// 3) Public: group create (parent + children) atomically
+export async function createBookingGroup(inputs: CreateBookingSingleInput[]): Promise<Booking[]> {
+	if (!inputs.length) throw new Error('No services to create');
+	return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+		const created: Booking[] = [];
+		// parent
+		const parent = await createBookingTx(tx, inputs[0] as CreateBookingSingleInput);
+		created.push(parent);
+		// children
+		for (let i = 1; i < inputs.length; i++) {
+			const child = await createBookingTx(tx, {
+				...inputs[i],
+				parent_booking_id: parent.booking_id,
+			} as CreateBookingSingleInput);
+			created.push(child);
+		}
+		return created;
+	});
 }
 
 /**
@@ -276,7 +285,20 @@ export async function updateBooking(input: UpdateBookingInput, booking_id: strin
 					});
 				}
 			}
+			let isAvailable = await isBookingSlotAvailable(tx, {
+				reservation_module_id: input.reservation_module_id as string,
+				start_time: input.start_time ? new Date(input.start_time) : null,
+				end_time: input.end_time ? new Date(input.end_time) : null,
+				location_id: input.location_id ?? undefined,
+				employee_id: input.employee_id ?? undefined,
+			});
+			if (!isAvailable) {
+				throw new Error('Booking slot is not available for the selected time and resources');
+			}
 
+			// Update booking with new data
+			// Note: we use `?? undefined` to avoid sending nulls to Prisma
+			// which would overwrite existing values with null.
 			const updated = await tx.booking.update({
 				where: { booking_id: booking_id },
 				data: {
@@ -297,9 +319,9 @@ export async function updateBooking(input: UpdateBookingInput, booking_id: strin
 								: { disconnect: true }
 							: undefined,
 					employee:
-						input.assigned_employee_id !== undefined
-							? input.assigned_employee_id
-								? { connect: { employee_id: input.assigned_employee_id } }
+						input.employee_id !== undefined
+							? input.employee_id
+								? { connect: { employee_id: input.employee_id } }
 								: { disconnect: true }
 							: undefined,
 					parent_booking:
@@ -407,7 +429,7 @@ export async function listBookingsByReservationModuleId(params: ListBookingsPara
 						}
 					: {}),
 				...(location_id ? { location_id } : {}),
-				...(employee_id ? { assigned_employee_id: employee_id } : {}),
+				...(employee_id ? { employee_id: employee_id } : {}),
 			},
 			orderBy: [{ created_at: 'desc' }, { booking_id: 'desc' }],
 			...(limit != null ? { take: limit } : {}),
@@ -452,4 +474,5 @@ export default {
 	getBookingById,
 	listBookingsByReservationModuleId,
 	createBookingHistoryLog,
+	createBookingGroup,
 };
