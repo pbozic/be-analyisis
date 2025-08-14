@@ -103,7 +103,7 @@ export async function findSlots({
 				start_time: { lt: endOfDay },
 				end_time: { gt: startOfDay },
 				status: { notIn: ['cancelled', 'no_show'] },
-				...(employeeId && { assigned_employee_id: employeeId }),
+				...(employeeId && { employee_id: employeeId }),
 				...(locationId && { location_id: locationId }),
 			},
 			select: { start_time: true, end_time: true },

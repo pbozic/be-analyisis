@@ -153,14 +153,14 @@ async function createBookingTx(tx: Prisma.TransactionClient, input: CreateBookin
 	// employee double-booking guard
 	const ok = await isBookingSlotAvailable(tx, {
 		reservation_module_id: input.reservation_module_id,
-		employee_id: input.assigned_employee_id ?? null,
+		employee_id: input.employee_id ?? null,
 		start_time: input.start_time ?? null,
 		end_time: input.end_time ?? null,
 	});
 	if (!ok) throw new Error('Booking slot already taken');
 	const schedule = isEmployeeScheduledForWindow(tx, {
 		reservation_module_id: input.reservation_module_id,
-		employee_id: input.assigned_employee_id ?? null,
+		employee_id: input.employee_id ?? null,
 		start_time: input.start_time ? new Date(input.start_time) : null,
 		end_time: input.end_time ? new Date(input.end_time) : null,
 	});
@@ -178,7 +178,7 @@ async function createBookingTx(tx: Prisma.TransactionClient, input: CreateBookin
 			customer: { connect: { customer_id: customerId } },
 
 			location: input.location_id ? { connect: { location_id: input.location_id } } : undefined,
-			employee: input.assigned_employee_id ? { connect: { employee_id: input.assigned_employee_id } } : undefined,
+			employee: input.employee_id ? { connect: { employee_id: input.employee_id } } : undefined,
 			parent_booking: input.parent_booking_id ? { connect: { booking_id: input.parent_booking_id } } : undefined,
 		},
 	});
@@ -290,7 +290,7 @@ export async function updateBooking(input: UpdateBookingInput, booking_id: strin
 				start_time: input.start_time ? new Date(input.start_time) : null,
 				end_time: input.end_time ? new Date(input.end_time) : null,
 				location_id: input.location_id ?? undefined,
-				employee_id: input.assigned_employee_id ?? undefined,
+				employee_id: input.employee_id ?? undefined,
 			});
 			if (!isAvailable) {
 				throw new Error('Booking slot is not available for the selected time and resources');
@@ -319,9 +319,9 @@ export async function updateBooking(input: UpdateBookingInput, booking_id: strin
 								: { disconnect: true }
 							: undefined,
 					employee:
-						input.assigned_employee_id !== undefined
-							? input.assigned_employee_id
-								? { connect: { employee_id: input.assigned_employee_id } }
+						input.employee_id !== undefined
+							? input.employee_id
+								? { connect: { employee_id: input.employee_id } }
 								: { disconnect: true }
 							: undefined,
 					parent_booking:
@@ -429,7 +429,7 @@ export async function listBookingsByReservationModuleId(params: ListBookingsPara
 						}
 					: {}),
 				...(location_id ? { location_id } : {}),
-				...(employee_id ? { assigned_employee_id: employee_id } : {}),
+				...(employee_id ? { employee_id: employee_id } : {}),
 			},
 			orderBy: [{ created_at: 'desc' }, { booking_id: 'desc' }],
 			...(limit != null ? { take: limit } : {}),

@@ -38,7 +38,7 @@ export const CreateBookingSchema = z
 		comment: z.string().optional(),
 		start_time: z.string().datetime().optional(),
 		end_time: z.string().datetime().optional(),
-		assigned_employee_id: z.string().uuid().optional(),
+		employee_id: z.string().uuid().optional(),
 	})
 	.superRefine((data, ctx) => {
 		if (!data.customer_id) {
@@ -102,7 +102,7 @@ export const UpdateBookingSchema = z
 		comment: z.string().optional(),
 		start_time: z.string().datetime().optional(),
 		end_time: z.string().datetime().optional(),
-		assigned_employee_id: z.string().uuid().optional(),
+		employee_id: z.string().uuid().optional(),
 		parent_booking_id: z.string().uuid().optional(),
 		status: z.nativeEnum(BOOKING_STATUS).optional(),
 	})

@@ -219,13 +219,13 @@ model booking {
   price_cents           Int?
   start_time            DateTime? // Start time of the booking, e.g. 2023-10-01T09:00:00Z
   end_time              DateTime? // End time of the booking, e.g. 2023-10-01T10:00:00Z - calculated from start time + service duration
-  assigned_employee_id  String?               @db.Uuid
+  employee_id  String?               @db.Uuid
   parent_booking_id     String?               @db.Uuid // For rescheduled bookings
   parent_booking        booking?              @relation("RescheduledBooking", fields: [parent_booking_id], references: [booking_id])
   child_bookings        booking[]             @relation("RescheduledBooking")
   reservation_module    reservation_module    @relation(fields: [reservation_module_id], references: [reservation_module_id])
   location              location?             @relation(fields: [location_id], references: [location_id])
-  employee              employee?             @relation(fields: [assigned_employee_id], references: [employee_id], onDelete: SetNull)
+  employee              employee?             @relation(fields: [employee_id], references: [employee_id], onDelete: SetNull)
   service               service?              @relation(fields: [service_id], references: [service_id])
   customer              customers             @relation(fields: [customer_id], references: [customer_id])
   booking_history_log   booking_history_log[]
