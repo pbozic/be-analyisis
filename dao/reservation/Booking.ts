@@ -138,7 +138,36 @@ async function createBookingTx(
 		select: { reservation_module_id: true },
 	});
 	if (!mod) throw new Error('Reservation module not found');
-
+	// check if employee is part of the module
+	if (input.employee_id) {
+		const employee = await tx.employee.findUnique({
+			where: { employee_id: input.employee_id },
+			select: { reservation_module_id: true },
+		});
+		if (!employee || employee.reservation_module_id !== input.reservation_module_id) {
+			throw new Error('Employee not found in this reservation module');
+		}
+	}
+	// check if service exists
+	if (input.service_id) {
+		const service = await tx.service.findUnique({
+			where: { service_id: input.service_id },
+			select: { service_id: true, reservation_module_id: true },
+		});
+		if (!service || service.reservation_module_id !== input.reservation_module_id) {
+			throw new Error('Service not found in this reservation module');
+		}
+	}
+	// check if location exists
+	if (input.location_id) {
+		const location = await tx.location.findUnique({
+			where: { location_id: input.location_id },
+			select: { location_id: true, reservation_module_id: true },
+		});
+		if (!location || location.reservation_module_id !== input.reservation_module_id) {
+			throw new Error('Location not found in this reservation module');
+		}
+	}
 	const customerId = await resolveOrCreateCustomer(tx, {
 		reservation_module_id: input.reservation_module_id,
 		customer_id: input.customer_id ?? undefined,
@@ -169,6 +198,7 @@ async function createBookingTx(
 			employee_id: input.employee_id ?? null,
 			start_time: input.start_time ? new Date(input.start_time) : null,
 			end_time: input.end_time ? new Date(input.end_time) : null,
+			location_id: input.location_id ?? null,
 		});
 	}
 	if (!schedule) throw new Error('Employee is not scheduled for the selected time');

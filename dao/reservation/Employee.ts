@@ -21,28 +21,6 @@ export async function getEmployeesByReservationModuleId(reservationModuleId: str
 			},
 			include: {
 				reservation_module: true,
-				assignments: true,
-				schedules: {
-					include: {
-						schedule_slots: {
-							include: {
-								schedule_slot_exceptions: {
-									orderBy: {
-										start_time: 'asc',
-									},
-								},
-								booking_slots: {
-									orderBy: {
-										start_time: 'asc',
-									},
-								},
-							},
-							orderBy: {
-								start_time: 'asc',
-							},
-						},
-					},
-				},
 				business_user: {
 					select: {
 						business_users_id: true,
@@ -190,32 +168,6 @@ export async function getEmployeeById(employeeId: string): Promise<Employee | nu
 			},
 			include: {
 				reservation_module: true,
-				assignments: {
-					include: {
-						service: true,
-						schedule: {
-							include: {
-								schedule_slots: {
-									include: {
-										schedule_slot_exceptions: {
-											orderBy: {
-												start_time: 'asc',
-											},
-										},
-										booking_slots: {
-											orderBy: {
-												start_time: 'asc',
-											},
-										},
-									},
-									orderBy: {
-										start_time: 'asc',
-									},
-								},
-							},
-						},
-					},
-				},
 				business_users: {
 					include: {
 						users: true,

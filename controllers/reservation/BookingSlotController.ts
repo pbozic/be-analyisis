@@ -32,7 +32,8 @@ export async function getBookingSlotsByScheduleSlotId(
 		const records = await BookingSlotDao.getBookingSlotsByScheduleSlotId(scheduleSlotId);
 		res.status(200).json(records);
 	} catch (error) {
-		res.status(500).json({ message: 'Error retrieving booking slots', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error retrieving booking slots', error: message });
 	}
 }
 
@@ -53,7 +54,8 @@ export async function createBookingSlot(req: ValidatedRequest<CreateBookingSlotI
 		const record = await BookingSlotDao.createBookingSlot(req.body);
 		res.status(201).json(record);
 	} catch (error) {
-		res.status(500).json({ message: 'Error creating booking slot', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error creating booking slot', error: message });
 	}
 }
 
@@ -78,7 +80,8 @@ export async function updateBookingSlot(
 		const record = await BookingSlotDao.updateBookingSlot(req.params.id, req.body);
 		res.status(200).json(record);
 	} catch (error) {
-		res.status(500).json({ message: 'Error updating booking slot', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error updating booking slot', error: message });
 	}
 }
 
@@ -98,7 +101,8 @@ export async function deleteBookingSlot(req: ValidatedRequest<null, { id: string
 		await BookingSlotDao.deleteBookingSlot(req.params.id);
 		res.status(204).send();
 	} catch (error) {
-		res.status(500).json({ message: 'Error deleting booking slot', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error deleting booking slot', error: message });
 	}
 }
 
@@ -123,7 +127,8 @@ export async function getBookingSlotById(req: ValidatedRequest<null, { id: strin
 		}
 		res.status(200).json(record);
 	} catch (error) {
-		res.status(500).json({ message: 'Error retrieving booking slot', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error retrieving booking slot', error: message });
 	}
 }
 
@@ -172,7 +177,8 @@ export async function updateOrCreateBookingSlots(
 		const record = { updatedSlots, createdSlots, removedSlots };
 		res.status(200).json(record);
 	} catch (error) {
-		res.status(500).json({ message: 'Error updating or creating booking slot', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error updating or creating booking slot', error: message });
 	}
 }
 
@@ -218,7 +224,8 @@ export async function createScheduleSlotWithBookingSlots(
 		};
 		res.status(200).json(record);
 	} catch (error) {
-		res.status(500).json({ message: 'Error updating or creating booking slot', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error updating or creating booking slot', error: message });
 	}
 }
 
@@ -272,7 +279,8 @@ export async function updateScheduleSlotWithBookingSlots(
 		};
 		res.status(200).json(data);
 	} catch (error) {
-		res.status(500).json({ message: 'Error updating or creating booking slot', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error updating or creating booking slot', error: message });
 	}
 }
 

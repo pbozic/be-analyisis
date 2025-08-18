@@ -99,6 +99,7 @@ export async function getScheduleById(scheduleId: string): Promise<Schedule | nu
 			where: { schedule_id: scheduleId },
 			include: {
 				location: true,
+				schedule_employees: true,
 			},
 		});
 		return schedule;

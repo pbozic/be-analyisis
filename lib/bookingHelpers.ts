@@ -341,26 +341,32 @@ export async function isEmployeeScheduledForWindow(
 	}
 ): Promise<boolean> {
 	const { reservation_module_id, employee_id, location_id, start_time, end_time } = args;
-	if (!employee_id || !start_time || !end_time) return true; // nothing to validate
+	if (!employee_id || !start_time || !end_time) return true;
 
-	const st = new Date(start_time);
-	const et = new Date(end_time);
-	if (!(st < et)) return false;
+	const st = moment.utc(start_time);
+	const et = moment.utc(end_time);
 
-	// Fetch candidate schedule slots that *overlap* the requested window
-	// (we’ll enforce full containment below).
+	if (!st.isValid() || !et.isValid() || !st.isBefore(et)) return false;
+
+	// Get all slots for this employee that overlap the requested window
 	const slots = await tx.schedule_slot.findMany({
 		where: {
 			employee_id,
-			// overlap: slot.start < req.end AND slot.end > req.start
-			start_time: { lt: et },
-			end_time: { gt: st },
+			start_time: { lt: et.toDate() },
+			end_time: { gt: st.toDate() },
 			schedule: {
-				...(location_id ? { location_id } : {}),
-				location: { reservation_module_id },
+				// First filter only by module
+				location: {
+					reservation_module_id: reservation_module_id,
+				},
 			},
 		},
 		include: {
+			schedule: {
+				include: {
+					location: true,
+				},
+			},
 			schedule_slot_exceptions: true,
 			booking_slots: true,
 		},
@@ -370,32 +376,32 @@ export async function isEmployeeScheduledForWindow(
 	if (slots.length === 0) return false;
 
 	for (const slot of slots) {
-		const sst = new Date(slot.start_time);
-		const set = new Date(slot.end_time);
+		const sst = moment.utc(slot.start_time);
+		const set = moment.utc(slot.end_time);
 
-		// Require the request window to be fully inside a single schedule slot
-		const insideSchedule = st >= sst && et <= set;
-		if (!insideSchedule) continue;
+		// Must be fully inside a single schedule slot
+		if (!(st.isSameOrAfter(sst) && et.isSameOrBefore(set))) continue;
 
-		// Exceptions: any overlap blocks
-		const blockedByException = slot.schedule_slot_exceptions.some((ex: ScheduleSlotException) => {
-			const xst = new Date(ex.start_time);
-			const xet = new Date(ex.end_time);
-			return st < xet && et > xst;
+		// Exceptions: block if overlap
+		const blockedByException = (slot.schedule_slot_exceptions ?? []).some((ex) => {
+			const xst = moment.utc(ex.start_time);
+			const xet = moment.utc(ex.end_time);
+			return st.isBefore(xet) && et.isAfter(xst);
 		});
 		if (blockedByException) continue;
 
-		// Booking windows: if none defined, allow whole slot;
-		// otherwise require containment in at least one booking window.
-		if (!slot.booking_slots || slot.booking_slots.length === 0) return true;
+		// No booking slots = whole schedule slot is available
+		const windows = slot.booking_slots ?? [];
+		if (windows.length === 0) return true;
 
-		const insideBookingWindow = slot.booking_slots.some((bs: BookingSlot) => {
-			const bst = new Date(bs.start_time);
-			const bet = new Date(bs.end_time);
-			return st >= bst && et <= bet;
+		// Must be inside at least one booking slot
+		const insideWindow = windows.some((bs) => {
+			const bst = moment.utc(bs.start_time);
+			const bet = moment.utc(bs.end_time);
+			return st.isSameOrAfter(bst) && et.isSameOrBefore(bet);
 		});
 
-		if (insideBookingWindow) return true;
+		if (insideWindow) return true;
 	}
 
 	return false;

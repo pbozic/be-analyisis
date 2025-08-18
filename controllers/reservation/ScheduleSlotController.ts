@@ -33,7 +33,8 @@ export async function getScheduleSlotsByScheduleId(
 		const records = await ScheduleSlotDao.getScheduleSlotsByScheduleId(scheduleId);
 		res.status(200).json(records);
 	} catch (error) {
-		res.status(500).json({ message: 'Error retrieving schedule slots', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error retrieving schedule slots', error: message });
 	}
 }
 
@@ -54,7 +55,8 @@ export async function createScheduleSlot(req: ValidatedRequest<CreateScheduleSlo
 		const record = await ScheduleSlotDao.createScheduleSlot(req.body);
 		res.status(201).json(record);
 	} catch (error) {
-		res.status(500).json({ message: 'Error creating schedule slot', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error creating schedule slot', error: message });
 	}
 }
 
@@ -79,7 +81,8 @@ export async function updateScheduleSlot(
 		const record = await ScheduleSlotDao.updateScheduleSlot(req.params.id, req.body);
 		res.status(200).json(record);
 	} catch (error) {
-		res.status(500).json({ message: 'Error updating schedule slot', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error updating schedule slot', error: message });
 	}
 }
 
@@ -99,7 +102,8 @@ export async function deleteScheduleSlot(req: ValidatedRequest<null, { id: strin
 		await ScheduleSlotDao.deleteScheduleSlot(req.params.id);
 		res.status(204).send();
 	} catch (error) {
-		res.status(500).json({ message: 'Error deleting schedule slot', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error deleting schedule slot', error: message });
 	}
 }
 
@@ -124,7 +128,8 @@ export async function getScheduleSlotById(req: ValidatedRequest<null, { id: stri
 		}
 		res.status(200).json(record);
 	} catch (error) {
-		res.status(500).json({ message: 'Error retrieving schedule slot', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error retrieving schedule slot', error: message });
 	}
 }
 
@@ -190,7 +195,8 @@ export async function createMultipleSchedules(
 		//let location = await ScheduleDao.createSchedule(scheduleData);
 		res.status(201).json({ schedules, existingSchedules });
 	} catch (error) {
-		res.status(500).json({ message: 'Error creating schedule', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error creating schedule', error: message });
 	}
 }
 
@@ -258,7 +264,8 @@ export async function overwriteMultipleSchedules(
 
 		//let location = await ScheduleDao.createSchedule(scheduleData);
 	} catch (error) {
-		res.status(500).json({ message: 'Error overwriting schedule', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error overwriting schedule', error: message });
 	}
 }
 
@@ -374,7 +381,8 @@ export async function updateMultipleSchedules(
 			res.status(404).json({ message: 'Error updating schedule slot' });
 		}
 	} catch (error) {
-		res.status(500).json({ message: 'Error creating schedule', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error creating schedule', error: message });
 	}
 }
 
