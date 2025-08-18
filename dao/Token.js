@@ -135,7 +135,7 @@ async function validateRegistrationSessionToken(tokenString) {
 		where: {
 			token: tokenString,
 			type: TokenType.BUSINESS_REGISTRATION,
-			expires_at: { gte: Date.now() },
+			expires_at: { gte: new Date() },
 		},
 		include: {
 			user: {
