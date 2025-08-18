@@ -584,7 +584,7 @@ let CATEGORIES_FULL = {
 	hotDrinks: {
 		key: 'hotDrinks',
 		tag: 'hot-drinks',
-		source: './categoryIcons/restaurantIcons/hot-drinks.png',
+		source: './categoryIcons/restaurantIcons/hot_drinks.png',
 		name: 'Coffee & Tea',
 	},
 	pubs: { key: 'pubs', tag: 'pubs', source: './categoryIcons/restaurantIcons/pub-1.png', name: 'Pubs' },
@@ -598,7 +598,7 @@ let CATEGORIES_FULL = {
 	drinks: {
 		key: 'drinks',
 		tag: 'soft-drinks',
-		source: './categoryIcons/restaurantIcons/drinks.png',
+		source: './categoryIcons/restaurantIcons/soft_drinks.png',
 		name: 'Soft drinks',
 	},
 	kidsMeals: {
@@ -610,7 +610,7 @@ let CATEGORIES_FULL = {
 	studentMeals: {
 		key: 'studentMeals',
 		tag: 'student-meals',
-		source: './categoryIcons/restaurantIcons/student-meal.png',
+		source: './categoryIcons/restaurantIcons/student_meal.png',
 		name: 'Student meals',
 	},
 };
