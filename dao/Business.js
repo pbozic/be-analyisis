@@ -100,6 +100,7 @@ const getBusinessById = async (business_id) => {
 						user: true,
 					},
 				},
+				reservation_module: true,
 				business_clients: true,
 				parent_business: true,
 				child_businesses: true,
