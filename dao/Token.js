@@ -138,7 +138,7 @@ async function validateRegistrationSessionToken(tokenString) {
 			expires_at: { gte: new Date() },
 		},
 		include: {
-			user: {
+			users: {
 				business_users: {
 					business: true,
 				},

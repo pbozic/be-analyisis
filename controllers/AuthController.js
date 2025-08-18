@@ -1124,7 +1124,7 @@ async function registerReservationBusiness(req, res) {
 					console.error('Invalid registration token!');
 					throw new Error('Invalid registration token!');
 				}
-				existingUser = token.user;
+				existingUser = token.users;
 			} else {
 				existingUser =
 					(await UserDao.getUserByEmail(userData.email)) ||
