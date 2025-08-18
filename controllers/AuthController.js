@@ -3,6 +3,7 @@ import fs from 'fs';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { config } from 'dotenv';
+import { BUSINESS_TYPE, COMPANY_ROLE } from '@prisma/client';
 
 import UserDao from '../dao/User.js';
 import { generateAccessToken, generateRefreshToken } from '../lib/jwt.js';
@@ -1064,58 +1065,127 @@ async function registerBusiness(req, res) {
 		res.status(400).json({ error: 'Error registering business', detail: error.message });
 	}
 }
-/**
- * POST /auth/reservation/register
- * @tag Auth
- * @summary Register a new reservation business
- * @description Creates a new reservation business.
- * @operationId registerBusiness
- * @bodyContent {BusinessRegistration} application/json
- * @bodyRequired
- * @response 201 - Business registered successfully
- * @responseContent {BusinessRegistrationResponse} 201.application/json
- * @response 400 - Error registering business
- */
-async function registerReservationBusiness(req, res) {
-	try {
-		if (req.body.email) {
-			const existingBusinessEmail = await BusinessDao.getBusinessByEmail(req.body.email);
-			if (existingBusinessEmail) {
-				console.error('Business with this email already exists.');
-				return res.status(400).json({ error: 'Business with this email already exists.' });
-			}
-		}
-		let stripeCustomer = await stripe.createCustomer(
-			req.body.email,
-			req.body.business_name,
-			req.body.business_telephone
-		);
-		const phoneNumber = req.body.business_telephone;
-		const userExists = await UserDao.getUserByTelephone(phoneNumber);
 
-		let businessUserData;
-		let businessUsers = [];
-		let business;
+/**
+- POST /auth/reservation/register
+- @tag Auth
+- @summary Register a new reservation business
+- @description Registers a new reservation business and user. If the business exists, connects it with a reservation module. If not, creates the business and required business users. If the user exists, connects the user to the business; otherwise, creates a new user. Also creates demo employee, location, and service for the reservation module.
+- @operationId registerReservationBusiness
+- @bodyDescription The required data to register a new reservation business and user.
+- @bodyContent {
+    "userData": {
+      "email": "user@example.com",
+      "password": "Password123!",
+      "registration_token": "optional-token",
+      "date_of_birth": "1990-01-01",
+      "telephone": "+123456789",
+      "telephone_number": "123456789",
+      "telephone_code": "+1"
+    },
+    "businessData": {
+      "business_id": "optional-business-id",
+      "name": "Business Name",
+      "email": "business@example.com",
+      "telephone": "+123456789",
+      "telephone_number": "123456789",
+      "telephone_code": "+1",
+      "type": "RESERVATION",
+      "tax_id": "TAX123",
+      "registration_id": "REG123"
+    },
+    "plan": "optional-plan"
+  } application/json
+- @bodyRequired
+- @response 201 - Business registered successfully
+- @responseContent {
+    "message": "Business registered successfully",
+    "business": {  business fields from ./prisma/schema.prisma  }
+  } 201.application/json
+- @response 400 - Error registering business
+- @prisma_model users (see ./prisma/schema.prisma)
+- @prisma_model business (see ./prisma/schema.prisma)
+- @prisma_model business_users (see ./prisma/schema.prisma)
+- @prisma_model reservation_module (see ./prisma/schema.prisma)
+*/
+async function registerReservationBusiness(req, res) {
+	//TODO: What do if MITM attack steals registration token?
+	try {
 		let transactionSucceeded = false;
-		await req.prisma.$transaction(async (tx) => {
-			const businessData = {
-				name: req.body.business_name,
-				email: req.body.email,
-				telephone: req.body.business_telephone,
-				telephone_number: req.body.business_telephone_number,
-				telephone_code: req.body.business_telephone_code,
-				type: 'RESERVATION',
-				tax_id: req.body.tax_id,
-				registration_id: req.body.registration_id,
-			};
-			business = await BusinessDao.createNewBusiness(
-				{
-					...businessData,
-					stripe_customer_id: stripeCustomer.id,
-				},
-				tx
+		let business = null;
+		await prisma.$transaction(async (tx) => {
+			const { userData, businessData, plan_tag } = req.body;
+			let existingUser = null;
+			if (userData.registration_token) {
+				//TODO: validate token if given
+				const token = await TokenDao.validateRegistrationSessionToken(userData.registration_token);
+				if (!token) {
+					console.error('Invalid registration token!');
+					throw new Error('Invalid registration token!');
+				}
+				existingUser = token.user;
+			} else {
+				existingUser =
+					(await UserDao.getUserByEmail(userData.email)) ||
+					(await UserDao.getUserByTelephone(userData.telephone));
+				console.log('existingUser:', existingUser?.email, existingUser?.telephone);
+				if (existingUser) {
+					console.error('User with this email/telephone already exists!');
+					throw new Error('User with this email/telephone already exists!');
+				}
+			}
+			let existingBusiness = null;
+			if (businessData.business_id) {
+				//TODO: check that business exists if given
+				existingBusiness = await BusinessDao.getBusinessById(businessData.business_id);
+				//TODO: check that user is admin in business if business given
+				const isAdmin =
+					existingBusiness.business_users.find((bu) => bu.user_id === existingUser.user_id)?.company_role ===
+					COMPANY_ROLE.DIRECTOR;
+				if (!isAdmin) {
+					console.error('You dont have the required permissions for this business!');
+					throw new Error('You dont have the required permissions for this business!');
+				}
+			} else {
+				existingBusiness = await BusinessDao.getBusinessByEmail(businessData.email);
+				if (existingBusiness) {
+					console.error('Business with this email already exists.');
+					throw new Error('Business with this email already exists.');
+					// return res.status(400).json({ error: 'Business with this email already exists.' });
+				}
+			}
+
+			let stripeCustomer = await stripe.createCustomer(
+				businessData.email,
+				businessData.business_name,
+				businessData.business_telephone
 			);
-			// Create reservation module for the business
+			const userCreationObj = existingUser
+				? null
+				: {
+						email: userData.email,
+						password: userData.password,
+						user_role: 'ADMIN',
+						telephone: userData.telephone || businessData.business_telephone,
+						telephone_number: userData.telephone_number || businessData.business_telephone_number,
+						telephone_code: userData.telephone_code || businessData.business_telephone_code,
+					};
+			const businessCreationObj = existingBusiness
+				? null
+				: {
+						name: businessData.name,
+						email: businessData.email,
+						telephone: businessData.telephone,
+						telephone_number: businessData.telephone_number,
+						telephone_code: businessData.telephone_code,
+						type: BUSINESS_TYPE.RESERVATION,
+						tax_id: businessData.tax_id,
+						registration_id: businessData.registration_id,
+						stripe_customer_id: stripeCustomer.id,
+					};
+
+			business = existingBusiness || (await BusinessDao.createNewBusiness(businessCreationObj, tx));
+
 			let reservationModule = await tx.reservation_module.create({
 				data: {
 					business: {
@@ -1125,43 +1195,32 @@ async function registerReservationBusiness(req, res) {
 					},
 				},
 			});
-			const userObj = {
-				data: {
-					email: userExists.email || req.body.email,
-					password: req.body.password,
-					user_role: 'ADMIN',
-					date_of_birth: req.body.date_of_birth,
-					telephone: userExists.telephone || req.body.business_telephone,
-					telephone_number: userExists.telephone_number || req.body.business_telephone_number,
-					telephone_code: userExists.telephone_code || req.body.business_telephone_code,
-				},
-			};
-			//TODO: is this ok or should we tell them this is happening?
-
-			if (userExists) {
-				// If user exists, connect to existing user
-				const { businessUser } = await BusinessUsersDao.createBusinessUser(
-					userObj,
-					business.business_id,
-					false,
-					tx
-				);
-				businessUserData = businessUser;
-				const userRoles = userObj.data.user_roles || [
-					{ role: userObj.data.user_role || 'BUSINESS_USER', primary: true },
-				];
-				await UserDao.linkRolesToUser(userExists.user_id, userRoles, tx);
+			let businessUserData = null;
+			if (existingUser) {
+				const existingBusinessUser = await BusinessUsersDao.getBusinessUserByUserId(existingUser.user_id);
+				if (!existingBusinessUser) {
+					const { businessUser } = await BusinessUsersDao.createBusinessUser(
+						existingUser,
+						business.business_id,
+						false,
+						tx
+					);
+				}
+				businessUserData = existingBusinessUser;
+				// const userRoles = userData.user_roles || [
+				// 	{ role: userObj.data.user_role || 'BUSINESS_USER', primary: true },
+				// ];
+				// await UserDao.linkRolesToUser(existingUser.user_id, userRoles, tx);
 			} else {
-				// If user does not exist, create new user
 				const { user, businessUser } = await BusinessUsersDao.createBusinessUser(
-					userObj,
+					{ data: userCreationObj },
 					business.business_id,
 					true,
 					tx
 				);
 				businessUserData = businessUser;
-				const userRoles = userObj.data.user_roles || [
-					{ role: userObj.data.user_role || 'BUSINESS_USER', primary: true },
+				const userRoles = userCreationObj.user_roles || [
+					{ role: userCreationObj.user_role || 'BUSINESS_USER', primary: true },
 				];
 				await UserDao.linkRolesToUser(user?.user_id, userRoles, tx);
 			}
@@ -1265,7 +1324,7 @@ async function registerReservationBusiness(req, res) {
 			transactionSucceeded = true;
 		});
 
-		businessUsers.push({ businessUser: businessUserData });
+		// businessUsers.push({ businessUser: businessUserData });
 		// TODO: select user to login,
 		if (!transactionSucceeded && stripeCustomer?.id) {
 			try {
@@ -1277,13 +1336,14 @@ async function registerReservationBusiness(req, res) {
 		res.status(201).json({
 			message: 'Business registered successfully',
 			business,
-			businessUsers,
+			// businessUsers,
 		});
 	} catch (error) {
 		console.error('Error registering business:', error);
 		res.status(400).json({ error: 'Error registering business', detail: error.message });
 	}
 }
+
 /**
  * POST /auth/create/scheduled_user
  * @tag User
