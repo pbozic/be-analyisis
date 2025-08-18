@@ -5,6 +5,8 @@ import allergernSeed from './seeders/alergenSeeder.js';
 import fiscalDevicesSeeder from './seeders/fiscalDevicesSeeder.js';
 import categoriesSeed from './seeders/restaurantsCategoriesSeeder.js';
 import cuisinesSeed from './seeders/dailyMealsCategoriesSeeder.js';
+import localSeed from './seeders/localLocationsSeeder.js';
+import merchantSeed from './seeders/merchantCategoriesSeeder.js';
 import promoSectionSeed from './seeders/promoSectionSeeder.js';
 import municipalitiesSeeder from './seeders/municipalitiesSeeder.js';
 import settlementSeeder from './seeders/settlementSeeder.js';
@@ -20,6 +22,8 @@ async function main() {
 	}
 	await allergernSeed();
 	await categoriesSeed();
+	await merchantSeed();
+	await localSeed();
 	await cuisinesSeed();
 	await promoSectionSeed();
 	await municipalitiesSeeder();

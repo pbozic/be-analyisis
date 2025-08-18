@@ -1,0 +1,625 @@
+import fs from 'fs';
+import path from 'path';
+import prisma from '../prisma.js';
+import { upsertFileOnS3Helper } from '../../controllers/FilesController.js';
+import CategoriesDao from '../../dao/Categories.js';
+import WordDao from '../../dao/Word.js';
+import url from 'node:url';
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+let languages = {
+	en: {
+		carParts: 'Car parts',
+		personalCareAndDrugstore: 'Personal care and drugstore',
+		music: 'Music, instruments and movies',
+		construction: 'Construction',
+		toys: "Toys and children's equipment",
+		mobile: 'Mobile devices',
+		clothing: 'Clothing, footwear and accessories',
+		officeSupplies: 'Office supplies',
+		computer: 'Computing',
+		sports: 'Sports',
+		fotoAndvideo: 'TV, photo, video and smart devices',
+		gardenAndWorkshop: 'Garden and workshop',
+		allForHome: 'Home and small household appliances',
+		animals: 'Animals',
+		food: 'Food',
+		bioAndSpecialFood: 'Organic and special food',
+		dairy: 'Chilled and dairy products',
+		bakery: 'Bread, pastries and sweets',
+		meatAndFish: 'Meat, meat products and fish',
+		saucesAndSpices: 'Sauces and spices',
+		baking: 'Baking',
+		drinks: 'Drinks',
+		supplements: 'Food supplements',
+		fruitsAndVegetables: 'Fruits and vegetables',
+		pantry: 'Pantry',
+		snacks: 'Sweet and salty snacks',
+		sportsNutrition: 'Sports nutrition',
+		meals: 'Everything for breakfast, snack or lunch',
+		frozen: 'Frozen products',
+	},
+	sl: {
+		carParts: 'Avto - deli',
+		personalCareAndDrugstore: 'Osebna nega in drogerija',
+		music: 'Glasba, glasbila in filmi',
+		construction: 'Gradbeništvo',
+		toys: 'Igrače in otroška oprema',
+		mobile: 'Mobilne naprave',
+		clothing: 'Oblačila, obutev in dodatki',
+		officeSupplies: 'Pisarniška oprema',
+		computer: 'Računalništvo',
+		sports: 'Šport',
+		fotoAndvideo: 'TV, foto, video in smart naprave',
+		gardenAndWorkshop: 'Vrt in delavnica',
+		allForHome: 'Vse za dom in mali gospodinjski aparati',
+		animals: 'Živali',
+		food: 'Živila',
+		bioAndSpecialFood: 'Bio in druga posebna hrana',
+		dairy: 'Hlajeni in mlečni izdelki',
+		bakery: 'Kruh, pecivo in slaščice',
+		meatAndFish: 'Meso, mesni izdelki in ribe',
+		saucesAndSpices: 'Omake in začimbe',
+		baking: 'Peka',
+		drinks: 'Pijače',
+		supplements: 'Prehranska dopolnila',
+		fruitsAndVegetables: 'Sadje in zelenjava',
+		pantry: 'Shramba',
+		snacks: 'Sladki in slani prigrizki',
+		sportsNutrition: 'Športna prehrana',
+		meals: 'Vse za zajtrk, malico ali kosilo',
+		frozen: 'Zamrznjeni izdelki',
+	},
+	it: {
+		carParts: 'Parti auto',
+		personalCareAndDrugstore: 'Cura personale e drogheria',
+		music: 'Musica, strumenti e film',
+		construction: 'Costruzioni',
+		toys: 'Giocattoli e articoli per bambini',
+		mobile: 'Dispositivi mobili',
+		clothing: 'Abbigliamento, calzature e accessori',
+		officeSupplies: 'Forniture per ufficio',
+		computer: 'Informatica',
+		sports: 'Sport',
+		fotoAndvideo: 'TV, foto, video e dispositivi smart',
+		gardenAndWorkshop: 'Giardino e officina',
+		allForHome: 'Casa e piccoli elettrodomestici',
+		animals: 'Animali',
+		food: 'Alimenti',
+		bioAndSpecialFood: 'Cibi biologici e speciali',
+		dairy: 'Prodotti freschi e latticini',
+		bakery: 'Pane, pasticcini e dolci',
+		meatAndFish: 'Carne, prodotti di carne e pesce',
+		saucesAndSpices: 'Salse e spezie',
+		baking: 'Pasticceria',
+		drinks: 'Bevande',
+		supplements: 'Integratori alimentari',
+		fruitsAndVegetables: 'Frutta e verdura',
+		pantry: 'Dispensa',
+		snacks: 'Snack dolci e salati',
+		sportsNutrition: 'Nutrizione sportiva',
+		meals: 'Tutto per colazione, spuntino o pranzo',
+		frozen: 'Prodotti surgelati',
+	},
+	de: {
+		carParts: 'Autoteile',
+		personalCareAndDrugstore: 'Körperpflege und Drogerie',
+		music: 'Musik, Instrumente und Filme',
+		construction: 'Bauwesen',
+		toys: 'Spielzeug und Kinderbedarf',
+		mobile: 'Mobilgeräte',
+		clothing: 'Kleidung, Schuhe und Accessoires',
+		officeSupplies: 'Bürobedarf',
+		computer: 'Informatik',
+		sports: 'Sport',
+		fotoAndvideo: 'TV, Foto, Video und Smart-Geräte',
+		gardenAndWorkshop: 'Garten und Werkstatt',
+		allForHome: 'Haushalt und kleine Elektrogeräte',
+		animals: 'Tiere',
+		food: 'Lebensmittel',
+		bioAndSpecialFood: 'Bio- und Spezialnahrung',
+		dairy: 'Kühl- und Milchprodukte',
+		bakery: 'Brot, Gebäck und Süßwaren',
+		meatAndFish: 'Fleisch, Fleischprodukte und Fisch',
+		saucesAndSpices: 'Soßen und Gewürze',
+		baking: 'Backen',
+		drinks: 'Getränke',
+		supplements: 'Nahrungsergänzungsmittel',
+		fruitsAndVegetables: 'Obst und Gemüse',
+		pantry: 'Vorratskammer',
+		snacks: 'Süße und salzige Snacks',
+		sportsNutrition: 'Sportnahrung',
+		meals: 'Alles für Frühstück, Snack oder Mittagessen',
+		frozen: 'Tiefkühlprodukte',
+	},
+	es: {
+		carParts: 'Piezas de coche',
+		personalCareAndDrugstore: 'Cuidado personal y droguería',
+		music: 'Música, instrumentos y películas',
+		construction: 'Construcción',
+		toys: 'Juguetes y artículos infantiles',
+		mobile: 'Dispositivos móviles',
+		clothing: 'Ropa, calzado y accesorios',
+		officeSupplies: 'Material de oficina',
+		computer: 'Informática',
+		sports: 'Deportes',
+		fotoAndvideo: 'TV, foto, vídeo y dispositivos inteligentes',
+		gardenAndWorkshop: 'Jardín y taller',
+		allForHome: 'Hogar y pequeños electrodomésticos',
+		animals: 'Animales',
+		food: 'Alimentos',
+		bioAndSpecialFood: 'Alimentos orgánicos y especiales',
+		dairy: 'Productos refrigerados y lácteos',
+		bakery: 'Pan, pasteles y dulces',
+		meatAndFish: 'Carne, productos cárnicos y pescado',
+		saucesAndSpices: 'Salsas y especias',
+		baking: 'Repostería',
+		drinks: 'Bebidas',
+		supplements: 'Suplementos alimenticios',
+		fruitsAndVegetables: 'Frutas y verduras',
+		pantry: 'Despensa',
+		snacks: 'Aperitivos dulces y salados',
+		sportsNutrition: 'Nutrición deportiva',
+		meals: 'Todo para el desayuno, merienda o almuerzo',
+		frozen: 'Productos congelados',
+	},
+	sr: {
+		carParts: 'Delovi za auto',
+		personalCareAndDrugstore: 'Lična nega i drogerija',
+		music: 'Muzika, instrumenti i filmovi',
+		construction: 'Građevinarstvo',
+		toys: 'Igračke i dečija oprema',
+		mobile: 'Mobilni uređaji',
+		clothing: 'Odeća, obuća i dodaci',
+		officeSupplies: 'Kancelarijski pribor',
+		computer: 'Računarstvo',
+		sports: 'Sport',
+		fotoAndvideo: 'TV, foto, video i smart uređaji',
+		gardenAndWorkshop: 'Vrt i radionica',
+		allForHome: 'Sve za dom i mali kućanski aparati',
+		animals: 'Životinje',
+		food: 'Živila',
+		bioAndSpecialFood: 'Bio i druga posebna hrana',
+		dairy: 'Hlađeni i mlečni proizvodi',
+		bakery: 'Hleb, peciva i kolači',
+		meatAndFish: 'Meso, mesni proizvodi i riba',
+		saucesAndSpices: 'Sosovi i začini',
+		baking: 'Pekarstvo',
+		drinks: 'Pića',
+		supplements: 'Prehrambeni dodaci',
+		fruitsAndVegetables: 'Voće i povrće',
+		pantry: 'Ostava',
+		snacks: 'Slatke i slane grickalice',
+		sportsNutrition: 'Sportska ishrana',
+		meals: 'Sve za doručak, užinu ili ručak',
+		frozen: 'Zamrznuti proizvodi',
+	},
+	bs: {
+		carParts: 'Dijelovi za auto',
+		personalCareAndDrugstore: 'Lična njega i drogerija',
+		music: 'Muzika, instrumenti i filmovi',
+		construction: 'Građevinarstvo',
+		toys: 'Igračke i dječija oprema',
+		mobile: 'Mobilni uređaji',
+		clothing: 'Odjeća, obuća i dodaci',
+		officeSupplies: 'Kancelarijski pribor',
+		computer: 'Računarstvo',
+		sports: 'Sport',
+		fotoAndvideo: 'TV, foto, video i smart uređaji',
+		gardenAndWorkshop: 'Vrt i radionica',
+		allForHome: 'Sve za dom i mali kućanski aparati',
+		animals: 'Životinje',
+		food: 'Živila',
+		bioAndSpecialFood: 'Bio i druga posebna hrana',
+		dairy: 'Hlađeni i mliječni proizvodi',
+		bakery: 'Hljeb, peciva i kolači',
+		meatAndFish: 'Meso, mesni proizvodi i riba',
+		saucesAndSpices: 'Sosovi i začini',
+		baking: 'Pekarstvo',
+		drinks: 'Pića',
+		supplements: 'Prehrambeni dodaci',
+		fruitsAndVegetables: 'Voće i povrće',
+		pantry: 'Ostava',
+		snacks: 'Slatke i slane grickalice',
+		sportsNutrition: 'Sportska prehrana',
+		meals: 'Sve za doručak, užinu ili ručak',
+		frozen: 'Zamrznuti proizvodi',
+	},
+	hr: {
+		carParts: 'Auto dijelovi',
+		personalCareAndDrugstore: 'Osobna njega i drogerija',
+		music: 'Glazba, instrumenti i filmovi',
+		construction: 'Građevinarstvo',
+		toys: 'Igračke i dječja oprema',
+		mobile: 'Mobilni uređaji',
+		clothing: 'Odjeća, obuća i dodaci',
+		officeSupplies: 'Uredski pribor',
+		computer: 'Računalstvo',
+		sports: 'Sport',
+		fotoAndvideo: 'TV, foto, video i smart uređaji',
+		gardenAndWorkshop: 'Vrt i radionica',
+		allForHome: 'Sve za dom i mali kućanski aparati',
+		animals: 'Životinje',
+		food: 'Živila',
+		bioAndSpecialFood: 'Bio i druga posebna hrana',
+		dairy: 'Hlađeni i mliječni proizvodi',
+		bakery: 'Kruh, peciva i kolači',
+		meatAndFish: 'Meso, mesni proizvodi i riba',
+		saucesAndSpices: 'Umaci i začini',
+		baking: 'Pekarstvo',
+		drinks: 'Pića',
+		supplements: 'Prehrambeni dodaci',
+		fruitsAndVegetables: 'Voće i povrće',
+		pantry: 'Skladište',
+		snacks: 'Slatke i slane grickalice',
+		sportsNutrition: 'Sportska prehrana',
+		meals: 'Sve za doručak, užinu ili ručak',
+		frozen: 'Zamrznuti proizvodi',
+	},
+	fr: {
+		carParts: 'Pièces automobiles',
+		personalCareAndDrugstore: 'Soins personnels et droguerie',
+		music: 'Musique, instruments et films',
+		construction: 'Construction',
+		toys: 'Jouets et articles pour enfants',
+		mobile: 'Appareils mobiles',
+		clothing: 'Vêtements, chaussures et accessoires',
+		officeSupplies: 'Fournitures de bureau',
+		computer: 'Informatique',
+		sports: 'Sports',
+		fotoAndvideo: 'TV, photo, vidéo et appareils connectés',
+		gardenAndWorkshop: 'Jardin et atelier',
+		allForHome: 'Maison et petits appareils électroménagers',
+		animals: 'Animaux',
+		food: 'Aliments',
+		bioAndSpecialFood: 'Aliments bio et spéciaux',
+		dairy: 'Produits frais et laitiers',
+		bakery: 'Pain, pâtisseries et confiseries',
+		meatAndFish: 'Viande, produits carnés et poisson',
+		saucesAndSpices: 'Sauces et épices',
+		baking: 'Boulangerie',
+		drinks: 'Boissons',
+		supplements: 'Compléments alimentaires',
+		fruitsAndVegetables: 'Fruits et légumes',
+		pantry: 'Garde-manger',
+		snacks: 'Snacks sucrés et salés',
+		sportsNutrition: 'Nutrition sportive',
+		meals: 'Tout pour le petit-déjeuner, le goûter ou le déjeuner',
+		frozen: 'Produits surgelés',
+	},
+	ru: {
+		carParts: 'Автозапчасти',
+		personalCareAndDrugstore: 'Личная гигиена и аптека',
+		music: 'Музыка, инструменты и фильмы',
+		construction: 'Строительство',
+		toys: 'Игрушки и детские товары',
+		mobile: 'Мобильные устройства',
+		clothing: 'Одежда, обувь и аксессуары',
+		officeSupplies: 'Канцелярские принадлежности',
+		computer: 'Вычислительная техника',
+		sports: 'Спорт',
+		fotoAndvideo: 'Телевизоры, фото, видео и смарт-устройства',
+		gardenAndWorkshop: 'Сад и мастерская',
+		allForHome: 'Дом и мелкая бытовая техника',
+		animals: 'Животные',
+		food: 'Продукты питания',
+		bioAndSpecialFood: 'Био и другие специальные продукты',
+		dairy: 'Охлажденные и молочные продукты',
+		bakery: 'Хлеб, выпечка и сладости',
+		meatAndFish: 'Мясо, мясные продукты и рыба',
+		saucesAndSpices: 'Соусы и специи',
+		baking: 'Выпечка',
+		drinks: 'Напитки',
+		supplements: 'Пищевые добавки',
+		fruitsAndVegetables: 'Фрукты и овощи',
+		pantry: 'Кладовая',
+		snacks: 'Сладкие и соленые закуски',
+		sportsNutrition: 'Спортивное питание',
+		meals: 'Все для завтрака, перекуса или обеда',
+		frozen: 'Замороженные продукты',
+	},
+};
+let CATEGORIES_FULL = {
+	carParts: {
+		key: 'carParts',
+		tag: 'carParts',
+		source: './categoryIcons/merchantIcons/avto_-_deli.png',
+		name: 'carParts',
+	},
+	personalCareAndDrugstore: {
+		key: 'personalCareAndDrugstore',
+		tag: 'personalCareAndDrugstore',
+		source: './categoryIcons/merchantIcons/osbnea_nega_in_drogerija.png',
+		name: 'personalCareAndDrugstore',
+	},
+	music: {
+		key: 'music',
+		tag: 'music',
+		source: './categoryIcons/merchantIcons/glasba_glasbila_in_filmi.png',
+		name: 'music',
+	},
+	construction: {
+		key: 'construction',
+		tag: 'construction',
+		source: './categoryIcons/merchantIcons/gradbenistvo.png',
+		name: 'construction',
+	},
+	toys: {
+		key: 'toys',
+		tag: 'toys',
+		source: './categoryIcons/merchantIcons/igrace_in_otroska_oprema.png',
+		name: 'toys',
+	},
+	mobile: {
+		key: 'mobile',
+		tag: 'mobile',
+		source: './categoryIcons/merchantIcons/mobilne_naprave.png',
+		name: 'mobile',
+	},
+	clothing: {
+		key: 'clothing',
+		tag: 'clothing',
+		source: './categoryIcons/merchantIcons/oblacila_obutev_in_dodatki.png',
+		name: 'clothing',
+	},
+	officeSupplies: {
+		key: 'officeSupplies',
+		tag: 'officeSupplies',
+		source: './categoryIcons/merchantIcons/pisarniska_oprema.png',
+		name: 'officeSupplies',
+	},
+	computer: {
+		key: 'computer',
+		tag: 'computer',
+		source: './categoryIcons/merchantIcons/racunalnistvo.png',
+		name: 'computer',
+	},
+	sports: {
+		key: 'sports',
+		tag: 'sports',
+		source: './categoryIcons/merchantIcons/sport.png',
+		name: 'sports',
+	},
+	fotoAndvideo: {
+		key: 'fotoAndvideo',
+		tag: 'fotoAndvideo',
+		source: './categoryIcons/merchantIcons/tv_foto_video_in_smart_naprave.png',
+		name: 'fotoAndvideo',
+	},
+	gardenAndWorkshop: {
+		key: 'gardenAndWorkshop',
+		tag: 'gardenAndWorkshop',
+		source: './categoryIcons/merchantIcons/vrt_in_delavnica.png',
+		name: 'gardenAndWorkshop',
+	},
+	allForHome: {
+		key: 'allForHome',
+		tag: 'allForHome',
+		source: './categoryIcons/merchantIcons/vse_za_dom_in_mali_gospodinjski_aparati.png',
+		name: 'allForHome',
+	},
+	animals: {
+		key: 'animals',
+		tag: 'animals',
+		source: './categoryIcons/merchantIcons/zivali.png',
+		name: 'animals',
+	},
+	food: {
+		key: 'food',
+		tag: 'food',
+		source: './categoryIcons/merchantIcons/zivila.png',
+		name: 'food',
+	},
+	/*________________________ */
+	bioAndSpecialFood: {
+		key: 'bioAndSpecialFood',
+		tag: 'bioAndSpecialFood',
+		source: './categoryIcons/merchantIcons/foodIcons/bio_in_druga_posebna_hrana.png',
+		name: 'bioAndSpecialFood',
+	},
+	dairy: {
+		key: 'dairy',
+		tag: 'dairy',
+		source: './categoryIcons/merchantIcons/foodIcons/hlajeni_in_mlecni_izdelki.png',
+		name: 'dairy',
+	},
+	bakery: {
+		key: 'bakery',
+		tag: 'bakery',
+		source: './categoryIcons/merchantIcons/foodIcons/kruh_pecivo_in_slascice.png',
+		name: 'bakery',
+	},
+	meatAndFish: {
+		key: 'meatAndFish',
+		tag: 'meatAndFish',
+		source: './categoryIcons/merchantIcons/foodIcons/meso_mesni_izdelki_in_ribe.png',
+		name: 'meatAndFish',
+	},
+	saucesAndSpices: {
+		key: 'saucesAndSpices',
+		tag: 'saucesAndSpices',
+		source: './categoryIcons/merchantIcons/foodIcons/omake_in_zacimbe.png',
+		name: 'saucesAndSpices',
+	},
+	baking: {
+		key: 'baking',
+		tag: 'baking',
+		source: './categoryIcons/merchantIcons/foodIcons/peka-1.png',
+		name: 'baking',
+	},
+	drinks: {
+		key: 'drinks',
+		tag: 'drinks',
+		source: './categoryIcons/merchantIcons/foodIcons/pijace.png',
+		name: 'drinks',
+	},
+	supplements: {
+		key: 'supplements',
+		tag: 'supplements',
+		source: './categoryIcons/merchantIcons/foodIcons/prehranska_dopolnila.png',
+		name: 'supplements',
+	},
+	fruitsAndVegetables: {
+		key: 'fruitsAndVegetables',
+		tag: 'fruitsAndVegetables',
+		source: './categoryIcons/merchantIcons/foodIcons/sadje_in_zelenjava.png',
+		name: 'fruitsAndVegetables',
+	},
+	pantry: {
+		key: 'pantry',
+		tag: 'pantry',
+		source: './categoryIcons/merchantIcons/foodIcons/shramba-1.png',
+		name: 'pantry',
+	},
+	snacks: {
+		key: 'snacks',
+		tag: 'snacks',
+		source: './categoryIcons/merchantIcons/foodIcons/sladki_in_slani_prigrizki.png',
+		name: 'snacks',
+	},
+	sportsNutrition: {
+		key: 'sportsNutrition',
+		tag: 'sportsNutrition',
+		source: './categoryIcons/merchantIcons/foodIcons/sportna_prehrana.png',
+		name: 'sportsNutrition',
+	},
+	meals: {
+		key: 'meals',
+		tag: 'meals',
+		source: './categoryIcons/merchantIcons/foodIcons/vse_za_zajtrk_malico_ali_kosilo.png',
+		name: 'meals',
+	},
+	frozen: {
+		key: 'frozen',
+		tag: 'frozen',
+		source: './categoryIcons/merchantIcons/foodIcons/zamrznjeni_izdelki.png',
+		name: 'frozen',
+	},
+};
+async function seedCategories() {
+	console.log('Seeding categories...');
+	for (let key in CATEGORIES_FULL) {
+		console.log(`Seeding category: ${key}`);
+		let category = CATEGORIES_FULL[key];
+		let translations = [];
+		for (let lang in languages) {
+			translations.push({
+				language: lang,
+				translation: languages[lang][key],
+			});
+		}
+		const imagePath = path.resolve(__dirname, category.source);
+		let base64 = null;
+		try {
+			if (fs.existsSync(imagePath)) {
+				const imageBuffer = fs.readFileSync(imagePath);
+				base64 = `data:image/png;base64,${imageBuffer.toString('base64')}`;
+			} else {
+				console.warn(`File not found: ${imagePath}`);
+			}
+		} catch (error) {
+			console.error(`Error processing ${imagePath}:`, error);
+		}
+		let categoryObj = {
+			categoryData: {
+				name: category.name,
+				description: category.name,
+				category_type: 'MERCHANT',
+				tag: category.tag,
+			},
+			translations: translations,
+			iconFileData: {
+				file_type: 'IMAGE',
+				mime_type: 'image/png',
+				base64: base64,
+			},
+			parent_categories_id: null,
+			subcategories: [],
+		};
+		try {
+			let categoryExists = await prisma.categories.findUnique({
+				where: {
+					tag_category_type: {
+						tag: categoryObj.categoryData.tag,
+						category_type: categoryObj.categoryData.category_type,
+					},
+				},
+				include: {
+					icon: true,
+				},
+			});
+			let category_id = categoryExists?.categories_id;
+			if (categoryExists) {
+				const cat = await CategoriesDao.updateCategory(
+					//TODO: delete old images
+					category_id,
+					categoryObj.categoryData,
+					categoryObj.translations,
+					categoryObj.subcategories,
+					categoryObj.parent_categories_id,
+					categoryObj.iconFileData
+				);
+				category_id = cat.categories_id;
+				if (categoryObj.iconFileData) {
+					const { file_type, mime_type, base64 } = categoryObj.iconFileData;
+					await upsertFileOnS3Helper(null, cat.icon, file_type, mime_type, base64);
+				}
+				console.log(`Category ${cat.categories_id} updated.`);
+				console.log(`Category ${categoryExists.tag} tag updated.`);
+			} else {
+				const cat = await CategoriesDao.createCategory(
+					categoryObj.categoryData,
+					categoryObj.translations,
+					categoryObj.subcategories,
+					[],
+					categoryObj.parent_categories_id,
+					categoryObj.iconFileData
+				);
+				category_id = cat.categories_id;
+				if (categoryObj.iconFileData) {
+					const { file_type, mime_type, base64 } = categoryObj.iconFileData;
+					await upsertFileOnS3Helper(null, cat.icon, file_type, mime_type, base64);
+				}
+				console.log(`Category ${cat.categories_id} created.`);
+			}
+			let wordObj = {
+				wordData: {
+					word: categoryObj.categoryData.name,
+					categories_id: category_id,
+				},
+				translations: translations,
+			};
+			let wordExists = await prisma.words.findUnique({
+				where: {
+					word: wordObj.wordData.word,
+				},
+			});
+			if (wordExists) {
+				let updatedWord = await prisma.words.update({
+					where: {
+						word: wordObj.wordData.word,
+					},
+					data: {
+						category: {
+							connect: {
+								categories_id: category_id,
+							},
+						},
+					},
+				});
+				console.log(`word ${wordExists.tag} already exists.`);
+			} else {
+				const word = await WordDao.createWord(
+					wordObj.wordData.word,
+					wordObj.wordData.categories_id,
+					wordObj.translations
+				);
+				console.log(`Word ${word.word_id} created.`);
+			}
+		} catch (error) {
+			console.log('Error creating category and word:', error);
+		}
+	}
+	console.log('Categories seeded.');
+}
+export default seedCategories;
