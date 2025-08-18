@@ -1139,6 +1139,10 @@ async function registerReservationBusiness(req, res) {
 			if (businessData.business_id) {
 				//TODO: check that business exists if given
 				existingBusiness = await BusinessDao.getBusinessById(businessData.business_id);
+				if (!existingBusiness) {
+					console.error('Unknown business_id!');
+					throw new Error('Unknown business_id!');
+				}
 				//TODO: check that user is admin in business if business given
 				const isAdmin =
 					existingBusiness.business_users.find((bu) => bu.user_id === existingUser.user_id)?.company_role ===
@@ -1146,6 +1150,10 @@ async function registerReservationBusiness(req, res) {
 				if (!isAdmin) {
 					console.error('You dont have the required permissions for this business!');
 					throw new Error('You dont have the required permissions for this business!');
+				}
+				if (existingBusiness.reservation_module !== null) {
+					console.error('This business is already connected to the reservation platform!');
+					throw new Error('This business is already connected to the reservation platform!');
 				}
 			} else {
 				existingBusiness = await BusinessDao.getBusinessByEmail(businessData.email);
