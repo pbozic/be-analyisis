@@ -9,6 +9,7 @@ import { getSettlementsWeatherForecast } from './lib/weatherHelpers.js';
 import { checkPingStatus } from './lib/driverHelpers.js';
 import stripe from './lib/stripe.js';
 import TaxRateHelpers from './lib/taxRateHelpers.js';
+import helpersLib from './lib/helpersLib.js';
 function startCronJobs() {
 	// Every minute
 	cron.schedule('* * * * *', TaxiHelpers.checkIfOrdersNeedSending);
@@ -31,6 +32,7 @@ function startCronJobs() {
 	cron.schedule('* */1 * * *', getSettlementsWeatherForecast);
 	cron.schedule('0 0 * * *', DailyMealHelper.generateDailyMealMenuCategoriesAndInstancesFor14Days);
 	cron.schedule('0 6 * * *', DailyMealHelper.createDailyMeals);
+	cron.schedule('0 0 * * *', helpersLib.clearExpiredRegistrationTokens);
 	//Every 10 days
 	cron.schedule('0 0 */10 * *', stripe.payoutAvailableBalanceToBusinesses);
 	cron.schedule('59 23 * * *', BusinessHelper.setNewBusinesses);
