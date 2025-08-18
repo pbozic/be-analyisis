@@ -33,7 +33,8 @@ export async function getScheduleSlotExceptionsBySlotId(
 		const records = await ScheduleSlotExceptionDao.getExceptionsByScheduleSlotId(req.params.schedule_slot_id);
 		res.status(200).json(records);
 	} catch (error) {
-		res.status(500).json({ message: 'Error retrieving schedule slot exceptions', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error retrieving schedule slot exceptions', error: message });
 	}
 }
 
@@ -56,7 +57,8 @@ export async function createScheduleSlotException(
 		const record = await ScheduleSlotExceptionDao.createScheduleSlotException(req.body);
 		res.status(201).json(record);
 	} catch (error) {
-		res.status(500).json({ message: 'Error creating schedule slot exception', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error creating schedule slot exception', error: message });
 	}
 }
 
@@ -81,7 +83,8 @@ export async function updateScheduleSlotException(
 		const record = await ScheduleSlotExceptionDao.updateScheduleSlotException(req.params.id, req.body);
 		res.status(200).json(record);
 	} catch (error) {
-		res.status(500).json({ message: 'Error updating schedule slot exception', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error updating schedule slot exception', error: message });
 	}
 }
 
@@ -103,7 +106,8 @@ export async function deleteScheduleSlotException(
 		await ScheduleSlotExceptionDao.deleteScheduleSlotException(req.params.id);
 		res.status(204).send();
 	} catch (error) {
-		res.status(500).json({ message: 'Error deleting schedule slot exception', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error deleting schedule slot exception', error: message });
 	}
 }
 
@@ -131,7 +135,8 @@ export async function getScheduleSlotExceptionById(
 		}
 		res.status(200).json(record);
 	} catch (error) {
-		res.status(500).json({ message: 'Error retrieving schedule slot exception', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error retrieving schedule slot exception', error: message });
 	}
 }
 
@@ -183,7 +188,8 @@ export async function updateOrCreateScheduleSlotExceptions(
 		const record = { updatedExceptions, createdExceptions, removedExceptions };
 		res.status(200).json(record);
 	} catch (error) {
-		res.status(500).json({ message: 'Error updating or creating exceptions', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error updating or creating exceptions', error: message });
 	}
 }
 
@@ -268,7 +274,8 @@ export async function updateOrCreateScheduleSlotExceptionsAndBookingSlots(
 		};
 		res.status(200).json(record);
 	} catch (error) {
-		res.status(500).json({ message: 'Error updating or creating exceptions', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error updating or creating exceptions', error: message });
 	}
 }
 
@@ -348,7 +355,8 @@ export async function createScheduleSlotWithBookingSlotsAndExceptions(
 		const record = await createScheduleSlotWithData(req.body);
 		res.status(200).json(record);
 	} catch (error) {
-		res.status(500).json({ message: 'Error updating or creating booking slot', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error updating or creating booking slot', error: message });
 	}
 }
 
@@ -456,6 +464,7 @@ export async function updateScheduleSlotWithBookingSlotsAndExceptions(
 		const record = await updateScheduleSlotWithData(req.body, req.params.id);
 		res.status(200).json(record);
 	} catch (error) {
+		const message = error instanceof Error ? error.message : 'Unknown error';
 		res.status(500).json({
 			message: 'Error updating on updating schedule slot with booking slots and exceptions',
 			error,

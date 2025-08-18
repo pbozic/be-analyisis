@@ -27,7 +27,8 @@ export async function getSchedule(req: Request, res: Response): Promise<void> {
 		let schedules = await ScheduleDao.getSchedulesByLocationId();
 		res.status(200).json(schedules);
 	} catch (error) {
-		res.status(500).json({ message: 'Error retrieving schedules', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error retrieving schedules', error: message });
 	}
 }
 
@@ -49,7 +50,8 @@ export async function createSchedule(req: ValidatedRequest<CreateScheduleInput>,
 		let location = await ScheduleDao.createSchedule(scheduleData);
 		res.status(201).json(location);
 	} catch (error) {
-		res.status(500).json({ message: 'Error creating schedule', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error creating schedule', error: message });
 	}
 }
 
@@ -76,7 +78,8 @@ export async function updateSchedule(
 		let schedule = await ScheduleDao.updateSchedule(scheduleId, scheduleData);
 		res.status(200).json(schedule);
 	} catch (error) {
-		res.status(500).json({ message: 'Error updating schedule', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error updating schedule', error: message });
 	}
 }
 
@@ -100,7 +103,8 @@ export async function deleteSchedule(
 		await ScheduleDao.deleteSchedule(scheduleId);
 		res.status(204).send();
 	} catch (error) {
-		res.status(500).json({ message: 'Error deleting schedule', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error deleting schedule', error: message });
 	}
 }
 
@@ -130,7 +134,8 @@ export async function getScheduleById(
 		}
 		res.status(200).json(schedule);
 	} catch (error) {
-		res.status(500).json({ message: 'Error retrieving schedule', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error retrieving schedule', error: message });
 	}
 }
 
@@ -177,8 +182,8 @@ export async function updateScheduleWithData(
 		);
 		res.status(200).json({ schedule, removedEmployees, createdEmployees });
 	} catch (error) {
-		log('Error updating schedule with data:', error);
-		res.status(500).json({ message: 'Error updating schedule', error });
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error updating schedule', error: message });
 	}
 }
 
@@ -216,8 +221,9 @@ export async function createScheduleWithData(
 		);
 		res.status(200).json({ schedule, createdEmployees });
 	} catch (error) {
+		const message = error instanceof Error ? error.message : 'Unknown error';
 		log('Error updating schedule with data:', error);
-		res.status(500).json({ message: 'Error updating schedule', error });
+		res.status(500).json({ message: 'Error updating schedule', error: message });
 	}
 }
 
