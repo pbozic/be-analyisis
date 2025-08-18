@@ -463,13 +463,13 @@ let CATEGORIES_FULL = {
 	fastFood: {
 		key: 'fastFood',
 		tag: 'fast-food',
-		source: './categoryIcons/restaurantIcons/fast-food.png',
+		source: './categoryIcons/restaurantIcons/fast-food-1.png',
 		name: 'Fast food',
 	},
 	pizza: { key: 'pizza', tag: 'pizza', source: './categoryIcons/restaurantIcons/pizza-1.png', name: 'Pizza' },
 	burger: { key: 'burger', tag: 'burger', source: './categoryIcons/restaurantIcons/hamburger-1.png', name: 'Burger' },
 	salads: { key: 'salads', tag: 'salads', source: './categoryIcons/restaurantIcons/salad.png', name: 'Salads' },
-	soups: { key: 'soups', tag: 'soups', source: './categoryIcons/restaurantIcons/ladlle.png', name: 'Soups' }, //TODO: fix icon
+	soups: { key: 'soups', tag: 'soups', source: './categoryIcons/restaurantIcons/soup-1.png', name: 'Soups' },
 	vegetarian: {
 		key: 'vegetarian',
 		tag: 'vegetarian',
@@ -544,7 +544,7 @@ let CATEGORIES_FULL = {
 		source: './categoryIcons/restaurantIcons/breakfast-1.png',
 		name: 'Breakfast',
 	},
-	lunch: { key: 'lunch', tag: 'lunch', source: './categoryIcons/restaurantIcons/dish.png', name: 'Lunch' }, //TODO: fix icon
+	lunch: { key: 'lunch', tag: 'lunch', source: './categoryIcons/restaurantIcons/lunch-1.png', name: 'Lunch' },
 	gourmetCuisine: {
 		key: 'gourmetCuisine',
 		tag: 'gourmet-cuisine',
@@ -566,9 +566,9 @@ let CATEGORIES_FULL = {
 	snacksExtras: {
 		key: 'snacksExtras',
 		tag: 'extras',
-		source: './categoryIcons/restaurantIcons/snacks_extras.png',
+		source: './categoryIcons/restaurantIcons/snacks.png',
 		name: 'Snacks & extras',
-	}, //TODO: fix icon
+	},
 	desserts: {
 		key: 'desserts',
 		tag: 'desserts',
@@ -600,13 +600,13 @@ let CATEGORIES_FULL = {
 		tag: 'soft-drinks',
 		source: './categoryIcons/restaurantIcons/drinks.png',
 		name: 'Soft drinks',
-	}, //TODO: fix icon
+	},
 	kidsMeals: {
 		key: 'kidsMeals',
 		tag: 'kids-meals',
-		source: './categoryIcons/restaurantIcons/kids-meals.png',
+		source: './categoryIcons/restaurantIcons/kids_meal.png',
 		name: 'Kids meals',
-	}, //TODO: fix icon
+	},
 	studentMeals: {
 		key: 'studentMeals',
 		tag: 'student-meals',
