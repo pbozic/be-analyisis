@@ -618,7 +618,7 @@ export async function generateInstancesForSubscription(subscription_id: string) 
 		business: true,
 	});
 	console.log(sub);
-	const startDate = new Date();
+	const startDate = new Date(sub.start_date || null);
 	startDate.setUTCHours(0, 0, 0, 0);
 	const endDate = new Date(startDate);
 	endDate.setUTCDate(endDate.getUTCDate() + 13);
