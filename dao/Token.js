@@ -139,8 +139,12 @@ async function validateRegistrationSessionToken(tokenString) {
 		},
 		include: {
 			users: {
-				business_users: {
-					business: true,
+				include: {
+					business_users: {
+						include: {
+							business: true,
+						},
+					},
 				},
 			},
 		},
