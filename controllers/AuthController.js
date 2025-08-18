@@ -1067,7 +1067,7 @@ async function registerBusiness(req, res) {
 }
 
 /**
-- POST /auth/reservation/register
+- POST /reservation/auth/register
 - @tag Auth
 - @summary Register a new reservation business
 - @description Registers a new reservation business and user. If the business exists, connects it with a reservation module. If not, creates the business and required business users. If the user exists, connects the user to the business; otherwise, creates a new user. Also creates demo employee, location, and service for the reservation module.
@@ -1114,6 +1114,7 @@ async function registerReservationBusiness(req, res) {
 		let transactionSucceeded = false;
 		let business = null;
 		await prisma.$transaction(async (tx) => {
+			console.log(req.body);
 			const { userData, businessData, plan_tag } = req.body;
 			let existingUser = null;
 			if (userData.registration_token) {
@@ -1523,7 +1524,7 @@ async function authenticateRegistrationSession(req, res) {
 
 		const token = await TokenDao.generateRegistrationSessionToken(user);
 
-		return res.status(200).json({ token });
+		return res.status(200).json(token);
 	} catch (err) {
 		console.error('Error authenticating registration session:', err);
 		return res.status(500).json({ error: 'Internal server error.' });
