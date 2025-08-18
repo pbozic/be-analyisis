@@ -117,7 +117,7 @@ const createBusinessUser = async (userData, business_id, createNewUser = true, t
 			userData.data.first_name + ' ' + userData.data.last_name,
 			userData.data.telephone
 		);
-		userData.data.date_of_birth = new Date(userData.data.date_of_birth);
+		userData.data.date_of_birth = userData.data?.date_of_birth ? new Date(userData.data.date_of_birth) : undefined;
 		const userObj = {
 			...userData.data,
 			stripe_customer_id: stripeCustomer.id,

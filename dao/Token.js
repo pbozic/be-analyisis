@@ -130,6 +130,27 @@ async function generateRegistrationSessionToken(user) {
 	};
 	return await prisma.tokens.create({ data: tokenObj });
 }
+async function validateRegistrationSessionToken(tokenString) {
+	return await prisma.tokens.findFirst({
+		where: {
+			token: tokenString,
+			type: TokenType.BUSINESS_REGISTRATION,
+			expires_at: { gte: new Date() },
+		},
+		include: {
+			users: {
+				include: {
+					business_users: {
+						include: {
+							business: true,
+						},
+					},
+				},
+			},
+		},
+	});
+}
+
 export { getActiveSMSToken };
 export { saveSMSToken };
 export { updateToken };
@@ -138,6 +159,7 @@ export { generateSMSVerificationToken };
 export { generatePaswordResetToken };
 export { getPasswordToken };
 export { generateRegistrationSessionToken };
+export { validateRegistrationSessionToken };
 export default {
 	getActiveSMSToken,
 	saveSMSToken,
@@ -147,4 +169,5 @@ export default {
 	generatePaswordResetToken,
 	getPasswordToken,
 	generateRegistrationSessionToken,
+	validateRegistrationSessionToken,
 };
