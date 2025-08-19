@@ -670,7 +670,12 @@ async function cleanedCreateOrderHelper(orderData) {
 }
 async function handlePaymentForTransferOrder(order, return_url) {
 	try {
-		let user = await UsersDao.getUserById(order.user_id);
+		let user;
+		if (order.creating_user_id) {
+			user = await UsersDao.getUserById(order.creating_user_id);
+		} else {
+			user = await UsersDao.getUserById(order.user_id);
+		}
 		let payment_intent = null;
 		//CALCULATE IN CENTS
 		const PRICE_CENTS = Math.round(parseFloat(order.payment.price) * 100);
