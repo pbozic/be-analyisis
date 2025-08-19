@@ -924,7 +924,7 @@ async function createOrder(req, res) {
 					throw new Error('Number of requested seats exceeds vehicle capacity!');
 				}
 				if (
-					!!orderData.preferences.repeat_ride &&
+					orderData.preferences.repeat_ride?.length > 0 &&
 					!orderData.preferences.repeat_ride.some((item) => item.value === 'do_not_repeat')
 				) {
 					throw new Error(`Repeating orders not allowed for transfer orders above ${25}€!`);
