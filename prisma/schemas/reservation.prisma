@@ -47,7 +47,7 @@ model location {
   reservation_module    reservation_module @relation(fields: [reservation_module_id], references: [reservation_module_id])
   schedules             schedule[]
   bookings              booking[]
-  address               addresses[] // Optional, if the location has multiple addresses
+  address               addresses?        @relation(fields: [address_id], references: [address_id])
 }
 
 model service_category {

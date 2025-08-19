@@ -1278,7 +1278,6 @@ async function registerReservationBusiness(req, res) {
 						},
 					},
 					name: 'Main Location',
-					address: 'Testna ulica 123',
 					working_days: [],
 				},
 			});
