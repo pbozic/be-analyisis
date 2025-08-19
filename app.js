@@ -57,6 +57,9 @@ const allowedOrigins = [
 	'http://transfer.klikni.localhost:3000', // etc.
 	'http://dostava.klikni.localhost:3000', // etc.
 	'http://rezervacije.klikni.localhost:3000', // etc.
+	'https://overwatch.klikni-web.eu',
+	'overwatch.klikni-web.eu',
+	'http://overwatch.klikni-web.eu',
 ];
 
 app.use(
