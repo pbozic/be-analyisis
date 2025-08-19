@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 
 import EmployeeDao from '../../dao/reservation/Employee.ts';
 import BusinessUsersDao from '../../dao/BusinessUsers.js';
-import UserDao from '../../dao/User.ts';
+import UserDao from '../../dao/User.js';
 import ScheduleDao from '../../dao/reservation/Schedule.ts';
 import ScheduleEmployeeDao from '../../dao/reservation/ScheduleEmployee.ts';
 import { CreateEmployeeInput, UpdateEmployeeInput } from '../../types/reservation/Employee.ts';
