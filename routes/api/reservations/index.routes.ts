@@ -13,6 +13,7 @@ import bookingSlotRoutes from './bookingSlot.routes';
 import authRoutes from './auth.routes';
 import authMiddleware from '../../../middleware/auth';
 import bookingRoutes from './booking.routes';
+import adminRoutes from './admin.routes';
 const router = express.Router();
 
 router.use('/customers', [authMiddleware], customerRoutes);
@@ -26,5 +27,6 @@ router.use('/booking-slots', [authMiddleware], bookingSlotRoutes);
 router.use('/service-categories', [authMiddleware], serviceCategoryRoutes);
 router.use('/locations', [authMiddleware], locationRoutes);
 router.use('/auth', authRoutes);
+router.use('/admin', [authMiddleware], adminRoutes);
 router.use('/reservations', [authMiddleware], bookingRoutes);
 export default router;

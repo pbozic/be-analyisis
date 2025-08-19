@@ -24,6 +24,7 @@ import SMSHelper from '../lib/SMS.js';
 import { DOCUMENT_TYPE } from '../lib/constants.js';
 import elasticsearch from '../elasticsearch/index.js';
 import prisma from '../prisma/prisma.js';
+import ReservationModule from '../dao/reservation/ReservationModule.js';
 const { businessIndex } = elasticsearch;
 config();
 /**
@@ -1195,15 +1196,7 @@ async function registerReservationBusiness(req, res) {
 
 			business = existingBusiness || (await BusinessDao.createNewBusiness(businessCreationObj, tx));
 
-			let reservationModule = await tx.reservation_module.create({
-				data: {
-					business: {
-						connect: {
-							business_id: business.business_id,
-						},
-					},
-				},
-			});
+			let reservationModule = await ReservationModule.createReservationModule(business.business_id);
 			let businessUserData = null;
 			if (existingUser) {
 				const existingBusinessUser = await BusinessUsersDao.getBusinessUserByUserId(existingUser.user_id);

@@ -28,7 +28,8 @@ const authMiddleware = async (req, res, next) => {
 		req.user = {
 			...decoded.user,
 			business_id: businessUser?.business?.business_id || null,
-			business_user_id: businessUser?.business_user_id || null,
+			business_user_id: businessUser?.business_users_id || null,
+			company_role: businessUser?.company_role || null,
 			reservation_module_id: businessUser?.business?.reservation_module?.reservation_module_id || null,
 		};
 		req.userSocket = UserSockets.get(decoded.user.user_id);
