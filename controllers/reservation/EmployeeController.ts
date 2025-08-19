@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 
 import EmployeeDao from '../../dao/reservation/Employee.ts';
 import BusinessUsersDao from '../../dao/BusinessUsers.js';
+import UserDao from '../../dao/User.ts';
 import ScheduleDao from '../../dao/reservation/Schedule.ts';
 import ScheduleEmployeeDao from '../../dao/reservation/ScheduleEmployee.ts';
 import { CreateEmployeeInput, UpdateEmployeeInput } from '../../types/reservation/Employee.ts';
@@ -49,6 +50,10 @@ export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>,
 			return;
 		}
 		let reservation_module_id = req.user?.reservation_module_id as string;
+		let userExists = await UserDao.getUserByEmail(employeeData.email, businessId);
+		if (!userExists) {
+			userExists = await UserDao.getUserByTelephone(employeeData.telephone);
+		}
 		const { businessUser } = await BusinessUsersDao.createBusinessUser(
 			{
 				data: {
@@ -61,7 +66,8 @@ export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>,
 					telephone_number: employeeData.telephone_number,
 				},
 			},
-			businessId
+			businessId,
+			!userExists
 		);
 		let employee = await EmployeeDao.createEmployee({
 			reservation_module_id: reservation_module_id,
