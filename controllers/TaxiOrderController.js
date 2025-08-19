@@ -670,7 +670,12 @@ async function cleanedCreateOrderHelper(orderData) {
 }
 async function handlePaymentForTransferOrder(order, return_url) {
 	try {
-		let user = await UsersDao.getUserById(order.user_id);
+		let user;
+		if (order.creating_user_id) {
+			user = await UsersDao.getUserById(order.creating_user_id);
+		} else {
+			user = await UsersDao.getUserById(order.user_id);
+		}
 		let payment_intent = null;
 		//CALCULATE IN CENTS
 		const PRICE_CENTS = Math.round(parseFloat(order.payment.price) * 100);
@@ -924,7 +929,7 @@ async function createOrder(req, res) {
 					throw new Error('Number of requested seats exceeds vehicle capacity!');
 				}
 				if (
-					!!orderData.preferences.repeat_ride &&
+					orderData.preferences.repeat_ride?.length > 0 &&
 					!orderData.preferences.repeat_ride.some((item) => item.value === 'do_not_repeat')
 				) {
 					throw new Error(`Repeating orders not allowed for transfer orders above ${25}€!`);

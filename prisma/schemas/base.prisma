@@ -344,7 +344,7 @@ model addresses {
   business_users              business_users[]           @relation("business_users_operating_address")
   daily_meal_subscriptions    daily_meal_subscriptions[]
   local_locations             local_locations?
-
+  locations                   location[]
   @@unique([address, latitude, longitude], name: "uniqueAddressIdentifier")
 }
 

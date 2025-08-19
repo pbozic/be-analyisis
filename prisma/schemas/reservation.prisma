@@ -43,7 +43,7 @@ model location {
   location_id           String             @id @default(uuid()) @db.Uuid
   reservation_module_id String             @db.Uuid
   name                  String
-  address               String
+  address_id           String?            @db.Uuid // Optional, if the location has a specific address ID
   phone                 String?
   color                 String?
   accepts_online        Boolean            @default(false)
@@ -52,6 +52,7 @@ model location {
   reservation_module    reservation_module @relation(fields: [reservation_module_id], references: [reservation_module_id])
   schedules             schedule[]
   bookings              booking[]
+  address               addresses?        @relation(fields: [address_id], references: [address_id])
 }
 
 model service_category {
