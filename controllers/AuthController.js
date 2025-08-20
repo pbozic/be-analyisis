@@ -143,6 +143,7 @@ async function login(req, res) {
 							include: {
 								address: true,
 								delivery_address: true,
+								reservation_module: true,
 							},
 						},
 						operating_address: true,
