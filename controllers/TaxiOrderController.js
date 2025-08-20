@@ -342,8 +342,21 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
 	try {
 		const completedOrders = await TaxiOrderDao.getOrders({
 			where: {
-				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
-				user_id: user_id,
+				status: {
+					in: [
+						TAXI_ORDER_STATUS.TAXI_COMPLETED,
+						TAXI_ORDER_STATUS.TAXI_CANCELED,
+						TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+					],
+				},
+				OR: [
+					{
+						user_id: user_id,
+					},
+					{
+						creating_user_id: user_id,
+					},
+				],
 			},
 			orderBy: {
 				updated_at: 'desc',
