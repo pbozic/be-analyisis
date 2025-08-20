@@ -349,10 +349,14 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
 						TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
 					],
 				},
-				OR: {
-					user_id: user_id,
-					creating_user_id: user_id,
-				},
+				OR: [
+					{
+						user_id: user_id,
+					},
+					{
+						creating_user_id: user_id,
+					},
+				],
 			},
 			orderBy: {
 				updated_at: 'desc',
