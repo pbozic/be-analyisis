@@ -342,8 +342,21 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
 	try {
 		const completedOrders = await TaxiOrderDao.getOrders({
 			where: {
-				status: TAXI_ORDER_STATUS.TAXI_COMPLETED,
-				user_id: user_id,
+				status: {
+					in: [
+						TAXI_ORDER_STATUS.TAXI_COMPLETED,
+						TAXI_ORDER_STATUS.TAXI_CANCELED,
+						TAXI_ORDER_STATUS.CUSTOMER_CANCELED,
+					],
+				},
+				OR: [
+					{
+						user_id: user_id,
+					},
+					{
+						creating_user_id: user_id,
+					},
+				],
 			},
 			orderBy: {
 				updated_at: 'desc',
@@ -646,21 +659,24 @@ async function cleanedCreateOrderHelper(orderData) {
 				businessClientId
 			);
 		}
-		const order = await TaxiOrderDao.getOrder(firstOrderId, {
-			include: {
-				grouped_orders: true,
-			},
-		});
-		console.log('parentOrderId', firstOrderId);
-		console.log('fetched grouped_orders', order.grouped_orders);
+		let order;
 		let vehicle_transfer_order;
-		if (order && order.preferences.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
-			vehicle_transfer_order = await generateVehicleTransferOrder(
-				cleanedOrderDataArray[0],
-				user_id,
-				businessUserId,
-				businessClientId
-			);
+		if (firstOrderId) {
+			order = await TaxiOrderDao.getOrder(firstOrderId, {
+				include: {
+					grouped_orders: true,
+				},
+			});
+			console.log('parentOrderId', firstOrderId);
+			console.log('fetched grouped_orders', order.grouped_orders);
+			if (order && order.preferences.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
+				vehicle_transfer_order = await generateVehicleTransferOrder(
+					cleanedOrderDataArray[0],
+					user_id,
+					businessUserId,
+					businessClientId
+				);
+			}
 		}
 		return { order, vehicle_transfer_order };
 	} catch (error) {
@@ -670,7 +686,12 @@ async function cleanedCreateOrderHelper(orderData) {
 }
 async function handlePaymentForTransferOrder(order, return_url) {
 	try {
-		let user = await UsersDao.getUserById(order.user_id);
+		let user;
+		if (order.creating_user_id) {
+			user = await UsersDao.getUserById(order.creating_user_id);
+		} else {
+			user = await UsersDao.getUserById(order.user_id);
+		}
 		let payment_intent = null;
 		//CALCULATE IN CENTS
 		const PRICE_CENTS = Math.round(parseFloat(order.payment.price) * 100);
@@ -952,6 +973,9 @@ async function createOrder(req, res) {
 		}
 		const orderCreated = await cleanedCreateOrderHelper(orderData);
 		let order = orderCreated?.order;
+		if (!order) {
+			return res.status(500).json({ error: 'Failed to create order' });
+		}
 		//TODO: payment management for order
 		let payment_intent =
 			orderData.status === TAXI_ORDER_STATUS.AWAITING_PAYMENT
@@ -2167,11 +2191,10 @@ async function getScheduledOrdersByUserId(req, res) {
 		const orders = await TaxiOrderDao.getOrders({
 			where: {
 				is_scheduled: true,
-				user_id: user_id,
-				status: TAXI_ORDER_STATUS.PENDING,
+				status: { in: [TAXI_ORDER_STATUS.PENDING, TAXI_ORDER_STATUS.TAXI_ACCEPTED] },
+				OR: [{ user_id: user_id }, { creating_user_id: user_id }],
 			},
 		});
-		console.info(orders.length, 'scheduled orders');
 		res.status(200).json(orders);
 	} catch (e) {
 		console.error('Error getting scheduled orders by user_id.', e);

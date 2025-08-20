@@ -1,6 +1,7 @@
 import { Response } from 'express';
 
 import LocationDao from '../../dao/reservation/Location.ts';
+import AddressDao from '../../dao/Address.js';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
 import { CreateLocationInput, UpdateLocationInput } from '../../types/reservation/Location';
 
@@ -44,8 +45,21 @@ export async function createLocation(req: ValidatedRequest<CreateLocationInput>,
 	try {
 		let locationData = req.body;
 		let reservationModuleId = req.user?.reservation_module_id as string;
-		let location = await LocationDao.createLocation(locationData, reservationModuleId);
-		res.status(201).json(location);
+		let address = await AddressDao.findAddress(locationData.address.latitude, locationData.address.longitude);
+		if (!address) {
+			let newAddress = await AddressDao.addAddress({
+				address: locationData.address.address,
+				latitude: locationData.address.latitude,
+				longitude: locationData.address.longitude,
+			});
+			locationData.address_id = newAddress.address_id;
+			let location = await LocationDao.createLocation(locationData, reservationModuleId);
+			res.status(201).json(location);
+		} else {
+			locationData.address_id = address.address_id;
+			let location = await LocationDao.createLocation(locationData, reservationModuleId);
+			res.status(201).json(location);
+		}
 	} catch (error) {
 		res.status(500).json({ message: 'Error creating location', error });
 	}
@@ -71,8 +85,27 @@ export async function updateLocation(
 	try {
 		let locationId = req.params.location_id;
 		let locationData = req.body;
-		let location = await LocationDao.updateLocation(locationId, locationData);
-		res.status(200).json(location);
+		let check = locationData?.address ? locationData?.address : false;
+		if (check) {
+			let address = await AddressDao.findAddress(check?.latitude, check?.longitude);
+			if (!address) {
+				let newAddress = await AddressDao.addAddress({
+					address: check.address,
+					latitude: check.latitude,
+					longitude: check.longitude,
+				});
+				locationData.address_id = newAddress.address_id;
+				let location = await LocationDao.updateLocation(locationId, locationData);
+				res.status(200).json(location);
+			} else {
+				locationData.address_id = address.address_id;
+				let location = await LocationDao.updateLocation(locationId, locationData);
+				res.status(200).json(location);
+			}
+		} else {
+			let location = await LocationDao.updateLocation(locationId, locationData);
+			res.status(200).json(location);
+		}
 	} catch (error) {
 		res.status(500).json({ message: 'Error updating location', error });
 	}

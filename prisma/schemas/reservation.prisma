@@ -9,12 +9,17 @@ enum BOOKING_STATUS {
 
 model reservation_module {
   reservation_module_id     String        @id @default(uuid()) @db.Uuid
+  public_link_hash          String?        @unique
   business_id               String        @unique @db.Uuid
   subscription_id           String?       @db.Uuid
   subscription_active_until DateTime? // Optional, if the business has a subscription
   business                  business      @relation(fields: [business_id], references: [business_id])
   subscription              subscription? @relation(fields: [subscription_id], references: [subscription_id])
   subscription_expires_at   DateTime? // Optional, if the business has a subscription
+
+  hours_before_reschedule Int?
+  hours_before_cancel     Int?
+  publicly_visible        Boolean @default(false)
 
   addons             business_addon[]
   usages             business_usage[]
@@ -38,7 +43,7 @@ model location {
   location_id           String             @id @default(uuid()) @db.Uuid
   reservation_module_id String             @db.Uuid
   name                  String
-  address_id           String?            @db.Uuid // Optional, if the location has a specific address ID
+  address_id            String?            @db.Uuid // Optional, if the location has a specific address ID
   phone                 String?
   color                 String?
   accepts_online        Boolean            @default(false)
@@ -220,7 +225,7 @@ model booking {
   price_cents           Int?
   start_time            DateTime? // Start time of the booking, e.g. 2023-10-01T09:00:00Z
   end_time              DateTime? // End time of the booking, e.g. 2023-10-01T10:00:00Z - calculated from start time + service duration
-  employee_id  String?               @db.Uuid
+  employee_id           String?               @db.Uuid
   parent_booking_id     String?               @db.Uuid // For rescheduled bookings
   parent_booking        booking?              @relation("RescheduledBooking", fields: [parent_booking_id], references: [booking_id])
   child_bookings        booking[]             @relation("RescheduledBooking")
