@@ -5,9 +5,14 @@ import type { location } from '../../prisma/schemas/interfaces';
 
 export const CreateLocationSchema = z.object({
 	name: z.string().min(1),
-	address: z.string().min(1),
-	phone: z.string().optional(),
+	address: z.object({
+		address: z.string().min(1),
+		latitude: z.string().min(1),
+		longitude: z.string().min(1),
+	}),
+	phone: z.string().optional().nullable(),
 	color: z.string().optional(),
+	address_id: z.string().uuid().optional(),
 	accepts_online: z.boolean().default(false),
 	closed_on_holidays: z.boolean().default(false),
 	working_days: z.any(),
