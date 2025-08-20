@@ -403,7 +403,6 @@ export async function bootstrapModuleNotifications(
 
 		if (!eventKeys.length) {
 			eventKeys = Array.from(byKey.keys());
-			return;
 		}
 		for (const eventKey of eventKeys) {
 			const ev = byKey.get(eventKey);
