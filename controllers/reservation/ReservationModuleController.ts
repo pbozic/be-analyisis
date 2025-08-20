@@ -58,4 +58,5 @@ export async function getReservationModuleByBusinessId(
 
 export default {
 	updateReservationSettings,
+	getReservationModuleByBusinessId,
 };

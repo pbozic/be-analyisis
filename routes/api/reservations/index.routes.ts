@@ -15,6 +15,7 @@ import authMiddleware from '../../../middleware/auth';
 import bookingRoutes from './booking.routes';
 import notificationRoutes from './notifications.routes';
 import adminRoutes from './admin.routes';
+import ReservationModuleController from '../../../controllers/reservation/ReservationModuleController';
 const router = express.Router();
 
 router.use('/customers', [authMiddleware], customerRoutes);
@@ -31,4 +32,5 @@ router.use('/auth', authRoutes);
 router.use('/admin', [authMiddleware], adminRoutes);
 router.use('/reservations', [authMiddleware], bookingRoutes);
 router.use('/notifications', [authMiddleware], notificationRoutes);
+router.get('/:reservation_module_id', ReservationModuleController.getReservationModuleByBusinessId);
 export default router;
