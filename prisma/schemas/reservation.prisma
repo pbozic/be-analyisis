@@ -43,7 +43,7 @@ model location {
   location_id           String             @id @default(uuid()) @db.Uuid
   reservation_module_id String             @db.Uuid
   name                  String
-  address_id           String?            @db.Uuid // Optional, if the location has a specific address ID
+  address_id            String?            @db.Uuid // Optional, if the location has a specific address ID
   phone                 String?
   color                 String?
   accepts_online        Boolean            @default(false)

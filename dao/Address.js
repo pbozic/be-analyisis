@@ -109,16 +109,30 @@ const updateAddressByAddressId = async (addressId, updateData) => {
 			data: updateData,
 		});
 	} catch (error) {
-		console.error('Error updating user address:', error);
 		throw new Error(error);
 	}
 };
+async function findAddress(latitude, longitude) {
+	try {
+		let addresses = await prisma.addresses.findMany({
+			where: {
+				latitude,
+				longitude,
+			},
+		});
+		return addresses[0] || null;
+	} catch (error) {
+		return new Error(error);
+	}
+}
+
 export { addAddress };
 export { addUserAddress };
 export { deleteUserAddress };
 export { editUserAddress };
 export { setPrimaryUserAddress };
 export { updateAddressByAddressId };
+export { findAddress };
 export default {
 	addAddress,
 	addUserAddress,
@@ -126,4 +140,5 @@ export default {
 	editUserAddress,
 	setPrimaryUserAddress,
 	updateAddressByAddressId,
+	findAddress,
 };

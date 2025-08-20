@@ -15,6 +15,7 @@ export async function getLocationsByReservationModuleId(reservationModuleId: str
 			},
 			include: {
 				reservation_module: true,
+				address: true,
 			},
 		});
 		return locations;
@@ -37,7 +38,6 @@ export async function createLocation(
 		let location = await prisma.location.create({
 			data: {
 				name: locationData.name,
-				address: locationData.address,
 				phone: locationData.phone,
 				color: locationData.color,
 				accepts_online: locationData.accepts_online,
@@ -45,6 +45,9 @@ export async function createLocation(
 				working_days: locationData.working_days,
 				reservation_module: {
 					connect: { reservation_module_id: reservation_module_id },
+				},
+				address: {
+					connect: { address_id: locationData.address_id },
 				},
 			},
 		});
@@ -67,12 +70,12 @@ export async function updateLocation(locationId: string, locationData: UpdateLoc
 			where: { location_id: locationId },
 			data: {
 				name: locationData.name,
-				address: locationData.address,
 				phone: locationData.phone,
 				color: locationData.color,
 				accepts_online: locationData.accepts_online,
 				closed_on_holidays: locationData.closed_on_holidays,
 				working_days: locationData.working_days,
+				address_id: locationData.address_id,
 			},
 		});
 		return location;
@@ -109,6 +112,7 @@ export async function getLocationById(locationId: string): Promise<Location | nu
 			where: { location_id: locationId },
 			include: {
 				reservation_module: true,
+				address: true,
 			},
 		});
 		return location;
