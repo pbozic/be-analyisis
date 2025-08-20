@@ -406,7 +406,7 @@ export async function bootstrapModuleNotifications(
 		if (!eventKeys.length) {
 			eventKeys = events.map((e) => e.key);
 		}
-
+		console.log(`Ensuring templates for events: ${eventKeys.join(', ')}`);
 		for (const eventKey of eventKeys) {
 			console.log(`Bootstrapping notification for event: ${eventKey}`);
 			const ev = byKey.get(eventKey);
