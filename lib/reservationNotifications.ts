@@ -402,7 +402,7 @@ export async function bootstrapModuleNotifications(
 		const varsSchema = buildVariablesJsonSchema();
 
 		if (!eventKeys.length) {
-			eventKeys = Array.from(byKey.keys());
+			eventKeys = events.map((e) => e.key);
 		}
 		for (const eventKey of eventKeys) {
 			const ev = byKey.get(eventKey);
