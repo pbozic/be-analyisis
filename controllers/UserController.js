@@ -757,7 +757,7 @@ async function addAddress(req, res) {
 		let address = await AddressDao.addAddress(req.body);
 		let userAddress = await AddressDao.addUserAddress(req.user.user_id, address.address_id);
 		if (userAddress) {
-			return res.status(200).json(userAddress);
+			return res.status(200).json(address);
 		}
 		res.status(400).json({ error: 'Error adding address1' });
 	} catch (e) {
