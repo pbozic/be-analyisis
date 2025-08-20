@@ -403,6 +403,7 @@ export async function bootstrapModuleNotifications(
 			where,
 			select: { notification_event_id: true, key: true, name: true },
 		});
+		console.log(`Found ${events.length} events for module: ${reservation_module_id}`);
 		const byKey = new Map(events.map((e) => [e.key, e]));
 
 		const varsSchema = buildVariablesJsonSchema();
