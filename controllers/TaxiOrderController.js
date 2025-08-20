@@ -646,21 +646,24 @@ async function cleanedCreateOrderHelper(orderData) {
 				businessClientId
 			);
 		}
-		const order = await TaxiOrderDao.getOrder(firstOrderId, {
-			include: {
-				grouped_orders: true,
-			},
-		});
-		console.log('parentOrderId', firstOrderId);
-		console.log('fetched grouped_orders', order.grouped_orders);
+		let order;
 		let vehicle_transfer_order;
-		if (order && order.preferences.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
-			vehicle_transfer_order = await generateVehicleTransferOrder(
-				cleanedOrderDataArray[0],
-				user_id,
-				businessUserId,
-				businessClientId
-			);
+		if (firstOrderId) {
+			order = await TaxiOrderDao.getOrder(firstOrderId, {
+				include: {
+					grouped_orders: true,
+				},
+			});
+			console.log('parentOrderId', firstOrderId);
+			console.log('fetched grouped_orders', order.grouped_orders);
+			if (order && order.preferences.vehicle_class === VEHICLE_CLASS.PRIVATE_DRIVER) {
+				vehicle_transfer_order = await generateVehicleTransferOrder(
+					cleanedOrderDataArray[0],
+					user_id,
+					businessUserId,
+					businessClientId
+				);
+			}
 		}
 		return { order, vehicle_transfer_order };
 	} catch (error) {
@@ -957,6 +960,9 @@ async function createOrder(req, res) {
 		}
 		const orderCreated = await cleanedCreateOrderHelper(orderData);
 		let order = orderCreated?.order;
+		if (!order) {
+			return res.status(500).json({ error: 'Failed to create order' });
+		}
 		//TODO: payment management for order
 		let payment_intent =
 			orderData.status === TAXI_ORDER_STATUS.AWAITING_PAYMENT
