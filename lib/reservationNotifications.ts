@@ -371,10 +371,11 @@ function buildVariablesJsonSchema() {
 	return { type: 'object', additionalProperties: false, properties: props };
 }
 export async function bootstrapAllExistingModuleNotifications() {
+	console.log('Bootstrapping notifications for all existing modules...');
 	const modules = await prisma.reservation_module.findMany({
 		select: { reservation_module_id: true },
 	});
-
+	console.log(`Bootstrapping notifications for ${modules.length} existing modules...`);
 	for (const module of modules) {
 		await bootstrapModuleNotifications(module.reservation_module_id, [], undefined);
 	}
@@ -391,6 +392,7 @@ export async function bootstrapModuleNotifications(
 	eventKeys: string[],
 	created_by_user_id?: string
 ) {
+	console.log(`Bootstrapping notifications for module: ${reservation_module_id}`);
 	await prisma.$transaction(async (tx) => {
 		// Load all events upfront
 		const events = await tx.notification_event.findMany({
