@@ -404,7 +404,9 @@ export async function bootstrapModuleNotifications(
 		if (!eventKeys.length) {
 			eventKeys = events.map((e) => e.key);
 		}
+
 		for (const eventKey of eventKeys) {
+			console.log(`Bootstrapping notification for event: ${eventKey}`);
 			const ev = byKey.get(eventKey);
 			if (!ev) {
 				// If event not in DB, skip or throw based on your policy
@@ -413,7 +415,7 @@ export async function bootstrapModuleNotifications(
 			}
 
 			const tplKey = templateKeyFromEventKey(eventKey);
-
+			console.log(`Processing template key: ${tplKey} for event: ${eventKey}`);
 			// 1) Template upsert by (module, key)
 			const template = await tx.notification_template.upsert({
 				where: { reservation_module_id_key: { reservation_module_id, key: tplKey } },
@@ -424,7 +426,7 @@ export async function bootstrapModuleNotifications(
 					name: tplKey,
 				},
 			});
-
+			console.log(`Upserted template: ${template.notification_template_id} for key: ${tplKey}`);
 			// 2) Ensure there is at least one version; if none, create v1 PUBLISHED
 			const latest = await tx.notification_template_version.aggregate({
 				where: { notification_template_id: template.notification_template_id },
@@ -453,7 +455,9 @@ export async function bootstrapModuleNotifications(
 					},
 				});
 			}
-
+			console.log(
+				`Using version: ${versionRecord!.notification_template_version_id} for template: ${template.notification_template_id}`
+			);
 			// 3) Upsert active mapping for (module,event) -> this version
 			await tx.notification_mapping.upsert({
 				where: {
