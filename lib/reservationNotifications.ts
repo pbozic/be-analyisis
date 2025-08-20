@@ -395,17 +395,18 @@ export async function bootstrapModuleNotifications(
 	console.log(`Bootstrapping notifications for module: ${reservation_module_id}`);
 	await prisma.$transaction(async (tx) => {
 		// Load all events upfront
+		let where: object = { key: { in: eventKeys } };
+		if (!eventKeys.length) {
+			where = {};
+		}
 		const events = await tx.notification_event.findMany({
-			where: { key: { in: eventKeys } },
+			where,
 			select: { notification_event_id: true, key: true, name: true },
 		});
 		const byKey = new Map(events.map((e) => [e.key, e]));
 
 		const varsSchema = buildVariablesJsonSchema();
 
-		if (!eventKeys.length) {
-			eventKeys = events.map((e) => e.key);
-		}
 		console.log(`Ensuring templates for events: ${eventKeys.join(', ')}`);
 		for (const eventKey of eventKeys) {
 			console.log(`Bootstrapping notification for event: ${eventKey}`);

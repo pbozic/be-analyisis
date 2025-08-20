@@ -1118,6 +1118,7 @@ async function registerReservationBusiness(req, res) {
 		let business = null;
 		let reservationModule = null;
 		let adminUser = null;
+		let stripeCustomer = null;
 		await prisma.$transaction(async (tx) => {
 			console.log(req.body);
 			const { userData, businessData, plan_tag } = req.body;
@@ -1169,7 +1170,7 @@ async function registerReservationBusiness(req, res) {
 				}
 			}
 
-			let stripeCustomer = await stripe.createCustomer(
+			stripeCustomer = await stripe.createCustomer(
 				businessData.email,
 				businessData.business_name,
 				businessData.business_telephone
