@@ -14,6 +14,7 @@ import subscriptionSeeder from './seeders/subscriptionSeeder.ts';
 import taxRatesSeeder, { TAX_RATES } from './seeders/taxRatesSeeder.ts';
 import localLocationsSeeder, { LOCATIONS } from './seeders/localLocationsSeeder.ts';
 import { seedRolesAndPermissions } from './seeders/ReservationRoleAndPermissionSeeder.ts';
+import reservationNotificationsSeeder from './seeders/reservationNotificationsSeeder.js';
 ({ config }).config();
 async function main() {
 	if (process.env.ENVIRONMENT === 'development') {
@@ -33,6 +34,7 @@ async function main() {
 	await taxRatesSeeder(TAX_RATES, false);
 	await localLocationsSeeder(LOCATIONS, false);
 	await seedRolesAndPermissions();
+	await reservationNotificationsSeeder();
 }
 main()
 	.then(async () => {
