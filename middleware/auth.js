@@ -13,24 +13,34 @@ const authMiddleware = async (req, res, next) => {
 	try {
 		console.log('auth token', token);
 		const decoded = jwt.verify(token, process.env.JWT_TOKEN_SECRET);
-		const businessUser = await req.prisma.business_users.findFirst({
+		const user = await req.prisma.users.findUnique({
 			where: {
 				user_id: decoded.user.user_id,
 			},
 			include: {
-				business: {
+				business_users: {
 					include: {
-						reservation_module: true,
+						business: {
+							include: {
+								reservation_module: true,
+							},
+						},
 					},
 				},
 			},
 		});
+		if (!user) {
+			throw new Error('Invalid user in token');
+		} else if (!user.phone_verified) {
+			throw new Error('Phone not verified');
+		}
+		const firstBusinessUser = user.business_users?.length > 0 ? user.business_users[0] : null;
 		req.user = {
 			...decoded.user,
-			business_id: businessUser?.business?.business_id || null,
-			business_user_id: businessUser?.business_users_id || null,
-			company_role: businessUser?.company_role || null,
-			reservation_module_id: businessUser?.business?.reservation_module?.reservation_module_id || null,
+			business_id: firstBusinessUser?.business?.business_id || null,
+			business_user_id: firstBusinessUser?.business_users_id || null,
+			company_role: firstBusinessUser?.company_role || null,
+			reservation_module_id: firstBusinessUser?.business?.reservation_module?.reservation_module_id || null,
 		};
 		req.userSocket = UserSockets.get(decoded.user.user_id);
 		// const userId = decoded.user.user_id; // Your logic
