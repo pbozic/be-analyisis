@@ -1,6 +1,7 @@
 // reservationNotifications.ts
 import { PrismaClient, Prisma } from '@prisma/client';
 import pug from 'pug';
+import { TEMPLATE_VERSION_STATUS, NOTIFICATION_CHANNEL } from '@prisma/client';
 
 import { addresses, business } from '../prisma/schemas/interfaces.js';
 import { Booking } from '../types/reservation/Booking.ts';
@@ -306,4 +307,193 @@ export function validateTemplatePlaceholders(
 		throw new Error(`Unknown placeholders: ${unknown.join(', ')}`);
 	}
 	return [...used];
+}
+
+const DEFAULT_CHANNEL_PREFS: Record<NOTIFICATION_CHANNEL, boolean> = {
+	EMAIL: true,
+	SMS: false,
+	PUSH: false,
+};
+
+function templateKeyFromEventKey(eventKey: string) {
+	// e.g. "booking.confirmed" -> "booking_confirmed"
+	return eventKey.replace(/\./g, '_');
+}
+
+function defaultSubject(eventKey: string) {
+	switch (eventKey) {
+		case 'booking.created':
+			return 'Rezervacija ustvarjena – {customer.fullName}';
+		case 'booking.confirmed':
+			return 'Potrjena rezervacija – {appointment.dateLong}';
+		case 'booking.reminder':
+			return 'Opomnik – {appointment.dateLong} ob {appointment.time}';
+		case 'booking.rescheduled':
+			return 'Spremenjena rezervacija – {appointment.dateLong}';
+		case 'booking.cancelled':
+			return 'Preklicana rezervacija';
+		case 'booking.no_show':
+			return 'Opravičilo, niste prišli na termin';
+		case 'booking.followup':
+			return 'Hvala za obisk – {businessName}';
+		case 'booking.feedback':
+			return 'Povratne informacije o vašem terminu';
+		default:
+			return '{businessName} obvestilo';
+	}
+}
+
+function defaultBody(eventKey: string) {
+	switch (eventKey) {
+		case 'booking.created':
+			return 'Pozdravljeni {customer.fullName}, vaša rezervacija je ustvarjena za {appointment.dateLong} ob {appointment.time} na lokaciji {appointment.locationName}.';
+		case 'booking.confirmed':
+			return 'Pozdravljeni {customer.fullName}, vaša rezervacija je potrjena za {appointment.dateLong} ob {appointment.time} na lokaciji {appointment.locationName}.';
+		case 'booking.reminder':
+			return 'Opomnik: vaš termin je {appointment.dateLong} ob {appointment.time}.';
+		case 'booking.rescheduled':
+			return 'Vaša rezervacija je prestavljena na {appointment.dateLong} ob {appointment.time}.';
+		case 'booking.cancelled':
+			return 'Vaša rezervacija je bila preklicana.';
+		case 'booking.no_show':
+			return 'Zabeležili smo, da se niste udeležili termina {appointment.dateLong}. Če želite nov termin, nas kontaktirajte.';
+		case 'booking.followup':
+			return 'Hvala za obisk pri {businessName}. Veselimo se ponovnega srečanja.';
+		case 'booking.feedback':
+			return 'Kako ste bili zadovoljni z obiskom {appointment.dateLong}? Vaše mnenje nam veliko pomeni.';
+		default:
+			return '{businessName} – obvestilo';
+	}
+}
+
+function buildVariablesJsonSchema() {
+	const props = Object.fromEntries(Object.keys(VARIABLE_CATALOG).map((k) => [k, { type: 'string' }]));
+	return { type: 'object', additionalProperties: false, properties: props };
+}
+export async function bootstrapAllExistingModuleNotifications() {
+	const modules = await prisma.reservation_module.findMany({
+		select: { reservation_module_id: true },
+	});
+
+	for (const module of modules) {
+		await bootstrapModuleNotifications(module.reservation_module_id, [], undefined);
+	}
+}
+/**
+ * Bootstrap notification templates/mappings/preferences for a reservation module.
+ * Idempotent: updates existing by key, creates missing.
+ * @param {string} reservation_module_id - Module to bootstrap.
+ * @param {string[]} eventKeys - Event keys to ensure (e.g. from your seed).
+ * @param {string} [created_by_user_id] - Optional author for version metadata.
+ */
+export async function bootstrapModuleNotifications(
+	reservation_module_id: string,
+	eventKeys: string[],
+	created_by_user_id?: string
+) {
+	await prisma.$transaction(async (tx) => {
+		// Load all events upfront
+		const events = await tx.notification_event.findMany({
+			where: { key: { in: eventKeys } },
+			select: { notification_event_id: true, key: true, name: true },
+		});
+		const byKey = new Map(events.map((e) => [e.key, e]));
+
+		const varsSchema = buildVariablesJsonSchema();
+
+		if (!eventKeys.length) {
+			eventKeys = Array.from(byKey.keys());
+			return;
+		}
+		for (const eventKey of eventKeys) {
+			const ev = byKey.get(eventKey);
+			if (!ev) {
+				// If event not in DB, skip or throw based on your policy
+				// throw new Error(`Missing notification_event for key: ${eventKey}`);
+				continue;
+			}
+
+			const tplKey = templateKeyFromEventKey(eventKey);
+
+			// 1) Template upsert by (module, key)
+			const template = await tx.notification_template.upsert({
+				where: { reservation_module_id_key: { reservation_module_id, key: tplKey } },
+				update: { name: tplKey },
+				create: {
+					reservation_module_id,
+					key: tplKey,
+					name: tplKey,
+				},
+			});
+
+			// 2) Ensure there is at least one version; if none, create v1 PUBLISHED
+			const latest = await tx.notification_template_version.aggregate({
+				where: { notification_template_id: template.notification_template_id },
+				_max: { version: true },
+			});
+			let versionRecord;
+			if (latest._max.version == null) {
+				versionRecord = await tx.notification_template_version.create({
+					data: {
+						notification_template_id: template.notification_template_id,
+						version: 1,
+						status: TEMPLATE_VERSION_STATUS.PUBLISHED,
+						subject: defaultSubject(eventKey),
+						body_text: defaultBody(eventKey),
+						variables_json_schema: varsSchema,
+						compiled_artifacts: {},
+						created_by_user_id: created_by_user_id ?? null,
+					},
+				});
+			} else {
+				// Optional: keep existing; or update subject/body to new defaults if empty
+				versionRecord = await tx.notification_template_version.findFirst({
+					where: {
+						notification_template_id: template.notification_template_id,
+						version: latest._max.version,
+					},
+				});
+			}
+
+			// 3) Upsert active mapping for (module,event) -> this version
+			await tx.notification_mapping.upsert({
+				where: {
+					reservation_module_id_notification_event_id: {
+						reservation_module_id,
+						notification_event_id: ev.notification_event_id,
+					},
+				},
+				update: {
+					notification_template_version_id: versionRecord!.notification_template_version_id,
+					is_active: true,
+				},
+				create: {
+					reservation_module_id,
+					notification_event_id: ev.notification_event_id,
+					notification_template_version_id: versionRecord!.notification_template_version_id,
+					is_active: true,
+				},
+			});
+
+			// 4) Upsert channel preferences
+			for (const ch of Object.keys(DEFAULT_CHANNEL_PREFS) as (keyof typeof DEFAULT_CHANNEL_PREFS)[]) {
+				await tx.notification_preference.upsert({
+					where: {
+						reservation_module_id_notification_event_id_channel: {
+							reservation_module_id,
+							notification_event_id: ev.notification_event_id,
+							channel: ch,
+						},
+					},
+					update: { enabled: DEFAULT_CHANNEL_PREFS[ch] },
+					create: {
+						reservation_module_id,
+						notification_event_id: ev.notification_event_id,
+						channel: ch,
+						enabled: DEFAULT_CHANNEL_PREFS[ch],
+					},
+				});
+			}
+		}
+	});
 }

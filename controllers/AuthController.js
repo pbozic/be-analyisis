@@ -25,6 +25,7 @@ import { DOCUMENT_TYPE } from '../lib/constants.js';
 import elasticsearch from '../elasticsearch/index.js';
 import prisma from '../prisma/prisma.js';
 import ReservationModule from '../dao/reservation/ReservationModule.js';
+import { bootstrapModuleNotifications } from '../lib/reservationNotifications.js';
 const { businessIndex } = elasticsearch;
 config();
 /**
@@ -1115,6 +1116,8 @@ async function registerReservationBusiness(req, res) {
 	try {
 		let transactionSucceeded = false;
 		let business = null;
+		let reservationModule = null;
+		let adminUser = null;
 		await prisma.$transaction(async (tx) => {
 			console.log(req.body);
 			const { userData, businessData, plan_tag } = req.body;
@@ -1197,7 +1200,7 @@ async function registerReservationBusiness(req, res) {
 
 			business = existingBusiness || (await BusinessDao.createNewBusiness(businessCreationObj, tx));
 
-			let reservationModule = await ReservationModule.createReservationModule(business.business_id);
+			reservationModule = await ReservationModule.createReservationModule(business.business_id);
 			let businessUserData = null;
 			if (existingUser) {
 				const existingBusinessUser = await BusinessUsersDao.getBusinessUserByUserId(existingUser.user_id);
@@ -1210,6 +1213,7 @@ async function registerReservationBusiness(req, res) {
 					);
 				}
 				businessUserData = existingBusinessUser;
+				adminUser = existingUser;
 				// const userRoles = userData.user_roles || [
 				// 	{ role: userObj.data.user_role || 'BUSINESS_USER', primary: true },
 				// ];
@@ -1226,6 +1230,7 @@ async function registerReservationBusiness(req, res) {
 					{ role: userCreationObj.user_role || 'BUSINESS_USER', primary: true },
 				];
 				await UserDao.linkRolesToUser(user?.user_id, userRoles, tx);
+				adminUser = user;
 			}
 			//create employee user
 			let employee = await tx.employee.create({
@@ -1335,6 +1340,7 @@ async function registerReservationBusiness(req, res) {
 				console.error('Failed to delete Stripe customer:', stripeError);
 			}
 		}
+		await bootstrapModuleNotifications(reservationModule.reservation_module_id, null, adminUser.user_id);
 		res.status(201).json({
 			message: 'Business registered successfully',
 			business,
