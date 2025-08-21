@@ -194,6 +194,7 @@ export async function getReservationModuleByPublicLinkHash(
 				},
 				services: true,
 				locations: true,
+				business: true,
 			},
 		});
 	} catch {
