@@ -136,7 +136,7 @@ export async function updateEmployee(employeeId: string, employeeData: UpdateEmp
 		}
 		await prisma.employee.update({
 			where: {
-				user_id: user.user_id,
+				employee_id: employee.employee_id,
 			},
 			data: {
 				first_name: employeeData.first_name,
