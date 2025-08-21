@@ -86,7 +86,7 @@ model notification_mapping {
 
   // Exactly one active mapping per (module,event)
   @@unique([reservation_module_id, notification_event_id], map: "uniq_active_slot_no_locale")
-  @@index([reservation_module_id, notification_event_id])
+  @@index([reservation_module_id, notification_event_id], name: "idx_module_event")
 }
 
 model notification_preference {

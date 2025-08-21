@@ -2191,11 +2191,10 @@ async function getScheduledOrdersByUserId(req, res) {
 		const orders = await TaxiOrderDao.getOrders({
 			where: {
 				is_scheduled: true,
-				user_id: user_id,
-				status: TAXI_ORDER_STATUS.PENDING,
+				status: { in: [TAXI_ORDER_STATUS.PENDING, TAXI_ORDER_STATUS.TAXI_ACCEPTED] },
+				OR: [{ user_id: user_id }, { creating_user_id: user_id }],
 			},
 		});
-		console.info(orders.length, 'scheduled orders');
 		res.status(200).json(orders);
 	} catch (e) {
 		console.error('Error getting scheduled orders by user_id.', e);
