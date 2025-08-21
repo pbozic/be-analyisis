@@ -50,7 +50,7 @@ export async function createEmployee(req: ValidatedRequest<CreateEmployeeInput>,
 			return;
 		}
 		let reservation_module_id = req.user?.reservation_module_id as string;
-		let userExists = await UserDao.getUserByEmail(employeeData.email, businessId);
+		let userExists = await UserDao.getUserByEmail(employeeData.email);
 		if (!userExists) {
 			userExists = await UserDao.getUserByTelephone(employeeData.telephone);
 		}

@@ -168,7 +168,7 @@ export async function getEmployeeById(employeeId: string): Promise<Employee | nu
 			},
 			include: {
 				reservation_module: true,
-				business_users: {
+				business_user: {
 					include: {
 						users: true,
 					},
