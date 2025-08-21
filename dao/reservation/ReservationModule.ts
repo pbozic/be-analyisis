@@ -168,9 +168,32 @@ export async function getReservationModuleByPublicLinkHash(
 	try {
 		return await prisma_client.reservation_module.findUnique({
 			where: { public_link_hash: hash },
-			include: {
-				locations: true,
+			select: {
+				reservation_module_id: true,
+				public_link_hash: true,
+				business_id: true,
+				hours_before_reschedule: true,
+				hours_before_cancel: true,
+
+				// include employees (skip phone fields)
+				employees: {
+					select: {
+						employee_id: true,
+						reservation_module_id: true,
+						first_name: true,
+						last_name: true,
+						email: true,
+						business_users_id: true,
+						created_at: true,
+						deleted_at: true,
+						assignments: true,
+						schedules: true,
+						bookings: true,
+						schedule_slots: true,
+					},
+				},
 				services: true,
+				locations: true,
 			},
 		});
 	} catch {
