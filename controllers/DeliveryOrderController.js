@@ -780,7 +780,7 @@ async function completeOrder(req, res) {
 		sendPdfDeliveryOrder(order);
 		// order = await DeliveryOrderDao.updateOrderStatus(order.order_id,DELIVERY_ORDER_STATUS.SUCCESS)
 		io.to('order_' + order.order_id).emit('order_completed__delivery', order);
-		io.emit('driver_available', driver);
+		if (driver) io.emit('driver_available', driver);
 		setTimeout(() => {
 			SocketStore.closeRoom(`order_${order.order_id}`);
 		}, 10000);
