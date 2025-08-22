@@ -192,7 +192,11 @@ export async function getReservationModuleByPublicLinkHash(
 						schedule_slots: true,
 					},
 				},
-				services: true,
+				services: {
+					include: {
+						assigned_employees: true,
+					},
+				},
 				locations: true,
 				business: true,
 			},
