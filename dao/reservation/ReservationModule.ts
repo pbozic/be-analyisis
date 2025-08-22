@@ -187,7 +187,15 @@ export async function getReservationModuleByPublicLinkHash(
 						created_at: true,
 						deleted_at: true,
 						assignments: true,
-						schedules: true,
+						schedules: {
+							select: {
+								schedule: {
+									select: {
+										location_id: true,
+									},
+								},
+							},
+						},
 						bookings: true,
 						schedule_slots: true,
 					},
