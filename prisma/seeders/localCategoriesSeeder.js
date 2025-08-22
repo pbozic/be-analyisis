@@ -5,6 +5,7 @@ import { upsertFileOnS3Helper } from '../../controllers/FilesController.js';
 import CategoriesDao from '../../dao/Categories.js';
 import WordDao from '../../dao/Word.js';
 import url from 'node:url';
+import { DeleteObject } from '../../lib/s3.js';
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 let languages = {
@@ -341,6 +342,11 @@ async function seedCategories() {
 			});
 			let category_id = categoryExists?.categories_id;
 			if (categoryExists) {
+				if (categoryExists.icon) {
+					const key = getFileKey(categoryExists.icon.file_id, categoryExists.icon.mime_type);
+					await DeleteObject(key);
+				}
+
 				const cat = await CategoriesDao.updateCategory(
 					//TODO: delete old images
 					category_id,
