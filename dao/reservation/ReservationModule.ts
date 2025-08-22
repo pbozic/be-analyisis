@@ -206,7 +206,7 @@ export async function getReservationModuleByPublicLinkHash(
 					},
 				},
 				locations: true,
-				business: true,
+				business: { include: { address: true } },
 			},
 		});
 	} catch {
