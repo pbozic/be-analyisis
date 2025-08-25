@@ -157,7 +157,7 @@ export async function createMultipleSchedules(
 	try {
 		const { schedule, bookingSlots, exceptions, dates } = req.body;
 		const existingSchedules = await ScheduleSlotDao.getScheduleSlotsByEmployeeIdAndDates(
-			schedule.schedule_employee_id,
+			schedule.employee_id,
 			dates
 		);
 		const existingDates = existingSchedules.map((el) => el.date.toISOString());
