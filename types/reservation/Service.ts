@@ -7,6 +7,7 @@ export const CreateServiceSchema = z.object({
 	service_category_id: z.string().uuid().optional(),
 	name: z.record(z.string()),
 	description: z.record(z.string()).optional(),
+	tax_rate_id: z.string().uuid().optional(),
 	image_url: z.string().url().optional(),
 	price_cents: z.number().int(),
 	discount_percent: z.number().int().optional(),
@@ -19,6 +20,7 @@ export const CreateServiceSchema = z.object({
 export const UpdateServiceSchema = z.object({
 	service_category_id: z.string().uuid().optional(),
 	name: z.record(z.string()).optional(),
+	tax_rate_id: z.string().uuid().optional(),
 	description: z.record(z.string()).optional(),
 	image_url: z.string().url().optional(),
 	price_cents: z.number().int().optional(),
@@ -29,9 +31,23 @@ export const UpdateServiceSchema = z.object({
 	skd_codes: z.array(z.string()).optional(),
 });
 
+export const CreateServiceWithEmployeesSchema = z.object({
+	formData: CreateServiceSchema,
+	removed: z.array(z.string().uuid()),
+	added: z.array(z.string().uuid()),
+});
+
+export const UpdateServiceWithEmployeesSchema = z.object({
+	formData: UpdateServiceSchema,
+	removed: z.array(z.string().uuid()),
+	added: z.array(z.string().uuid()),
+});
+
 export const DeleteServiceSchema = z.object({ service_id: z.string().uuid() });
 
 export type CreateServiceInput = z.infer<typeof CreateServiceSchema>;
 export type UpdateServiceInput = z.infer<typeof UpdateServiceSchema>;
+export type CreateServiceWithEmployeesInput = z.infer<typeof CreateServiceWithEmployeesSchema>;
+export type UpdateServiceWithEmployeesInput = z.infer<typeof UpdateServiceWithEmployeesSchema>;
 
 export type Service = service;

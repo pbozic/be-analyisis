@@ -81,11 +81,13 @@ model service {
   available_online      Boolean  @default(false)
   skd_codes             String[]
   created_at            DateTime @default(now())
+  tax_rate_id          String?  @db.Uuid 
 
   reservation_module reservation_module   @relation(fields: [reservation_module_id], references: [reservation_module_id])
   service_category   service_category?    @relation(fields: [service_category_id], references: [service_category_id])
   assigned_employees service_assignment[]
   bookings           booking[]
+  tax_rate           tax_rates?            @relation(fields: [tax_rate_id], references: [tax_rates_id])
 }
 
 model employee {
@@ -132,7 +134,7 @@ model service_assignment {
   service_id  String @db.Uuid
 
   employee employee @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade)
-  service  service  @relation(fields: [service_id], references: [service_id])
+  service  service  @relation(fields: [service_id], references: [service_id], onDelete: Cascade)
 
   @@id([employee_id, service_id])
 }

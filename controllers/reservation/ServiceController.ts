@@ -1,7 +1,15 @@
 import { Request, Response } from 'express';
 
 import ServiceDao from '../../dao/reservation/Service.ts';
-import { CreateServiceInput, UpdateServiceInput } from '../../types/reservation/Service.ts';
+import ServiceCategoryDao from '../../dao/reservation/ServiceCategory.ts';
+import EmployeeDao from '../../dao/reservation/Employee.ts';
+import TaxDao from '../../dao/Tax.ts';
+import {
+	CreateServiceInput,
+	UpdateServiceInput,
+	CreateServiceWithEmployeesInput,
+	UpdateServiceWithEmployeesInput,
+} from '../../types/reservation/Service.ts';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
 
 /**
@@ -15,9 +23,9 @@ import { ValidatedRequest } from '../../types/validatedRequest.ts';
  * @response 500 - Error retrieving services
  * @prisma_model services
  */
-export async function getServices(req: Request, res: Response): Promise<void> {
+export async function getServices(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
-		let reservationModuleId = req.body.reservation_module_id as string;
+		let reservationModuleId = req.user?.reservation_module_id as string;
 		let services = await ServiceDao.getServicesByReservationModuleId(reservationModuleId);
 		res.status(200).json(services);
 	} catch (error) {
@@ -193,6 +201,106 @@ export async function disconnectServiceFromCategory(
 	}
 }
 
+/**
+ * GET /reservation/services/form-data
+ * @tag Reservation
+ * @summary Get all data for service form
+ * @description Retrieves all data needed for the service creation/edit form.
+ * @operationId getDataForServiceForm
+ * @response 200 - Data retrieved successfully
+ * @responseContent {data} 200.application/json
+ * @response 500 - Error retrieving data
+ */
+export async function getDataForServiceForm(req: ValidatedRequest, res: Response): Promise<void> {
+	try {
+		let reservationModuleId = req.user?.reservation_module_id as string;
+		let serviceCategories = await ServiceCategoryDao.getServiceCategoriesByReservationModuleId(reservationModuleId);
+		let employees = await EmployeeDao.getEmployeesByReservationModuleId(reservationModuleId);
+		let taxes = await TaxDao.getActiveTaxRates();
+
+		res.status(200).json({ serviceCategories, employees, taxes });
+	} catch (error) {
+		res.status(500).json({ message: 'Error retrieving data for service form', error });
+	}
+}
+
+/**
+ * POST /reservation/services/service-with-employees
+ * @tag Reservation
+ * @summary Create a new reservation service with employees
+ * @description Creates a new reservation service along with its assigned employees.
+ * @operationId createServiceWithData
+ * @requestBody {CreateServiceWithEmployeesInput} requestBody - The data to create the service and assign employees.
+ * @response 200 - Schedule created successfully
+ * @responseContent {Schedule} 200.application/json
+ * @response 404 - Related entity not found
+ * @response 500 - Error creating schedule
+ */
+export async function createServiceWithData(
+	req: ValidatedRequest<CreateServiceWithEmployeesInput>,
+	res: Response
+): Promise<void> {
+	try {
+		const { formData, added } = req.body;
+		let reservationModuleId = req.user?.reservation_module_id as string;
+		let service = await ServiceDao.createService(formData, reservationModuleId);
+		const serviceId = service.service_id;
+		const createdEmployees = await Promise.all(
+			added.map(async (el) => {
+				let data = await ServiceDao.createServiceAssigment(el, serviceId);
+				return data;
+			})
+		);
+		res.status(200).json({ service, createdEmployees });
+	} catch (error) {
+		const message = error instanceof Error ? error.message : 'Unknown error';
+		res.status(500).json({ message: 'Error creating service with employees', error: message });
+	}
+}
+
+/**
+ * PUT /reservation/services/service-with-employees/{service_id}
+ * @tag Reservation
+ * @summary Update a reservation service with employees
+ * @description Updates a reservation service by its ID along with its assigned employees.
+ * @operationId updateServiceWithData
+ * @pathParam {string} service_id - The ID of the service to update.
+ * @requestBody {UpdateServiceWithEmployeesInput} requestBody - The updated service data and its employees.
+ * @response 200 - Service updated successfully
+ * @responseContent {Service} 200.application/json
+ * @response 400 - Invalid input data
+ * @response 404 - Service not found
+ * @response 500 - Error updating service
+ * @prisma_model services
+ */
+export async function updateServiceWithData(
+	req: ValidatedRequest<UpdateServiceWithEmployeesInput, { service_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		let serviceId = req.params.service_id;
+		const { formData, added, removed } = req.body;
+		let service = Object.keys(formData).length !== 0 ? await ServiceDao.updateService(serviceId, formData) : {};
+		const removedEmployees = await Promise.all(
+			removed.map(async (el) => {
+				let data = await ServiceDao.deleteServiceAssigment(el, serviceId);
+				return {
+					data,
+				};
+			})
+		);
+		const createdEmployees = await Promise.all(
+			added.map(async (el) => {
+				let data = await ServiceDao.createServiceAssigment(el, serviceId);
+				return data;
+			})
+		);
+		res.status(200).json({ service, createdEmployees, removedEmployees });
+	} catch (error) {
+		res.status(500).json({ message: 'Error updating service', error });
+	}
+}
+
 export default {
 	getServices,
 	createService,
@@ -202,4 +310,7 @@ export default {
 	connectServiceToCategory,
 	disconnectServiceFromCategory,
 	getServicesByCategoryId,
+	getDataForServiceForm,
+	createServiceWithData,
+	updateServiceWithData,
 };

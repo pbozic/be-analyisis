@@ -1665,7 +1665,8 @@ model tax_rates {
   activated_at DateTime? @db.Timestamptz(6)
 
   menu_items menu_items[]
-
+  service service[]
+  
   @@unique([name, rate, valid_from], name: "unique_tax_rate")
 }
 

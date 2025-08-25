@@ -42,6 +42,9 @@ export async function createService(serviceData: CreateServiceInput, reservation
 				discount_amount: serviceData.discount_amount,
 				duration_minutes: serviceData.duration_minutes,
 				available_online: serviceData.available_online,
+				tax_rate: {
+					connect: serviceData.tax_rate_id ? { tax_rates_id: serviceData.tax_rate_id } : undefined,
+				},
 				reservation_module: {
 					connect: { reservation_module_id: reservationModuleId },
 				},
@@ -194,6 +197,59 @@ export async function getServicesByCategoryId(serviceCategoryId: string): Promis
 		throw new Error('Error retrieving services by category');
 	}
 }
+
+/**
+ * Creates a new service assignment to an employee.
+ * @param {string} employee_id - The ID of the employee to assign the service to.
+ * @param {string} service_id - The ID of the service to be assigned.
+ * @returns {Promise<Service>} A promise that resolves to the created service assignment.
+ * @throws {Error} If there is an error creating the service assignment.
+ */
+export async function createServiceAssigment(employee_id: string, service_id: string): Promise<Service> {
+	try {
+		let serviceAssignment = await prisma.service_assignment.create({
+			data: {
+				employee: {
+					connect: {
+						employee_id: employee_id,
+					},
+				},
+				service: {
+					connect: {
+						service_id: service_id,
+					},
+				},
+			},
+		});
+		return serviceAssignment;
+	} catch (error) {
+		throw new Error('Error creating service assignment');
+	}
+}
+
+/**
+ * Deletes a service assignment from an employee.
+ * @param {string} employee_id - The ID of the employee to assign the service to.
+ * @param {string} service_id - The ID of the service to be assigned.
+ * @returns {Promise<void>} A promise that resolves when the service assignment is deleted.
+ * @throws {Error} If there is an error deleting the service assignment.
+ */
+
+export async function deleteServiceAssigment(employee_id: string, service_id: string): Promise<void> {
+	try {
+		await prisma.service_assignment.delete({
+			where: {
+				employee_id_service_id: {
+					employee_id,
+					service_id,
+				},
+			},
+		});
+	} catch (error) {
+		throw new Error('Error deleting service assignment');
+	}
+}
+
 export default {
 	getServicesByReservationModuleId,
 	createService,
@@ -203,5 +259,7 @@ export default {
 	connectServiceToCategory,
 	disconnectServiceFromCategory,
 	getServicesByCategoryId,
+	createServiceAssigment,
+	deleteServiceAssigment,
 	// Add other service-related methods here
 };

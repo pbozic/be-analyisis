@@ -2,10 +2,26 @@ import express from 'express';
 
 import ServiceController from '../../../controllers/reservation/ServiceController';
 import { validate } from '../../../middleware/zod';
-import { CreateServiceSchema, UpdateServiceSchema } from '../../../types/reservation/Service';
+import {
+	CreateServiceSchema,
+	UpdateServiceSchema,
+	CreateServiceWithEmployeesSchema,
+	UpdateServiceWithEmployeesSchema,
+} from '../../../types/reservation/Service';
 const router = express.Router();
 router.get('/', ServiceController.getServices);
+router.get('/form-data', ServiceController.getDataForServiceForm);
 router.post('/', validate(CreateServiceSchema), ServiceController.createService);
+router.post(
+	'/service-with-employees',
+	validate(CreateServiceWithEmployeesSchema),
+	ServiceController.createServiceWithData
+);
+router.put(
+	'/service-with-employees/:service_id',
+	validate(UpdateServiceWithEmployeesSchema),
+	ServiceController.updateServiceWithData
+);
 router.put('/:service_id', validate(UpdateServiceSchema), ServiceController.updateService);
 router.delete('/:service_id', ServiceController.deleteService);
 router.get('/:service_id', ServiceController.getServiceById);
