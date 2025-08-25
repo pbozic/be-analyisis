@@ -312,7 +312,7 @@ export async function updateMultipleSchedules(
 	try {
 		const { schedule, bookingSlots, exceptions, dates, update } = req.body;
 		const existingSchedules = await ScheduleSlotDao.getScheduleSlotsByEmployeeIdAndDates(
-			schedule.schedule_employee_id,
+			schedule.employee_id,
 			dates
 		);
 		const existingDates = existingSchedules.map((el) => el.date.toISOString());

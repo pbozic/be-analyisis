@@ -123,7 +123,7 @@ export async function getScheduleSlotsByEmployeeIdAndDates(
 	try {
 		const records = await prisma.schedule_slot.findMany({
 			where: {
-				schedule_employee_id: employee_id,
+				employee_id: employee_id,
 				date: {
 					in: dates,
 				},
