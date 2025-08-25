@@ -4,19 +4,12 @@ import express from 'express';
 import {
 	listBookings,
 	getBooking,
-	createBooking,
 	updateBooking,
 	deleteBooking,
 	createBookingHistoryLog,
-	findBookingSlots,
 } from '../../../controllers/reservation/BookingController.ts';
 import { validate } from '../../../middleware/zod';
-import {
-	ListBookingsParamsSchema,
-	CreateBookingSchema,
-	UpdateBookingSchema,
-	FindBookingSlotsSchema,
-} from '../../../types/reservation/Booking.ts';
+import { ListBookingsParamsSchema, UpdateBookingSchema } from '../../../types/reservation/Booking.ts';
 const router = express.Router();
 
 /**
@@ -24,12 +17,6 @@ const router = express.Router();
  * POST /bookings/list
  */
 router.post('/bookings/list', [validate(ListBookingsParamsSchema)], listBookings);
-
-/**
- * Create booking
- * POST /bookings
- */
-router.post('/bookings', validate(CreateBookingSchema), createBooking);
 
 /**
  * Get booking by id
@@ -54,11 +41,5 @@ router.delete('/bookings/:booking_id', deleteBooking);
  * POST /bookings/:booking_id/history
  */
 router.post('/bookings/:booking_id/history', createBookingHistoryLog);
-
-/**
- * Find available slots
- * POST /find-slots
- */
-router.post('/find-slots', [validate(FindBookingSlotsSchema)], findBookingSlots);
 
 export default router;
