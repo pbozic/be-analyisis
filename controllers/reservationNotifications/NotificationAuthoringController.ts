@@ -481,8 +481,8 @@ export async function getLatestTemplateForEvent(
 			return;
 		}
 		const template = await AuthoringDao.getLatestTemplateForEvent(
-			reservation_module_id,
-			req.params.notification_event_id
+			req.params.notification_event_id,
+			reservation_module_id
 		);
 		if (!template) {
 			res.status(404).json({ message: 'No template found for the given event in this module' });
