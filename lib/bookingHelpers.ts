@@ -43,8 +43,9 @@ export async function findSlots({
 		where: { reservation_module_id: reservationModuleId, service_id: { in: serviceIds } },
 		select: { duration_minutes: true, service_id: true },
 	});
-	if (services.length !== serviceIds.length)
+	if (services.length !== serviceIds.length) {
 		throw new Error('One or more services do not belong to this reservation module');
+	}
 
 	if (employeeId) {
 		const ok = await prisma.employee.findFirst({

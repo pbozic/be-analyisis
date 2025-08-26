@@ -1,3 +1,10 @@
-import dailyMealHelpers from './lib/dailyMealHelpers.ts';
-const today_midnight = new Date(new Date().setHours(0, 0, 0, 0));
-dailyMealHelpers.generateDMInstancesForDateSimple(today_midnight.toISOString());
+import { bootstrapAllExistingModuleNotifications } from './lib/reservationNotifications';
+
+(async () => {
+	try {
+		await bootstrapAllExistingModuleNotifications();
+	} catch (e) {
+		console.error('Error during bootstrapping reservation notifications', e);
+	} finally {
+	}
+})();
