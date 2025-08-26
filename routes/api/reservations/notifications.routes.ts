@@ -96,7 +96,7 @@ router.put(
 	AuthoringController.updateNotificationMapping
 );
 router.post('/mappings/active', validate(ActiveMappingSchema), AuthoringController.upsertActiveNotificationMapping);
-
+router.get('/events/:notification_event_id/template', AuthoringController.getLatestTemplateForEvent);
 // Preferences
 router.get('/preferences', AuthoringController.listNotificationPreferences);
 router.put(

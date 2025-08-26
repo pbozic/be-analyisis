@@ -375,6 +375,38 @@ export async function upsertNotificationPreference(
 	}
 }
 
+export async function getLatestTemplateForEvent(
+	notification_event_id: string,
+	reservation_module_id: string
+): Promise<NotificationTemplate | null> {
+	try {
+		// Find the active mapping for the event and module
+		const activeMapping = await prisma.notification_mapping.findFirst({
+			where: {
+				reservation_module_id,
+				notification_event_id,
+				is_active: true,
+			},
+			include: {
+				notification_template_version: {
+					include: {
+						notification_template: true,
+					},
+				},
+			},
+			orderBy: { created_at: 'desc' },
+		});
+
+		if (!activeMapping || !activeMapping.notification_template_version) {
+			return null; // No active mapping found
+		}
+
+		return activeMapping.notification_template_version.notification_template;
+	} catch (error) {
+		throw new Error('Error retrieving latest template for event');
+	}
+}
+
 export default {
 	listNotificationEvents,
 	createNotificationEvent,
@@ -395,4 +427,5 @@ export default {
 	upsertActiveNotificationMapping,
 	listNotificationPreferences,
 	upsertNotificationPreference,
+	getLatestTemplateForEvent,
 };

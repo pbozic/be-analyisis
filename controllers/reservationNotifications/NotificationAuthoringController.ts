@@ -470,6 +470,30 @@ export async function listNotificationVariables(_req: ValidatedRequest<null>, re
 	}
 }
 
+export async function getLatestTemplateForEvent(
+	req: ValidatedRequest<null, { notification_event_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const reservation_module_id = req.user?.reservation_module_id;
+		if (!reservation_module_id) {
+			res.status(400).json({ message: 'Reservation module ID is required' });
+			return;
+		}
+		const template = await AuthoringDao.getLatestTemplateForEvent(
+			reservation_module_id,
+			req.params.notification_event_id
+		);
+		if (!template) {
+			res.status(404).json({ message: 'No template found for the given event in this module' });
+			return;
+		}
+		res.status(200).json(template);
+	} catch (error) {
+		res.status(500).json({ message: 'Error retrieving latest template for event', error });
+	}
+}
+
 export default {
 	listNotificationEvents,
 	createNotificationEvent,
@@ -490,4 +514,5 @@ export default {
 	upsertNotificationPreference,
 	listNotificationChannels,
 	listNotificationVariables,
+	getLatestTemplateForEvent,
 };
