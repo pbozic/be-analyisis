@@ -419,15 +419,17 @@ export async function upsertNotificationPreference(
 	res: Response
 ): Promise<void> {
 	try {
-		const reservation_module_id = req.user?.reservation_module_id ?? req.body.reservation_module_id;
+		const reservation_module_id = req.user?.reservation_module_id;
 		if (!reservation_module_id) {
 			res.status(400).json({ message: 'Reservation module ID is required' });
 			return;
 		}
-		const updated = await AuthoringDao.upsertNotificationPreference({
-			...req.body,
-			reservation_module_id,
-		});
+		const updated = await AuthoringDao.upsertNotificationPreference(
+			{
+				...req.body,
+			},
+			reservation_module_id
+		);
 		res.status(200).json(updated);
 	} catch (error) {
 		res.status(500).json({ message: 'Error upserting notification preference', error });

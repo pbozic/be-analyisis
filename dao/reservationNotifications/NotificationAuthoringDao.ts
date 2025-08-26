@@ -354,10 +354,11 @@ export async function listNotificationPreferences(reservation_module_id: string)
  * @throws {Error} If there is an error upserting the preference.
  */
 export async function upsertNotificationPreference(
-	data: UpsertNotificationPreferenceInput
+	data: UpsertNotificationPreferenceInput,
+	reservation_module_id: string
 ): Promise<NotificationPreference> {
 	try {
-		const { reservation_module_id, notification_event_id, channel, enabled } = data;
+		const { notification_event_id, channel, enabled } = data;
 		return await prisma.notification_preference.upsert({
 			where: {
 				reservation_module_id_notification_event_id_channel: {
