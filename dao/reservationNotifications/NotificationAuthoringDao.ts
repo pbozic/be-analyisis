@@ -378,32 +378,38 @@ export async function upsertNotificationPreference(
 export async function getLatestTemplateForEvent(
 	notification_event_id: string,
 	reservation_module_id: string
-): Promise<NotificationTemplate | null> {
+): Promise<NotificationTemplateVersion | null> {
 	try {
-		// Find the active mapping for the event and module
-		const activeMapping = await prisma.notification_mapping.findFirst({
+		const mapping = await prisma.notification_mapping.findUnique({
 			where: {
-				reservation_module_id,
-				notification_event_id,
-				is_active: true,
-			},
-			include: {
-				notification_template_version: {
-					include: {
-						notification_template: true,
-					},
+				reservation_module_id_notification_event_id: {
+					reservation_module_id,
+					notification_event_id,
 				},
 			},
-			orderBy: { created_at: 'desc' },
+			include: {
+				version: { include: { template: true } },
+			},
 		});
 
-		if (!activeMapping || !activeMapping.notification_template_version) {
-			return null; // No active mapping found
-		}
+		const v = mapping?.version;
+		if (!v) return null;
 
-		return activeMapping.notification_template_version.notification_template;
-	} catch (error) {
-		throw new Error('Error retrieving latest template for event');
+		return {
+			notification_template_version_id: v.notification_template_version_id,
+			notification_template_id: v.notification_template_id,
+			version: v.version,
+			status: v.status,
+			subject: v.subject,
+			body_text: v.body_text,
+			variables_json_schema: v.variables_json_schema,
+			compiled_artifacts: v.compiled_artifacts,
+			created_at: v.created_at,
+			template: v.template,
+			created_by_user_id: v.created_by_user_id,
+		};
+	} catch {
+		throw new Error('Error retrieving active template version for event');
 	}
 }
 
