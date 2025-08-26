@@ -4,7 +4,6 @@ import type { notification_preference } from '../../prisma/schemas/interfaces';
 import { NotificationChannelEnum } from './enums.ts';
 
 export const UpsertNotificationPreferenceSchema = z.object({
-	reservation_module_id: z.string().uuid(),
 	notification_event_id: z.string().uuid(),
 	channel: NotificationChannelEnum,
 	enabled: z.boolean(), // explicit toggle
