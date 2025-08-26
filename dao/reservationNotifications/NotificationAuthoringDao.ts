@@ -380,6 +380,7 @@ export async function getLatestTemplateForEvent(
 	reservation_module_id: string
 ): Promise<NotificationTemplateVersion | null> {
 	try {
+		console.log(`Fetching latest template for event ${notification_event_id} in module ${reservation_module_id}`);
 		const mapping = await prisma.notification_mapping.findUnique({
 			where: {
 				reservation_module_id_notification_event_id: {
