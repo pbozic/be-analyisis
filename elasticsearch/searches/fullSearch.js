@@ -132,10 +132,10 @@ async function searchBusinesses(
 
 		if (typeof isDailyMealSearch === 'boolean') {
 			if (isDailyMealSearch) {
-				// Only daily meals with a date >= today
-				const now = new Date();
-				const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-				const todayISOString = todayStart.toISOString();
+				// // Only daily meals with a date >= today
+				// const now = new Date();
+				// const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
+				// const todayISOString = todayStart.toISOString();
 				boolQuery.bool.filter.push({
 					nested: {
 						path: 'menus',
@@ -143,11 +143,11 @@ async function searchBusinesses(
 							bool: {
 								must: [
 									{ term: { 'menus.isDailyMeal': true } },
-									{
-										range: {
-											'menus.date': { gte: todayISOString },
-										},
-									},
+									// {
+									// 	range: {
+									// 		'menus.date': { gte: todayISOString },
+									// 	},
+									// },
 								],
 							},
 						},
