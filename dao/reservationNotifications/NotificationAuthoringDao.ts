@@ -149,30 +149,30 @@ export async function deleteNotificationTemplate(notification_template_id: strin
 	}
 }
 
-/**
- * Creates a new template version (auto-increments version).
- * @param {CreateNotificationTemplateVersionInput} data - The version data (template_id, subject?, body_text?, variables_json_schema, ...).
- * @returns {Promise<NotificationTemplateVersion>} A promise that resolves to the created version.
- * @throws {Error} If there is an error creating the version.
- */
-export async function createNotificationTemplateVersion(
-	data: CreateNotificationTemplateVersionInput
-): Promise<NotificationTemplateVersion> {
-	try {
-		const { notification_template_id } = data;
-		const agg = await prisma.notification_template_version.aggregate({
-			where: { notification_template_id },
-			_max: { version: true },
-		});
-		const nextVersion = (agg._max.version ?? 0) + 1;
+// /**
+//  * Creates a new template version (auto-increments version).
+//  * @param {CreateNotificationTemplateVersionInput} data - The version data (template_id, subject?, body_text?, variables_json_schema, ...).
+//  * @returns {Promise<NotificationTemplateVersion>} A promise that resolves to the created version.
+//  * @throws {Error} If there is an error creating the version.
+//  */
+// export async function createNotificationTemplateVersion(
+// 	data: CreateNotificationTemplateVersionInput
+// ): Promise<NotificationTemplateVersion> {
+// 	try {
+// 		const { notification_template_id } = data;
+// 		const agg = await prisma.notification_template_version.aggregate({
+// 			where: { notification_template_id },
+// 			_max: { version: true },
+// 		});
+// 		const nextVersion = (agg._max.version ?? 0) + 1;
 
-		return await prisma.notification_template_version.create({
-			data: { ...data, version: nextVersion },
-		});
-	} catch {
-		throw new Error('Error creating notification template version');
-	}
-}
+// 		return await prisma.notification_template_version.create({
+// 			data: { ...data, version: nextVersion },
+// 		});
+// 	} catch {
+// 		throw new Error('Error creating notification template version');
+// 	}
+// }
 
 /**
  * Updates a template version by ID.
@@ -430,13 +430,17 @@ export async function getLatestTemplateForEvent(
 export async function createVersionMapAndArchiveForEvent(
 	reservation_module_id: string,
 	notification_event_id: string,
-	data: Omit<CreateNotificationTemplateVersionInput, 'notification_template_id' | 'version'>
+	data: Omit<CreateNotificationTemplateVersionInput, 'notification_event_id' | 'version'>
 ): Promise<{
 	version: NotificationTemplateVersion;
 	mapping: NotificationMapping;
 	archived_previous_version_id: string | null;
 }> {
 	try {
+		console.log(
+			`Creating new version for event ${notification_event_id} in module ${reservation_module_id} with data:`,
+			data
+		);
 		return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 			// 1) Find current mapping → current template (if any)
 			const mapping = await tx.notification_mapping.findUnique({
@@ -556,7 +560,7 @@ export default {
 	createNotificationTemplate,
 	updateNotificationTemplate,
 	deleteNotificationTemplate,
-	createNotificationTemplateVersion,
+	// createNotificationTemplateVersion,
 	updateNotificationTemplateVersionById,
 	updateNotificationTemplateVersionByComposite,
 	deleteNotificationTemplateVersionById,

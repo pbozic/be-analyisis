@@ -76,8 +76,8 @@ router.delete('/templates/:notification_template_id', AuthoringController.delete
 
 // Template versions
 router.post(
-	'/templates/:notification_template_id/versions',
-	validate(CreateNotificationTemplateVersionSchema.omit({ notification_template_id: true })), // body excludes path param
+	'/templates/:notification_event_id/versions',
+	validate(CreateNotificationTemplateVersionSchema.omit({ notification_event_id: true })), // body excludes path param
 	AuthoringController.createNotificationTemplateVersion
 );
 router.put(

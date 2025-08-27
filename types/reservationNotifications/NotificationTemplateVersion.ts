@@ -6,7 +6,7 @@ import { TemplateVersionStatusEnum } from './enums.ts';
 
 // On create: version number is computed in DAO (next integer for the template)
 export const CreateNotificationTemplateVersionSchema = z.object({
-	notification_template_id: z.string().uuid(),
+	notification_event_id: z.string().uuid(),
 	status: TemplateVersionStatusEnum.default('DRAFT'),
 	subject: z.string().optional().nullable(),
 	body_text: z.string().optional().nullable(),
