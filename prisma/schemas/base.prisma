@@ -1014,8 +1014,8 @@ model promo_sections_buy {
   paid                  Boolean        @default(false)
   active_at             DateTime?
   expires_at            DateTime?
-  tier                  Int
-  duration              Int
+  tier                  Int 
+  duration              Int            @default(30) // in days
 }
 
 model promo_ads {
