@@ -589,6 +589,9 @@ async function getAllWordBuysByBusiness(business) {
 			business: {
 				business_id: business,
 			},
+			stripe_subscription_id: {
+				not: null,
+			},
 		},
 		include: {
 			word: {
@@ -616,7 +619,6 @@ async function deleteWordBuy(word_buy_id) {
 		},
 		data: {
 			stripe_subscription_id: null,
-			business_id: null,
 		},
 	});
 }
