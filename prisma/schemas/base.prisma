@@ -345,6 +345,7 @@ model addresses {
   daily_meal_subscriptions    daily_meal_subscriptions[]
   local_locations             local_locations?
   locations                   location[]
+
   @@unique([address, latitude, longitude], name: "uniqueAddressIdentifier")
 }
 
@@ -1014,6 +1015,7 @@ model promo_sections_buy {
   active_at             DateTime?
   expires_at            DateTime?
   tier                  Int
+  duration              Int
 }
 
 model promo_ads {
@@ -1456,8 +1458,8 @@ model payments {
   payment_type      String?
 
   // For daily meals subscriptions
-  daily_meal_subscription_id String?                    @unique @db.Uuid
-  daily_meal_subscription           daily_meal_subscriptions? @relation("PaymentToDMSubscription", fields: [daily_meal_subscription_id], references: [id], onDelete: Cascade)
+  daily_meal_subscription_id String?                   @unique @db.Uuid
+  daily_meal_subscription    daily_meal_subscriptions? @relation("PaymentToDMSubscription", fields: [daily_meal_subscription_id], references: [id], onDelete: Cascade)
 
   // delivery_order_id         String?                      @db.Uuid
   // delivery_order            delivery_orders?             @relation(fields: [delivery_order_id], references: [order_id])
@@ -1665,8 +1667,8 @@ model tax_rates {
   activated_at DateTime? @db.Timestamptz(6)
 
   menu_items menu_items[]
-  service service[]
-  
+  service    service[]
+
   @@unique([name, rate, valid_from], name: "unique_tax_rate")
 }
 
