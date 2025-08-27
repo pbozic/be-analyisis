@@ -237,7 +237,10 @@ export async function updateUserSubscription(userId, business_id) {
 		// No active word buys → cancel sub if exists
 		if (!wordBuys || wordBuys.length === 0) {
 			if (business.word_buy_stripe_subscription_id) {
-				await stripe.subscriptions.del(business.word_buy_stripe_subscription_id);
+				await stripe.subscriptions.update(business.word_buy_stripe_subscription_id, {
+					cancel_at_period_end: true,
+				});
+				// await stripe.subscriptions.del(business.word_buy_stripe_subscription_id);
 				await prisma.business.update({
 					where: { business_id: business.business_id },
 					data: { word_buy_stripe_subscription_id: null },

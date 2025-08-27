@@ -1,5 +1,4 @@
 import WordDao from '../dao/Word.js';
-import BusinessUserDao from '../dao/BusinessUsers.js';
 import { updateUserSubscription } from '../dao/Word.js';
 
 async function createWord(req, res) {
@@ -133,11 +132,9 @@ async function getAllWordBuys(req, res) {
 }
 async function deleteWordBuy(req, res) {
 	try {
-		const userId = req.user?.user_id;
 		const { id } = req.params;
 		const result = await WordDao.deleteWordBuy(id);
-		const businessUser = await BusinessUserDao.getBusinessUserByUserId(userId);
-		await updateUserSubscription(userId, businessUser?.business_id);
+		await updateUserSubscription(req.user?.user_id);
 		res.status(200).json({ message: 'Word buy subscription id deleted successfully', result });
 	} catch (error) {
 		console.error('Error deleting word buy:', error);
