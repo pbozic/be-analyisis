@@ -71,12 +71,12 @@ async function updateWord(id, word, categories_id, translations) {
 			word,
 			...(categories_id
 				? {
-					category: {
-						connect: {
-							categories_id: categories_id,
+						category: {
+							connect: {
+								categories_id: categories_id,
+							},
 						},
-					},
-				}
+					}
 				: {}),
 		},
 		include: {
@@ -225,26 +225,32 @@ async function createWordBuy(args) {
 		},
 	});
 }
-
 export async function updateUserSubscription(userId, business_id) {
 	try {
 		const businessUser = await BusinessUserDao.getBusinessUserByUserId(userId);
 		const business = await BusinessDao.getBusinessById(business_id || businessUser?.business_id);
+		if (!business) throw new Error('Business not found');
+		if (!business.stripe_customer_id) throw new Error('User does not have a Stripe customer ID');
+
 		const wordBuys = await getAllWordBuysByBusiness(business.business_id);
 
-		if (!business?.stripe_customer_id) throw new Error('User does not have a Stripe customer ID');
-
-		if (wordBuys.length === 0) {
+		// No active word buys → cancel sub if exists
+		if (!wordBuys || wordBuys.length === 0) {
 			if (business.word_buy_stripe_subscription_id) {
 				await stripe.subscriptions.del(business.word_buy_stripe_subscription_id);
 				await prisma.business.update({
 					where: { business_id: business.business_id },
 					data: { word_buy_stripe_subscription_id: null },
 				});
+				await prisma.word_buy.updateMany({
+					where: { business_id: business.business_id },
+					data: { stripe_subscription_id: null },
+				});
 			}
 			return { success: true, message: 'No active word buys' };
 		}
 
+		// Build items, detect ups/downs
 		const subscriptionItems = [];
 		const nextPhaseItems = [];
 		let hasUpgrades = false;
@@ -254,20 +260,35 @@ export async function updateUserSubscription(userId, business_id) {
 			let currentPrice = null;
 
 			if (wb.stripe_price_id) {
-				currentPrice = await stripe.prices.retrieve(wb.stripe_price_id);
+				try {
+					currentPrice = await stripe.prices.retrieve(wb.stripe_price_id);
+				} catch {
+					currentPrice = null; // stale / missing price id
+				}
 			}
 
-			console.log('Processing word buy:', wb.word.word, 'with price:', newAmount, currentPrice);
-
-			if (!currentPrice || currentPrice.unit_amount !== newAmount) {
-				if (!currentPrice || newAmount > currentPrice.unit_amount) {
-					const newPrice = await stripe.prices.create({
-						unit_amount: newAmount,
+			// Helper to create a price with idempotency (avoid dupes on retries)
+			const createPrice = async (amount) => {
+				const idemKey = `wb_${wb.word_buy_id}_${amount}`;
+				return stripe.prices.create(
+					{
+						unit_amount: amount,
 						currency: 'eur',
 						recurring: { interval: 'month' },
 						product_data: { name: `Klikni Word: ${wb.word.word}` },
 						metadata: { word_buy_id: wb.word_buy_id },
-					});
+					},
+					{ idempotencyKey: idemKey }
+				);
+			};
+
+			const currentUnit = currentPrice?.unit_amount ?? null;
+
+			// unchanged, upgrade (immediate), or downgrade (next cycle)
+			if (currentUnit === null || currentUnit !== newAmount) {
+				if (currentUnit === null || newAmount > currentUnit) {
+					// UPGRADE: create new price and swap now (proration)
+					const newPrice = await createPrice(newAmount);
 					await prisma.word_buy.update({
 						where: { word_buy_id: wb.word_buy_id },
 						data: {
@@ -280,13 +301,8 @@ export async function updateUserSubscription(userId, business_id) {
 					subscriptionItems.push({ price: newPrice.id, quantity: 1 });
 					hasUpgrades = true;
 				} else {
-					const downgradePrice = await stripe.prices.create({
-						unit_amount: newAmount,
-						currency: 'eur',
-						recurring: { interval: 'month' },
-						product_data: { name: `Klikni Word: ${wb.word.word}` },
-						metadata: { word_buy_id: wb.word_buy_id },
-					});
+					// DOWNGRADE: create lower price, keep current for now, switch next period
+					const downgradePrice = await createPrice(newAmount);
 					await prisma.word_buy.update({
 						where: { word_buy_id: wb.word_buy_id },
 						data: {
@@ -294,10 +310,17 @@ export async function updateUserSubscription(userId, business_id) {
 							pending_stripe_price_id: downgradePrice.id,
 						},
 					});
-					subscriptionItems.push({ price: wb.stripe_price_id, quantity: 1 });
+
+					if (currentPrice?.id) {
+						subscriptionItems.push({ price: currentPrice.id, quantity: 1 });
+					} else {
+						// fall back to downgrade price if current is missing
+						subscriptionItems.push({ price: downgradePrice.id, quantity: 1 });
+					}
 					nextPhaseItems.push({ price: downgradePrice.id, quantity: 1 });
 				}
 			} else {
+				// unchanged
 				subscriptionItems.push({ price: currentPrice.id, quantity: 1 });
 			}
 		}
@@ -306,22 +329,28 @@ export async function updateUserSubscription(userId, business_id) {
 		let clientSecret = null;
 		let paymentRequired = false;
 
+		// EXISTING SUBSCRIPTION
 		if (business.word_buy_stripe_subscription_id) {
-			const currentSub = await stripe.subscriptions.retrieve(business.word_buy_stripe_subscription_id);
+			const currentSub = await stripe.subscriptions.retrieve(business.word_buy_stripe_subscription_id, {
+				expand: ['latest_invoice.payment_intent', 'items.data.price'],
+			});
 
 			if (nextPhaseItems.length > 0) {
+				// Downgrades → schedule next cycle, no proration now
 				await stripe.subscriptionSchedules.create({
 					customer: business.stripe_customer_id,
-					start_date: Math.floor(Date.now() / 1000),
+					start_date: Math.floor(Date.now() / 1000), // now
 					end_behavior: 'release',
 					phases: [
 						{
 							items: subscriptionItems,
 							start_date: currentSub.current_period_start,
 							end_date: currentSub.current_period_end,
+							proration_behavior: 'none',
 						},
 						{
 							items: nextPhaseItems,
+							proration_behavior: 'none',
 						},
 					],
 					metadata: {
@@ -329,27 +358,56 @@ export async function updateUserSubscription(userId, business_id) {
 						word_buy_schedule: 'true',
 					},
 				});
-				subscription = currentSub;
+				subscription = currentSub; // items switch at boundary via schedule
 			} else {
+				// Only upgrades / no changes → apply now
+				const deleteOps = currentSub.items.data.map((i) => ({ id: i.id, deleted: true }));
 				const updated = await stripe.subscriptions.update(currentSub.id, {
-					items: [
-						...currentSub.items.data.map((i) => ({ id: i.id, deleted: true })),
-						...subscriptionItems,
-					],
+					items: [...deleteOps, ...subscriptionItems],
 					proration_behavior: hasUpgrades ? 'create_prorations' : 'none',
 					expand: ['latest_invoice.payment_intent'],
 				});
 				subscription = updated;
 
+				// Handle invoice only if we caused prorations (upgrades)
 				if (hasUpgrades && subscription.latest_invoice?.id) {
-					const invoice = await stripe.invoices.retrieve(subscription.latest_invoice.id);
-					if (invoice.status === 'open' || invoice.status === 'draft') {
-						await stripe.invoices.finalizeInvoice(invoice.id);
-						await stripe.invoices.pay(invoice.id);
+					let invoice = await stripe.invoices.retrieve(subscription.latest_invoice.id, {
+						expand: ['payment_intent'],
+					});
+
+					// Finalize only if still draft — fixes your error
+					if (invoice.status === 'draft') {
+						invoice = await stripe.invoices.finalizeInvoice(invoice.id, { expand: ['payment_intent'] });
+					}
+
+					if (invoice.status === 'open') {
+						const pi = invoice.payment_intent || null;
+
+						if (pi && (pi.status === 'requires_action' || pi.status === 'requires_payment_method')) {
+							paymentRequired = true;
+							clientSecret = pi.client_secret || null;
+						} else if (invoice.collection_method === 'charge_automatically') {
+							try {
+								await stripe.invoices.pay(invoice.id);
+							} catch (e) {
+								const epi = e?.raw?.payment_intent;
+								if (
+									epi &&
+									(epi.status === 'requires_action' || epi.status === 'requires_payment_method')
+								) {
+									paymentRequired = true;
+									clientSecret = epi.client_secret || null;
+								} else {
+									console.error('Invoice payment error:', e);
+									throw new Error('Invoice payment failed');
+								}
+							}
+						}
 					}
 				}
 			}
 		} else {
+			// NEW SUBSCRIPTION
 			subscription = await stripe.subscriptions.create({
 				customer: business.stripe_customer_id,
 				items: subscriptionItems,
@@ -360,17 +418,20 @@ export async function updateUserSubscription(userId, business_id) {
 				expand: ['latest_invoice.payment_intent'],
 				metadata: { business_id: business.business_id, type: 'word_buys' },
 			});
+
 			await prisma.business.update({
 				where: { business_id: business.business_id },
 				data: { word_buy_stripe_subscription_id: subscription.id },
 			});
+
+			const pi = subscription.latest_invoice?.payment_intent;
+			if (pi && (pi.status === 'requires_action' || pi.status === 'requires_payment_method')) {
+				paymentRequired = true;
+				clientSecret = pi.client_secret || null;
+			}
 		}
 
-		if (subscription.latest_invoice?.payment_intent?.status === 'requires_payment_method') {
-			paymentRequired = true;
-			clientSecret = subscription.latest_invoice.payment_intent.client_secret;
-		}
-
+		// Persist subscription id on word_buys
 		await prisma.word_buy.updateMany({
 			where: { business_id: business.business_id, deleted_at: null },
 			data: { stripe_subscription_id: subscription.id },
@@ -384,10 +445,9 @@ export async function updateUserSubscription(userId, business_id) {
 		};
 	} catch (err) {
 		console.error('❌ updateUserSubscription failed:', err);
-		return { success: false, error: err.message };
+		return { success: false, error: err?.message || 'Unknown error' };
 	}
 }
-
 
 export async function createWordBuySubscription(words, business_id, userId) {
 	try {
@@ -559,9 +619,9 @@ async function deleteWordBuy(word_buy_id) {
 				stripe_subscription_id: null,
 			},
 		});
-		console.log/(deletedWordBuy, 'deleted word buy');
+		console.log / (deletedWordBuy, 'deleted word buy');
 	} catch (error) {
-		return res.status(404).json({ error: 'Word buy not found / other error' }); 
+		return res.status(404).json({ error: 'Word buy not found / other error' });
 	}
 }
 
