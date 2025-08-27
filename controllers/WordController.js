@@ -97,12 +97,10 @@ async function addCategoryToWord(req, res) {
 	}
 }
 async function createWordBuy(req, res) {
-	/* gets an array of words (word_id,word_price) */
 	try {
 		let { words, business_id } = req.body;
-		console.log(req.body,'body');
 		let userId = req.user?.user_id;
-		const result = await WordDao.createWordBuySubscription(words,business_id,userId);
+		const result = await WordDao.createWordBuySubscription(words, business_id, userId);
 		res.status(201).json(result);
 	} catch (error) {
 		console.error('Error creating word buy:', error);
@@ -138,7 +136,7 @@ async function deleteWordBuy(req, res) {
 		console.log(id, 'word_buy_id');
 		const result = await WordDao.deleteWordBuy(id);
 		let stripeResult = await updateUserSubscription(req.user?.user_id);
-		res.status(200).json({ message: 'Word buy subscription id deleted successfully',result });
+		res.status(200).json({ message: 'Word buy subscription id deleted successfully', result });
 	} catch (error) {
 		console.error('Error deleting word buy:', error);
 		res.status(500).json({ error: 'Failed to delete word buy' });

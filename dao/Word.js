@@ -413,7 +413,7 @@ export async function updateUserSubscription(userId, business_id) {
 				items: subscriptionItems,
 				payment_behavior: 'default_incomplete',
 				collection_method: 'charge_automatically',
-				billing_cycle_anchor: Math.floor(Date.now() / 1000),
+				billing_cycle_anchor: 'now',
 				proration_behavior: 'none',
 				expand: ['latest_invoice.payment_intent'],
 				metadata: { business_id: business.business_id, type: 'word_buys' },
