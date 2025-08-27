@@ -216,16 +216,21 @@ export async function deleteNotificationTemplate(
  */
 export async function createNotificationTemplateVersion(
 	req: ValidatedRequest<
-		Omit<CreateNotificationTemplateVersionInput, 'notification_template_id'>,
+		Omit<CreateNotificationTemplateVersionInput, 'notification_template_id' | 'created_by_user_id'>,
 		{ notification_template_id: string }
 	>,
 	res: Response
 ): Promise<void> {
 	try {
-		const created = await AuthoringDao.createNotificationTemplateVersion({
-			...req.body,
-			notification_template_id: req.params.notification_template_id,
-		});
+		const reservation_module_id = req.user?.reservation_module_id as string;
+		const created = await AuthoringDao.createVersionMapAndArchiveForEvent(
+			reservation_module_id,
+			req.params.notification_template_id,
+			{
+				...req.body,
+				created_by_user_id: req.user?.user_id,
+			}
+		);
 		res.status(201).json(created);
 	} catch (error) {
 		res.status(500).json({ message: 'Error creating notification template version', error });

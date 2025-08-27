@@ -1,3 +1,5 @@
+import { Prisma } from '@prisma/client';
+
 import prisma from '../../prisma/prisma';
 import type {
 	NotificationEvent,
@@ -413,7 +415,138 @@ export async function getLatestTemplateForEvent(
 		throw new Error('Error retrieving active template version for event');
 	}
 }
+/**
+ * Create a new template version for (module,event), repoint mapping to it,
+ * and archive the previously mapped version (if any) — all atomically.
+ *
+ * @param {string} reservation_module_id - Module ID.
+ * @param {string} notification_event_id - Event ID.
+ * @param {Omit<CreateNotificationTemplateVersionInput, 'notification_template_id' | 'version'>} data
+ *        Fields for the new version (subject?, body_text?, variables_json_schema, compiled_artifacts?, created_by_user_id?, status?).
+ *        status defaults to 'PUBLISHED'.
+ * @returns {Promise<{ version: NotificationTemplateVersion; mapping: NotificationMapping; archived_previous_version_id: string | null }>}
+ * @throws {Error} If anything fails.
+ */
+export async function createVersionMapAndArchiveForEvent(
+	reservation_module_id: string,
+	notification_event_id: string,
+	data: Omit<CreateNotificationTemplateVersionInput, 'notification_template_id' | 'version'>
+): Promise<{
+	version: NotificationTemplateVersion;
+	mapping: NotificationMapping;
+	archived_previous_version_id: string | null;
+}> {
+	try {
+		return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+			// 1) Find current mapping → current template (if any)
+			const mapping = await tx.notification_mapping.findUnique({
+				where: {
+					reservation_module_id_notification_event_id: {
+						reservation_module_id,
+						notification_event_id,
+					},
+				},
+				include: {
+					version: true,
+					event: { select: { key: true, name: true } },
+				},
+			});
 
+			// 2) Ensure a template exists (use mapped template, or create one derived from event key)
+			let templateId: string | null = mapping?.version?.notification_template_id ?? null;
+
+			if (!templateId) {
+				const ev =
+					mapping?.event ??
+					(await tx.notification_event.findUnique({
+						where: { notification_event_id },
+						select: { key: true, name: true },
+					}));
+
+				if (!ev) throw new Error('notification_event not found');
+
+				const derivedKey = ev.key.replace(/\./g, '_');
+
+				const tpl = await tx.notification_template.upsert({
+					where: { reservation_module_id_key: { reservation_module_id, key: derivedKey } },
+					update: { name: ev.name },
+					create: { reservation_module_id, key: derivedKey, name: ev.name },
+				});
+
+				templateId = tpl.notification_template_id;
+			}
+
+			// 3) Next version number for that template
+			const agg = await tx.notification_template_version.aggregate({
+				where: { notification_template_id: templateId },
+				_max: { version: true },
+			});
+			const nextVersion = (agg._max.version ?? 0) + 1;
+
+			// 4) Create the new version
+			const {
+				subject = null,
+				body_text = null,
+				variables_json_schema,
+				compiled_artifacts = {},
+				created_by_user_id = null,
+				status = 'PUBLISHED',
+			} = data as NotificationTemplateVersion;
+
+			const newVersion = await tx.notification_template_version.create({
+				data: {
+					notification_template_id: templateId,
+					version: nextVersion,
+					status,
+					subject,
+					body_text,
+					variables_json_schema: variables_json_schema as Prisma.InputJsonObject,
+					compiled_artifacts: compiled_artifacts as Prisma.InputJsonObject,
+					created_by_user_id,
+				},
+			});
+
+			// 5) Remember previously mapped version to archive later
+			const oldVersionId = mapping?.notification_template_version_id ?? null;
+
+			// 6) Repoint mapping to the new version
+			const updatedMapping = await tx.notification_mapping.upsert({
+				where: {
+					reservation_module_id_notification_event_id: {
+						reservation_module_id,
+						notification_event_id,
+					},
+				},
+				update: {
+					notification_template_version_id: newVersion.notification_template_version_id,
+					is_active: true,
+				},
+				create: {
+					reservation_module_id,
+					notification_event_id,
+					notification_template_version_id: newVersion.notification_template_version_id,
+					is_active: true,
+				},
+			});
+
+			// 7) Archive the old version (if any & different)
+			if (oldVersionId && oldVersionId !== newVersion.notification_template_version_id) {
+				await tx.notification_template_version.update({
+					where: { notification_template_version_id: oldVersionId },
+					data: { status: 'ARCHIVED' },
+				});
+			}
+
+			return {
+				version: newVersion,
+				mapping: updatedMapping,
+				archived_previous_version_id: oldVersionId,
+			};
+		});
+	} catch {
+		throw new Error('Error creating version, mapping it, and archiving previous version');
+	}
+}
 export default {
 	listNotificationEvents,
 	createNotificationEvent,
