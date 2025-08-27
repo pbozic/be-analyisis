@@ -29,5 +29,7 @@ export default {
 		'express',
 		'pg',
 		'@prisma/client',
+		'moment-timezone',
+		'moment',
 	], // 🧠 skip bundling these
 };
