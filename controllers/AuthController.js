@@ -1201,7 +1201,7 @@ async function registerReservationBusiness(req, res) {
 
 			business = existingBusiness || (await BusinessDao.createNewBusiness(businessCreationObj, tx));
 
-			reservationModule = await ReservationModule.createReservationModule(business.business_id);
+			reservationModule = await ReservationModule.createReservationModule(business.business_id, tx);
 			let businessUserData = null;
 			if (existingUser) {
 				const existingBusinessUser = await BusinessUsersDao.getBusinessUserByUserId(existingUser.user_id);
