@@ -413,7 +413,7 @@ export async function updateUserSubscription(userId, business_id) {
 				items: subscriptionItems,
 				payment_behavior: 'default_incomplete',
 				collection_method: 'charge_automatically',
-				billing_cycle_anchor: 'now',
+				// billing_cycle_anchor: 'now',
 				proration_behavior: 'none',
 				expand: ['latest_invoice.payment_intent'],
 				metadata: { business_id: business.business_id, type: 'word_buys' },
@@ -500,7 +500,7 @@ export async function createWordBuySubscription(words, business_id, userId) {
 					wordBuys.map((wordBuy) =>
 						prisma.word_buy.update({
 							where: { word_buy_id: wordBuy.word_buy_id },
-							data: { expires_at: expiresAt },
+							data: { expires_at: expiresAt, paid: true },
 						})
 					)
 				);
@@ -610,19 +610,15 @@ async function getAllWordBuysByBusiness(business) {
 }
 
 async function deleteWordBuy(word_buy_id) {
-	try {
-		const deletedWordBuy = await prisma.word_buy.update({
-			where: {
-				word_buy_id: word_buy_id,
-			},
-			data: {
-				stripe_subscription_id: null,
-			},
-		});
-		console.log / (deletedWordBuy, 'deleted word buy');
-	} catch (error) {
-		return res.status(404).json({ error: 'Word buy not found / other error' });
-	}
+	return await prisma.word_buy.update({
+		where: {
+			word_buy_id: word_buy_id,
+		},
+		data: {
+			stripe_subscription_id: null,
+			business_id: null,
+		},
+	});
 }
 
 export { createWord };

@@ -1,5 +1,7 @@
 import WordDao from '../dao/Word.js';
+import BusinessUserDao from '../dao/BusinessUsers.js';
 import { updateUserSubscription } from '../dao/Word.js';
+
 async function createWord(req, res) {
 	try {
 		const { wordData, translations } = req.body;
@@ -131,11 +133,11 @@ async function getAllWordBuys(req, res) {
 }
 async function deleteWordBuy(req, res) {
 	try {
-		/* word buy id */
+		const userId = req.user?.user_id;
 		const { id } = req.params;
-		console.log(id, 'word_buy_id');
 		const result = await WordDao.deleteWordBuy(id);
-		let stripeResult = await updateUserSubscription(req.user?.user_id);
+		const businessUser = await BusinessUserDao.getBusinessUserByUserId(userId);
+		await updateUserSubscription(userId, businessUser?.business_id);
 		res.status(200).json({ message: 'Word buy subscription id deleted successfully', result });
 	} catch (error) {
 		console.error('Error deleting word buy:', error);
