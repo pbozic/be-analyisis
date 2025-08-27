@@ -327,7 +327,7 @@ export async function updateUserSubscription(userId, business_id) {
 				subscriptionItems.push({ price: currentPrice.id, quantity: 1 });
 			}
 		}
-
+		console.log(subscriptionItems, nextPhaseItems, hasUpgrades);
 		let subscription;
 		let clientSecret = null;
 		let paymentRequired = false;
@@ -592,6 +592,7 @@ async function getAllWordBuysByBusiness(business) {
 			business: {
 				business_id: business,
 			},
+			deleted_at: null,
 			stripe_subscription_id: {
 				not: null,
 			},
@@ -622,6 +623,7 @@ async function deleteWordBuy(word_buy_id) {
 		},
 		data: {
 			stripe_subscription_id: null,
+			deleted_at: new Date(),
 		},
 	});
 }
