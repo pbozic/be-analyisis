@@ -103,7 +103,10 @@ async function getPromoSectionById(req, res) {
 }
 async function getAllPromoSections(req, res) {
 	try {
-		const promoSections = await PromoDao.getAllPromoSections();
+		const promoSections = await PromoDao.getAllPromoSections({
+			active: true,
+			...(req.query.purchasable && { canPurchase: true }),
+		});
 		res.json(promoSections);
 	} catch (error) {
 		console.error(error);

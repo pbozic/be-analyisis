@@ -136,7 +136,7 @@ async function getPromoSectionById(id) {
 	delete promo_section.translatable;
 	return promo_section;
 }
-async function getAllPromoSections() {
+async function getAllPromoSections(args) {
 	const promo_sections = await prisma.promo_sections.findMany({
 		include: {
 			promo_section_buy: true,
@@ -145,6 +145,7 @@ async function getAllPromoSections() {
 					translations: true,
 				},
 			},
+			...args,
 		},
 	});
 	promo_sections.map((promo_section) => {
