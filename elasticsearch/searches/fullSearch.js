@@ -15,6 +15,8 @@ const SCORING_WEIGHTS = {
 	menu_item_name_weight: 2, // Weight for matching menu items
 	menu_item_description_weight: 1, // Weight for matching menu item descriptions
 };
+
+const INCLUDE_MATCHES = true;
 /**
  * Search for businesses in Elasticsearch with comprehensive filtering and scoring
  * @param {string} query - Search query text
@@ -181,20 +183,25 @@ async function searchBusinesses(
 		// **Text Search (if query exists)**
 		if (hasQuery) {
 			boolQuery.bool.should.push(
+				// Text: name/description (not nested) -> use _name to see which field matched
 				{
 					function_score: {
 						weight: SCORING_WEIGHTS.description_name_weight,
 						query: {
-							multi_match: {
-								query: query,
-								fields: ['name', 'description'],
-								fuzziness: 'AUTO',
+							bool: {
+								should: [
+									{ match: { name: { query, fuzziness: 'AUTO', _name: 'text:name' } } },
+									{ match: { description: { query, fuzziness: 'AUTO', _name: 'text:description' } } },
+								],
+								minimum_should_match: 1,
 							},
 						},
 						boost_mode: 'sum',
 						score_mode: 'sum',
 					},
 				},
+
+				// Nested: menus.menu_items.name
 				{
 					function_score: {
 						weight: SCORING_WEIGHTS.menu_item_name_weight,
@@ -202,19 +209,32 @@ async function searchBusinesses(
 							nested: {
 								path: 'menus.menu_items',
 								query: {
-									multi_match: {
-										query: query,
-										fields: ['menus.menu_items.name'],
-										fuzziness: 'AUTO',
+									match: {
+										'menus.menu_items.name': { query, fuzziness: 'AUTO', _name: 'mi:name' },
 									},
 								},
 								score_mode: 'max',
+								...(INCLUDE_MATCHES
+									? {
+											inner_hits: {
+												name: 'mi_name',
+												size: 25,
+												_source: ['menus.menu_items.id', 'menus.menu_items.name'],
+												highlight: {
+													fields: { 'menus.menu_items.name': {} },
+													require_field_match: false,
+												},
+											},
+										}
+									: {}),
 							},
 						},
 						boost_mode: 'sum',
 						score_mode: 'sum',
 					},
 				},
+
+				// Nested: menus.menu_items.description
 				{
 					function_score: {
 						weight: SCORING_WEIGHTS.menu_item_description_weight,
@@ -222,19 +242,32 @@ async function searchBusinesses(
 							nested: {
 								path: 'menus.menu_items',
 								query: {
-									multi_match: {
-										query: query,
-										fields: ['menus.menu_items.description'],
-										fuzziness: 'AUTO',
+									match: {
+										'menus.menu_items.description': { query, fuzziness: 'AUTO', _name: 'mi:desc' },
 									},
 								},
 								score_mode: 'max',
+								...(INCLUDE_MATCHES
+									? {
+											inner_hits: {
+												name: 'mi_desc',
+												size: 25,
+												_source: ['menus.menu_items.id', 'menus.menu_items.description'],
+												highlight: {
+													fields: { 'menus.menu_items.description': {} },
+													require_field_match: false,
+												},
+											},
+										}
+									: {}),
 							},
 						},
 						boost_mode: 'sum',
 						score_mode: 'sum',
 					},
 				},
+
+				// Nested: word_buys -> label per input word + inner_hits to return the matched buys
 				{
 					function_score: {
 						weight: SCORING_WEIGHTS.bid_multiplier,
@@ -244,11 +277,35 @@ async function searchBusinesses(
 								query: {
 									bool: {
 										should: queryWords.map((word) => ({
-											match: { 'word_buys.word': word },
+											match: {
+												'word_buys.word': {
+													query: word,
+													fuzziness: 'AUTO',
+													_name: `wb:${word}`,
+												},
+											},
 										})),
+										minimum_should_match: 1,
 									},
 								},
 								score_mode: 'sum',
+								...(INCLUDE_MATCHES
+									? {
+											inner_hits: {
+												name: 'wb',
+												size: 50,
+												_source: [
+													'word_buys.word_id',
+													'word_buys.word',
+													'word_buys.bid_multiplier',
+												],
+												highlight: {
+													fields: { 'word_buys.word': {} },
+													require_field_match: false,
+												},
+											},
+										}
+									: {}),
 							},
 						},
 						boost_mode: 'sum',
@@ -404,6 +461,48 @@ async function searchBusinesses(
 			max_score: esResponse.hits.max_score,
 			took: esResponse.took,
 			results: esResponse.hits.hits.map((hit) => {
+				// --- collect matched query labels (requires `_name` in your queries)
+				const matchedQueries = hit.matched_queries || [];
+				const matchedText = {
+					name: matchedQueries.includes('text:name'),
+					description: matchedQueries.includes('text:description'),
+				};
+				const matchedQueryWords = matchedQueries.filter((q) => q.startsWith('wb:')).map((q) => q.slice(3));
+
+				// --- inner_hits for nested matches (safe if missing)
+				const wbHits = hit.inner_hits?.wb?.hits?.hits ?? [];
+				const matchedWordBuys = wbHits.map((h) => {
+					const src = h._source?.word_buys || h._source || {};
+					return {
+						word_id: src.word_id ?? src.id ?? null,
+						word: src.word ?? null,
+						bid_multiplier: src.bid_multiplier ?? null,
+						highlight: h.highlight?.['word_buys.word'] ?? [],
+						matched_queries: h.matched_queries ?? [],
+					};
+				});
+
+				const miNameHits = hit.inner_hits?.mi_name?.hits?.hits ?? [];
+				const matchedMenuItemNames = miNameHits.map((h) => {
+					const src = h._source?.menus?.menu_items || h._source?.menu_items || h._source || {};
+					return {
+						id: src.id ?? src.menu_item_id ?? null,
+						name: src.name ?? null,
+						highlight: h.highlight?.['menus.menu_items.name'] ?? [],
+					};
+				});
+
+				const miDescHits = hit.inner_hits?.mi_desc?.hits?.hits ?? [];
+				const matchedMenuItemDescs = miDescHits.map((h) => {
+					const src = h._source?.menus?.menu_items || h._source?.menu_items || h._source || {};
+					return {
+						id: src.id ?? src.menu_item_id ?? null,
+						description: src.description ?? null,
+						highlight: h.highlight?.['menus.menu_items.description'] ?? [],
+					};
+				});
+
+				// --- scores (unchanged)
 				let scores = {
 					name_score: 0,
 					description_score: 0,
@@ -418,6 +517,7 @@ async function searchBusinesses(
 				if (hit._explanation) {
 					extractScores(hit._explanation, scores);
 				}
+
 				return {
 					business_id: hit._source.business_id,
 					online: hit._source.online,
@@ -438,6 +538,15 @@ async function searchBusinesses(
 					type: hit._source.type,
 					business_local_locations: hit._source.business_local_locations,
 					scores,
+
+					// --- NEW: matched info
+					matched: {
+						text: matchedText, // { name: bool, description: bool }
+						word_buys_words: matchedQueryWords, // ['pizza', 'coffee', ...] from named queries wb:<word>
+						word_buys: matchedWordBuys, // [{ word_id, word, bid_multiplier, ... }]
+						menu_item_names: matchedMenuItemNames,
+						menu_item_descriptions: matchedMenuItemDescs,
+					},
 				};
 			}),
 		};
