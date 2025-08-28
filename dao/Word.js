@@ -593,9 +593,6 @@ async function getAllWordBuysByBusiness(business) {
 				business_id: business,
 			},
 			deleted_at: null,
-			stripe_subscription_id: {
-				not: null,
-			},
 		},
 		include: {
 			word: {
