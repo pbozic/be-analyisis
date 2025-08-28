@@ -1,4 +1,6 @@
 import PromoDao from '../dao/Promo.js';
+import BusinessUserDao from '../dao/BusinessUsers.js';
+import BusinessDao from '../dao/Business.js';
 import stripe from '../lib/stripe.js';
 import S3Helper from '../lib/s3.js';
 import prisma from '../prisma/prisma.js';
@@ -101,7 +103,10 @@ async function getPromoSectionById(req, res) {
 }
 async function getAllPromoSections(req, res) {
 	try {
-		const promoSections = await PromoDao.getAllPromoSections();
+		const promoSections = await PromoDao.getAllPromoSections({
+			active: true,
+			...(req.query.purchasable && { canPurchase: true }),
+		});
 		res.json(promoSections);
 	} catch (error) {
 		console.error(error);
@@ -361,23 +366,89 @@ export async function createPaymentIntentForPromoBuy(req, res) {
 	}
 }
 
+/**
+ * POST /promo-section-buys
+ * @tag PromoSectionBuy
+ * @summary Create promo section buys and payment intent
+ * @description Creates pending promo section buy records (unpaid) and a Stripe PaymentIntent for all of them. On successful webhook confirmation the buys become active.
+ * @operationId createPromoSectionBuy
+ * @bodyDescription Promo sections to purchase with tier, duration (days) and activePrice per day
+ * @bodyContent {
+ *   "promoSections": [
+ *     { "promo_sections_id": "uuid", "tier": 1, "duration": 30, "activePrice": 12.5 }
+ *   ]
+ * } application/json
+ * @bodyRequired
+ * @response 200 - Created payment intent for promo section buys
+ * @responseContent {object} 200.application/json
+ * @responseExample 200.application/json {
+ *   "clientSecret": "pi_123_secret_abc",
+ *   "promo_section_buy_ids": ["uuid1", "uuid2"]
+ * }
+ * @response 400 - Validation error
+ * @response 500 - Error creating promo section buy payment intent
+ * @prisma_model promo_sections_buy
+ */
 async function createPromoSectionBuy(req, res) {
 	try {
 		const { promoSections } = req.body;
-		const promoBuys = await Promise.all(
-			promoSections.map(async (section) => {
-				return await PromoDao.createPromoSectionBuy(
-					section.business_id,
-					section.promo_section_id,
-					section.active_at,
-					section.expires_at,
-					section.tier
-				);
-			})
-		);
-		//TODO: handle stripe payment
-		return res.status(200).json(promoBuys);
+		const userId = req.user?.user_id;
+		if (!Array.isArray(promoSections) || promoSections.length === 0) {
+			return res.status(400).json({ error: 'promoSections must be a non-empty array' });
+		}
+		const businessUser = await BusinessUserDao.getBusinessUserByUserId(userId);
+		if (!businessUser) {
+			return res.status(404).json({ error: 'Business user not found' });
+		}
+		const business = await BusinessDao.getBusinessById(businessUser.business_id);
+		if (!business?.stripe_customer_id) {
+			return res.status(400).json({ error: 'No Stripe customer on file' });
+		}
+		let totalAmountCents = 0;
+		const createdBuys = [];
+		for (const section of promoSections) {
+			const { promo_sections_id, tier, duration, activePrice } = section;
+			if (!promo_sections_id || typeof tier !== 'number' || !duration || !activePrice) {
+				return res
+					.status(400)
+					.json({ error: 'Each promo section requires promo_sections_id, tier, duration, activePrice' });
+			}
+			const promoSection = await prisma.promo_sections.findUnique({ where: { promo_sections_id } });
+			if (!promoSection) {
+				return res.status(404).json({ error: `Promo section not found: ${promo_sections_id}` });
+			}
+			const amountCents = Math.round(activePrice * 100 * (duration / promoSection.promo_duration_days));
+			totalAmountCents += amountCents;
+			const buy = await prisma.promo_sections_buy.create({
+				data: {
+					promo_sections_id,
+					business_id: business.business_id,
+					user_id: userId,
+					tier: tier,
+					duration: duration,
+				},
+			});
+			createdBuys.push({ id: buy.promo_sections_buy_id, duration, amountCents });
+		}
+		const ids = createdBuys.map((b) => b.id);
+		const paymentIntent = await stripe.client.paymentIntents.create({
+			amount: totalAmountCents,
+			currency: 'eur',
+			customer: business.stripe_customer_id,
+			metadata: {
+				user_id: userId,
+				business_id: business.business_id,
+				type: 'promo_section_bulk',
+				promo_section_buy_ids: JSON.stringify(ids),
+			},
+		});
+		await prisma.promo_sections_buy.updateMany({
+			where: { promo_sections_buy_id: { in: ids } },
+			data: { payment_intent_id: paymentIntent.id },
+		});
+		return res.status(200).json({ clientSecret: paymentIntent.client_secret, promo_section_buy_ids: ids });
 	} catch (error) {
+		console.error('createPromoSectionBuy:', error);
 		res.status(500).json({ error: error.message });
 	}
 }

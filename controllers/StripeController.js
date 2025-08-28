@@ -133,26 +133,54 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 			break;
 		}
 		case 'promo_section': {
-			// 1) fetch the promo_sections_buy record by PI id
-			const promoBuy = await PromoDao.getPromoSectionBuyByStripeIntentId(
-				paymentIntent.metadata.promo_section_buys_id
-			);
-			if (!promoBuy) {
-				console.error('No promo_sections_buy found for PI:', piId);
-				break;
-			}
-
-			// 2) compute activation / expiration
+			// Legacy single promo section flow (kept for backward compatibility). Expect metadata: promo_sections_buy_id & duration
+			const buyId = paymentIntent.metadata?.promo_sections_buy_id;
+			const duration = parseInt(paymentIntent.metadata?.duration || '0', 10) || 0;
+			if (!buyId) break;
+			const promoBuy = await PromoDao.getPromoSectionBuyByStripeIntentId(paymentIntent.id);
+			if (!promoBuy) break;
 			const now = new Date();
-			const days = parseInt(meta.duration, 10) || 0;
-			const expires = new Date(now.getTime() + days * 24 * 60 * 60 * 1000); // duration in days
-
-			// 3) update the DB record
+			const expires = new Date(now.getTime() + duration * 24 * 60 * 60 * 1000);
 			await PromoDao.updatePromoSectionBuy(promoBuy.promo_sections_buy_id, {
 				paid: true,
 				active_at: now,
 				expires_at: expires,
 			});
+			break;
+		}
+		case 'promo_section_bulk': {
+			try {
+				const idsRaw = paymentIntent.metadata.promo_section_buy_ids;
+				const businessId = paymentIntent.metadata.business_id;
+				if (!idsRaw) break;
+				let ids = [];
+				try {
+					ids = JSON.parse(idsRaw);
+				} catch {
+					ids = [];
+				}
+				if (!Array.isArray(ids) || ids.length === 0) break;
+				const now = new Date();
+				const buys = await prisma.promo_sections_buy.findMany({
+					where: { promo_sections_buy_id: { in: ids } },
+				});
+				for (const b of buys) {
+					// check if promo_buy already exists (if exists update now to exists.expires_at)
+					const exists = await prisma.promo_sections_buy.findFirst({
+						where: { promo_sections_id: b.promo_sections_id, business_id: businessId, paid: true },
+						orderBy: { expires_at: 'desc' },
+					});
+					const starts = exists ? new Date(exists.expires_at) : now;
+					const expires = new Date(starts.getTime() + (b.duration || 0) * 24 * 60 * 60 * 1000);
+					await prisma.promo_sections_buy.update({
+						where: { promo_sections_buy_id: b.promo_sections_buy_id },
+						data: { paid: true, active_at: starts, expires_at: expires },
+					});
+				}
+				console.info('Activated promo section buys', ids);
+			} catch (err) {
+				console.error('Failed to activate promo_section_bulk buys', err);
+			}
 			break;
 		}
 		// case 'word_buy': {
@@ -256,7 +284,7 @@ async function handlePaymentIntentFaliure(paymentIntent) {
 			if (!updated_subs || updated_subs.length === 0) {
 				console.warn(
 					'No DM subscriptions found after transfers for grouped_id: ',
-					payment_intent.transfer_group
+					paymentIntent.transfer_group
 				);
 			}
 			await PaymentHelpers.handlePaymentRefund(payment);

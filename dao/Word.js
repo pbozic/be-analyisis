@@ -593,9 +593,6 @@ async function getAllWordBuysByBusiness(business) {
 				business_id: business,
 			},
 			deleted_at: null,
-			stripe_subscription_id: {
-				not: null,
-			},
 		},
 		include: {
 			word: {
@@ -628,6 +625,17 @@ async function deleteWordBuy(word_buy_id) {
 	});
 }
 
+async function updateWordBuy(id, data) {
+	return await prisma.word_buy.update({
+		where: {
+			word_buy_id: id,
+		},
+		data: {
+			...data,
+		},
+	});
+}
+
 export { createWord };
 export { updateWord };
 export { deleteWord };
@@ -643,6 +651,7 @@ export { getAllWordBuysByBusiness };
 export { removeCategoryFromWord };
 export { addCategoryToWord };
 export { deleteWordBuy };
+export { updateWordBuy };
 export default {
 	createWord,
 	updateWord,
@@ -661,4 +670,5 @@ export default {
 	createWordBuySubscription,
 	updateUserSubscription,
 	deleteWordBuy,
+	updateWordBuy,
 };

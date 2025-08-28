@@ -102,7 +102,7 @@ async function createWordBuy(req, res) {
 		let { words, business_id } = req.body;
 		let userId = req.user?.user_id;
 		const result = await WordDao.createWordBuySubscription(words, business_id, userId);
-		res.status(201).json(result);
+		res.status(200).json(result);
 	} catch (error) {
 		console.error('Error creating word buy:', error);
 		res.status(500).json({ error: 'Failed to create word buy' });
@@ -144,11 +144,12 @@ async function deleteWordBuy(req, res) {
 async function updateWordBuy(req, res) {
 	try {
 		const { id } = req.params;
-		const result = await WordDao.updateWordBuy(id, req.body);
-		let stripeResult = await updateUserSubscription(req.user?.user_id);
+		const { price } = req.body;
+		const result = await WordDao.updateWordBuy(id, { price });
 		if (!result) {
 			return res.status(404).json({ error: 'Word buy not found' });
 		}
+		let stripeResult = await updateUserSubscription(req.user?.user_id);
 		res.status(200).json(stripeResult);
 	} catch (error) {
 		console.error('Error updating word buy:', error);

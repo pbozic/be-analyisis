@@ -8,7 +8,7 @@ router.get('/business/:business_id', WordController.getWordBuysByBusiness);
 // router.get('/tier/:tier', WordController.getAllWordBuysByTier);
 // router.get('/stripeSub/:stripe_subscription_id', WordController.getAllWordBuysByStripeSub);
 router.post('/', WordController.createWordBuy);
-router.put('/:id', WordController.updateWordBuy);
+router.patch('/:id', WordController.updateWordBuy);
 router.delete('/:id', WordController.deleteWordBuy);
 router.get('/:id', WordController.getWordBuyById);
 export default router;
