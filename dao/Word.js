@@ -625,6 +625,17 @@ async function deleteWordBuy(word_buy_id) {
 	});
 }
 
+async function updateWordBuy(id, data) {
+	return await prisma.word_buy.update({
+		where: {
+			word_buy_id: id,
+		},
+		data: {
+			...data,
+		},
+	});
+}
+
 export { createWord };
 export { updateWord };
 export { deleteWord };
@@ -640,6 +651,7 @@ export { getAllWordBuysByBusiness };
 export { removeCategoryFromWord };
 export { addCategoryToWord };
 export { deleteWordBuy };
+export { updateWordBuy };
 export default {
 	createWord,
 	updateWord,
@@ -658,4 +670,5 @@ export default {
 	createWordBuySubscription,
 	updateUserSubscription,
 	deleteWordBuy,
+	updateWordBuy,
 };

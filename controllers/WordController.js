@@ -144,11 +144,12 @@ async function deleteWordBuy(req, res) {
 async function updateWordBuy(req, res) {
 	try {
 		const { id } = req.params;
-		const result = await WordDao.updateWordBuy(id, req.body);
-		let stripeResult = await updateUserSubscription(req.user?.user_id);
+		const { price } = req.body;
+		const result = await WordDao.updateWordBuy(id, { price });
 		if (!result) {
 			return res.status(404).json({ error: 'Word buy not found' });
 		}
+		let stripeResult = await updateUserSubscription(req.user?.user_id);
 		res.status(200).json(stripeResult);
 	} catch (error) {
 		console.error('Error updating word buy:', error);
