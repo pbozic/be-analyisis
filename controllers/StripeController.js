@@ -167,7 +167,7 @@ async function handlePaymentIntentSuccess(paymentIntent) {
 				for (const b of buys) {
 					// check if promo_buy already exists (if exists update now to exists.expires_at)
 					const exists = await prisma.promo_sections_buy.findFirst({
-						where: { promo_sections_buy_id: b.promo_sections_buy_id, business_id: businessId, paid: true },
+						where: { promo_sections_id: b.promo_sections_id, business_id: businessId, paid: true },
 						orderBy: { expires_at: 'desc' },
 					});
 					const starts = exists ? new Date(exists.expires_at) : now;
