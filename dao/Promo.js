@@ -138,6 +138,7 @@ async function getPromoSectionById(id) {
 }
 async function getAllPromoSections(args) {
 	const promo_sections = await prisma.promo_sections.findMany({
+		where: { ...args },
 		include: {
 			promo_section_buy: true,
 			translatable: {
@@ -145,7 +146,6 @@ async function getAllPromoSections(args) {
 					translations: true,
 				},
 			},
-			...args,
 		},
 	});
 	promo_sections.map((promo_section) => {
