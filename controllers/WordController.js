@@ -102,7 +102,7 @@ async function createWordBuy(req, res) {
 		let { words, business_id } = req.body;
 		let userId = req.user?.user_id;
 		const result = await WordDao.createWordBuySubscription(words, business_id, userId);
-		res.status(201).json(result);
+		res.status(200).json(result);
 	} catch (error) {
 		console.error('Error creating word buy:', error);
 		res.status(500).json({ error: 'Failed to create word buy' });

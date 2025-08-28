@@ -506,6 +506,7 @@ async function getAllPromoSectionBuysByBusiness(business) {
 			business: {
 				business_id: business,
 			},
+			paid: true,
 		},
 		include: {
 			promo_section: {

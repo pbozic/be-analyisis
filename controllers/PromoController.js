@@ -414,7 +414,7 @@ async function createPromoSectionBuy(req, res) {
 			if (!promoSection) {
 				return res.status(404).json({ error: `Promo section not found: ${promo_sections_id}` });
 			}
-			const amountCents = Math.round(activePrice * 100 * duration);
+			const amountCents = Math.round(activePrice * 100 * (duration / promoSection.promo_duration_days));
 			totalAmountCents += amountCents;
 			const buy = await prisma.promo_sections_buy.create({
 				data: {
