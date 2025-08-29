@@ -128,7 +128,7 @@ async function resolveOrCreateCustomer(
 async function createBookingTx(
 	tx: Prisma.TransactionClient,
 	input: CreateBookingSingleInput,
-	opts: { validateSchedule: boolean; ignoreBooking: boolean }
+	opts: { validateSchedule: boolean; ignoreBooking?: boolean }
 ): Promise<Booking> {
 	const tel = composeTelephone(input);
 
@@ -185,7 +185,7 @@ async function createBookingTx(
 
 	// employee double-booking guard
 	let ok = true;
-	if (opts.ignoreBooking) {
+	if (!opts.ignoreBooking) {
 		ok = await isBookingSlotAvailable(tx, {
 			reservation_module_id: input.reservation_module_id,
 			employee_id: input.employee_id ?? null,

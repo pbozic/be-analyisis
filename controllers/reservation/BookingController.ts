@@ -407,7 +407,7 @@ export async function createBookingAdmin(
 	try {
 		const all = await BookingDao.createBookingGroup(inputs, {
 			validateSchedule: !isEmployeeOfModule, // <- only enforce schedules for externals
-			ignoreBooking: false,
+			ignoreBooking: true,
 		});
 		res.status(201).json({ parent: all[0], children: all.slice(1), all });
 	} catch (error) {
