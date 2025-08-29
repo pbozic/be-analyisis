@@ -14,6 +14,7 @@ const SCORING_WEIGHTS = {
 	description_name_weight: 4, // Weight for matching name in description
 	menu_item_name_weight: 2, // Weight for matching menu items
 	menu_item_description_weight: 1, // Weight for matching menu item descriptions
+	word_buy_price_factor: 1,
 };
 
 const INCLUDE_MATCHES = true;
@@ -269,47 +270,86 @@ async function searchBusinesses(
 
 				// Nested: word_buys -> label per input word + inner_hits to return the matched buys
 				{
-					function_score: {
-						weight: SCORING_WEIGHTS.bid_multiplier,
-						query: {
-							nested: {
-								path: 'word_buys',
-								query: {
-									bool: {
-										should: queryWords.map((word) => ({
-											match: {
-												'word_buys.word': {
-													query: word,
-													fuzziness: 'AUTO',
-													_name: `wb:${word}`,
+					query: {
+						nested: {
+							path: 'word_buys',
+							score_mode: 'max',
+							query: {
+								function_score: {
+									query: {
+										bool: {
+											must: [
+												{
+													bool: {
+														should: queryWords.map((word) => ({
+															match: {
+																'word_buys.word': {
+																	query: word,
+																	fuzziness: 'AUTO',
+																	_name: `wb:${word}`,
+																},
+															},
+														})),
+														minimum_should_match: 1,
+													},
 												},
-											},
-										})),
-										minimum_should_match: 1,
+											],
+											// Optional validity filter: allow missing expires_at OR future expiry
+											filter: [
+												{
+													bool: {
+														should: [
+															{ range: { 'word_buys.expires_at': { gte: 'now' } } },
+															{
+																bool: {
+																	must_not: {
+																		exists: { field: 'word_buys.expires_at' },
+																	},
+																},
+															},
+														],
+														minimum_should_match: 1,
+													},
+												},
+											],
+										},
 									},
-								},
-								score_mode: 'sum',
-								...(INCLUDE_MATCHES
-									? {
-											inner_hits: {
-												name: 'wb',
-												size: 50,
-												_source: [
-													'word_buys.word_id',
-													'word_buys.word',
-													'word_buys.bid_multiplier',
-												],
-												highlight: {
-													fields: { 'word_buys.word': {} },
-													require_field_match: false,
-												},
+									functions: [
+										{
+											// PRICE BOOST -> higher price => higher score (smooth, non-explosive)
+											field_value_factor: {
+												field: 'word_buys.price',
+												modifier: 'ln1p',
+												factor: SCORING_WEIGHTS.word_buy_price_factor,
+												missing: 0,
 											},
-										}
-									: {}),
+										},
+										{ weight: SCORING_WEIGHTS.bid_multiplier },
+									],
+									score_mode: 'sum',
+									boost_mode: 'multiply',
+								},
 							},
+							...(INCLUDE_MATCHES
+								? {
+										inner_hits: {
+											name: 'wb',
+											size: 50,
+											_source: [
+												'word_buys.word_buy_id',
+												'word_buys.word_id',
+												'word_buys.word',
+												'word_buys.price',
+												'word_buys.expires_at',
+											],
+											highlight: {
+												fields: { 'word_buys.word': {} },
+												require_field_match: false,
+											},
+										},
+									}
+								: {}),
 						},
-						boost_mode: 'sum',
-						score_mode: 'sum',
 					},
 				}
 			);

@@ -363,8 +363,8 @@ async function indexBusinesses(business_id = null, force = false) {
 						},
 					};
 				}),
+				word_buys: (business.word_buys || []).map((wb) => mapWordBuyForIndex(wb)).filter(Boolean), // remove nulls from dead/expired buys
 			};
-			//console.log(JSON.stringify(doc))
 			bulkOps.push(
 				{ update: { _index: 'business_index', _id: business.business_id } }, // Use business_id as _id
 				{ doc, doc_as_upsert: true } // Update if exists, create if not
@@ -399,4 +399,25 @@ async function indexBusinesses(business_id = null, force = false) {
 		console.error('❌ Error indexing businesses:', error);
 	}
 }
+
+function mapWordBuyForIndex(dbWordBuy) {
+	// Skip dead/expired buys at index time (faster queries)
+	if (dbWordBuy.deleted_at) return null;
+	if (dbWordBuy.expires_at && new Date(dbWordBuy.expires_at) <= new Date()) return null;
+
+	const baseWord = dbWordBuy.word?.word || null;
+	const translationsArr =
+		dbWordBuy.word?.translatable?.translations?.map((t) => t.translation)?.filter(Boolean) || [];
+	const dedupTranslations = Array.from(new Set(translationsArr));
+
+	return {
+		word_buy_id: dbWordBuy.word_buy_id,
+		word_id: dbWordBuy.word_id,
+		word: baseWord,
+		translations: dedupTranslations.join(' '), // index as a single text blob
+		price: Number(dbWordBuy.price) || 0,
+		expires_at: dbWordBuy.expires_at || null,
+	};
+}
+
 export default indexBusinesses;
