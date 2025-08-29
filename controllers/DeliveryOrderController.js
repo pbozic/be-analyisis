@@ -2191,12 +2191,12 @@ async function dispatcherRevoke(req, res) {
 async function startOrder(req, res) {
 	try {
 		const { ANALYTICS_PARAM_PROMO_WORDS, ANALYTICS_PARAM_PROMO_SECTION, ANALYTICS_PARAM_PROMO_AD } = req.query;
-		let res;
+		let log;
 		if (ANALYTICS_PARAM_PROMO_AD || ANALYTICS_PARAM_PROMO_SECTION || ANALYTICS_PARAM_PROMO_WORDS) {
-			res = await logPromoAnalytics({
+			log = await logPromoAnalytics({
 				business_id: req.body.business_id,
-				user_id: req.body.user_id,
-				order_id: req.body.order_id,
+				user_id: req.user?.user_id,
+				// order_id: req.body.order_id,
 				analytics_type: ANALYTICS_TYPE.ORDER_START,
 				promo_type: ANALYTICS_PARAM_PROMO_AD
 					? PROMO_TYPE.AD
@@ -2210,8 +2210,8 @@ async function startOrder(req, res) {
 				.then((res) => console.log('Promo analytics ORDER START success', res))
 				.catch((err) => console.warn('Promo analytics ORDER START failed', err));
 		}
-		console.log('startOrder', res);
-		res.status(200).json(res);
+		console.log('startOrder', log);
+		res.status(200).json(log);
 	} catch (e) {
 		console.error('Error starting order', e);
 		res.status(500).json(e);
