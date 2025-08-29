@@ -1302,14 +1302,19 @@ async function registerReservationBusiness(req, res) {
 				if (businessUserData && userRole) {
 					await tx.user_role.create({
 						data: {
-							business_user: {
+							reservation_module: {
 								connect: {
-									business_users_id: businessUserData.business_users_id,
+									reservation_module_id: reservationModule.reservation_module_id,
 								},
 							},
 							role: {
 								connect: {
 									role_id: userRole.role_id,
+								},
+							},
+							user: {
+								connect: {
+									user_id: businessUserData.user_id,
 								},
 							},
 						},
