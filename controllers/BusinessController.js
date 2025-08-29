@@ -220,8 +220,12 @@ async function searchBusinesses(req, res) {
 					promo_type: wordIds.length ? PROMO_TYPE.WORD : PROMO_TYPE.SEARCH,
 					analytics_type: ANALYTICS_TYPE.VIEW,
 				})
-					.then((res) => console.log('Promo analytics WORD VIEW success', res))
-					.catch((err) => console.warn('Promo analytics WORD VIEW failed', err));
+					.then((res) =>
+						console.log(`Promo analytics ${wordIds.length ? 'WORD' : 'SEARCH'} VIEW success`, res)
+					)
+					.catch((err) =>
+						console.warn(`Promo analytics ${wordIds.length ? 'WORD' : 'SEARCH'} VIEW failed`, err)
+					);
 			}
 			res.status(200).json(results);
 		} else {
