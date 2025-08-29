@@ -189,6 +189,24 @@ let languages = {
 		garden: 'Сад',
 		grains: 'Зерновые и мучные изделия',
 	},
+	ua: {
+		decoration: 'Декорація',
+		eggs: 'Яйця',
+		heating: 'Опалення',
+		beauty: 'Краса',
+		honey: 'Мед та бджолопродукти',
+		meat: 'Мʼясні продукти',
+		dairy: 'Молочні продукти',
+		oils: 'Олії та жири',
+		bakery: 'Хлібобулочні вироби',
+		drinks: 'Напої',
+		fish: 'Рибні продукти',
+		fruitsAndVegetables: 'Фрукти та овочі',
+		preservedAndProcessedProducts: 'Консервовані та перероблені продукти',
+		sweets: 'Солодощі',
+		garden: 'Сад',
+		grains: 'Зернові та борошняні вироби',
+	},
 };
 let CATEGORIES_FULL = {
 	decoration: {

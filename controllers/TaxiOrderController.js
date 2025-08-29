@@ -509,6 +509,7 @@ async function generateVehicleTransferOrder(orderData, userId, businessUserId, b
 				language_hr: false,
 				language_fr: false,
 				language_ru: false,
+				language_ua: false,
 			},
 			vehicle_class: VEHICLE_CLASS.ANY,
 			vehicle_category: VEHICLE_CATEGORY.ANY,

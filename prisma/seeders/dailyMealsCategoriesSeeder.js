@@ -158,6 +158,21 @@ let languages = {
 		modalDescription:
 			"Kada je odabrano 'I', prikazat ćemo vam samo restorane sa svim odabranim prehrambenim opcijama.\nKada je odabrano 'ILI', prikazat ćemo vam restorane s bilo kojom od odabranih prehrambenih opcija.",
 	},
+	ua: {
+		title: 'Ви дотримуєтеся якихось конкретних дієтичних рекомендацій?',
+		gallbladder: 'Жовчний міхур',
+		glutenFree: 'Без глютену',
+		fit: 'Фітнес',
+		vegetarian: 'Вегетаріанська',
+		vegan: 'Веганська',
+		diabetes: 'Діабет',
+		diverse: 'Різноманітна',
+		balanced: 'Збалансована',
+		dietaryPlan: 'Дієтичний план',
+		modalTitle: 'Інформація',
+		modalDescription:
+			"Коли вибрано 'І', ми покажемо вам лише ті ресторани, які мають всі обрані дієтичні опції.\nКоли вибрано 'АБО', ми покажемо вам ресторани з будь-якою з обраних дієтичних опцій.",
+	},
 };
 const DIETARY_OPTIONS = [
 	{ title: 'Gallbladder', tag: 'gallbladder', source: './icons/liver_icon.png' },
