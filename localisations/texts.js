@@ -8,6 +8,8 @@ import bs from './languages/bs.js';
 import hr from './languages/hr.js';
 import fr from './languages/fr.js';
 import ru from './languages/ru.js';
+import ua from './languages/ua.js';
+
 const languageTexts = {
 	en,
 	sl,
@@ -19,6 +21,7 @@ const languageTexts = {
 	hr,
 	fr,
 	ru,
+	ua,
 };
 export { languageTexts };
 export default {

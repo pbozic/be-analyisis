@@ -285,6 +285,7 @@ async function listPromoSectionsWithMerchants(req, res) {
 					bs: 'Omiljeni',
 					sr: 'Omiljeni',
 					sl: 'Priljubljeni',
+					ua: 'Улюблені',
 				},
 			});
 			favoriteBusinessIds = user.user_favorite_businesses?.map((b) => b.business_id);

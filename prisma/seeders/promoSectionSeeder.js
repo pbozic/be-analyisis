@@ -1,4 +1,3 @@
-import prisma from '../prisma.js';
 import PromoDao from '../../dao/Promo.js';
 const placeholder_promo_sections = [
 	{
@@ -13,6 +12,7 @@ const placeholder_promo_sections = [
 			{ language: 'hr', translation: 'Istaknuti oglasi' },
 			{ language: 'fr', translation: 'Annonces en vedette' },
 			{ language: 'ru', translation: 'Рекомендуемые объявления' },
+			{ language: 'ua', translation: 'Рекомендовані оголошення' },
 		],
 		sectionData: {
 			name: 'Featured Ads',
@@ -39,6 +39,7 @@ const placeholder_promo_sections = [
 			{ language: 'HR', translation: 'Premium oglasi' },
 			{ language: 'FR', translation: 'Annonces premium' },
 			{ language: 'RU', translation: 'Премиум-объявления' },
+			{ language: 'UA', translation: 'Преміум-оголошення' },
 		],
 		sectionData: {
 			name: 'Premium Listings',
@@ -65,6 +66,7 @@ const placeholder_promo_sections = [
 			{ language: 'HR', translation: 'Početna stran istaknut' },
 			{ language: 'FR', translation: "Mise en avant sur la page d'accueil" },
 			{ language: 'RU', translation: 'Выделение на главной странице' },
+			{ language: 'UA', translation: 'Виділення на головній сторінці' },
 		],
 		sectionData: {
 			name: 'Homepage Spotlight',
@@ -91,6 +93,7 @@ const placeholder_promo_sections = [
 			{ language: 'HR', translation: 'Povećanje društvenih mreža' },
 			{ language: 'FR', translation: 'Boost sur les réseaux sociaux' },
 			{ language: 'RU', translation: 'Реклама в социальных сетях' },
+			{ language: 'UA', translation: 'Просування у соціальних мережах' },
 		],
 		sectionData: {
 			name: 'Social Media Boost',
@@ -117,6 +120,7 @@ const placeholder_promo_sections = [
 			{ language: 'HR', translation: 'Hitna oznaka' },
 			{ language: 'FR', translation: 'Étiquette urgente' },
 			{ language: 'RU', translation: 'Срочная метка' },
+			{ language: 'UA', translation: 'Мітка "Терміново"' },
 		],
 		sectionData: {
 			name: 'Urgent Label',
