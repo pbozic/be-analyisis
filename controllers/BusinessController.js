@@ -212,18 +212,20 @@ async function searchBusinesses(req, res) {
 		if (results) {
 			for (const resItem of results.results) {
 				const matchedWords = resItem?.matched?.word_buys || [];
-				if (!matchedWords.length) continue;
 				const wordIds = [...new Set(matchedWords.map((w) => w.word_id).filter(Boolean))];
-				if (!wordIds.length) continue;
 				logPromoAnalytics({
 					wordIds,
 					business_id: resItem.business_id,
 					user_id: req.user.user_id,
-					promo_type: PROMO_TYPE.WORD,
+					promo_type: wordIds.length ? PROMO_TYPE.WORD : PROMO_TYPE.SEARCH,
 					analytics_type: ANALYTICS_TYPE.VIEW,
 				})
-					.then((res) => console.log('Promo analytics WORD VIEW success', res))
-					.catch((err) => console.warn('Promo analytics WORD VIEW failed', err));
+					.then((res) =>
+						console.log(`Promo analytics ${wordIds.length ? 'WORD' : 'SEARCH'} VIEW success`, res)
+					)
+					.catch((err) =>
+						console.warn(`Promo analytics ${wordIds.length ? 'WORD' : 'SEARCH'} VIEW failed`, err)
+					);
 			}
 			res.status(200).json(results);
 		} else {

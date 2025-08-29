@@ -11,7 +11,7 @@ const authMiddleware = async (req, res, next) => {
 		return res.status(401).send('Access Denied. No token provided.');
 	}
 	try {
-		console.log('auth token', token);
+		// console.log('auth token', token);
 		const decoded = jwt.verify(token, process.env.JWT_TOKEN_SECRET);
 		const user = await req.prisma.users.findUnique({
 			where: {

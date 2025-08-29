@@ -53,11 +53,9 @@ async function isDuplicate(_row: PromoAnalyticsRowInput): Promise<boolean> {
 			business_id: _row.business_id,
 			user_id: _row.user_id,
 			promo_type: _row.promo_type,
-			// type: _row.type,
-			// promo_ads_id: _row.promo_ads_id,
-			// promo_sections_id: _row.promo_sections_id,
-			// word_id: _row.word_id,
-			// order_id: _row.order_id,
+			promo_ads_id: _row.promo_ads_id,
+			promo_sections_id: _row.promo_sections_id,
+			word_id: _row.word_id,
 			created_at: { gte: since },
 		},
 	}));
@@ -101,7 +99,7 @@ export async function logPromoAnalytics(params: LogPromoAnalyticsParams) {
 			details: [{ reason: 'Missing core identifiers (business_id, user_id, promo_type, analytics_type).' }],
 		};
 	}
-	console.log('PROMO ANALYTICS LOG', business_id, promo_type, analytics_type);
+
 	if (promo_type === PROMO_TYPE.WORD) {
 		let wordIds = Array.isArray(explicitWordIds) ? [...explicitWordIds] : [];
 		if (!wordIds.length) return { created: 0, skipped: 1, details: [{ reason: 'No word IDs found.' }] };
@@ -136,41 +134,20 @@ export async function logPromoAnalytics(params: LogPromoAnalyticsParams) {
 		if (!rows.length) return { created: 0, skipped: details.length || 1, details };
 		const { created } = await createPromoAnalyticsEntries(rows);
 		return { created, skipped: details.length, details };
-	} else if (promo_type === PROMO_TYPE.SECTION) {
-		const row: PromoAnalyticsRowInput = {
-			promo_sections_id,
-			promo_ads_id,
-			business_id,
-			user_id,
-			order_id,
-			promo_type,
-			type: analytics_type,
-		};
-		if (await isDuplicate(row)) {
-			return { created: 0, skipped: 1, details: [{ reason: 'Duplicate within rate-limit window. Skipped.' }] };
-		}
-		const { created } = await createPromoAnalyticsEntries([row]);
-		return { created, skipped: 0, details: [] };
-	} else if (promo_type === PROMO_TYPE.AD) {
-		const row: PromoAnalyticsRowInput = {
-			promo_ads_id,
-			promo_sections_id,
-			business_id,
-			user_id,
-			order_id,
-			promo_type,
-			type: analytics_type,
-		};
-		if (await isDuplicate(row)) {
-			return { created: 0, skipped: 1, details: [{ reason: 'Duplicate within rate-limit window. Skipped.' }] };
-		}
-		const { created } = await createPromoAnalyticsEntries([row]);
-		return { created, skipped: 0, details: [] };
 	} else {
-		return {
-			created: 0,
-			skipped: 1,
-			details: [{ reason: 'Unsupported promo_type: ' + promo_type }],
+		const row: PromoAnalyticsRowInput = {
+			promo_sections_id,
+			promo_ads_id,
+			business_id,
+			user_id,
+			order_id,
+			promo_type,
+			type: analytics_type,
 		};
+		if (await isDuplicate(row)) {
+			return { created: 0, skipped: 1, details: [{ reason: 'Duplicate within rate-limit window. Skipped.' }] };
+		}
+		const { created } = await createPromoAnalyticsEntries([row]);
+		return { created, skipped: 0, details: [] };
 	}
 }

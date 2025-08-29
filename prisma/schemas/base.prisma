@@ -2003,6 +2003,7 @@ enum PROMO_TYPE {
   AD
   SECTION
   WORD
+  SEARCH
 }
 
 enum ANALYTICS_TYPE {
