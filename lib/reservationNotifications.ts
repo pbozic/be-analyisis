@@ -405,7 +405,7 @@ export async function bootstrapModuleNotifications(
 		});
 		console.log(`Found ${events.length} events for module: ${reservation_module_id}`);
 		const byKey = new Map(events.map((e) => [e.key, e]));
-		eventKeys = eventKeys.length ? eventKeys : events.map((e) => e.key); // all if empty
+		eventKeys = eventKeys && eventKeys.length ? eventKeys : events.map((e) => e.key); // all if empty
 		const varsSchema = buildVariablesJsonSchema();
 
 		console.log(`Ensuring templates for events: ${eventKeys.join(', ')}`);
