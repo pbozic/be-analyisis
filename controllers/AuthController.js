@@ -1296,7 +1296,7 @@ async function registerReservationBusiness(req, res) {
 				let userRole = await tx.role.findFirst({
 					where: {
 						business_id: business.business_id,
-						isAdmin: true,
+						is_admin: true,
 					},
 				});
 				if (businessUserData && userRole) {
