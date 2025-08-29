@@ -7,6 +7,7 @@ import {
 	DAILY_MEAL_INSTANCE_STATUS,
 	BUSINESS_TYPE,
 } from '@prisma/client';
+import { PROMO_TYPE, ANALYTICS_TYPE } from '@prisma/client';
 
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import DeliveryDriverDao from '../dao/DeliveryDriver.js';
@@ -14,6 +15,7 @@ import BusinessDao from '../dao/Business.js';
 import EmailHelper from '../lib/emailSender.js';
 import gApi from '../lib/gApis.js';
 import socket from '../socket.js';
+import { logPromoAnalytics } from '../lib/analytics.ts';
 import stripe from '../lib/stripe.js';
 import { getOrderAndPDF } from '../lib/orderPdf.js';
 import {
@@ -151,18 +153,40 @@ async function getUserByDeliveryOrderId(req, res) {
  * @bodyDescription Request body must include necessary order details.
  * @bodyContent {DeliveryOrderRequest} application/json
  * @bodyRequired
+ * @pathQuery {string} [ANALYTICS_PARAM_PROMO_WORDS] - Optional promo words for analytics
+ * @pathQuery {string} [ANALYTICS_PARAM_PROMO_SECTION] - Optional promo section ID for analytics
+ * @pathQuery {string} [ANALYTICS_PARAM_PROMO_AD] - Optional promo ad ID for analytics
  * @response 200 - Successful operation. Returns the newly created order in the response body.
  * @responseContent {DeliveryOrder} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function createOrder(req, res) {
 	const { orderBody, return_url } = req.body;
+	const { ANALYTICS_PARAM_PROMO_WORDS, ANALYTICS_PARAM_PROMO_SECTION, ANALYTICS_PARAM_PROMO_AD } = req.query;
 	try {
 		const user_id = req.user?.user_id;
 		if (!user_id) {
 			return res.status(403).json({ message: 'Unauthorized' });
 		}
 		const { order, payment_intent } = await generateOrder(orderBody, user_id, return_url);
+		if (ANALYTICS_PARAM_PROMO_AD || ANALYTICS_PARAM_PROMO_SECTION || ANALYTICS_PARAM_PROMO_WORDS) {
+			logPromoAnalytics({
+				business_id: order.business_id,
+				user_id,
+				order_id: order.order_id,
+				analytics_type: ANALYTICS_TYPE.ORDER_CREATE,
+				promo_type: ANALYTICS_PARAM_PROMO_AD
+					? PROMO_TYPE.AD
+					: ANALYTICS_PARAM_PROMO_SECTION
+						? PROMO_TYPE.SECTION
+						: PROMO_TYPE.WORD,
+				promo_ads_id: ANALYTICS_PARAM_PROMO_AD,
+				promo_sections_id: ANALYTICS_PARAM_PROMO_SECTION,
+				wordIds: ANALYTICS_PARAM_PROMO_WORDS,
+			})
+				.then((res) => console.log('Promo analytics ORDER CREATE success', res))
+				.catch((err) => console.warn('Promo analytics ORDER CREATE failed', err));
+		}
 		res.status(200).json({
 			...order,
 			payment_intent,
@@ -580,13 +604,35 @@ async function cancelOrderDelivery(req, res) {
  * @bodyDescription Request body must include 'order_id'.
  * @bodyContent {object} application/json
  * @bodyRequired
+ * @pathQuery {string} [ANALYTICS_PARAM_PROMO_WORDS] - Optional promo words for analytics
+ * @pathQuery {string} [ANALYTICS_PARAM_PROMO_SECTION] - Optional promo section ID for analytics
+ * @pathQuery {string} [ANALYTICS_PARAM_PROMO_AD] - Optional promo ad ID for analytics
  * @response 200 - Successful operation. Returns the completed order in the response body.
  * @responseContent {DeliveryOrder} 200.application/json
  * @response 500 - Server error. Console logs the error message and returns it in the response.
  */
 async function completeOrder(req, res) {
 	try {
+		const { ANALYTICS_PARAM_PROMO_WORDS, ANALYTICS_PARAM_PROMO_SECTION, ANALYTICS_PARAM_PROMO_AD } = req.query;
 		let order = await DeliveryOrderDao.completeOrder(req.body.order_id);
+		if (ANALYTICS_PARAM_PROMO_AD || ANALYTICS_PARAM_PROMO_SECTION || ANALYTICS_PARAM_PROMO_WORDS) {
+			logPromoAnalytics({
+				business_id: order.business_id,
+				user_id: order.user_id,
+				order_id: order.order_id,
+				analytics_type: ANALYTICS_TYPE.ORDER_FINISH,
+				promo_type: ANALYTICS_PARAM_PROMO_AD
+					? PROMO_TYPE.AD
+					: ANALYTICS_PARAM_PROMO_SECTION
+						? PROMO_TYPE.SECTION
+						: PROMO_TYPE.WORD,
+				promo_ads_id: ANALYTICS_PARAM_PROMO_AD,
+				promo_sections_id: ANALYTICS_PARAM_PROMO_SECTION,
+				wordIds: ANALYTICS_PARAM_PROMO_WORDS,
+			})
+				.then((res) => console.log('Promo analytics ORDER FINISH success', res))
+				.catch((err) => console.warn('Promo analytics ORDER FINISH failed', err));
+		}
 		let driver;
 		if (order.details?.type !== 'pickup') {
 			driver = order.delivery_driver_id
@@ -2140,6 +2186,38 @@ async function dispatcherRevoke(req, res) {
 	}
 }
 
+// This is where we should create order_id with added line item
+// Not possible right now, so let's just use it to log analytics
+async function startOrder(req, res) {
+	try {
+		const { ANALYTICS_PARAM_PROMO_WORDS, ANALYTICS_PARAM_PROMO_SECTION, ANALYTICS_PARAM_PROMO_AD } = req.query;
+		let res;
+		if (ANALYTICS_PARAM_PROMO_AD || ANALYTICS_PARAM_PROMO_SECTION || ANALYTICS_PARAM_PROMO_WORDS) {
+			res = await logPromoAnalytics({
+				business_id: req.body.business_id,
+				user_id: req.body.user_id,
+				order_id: req.body.order_id,
+				analytics_type: ANALYTICS_TYPE.ORDER_START,
+				promo_type: ANALYTICS_PARAM_PROMO_AD
+					? PROMO_TYPE.AD
+					: ANALYTICS_PARAM_PROMO_SECTION
+						? PROMO_TYPE.SECTION
+						: PROMO_TYPE.WORD,
+				promo_ads_id: ANALYTICS_PARAM_PROMO_AD,
+				promo_sections_id: ANALYTICS_PARAM_PROMO_SECTION,
+				wordIds: ANALYTICS_PARAM_PROMO_WORDS,
+			})
+				.then((res) => console.log('Promo analytics ORDER START success', res))
+				.catch((err) => console.warn('Promo analytics ORDER START failed', err));
+		}
+		console.log('startOrder', res);
+		res.status(200).json(res);
+	} catch (e) {
+		console.error('Error starting order', e);
+		res.status(500).json(e);
+	}
+}
+
 export { getDeliveryOrders };
 export { getDeliveryOrdersToday };
 export { getActiveDeliveryOrders };
@@ -2171,6 +2249,7 @@ export { getActiveDeliveryOrdersByBusinessId };
 export { getCompletedDeliveryOrdersByBusinessId };
 export { generateOrder };
 export { localConfirmMultipleOrdersReady };
+export { startOrder };
 export default {
 	getDeliveryOrders,
 	getDeliveryOrdersToday,
@@ -2203,4 +2282,5 @@ export default {
 	getCompletedDeliveryOrdersByBusinessId,
 	localConfirmMultipleOrdersReady,
 	generateOrder,
+	startOrder,
 };

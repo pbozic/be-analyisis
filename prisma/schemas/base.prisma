@@ -102,6 +102,7 @@ model business {
   daily_users_sorting_type        SORTING_TYPE         @default(AUTOMATIC)
   restaurant_overwhelmed          Boolean              @default(false)
   promo_sections                  promo_sections_buy[]
+  analytics                       promo_analytics[]
   business_teams                  business_teams[]     @relation("business_to_business_teams")
   business_order_lobbies          order_lobbies[]      @relation("business_to_lobby")
   first_activated_at              DateTime?
@@ -647,6 +648,7 @@ model delivery_orders {
   stock_movements                   menu_item_stock_change[]
   business_local_location_id        String?                             @db.Uuid
   business_local_location           business_local_locations?           @relation(fields: [business_local_location_id], references: [business_local_location_id])
+  promo_analytics                   promo_analytics[]
 }
 
 model delivery_order_sent {
@@ -987,6 +989,7 @@ model promo_sections {
   translatable_id        String               @db.Uuid
   translatable           translatable         @relation(fields: [translatable_id], references: [translatable_id])
   display_cards_per_page Int?                 @default(4)
+  promo_analytics        promo_analytics[]
 }
 
 model promo_banners {
@@ -1014,24 +1017,25 @@ model promo_sections_buy {
   paid                  Boolean        @default(false)
   active_at             DateTime?
   expires_at            DateTime?
-  tier                  Int 
+  tier                  Int
   duration              Int            @default(30) // in days
 }
 
 model promo_ads {
-  promo_ads_id String               @id @default(uuid()) @db.Uuid
-  title        String
-  text         String
-  tag          String
-  service_type PROMO_SERVICE_TYPES
-  discount     Float                @default(0)
-  banner       promo_banners[]
-  categories   promo_ads_category[]
-  active       Boolean              @default(true)
-  code         Int?                 @unique @db.SmallInt
-  created_at   DateTime             @default(now()) @db.Timestamptz(6)
-  active_at    DateTime?
-  active_until DateTime?
+  promo_ads_id    String               @id @default(uuid()) @db.Uuid
+  title           String
+  text            String
+  tag             String
+  service_type    PROMO_SERVICE_TYPES
+  discount        Float                @default(0)
+  banner          promo_banners[]
+  categories      promo_ads_category[]
+  active          Boolean              @default(true)
+  code            Int?                 @unique @db.SmallInt
+  created_at      DateTime             @default(now()) @db.Timestamptz(6)
+  active_at       DateTime?
+  active_until    DateTime?
+  promo_analytics promo_analytics[]
 }
 
 model promo_ads_category {
@@ -1043,17 +1047,18 @@ model promo_ads_category {
 }
 
 model words {
-  word_id         String         @id @default(uuid()) @db.Uuid
-  word            String         @unique
-  popularity      Int            @default(0)
-  categories_id   String?        @db.Uuid
-  category        categories?    @relation(fields: [categories_id], references: [categories_id])
-  translatable_id String         @db.Uuid
-  translatable    translatable   @relation(fields: [translatable_id], references: [translatable_id])
+  word_id         String            @id @default(uuid()) @db.Uuid
+  word            String            @unique
+  popularity      Int               @default(0)
+  categories_id   String?           @db.Uuid
+  category        categories?       @relation(fields: [categories_id], references: [categories_id])
+  translatable_id String            @db.Uuid
+  translatable    translatable      @relation(fields: [translatable_id], references: [translatable_id])
   subscriptions   word_buy[]
   bundles         word_bundles[]
-  created_at      DateTime       @default(now()) @db.Timestamptz(6)
-  updated_at      DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
+  created_at      DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+  promo_analytics promo_analytics[]
 }
 
 model word_buy {
@@ -1083,6 +1088,27 @@ model word_bundles {
   description String?
   words       words[]
   created_at  DateTime @default(now()) @db.Timestamptz(6)
+}
+
+model promo_analytics {
+  promo_analytics_id String         @id @default(uuid()) @db.Uuid
+  promo_ads_id       String         @db.Uuid
+  promo_sections_id  String         @db.Uuid
+  word_id            String         @db.Uuid
+  order_id           String         @db.Uuid
+  business_id        String         @db.Uuid
+  user_id            String         @db.Uuid
+  created_at         DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
+  promo_type         PROMO_TYPE
+  type               ANALYTICS_TYPE
+
+  business       business         @relation(fields: [business_id], references: [business_id])
+  user           users?           @relation(fields: [user_id], references: [user_id])
+  promo_ads      promo_ads?       @relation(fields: [promo_ads_id], references: [promo_ads_id])
+  promo_sections promo_sections?  @relation(fields: [promo_sections_id], references: [promo_sections_id])
+  promo_words    words?           @relation(fields: [word_id], references: [word_id])
+  order          delivery_orders? @relation(fields: [order_id], references: [order_id])
 }
 
 model order_lobbies {
@@ -1970,4 +1996,18 @@ enum DAY_OF_WEEK {
   FRI // 4
   SAT // 5
   SUN // 6 and not 0
+}
+
+enum PROMO_TYPE {
+  AD
+  SECTION
+  WORD
+}
+
+enum ANALYTICS_TYPE {
+  VIEW
+  CLICK
+  ORDER_START
+  ORDER_CREATE
+  ORDER_FINISH
 }

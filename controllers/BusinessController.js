@@ -1,4 +1,5 @@
 import { config } from 'dotenv';
+import { PROMO_TYPE, ANALYTICS_TYPE } from '@prisma/client';
 
 import BusinessDao from '../dao/Business.js';
 import ReviewDao from '../dao/Review.js';
@@ -17,6 +18,7 @@ import elasticsearch from '../elasticsearch/index.js';
 import UserFavoriteBusinessDao from '../dao/UserFavoriteBusiness.js';
 import ScoringPointsDao from '../dao/ScoringPoints.js';
 import LocalLocationDao from '../dao/LocalLocation.js';
+import { logPromoAnalytics } from '../lib/analytics.ts';
 config();
 const { UserSockets, io } = socket;
 const { businessIndex, categorySearch, fullSearch } = elasticsearch;
@@ -208,6 +210,21 @@ async function searchBusinesses(req, res) {
 			}),
 		};
 		if (results) {
+			for (const resItem of results.results) {
+				const matchedWords = resItem?.matched?.word_buys || [];
+				if (!matchedWords.length) continue;
+				const wordIds = [...new Set(matchedWords.map((w) => w.word_id).filter(Boolean))];
+				if (!wordIds.length) continue;
+				logPromoAnalytics({
+					wordIds,
+					business_id: resItem.business_id,
+					user_id: req.user.user_id,
+					promo_type: PROMO_TYPE.WORD,
+					analytics_type: ANALYTICS_TYPE.VIEW,
+				})
+					.then((res) => console.log('Promo analytics WORD VIEW success', res))
+					.catch((err) => console.warn('Promo analytics WORD VIEW failed', err));
+			}
 			res.status(200).json(results);
 		} else {
 			res.status(400).json({
@@ -327,6 +344,17 @@ async function listPromoSectionsWithMerchants(req, res) {
 			let result = [];
 			for (let provider of providers) {
 				let esResult = esResults.results.find((r) => r.business_id === provider.business_id);
+				if (promoSection.promo_sections_id) {
+					logPromoAnalytics({
+						business_id: provider.business_id,
+						user_id: req.user?.user_id,
+						promo_type: PROMO_TYPE.SECTION,
+						analytics_type: ANALYTICS_TYPE.VIEW,
+						promo_sections_id: promoSection.promo_sections_id,
+					})
+						.then((res) => console.log('Promo analytics SECTION VIEW success', res))
+						.catch((err) => console.warn('Promo analytics SECTION VIEW failed', err));
+				}
 				result.push({
 					...provider,
 					...esResult,
@@ -489,6 +517,9 @@ async function getBusinessAdminDataById(req, res) {
  * @description Retrieves detailed information about a specific business by its ID.
  * @operationId getBusinessForSearchById
  * @pathParam {string} business_id - The ID of the business to retrieve
+ * @pathQuery {string} [ANALYTICS_PARAM_PROMO_WORDS] - Optional promo words for analytics
+ * @pathQuery {string} [ANALYTICS_PARAM_PROMO_SECTION] - Optional promo section ID for analytics
+ * @pathQuery {string} [ANALYTICS_PARAM_PROMO_AD] - Optional promo ad ID for analytics
  * @response 200 - Successful operation, returns detailed business information
  * @responseContent {Business} 200.application/json
  * @response 404 - Business not found
@@ -496,6 +527,7 @@ async function getBusinessAdminDataById(req, res) {
  */
 async function getBusinessForSearchById(req, res) {
 	try {
+		const { ANALYTICS_PARAM_PROMO_WORDS, ANALYTICS_PARAM_PROMO_SECTION, ANALYTICS_PARAM_PROMO_AD } = req.query;
 		const business = await BusinessDao.getBusinessForSearchById(req.params.business_id);
 		let logo, banner;
 		for (let d of business.documents) {
@@ -510,6 +542,23 @@ async function getBusinessForSearchById(req, res) {
 		business.menu = business.menus.find((m) => m.isDailyMeal === false);
 		business.dailyMenu = business.menus.find((m) => m.isDailyMeal === true);
 		business.menus = null;
+		if (ANALYTICS_PARAM_PROMO_AD || ANALYTICS_PARAM_PROMO_SECTION || ANALYTICS_PARAM_PROMO_WORDS) {
+			logPromoAnalytics({
+				business_id: business.business_id,
+				user_id: req.user?.user_id,
+				promo_type: ANALYTICS_PARAM_PROMO_AD
+					? PROMO_TYPE.AD
+					: ANALYTICS_PARAM_PROMO_SECTION
+						? PROMO_TYPE.SECTION
+						: PROMO_TYPE.WORD,
+				analytics_type: ANALYTICS_TYPE.CLICK,
+				promo_ads_id: ANALYTICS_PARAM_PROMO_AD,
+				promo_sections_id: ANALYTICS_PARAM_PROMO_SECTION,
+				wordIds: ANALYTICS_PARAM_PROMO_WORDS,
+			})
+				.then((res) => console.log('Promo analytics CLICK success', res))
+				.catch((err) => console.warn('Promo analytics CLICK failed', err));
+		}
 		if (business) {
 			res.status(200).json(business);
 		} else {

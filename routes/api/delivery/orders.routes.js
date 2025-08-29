@@ -19,6 +19,7 @@ router.get('/:daily_meals', DeliveryOrderController.getDeliveryOrders);
 
 router.post('/daily_meals', DeliveryOrderController.startDailyMeals);
 router.post('/order', DeliveryOrderController.createOrder);
+router.post('/order/start', DeliveryOrderController.startOrder);
 router.post('/order/merchant_accept', DeliveryOrderController.merchantAcceptOrder);
 router.post('/order/merchant_ready', DeliveryOrderController.merchantConfirmOrderReady);
 router.post('/order/local_ready', DeliveryOrderController.localConfirmMultipleOrdersReady);
