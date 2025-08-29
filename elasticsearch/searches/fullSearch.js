@@ -282,7 +282,7 @@ async function searchBusinesses(
 												bool: {
 													should: queryWords.map((word) => ({
 														match: {
-															'word_buys.word': {
+															'word_buys.translations': {
 																query: word,
 																fuzziness: 'AUTO',
 																_name: `wb:${word}`,
@@ -340,7 +340,7 @@ async function searchBusinesses(
 											'word_buys.expires_at',
 										],
 										highlight: {
-											fields: { 'word_buys.word': {} },
+											fields: { 'word_buys.translations': {} },
 											require_field_match: false,
 										},
 									},
