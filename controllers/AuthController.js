@@ -1234,7 +1234,7 @@ async function registerReservationBusiness(req, res) {
 					await UserDao.linkRolesToUser(user?.user_id, userRoles, tx);
 					adminUser = user;
 				}
-				const permissions = await tx.permissions.findMany({});
+				const permissions = await tx.permission.findMany({});
 				const ROLES = [
 					{
 						name: 'Owner',
