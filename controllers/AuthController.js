@@ -1119,293 +1119,304 @@ async function registerReservationBusiness(req, res) {
 		let reservationModule = null;
 		let adminUser = null;
 		let stripeCustomer = null;
-		await prisma.$transaction(async (tx) => {
-			console.log(req.body);
-			const { userData, businessData, plan_tag } = req.body;
-			let existingUser = null;
-			if (userData.registration_token) {
-				//TODO: validate token if given
-				const token = await TokenDao.validateRegistrationSessionToken(userData.registration_token);
-				if (!token) {
-					console.error('Invalid registration token!');
-					throw new Error('Invalid registration token!');
-				}
-				existingUser = token.users;
-			} else {
-				existingUser =
-					(await UserDao.getUserByEmail(userData.email)) ||
-					(await UserDao.getUserByTelephone(userData.telephone));
-				console.log('existingUser:', existingUser?.email, existingUser?.telephone);
-				if (existingUser) {
-					console.error('User with this email/telephone already exists!');
-					throw new Error('User with this email/telephone already exists!');
-				}
-			}
-			let existingBusiness = null;
-			if (businessData.business_id) {
-				//TODO: check that business exists if given
-				existingBusiness = await BusinessDao.getBusinessById(businessData.business_id);
-				if (!existingBusiness) {
-					console.error('Unknown business_id!');
-					throw new Error('Unknown business_id!');
-				}
-				//TODO: check that user is admin in business if business given
-				const isAdmin =
-					existingBusiness.business_users.find((bu) => bu.user_id === existingUser.user_id)?.company_role ===
-					COMPANY_ROLE.DIRECTOR;
-				if (!isAdmin) {
-					console.error('You dont have the required permissions for this business!');
-					throw new Error('You dont have the required permissions for this business!');
-				}
-				if (existingBusiness.reservation_module !== null) {
-					console.error('This business is already connected to the reservation platform!');
-					throw new Error('This business is already connected to the reservation platform!');
-				}
-			} else {
-				existingBusiness = await BusinessDao.getBusinessByEmail(businessData.email);
-				if (existingBusiness) {
-					console.error('Business with this email already exists.');
-					throw new Error('Business with this email already exists.');
-					// return res.status(400).json({ error: 'Business with this email already exists.' });
-				}
-			}
-
-			stripeCustomer = await stripe.createCustomer(
-				businessData.email,
-				businessData.business_name,
-				businessData.business_telephone
-			);
-			const userCreationObj = existingUser
-				? null
-				: {
-						email: userData.email,
-						password: userData.password,
-						user_role: 'ADMIN',
-						telephone: userData.telephone || businessData.business_telephone,
-						telephone_number: userData.telephone_number || businessData.business_telephone_number,
-						telephone_code: userData.telephone_code || businessData.business_telephone_code,
-					};
-			const businessCreationObj = existingBusiness
-				? null
-				: {
-						name: businessData.name,
-						email: businessData.email,
-						telephone: businessData.telephone,
-						telephone_number: businessData.telephone_number,
-						telephone_code: businessData.telephone_code,
-						type: BUSINESS_TYPE.RESERVATION,
-						tax_id: businessData.tax_id,
-						registration_id: businessData.registration_id,
-						stripe_customer_id: stripeCustomer.id,
-					};
-
-			business = existingBusiness || (await BusinessDao.createNewBusiness(businessCreationObj, tx));
-
-			reservationModule = await ReservationModule.createReservationModule(business.business_id, tx);
-			let businessUserData = null;
-			if (existingUser) {
-				const existingBusinessUser = await BusinessUsersDao.getBusinessUserByUserId(existingUser.user_id);
-				if (!existingBusinessUser) {
-					const { businessUser } = await BusinessUsersDao.createBusinessUser(
-						existingUser,
-						business.business_id,
-						false,
-						tx
-					);
-				}
-				businessUserData = existingBusinessUser;
-				adminUser = existingUser;
-				// const userRoles = userData.user_roles || [
-				// 	{ role: userObj.data.user_role || 'BUSINESS_USER', primary: true },
-				// ];
-				// await UserDao.linkRolesToUser(existingUser.user_id, userRoles, tx);
-			} else {
-				const { user, businessUser } = await BusinessUsersDao.createBusinessUser(
-					{ data: userCreationObj },
-					business.business_id,
-					true,
-					tx
-				);
-				businessUserData = businessUser;
-				const userRoles = userCreationObj.user_roles || [
-					{ role: userCreationObj.user_role || 'BUSINESS_USER', primary: true },
-				];
-				await UserDao.linkRolesToUser(user?.user_id, userRoles, tx);
-				adminUser = user;
-			}
-			const permissions = await tx.permissions.findMany({});
-			const ROLES = [
-				{
-					name: 'Owner',
-					isAdmin: true,
-					permissions: [
-						'view_dashboard',
-						'manage_booking',
-						'add_employee',
-						'add_location',
-						'add_service',
-						'send_sms',
-					],
-				},
-				{
-					name: 'Manager',
-					permissions: ['view_dashboard', 'manage_booking', 'add_employee', 'add_location', 'add_service'],
-				},
-				{ name: 'Employee', permissions: ['view_dashboard', 'manage_booking'] },
-			];
-			for (const role of ROLES) {
-				const roleData = await tx.role.create({
-					data: {
-						business: {
-							connect: {
-								business_id: business.business_id,
-							},
-						},
-						name: role.name,
-						is_admin: role.isAdmin || false,
-						module: 'RESERVATION',
-					},
-				});
-				for (const permissionName of role.permissions) {
-					const permission = permissions.find((p) => p.name === permissionName);
-					if (permission) {
-						await tx.role_permissions.create({
-							data: {
-								role: {
-									connect: {
-										role_id: roleData.role_id,
-									},
-								},
-								permission: {
-									connect: {
-										permission_id: permission.permission_id,
-									},
-								},
-							},
-						});
+		await prisma.$transaction(
+			async (tx) => {
+				console.log(req.body);
+				const { userData, businessData, plan_tag } = req.body;
+				let existingUser = null;
+				if (userData?.registration_token) {
+					//TODO: validate token if given
+					const token = await TokenDao.validateRegistrationSessionToken(userData.registration_token);
+					if (!token) {
+						console.error('Invalid registration token!');
+						throw new Error('Invalid registration token!');
+					}
+					existingUser = token.users;
+				} else {
+					existingUser =
+						(await UserDao.getUserByEmail(userData.email)) ||
+						(await UserDao.getUserByTelephone(userData.telephone));
+					console.log('existingUser:', existingUser?.email, existingUser?.telephone);
+					if (existingUser) {
+						console.error('User with this email/telephone already exists!');
+						throw new Error('User with this email/telephone already exists!');
 					}
 				}
-			}
-			let userRole = await tx.role.findFirst({
-				where: {
-					business_id: business.business_id,
-					isAdmin: true,
-				},
-			});
-			if (businessUserData && userRole) {
-				await tx.user_role.create({
+				let existingBusiness = null;
+				if (businessData.business_id) {
+					//TODO: check that business exists if given
+					existingBusiness = await BusinessDao.getBusinessById(businessData.business_id);
+					if (!existingBusiness) {
+						console.error('Unknown business_id!');
+						throw new Error('Unknown business_id!');
+					}
+					//TODO: check that user is admin in business if business given
+					const isAdmin =
+						existingBusiness.business_users.find((bu) => bu.user_id === existingUser.user_id)
+							?.company_role === COMPANY_ROLE.DIRECTOR;
+					if (!isAdmin) {
+						console.error('You dont have the required permissions for this business!');
+						throw new Error('You dont have the required permissions for this business!');
+					}
+					if (existingBusiness.reservation_module !== null) {
+						console.error('This business is already connected to the reservation platform!');
+						throw new Error('This business is already connected to the reservation platform!');
+					}
+				} else {
+					existingBusiness = await BusinessDao.getBusinessByEmail(businessData.email);
+					if (existingBusiness) {
+						console.error('Business with this email already exists.');
+						throw new Error('Business with this email already exists.');
+						// return res.status(400).json({ error: 'Business with this email already exists.' });
+					}
+				}
+
+				stripeCustomer = await stripe.createCustomer(
+					businessData.email,
+					businessData.business_name,
+					businessData.business_telephone
+				);
+				const userCreationObj = existingUser
+					? null
+					: {
+							email: userData.email,
+							password: userData.password,
+							user_role: 'ADMIN',
+							telephone: userData.telephone || businessData.business_telephone,
+							telephone_number: userData.telephone_number || businessData.business_telephone_number,
+							telephone_code: userData.telephone_code || businessData.business_telephone_code,
+						};
+				const businessCreationObj = existingBusiness
+					? null
+					: {
+							name: businessData.name,
+							email: businessData.email,
+							telephone: businessData.telephone,
+							telephone_number: businessData.telephone_number,
+							telephone_code: businessData.telephone_code,
+							type: BUSINESS_TYPE.RESERVATION,
+							tax_id: businessData.tax_id,
+							registration_id: businessData.registration_id,
+							stripe_customer_id: stripeCustomer.id,
+						};
+
+				business = existingBusiness || (await BusinessDao.createNewBusiness(businessCreationObj, tx));
+
+				reservationModule = await ReservationModule.createReservationModule(business.business_id, tx);
+				let businessUserData = null;
+				if (existingUser) {
+					const existingBusinessUser = await BusinessUsersDao.getBusinessUserByUserId(existingUser.user_id);
+					if (!existingBusinessUser) {
+						const { businessUser } = await BusinessUsersDao.createBusinessUser(
+							existingUser,
+							business.business_id,
+							false,
+							tx
+						);
+					}
+					businessUserData = existingBusinessUser;
+					adminUser = existingUser;
+					// const userRoles = userData.user_roles || [
+					// 	{ role: userObj.data.user_role || 'BUSINESS_USER', primary: true },
+					// ];
+					// await UserDao.linkRolesToUser(existingUser.user_id, userRoles, tx);
+				} else {
+					const { user, businessUser } = await BusinessUsersDao.createBusinessUser(
+						{ data: userCreationObj },
+						business.business_id,
+						true,
+						tx
+					);
+					businessUserData = businessUser;
+					const userRoles = userCreationObj.user_roles || [
+						{ role: userCreationObj.user_role || 'BUSINESS_USER', primary: true },
+					];
+					await UserDao.linkRolesToUser(user?.user_id, userRoles, tx);
+					adminUser = user;
+				}
+				const permissions = await tx.permissions.findMany({});
+				const ROLES = [
+					{
+						name: 'Owner',
+						isAdmin: true,
+						permissions: [
+							'view_dashboard',
+							'manage_booking',
+							'add_employee',
+							'add_location',
+							'add_service',
+							'send_sms',
+						],
+					},
+					{
+						name: 'Manager',
+						permissions: [
+							'view_dashboard',
+							'manage_booking',
+							'add_employee',
+							'add_location',
+							'add_service',
+						],
+					},
+					{ name: 'Employee', permissions: ['view_dashboard', 'manage_booking'] },
+				];
+				for (const role of ROLES) {
+					const roleData = await tx.role.create({
+						data: {
+							business: {
+								connect: {
+									business_id: business.business_id,
+								},
+							},
+							name: role.name,
+							is_admin: role.isAdmin || false,
+							module: 'RESERVATION',
+						},
+					});
+					for (const permissionName of role.permissions) {
+						const permission = permissions.find((p) => p.name === permissionName);
+						if (permission) {
+							await tx.role_permissions.create({
+								data: {
+									role: {
+										connect: {
+											role_id: roleData.role_id,
+										},
+									},
+									permission: {
+										connect: {
+											permission_id: permission.permission_id,
+										},
+									},
+								},
+							});
+						}
+					}
+				}
+				let userRole = await tx.role.findFirst({
+					where: {
+						business_id: business.business_id,
+						isAdmin: true,
+					},
+				});
+				if (businessUserData && userRole) {
+					await tx.user_role.create({
+						data: {
+							business_user: {
+								connect: {
+									business_users_id: businessUserData.business_users_id,
+								},
+							},
+							role: {
+								connect: {
+									role_id: userRole.role_id,
+								},
+							},
+						},
+					});
+				}
+				//create employee user
+				let employee = await tx.employee.create({
 					data: {
 						business_user: {
 							connect: {
 								business_users_id: businessUserData.business_users_id,
 							},
 						},
-						role: {
+						reservation_module: {
 							connect: {
-								role_id: userRole.role_id,
+								reservation_module_id: reservationModule.reservation_module_id,
 							},
 						},
 					},
 				});
-			}
-			//create employee user
-			let employee = await tx.employee.create({
-				data: {
-					business_user: {
-						connect: {
-							business_users_id: businessUserData.business_users_id,
-						},
+				let employeeAction = await tx.action.findFirst({
+					where: {
+						name: 'add_employee',
 					},
-					reservation_module: {
-						connect: {
-							reservation_module_id: reservationModule.reservation_module_id,
+				});
+				await tx.business_usage.create({
+					data: {
+						action: {
+							connect: {
+								action_id: employeeAction.action_id,
+							},
 						},
-					},
-				},
-			});
-			let employeeAction = await tx.action.findFirst({
-				where: {
-					name: 'add_employee',
-				},
-			});
-			await tx.business_usage.create({
-				data: {
-					action: {
-						connect: {
-							action_id: employeeAction.action_id,
+						reservation_module: {
+							connect: {
+								reservation_module_id: reservationModule.reservation_module_id,
+							},
 						},
+						used: 1,
 					},
-					reservation_module: {
-						connect: {
-							reservation_module_id: reservationModule.reservation_module_id,
-						},
-					},
-					used: 1,
-				},
-			});
+				});
 
-			//create demo location
-			await tx.location.create({
-				data: {
-					reservation_module: {
-						connect: {
-							reservation_module_id: reservationModule.reservation_module_id,
+				//create demo location
+				await tx.location.create({
+					data: {
+						reservation_module: {
+							connect: {
+								reservation_module_id: reservationModule.reservation_module_id,
+							},
+						},
+						name: 'Main Location',
+						working_days: [],
+					},
+				});
+				let locationAction = await tx.action.findFirst({
+					where: {
+						name: 'add_location',
+					},
+				});
+				await tx.business_usage.create({
+					data: {
+						action: {
+							connect: {
+								action_id: locationAction.action_id,
+							},
+						},
+						reservation_module: {
+							connect: {
+								reservation_module_id: reservationModule.reservation_module_id,
+							},
+						},
+						used: 1,
+					},
+				});
+				//create demo service
+				let service = await tx.service.create({
+					data: {
+						reservation_module: {
+							connect: {
+								reservation_module_id: reservationModule.reservation_module_id,
+							},
+						},
+						name: { en: 'Test Service' },
+						description: { en: 'This is a test service' },
+						duration_minutes: 60,
+						price_cents: 1000,
+					},
+				});
+				await tx.service_assignment.create({
+					data: {
+						employee: {
+							connect: {
+								employee_id: employee.employee_id,
+							},
+						},
+						service: {
+							connect: {
+								service_id: service.service_id,
+							},
 						},
 					},
-					name: 'Main Location',
-					working_days: [],
-				},
-			});
-			let locationAction = await tx.action.findFirst({
-				where: {
-					name: 'add_location',
-				},
-			});
-			await tx.business_usage.create({
-				data: {
-					action: {
-						connect: {
-							action_id: locationAction.action_id,
-						},
-					},
-					reservation_module: {
-						connect: {
-							reservation_module_id: reservationModule.reservation_module_id,
-						},
-					},
-					used: 1,
-				},
-			});
-			//create demo service
-			let service = await tx.service.create({
-				data: {
-					reservation_module: {
-						connect: {
-							reservation_module_id: reservationModule.reservation_module_id,
-						},
-					},
-					name: { en: 'Test Service' },
-					description: { en: 'This is a test service' },
-					duration_minutes: 60,
-					price_cents: 1000,
-				},
-			});
-			await tx.service_assignment.create({
-				data: {
-					employee: {
-						connect: {
-							employee_id: employee.employee_id,
-						},
-					},
-					service: {
-						connect: {
-							service_id: service.service_id,
-						},
-					},
-				},
-			});
-			transactionSucceeded = true;
-		});
+				});
+				transactionSucceeded = true;
+			},
+			{
+				timeout: 15000, // 30 seconds
+			}
+		);
 
 		// businessUsers.push({ businessUser: businessUserData });
 		// TODO: select user to login,
