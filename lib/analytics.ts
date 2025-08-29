@@ -15,6 +15,7 @@ interface LogPromoAnalyticsParams {
 	order_id?: string;
 	promo_type: PROMO_TYPE;
 	analytics_type: ANALYTICS_TYPE;
+	is_daily_meal?: boolean;
 }
 
 interface PromoAnalyticsRowInput {
@@ -26,6 +27,7 @@ interface PromoAnalyticsRowInput {
 	user_id?: string;
 	promo_type: PROMO_TYPE;
 	type: ANALYTICS_TYPE;
+	is_daily_meal?: boolean;
 }
 
 async function createPromoAnalyticsEntries(rows: PromoAnalyticsRowInput[]) {
@@ -39,6 +41,7 @@ async function createPromoAnalyticsEntries(rows: PromoAnalyticsRowInput[]) {
 		user_id: r.user_id ?? undefined,
 		promo_type: r.promo_type,
 		type: r.type,
+		is_daily_meal: r.is_daily_meal ?? undefined,
 	}));
 	const result = await prisma.promo_analytics.createMany({ data });
 	return { created: result.count };
@@ -87,9 +90,10 @@ export async function logPromoAnalytics(params: LogPromoAnalyticsParams) {
 		promo_ads_id,
 		business_id,
 		user_id,
-		order_id,
 		promo_type,
 		analytics_type,
+		order_id,
+		is_daily_meal = false,
 	} = params || {};
 
 	if (!business_id || !promo_type || !analytics_type) {
@@ -124,6 +128,7 @@ export async function logPromoAnalytics(params: LogPromoAnalyticsParams) {
 				user_id,
 				promo_type,
 				type: analytics_type,
+				is_daily_meal,
 			};
 			if (await isDuplicate(row)) {
 				details.push({ word_id, reason: 'Duplicate within rate-limit window. Skipped.' });
@@ -143,6 +148,7 @@ export async function logPromoAnalytics(params: LogPromoAnalyticsParams) {
 			order_id,
 			promo_type,
 			type: analytics_type,
+			is_daily_meal,
 		};
 		if (await isDuplicate(row)) {
 			return { created: 0, skipped: 1, details: [{ reason: 'Duplicate within rate-limit window. Skipped.' }] };

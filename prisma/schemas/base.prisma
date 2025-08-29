@@ -125,7 +125,7 @@ model business {
 
   business_money_flows business_money_flows[]
   reservation_module   reservation_module?
-  roles                 role[]
+  roles                role[]
 }
 
 model local_locations {
@@ -1103,6 +1103,7 @@ model promo_analytics {
   updated_at         DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
   promo_type         PROMO_TYPE
   type               ANALYTICS_TYPE
+  is_daily_meal      Boolean        @default(false)
 
   business       business         @relation(fields: [business_id], references: [business_id])
   user           users?           @relation(fields: [user_id], references: [user_id])

@@ -613,22 +613,25 @@ async function cancelOrderDelivery(req, res) {
  */
 async function completeOrder(req, res) {
 	try {
-		const { ANALYTICS_PARAM_PROMO_WORDS, ANALYTICS_PARAM_PROMO_SECTION, ANALYTICS_PARAM_PROMO_AD } = req.query;
 		let order = await DeliveryOrderDao.completeOrder(req.body.order_id);
-		if (ANALYTICS_PARAM_PROMO_AD || ANALYTICS_PARAM_PROMO_SECTION || ANALYTICS_PARAM_PROMO_WORDS) {
+		const existingPromoAnalyticsLog = await prisma.promo_analytics.findMany({
+			where: {
+				order_id: order.order_id,
+			},
+		});
+		if (existingPromoAnalyticsLog?.length > 0) {
 			logPromoAnalytics({
 				business_id: order.business_id,
 				user_id: order.user_id,
 				order_id: order.order_id,
 				analytics_type: ANALYTICS_TYPE.ORDER_FINISH,
-				promo_type: ANALYTICS_PARAM_PROMO_AD
-					? PROMO_TYPE.AD
-					: ANALYTICS_PARAM_PROMO_SECTION
-						? PROMO_TYPE.SECTION
-						: PROMO_TYPE.WORD,
-				promo_ads_id: ANALYTICS_PARAM_PROMO_AD,
-				promo_sections_id: ANALYTICS_PARAM_PROMO_SECTION,
-				wordIds: ANALYTICS_PARAM_PROMO_WORDS,
+				promo_type: existingPromoAnalyticsLog[0].promo_type,
+				promo_ads_id: existingPromoAnalyticsLog[0].promo_ads_id,
+				promo_sections_id: existingPromoAnalyticsLog[0].promo_sections_id,
+				wordIds: existingPromoAnalyticsLog[0].word_id
+					? existingPromoAnalyticsLog.map((log) => log.word_id)
+					: null,
+				is_daily_meal: order.is_daily_meal,
 			})
 				.then((res) => console.log('Promo analytics ORDER FINISH success', res))
 				.catch((err) => console.warn('Promo analytics ORDER FINISH failed', err));
@@ -2206,6 +2209,7 @@ async function startOrder(req, res) {
 				promo_ads_id: ANALYTICS_PARAM_PROMO_AD,
 				promo_sections_id: ANALYTICS_PARAM_PROMO_SECTION,
 				wordIds: ANALYTICS_PARAM_PROMO_WORDS,
+				is_daily_meal: req.body.is_daily_meal,
 			})
 				.then((res) => console.log('Promo analytics ORDER START success', res))
 				.catch((err) => console.warn('Promo analytics ORDER START failed', err));
