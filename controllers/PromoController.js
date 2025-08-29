@@ -171,6 +171,7 @@ async function getAllPromoAds(req, res) {
 }
 async function getPromoAdsByServiceType(req, res) {
 	try {
+		//TODO: add logPromoAnalytics when connected with businesses
 		const promoAds = await PromoDao.getAllPromoAdsByServiceType(req.params.type);
 		res.json(promoAds);
 	} catch (error) {

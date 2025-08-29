@@ -7,9 +7,19 @@ import {
 	updateBooking,
 	deleteBooking,
 	createBookingHistoryLog,
+	getLocationsAndEmployees,
+	getBookingsForLocationAndEmployees,
+	getServicesAndEmployees,
+	createBookingAdmin,
 } from '../../../controllers/reservation/BookingController.ts';
 import { validate } from '../../../middleware/zod';
-import { ListBookingsParamsSchema, UpdateBookingSchema } from '../../../types/reservation/Booking.ts';
+import {
+	ListBookingsParamsSchema,
+	UpdateBookingSchema,
+	AllBookingsForLocationAndEmployeesSchema,
+	CreateMultipleBookingsSchema,
+} from '../../../types/reservation/Booking.ts';
+
 const router = express.Router();
 
 /**
@@ -18,6 +28,16 @@ const router = express.Router();
  */
 router.post('/bookings/list', [validate(ListBookingsParamsSchema)], listBookings);
 
+router.post(
+	'/bookings/bookings-locations-and-employees',
+	[validate(AllBookingsForLocationAndEmployeesSchema)],
+	getBookingsForLocationAndEmployees
+);
+
+router.post('/bookings/create-booking-admin', [validate(CreateMultipleBookingsSchema)], createBookingAdmin);
+
+router.get('/bookings/locations-and-employees', getLocationsAndEmployees);
+router.get('/bookings/services-and-employees', getServicesAndEmployees);
 /**
  * Get booking by id
  * GET /bookings/:booking_id

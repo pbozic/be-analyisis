@@ -14,7 +14,7 @@ model users {
   telephone                              String               @unique
   telephone_code                         String
   telephone_number                       String
-  date_of_birth                          DateTime?             @db.Date
+  date_of_birth                          DateTime?            @db.Date
   created_at                             DateTime             @default(now()) @db.Timestamptz(6)
   updated_at                             DateTime             @default(now()) @updatedAt @db.Timestamptz(6)
   user_role                              USER_ROLES           @default(PERSONAL)
@@ -84,15 +84,15 @@ model users {
   created_account_actions account_actions[] @relation("action_to_creator")
   blog_posts              blog_posts[]
 
-  payments payments[]
-
+  payments                 payments[]
+  promo_analytics          promo_analytics[]
   daily_meal_subscriptions daily_meal_subscriptions[]
 
-  user_money_flows user_money_flows[]
-  customer customers[]
+  user_money_flows    user_money_flows[]
+  customer            customers[]
   booking_history_log booking_history_log[]
-  roles user_role[]
-  user_permissions user_permission[]
+  roles               user_role[]
+  user_permissions    user_permission[]
 }
 
 model user_roles {
@@ -103,24 +103,24 @@ model user_roles {
   primary       Boolean?   @default(false)
 }
 
-
 model role {
-  role_id     String   @id @default(uuid()) @db.Uuid
+  role_id     String       @id @default(uuid()) @db.Uuid
   name        String
   module      MODULE_TYPE
   business_id String?  @db.Uuid // null = global role
   permissions role_permission[]
   users       user_role[]
+
   @@unique([name, business_id]) // same role name allowed globally and per business
 }
 
 model user_role {
-  user_id               String @id @db.Uuid
-  role_id               String @db.Uuid
+  user_id               String  @id @db.Uuid
+  role_id               String  @db.Uuid
   reservation_module_id String? @db.Uuid
 
-  user                users              @relation(fields: [user_id], references: [user_id])
-  role                role               @relation(fields: [role_id], references: [role_id])
+  user               users               @relation(fields: [user_id], references: [user_id])
+  role               role                @relation(fields: [role_id], references: [role_id])
   reservation_module reservation_module? @relation(fields: [reservation_module_id], references: [reservation_module_id])
   @@unique([user_id, role_id, reservation_module_id])
 }
@@ -149,18 +149,18 @@ model permission {
 }
 
 model user_permission {
-  user_permission_id    String   @id @default(uuid()) @db.Uuid
-  user_id               String   @db.Uuid
-  reservation_module_id String?   @db.Uuid
-  action_id             String?  @db.Uuid // optional for non-action permission
-  name                  String?  // for non-action override
-  display_name          String? 
+  user_permission_id    String              @id @default(uuid()) @db.Uuid
+  user_id               String              @db.Uuid
+  reservation_module_id String?             @db.Uuid
+  action_id             String?             @db.Uuid // optional for non-action permission
+  name                  String? // for non-action override
+  display_name          String?
   module                MODULE_TYPE
-  limit                 Int?     // optional limit override
-  scope                 PERMISSION_SCOPE @default(GLOBAL)
-  is_blocked            Boolean @default(false)
-  user                  users              @relation(fields: [user_id], references: [user_id])
-  action                action?            @relation(fields: [action_id], references: [action_id])
+  limit                 Int? // optional limit override
+  scope                 PERMISSION_SCOPE    @default(GLOBAL)
+  is_blocked            Boolean             @default(false)
+  user                  users               @relation(fields: [user_id], references: [user_id])
+  action                action?             @relation(fields: [action_id], references: [action_id])
   reservation_module    reservation_module? @relation(fields: [reservation_module_id], references: [reservation_module_id])
 
   @@unique([name, module])

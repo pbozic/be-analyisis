@@ -1,6 +1,7 @@
 import { BOOKING_STATUS } from '@prisma/client';
 import { z } from 'zod';
 
+import { addValideBookingSchema } from '../../lib/bookingHelpers';
 import type { booking, booking_history_log } from '../../prisma/schemas/interfaces';
 
 // --- SCHEMAS ---
@@ -23,69 +24,26 @@ export const FindBookingSlotsSchema = z.object({
 	date: z.coerce.date(), // accepts string | number | Date → coerces to Date
 	returnFirst: z.boolean().optional().default(false),
 });
-export const CreateBookingSchema = z
-	.object({
-		customer_id: z.string().uuid().optional(),
-		first_name: z.string().min(1, 'First name is required').optional(),
-		last_name: z.string().min(1, 'Last name is required').optional(),
-		email: z.string().email('Invalid email address').optional(),
-		telephone: z.string().optional(),
-		telephone_code: z.string().optional(),
-		telephone_number: z.string().optional(),
-		reservation_module_id: z.string().uuid(),
-		location_id: z.string().uuid().optional(),
-		service_ids: z.array(z.string().uuid()).min(1, 'At least one service ID is required'),
-		comment: z.string().optional(),
-		start_time: z.string().datetime().optional(),
-		end_time: z.string().datetime().optional(),
-		employee_id: z.string().uuid().optional(),
-	})
-	.superRefine((data, ctx) => {
-		if (!data.customer_id) {
-			if (!data.first_name) {
-				ctx.addIssue({
-					path: ['first_name'],
-					message: 'First name is required when no customer_id is provided',
-					code: z.ZodIssueCode.custom,
-				});
-			}
-			if (!data.last_name) {
-				ctx.addIssue({
-					path: ['last_name'],
-					message: 'Last name is required when no customer_id is provided',
-					code: z.ZodIssueCode.custom,
-				});
-			}
-			if (!data.email) {
-				ctx.addIssue({
-					path: ['email'],
-					message: 'Email is required when no customer_id is provided',
-					code: z.ZodIssueCode.custom,
-				});
-			}
-			if (!data.telephone) {
-				ctx.addIssue({
-					path: ['telephone'],
-					message: 'Telephone is required when no customer_id is provided',
-					code: z.ZodIssueCode.custom,
-				});
-			}
-			if (!data.telephone_code) {
-				ctx.addIssue({
-					path: ['telephone_code'],
-					message: 'Telephone code is required when no customer_id is provided',
-					code: z.ZodIssueCode.custom,
-				});
-			}
-			if (!data.telephone_number) {
-				ctx.addIssue({
-					path: ['telephone_number'],
-					message: 'Telephone number is required when no customer_id is provided',
-					code: z.ZodIssueCode.custom,
-				});
-			}
-		}
-	});
+export const CreateBookingBaseSchema = z.object({
+	customer_id: z.string().uuid().optional(),
+	first_name: z.string().min(1, 'First name is required').optional(),
+	last_name: z.string().min(1, 'Last name is required').optional(),
+	email: z.string().email('Invalid email address').optional(),
+	telephone: z.string().optional(),
+	telephone_code: z.string().optional(),
+	telephone_number: z.string().optional(),
+	reservation_module_id: z.string().uuid(),
+	location_id: z.string().uuid().optional(),
+	service_ids: z.array(z.string().uuid()).min(1, 'At least one service ID is required'),
+	comment: z.string().optional(),
+	start_time: z.string().datetime().optional(),
+	end_time: z.string().datetime().optional(),
+	employee_id: z.string().uuid().optional(),
+});
+
+export const CreateBookingSchema = CreateBookingBaseSchema.superRefine((data, ctx) => {
+	addValideBookingSchema(data, ctx);
+});
 
 export const UpdateBookingSchema = z
 	.object({
@@ -107,51 +65,9 @@ export const UpdateBookingSchema = z
 		status: z.nativeEnum(BOOKING_STATUS).optional(),
 	})
 	.superRefine((data, ctx) => {
-		if (!data.customer_id) {
-			if (!data.first_name) {
-				ctx.addIssue({
-					path: ['first_name'],
-					message: 'First name is required when no customer_id is provided',
-					code: z.ZodIssueCode.custom,
-				});
-			}
-			if (!data.last_name) {
-				ctx.addIssue({
-					path: ['last_name'],
-					message: 'Last name is required when no customer_id is provided',
-					code: z.ZodIssueCode.custom,
-				});
-			}
-			if (!data.email) {
-				ctx.addIssue({
-					path: ['email'],
-					message: 'Email is required when no customer_id is provided',
-					code: z.ZodIssueCode.custom,
-				});
-			}
-			if (!data.telephone) {
-				ctx.addIssue({
-					path: ['telephone'],
-					message: 'Telephone is required when no customer_id is provided',
-					code: z.ZodIssueCode.custom,
-				});
-			}
-			if (!data.telephone_code) {
-				ctx.addIssue({
-					path: ['telephone_code'],
-					message: 'Telephone code is required when no customer_id is provided',
-					code: z.ZodIssueCode.custom,
-				});
-			}
-			if (!data.telephone_number) {
-				ctx.addIssue({
-					path: ['telephone_number'],
-					message: 'Telephone number is required when no customer_id is provided',
-					code: z.ZodIssueCode.custom,
-				});
-			}
-		}
+		addValideBookingSchema(data, ctx);
 	});
+
 export const DeleteBookingSchema = z.object({ booking_id: z.string().uuid() });
 
 export const CreateBookingHistoryLogSchema = z.object({
@@ -164,12 +80,40 @@ export const CreateBookingHistoryLogSchema = z.object({
 	user_id: z.string().uuid().optional(),
 });
 
+export const AllBookingsForLocationAndEmployeesSchema = z.object({
+	startDate: z.string().datetime(),
+	endDate: z.string().datetime(),
+	locationId: z.string().uuid(),
+	employeeIds: z.array(z.string().uuid()),
+});
+
+export const CreateMultipleBookingsSchema = CreateBookingBaseSchema.omit({ service_ids: true })
+	.extend({
+		bookings: z.array(
+			z.object({
+				service_id: z.string().uuid(),
+				start_time: z.string().datetime(),
+				end_time: z.string().datetime(),
+				price_cents: z.number().int().min(0).optional(),
+				discount_percent: z.number().int().min(0).max(100).optional(),
+				discount_amount: z.number().int().min(0).optional(),
+				comment: z.string().optional(),
+				location_id: z.string().uuid(),
+				employee_id: z.string().uuid(),
+			})
+		),
+	})
+	.superRefine((data, ctx) => {
+		addValideBookingSchema(data, ctx);
+	});
+
 // --- TYPES ---
 
 export type Booking = booking;
 export type BookingHistoryLog = booking_history_log;
 
 export type CreateBookingInput = z.infer<typeof CreateBookingSchema>;
+export type CreateMultipleBookingsInput = z.infer<typeof CreateMultipleBookingsSchema>;
 export type CreateBookingSingleInput = Omit<CreateBookingInput, 'service_ids'> & {
 	service_id: string;
 	parent_booking_id?: string;
@@ -179,3 +123,4 @@ export type CreateBookingHistoryLogInput = z.infer<typeof CreateBookingHistoryLo
 export type FindBookingSlotsInput = z.infer<typeof FindBookingSlotsSchema>;
 export type DeleteBookingInput = z.infer<typeof DeleteBookingSchema>;
 export type ListBookingsParams = z.infer<typeof ListBookingsParamsSchema>;
+export type AllBookingsForLocationAndEmployeesParams = z.infer<typeof AllBookingsForLocationAndEmployeesSchema>;
