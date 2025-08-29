@@ -248,6 +248,56 @@ export async function getEmployeesByReservationModuleIdWithSlots(
 	}
 }
 
+/**
+ * Retrieves a schedule slots by employee IDs and date range.
+ * @param {string} ids - The employee IDs.
+ * @param {string} reservationModuleId - The reservation module ID.
+ * @param {string} startDate - The start date of the range.
+ * @param {string} endDate - The end date of the range.
+ * @returns {Promise<Employee[]>} A promise that resolves to the retrieved schedule slot record or null.
+ * @throws {Error} If there is an error retrieving the schedule slot.
+ */
+export async function getScheduleSlotsByEmployeesIdAndDate(
+	ids: string[],
+	reservationModuleId: string,
+	startDate: string,
+	endDate: string
+): Promise<Employee[]> {
+	try {
+		const record = await prisma.employee.findMany({
+			where: {
+				employee_id: { in: ids },
+				reservation_module_id: reservationModuleId,
+			},
+			include: {
+				schedule_slots: {
+					where: {
+						date: {
+							gte: new Date(startDate),
+							lte: new Date(endDate),
+						},
+					},
+					include: {
+						schedule_slot_exceptions: {
+							orderBy: {
+								start_time: 'asc',
+							},
+						},
+						booking_slots: {
+							orderBy: {
+								start_time: 'asc',
+							},
+						},
+					},
+				},
+			},
+		});
+		return record;
+	} catch (error) {
+		throw new Error('Error retrieving schedule slots');
+	}
+}
+
 export default {
 	getEmployeesByReservationModuleId,
 	createEmployee,
@@ -255,4 +305,5 @@ export default {
 	updateEmployee,
 	getEmployeeById,
 	getEmployeesByReservationModuleIdWithSlots,
+	getScheduleSlotsByEmployeesIdAndDate,
 };

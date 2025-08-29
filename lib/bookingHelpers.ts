@@ -1,5 +1,6 @@
 import moment from 'moment';
 import { Prisma, BOOKING_STATUS } from '@prisma/client';
+import { z } from 'zod';
 
 import prisma from '../prisma/prisma';
 import type { Location } from '../types/reservation/Location';
@@ -13,7 +14,12 @@ import {
 	ExceptionWithoutId,
 	ExceptionWithId,
 } from '../types/reservation/Schedule';
-import { Booking } from '../types/reservation/Booking';
+import {
+	Booking,
+	CreateBookingInput,
+	CreateMultipleBookingsInput,
+	UpdateBookingInput,
+} from '../types/reservation/Booking';
 
 const SLOT_INTERVAL_MINUTES = 30;
 const CAN_END_OUT_OF_BOOKING_SLOT = true;
@@ -406,4 +412,54 @@ export async function isEmployeeScheduledForWindow(
 	}
 
 	return false;
+}
+
+export async function addValideBookingSchema(
+	data: CreateBookingInput | CreateMultipleBookingsInput | UpdateBookingInput,
+	ctx: z.RefinementCtx
+) {
+	if (!data?.customer_id) {
+		if (!data?.first_name) {
+			ctx.addIssue({
+				path: ['first_name'],
+				message: 'First name is required when no customer_id is provided',
+				code: z.ZodIssueCode.custom,
+			});
+		}
+		if (!data.last_name) {
+			ctx.addIssue({
+				path: ['last_name'],
+				message: 'Last name is required when no customer_id is provided',
+				code: z.ZodIssueCode.custom,
+			});
+		}
+		if (!data.email) {
+			ctx.addIssue({
+				path: ['email'],
+				message: 'Email is required when no customer_id is provided',
+				code: z.ZodIssueCode.custom,
+			});
+		}
+		if (!data.telephone) {
+			ctx.addIssue({
+				path: ['telephone'],
+				message: 'Telephone is required when no customer_id is provided',
+				code: z.ZodIssueCode.custom,
+			});
+		}
+		if (!data.telephone_code) {
+			ctx.addIssue({
+				path: ['telephone_code'],
+				message: 'Telephone code is required when no customer_id is provided',
+				code: z.ZodIssueCode.custom,
+			});
+		}
+		if (!data.telephone_number) {
+			ctx.addIssue({
+				path: ['telephone_number'],
+				message: 'Telephone number is required when no customer_id is provided',
+				code: z.ZodIssueCode.custom,
+			});
+		}
+	}
 }

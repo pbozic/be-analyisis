@@ -250,6 +250,29 @@ export async function deleteServiceAssigment(employee_id: string, service_id: st
 	}
 }
 
+/**
+ * Retrieves all services for a given reservation module ID.
+ * @param {string} reservationModuleId - The ID of the reservation module to retrieve services for.
+ * @returns {Promise<Service[]>} A promise that resolves to an array of services.
+ * @throws {Error} If there is an error retrieving the services.
+ */
+export async function getServicesByReservationId(reservationModuleId: string): Promise<Service[]> {
+	try {
+		let services = await prisma.service.findMany({
+			where: {
+				reservation_module_id: reservationModuleId,
+			},
+			include: {
+				service_category: true,
+				assigned_employees: true,
+			},
+		});
+		return services;
+	} catch (error) {
+		throw new Error('Error retrieving services');
+	}
+}
+
 export default {
 	getServicesByReservationModuleId,
 	createService,
@@ -261,5 +284,6 @@ export default {
 	getServicesByCategoryId,
 	createServiceAssigment,
 	deleteServiceAssigment,
+	getServicesByReservationId,
 	// Add other service-related methods here
 };

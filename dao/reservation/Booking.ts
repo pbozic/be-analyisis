@@ -128,7 +128,7 @@ async function resolveOrCreateCustomer(
 async function createBookingTx(
 	tx: Prisma.TransactionClient,
 	input: CreateBookingSingleInput,
-	opts: { validateSchedule: boolean }
+	opts: { validateSchedule: boolean; ignoreBooking: boolean }
 ): Promise<Booking> {
 	const tel = composeTelephone(input);
 
@@ -184,13 +184,17 @@ async function createBookingTx(
 	if (!service) throw new Error('Service not found');
 
 	// employee double-booking guard
-	const ok = await isBookingSlotAvailable(tx, {
-		reservation_module_id: input.reservation_module_id,
-		employee_id: input.employee_id ?? null,
-		start_time: input.start_time ?? null,
-		end_time: input.end_time ?? null,
-	});
+	let ok = true;
+	if (opts.ignoreBooking) {
+		ok = await isBookingSlotAvailable(tx, {
+			reservation_module_id: input.reservation_module_id,
+			employee_id: input.employee_id ?? null,
+			start_time: input.start_time ?? null,
+			end_time: input.end_time ?? null,
+		});
+	}
 	if (!ok) throw new Error('Booking slot already taken');
+
 	let schedule = true;
 	if (opts.validateSchedule) {
 		schedule = await isEmployeeScheduledForWindow(tx, {
@@ -246,14 +250,18 @@ export async function createBooking(
 // 3) Public: group create (parent + children) atomically
 export async function createBookingGroup(
 	inputs: CreateBookingSingleInput[],
-	opts: { validateSchedule?: boolean } = {}
+	opts: { validateSchedule?: boolean; ignoreBooking?: boolean } = {}
 ): Promise<Booking[]> {
 	if (!inputs.length) throw new Error('No services to create');
 	const validateSchedule = !!opts.validateSchedule;
+	const ignoreBooking = !!opts.ignoreBooking;
 	return prisma.$transaction(async (tx: Prisma.TransactionClient) => {
 		const created: Booking[] = [];
 		// parent
-		const parent = await createBookingTx(tx, inputs[0] as CreateBookingSingleInput, { validateSchedule });
+		const parent = await createBookingTx(tx, inputs[0] as CreateBookingSingleInput, {
+			validateSchedule,
+			ignoreBooking,
+		});
 		created.push(parent);
 		// children
 		for (let i = 1; i < inputs.length; i++) {
@@ -517,6 +525,51 @@ export async function createBookingHistoryLog(input: CreateBookingHistoryLogInpu
 	}
 }
 
+/**
+ * Retrieves all bookings for given employees, location and date range.
+ * @param {Array} employee_ids - An array of employee IDs.
+ * @param {string} startDate - The start date (inclusive) in ISO format (YYYY-MM-DD).
+ * @param {string} endDate - The end date (inclusive) in ISO format (YYYY-MM-DD).
+ * @param {string} location_id - The location ID.
+ * @param {string} reservationModuleId - The reservation module ID.
+ * @returns {Promise<Booking[]>} A promise that resolves to an array of booking records.
+ * @throws {Error} If there is an error retrieving the bookings.
+ */
+export async function getBookingsByEmployeeIdsLocationAndDates(
+	employee_ids: string[],
+	startDate: string,
+	endDate: string,
+	location_id: string,
+	reservationModuleId: string
+): Promise<Booking[]> {
+	try {
+		const records = await prisma.booking.findMany({
+			where: {
+				employee_id: { in: employee_ids },
+				location_id: location_id,
+				start_time: {
+					gte: new Date(startDate), // startDate = '2025-08-01'
+					lte: new Date(endDate), // endDate = '2025-08-08'
+				},
+				reservation_module_id: reservationModuleId,
+			},
+			include: {
+				employee: true,
+				location: true,
+				service: {
+					include: {
+						service_category: true,
+					},
+				},
+				customer: true,
+			},
+		});
+		return records;
+	} catch (error) {
+		throw new Error('Error retrieving schedule slots');
+	}
+}
+
 export default {
 	createBooking,
 	updateBooking,
@@ -525,4 +578,5 @@ export default {
 	listBookingsByReservationModuleId,
 	createBookingHistoryLog,
 	createBookingGroup,
+	getBookingsByEmployeeIdsLocationAndDates,
 };
