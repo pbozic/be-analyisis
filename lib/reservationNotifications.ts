@@ -396,7 +396,7 @@ export async function bootstrapModuleNotifications(
 	await prisma.$transaction(async (tx) => {
 		// Load all events upfront
 		let where: object = { key: { in: eventKeys } };
-		if (!eventKeys.length) {
+		if (!eventKeys || eventKeys.length) {
 			where = {};
 		}
 		const events = await tx.notification_event.findMany({
