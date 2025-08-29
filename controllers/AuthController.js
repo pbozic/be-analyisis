@@ -1270,7 +1270,7 @@ async function registerReservationBusiness(req, res) {
 							},
 							name: role.name,
 							is_admin: role.isAdmin || false,
-							module: 'RESERVATION',
+							module: 'reservations',
 						},
 					});
 					for (const permissionName of role.permissions) {
