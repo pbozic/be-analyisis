@@ -1233,6 +1233,81 @@ async function registerReservationBusiness(req, res) {
 				await UserDao.linkRolesToUser(user?.user_id, userRoles, tx);
 				adminUser = user;
 			}
+			const permissions = await tx.permissions.findMany({});
+			const ROLES = [
+				{
+					name: 'Owner',
+					isAdmin: true,
+					permissions: [
+						'view_dashboard',
+						'manage_booking',
+						'add_employee',
+						'add_location',
+						'add_service',
+						'send_sms',
+					],
+				},
+				{
+					name: 'Manager',
+					permissions: ['view_dashboard', 'manage_booking', 'add_employee', 'add_location', 'add_service'],
+				},
+				{ name: 'Employee', permissions: ['view_dashboard', 'manage_booking'] },
+			];
+			for (const role of ROLES) {
+				const roleData = await tx.role.create({
+					data: {
+						business: {
+							connect: {
+								business_id: business.business_id,
+							},
+						},
+						name: role.name,
+						is_admin: role.isAdmin || false,
+						module: 'RESERVATION',
+					},
+				});
+				for (const permissionName of role.permissions) {
+					const permission = permissions.find((p) => p.name === permissionName);
+					if (permission) {
+						await tx.role_permissions.create({
+							data: {
+								role: {
+									connect: {
+										role_id: roleData.role_id,
+									},
+								},
+								permission: {
+									connect: {
+										permission_id: permission.permission_id,
+									},
+								},
+							},
+						});
+					}
+				}
+			}
+			let userRole = await tx.role.findFirst({
+				where: {
+					business_id: business.business_id,
+					isAdmin: true,
+				},
+			});
+			if (businessUserData && userRole) {
+				await tx.user_role.create({
+					data: {
+						business_user: {
+							connect: {
+								business_users_id: businessUserData.business_users_id,
+							},
+						},
+						role: {
+							connect: {
+								role_id: userRole.role_id,
+							},
+						},
+					},
+				});
+			}
 			//create employee user
 			let employee = await tx.employee.create({
 				data: {

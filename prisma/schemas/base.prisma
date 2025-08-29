@@ -125,6 +125,7 @@ model business {
 
   business_money_flows business_money_flows[]
   reservation_module   reservation_module?
+  roles                 role[]
 }
 
 model local_locations {

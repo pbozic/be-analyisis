@@ -1,4 +1,5 @@
 export const rules = {
+	'type-enum': [0],
 	'custom-rule': [2, 'always'],
 };
 export const plugins = [
