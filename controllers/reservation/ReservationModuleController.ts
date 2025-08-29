@@ -55,27 +55,32 @@ export async function getReservationModuleByBusinessId(
 	}
 }
 
-export async function getReservationModuleBookingDataByHash(
-	req: ValidatedRequest<null, { public_link_hash: string }>,
+export async function getReservationModuleBookingDataByHashOrBusinessId(
+	req: ValidatedRequest<null, { public_link_hash?: string; business_id?: string }>,
 	res: Response
 ): Promise<void> {
 	try {
-		if (!req.params.public_link_hash) {
+		if (!req.params.public_link_hash && !req.params.business_id) {
 			throw new Error('Invalid business data');
+		} else {
+			let reservation_module = null;
+
+			reservation_module = await ReservationModuleDao.getReservationModuleByPublicLinkHashOrBusinessId(
+				(req.params.public_link_hash ?? req.params.business_id)!
+			);
+			if (!reservation_module) {
+				throw new Error('Reservation module not found.');
+			}
+			res.status(200).json(reservation_module);
 		}
-		let reservation_module = null;
-		reservation_module = await ReservationModuleDao.getReservationModuleByPublicLinkHash(
-			req.params.public_link_hash
-		);
-		res.status(200).json(reservation_module);
 	} catch (e) {
-		console.error('Error updating business reservation settings:', e);
-		res.status(400).json({ error: 'Error updating business reservation settings', e });
+		console.error('Error fetching booking data:', e);
+		res.status(400).json({ error: 'Error fetching booking data', e });
 	}
 }
 
 export default {
 	updateReservationSettings,
 	getReservationModuleByBusinessId,
-	getReservationModuleBookingDataByHash,
+	getReservationModuleBookingDataByHashOrBusinessId,
 };
