@@ -109,7 +109,7 @@ model role {
   name        String
   module      MODULE_TYPE
   business_id String?  @db.Uuid // null = global role
-  permissions permission[]
+  permissions role_permission[]
   users       user_role[]
   @@unique([name, business_id]) // same role name allowed globally and per business
 }
@@ -122,13 +122,20 @@ model user_role {
   user                users              @relation(fields: [user_id], references: [user_id])
   role                role               @relation(fields: [role_id], references: [role_id])
   reservation_module reservation_module? @relation(fields: [reservation_module_id], references: [reservation_module_id])
-  
   @@unique([user_id, role_id, reservation_module_id])
 }
+model role_permission {
+  role_permission_id String   @id @default(uuid()) @db.Uuid
+  role_id            String   @db.Uuid
+  permission_id      String   @db.Uuid
 
+  role       role       @relation(fields: [role_id], references: [role_id])
+  permission permission @relation(fields: [permission_id], references: [permission_id])
+
+  @@unique([role_id, permission_id])
+}
 model permission {
   permission_id  String   @id @default(uuid()) @db.Uuid
-  role_id        String   @db.Uuid
   action_id      String?  @db.Uuid // null = non-action permission
   name           String?  // for non-action permissions
   description   String?  
@@ -137,11 +144,8 @@ model permission {
   limit          Int?     // for action usage limits
   scope          PERMISSION_SCOPE @default(GLOBAL)
   group          String?  // for grouping permissions
-  role   role    @relation(fields: [role_id], references: [role_id])
+  roles          role_permission[]
   action action? @relation(fields: [action_id], references: [action_id])
-
-  @@unique([role_id, action_id])
-  @@unique([role_id, name, module])
 }
 
 model user_permission {

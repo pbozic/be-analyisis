@@ -14,7 +14,7 @@ const SCORING_WEIGHTS = {
 	description_name_weight: 4, // Weight for matching name in description
 	menu_item_name_weight: 2, // Weight for matching menu items
 	menu_item_description_weight: 1, // Weight for matching menu item descriptions
-	word_buy_price_factor: 1,
+	word_buy_price_factor: 2,
 };
 
 const INCLUDE_MATCHES = true;
@@ -513,7 +513,6 @@ async function searchBusinesses(
 						word_id: src.word_id ?? src.id ?? null,
 						word: src.word ?? null,
 						bid_multiplier: src.bid_multiplier ?? null,
-						highlight: h.highlight?.['word_buys.word'] ?? [],
 						matched_queries: h.matched_queries ?? [],
 					};
 				});
@@ -523,8 +522,6 @@ async function searchBusinesses(
 					const src = h._source?.menus?.menu_items || h._source?.menu_items || h._source || {};
 					return {
 						id: src.id ?? src.menu_item_id ?? null,
-						name: src.name ?? null,
-						highlight: h.highlight?.['menus.menu_items.name'] ?? [],
 					};
 				});
 
@@ -533,8 +530,6 @@ async function searchBusinesses(
 					const src = h._source?.menus?.menu_items || h._source?.menu_items || h._source || {};
 					return {
 						id: src.id ?? src.menu_item_id ?? null,
-						description: src.description ?? null,
-						highlight: h.highlight?.['menus.menu_items.description'] ?? [],
 					};
 				});
 
