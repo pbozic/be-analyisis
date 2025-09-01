@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import prisma from '../prisma.js';
 import { upsertFileOnS3Helper } from '../../controllers/FilesController.js';
-import { DeleteObject } from '../../lib/s3.js';
+import { DeleteObject, getFileKey } from '../../lib/s3.js';
 import CategoriesDao from '../../dao/Categories.js';
 import WordDao from '../../dao/Word.js';
 import url from 'node:url';
