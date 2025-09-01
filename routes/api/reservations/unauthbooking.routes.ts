@@ -23,6 +23,6 @@ router.post('/find-slots', [validate(FindBookingSlotsSchema)], findBookingSlots)
  * Get data necessary for the booking process
  * POST /booking/booking-data
  */
-router.post('/booking-data/', ReservationModuleController.getReservationModuleBookingDataByHashOrBusinessId);
+router.post('/booking-data', ReservationModuleController.getReservationModuleBookingDataByHashOrBusinessId);
 
 export default router;

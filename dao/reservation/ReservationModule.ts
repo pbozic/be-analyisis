@@ -166,7 +166,7 @@ export async function getReservationModuleByPublicLinkHashOrBusinessId(
 ): Promise<ReservationModule | null> {
 	const prisma_client = tx || prisma;
 	try {
-		return await prisma_client.reservation_module.findUnique({
+		return await prisma_client.reservation_module.findFirst({
 			where: {
 				OR: [{ public_link_hash: hash_or_businessid }, { business_id: hash_or_businessid }],
 			},
