@@ -6,6 +6,7 @@ import {
 	SPLIT_STATUS,
 	DAILY_MEAL_INSTANCE_STATUS,
 	BUSINESS_TYPE,
+	SUBSCRIPTION_TYPE,
 } from '@prisma/client';
 import { PROMO_TYPE, ANALYTICS_TYPE } from '@prisma/client';
 
@@ -19,6 +20,7 @@ import { logPromoAnalytics } from '../lib/analytics.ts';
 import stripe from '../lib/stripe.js';
 import { getOrderAndPDF } from '../lib/orderPdf.js';
 import {
+	DAILY_MEAL_DELIVERY_COST_CENTS,
 	DELIVERY_ORDER_STATUS,
 	DOCUMENT_TYPE,
 	CREDITS,
@@ -717,59 +719,69 @@ async function completeOrder(req, res) {
 				if (!grouped_id) {
 					console.warn('Daily meal order details do not contain subscription_grouped_id');
 				} else {
-					const subscription_payment = await PaymentDao.getPaymentByGroupedId(grouped_id);
-					const sub_total_price = Math.round(order.details.sub_total_price * 100);
-					const first_available_driver_split = subscription_payment.payment_splits.find(
-						(split) =>
-							split.destination_type === SPLIT_DESTINATION_TYPE.DRIVER &&
-							split.status === SPLIT_STATUS.RESERVED
-					);
-					const amount_merchant = Math.floor((sub_total_price * RESTAURANT_SHARE_PERC) / 100);
-					const amount_platform = sub_total_price - amount_merchant;
-					const amount_driver =
-						first_available_driver_split.amount_regular + first_available_driver_split.amount_credits;
-					// console.log([
-					// 	{
-					// 		destination_type: SPLIT_DESTINATION_TYPE.MERCHANT,
-					// 		destination_id: restaurant_business_stripe,
-					// 		amount: amount_merchant,
-					// 	},
-					// 	{
-					// 		destination_type: SPLIT_DESTINATION_TYPE.PLATFORM,
-					// 		destination_id: 'platform',
-					// 		amount: amount_platform,
-					// 	},
-					// 	{
-					// 		destination_type: SPLIT_DESTINATION_TYPE.DRIVER,
-					// 		amount:
-					// 			first_available_driver_split.amount_regular +
-					// 			first_available_driver_split.amount_credits,
-					// 		destination_id: delivery_business_stripe,
-					// 	},
-					// ])
-					await createAndProcessTransferGroupSplits(
-						subscription_payment.payment_id,
-						[
-							{
-								destination_type: SPLIT_DESTINATION_TYPE.MERCHANT,
-								destination_id: restaurant_business_stripe,
-								amount: amount_merchant,
-							},
-							{
-								destination_type: SPLIT_DESTINATION_TYPE.PLATFORM,
-								destination_id: 'platform',
-								amount: amount_platform,
-							},
-							{
-								destination_type: SPLIT_DESTINATION_TYPE.DRIVER,
-								amount:
-									first_available_driver_split.amount_regular +
-									first_available_driver_split.amount_credits,
-								new_destination_id: delivery_business_stripe,
-							},
-						],
-						TRANSFER_GROUP_TYPE.TRANSFER
-					);
+					const subscription = await DailyMealDao.getSubscriptionById(order.details.subscription_id);
+					if (!subscription) {
+						console.warn('No subscription found for id ' + order.details.subscription_id);
+					}
+
+					if (subscription.type === SUBSCRIPTION_TYPE.DATED) {
+						const subscription_payment = await PaymentDao.getPaymentByGroupedId(grouped_id);
+						const sub_total_price = Math.round(order.details.sub_total_price * 100);
+						const first_available_driver_split = subscription_payment.payment_splits.find(
+							(split) =>
+								split.destination_type === SPLIT_DESTINATION_TYPE.DRIVER &&
+								split.status === SPLIT_STATUS.RESERVED
+						);
+						const amount_merchant = Math.floor((sub_total_price * RESTAURANT_SHARE_PERC) / 100);
+						const amount_platform = sub_total_price - amount_merchant;
+						const amount_driver =
+							first_available_driver_split.amount_regular + first_available_driver_split.amount_credits;
+						// console.log([
+						// 	{
+						// 		destination_type: SPLIT_DESTINATION_TYPE.MERCHANT,
+						// 		destination_id: restaurant_business_stripe,
+						// 		amount: amount_merchant,
+						// 	},
+						// 	{
+						// 		destination_type: SPLIT_DESTINATION_TYPE.PLATFORM,
+						// 		destination_id: 'platform',
+						// 		amount: amount_platform,
+						// 	},
+						// 	{
+						// 		destination_type: SPLIT_DESTINATION_TYPE.DRIVER,
+						// 		amount:
+						// 			first_available_driver_split.amount_regular +
+						// 			first_available_driver_split.amount_credits,
+						// 		destination_id: delivery_business_stripe,
+						// 	},
+						// ])
+						await createAndProcessTransferGroupSplits(
+							subscription_payment.payment_id,
+							[
+								{
+									destination_type: SPLIT_DESTINATION_TYPE.MERCHANT,
+									destination_id: restaurant_business_stripe,
+									amount: amount_merchant,
+								},
+								{
+									destination_type: SPLIT_DESTINATION_TYPE.PLATFORM,
+									destination_id: 'platform',
+									amount: amount_platform,
+								},
+								{
+									destination_type: SPLIT_DESTINATION_TYPE.DRIVER,
+									amount:
+										first_available_driver_split.amount_regular +
+										first_available_driver_split.amount_credits,
+									new_destination_id: delivery_business_stripe,
+								},
+							],
+							TRANSFER_GROUP_TYPE.TRANSFER
+						);
+					} else {
+						const amount_driver = DAILY_MEAL_DELIVERY_COST_CENTS;
+						await stripe.transferToConnectedAccount(amount_driver, delivery_business_stripe, grouped_id);
+					}
 				}
 			}
 		}
