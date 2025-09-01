@@ -100,7 +100,6 @@ export async function createBooking(req: ValidatedRequest<CreateBookingInput>, r
 	if (reservation_module && user_id) {
 		isEmployeeOfModule = reservation_module.employees.some((e: Employee) => e.business_user?.user_id === user_id);
 	}
-	console.log('isEmployeeOfModule:', isEmployeeOfModule);
 	// map to DAO’s single-service input
 	const inputs = service_ids.map((sid) => ({
 		...base,
@@ -360,6 +359,40 @@ export async function getServicesAndEmployees(req: ValidatedRequest, res: Respon
 		res.status(500).json({ message: 'Error retrieving form data', error });
 	}
 }
+/**
+ * Split consecutive slots into groups
+ * @param {CreateBookingSingleInput[]} slots - The list of slots to split.
+ * @returns {CreateBookingSingleInput[]} - The list of slots split into groups.
+ * @description This function takes an array of slots and splits them into groups of consecutive slots.
+ */
+function splitConsecutiveSlots(slots: CreateBookingSingleInput[]): CreateBookingSingleInput[][] {
+	if (slots.length === 0) return [];
+
+	const result: CreateBookingSingleInput[][] = [];
+	if (slots[0]) {
+		let currentGroup: CreateBookingSingleInput[] = [slots[0]];
+
+		for (let i = 1; i < slots.length; i++) {
+			const prev = slots[i - 1];
+			const curr = slots[i];
+			if (curr && prev) {
+				if (prev?.end_time === curr?.start_time) {
+					// same chain → keep in current group
+					currentGroup.push(curr);
+				} else {
+					// break → push group and start a new one
+					result.push(currentGroup);
+					currentGroup = [curr];
+				}
+			} else return [];
+		}
+
+		// push last group
+		result.push(currentGroup);
+
+		return result;
+	} else return [];
+}
 
 /**
  * POST /bookings/create-booking-admin
@@ -376,7 +409,7 @@ export async function createBookingAdmin(
 	res: Response
 ): Promise<void> {
 	const { bookings, ...base } = req.body;
-	const reservation_module_id = req.user?.reservation_module_id ?? base.reservation_module_id;
+	const reservation_module_id = req.user?.reservation_module_id;
 	let user_id = req.user?.user_id;
 	let reservation_module = await prisma.reservation_module.findUnique({
 		where: { reservation_module_id: reservation_module_id },
@@ -396,26 +429,84 @@ export async function createBookingAdmin(
 	//console.log(bookings);
 
 	// map to DAO’s single-service input
-	const inputs = bookings.map((booking) => ({
-		...base,
-		...booking,
-		reservation_module_id,
-		// parent_booking_id set inside DAO for children
-	})) as CreateBookingSingleInput[];
-	//console.log(inputs);
+	if (isEmployeeOfModule) {
+		const inputs = bookings.map((booking) => ({
+			...base,
+			...booking,
+			reservation_module_id,
+			// parent_booking_id set inside DAO for children
+		})) as CreateBookingSingleInput[];
+		const splittedInputs = splitConsecutiveSlots(inputs);
 
+		try {
+			const result = await Promise.all(
+				splittedInputs.map(async (el) => {
+					const all = await BookingDao.createBookingGroup(el, {
+						validateSchedule: !isEmployeeOfModule, // <- only enforce schedules for externals
+						ignoreBooking: true,
+					});
+					return {
+						parent: all[0],
+						children: all.slice(1),
+						all,
+					};
+				})
+			);
+			res.status(201).json({ result });
+		} catch (error) {
+			console.error('Error creating booking group:', error);
+			res.status(500).json({
+				message: error instanceof Error ? error.message : 'Error creating booking group',
+				error,
+			});
+		}
+	} else {
+		res.status(400).json({ message: 'User is not an employee of the reservation module' });
+	}
+}
+
+/**
+ * PUT /bookings/update-boking-start-admin/{booking_id}
+ * @tag Reservation
+ * @summary Update an existing booking start
+ * @operationId updateBookingStartAdmin
+ * @pathParam {string} booking_id
+ * @requestBody {UpdateBookingInput} requestBody
+ * @response 200 - Booking updated
+ * @responseContent {Booking} 200.application/json
+ * @response 500 - Error updating booking
+ */
+export async function updateBookingStartAdmin(
+	req: ValidatedRequest<UpdateBookingInput, { booking_id: string }>,
+	res: Response
+): Promise<void> {
 	try {
-		const all = await BookingDao.createBookingGroup(inputs, {
-			validateSchedule: !isEmployeeOfModule, // <- only enforce schedules for externals
-			ignoreBooking: true,
+		const reservation_module_id = req.user?.reservation_module_id;
+		let user_id = req.user?.user_id;
+		let reservation_module = await prisma.reservation_module.findUnique({
+			where: { reservation_module_id: reservation_module_id },
+			include: {
+				employees: {
+					include: {
+						business_user: true,
+					},
+				},
+			},
 		});
-		res.status(201).json({ parent: all[0], children: all.slice(1), all });
+		let isEmployeeOfModule = false;
+		if (reservation_module && user_id) {
+			isEmployeeOfModule = reservation_module.employees.some(
+				(e: Employee) => e.business_user?.user_id === user_id
+			);
+		}
+		if (isEmployeeOfModule) {
+			const booking = await BookingDao.updateBookingStart(req.body, req.params.booking_id);
+			res.status(200).json(booking);
+		} else {
+			res.status(400).json({ message: 'User is not an employee of the reservation module' });
+		}
 	} catch (error) {
-		console.error('Error creating booking group:', error);
-		res.status(500).json({
-			message: error instanceof Error ? error.message : 'Error creating booking group',
-			error,
-		});
+		res.status(500).json({ message: 'Error updating booking start and end', error });
 	}
 }
 
@@ -431,4 +522,5 @@ export default {
 	getBookingsForLocationAndEmployees,
 	getServicesAndEmployees,
 	createBookingAdmin,
+	updateBookingStartAdmin,
 };

@@ -11,6 +11,7 @@ import {
 	getBookingsForLocationAndEmployees,
 	getServicesAndEmployees,
 	createBookingAdmin,
+	updateBookingStartAdmin,
 } from '../../../controllers/reservation/BookingController.ts';
 import { validate } from '../../../middleware/zod';
 import {
@@ -48,6 +49,12 @@ router.get('/bookings/:booking_id', getBooking);
  * Update booking
  * PUT /bookings/:booking_id
  */
+router.put(
+	'/bookings/update-booking-start-admin/:booking_id',
+	[validate(UpdateBookingSchema)],
+	updateBookingStartAdmin
+);
+
 router.put('/bookings/:booking_id', [validate(UpdateBookingSchema)], updateBooking);
 
 /**

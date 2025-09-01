@@ -562,11 +562,36 @@ export async function getBookingsByEmployeeIdsLocationAndDates(
 					},
 				},
 				customer: true,
+				child_bookings: true,
 			},
 		});
 		return records;
 	} catch (error) {
 		throw new Error('Error retrieving schedule slots');
+	}
+}
+
+/**
+ * Update a booking using UpdateBookingInput. Will connect to provided customer_id,
+ * otherwise patch the currently linked customer (or create one if missing and fields provided).
+ *
+ * @export
+ * @async
+ * @param {UpdateBookingInput} input
+ * @returns {Promise<Booking>}
+ */
+export async function updateBookingStart(input: UpdateBookingInput, booking_id: string): Promise<Booking> {
+	try {
+		const updated = await prisma.booking.update({
+			where: { booking_id: booking_id },
+			data: {
+				start_time: input.start_time ? new Date(input.start_time) : undefined,
+				end_time: input.end_time ? new Date(input.end_time) : undefined,
+			},
+		});
+		return updated as Booking;
+	} catch (error) {
+		throwPrisma('Error updating booking', error);
 	}
 }
 
@@ -579,4 +604,5 @@ export default {
 	createBookingHistoryLog,
 	createBookingGroup,
 	getBookingsByEmployeeIdsLocationAndDates,
+	updateBookingStart,
 };
