@@ -34,7 +34,7 @@ router.use('/admin', [authMiddleware], adminRoutes);
 router.use('/reservations', [authMiddleware], bookingRoutes);
 router.use('/booking', unauthBookingRoutes);
 router.use('/notifications', [authMiddleware], notificationRoutes);
-router.get(
+router.post(
 	'/booking-data/:public_link_hash',
 	ReservationModuleController.getReservationModuleBookingDataByHashOrBusinessId
 );

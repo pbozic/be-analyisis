@@ -56,17 +56,17 @@ export async function getReservationModuleByBusinessId(
 }
 
 export async function getReservationModuleBookingDataByHashOrBusinessId(
-	req: ValidatedRequest<null, { public_link_hash?: string; business_id?: string }>,
+	req: ValidatedRequest<{ public_link_hash?: string; business_id?: string }>,
 	res: Response
 ): Promise<void> {
 	try {
-		if (!req.params.public_link_hash && !req.params.business_id) {
+		if (!req.body.public_link_hash && !req.body.business_id) {
 			throw new Error('Invalid business data');
 		} else {
 			let reservation_module = null;
 
 			reservation_module = await ReservationModuleDao.getReservationModuleByPublicLinkHashOrBusinessId(
-				(req.params.public_link_hash ?? req.params.business_id)!
+				(req.body.public_link_hash ?? req.body.business_id)!
 			);
 			if (!reservation_module) {
 				throw new Error('Reservation module not found.');
