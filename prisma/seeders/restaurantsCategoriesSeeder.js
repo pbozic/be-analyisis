@@ -721,7 +721,7 @@ async function seedCategories() {
 				}
 				const cat = await CategoriesDao.updateCategory(
 					//TODO: delete old images
-					category_id,
+					categoryExists.categories_id,
 					categoryObj.categoryData,
 					categoryObj.translations,
 					categoryObj.subcategories,
