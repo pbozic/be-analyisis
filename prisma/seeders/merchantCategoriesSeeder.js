@@ -584,7 +584,7 @@ async function seedCategories() {
 			let category_id = categoryExists?.categories_id;
 			if (categoryExists) {
 				if (categoryExists.icon) {
-					const key = getFileKey(categoryExists.icon.file_id, categoryExists.icon.mime_type);
+					const key = await getFileKey(categoryExists.icon.file_id, categoryExists.icon.mime_type);
 					await DeleteObject(key);
 				}
 				const cat = await CategoriesDao.updateCategory(
