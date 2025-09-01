@@ -2,17 +2,17 @@ import prisma from '../../prisma/prisma';
 import type { CreateRoleInput, UpdateRoleInput, Role } from '../../types/userRoles/Role.ts';
 
 /**
- * Retrieves all roles for a given reservation module ID.
- * If reservationModuleId is null, retrieves global roles.
- * @param {string | null} reservationModuleId - The ID of the reservation module.
+ * Retrieves all roles for a given business ID.
+ * If businessId is null, retrieves global roles.
+ * @param {string | null} businessId - The ID of the business.
  * @returns {Promise<Role[]>} A promise that resolves to an array of roles.
  * @throws {Error} If there is an error retrieving the roles.
  */
-export async function getRoles(reservationModuleId: string | null): Promise<Role[]> {
+export async function getRoles(businessId: string | null): Promise<Role[]> {
 	try {
 		return await prisma.role.findMany({
 			where: {
-				reservation_module_id: reservationModuleId,
+				business_id: businessId,
 			},
 			include: {
 				permissions: true,

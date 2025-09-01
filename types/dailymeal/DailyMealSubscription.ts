@@ -52,6 +52,12 @@ export const DailyMealsSubscriptionRequestSchema = z.object({
 	allow_credits_usage: z.boolean(),
 });
 
+export const DailyMealsSubscriptionQuerySchema = z.object({
+	ANALYTICS_PARAM_PROMO_WORDS: z.array(z.string()).optional(),
+	ANALYTICS_PARAM_PROMO_SECTION: z.string().optional(),
+	ANALYTICS_PARAM_PROMO_AD: z.string().optional(),
+});
+
 export const GetUserDailyMealSubscriptionsSchema = z.object({
 	start_date: z.string().datetime().optional(),
 });
@@ -61,3 +67,4 @@ export type DailyMealsCartPerson = z.infer<typeof DailyMealsCartPersonSchema>;
 export type DailyMealsCartPersonWithPrice = DailyMealsCartPerson & { daily_meal_category_price_id: string };
 export type DailyMealsCart = z.infer<typeof DailyMealsCartSchema>;
 export type DailyMealsSubscriptionRequest = z.infer<typeof DailyMealsSubscriptionRequestSchema>;
+export type DailyMealsSubscriptionQuery = z.infer<typeof DailyMealsSubscriptionQuerySchema>;

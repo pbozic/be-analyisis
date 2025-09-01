@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import {
 	SPLIT_DESTINATION_TYPE,
 	PAYMENT_STATUS,
@@ -10,20 +10,25 @@ import {
 	TRANSFER_GROUP_TYPE,
 	payment_splits,
 	SPLIT_STATUS,
+	ANALYTICS_TYPE,
+	PROMO_TYPE,
 } from '@prisma/client';
 
 import UsersDao from '../dao/User.js';
 import BusinessDao from '../dao/Business.js';
 import PaymentHelpers from '../lib/paymentHelpers.js';
 import { ValidatedRequest } from '../types/validatedRequest.js';
-import { DailyMealsSubscriptionRequest } from '../types/dailymeal/DailyMealSubscription.ts';
+import {
+	DailyMealsSubscriptionQuery,
+	DailyMealsSubscriptionRequest,
+} from '../types/dailymeal/DailyMealSubscription.ts';
 import DailyMealDao from '../dao/DailyMealDao.ts';
 import AddressDao from '../dao/Address.js';
 import { DAILY_MEAL_DELIVERY_COST_CENTS, RESTAURANT_SHARE_PERC } from '../lib/constants.js';
 import dailyMealHelpers, { mapDateToEarlierWeekday } from '../lib/dailyMealHelpers.ts';
 import prisma from '../prisma/prisma.js';
-import stripe from '../lib/stripe.js';
 import DailyMealCategoryDao from '../dao/DailyMealCategory.ts';
+import { logPromoAnalytics } from '../lib/analytics.ts';
 
 /**
  *
@@ -92,7 +97,7 @@ import DailyMealCategoryDao from '../dao/DailyMealCategory.ts';
  * ./prisma/schema.prisma
  */
 export async function dailyMealsSubscriptionPayment(
-	req: ValidatedRequest<DailyMealsSubscriptionRequest>,
+	req: ValidatedRequest<DailyMealsSubscriptionRequest, unknown, DailyMealsSubscriptionQuery>,
 	res: Response
 ): Promise<void> {
 	const {
@@ -103,6 +108,7 @@ export async function dailyMealsSubscriptionPayment(
 		return_url,
 		allow_credits_usage,
 	} = req.body;
+	const { ANALYTICS_PARAM_PROMO_WORDS, ANALYTICS_PARAM_PROMO_SECTION, ANALYTICS_PARAM_PROMO_AD } = req.query;
 	const { payment_type, payment_method_id } = payment ? payment : {};
 
 	let created_payment = null;
@@ -211,8 +217,26 @@ export async function dailyMealsSubscriptionPayment(
 				const updated_sub = await dailyMealHelpers.activateSubscriptionById(new_subscription.id);
 			}
 		}
-
 		const payment_intent = payment_response?.payment_intent;
+
+		if (ANALYTICS_PARAM_PROMO_AD || ANALYTICS_PARAM_PROMO_SECTION || ANALYTICS_PARAM_PROMO_WORDS) {
+			logPromoAnalytics({
+				business_id: business.business_id,
+				user_id: user.user_id,
+				analytics_type: ANALYTICS_TYPE.DAILY_MEAL_SUBSCRIPTION_CREATE,
+				promo_type: ANALYTICS_PARAM_PROMO_AD
+					? PROMO_TYPE.AD
+					: ANALYTICS_PARAM_PROMO_SECTION
+						? PROMO_TYPE.SECTION
+						: PROMO_TYPE.WORD,
+				promo_ads_id: ANALYTICS_PARAM_PROMO_AD,
+				promo_sections_id: ANALYTICS_PARAM_PROMO_SECTION,
+				wordIds: ANALYTICS_PARAM_PROMO_WORDS,
+				daily_meal_subscription_id: new_subscription.id,
+			})
+				.then((res) => console.log('Promo analytics DAILY MEALS ORDER CREATE success', res))
+				.catch((err) => console.warn('Promo analytics DAILY MEALS ORDER CREATE failed', err));
+		}
 
 		res.status(200).json({
 			status: 'Success',

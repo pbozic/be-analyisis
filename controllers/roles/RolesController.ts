@@ -7,16 +7,16 @@ import { CreateRoleInput, UpdateRoleInput } from '../../types/userRoles/Role.ts'
 /**
  * GET /roles/roles
  * @tag Reservation
- * @summary Get all roles for the current reservation module
- * @operationId getReservationRoles
+ * @summary Get all roles for the current business
+ * @operationId getBusinessRoles
  * @response 200 - Roles retrieved
  * @responseContent {Role[]} 200.application/json
  * @response 500 - Error retrieving roles
  */
 export async function getRoles(req: ValidatedRequest, res: Response): Promise<void> {
 	try {
-		let reservationModuleId = req.user?.reservation_module_id || null;
-		let roles = await RoleDao.getRoles(reservationModuleId);
+		let businessId = req.user?.business_id || null;
+		let roles = await RoleDao.getRoles(businessId);
 		res.status(200).json(roles);
 	} catch (error) {
 		res.status(500).json({ message: 'Error retrieving roles', error });

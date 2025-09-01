@@ -4,6 +4,7 @@ import express from 'express';
 import { createBooking, findBookingSlots } from '../../../controllers/reservation/BookingController.ts';
 import { validate } from '../../../middleware/zod';
 import { CreateBookingSchema, FindBookingSlotsSchema } from '../../../types/reservation/Booking.ts';
+import ReservationModuleController from '../../../controllers/reservation/ReservationModuleController.ts';
 const router = express.Router();
 
 /**
@@ -17,5 +18,11 @@ router.post('/', validate(CreateBookingSchema), createBooking);
  * POST /booking/find-slots
  */
 router.post('/find-slots', [validate(FindBookingSlotsSchema)], findBookingSlots);
+
+/**
+ * Get data necessary for the booking process
+ * POST /booking/booking-data
+ */
+router.post('/booking-data', ReservationModuleController.getReservationModuleBookingDataByHashOrBusinessId);
 
 export default router;

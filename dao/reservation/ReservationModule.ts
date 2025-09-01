@@ -1,5 +1,6 @@
 import crypto from 'crypto';
 
+import { validate as isUuid } from 'uuid';
 import type { Prisma as TPrisma } from '@prisma/client';
 
 import prisma from '../../prisma/prisma';
@@ -167,9 +168,9 @@ export async function getReservationModuleByPublicLinkHashOrBusinessId(
 	const prisma_client = tx || prisma;
 	try {
 		return await prisma_client.reservation_module.findUnique({
-			where: {
-				OR: [{ public_link_hash: hash_or_businessid }, { business_id: hash_or_businessid }],
-			},
+			where: isUuid(hash_or_businessid)
+				? { business_id: hash_or_businessid }
+				: { public_link_hash: hash_or_businessid },
 			select: {
 				reservation_module_id: true,
 				public_link_hash: true,

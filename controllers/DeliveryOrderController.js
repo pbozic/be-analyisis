@@ -613,22 +613,24 @@ async function cancelOrderDelivery(req, res) {
  */
 async function completeOrder(req, res) {
 	try {
-		const { ANALYTICS_PARAM_PROMO_WORDS, ANALYTICS_PARAM_PROMO_SECTION, ANALYTICS_PARAM_PROMO_AD } = req.query;
 		let order = await DeliveryOrderDao.completeOrder(req.body.order_id);
-		if (ANALYTICS_PARAM_PROMO_AD || ANALYTICS_PARAM_PROMO_SECTION || ANALYTICS_PARAM_PROMO_WORDS) {
+		const existingPromoAnalyticsLogs = await prisma.promo_analytics.findMany({
+			where: {
+				order_id: order.order_id,
+			},
+		});
+		if (existingPromoAnalyticsLogs?.length > 0) {
 			logPromoAnalytics({
 				business_id: order.business_id,
 				user_id: order.user_id,
 				order_id: order.order_id,
 				analytics_type: ANALYTICS_TYPE.ORDER_FINISH,
-				promo_type: ANALYTICS_PARAM_PROMO_AD
-					? PROMO_TYPE.AD
-					: ANALYTICS_PARAM_PROMO_SECTION
-						? PROMO_TYPE.SECTION
-						: PROMO_TYPE.WORD,
-				promo_ads_id: ANALYTICS_PARAM_PROMO_AD,
-				promo_sections_id: ANALYTICS_PARAM_PROMO_SECTION,
-				wordIds: ANALYTICS_PARAM_PROMO_WORDS,
+				promo_type: existingPromoAnalyticsLogs[0].promo_type,
+				promo_ads_id: existingPromoAnalyticsLogs[0].promo_ads_id,
+				promo_sections_id: existingPromoAnalyticsLogs[0].promo_sections_id,
+				wordIds: existingPromoAnalyticsLogs[0].word_id
+					? existingPromoAnalyticsLogs.map((log) => log.word_id)
+					: null,
 			})
 				.then((res) => console.log('Promo analytics ORDER FINISH success', res))
 				.catch((err) => console.warn('Promo analytics ORDER FINISH failed', err));
@@ -939,7 +941,9 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 		const activeOrders = [];
 		const pendingOrders = [];
 		for (let order of allActiveOrders) {
-			if (!order.is_daily_meal || order.timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED)) {
+			let driver = await DeliveryDriverDao.getDeliveryDriverById(driver_id);
+			if (!driver) driver = await DriverDao.getDriverById(driver_id);
+			if ((!order.is_daily_meal && !driver.on_daily_meals) || (order.is_daily_meal && driver.on_daily_meals)) {
 				activeOrders.push(order);
 			}
 		}
@@ -2191,13 +2195,15 @@ async function dispatcherRevoke(req, res) {
 async function startOrder(req, res) {
 	try {
 		const { ANALYTICS_PARAM_PROMO_WORDS, ANALYTICS_PARAM_PROMO_SECTION, ANALYTICS_PARAM_PROMO_AD } = req.query;
-		let res;
+		let log;
 		if (ANALYTICS_PARAM_PROMO_AD || ANALYTICS_PARAM_PROMO_SECTION || ANALYTICS_PARAM_PROMO_WORDS) {
-			res = await logPromoAnalytics({
+			log = await logPromoAnalytics({
 				business_id: req.body.business_id,
-				user_id: req.body.user_id,
-				order_id: req.body.order_id,
-				analytics_type: ANALYTICS_TYPE.ORDER_START,
+				user_id: req.user?.user_id,
+				// order_id: req.body.order_id,
+				analytics_type: req.body.is_daily_meal
+					? ANALYTICS_TYPE.DAILY_MEAL_SUBSCRIPTION_START
+					: ANALYTICS_TYPE.ORDER_START,
 				promo_type: ANALYTICS_PARAM_PROMO_AD
 					? PROMO_TYPE.AD
 					: ANALYTICS_PARAM_PROMO_SECTION
@@ -2210,8 +2216,7 @@ async function startOrder(req, res) {
 				.then((res) => console.log('Promo analytics ORDER START success', res))
 				.catch((err) => console.warn('Promo analytics ORDER START failed', err));
 		}
-		console.log('startOrder', res);
-		res.status(200).json(res);
+		res.status(200).json(log);
 	} catch (e) {
 		console.error('Error starting order', e);
 		res.status(500).json(e);

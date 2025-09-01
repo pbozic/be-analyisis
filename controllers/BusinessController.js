@@ -216,7 +216,7 @@ async function searchBusinesses(req, res) {
 				logPromoAnalytics({
 					wordIds,
 					business_id: resItem.business_id,
-					user_id: req.user.user_id,
+					user_id: req.user?.user_id,
 					promo_type: wordIds.length ? PROMO_TYPE.WORD : PROMO_TYPE.SEARCH,
 					analytics_type: ANALYTICS_TYPE.VIEW,
 				})
@@ -235,7 +235,7 @@ async function searchBusinesses(req, res) {
 			});
 		}
 	} catch (e) {
-		res.status(400).json({ error: 'Error obtaining list of businesses..', e: e.message });
+		res.status(500).json({ error: 'Error obtaining list of businesses..', e: e.message });
 	}
 }
 /**
