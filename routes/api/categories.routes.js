@@ -8,5 +8,5 @@ router.get('/:category_type', CategoriesController.getCategoriesByType);
 router.post('/category/', [authMiddleware], CategoriesController.createCategory);
 router.patch('/category/:id', [authMiddleware], CategoriesController.updateCategory);
 router.delete('/category/:id', [authMiddleware], CategoriesController.deleteCategory);
-router.get('/category/:id', [authMiddleware], CategoriesController.getCategoryById);
+router.get('/category/:id', CategoriesController.getCategoryById);
 export default router;
