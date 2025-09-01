@@ -3,7 +3,7 @@ import path from 'path';
 import prisma from '../prisma.js';
 import { upsertFileOnS3Helper } from '../../controllers/FilesController.js';
 import CategoriesDao from '../../dao/Categories.js';
-import { DeleteObject } from '../../lib/s3.js';
+import { DeleteObject, getFileKey } from '../../lib/s3.js';
 import WordDao from '../../dao/Word.js';
 import url from 'node:url';
 const __filename = url.fileURLToPath(import.meta.url);
@@ -721,7 +721,7 @@ async function seedCategories() {
 				}
 				const cat = await CategoriesDao.updateCategory(
 					//TODO: delete old images
-					category_id,
+					categoryExists.categories_id,
 					categoryObj.categoryData,
 					categoryObj.translations,
 					categoryObj.subcategories,
@@ -730,6 +730,7 @@ async function seedCategories() {
 				);
 				category_id = cat.categories_id;
 				if (categoryObj.iconFileData) {
+					console.log('Uploading new icon for category:', cat.categories_id, cat.icon);
 					const { file_type, mime_type, base64 } = categoryObj.iconFileData;
 					await upsertFileOnS3Helper(null, cat.icon, file_type, mime_type, base64);
 				}

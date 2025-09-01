@@ -953,7 +953,9 @@ async function getActiveDeliveryOrdersByDriverId(req, res) {
 		const activeOrders = [];
 		const pendingOrders = [];
 		for (let order of allActiveOrders) {
-			if (!order.is_daily_meal || order.timeline.includes(DELIVERY_ORDER_STATUS.DELIVERY_ACCEPTED)) {
+			let driver = await DeliveryDriverDao.getDeliveryDriverById(driver_id);
+			if (!driver) driver = await DriverDao.getDriverById(driver_id);
+			if ((!order.is_daily_meal && !driver.on_daily_meals) || (order.is_daily_meal && driver.on_daily_meals)) {
 				activeOrders.push(order);
 			}
 		}

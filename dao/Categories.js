@@ -171,15 +171,36 @@ async function updateCategory(
 			});
 			if (!category) throw new Error('Category not found');
 			for (let translation of translations) {
-				await prisma.translations.update({
+				const existingTranslation = await prisma.translations.findUnique({
 					where: {
 						translationPair: {
 							translatable_id: category.translatable_id,
 							language: translation.language,
 						},
 					},
-					data: { translation: translation.translation },
 				});
+				if (!existingTranslation) {
+					await prisma.translations.create({
+						data: {
+							...translation,
+							translatable: {
+								connect: {
+									translatable_id: category.translatable_id,
+								},
+							},
+						},
+					});
+				} else {
+					await prisma.translations.update({
+						where: {
+							translationPair: {
+								translatable_id: category.translatable_id,
+								language: translation.language,
+							},
+						},
+						data: { translation: translation.translation },
+					});
+				}
 			}
 			const updateData = { ...categoryData };
 			if (parent_categories_id) {

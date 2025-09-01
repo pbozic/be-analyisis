@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import prisma from '../prisma.js';
 import { upsertFileOnS3Helper } from '../../controllers/FilesController.js';
-import { DeleteObject } from '../../lib/s3.js';
+import { DeleteObject, getFileKey } from '../../lib/s3.js';
 import CategoriesDao from '../../dao/Categories.js';
 import WordDao from '../../dao/Word.js';
 import url from 'node:url';
@@ -584,7 +584,7 @@ async function seedCategories() {
 			let category_id = categoryExists?.categories_id;
 			if (categoryExists) {
 				if (categoryExists.icon) {
-					const key = getFileKey(categoryExists.icon.file_id, categoryExists.icon.mime_type);
+					const key = await getFileKey(categoryExists.icon.file_id, categoryExists.icon.mime_type);
 					await DeleteObject(key);
 				}
 				const cat = await CategoriesDao.updateCategory(
