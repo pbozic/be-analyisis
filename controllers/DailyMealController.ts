@@ -223,7 +223,7 @@ export async function dailyMealsSubscriptionPayment(
 			logPromoAnalytics({
 				business_id: business.business_id,
 				user_id: user.user_id,
-				analytics_type: ANALYTICS_TYPE.ORDER_CREATE,
+				analytics_type: ANALYTICS_TYPE.DAILY_MEAL_SUBSCRIPTION_CREATE,
 				promo_type: ANALYTICS_PARAM_PROMO_AD
 					? PROMO_TYPE.AD
 					: ANALYTICS_PARAM_PROMO_SECTION
@@ -232,6 +232,7 @@ export async function dailyMealsSubscriptionPayment(
 				promo_ads_id: ANALYTICS_PARAM_PROMO_AD,
 				promo_sections_id: ANALYTICS_PARAM_PROMO_SECTION,
 				wordIds: ANALYTICS_PARAM_PROMO_WORDS,
+				daily_meal_subscription_id: new_subscription.id,
 			})
 				.then((res) => console.log('Promo analytics DAILY MEALS ORDER CREATE success', res))
 				.catch((err) => console.warn('Promo analytics DAILY MEALS ORDER CREATE failed', err));

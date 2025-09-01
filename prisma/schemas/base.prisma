@@ -1092,25 +1092,26 @@ model word_bundles {
 }
 
 model promo_analytics {
-  promo_analytics_id String         @id @default(uuid()) @db.Uuid
-  promo_ads_id       String?        @db.Uuid
-  promo_sections_id  String?        @db.Uuid
-  word_id            String?        @db.Uuid
-  order_id           String?        @db.Uuid
-  business_id        String         @db.Uuid
-  user_id            String?        @db.Uuid
-  created_at         DateTime       @default(now()) @db.Timestamptz(6)
-  updated_at         DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
-  promo_type         PROMO_TYPE
-  type               ANALYTICS_TYPE
-  is_daily_meal      Boolean        @default(false)
+  promo_analytics_id         String         @id @default(uuid()) @db.Uuid
+  promo_ads_id               String?        @db.Uuid
+  promo_sections_id          String?        @db.Uuid
+  word_id                    String?        @db.Uuid
+  order_id                   String?        @db.Uuid
+  daily_meal_subscription_id String?        @db.Uuid
+  business_id                String         @db.Uuid
+  user_id                    String?        @db.Uuid
+  created_at                 DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at                 DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
+  promo_type                 PROMO_TYPE
+  type                       ANALYTICS_TYPE
 
-  business       business         @relation(fields: [business_id], references: [business_id])
-  user           users?           @relation(fields: [user_id], references: [user_id])
-  promo_ads      promo_ads?       @relation(fields: [promo_ads_id], references: [promo_ads_id])
-  promo_sections promo_sections?  @relation(fields: [promo_sections_id], references: [promo_sections_id])
-  promo_words    words?           @relation(fields: [word_id], references: [word_id])
-  order          delivery_orders? @relation(fields: [order_id], references: [order_id])
+  business                business                  @relation(fields: [business_id], references: [business_id])
+  user                    users?                    @relation(fields: [user_id], references: [user_id])
+  promo_ads               promo_ads?                @relation(fields: [promo_ads_id], references: [promo_ads_id])
+  promo_sections          promo_sections?           @relation(fields: [promo_sections_id], references: [promo_sections_id])
+  promo_words             words?                    @relation(fields: [word_id], references: [word_id])
+  order                   delivery_orders?          @relation(fields: [order_id], references: [order_id])
+  daily_meal_subscription daily_meal_subscriptions? @relation(fields: [daily_meal_subscription_id], references: [id])
 }
 
 model order_lobbies {
@@ -1402,6 +1403,7 @@ model daily_meal_subscriptions {
   weekdays             daily_meal_subscription_weekdays[]
   daily_meal_instances daily_meal_instances[]
   payment              payments?                           @relation("PaymentToDMSubscription")
+  promo_analytics      promo_analytics[]
 }
 
 model daily_meal_subscription_customers {
@@ -2013,4 +2015,6 @@ enum ANALYTICS_TYPE {
   ORDER_START
   ORDER_CREATE
   ORDER_FINISH
+  DAILY_MEAL_SUBSCRIPTION_START
+  DAILY_MEAL_SUBSCRIPTION_CREATE
 }
