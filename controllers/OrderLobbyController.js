@@ -141,13 +141,14 @@ async function createLobby(req, res) {
 			restaurant_message,
 			courier_note,
 			delivery_location,
+			user,
 		} = req.body;
 		const new_lobby = await OrderLobbyDao.createOrderLobby({
 			lobby_name,
 			lobby_description,
-			business: { connect: { business_id: business_id } },
+			business_id: business_id,
 			restaurant_id,
-			creator_id: req.user.user_id,
+			creator_id: user.user_id,
 			restaurant_message,
 			courier_note: courier_note,
 			delivery_location: delivery_location,
