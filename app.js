@@ -99,6 +99,7 @@ app.use((req, res, next) => {
 				httpOnly: true,
 				sameSite,
 				secure,
+				partitioned: true,
 				maxAge: 60 * 60 * 24 * 7, // 1 week (optional)
 			});
 
