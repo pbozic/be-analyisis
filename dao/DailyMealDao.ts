@@ -79,6 +79,13 @@ export async function getActiveDailyMealSubscriptionsByBusinessId(business_id: s
 		},
 		include: {
 			...defaultIncludeObj,
+			daily_meal_instances: {
+				...defaultIncludeObj.daily_meal_instances,
+				where: {
+					status: { in: [DAILY_MEAL_INSTANCE_STATUS.PLANNED, DAILY_MEAL_INSTANCE_STATUS.DELIVERED] },
+					delivery_date: normalizedDate ? { gte: normalizedDate } : undefined,
+				},
+			},
 			business: false,
 		},
 		orderBy: { start_date: 'asc' },
