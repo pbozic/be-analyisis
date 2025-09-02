@@ -148,7 +148,7 @@ async function createLobby(req, res) {
 			lobby_description,
 			business_id: business_id,
 			restaurant_id,
-			creator_id: user.user_id,
+			creator_id: user.user_id, // TODO: Return to req.user.user_id when auth is implemented
 			restaurant_message,
 			courier_note: courier_note,
 			delivery_location: delivery_location,
@@ -260,7 +260,7 @@ async function setLobbyUsersWithLimits(req, res) {
 async function setUserOrderLobbyItems(req, res) {
 	try {
 		const { order_lobbies_id } = req.params;
-		const { user_id } = req.user;
+		const { user_id } = req.body.user; // TODO: Return to req.user when auth is implemented
 		const { items } = req.body;
 		const order_lobby_items = await OrderLobbyItemDao.getOrderLobbyItemsByLobbyAndUserId(order_lobbies_id, user_id);
 		//delete removed items
