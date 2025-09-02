@@ -56,7 +56,7 @@ async function addUserToLobby(user_id, order_lobby, limit) {
 	return ol_user;
 }
 
-async function generateOrderDataFromLobby(orderLobby, paymentMethod) {
+async function generateOrderDataFromLobby(orderLobby, paymentMethod, useCredits) {
 	const items = await Promise.all(
 		orderLobby.order_lobby_items.map(async (item) => {
 			return {
@@ -91,6 +91,7 @@ async function generateOrderDataFromLobby(orderLobby, paymentMethod) {
 		},
 		delivery_location: orderLobby.delivery_location,
 		pickup_location: restaurantAddress,
+		allow_credits_usage: useCredits,
 	};
 
 	const orderDetails = CalculateOrderLobbyOrderDetails(
@@ -111,6 +112,7 @@ async function generateOrderDataFromLobby(orderLobby, paymentMethod) {
 		pickup_location: restaurantAddress,
 		delivery_location: order.delivery_location,
 		route: orderRoute,
+		allow_credits_usage: useCredits,
 	};
 }
 /**
@@ -176,6 +178,7 @@ async function createLobby(req, res) {
  * @param {Object} req - Express request object
  * @param {Object} req.params - Request parameters
  * @param {string} req.params.order_lobbies_id - ID of the order lobby
+ * @param {Boolean} req.params.useCredits - flag to indicate if user credits should be used
  * @param {Object} req.body - Request body
  * @param {Object} req.body.paymentMethod - Payment method for delivery order
  * @param {Object} res - Express response object
@@ -186,8 +189,9 @@ async function submitLobby(req, res) {
 		const { order_lobbies_id } = req.params;
 		const order_lobby = await OrderLobbyDao.getOrderLobbyById(order_lobbies_id);
 		const paymentMethod = req.body.paymentMethod;
+		const useCredits = req.body.useCredits || false;
 
-		const orderData = await generateOrderDataFromLobby(order_lobby, paymentMethod);
+		const orderData = await generateOrderDataFromLobby(order_lobby, paymentMethod, useCredits);
 
 		// Generate a delivery order
 		const { order, payment_intent } = await DeliveryOrderController.generateOrder(
