@@ -10,6 +10,13 @@ import type {
 	CreateBookingSingleInput,
 } from '../../types/reservation/Booking.ts'; // <-- adjust path if different
 import { isBookingSlotAvailable, isEmployeeScheduledForWindow } from '../../lib/bookingHelpers.ts';
+
+const cropped_user_columns = {
+	first_name: true,
+	last_name: true,
+	user_id: true,
+};
+
 /**
  * Narrow and rethrow Prisma errors with a consistent message prefix.
  * Logs useful context for known Prisma error types.
@@ -206,13 +213,16 @@ async function createBookingTx(
 		});
 	}
 	if (!schedule) throw new Error('Employee is not scheduled for the selected time');
+	const price = input?.price_cents ?? service.price_cents;
 	const created = await tx.booking.create({
 		data: {
 			status: BOOKING_STATUS.reserved,
 			comment: input.comment ?? null,
-			price_cents: service.price_cents ?? null,
+			price_cents: price ?? null,
 			start_time: input.start_time ? new Date(input.start_time) : null,
 			end_time: input.end_time ? new Date(input.end_time) : null,
+			discount_percent: input.discount_percent ?? null,
+			discount_amount: input.discount_amount ?? null,
 
 			reservation_module: { connect: { reservation_module_id: input.reservation_module_id } },
 			service: { connect: { service_id: input.service_id } },
@@ -229,6 +239,28 @@ async function createBookingTx(
 			status: created.status,
 			type: 'created',
 			title: 'Booking Created',
+			comment:
+				'Start time: ' +
+				input.start_time +
+				'\n End time: ' +
+				input.end_time +
+				'\n Parent booking: ' +
+				input.parent_booking_id +
+				'\n service: ' +
+				input.service_id +
+				'\n Location: ' +
+				input.location_id +
+				'\n Employee: ' +
+				input.employee_id +
+				'\n Customer: ' +
+				input.customer_id +
+				'\n Discount: ' +
+				input.discount_percent +
+				'\n Discount amount: ' +
+				input?.discount_amount +
+				'\n price: ' +
+				service.price_cents,
+
 			description: input.comment ?? null,
 			booking: { connect: { booking_id: created.booking_id } },
 		},
@@ -397,6 +429,21 @@ export async function updateBooking(input: UpdateBookingInput, booking_id: strin
 						status: updated.status,
 						type: 'updated',
 						title: 'Booking Updated',
+						comment:
+							'Start time: ' +
+							input.start_time +
+							'\n End time: ' +
+							input.end_time +
+							'\n Parent booking: ' +
+							input.parent_booking_id +
+							'\n service: ' +
+							input.service_id +
+							'\n Location: ' +
+							input.location_id +
+							'\n Employee: ' +
+							input.employee_id +
+							'\n Customer: ' +
+							input.customer_id,
 						description: input.comment ?? null,
 						booking: { connect: { booking_id: updated.booking_id } },
 					},
@@ -572,26 +619,146 @@ export async function getBookingsByEmployeeIdsLocationAndDates(
 }
 
 /**
- * Update a booking using UpdateBookingInput. Will connect to provided customer_id,
+ * Update a booking start, end, delete parent using UpdateBookingInput. Will connect to provided customer_id,
  * otherwise patch the currently linked customer (or create one if missing and fields provided).
- *
- * @export
- * @async
  * @param {UpdateBookingInput} input
  * @returns {Promise<Booking>}
+ * @throws {Error} If there is an error updating the booking.
  */
-export async function updateBookingStart(input: UpdateBookingInput, booking_id: string): Promise<Booking> {
+export async function updateBookingStart(
+	input: UpdateBookingInput,
+	booking_id: string,
+	user_id: string | undefined
+): Promise<Booking> {
 	try {
-		const updated = await prisma.booking.update({
-			where: { booking_id: booking_id },
-			data: {
-				start_time: input.start_time ? new Date(input.start_time) : undefined,
-				end_time: input.end_time ? new Date(input.end_time) : undefined,
-			},
+		return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+			const updated = await tx.booking.update({
+				where: { booking_id: booking_id },
+				data: {
+					start_time: input.start_time ? new Date(input.start_time) : undefined,
+					end_time: input.end_time ? new Date(input.end_time) : undefined,
+					parent_booking: input.parent_booking_id ? { disconnect: true } : undefined,
+				},
+			});
+			await tx.booking_history_log.create({
+				data: {
+					status: updated.status,
+					type: 'updated',
+					title: 'Booking Updated',
+					comment:
+						'New start time: ' +
+						input.start_time +
+						'\n New end time: ' +
+						input.end_time +
+						(input.parent_booking_id ? '\n Deleted parent booking: ' + input.parent_booking_id : ''),
+					description: input.comment ?? null,
+					booking: { connect: { booking_id: updated.booking_id } },
+					user: { connect: { user_id: user_id } },
+				},
+			});
+			return updated;
 		});
-		return updated as Booking;
 	} catch (error) {
 		throwPrisma('Error updating booking', error);
+	}
+}
+
+/**
+ * Update a booking parent using UpdateBookingInput. Will connect to provided customer_id,
+ * otherwise patch the currently linked customer (or create one if missing and fields provided).
+ * @param {UpdateBookingInput} input
+ * @returns {Promise<Booking>}
+ * @throws {Error} If there is an error updating the booking.
+ */
+export async function updateBookingParent(
+	input: UpdateBookingInput,
+	booking_id: string,
+	user_id: string | undefined
+): Promise<Booking> {
+	try {
+		return await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+			const updated = await tx.booking.update({
+				where: { booking_id: booking_id },
+				data: {
+					parent_booking: input.parent_booking_id
+						? { connect: { booking_id: input.parent_booking_id } }
+						: undefined,
+				},
+			});
+			await tx.booking_history_log.create({
+				data: {
+					status: updated.status,
+					type: 'updated',
+					title: 'Booking Updated',
+					comment: input.parent_booking_id ? '\n New parent booking: ' + input.parent_booking_id : '',
+					description: input.comment ?? null,
+					booking: { connect: { booking_id: updated.booking_id } },
+					user: { connect: { user_id: user_id } },
+				},
+			});
+			return updated;
+		});
+	} catch (error) {
+		throwPrisma('Error updating booking', error);
+	}
+}
+
+/**
+ * Get booking by id
+ * @param {{ booking_id: string }} input
+ * @returns {Promise<Booking>}
+ */
+export async function getBookingByIdWithChildren(booking_id: string): Promise<Booking> {
+	try {
+		const booking = await prisma.booking.findUnique({
+			where: { booking_id: booking_id },
+			include: {
+				customer: true,
+				location: true,
+				service: true,
+				employee: {
+					include: {
+						business_user: {
+							select: {
+								business_users_id: true,
+								business_id: true,
+								user_id: true,
+								users: {
+									select: cropped_user_columns,
+								},
+							},
+						},
+					},
+				},
+				child_bookings: {
+					include: {
+						customer: true,
+						location: true,
+						service: true,
+						employee: {
+							include: {
+								business_user: {
+									select: {
+										business_users_id: true,
+										business_id: true,
+										user_id: true,
+										users: {
+											select: cropped_user_columns,
+										},
+									},
+								},
+							},
+						},
+					},
+					orderBy: {
+						start_time: 'asc',
+					},
+				},
+			},
+		});
+		return booking;
+	} catch (error) {
+		throwPrisma('Error fetching booking by id', error);
 	}
 }
 
@@ -605,4 +772,6 @@ export default {
 	createBookingGroup,
 	getBookingsByEmployeeIdsLocationAndDates,
 	updateBookingStart,
+	getBookingByIdWithChildren,
+	updateBookingParent,
 };

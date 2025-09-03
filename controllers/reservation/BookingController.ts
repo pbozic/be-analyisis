@@ -11,6 +11,7 @@ import {
 	CreateBookingSingleInput,
 	AllBookingsForLocationAndEmployeesParams,
 	CreateMultipleBookingsInput,
+	Booking,
 } from '../../types/reservation/Booking.ts';
 import { Employee } from '../../types/reservation/Employee.ts';
 import { findSlots } from '../../lib/bookingHelpers.ts';
@@ -425,9 +426,6 @@ export async function createBookingAdmin(
 	if (reservation_module && user_id) {
 		isEmployeeOfModule = reservation_module.employees.some((e: Employee) => e.business_user?.user_id === user_id);
 	}
-	//console.log('isEmployeeOfModule:', isEmployeeOfModule);
-	//console.log(bookings);
-
 	// map to DAO’s single-service input
 	if (isEmployeeOfModule) {
 		const inputs = bookings.map((booking) => ({
@@ -500,8 +498,355 @@ export async function updateBookingStartAdmin(
 			);
 		}
 		if (isEmployeeOfModule) {
-			const booking = await BookingDao.updateBookingStart(req.body, req.params.booking_id);
+			const booking = await BookingDao.updateBookingStart(req.body, req.params.booking_id, user_id);
 			res.status(200).json(booking);
+		} else {
+			res.status(400).json({ message: 'User is not an employee of the reservation module' });
+		}
+	} catch (error) {
+		res.status(500).json({ message: 'Error updating booking start and end', error });
+	}
+}
+
+/**
+ * GET /bookings/get-booking-admin/{booking_id}
+ * @tag Reservation
+ * @summary Get a booking by ID
+ * @operationId getBookingById
+ * @pathParam {string} booking_id
+ * @response 200 - Booking retrieved
+ * @responseContent {Booking} 200.application/json
+ * @response 404 - Booking not found
+ * @response 500 - Error retrieving booking
+ */
+export async function getBookingAdmin(
+	req: ValidatedRequest<null, { booking_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const booking = await BookingDao.getBookingByIdWithChildren(req.params.booking_id);
+		if (!booking) {
+			res.status(404).json({ message: 'Booking not found' });
+			return;
+		}
+		const children = booking?.child_bookings || [];
+		const bookings = [booking, ...children];
+		res.status(200).json(bookings);
+	} catch (error) {
+		res.status(500).json({ message: 'Error retrieving booking', error });
+	}
+}
+
+/**
+ * Calcs duration between two ISO strings
+ * @param {string} startIso - The start time.
+ * @param {string} endIso - The end time.
+ * @returns {number} - The duration in minutes.
+ * @description Calculates the duration between two ISO strings in minutes.
+ */
+function durationInMinutes(startIso: string | undefined, endIso: string | undefined): number {
+	if (!startIso || !endIso) return 0;
+
+	const start = new Date(startIso);
+	const end = new Date(endIso);
+
+	if (isNaN(start.getTime()) || isNaN(end.getTime())) return 0; // invalid date check
+
+	return Math.floor((end.getTime() - start.getTime()) / (1000 * 60));
+}
+
+/**
+ * PUT /bookings/update-booking-start-admin-group/{booking_id}
+ * @tag Reservation
+ * @summary Update an existing booking group start
+ * @operationId updateBookingStartGroupAdmin
+ * @pathParam {string} booking_id
+ * @requestBody {UpdateBookingInput} requestBody
+ * @response 200 - Bookings updated
+ * @responseContent {Booking} 200.application/json
+ * @response 500 - Error updating booking group
+ */
+export async function updateBookingStartGroupAdmin(
+	req: ValidatedRequest<UpdateBookingInput, { booking_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const reservation_module_id = req.user?.reservation_module_id;
+		let user_id = req.user?.user_id;
+		let reservation_module = await prisma.reservation_module.findUnique({
+			where: { reservation_module_id: reservation_module_id },
+			include: {
+				employees: {
+					include: {
+						business_user: true,
+					},
+				},
+			},
+		});
+		let isEmployeeOfModule = false;
+		if (reservation_module && user_id) {
+			isEmployeeOfModule = reservation_module.employees.some(
+				(e: Employee) => e.business_user?.user_id === user_id
+			);
+		}
+		if (isEmployeeOfModule) {
+			const inputs = req.body;
+			const start_time = inputs?.start_time;
+			const end_time = inputs?.end_time;
+			// If this is the first booking in the group (it is parent booking)
+			if (!inputs?.parent_booking_id && start_time && end_time) {
+				const bookingsData = await BookingDao.getBookingByIdWithChildren(req.params.booking_id);
+				const bookings = [bookingsData, ...(bookingsData?.child_bookings ?? [])];
+				// If this is first booking in the group and it is set to keep time gaps when moving
+				if (inputs?.keepTimeGaps) {
+					let end = '';
+					let previousEnd = '';
+					const newBookings = bookings.map((booking, i) => {
+						if (i === 0) {
+							end = end_time;
+							previousEnd = booking?.end_time?.toISOString() ?? '';
+							return {
+								booking_id: booking.booking_id,
+								start_time: inputs.start_time,
+								end_time: end,
+							};
+						} else {
+							const durationBetween = durationInMinutes(previousEnd, booking?.start_time?.toISOString());
+							const duration = durationInMinutes(
+								booking?.start_time?.toISOString(),
+								booking?.end_time?.toISOString()
+							);
+							const nStart = new Date(end);
+							const new_start_time = nStart.setMinutes(nStart.getMinutes() + durationBetween);
+							const nEnd = new Date(new_start_time);
+							const new_end_time = nEnd.setMinutes(nEnd.getMinutes() + duration);
+							end = new Date(new_end_time).toISOString();
+							previousEnd = booking?.end_time?.toISOString() ?? '';
+							return {
+								booking_id: booking.booking_id,
+								start_time: new Date(new_start_time).toISOString(),
+								end_time: new Date(new_end_time).toISOString(),
+							};
+						}
+					});
+					const updatedBookings = await Promise.all(
+						newBookings.map(async (el) => {
+							const booking = await BookingDao.updateBookingStart(el, el.booking_id, user_id);
+							return booking;
+						})
+					);
+					res.status(200).json({ updatedBookings });
+				} else {
+					// If this is first booking in the group and you set to no time gaps when moving
+					let end = '';
+					const newBookings = bookings.map((booking, i) => {
+						if (i === 0) {
+							end = end_time;
+							return {
+								booking_id: booking.booking_id,
+								start_time: inputs.start_time,
+								end_time: end,
+							};
+						} else {
+							const duration = durationInMinutes(
+								booking?.start_time?.toISOString(),
+								booking?.end_time?.toISOString()
+							);
+							const new_start_time = new Date(end);
+							const nEnd = new_start_time;
+							const new_end_time = nEnd.setMinutes(nEnd.getMinutes() + duration);
+							end = new Date(new_end_time).toISOString();
+							return {
+								booking_id: booking.booking_id,
+								start_time: new Date(new_start_time).toISOString(),
+								end_time: new Date(new_end_time).toISOString(),
+							};
+						}
+					});
+					const updatedBookings = await Promise.all(
+						newBookings.map(async (el) => {
+							const booking = await BookingDao.updateBookingStart(el, el.booking_id, user_id);
+							return booking;
+						})
+					);
+					res.status(200).json({ updatedBookings });
+				}
+			} else if (inputs.parent_booking_id && start_time && end_time) {
+				// If this is not the first booking in the group
+				const bookingsData = await BookingDao.getBookingByIdWithChildren(inputs.parent_booking_id);
+				const bookings = [bookingsData, ...(bookingsData?.child_bookings ?? [])];
+				const findBookingIndex = bookings.findIndex((b) => b.booking_id === req.params.booking_id);
+				const findBooking = bookings.find((b) => b.booking_id === req.params.booking_id);
+				// If this is not the first booking in the group and it is set to keep time gaps when moving
+				if (inputs.keepTimeGaps) {
+					const calcDuration = durationInMinutes(
+						bookingsData?.start_time?.toISOString(),
+						findBooking?.start_time?.toISOString()
+					);
+					const inputStart = new Date(start_time);
+					const firstStart = inputStart.setMinutes(inputStart.getMinutes() - calcDuration);
+
+					let end = '';
+					let previousEnd = '';
+					const newBookings = bookings.map((booking, i) => {
+						if (i === 0) {
+							const duration = durationInMinutes(
+								booking?.start_time?.toISOString(),
+								booking?.end_time?.toISOString()
+							);
+							const nEnd = new Date(firstStart);
+							const new_end_time = nEnd.setMinutes(nEnd.getMinutes() + duration);
+							previousEnd = booking?.end_time?.toISOString() ?? '';
+							end = new Date(new_end_time).toISOString();
+							return {
+								booking_id: booking.booking_id,
+								start_time: new Date(firstStart).toISOString(),
+								end_time: new Date(new_end_time).toISOString(),
+							};
+						} else {
+							const durationBetween = durationInMinutes(previousEnd, booking?.start_time?.toISOString());
+							const duration = durationInMinutes(
+								booking?.start_time?.toISOString(),
+								booking?.end_time?.toISOString()
+							);
+							const nStart = new Date(end);
+							const new_start_time = nStart.setMinutes(nStart.getMinutes() + durationBetween);
+							const nEnd = new Date(new_start_time);
+							const new_end_time = nEnd.setMinutes(nEnd.getMinutes() + duration);
+							previousEnd = booking?.end_time?.toISOString() ?? '';
+							end = new Date(new_end_time).toISOString();
+							return {
+								booking_id: booking.booking_id,
+								start_time: new Date(new_start_time).toISOString(),
+								end_time: new Date(new_end_time).toISOString(),
+							};
+						}
+					});
+					const updatedBookings = await Promise.all(
+						newBookings.map(async (el) => {
+							const booking = await BookingDao.updateBookingStart(el, el.booking_id, user_id);
+							return booking;
+						})
+					);
+					res.status(200).json({ updatedBookings });
+				} else {
+					// if this is not the first booking in the group and you set to no time gaps when moving
+					let end = '';
+					const calcDuration = bookings
+						.slice(0, findBookingIndex)
+						.reduce(
+							(total, b) =>
+								total + durationInMinutes(b?.start_time?.toISOString(), b.end_time?.toISOString()),
+							0
+						);
+					const inputStart = new Date(start_time);
+					const firstStart = inputStart.setMinutes(inputStart.getMinutes() - calcDuration);
+					const newBookings = bookings.map((booking, i) => {
+						if (i === 0) {
+							const duration = durationInMinutes(
+								booking?.start_time?.toISOString(),
+								booking?.end_time?.toISOString()
+							);
+							const nEnd = new Date(firstStart);
+							const new_end_time = nEnd.setMinutes(nEnd.getMinutes() + duration);
+							end = new Date(new_end_time).toISOString();
+							return {
+								booking_id: booking.booking_id,
+								start_time: new Date(firstStart).toISOString(),
+								end_time: new Date(new_end_time).toISOString(),
+							};
+						} else {
+							const duration = durationInMinutes(
+								booking?.start_time?.toISOString(),
+								booking?.end_time?.toISOString()
+							);
+							const new_start_time = new Date(end);
+							const nEnd = new Date(end);
+							const new_end_time = nEnd.setMinutes(nEnd.getMinutes() + duration);
+							end = new Date(new_end_time).toISOString();
+							return {
+								booking_id: booking.booking_id,
+								start_time: new Date(new_start_time).toISOString(),
+								end_time: new Date(new_end_time).toISOString(),
+							};
+						}
+					});
+					const updatedBookings = await Promise.all(
+						newBookings.map(async (el) => {
+							const booking = await BookingDao.updateBookingStart(el, el.booking_id, user_id);
+							return booking;
+						})
+					);
+					res.status(200).json({ updatedBookings });
+				}
+			} else res.status(200).json('ok');
+		} else {
+			res.status(400).json({ message: 'User is not an employee of the reservation module' });
+		}
+	} catch (error) {
+		res.status(500).json({ message: 'Error updating booking start and end', error });
+	}
+}
+
+/**
+ * PUT /bookings/update-booking-start-first-group-admin/{booking_id}
+ * @tag Reservation
+ * @summary Update booking start time for the first booking in a group and parent of the group
+ * @operationId updateBookingStartFirstInGroupAdmin
+ * @pathParam {string} booking_id
+ * @requestBody {UpdateBookingInput} requestBody
+ * @response 200 - Booking updated
+ * @responseContent {Booking} 200.application/json
+ * @response 500 - Error updating booking
+ */
+export async function updateBookingStartFirstInGroupAdmin(
+	req: ValidatedRequest<UpdateBookingInput, { booking_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const reservation_module_id = req.user?.reservation_module_id;
+		let user_id = req.user?.user_id;
+		let reservation_module = await prisma.reservation_module.findUnique({
+			where: { reservation_module_id: reservation_module_id },
+			include: {
+				employees: {
+					include: {
+						business_user: true,
+					},
+				},
+			},
+		});
+		let isEmployeeOfModule = false;
+		if (reservation_module && user_id) {
+			isEmployeeOfModule = reservation_module.employees.some(
+				(e: Employee) => e.business_user?.user_id === user_id
+			);
+		}
+		if (isEmployeeOfModule) {
+			const bookingsData = await BookingDao.getBookingByIdWithChildren(req.params.booking_id);
+			const booking = await BookingDao.updateBookingStart(req.body, req.params.booking_id, user_id);
+			const children: Booking[] = bookingsData?.child_bookings ?? [];
+			if (children.length > 0) {
+				const [firstBooking, ...restBookings] = children;
+				const firstBookingData = await BookingDao.updateBookingStart(
+					{ parent_booking_id: firstBooking?.parent_booking_id as string },
+					firstBooking?.booking_id as string,
+					user_id
+				);
+				const updatedBookings = await Promise.all(
+					restBookings.map(async (el) => {
+						const booking = await BookingDao.updateBookingParent(
+							{ parent_booking_id: firstBooking?.booking_id as string },
+							el.booking_id,
+							user_id
+						);
+						return booking;
+					})
+				);
+				res.status(200).json({ booking, firstBookingData, updatedBookings });
+			} else {
+				res.status(200).json(booking);
+			}
 		} else {
 			res.status(400).json({ message: 'User is not an employee of the reservation module' });
 		}
@@ -523,4 +868,6 @@ export default {
 	getServicesAndEmployees,
 	createBookingAdmin,
 	updateBookingStartAdmin,
+	updateBookingStartGroupAdmin,
+	updateBookingStartFirstInGroupAdmin,
 };
