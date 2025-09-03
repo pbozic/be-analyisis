@@ -40,6 +40,7 @@ const de = {
 		rejected: 'Ihre Lieferbestellung wurde abgelehnt.',
 		inDelivery: 'Ihre Lieferung ist auf dem Weg zu Ihnen.',
 		completed: 'Ihre Lieferbestellung wurde abgeschlossen.',
+		driverClose: 'Ihr Lieferfahrer ist in der Nähe und wird bald ankommen.',
 	},
 	DELIVERY_DRIVER_NOTIFICATIONS: {
 		accepted: 'Sie haben eine neue Lieferbestellung.',

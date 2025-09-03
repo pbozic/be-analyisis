@@ -40,6 +40,7 @@ const sl = {
 		rejected: 'Vaše naročilo je bilo zavrnjeno.',
 		inDelivery: 'Vaše naročilo je v dostavi.',
 		completed: 'Vaše naročilo je zaključeno.',
+		driverClose: 'Dostavljalec je v bližini in bo kmalu prispel.',
 	},
 	DELIVERY_DRIVER_NOTIFICATIONS: {
 		accepted: 'Imate novo naročilo dostave.',

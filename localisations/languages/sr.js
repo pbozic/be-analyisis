@@ -40,6 +40,7 @@ const sr = {
 		rejected: 'Vaša narudžba za dostavu je odbijena.',
 		inDelivery: 'Vaša narudžba se dostavlja.',
 		completed: 'Vaša narudžba za dostavu je završena.',
+		driverClose: 'Vaš vozač dostave je u blizini i uskoro će stići.',
 	},
 	DELIVERY_DRIVER_NOTIFICATIONS: {
 		accepted: 'Imate novu narudžbinu za dostavu.',
