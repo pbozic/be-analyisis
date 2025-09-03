@@ -1229,7 +1229,9 @@ async function reviewBusiness(req, res) {
 			}
 			business_id = business.business_id;
 		}
-		// Proceed with the business_id obtained or provided
+
+		if (!business_id) return res.status(400).json({ error: 'Business ID is required' });
+
 		let business = await BusinessDao.getBusinessById(business_id);
 		if (business.reviewable_id === null) {
 			let reviewable = await ReviewDao.createReviewableBusiness(business.business_id);

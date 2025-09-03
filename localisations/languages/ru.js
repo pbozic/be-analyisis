@@ -40,6 +40,7 @@ const ru = {
 		rejected: 'Ваш заказ на доставку был отклонен.',
 		inDelivery: 'Ваш заказ доставляется.',
 		completed: 'Ваш заказ на доставку выполнен.',
+		driverClose: 'Ваш водитель доставки рядом и скоро прибудет.',
 	},
 	DELIVERY_DRIVER_NOTIFICATIONS: {
 		accepted: 'У вас новый заказ на доставку.',

@@ -222,7 +222,7 @@ async function startDailyMeals(req, res) {
 	try {
 		const deliveryDriver = await DeliveryDriverDao.getDeliveryDriverByUserId(user_id);
 		if (!deliveryDriver) {
-			return res.status(404).json({ message: 'Delivery driver not found.' });
+			return res.status(400).json({ message: 'Delivery driver not found.' });
 		}
 		if (!deliveryDriver?.location?.coordinates) {
 			return res.status(400).json({ message: 'Delivery driver location not set.' });
@@ -235,7 +235,7 @@ async function startDailyMeals(req, res) {
 			},
 		});
 		if (!dailyMealOrders || dailyMealOrders.length === 0) {
-			return res.status(404).json({ message: 'No daily meal orders found.' });
+			return res.status(204).json({ message: 'No daily meal orders found.' });
 		}
 		const convertAddressToLocation = (address) => {
 			return {
