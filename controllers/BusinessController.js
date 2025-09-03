@@ -291,23 +291,25 @@ async function listPromoSectionsWithMerchants(req, res) {
 					user_favorite_businesses: true,
 				},
 			});
-			finalPromoSections.unshift({
-				tag: 'favorite',
-				translations: {
-					en: 'Favorites',
-					es: 'Favoritos',
-					de: 'Favoriten',
-					fr: 'Favoris',
-					it: 'Preferiti',
-					ru: 'Избранное',
-					hr: 'Omiljeni',
-					bs: 'Omiljeni',
-					sr: 'Omiljeni',
-					sl: 'Priljubljeni',
-					ua: 'Улюблені',
-				},
-			});
 			favoriteBusinessIds = user.user_favorite_businesses?.map((b) => b.business_id);
+			if (favoriteBusinessIds?.length > 0) {
+				finalPromoSections.unshift({
+					tag: 'favorite',
+					translations: {
+						en: 'Favorites',
+						es: 'Favoritos',
+						de: 'Favoriten',
+						fr: 'Favoris',
+						it: 'Preferiti',
+						ru: 'Избранное',
+						hr: 'Omiljeni',
+						bs: 'Omiljeni',
+						sr: 'Omiljeni',
+						sl: 'Priljubljeni',
+						ua: 'Улюблені',
+					},
+				});
+			}
 		}
 
 		for (let promoSection of finalPromoSections) {
