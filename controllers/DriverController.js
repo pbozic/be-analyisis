@@ -437,7 +437,10 @@ async function updateDriverLocation(req, res) {
 		let acceptedOrder;
 		let onOrder = false;
 		for (let order of allOrders) {
-			if ([TAXI_ORDER_STATUS.TAXI_ACCEPTED, DELIVERY_ORDER_STATUS.DELIVERY_IN_DELIVERY].includes(order.status)) {
+			if (
+				[TAXI_ORDER_STATUS.TAXI_ACCEPTED, DELIVERY_ORDER_STATUS.DELIVERY_IN_DELIVERY].includes(order.status) &&
+				!order.timeline?.some((t) => t.status === 'DRIVER_NEARBY')
+			) {
 				acceptedOrder = order;
 			} else if (
 				[

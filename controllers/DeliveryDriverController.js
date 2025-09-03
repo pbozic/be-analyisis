@@ -574,7 +574,10 @@ async function updateDeliveryDriverLocation(req, res) {
 			let acceptedOrder;
 			let notified = false;
 			for (let order of orders) {
-				if (order.status === DELIVERY_ORDER_STATUS.DELIVERY_IN_DELIVERY) {
+				if (
+					order.status === DELIVERY_ORDER_STATUS.DELIVERY_IN_DELIVERY &&
+					!order.timeline?.some((t) => t.status === 'DRIVER_NEARBY')
+				) {
 					acceptedOrder = order;
 				} else if (
 					[
