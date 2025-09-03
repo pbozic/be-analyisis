@@ -448,7 +448,7 @@ async function updateDriverLocation(req, res) {
 					DELIVERY_ORDER_STATUS.DELIVERY_ARRIVED,
 					DELIVERY_ORDER_STATUS.DELIVERY_DELIVERED,
 				].includes(order.status) ||
-				!order.timeline?.some((t) => t.status === 'DRIVER_NEARBY')
+				order.timeline?.some((t) => t.status === 'DRIVER_NEARBY')
 			) {
 				onOrder = true;
 			}

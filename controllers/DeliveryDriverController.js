@@ -557,7 +557,7 @@ async function updateDeliveryDriverLocation(req, res) {
 				locationData
 			);
 			// Emit the delivery driver's updated location to each order's specific channel
-			const orders = await DeliveryOrderDao.getOrdersByDeliveryDriverId(deliveryDriver.delivery_driver_id);
+			const orders = await DeliveryOrderDao.getActiveOrdersByDeliveryDriverId(deliveryDriver.delivery_driver_id);
 			let orderStatus = null;
 			let orderId = null;
 			if (deliveryDriver?.on_order) {
@@ -582,7 +582,7 @@ async function updateDeliveryDriverLocation(req, res) {
 						DELIVERY_ORDER_STATUS.DELIVERY_ARRIVED,
 						DELIVERY_ORDER_STATUS.DELIVERY_DELIVERED,
 					].includes(order.status) ||
-					!order.timeline?.some((t) => t.status === 'DRIVER_NEARBY')
+					order.timeline?.some((t) => t.status === 'DRIVER_NEARBY')
 				) {
 					notified = true;
 				}
