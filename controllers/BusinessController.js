@@ -902,7 +902,7 @@ async function updateRestaurantOverwhelmed(req, res) {
 		);
 		if (business) {
 			const userSocket = UserSockets.get(business.business_id);
-			console.log('overwhelmed in business, the usersocket', userSocket);
+			console.log('overwhelmed in business, the usersocket', !!userSocket);
 			if (userSocket) {
 				console.log('overwhelmed in usersocket, businees', business);
 				io.emit('refetch_providers', business);
