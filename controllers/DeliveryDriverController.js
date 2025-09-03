@@ -1,4 +1,5 @@
 import { config } from 'dotenv';
+import moment from 'moment';
 
 import DeliveryDriverDao from '../dao/DeliveryDriver.js';
 import UserDao from '../dao/User.js';
@@ -18,10 +19,11 @@ import {
 import { updateFileInDocument, addFileToDocument } from '../dao/File.js';
 import S3Helper from '../lib/s3.js';
 import VehicleDao from '../dao/Vehicle.js';
-import { DELIVERY_ORDER_STATUS, DOCUMENT_TYPE } from '../lib/constants.js';
+import { DELIVERY_DRIVER_NEARBY_DISTANCE, DELIVERY_ORDER_STATUS, DOCUMENT_TYPE } from '../lib/constants.js';
 import { createNewVehicle } from '../dao/Vehicle.js';
-import { calculateTotalEarnings, calculateDeliveryDriversEarnings } from '../lib/helpersLib.js';
+import { calculateTotalEarnings, calculateDeliveryDriversEarnings, calculateDistance } from '../lib/helpersLib.js';
 import dailyMealHelpers from '../lib/dailyMealHelpers.js';
+import { sendDeliveryOrderNotifications } from '../lib/notifications.js';
 config();
 const { UserSockets, io } = socket;
 /**
@@ -546,13 +548,13 @@ async function updateDeliveryDriver(req, res) {
  */
 async function updateDeliveryDriverLocation(req, res) {
 	try {
-		console.log(req.body, 'location, body');
+		const locationData = req.body.location;
 		try {
 			const userId = req.user.user_id;
 			const deliveryDriver = await DeliveryDriverDao.getDeliveryDriverByUserId(userId);
 			const updatedDeliveryDriver = await DeliveryDriverDao.updateDeliveryDriverLocation(
 				deliveryDriver.delivery_driver_id,
-				req.body.location
+				locationData
 			);
 			// Emit the delivery driver's updated location to each order's specific channel
 			const orders = await DeliveryOrderDao.getOrdersByDeliveryDriverId(deliveryDriver.delivery_driver_id);
@@ -569,7 +571,21 @@ async function updateDeliveryDriverLocation(req, res) {
 					orderId = latestOrder.order_id;
 				}
 			}
+			let acceptedOrder;
+			let notified = false;
 			for (let order of orders) {
+				if (order.status === DELIVERY_ORDER_STATUS.DELIVERY_IN_DELIVERY) {
+					acceptedOrder = order;
+				} else if (
+					[
+						DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP,
+						DELIVERY_ORDER_STATUS.DELIVERY_ARRIVED,
+						DELIVERY_ORDER_STATUS.DELIVERY_DELIVERED,
+					].includes(order.status) ||
+					!order.timeline?.some((t) => t.status === 'DRIVER_NEARBY')
+				) {
+					notified = true;
+				}
 				try {
 					io.to(`order_${order.order_id}`).emit('driver_location_delivery', {
 						...deliveryDriver,
@@ -578,6 +594,38 @@ async function updateDeliveryDriverLocation(req, res) {
 					});
 				} catch (error) {
 					console.error("Error emitting delivery driver's location to connected users:", error);
+				}
+			}
+			if (acceptedOrder?.order_id && !notified) {
+				const pickupLocation = acceptedOrder.pickup_location;
+				const distance = calculateDistance(
+					locationData?.coordinates?.latitude,
+					locationData?.coordinates?.longitude,
+					pickupLocation?.coordinates?.latitude,
+					pickupLocation?.coordinates?.longitude
+				);
+				if (distance < DELIVERY_DRIVER_NEARBY_DISTANCE) {
+					console.log('Driver is within 300 meters of delivery location!');
+					sendDeliveryOrderNotifications(
+						acceptedOrder?.user,
+						acceptedOrder?.driver,
+						acceptedOrder?.user_id,
+						acceptedOrder?.driver_id,
+						'DRIVER_NEARBY'
+					);
+					DeliveryOrderDao.updateDeliveryOrderTimeline(acceptedOrder.order_id, [
+						{
+							status: 'DRIVER_NEARBY',
+							order_id: acceptedOrder.order_id,
+							location: {
+								timestamp: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
+								address: acceptedOrder.delivery_location?.address,
+								coordinates: locationData?.coordinates,
+							},
+						},
+					]);
+				} else {
+					console.log(`Driver is ${distance} km from delivery location`);
 				}
 			}
 			if (orders.length === 0) {

@@ -27,6 +27,7 @@ import {
 	DOCUMENT_TYPE,
 	ACTIVITY_TYPE,
 	TAXI_ORDER_AUTO_UPDATE_STATUS_DISTANCE,
+	DELIVERY_DRIVER_NEARBY_DISTANCE,
 	ORDER_TYPE,
 } from '../lib/constants.js';
 import { calculateTotalEarnings, calculateDriversEarnings, calculateDistance } from '../lib/helpersLib.js';
@@ -38,7 +39,7 @@ import { getLocalisedTexts } from '../localisations/languages.js';
 import { handleDriverStatusChange } from '../lib/driverHelpers.js';
 import { sendDeliveryOrderNotifications, sendOrderNotifications } from '../lib/notifications.js';
 config();
-const { UserSockets, io } = socket;
+const { io } = socket;
 /**
  * GET /drivers
  * @tag Drivers
@@ -446,7 +447,8 @@ async function updateDriverLocation(req, res) {
 					DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP,
 					DELIVERY_ORDER_STATUS.DELIVERY_ARRIVED,
 					DELIVERY_ORDER_STATUS.DELIVERY_DELIVERED,
-				].includes(order.status)
+				].includes(order.status) ||
+				!order.timeline?.some((t) => t.status === 'DRIVER_NEARBY')
 			) {
 				onOrder = true;
 			}
@@ -460,7 +462,7 @@ async function updateDriverLocation(req, res) {
 				console.error("Error emiting driver's location to connected users:", error);
 			}
 		}
-		console.info('ORDERS LENGTH driver_location', orders.length);
+
 		if (acceptedOrder?.order_id && !onOrder) {
 			const pickupLocation = acceptedOrder.pickup_location;
 			const distance = calculateDistance(
@@ -496,7 +498,7 @@ async function updateDriverLocation(req, res) {
 					console.log(`Driver is ${distance} km from pickup location, keeping order status as accepted`);
 				}
 			} else {
-				if (distance < TAXI_ORDER_AUTO_UPDATE_STATUS_DISTANCE) {
+				if (distance < DELIVERY_DRIVER_NEARBY_DISTANCE) {
 					console.log('Driver is within 300 meters of delivery location!');
 					sendDeliveryOrderNotifications(
 						acceptedOrder?.user,
@@ -505,6 +507,17 @@ async function updateDriverLocation(req, res) {
 						acceptedOrder?.driver_id,
 						'DRIVER_NEARBY'
 					);
+					DeliveryOrderDao.updateDeliveryOrderTimeline(acceptedOrder.order_id, [
+						{
+							status: 'DRIVER_NEARBY',
+							order_id: acceptedOrder.order_id,
+							location: {
+								timestamp: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
+								address: acceptedOrder.delivery_location?.address,
+								coordinates: locationData?.coordinates,
+							},
+						},
+					]);
 				} else {
 					console.log(`Driver is ${distance} km from delivery location`);
 				}

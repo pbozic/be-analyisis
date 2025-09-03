@@ -148,7 +148,7 @@ async function getActiveOrdersHelper(user_id, type, isBusinessUser = false) {
 						estimates: activeOrder.estimates,
 					});
 					const userSocket = UserSockets.get(activeOrder.user_id);
-					console.log('userSocket: ', userSocket);
+					console.log('userSocket: ', !!userSocket);
 					if (userSocket) {
 						io.emit('active_order_updated__taxi', {
 							...activeOrder,
