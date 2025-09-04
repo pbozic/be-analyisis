@@ -39,6 +39,9 @@ export const CreateBookingBaseSchema = z.object({
 	start_time: z.string().datetime().optional(),
 	end_time: z.string().datetime().optional(),
 	employee_id: z.string().uuid().optional(),
+	discount_percent: z.number().int().min(0).optional(),
+	discount_amount: z.number().int().min(0).optional(),
+	price_cents: z.number().int().min(0).optional(),
 });
 
 export const CreateBookingSchema = CreateBookingBaseSchema.superRefine((data, ctx) => {
@@ -63,6 +66,9 @@ export const UpdateBookingSchema = z
 		employee_id: z.string().uuid().optional(),
 		parent_booking_id: z.string().uuid().optional(),
 		status: z.nativeEnum(BOOKING_STATUS).optional(),
+		discount_percent: z.number().int().min(0).optional(),
+		discount_amount: z.number().int().min(0).optional(),
+		keepTimeGaps: z.boolean().optional(),
 	})
 	.superRefine((data, ctx) => {
 		addValideBookingSchema(data, ctx);

@@ -138,6 +138,7 @@ async function login(req, res) {
 				referrals_made: true,
 				referral: { include: { referrer: { select: { first_name: true, last_name: true } } } },
 				user_roles: true,
+				user_favorite_businesses: true,
 				business_users: {
 					include: {
 						business: {

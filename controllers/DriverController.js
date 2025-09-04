@@ -27,6 +27,7 @@ import {
 	DOCUMENT_TYPE,
 	ACTIVITY_TYPE,
 	TAXI_ORDER_AUTO_UPDATE_STATUS_DISTANCE,
+	DELIVERY_DRIVER_NEARBY_DISTANCE,
 } from '../lib/constants.js';
 import { calculateTotalEarnings, calculateDriversEarnings, calculateDistance } from '../lib/helpersLib.js';
 import deliveryHelpers from '../lib/deliveryHelpers.js';
@@ -35,8 +36,9 @@ import SMSHelper from '../lib/SMS.js';
 import { sendNotificationToUser } from '../lib/oneSignal.js';
 import { getLocalisedTexts } from '../localisations/languages.js';
 import { handleDriverStatusChange } from '../lib/driverHelpers.js';
+import { sendDeliveryOrderNotifications, sendOrderNotifications } from '../lib/notifications.js';
 config();
-const { UserSockets, io } = socket;
+const { io } = socket;
 /**
  * GET /drivers
  * @tag Drivers
@@ -415,7 +417,7 @@ async function updateDriverLocation(req, res) {
 		// Emit the driver's updated location to each order's specific channel
 		const orders = await TaxiOrderDao.getActiveOrdersByDriverId(driver.driver_id);
 		const deliveryOrders = await DeliveryOrderDao.getActiveOrdersByDeliveryDriverId(driver.driver_id);
-		let allOrders = orders.concat(deliveryOrders);
+		let allOrders = [...orders, ...deliveryOrders];
 		let orderStatus = null;
 		let orderId = null;
 		let orderType;
@@ -432,18 +434,24 @@ async function updateDriverLocation(req, res) {
 			}
 		}
 		let acceptedOrder;
+		let acceptedDeliveryOrders = [];
 		let onOrder = false;
 		for (let order of allOrders) {
 			if (order.status === TAXI_ORDER_STATUS.TAXI_ACCEPTED) {
 				acceptedOrder = order;
 			} else if (
 				[
-					TAXI_ORDER_STATUS.TAXI_ARRIVED,
-					TAXI_ORDER_STATUS.TAXI_DRIVING,
 					TAXI_ORDER_STATUS.TAXI_WAITING,
+					TAXI_ORDER_STATUS.TAXI_DRIVING,
+					TAXI_ORDER_STATUS.TAXI_ARRIVED,
 				].includes(order.status)
 			) {
 				onOrder = true;
+			} else if (
+				order.status === DELIVERY_ORDER_STATUS.DELIVERY_IN_DELIVERY &&
+				!order.timeline?.some((t) => t.status === 'DRIVER_NEARBY')
+			) {
+				acceptedDeliveryOrders.push(order);
 			}
 			try {
 				io.to(`order_${order.order_id}`).emit('driver_location', {
@@ -455,7 +463,7 @@ async function updateDriverLocation(req, res) {
 				console.error("Error emiting driver's location to connected users:", error);
 			}
 		}
-		console.info('ORDERS LENGTH driver_location', orders.length);
+
 		if (acceptedOrder?.order_id && !onOrder) {
 			const pickupLocation = acceptedOrder.pickup_location;
 			const distance = calculateDistance(
@@ -472,15 +480,54 @@ async function updateDriverLocation(req, res) {
 						status: TAXI_ORDER_STATUS.TAXI_WAITING,
 						order_id: acceptedOrder.order_id,
 						location: {
-							timestamp: new Date().toISOString(),
+							timestamp: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
 							address: acceptedOrder.route[0]?.address,
 							coordinates: locationData?.coordinates,
 						},
 					},
 				]);
+				sendOrderNotifications(
+					acceptedOrder?.user,
+					acceptedOrder?.driver,
+					acceptedOrder?.user_id,
+					acceptedOrder?.driver_id,
+					TAXI_ORDER_STATUS.TAXI_WAITING
+				);
 				io.to(`order_${acceptedOrder.order_id}`).emit('order_status_change__taxi', updatedOrder);
 			} else {
 				console.log(`Driver is ${distance} km from pickup location, keeping order status as accepted`);
+			}
+		}
+		for (const acceptedOrder of acceptedDeliveryOrders) {
+			const deliveryLocation = acceptedOrder.delivery_location;
+			const distance = calculateDistance(
+				locationData?.coordinates?.latitude,
+				locationData?.coordinates?.longitude,
+				deliveryLocation?.coordinates?.latitude,
+				deliveryLocation?.coordinates?.longitude
+			);
+			if (distance < DELIVERY_DRIVER_NEARBY_DISTANCE) {
+				console.log('Driver is within 300 meters of delivery location!');
+				sendDeliveryOrderNotifications(
+					acceptedOrder?.user,
+					acceptedOrder?.driver,
+					acceptedOrder?.user_id,
+					acceptedOrder?.driver_id,
+					'DRIVER_NEARBY'
+				);
+				DeliveryOrderDao.updateDeliveryOrderTimeline(acceptedOrder.order_id, [
+					{
+						status: 'DRIVER_NEARBY',
+						order_id: acceptedOrder.order_id,
+						location: {
+							timestamp: moment().format('YYYY-MM-DDTHH:mm:ss.SSS'),
+							address: acceptedOrder.delivery_location?.address,
+							coordinates: locationData?.coordinates,
+						},
+					},
+				]);
+			} else {
+				console.log(`Driver is ${distance} km from delivery location`);
 			}
 		}
 		if (!driver?.on_order) {

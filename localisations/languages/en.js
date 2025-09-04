@@ -40,6 +40,7 @@ const en = {
 		rejected: 'Your delivery order has been rejected.',
 		inDelivery: 'Your delivery order is being delivered to you.',
 		completed: 'Your delivery order has been completed.',
+		driverClose: 'Your delivery driver is nearby and will arrive soon.',
 	},
 	DELIVERY_DRIVER_NOTIFICATIONS: {
 		accepted: 'You have a new delivery order.',

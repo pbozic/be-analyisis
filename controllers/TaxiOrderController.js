@@ -148,7 +148,7 @@ async function getActiveOrdersHelper(user_id, type, isBusinessUser = false) {
 						estimates: activeOrder.estimates,
 					});
 					const userSocket = UserSockets.get(activeOrder.user_id);
-					console.log('userSocket: ', userSocket);
+					console.log('userSocket: ', !!userSocket);
 					if (userSocket) {
 						io.emit('active_order_updated__taxi', {
 							...activeOrder,
@@ -1179,7 +1179,7 @@ async function acceptOrder(req, res) {
 		if (userSocket) {
 			io.to('order_' + order.order_id).emit('order_accepted__taxi', order);
 			io.emit('driver_unavailable', order.driver_id);
-			console.log('userSocket', userSocket);
+			console.log('userSocket', !!userSocket);
 		}
 		SocketStore.addUserToRoom(driver.user_id, `order_${order.order_id}`);
 		if (order.type !== ORDER_TYPE.VEHICLE_TRANSFER_COMBO)

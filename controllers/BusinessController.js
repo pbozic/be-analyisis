@@ -291,23 +291,25 @@ async function listPromoSectionsWithMerchants(req, res) {
 					user_favorite_businesses: true,
 				},
 			});
-			finalPromoSections.unshift({
-				tag: 'favorite',
-				translations: {
-					en: 'Favorites',
-					es: 'Favoritos',
-					de: 'Favoriten',
-					fr: 'Favoris',
-					it: 'Preferiti',
-					ru: 'Избранное',
-					hr: 'Omiljeni',
-					bs: 'Omiljeni',
-					sr: 'Omiljeni',
-					sl: 'Priljubljeni',
-					ua: 'Улюблені',
-				},
-			});
 			favoriteBusinessIds = user.user_favorite_businesses?.map((b) => b.business_id);
+			if (favoriteBusinessIds?.length > 0) {
+				finalPromoSections.unshift({
+					tag: 'favorite',
+					translations: {
+						en: 'Favorites',
+						es: 'Favoritos',
+						de: 'Favoriten',
+						fr: 'Favoris',
+						it: 'Preferiti',
+						ru: 'Избранное',
+						hr: 'Omiljeni',
+						bs: 'Omiljeni',
+						sr: 'Omiljeni',
+						sl: 'Priljubljeni',
+						ua: 'Улюблені',
+					},
+				});
+			}
 		}
 
 		for (let promoSection of finalPromoSections) {
@@ -900,7 +902,7 @@ async function updateRestaurantOverwhelmed(req, res) {
 		);
 		if (business) {
 			const userSocket = UserSockets.get(business.business_id);
-			console.log('overwhelmed in business, the usersocket', userSocket);
+			console.log('overwhelmed in business, the usersocket', !!userSocket);
 			if (userSocket) {
 				console.log('overwhelmed in usersocket, businees', business);
 				io.emit('refetch_providers', business);
@@ -1229,7 +1231,9 @@ async function reviewBusiness(req, res) {
 			}
 			business_id = business.business_id;
 		}
-		// Proceed with the business_id obtained or provided
+
+		if (!business_id) return res.status(400).json({ error: 'Business ID is required' });
+
 		let business = await BusinessDao.getBusinessById(business_id);
 		if (business.reviewable_id === null) {
 			let reviewable = await ReviewDao.createReviewableBusiness(business.business_id);

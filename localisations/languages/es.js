@@ -40,6 +40,7 @@ const es = {
 		rejected: 'Su pedido de entrega ha sido rechazado.',
 		inDelivery: 'Su pedido está siendo entregado.',
 		completed: 'Su pedido de entrega ha sido completado.',
+		driverClose: 'Su conductor de entrega está cerca y llegará pronto.',
 	},
 	DELIVERY_DRIVER_NOTIFICATIONS: {
 		accepted: 'Tienes un nuevo pedido de entrega.',

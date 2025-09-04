@@ -40,6 +40,7 @@ const fr = {
 		rejected: 'Votre commande de livraison a été refusée.',
 		inDelivery: 'Votre commande est en cours de livraison.',
 		completed: 'Votre commande de livraison est terminée.',
+		driverClose: 'Votre chauffeur de livraison est à proximité et arrivera bientôt.',
 	},
 	DELIVERY_DRIVER_NOTIFICATIONS: {
 		accepted: 'Vous avez une nouvelle commande de livraison.',

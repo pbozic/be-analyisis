@@ -40,6 +40,7 @@ const it = {
 		rejected: 'Il tuo ordine di consegna è stato rifiutato.',
 		inDelivery: 'Il tuo ordine è in fase di consegna.',
 		completed: 'Il tuo ordine di consegna è stato completato.',
+		driverClose: 'Il tuo autista di consegna è nelle vicinanze e arriverà presto.',
 	},
 	DELIVERY_DRIVER_NOTIFICATIONS: {
 		accepted: 'Hai un nuovo ordine di consegna.',
