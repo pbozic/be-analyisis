@@ -571,23 +571,13 @@ async function updateDeliveryDriverLocation(req, res) {
 					orderId = latestOrder.order_id;
 				}
 			}
-			let acceptedOrder;
-			let notified = false;
+			let acceptedOrders = [];
 			for (let order of orders) {
 				if (
 					order.status === DELIVERY_ORDER_STATUS.DELIVERY_IN_DELIVERY &&
 					!order.timeline?.some((t) => t.status === 'DRIVER_NEARBY')
 				) {
-					acceptedOrder = order;
-				} else if (
-					[
-						DELIVERY_ORDER_STATUS.DELIVERY_PICKED_UP,
-						DELIVERY_ORDER_STATUS.DELIVERY_ARRIVED,
-						DELIVERY_ORDER_STATUS.DELIVERY_DELIVERED,
-					].includes(order.status) ||
-					order.timeline?.some((t) => t.status === 'DRIVER_NEARBY')
-				) {
-					notified = true;
+					acceptedOrders.push(order);
 				}
 				try {
 					io.to(`order_${order.order_id}`).emit('driver_location_delivery', {
@@ -599,8 +589,8 @@ async function updateDeliveryDriverLocation(req, res) {
 					console.error("Error emitting delivery driver's location to connected users:", error);
 				}
 			}
-			if (acceptedOrder?.order_id && !notified) {
-				const pickupLocation = acceptedOrder.pickup_location;
+			for (const acceptedOrder of acceptedOrders) {
+				const pickupLocation = acceptedOrder.delivery_location;
 				const distance = calculateDistance(
 					locationData?.coordinates?.latitude,
 					locationData?.coordinates?.longitude,
