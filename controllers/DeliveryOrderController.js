@@ -232,6 +232,7 @@ async function startDailyMeals(req, res) {
 				is_daily_meal: true,
 				delivery_driver_id: deliveryDriver.delivery_driver_id,
 				status: DELIVERY_ORDER_STATUS.MERCHANT_READY_FOR_PICKUP,
+				created_at: { gte: new Date(new Date().setUTCHours(0, 0, 0, 0)) },
 			},
 		});
 		if (!dailyMealOrders || dailyMealOrders.length === 0) {
