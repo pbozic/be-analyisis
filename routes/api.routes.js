@@ -65,7 +65,7 @@ router.use('/delivery_drivers', [authMiddleware], deliveryDriverRoutes);
 router.use('/vehicles', [authMiddleware], vehicleRoutes);
 router.use('/finances', [authMiddleware], financesRoutes);
 router.use('/documents', [authMiddleware], documentsRoutes);
-router.use('/menus', menusRoutes);
+router.use('/menus', [authMiddleware], menusRoutes);
 router.use('/business-users', [authMiddleware], businessUserRoutes);
 router.use('/business-teams', [authMiddleware], businessTeamRoutes);
 router.use('/business-clients', [authMiddleware], businessClientRoutes);
