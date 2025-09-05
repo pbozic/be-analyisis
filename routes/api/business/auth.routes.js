@@ -4,7 +4,7 @@ import AuthController from '../../../controllers/AuthController.js';
 import { loginSchema, registerSchema, refreshSchema, resetPasswordSchema } from '../../../joi/authSchemas.js';
 import joi from '../../../middleware/joi.js';
 import BusinessController from '../../../controllers/BusinessController.js';
-import DailyMealCategoryController from '../../../controllers/DailyMealCategoryController.js';
+import * as DailyMealCategoryController from '../../../controllers/DailyMealCategoryController.js';
 
 const router = express.Router();
 router.post('/register', AuthController.registerBusiness);
