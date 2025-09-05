@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { addValideBookingSchema } from '../../lib/bookingHelpers';
 import type { booking, booking_history_log } from '../../prisma/schemas/interfaces';
+import { UpdateCustomerSchema } from './Customer';
 
 // --- SCHEMAS ---
 export const ListBookingsParamsSchema = z.object({
@@ -48,31 +49,32 @@ export const CreateBookingSchema = CreateBookingBaseSchema.superRefine((data, ct
 	addValideBookingSchema(data, ctx);
 });
 
-export const UpdateBookingSchema = z
-	.object({
-		customer_id: z.string().uuid().optional(),
-		first_name: z.string().min(1, 'First name is required').optional(),
-		last_name: z.string().min(1, 'Last name is required').optional(),
-		email: z.string().email('Invalid email address').optional(),
-		telephone: z.string().optional(),
-		telephone_code: z.string().optional(),
-		telephone_number: z.string().optional(),
-		reservation_module_id: z.string().uuid().optional(),
-		location_id: z.string().uuid().optional(),
-		service_id: z.string().uuid().optional(),
-		comment: z.string().optional(),
-		start_time: z.string().datetime().optional(),
-		end_time: z.string().datetime().optional(),
-		employee_id: z.string().uuid().optional(),
-		parent_booking_id: z.string().uuid().optional(),
-		status: z.nativeEnum(BOOKING_STATUS).optional(),
-		discount_percent: z.number().int().min(0).optional(),
-		discount_amount: z.number().int().min(0).optional(),
-		keepTimeGaps: z.boolean().optional(),
-	})
-	.superRefine((data, ctx) => {
-		addValideBookingSchema(data, ctx);
-	});
+export const UpdateBookingBaseSchema = z.object({
+	booking_id: z.string().uuid().optional(),
+	customer_id: z.string().uuid().optional(),
+	first_name: z.string().min(1, 'First name is required').optional(),
+	last_name: z.string().min(1, 'Last name is required').optional(),
+	email: z.string().email('Invalid email address').optional(),
+	telephone: z.string().optional(),
+	telephone_code: z.string().optional(),
+	telephone_number: z.string().optional(),
+	reservation_module_id: z.string().uuid().optional(),
+	location_id: z.string().uuid().optional(),
+	service_id: z.string().uuid().optional(),
+	comment: z.string().optional(),
+	start_time: z.string().datetime().optional(),
+	end_time: z.string().datetime().optional(),
+	employee_id: z.string().uuid().optional(),
+	parent_booking_id: z.string().uuid().optional().nullable(),
+	status: z.nativeEnum(BOOKING_STATUS).optional(),
+	discount_percent: z.number().int().min(0).optional().nullable(),
+	discount_amount: z.number().int().min(0).optional().nullable(),
+	keepTimeGaps: z.boolean().optional(),
+});
+
+export const UpdateBookingSchema = UpdateBookingBaseSchema.superRefine((data, ctx) => {
+	addValideBookingSchema(data, ctx);
+});
 
 export const DeleteBookingSchema = z.object({ booking_id: z.string().uuid() });
 
@@ -113,6 +115,12 @@ export const CreateMultipleBookingsSchema = CreateBookingBaseSchema.omit({ servi
 		addValideBookingSchema(data, ctx);
 	});
 
+export const UpdateMultipleBookingsSchema = z.object({
+	customer: UpdateCustomerSchema,
+	bookings: z.array(UpdateBookingBaseSchema),
+	deletedBookings: z.array(UpdateBookingBaseSchema),
+});
+
 // --- TYPES ---
 
 export type Booking = booking;
@@ -125,6 +133,7 @@ export type CreateBookingSingleInput = Omit<CreateBookingInput, 'service_ids'> &
 	parent_booking_id?: string;
 };
 export type UpdateBookingInput = z.infer<typeof UpdateBookingSchema>;
+export type UpdateMultipleBookingsInput = z.infer<typeof UpdateMultipleBookingsSchema>;
 export type CreateBookingHistoryLogInput = z.infer<typeof CreateBookingHistoryLogSchema>;
 export type FindBookingSlotsInput = z.infer<typeof FindBookingSlotsSchema>;
 export type DeleteBookingInput = z.infer<typeof DeleteBookingSchema>;

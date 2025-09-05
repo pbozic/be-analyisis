@@ -12,6 +12,7 @@ import {
 	AllBookingsForLocationAndEmployeesParams,
 	CreateMultipleBookingsInput,
 	Booking,
+	UpdateMultipleBookingsInput,
 } from '../../types/reservation/Booking.ts';
 import { Employee } from '../../types/reservation/Employee.ts';
 import { findSlots } from '../../lib/bookingHelpers.ts';
@@ -144,7 +145,8 @@ export async function updateBooking(
 				...req.body,
 				reservation_module_id: req.user?.reservation_module_id,
 			},
-			req.params.booking_id
+			req.params.booking_id,
+			false
 		);
 		res.status(200).json(booking);
 	} catch (error) {
@@ -362,16 +364,18 @@ export async function getServicesAndEmployees(req: ValidatedRequest, res: Respon
 }
 /**
  * Split consecutive slots into groups
- * @param {CreateBookingSingleInput[]} slots - The list of slots to split.
- * @returns {CreateBookingSingleInput[]} - The list of slots split into groups.
+ * @param {(CreateBookingSingleInput | UpdateBookingInput)[]} slots - The list of slots to split.
+ * @returns {(CreateBookingSingleInput | UpdateBookingInput)[]} - The list of slots split into groups.
  * @description This function takes an array of slots and splits them into groups of consecutive slots.
  */
-function splitConsecutiveSlots(slots: CreateBookingSingleInput[]): CreateBookingSingleInput[][] {
+function splitConsecutiveSlots(
+	slots: (CreateBookingSingleInput | UpdateBookingInput)[]
+): (CreateBookingSingleInput | UpdateBookingInput)[][] {
 	if (slots.length === 0) return [];
 
-	const result: CreateBookingSingleInput[][] = [];
+	const result: (CreateBookingSingleInput | UpdateBookingInput)[][] = [];
 	if (slots[0]) {
-		let currentGroup: CreateBookingSingleInput[] = [slots[0]];
+		let currentGroup: (CreateBookingSingleInput | UpdateBookingInput)[] = [slots[0]];
 
 		for (let i = 1; i < slots.length; i++) {
 			const prev = slots[i - 1];
@@ -439,7 +443,7 @@ export async function createBookingAdmin(
 		try {
 			const result = await Promise.all(
 				splittedInputs.map(async (el) => {
-					const all = await BookingDao.createBookingGroup(el, {
+					const all = await BookingDao.createBookingGroup(el as CreateBookingSingleInput[], {
 						validateSchedule: !isEmployeeOfModule, // <- only enforce schedules for externals
 						ignoreBooking: true,
 					});
@@ -855,6 +859,85 @@ export async function updateBookingStartFirstInGroupAdmin(
 	}
 }
 
+/**
+ * POST /bookings/update-bookings-admin
+ * @tag Reservation
+ * @summary Update multiple bookings
+ * @operationId updateBookingGroupAdmin
+ * @requestBody {UpdateMultipleBookingsInput} requestBody
+ * @response 201 - Bookings updated
+ * @responseContent {Booking} 201.application/json
+ * @response 500 - Error updating booking
+ */
+export async function updateBookingGroupAdmin(
+	req: ValidatedRequest<UpdateMultipleBookingsInput>,
+	res: Response
+): Promise<void> {
+	const { bookings, customer, deletedBookings } = req.body;
+	const reservation_module_id = req.user?.reservation_module_id;
+	let user_id = req.user?.user_id;
+
+	let reservation_module = await prisma.reservation_module.findUnique({
+		where: { reservation_module_id: reservation_module_id },
+		include: {
+			employees: {
+				include: {
+					business_user: true,
+				},
+			},
+		},
+	});
+	let isEmployeeOfModule = false;
+	if (reservation_module && user_id) {
+		isEmployeeOfModule = reservation_module.employees.some((e: Employee) => e.business_user?.user_id === user_id);
+	}
+	// map to DAO’s single-service input
+	if (isEmployeeOfModule) {
+		const customerInput = {
+			...customer,
+			customer_id: customer?.customer_id ?? null,
+		};
+		const inputs = bookings.map((booking) => ({
+			...booking,
+			...customerInput,
+			reservation_module_id,
+			// parent_booking_id set inside DAO for children
+		})) as UpdateBookingInput[];
+		const splittedInputs = splitConsecutiveSlots(inputs);
+
+		try {
+			const result = await Promise.all(
+				splittedInputs.map(async (el) => {
+					const all = await BookingDao.updateBookingGroup(el, {
+						validateSchedule: !isEmployeeOfModule, // <- only enforce schedules for externals
+						ignoreBooking: true,
+					});
+					return {
+						parent: all[0],
+						children: all.slice(1),
+						all,
+					};
+				})
+			);
+			const deleted = await Promise.all(
+				deletedBookings.map(async (el) => {
+					const all = await BookingDao.updateStatusDelete(el?.booking_id as string, user_id);
+					return all;
+				})
+			);
+			res.status(201).json({ result, deleted });
+		} catch (error) {
+			console.error('Error creating booking group:', error);
+			res.status(500).json({
+				message: error instanceof Error ? error.message : 'Error creating booking group',
+				error,
+			});
+		}
+	} else {
+		res.status(400).json({ message: 'User is not an employee of the reservation module' });
+	}
+}
+
 export default {
 	listBookings,
 	getBooking,
@@ -870,4 +953,5 @@ export default {
 	updateBookingStartAdmin,
 	updateBookingStartGroupAdmin,
 	updateBookingStartFirstInGroupAdmin,
+	updateBookingGroupAdmin,
 };
