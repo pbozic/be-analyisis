@@ -1,8 +1,6 @@
 import express from 'express';
 
 import AuthController from '../../../controllers/AuthController.js';
-import { loginSchema, registerSchema, refreshSchema, resetPasswordSchema } from '../../../joi/authSchemas.js';
-import joi from '../../../middleware/joi.js';
 import BusinessController from '../../../controllers/BusinessController.js';
 import * as DailyMealCategoryController from '../../../controllers/DailyMealCategoryController.js';
 
