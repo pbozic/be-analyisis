@@ -9,6 +9,7 @@ export const CreateCustomerSchema = z.object({
 	email: z.string().email().optional(),
 	telephone: z.string().optional(),
 	user_id: z.string().uuid().optional(),
+	customer_id: z.string().uuid().optional(),
 });
 
 export const UpdateCustomerSchema = CreateCustomerSchema.partial();

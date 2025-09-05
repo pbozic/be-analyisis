@@ -15,6 +15,7 @@ import {
 	getBookingAdmin,
 	updateBookingStartGroupAdmin,
 	updateBookingStartFirstInGroupAdmin,
+	updateBookingGroupAdmin,
 } from '../../../controllers/reservation/BookingController.ts';
 import { validate } from '../../../middleware/zod';
 import {
@@ -22,6 +23,7 @@ import {
 	UpdateBookingSchema,
 	AllBookingsForLocationAndEmployeesSchema,
 	CreateMultipleBookingsSchema,
+	UpdateMultipleBookingsSchema,
 } from '../../../types/reservation/Booking.ts';
 
 const router = express.Router();
@@ -68,6 +70,7 @@ router.put(
 	[validate(UpdateBookingSchema)],
 	updateBookingStartFirstInGroupAdmin
 );
+router.put('/bookings/update-bookings-admin', [validate(UpdateMultipleBookingsSchema)], updateBookingGroupAdmin);
 
 router.put('/bookings/:booking_id', [validate(UpdateBookingSchema)], updateBooking);
 
