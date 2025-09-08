@@ -2008,17 +2008,14 @@ async function updateBusinessLocalLocation(req, res) {
 
 async function getBusinessOverallAnalytics(req, res) {
 	try {
-		const { business_id } = req.params;
-		if (!business_id) {
-			return res.status(400).json({ error: 'Business ID is required' });
-		}
 		const user_id = req.user?.user_id;
 		const bUser = await BusinessUsersDao.getBusinessUserByUserId(user_id);
-		if (!bUser || bUser.business_id !== business_id) {
+		const business_id = bUser?.business_id;
+		if (!bUser || !business_id) {
 			return res.status(401).json({ error: 'Unauthorized' });
 		}
 		const { type, periodStart, periodEnd, prevStart, prevEnd } = getPeriodsFromBody(req.body);
-		console.info('Analytics period', { periodStart, periodEnd, prevStart, prevEnd });
+
 		// Fetch orders for current & previous periods
 		const allOrdersCurrent = await prisma.delivery_orders.findMany({
 			where: {
@@ -2051,7 +2048,7 @@ async function getBusinessOverallAnalytics(req, res) {
 		const currentUserOrdersMap = new Set();
 		for (const o of ordersCurrent) {
 			if (!o.user_id) continue;
-			const existing = currentUserOrdersMap.get(o.user_id);
+			const existing = currentUserOrdersMap.has(o.user_id);
 			if (!existing) currentUserOrdersMap.add(o.user_id);
 		}
 		let newCustomers = 0;
@@ -2077,7 +2074,7 @@ async function getBusinessOverallAnalytics(req, res) {
 			const previousUserOrdersMap = new Set();
 			for (const o of ordersPrevious) {
 				if (!o.user_id) continue;
-				const existing = previousUserOrdersMap.get(o.user_id);
+				const existing = previousUserOrdersMap.has(o.user_id);
 				if (!existing) previousUserOrdersMap.add(o.user_id);
 			}
 			for (const userId of previousUserOrdersMap.keys()) {
@@ -2255,7 +2252,6 @@ function buildPromoBuckets(
  * @summary Promo analytics for sections
  * @description Returns promo analytics for sections for a business and time period, including purchased promo sections.
  * @operationId getBusinessPromoSectionsAnalytics
- * @pathParam {string} business_id - The ID of the business
  * @bodyDescription Time period definition
  * @bodyContent {
  *   "type": 0,
@@ -2273,13 +2269,10 @@ function buildPromoBuckets(
  */
 async function getBusinessPromoSectionsAnalytics(req, res) {
 	try {
-		const { business_id } = req.params;
 		const user_id = req.user?.user_id;
 		const bUser = await BusinessUsersDao.getBusinessUserByUserId(user_id);
-		if (!business_id) {
-			return res.status(400).json({ error: 'Business ID is required' });
-		}
-		if (!bUser || bUser.business_id !== business_id) {
+		const business_id = bUser?.business_id;
+		if (!bUser || !business_id) {
 			return res.status(401).json({ error: 'Unauthorized' });
 		}
 
@@ -2352,7 +2345,6 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
  * @summary Promo analytics for words
  * @description Returns promo analytics for words for a business and time period, including purchased words.
  * @operationId getBusinessPromoWordsAnalytics
- * @pathParam {string} business_id - The ID of the business
  * @bodyDescription Time period definition
  * @bodyContent {
  *   "type": 0,
@@ -2370,13 +2362,10 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
  */
 async function getBusinessPromoWordsAnalytics(req, res) {
 	try {
-		const { business_id } = req.params;
 		const user_id = req.user?.user_id;
 		const bUser = await BusinessUsersDao.getBusinessUserByUserId(user_id);
-		if (!business_id) {
-			return res.status(400).json({ error: 'Business ID is required' });
-		}
-		if (!bUser || bUser.business_id !== business_id) {
+		const business_id = bUser?.business_id;
+		if (!bUser || !business_id) {
 			return res.status(401).json({ error: 'Unauthorized' });
 		}
 
@@ -2445,13 +2434,10 @@ async function getBusinessPromoWordsAnalytics(req, res) {
 
 async function getBusinessPromoAdsAnalytics(req, res) {
 	try {
-		const { business_id } = req.params;
 		const user_id = req.user?.user_id;
 		const bUser = await BusinessUsersDao.getBusinessUserByUserId(user_id);
-		if (!business_id) {
-			return res.status(400).json({ error: 'Business ID is required' });
-		}
-		if (!bUser || bUser.business_id !== business_id) {
+		const business_id = bUser?.business_id;
+		if (!bUser || !business_id) {
 			return res.status(401).json({ error: 'Unauthorized' });
 		}
 
