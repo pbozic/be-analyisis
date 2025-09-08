@@ -1,7 +1,9 @@
+import { promo_analytics } from '@prisma/client';
+
 import prisma from '../prisma/prisma.js';
 
-const getAllPromoAnalyticsForPeriod = async (businessId: string, start: Date, end: Date) => {
-	return await prisma.promoAnalytics.findMany({
+async function getAllPromoAnalyticsForPeriod(businessId: string, start: Date, end: Date): Promise<promo_analytics[]> {
+	return await prisma.promo_analytics.findMany({
 		where: {
 			business_id: businessId,
 			created_at: {
@@ -11,9 +13,14 @@ const getAllPromoAnalyticsForPeriod = async (businessId: string, start: Date, en
 		},
 		include: { order: true },
 	});
-};
-const getPromoAnalyticsForPeriodByPromoType = async (businessId: string, start: Date, end: Date, promoType: string) => {
-	return await prisma.promoAnalytics.findMany({
+}
+async function getPromoAnalyticsForPeriodByPromoType(
+	businessId: string,
+	start: Date,
+	end: Date,
+	promoType: string
+): Promise<promo_analytics[]> {
+	return await prisma.promo_analytics.findMany({
 		where: {
 			business_id: businessId,
 			created_at: {
@@ -24,7 +31,7 @@ const getPromoAnalyticsForPeriodByPromoType = async (businessId: string, start: 
 		},
 		include: { order: true },
 	});
-};
+}
 export { getPromoAnalyticsForPeriodByPromoType, getAllPromoAnalyticsForPeriod };
 export default {
 	getPromoAnalyticsForPeriodByPromoType,
