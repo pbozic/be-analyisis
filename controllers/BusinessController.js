@@ -2208,10 +2208,12 @@ function buildPromoBuckets(
 				clicks: 0,
 				clicksUsers: new Set(),
 				orderStarts: 0,
+				orderStartsUsers: 0,
 				ordersCreated: 0,
 				ordersFinished: 0,
 				newUsers: 0,
 				returningUsers: 0,
+				revenue: 0,
 			};
 		const b = buckets[id];
 		if (pa.type === ANALYTICS_TYPE.VIEW) {
@@ -2231,11 +2233,16 @@ function buildPromoBuckets(
 		} else if (pa.type === ANALYTICS_TYPE.ORDER_START) {
 			b.orderStarts++;
 			if (d) d.orderStarts++;
+			if (pa.user_id) {
+				b.orderStartsUsers++;
+				if (d) d.orderStartsUsers++;
+			}
 		} else if (pa.type === ANALYTICS_TYPE.ORDER_CREATE) {
 			b.ordersCreated++;
 			if (d) d.ordersCreated++;
 		} else if (pa.type === ANALYTICS_TYPE.ORDER_FINISH) {
 			b.ordersFinished++;
+			b.revenue += Number(pa.order?.details?.total_price) || 0;
 			if (d) d.ordersFinished++;
 		}
 		if (includeUserBreakdown && pa.user_id) {
@@ -2326,6 +2333,19 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
 		const results = {
 			current: bucketsCurrent,
 			previous: bucketsPrevious,
+			timeline: Object.entries(dayBuckets)
+				.sort((a, b) => (a[0] < b[0] ? -1 : 1))
+				.map(([date, v]) => ({
+					date,
+					impressions: v.impressions || 0,
+					impressionsUsers: v.impressionsUsers.size || 0,
+					clicks: v.clicks || 0,
+					clicksUsers: v.clicksUsers.size || 0,
+					orderStarts: v.orderStarts || 0,
+					orderStartsUsers: v.orderStartsUsers.size || 0,
+					ordersFinished: v.ordersFinished || 0,
+					ordersCreated: v.ordersCreated || 0,
+				})),
 		};
 
 		return res.status(200).json({
@@ -2409,7 +2429,6 @@ async function getBusinessPromoWordsAnalytics(req, res) {
 				ordersFinished: 0,
 			};
 		}
-		// For words, analytics might store either promo_words_id or word_id; support both.
 		const bucketsCurrent = buildPromoBuckets(current, 'word_id', {
 			includeUserBreakdown: true,
 			priorUsers,
@@ -2419,6 +2438,19 @@ async function getBusinessPromoWordsAnalytics(req, res) {
 		const results = {
 			current: bucketsCurrent,
 			previous: bucketsPrevious,
+			timeline: Object.entries(dayBuckets)
+				.sort((a, b) => (a[0] < b[0] ? -1 : 1))
+				.map(([date, v]) => ({
+					date,
+					impressions: v.impressions || 0,
+					impressionsUsers: v.impressionsUsers.size || 0,
+					clicks: v.clicks || 0,
+					clicksUsers: v.clicksUsers.size || 0,
+					orderStarts: v.orderStarts || 0,
+					orderStartsUsers: v.orderStartsUsers.size || 0,
+					ordersFinished: v.ordersFinished || 0,
+					ordersCreated: v.ordersCreated || 0,
+				})),
 		};
 
 		return res.status(200).json({
@@ -2491,17 +2523,24 @@ async function getBusinessPromoAdsAnalytics(req, res) {
 		const results = {
 			current: bucketsCurrent,
 			previous: bucketsPrevious,
+			timeline: Object.entries(dayBuckets)
+				.sort((a, b) => (a[0] < b[0] ? -1 : 1))
+				.map(([date, v]) => ({
+					date,
+					impressions: v.impressions || 0,
+					impressionsUsers: v.impressionsUsers.size || 0,
+					clicks: v.clicks || 0,
+					clicksUsers: v.clicksUsers.size || 0,
+					orderStarts: v.orderStarts || 0,
+					orderStartsUsers: v.orderStartsUsers.size || 0,
+					ordersFinished: v.ordersFinished || 0,
+					ordersCreated: v.ordersCreated || 0,
+				})),
 		};
 
 		return res.status(200).json({
 			items: results,
 			ads: promoAds,
-			period: {
-				start: periodStart,
-				end: periodEnd,
-				prevStart: type === 4 ? null : prevStart,
-				prevEnd: type === 4 ? null : prevEnd,
-			},
 		});
 	} catch (e) {
 		const status = e?.status || 500;
