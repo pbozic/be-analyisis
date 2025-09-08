@@ -232,25 +232,86 @@ async function seedCategories() {
 						category_type: categoryObj.categoryData.category_type,
 					},
 				},
+				include: {
+					icon: true,
+				},
 			});
+
+			let category_id = categoryExists?.categories_id;
 			if (categoryExists) {
-				console.log(`Dietary option ${categoryExists.tag} already exists.`);
-				continue;
+				if (categoryExists.icon) {
+					const key = getFileKey(categoryExists.icon.file_id, categoryExists.icon.mime_type);
+					await DeleteObject(key);
+				}
+				const cat = await CategoriesDao.updateCategory(
+					//TODO: delete old images
+					category_id,
+					categoryObj.categoryData,
+					categoryObj.translations,
+					categoryObj.subcategories,
+					categoryObj.parent_categories_id,
+					categoryObj.iconFileData
+				);
+				category_id = cat.categories_id;
+				if (categoryObj.iconFileData) {
+					const { file_type, mime_type, base64 } = categoryObj.iconFileData;
+					await upsertFileOnS3Helper(null, cat.icon, file_type, mime_type, base64);
+				}
+				console.log(`Category ${cat.categories_id} updated.`);
+				console.log(`Category ${categoryExists.tag} tag updated.`);
+			} else {
+				const cat = await CategoriesDao.createCategory(
+					categoryObj.categoryData,
+					categoryObj.translations,
+					categoryObj.subcategories,
+					[],
+					categoryObj.parent_categories_id,
+					categoryObj.iconFileData
+				);
+				category_id = cat.categories_id;
+				if (categoryObj.iconFileData) {
+					const { file_type, mime_type, base64 } = categoryObj.iconFileData;
+					await upsertFileOnS3Helper(null, cat.icon, file_type, mime_type, base64);
+				}
+				console.log(`Category ${cat.categories_id} created.`);
 			}
-			const cat = await CategoriesDao.createCategory(
-				categoryObj.categoryData,
-				categoryObj.translations,
-				categoryObj.subcategories,
-				[],
-				categoryObj.parent_categories_id,
-				categoryObj.iconFileData
-			);
-			console.log(`Dietary option ${cat.categories_id} created.`);
-			if (categoryObj.iconFileData) {
-				const { file_type, mime_type, base64 } = categoryObj.iconFileData;
-				await upsertFileOnS3Helper(user_id, category.icon, file_type, mime_type, base64);
+			let wordObj = {
+				wordData: {
+					word: categoryObj.categoryData.name,
+					categories_id: category_id,
+				},
+				translations: translations,
+			};
+			let wordExists = await prisma.words.findUnique({
+				where: {
+					word: wordObj.wordData.word,
+				},
+			});
+			if (wordExists) {
+				let updatedWord = await prisma.words.update({
+					where: {
+						word: wordObj.wordData.word,
+					},
+					data: {
+						category: {
+							connect: {
+								categories_id: category_id,
+							},
+						},
+					},
+				});
+				console.log(`word ${wordExists.tag} already exists.`);
+			} else {
+				const word = await WordDao.createWord(
+					wordObj.wordData.word,
+					wordObj.wordData.categories_id,
+					wordObj.translations
+				);
+				console.log(`Word ${word.word_id} created.`);
 			}
-		} catch (error) {}
+		} catch (error) {
+			console.log('Error creating category and word:', error);
+		}
 	}
 	console.log('Dietary options seeded.');
 }
