@@ -2226,8 +2226,18 @@ async function startOrder(req, res) {
 				promo_sections_id: ANALYTICS_PARAM_PROMO_SECTION,
 				wordIds: ANALYTICS_PARAM_PROMO_WORDS,
 			})
-				.then((res) => console.log('Promo analytics ORDER START success', res))
-				.catch((err) => console.warn('Promo analytics ORDER START failed', err));
+				.then((res) =>
+					console.log(
+						`Promo analytics ${req.body.is_daily_meal ? 'DAILY MEALS' : 'ORDER'} START success`,
+						res
+					)
+				)
+				.catch((err) =>
+					console.warn(
+						`Promo analytics ${req.body.is_daily_meal ? 'DAILY MEALS' : 'ORDER'} START failed`,
+						err
+					)
+				);
 		}
 		res.status(200).json(log);
 	} catch (e) {

@@ -2,6 +2,8 @@ import prisma from '../prisma/prisma.js';
 import { client as stripe } from '../lib/stripe.js';
 import BusinessUserDao from './BusinessUsers.js';
 import BusinessDao from './Business.js';
+import elasticsearch from '../elasticsearch/index.js';
+const { businessIndex } = elasticsearch;
 
 async function createWord(word, category_id, translations) {
 	// Create a new translatable record
@@ -232,7 +234,7 @@ export async function updateUserSubscription(userId, business_id) {
 		if (!business) throw new Error('Business not found');
 		if (!business.stripe_customer_id) throw new Error('User does not have a Stripe customer ID');
 
-		const wordBuys = await getAllWordBuysByBusiness(business.business_id);
+		const wordBuys = await getActiveWordBuysByBusiness(business.business_id);
 
 		// No active word buys → cancel sub if exists
 		if (!wordBuys || wordBuys.length === 0) {
@@ -440,6 +442,8 @@ export async function updateUserSubscription(userId, business_id) {
 			data: { stripe_subscription_id: subscription.id },
 		});
 
+		businessIndex(business.business_id);
+
 		return {
 			success: true,
 			subscriptionId: subscription.id,
@@ -587,6 +591,31 @@ async function getAllWordBuysByWord(word) {
 	return wbs;
 }
 async function getAllWordBuysByBusiness(business) {
+	const wbs = await prisma.word_buy.findMany({
+		where: {
+			business: {
+				business_id: business,
+			},
+		},
+		include: {
+			word: {
+				include: {
+					translatable: {
+						include: {
+							translations: true,
+						},
+					},
+				},
+			},
+		},
+	});
+	for (let wb of wbs) {
+		wb.word.translations = wb.word.translatable.translations;
+		delete wb.word.translatable;
+	}
+	return wbs;
+}
+async function getActiveWordBuysByBusiness(business) {
 	const wbs = await prisma.word_buy.findMany({
 		where: {
 			business: {

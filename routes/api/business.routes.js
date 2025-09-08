@@ -81,4 +81,8 @@ router.get('/local/locations', BusinessController.getLocalLocations);
 router.post('/local/locations/:business_id', BusinessController.createBusinessLocalLocation);
 router.patch('/local/locations/:location_id', BusinessController.updateBusinessLocalLocation);
 
+router.post('/analytics/overall/:business_id', BusinessController.getBusinessOverallAnalytics);
+router.post('/analytics/promo/ads/:business_id', BusinessController.getBusinessPromoAdsAnalytics);
+router.post('/analytics/promo/sections/:business_id', BusinessController.getBusinessPromoSectionsAnalytics);
+router.post('/analytics/promo/words/:business_id', BusinessController.getBusinessPromoWordsAnalytics);
 export default router;
