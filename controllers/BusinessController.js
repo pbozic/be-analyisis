@@ -2017,7 +2017,7 @@ async function getBusinessOverallAnalytics(req, res) {
 		if (!bUser || bUser.business_id !== business_id) {
 			return res.status(401).json({ error: 'Unauthorized' });
 		}
-		const { periodStart, periodEnd, prevStart, prevEnd } = getPeriodsFromBody(req.body);
+		const { type, periodStart, periodEnd, prevStart, prevEnd } = getPeriodsFromBody(req.body);
 		console.info('Analytics period', { periodStart, periodEnd, prevStart, prevEnd });
 		// Fetch orders for current & previous periods
 		const allOrdersCurrent = await prisma.delivery_orders.findMany({
@@ -2040,19 +2040,19 @@ async function getBusinessOverallAnalytics(req, res) {
 		}
 		const ordersPrevious = allOrdersPrevious.filter((o) => o.status === DELIVERY_ORDER_STATUS.SUCCESS);
 		// Prior orders for new customer calculation
-		const priorCustomerOrders = await prisma.delivery_orders.findMany({
+		let priorCustomerOrders = await prisma.delivery_orders.findMany({
 			where: {
 				business_id,
 				status: DELIVERY_ORDER_STATUS.SUCCESS,
 				created_at: { lt: periodStart },
 			},
 		});
-		const usersWithPriorOrders = new Set(priorCustomerOrders.map((o) => o.user_id).filter(Boolean));
-		const currentUserOrdersMap = new Map(); // user -> earliest order date in current
+		let usersWithPriorOrders = new Set(priorCustomerOrders.map((o) => o.user_id).filter(Boolean));
+		const currentUserOrdersMap = new Set();
 		for (const o of ordersCurrent) {
 			if (!o.user_id) continue;
 			const existing = currentUserOrdersMap.get(o.user_id);
-			if (!existing || existing > o.created_at) currentUserOrdersMap.set(o.user_id, o.created_at);
+			if (!existing) currentUserOrdersMap.add(o.user_id);
 		}
 		let newCustomers = 0;
 		let returningCustomers = 0;
@@ -2061,6 +2061,31 @@ async function getBusinessOverallAnalytics(req, res) {
 				newCustomers++;
 			} else {
 				returningCustomers++;
+			}
+		}
+		let prevNewCustomers = 0;
+		let prevReturningCustomers = 0;
+		if (type !== 4) {
+			priorCustomerOrders = await prisma.delivery_orders.findMany({
+				where: {
+					business_id,
+					status: DELIVERY_ORDER_STATUS.SUCCESS,
+					created_at: { lt: prevStart },
+				},
+			});
+			usersWithPriorOrders = new Set(priorCustomerOrders.map((o) => o.user_id).filter(Boolean));
+			const previousUserOrdersMap = new Set();
+			for (const o of ordersPrevious) {
+				if (!o.user_id) continue;
+				const existing = previousUserOrdersMap.get(o.user_id);
+				if (!existing) previousUserOrdersMap.add(o.user_id);
+			}
+			for (const userId of previousUserOrdersMap.keys()) {
+				if (!usersWithPriorOrders.has(userId)) {
+					prevNewCustomers++;
+				} else {
+					prevReturningCustomers++;
+				}
 			}
 		}
 		// Revenue (sum of details.total_price) & counts
@@ -2086,6 +2111,7 @@ async function getBusinessOverallAnalytics(req, res) {
 			dayBuckets[formatDay(d)] = {
 				impressionsUsers: new Set(),
 				clicksUsers: new Set(),
+				orderStartsUsers: new Set(),
 				impressions: 0,
 				clicks: 0,
 				orderStarts: 0,
@@ -2104,6 +2130,7 @@ async function getBusinessOverallAnalytics(req, res) {
 				if (pa.user_id) dayBuckets[day].clicksUsers.add(pa.user_id);
 			} else if (pa.type === ANALYTICS_TYPE.ORDER_START) {
 				dayBuckets[day].orderStarts++;
+				if (pa.user_id) dayBuckets[day].orderStartsUsers?.add(pa.user_id);
 			}
 		}
 		// Orders per day
@@ -2122,22 +2149,25 @@ async function getBusinessOverallAnalytics(req, res) {
 			.sort((a, b) => (a[0] < b[0] ? -1 : 1))
 			.map(([date, v]) => ({
 				date,
-				impressions: v.impressionsUsers.size || v.impressions, // unique user impressions prefer
-				clicks: v.clicksUsers.size || v.clicks, // unique user clicks prefer
+				impressions: v.impressions || 0,
+				impressionsUsers: v.impressionsUsers.size || 0,
+				clicks: v.clicks || 0,
+				clicksUsers: v.clicksUsers.size || 0,
 				orderStarts: v.orderStarts || 0,
+				orderStartsUsers: v.orderStartsUsers.size || 0,
 				ordersFinished: v.ordersFinished || 0,
 				ordersCreated: v.ordersCreated || 0,
 			}));
-		// Percentages
-		const total_customers = newCustomers + returningCustomers;
 
 		return res.status(200).json({
 			revenue,
 			revenue_previous: type === 4 ? null : revenue_previous,
 			orders,
 			orders_previous: type === 4 ? null : orders_previous,
-			total_customers,
 			new_customers: newCustomers,
+			new_customers_previous: type === 4 ? null : prevNewCustomers,
+			returning_customers: returningCustomers,
+			returning_customers_previous: type === 4 ? null : prevReturningCustomers,
 			deliveries,
 			deliveries_previous: type === 4 ? null : deliveries_previous,
 			pickups,
