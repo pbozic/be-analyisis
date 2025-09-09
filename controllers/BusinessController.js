@@ -2255,14 +2255,19 @@ function buildPromoBuckets(
 			else b.returningUsers.add(pa.user_id);
 		}
 	}
-	const mapped = buckets.forEach((b) => ({
-		...b,
-		impressionsUsers: b.impressionsUsers.size,
-		clicksUsers: b.clicksUsers.size,
-		orderStartsUsers: b.orderStartsUsers.size,
-		newUsers: b.newUsers.size,
-		returningUsers: b.returningUsers.size,
-	}));
+	const mapped = Object.fromEntries(
+		Object.entries(buckets).map(([key, b]) => [
+			key,
+			{
+				...b,
+				impressionsUsers: b.impressionsUsers.size,
+				clicksUsers: b.clicksUsers.size,
+				orderStartsUsers: b.orderStartsUsers.size,
+				newUsers: b.newUsers.size,
+				returningUsers: b.returningUsers.size,
+			},
+		])
+	);
 	return mapped;
 }
 
