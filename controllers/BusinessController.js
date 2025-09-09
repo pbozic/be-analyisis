@@ -2304,7 +2304,10 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
 		const { periodStart, periodEnd, prevStart, prevEnd } = getPeriodsFromBody(req.body);
 
 		// Purchased sections for business
-		let promoSections = await PromoDao.getAllPromoSectionBuysByBusiness(business_id);
+		let promoSections = await PromoDao.getAllPromoSectionBuysByBusiness(business_id, {
+			active_at: { lte: periodEnd },
+			expires_at: { gte: periodStart },
+		});
 
 		// Analytics rows
 		const current = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
@@ -2413,7 +2416,10 @@ async function getBusinessPromoWordsAnalytics(req, res) {
 		const { periodStart, periodEnd, prevStart, prevEnd } = getPeriodsFromBody(req.body);
 
 		// Purchased words for business
-		const promoWords = await WordDao.getAllWordBuysByBusiness(business_id);
+		const promoWords = await WordDao.getAllWordBuysByBusiness(business_id, {
+			active_at: { lte: periodEnd },
+			expires_at: { gte: periodStart },
+		});
 
 		// Analytics rows
 		const current = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(

@@ -590,12 +590,13 @@ async function getAllWordBuysByWord(word) {
 	}
 	return wbs;
 }
-async function getAllWordBuysByBusiness(business) {
+async function getAllWordBuysByBusiness(business, whereObj = {}) {
 	const wbs = await prisma.word_buy.findMany({
 		where: {
 			business: {
 				business_id: business,
 			},
+			...whereObj,
 		},
 		include: {
 			word: {
