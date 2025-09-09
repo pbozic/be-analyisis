@@ -2194,13 +2194,14 @@ function getPeriodsFromBody(body) {
 // Helper: build promo buckets by id for a list of analytics rows
 function buildPromoBuckets(
 	analyticsRows,
-	id,
+	idKey,
 	{ includeUserBreakdown = false, priorUsers = new Set(), dayBuckets = {} } = {}
 ) {
 	const buckets = {};
 	for (const pa of analyticsRows || []) {
 		const day = formatDay(pa.created_at);
 		const d = dayBuckets[day];
+		const id = pa[idKey] || 'other';
 		if (!buckets[id])
 			buckets[id] = {
 				impressions: 0,
@@ -2246,7 +2247,7 @@ function buildPromoBuckets(
 			if (d) d.ordersFinished++;
 		}
 		if (includeUserBreakdown && pa.user_id) {
-			if (!priorUsers.has(pa.user_id)) b.newUsers++;
+			if (!priorUsers.has(pa.user_id) && pa.user_id) b.newUsers++;
 			else b.returningUsers++;
 		}
 	}
@@ -2286,7 +2287,7 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
 		const { periodStart, periodEnd, prevStart, prevEnd } = getPeriodsFromBody(req.body);
 
 		// Purchased sections for business
-		const promoSections = await PromoDao.getAllPromoSectionBuysByBusiness(business_id);
+		let promoSections = await PromoDao.getAllPromoSectionBuysByBusiness(business_id);
 
 		// Analytics rows
 		const current = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
