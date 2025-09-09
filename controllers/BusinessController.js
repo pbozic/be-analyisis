@@ -2212,8 +2212,8 @@ function buildPromoBuckets(
 				orderStartsUsers: new Set(),
 				ordersCreated: 0,
 				ordersFinished: 0,
-				newUsers: 0,
-				returningUsers: 0,
+				newUsers: new Set(),
+				returningUsers: new Set(),
 				revenue: 0,
 			};
 		const b = buckets[id];
@@ -2243,15 +2243,27 @@ function buildPromoBuckets(
 			if (d) d.ordersCreated++;
 		} else if (pa.type === ANALYTICS_TYPE.ORDER_FINISH) {
 			b.ordersFinished++;
-			b.revenue += Number(pa.order?.details?.total_price) || 0;
-			if (d) d.ordersFinished++;
+			const price = Number(pa.order?.details?.total_price) || 0;
+			b.revenue += price;
+			if (d) {
+				d.ordersFinished++;
+				d.revenue += price;
+			}
 		}
 		if (includeUserBreakdown && pa.user_id) {
-			if (!priorUsers.has(pa.user_id) && pa.user_id) b.newUsers++;
-			else b.returningUsers++;
+			if (!priorUsers.has(pa.user_id) && pa.user_id) b.newUsers.add(pa.user_id);
+			else b.returningUsers.add(pa.user_id);
 		}
 	}
-	return buckets;
+	const mapped = buckets.forEach((b) => ({
+		...b,
+		impressionsUsers: b.impressionsUsers.size,
+		clicksUsers: b.clicksUsers.size,
+		orderStartsUsers: b.orderStartsUsers.size,
+		newUsers: b.newUsers.size,
+		returningUsers: b.returningUsers.size,
+	}));
+	return mapped;
 }
 
 /**
@@ -2323,6 +2335,7 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
 				orderStartsUsers: new Set(),
 				ordersCreated: 0,
 				ordersFinished: 0,
+				revenue: 0,
 			};
 		}
 		// Build buckets keyed by promo_sections_id
@@ -2347,6 +2360,7 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
 					orderStartsUsers: v.orderStartsUsers.size || 0,
 					ordersFinished: v.ordersFinished || 0,
 					ordersCreated: v.ordersCreated || 0,
+					revenue: v.revenue || 0,
 				})),
 		};
 
