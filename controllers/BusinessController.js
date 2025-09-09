@@ -2127,7 +2127,7 @@ async function getBusinessOverallAnalytics(req, res) {
 				if (pa.user_id) dayBuckets[day].clicksUsers.add(pa.user_id);
 			} else if (pa.type === ANALYTICS_TYPE.ORDER_START) {
 				dayBuckets[day].orderStarts++;
-				if (pa.user_id) dayBuckets[day].orderStartsUsers?.add(pa.user_id);
+				if (pa.user_id) dayBuckets[day].orderStartsUsers.add(pa.user_id);
 			}
 		}
 		// Orders per day
@@ -2208,7 +2208,7 @@ function buildPromoBuckets(
 				clicks: 0,
 				clicksUsers: new Set(),
 				orderStarts: 0,
-				orderStartsUsers: 0,
+				orderStartsUsers: new Set(),
 				ordersCreated: 0,
 				ordersFinished: 0,
 				newUsers: 0,
@@ -2234,8 +2234,8 @@ function buildPromoBuckets(
 			b.orderStarts++;
 			if (d) d.orderStarts++;
 			if (pa.user_id) {
-				b.orderStartsUsers++;
-				if (d) d.orderStartsUsers++;
+				b.orderStartsUsers.add(pa.user_id);
+				if (d) d.orderStartsUsers.add(pa.user_id);
 			}
 		} else if (pa.type === ANALYTICS_TYPE.ORDER_CREATE) {
 			b.ordersCreated++;
@@ -2319,6 +2319,7 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
 				impressions: 0,
 				clicks: 0,
 				orderStarts: 0,
+				orderStartsUsers: new Set(),
 				ordersCreated: 0,
 				ordersFinished: 0,
 			};
