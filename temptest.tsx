@@ -16,7 +16,7 @@ async function main() {
 		// 1️⃣ Get first addon in DB
 		const firstAddon = await prisma.addon.findFirst();
 		if (!firstAddon) throw new Error('No addon found in DB');
-		const freeTrialBundle = await prisma.action_bundle.findFirst({ where: { name: 'Premium' } });
+		const freeTrialBundle = await prisma.action_bundle.findFirst({ where: { name: 'Free Trial' } });
 		if (!freeTrialBundle) throw new Error('No freeTrialBundle found in DB');
 
 		console.log('Using addon:', firstAddon.name, 'price:', firstAddon.stripe_price_id);
@@ -24,10 +24,8 @@ async function main() {
 		// 2️⃣ Create or update Free Trial subscription with first addon, quantity 2
 		const result = await createOrUpdateReservationModuleSubscription({
 			reservation_module_id,
-			bundleId: freeTrialBundle.stripe_price_id,
-			addonPriceIds: [
-				// { priceId: firstAddon.stripe_price_id, quantity: 2 }
-			],
+			bundleId: freeTrialBundle.action_bundle_id,
+			addonPriceIds: [{ priceId: firstAddon.stripe_price_id, quantity: 4 }],
 		});
 
 		console.log('Subscription created/updated:', result);

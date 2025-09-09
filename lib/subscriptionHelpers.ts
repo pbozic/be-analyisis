@@ -1,4 +1,4 @@
-import type { MODULE_TYPE, Prisma as TPrisma } from '@prisma/client';
+import type { action_bundle, MODULE_TYPE, Prisma as TPrisma } from '@prisma/client';
 import Stripe from 'stripe';
 
 import prisma from '../prisma/prisma.js';
@@ -129,73 +129,101 @@ type SubscriptionPhaseItems = {
 
 /**
  * Builds Stripe subscription schedule items for immediate and next-cycle application.
+ * - Bundles: exactly one from desiredBundles
+ *   - Replace immediately only if price increases → triggers proration
+ * - Addons: zero or more from desiredAddons, respecting desired quantities
  * - Upgrades (new items or increased quantity) → current phase
  * - Downgrades (removed items or decreased quantity) → next phase
  */
 export function buildSchedulePhaseItems(
-	currentSub: Stripe.Subscription | null,
-	input: DesiredSubscriptionInput
+	currentPhaseItems: (Stripe.SubscriptionItem & {
+		price: Stripe.Price & { product: Stripe.Product };
+	})[],
+	desiredBundle: action_bundle,
+	desiredAddons: { priceId: string; quantity: number }[],
+	existingBundleObjects: action_bundle[]
 ): SubscriptionPhaseItems {
-	const desired = new Map<string, number>();
-	desired.set(input.bundlePriceId, 1); // bundle always quantity 1
+	const currentBundles = new Map<string, Stripe.SubscriptionItem>();
+	const currentAddons = new Map<string, Stripe.SubscriptionItem>();
 
-	if (input.addons) {
-		for (const addon of input.addons) {
-			desired.set(addon.priceId, addon.quantity);
+	// Split current items into bundles vs addons
+	const existingBundleProductIds = new Set(existingBundleObjects.map((b) => b.stripe_product_id));
+	for (const item of currentPhaseItems) {
+		const product = item.price.product as Stripe.Product;
+		if (existingBundleProductIds.has(product.id)) {
+			currentBundles.set(item.price.id, item);
+		} else {
+			currentAddons.set(item.price.id, item);
 		}
 	}
 
-	if (!currentSub) {
-		// Fresh subscription → everything applies immediately
-		const currentPhaseItems = Array.from(desired.entries()).map(([priceId, quantity]) => ({
-			price: priceId,
-			quantity,
-		}));
-		return { currentPhaseItems };
-	}
-
-	// Map of current subscription items
-	const currentMap = new Map<string, Stripe.SubscriptionItem>();
-	for (const item of currentSub.items.data) {
-		currentMap.set(item.price.id, item);
-	}
-
-	const currentPhaseItems: Stripe.SubscriptionScheduleCreateParams.Phase.Item[] = [];
+	const newCurrentPhaseItems: Stripe.SubscriptionScheduleCreateParams.Phase.Item[] = [];
 	const nextPhaseItems: Stripe.SubscriptionScheduleCreateParams.Phase.Item[] = [];
 
-	// Process desired items
-	for (const [priceId, desiredQty] of desired.entries()) {
-		const currentItem = currentMap.get(priceId);
-		const currentQty = currentItem?.quantity ?? 0;
-
-		if (currentQty === 0) {
-			// New item → upgrade → apply immediately
-			currentPhaseItems.push({ price: priceId, quantity: desiredQty });
-			nextPhaseItems.push({ price: priceId, quantity: desiredQty });
-		} else if (desiredQty > currentQty) {
-			// Increased quantity → upgrade → apply immediately
-			currentPhaseItems.push({ price: priceId, quantity: desiredQty });
-			nextPhaseItems.push({ price: priceId, quantity: desiredQty });
-		} else if (desiredQty < currentQty) {
-			// Decreased quantity → downgrade → keep current now, schedule lower qty next cycle
-			currentPhaseItems.push({ price: priceId, quantity: currentQty });
-			nextPhaseItems.push({ price: priceId, quantity: desiredQty });
-		} else {
-			// Quantity unchanged → keep as-is
-			currentPhaseItems.push({ price: priceId, quantity: currentQty });
-			nextPhaseItems.push({ price: priceId, quantity: currentQty });
+	// Find current bundle if exists
+	const currentBundleItem = Array.from(currentBundles.values())[0];
+	if (!currentBundleItem) {
+		// No current bundle → add immediately
+		newCurrentPhaseItems.push({ price: desiredBundle.stripe_price_id, quantity: 1 });
+		nextPhaseItems.push({ price: desiredBundle.stripe_price_id, quantity: 1 });
+	} else {
+		const currentBundleObj = existingBundleObjects.find(
+			(b) => b.stripe_product_id === (currentBundleItem.price.product as Stripe.Product).id
+		);
+		if (!currentBundleObj) {
+			throw new Error('Current bundle not found in existingBundleObjects');
 		}
 
-		currentMap.delete(priceId);
+		if (desiredBundle.price_cents > currentBundleObj.price_cents) {
+			// Price increase → replace immediately
+			newCurrentPhaseItems.push({ price: desiredBundle.stripe_price_id, quantity: 1 });
+			nextPhaseItems.push({ price: desiredBundle.stripe_price_id, quantity: 1 });
+		} else {
+			// No immediate change → keep current bundle in current phase
+			newCurrentPhaseItems.push({ price: currentBundleItem.price.id, quantity: 1 });
+			nextPhaseItems.push({ price: desiredBundle.stripe_price_id, quantity: 1 }); // replacement next phase
+		}
 	}
 
-	// Any remaining current items are no longer desired → remove in next cycle
-	for (const [, item] of currentMap) {
-		currentPhaseItems.push({ price: item.price.id, quantity: item.quantity }); // keep until next cycle
-		nextPhaseItems.push({ price: item.price.id, quantity: 0 }); // remove in next cycle
+	// --- Handle Addons ---
+	const desiredAddonMap = new Map<string, number>();
+	desiredAddons.forEach((a) => desiredAddonMap.set(a.priceId, a.quantity));
+
+	for (const [priceId, desiredQty] of desiredAddonMap.entries()) {
+		const currentItem = currentAddons.get(priceId);
+		if (!currentItem) {
+			// New addon → upgrade immediately
+			newCurrentPhaseItems.push({ price: priceId, quantity: desiredQty });
+			nextPhaseItems.push({ price: priceId, quantity: desiredQty });
+		} else {
+			const currentQty = currentItem.quantity ?? 0;
+			if (desiredQty > currentQty) {
+				// Upgrade
+				newCurrentPhaseItems.push({ price: priceId, quantity: desiredQty });
+				nextPhaseItems.push({ price: priceId, quantity: desiredQty });
+			} else if (desiredQty < currentQty) {
+				// Downgrade → keep current now, apply next cycle
+				newCurrentPhaseItems.push({ price: priceId, quantity: currentQty });
+				nextPhaseItems.push({ price: priceId, quantity: desiredQty });
+			} else {
+				// Unchanged
+				newCurrentPhaseItems.push({ price: priceId, quantity: currentQty });
+				nextPhaseItems.push({ price: priceId, quantity: currentQty });
+			}
+		}
+		currentAddons.delete(priceId);
 	}
 
-	return { currentPhaseItems, nextPhaseItems };
+	// Any remaining current addons → remove next cycle
+	for (const [, item] of currentAddons) {
+		newCurrentPhaseItems.push({ price: item.price.id, quantity: item.quantity ?? 1 });
+		nextPhaseItems.push({ price: item.price.id, quantity: 0 });
+	}
+
+	return {
+		currentPhaseItems: newCurrentPhaseItems,
+		nextPhaseItems,
+	};
 }
 
 type CreateOrUpdateSubscriptionInput = {
@@ -210,90 +238,93 @@ export async function createOrUpdateReservationModuleSubscription(
 	const { reservation_module_id, bundleId, addonPriceIds = [], tx } = input;
 	const client = tx || prisma;
 
-	// 1️⃣ Load reservation module and ensure business exists
+	// 1️⃣ Load reservation module and business
 	const reservation_module = await ReservationModuleDao.getReservationModuleById(reservation_module_id);
 	if (!reservation_module) throw new Error('Reservation module not found');
 	const customerId = reservation_module.business?.stripe_customer_id;
 	if (!customerId) throw new Error('Stripe customer ID not found');
 
-	// 2️⃣ Retrieve existing schedule if it exists
+	// 2️⃣ Load desired bundle object and existing bundles from DB
+	const desiredBundle = await prisma.action_bundle.findUnique({
+		where: { action_bundle_id: bundleId },
+	});
+	if (!desiredBundle) throw new Error('Desired bundle not found');
+
+	const existingBundles = await prisma.action_bundle.findMany();
+
+	// 3️⃣ Retrieve existing schedule and subscription if exists
 	const currentScheduleId = reservation_module.stripe_subscription_schedule_id || null;
-	let schedule:
-		| (Stripe.SubscriptionSchedule & {
-				subscription: Stripe.Subscription;
-				phases: Stripe.SubscriptionSchedule.Phase[];
-		  })
-		| null = null;
+	let schedule: (Stripe.SubscriptionSchedule & { subscription: Stripe.Subscription | string }) | null = null;
 	let underlyingSub:
 		| (Stripe.Subscription & { latest_invoice: Stripe.Invoice & { payment_intent: Stripe.PaymentIntent } })
 		| null = null;
+	let currentPhaseItems: (Stripe.SubscriptionItem & { price: Stripe.Price & { product: Stripe.Product } })[] = [];
 
 	if (currentScheduleId) {
 		schedule = await stripe.client.subscriptionSchedules.retrieve(currentScheduleId, {
-			expand: ['subscription', 'phases.items.price'],
+			expand: ['subscription', 'phases.items.price.product'],
 		});
-		if (!schedule) {
-			throw new Error('Schedule not found');
-		}
-		console.log(schedule);
-		underlyingSub = await stripe.client.subscriptions.retrieve(schedule.subscription?.id as string, {
-			expand: ['latest_invoice.payment_intent', 'items.data.price'],
+		if (!schedule) throw new Error('Schedule not found');
+
+		underlyingSub = await stripe.client.subscriptions.retrieve(schedule.subscription.id as string, {
+			expand: ['items.data.price.product', 'latest_invoice.payment_intent'],
 		});
+		if (!underlyingSub) throw new Error('Schedule subscription not found');
+		currentPhaseItems = underlyingSub.items.data as typeof currentPhaseItems;
 	}
 
-	// 3️⃣ Build phase items using the new helper
-	const { currentPhaseItems, nextPhaseItems } = buildSchedulePhaseItems(underlyingSub, {
-		bundlePriceId: bundleId,
-		addons: addonPriceIds.map((a) => ({ priceId: a.priceId, quantity: a.quantity })),
-	});
+	// 4️⃣ Build current and next phase items
+	const { currentPhaseItems: newCurrentPhaseItems, nextPhaseItems } = buildSchedulePhaseItems(
+		currentPhaseItems,
+		desiredBundle,
+		addonPriceIds.map((a) => ({ priceId: a.priceId, quantity: a.quantity })),
+		existingBundles
+	);
 
 	let paymentRequired = false;
-	let clientSecret: string | null = null;
+	let clientSecret: string | undefined;
 
 	if (schedule) {
 		// --- Update existing schedule ---
-		const phases: Stripe.SubscriptionScheduleCreateParams.Phase[] = [
+		const phases: Stripe.SubscriptionScheduleUpdateParams.Phase[] = [
 			{
-				end_date: schedule.current_phase?.end_date, // optional: current phase ends at current period
-				items: currentPhaseItems,
-				proration_behavior: 'always_invoice' as Stripe.SubscriptionScheduleCreateParams.Phase.ProrationBehavior, // upgrades applied immediately
+				end_date: schedule.current_phase?.end_date,
+				start_date: schedule?.current_phase?.start_date,
+				items: newCurrentPhaseItems,
+				proration_behavior: 'always_invoice' as Stripe.SubscriptionCreateParams.ProrationBehavior,
 			},
 			...(nextPhaseItems && nextPhaseItems.length
 				? [
 						{
 							items: nextPhaseItems,
-							proration_behavior:
-								'none' as Stripe.SubscriptionScheduleCreateParams.Phase.ProrationBehavior, // downgrades take effect next period
+							proration_behavior: 'none' as Stripe.SubscriptionCreateParams.ProrationBehavior,
 						},
 					]
 				: []),
 		];
 
+		// Only set start_date on first phase when updating
 		schedule = await stripe.client.subscriptionSchedules.update(schedule.id, {
-			phases: phases.map((ph, ix) =>
-				ix === 0 ? { ...ph, start_date: schedule?.current_phase?.start_date } : ph
-			),
-			// start_date: Math.floor(Date.now() / 1000),
-
+			phases,
 			metadata: { reservation_module_id },
 		});
 
-		// Retrieve underlying subscription for payment info
-		underlyingSub = await stripe.client.subscriptions.retrieve(schedule!.subscription as string, {
+		console.log('schedule before update and retrieve', schedule);
+		underlyingSub = await stripe.client.subscriptions.retrieve(schedule.subscription as string, {
 			expand: ['latest_invoice.payment_intent'],
 		});
 
-		const pi = underlyingSub!.latest_invoice?.payment_intent;
+		const pi = underlyingSub.latest_invoice?.payment_intent;
 		if (pi && (pi.status === 'requires_action' || pi.status === 'requires_payment_method')) {
 			paymentRequired = true;
-			clientSecret = pi.client_secret || null;
+			clientSecret = pi.client_secret ?? undefined;
 		}
 	} else {
 		// --- Create new schedule from scratch ---
 		const phases: Stripe.SubscriptionScheduleCreateParams.Phase[] = [
 			{
-				items: currentPhaseItems,
-				proration_behavior: 'always_invoice', // charge for upgrades immediately
+				items: newCurrentPhaseItems,
+				proration_behavior: 'always_invoice',
 			},
 		];
 
@@ -301,45 +332,29 @@ export async function createOrUpdateReservationModuleSubscription(
 			customer: customerId,
 			end_behavior: 'release',
 			start_date: Math.floor(Date.now() / 1000),
-
 			metadata: { reservation_module_id },
 			phases,
 		});
+		console.log('schedule', schedule);
 
-		underlyingSub = await stripe.client.subscriptions.retrieve(schedule!.subscription as string, {
+		underlyingSub = await stripe.client.subscriptions.retrieve(schedule.subscription as string, {
 			expand: ['latest_invoice.payment_intent'],
 		});
 
-		const pi = underlyingSub!.latest_invoice?.payment_intent;
+		const pi = underlyingSub.latest_invoice?.payment_intent;
 		if (pi && (pi.status === 'requires_action' || pi.status === 'requires_payment_method')) {
 			paymentRequired = true;
-			clientSecret = pi.client_secret || null;
+			clientSecret = pi.client_secret ?? undefined;
 		}
 	}
 
-	// 4️⃣ Update DB to store schedule ID
+	// 5️⃣ Update DB to store schedule ID
 	await client.reservation_module.update({
 		where: { reservation_module_id },
-		data: { stripe_subscription_schedule_id: schedule!.id },
+		data: { stripe_subscription_schedule_id: schedule.id },
 	});
 
-	// 5️⃣ Optional: connect bundle and addons immediately if no payment required
-	if (!paymentRequired) {
-		// await connectReservationModuleBundle(reservation_module_id, bundleId, tx);
-		if (addonPriceIds.length > 0) {
-			// await createBusinessAddonConnections(
-			//   reservation_module_id,
-			//   addonPriceIds.map(a => a.priceId),
-			//   tx
-			// );
-		}
-	}
-
-	return {
-		scheduleId: schedule!.id,
-		paymentRequired,
-		clientSecret: clientSecret ?? undefined,
-	};
+	return { scheduleId: schedule.id, paymentRequired, clientSecret };
 }
 
 /**
