@@ -19,18 +19,18 @@ type ActionLimit = {
 	limit: number | null;
 };
 
-type SeedSubscription = {
+type SeedActionBundle = {
 	name: string;
 	price_cents: number;
 	seed_key: string;
 	actions: ActionLimit[];
 };
 
-const SUBSCRIPTIONS: SeedSubscription[] = [
+const ACTION_BUNDLES: SeedActionBundle[] = [
 	{
 		name: 'Basic',
 		price_cents: 500,
-		seed_key: 'subscription_basic_reservations',
+		seed_key: 'action_bundle_basic_reservations',
 		actions: Object.keys(RESERVATION_ACTIONS).map((key) => ({
 			action: key as keyof typeof RESERVATION_ACTIONS,
 			limit: 0,
@@ -39,7 +39,7 @@ const SUBSCRIPTIONS: SeedSubscription[] = [
 	{
 		name: 'Free Trial',
 		price_cents: 0,
-		seed_key: 'subscription_trial_reservations',
+		seed_key: 'action_bundle_trial_reservations',
 		actions: [
 			{ action: 'MANAGE_BOOKING', limit: null },
 			{ action: 'ADD_EMPLOYEE', limit: 1 },
@@ -53,7 +53,7 @@ const SUBSCRIPTIONS: SeedSubscription[] = [
 	{
 		name: 'Standard',
 		price_cents: 1000,
-		seed_key: 'subscription_standard_reservations',
+		seed_key: 'action_bundle_standard_reservations',
 		actions: [
 			{ action: 'MANAGE_BOOKING', limit: null },
 			{ action: 'ADD_EMPLOYEE', limit: 1 },
@@ -67,7 +67,7 @@ const SUBSCRIPTIONS: SeedSubscription[] = [
 	{
 		name: 'Premium',
 		price_cents: 2000,
-		seed_key: 'subscription_premium_reservations',
+		seed_key: 'action_bundle_premium_reservations',
 		actions: [
 			{ action: 'MANAGE_BOOKING', limit: null },
 			{ action: 'ADD_EMPLOYEE', limit: 1 },
@@ -136,7 +136,7 @@ async function getOrCreatePrice(productId: string, priceCents: number, seedKey: 
 	return created.id;
 }
 
-export default async function seedSubscriptions(): Promise<void> {
+export default async function seedActionBundles(): Promise<void> {
 	const productId = await getOrCreateProduct(MODULE);
 
 	await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
@@ -158,37 +158,37 @@ export default async function seedSubscriptions(): Promise<void> {
 			actionsMap[act.name] = { action_id: act.action_id };
 		}
 
-		// 2. Seed subscriptions
-		for (const sub of SUBSCRIPTIONS) {
-			const stripePriceId = await getOrCreatePrice(productId, sub.price_cents, sub.seed_key);
+		// 2. Seed action_bundles
+		for (const bundle of ACTION_BUNDLES) {
+			const stripePriceId = await getOrCreatePrice(productId, bundle.price_cents, bundle.seed_key);
 
-			const createdSub = await tx.subscription.upsert({
-				where: { name: sub.name },
+			const createdBundle = await tx.action_bundle.upsert({
+				where: { name: bundle.name },
 				update: {
-					price_cents: sub.price_cents,
+					price_cents: bundle.price_cents,
 					stripe_price_id: stripePriceId,
 					module: { set: MODULE },
 				},
 				create: {
-					name: sub.name,
-					price_cents: sub.price_cents,
+					name: bundle.name,
+					price_cents: bundle.price_cents,
 					stripe_price_id: stripePriceId,
 					module: MODULE,
 				},
 			});
 
-			await tx.subscription_action.deleteMany({
-				where: { subscription_id: createdSub.subscription_id },
+			await tx.action_bundle_action.deleteMany({
+				where: { action_bundle_id: createdBundle.action_bundle_id },
 			});
 
-			for (const sa of sub.actions) {
+			for (const sa of bundle.actions) {
 				const actionName = RESERVATION_ACTIONS[sa.action];
 				const foundAction = actionsMap[actionName];
 				if (!foundAction) throw new Error(`Action not found: ${actionName}`);
 
-				await tx.subscription_action.create({
+				await tx.action_bundle_action.create({
 					data: {
-						subscription: { connect: { subscription_id: createdSub.subscription_id } },
+						action_bundle: { connect: { action_bundle_id: createdBundle.action_bundle_id } },
 						action: { connect: { action_id: foundAction.action_id } },
 						limit: sa.limit,
 						module: MODULE,

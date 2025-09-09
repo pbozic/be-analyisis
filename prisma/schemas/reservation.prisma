@@ -11,11 +11,12 @@ model reservation_module {
   reservation_module_id     String        @id @default(uuid()) @db.Uuid
   public_link_hash          String?        @unique
   business_id               String        @unique @db.Uuid
-  subscription_id           String?       @db.Uuid
+  action_bundle_id           String?       @db.Uuid
   subscription_active_until DateTime? // Optional, if the business has a subscription
   business                  business      @relation(fields: [business_id], references: [business_id])
-  subscription              subscription? @relation(fields: [subscription_id], references: [subscription_id])
+  action_bundle              action_bundle? @relation(fields: [action_bundle_id], references: [action_bundle_id])
   subscription_expires_at   DateTime? // Optional, if the business has a subscription
+  stripe_subscription_schedule_id   String? // Optional, if the business has a subscription
 
   hours_before_reschedule Int?
   hours_before_cancel     Int?

@@ -1,4 +1,4 @@
-import type { business } from '@prisma/client';
+import type { action_bundle, business } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
 import type { CreateSubscriptionSchema, UpdateSubscriptionSchema } from '../types/subscriptions/Subscription.js';
@@ -11,7 +11,7 @@ import type { CreateSubscriptionSchema, UpdateSubscriptionSchema } from '../type
  */
 export async function createSubscription(data: CreateSubscriptionSchema): Promise<business> {
 	try {
-		return await prisma.subscription.create({
+		return await prisma.action_bundle.create({
 			data: {
 				module: data.module,
 				name: data.name,
@@ -34,7 +34,7 @@ export async function createSubscription(data: CreateSubscriptionSchema): Promis
  */
 export async function updateSubscription(subscriptionId: string, data: UpdateSubscriptionSchema): Promise<business> {
 	try {
-		return await prisma.subscription.update({
+		return await prisma.action_bundle.update({
 			where: { subscription_id: subscriptionId },
 			data: {
 				module: data.module,
@@ -57,7 +57,7 @@ export async function updateSubscription(subscriptionId: string, data: UpdateSub
  */
 export async function deleteSubscription(subscriptionId: string): Promise<void> {
 	try {
-		await prisma.subscription.delete({
+		await prisma.action_bundle.delete({
 			where: { subscription_id: subscriptionId },
 		});
 	} catch (error) {
@@ -72,10 +72,27 @@ export async function deleteSubscription(subscriptionId: string): Promise<void> 
  * @param {string} subscriptionId
  * @returns {Promise<business | null>}
  */
-export async function getSubscriptionById(subscriptionId: string): Promise<business | null> {
+export async function getSubscriptionById(subscriptionId: string): Promise<action_bundle | null> {
 	try {
-		return await prisma.subscription.findUnique({
+		return await prisma.action_bundle.findUnique({
 			where: { subscription_id: subscriptionId },
+		});
+	} catch (error) {
+		console.error('Error fetching subscription:', error);
+		throw new Error('Failed to fetch subscription');
+	}
+}
+
+/**
+ * Get a subscription by Name
+ *
+ * @param {string} name
+ * @returns {Promise<business | null>}
+ */
+export async function getSubscriptionByName(name: string): Promise<action_bundle | null> {
+	try {
+		return await prisma.action_bundle.findUnique({
+			where: { name },
 		});
 	} catch (error) {
 		console.error('Error fetching subscription:', error);
@@ -90,7 +107,7 @@ export async function getSubscriptionById(subscriptionId: string): Promise<busin
  */
 export async function listSubscriptions(): Promise<business[]> {
 	try {
-		return await prisma.subscription.findMany();
+		return await prisma.action_bundle.findMany();
 	} catch (error) {
 		console.error('Error listing subscriptions:', error);
 		throw new Error('Failed to list subscriptions');
@@ -104,7 +121,7 @@ export async function listSubscriptions(): Promise<business[]> {
  */
 export async function listSubscriptionsByModule(module: string): Promise<business[]> {
 	try {
-		return await prisma.subscription.findMany({
+		return await prisma.action_bundle.findMany({
 			where: { module },
 		});
 	} catch (error) {
@@ -112,3 +129,13 @@ export async function listSubscriptionsByModule(module: string): Promise<busines
 		throw new Error('Failed to list subscriptions');
 	}
 }
+
+export default {
+	createSubscription,
+	updateSubscription,
+	deleteSubscription,
+	getSubscriptionById,
+	getSubscriptionByName,
+	listSubscriptions,
+	listSubscriptionsByModule,
+};
