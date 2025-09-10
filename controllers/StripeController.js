@@ -432,7 +432,7 @@ async function handleWebhook(req, res) {
 			case 'customer.subscription.created':
 			case 'customer.subscription.updated': {
 				const subscription = event.data.object;
-				if (subscription.metadata.type === 'word_buy') {
+				if (subscription.metadata.type === 'word_buys') {
 					console.log(`Updating word_buys for subscription ${subscription.id}`);
 					// Get new expiration date
 					const newExpiresAt = new Date(subscription.current_period_end * 1000);
