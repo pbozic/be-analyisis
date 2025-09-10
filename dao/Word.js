@@ -438,7 +438,7 @@ export async function updateUserSubscription(userId, business_id) {
 
 		// Persist subscription id on word_buys
 		await prisma.word_buy.updateMany({
-			where: { business_id: business.business_id, deleted_at: null },
+			where: { business_id: business.business_id, deleted_at: null, expires_at: { gt: new Date() } },
 			data: { stripe_subscription_id: subscription.id },
 		});
 

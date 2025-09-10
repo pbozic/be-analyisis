@@ -158,8 +158,8 @@ async function updateWordBuy(req, res) {
 async function updateWordBuys(req, res) {
 	try {
 		const user_id = req.user?.user_id;
-		const { word_buys } = req.body;
-		const result = await WordDao.createWordBuySubscription(word_buys, null, user_id);
+		const { word_buys, business_id } = req.body;
+		const result = await WordDao.createWordBuySubscription(word_buys, business_id, user_id);
 		res.status(200).json(result);
 	} catch (error) {
 		console.error('Error updating word buy:', error);
