@@ -162,7 +162,7 @@ async function getWordBuysByBusiness(req, res) {
 		const result = await WordDao.getActiveWordBuysByBusiness(business_id);
 		res.status(200).json(result);
 	} catch (error) {
-		console.error('Error fetching word buys by business:', error);
+		console.error('Error fetching active word buys by business:', error);
 		res.status(500).json({ error: 'Failed to fetch word buys by business' });
 	}
 }
