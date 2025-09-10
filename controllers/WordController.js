@@ -158,8 +158,8 @@ async function updateWordBuy(req, res) {
 }
 async function getWordBuysByBusiness(req, res) {
 	try {
-		const { user } = req.params;
-		const result = await WordDao.getAllWordBuysByBusiness(user);
+		const { business_id } = req.params;
+		const result = await WordDao.getActiveWordBuysByBusiness(business_id);
 		res.status(200).json(result);
 	} catch (error) {
 		console.error('Error fetching word buys by business:', error);
