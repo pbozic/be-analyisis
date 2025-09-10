@@ -18,7 +18,10 @@ async function getPromoAnalyticsForPeriodByPromoType(
 	businessId: string,
 	start: Date,
 	end: Date,
-	promoType: string
+	promoType: string,
+	wordIds?: string[],
+	sectionIds?: string[],
+	adIds?: string[]
 ): Promise<promo_analytics[]> {
 	return await prisma.promo_analytics.findMany({
 		where: {
@@ -28,6 +31,9 @@ async function getPromoAnalyticsForPeriodByPromoType(
 				lte: end,
 			},
 			promo_type: promoType,
+			promo_sections_id: Array.isArray(sectionIds) && sectionIds.length > 0 ? { in: sectionIds } : undefined,
+			promo_ads_id: Array.isArray(adIds) && adIds.length > 0 ? { in: adIds } : undefined,
+			word_id: Array.isArray(wordIds) && wordIds.length > 0 ? { in: wordIds } : undefined,
 		},
 		include: { order: true },
 	});

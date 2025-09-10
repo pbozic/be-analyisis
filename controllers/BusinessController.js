@@ -2281,7 +2281,8 @@ function buildPromoBuckets(
  * @bodyContent {
  *   "type": 0,
  *   "start_date": "2025-01-01T00:00:00.000Z",
- *   "end_date": null
+ *   "end_date": null,
+ *   "ids": ["optional array of promo_sections_id to filter"]
  * } application/json
  * @bodyRequired
  * @response 200 - successful operation
@@ -2303,18 +2304,20 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
 
 		const { periodStart, periodEnd, prevStart, prevEnd } = getPeriodsFromBody(req.body);
 
-		// Purchased sections for business
+		const sectionIds = req.body?.ids;
 		let promoSections = await PromoDao.getAllPromoSectionBuysByBusiness(business_id, {
 			active_at: { lte: periodEnd },
 			expires_at: { gte: periodStart },
+			promo_sections_id: sectionIds ? { in: sectionIds } : undefined,
 		});
 
-		// Analytics rows
 		const current = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
 			business_id,
 			periodStart,
 			periodEnd,
-			PROMO_TYPE.SECTION
+			PROMO_TYPE.SECTION,
+			undefined,
+			sectionIds
 		);
 		const previous =
 			prevStart && prevEnd
@@ -2322,14 +2325,18 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
 						business_id,
 						prevStart,
 						prevEnd,
-						PROMO_TYPE.SECTION
+						PROMO_TYPE.SECTION,
+						undefined,
+						sectionIds
 					)
 				: [];
 		const prior = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
 			business_id,
 			new Date(0),
 			prevEnd || new Date(periodStart.getTime() - 1),
-			PROMO_TYPE.SECTION
+			PROMO_TYPE.SECTION,
+			undefined,
+			sectionIds
 		);
 		const priorUsers = new Set(prior.map((r) => r.user_id).filter(Boolean));
 		const dayBuckets = {};
@@ -2393,7 +2400,8 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
  * @bodyContent {
  *   "type": 0,
  *   "start_date": "2025-01-01T00:00:00.000Z",
- *   "end_date": null
+ *   "end_date": null,
+ *   "ids": ["optional array of word_id to filter"]
  * } application/json
  * @bodyRequired
  * @response 200 - successful operation
@@ -2415,18 +2423,19 @@ async function getBusinessPromoWordsAnalytics(req, res) {
 
 		const { periodStart, periodEnd, prevStart, prevEnd } = getPeriodsFromBody(req.body);
 
-		// Purchased words for business
+		const wordIds = req.body?.ids;
 		const promoWords = await WordDao.getAllWordBuysByBusiness(business_id, {
 			active_at: { lte: periodEnd },
 			expires_at: { gte: periodStart },
+			word_id: wordIds ? { in: wordIds } : undefined,
 		});
 
-		// Analytics rows
 		const current = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
 			business_id,
 			periodStart,
 			periodEnd,
-			PROMO_TYPE.WORD
+			PROMO_TYPE.WORD,
+			wordIds
 		);
 		const previous =
 			prevStart && prevEnd
@@ -2434,14 +2443,16 @@ async function getBusinessPromoWordsAnalytics(req, res) {
 						business_id,
 						prevStart,
 						prevEnd,
-						PROMO_TYPE.WORD
+						PROMO_TYPE.WORD,
+						wordIds
 					)
 				: [];
 		const prior = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
 			business_id,
 			new Date(0),
 			prevEnd || new Date(periodStart.getTime() - 1),
-			PROMO_TYPE.WORD
+			PROMO_TYPE.WORD,
+			wordIds
 		);
 		const priorUsers = new Set(prior.map((r) => r.user_id).filter(Boolean));
 		const dayBuckets = {};
@@ -2452,6 +2463,7 @@ async function getBusinessPromoWordsAnalytics(req, res) {
 				impressions: 0,
 				clicks: 0,
 				orderStarts: 0,
+				orderStartsUsers: new Set(),
 				ordersCreated: 0,
 				ordersFinished: 0,
 			};
@@ -2500,17 +2512,19 @@ async function getBusinessPromoAdsAnalytics(req, res) {
 			return res.status(401).json({ error: 'Unauthorized' });
 		}
 
-		const { type, periodStart, periodEnd, prevStart, prevEnd } = getPeriodsFromBody(req.body);
+		const { periodStart, periodEnd, prevStart, prevEnd } = getPeriodsFromBody(req.body);
 
-		// Purchased ads for business
+		const adIds = req.body?.ids;
 		const promoAds = []; // TODO: await PromoDao.getAllPromoAdsBuysByBusiness(business_id);
 
-		// Analytics rows
 		const current = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
 			business_id,
 			periodStart,
 			periodEnd,
-			PROMO_TYPE.AD
+			PROMO_TYPE.AD,
+			undefined,
+			undefined,
+			adIds
 		);
 		const previous =
 			prevStart && prevEnd
@@ -2518,14 +2532,20 @@ async function getBusinessPromoAdsAnalytics(req, res) {
 						business_id,
 						prevStart,
 						prevEnd,
-						PROMO_TYPE.AD
+						PROMO_TYPE.AD,
+						undefined,
+						undefined,
+						adIds
 					)
 				: [];
 		const prior = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
 			business_id,
 			new Date(0),
 			prevEnd || new Date(periodStart.getTime() - 1),
-			PROMO_TYPE.AD
+			PROMO_TYPE.AD,
+			undefined,
+			undefined,
+			adIds
 		);
 		const priorUsers = new Set(prior.map((r) => r.user_id).filter(Boolean));
 		const dayBuckets = {};
@@ -2536,6 +2556,7 @@ async function getBusinessPromoAdsAnalytics(req, res) {
 				impressions: 0,
 				clicks: 0,
 				orderStarts: 0,
+				orderStartsUsers: new Set(),
 				ordersCreated: 0,
 				ordersFinished: 0,
 			};
