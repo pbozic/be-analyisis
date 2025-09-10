@@ -439,7 +439,7 @@ async function handleWebhook(req, res) {
 					// Update `expires_at` in all word_buys linked to this subscription
 					await prisma.word_buy.updateMany({
 						where: { stripe_subscription_id: subscription.id },
-						data: { expires_at: newExpiresAt },
+						data: { expires_at: newExpiresAt, paid: true, active_at: new Date() },
 					});
 					console.log('Updated expires_at for all word_buy in subscription:', subscription.id);
 				}
