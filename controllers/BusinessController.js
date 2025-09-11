@@ -2194,6 +2194,7 @@ function getPeriodsFromBody(body) {
 // Helper: build promo buckets by id for a list of analytics rows
 function buildPromoBuckets(
 	analyticsRows,
+	idKey,
 	{ includeUserBreakdown = false, priorUsers = new Set(), dayBuckets = {} } = {}
 ) {
 	const bucket = {
@@ -2212,6 +2213,7 @@ function buildPromoBuckets(
 	for (const pa of analyticsRows || []) {
 		const day = formatDay(pa.created_at);
 		const d = dayBuckets[day];
+		const id = pa[idKey] || 'unknown';
 		if (pa.type === ANALYTICS_TYPE.VIEW) {
 			bucket.impressions++;
 			if (d) d.impressions++;
@@ -2242,7 +2244,8 @@ function buildPromoBuckets(
 			bucket.revenue += price;
 			if (d) {
 				d.ordersFinished.add(pa.order_id);
-				d.revenue += price;
+				if (!d.revenue[id]) d.revenue[id] = 0;
+				d.revenue[id] += price;
 			}
 		}
 		if (includeUserBreakdown && pa.user_id) {
@@ -2340,7 +2343,7 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
 				orderStartsUsers: new Set(),
 				ordersCreated: new Set(),
 				ordersFinished: new Set(),
-				revenue: 0,
+				revenue: {},
 			};
 		}
 		// Build buckets keyed by promo_sections_id
@@ -2456,18 +2459,18 @@ async function getBusinessPromoWordsAnalytics(req, res) {
 				orderStartsUsers: new Set(),
 				ordersCreated: new Set(),
 				ordersFinished: new Set(),
-				revenue: 0,
+				revenue: {},
 			};
 		}
-		const bucketsCurrent = buildPromoBuckets(current, 'word_id', {
+		const bucketCurrent = buildPromoBuckets(current, 'word_id', {
 			includeUserBreakdown: true,
 			priorUsers,
 			dayBuckets,
 		});
-		const bucketsPrevious = buildPromoBuckets(previous, 'word_id');
+		const bucketPrevious = buildPromoBuckets(previous, 'word_id');
 		const results = {
-			current: bucketsCurrent,
-			previous: bucketsPrevious,
+			current: bucketCurrent,
+			previous: bucketPrevious,
 			timeline: Object.entries(dayBuckets)
 				.sort((a, b) => (a[0] < b[0] ? -1 : 1))
 				.map(([date, v]) => ({
@@ -2551,7 +2554,7 @@ async function getBusinessPromoAdsAnalytics(req, res) {
 				orderStartsUsers: new Set(),
 				ordersCreated: new Set(),
 				ordersFinished: new Set(),
-				revenue: 0,
+				revenue: {},
 			};
 		}
 		// Build buckets keyed by promo_ads_id
