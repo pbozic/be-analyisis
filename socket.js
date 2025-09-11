@@ -142,7 +142,6 @@ export const UserSockets = {
 	},
 };
 export { setupSocket };
-export { UserSockets };
 export { SocketStore };
 export default {
 	setupSocket,
