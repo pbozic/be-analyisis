@@ -1,4 +1,5 @@
 import { Response } from 'express';
+import moment, { Moment, unitOfTime } from 'moment';
 
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
 import BookingDao from '../../dao/reservation/Booking.ts';
@@ -13,6 +14,7 @@ import {
 	CreateMultipleBookingsInput,
 	Booking,
 	UpdateMultipleBookingsInput,
+	BookingsAnalyticsParams,
 } from '../../types/reservation/Booking.ts';
 import { Employee } from '../../types/reservation/Employee.ts';
 import { findSlots } from '../../lib/bookingHelpers.ts';
@@ -938,6 +940,175 @@ export async function updateBookingGroupAdmin(
 	}
 }
 
+/**
+ * Calcs bookings analytics
+ * @param {Booking[]} bookings - The list of bookings to analyze.
+ * @param {string} start_date - The start date to consider for new customers
+ * @returns { noShows: number; cancels: number; totalPrice: number; newCustomers: number } - The analytics data.
+ * @description Calculates the number of no-shows, cancellations, total price, and new customers from a list of bookings.
+ */
+
+function calcBookings(bookings: Booking[], start_date: string) {
+	const start = moment(start_date);
+	const newCustomers = new Set<string>();
+
+	let newCustomersBookings = 0;
+	let noShows = 0;
+	let cancels = 0;
+	let totalPrice = 0;
+
+	for (const booking of bookings) {
+		// Count statuses
+		if (booking.status === 'no_show') noShows++;
+		if (booking.status === 'cancelled') cancels++;
+
+		// Sum price
+		const price = booking.price_cents || 0;
+		const discount = booking.discount_percent
+			? ((booking.discount_percent || 100) / 100) * price
+			: booking.discount_amount || 0;
+		const sum = price - discount;
+		totalPrice += sum;
+
+		// Track new customers
+		if (booking?.customer && moment(booking.customer.created_at).isSameOrAfter(start)) {
+			newCustomers.add(booking.customer?.customer_id);
+			newCustomersBookings++;
+		}
+	}
+
+	return {
+		noShows,
+		cancels,
+		totalPrice,
+		newCustomers: newCustomers.size,
+		newCustomersBookings,
+	};
+}
+
+interface DailyStats {
+	date: string;
+	endDate: string;
+	bookingsCount: number;
+	totalPrice: number;
+}
+
+/**
+ * Sorts and aggregates booking stats
+ * @param {Booking[]} bookings - The list of bookings to sort and aggregate.
+ * @param {string} startDate - The start date of the range (ISO string).
+ * @param {string} endDate - The end date of the range (ISO string).
+ * @param {string} type - The type of aggregation ('day', 'month').
+ * @returns {DailyStats[]} - The aggregated daily stats.
+ * @description Sorts bookings into daily stats within a date range, aggregating counts and total prices.
+ */
+
+export function sortBookingStats(bookings: Booking[], startDate: string, endDate: string, type: string): DailyStats[] {
+	const start: Moment = moment(startDate);
+	const end: Moment = moment(endDate);
+	const days: DailyStats[] = [];
+
+	// initialize all days in range
+	for (
+		let m = start;
+		m.isBefore(end);
+		type === 'month'
+			? m.add(1, type as unitOfTime.DurationAs).endOf('month')
+			: m.add(1, type as unitOfTime.DurationAs)
+	) {
+		const end =
+			type === 'month'
+				? moment(m)
+						.add(1, type as unitOfTime.DurationAs)
+						.endOf('month')
+				: moment(m).add(1, type as unitOfTime.DurationAs);
+		days.push({
+			date: m.toISOString(), // ISO string at midnight UTC
+			endDate: end.toISOString(),
+			bookingsCount: 0,
+			totalPrice: 0,
+		});
+	}
+
+	// aggregate bookings
+	bookings.forEach((b) => {
+		const bookingDay = moment(b.start_time);
+
+		const entry = days.find((d) => moment(d.date).isBefore(bookingDay) && moment(d.endDate).isAfter(bookingDay));
+		if (entry) {
+			entry.bookingsCount += 1;
+			const price = b.price_cents || 0;
+			const discount = b.discount_percent ? ((b.discount_percent || 100) / 100) * price : b.discount_amount || 0;
+			const sum = Math.round(price - discount) / 100;
+			entry.totalPrice += sum;
+		}
+	});
+
+	return days;
+}
+
+/**
+ * POST /bookings/analytics
+ * @tag Reservation
+ * @summary Get analytics for bookings
+ * @operationId listBookingsAnalytics
+ * @requestBody {BookingsAnalyticsParams} requestBody
+ * @response 200 - Analytics retrieved
+ * @responseContent {data} 200.application/json
+ * @response 500 - Error retrieving analytics
+ */
+export async function getBookingsAnalytics(
+	req: ValidatedRequest<BookingsAnalyticsParams>,
+	res: Response
+): Promise<void> {
+	try {
+		let reservationModuleId = req.user?.reservation_module_id || null;
+		if (!reservationModuleId) {
+			res.status(400).json({ message: 'Reservation module ID is required' });
+			return;
+		}
+
+		const params: ListBookingsParams = {
+			...req.body,
+			status: ['reserved', 'cancelled', 'no_show'],
+			reservation_module_id: reservationModuleId,
+		};
+		const bookings = await BookingDao.getBookingsForAnalytics(params);
+		const paramsPrev: ListBookingsParams = {
+			...req.body,
+			reservation_module_id: reservationModuleId,
+			status: ['reserved', 'cancelled', 'no_show'],
+			from: req.body.prevFrom,
+			to: req.body.prevTo,
+		};
+		const bookingsPrev = await BookingDao.getBookingsForAnalytics(paramsPrev);
+		const data = req.body.from
+			? calcBookings(bookings, req.body.from.toISOString())
+			: { noShows: 0, cancels: 0, totalPrice: 0, newCustomers: 0, newCustomersBookings: 0 };
+		const dataPrev = req.body.prevFrom
+			? calcBookings(bookingsPrev, req.body.prevFrom.toISOString())
+			: { noShows: 0, cancels: 0, totalPrice: 0, newCustomers: 0, newCustomersBookings: 0 };
+		const sortedBookings =
+			req.body.from && req.body.to
+				? sortBookingStats(
+						bookings,
+						req.body.from?.toISOString(),
+						req.body.to?.toISOString(),
+						req.body.type === 'year' ? 'month' : 'day'
+					)
+				: [];
+		res.status(200).json({
+			bookings,
+			bookingsPrev,
+			cards: { ...data, bookingsCount: bookings.length },
+			cardsPrev: { ...dataPrev, bookingsCount: bookingsPrev.length },
+			sortedBookings,
+		});
+	} catch (error) {
+		res.status(500).json({ message: 'Error retrieving bookings', error });
+	}
+}
+
 export default {
 	listBookings,
 	getBooking,
@@ -954,4 +1125,5 @@ export default {
 	updateBookingStartGroupAdmin,
 	updateBookingStartFirstInGroupAdmin,
 	updateBookingGroupAdmin,
+	getBookingsAnalytics,
 };

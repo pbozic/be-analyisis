@@ -380,9 +380,11 @@ export async function updateBooking(
 				data: {
 					status: input.status ?? undefined,
 					comment: input.comment ?? undefined,
-					price_cents: service.price_cents ?? undefined,
+					price_cents: input.price_cents ?? undefined,
 					start_time: input.start_time ? new Date(input.start_time) : undefined,
 					end_time: input.end_time ? new Date(input.end_time) : undefined,
+					discount_amount: input.discount_amount ?? undefined,
+					discount_percent: input.discount_percent ?? undefined,
 
 					reservation_module: input.reservation_module_id
 						? { connect: { reservation_module_id: input.reservation_module_id } }
@@ -813,6 +815,39 @@ export async function updateStatusDelete(booking_id: string, user_id: string | u
 	}
 }
 
+/**
+ * Get bookings for analytics
+ * @param {ListBookingsParams} params
+ * @returns {Promise<Booking[]>}
+ */
+export async function getBookingsForAnalytics(params: ListBookingsParams): Promise<Booking[]> {
+	try {
+		const { reservation_module_id, status, from, to, location_id } = params;
+
+		return (await prisma.booking.findMany({
+			where: {
+				reservation_module_id,
+				...(status && status.length ? { status: { in: status } } : {}),
+				...(from || to
+					? {
+							start_time: {
+								...(from ? { gte: from } : {}),
+								...(to ? { lte: to } : {}),
+							},
+						}
+					: {}),
+				...(location_id ? { location_id } : {}),
+			},
+			include: {
+				customer: true,
+			},
+			orderBy: [{ created_at: 'desc' }, { booking_id: 'desc' }],
+		})) as Booking[];
+	} catch (error) {
+		throwPrisma('Error listing bookings', error);
+	}
+}
+
 export default {
 	createBooking,
 	updateBooking,
@@ -827,4 +862,5 @@ export default {
 	updateBookingParent,
 	updateBookingGroup,
 	updateStatusDelete,
+	getBookingsForAnalytics,
 };

@@ -70,6 +70,7 @@ export const UpdateBookingBaseSchema = z.object({
 	discount_percent: z.number().int().min(0).optional().nullable(),
 	discount_amount: z.number().int().min(0).optional().nullable(),
 	keepTimeGaps: z.boolean().optional(),
+	price_cents: z.number().int().min(0).optional(),
 });
 
 export const UpdateBookingSchema = UpdateBookingBaseSchema.superRefine((data, ctx) => {
@@ -121,6 +122,15 @@ export const UpdateMultipleBookingsSchema = z.object({
 	deletedBookings: z.array(UpdateBookingBaseSchema),
 });
 
+export const BookingsAnalyticsSchema = z.object({
+	from: z.coerce.date().optional().nullable(),
+	to: z.coerce.date().optional().nullable(),
+	location_id: z.string().min(1).optional().nullable(),
+	prevFrom: z.coerce.date().optional().nullable(),
+	prevTo: z.coerce.date().optional().nullable(),
+	type: z.enum(['day', 'week', 'month', 'year']).optional().default('day'),
+});
+
 // --- TYPES ---
 
 export type Booking = booking;
@@ -138,4 +148,5 @@ export type CreateBookingHistoryLogInput = z.infer<typeof CreateBookingHistoryLo
 export type FindBookingSlotsInput = z.infer<typeof FindBookingSlotsSchema>;
 export type DeleteBookingInput = z.infer<typeof DeleteBookingSchema>;
 export type ListBookingsParams = z.infer<typeof ListBookingsParamsSchema>;
+export type BookingsAnalyticsParams = z.infer<typeof BookingsAnalyticsSchema>;
 export type AllBookingsForLocationAndEmployeesParams = z.infer<typeof AllBookingsForLocationAndEmployeesSchema>;
