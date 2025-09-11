@@ -84,7 +84,7 @@ function setupSocket(server) {
 			next();
 		});
 	});
-	io.on('connection', async (socket) => {
+	io.server.on('connection', async (socket) => {
 		const userId = socket.user?.user_id; // or socket.data.userId (recommended)
 		if (!userId) return socket.disconnect(true);
 		socket.join(`user:${userId}`);
