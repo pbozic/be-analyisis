@@ -2371,6 +2371,7 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
 					ordersFinished: v.ordersFinished.size || 0,
 					ordersCreated: v.ordersCreated.size || 0,
 					revenue: v.revenue || 0,
+					revenueBreakdown: v.revenueBreakdown || {},
 				})),
 		};
 
@@ -2487,6 +2488,7 @@ async function getBusinessPromoWordsAnalytics(req, res) {
 					ordersFinished: v.ordersFinished.size || 0,
 					ordersCreated: v.ordersCreated.size || 0,
 					revenue: v.revenue || 0,
+					revenueBreakdown: v.revenueBreakdown || {},
 				})),
 		};
 
@@ -2584,6 +2586,7 @@ async function getBusinessPromoAdsAnalytics(req, res) {
 					ordersFinished: v.ordersFinished.size || 0,
 					ordersCreated: v.ordersCreated.size || 0,
 					revenue: v.revenue || 0,
+					revenueBreakdown: v.revenueBreakdown || {},
 				})),
 		};
 
