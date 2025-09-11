@@ -2,8 +2,6 @@ import prisma from '../prisma/prisma.js';
 import { client as stripe } from '../lib/stripe.js';
 import BusinessUserDao from './BusinessUsers.js';
 import BusinessDao from './Business.js';
-import elasticsearch from '../elasticsearch/index.js';
-const { businessIndex } = elasticsearch;
 
 async function createWord(word, category_id, translations) {
 	// Create a new translatable record
@@ -438,11 +436,13 @@ export async function updateUserSubscription(userId, business_id) {
 
 		// Persist subscription id on word_buys
 		await prisma.word_buy.updateMany({
-			where: { business_id: business.business_id, deleted_at: null, expires_at: { gt: new Date() } },
+			where: {
+				business_id: business.business_id,
+				deleted_at: null,
+				OR: [{ expires_at: null }, { expires_at: { gt: new Date() } }],
+			},
 			data: { stripe_subscription_id: subscription.id },
 		});
-
-		businessIndex(business.business_id);
 
 		return {
 			success: true,

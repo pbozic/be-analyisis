@@ -19,6 +19,8 @@ import { BUSINESS_TYPE } from '../lib/constants.js';
 import prisma from '../prisma/prisma.js';
 import DailyMealDao from '../dao/DailyMealDao.ts';
 import PaymentDao from '../dao/Payment.ts';
+import elasticsearch from '../elasticsearch/index.js';
+const { businessIndex } = elasticsearch;
 
 dotenv.config();
 const { io, UserSockets, SocketStore } = socket;
@@ -442,6 +444,7 @@ async function handleWebhook(req, res) {
 						data: { expires_at: newExpiresAt, paid: true, active_at: new Date() },
 					});
 					console.log('Updated expires_at for all word_buy in subscription:', subscription.id);
+					businessIndex(subscription.metadata.business_id);
 				}
 				break;
 			}

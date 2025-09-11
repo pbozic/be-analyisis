@@ -2424,6 +2424,7 @@ async function getBusinessPromoWordsAnalytics(req, res) {
 
 		const wordIds = req.body?.ids;
 		const promoWords = await WordDao.getAllWordBuysByBusiness(business_id, {
+			deleted_at: null,
 			active_at: { lte: periodEnd },
 			expires_at: { gte: periodStart },
 		});
