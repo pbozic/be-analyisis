@@ -2239,9 +2239,9 @@ function buildPromoBuckets(
 			bucket.ordersCreated.add(pa.order_id);
 			if (d) d.ordersCreated.add(pa.order_id);
 		} else if (pa.type === ANALYTICS_TYPE.ORDER_FINISH) {
-			bucket.ordersFinished.add(pa.order_id);
 			const price = Number(pa.order?.details?.total_price) || 0;
-			bucket.revenue += price;
+			if (!bucket.ordersFinished.has(pa.order_id)) bucket.revenue += price;
+			bucket.ordersFinished.add(pa.order_id);
 			if (d) {
 				d.ordersFinished.add(pa.order_id);
 				if (!d.revenue[id]) d.revenue[id] = 0;
@@ -2249,7 +2249,7 @@ function buildPromoBuckets(
 			}
 		}
 		if (includeUserBreakdown && pa.user_id) {
-			if (!priorUsers.has(pa.user_id) && pa.user_id) bucket.newUsers.add(pa.user_id);
+			if (!priorUsers.has(pa.user_id)) bucket.newUsers.add(pa.user_id);
 			else bucket.returningUsers.add(pa.user_id);
 		}
 	}
