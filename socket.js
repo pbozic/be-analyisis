@@ -77,8 +77,8 @@ function setupSocket(server) {
 		jwt.verify(token, process.env.JWT_TOKEN_SECRET, (err, data) => {
 			if (err) return next(new Error('Authentication error'));
 			socket.user = data.user;
-			const existingSocket = UserSockets.get(data.user.user_id);
-			if (existingSocket) existingSocket.disconnect(true);
+			//const existingSocket = UserSockets.get(data.user.user_id);
+			//if (existingSocket) existingSocket.disconnect(true);
 			UserSockets.set(data.user.user_id, socket);
 			SocketStore.addSocket(data.user.user_id, socket);
 			next();
@@ -131,6 +131,15 @@ export const UserSockets = {
 			to: (roomName) => ({
 				emit: (event, payload) => io.to(room).to(roomName).emit(event, payload),
 			}),
+			disconnect: (close = false) => {
+				const sids = io.sockets.adapter.rooms.get(room);
+				if (sids) {
+					for (const sid of sids) {
+						const socket = io.server.sockets.sockets.get(sid);
+						if (socket) socket.disconnect(close);
+					}
+				}
+			},
 		};
 	},
 	emit(userId, event, payload) {
