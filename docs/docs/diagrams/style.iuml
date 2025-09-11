@@ -4,8 +4,9 @@
 skinparam dpi 300
 skinparam pageWidth 2100
 
-' === Compact Sequence Styling ===
+' === Compact Sequence Styling ===' === Default ===
 skinparam defaultFontSize 10
+
 skinparam sequence {
     MessageSpacing 15
     ParticipantSpacing 50
@@ -33,8 +34,8 @@ skinparam participant {
 
 ' === Participant Colors ===
 actor User as user #B0E0E6
-actor Driver as driver #F0E68C
 actor Business as business #D3D3D3
-participant Klikni as klikni #E6E6FA 
+actor Driver as driver #F0E68C
+participant Klikni as klikni #E6E6FA
 participant Stripe as stripe #FFDAB9
 participant Pantheon as pantheon #FFE4E1

@@ -77,8 +77,7 @@ group DeliveryOrder Flow
             }
             end note
         end
-        klikni -> stripe: create transfer to driver
-        klikni -[#green]> pantheon: send accounting data
+        klikni -[#green]> pantheon: send accounting data about CASH
         note right #LightGreen
         {
             price: 100EUR
@@ -99,7 +98,7 @@ group DeliveryOrder Flow
             }
             end note
         end
-        klikni -[#green]> pantheon: send accounting data
+        klikni -[#green]> pantheon: send accounting data about CASH
         note right #LightGreen
         {
             price: 100EUR
@@ -107,17 +106,6 @@ group DeliveryOrder Flow
         }
         end note
     end
-
-    ' par
-    '     klikni -> klikni: Find DeliveryDriver
-    '     klikni -> driver: DeliveryOrder
-    '     driver -> klikni: Accept DeliveryOrder
-    ' else
-    '     business -> klikni: DeliveryOrder Ready
-    ' end
-    ' driver -> klikni: DeliveryOrder Picked Up
-    ' driver -> klikni: DeliveryOrder In Delivery
-    ' driver -> klikni: DeliveryOrder At Location
 
     ... [[http://plantuml.com Delivery Flow]]  ...
     driver -> klikni: DeliveryOrder Finish Delivery
@@ -136,8 +124,7 @@ group DeliveryOrder Flow
             }
             end note
         end
-        klikni -> stripe: create transfer to driver
-        klikni -[#green]> pantheon: send accounting data
+        klikni -[#green]> pantheon: send accounting data about CASH
         note right #LightGreen
         {
             price: 100EUR
