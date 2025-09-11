@@ -2,8 +2,6 @@ import prisma from '../prisma/prisma.js';
 import { client as stripe } from '../lib/stripe.js';
 import BusinessUserDao from './BusinessUsers.js';
 import BusinessDao from './Business.js';
-import elasticsearch from '../elasticsearch/index.js';
-const { businessIndex } = elasticsearch;
 
 async function createWord(word, category_id, translations) {
 	// Create a new translatable record
@@ -438,11 +436,13 @@ export async function updateUserSubscription(userId, business_id) {
 
 		// Persist subscription id on word_buys
 		await prisma.word_buy.updateMany({
-			where: { business_id: business.business_id, deleted_at: null },
+			where: {
+				business_id: business.business_id,
+				deleted_at: null,
+				OR: [{ expires_at: null }, { expires_at: { gt: new Date() } }],
+			},
 			data: { stripe_subscription_id: subscription.id },
 		});
-
-		businessIndex(business.business_id);
 
 		return {
 			success: true,
@@ -466,56 +466,36 @@ export async function createWordBuySubscription(words, business_id, userId) {
 			throw new Error('Business has no Stripe customer on file');
 		}
 
-		// 2) Create or update word_buy entries
+		// 2) Create word_buy entries
+		const now = new Date();
 		const wordBuys = await Promise.all(
-			words.map(async (word) => {
+			words.map(async ({ word_id, price }) => {
 				try {
-					const { word_id, price } = word;
-					const wordBuy = await prisma.word_buy.upsert({
-						where: {
-							word_id_business_id: {
-								word_id,
-								business_id,
-							},
-						},
-						update: {
-							price,
-						},
-						create: {
+					const last = await prisma.word_buy.findFirst({
+						where: { word_id, business_id, deleted_at: null },
+						orderBy: { created_at: 'desc' },
+					});
+					const subId = last?.stripe_subscription_id || business.word_buy_stripe_subscription_id || null;
+					if (last && (!last.expires_at || last.expires_at > now)) {
+						await prisma.word_buy.update({
+							where: { word_buy_id: last.word_buy_id },
+							data: { expires_at: now, stripe_subscription_id: null },
+						});
+					}
+					return await prisma.word_buy.create({
+						data: {
 							word: { connect: { word_id } },
 							business: { connect: { business_id } },
 							price,
+							stripe_subscription_id: subId,
 						},
 					});
-					return wordBuy;
 				} catch (error) {
-					console.error('Error creating/updating word_buy:', error);
+					console.error('Error creating word_buy:', error);
 					throw error;
 				}
 			})
 		);
-
-		// Helper: update expires_at for all wordBuys
-		async function updateExpiresAt(subscriptionId) {
-			const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-			if (subscription?.current_period_end) {
-				const expiresAt = new Date(subscription.current_period_end * 1000);
-				console.log('Updating expires_at to:', expiresAt);
-
-				// Update all created wordBuys
-				await Promise.all(
-					wordBuys.map((wordBuy) =>
-						prisma.word_buy.update({
-							where: { word_buy_id: wordBuy.word_buy_id },
-							data: { expires_at: expiresAt, paid: true },
-						})
-					)
-				);
-				console.log('✅ expires_at updated for all word_buy entries');
-			} else {
-				console.log('No current_period_end found on subscription');
-			}
-		}
 
 		// 3) Check if existing subscription
 		let reusedSubscription = false;
@@ -530,10 +510,7 @@ export async function createWordBuySubscription(words, business_id, userId) {
 			result = await updateUserSubscription(userId, business_id);
 		}
 
-		// 5) Update expires_at for the words
-		if (result?.subscriptionId) {
-			await updateExpiresAt(result.subscriptionId);
-		}
+		if (result?.subscriptionId) console.log('✅ Subscription active/updated:', result.subscriptionId);
 
 		return {
 			wordBuyIds: wordBuys.map((wb) => wb.word_buy_id),
@@ -590,12 +567,13 @@ async function getAllWordBuysByWord(word) {
 	}
 	return wbs;
 }
-async function getAllWordBuysByBusiness(business) {
+async function getAllWordBuysByBusiness(business, whereObj = {}) {
 	const wbs = await prisma.word_buy.findMany({
 		where: {
 			business: {
 				business_id: business,
 			},
+			...whereObj,
 		},
 		include: {
 			word: {
@@ -616,12 +594,14 @@ async function getAllWordBuysByBusiness(business) {
 	return wbs;
 }
 async function getActiveWordBuysByBusiness(business) {
+	const now = new Date();
 	const wbs = await prisma.word_buy.findMany({
 		where: {
 			business: {
 				business_id: business,
 			},
 			deleted_at: null,
+			OR: [{ expires_at: null }, { expires_at: { gt: now } }],
 		},
 		include: {
 			word: {
@@ -677,6 +657,7 @@ export { getWordBuyById };
 export { getAllWordBuys };
 export { getAllWordBuysByWord };
 export { getAllWordBuysByBusiness };
+export { getActiveWordBuysByBusiness };
 export { removeCategoryFromWord };
 export { addCategoryToWord };
 export { deleteWordBuy };
@@ -694,6 +675,7 @@ export default {
 	getAllWordBuys,
 	getAllWordBuysByWord,
 	getAllWordBuysByBusiness,
+	getActiveWordBuysByBusiness,
 	removeCategoryFromWord,
 	addCategoryToWord,
 	createWordBuySubscription,

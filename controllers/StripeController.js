@@ -19,6 +19,8 @@ import { BUSINESS_TYPE } from '../lib/constants.js';
 import prisma from '../prisma/prisma.js';
 import DailyMealDao from '../dao/DailyMealDao.ts';
 import PaymentDao from '../dao/Payment.ts';
+import elasticsearch from '../elasticsearch/index.js';
+const { businessIndex } = elasticsearch;
 
 dotenv.config();
 const { io, UserSockets, SocketStore } = socket;
@@ -432,16 +434,17 @@ async function handleWebhook(req, res) {
 			case 'customer.subscription.created':
 			case 'customer.subscription.updated': {
 				const subscription = event.data.object;
-				if (subscription.metadata.type === 'word_buy') {
+				if (subscription.metadata.type === 'word_buys') {
 					console.log(`Updating word_buys for subscription ${subscription.id}`);
 					// Get new expiration date
 					const newExpiresAt = new Date(subscription.current_period_end * 1000);
 					// Update `expires_at` in all word_buys linked to this subscription
 					await prisma.word_buy.updateMany({
 						where: { stripe_subscription_id: subscription.id },
-						data: { expires_at: newExpiresAt },
+						data: { expires_at: newExpiresAt, paid: true, active_at: new Date() },
 					});
 					console.log('Updated expires_at for all word_buy in subscription:', subscription.id);
+					businessIndex(subscription.metadata.business_id);
 				}
 				break;
 			}
