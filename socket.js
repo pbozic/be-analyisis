@@ -3,7 +3,7 @@ import { createAdapter } from '@socket.io/redis-adapter';
 import jwt from 'jsonwebtoken';
 
 import redis from './lib/redis.js';
-const UserSockets = new Map();
+
 const subClient = redis.duplicate();
 const io = {}; // mutable container
 const SocketStore = {
@@ -84,23 +84,33 @@ function setupSocket(server) {
 			next();
 		});
 	});
-	io.server.on('connection', async (socket) => {
-		const userId = socket.user?.user_id;
-		UserSockets.set(userId, socket);
+	io.on('connection', async (socket) => {
+		const userId = socket.user?.user_id; // or socket.data.userId (recommended)
+		if (!userId) return socket.disconnect(true);
+		socket.join(`user:${userId}`);
+		// if you want multi-socket-per-user, store a Set instead of a single socket
+		UserSockets.set(userId, socket); // this overwrites previous sockets
+
 		const rooms = await SocketStore.getRoomsForUser(userId);
-		for (const room of rooms) {
-			socket.join(room);
-		}
-		socket.on('disconnect', async (reason) => {
+		for (const room of rooms) socket.join(room);
+
+		socket.on('joinRoom', (roomName) => {
+			socket.join(roomName); // join now
+			return SocketStore.addUserToRoom(userId, roomName); // persist
+		});
+
+		socket.on('leaveRoom', (roomName) => {
+			socket.leave(roomName);
+			return SocketStore.removeUserFromRoom(userId, roomName);
+		});
+
+		socket.on('disconnect', async () => {
 			const current = UserSockets.get(userId);
-			if (current?.id === socket.id) {
-				UserSockets.delete(userId); // only delete if this was the current active socket
-			}
+			if (current?.id === socket.id) UserSockets.delete(userId);
 			await SocketStore.removeSocket(userId, socket.id);
 		});
-		socket.on('joinRoom', (roomName) => SocketStore.addUserToRoom(userId, roomName));
-		socket.on('leaveRoom', (roomName) => SocketStore.removeUserFromRoom(userId, roomName));
 	});
+
 	initRedisAdapter();
 }
 async function initRedisAdapter() {
@@ -109,6 +119,28 @@ async function initRedisAdapter() {
 	io.server.adapter(createAdapter(redis, subClient));
 	await restoreUserSockets();
 }
+const userRoom = (id) => `user:${id}`;
+export const UserSockets = {
+	// keeps your old call style: UserSockets.get(id).emit(...)
+	get(userId) {
+		const room = userRoom(userId);
+		const op = io.to(room);
+		return {
+			emit: (event, payload) => op.emit(event, payload),
+			// optional: union with another room (socket.io de-dupes)
+			to: (roomName) => ({
+				emit: (event, payload) => io.to(room).to(roomName).emit(event, payload),
+			}),
+		};
+	},
+	emit(userId, event, payload) {
+		io.to(userRoom(userId)).emit(event, payload);
+	},
+	count(userId) {
+		const sids = io.sockets.adapter.rooms.get(userRoom(userId));
+		return sids ? sids.size : 0;
+	},
+};
 export { setupSocket };
 export { UserSockets };
 export { SocketStore };
