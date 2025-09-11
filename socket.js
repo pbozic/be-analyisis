@@ -79,7 +79,7 @@ function setupSocket(server) {
 			socket.user = data.user;
 			//const existingSocket = UserSockets.get(data.user.user_id);
 			//if (existingSocket) existingSocket.disconnect(true);
-			UserSockets.set(data.user.user_id, socket);
+			//UserSockets.set(data.user.user_id, socket);
 			SocketStore.addSocket(data.user.user_id, socket);
 			next();
 		});
@@ -89,7 +89,7 @@ function setupSocket(server) {
 		if (!userId) return socket.disconnect(true);
 		socket.join(`user:${userId}`);
 		// if you want multi-socket-per-user, store a Set instead of a single socket
-		UserSockets.set(userId, socket); // this overwrites previous sockets
+		//UserSockets.set(userId, socket); // this overwrites previous sockets
 
 		const rooms = await SocketStore.getRoomsForUser(userId);
 		for (const room of rooms) socket.join(room);
@@ -122,14 +122,15 @@ async function initRedisAdapter() {
 const userRoom = (id) => `user:${id}`;
 export const UserSockets = {
 	// keeps your old call style: UserSockets.get(id).emit(...)
+	set(userId, socketId) {},
 	get(userId) {
 		const room = userRoom(userId);
-		const op = io.to(room);
+		const op = io.server.to(room);
 		return {
 			emit: (event, payload) => op.emit(event, payload),
 			// optional: union with another room (socket.io de-dupes)
 			to: (roomName) => ({
-				emit: (event, payload) => io.to(room).to(roomName).emit(event, payload),
+				emit: (event, payload) => io.server.to(room).to(roomName).emit(event, payload),
 			}),
 			disconnect: (close = false) => {
 				const sids = io.sockets.adapter.rooms.get(room);
@@ -143,7 +144,7 @@ export const UserSockets = {
 		};
 	},
 	emit(userId, event, payload) {
-		io.to(userRoom(userId)).emit(event, payload);
+		io.server.to(userRoom(userId)).emit(event, payload);
 	},
 	count(userId) {
 		const sids = io.sockets.adapter.rooms.get(userRoom(userId));
