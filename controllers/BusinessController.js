@@ -2243,7 +2243,7 @@ function buildPromoBuckets(
 			if (!bucket.ordersFinished.has(pa.order_id)) bucket.revenue += price;
 			bucket.ordersFinished.add(pa.order_id);
 			if (d) {
-				if (!d.ordersFinished.has(pa.order_id)) bucket.revenue += price;
+				if (!d.ordersFinished.has(pa.order_id)) d.revenue += price;
 				d.ordersFinished.add(pa.order_id);
 				if (!d.revenueBreakdown[id]) d.revenueBreakdown[id] = 0;
 				d.revenueBreakdown[id] += price;
