@@ -2243,9 +2243,10 @@ function buildPromoBuckets(
 			if (!bucket.ordersFinished.has(pa.order_id)) bucket.revenue += price;
 			bucket.ordersFinished.add(pa.order_id);
 			if (d) {
+				if (!d.ordersFinished.has(pa.order_id)) bucket.revenue += price;
 				d.ordersFinished.add(pa.order_id);
-				if (!d.revenue[id]) d.revenue[id] = 0;
-				d.revenue[id] += price;
+				if (!d.revenueBreakdown[id]) d.revenueBreakdown[id] = 0;
+				d.revenueBreakdown[id] += price;
 			}
 		}
 		if (includeUserBreakdown && pa.user_id) {
@@ -2343,7 +2344,8 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
 				orderStartsUsers: new Set(),
 				ordersCreated: new Set(),
 				ordersFinished: new Set(),
-				revenue: {},
+				revenue: 0,
+				revenueBreakdown: {},
 			};
 		}
 		// Build buckets keyed by promo_sections_id
@@ -2459,7 +2461,8 @@ async function getBusinessPromoWordsAnalytics(req, res) {
 				orderStartsUsers: new Set(),
 				ordersCreated: new Set(),
 				ordersFinished: new Set(),
-				revenue: {},
+				revenue: 0,
+				revenueBreakdown: {},
 			};
 		}
 		const bucketCurrent = buildPromoBuckets(current, 'word_id', {
@@ -2554,7 +2557,8 @@ async function getBusinessPromoAdsAnalytics(req, res) {
 				orderStartsUsers: new Set(),
 				ordersCreated: new Set(),
 				ordersFinished: new Set(),
-				revenue: {},
+				revenue: 0,
+				revenueBreakdown: {},
 			};
 		}
 		// Build buckets keyed by promo_ads_id
