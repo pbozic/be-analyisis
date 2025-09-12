@@ -1,4 +1,4 @@
-@startuml 
+@startuml
 title Transfer Card, Cash, Narocilnica Payments
 ' === Compact Sequence Styling ===
 skinparam defaultFontSize 10
@@ -42,6 +42,9 @@ user -> klikni: Create Transfer Order
 
 ... Taxi Order Flow ...
 driver -> klikni: Confirm payment
+opt use credits
+    klikni -> klikni: Check and reserve credits
+end
 group Transfer Money to Platform
     group Transfer Credits
         loop for each
@@ -79,7 +82,6 @@ group Transfer Money to Driver
         }
         end note
     end
-
     klikni -[#green]> pantheon: send accounting data about CASH
     note right #LightGreen
     {

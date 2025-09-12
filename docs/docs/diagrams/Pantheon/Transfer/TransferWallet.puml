@@ -42,6 +42,12 @@ user -> klikni: Create Transfer Order
 
 ... Taxi Order Flow ...
 driver -> klikni: Confirm payment
+opt use credits
+    klikni -> klikni: Check and reserve credits & funds
+end
+opt credits amount < total price
+    klikni -> klikni: Check and reserve funds
+end
 group Transfer Credits and Funds To Platform
     klikni->klikni: group reserved WF by (charge_id,type)
     loop for each group
