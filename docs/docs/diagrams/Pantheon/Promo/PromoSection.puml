@@ -1,0 +1,54 @@
+@startuml Klikni_Sequence_Diagram
+' === Page / Resolution ===
+skinparam dpi 300
+
+' === Compact Sequence Styling ===
+skinparam defaultFontSize 10
+skinparam sequence {
+    MessageSpacing 15
+    ParticipantSpacing 50
+}
+
+' === Actor / Participant Styling ===
+skinparam actor {
+    FontName Arial
+    FontSize 12
+    BorderColor Black
+    BackgroundColor #ADD8E6
+    RoundCorner 10
+    MinWidth 120
+    MinHeight 120
+}
+
+skinparam participant {
+    FontName Arial
+    FontSize 12
+    BorderColor Black
+    RoundCorner 10
+    MinWidth 140
+    MinHeight 100
+}
+
+' === Participant Colors ===
+actor Business as business #D3D3D3
+participant Klikni as klikni #E6E6FA 
+participant Stripe as stripe #FFDAB9
+participant Pantheon as pantheon #FFE4E1
+
+' === Sequence Example ===
+business -> klikni: Purchase promo section
+klikni -> stripe: Create PaymentIntent
+klikni <-- stripe: PaymentIntent
+business <-- klikni: ClientSecret
+business -> stripe: Confirm PaymentIntent
+stripe -> klikni: Payment Intent Success
+klikni -> klikni: Add to Promo Section for time period
+
+klikni -[#green]> pantheon: send accounting data
+note right#LightGreen 
+Available Data Json:
+{price: 100EUR
+credits: 15EUR}
+end note
+
+@enduml
