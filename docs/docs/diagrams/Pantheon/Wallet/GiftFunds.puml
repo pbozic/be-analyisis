@@ -1,5 +1,5 @@
 @startuml Klikni_Sequence_Diagram
-title Referral
+title Giving Funds To User
 
 ' === Compact Sequence Styling ===
 skinparam defaultFontSize 10
@@ -30,24 +30,20 @@ skinparam participant {
 
 ' === Participant Colors ===
 ' Use stereotypes for coloring specific entities
-' actor User as user #B0E0E6
-actor ReferredUser as refuser #99c1c6ff
-' actor Driver as driver #F0E68C
-' actor Business as business #D3D3D3
-participant Klikni as klikni #E6E6FA 
-' participant Stripe as stripe #FFDAB9
+actor User as user #B0E0E6
+participant Klikni as klikni #E6E6FA
+participant Stripe as stripe #FFDAB9
 participant Pantheon as pantheon #FFE4E1
 
-
 ' === Sequence ===
-refuser -> klikni: Order payment
-opt Referring User meets\n referral rewards conditions
-    klikni --> klikni: Create credits\nfor referring user
-    klikni -[#green]> pantheon: Send accounting data
-    note left of pantheon #LightGreen 
-    {amount_eur: number
+klikni -> klikni: create Wallet Funds objects
+klikni -[#green]> pantheon: Send Accounting Data
+note right #LightGreen
+{
+    amount_eur: number
     user_id: string
-    customer_id: string}
-    end note
-end opt
+    customer_id: string
+}
+end note
+
 @enduml

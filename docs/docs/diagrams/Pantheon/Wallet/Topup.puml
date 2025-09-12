@@ -1,11 +1,6 @@
 @startuml Klikni_Sequence_Diagram
 title Wallet Topup
 
-' === Page / Resolution ===
-skinparam dpi 300
-skinparam pageWidth 2100
-' skinparam pageHeight 1485
-
 ' === Compact Sequence Styling ===
 skinparam defaultFontSize 10
 skinparam sequence {
