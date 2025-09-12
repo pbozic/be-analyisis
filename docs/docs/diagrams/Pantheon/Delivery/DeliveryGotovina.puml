@@ -1,5 +1,5 @@
 @startuml Klikni_Sequence_Diagram
-title Delivery card payment with credits
+title Delivery cash payment with credits
 ' === Page / Resolution ===
 ' skinparam dpi 300
 ' skinparam pageWidth 2100
@@ -47,11 +47,6 @@ klikni -> klikni: Verify Prices
 opt use credits
     klikni -> klikni: Check and reserve credits
 end
-klikni -> stripe: Create PaymentIntent
-klikni <-- stripe: PaymentIntent
-user <-- klikni: ClientSecret
-user -> stripe: Confirm PaymentIntent
-stripe -> klikni: Payment Intent Success
 klikni -> klikni: Create DeliveryOrder
 klikni --> user: DeliveryOrder
 
@@ -124,6 +119,8 @@ group DeliveryOrder Flow
             }
             end note
         end
+        klikni->stripe: create transfer in correct amount
+
         klikni -[#green]> pantheon: send accounting data about CASH
         note right #LightGreen
         {

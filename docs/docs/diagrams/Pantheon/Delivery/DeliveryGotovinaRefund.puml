@@ -40,6 +40,7 @@ participant Stripe as stripe #FFDAB9
 participant Pantheon as pantheon #FFE4E1
 
 ' === Sequence Example ===
+== NOT DEFINED BUT HERE YOU GO ==
 user -> klikni: Request refund
 klikni -> klikni: Recreate X% spent credits
 klikni -[#green]> pantheon: send accounting data

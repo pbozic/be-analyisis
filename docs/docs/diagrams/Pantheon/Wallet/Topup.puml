@@ -36,8 +36,6 @@ skinparam participant {
 ' === Participant Colors ===
 ' Use stereotypes for coloring specific entities
 actor User as user #B0E0E6
-actor Driver as driver #F0E68C
-actor Business as business #D3D3D3
 participant Klikni as klikni #E6E6FA 
 participant Stripe as stripe #FFDAB9
 participant Pantheon as pantheon #FFE4E1

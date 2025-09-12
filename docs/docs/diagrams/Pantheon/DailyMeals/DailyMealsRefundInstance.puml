@@ -1,0 +1,112 @@
+@startuml Klikni_Sequence_Diagram
+title Daily Meal Instance Refund with credits (0.9 %)
+
+' === Compact Sequence Styling ===
+skinparam defaultFontSize 10
+skinparam sequence {
+    MessageSpacing 15
+    ParticipantSpacing 50
+}
+
+' === Actor / Participant Styling ===
+skinparam actor {
+    FontName Arial
+    FontSize 12
+    BorderColor Black
+    BackgroundColor #ADD8E6
+    RoundCorner 10
+    MinWidth 120
+    MinHeight 120
+}
+
+skinparam participant {
+    FontName Arial
+    FontSize 12
+    BorderColor Black
+    RoundCorner 10
+    MinWidth 140
+    MinHeight 100
+}
+
+' === Participant Colors ===
+' Use stereotypes for coloring specific entities
+actor User as user #B0E0E6
+actor Driver as driver #F0E68C
+participant Klikni as klikni #E6E6FA
+participant Stripe as stripe #FFDAB9
+participant Pantheon as pantheon #FFE4E1
+
+' === Sequence Example ===
+user -> klikni: Cancel Daily Meal instance
+klikni -> klikni: Calculate refund splits
+
+
+group Transfer ((1-X)%) Money to Platform
+    opt use credits
+        klikni->klikni: delete ((1-X)%) Credits
+        klikni -[#green]> pantheon: send accounting data
+        note right #LightGreen
+        {
+            price: 100EUR
+            credits: 15EUR
+        }
+        end note
+    end
+    alt paymenttype==WALLET
+        klikni->stripe: create transfer
+        klikni<--stripe
+        klikni->klikni: delete ((1-X)%) Funds
+        klikni -[#green]> pantheon: send accounting data
+        note right #LightGreen
+        {
+            price: 100EUR
+            credits: 15EUR
+        }
+        end note
+
+    else paymenttype==CARD
+        klikni -[#green]> pantheon: send accounting data
+        note right #LightGreen
+        {
+            price: 100EUR
+            credits: 15EUR
+        }
+        end note
+    end
+
+end
+group Refund (X%) Money to User
+    opt use credits
+        klikni -> klikni: Recreate X% spent credits
+        klikni -[#green]> pantheon: send accounting data
+        note right #LightGreen
+        {
+            price: 100EUR
+            credits: 15EUR
+        }
+        end note
+    end
+    alt paymenttype==WALLET
+        klikni -> klikni: Recreate X% spent funds instead of cash
+        klikni -[#green]> pantheon: send accounting data
+        note right #LightGreen
+        {
+            price: 100EUR
+            credits: 15EUR
+        }
+        end note
+
+    else paymenttype==CARD
+        klikni -> stripe: Refund amount * X% PaymentIntent
+        klikni <-- stripe: refund created
+        klikni -[#green]> pantheon: send accounting data
+        note right #LightGreen
+        {
+            price: 100EUR
+            credits: 15EUR
+        }
+        end note
+    end
+    klikni -> klikni: finalize cancelation
+    klikni --> user: cancelation processed
+    @enduml
