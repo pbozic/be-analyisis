@@ -2197,78 +2197,73 @@ function buildPromoBuckets(
 	idKey,
 	{ includeUserBreakdown = false, priorUsers = new Set(), dayBuckets = {} } = {}
 ) {
-	const buckets = {};
+	const bucket = {
+		impressions: 0,
+		impressionsUsers: new Set(),
+		clicks: 0,
+		clicksUsers: new Set(),
+		orderStarts: 0,
+		orderStartsUsers: new Set(),
+		ordersCreated: new Set(),
+		ordersFinished: new Set(),
+		newUsers: new Set(),
+		returningUsers: new Set(),
+		revenue: 0,
+	};
 	for (const pa of analyticsRows || []) {
 		const day = formatDay(pa.created_at);
 		const d = dayBuckets[day];
-		const id = pa[idKey] || 'other';
-		if (!buckets[id])
-			buckets[id] = {
-				impressions: 0,
-				impressionsUsers: new Set(),
-				clicks: 0,
-				clicksUsers: new Set(),
-				orderStarts: 0,
-				orderStartsUsers: new Set(),
-				ordersCreated: 0,
-				ordersFinished: 0,
-				newUsers: new Set(),
-				returningUsers: new Set(),
-				revenue: 0,
-			};
-		const b = buckets[id];
+		const id = pa[idKey] || 'unknown';
 		if (pa.type === ANALYTICS_TYPE.VIEW) {
-			b.impressions++;
+			bucket.impressions++;
 			if (d) d.impressions++;
 			if (pa.user_id) {
-				b.impressionsUsers.add(pa.user_id);
+				bucket.impressionsUsers.add(pa.user_id);
 				if (d) d.impressionsUsers.add(pa.user_id);
 			}
 		} else if (pa.type === ANALYTICS_TYPE.CLICK) {
-			b.clicks++;
+			bucket.clicks++;
 			if (d) d.clicks++;
 			if (pa.user_id) {
-				b.clicksUsers.add(pa.user_id);
+				bucket.clicksUsers.add(pa.user_id);
 				if (d) d.clicksUsers.add(pa.user_id);
 			}
 		} else if (pa.type === ANALYTICS_TYPE.ORDER_START) {
-			b.orderStarts++;
+			bucket.orderStarts++;
 			if (d) d.orderStarts++;
 			if (pa.user_id) {
-				b.orderStartsUsers.add(pa.user_id);
+				bucket.orderStartsUsers.add(pa.user_id);
 				if (d) d.orderStartsUsers.add(pa.user_id);
 			}
 		} else if (pa.type === ANALYTICS_TYPE.ORDER_CREATE) {
-			b.ordersCreated++;
-			if (d) d.ordersCreated++;
+			bucket.ordersCreated.add(pa.order_id);
+			if (d) d.ordersCreated.add(pa.order_id);
 		} else if (pa.type === ANALYTICS_TYPE.ORDER_FINISH) {
-			b.ordersFinished++;
 			const price = Number(pa.order?.details?.total_price) || 0;
-			b.revenue += price;
+			if (!bucket.ordersFinished.has(pa.order_id)) bucket.revenue += price;
+			bucket.ordersFinished.add(pa.order_id);
 			if (d) {
-				d.ordersFinished++;
-				d.revenue += price;
+				if (!d.ordersFinished.has(pa.order_id)) d.revenue += price;
+				d.ordersFinished.add(pa.order_id);
+				if (!d.revenueBreakdown[id]) d.revenueBreakdown[id] = 0;
+				d.revenueBreakdown[id] += price;
 			}
 		}
 		if (includeUserBreakdown && pa.user_id) {
-			if (!priorUsers.has(pa.user_id) && pa.user_id) b.newUsers.add(pa.user_id);
-			else b.returningUsers.add(pa.user_id);
+			if (!priorUsers.has(pa.user_id)) bucket.newUsers.add(pa.user_id);
+			else bucket.returningUsers.add(pa.user_id);
 		}
 	}
-	const mapped = Object.fromEntries(
-		Object.entries(buckets).map(([key, b]) => [
-			key,
-			{
-				...b,
-				impressionsUsers: b.impressionsUsers.size,
-				clicksUsers: b.clicksUsers.size,
-				orderStartsUsers: b.orderStartsUsers.size,
-				newUsers: b.newUsers.size,
-				returningUsers: b.returningUsers.size,
-			},
-		])
-	);
-	return mapped;
+	return {
+		...bucket,
+		impressionsUsers: bucket.impressionsUsers.size,
+		clicksUsers: bucket.clicksUsers.size,
+		orderStartsUsers: bucket.orderStartsUsers.size,
+		newUsers: bucket.newUsers.size,
+		returningUsers: bucket.returningUsers.size,
+		ordersCreated: bucket.ordersCreated.size,
+		ordersFinished: bucket.ordersFinished.size,
+	};
 }
 
 /**
@@ -2347,9 +2342,10 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
 				clicks: 0,
 				orderStarts: 0,
 				orderStartsUsers: new Set(),
-				ordersCreated: 0,
-				ordersFinished: 0,
+				ordersCreated: new Set(),
+				ordersFinished: new Set(),
 				revenue: 0,
+				revenueBreakdown: {},
 			};
 		}
 		// Build buckets keyed by promo_sections_id
@@ -2372,9 +2368,10 @@ async function getBusinessPromoSectionsAnalytics(req, res) {
 					clicksUsers: v.clicksUsers.size || 0,
 					orderStarts: v.orderStarts || 0,
 					orderStartsUsers: v.orderStartsUsers.size || 0,
-					ordersFinished: v.ordersFinished || 0,
-					ordersCreated: v.ordersCreated || 0,
+					ordersFinished: v.ordersFinished.size || 0,
+					ordersCreated: v.ordersCreated.size || 0,
 					revenue: v.revenue || 0,
+					revenueBreakdown: v.revenueBreakdown || {},
 				})),
 		};
 
@@ -2463,19 +2460,21 @@ async function getBusinessPromoWordsAnalytics(req, res) {
 				clicks: 0,
 				orderStarts: 0,
 				orderStartsUsers: new Set(),
-				ordersCreated: 0,
-				ordersFinished: 0,
+				ordersCreated: new Set(),
+				ordersFinished: new Set(),
+				revenue: 0,
+				revenueBreakdown: {},
 			};
 		}
-		const bucketsCurrent = buildPromoBuckets(current, 'word_id', {
+		const bucketCurrent = buildPromoBuckets(current, 'word_id', {
 			includeUserBreakdown: true,
 			priorUsers,
 			dayBuckets,
 		});
-		const bucketsPrevious = buildPromoBuckets(previous, 'word_id');
+		const bucketPrevious = buildPromoBuckets(previous, 'word_id');
 		const results = {
-			current: bucketsCurrent,
-			previous: bucketsPrevious,
+			current: bucketCurrent,
+			previous: bucketPrevious,
 			timeline: Object.entries(dayBuckets)
 				.sort((a, b) => (a[0] < b[0] ? -1 : 1))
 				.map(([date, v]) => ({
@@ -2486,8 +2485,10 @@ async function getBusinessPromoWordsAnalytics(req, res) {
 					clicksUsers: v.clicksUsers.size || 0,
 					orderStarts: v.orderStarts || 0,
 					orderStartsUsers: v.orderStartsUsers.size || 0,
-					ordersFinished: v.ordersFinished || 0,
-					ordersCreated: v.ordersCreated || 0,
+					ordersFinished: v.ordersFinished.size || 0,
+					ordersCreated: v.ordersCreated.size || 0,
+					revenue: v.revenue || 0,
+					revenueBreakdown: v.revenueBreakdown || {},
 				})),
 		};
 
@@ -2556,8 +2557,10 @@ async function getBusinessPromoAdsAnalytics(req, res) {
 				clicks: 0,
 				orderStarts: 0,
 				orderStartsUsers: new Set(),
-				ordersCreated: 0,
-				ordersFinished: 0,
+				ordersCreated: new Set(),
+				ordersFinished: new Set(),
+				revenue: 0,
+				revenueBreakdown: {},
 			};
 		}
 		// Build buckets keyed by promo_ads_id
@@ -2580,8 +2583,10 @@ async function getBusinessPromoAdsAnalytics(req, res) {
 					clicksUsers: v.clicksUsers.size || 0,
 					orderStarts: v.orderStarts || 0,
 					orderStartsUsers: v.orderStartsUsers.size || 0,
-					ordersFinished: v.ordersFinished || 0,
-					ordersCreated: v.ordersCreated || 0,
+					ordersFinished: v.ordersFinished.size || 0,
+					ordersCreated: v.ordersCreated.size || 0,
+					revenue: v.revenue || 0,
+					revenueBreakdown: v.revenueBreakdown || {},
 				})),
 		};
 
