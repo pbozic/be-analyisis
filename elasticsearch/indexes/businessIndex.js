@@ -279,10 +279,13 @@ async function indexBusinesses(business_id = null, force = false) {
 				telephone: business.telephone,
 				location: business.delivery_address
 					? {
-							lat: parseFloat(business.delivery_address.latitude),
-							lon: parseFloat(business.delivery_address.longitude),
+							lat: parseFloat(business?.delivery_address?.latitude || 0),
+							lon: parseFloat(business?.delivery_address?.longitude || 0),
 						}
-					: { lat: parseFloat(business.address.latitude), lon: parseFloat(business.address.longitude) },
+					: {
+							lat: parseFloat(business?.address?.latitude || 0),
+							lon: parseFloat(business?.address?.longitude || 0),
+						},
 				menus: business.menus
 					.filter((menu) => {
 						if (!menu.isDailyMeal) return true;
