@@ -40,7 +40,10 @@ import ScoringPointsDao from '../dao/ScoringPoints.js';
 import LateEventsDao from '../dao/LateEvents.js';
 import stripe from '../lib/stripe.js';
 import { calculateTransferOrderPaymentCuts } from '../lib/taxiHelpers.js';
+import ReviewsDao from '../dao/Review.js';
+
 const { UserSockets, io, SocketStore } = socket;
+
 /**
  * GET /taxi/order/{orderId}
  * @tag Taxi
@@ -62,6 +65,7 @@ async function getOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * GET /taxi/orders/active/:user_id/:type
  * @tag Taxi
@@ -82,6 +86,7 @@ async function getActiveTaxiOrders(req, res) {
 		res.status(500).json({ message: 'Error fetching active orders' });
 	}
 }
+
 /**
  * GET /taxi/orders/active/me
  * @tag Taxi
@@ -103,6 +108,7 @@ export async function getMyActiveTaxiOrders(req, res) {
 		res.status(500).json({ message: 'Error fetching active orders' });
 	}
 }
+
 async function getActiveOrdersHelper(user_id, type, isBusinessUser = false) {
 	try {
 		const activeOrders = await TaxiOrderDao.getTaxiOrdersIfNotCompleted(user_id, type, isBusinessUser);
@@ -163,6 +169,7 @@ async function getActiveOrdersHelper(user_id, type, isBusinessUser = false) {
 		throw new Error('Error fetching active orders');
 	}
 }
+
 /**
  * GET /taxi/orders/active/driver/:driver_id
  * @tag Taxi
@@ -197,6 +204,7 @@ async function getActiveTaxiOrdersByDriverId(req, res) {
 		res.status(500).json({ message: 'Error something went wrong...' });
 	}
 }
+
 /**
  * GET /taxi/orders/driver/:driver_id
  * @tag Taxi
@@ -221,6 +229,7 @@ async function getTaxiOrdersByDriverId(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * GET /taxi/orders/completed
  * @tag Taxi
@@ -246,6 +255,7 @@ async function getCompletedTaxiOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * GET /taxi/orders/canceled/:driver_id
  * @tag Taxi
@@ -271,6 +281,7 @@ async function getCanceledTaxiOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * GET /taxi/orders/rejected/:driver_id
  * @tag Taxi
@@ -296,6 +307,7 @@ async function getRejectedTaxiOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * GET /taxi/orders
  * @tag Taxi
@@ -327,6 +339,7 @@ async function getTaxiOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * GET /taxi/orders/completed/user/:user_id
  * @tag Taxi
@@ -362,12 +375,20 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
 				updated_at: 'desc',
 			},
 		});
-		res.status(200).json(completedOrders);
+
+		const reviews = await ReviewsDao.getReviewsByUserId(user_id);
+		const joinReviews = completedOrders.map((order) => {
+			const review = reviews.find((r) => r.feedback?.order_id === order.order_id);
+			return { ...order, review };
+		});
+
+		res.status(200).json(joinReviews);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
 		res.status(500).json(e);
 	}
 }
+
 /**
  * GET /taxi/orders/completed/business/:business_id
  * @tag Taxi
@@ -396,6 +417,7 @@ async function getCompletedTaxiOrdersByBusinessId(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * GET /taxi/orders/canceled/user/:user_id
  * @tag Taxi
@@ -421,6 +443,7 @@ async function getCanceledTaxiOrdersByUserId(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 function preprocessOrderData(orderData) {
 	const cleanedOrderData = {
 		// user_id: orderData.user_id,
@@ -487,6 +510,7 @@ function preprocessOrderData(orderData) {
 	}
 	return orderDataArray;
 }
+
 async function generateVehicleTransferOrder(orderData, userId, businessUserId, businessClientId) {
 	const vehicleTransferOrderData = {
 		...orderData,
@@ -530,6 +554,7 @@ async function generateVehicleTransferOrder(orderData, userId, businessUserId, b
 	);
 	return vehicle_transfer_order;
 }
+
 function subdivideOrder(vehicle_class, vehicle_category, n_adults, n_children) {
 	let splits = [];
 	let num_orders;
@@ -569,6 +594,7 @@ function subdivideOrder(vehicle_class, vehicle_category, n_adults, n_children) {
 	}
 	return splits;
 }
+
 async function makeOrder(cleanOrderData, userId, parentOrderId, driverId, businessUserId, businessClientId) {
 	const orderPayload = {
 		...cleanOrderData,
@@ -609,6 +635,7 @@ async function makeOrder(cleanOrderData, userId, parentOrderId, driverId, busine
 	const order = await TaxiOrderDao.createOrder(orderPayload);
 	return order;
 }
+
 async function buildOrder(cleanOrderData, userId, parentOrderId, driverId, businessUserId, businessClientId) {
 	const { vehicle_class, vehicle_category, adults, children_under_140 } = cleanOrderData.preferences;
 	const splits = subdivideOrder(vehicle_class, vehicle_category, adults, children_under_140);
@@ -631,6 +658,7 @@ async function buildOrder(cleanOrderData, userId, parentOrderId, driverId, busin
 	}
 	return firstOrderId;
 }
+
 async function requestTransferOrderPrice(req, res) {
 	try {
 		const { route, vehicle_category } = req.body;
@@ -641,6 +669,7 @@ async function requestTransferOrderPrice(req, res) {
 		res.status(500);
 	}
 }
+
 async function cleanedCreateOrderHelper(orderData) {
 	try {
 		const user_id = orderData.user_id;
@@ -685,6 +714,7 @@ async function cleanedCreateOrderHelper(orderData) {
 		throw new Error('Error in cleanedCreateOrderHelper!');
 	}
 }
+
 async function handlePaymentForTransferOrder(order, return_url) {
 	try {
 		let user;
@@ -847,6 +877,7 @@ async function handlePaymentForTransferOrder(order, return_url) {
 		throw new Error('Error when handling payment: ', e);
 	}
 }
+
 /**
  * POST /taxi/order
  * @tag Taxi
@@ -878,13 +909,11 @@ async function createOrder(req, res) {
 		if (coordinates) {
 			const pointWKT = `SRID=4326;POINT(${coordinates.longitude} ${coordinates.latitude})`;
 			region = await prisma.$queryRaw`
-			SELECT 
-				municipalities_id,
-				name,
-				requires_license
-			FROM municipalities
-			WHERE ST_Contains(geom_generated, ST_GeomFromText(${pointWKT}))
-			LIMIT 1;
+                SELECT municipalities_id,
+                       name,
+                       requires_license
+                FROM municipalities
+                WHERE ST_Contains(geom_generated, ST_GeomFromText(${pointWKT})) LIMIT 1;
 			`;
 		}
 		console.log('REGION', region);
@@ -1003,6 +1032,7 @@ async function createOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 function getDayIndex(dayName) {
 	// Map day names to their corresponding indices
 	const daysOfWeek = {
@@ -1016,6 +1046,7 @@ function getDayIndex(dayName) {
 	};
 	return daysOfWeek[dayName]; // Return the index of the day
 }
+
 function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
 	try {
 		console.log('rd', repeatDuration);
@@ -1068,6 +1099,7 @@ function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
 		throw new Error(error);
 	}
 }
+
 /**
  * POST /taxi/dispatch-order
  * @tag Taxi
@@ -1096,6 +1128,7 @@ async function createDispatchOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * POST /taxi/order/accept
  * @tag Taxi
@@ -1197,6 +1230,7 @@ async function acceptOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * POST /taxi/order/complete
  * @tag Taxi
@@ -1638,6 +1672,7 @@ async function completeOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * POST /taxi/order/status
  * @tag Taxi
@@ -1691,6 +1726,7 @@ async function updateOrderStatus(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * POST /taxi/order/update/preferences
  * @tag Taxi
@@ -1729,6 +1765,7 @@ async function updateTaxiOrderPreferences(req, res) {
 		res.status(500).json({ message: 'Server error', error: e });
 	}
 }
+
 /**
  * POST /taxi/order/cancel
  * @tag Taxi
@@ -1863,6 +1900,7 @@ async function cancelOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * POST /taxi/order/reject
  * @tag Taxi
@@ -1976,6 +2014,7 @@ async function rejectOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * POST /taxi/order/route
  * @tag Taxi
@@ -1999,6 +2038,7 @@ async function updateTaxiOrderRoute(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * POST /taxi/order/pickup_location
  * @tag Taxi
@@ -2022,6 +2062,7 @@ async function updateTaxiOrderPickupLocation(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * POST /taxi/order/delivery_location
  * @tag Taxi
@@ -2045,6 +2086,7 @@ async function updateTaxiOrderDeliveryLocation(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * POST /taxi/order/complete_route
  * @tag Taxi
@@ -2069,6 +2111,7 @@ async function updateCompleteTaxiRoute(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * POST /taxi/order/timeline
  * @tag Taxi
@@ -2094,6 +2137,7 @@ async function updateTaxiOrderTimeline(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * POST /taxi/order/payment
  * @tag Taxi
@@ -2122,6 +2166,7 @@ async function updateTaxiOrderPayment(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * POST /taxi/driver
  * @tag Taxi
@@ -2155,6 +2200,7 @@ async function appendTaxiDriver(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 async function getScheduledOrders(req, res) {
 	try {
 		const orders = await TaxiOrderDao.getOrders({
@@ -2170,6 +2216,7 @@ async function getScheduledOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 async function getAcceptedScheduledOrders(req, res) {
 	try {
 		const orders = await TaxiOrderDao.getOrders({
@@ -2186,6 +2233,7 @@ async function getAcceptedScheduledOrders(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 async function getScheduledOrdersByUserId(req, res) {
 	const { user_id } = req.params;
 	try {
@@ -2202,6 +2250,7 @@ async function getScheduledOrdersByUserId(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 async function getDriversForOrder(req, res) {
 	try {
 		const drivers = await DriverDao.getAvailableDrivers();
@@ -2219,6 +2268,7 @@ async function getDriversForOrder(req, res) {
 		res.status(500).json(error);
 	}
 }
+
 /**
  * GET /taxi/orders/pagination
  * @tag Taxi
@@ -2253,6 +2303,7 @@ async function getTaxiOrdersWithPagination(req, res) {
 		res.status(500).json({ message: 'Error something went wrong...' });
 	}
 }
+
 /**
  * GET /taxi/orders/today
  * @tag Taxi
@@ -2281,6 +2332,7 @@ async function getTaxiOrdersToday(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 async function cancelGroupedOrderByParentId(req, res) {
 	console.info('TaxiOrderController', 'CANCEL GROUP ORDER', req.body);
 	const { parent_order_id, status, cancellation_reason } = req.body;
@@ -2349,6 +2401,7 @@ async function cancelGroupedOrderByParentId(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 async function rejectGroupedOrderByParentId(req, res) {
 	console.info('TaxiOrderController', 'REJECT GROUP ORDER', req.body);
 	const { parent_order_id, rejection_reason } = req.body;
@@ -2433,6 +2486,7 @@ async function rejectGroupedOrderByParentId(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 /**
  * GET /taxi/orders/today
  * @tag Taxi
@@ -2470,6 +2524,7 @@ async function splitVanOrder(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 async function calculateTransferPrice(req, res) {
 	const { pickup_location, delivery_location, departure_time } = req.body;
 	try {
@@ -2487,6 +2542,7 @@ async function calculateTransferPrice(req, res) {
 		res.status(500).json(e);
 	}
 }
+
 export { getTaxiOrders };
 export { getTaxiOrdersToday };
 export { getOrder };

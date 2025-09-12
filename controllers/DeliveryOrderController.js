@@ -10,6 +10,7 @@ import {
 } from '@prisma/client';
 import { PROMO_TYPE, ANALYTICS_TYPE } from '@prisma/client';
 
+import ReviewsDao from '../dao/Review.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
 import DeliveryDriverDao from '../dao/DeliveryDriver.js';
 import BusinessDao from '../dao/Business.js';
@@ -1021,7 +1022,7 @@ async function getCompletedDeliveryOrdersByUserId(req, res) {
 				updated_at: 'desc',
 			},
 		});
-		const result = completedOrders.map((order) => {
+		const orders = completedOrders.map((order) => {
 			const business = order.business;
 			const logoDocument = business.documents.find((doc) => doc.document_type === DOCUMENT_TYPE.LOGO);
 			const logo = logoDocument ? { ...logoDocument, files: logoDocument.files } : null;
@@ -1032,6 +1033,11 @@ async function getCompletedDeliveryOrdersByUserId(req, res) {
 					logo: logo,
 				},
 			};
+		});
+		const reviews = await ReviewsDao.getReviewsByUserId(user_id);
+		const result = orders.map((order) => {
+			const review = reviews.find((r) => r.feedback?.order_id === order.order_id);
+			return { ...order, review };
 		});
 		res.status(200).json(result);
 	} catch (e) {
