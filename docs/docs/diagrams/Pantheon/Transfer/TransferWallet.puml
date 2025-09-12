@@ -1,5 +1,5 @@
-@startuml
-title Expensive Transfer Order Wallet
+@startuml 
+title Transfer Wallet Payment
 ' === Compact Sequence Styling ===
 skinparam defaultFontSize 10
 skinparam sequence {
@@ -39,18 +39,9 @@ participant Pantheon as pantheon #FFE4E1
 user -> klikni: Get price for order route
 user <-- klikni: order price
 user -> klikni: Create Transfer Order
-' klikni -> klikni: Verify Prices
-opt use credits
-    klikni -> klikni: Check and reserve credits & funds
-end
-opt credits amount < total price
-    klikni -> klikni: Check and reserve funds
-end
-klikni -> klikni: Move order to Pending
 
 ... Taxi Order Flow ...
-
-driver -> klikni: Complete Order
+driver -> klikni: Confirm payment
 group Transfer Credits and Funds To Platform
     klikni->klikni: group reserved WF by (charge_id,type)
     loop for each group
@@ -72,7 +63,9 @@ group Transfer Credits and Funds To Platform
             }
             end note
         end
+
     end
+
 end
 
 group Transfer Credits and Funds To Driver

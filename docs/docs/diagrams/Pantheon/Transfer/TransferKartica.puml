@@ -1,4 +1,4 @@
-@startuml
+@startuml 
 title Transfer Card, Cash, Narocilnica Payments
 ' === Compact Sequence Styling ===
 skinparam defaultFontSize 10
@@ -39,22 +39,9 @@ participant Pantheon as pantheon #FFE4E1
 user -> klikni: Get price for order route
 user <-- klikni: order price
 user -> klikni: Create Transfer Order
-' klikni -> klikni: Verify Prices
-opt use credits
-    klikni -> klikni: Check and reserve credits & funds
-end
-opt credits amount < total price
-    klikni -> stripe: Create Payment Intent
-    klikni <-- stripe: Payment Intent
-    user <-- klikni: Payment Intent
-    user -> stripe: Confirm Payment Intent
-    klikni <-- stripe: Payment Intent Success
-end
-klikni -> klikni: Move order to Pending
 
 ... Taxi Order Flow ...
-
-driver -> klikni: Complete Order
+driver -> klikni: Confirm payment
 group Transfer Money to Platform
     group Transfer Credits
         loop for each
