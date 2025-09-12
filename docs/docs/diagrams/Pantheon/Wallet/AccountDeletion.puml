@@ -1,4 +1,4 @@
-@startuml Klikni_Sequence_Diagram
+@startuml 
 title Account deletion
 
 ' === Compact Sequence Styling ===

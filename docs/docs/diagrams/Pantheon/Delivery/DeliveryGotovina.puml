@@ -1,4 +1,4 @@
-@startuml Klikni_Sequence_Diagram
+@startuml 
 title Delivery cash payment with credits
 ' === Page / Resolution ===
 ' skinparam dpi 300

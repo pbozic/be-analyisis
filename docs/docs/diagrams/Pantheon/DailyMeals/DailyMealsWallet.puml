@@ -1,4 +1,4 @@
-@startuml Klikni_Sequence_Diagram
+@startuml
 title Daily Meal Subscription Payment With Card
 
 ' === Compact Sequence Styling ===
