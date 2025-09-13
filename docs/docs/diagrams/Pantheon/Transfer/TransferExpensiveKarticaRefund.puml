@@ -1,4 +1,4 @@
-@startuml
+@startuml TransferExpensiveKarticaRefund
 title Expensive Transfer Card, Cash, Narocilnica Payments
 ' === Compact Sequence Styling ===
 skinparam defaultFontSize 10

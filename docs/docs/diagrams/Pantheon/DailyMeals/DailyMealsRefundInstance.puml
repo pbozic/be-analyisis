@@ -1,4 +1,4 @@
-@startuml 
+@startuml DailyMealsRefundInstance
 title Daily Meal Instance Refund with credits (0.9 %)
 
 ' === Compact Sequence Styling ===

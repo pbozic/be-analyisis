@@ -1,4 +1,4 @@
-@startuml 
+@startuml GivingFundsToUser
 title Giving Funds To User
 
 ' === Compact Sequence Styling ===

@@ -1,4 +1,5 @@
-@startuml Klikni_Sequence_Diagram
+@startuml UpdateReservationModuleSubscription
+title Business updates reservation module subscription
 ' === Page / Resolution ===
 skinparam dpi 300
 

@@ -1,5 +1,5 @@
-@startuml 
-title Taxi Card, Cash, Narocilnica Payments
+@startuml TaxiKartica
+title Taxi Card, Cash, "Purchase Order" Payments
 ' === Compact Sequence Styling ===
 skinparam defaultFontSize 10
 skinparam sequence {
@@ -38,7 +38,7 @@ participant Pantheon as pantheon #FFE4E1
 ' === Sequence Example ===
 driver -> driver: Get Taximeter Price
 driver -> klikni: Get Final payment details
-klikni -> klikni: Check and reserve credits & funds
+klikni -> klikni: Check and reserve credits
 klikni --> driver: Payment details
 driver -> klikni: Confirm payment
 group Transfer Money to Platform

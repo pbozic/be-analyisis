@@ -1,4 +1,4 @@
-@startuml 
+@startuml DailyMealsKartica
 title Daily Meal Subscription Payment With Card
 
 ' === Compact Sequence Styling ===
@@ -57,13 +57,13 @@ note right #LightGreen
 end note
 klikni -> klikni: Activate Dated Subscription
 
-... On start date ...
+... ...From start date onwards ... ...
 loop for date in Subscription
 klikni -> klikni: Create DailyMeal DeliveryOrder
 
 group DeliveryOrder Flow
-    ... [[http://plantuml.com Daily Meal Delivery Flow]]  ...
-    driver -> klikni: DeliveryOrder Finish Delivery
+    ... ...[[http://plantuml.com Daily Meal Delivery Flow]]...  ...
+    driver -> klikni: Finish Delivery
 
     group Transfer Money to Business
         group Transfer Credits

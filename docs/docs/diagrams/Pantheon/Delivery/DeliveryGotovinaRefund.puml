@@ -1,4 +1,4 @@
-@startuml 
+@startuml DeliveryGotovinaRefund
 title Delivery cash payment refund with credits (Any %)
 ' === Page / Resolution ===
 ' skinparam dpi 300
@@ -40,7 +40,7 @@ participant Stripe as stripe #FFDAB9
 participant Pantheon as pantheon #FFE4E1
 
 ' === Sequence Example ===
-== NOT DEFINED BUT HERE YOU GO ==
+== NOT DEFINED BUT THIS IS HOW IT SHOULD WORK ==
 user -> klikni: Request refund
 klikni -> klikni: Recreate X% spent credits
 klikni -[#green]> pantheon: send accounting data

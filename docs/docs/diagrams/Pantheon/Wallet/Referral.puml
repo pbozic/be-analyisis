@@ -1,4 +1,4 @@
-@startuml 
+@startuml Referral
 title Referral
 
 ' === Compact Sequence Styling ===

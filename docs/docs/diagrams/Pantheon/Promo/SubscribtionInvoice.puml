@@ -1,4 +1,5 @@
-@startuml Klikni_Sequence_Diagram
+@startuml SubscriptionInvoice
+title Business creates a promo words subscription and pays invoice
 ' === Page / Resolution ===
 skinparam dpi 300
 

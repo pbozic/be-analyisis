@@ -1,4 +1,4 @@
-@startuml
+@startuml TransferKartica
 title Transfer Card, Cash, Narocilnica Payments
 ' === Compact Sequence Styling ===
 skinparam defaultFontSize 10
@@ -40,7 +40,7 @@ user -> klikni: Get price for order route
 user <-- klikni: order price
 user -> klikni: Create Transfer Order
 
-... Taxi Order Flow ...
+... ...Taxi Order Flow... ...
 driver -> klikni: Confirm payment
 opt use credits
     klikni -> klikni: Check and reserve credits

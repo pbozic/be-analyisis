@@ -1,4 +1,4 @@
-@startuml 
+@startuml TaxiWallet
 title Taxi Wallet Payment
 ' === Compact Sequence Styling ===
 skinparam defaultFontSize 10

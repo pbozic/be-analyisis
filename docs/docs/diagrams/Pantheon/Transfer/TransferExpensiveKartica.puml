@@ -1,5 +1,5 @@
-@startuml
-title Transfer Card, Cash, Narocilnica Payments
+@startuml TransferExpensiveKartica
+title Transfer Card, Cash, "Purchase Order" Payments
 ' === Compact Sequence Styling ===
 skinparam defaultFontSize 10
 skinparam sequence {
@@ -52,7 +52,7 @@ opt credits amount < total price
 end
 klikni -> klikni: Move order to Pending
 
-... Taxi Order Flow ...
+... ...Taxi Order Flow... ...
 
 driver -> klikni: Complete Order
 group Transfer Money to Platform

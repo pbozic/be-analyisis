@@ -1,4 +1,4 @@
-@startuml 
+@startuml Topup
 title Wallet Topup
 
 ' === Compact Sequence Styling ===

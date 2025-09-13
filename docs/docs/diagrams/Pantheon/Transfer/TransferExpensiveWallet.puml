@@ -1,4 +1,4 @@
-@startuml
+@startuml TransferExpensiveWallet
 title Expensive Transfer Order Wallet
 ' === Compact Sequence Styling ===
 skinparam defaultFontSize 10
@@ -48,7 +48,7 @@ opt credits amount < total price
 end
 klikni -> klikni: Move order to Pending
 
-... Taxi Order Flow ...
+... ...Taxi Order Flow... ...
 
 driver -> klikni: Complete Order
 group Transfer Credits and Funds To Platform

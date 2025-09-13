@@ -1,4 +1,4 @@
-@startuml 
+@startuml DeliveryKartica
 title Delivery card payment with credits
 ' === Page / Resolution ===
 ' skinparam dpi 300
@@ -58,6 +58,10 @@ klikni --> user: DeliveryOrder
 group DeliveryOrder Flow
     klikni -> business: New Delivery Order
     business -> klikni: Accept DeliveryOrder
+    opt Business type is store
+        business -> klikni: Set final items
+        klikni -> klikni: Update Order Payment and Items
+    end
     opt If credits amount < total price
         klikni -> stripe: Capture PaymentIntent
         stripe --> klikni: PaymentIntent Captured         
@@ -119,7 +123,7 @@ group DeliveryOrder Flow
     ' driver -> klikni: DeliveryOrder In Delivery
     ' driver -> klikni: DeliveryOrder At Location
 
-    ... [[http://plantuml.com Delivery Flow]]  ...
+    ... ...[[http://plantuml.com Delivery Flow]]...  ...
     driver -> klikni: DeliveryOrder Finish Delivery
     group Transfer Money to Driver
         group Transfer Credits

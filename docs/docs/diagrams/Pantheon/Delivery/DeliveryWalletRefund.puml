@@ -1,4 +1,4 @@
-@startuml 
+@startuml DeliveryWalletRefund
 title Delivery wallet payment refund with credits (Any %)
 ' === Page / Resolution ===
 ' skinparam dpi 300

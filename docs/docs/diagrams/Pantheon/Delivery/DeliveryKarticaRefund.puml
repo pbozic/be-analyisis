@@ -1,4 +1,4 @@
-@startuml 
+@startuml DeliveryKarticaRefund
 title Delivery card payment refund with credits (Any %)
 ' === Page / Resolution ===
 ' skinparam dpi 300

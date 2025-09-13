@@ -1,4 +1,5 @@
-@startuml Klikni_Sequence_Diagram
+@startuml PromoSection
+title Business purchases promo section for a duration
 ' === Page / Resolution ===
 skinparam dpi 300
 
