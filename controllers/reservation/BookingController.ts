@@ -1098,8 +1098,8 @@ export async function getBookingsAnalytics(
 					)
 				: [];
 		res.status(200).json({
-			bookings,
-			bookingsPrev,
+			//bookings,
+			//bookingsPrev,
 			cards: { ...data, bookingsCount: bookings.length },
 			cardsPrev: { ...dataPrev, bookingsCount: bookingsPrev.length },
 			sortedBookings,
