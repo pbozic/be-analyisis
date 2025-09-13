@@ -1,4 +1,4 @@
-@startuml Klikni_Sequence_Diagram
+@startuml DailyMealsKartica
 title Daily Meal Subscription Payment With Card
 
 ' === Compact Sequence Styling ===
@@ -50,20 +50,17 @@ user -> stripe: Confirm PaymentIntent
 stripe -> klikni: Payment Intent Success
 klikni -[#green]> pantheon: send accounting data
 note right #LightGreen
-{
-    price: 100EUR
-    credits: 15EUR
-}
+Podatki za pantheon
 end note
 klikni -> klikni: Activate Dated Subscription
 
-... On start date ...
+... ...From start date onwards ... ...
 loop for date in Subscription
 klikni -> klikni: Create DailyMeal DeliveryOrder
 
 group DeliveryOrder Flow
-    ... [[http://plantuml.com Daily Meal Delivery Flow]]  ...
-    driver -> klikni: DeliveryOrder Finish Delivery
+    ... ...[[http://plantuml.com Daily Meal Delivery Flow]]...  ...
+    driver -> klikni: Finish Delivery
 
     group Transfer Money to Business
         group Transfer Credits

@@ -1,4 +1,4 @@
-@startuml Klikni_Sequence_Diagram
+@startuml Cashback
 title CashBack Credits Creation
 
 ' === Compact Sequence Styling ===

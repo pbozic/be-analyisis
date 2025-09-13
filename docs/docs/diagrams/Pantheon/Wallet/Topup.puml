@@ -1,4 +1,4 @@
-@startuml Klikni_Sequence_Diagram
+@startuml Topup
 title Wallet Topup
 
 ' === Compact Sequence Styling ===
@@ -31,7 +31,7 @@ skinparam participant {
 ' === Participant Colors ===
 ' Use stereotypes for coloring specific entities
 actor User as user #B0E0E6
-participant Klikni as klikni #E6E6FA 
+participant Klikni as klikni #E6E6FA
 participant Stripe as stripe #FFDAB9
 participant Pantheon as pantheon #FFE4E1
 
@@ -46,10 +46,8 @@ klikni <- stripe: Event - PaymentIntent Success
 
 
 klikni -[#green]> pantheon: Send Accounting Data
-note left of pantheon #LightGreen 
-{amount_eur: number
-user_id: string
-customer_id: string}
+note right #LightGreen
+Podatki za pantheon
 end note
 ' klikni <-- pantheon: response
 klikni -> klikni: create Wallet Funds objects

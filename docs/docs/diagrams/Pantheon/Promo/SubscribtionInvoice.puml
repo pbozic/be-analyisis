@@ -1,9 +1,7 @@
-@startuml DeliveryWalletRefund
-title Delivery wallet payment refund with credits (Any %)
+@startuml SubscriptionInvoice
+title Business creates a promo words subscription and pays invoice
 ' === Page / Resolution ===
-' skinparam dpi 300
-' skinparam pageWidth 2100
-' skinparam pageHeight 1485
+skinparam dpi 300
 
 ' === Compact Sequence Styling ===
 skinparam defaultFontSize 10
@@ -33,26 +31,25 @@ skinparam participant {
 }
 
 ' === Participant Colors ===
-' Use stereotypes for coloring specific entities
-actor User as user #B0E0E6
-participant Klikni as klikni #E6E6FA
+actor Business as business #D3D3D3
+participant Klikni as klikni #E6E6FA 
 participant Stripe as stripe #FFDAB9
 participant Pantheon as pantheon #FFE4E1
 
 ' === Sequence Example ===
-user -> klikni: Request refund
-klikni -> klikni: Recreate X% spent credits
-klikni -[#green]> pantheon: send accounting data
-note right #LightGreen
-Podatki za pantheon
-end note
+business -> klikni: Create promo subscription
+klikni -> stripe: Create subscription object
+klikni <-- stripe: Subscription object
+klikni --> business: Invoice
+business -> stripe: Pay Invoice
+stripe -> klikni: Invoice Paid Event
+klikni -> klikni: Activate Subscription for time period
 
-klikni -> klikni: Recreate X% spent funds
 klikni -[#green]> pantheon: send accounting data
-note right #LightGreen
-Podatki za pantheon
+note right#LightGreen 
+Available Data Json:
+{price: 100EUR
+credits: 15EUR}
 end note
-
-klikni --> user: Refund processed
 
 @enduml

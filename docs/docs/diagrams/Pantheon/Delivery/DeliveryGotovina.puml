@@ -1,4 +1,4 @@
-@startuml Klikni_Sequence_Diagram
+@startuml DeliveryGotovina
 title Delivery cash payment with credits
 ' === Page / Resolution ===
 ' skinparam dpi 300
@@ -53,9 +53,9 @@ klikni --> user: DeliveryOrder
 group DeliveryOrder Flow
     klikni -> business: New Delivery Order
     business -> klikni: Accept DeliveryOrder
-    opt If credits amount < total price
-        klikni -> stripe: Capture PaymentIntent
-        stripe --> klikni: PaymentIntent Captured         
+    opt Business type is store
+        business -> klikni: Set final items
+        klikni -> klikni: Update Order Payment and Items
     end
     group Transfer Money to Business
         group Transfer Credits
@@ -102,7 +102,7 @@ group DeliveryOrder Flow
         end note
     end
 
-    ... [[http://plantuml.com Delivery Flow]]  ...
+    ... ...[[http://plantuml.com Delivery Flow]]...  ...
     driver -> klikni: DeliveryOrder Finish Delivery
     group Transfer Money to Driver
         group Transfer Credits
@@ -119,7 +119,7 @@ group DeliveryOrder Flow
             }
             end note
         end
-        klikni->stripe: create transfer in correct amount
+        klikni->stripe: create transfer
 
         klikni -[#green]> pantheon: send accounting data about CASH
         note right #LightGreen

@@ -1,4 +1,4 @@
-@startuml Klikni_Sequence_Diagram
+@startuml AccountDeletion
 title Account deletion
 
 ' === Compact Sequence Styling ===
@@ -47,10 +47,8 @@ opt User has Wallet funds with charge_id
             klikni -> stripe: Create Refund for charge_id in total group amount
             klikni <-- stripe
             klikni -[#green]> pantheon: Send accounting data
-            note left of pantheon #LightGreen 
-                {amount_eur: number
-                user_id: string
-                customer_id: string}
+            note right #LightGreen 
+                Podatki za pantheon
             end note
             klikni -> klikni: Delete Wallet Funds in group
         end loop    

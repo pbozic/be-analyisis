@@ -1,5 +1,5 @@
-@startuml TaxiWallet
-title Taxi Wallet Payment
+@startuml TransferWallet
+title Transfer Wallet Payment
 ' === Compact Sequence Styling ===
 skinparam defaultFontSize 10
 skinparam sequence {
@@ -36,11 +36,18 @@ participant Stripe as stripe #FFDAB9
 participant Pantheon as pantheon #FFE4E1
 
 ' === Sequence Example ===
-driver -> driver: Get Taximeter Price
-driver -> klikni: Get Final payment details
-klikni -> klikni: Check and reserve credits & funds
-klikni -> driver: Payment details
-driver ->klikni: Confirm payment
+user -> klikni: Get price for order route
+user <-- klikni: order price
+user -> klikni: Create Transfer Order
+
+... ...Taxi Order Flow... ...
+driver -> klikni: Confirm payment
+opt use credits
+    klikni -> klikni: Check and reserve credits
+end
+opt credits amount < total price
+    klikni -> klikni: Check and reserve funds
+end
 group Transfer Credits and Funds To Platform
     klikni->klikni: group reserved WF by (charge_id,type)
     loop for each group

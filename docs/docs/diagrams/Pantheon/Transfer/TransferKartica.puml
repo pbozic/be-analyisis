@@ -1,5 +1,5 @@
-@startuml TaxiKartica
-title Taxi Card, Cash, "Purchase Order" Payments
+@startuml TransferKartica
+title Transfer Card, Cash, Narocilnica Payments
 ' === Compact Sequence Styling ===
 skinparam defaultFontSize 10
 skinparam sequence {
@@ -36,11 +36,15 @@ participant Stripe as stripe #FFDAB9
 participant Pantheon as pantheon #FFE4E1
 
 ' === Sequence Example ===
-driver -> driver: Get Taximeter Price
-driver -> klikni: Get Final payment details
-klikni -> klikni: Check and reserve credits
-klikni --> driver: Payment details
+user -> klikni: Get price for order route
+user <-- klikni: order price
+user -> klikni: Create Transfer Order
+
+... ...Taxi Order Flow... ...
 driver -> klikni: Confirm payment
+opt use credits
+    klikni -> klikni: Check and reserve credits
+end
 group Transfer Money to Platform
     group Transfer Credits
         loop for each
@@ -78,7 +82,6 @@ group Transfer Money to Driver
         }
         end note
     end
-
     klikni -[#green]> pantheon: send accounting data about CASH
     note right #LightGreen
     {

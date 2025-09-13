@@ -1,4 +1,4 @@
-@startuml Klikni_Sequence_Diagram
+@startuml DeliveryWallet
 title Delivery wallet payment with credits
 
 ' === Page / Resolution ===
@@ -52,6 +52,10 @@ klikni --> user: DeliveryOrder
 group DeliveryOrder Flow
     klikni -> business: New Delivery Order
     business -> klikni: Accept DeliveryOrder
+    opt Business type is store
+        business -> klikni: Set final items
+        klikni -> klikni: Update Order Payment and Items
+    end
     group Transfer Credits and Funds To Business
         klikni->klikni: group reserved WF by (charge_id,type)
         loop for each group
@@ -66,7 +70,7 @@ group DeliveryOrder Flow
                     credits: 15EUR
                 }
                 end note
-            else
+            else type==FUNDS
                 klikni -[#green]> pantheon: send accounting data for funds
                 note right #LightGreen
                 {
@@ -91,7 +95,7 @@ group DeliveryOrder Flow
                     credits: 15EUR
                 }
                 end note
-            else
+            else type==FUNDS
                 klikni -[#green]> pantheon: send accounting data for funds
                 note right #LightGreen
                 {
@@ -104,7 +108,7 @@ group DeliveryOrder Flow
         end
 
     end
-    ... [[http://plantuml.com Delivery Flow]]  ...
+    ... ...[[http://plantuml.com Delivery Flow]]...  ...
 
     ' par
     '     klikni -> klikni: Find DeliveryDriver
@@ -133,7 +137,7 @@ group DeliveryOrder Flow
                     credits: 15EUR
                 }
                 end note
-            else
+            else type==FUNDS
                 klikni -[#green]> pantheon: send accounting data for funds
                 note right #LightGreen
                 {
