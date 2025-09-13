@@ -45,7 +45,7 @@ import withUserMiddleware from '../middleware/user.js';
 import sessionRoutes from './api/session.routes.js';
 import UserController from '../controllers/UserController.js';
 import joi from '../middleware/joi.js';
-import { verifyPhoneSchema } from '../joi/authSchemas.js';
+import { verifyPhoneSchema } from '../joi/userSchemas.js';
 const router = express.Router();
 const authUserRoutes = authRoutes;
 router.use('/stripe', stripeRoutes);
