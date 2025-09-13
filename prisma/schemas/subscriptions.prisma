@@ -7,13 +7,14 @@ enum MODULE_TYPE {
 }
 
 // --- SUBSCRIPTION + ADDON SYSTEM ---
-model subscription {
-  subscription_id  String                 @id @default(uuid()) @db.Uuid
+model action_bundle {
+  action_bundle_id  String                 @id @default(uuid()) @db.Uuid
   module           MODULE_TYPE
   name             String @unique
   price_cents      Int
   stripe_price_id  String
-  actions          subscription_action[]
+  stripe_product_id  String
+  actions          action_bundle_action[]
   business_modules reservation_module[]
 }
 
@@ -23,6 +24,7 @@ model addon {
   name             String @unique
   price_cents      Int
   stripe_price_id  String
+  stripe_product_id  String
   actions          addon_action[]
   business_addons  business_addon[]
 }
@@ -31,21 +33,21 @@ model action {
   action_id             String       @id @default(uuid()) @db.Uuid
   module                MODULE_TYPE
   name                  String       @unique
-  subscription_actions  subscription_action[]
+  action_bundle_actions  action_bundle_action[]
   addon_actions         addon_action[]
   business_usages       business_usage[]
   permissions           permission[]
   user_permissions      user_permission[]
 }
 
-model subscription_action {
-  subscription_action_id               String        @id @default(uuid()) @db.Uuid
-  subscription_id  String   @db.Uuid
+model action_bundle_action {
+  action_bundle_action_id               String        @id @default(uuid()) @db.Uuid
+  action_bundle_id  String   @db.Uuid
   action_id        String    @db.Uuid
   module           MODULE_TYPE
   limit            Int?          // null = unlimited
 
-  subscription     subscription  @relation(fields: [subscription_id], references: [subscription_id])
+  action_bundle     action_bundle  @relation(fields: [action_bundle_id], references: [action_bundle_id])
   action           action        @relation(fields: [action_id], references: [action_id])
 }
 
@@ -66,9 +68,11 @@ model business_addon {
   reservation_module_id String?   @db.Uuid
   sms_module_id         String?
   ads_module_id         String?
+  quantity             Int      @default(1)
 
   addon                 addon               @relation(fields: [addon_id], references: [addon_id])
   reservation_module    reservation_module? @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  @@unique([addon_id, reservation_module_id], name: "business_addon_connection")
 }
 
 model business_usage {

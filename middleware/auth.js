@@ -32,7 +32,9 @@ const authMiddleware = async (req, res, next) => {
 		if (!user) {
 			throw new Error('Invalid user in token');
 		} else if (!user.phone_verified && !req.path.includes('/api/users/me/verify/phone')) {
-			//throw new Error('Phone not verified');
+			throw new Error('Phone not verified');
+		} else if (!user.active) {
+			throw new Error('User not active');
 		}
 		const firstBusinessUser = user.business_users?.length > 0 ? user.business_users[0] : null;
 		req.user = {

@@ -1,0 +1,155 @@
+@startuml DeliveryWallet
+title Delivery wallet payment with credits
+
+' === Page / Resolution ===
+
+' === Compact Sequence Styling ===
+skinparam defaultFontSize 10
+skinparam sequence {
+    MessageSpacing 15
+    ParticipantSpacing 50
+}
+
+' === Actor / Participant Styling ===
+skinparam actor {
+    FontName Arial
+    FontSize 12
+    BorderColor Black
+    BackgroundColor #ADD8E6
+    RoundCorner 10
+    MinWidth 120
+    MinHeight 120
+}
+
+skinparam participant {
+    FontName Arial
+    FontSize 12
+    BorderColor Black
+    RoundCorner 10
+    MinWidth 140
+    MinHeight 100
+}
+
+' === Participant Colors ===
+' Use stereotypes for coloring specific entities
+actor User as user #B0E0E6
+actor Business as business #D3D3D3
+actor Driver as driver #F0E68C
+participant Klikni as klikni #E6E6FA
+participant Stripe as stripe #FFDAB9
+participant Pantheon as pantheon #FFE4E1
+
+' === Sequence Example ===
+user -> klikni: Create Order
+klikni -> klikni: Verify Prices
+opt use credits
+    klikni -> klikni: Check and reserve credits
+end
+klikni -> klikni: Check and reserve funds
+klikni -> klikni: Create DeliveryOrder
+klikni --> user: DeliveryOrder
+
+group DeliveryOrder Flow
+    klikni -> business: New Delivery Order
+    business -> klikni: Accept DeliveryOrder
+    opt Business type is store
+        business -> klikni: Set final items
+        klikni -> klikni: Update Order Payment and Items
+    end
+    group Transfer Credits and Funds To Business
+        klikni->klikni: group reserved WF by (charge_id,type)
+        loop for each group
+            klikni->stripe: create transfer
+            klikni<--stripe
+            klikni->klikni: delete group WFs
+            alt type==CREDITS
+                klikni -[#green]> pantheon: send accounting data for credits
+                note right #LightGreen
+                {
+                    price: 100EUR
+                    credits: 15EUR
+                }
+                end note
+            else type==FUNDS
+                klikni -[#green]> pantheon: send accounting data for funds
+                note right #LightGreen
+                {
+                    price: 100EUR
+                    credits: 15EUR
+                }
+                end note
+            end
+
+        end
+
+    end
+    group Transfer Credits and Funds To Platform
+        klikni->klikni: group reserved WF by (charge_id,type)
+        loop for each group
+            klikni->klikni: delete group WFs
+            alt type==CREDITS
+                klikni -[#green]> pantheon: send accounting data for credits
+                note right #LightGreen
+                {
+                    price: 100EUR
+                    credits: 15EUR
+                }
+                end note
+            else type==FUNDS
+                klikni -[#green]> pantheon: send accounting data for funds
+                note right #LightGreen
+                {
+                    price: 100EUR
+                    credits: 15EUR
+                }
+                end note
+            end
+
+        end
+
+    end
+    ... ...[[http://plantuml.com Delivery Flow]]...  ...
+
+    ' par
+    '     klikni -> klikni: Find DeliveryDriver
+    '     klikni -> driver: DeliveryOrder
+    '     driver -> klikni: Accept DeliveryOrder
+    ' else
+    '     business -> klikni: DeliveryOrder Ready
+    ' end
+    ' driver -> klikni: DeliveryOrder Picked Up
+    ' driver -> klikni: DeliveryOrder In Delivery
+    ' driver -> klikni: DeliveryOrder At Location
+    driver -> klikni: DeliveryOrder Finish Delivery
+
+    group Transfer Credits and Funds To Driver
+        klikni->klikni: group reserved WF by (charge_id,type)
+        loop for each group
+            klikni->stripe: create transfer
+            klikni<--stripe
+            klikni->klikni: delete group WFs
+
+            alt type==CREDITS
+                klikni -[#green]> pantheon: send accounting data for credits
+                note right #LightGreen
+                {
+                    price: 100EUR
+                    credits: 15EUR
+                }
+                end note
+            else type==FUNDS
+                klikni -[#green]> pantheon: send accounting data for funds
+                note right #LightGreen
+                {
+                    price: 100EUR
+                    credits: 15EUR
+                }
+                end note
+            end
+        end
+    end
+
+    klikni --> driver: DeliveryOrder Completed
+end
+
+@enduml

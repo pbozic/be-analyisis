@@ -1,0 +1,41 @@
+' KlikniStyle.puml
+
+' === Page / Resolution ===
+skinparam dpi 300
+skinparam pageWidth 2100
+
+' === Compact Sequence Styling ===' === Default ===
+skinparam defaultFontSize 10
+
+skinparam sequence {
+    MessageSpacing 15
+    ParticipantSpacing 50
+}
+
+' === Actor / Participant Styling ===
+skinparam actor {
+    FontName Arial
+    FontSize 12
+    BorderColor Black
+    BackgroundColor #ADD8E6
+    RoundCorner 10
+    MinWidth 120
+    MinHeight 120
+}
+
+skinparam participant {
+    FontName Arial
+    FontSize 12
+    BorderColor Black
+    RoundCorner 10
+    MinWidth 140
+    MinHeight 100
+}
+
+' === Participant Colors ===
+actor User as user #B0E0E6
+actor Business as business #D3D3D3
+actor Driver as driver #F0E68C
+participant Klikni as klikni #E6E6FA
+participant Stripe as stripe #FFDAB9
+participant Pantheon as pantheon #FFE4E1
