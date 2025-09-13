@@ -15,11 +15,15 @@ import {
 import { reviewUserSchema } from '../../joi/reviewSchemas.js';
 import { registerChildSchema } from '../../joi/authSchemas.js';
 import StripeController from '../../controllers/StripeController.js';
+import { verifyPhoneSchema } from '../../joi/userSchemas.js';
 config();
 const router = express.Router();
 router.get('/', UserController.listUsers);
 router.get('/personal', UserController.listPersonalUsers);
 router.get('/me', UserController.me);
+
+router.get('/me/verify/phone', UserController.requestSMSVerification);
+router.post('/me/verify/phone', joi(verifyPhoneSchema), UserController.verifyMe);
 router.get('/me/ping', UserController.ping);
 router.get('/me/reviews', UserController.getMyReviews);
 router.get('/me/active_order_ids', UserController.getMyActiveOrderIds);
