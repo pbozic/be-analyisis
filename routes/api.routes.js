@@ -50,6 +50,8 @@ const router = express.Router();
 const authUserRoutes = authRoutes;
 router.use('/stripe', stripeRoutes);
 router.use('/admin', [authMiddleware, adminMiddleware], adminRoutes);
+router.get('/users/me/verify/phone', UserController.requestSMSVerification);
+router.post('/users/me/verify/phone', joi(verifyPhoneSchema), UserController.verifyMe);
 router.use('/users', [authMiddleware], userRoutes);
 router.use('/auth', authRoutes);
 router.use('/user/auth', authRoutes);
@@ -84,8 +86,7 @@ router.use('/blog', blogRoutes);
 router.use('/reservation', reservationRoutes);
 router.use('/roles', [authMiddleware], RolesRoutes);
 router.use('/session', sessionRoutes);
-router.get('/users/me/verify/phone', UserController.requestSMSVerification);
-router.post('/users/me/verify/phone', joi(verifyPhoneSchema), UserController.verifyMe);
+
 router.use('/reviews', [authMiddleware], async (req, res) => {
 	let reviews = await prisma.reviews.findMany({
 		include: {
