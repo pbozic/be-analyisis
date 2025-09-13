@@ -5,9 +5,7 @@ import UserController from '../../controllers/UserController.js';
 import joi from '../../middleware/joi.js';
 import {
 	updateSchema,
-	verifyPhoneSchema,
 	updateEmailSchema,
-	updateUserLanguageSchema,
 	updateTelephoneSchema,
 	updatePasswordSchema,
 	addAddressSchema,
@@ -51,8 +49,7 @@ router.post('/me/address', joi(addAddressSchema), UserController.addAddress);
 router.delete('/me/address/:address_id', UserController.deleteAddress);
 router.patch('/me/address/:address_id', joi(editAddressSchema), UserController.editAddress);
 router.patch('/me/address/:address_id/primary', UserController.setPrimaryAddress);
-router.get('/me/verify/phone', UserController.requestSMSVerification);
-router.post('/me/verify/phone', joi(verifyPhoneSchema), UserController.verifyMe);
+
 router.post('/review', joi(reviewUserSchema), UserController.reviewUser);
 router.get('/me/payment-sheet/:type?/:business_id?', UserController.getPaymentSheetCredentials);
 router.post('/me/requestToAddFunds', UserController.requestToAddFundsToWallet);

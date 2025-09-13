@@ -43,6 +43,9 @@ import authMenusRoutes from './api/menu/auth.routes.js';
 import { sendNotificationToUser } from '../lib/oneSignal.js';
 import withUserMiddleware from '../middleware/user.js';
 import sessionRoutes from './api/session.routes.js';
+import UserController from '../controllers/UserController.js';
+import joi from '../middleware/joi.js';
+import { verifyPhoneSchema } from '../joi/authSchemas.js';
 const router = express.Router();
 const authUserRoutes = authRoutes;
 router.use('/stripe', stripeRoutes);
@@ -81,6 +84,8 @@ router.use('/blog', blogRoutes);
 router.use('/reservation', reservationRoutes);
 router.use('/roles', [authMiddleware], RolesRoutes);
 router.use('/session', sessionRoutes);
+router.get('/users/me/verify/phone', UserController.requestSMSVerification);
+router.post('/users/me/verify/phone', joi(verifyPhoneSchema), UserController.verifyMe);
 router.use('/reviews', [authMiddleware], async (req, res) => {
 	let reviews = await prisma.reviews.findMany({
 		include: {
