@@ -4,7 +4,6 @@ import {
 	type daily_meal_categories,
 	type daily_meal_category_prices,
 	type daily_meal_instances,
-	type business,
 	type daily_meal_subscriptions,
 	type daily_meal_subscription_customers,
 	type daily_meal_subscription_days,
@@ -15,7 +14,6 @@ import {
 	menu_items,
 	addresses,
 	DELIVERY_ORDER_STATUS,
-	delivery_drivers,
 } from '@prisma/client';
 
 import prisma from '../prisma/prisma.js';
@@ -776,7 +774,7 @@ export async function createDailyMeals() {
 		for (const business of businesses) {
 			const subscriptions = await DailyMealDao.getTodayDailyMealSubscriptionsByBusinessId(business.business_id);
 			if (!subscriptions || subscriptions.length === 0) {
-				throw new Error(`No daily meal subscriptions found for business ${business.business_id}.`);
+				continue;
 			}
 			const convertAddressToLocation = (address: addresses) => {
 				return {
