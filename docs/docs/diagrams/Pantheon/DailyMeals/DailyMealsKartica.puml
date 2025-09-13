@@ -50,10 +50,7 @@ user -> stripe: Confirm PaymentIntent
 stripe -> klikni: Payment Intent Success
 klikni -[#green]> pantheon: send accounting data
 note right #LightGreen
-{
-    price: 100EUR
-    credits: 15EUR
-}
+Podatki za pantheon
 end note
 klikni -> klikni: Activate Dated Subscription
 
