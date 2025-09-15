@@ -948,7 +948,7 @@ export async function updateBookingGroupAdmin(
  * @description Calculates the number of no-shows, cancellations, total price, and new customers from a list of bookings.
  */
 
-function calcBookings(bookings: Booking[], start_date: string) {
+export function calcBookings(bookings: Booking[], start_date: string) {
 	const start = moment(start_date);
 	const newCustomers = new Set<string>();
 
@@ -1126,4 +1126,5 @@ export default {
 	updateBookingStartFirstInGroupAdmin,
 	updateBookingGroupAdmin,
 	getBookingsAnalytics,
+	calcBookings,
 };

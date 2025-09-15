@@ -822,12 +822,13 @@ export async function updateStatusDelete(booking_id: string, user_id: string | u
  */
 export async function getBookingsForAnalytics(params: ListBookingsParams): Promise<Booking[]> {
 	try {
-		const { reservation_module_id, status, from, to, location_id } = params;
+		const { reservation_module_id, status, from, to, location_id, employee_id } = params;
 
 		return (await prisma.booking.findMany({
 			where: {
 				reservation_module_id,
 				...(status && status.length ? { status: { in: status } } : {}),
+				...(employee_id ? { employee_id: employee_id } : {}),
 				...(from || to
 					? {
 							start_time: {

@@ -4,10 +4,13 @@ import EmployeeDao from '../../dao/reservation/Employee.ts';
 import BusinessUsersDao from '../../dao/BusinessUsers.js';
 import UserDao from '../../dao/User.js';
 import ScheduleDao from '../../dao/reservation/Schedule.ts';
+import BookingDao from '../../dao/reservation/Booking.ts';
 import ScheduleEmployeeDao from '../../dao/reservation/ScheduleEmployee.ts';
 import { CreateEmployeeInput, UpdateEmployeeInput } from '../../types/reservation/Employee.ts';
+import { ListBookingsParams, BookingsAnalyticsParams } from '../../types/reservation/Booking.ts';
 import { GetSchedulesWithSlotsInput } from '../../types/reservation/Schedule.ts';
 import { ValidatedRequest } from '../../types/validatedRequest.ts';
+import { calcBookings } from './BookingController.ts';
 
 /**
  * GET /reservation/employees
@@ -207,6 +210,71 @@ export async function getEmployeesWithScheduleSlots(
 	}
 }
 
+/**
+ * GET /reservation/employees/with-schedules/{employee_id}
+ * @tag Reservation
+ * @summary Get a reservation employee by ID
+ * @description Retrieves a reservation employee by its ID.
+ * @operationId getReservationEmployeeById
+ * @pathParam {string} employee_id - The ID of the employee to retrieve.
+ * @response 200 - Employee retrieved successfully
+ * @responseContent {Employee} 200.application/json
+ * @response 404 - Employee not found
+ * @response 500 - Error retrieving employee
+ */
+
+export async function getEmployeeByIdWithSchedules(
+	req: ValidatedRequest<BookingsAnalyticsParams, { employee_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		let employeeId = req.params.employee_id as string;
+		const reservationModuleId = req.user?.reservation_module_id as string;
+		if (!reservationModuleId) {
+			res.status(400).json({ message: 'User has no reservation module' });
+			return;
+		}
+		let employeeData = await EmployeeDao.getEmployeeByIdWithSchedules(employeeId);
+		if (!employeeData) {
+			res.status(404).json({ message: 'Employee not found' });
+			return;
+		}
+		const employeeSchedule = employeeData?.schedules?.map((es) => es.schedule);
+
+		const params: ListBookingsParams = {
+			...req.body,
+			employee_id: employeeId,
+			status: ['reserved', 'cancelled', 'no_show'],
+			reservation_module_id: reservationModuleId,
+		};
+		const bookings = await BookingDao.getBookingsForAnalytics(params);
+		const paramsPrev: ListBookingsParams = {
+			...req.body,
+			reservation_module_id: reservationModuleId,
+			employee_id: employeeId,
+			status: ['reserved', 'cancelled', 'no_show'],
+			from: req.body.prevFrom,
+			to: req.body.prevTo,
+		};
+		const bookingsPrev = await BookingDao.getBookingsForAnalytics(paramsPrev);
+		const data = req.body.from
+			? calcBookings(bookings, req.body.from.toISOString())
+			: { noShows: 0, cancels: 0, totalPrice: 0, newCustomers: 0, newCustomersBookings: 0 };
+		const dataPrev = req.body.prevFrom
+			? calcBookings(bookingsPrev, req.body.prevFrom.toISOString())
+			: { noShows: 0, cancels: 0, totalPrice: 0, newCustomers: 0, newCustomersBookings: 0 };
+		const employee = {
+			...employeeData,
+			schedules: employeeSchedule,
+			bookings: { ...data, bookingsCount: bookings?.length || 0 },
+			bookingsPrev: { ...dataPrev, bookingsCount: bookingsPrev?.length || 0 },
+		};
+		res.status(200).json(employee);
+	} catch (error) {
+		res.status(500).json({ message: 'Error retrieving employee with data', error });
+	}
+}
+
 export default {
 	getEmployees,
 	createEmployee,
@@ -214,4 +282,5 @@ export default {
 	updateEmployee,
 	getEmployeeById,
 	getEmployeesWithScheduleSlots,
+	getEmployeeByIdWithSchedules,
 };
