@@ -39,6 +39,7 @@ import overwatchRoutes from './api/overwatch.routes.js';
 import blogRoutes from './api/blog.routes.js';
 import reservationRoutes from './api/reservations/index.routes.js';
 import RolesRoutes from './api/roles.routes.js';
+import authMenusRoutes from './api/menu/auth.routes.js';
 import { sendNotificationToUser } from '../lib/oneSignal.js';
 import withUserMiddleware from '../middleware/user.js';
 import sessionRoutes from './api/session.routes.js';
@@ -52,6 +53,7 @@ router.use('/user/auth', authRoutes);
 router.use('/taxi/auth', authTaxiRoutes);
 router.use('/delivery/auth', authDeliveryRoutes);
 router.use('/merchant/auth', authMerchantRoutes);
+router.use('/menus/auth', authMenusRoutes);
 router.use('/merchant/reservations', reservationsMerchantRoutes);
 router.use('/delivery/orders', [authMiddleware], deliveryRoutes);
 router.use('/delivery/daily_meals', [authMiddleware], dailyMealsRoutes);
@@ -79,6 +81,7 @@ router.use('/blog', blogRoutes);
 router.use('/reservation', reservationRoutes);
 router.use('/roles', [authMiddleware], RolesRoutes);
 router.use('/session', sessionRoutes);
+
 router.use('/reviews', [authMiddleware], async (req, res) => {
 	let reviews = await prisma.reviews.findMany({
 		include: {

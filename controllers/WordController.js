@@ -149,8 +149,18 @@ async function updateWordBuy(req, res) {
 		if (!result) {
 			return res.status(404).json({ error: 'Word buy not found' });
 		}
-		let stripeResult = await updateUserSubscription(req.user?.user_id);
-		res.status(200).json(stripeResult);
+		res.status(200).json(result);
+	} catch (error) {
+		console.error('Error updating word buy:', error);
+		res.status(500).json({ error: 'Failed to update word buy' });
+	}
+}
+async function updateWordBuys(req, res) {
+	try {
+		const user_id = req.user?.user_id;
+		const { word_buys, business_id } = req.body;
+		const result = await WordDao.createWordBuySubscription(word_buys, business_id, user_id);
+		res.status(200).json(result);
 	} catch (error) {
 		console.error('Error updating word buy:', error);
 		res.status(500).json({ error: 'Failed to update word buy' });
@@ -158,11 +168,11 @@ async function updateWordBuy(req, res) {
 }
 async function getWordBuysByBusiness(req, res) {
 	try {
-		const { user } = req.params;
-		const result = await WordDao.getAllWordBuysByBusiness(user);
+		const { business_id } = req.params;
+		const result = await WordDao.getActiveWordBuysByBusiness(business_id);
 		res.status(200).json(result);
 	} catch (error) {
-		console.error('Error fetching word buys by business:', error);
+		console.error('Error fetching active word buys by business:', error);
 		res.status(500).json({ error: 'Failed to fetch word buys by business' });
 	}
 }
@@ -180,6 +190,7 @@ export { getWordBuyById };
 export { getAllWordBuys };
 export { deleteWordBuy };
 export { updateWordBuy };
+export { updateWordBuys };
 export { getWordBuysByBusiness };
 export default {
 	createWord,
@@ -195,5 +206,6 @@ export default {
 	getAllWordBuys,
 	deleteWordBuy,
 	updateWordBuy,
+	updateWordBuys,
 	getWordBuysByBusiness,
 };

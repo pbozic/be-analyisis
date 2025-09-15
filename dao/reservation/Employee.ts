@@ -298,6 +298,42 @@ export async function getScheduleSlotsByEmployeesIdAndDate(
 	}
 }
 
+/**
+ * Retrieves an employee by its ID including its schedules.
+ * @param employeeId - The ID of the employee to retrieve.
+ * @returns A promise that resolves to the employee, or null if not found.
+ */
+
+export async function getEmployeeByIdWithSchedules(employeeId: string): Promise<Employee | null> {
+	try {
+		let employee = await prisma.employee.findUnique({
+			where: {
+				employee_id: employeeId,
+			},
+			include: {
+				reservation_module: true,
+				business_user: {
+					include: {
+						users: true,
+					},
+				},
+				schedules: {
+					include: {
+						schedule: {
+							include: {
+								location: true,
+							},
+						},
+					},
+				},
+			},
+		});
+		return employee;
+	} catch (error) {
+		throw new Error('Error retrieving employee');
+	}
+}
+
 export default {
 	getEmployeesByReservationModuleId,
 	createEmployee,
@@ -306,4 +342,5 @@ export default {
 	getEmployeeById,
 	getEmployeesByReservationModuleIdWithSlots,
 	getScheduleSlotsByEmployeesIdAndDate,
+	getEmployeeByIdWithSchedules,
 };

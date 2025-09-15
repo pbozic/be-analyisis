@@ -5,9 +5,7 @@ import UserController from '../../controllers/UserController.js';
 import joi from '../../middleware/joi.js';
 import {
 	updateSchema,
-	verifyPhoneSchema,
 	updateEmailSchema,
-	updateUserLanguageSchema,
 	updateTelephoneSchema,
 	updatePasswordSchema,
 	addAddressSchema,
@@ -17,11 +15,15 @@ import {
 import { reviewUserSchema } from '../../joi/reviewSchemas.js';
 import { registerChildSchema } from '../../joi/authSchemas.js';
 import StripeController from '../../controllers/StripeController.js';
+import { verifyPhoneSchema } from '../../joi/userSchemas.js';
 config();
 const router = express.Router();
 router.get('/', UserController.listUsers);
 router.get('/personal', UserController.listPersonalUsers);
 router.get('/me', UserController.me);
+
+router.get('/me/verify/phone', UserController.requestSMSVerification);
+router.post('/me/verify/phone', joi(verifyPhoneSchema), UserController.verifyMe);
 router.get('/me/ping', UserController.ping);
 router.get('/me/reviews', UserController.getMyReviews);
 router.get('/me/active_order_ids', UserController.getMyActiveOrderIds);
@@ -51,8 +53,7 @@ router.post('/me/address', joi(addAddressSchema), UserController.addAddress);
 router.delete('/me/address/:address_id', UserController.deleteAddress);
 router.patch('/me/address/:address_id', joi(editAddressSchema), UserController.editAddress);
 router.patch('/me/address/:address_id/primary', UserController.setPrimaryAddress);
-router.get('/me/verify/phone', UserController.requestSMSVerification);
-router.post('/me/verify/phone', joi(verifyPhoneSchema), UserController.verifyMe);
+
 router.post('/review', joi(reviewUserSchema), UserController.reviewUser);
 router.get('/me/payment-sheet/:type?/:business_id?', UserController.getPaymentSheetCredentials);
 router.post('/me/requestToAddFunds', UserController.requestToAddFundsToWallet);

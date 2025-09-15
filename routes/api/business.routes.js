@@ -68,7 +68,6 @@ router.post(
 	DailyMealCategoryController.createDailyMealCategoryWithPrice
 );
 
-router.get('/:business_id/daily-meal-categories', DailyMealCategoryController.getDailyMealCategoriesForBusiness);
 router.get('/daily_meal_subscriptions/:business_id', DailyMealController.getDailyMealsSubscriptionsByBusinessId);
 router.post(
 	'/daily-meal-categories/:dmc_id/price',
@@ -82,4 +81,8 @@ router.get('/local/locations', BusinessController.getLocalLocations);
 router.post('/local/locations/:business_id', BusinessController.createBusinessLocalLocation);
 router.patch('/local/locations/:location_id', BusinessController.updateBusinessLocalLocation);
 
+router.post('/analytics/overall', BusinessController.getBusinessOverallAnalytics);
+router.post('/analytics/promo/ads', BusinessController.getBusinessPromoAdsAnalytics);
+router.post('/analytics/promo/sections', BusinessController.getBusinessPromoSectionsAnalytics);
+router.post('/analytics/promo/words', BusinessController.getBusinessPromoWordsAnalytics);
 export default router;

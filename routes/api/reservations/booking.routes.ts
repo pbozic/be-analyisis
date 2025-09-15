@@ -15,6 +15,8 @@ import {
 	getBookingAdmin,
 	updateBookingStartGroupAdmin,
 	updateBookingStartFirstInGroupAdmin,
+	updateBookingGroupAdmin,
+	getBookingsAnalytics,
 } from '../../../controllers/reservation/BookingController.ts';
 import { validate } from '../../../middleware/zod';
 import {
@@ -22,6 +24,8 @@ import {
 	UpdateBookingSchema,
 	AllBookingsForLocationAndEmployeesSchema,
 	CreateMultipleBookingsSchema,
+	UpdateMultipleBookingsSchema,
+	BookingsAnalyticsSchema,
 } from '../../../types/reservation/Booking.ts';
 
 const router = express.Router();
@@ -31,6 +35,7 @@ const router = express.Router();
  * POST /bookings/list
  */
 router.post('/bookings/list', [validate(ListBookingsParamsSchema)], listBookings);
+router.post('/bookings/analytics', [validate(BookingsAnalyticsSchema)], getBookingsAnalytics);
 
 router.post(
 	'/bookings/bookings-locations-and-employees',
@@ -68,6 +73,7 @@ router.put(
 	[validate(UpdateBookingSchema)],
 	updateBookingStartFirstInGroupAdmin
 );
+router.put('/bookings/update-bookings-admin', [validate(UpdateMultipleBookingsSchema)], updateBookingGroupAdmin);
 
 router.put('/bookings/:booking_id', [validate(UpdateBookingSchema)], updateBooking);
 

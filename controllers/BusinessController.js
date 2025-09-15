@@ -3,7 +3,7 @@ import { PROMO_TYPE, ANALYTICS_TYPE } from '@prisma/client';
 
 import BusinessDao from '../dao/Business.js';
 import ReviewDao from '../dao/Review.js';
-import Constants from '../lib/constants.js';
+import Constants, { DELIVERY_ORDER_END_STATES } from '../lib/constants.js';
 import stripe from '../lib/stripe.js';
 import UserDao from '../dao/User.js';
 import DriverDao from '../dao/Driver.js';
@@ -19,9 +19,14 @@ import UserFavoriteBusinessDao from '../dao/UserFavoriteBusiness.js';
 import ScoringPointsDao from '../dao/ScoringPoints.js';
 import LocalLocationDao from '../dao/LocalLocation.js';
 import { logPromoAnalytics } from '../lib/analytics.ts';
+import { addDays, atStartOfDay, formatDay, getPeriodStartAndEnd, getPreviousPeriod } from '../lib/dateHelpers.js';
+import BusinessUsersDao from '../dao/BusinessUsers.js';
+import PromoAnalyticsDao from '../dao/PromoAnalytics.js';
+import PromoDao from '../dao/Promo.js';
+import WordDao from '../dao/Word.js';
 config();
 const { UserSockets, io } = socket;
-const { businessIndex, categorySearch, fullSearch } = elasticsearch;
+const { businessIndex, fullSearch } = elasticsearch;
 /**
  * POST /business/activate
  * @tag Business
@@ -901,13 +906,7 @@ async function updateRestaurantOverwhelmed(req, res) {
 			req.body.restaurant_overwhelmed
 		);
 		if (business) {
-			const userSocket = UserSockets.get(business.business_id);
-			console.log('overwhelmed in business, the usersocket', !!userSocket);
-			if (userSocket) {
-				console.log('overwhelmed in usersocket, businees', business);
-				io.emit('refetch_providers', business);
-			}
-			console.log('overwhelmed in function, 200');
+			businessIndex(business.business_id);
 			return res.status(200).json(business);
 		}
 		res.status(400).json({ error: 'Error updating restaurant overwhelmed' });
@@ -1450,7 +1449,7 @@ async function getTotalEarnings(req, res) {
 				status: DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED,
 			},
 		});
-		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED);
+		const totalEarnings = calculateTotalEarnings(orders, false, true);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
 		console.error("Error retrieving all businesses' total earnings:", error);
@@ -1481,7 +1480,7 @@ async function getBusinessTotalEarnings(req, res) {
 				business_id: business_id,
 			},
 		});
-		const totalEarnings = calculateTotalEarnings(orders, DELIVERY_ORDER_STATUS.DELIVERY_COMPLETED);
+		const totalEarnings = calculateTotalEarnings(orders, false, true);
 		res.status(200).json(totalEarnings);
 	} catch (error) {
 		console.error("Error retrieving business' total earnings:", error);
@@ -1757,7 +1756,7 @@ async function getBusynessFactorsBusinessIdList(req, res) {
 }
 async function addBusinessToFavorites(req, res) {
 	try {
-		const { business_id, type } = req.body;
+		const { business_id } = req.body;
 		const { user_id } = req.user;
 		const business = await BusinessDao.getBusinessById(business_id);
 		if (!business) {
@@ -2001,6 +2000,601 @@ async function updateBusinessLocalLocation(req, res) {
 	}
 }
 
+async function getBusinessOverallAnalytics(req, res) {
+	try {
+		const user_id = req.user?.user_id;
+		const bUser = await BusinessUsersDao.getBusinessUserByUserId(user_id);
+		const business_id = bUser?.business_id;
+		if (!bUser || !business_id) {
+			return res.status(401).json({ error: 'Unauthorized' });
+		}
+		const { type, periodStart, periodEnd, prevStart, prevEnd } = getPeriodsFromBody(req.body);
+
+		// Fetch orders for current & previous periods
+		const allOrdersCurrent = await prisma.delivery_orders.findMany({
+			where: {
+				business_id,
+				status: { in: DELIVERY_ORDER_END_STATES },
+				created_at: { gte: periodStart, lte: periodEnd },
+			},
+		});
+		const ordersCurrent = allOrdersCurrent.filter((o) => o.status === DELIVERY_ORDER_STATUS.SUCCESS);
+		let allOrdersPrevious = [];
+		if (prevStart && prevEnd) {
+			allOrdersPrevious = await prisma.delivery_orders.findMany({
+				where: {
+					business_id,
+					status: { in: DELIVERY_ORDER_END_STATES },
+					created_at: { gte: prevStart, lte: prevEnd },
+				},
+			});
+		}
+		const ordersPrevious = allOrdersPrevious.filter((o) => o.status === DELIVERY_ORDER_STATUS.SUCCESS);
+		// Prior orders for new customer calculation
+		let priorCustomerOrders = await prisma.delivery_orders.findMany({
+			where: {
+				business_id,
+				status: DELIVERY_ORDER_STATUS.SUCCESS,
+				created_at: { lt: periodStart },
+			},
+		});
+		let usersWithPriorOrders = new Set(priorCustomerOrders.map((o) => o.user_id).filter(Boolean));
+		const currentUserOrdersMap = new Set();
+		for (const o of ordersCurrent) {
+			if (!o.user_id) continue;
+			const existing = currentUserOrdersMap.has(o.user_id);
+			if (!existing) currentUserOrdersMap.add(o.user_id);
+		}
+		let newCustomers = 0;
+		let returningCustomers = 0;
+		for (const userId of currentUserOrdersMap.keys()) {
+			if (!usersWithPriorOrders.has(userId)) {
+				newCustomers++;
+			} else {
+				returningCustomers++;
+			}
+		}
+		let prevNewCustomers = 0;
+		let prevReturningCustomers = 0;
+		if (type !== 4) {
+			priorCustomerOrders = await prisma.delivery_orders.findMany({
+				where: {
+					business_id,
+					status: DELIVERY_ORDER_STATUS.SUCCESS,
+					created_at: { lt: prevStart },
+				},
+			});
+			usersWithPriorOrders = new Set(priorCustomerOrders.map((o) => o.user_id).filter(Boolean));
+			const previousUserOrdersMap = new Set();
+			for (const o of ordersPrevious) {
+				if (!o.user_id) continue;
+				const existing = previousUserOrdersMap.has(o.user_id);
+				if (!existing) previousUserOrdersMap.add(o.user_id);
+			}
+			for (const userId of previousUserOrdersMap.keys()) {
+				if (!usersWithPriorOrders.has(userId)) {
+					prevNewCustomers++;
+				} else {
+					prevReturningCustomers++;
+				}
+			}
+		}
+		// Revenue (sum of details.total_price) & counts
+		const sumRevenue = (orders) => orders.reduce((sum, o) => sum + (Number(o.details?.total_price) || 0), 0);
+		const revenue = sumRevenue(ordersCurrent);
+		const revenue_previous = sumRevenue(ordersPrevious);
+		const orders = ordersCurrent.length;
+		const orders_previous = ordersPrevious.length;
+		// Delivery vs pickup
+		const deliveries = ordersCurrent.filter((o) => o.details?.type !== 'pickup').length;
+		const pickups = ordersCurrent.length - deliveries;
+		const deliveries_previous = ordersPrevious.filter((o) => o.details?.type !== 'pickup').length;
+		const pickups_previous = ordersPrevious.length - deliveries_previous;
+
+		const promoAnalytics = await PromoAnalyticsDao.getAllPromoAnalyticsForPeriod(
+			business_id,
+			periodStart,
+			periodEnd
+		);
+		// Build day buckets between periodStart and periodEnd
+		const dayBuckets = {};
+		for (let d = atStartOfDay(periodStart); d <= periodEnd; d = addDays(d, 1)) {
+			dayBuckets[formatDay(d)] = {
+				impressionsUsers: new Set(),
+				clicksUsers: new Set(),
+				orderStartsUsers: new Set(),
+				impressions: 0,
+				clicks: 0,
+				orderStarts: 0,
+				ordersCreated: 0,
+				ordersFinished: 0,
+			};
+		}
+		for (const pa of promoAnalytics) {
+			const day = formatDay(pa.created_at);
+			if (!dayBuckets[day]) continue;
+			if (pa.type === ANALYTICS_TYPE.VIEW) {
+				dayBuckets[day].impressions++;
+				if (pa.user_id) dayBuckets[day].impressionsUsers.add(pa.user_id);
+			} else if (pa.type === ANALYTICS_TYPE.CLICK) {
+				dayBuckets[day].clicks++;
+				if (pa.user_id) dayBuckets[day].clicksUsers.add(pa.user_id);
+			} else if (pa.type === ANALYTICS_TYPE.ORDER_START) {
+				dayBuckets[day].orderStarts++;
+				if (pa.user_id) dayBuckets[day].orderStartsUsers.add(pa.user_id);
+			}
+		}
+		// Orders per day
+		for (const o of allOrdersCurrent) {
+			if (o.status === DELIVERY_ORDER_STATUS.SUCCESS) {
+				const day = formatDay(o.updated_at);
+				if (!dayBuckets[day]) continue;
+				dayBuckets[day].ordersFinished++;
+			} else {
+				const day = formatDay(o.created_at);
+				if (!dayBuckets[day]) continue;
+				dayBuckets[day].ordersCreated++;
+			}
+		}
+		const timeline = Object.entries(dayBuckets)
+			.sort((a, b) => (a[0] < b[0] ? -1 : 1))
+			.map(([date, v]) => ({
+				date,
+				impressions: v.impressions || 0,
+				impressionsUsers: v.impressionsUsers.size || 0,
+				clicks: v.clicks || 0,
+				clicksUsers: v.clicksUsers.size || 0,
+				orderStarts: v.orderStarts || 0,
+				orderStartsUsers: v.orderStartsUsers.size || 0,
+				ordersFinished: v.ordersFinished || 0,
+				ordersCreated: v.ordersCreated || 0,
+			}));
+
+		return res.status(200).json({
+			revenue,
+			revenue_previous: type === 4 ? null : revenue_previous,
+			orders,
+			orders_previous: type === 4 ? null : orders_previous,
+			new_customers: newCustomers,
+			new_customers_previous: type === 4 ? null : prevNewCustomers,
+			returning_customers: returningCustomers,
+			returning_customers_previous: type === 4 ? null : prevReturningCustomers,
+			deliveries,
+			deliveries_previous: type === 4 ? null : deliveries_previous,
+			pickups,
+			pickups_previous: type === 4 ? null : pickups_previous,
+			timeline,
+		});
+	} catch (e) {
+		console.error('Error getting business overall analytics:', e);
+		res.status(500).json({ error: 'Error getting business overall analytics', e: e.message });
+	}
+}
+
+// Helper: compute period bounds
+function getPeriodsFromBody(body) {
+	const { type = 0, start_date = new Date(), end_date = null } = body || {};
+	const start = new Date(start_date);
+	if (isNaN(start.getTime())) {
+		const err = new Error('Invalid start_date');
+		err.status = 400;
+		throw err;
+	}
+	const { periodStart, periodEnd } = getPeriodStartAndEnd(start, type, end_date);
+	const { prevStart, prevEnd } = getPreviousPeriod(periodStart, periodEnd, type);
+	return { type, periodStart, periodEnd, prevStart, prevEnd };
+}
+
+// Helper: build promo buckets by id for a list of analytics rows
+function buildPromoBuckets(
+	analyticsRows,
+	idKey,
+	{ includeUserBreakdown = false, priorUsers = new Set(), dayBuckets = {} } = {}
+) {
+	const bucket = {
+		impressions: 0,
+		impressionsUsers: new Set(),
+		clicks: 0,
+		clicksUsers: new Set(),
+		orderStarts: 0,
+		orderStartsUsers: new Set(),
+		ordersCreated: new Set(),
+		ordersFinished: new Set(),
+		newUsers: new Set(),
+		returningUsers: new Set(),
+		revenue: 0,
+	};
+	for (const pa of analyticsRows || []) {
+		const day = formatDay(pa.created_at);
+		const d = dayBuckets[day];
+		const id = pa[idKey] || 'unknown';
+		if (pa.type === ANALYTICS_TYPE.VIEW) {
+			bucket.impressions++;
+			if (d) d.impressions++;
+			if (pa.user_id) {
+				bucket.impressionsUsers.add(pa.user_id);
+				if (d) d.impressionsUsers.add(pa.user_id);
+			}
+		} else if (pa.type === ANALYTICS_TYPE.CLICK) {
+			bucket.clicks++;
+			if (d) d.clicks++;
+			if (pa.user_id) {
+				bucket.clicksUsers.add(pa.user_id);
+				if (d) d.clicksUsers.add(pa.user_id);
+			}
+		} else if (pa.type === ANALYTICS_TYPE.ORDER_START) {
+			bucket.orderStarts++;
+			if (d) d.orderStarts++;
+			if (pa.user_id) {
+				bucket.orderStartsUsers.add(pa.user_id);
+				if (d) d.orderStartsUsers.add(pa.user_id);
+			}
+		} else if (pa.type === ANALYTICS_TYPE.ORDER_CREATE) {
+			bucket.ordersCreated.add(pa.order_id);
+			if (d) d.ordersCreated.add(pa.order_id);
+		} else if (pa.type === ANALYTICS_TYPE.ORDER_FINISH) {
+			const price = Number(pa.order?.details?.total_price) || 0;
+			if (!bucket.ordersFinished.has(pa.order_id)) bucket.revenue += price;
+			bucket.ordersFinished.add(pa.order_id);
+			if (d) {
+				if (!d.ordersFinished.has(pa.order_id)) d.revenue += price;
+				d.ordersFinished.add(pa.order_id);
+				if (!d.revenueBreakdown[id]) d.revenueBreakdown[id] = 0;
+				d.revenueBreakdown[id] += price;
+			}
+		}
+		if (includeUserBreakdown && pa.user_id) {
+			if (!priorUsers.has(pa.user_id)) bucket.newUsers.add(pa.user_id);
+			else bucket.returningUsers.add(pa.user_id);
+		}
+	}
+	return {
+		...bucket,
+		impressionsUsers: bucket.impressionsUsers.size,
+		clicksUsers: bucket.clicksUsers.size,
+		orderStartsUsers: bucket.orderStartsUsers.size,
+		newUsers: bucket.newUsers.size,
+		returningUsers: bucket.returningUsers.size,
+		ordersCreated: bucket.ordersCreated.size,
+		ordersFinished: bucket.ordersFinished.size,
+	};
+}
+
+/**
+ * POST /business/analytics/promo/sections/{business_id}
+ * @tag Business
+ * @summary Promo analytics for sections
+ * @description Returns promo analytics for sections for a business and time period, including purchased promo sections.
+ * @operationId getBusinessPromoSectionsAnalytics
+ * @bodyDescription Time period definition
+ * @bodyContent {
+ *   "type": 0,
+ *   "start_date": "2025-01-01T00:00:00.000Z",
+ *   "end_date": null,
+ *   "ids": ["optional array of promo_sections_id to filter"]
+ * } application/json
+ * @bodyRequired
+ * @response 200 - successful operation
+ * @responseContent {object} 200.application/json
+ * @response 400 - Invalid request
+ * @response 401 - Unauthorized
+ * @prisma_model promo_sections_buy
+ * @prisma_model promo_sections
+ * @prisma_model promo_analytics
+ */
+async function getBusinessPromoSectionsAnalytics(req, res) {
+	try {
+		const user_id = req.user?.user_id;
+		const bUser = await BusinessUsersDao.getBusinessUserByUserId(user_id);
+		const business_id = bUser?.business_id;
+		if (!bUser || !business_id) {
+			return res.status(401).json({ error: 'Unauthorized' });
+		}
+
+		const { periodStart, periodEnd, prevStart, prevEnd } = getPeriodsFromBody(req.body);
+
+		const sectionIds = req.body?.ids;
+		let promoSections = await PromoDao.getAllPromoSectionBuysByBusiness(business_id, {
+			active_at: { lte: periodEnd },
+			expires_at: { gte: periodStart },
+		});
+
+		const current = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
+			business_id,
+			periodStart,
+			periodEnd,
+			PROMO_TYPE.SECTION,
+			undefined,
+			sectionIds
+		);
+		const previous =
+			prevStart && prevEnd
+				? await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
+						business_id,
+						prevStart,
+						prevEnd,
+						PROMO_TYPE.SECTION,
+						undefined,
+						sectionIds
+					)
+				: [];
+		const prior = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
+			business_id,
+			new Date(0),
+			prevEnd || new Date(periodStart.getTime() - 1),
+			PROMO_TYPE.SECTION,
+			undefined,
+			sectionIds
+		);
+		const priorUsers = new Set(prior.map((r) => r.user_id).filter(Boolean));
+		const dayBuckets = {};
+		for (let d = atStartOfDay(periodStart); d <= periodEnd; d = addDays(d, 1)) {
+			dayBuckets[formatDay(d)] = {
+				impressionsUsers: new Set(),
+				clicksUsers: new Set(),
+				impressions: 0,
+				clicks: 0,
+				orderStarts: 0,
+				orderStartsUsers: new Set(),
+				ordersCreated: new Set(),
+				ordersFinished: new Set(),
+				revenue: 0,
+				revenueBreakdown: {},
+			};
+		}
+		// Build buckets keyed by promo_sections_id
+		const bucketsCurrent = buildPromoBuckets(current, 'promo_sections_id', {
+			includeUserBreakdown: true,
+			priorUsers,
+			dayBuckets,
+		});
+		const bucketsPrevious = buildPromoBuckets(previous, 'promo_sections_id');
+		const results = {
+			current: bucketsCurrent,
+			previous: bucketsPrevious,
+			timeline: Object.entries(dayBuckets)
+				.sort((a, b) => (a[0] < b[0] ? -1 : 1))
+				.map(([date, v]) => ({
+					date,
+					impressions: v.impressions || 0,
+					impressionsUsers: v.impressionsUsers.size || 0,
+					clicks: v.clicks || 0,
+					clicksUsers: v.clicksUsers.size || 0,
+					orderStarts: v.orderStarts || 0,
+					orderStartsUsers: v.orderStartsUsers.size || 0,
+					ordersFinished: v.ordersFinished.size || 0,
+					ordersCreated: v.ordersCreated.size || 0,
+					revenue: v.revenue || 0,
+					revenueBreakdown: v.revenueBreakdown || {},
+				})),
+		};
+
+		return res.status(200).json({
+			items: results,
+			sections: promoSections,
+		});
+	} catch (e) {
+		const status = e?.status || 500;
+		console.error('Error getting promo sections analytics:', e);
+		return res.status(status).json({ error: 'Error getting promo sections analytics', m: e.message });
+	}
+}
+
+/**
+ * POST /business/analytics/promo/words/{business_id}
+ * @tag Business
+ * @summary Promo analytics for words
+ * @description Returns promo analytics for words for a business and time period, including purchased words.
+ * @operationId getBusinessPromoWordsAnalytics
+ * @bodyDescription Time period definition
+ * @bodyContent {
+ *   "type": 0,
+ *   "start_date": "2025-01-01T00:00:00.000Z",
+ *   "end_date": null,
+ *   "ids": ["optional array of word_id to filter"]
+ * } application/json
+ * @bodyRequired
+ * @response 200 - successful operation
+ * @responseContent {object} 200.application/json
+ * @response 400 - Invalid request
+ * @response 401 - Unauthorized
+ * @prisma_model word_buy
+ * @prisma_model words
+ * @prisma_model promo_analytics
+ */
+async function getBusinessPromoWordsAnalytics(req, res) {
+	try {
+		const user_id = req.user?.user_id;
+		const bUser = await BusinessUsersDao.getBusinessUserByUserId(user_id);
+		const business_id = bUser?.business_id;
+		if (!bUser || !business_id) {
+			return res.status(401).json({ error: 'Unauthorized' });
+		}
+
+		const { periodStart, periodEnd, prevStart, prevEnd } = getPeriodsFromBody(req.body);
+
+		const wordIds = req.body?.ids;
+		const promoWords = await WordDao.getAllWordBuysByBusiness(business_id, {
+			deleted_at: null,
+			active_at: { lte: periodEnd },
+			expires_at: { gte: periodStart },
+		});
+
+		const current = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
+			business_id,
+			periodStart,
+			periodEnd,
+			PROMO_TYPE.WORD,
+			wordIds
+		);
+		const previous =
+			prevStart && prevEnd
+				? await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
+						business_id,
+						prevStart,
+						prevEnd,
+						PROMO_TYPE.WORD,
+						wordIds
+					)
+				: [];
+		const prior = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
+			business_id,
+			new Date(0),
+			prevEnd || new Date(periodStart.getTime() - 1),
+			PROMO_TYPE.WORD,
+			wordIds
+		);
+		const priorUsers = new Set(prior.map((r) => r.user_id).filter(Boolean));
+		const dayBuckets = {};
+		for (let d = atStartOfDay(periodStart); d <= periodEnd; d = addDays(d, 1)) {
+			dayBuckets[formatDay(d)] = {
+				impressionsUsers: new Set(),
+				clicksUsers: new Set(),
+				impressions: 0,
+				clicks: 0,
+				orderStarts: 0,
+				orderStartsUsers: new Set(),
+				ordersCreated: new Set(),
+				ordersFinished: new Set(),
+				revenue: 0,
+				revenueBreakdown: {},
+			};
+		}
+		const bucketCurrent = buildPromoBuckets(current, 'word_id', {
+			includeUserBreakdown: true,
+			priorUsers,
+			dayBuckets,
+		});
+		const bucketPrevious = buildPromoBuckets(previous, 'word_id');
+		const results = {
+			current: bucketCurrent,
+			previous: bucketPrevious,
+			timeline: Object.entries(dayBuckets)
+				.sort((a, b) => (a[0] < b[0] ? -1 : 1))
+				.map(([date, v]) => ({
+					date,
+					impressions: v.impressions || 0,
+					impressionsUsers: v.impressionsUsers.size || 0,
+					clicks: v.clicks || 0,
+					clicksUsers: v.clicksUsers.size || 0,
+					orderStarts: v.orderStarts || 0,
+					orderStartsUsers: v.orderStartsUsers.size || 0,
+					ordersFinished: v.ordersFinished.size || 0,
+					ordersCreated: v.ordersCreated.size || 0,
+					revenue: v.revenue || 0,
+					revenueBreakdown: v.revenueBreakdown || {},
+				})),
+		};
+
+		return res.status(200).json({
+			items: results,
+			words: promoWords,
+		});
+	} catch (e) {
+		const status = e?.status || 500;
+		console.error('Error getting promo words analytics:', e);
+		return res.status(status).json({ error: 'Error getting promo words analytics', m: e.message });
+	}
+}
+
+async function getBusinessPromoAdsAnalytics(req, res) {
+	try {
+		const user_id = req.user?.user_id;
+		const bUser = await BusinessUsersDao.getBusinessUserByUserId(user_id);
+		const business_id = bUser?.business_id;
+		if (!bUser || !business_id) {
+			return res.status(401).json({ error: 'Unauthorized' });
+		}
+
+		const { periodStart, periodEnd, prevStart, prevEnd } = getPeriodsFromBody(req.body);
+
+		const adIds = req.body?.ids;
+		const promoAds = []; // TODO: await PromoDao.getAllPromoAdsBuysByBusiness(business_id);
+
+		const current = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
+			business_id,
+			periodStart,
+			periodEnd,
+			PROMO_TYPE.AD,
+			undefined,
+			undefined,
+			adIds
+		);
+		const previous =
+			prevStart && prevEnd
+				? await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
+						business_id,
+						prevStart,
+						prevEnd,
+						PROMO_TYPE.AD,
+						undefined,
+						undefined,
+						adIds
+					)
+				: [];
+		const prior = await PromoAnalyticsDao.getPromoAnalyticsForPeriodByPromoType(
+			business_id,
+			new Date(0),
+			prevEnd || new Date(periodStart.getTime() - 1),
+			PROMO_TYPE.AD,
+			undefined,
+			undefined,
+			adIds
+		);
+		const priorUsers = new Set(prior.map((r) => r.user_id).filter(Boolean));
+		const dayBuckets = {};
+		for (let d = atStartOfDay(periodStart); d <= periodEnd; d = addDays(d, 1)) {
+			dayBuckets[formatDay(d)] = {
+				impressionsUsers: new Set(),
+				clicksUsers: new Set(),
+				impressions: 0,
+				clicks: 0,
+				orderStarts: 0,
+				orderStartsUsers: new Set(),
+				ordersCreated: new Set(),
+				ordersFinished: new Set(),
+				revenue: 0,
+				revenueBreakdown: {},
+			};
+		}
+		// Build buckets keyed by promo_ads_id
+		const bucketsCurrent = buildPromoBuckets(current, 'promo_ads_id', {
+			includeUserBreakdown: true,
+			priorUsers,
+			dayBuckets,
+		});
+		const bucketsPrevious = buildPromoBuckets(previous, 'promo_ads_id');
+		const results = {
+			current: bucketsCurrent,
+			previous: bucketsPrevious,
+			timeline: Object.entries(dayBuckets)
+				.sort((a, b) => (a[0] < b[0] ? -1 : 1))
+				.map(([date, v]) => ({
+					date,
+					impressions: v.impressions || 0,
+					impressionsUsers: v.impressionsUsers.size || 0,
+					clicks: v.clicks || 0,
+					clicksUsers: v.clicksUsers.size || 0,
+					orderStarts: v.orderStarts || 0,
+					orderStartsUsers: v.orderStartsUsers.size || 0,
+					ordersFinished: v.ordersFinished.size || 0,
+					ordersCreated: v.ordersCreated.size || 0,
+					revenue: v.revenue || 0,
+					revenueBreakdown: v.revenueBreakdown || {},
+				})),
+		};
+
+		return res.status(200).json({
+			items: results,
+			ads: promoAds,
+		});
+	} catch (e) {
+		const status = e?.status || 500;
+		console.error('Error getting promo sections analytics:', e);
+		return res.status(status).json({ error: 'Error getting promo sections analytics', m: e.message });
+	}
+}
+
 export { getScheduledUsersByBusinessId };
 export { listBusinesses };
 export { listTransferBusinesses };
@@ -2031,6 +2625,7 @@ export { updateParentBusinessId };
 export { removeParentBusinessId };
 export { deleteBusiness };
 export { reviewBusiness };
+export { confirmBusinessReview };
 export { createPaymentIntent };
 export { manualSortScheduledUsers };
 export { addScheduledUserSortingType };
@@ -2061,6 +2656,10 @@ export { getPurchaseOrderLimit };
 export { getLocalLocations };
 export { createBusinessLocalLocation };
 export { updateBusinessLocalLocation };
+export { getBusinessOverallAnalytics };
+export { getBusinessPromoAdsAnalytics };
+export { getBusinessPromoSectionsAnalytics };
+export { getBusinessPromoWordsAnalytics };
 export default {
 	getScheduledUsersByBusinessId,
 	listBusinesses,
@@ -2093,6 +2692,7 @@ export default {
 	removeParentBusinessId,
 	deleteBusiness,
 	reviewBusiness,
+	confirmBusinessReview,
 	createPaymentIntent,
 	manualSortScheduledUsers,
 	addScheduledUserSortingType,
@@ -2122,4 +2722,8 @@ export default {
 	getLocalLocations,
 	createBusinessLocalLocation,
 	updateBusinessLocalLocation,
+	getBusinessOverallAnalytics,
+	getBusinessPromoAdsAnalytics,
+	getBusinessPromoSectionsAnalytics,
+	getBusinessPromoWordsAnalytics,
 };

@@ -142,10 +142,20 @@ async function promoSectionSeed() {
 		console.log('Seeding Promo Sections...');
 		let promisses = [];
 		for (let promo_section of placeholder_promo_sections) {
-			if (!existing_promo_sections.find((ps) => ps.tag === promo_section.sectionData.tag)) {
+			const existing = existing_promo_sections.find((ps) => ps.tag === promo_section.sectionData.tag);
+			if (!existing) {
 				promisses.push(PromoDao.createPromoSection(promo_section.sectionData, promo_section.translations));
 			} else {
-				console.log(`Promo section ${promo_section.tag} already exists!`);
+				console.log(
+					`Promo section ${promo_section.tag} already exists!, updating ${existing.promo_sections_id}`
+				);
+				promisses.push(
+					PromoDao.updatePromoSection(
+						existing.promo_sections_id,
+						promo_section.sectionData,
+						promo_section.translations
+					)
+				);
 			}
 		}
 		try {

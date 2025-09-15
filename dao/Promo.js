@@ -501,13 +501,14 @@ async function getAllPromoSectionBuysBySection(section) {
 		},
 	});
 }
-async function getAllPromoSectionBuysByBusiness(business) {
+async function getAllPromoSectionBuysByBusiness(business, whereObj = {}) {
 	return await prisma.promo_sections_buy.findMany({
 		where: {
 			business: {
 				business_id: business,
 			},
 			paid: true,
+			...whereObj,
 		},
 		include: {
 			promo_section: {

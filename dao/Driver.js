@@ -1,6 +1,5 @@
 import prisma from '../prisma/prisma.js';
 import UserDao from './User.js';
-import { calculateDistance, calculateTimeDifference } from '../lib/helpersLib.js';
 const getDrivers = async (args) => {
 	try {
 		return await prisma.drivers.findMany({
@@ -470,75 +469,118 @@ async function getDriverLocations(driverId, startTime, endTime) {
 }
 async function getDriverLocationsWithPerformance(driverId, startTime, endTime) {
 	try {
-		const locations = await prisma.driver_history_locations.findMany({
+		const rows = await prisma.driver_history_locations.findMany({
 			where: {
 				driver_id: driverId,
-				created_at: {
-					gte: new Date(startTime),
-					lte: new Date(endTime),
-				},
+				created_at: { gte: new Date(startTime), lte: new Date(endTime) },
 			},
-			select: {
-				location: true,
-				created_at: true,
-			},
-			orderBy: {
-				created_at: 'asc',
-			},
+			select: { location: true, created_at: true },
+			orderBy: { created_at: 'asc' },
 		});
-		// Initialize previous location for distance calculation
-		let previousLocation = null;
-		let totalScore = 0;
-		const formattedLocations = locations.map((entry, index) => {
-			const location = entry.location;
-			const currentCoordinates = {
-				latitude: location?.coordinates?.latitude || null,
-				longitude: location?.coordinates?.longitude || null,
+
+		if (!rows?.length) return { locations: [], averageScore: null };
+
+		// Tunables
+		const TARGET_KMH = 30; // desired “normal” speed
+		const MAX_KMH = 150; // clip ridiculous spikes
+		const MIN_METERS = 10; // ignore jitter hops
+		const MIN_SECONDS = 3; // ignore ultra-short intervals
+
+		const toRad = (d) => (d * Math.PI) / 180;
+		const haversineKm = (lat1, lon1, lat2, lon2) => {
+			const R = 6371;
+			const dLat = toRad(lat2 - lat1);
+			const dLon = toRad(lon2 - lon1);
+			const a = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+			return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+		};
+
+		// Try to read both GeoJSON and loose shapes
+		const extractLatLon = (loc) => {
+			if (!loc) return { lat: null, lon: null };
+			if (Array.isArray(loc.coordinates) && loc.coordinates.length >= 2) {
+				const [lon, lat] = loc.coordinates;
+				return { lat, lon };
+			}
+			return {
+				lat: loc.coordinates?.latitude ?? loc.latitude ?? loc.lat ?? null,
+				lon: loc.coordinates?.longitude ?? loc.longitude ?? loc.lon ?? null,
 			};
-			// First location has no distance or time
-			if (index === 0) {
-				previousLocation = { ...currentCoordinates, timestamp: entry.created_at };
+		};
+
+		let prev = null;
+		let weightedScoreSum = 0;
+		let weightSum = 0;
+
+		const formatted = rows.map((row, idx) => {
+			const { lat, lon } = extractLatLon(row.location) || {};
+			const ts = new Date(row.created_at);
+
+			if (idx === 0 || prev == null || lat == null || lon == null || prev.lat == null || prev.lon == null) {
+				prev = { lat, lon, ts };
 				return {
-					...currentCoordinates,
-					timestamp: entry.created_at,
-					distance: 0, // First location has 0 distance
-					time_taken: 0, // First location has no time taken
-					performance_score: 0, // First location has 0 score
+					latitude: lat,
+					longitude: lon,
+					timestamp: ts,
+					distance_km: 0,
+					time_min: 0,
+					speed_kmh: 0,
+					performance_score: 0,
 				};
 			}
-			// Calculate distance between the previous and current location
-			const distance = calculateDistance(
-				previousLocation.latitude,
-				previousLocation.longitude,
-				currentCoordinates.latitude,
-				currentCoordinates.longitude
-			);
-			// Calculate time taken between the previous and current location
-			const time_taken = calculateTimeDifference(previousLocation.timestamp, entry.created_at);
-			// Calculate the speed (distance per minute)
-			const speed = distance / time_taken;
-			// Assume a threshold speed, e.g., normal speed = 50 km/h (0.83 km/min)
-			const normalSpeed = 0.5; // 30 km/h in km/min
-			const performance_score = normalSpeed / speed;
-			totalScore += performance_score;
-			// Update previous location
-			previousLocation = { ...currentCoordinates, timestamp: entry.created_at };
-			return {
-				...currentCoordinates,
-				timestamp: entry.created_at,
-				distance: distance, // Distance between this and the previous location
-				time_taken: time_taken, // Time taken in minutes
-				performance_score: performance_score, // Performance score based on speed
+
+			const minutes = (ts - prev.ts) / 60000;
+			let km = lat != null && lon != null ? haversineKm(prev.lat, prev.lon, lat, lon) : 0;
+
+			// Ignore jitter and ultra-short intervals
+			if (minutes * 60 < MIN_SECONDS || km * 1000 < MIN_METERS) {
+				prev = { lat, lon, ts };
+				return {
+					latitude: lat,
+					longitude: lon,
+					timestamp: ts,
+					distance_km: 0,
+					time_min: minutes,
+					speed_kmh: 0,
+					performance_score: 0,
+				};
+			}
+
+			// Guard div-by-zero
+			const speedKmh = minutes > 0 ? Math.min((km / minutes) * 60, MAX_KMH) : 0;
+
+			// Score in [0,1]: 1 when speed == TARGET_KMH, falls off linearly, clamped.
+			// Adjust if you want different sensitivity.
+			const rel = TARGET_KMH > 0 ? Math.abs(speedKmh - TARGET_KMH) / TARGET_KMH : 1;
+			const score = Math.max(0, 1 - Math.min(rel, 1)); // 1..0
+
+			// Time-weighted average so dense sampling doesn’t bias
+			weightedScoreSum += score * minutes;
+			weightSum += minutes;
+
+			const out = {
+				latitude: lat,
+				longitude: lon,
+				timestamp: ts,
+				distance_km: Number(km.toFixed(4)),
+				time_min: Number(minutes.toFixed(3)),
+				speed_kmh: Number(speedKmh.toFixed(1)),
+				performance_score: Number(score.toFixed(3)),
 			};
+
+			prev = { lat, lon, ts };
+			return out;
 		});
-		// Calculate the average score for the whole trip
-		const averageScore = totalScore / (locations.length - 1);
-		return { locations: formattedLocations, averageScore };
-	} catch (error) {
-		console.error('Error fetching driver locations:', error);
+
+		const averageScore = weightSum > 0 ? Number((weightedScoreSum / weightSum).toFixed(3)) : null;
+
+		return { locations: formatted, averageScore };
+	} catch (err) {
+		console.error('Error fetching driver locations:', err);
 		throw new Error('Could not fetch driver locations');
 	}
 }
+
 async function setDriverHandle(driver_id, action, type) {
 	const updateData = {};
 	const isEnableAction = action === 'enable';

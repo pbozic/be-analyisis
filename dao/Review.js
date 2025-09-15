@@ -38,11 +38,25 @@ async function createReview(review) {
 		throw new Error(e);
 	}
 }
+
+async function getReviewsByUserId(user_id) {
+	try {
+		return prisma.reviews.findMany({
+			where: {
+				author_id: user_id,
+			},
+		});
+	} catch (e) {
+		throw new Error(e);
+	}
+}
 export { createReviewableBusiness };
 export { createReviewableUser };
 export { createReview };
+export { getReviewsByUserId };
 export default {
 	createReviewableBusiness,
 	createReviewableUser,
 	createReview,
+	getReviewsByUserId,
 };

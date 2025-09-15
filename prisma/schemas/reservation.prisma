@@ -230,6 +230,7 @@ model booking {
   discount_amount       Int?
   start_time            DateTime? // Start time of the booking, e.g. 2023-10-01T09:00:00Z
   end_time              DateTime? // End time of the booking, e.g. 2023-10-01T10:00:00Z - calculated from start time + service duration
+  deleted_at            DateTime? 
   employee_id           String?               @db.Uuid
   parent_booking_id     String?               @db.Uuid // For rescheduled bookings
   parent_booking        booking?              @relation("RescheduledBooking", fields: [parent_booking_id], references: [booking_id])
