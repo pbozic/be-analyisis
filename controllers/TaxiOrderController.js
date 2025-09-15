@@ -1973,14 +1973,13 @@ async function rejectOrder(req, res) {
 				});
 			}
 		}
-		// Determine the cancellation reason
 		let reason = '';
 		if (Array.isArray(cancellation_reason) && cancellation_reason.length > 0) {
 			reason = cancellation_reason[0].value;
 		} else if (typeof cancellation_reason === 'string' && cancellation_reason.trim() !== '') {
 			reason = cancellation_reason;
 		}
-		// Cancel the order with the determined reason
+		let pending = order.status === TAXI_ORDER_STATUS.PENDING;
 		order = await TaxiOrderDao.cancelOrder(order_id, new_status, reason);
 		if (order.driver_id) {
 			let driver = await DriverDao.getDriverById(order.driver_id);
@@ -1993,14 +1992,14 @@ async function rejectOrder(req, res) {
 		}
 		io.to('order_' + order.order_id).emit('order_rejected__taxi', { order, driver_id: order_driver_id });
 		io.to('order_' + order.order_id).emit('order_status_change__taxi', order);
-		let userActiveOrders = await TaxiOrderDao.userActiveOrders(order.user_id);
-		let pending = false;
-		for (let or of userActiveOrders) {
-			if (or.status !== TAXI_ORDER_STATUS.PENDING) {
-				pending = true;
-			}
-		}
-		if (pending) {
+		// let userActiveOrders = await TaxiOrderDao.userActiveOrders(order.user_id);
+		// let pending = false;
+		// for (let or of userActiveOrders) {
+		// 	if (or.status !== TAXI_ORDER_STATUS.PENDING) {
+		// 		pending = true;
+		// 	}
+		// }
+		if (!pending) {
 			if (UserSockets.get(order.user_id) && order.creating_user_id !== order.user_id) {
 				console.log('EMITTING order_restart_search');
 				UserSockets.get(order.user_id).emit('order_restart_search', { order, driver_id: order_driver_id });
