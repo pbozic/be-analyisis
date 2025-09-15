@@ -1994,20 +1994,18 @@ async function rejectOrder(req, res) {
 		io.to('order_' + order.order_id).emit('order_rejected__taxi', { order, driver_id: order_driver_id });
 		io.to('order_' + order.order_id).emit('order_status_change__taxi', order);
 		let userActiveOrders = await TaxiOrderDao.userActiveOrders(order.user_id);
-		let pending = true;
+		let pending = false;
 		for (let or of userActiveOrders) {
 			if (or.status !== TAXI_ORDER_STATUS.PENDING) {
-				pending = false;
+				pending = true;
 			}
 		}
-		console.log('pending', pending);
 		if (pending) {
 			if (UserSockets.get(order.user_id) && order.creating_user_id !== order.user_id) {
 				console.log('EMITTING order_restart_search');
 				UserSockets.get(order.user_id).emit('order_restart_search', { order, driver_id: order_driver_id });
 			}
 		}
-		console.log('order_status_change__taxi', 'order_rejected__taxi');
 		res.status(200).json(order);
 	} catch (e) {
 		console.log('TaxiOrderController', e);
