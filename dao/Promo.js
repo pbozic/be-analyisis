@@ -30,7 +30,7 @@ async function createPromoSection(args, translations) {
 		let trans = await prisma.translations.create({
 			data: {
 				translation: translation.translation,
-				language: translation.language,
+				language: translation.language.toLowerCase(),
 				translatable: {
 					connect: {
 						translatable_id: translatable.translatable_id,
@@ -79,7 +79,7 @@ async function updatePromoSection(id, args, translations) {
 			let trans = await prisma.translations.create({
 				data: {
 					translation: translation.translation,
-					language: translation.language,
+					language: translation.language.toLowerCase(),
 					translatable: {
 						connect: {
 							translatable_id: updated_promo_section.translatable_id,
