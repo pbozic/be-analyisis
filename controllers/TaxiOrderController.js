@@ -1247,7 +1247,10 @@ async function acceptOrder(req, res) {
 async function completeOrder(req, res) {
 	try {
 		let order = await TaxiOrderDao.getOrder(req.body.order_id);
-		let driver = await DriverDao.getDriverById(order.driver_id);
+		let driver = await DriverDao.getDriverByUserId(req.user?.user_id);
+		if (!driver) {
+			return res.status(400).json({ error: 'Driver not found.' });
+		}
 		let driver_business = await BusinessDao.getBusinessById(driver.business_id);
 		//assign penalties for being late
 		const timeline_first_waiting_timestamp = order.timeline.find(
@@ -1279,7 +1282,7 @@ async function completeOrder(req, res) {
 			}
 		} else {
 			await ScoringPointsDao.createScoringPoints(
-				order.business_id,
+				driver.business_id,
 				driver.user_id,
 				null,
 				order.order_id,
