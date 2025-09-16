@@ -684,14 +684,12 @@ async function requestSMSVerification(req, res) {
 		let token = await TokenDao.generateSMSVerificationToken(req.user);
 		let user = await UserDao.getUserById(req.user.user_id);
 		await SMS.sendSMSVerification(user.telephone, token.token, user.country_code);
-		console.log(token);
-		console.info(token);
 		if (token) {
 			return res.status(200).json({ message: 'Token sent', telephone: user.telephone });
 		}
 		res.status(400).json({ error: 'Error obtaining user information' });
 	} catch (e) {
-		console.log(e);
+		console.error(e);
 		res.status(400).json({ error: 'Error obtaining user information', e });
 	}
 }
