@@ -103,6 +103,7 @@ async function getAvailableWalletFunds(userId, funds_type) {
 				reserved_daily_meals_subscription: null,
 				type: funds_type,
 			},
+			include: { user: true },
 			orderBy: [{ expires_at: { sort: 'asc', nulls: 'last' } }, { created_at: 'asc' }],
 		});
 		return walletFunds;

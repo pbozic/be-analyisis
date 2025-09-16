@@ -27,6 +27,7 @@ import {
 	CASHBACK_TYPE,
 	ACCOUNT_ACTIONS_REASON,
 	ORDER_TYPE,
+	MAX_WALLET_FUNDS,
 } from '../lib/constants.js';
 import TaxiOrderDao from '../dao/TaxiOrder.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
@@ -1065,8 +1066,27 @@ async function requestToAddFundsToWallet(req, res) {
 		if ((!amount && amount <= 0) || !currency || !payment_method_id) {
 			return res.status(400).json({ error: 'Error requesting to add funds to wallet: Invalid parameters!' });
 		}
+		const availableWalletFunds = await WalletFundsDao.getAvailableWalletFunds(req.user.user_id, FUNDS_TYPE.FUNDS);
+		const user = availableWalletFunds?.user;
+		if (!user) {
+			return res.status(400).json({ error: 'Error obtaining user information' });
+		}
+		let sum = 0;
+		let included_wallet_funds = [];
+		for (let i = 0; i < availableWalletFunds.length; i++) {
+			sum += availableWalletFunds[i].amount;
+			included_wallet_funds.push(availableWalletFunds[i]);
+			if (sum >= MAX_WALLET_FUNDS) {
+				break;
+			}
+		}
+		if (sum >= MAX_WALLET_FUNDS) {
+			return res.status(400).json({
+				error_type: 'MAX_WALLET_FUNDS_ERR',
+				error: 'You have reached the maximum wallet funds limit.',
+			});
+		}
 		// Create a Payment Method to handle the transaction
-		let user = await UserDao.getUserById(req.user.user_id);
 		let paymentIntent = await stripe.createPaymentIntentForWallet(
 			Math.round(amount * 100),
 			currency,
