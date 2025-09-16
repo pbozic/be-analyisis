@@ -120,6 +120,7 @@ model customers {
   telephone             String?
   created_at            DateTime @default(now())
   updated_at            DateTime @updatedAt
+  code                  String?   @db.VarChar(16)
 
   reservation_module reservation_module @relation(fields: [reservation_module_id], references: [reservation_module_id])
   bookings           booking[]
@@ -128,6 +129,7 @@ model customers {
 
   @@unique([reservation_module_id, email], name: "unique_customer_email")
   @@unique([reservation_module_id, telephone], name: "unique_customer_telephone")
+  @@unique([code])
 }
 
 model service_assignment {
