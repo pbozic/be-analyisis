@@ -120,7 +120,7 @@ model customers {
   telephone             String?
   created_at            DateTime @default(now())
   updated_at            DateTime @updatedAt
-  code                  String?   @db.VarChar(16)
+  code                  String   @default(dbgenerated("substr(md5(random()::text), 1, 16)")) @db.VarChar(16)
 
   reservation_module reservation_module @relation(fields: [reservation_module_id], references: [reservation_module_id])
   bookings           booking[]
