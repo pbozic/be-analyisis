@@ -139,10 +139,38 @@ export async function getCustomerById(
 	}
 }
 
+/**
+ * GET /booking/customer/{code}
+ * @tag Reservation
+ * @summary Get a reservation customer by ID
+ * @description Retrieves a reservation customer by its ID.
+ * @operationId getReservationCustomerById
+ * @pathParam {string} customer_id - The ID of the customer to retrieve.
+ * @response 200 - Customer retrieved successfully
+ * @responseContent {Customer} 200.application/json
+ * @response 404 - Customer not found
+ * @response 500 - Error retrieving customer
+ */
+
+export async function getCustomerByCode(req: ValidatedRequest<null, { code: string }>, res: Response): Promise<void> {
+	try {
+		let customerCode = req.params.code as string;
+		let customer = await CustomerDao.getCustomerByCode(customerCode);
+		if (!customer) {
+			res.status(404).json({ message: 'Customer not found' });
+			return;
+		}
+		res.status(200).json(customer);
+	} catch (error) {
+		res.status(500).json({ message: 'Error retrieving customer', error });
+	}
+}
+
 export default {
 	getCustomers,
 	createCustomer,
 	updateCustomer,
 	deleteCustomer,
 	getCustomerById,
+	getCustomerByCode,
 };

@@ -122,10 +122,45 @@ export async function getCustomerById(customerId: string): Promise<Customer | nu
 	}
 }
 
+/**
+ * Retrieves a customer by its code.
+ * @param {string} code - The code of the customer to retrieve.
+ * @returns {Promise<Customer>} A promise that resolves to the retrieved customer.
+ * @throws {Error} If there is an error retrieving the customer.
+ */
+export async function getCustomerByCode(code: string): Promise<Customer | null> {
+	try {
+		let customer = await prisma.customers.findUnique({
+			where: {
+				code: code,
+			},
+			include: {
+				reservation_module: {
+					include: {
+						business: { include: { address: true } },
+					},
+				},
+				bookings: {
+					where: { status: 'reserved' },
+					include: {
+						service: true,
+						employee: true,
+						location: true,
+					},
+				},
+			},
+		});
+		return customer;
+	} catch (error) {
+		throw new Error('Error retrieving customer');
+	}
+}
+
 export default {
 	getCustomersByReservationModuleId,
 	createCustomer,
 	updateCustomer,
 	deleteCustomer,
 	getCustomerById,
+	getCustomerByCode,
 };
