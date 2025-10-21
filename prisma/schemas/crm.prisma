@@ -1,0 +1,43 @@
+// CRM module for non-partnered business accounts
+
+model crm_module {
+    crm_module_id               String   @id @default(uuid()) @db.Uuid
+    business_id                 String   @unique @db.Uuid
+    purchase_order_limit_amount Float?
+    created_at                  DateTime @default(now()) @db.Timestamptz(6)
+    updated_at                  DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    business         business           @relation(fields: [business_id], references: [business_id])
+    business_clients business_clients[]
+    business_teams   business_teams[]
+}
+
+model business_clients {
+    business_clients_id String     @id @default(uuid()) @db.Uuid
+    created_at          DateTime   @default(now()) @db.Timestamptz(6)
+    updated_at          DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
+    crm_module_id       String     @db.Uuid
+    crm_module          crm_module @relation(fields: [crm_module_id], references: [crm_module_id])
+
+    first_name       String?
+    last_name        String?
+    email            String?
+    telephone        String
+    telephone_code   String
+    telephone_number String
+    taxi_orders      taxi_orders[]
+
+    @@unique([telephone, crm_module_id], name: "uniqueBusinessClient")
+}
+
+model business_teams {
+    business_teams_id String   @id @default(uuid()) @db.Uuid
+    team_name         String   @unique
+    crm_module_id     String   @db.Uuid
+    limit_per_person  Float
+    created_at        DateTime @default(now()) @db.Timestamptz(6)
+    updated_at        DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    users      users[]    @relation("user_to_business_team")
+    crm_module crm_module @relation(fields: [crm_module_id], references: [crm_module_id])
+}

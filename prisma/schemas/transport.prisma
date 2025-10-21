@@ -1,0 +1,147 @@
+model transport_module {
+    transport_module_id String   @id @default(uuid()) @db.Uuid
+    business_id         String   @unique @db.Uuid
+    created_at          DateTime @default(now()) @db.Timestamptz(6)
+    updated_at          DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    business        business          @relation(fields: [business_id], references: [business_id])
+    taxi_orders     taxi_orders[]
+    delivery_orders delivery_orders[]
+    drivers         drivers[]
+    vehicles        vehicles[]
+}
+
+model driver_activity_settings {
+    driver_activity_settings_id String   @id @default(uuid()) @db.Uuid
+    first_offline_lockout       Int      @default(30) // Default 30 minutes
+    second_offline_lockout      Int      @default(120) // Default 2 hours
+    online_timeout              Int      @default(120) // Default 2 hours
+    created_at                  DateTime @default(now()) @db.Timestamptz(6)
+    updated_at                  DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+    active                      Boolean  @default(true)
+}
+
+model driver_activity_logs {
+    driver_activity_log_id String        @id @default(uuid()) @db.Uuid
+    driver_id              String        @db.Uuid
+    activity_type          ACTIVITY_TYPE
+    started_at             DateTime      @default(now()) @db.Timestamptz(6)
+    ended_at               DateTime?     @db.Timestamptz(6)
+    timeout_at             DateTime?     @db.Timestamptz(6)
+    lockout_until          DateTime?     @db.Timestamptz(6)
+
+    driver drivers @relation(fields: [driver_id], references: [driver_id])
+
+    @@index([driver_id, activity_type])
+    @@index([started_at])
+    @@index([ended_at])
+}
+
+model drivers {
+    driver_id                 String                     @id @default(uuid()) @db.Uuid
+    transport_module_id       String?                    @db.Uuid
+    online                    Boolean?                   @default(false)
+    on_order                  Boolean?                   @default(false)
+    working_hours             Json?
+    ride_requirements         Json?
+    created_at                DateTime                   @default(now()) @db.Timestamptz(6)
+    updated_at                DateTime                   @default(now()) @updatedAt @db.Timestamptz(6)
+    user_id                   String?                    @unique @db.Uuid
+    user                      users?                     @relation(fields: [user_id], references: [user_id])
+    vehicles                  vehicle_drivers[]
+    current_vehicle_id        String?                    @unique @db.Uuid
+    last_used_vehicle_id      String?                    @db.Uuid
+    orders                    taxi_orders[]
+    received_orders           taxi_order_sent[]
+    delivery_orders           delivery_orders[]
+    received_delivery_orders  delivery_order_sent[]
+    documents                 documents[]
+    location                  Json?
+    delivery_timeline         Json?                      @default("[]")
+    last_ping_at              DateTime                   @default(now()) @db.Timestamptz(6)
+    is_inactive               Boolean?                   @default(false)
+    transfer_requirements     Json?
+    regions                   String[]
+    driver_history_locations  driver_history_locations[]
+    handles_taxi_orders       Boolean?                   @default(false)
+    handles_transfer_orders   Boolean?                   @default(false)
+    handles_courier_orders    Boolean?                   @default(false)
+    handles_delivery_orders   Boolean?                   @default(false)
+    taxi_orders_toggled       Boolean?                   @default(false)
+    transfer_orders_toggled   Boolean?                   @default(false)
+    courier_orders_toggled    Boolean?                   @default(false)
+    delivery_orders_toggled   Boolean?                   @default(false)
+    partner_cash_balance      Float?                     @default(0)
+    come_to_work_last_sent_at DateTime?                  @db.Timestamptz(6)
+    driver_municipalities     driver_municipalities[]
+    current_vehicle           vehicles?                  @relation("driver_current_vehicle", fields: [current_vehicle_id], references: [vehicle_id])
+    activity_logs             driver_activity_logs[]
+    transport_module          transport_module?          @relation(fields: [transport_module_id], references: [transport_module_id])
+
+    daily_meals_id        String?                    @db.Uuid
+    daily_meals           daily_meals[]
+    delivers_daily_meals  Boolean?                   @default(false)
+    on_daily_meals        Boolean?                   @default(false)
+    scheduled_meals_route Json?                      @default("[]")
+    subscriptions         daily_meal_subscriptions[]
+    vehicle_type          VEHICLE_TYPE?
+}
+
+model vehicle_drivers {
+    vehicle_drivers_id String   @id @unique @default(uuid()) @db.Uuid
+    vehicle_id         String   @db.Uuid
+    driver_id          String   @db.Uuid
+    can_drive          Boolean  @default(true)
+    created_at         DateTime @default(now()) @db.Timestamptz(6)
+    updated_at         DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+    vehicle            vehicles @relation(fields: [vehicle_id], references: [vehicle_id])
+    driver             drivers  @relation(fields: [driver_id], references: [driver_id])
+
+    @@unique([vehicle_id, driver_id])
+    @@index([driver_id, can_drive])
+    @@index([vehicle_id, can_drive])
+}
+
+model vehicles {
+    vehicle_id               String                  @id @unique @default(uuid()) @db.Uuid
+    transport_module_id      String?                 @db.Uuid
+    active                   Boolean?                @default(true)
+    class                    VEHICLE_CLASS?
+    category                 VEHICLE_CATEGORY?
+    make                     String?
+    model                    String?
+    color                    String?
+    license_plate            String?
+    created_at               DateTime                @default(now()) @db.Timestamptz(6)
+    updated_at               DateTime                @default(now()) @updatedAt @db.Timestamptz(6)
+    documents                documents[]
+    drivers                  vehicle_drivers[]
+    vehicle_specification_id String?                 @unique @db.Uuid
+    vehicle_specification    vehicle_specifications? @relation(fields: [vehicle_specification_id], references: [vehicle_specification_id])
+    taxi_orders              taxi_orders[]
+    delivery_orders          delivery_orders[]
+    current_driver           drivers?                @relation("driver_current_vehicle")
+    business_premise_id      String?                 @unique @db.Uuid
+    business_premise         business_premise?       @relation(fields: [business_premise_id], references: [business_premise_id])
+    invoices                 invoice[]
+    transport_module         transport_module?       @relation(fields: [transport_module_id], references: [transport_module_id])
+}
+
+model vehicle_specifications {
+    vehicle_specification_id String           @id @unique @default(uuid()) @db.Uuid
+    class                    VEHICLE_CLASS
+    category                 VEHICLE_CATEGORY
+    people                   String
+    start_cost               String
+    per_kilometre            String
+    per_minute               String
+    vehicle_id               String?          @db.Uuid
+    vehicle                  vehicles?
+}
+
+enum VEHICLE_TYPE {
+    CAR
+    BIKE
+    SCOOTER
+    ON_FOOT
+}

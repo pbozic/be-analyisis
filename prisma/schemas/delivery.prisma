@@ -1,0 +1,400 @@
+model stores {
+    stores_id                String                     @id @default(uuid()) @db.Uuid
+    business_id              String                     @unique @db.Uuid
+    enabled                  Boolean                    @default(false)
+    settings                 Json?
+    created_at               DateTime                   @default(now()) @db.Timestamptz(6)
+    updated_at               DateTime                   @default(now()) @updatedAt @db.Timestamptz(6)
+    business_local_locations business_local_locations[]
+    business                 business                   @relation(fields: [business_id], references: [business_id])
+    delivery_address_id      String?                    @db.Uuid
+    delivery_address         addresses?                 @relation(name: "delivery_address", fields: [delivery_address_id], references: [address_id])
+    delivery_orders          delivery_orders[]
+    minimum_order            Int                        @default(0)
+    menus                    menus[]
+    order_lobbies            order_lobbies[]
+}
+
+model food_drinks {
+    food_drinks_id String   @id @default(uuid()) @db.Uuid
+    business_id    String   @unique @db.Uuid
+    enabled        Boolean  @default(false)
+    settings       Json?
+    created_at     DateTime @default(now()) @db.Timestamptz(6)
+    updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    restaurant_overwhelmed Boolean           @default(false)
+    business               business          @relation(fields: [business_id], references: [business_id])
+    delivery_address_id    String?           @db.Uuid
+    delivery_address       addresses?        @relation(name: "delivery_address", fields: [delivery_address_id], references: [address_id])
+    delivery_orders        delivery_orders[]
+    minimum_order          Int               @default(0)
+    menus                  menus[]
+    order_lobbies          order_lobbies[]
+
+    // Restaurant/table reservations
+    reservations reservations[]
+    seats        Int?
+
+    daily_meals_id String?      @db.Uuid
+    daily_meals    daily_meals?
+}
+
+model daily_meals {
+    daily_meals_id                  String                     @id @default(uuid()) @db.Uuid
+    food_drinks_id                  String                     @unique @db.Uuid
+    food_drinks                     food_drinks                @relation(fields: [food_drinks_id], references: [food_drinks_id])
+    daily_meals_days                DAY_OF_WEEK[]              @default([])
+    daily_meals_delivery_mapping    Json?                      @default("{\"0\": 0, \"1\": 1, \"2\": 2, \"3\": 3, \"4\": 4, \"5\": 5, \"6\": 6}")
+    maximum_daily_meals_subscribers Int?
+    daily_users_sorted              Json?                      @default("[]")
+    daily_users_sorting_type        SORTING_TYPE               @default(AUTOMATIC)
+    daily_meal_drivers              drivers[]
+    daily_meal_categories           daily_meal_categories[]
+    daily_meal_subscriptions        daily_meal_subscriptions[]
+}
+
+// Business-local-locations are used for pickup/delivery context and belong to the delivery module
+model business_local_locations {
+    business_local_location_id String   @id @default(uuid()) @db.Uuid
+    stores_id                  String   @db.Uuid
+    local_location_id          String   @db.Uuid
+    created_at                 DateTime @default(now()) @db.Timestamptz(6)
+    updated_at                 DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    time           DateTime          @db.Timestamptz(6)
+    local_location local_locations   @relation(fields: [local_location_id], references: [local_location_id])
+    stores         stores            @relation(fields: [stores_id], references: [stores_id])
+    orders         delivery_orders[]
+
+    @@unique([stores_id, local_location_id, time], name: "uniqueBusinessLocalLocation")
+}
+
+model local_locations {
+    local_location_id String   @id @default(uuid()) @db.Uuid
+    address_id        String   @db.Uuid
+    created_at        DateTime @default(now()) @db.Timestamptz(6)
+    updated_at        DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    address                  addresses                  @relation(fields: [address_id], references: [address_id])
+    business_local_locations business_local_locations[]
+
+    @@unique([address_id], name: "uniqueLocalLocation")
+}
+
+model categories {
+    categories_id        String                       @id @default(uuid()) @db.Uuid
+    name                 String
+    description          String?
+    tag                  String
+    icon_file_id         String?                      @db.Uuid
+    icon                 files?                       @relation(fields: [icon_file_id], references: [file_id])
+    category_type        CATEGORY_TYPE
+    menu_categories      menu_categories_categories[]
+    promo_ads_category   promo_ads_category[]
+    parent_categories_id String?                      @db.Uuid
+    parent_category      categories?                  @relation("sub_categories", fields: [parent_categories_id], references: [categories_id])
+    sub_categories       categories[]                 @relation("sub_categories")
+    translatable_id      String                       @db.Uuid
+    translatable         translatable                 @relation(fields: [translatable_id], references: [translatable_id], onDelete: Cascade)
+    words                words[]
+    created_at           DateTime                     @default(now()) @db.Timestamptz(6)
+    updated_at           DateTime                     @default(now()) @updatedAt @db.Timestamptz(6)
+    deleted_at           DateTime?                    @db.Timestamptz(6)
+
+    daily_meal_categories daily_meal_categories[]
+
+    @@unique([tag, category_type])
+}
+
+model menu_categories_categories {
+    menu_categories_id String          @db.Uuid
+    categories_id      String          @db.Uuid
+    menu_category      menu_categories @relation(fields: [menu_categories_id], references: [menu_category_id], onDelete: Cascade)
+    category           categories      @relation(fields: [categories_id], references: [categories_id])
+
+    @@id([menu_categories_id, categories_id])
+}
+
+model allergens {
+    allergen_id String  @id @default(uuid()) @db.Uuid
+    name        String
+    description String?
+    code        Int     @unique @db.SmallInt
+}
+
+model menus {
+    menu_id                 String            @id @default(uuid()) @db.Uuid
+    stores_id               String?           @db.Uuid
+    food_drinks_id          String?           @db.Uuid
+    active                  Boolean           @default(true)
+    stores                  stores?           @relation(fields: [stores_id], references: [stores_id])
+    food_drinks             food_drinks?      @relation(fields: [food_drinks_id], references: [food_drinks_id])
+    categories              menu_categories[]
+    menu_categories_ordered Json? // JSON field to store ordered category IDs
+    isDailyMeal             Boolean           @default(false)
+    date                    DateTime?         @db.Timestamp(0)
+
+    @@unique([menu_id])
+}
+
+model menu_categories {
+    menu_category_id           String                       @id @default(uuid()) @db.Uuid
+    names                      Json? // l10n names
+    description                Json? // l10n descriptions
+    categories                 String[]
+    business_id                String                       @db.Uuid
+    menu_items                 menu_items[]                 @relation("menu_items_in_category")
+    menu_id                    String?                      @db.Uuid
+    menu                       menus?                       @relation(fields: [menu_id], references: [menu_id], onDelete: Cascade)
+    order                      Int?
+    price                      Float?
+    menu_items_ordered         Json? // JSON field to store ordered menu item IDs
+    menu_categories_categories menu_categories_categories[]
+    menu_order_index           Int?
+
+    daily_meal_category_id       String?                     @db.Uuid
+    daily_meal_category_price_id String?                     @db.Uuid
+    daily_meal_category          daily_meal_categories?      @relation("daily_meal_categories_to_menu_categories", fields: [daily_meal_category_id], references: [daily_meal_category_id])
+    daily_meal_category_price    daily_meal_category_prices? @relation(fields: [daily_meal_category_price_id], references: [daily_meal_category_prices_id])
+    daily_meal_instances         daily_meal_instances[]
+
+    @@unique([menu_category_id])
+}
+
+model menu_items {
+    menu_item_id              String                   @id @default(uuid()) @db.Uuid
+    names                     Json // l10n names
+    image                     String?
+    description               Json // l10n descriptions
+    allergens                 String[]
+    spicy_level               Int?
+    unit_size                 String?
+    price                     Float                    @default(0)
+    discount                  Float?
+    sides                     String[] // Optional, for sides
+    extras                    String[] // Optional, for extras, inside are menu_ids
+    ingredients               Json // Includes allergen and multilingual names
+    availability              String[] // Array of availability -> ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
+    business_id               String                   @db.Uuid
+    menu_category_id          String?                  @db.Uuid
+    daily_date                DateTime?                @db.Timestamptz(6)
+    menu_category             menu_categories?         @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id], onDelete: Cascade)
+    documents                 documents[]
+    requires_id_check         Boolean                  @default(false)
+    is_enabled                Boolean                  @default(true)
+    is_copy                   Boolean                  @default(false)
+    menu_category_order_index Int?
+    order_lobby_items         order_lobby_items[]      @relation("lobby_item_to_menu_item")
+    allergens_text            Json?
+    ingredients_text          Json?
+    usage_text                Json?
+    origin_text               Json?
+    is_weighted               Boolean                  @default(false) // Indicates if the item is weighted (e.g., meat, fish)
+    weight_quantity           Float? // Quantity for weighted items
+    stock                     Float?                   @default(1) // Stock for the item, if applicable 
+    stock_movements           menu_item_stock_change[]
+
+    tax_rates_id String?    @db.Uuid
+    tax_rate     tax_rates? @relation(fields: [tax_rates_id], references: [tax_rates_id])
+
+    @@unique([menu_item_id])
+}
+
+model reservations {
+    reservation_id String             @id @default(uuid()) @db.Uuid
+    seats          Int
+    date           DateTime           @db.Timestamptz(6)
+    time           String
+    datetime       DateTime           @default(now()) @db.Timestamptz(0)
+    created_at     DateTime           @default(now()) @db.Timestamptz(6)
+    updated_at     DateTime           @default(now()) @updatedAt @db.Timestamptz(6)
+    food_drinks_id String             @db.Uuid
+    food_drinks    food_drinks        @relation(fields: [food_drinks_id], references: [food_drinks_id])
+    user_id        String             @db.Uuid
+    user           users              @relation(fields: [user_id], references: [user_id])
+    status         RESERVATION_STATUS @default(PENDING)
+    table          Int?
+}
+
+model daily_meal_subscriptions {
+    id                  String              @id @default(uuid()) @db.Uuid
+    user_id             String              @db.Uuid
+    daily_meals_id      String              @db.Uuid
+    delivery_address_id String              @db.Uuid
+    driver_id           String?             @db.Uuid
+    start_date          DateTime
+    end_date            DateTime? // null = indefinite
+    type                SUBSCRIPTION_TYPE
+    status              SUBSCRIPTION_STATUS @default(AWAITING_PAYMENT)
+    courier_comment     String?
+
+    created_at DateTime @default(now()) @db.Timestamptz(6)
+    updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    user                 users                               @relation(fields: [user_id], references: [user_id])
+    driver               drivers?                            @relation(fields: [driver_id], references: [driver_id])
+    delivery_address     addresses                           @relation(fields: [delivery_address_id], references: [address_id])
+    daily_meals          daily_meals                         @relation(fields: [daily_meals_id], references: [daily_meals_id])
+    customers            daily_meal_subscription_customers[]
+    days                 daily_meal_subscription_days[]
+    weekdays             daily_meal_subscription_weekdays[]
+    daily_meal_instances daily_meal_instances[]
+    payment              payments?                           @relation("PaymentToDMSubscription")
+    promo_analytics      promo_analytics[]
+}
+
+model daily_meal_subscription_customers {
+    id                           String  @id @default(uuid()) @db.Uuid
+    subscription_id              String  @db.Uuid
+    daily_meal_category_id       String  @db.Uuid
+    daily_meal_category_price_id String  @db.Uuid
+    first_name                   String
+    last_name                    String
+    telephone                    String
+    restaurant_comment           String?
+
+    created_at DateTime @default(now()) @db.Timestamptz(6)
+    updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    subscription              daily_meal_subscriptions   @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
+    daily_meal_instances      daily_meal_instances[]
+    daily_meal_categories     daily_meal_categories?     @relation(fields: [daily_meal_category_id], references: [daily_meal_category_id])
+    daily_meal_category_price daily_meal_category_prices @relation(fields: [daily_meal_category_price_id], references: [daily_meal_category_prices_id])
+}
+
+model daily_meal_subscription_days {
+    id              String   @id @default(uuid()) @db.Uuid
+    subscription_id String   @db.Uuid
+    intended_date   DateTime @db.Timestamp(0)
+    delivery_date   DateTime @db.Timestamp(0)
+
+    subscription daily_meal_subscriptions @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
+
+    @@unique([subscription_id, intended_date])
+    @@index([delivery_date])
+    @@index([intended_date])
+}
+
+model daily_meal_subscription_weekdays {
+    id               String @id @default(uuid()) @db.Uuid
+    subscription_id  String @db.Uuid
+    intended_weekday Int // 0 (Sunday) to 6 (Saturday)
+    delivery_weekday Int // 0 (Sunday) to 6 (Saturday)
+
+    subscription daily_meal_subscriptions @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
+
+    @@unique([subscription_id, intended_weekday])
+    @@index([intended_weekday])
+    @@index([delivery_weekday])
+}
+
+model daily_meal_instances {
+    id                           String                     @id @default(uuid()) @db.Uuid
+    subscription_id              String                     @db.Uuid
+    subscription_customer_id     String                     @db.Uuid
+    menu_category_id             String                     @db.Uuid
+    status                       DAILY_MEAL_INSTANCE_STATUS @default(PLANNED)
+    intended_date                DateTime                   @db.Timestamp(0)
+    delivery_date                DateTime                   @db.Timestamp(0)
+    daily_meal_category_price_id String                     @db.Uuid
+
+    created_at DateTime @default(now()) @db.Timestamptz(6)
+    updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    subscription              daily_meal_subscriptions          @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
+    customer                  daily_meal_subscription_customers @relation(fields: [subscription_customer_id], references: [id])
+    menu_category             menu_categories                   @relation(fields: [menu_category_id], references: [menu_category_id])
+    daily_meal_category_price daily_meal_category_prices        @relation(fields: [daily_meal_category_price_id], references: [daily_meal_category_prices_id])
+
+    @@unique([subscription_customer_id, intended_date])
+    @@index([delivery_date])
+    @@index([intended_date])
+    @@index([status])
+}
+
+model daily_meal_categories {
+    daily_meal_category_id String @id @default(uuid()) @db.Uuid
+    daily_meals_id         String @db.Uuid
+    category_id            String @db.Uuid
+
+    created_at DateTime @default(now()) @db.Timestamptz(6)
+    start_date DateTime @db.Timestamptz(6)
+    active     Boolean  @default(true)
+
+    category                          categories                          @relation(fields: [category_id], references: [categories_id], onDelete: Cascade)
+    daily_meals                       daily_meals                         @relation(fields: [daily_meals_id], references: [daily_meals_id], onDelete: Cascade)
+    menu_categories                   menu_categories[]                   @relation("daily_meal_categories_to_menu_categories")
+    daily_meal_subscription_customers daily_meal_subscription_customers[]
+
+    daily_meal_category_prices daily_meal_category_prices[]
+}
+
+model daily_meal_category_prices {
+    daily_meal_category_prices_id String   @id @default(uuid()) @db.Uuid
+    daily_meal_category_id        String   @db.Uuid
+    price                         Int
+    valid_from                    DateTime @db.Timestamptz(6)
+
+    created_at DateTime @default(now()) @db.Timestamptz(6)
+
+    daily_meal_category daily_meal_categories @relation(fields: [daily_meal_category_id], references: [daily_meal_category_id], onDelete: Cascade)
+    menu_categories     menu_categories[]
+
+    daily_meal_instances daily_meal_instances[]
+
+    daily_meal_subscription_customers daily_meal_subscription_customers[]
+}
+
+model order_lobbies {
+    order_lobbies_id   String   @id @default(uuid()) @db.Uuid
+    lobby_name         String
+    lobby_description  String
+    active             Boolean  @default(true)
+    delivery_location  Json?
+    courier_note       String?
+    restaurant_message String?
+    stores_id          String   @db.Uuid
+    food_drinks_id     String?  @db.Uuid
+    creator_id         String   @db.Uuid
+    delivery_orders_id String?  @unique @db.Uuid
+    created_at         DateTime @default(now()) @db.Timestamptz(6)
+    updated_at         DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    order_lobby_items order_lobby_items[] @relation("item_to_lobby")
+    order_lobby_users order_lobby_users[] @relation("user_to_lobby")
+    delivery_orders   delivery_orders?    @relation("origin_lobby", fields: [delivery_orders_id], references: [order_id])
+    stores            stores              @relation(fields: [stores_id], references: [stores_id])
+    food_drinks       food_drinks?        @relation(fields: [food_drinks_id], references: [food_drinks_id])
+    // restaurant      business @relation("restaurant_to_lobby",fields: [restaurant_id],references: [business_id])
+}
+
+model order_lobby_items {
+    order_lobby_items_id String   @id @default(uuid()) @db.Uuid
+    order_lobbies_id     String   @db.Uuid
+    menu_item_id         String   @db.Uuid
+    user_id              String?  @db.Uuid
+    sides                String[]
+    extras               String[]
+    quantity             Int
+    customer_note        String?
+    created_at           DateTime @default(now()) @db.Timestamptz(6)
+    updated_at           DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    menu_items    menu_items?   @relation("lobby_item_to_menu_item", fields: [menu_item_id], references: [menu_item_id])
+    order_lobbies order_lobbies @relation("item_to_lobby", fields: [order_lobbies_id], references: [order_lobbies_id])
+}
+
+model order_lobby_users {
+    order_lobby_users_id String   @id @default(uuid()) @db.Uuid
+    user_id              String   @db.Uuid
+    order_lobbies_id     String   @db.Uuid
+    limit                Float
+    created_at           DateTime @default(now()) @db.Timestamptz(6)
+    updated_at           DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    order_lobbies order_lobbies @relation("user_to_lobby", fields: [order_lobbies_id], references: [order_lobbies_id])
+    users         users         @relation("user_to_OL_user", fields: [user_id], references: [user_id])
+
+    @@unique([user_id, order_lobbies_id])
+}

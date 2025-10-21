@@ -28,7 +28,6 @@ model users {
   driver                                 drivers?
   orders                                 taxi_orders[]
   documents                              documents[]
-  delivery_driver                        delivery_drivers?
   delivery_orders                        delivery_orders[]
   reviewable_id                          String?              @db.Uuid
   reviewable                             reviewable?          @relation(fields: [reviewable_id], references: [reviewable_id])
@@ -104,15 +103,15 @@ model user_roles {
 }
 
 model role {
-  role_id     String       @id @default(uuid()) @db.Uuid
+  role_id     String            @id @default(uuid()) @db.Uuid
   name        String
   module      MODULE_TYPE
-  business_id String?  @db.Uuid // null = global role
+  business_id String?           @db.Uuid // null = global role
   permissions role_permission[]
   users       user_role[]
-  is_admin   Boolean  @default(false)
-  business   business? @relation(fields: [business_id], references: [business_id])
-  
+  is_admin    Boolean           @default(false)
+  business    business?         @relation(fields: [business_id], references: [business_id])
+
   @@unique([name, business_id]) // same role name allowed globally and per business
 }
 
@@ -124,31 +123,33 @@ model user_role {
   user               users               @relation(fields: [user_id], references: [user_id])
   role               role                @relation(fields: [role_id], references: [role_id])
   reservation_module reservation_module? @relation(fields: [reservation_module_id], references: [reservation_module_id])
+
   @@unique([user_id, role_id, reservation_module_id])
 }
 
 model role_permission {
-  role_permission_id String   @id @default(uuid()) @db.Uuid
-  role_id            String   @db.Uuid
-  permission_id      String   @db.Uuid
+  role_permission_id String @id @default(uuid()) @db.Uuid
+  role_id            String @db.Uuid
+  permission_id      String @db.Uuid
 
   role       role       @relation(fields: [role_id], references: [role_id])
   permission permission @relation(fields: [permission_id], references: [permission_id])
 
   @@unique([role_id, permission_id])
 }
+
 model permission {
-  permission_id  String   @id @default(uuid()) @db.Uuid
-  action_id      String?  @db.Uuid // null = non-action permission
-  name           String?  // for non-action permissions
-  description   String?  
-  display_name   String?  
-  module         MODULE_TYPE
-  limit          Int?     // for action usage limits
-  scope          PERMISSION_SCOPE @default(GLOBAL)
-  group          String?  // for grouping permissions
-  roles          role_permission[]
-  action action? @relation(fields: [action_id], references: [action_id])
+  permission_id String            @id @default(uuid()) @db.Uuid
+  action_id     String?           @db.Uuid // null = non-action permission
+  name          String? // for non-action permissions
+  description   String?
+  display_name  String?
+  module        MODULE_TYPE
+  limit         Int? // for action usage limits
+  scope         PERMISSION_SCOPE  @default(GLOBAL)
+  group         String? // for grouping permissions
+  roles         role_permission[]
+  action        action?           @relation(fields: [action_id], references: [action_id])
 }
 
 model user_permission {
@@ -168,4 +169,16 @@ model user_permission {
 
   @@unique([name, module])
   @@unique([action_id, module])
+}
+
+model group_users {
+  group_user_id  String      @id @default(uuid()) @db.Uuid
+  parent_user_id String      @db.Uuid
+  child_user_id  String      @unique @db.Uuid
+  created_at     DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime    @default(now()) @updatedAt @db.Timestamptz(6)
+  parent_user    users       @relation("parent_user", fields: [parent_user_id], references: [user_id])
+  child_user     users       @relation("child_user", fields: [child_user_id], references: [user_id])
+  allowance      allowances?
+  enabled        Boolean     @default(true)
 }
