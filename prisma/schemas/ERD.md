@@ -8,10 +8,9 @@
 - [FamilyUsers](#familyusers)
 - [Documents](#documents)
 - [Users](#users)
-- [TaxiOrders](#taxiorders)
-- [DeliveryOrders](#deliveryorders)
 - [Payments](#payments)
 - [LostItems](#lostitems)
+- [TaxiOrders](#taxiorders)
 - [PromoSections](#promosections)
 - [PromoAds](#promoads)
 - [PromoWords](#promowords)
@@ -21,6 +20,7 @@
 - [MenuItems](#menuitems)
 - [CRM](#crm)
 - [Delivery](#delivery)
+- [DeliveryOrders](#deliveryorders)
 - [FoodDrinks](#fooddrinks)
 - [Stores](#stores)
 - [Menus](#menus)
@@ -39,7 +39,6 @@
 - [Locations](#locations)
 - [Schedules](#schedules)
 - [Notifications](#notifications)
-- [default](#default)
 
 ## Business
 
@@ -97,6 +96,7 @@ erDiagram
   String business_id FK "nullable"
   String vehicle_id FK "nullable"
   String transaction_id FK "nullable"
+  String order_id FK "nullable"
 }
 "addresses" {
   String address_id PK
@@ -196,6 +196,7 @@ erDiagram
   String user_id FK,UK "nullable"
   String menu_item_id FK,UK "nullable"
   String lost_item_id FK,UK "nullable"
+  String delivery_order_id FK,UK "nullable"
 }
 "reviews" {
   String review_id PK
@@ -307,6 +308,7 @@ Properties as follows:
 - `business_id`:
 - `vehicle_id`:
 - `transaction_id`:
+- `order_id`:
 
 ### `addresses`
 
@@ -446,6 +448,7 @@ Properties as follows:
 - `user_id`:
 - `menu_item_id`:
 - `lost_item_id`:
+- `delivery_order_id`:
 
 ### `reviews`
 
@@ -948,6 +951,7 @@ erDiagram
   String user_id FK,UK "nullable"
   String menu_item_id FK,UK "nullable"
   String lost_item_id FK,UK "nullable"
+  String delivery_order_id FK,UK "nullable"
 }
 "documents" {
   String document_id PK
@@ -962,6 +966,7 @@ erDiagram
   String business_id FK "nullable"
   String vehicle_id FK "nullable"
   String transaction_id FK "nullable"
+  String order_id FK "nullable"
 }
 "transactions" {
   String transaction_id PK
@@ -998,6 +1003,7 @@ Properties as follows:
 - `user_id`:
 - `menu_item_id`:
 - `lost_item_id`:
+- `delivery_order_id`:
 
 ### `documents`
 
@@ -1017,6 +1023,7 @@ Properties as follows:
 - `business_id`:
 - `vehicle_id`:
 - `transaction_id`:
+- `order_id`:
 
 ### `transactions`
 
@@ -1198,6 +1205,7 @@ erDiagram
   String user_id FK,UK "nullable"
   String menu_item_id FK,UK "nullable"
   String lost_item_id FK,UK "nullable"
+  String delivery_order_id FK,UK "nullable"
 }
 "addresses" {
   String address_id PK
@@ -1527,6 +1535,7 @@ Properties as follows:
 - `user_id`:
 - `menu_item_id`:
 - `lost_item_id`:
+- `delivery_order_id`:
 
 ### `addresses`
 
@@ -1641,1050 +1650,6 @@ Properties as follows:
 - `updated_at`:
 - `code`:
 - `user_id`:
-
-## TaxiOrders
-
-```mermaid
-erDiagram
-"taxi_orders" {
-  String order_id PK
-  String user_id FK
-  String business_users_id FK "nullable"
-  String business_clients_id FK "nullable"
-  String driver_id FK "nullable"
-  String vehicle_id FK "nullable"
-  Json route
-  Json pickup_location
-  Json delivery_location "nullable"
-  Json payment "nullable"
-  Json estimates "nullable"
-  Json timeline
-  Json preferences "nullable"
-  TAXI_ORDER_STATUS status
-  DateTime(6) last_sent_at "nullable"
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  String telephone "nullable"
-  String first_name "nullable"
-  String last_name "nullable"
-  String cancellation_reason "nullable"
-  Int find_drivers_attempts "nullable"
-  Boolean is_scheduled
-  String parent_order_id FK "nullable"
-  ORDER_TYPE type
-  ORDER_SUBTYPE subtype
-  Json flags "nullable"
-  Json cargo_preferences "nullable"
-  String customer_note "nullable"
-  String parent_user_type "nullable"
-  String creating_user_id "nullable"
-  Boolean allow_credits_usage
-  Int order_number
-  String review_id FK,UK "nullable"
-  String transport_module_id FK "nullable"
-}
-"taxi_order_sent" {
-  String taxi_order_sent_id PK
-  String order_id FK
-  String driver_id FK
-  Boolean accepted
-  Json location "nullable"
-  Json timeline
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  Boolean rejected
-}
-"wallet_transfer_history" {
-  String wallet_transfer_history_id PK
-  String order_id FK
-  Float amount
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  Boolean success
-}
-"late_events" {
-  String late_events_id PK
-  String stores_id FK "nullable"
-  String food_drinks_id FK "nullable"
-  String driver_id FK
-  String user_id
-  String delivery_order_id FK "nullable"
-  String taxi_order_id FK "nullable"
-  String scoring_points_id FK "nullable"
-  Int seconds
-  DateTime(6) created_at
-  DateTime(6) updated_at
-}
-"business_users" {
-  String business_users_id PK
-  Boolean online "nullable"
-  COMPANY_ROLE company_role
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  String user_id FK
-  String business_id FK
-  String operating_address_id FK "nullable"
-}
-"transactions" {
-  String transaction_id PK
-  String user_id FK
-  Float amount
-  TRANSACTION_TYPE type
-  String description "nullable"
-  DateTime(6) createdAt
-  DateTime(6) updatedAt
-  String delivery_order_id FK "nullable"
-  String taxi_order_id FK "nullable"
-  String wallet_fund_id FK "nullable"
-}
-"scoring_points" {
-  String scoring_points_id PK
-  String business_id FK
-  String user_id FK "nullable"
-  String delivery_order_id FK "nullable"
-  String taxi_order_id FK "nullable"
-  Int points
-  Boolean isPenalty
-  SCORING_POINTS_REASON reason
-  DateTime expiration_date "nullable"
-  DateTime(6) created_at
-  DateTime(6) updated_at
-}
-"business_clients" {
-  String business_clients_id PK
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  String crm_module_id FK
-  String first_name "nullable"
-  String last_name "nullable"
-  String email "nullable"
-  String telephone
-  String telephone_code
-  String telephone_number
-}
-"drivers" {
-  String driver_id PK
-  String transport_module_id FK "nullable"
-  Boolean online "nullable"
-  Boolean on_order "nullable"
-  Json working_hours "nullable"
-  Json ride_requirements "nullable"
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  String user_id FK,UK "nullable"
-  String current_vehicle_id FK,UK "nullable"
-  String last_used_vehicle_id "nullable"
-  Json location "nullable"
-  Json delivery_timeline "nullable"
-  DateTime(6) last_ping_at
-  Boolean is_inactive "nullable"
-  Json transfer_requirements "nullable"
-  String regions
-  Boolean handles_taxi_orders "nullable"
-  Boolean handles_transfer_orders "nullable"
-  Boolean handles_courier_orders "nullable"
-  Boolean handles_delivery_orders "nullable"
-  Boolean taxi_orders_toggled "nullable"
-  Boolean transfer_orders_toggled "nullable"
-  Boolean courier_orders_toggled "nullable"
-  Boolean delivery_orders_toggled "nullable"
-  Float partner_cash_balance "nullable"
-  DateTime(6) come_to_work_last_sent_at "nullable"
-  String daily_meals_id "nullable"
-  Boolean delivers_daily_meals "nullable"
-  Boolean on_daily_meals "nullable"
-  Json scheduled_meals_route "nullable"
-  VEHICLE_TYPE vehicle_type "nullable"
-  String reviewable_id FK "nullable"
-}
-"vehicles" {
-  String vehicle_id PK
-  String transport_module_id FK "nullable"
-  Boolean active "nullable"
-  VEHICLE_CLASS class "nullable"
-  VEHICLE_CATEGORY category "nullable"
-  String make "nullable"
-  String model "nullable"
-  String color "nullable"
-  String license_plate "nullable"
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  String vehicle_specification_id FK,UK "nullable"
-  String business_premise_id FK,UK "nullable"
-}
-"users" {
-  String user_id PK
-  String first_name "nullable"
-  String last_name "nullable"
-  String password
-  String email "nullable"
-  String telephone UK
-  String telephone_code
-  String telephone_number
-  DateTime date_of_birth "nullable"
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  USER_ROLES user_role
-  Boolean phone_verified
-  Json notification_preferences "nullable"
-  Json taxi_preferences "nullable"
-  String profile_picture_id UK "nullable"
-  String reviewable_id FK "nullable"
-  Boolean review_complete
-  String one_signal_id "nullable"
-  String stripe_customer_id "nullable"
-  Float wallet_balance
-  Json transfer_preferences "nullable"
-  Json allergies_preferences "nullable"
-  Json spicy_preferences "nullable"
-  Json radio_preferences "nullable"
-  Boolean subscribed_to_daily_meals
-  Json daily_meal_preferences "nullable"
-  Json details "nullable"
-  Json taxi_push_notification_preferences "nullable"
-  Json transfer_push_notification_preferences "nullable"
-  Json delivery_push_notification_preferences "nullable"
-  Json spoken_languages "nullable"
-  Json daily_meal_day_preferences "nullable"
-  Boolean disabled
-  Boolean active
-  String language "nullable"
-  String apple_id "nullable"
-  String google_id "nullable"
-  String(6) referral_code UK "nullable"
-  DateTime activated_at "nullable"
-  DateTime deactivated_at "nullable"
-  Boolean deactivated
-  String business_teams_id FK "nullable"
-  Boolean allow_marketing_push_notifications "nullable"
-  Boolean allow_ads_personalization "nullable"
-  Boolean allow_newsletter "nullable"
-}
-"taxi_orders" }o--o| "drivers" : driver
-"taxi_orders" }o--o| "vehicles" : vehicle
-"taxi_orders" }o--|| "users" : user
-"taxi_orders" }o--o| "business_users" : business_users
-"taxi_orders" }o--o| "business_clients" : business_clients
-"taxi_orders" }o--o| "taxi_orders" : parent_order
-"taxi_order_sent" }o--|| "taxi_orders" : order
-"taxi_order_sent" }o--|| "drivers" : driver
-"wallet_transfer_history" }o--|| "taxi_orders" : taxi_order
-"late_events" }o--|| "drivers" : driver
-"late_events" }o--o| "taxi_orders" : taxi_orders
-"late_events" }o--o| "scoring_points" : scoring_points
-"business_users" }o--|| "users" : users
-"transactions" }o--o| "taxi_orders" : taxi_order
-"transactions" }o--|| "users" : user
-"scoring_points" }o--o| "users" : users
-"scoring_points" }o--o| "taxi_orders" : taxi_orders
-"drivers" |o--o| "users" : user
-"drivers" |o--o| "vehicles" : current_vehicle
-```
-
-### `taxi_orders`
-
-Ride-hailing taxi orders with route, payment and driver relations.
-
-Properties as follows:
-
-- `order_id`:
-- `user_id`:
-- `business_users_id`:
-- `business_clients_id`:
-- `driver_id`:
-- `vehicle_id`:
-- `route`:
-- `pickup_location`:
-- `delivery_location`:
-- `payment`:
-- `estimates`:
-- `timeline`:
-- `preferences`:
-- `status`:
-- `last_sent_at`:
-- `created_at`:
-- `updated_at`:
-- `telephone`:
-- `first_name`:
-- `last_name`:
-- `cancellation_reason`:
-- `find_drivers_attempts`:
-- `is_scheduled`:
-- `parent_order_id`:
-- `type`:
-- `subtype`:
-- `flags`:
-- `cargo_preferences`:
-- `customer_note`:
-- `parent_user_type`:
-- `creating_user_id`:
-- `allow_credits_usage`:
-- `order_number`:
-- `review_id`:
-- `transport_module_id`:
-
-### `taxi_order_sent`
-
-Properties as follows:
-
-- `taxi_order_sent_id`:
-- `order_id`:
-- `driver_id`:
-- `accepted`:
-- `location`:
-- `timeline`:
-- `created_at`:
-- `updated_at`:
-- `rejected`:
-
-### `wallet_transfer_history`
-
-Wallet transfer history for taxi and delivery orders.
-
-Properties as follows:
-
-- `wallet_transfer_history_id`:
-- `order_id`:
-- `amount`:
-- `created_at`:
-- `updated_at`:
-- `success`:
-
-### `late_events`
-
-Recorded late events for orders impacting scoring.
-
-Properties as follows:
-
-- `late_events_id`:
-- `stores_id`:
-- `food_drinks_id`:
-- `driver_id`:
-- `user_id`:
-- `delivery_order_id`:
-- `taxi_order_id`:
-- `scoring_points_id`:
-- `seconds`:
-- `created_at`:
-- `updated_at`:
-
-### `business_users`
-
-User membership within a business (employees/managers).
-
-Properties as follows:
-
-- `business_users_id`:
-- `online`:
-- `company_role`:
-- `created_at`:
-- `updated_at`:
-- `user_id`:
-- `business_id`:
-- `operating_address_id`:
-
-### `transactions`
-
-Ledger transactions for users and orders (credit/debit entries).
-
-Properties as follows:
-
-- `transaction_id`:
-- `user_id`:
-- `amount`:
-- `type`:
-- `description`:
-- `createdAt`:
-- `updatedAt`:
-- `delivery_order_id`:
-- `taxi_order_id`:
-- `wallet_fund_id`:
-
-### `scoring_points`
-
-Scoring points (rewards/penalties) for users and businesses.
-
-Properties as follows:
-
-- `scoring_points_id`:
-- `business_id`:
-- `user_id`:
-- `delivery_order_id`:
-- `taxi_order_id`:
-- `points`:
-- `isPenalty`:
-- `reason`:
-- `expiration_date`:
-- `created_at`:
-- `updated_at`:
-
-### `business_clients`
-
-Client contacts managed by a CRM module.
-
-Represents end customers of a business using CRM. Telephone is unique per CRM module
-to avoid duplicate client records within the same business context.
-
-Properties as follows:
-
-- `business_clients_id`:
-- `created_at`:
-- `updated_at`:
-- `crm_module_id`:
-- `first_name`:
-- `last_name`:
-- `email`:
-- `telephone`:
-- `telephone_code`:
-- `telephone_number`:
-
-### `drivers`
-
-Driver entity linked to a user and (optionally) a transport module.
-
-Tracks online state, capabilities, documents, orders and current vehicle.
-
-Properties as follows:
-
-- `driver_id`:
-- `transport_module_id`:
-- `online`:
-- `on_order`:
-- `working_hours`:
-- `ride_requirements`:
-- `created_at`:
-- `updated_at`:
-- `user_id`:
-- `current_vehicle_id`:
-- `last_used_vehicle_id`:
-- `location`:
-- `delivery_timeline`:
-- `last_ping_at`:
-- `is_inactive`:
-- `transfer_requirements`:
-- `regions`:
-- `handles_taxi_orders`:
-- `handles_transfer_orders`:
-- `handles_courier_orders`:
-- `handles_delivery_orders`:
-- `taxi_orders_toggled`:
-- `transfer_orders_toggled`:
-- `courier_orders_toggled`:
-- `delivery_orders_toggled`:
-- `partner_cash_balance`:
-- `come_to_work_last_sent_at`:
-- `daily_meals_id`:
-- `delivers_daily_meals`:
-- `on_daily_meals`:
-- `scheduled_meals_route`:
-- `vehicle_type`:
-- `reviewable_id`:
-
-### `vehicles`
-
-Vehicle entity with class/category, documents and invoice relations.
-
-Properties as follows:
-
-- `vehicle_id`:
-- `transport_module_id`:
-- `active`:
-- `class`:
-- `category`:
-- `make`:
-- `model`:
-- `color`:
-- `license_plate`:
-- `created_at`:
-- `updated_at`:
-- `vehicle_specification_id`:
-- `business_premise_id`:
-
-### `users`
-
-End user account with profile, preferences and relations.
-
-Central user entity linking to roles, orders, documents, wallets and analytics.
-
-Properties as follows:
-
-- `user_id`:
-- `first_name`:
-- `last_name`:
-- `password`:
-- `email`:
-- `telephone`:
-- `telephone_code`:
-- `telephone_number`:
-- `date_of_birth`:
-- `created_at`:
-- `updated_at`:
-- `user_role`:
-- `phone_verified`:
-- `notification_preferences`:
-- `taxi_preferences`:
-- `profile_picture_id`:
-- `reviewable_id`:
-- `review_complete`:
-- `one_signal_id`:
-- `stripe_customer_id`:
-- `wallet_balance`:
-- `transfer_preferences`:
-- `allergies_preferences`:
-- `spicy_preferences`:
-- `radio_preferences`:
-- `subscribed_to_daily_meals`:
-- `daily_meal_preferences`:
-- `details`:
-- `taxi_push_notification_preferences`:
-- `transfer_push_notification_preferences`:
-- `delivery_push_notification_preferences`:
-- `spoken_languages`:
-- `daily_meal_day_preferences`:
-- `disabled`:
-- `active`:
-- `language`:
-- `apple_id`:
-- `google_id`:
-- `referral_code`:
-- `activated_at`:
-- `deactivated_at`:
-- `deactivated`:
-- `business_teams_id`:
-- `allow_marketing_push_notifications`:
-- `allow_ads_personalization`:
-- `allow_newsletter`:
-
-## DeliveryOrders
-
-```mermaid
-erDiagram
-"delivery_orders" {
-  String order_id PK
-  String user_id FK "nullable"
-  Json route
-  Json pickup_location
-  Json delivery_location
-  Json payment "nullable"
-  Json estimates "nullable"
-  Json details "nullable"
-  Json courier_instructions "nullable"
-  Json restaurant_message "nullable"
-  String rejection_reason "nullable"
-  Json scheduled "nullable"
-  Json timeline
-  DELIVERY_ORDER_STATUS status
-  DateTime(6) last_sent_at "nullable"
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  String vehicle_id FK "nullable"
-  String driver_id FK "nullable"
-  String transport_module_id FK "nullable"
-  String payment_intent_id "nullable"
-  Int find_drivers_attempts "nullable"
-  Boolean is_daily_meal
-  Boolean allow_credits_usage
-  Int order_number
-  String business_local_location_id FK "nullable"
-  String review_id FK,UK "nullable"
-  String stores_id FK "nullable"
-  String food_drinks_id FK "nullable"
-}
-"delivery_order_sent" {
-  String delivery_order_sent_id PK
-  String order_id FK
-  Boolean accepted
-  Json location
-  Json timeline
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  String driver_id FK "nullable"
-}
-"business_users" {
-  String business_users_id PK
-  Boolean online "nullable"
-  COMPANY_ROLE company_role
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  String user_id FK
-  String business_id FK
-  String operating_address_id FK "nullable"
-}
-"transactions" {
-  String transaction_id PK
-  String user_id FK
-  Float amount
-  TRANSACTION_TYPE type
-  String description "nullable"
-  DateTime(6) createdAt
-  DateTime(6) updatedAt
-  String delivery_order_id FK "nullable"
-  String taxi_order_id FK "nullable"
-  String wallet_fund_id FK "nullable"
-}
-"wallet_transfer_history" {
-  String wallet_transfer_history_id PK
-  String order_id FK
-  Float amount
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  Boolean success
-}
-"scoring_points" {
-  String scoring_points_id PK
-  String business_id FK
-  String user_id FK "nullable"
-  String delivery_order_id FK "nullable"
-  String taxi_order_id FK "nullable"
-  Int points
-  Boolean isPenalty
-  SCORING_POINTS_REASON reason
-  DateTime expiration_date "nullable"
-  DateTime(6) created_at
-  DateTime(6) updated_at
-}
-"late_events" {
-  String late_events_id PK
-  String stores_id FK "nullable"
-  String food_drinks_id FK "nullable"
-  String driver_id FK
-  String user_id
-  String delivery_order_id FK "nullable"
-  String taxi_order_id FK "nullable"
-  String scoring_points_id FK "nullable"
-  Int seconds
-  DateTime(6) created_at
-  DateTime(6) updated_at
-}
-"business_clients" {
-  String business_clients_id PK
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  String crm_module_id FK
-  String first_name "nullable"
-  String last_name "nullable"
-  String email "nullable"
-  String telephone
-  String telephone_code
-  String telephone_number
-}
-"line_items" {
-  String line_item_id PK
-  String menu_item_id FK
-  String menu_item_version_id FK
-  String order_id FK
-  Int quantity
-  String comment "nullable"
-  String replacement_id "nullable"
-  String replaces_id FK,UK "nullable"
-  String parent_side_id FK "nullable"
-  String parent_extra_id FK "nullable"
-  Boolean removed
-}
-"drivers" {
-  String driver_id PK
-  String transport_module_id FK "nullable"
-  Boolean online "nullable"
-  Boolean on_order "nullable"
-  Json working_hours "nullable"
-  Json ride_requirements "nullable"
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  String user_id FK,UK "nullable"
-  String current_vehicle_id FK,UK "nullable"
-  String last_used_vehicle_id "nullable"
-  Json location "nullable"
-  Json delivery_timeline "nullable"
-  DateTime(6) last_ping_at
-  Boolean is_inactive "nullable"
-  Json transfer_requirements "nullable"
-  String regions
-  Boolean handles_taxi_orders "nullable"
-  Boolean handles_transfer_orders "nullable"
-  Boolean handles_courier_orders "nullable"
-  Boolean handles_delivery_orders "nullable"
-  Boolean taxi_orders_toggled "nullable"
-  Boolean transfer_orders_toggled "nullable"
-  Boolean courier_orders_toggled "nullable"
-  Boolean delivery_orders_toggled "nullable"
-  Float partner_cash_balance "nullable"
-  DateTime(6) come_to_work_last_sent_at "nullable"
-  String daily_meals_id "nullable"
-  Boolean delivers_daily_meals "nullable"
-  Boolean on_daily_meals "nullable"
-  Json scheduled_meals_route "nullable"
-  VEHICLE_TYPE vehicle_type "nullable"
-  String reviewable_id FK "nullable"
-}
-"vehicles" {
-  String vehicle_id PK
-  String transport_module_id FK "nullable"
-  Boolean active "nullable"
-  VEHICLE_CLASS class "nullable"
-  VEHICLE_CATEGORY category "nullable"
-  String make "nullable"
-  String model "nullable"
-  String color "nullable"
-  String license_plate "nullable"
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  String vehicle_specification_id FK,UK "nullable"
-  String business_premise_id FK,UK "nullable"
-}
-"users" {
-  String user_id PK
-  String first_name "nullable"
-  String last_name "nullable"
-  String password
-  String email "nullable"
-  String telephone UK
-  String telephone_code
-  String telephone_number
-  DateTime date_of_birth "nullable"
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  USER_ROLES user_role
-  Boolean phone_verified
-  Json notification_preferences "nullable"
-  Json taxi_preferences "nullable"
-  String profile_picture_id UK "nullable"
-  String reviewable_id FK "nullable"
-  Boolean review_complete
-  String one_signal_id "nullable"
-  String stripe_customer_id "nullable"
-  Float wallet_balance
-  Json transfer_preferences "nullable"
-  Json allergies_preferences "nullable"
-  Json spicy_preferences "nullable"
-  Json radio_preferences "nullable"
-  Boolean subscribed_to_daily_meals
-  Json daily_meal_preferences "nullable"
-  Json details "nullable"
-  Json taxi_push_notification_preferences "nullable"
-  Json transfer_push_notification_preferences "nullable"
-  Json delivery_push_notification_preferences "nullable"
-  Json spoken_languages "nullable"
-  Json daily_meal_day_preferences "nullable"
-  Boolean disabled
-  Boolean active
-  String language "nullable"
-  String apple_id "nullable"
-  String google_id "nullable"
-  String(6) referral_code UK "nullable"
-  DateTime activated_at "nullable"
-  DateTime deactivated_at "nullable"
-  Boolean deactivated
-  String business_teams_id FK "nullable"
-  Boolean allow_marketing_push_notifications "nullable"
-  Boolean allow_ads_personalization "nullable"
-  Boolean allow_newsletter "nullable"
-}
-"delivery_orders" }o--o| "users" : user
-"delivery_orders" }o--o| "vehicles" : vehicle
-"delivery_orders" }o--o| "drivers" : driver
-"delivery_order_sent" }o--|| "delivery_orders" : order
-"delivery_order_sent" }o--o| "drivers" : driver
-"business_users" }o--|| "users" : users
-"transactions" }o--o| "delivery_orders" : delivery_order
-"transactions" }o--|| "users" : user
-"wallet_transfer_history" }o--|| "delivery_orders" : delivery_order
-"scoring_points" }o--o| "users" : users
-"scoring_points" }o--o| "delivery_orders" : delivery_orders
-"late_events" }o--|| "drivers" : driver
-"late_events" }o--o| "delivery_orders" : delivery_orders
-"late_events" }o--o| "scoring_points" : scoring_points
-"line_items" }o--|| "delivery_orders" : order
-"line_items" |o--o| "line_items" : replaces
-"line_items" }o--o| "line_items" : parent_side
-"line_items" }o--o| "line_items" : parent_extra
-"drivers" |o--o| "users" : user
-"drivers" |o--o| "vehicles" : current_vehicle
-```
-
-### `delivery_orders`
-
-Courier/food delivery orders with items, status timeline and driver.
-
-Properties as follows:
-
-- `order_id`:
-- `user_id`:
-- `route`:
-- `pickup_location`:
-- `delivery_location`:
-- `payment`:
-- `estimates`:
-- `details`:
-- `courier_instructions`:
-- `restaurant_message`:
-- `rejection_reason`:
-- `scheduled`:
-- `timeline`:
-- `status`:
-- `last_sent_at`:
-- `created_at`:
-- `updated_at`:
-- `vehicle_id`:
-- `driver_id`:
-- `transport_module_id`:
-- `payment_intent_id`:
-- `find_drivers_attempts`:
-- `is_daily_meal`:
-- `allow_credits_usage`:
-- `order_number`:
-- `business_local_location_id`:
-- `review_id`:
-- `stores_id`:
-- `food_drinks_id`:
-
-### `delivery_order_sent`
-
-Properties as follows:
-
-- `delivery_order_sent_id`:
-- `order_id`:
-- `accepted`:
-- `location`:
-- `timeline`:
-- `created_at`:
-- `updated_at`:
-- `driver_id`:
-
-### `business_users`
-
-User membership within a business (employees/managers).
-
-Properties as follows:
-
-- `business_users_id`:
-- `online`:
-- `company_role`:
-- `created_at`:
-- `updated_at`:
-- `user_id`:
-- `business_id`:
-- `operating_address_id`:
-
-### `transactions`
-
-Ledger transactions for users and orders (credit/debit entries).
-
-Properties as follows:
-
-- `transaction_id`:
-- `user_id`:
-- `amount`:
-- `type`:
-- `description`:
-- `createdAt`:
-- `updatedAt`:
-- `delivery_order_id`:
-- `taxi_order_id`:
-- `wallet_fund_id`:
-
-### `wallet_transfer_history`
-
-Wallet transfer history for taxi and delivery orders.
-
-Properties as follows:
-
-- `wallet_transfer_history_id`:
-- `order_id`:
-- `amount`:
-- `created_at`:
-- `updated_at`:
-- `success`:
-
-### `scoring_points`
-
-Scoring points (rewards/penalties) for users and businesses.
-
-Properties as follows:
-
-- `scoring_points_id`:
-- `business_id`:
-- `user_id`:
-- `delivery_order_id`:
-- `taxi_order_id`:
-- `points`:
-- `isPenalty`:
-- `reason`:
-- `expiration_date`:
-- `created_at`:
-- `updated_at`:
-
-### `late_events`
-
-Recorded late events for orders impacting scoring.
-
-Properties as follows:
-
-- `late_events_id`:
-- `stores_id`:
-- `food_drinks_id`:
-- `driver_id`:
-- `user_id`:
-- `delivery_order_id`:
-- `taxi_order_id`:
-- `scoring_points_id`:
-- `seconds`:
-- `created_at`:
-- `updated_at`:
-
-### `business_clients`
-
-Client contacts managed by a CRM module.
-
-Represents end customers of a business using CRM. Telephone is unique per CRM module
-to avoid duplicate client records within the same business context.
-
-Properties as follows:
-
-- `business_clients_id`:
-- `created_at`:
-- `updated_at`:
-- `crm_module_id`:
-- `first_name`:
-- `last_name`:
-- `email`:
-- `telephone`:
-- `telephone_code`:
-- `telephone_number`:
-
-### `line_items`
-
-Individual items within an order, including sides/extras and replacements.
-
-Properties as follows:
-
-- `line_item_id`:
-- `menu_item_id`:
-- `menu_item_version_id`:
-- `order_id`:
-- `quantity`:
-- `comment`:
-- `replacement_id`:
-- `replaces_id`:
-- `parent_side_id`:
-- `parent_extra_id`:
-- `removed`:
-
-### `drivers`
-
-Driver entity linked to a user and (optionally) a transport module.
-
-Tracks online state, capabilities, documents, orders and current vehicle.
-
-Properties as follows:
-
-- `driver_id`:
-- `transport_module_id`:
-- `online`:
-- `on_order`:
-- `working_hours`:
-- `ride_requirements`:
-- `created_at`:
-- `updated_at`:
-- `user_id`:
-- `current_vehicle_id`:
-- `last_used_vehicle_id`:
-- `location`:
-- `delivery_timeline`:
-- `last_ping_at`:
-- `is_inactive`:
-- `transfer_requirements`:
-- `regions`:
-- `handles_taxi_orders`:
-- `handles_transfer_orders`:
-- `handles_courier_orders`:
-- `handles_delivery_orders`:
-- `taxi_orders_toggled`:
-- `transfer_orders_toggled`:
-- `courier_orders_toggled`:
-- `delivery_orders_toggled`:
-- `partner_cash_balance`:
-- `come_to_work_last_sent_at`:
-- `daily_meals_id`:
-- `delivers_daily_meals`:
-- `on_daily_meals`:
-- `scheduled_meals_route`:
-- `vehicle_type`:
-- `reviewable_id`:
-
-### `vehicles`
-
-Vehicle entity with class/category, documents and invoice relations.
-
-Properties as follows:
-
-- `vehicle_id`:
-- `transport_module_id`:
-- `active`:
-- `class`:
-- `category`:
-- `make`:
-- `model`:
-- `color`:
-- `license_plate`:
-- `created_at`:
-- `updated_at`:
-- `vehicle_specification_id`:
-- `business_premise_id`:
-
-### `users`
-
-End user account with profile, preferences and relations.
-
-Central user entity linking to roles, orders, documents, wallets and analytics.
-
-Properties as follows:
-
-- `user_id`:
-- `first_name`:
-- `last_name`:
-- `password`:
-- `email`:
-- `telephone`:
-- `telephone_code`:
-- `telephone_number`:
-- `date_of_birth`:
-- `created_at`:
-- `updated_at`:
-- `user_role`:
-- `phone_verified`:
-- `notification_preferences`:
-- `taxi_preferences`:
-- `profile_picture_id`:
-- `reviewable_id`:
-- `review_complete`:
-- `one_signal_id`:
-- `stripe_customer_id`:
-- `wallet_balance`:
-- `transfer_preferences`:
-- `allergies_preferences`:
-- `spicy_preferences`:
-- `radio_preferences`:
-- `subscribed_to_daily_meals`:
-- `daily_meal_preferences`:
-- `details`:
-- `taxi_push_notification_preferences`:
-- `transfer_push_notification_preferences`:
-- `delivery_push_notification_preferences`:
-- `spoken_languages`:
-- `daily_meal_day_preferences`:
-- `disabled`:
-- `active`:
-- `language`:
-- `apple_id`:
-- `google_id`:
-- `referral_code`:
-- `activated_at`:
-- `deactivated_at`:
-- `deactivated`:
-- `business_teams_id`:
-- `allow_marketing_push_notifications`:
-- `allow_ads_personalization`:
-- `allow_newsletter`:
 
 ## Payments
 
@@ -3043,6 +2008,7 @@ erDiagram
   String user_id FK,UK "nullable"
   String menu_item_id FK,UK "nullable"
   String lost_item_id FK,UK "nullable"
+  String delivery_order_id FK,UK "nullable"
 }
 "users" {
   String user_id PK
@@ -3131,6 +2097,518 @@ Properties as follows:
 - `user_id`:
 - `menu_item_id`:
 - `lost_item_id`:
+- `delivery_order_id`:
+
+### `users`
+
+End user account with profile, preferences and relations.
+
+Central user entity linking to roles, orders, documents, wallets and analytics.
+
+Properties as follows:
+
+- `user_id`:
+- `first_name`:
+- `last_name`:
+- `password`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+- `date_of_birth`:
+- `created_at`:
+- `updated_at`:
+- `user_role`:
+- `phone_verified`:
+- `notification_preferences`:
+- `taxi_preferences`:
+- `profile_picture_id`:
+- `reviewable_id`:
+- `review_complete`:
+- `one_signal_id`:
+- `stripe_customer_id`:
+- `wallet_balance`:
+- `transfer_preferences`:
+- `allergies_preferences`:
+- `spicy_preferences`:
+- `radio_preferences`:
+- `subscribed_to_daily_meals`:
+- `daily_meal_preferences`:
+- `details`:
+- `taxi_push_notification_preferences`:
+- `transfer_push_notification_preferences`:
+- `delivery_push_notification_preferences`:
+- `spoken_languages`:
+- `daily_meal_day_preferences`:
+- `disabled`:
+- `active`:
+- `language`:
+- `apple_id`:
+- `google_id`:
+- `referral_code`:
+- `activated_at`:
+- `deactivated_at`:
+- `deactivated`:
+- `business_teams_id`:
+- `allow_marketing_push_notifications`:
+- `allow_ads_personalization`:
+- `allow_newsletter`:
+
+## TaxiOrders
+
+```mermaid
+erDiagram
+"wallet_transfer_history" {
+  String wallet_transfer_history_id PK
+  String order_id FK
+  Float amount
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  Boolean success
+}
+"late_events" {
+  String late_events_id PK
+  String stores_id FK "nullable"
+  String food_drinks_id FK "nullable"
+  String driver_id FK
+  String user_id
+  String delivery_order_id FK "nullable"
+  String taxi_order_id FK "nullable"
+  String scoring_points_id FK "nullable"
+  Int seconds
+  DateTime(6) created_at
+  DateTime(6) updated_at
+}
+"taxi_orders" {
+  String order_id PK
+  String user_id FK
+  String business_users_id FK "nullable"
+  String business_clients_id FK "nullable"
+  String driver_id FK "nullable"
+  String vehicle_id FK "nullable"
+  Json route
+  Json pickup_location
+  Json delivery_location "nullable"
+  Json payment "nullable"
+  Json estimates "nullable"
+  Json timeline
+  Json preferences "nullable"
+  TAXI_ORDER_STATUS status
+  DateTime(6) last_sent_at "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String telephone "nullable"
+  String first_name "nullable"
+  String last_name "nullable"
+  String cancellation_reason "nullable"
+  Int find_drivers_attempts "nullable"
+  Boolean is_scheduled
+  String parent_order_id FK "nullable"
+  ORDER_TYPE type
+  ORDER_SUBTYPE subtype
+  Json cargo_preferences "nullable"
+  String customer_note "nullable"
+  String parent_user_type "nullable"
+  String creating_user_id "nullable"
+  Boolean allow_credits_usage
+  Int order_number
+  String review_id FK,UK "nullable"
+  String transport_module_id FK "nullable"
+}
+"taxi_order_sent" {
+  String taxi_order_sent_id PK
+  String order_id FK
+  String driver_id FK
+  Boolean accepted
+  Json location "nullable"
+  Json timeline
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  Boolean rejected
+}
+"business_users" {
+  String business_users_id PK
+  Boolean online "nullable"
+  COMPANY_ROLE company_role
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String user_id FK
+  String business_id FK
+  String operating_address_id FK "nullable"
+}
+"transactions" {
+  String transaction_id PK
+  String user_id FK
+  Float amount
+  TRANSACTION_TYPE type
+  String description "nullable"
+  DateTime(6) createdAt
+  DateTime(6) updatedAt
+  String delivery_order_id FK "nullable"
+  String taxi_order_id FK "nullable"
+  String wallet_fund_id FK "nullable"
+}
+"scoring_points" {
+  String scoring_points_id PK
+  String business_id FK
+  String user_id FK "nullable"
+  String delivery_order_id FK "nullable"
+  String taxi_order_id FK "nullable"
+  Int points
+  Boolean isPenalty
+  SCORING_POINTS_REASON reason
+  DateTime expiration_date "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+}
+"business_clients" {
+  String business_clients_id PK
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String crm_module_id FK
+  String first_name "nullable"
+  String last_name "nullable"
+  String email "nullable"
+  String telephone
+  String telephone_code
+  String telephone_number
+}
+"drivers" {
+  String driver_id PK
+  String transport_module_id FK "nullable"
+  Boolean online "nullable"
+  Boolean on_order "nullable"
+  Json working_hours "nullable"
+  Json ride_requirements "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String user_id FK,UK "nullable"
+  String current_vehicle_id FK,UK "nullable"
+  String last_used_vehicle_id "nullable"
+  Json location "nullable"
+  Json delivery_timeline "nullable"
+  DateTime(6) last_ping_at
+  Boolean is_inactive "nullable"
+  Json transfer_requirements "nullable"
+  String regions
+  Boolean handles_taxi_orders "nullable"
+  Boolean handles_transfer_orders "nullable"
+  Boolean handles_courier_orders "nullable"
+  Boolean handles_delivery_orders "nullable"
+  Boolean taxi_orders_toggled "nullable"
+  Boolean transfer_orders_toggled "nullable"
+  Boolean courier_orders_toggled "nullable"
+  Boolean delivery_orders_toggled "nullable"
+  Float partner_cash_balance "nullable"
+  DateTime(6) come_to_work_last_sent_at "nullable"
+  String daily_meals_id "nullable"
+  Boolean delivers_daily_meals "nullable"
+  Boolean on_daily_meals "nullable"
+  Json scheduled_meals_route "nullable"
+  VEHICLE_TYPE vehicle_type "nullable"
+  String reviewable_id FK "nullable"
+}
+"vehicles" {
+  String vehicle_id PK
+  String transport_module_id FK "nullable"
+  Boolean active "nullable"
+  VEHICLE_CLASS class "nullable"
+  VEHICLE_CATEGORY category "nullable"
+  String make "nullable"
+  String model "nullable"
+  String color "nullable"
+  String license_plate "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String vehicle_specification_id FK,UK "nullable"
+  String business_premise_id FK,UK "nullable"
+}
+"users" {
+  String user_id PK
+  String first_name "nullable"
+  String last_name "nullable"
+  String password
+  String email "nullable"
+  String telephone UK
+  String telephone_code
+  String telephone_number
+  DateTime date_of_birth "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  USER_ROLES user_role
+  Boolean phone_verified
+  Json notification_preferences "nullable"
+  Json taxi_preferences "nullable"
+  String profile_picture_id UK "nullable"
+  String reviewable_id FK "nullable"
+  Boolean review_complete
+  String one_signal_id "nullable"
+  String stripe_customer_id "nullable"
+  Float wallet_balance
+  Json transfer_preferences "nullable"
+  Json allergies_preferences "nullable"
+  Json spicy_preferences "nullable"
+  Json radio_preferences "nullable"
+  Boolean subscribed_to_daily_meals
+  Json daily_meal_preferences "nullable"
+  Json details "nullable"
+  Json taxi_push_notification_preferences "nullable"
+  Json transfer_push_notification_preferences "nullable"
+  Json delivery_push_notification_preferences "nullable"
+  Json spoken_languages "nullable"
+  Json daily_meal_day_preferences "nullable"
+  Boolean disabled
+  Boolean active
+  String language "nullable"
+  String apple_id "nullable"
+  String google_id "nullable"
+  String(6) referral_code UK "nullable"
+  DateTime activated_at "nullable"
+  DateTime deactivated_at "nullable"
+  Boolean deactivated
+  String business_teams_id FK "nullable"
+  Boolean allow_marketing_push_notifications "nullable"
+  Boolean allow_ads_personalization "nullable"
+  Boolean allow_newsletter "nullable"
+}
+"wallet_transfer_history" }o--|| "taxi_orders" : taxi_order
+"late_events" }o--|| "drivers" : driver
+"late_events" }o--o| "taxi_orders" : taxi_orders
+"late_events" }o--o| "scoring_points" : scoring_points
+"taxi_orders" }o--o| "drivers" : driver
+"taxi_orders" }o--o| "vehicles" : vehicle
+"taxi_orders" }o--|| "users" : user
+"taxi_orders" }o--o| "business_users" : business_users
+"taxi_orders" }o--o| "business_clients" : business_clients
+"taxi_orders" }o--o| "taxi_orders" : parent_order
+"taxi_order_sent" }o--|| "taxi_orders" : order
+"taxi_order_sent" }o--|| "drivers" : driver
+"business_users" }o--|| "users" : users
+"transactions" }o--o| "taxi_orders" : taxi_order
+"transactions" }o--|| "users" : user
+"scoring_points" }o--o| "users" : users
+"scoring_points" }o--o| "taxi_orders" : taxi_orders
+"drivers" |o--o| "users" : user
+"drivers" |o--o| "vehicles" : current_vehicle
+```
+
+### `wallet_transfer_history`
+
+Wallet transfer history for taxi and delivery orders.
+
+Properties as follows:
+
+- `wallet_transfer_history_id`:
+- `order_id`:
+- `amount`:
+- `created_at`:
+- `updated_at`:
+- `success`:
+
+### `late_events`
+
+Recorded late events for orders impacting scoring.
+
+Properties as follows:
+
+- `late_events_id`:
+- `stores_id`:
+- `food_drinks_id`:
+- `driver_id`:
+- `user_id`:
+- `delivery_order_id`:
+- `taxi_order_id`:
+- `scoring_points_id`:
+- `seconds`:
+- `created_at`:
+- `updated_at`:
+
+### `taxi_orders`
+
+Ride-hailing taxi orders with route, payment and driver relations.
+
+Properties as follows:
+
+- `order_id`:
+- `user_id`:
+- `business_users_id`:
+- `business_clients_id`:
+- `driver_id`:
+- `vehicle_id`:
+- `route`:
+- `pickup_location`:
+- `delivery_location`:
+- `payment`:
+- `estimates`:
+- `timeline`:
+- `preferences`:
+- `status`:
+- `last_sent_at`:
+- `created_at`:
+- `updated_at`:
+- `telephone`:
+- `first_name`:
+- `last_name`:
+- `cancellation_reason`:
+- `find_drivers_attempts`:
+- `is_scheduled`:
+- `parent_order_id`:
+- `type`:
+- `subtype`:
+- `cargo_preferences`:
+- `customer_note`:
+- `parent_user_type`:
+- `creating_user_id`:
+- `allow_credits_usage`:
+- `order_number`:
+- `review_id`:
+- `transport_module_id`:
+
+### `taxi_order_sent`
+
+Properties as follows:
+
+- `taxi_order_sent_id`:
+- `order_id`:
+- `driver_id`:
+- `accepted`:
+- `location`:
+- `timeline`:
+- `created_at`:
+- `updated_at`:
+- `rejected`:
+
+### `business_users`
+
+User membership within a business (employees/managers).
+
+Properties as follows:
+
+- `business_users_id`:
+- `online`:
+- `company_role`:
+- `created_at`:
+- `updated_at`:
+- `user_id`:
+- `business_id`:
+- `operating_address_id`:
+
+### `transactions`
+
+Ledger transactions for users and orders (credit/debit entries).
+
+Properties as follows:
+
+- `transaction_id`:
+- `user_id`:
+- `amount`:
+- `type`:
+- `description`:
+- `createdAt`:
+- `updatedAt`:
+- `delivery_order_id`:
+- `taxi_order_id`:
+- `wallet_fund_id`:
+
+### `scoring_points`
+
+Scoring points (rewards/penalties) for users and businesses.
+
+Properties as follows:
+
+- `scoring_points_id`:
+- `business_id`:
+- `user_id`:
+- `delivery_order_id`:
+- `taxi_order_id`:
+- `points`:
+- `isPenalty`:
+- `reason`:
+- `expiration_date`:
+- `created_at`:
+- `updated_at`:
+
+### `business_clients`
+
+Client contacts managed by a CRM module.
+
+Represents end customers of a business using CRM. Telephone is unique per CRM module
+to avoid duplicate client records within the same business context.
+
+Properties as follows:
+
+- `business_clients_id`:
+- `created_at`:
+- `updated_at`:
+- `crm_module_id`:
+- `first_name`:
+- `last_name`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+
+### `drivers`
+
+Driver entity linked to a user and (optionally) a transport module.
+
+Tracks online state, capabilities, documents, orders and current vehicle.
+
+Properties as follows:
+
+- `driver_id`:
+- `transport_module_id`:
+- `online`:
+- `on_order`:
+- `working_hours`:
+- `ride_requirements`:
+- `created_at`:
+- `updated_at`:
+- `user_id`:
+- `current_vehicle_id`:
+- `last_used_vehicle_id`:
+- `location`:
+- `delivery_timeline`:
+- `last_ping_at`:
+- `is_inactive`:
+- `transfer_requirements`:
+- `regions`:
+- `handles_taxi_orders`:
+- `handles_transfer_orders`:
+- `handles_courier_orders`:
+- `handles_delivery_orders`:
+- `taxi_orders_toggled`:
+- `transfer_orders_toggled`:
+- `courier_orders_toggled`:
+- `delivery_orders_toggled`:
+- `partner_cash_balance`:
+- `come_to_work_last_sent_at`:
+- `daily_meals_id`:
+- `delivers_daily_meals`:
+- `on_daily_meals`:
+- `scheduled_meals_route`:
+- `vehicle_type`:
+- `reviewable_id`:
+
+### `vehicles`
+
+Vehicle entity with class/category, documents and invoice relations.
+
+Properties as follows:
+
+- `vehicle_id`:
+- `transport_module_id`:
+- `active`:
+- `class`:
+- `category`:
+- `make`:
+- `model`:
+- `color`:
+- `license_plate`:
+- `created_at`:
+- `updated_at`:
+- `vehicle_specification_id`:
+- `business_premise_id`:
 
 ### `users`
 
@@ -3330,6 +2808,7 @@ erDiagram
   String user_id FK,UK "nullable"
   String menu_item_id FK,UK "nullable"
   String lost_item_id FK,UK "nullable"
+  String delivery_order_id FK,UK "nullable"
 }
 "promo_banners" }o--|| "files" : files
 "promo_banners" }o--o| "promo_ads" : promo_ads
@@ -3387,6 +2866,7 @@ Properties as follows:
 - `user_id`:
 - `menu_item_id`:
 - `lost_item_id`:
+- `delivery_order_id`:
 
 ## PromoWords
 
@@ -3723,6 +3203,7 @@ erDiagram
   String business_id FK "nullable"
   String vehicle_id FK "nullable"
   String transaction_id FK "nullable"
+  String order_id FK "nullable"
 }
 "reviews" {
   String review_id PK
@@ -3916,6 +3397,7 @@ Properties as follows:
 - `business_id`:
 - `vehicle_id`:
 - `transaction_id`:
+- `order_id`:
 
 ### `reviews`
 
@@ -4240,6 +3722,7 @@ erDiagram
   String user_id FK,UK "nullable"
   String menu_item_id FK,UK "nullable"
   String lost_item_id FK,UK "nullable"
+  String delivery_order_id FK,UK "nullable"
 }
 "menu_items" {
   String menu_item_id PK
@@ -4363,6 +3846,7 @@ Properties as follows:
 - `user_id`:
 - `menu_item_id`:
 - `lost_item_id`:
+- `delivery_order_id`:
 
 ### `menu_items`
 
@@ -4434,6 +3918,35 @@ erDiagram
   DateTime(6) created_at
   DateTime(6) updated_at
 }
+"business" {
+  String business_id PK
+  String address_id FK "nullable"
+  String finance_id "nullable"
+  BUSINESS_TYPE type
+  Boolean is_business_unit
+  String business_group_name "nullable"
+  String name
+  String description "nullable"
+  String tax_id
+  String registration_id
+  String email UK
+  String telephone "nullable"
+  String telephone_code
+  String telephone_number
+  String website_url "nullable"
+  Json working_hours "nullable"
+  Boolean popular
+  Boolean new
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String parent_business_id FK "nullable"
+  String stripe_account_id "nullable"
+  String stripe_customer_id "nullable"
+  String word_buy_stripe_subscription_id "nullable"
+  DateTime first_activated_at "nullable"
+  Boolean active
+  String sales_representative_id "nullable"
+}
 "users" {
   String user_id PK
   String first_name "nullable"
@@ -4482,8 +3995,10 @@ erDiagram
   Boolean allow_ads_personalization "nullable"
   Boolean allow_newsletter "nullable"
 }
+"crm_module" |o--|| "business" : business
 "business_clients" }o--|| "crm_module" : crm_module
 "business_teams" }o--|| "crm_module" : crm_module
+"business" }o--o| "business" : parent_business
 "users" }o--o| "business_teams" : business_teams
 ```
 
@@ -4536,6 +4051,42 @@ Properties as follows:
 - `limit_per_person`:
 - `created_at`:
 - `updated_at`:
+
+### `business`
+
+Business entity representing a merchant/partner account or crm.
+
+Core company profile linked to address, documents, analytics, roles and users.
+
+Properties as follows:
+
+- `business_id`:
+- `address_id`:
+- `finance_id`:
+- `type`:
+- `is_business_unit`:
+- `business_group_name`:
+- `name`:
+- `description`:
+- `tax_id`:
+- `registration_id`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+- `website_url`:
+- `working_hours`:
+- `popular`:
+- `new`:
+- `created_at`:
+- `updated_at`:
+- `parent_business_id`:
+- `stripe_account_id`:
+- `stripe_customer_id`:
+- `word_buy_stripe_subscription_id`:
+- `first_activated_at`:
+- `active`:
+- `sales_representative_id`:
 
 ### `users`
 
@@ -4621,6 +4172,35 @@ erDiagram
   Int seats "nullable"
   String daily_meals_id "nullable"
 }
+"business" {
+  String business_id PK
+  String address_id FK "nullable"
+  String finance_id "nullable"
+  BUSINESS_TYPE type
+  Boolean is_business_unit
+  String business_group_name "nullable"
+  String name
+  String description "nullable"
+  String tax_id
+  String registration_id
+  String email UK
+  String telephone "nullable"
+  String telephone_code
+  String telephone_number
+  String website_url "nullable"
+  Json working_hours "nullable"
+  Boolean popular
+  Boolean new
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String parent_business_id FK "nullable"
+  String stripe_account_id "nullable"
+  String stripe_customer_id "nullable"
+  String word_buy_stripe_subscription_id "nullable"
+  DateTime first_activated_at "nullable"
+  Boolean active
+  String sales_representative_id "nullable"
+}
 "delivery_order_sent" {
   String delivery_order_sent_id PK
   String order_id FK
@@ -4631,6 +4211,9 @@ erDiagram
   DateTime(6) updated_at
   String driver_id FK "nullable"
 }
+"stores" |o--|| "business" : business
+"food_drinks" |o--|| "business" : business
+"business" }o--o| "business" : parent_business
 ```
 
 ### `stores`
@@ -4672,6 +4255,42 @@ Properties as follows:
 - `seats`:
 - `daily_meals_id`:
 
+### `business`
+
+Business entity representing a merchant/partner account or crm.
+
+Core company profile linked to address, documents, analytics, roles and users.
+
+Properties as follows:
+
+- `business_id`:
+- `address_id`:
+- `finance_id`:
+- `type`:
+- `is_business_unit`:
+- `business_group_name`:
+- `name`:
+- `description`:
+- `tax_id`:
+- `registration_id`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+- `website_url`:
+- `working_hours`:
+- `popular`:
+- `new`:
+- `created_at`:
+- `updated_at`:
+- `parent_business_id`:
+- `stripe_account_id`:
+- `stripe_customer_id`:
+- `word_buy_stripe_subscription_id`:
+- `first_activated_at`:
+- `active`:
+- `sales_representative_id`:
+
 ### `delivery_order_sent`
 
 Properties as follows:
@@ -4684,6 +4303,539 @@ Properties as follows:
 - `created_at`:
 - `updated_at`:
 - `driver_id`:
+
+## DeliveryOrders
+
+```mermaid
+erDiagram
+"delivery_orders" {
+  String order_id PK
+  String user_id FK "nullable"
+  Json route
+  Json pickup_location
+  Json delivery_location
+  Json payment "nullable"
+  Json estimates "nullable"
+  Json details "nullable"
+  Json courier_instructions "nullable"
+  Json restaurant_message "nullable"
+  String rejection_reason "nullable"
+  Json scheduled "nullable"
+  Json timeline
+  DELIVERY_ORDER_STATUS status
+  DateTime(6) last_sent_at "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String vehicle_id FK "nullable"
+  String driver_id FK "nullable"
+  String transport_module_id FK "nullable"
+  String payment_intent_id "nullable"
+  Int find_drivers_attempts "nullable"
+  Boolean is_daily_meal
+  Boolean allow_credits_usage
+  Int order_number
+  String business_local_location_id FK "nullable"
+  String review_id FK,UK "nullable"
+  String stores_id FK "nullable"
+  String food_drinks_id FK "nullable"
+  String file_id "nullable"
+}
+"delivery_order_sent" {
+  String delivery_order_sent_id PK
+  String order_id FK
+  Boolean accepted
+  Json location
+  Json timeline
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String driver_id FK "nullable"
+}
+"business_users" {
+  String business_users_id PK
+  Boolean online "nullable"
+  COMPANY_ROLE company_role
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String user_id FK
+  String business_id FK
+  String operating_address_id FK "nullable"
+}
+"transactions" {
+  String transaction_id PK
+  String user_id FK
+  Float amount
+  TRANSACTION_TYPE type
+  String description "nullable"
+  DateTime(6) createdAt
+  DateTime(6) updatedAt
+  String delivery_order_id FK "nullable"
+  String taxi_order_id FK "nullable"
+  String wallet_fund_id FK "nullable"
+}
+"wallet_transfer_history" {
+  String wallet_transfer_history_id PK
+  String order_id FK
+  Float amount
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  Boolean success
+}
+"scoring_points" {
+  String scoring_points_id PK
+  String business_id FK
+  String user_id FK "nullable"
+  String delivery_order_id FK "nullable"
+  String taxi_order_id FK "nullable"
+  Int points
+  Boolean isPenalty
+  SCORING_POINTS_REASON reason
+  DateTime expiration_date "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+}
+"late_events" {
+  String late_events_id PK
+  String stores_id FK "nullable"
+  String food_drinks_id FK "nullable"
+  String driver_id FK
+  String user_id
+  String delivery_order_id FK "nullable"
+  String taxi_order_id FK "nullable"
+  String scoring_points_id FK "nullable"
+  Int seconds
+  DateTime(6) created_at
+  DateTime(6) updated_at
+}
+"business_clients" {
+  String business_clients_id PK
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String crm_module_id FK
+  String first_name "nullable"
+  String last_name "nullable"
+  String email "nullable"
+  String telephone
+  String telephone_code
+  String telephone_number
+}
+"line_items" {
+  String line_item_id PK
+  String menu_item_id FK
+  String menu_item_version_id FK
+  String order_id FK
+  Int quantity
+  String comment "nullable"
+  String replacement_id "nullable"
+  String replaces_id FK,UK "nullable"
+  String parent_side_id FK "nullable"
+  String parent_extra_id FK "nullable"
+  Boolean removed
+}
+"drivers" {
+  String driver_id PK
+  String transport_module_id FK "nullable"
+  Boolean online "nullable"
+  Boolean on_order "nullable"
+  Json working_hours "nullable"
+  Json ride_requirements "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String user_id FK,UK "nullable"
+  String current_vehicle_id FK,UK "nullable"
+  String last_used_vehicle_id "nullable"
+  Json location "nullable"
+  Json delivery_timeline "nullable"
+  DateTime(6) last_ping_at
+  Boolean is_inactive "nullable"
+  Json transfer_requirements "nullable"
+  String regions
+  Boolean handles_taxi_orders "nullable"
+  Boolean handles_transfer_orders "nullable"
+  Boolean handles_courier_orders "nullable"
+  Boolean handles_delivery_orders "nullable"
+  Boolean taxi_orders_toggled "nullable"
+  Boolean transfer_orders_toggled "nullable"
+  Boolean courier_orders_toggled "nullable"
+  Boolean delivery_orders_toggled "nullable"
+  Float partner_cash_balance "nullable"
+  DateTime(6) come_to_work_last_sent_at "nullable"
+  String daily_meals_id "nullable"
+  Boolean delivers_daily_meals "nullable"
+  Boolean on_daily_meals "nullable"
+  Json scheduled_meals_route "nullable"
+  VEHICLE_TYPE vehicle_type "nullable"
+  String reviewable_id FK "nullable"
+}
+"vehicles" {
+  String vehicle_id PK
+  String transport_module_id FK "nullable"
+  Boolean active "nullable"
+  VEHICLE_CLASS class "nullable"
+  VEHICLE_CATEGORY category "nullable"
+  String make "nullable"
+  String model "nullable"
+  String color "nullable"
+  String license_plate "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String vehicle_specification_id FK,UK "nullable"
+  String business_premise_id FK,UK "nullable"
+}
+"users" {
+  String user_id PK
+  String first_name "nullable"
+  String last_name "nullable"
+  String password
+  String email "nullable"
+  String telephone UK
+  String telephone_code
+  String telephone_number
+  DateTime date_of_birth "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  USER_ROLES user_role
+  Boolean phone_verified
+  Json notification_preferences "nullable"
+  Json taxi_preferences "nullable"
+  String profile_picture_id UK "nullable"
+  String reviewable_id FK "nullable"
+  Boolean review_complete
+  String one_signal_id "nullable"
+  String stripe_customer_id "nullable"
+  Float wallet_balance
+  Json transfer_preferences "nullable"
+  Json allergies_preferences "nullable"
+  Json spicy_preferences "nullable"
+  Json radio_preferences "nullable"
+  Boolean subscribed_to_daily_meals
+  Json daily_meal_preferences "nullable"
+  Json details "nullable"
+  Json taxi_push_notification_preferences "nullable"
+  Json transfer_push_notification_preferences "nullable"
+  Json delivery_push_notification_preferences "nullable"
+  Json spoken_languages "nullable"
+  Json daily_meal_day_preferences "nullable"
+  Boolean disabled
+  Boolean active
+  String language "nullable"
+  String apple_id "nullable"
+  String google_id "nullable"
+  String(6) referral_code UK "nullable"
+  DateTime activated_at "nullable"
+  DateTime deactivated_at "nullable"
+  Boolean deactivated
+  String business_teams_id FK "nullable"
+  Boolean allow_marketing_push_notifications "nullable"
+  Boolean allow_ads_personalization "nullable"
+  Boolean allow_newsletter "nullable"
+}
+"delivery_orders" }o--o| "users" : user
+"delivery_orders" }o--o| "vehicles" : vehicle
+"delivery_orders" }o--o| "drivers" : driver
+"delivery_order_sent" }o--|| "delivery_orders" : order
+"delivery_order_sent" }o--o| "drivers" : driver
+"business_users" }o--|| "users" : users
+"transactions" }o--o| "delivery_orders" : delivery_order
+"transactions" }o--|| "users" : user
+"wallet_transfer_history" }o--|| "delivery_orders" : delivery_order
+"scoring_points" }o--o| "users" : users
+"scoring_points" }o--o| "delivery_orders" : delivery_orders
+"late_events" }o--|| "drivers" : driver
+"late_events" }o--o| "delivery_orders" : delivery_orders
+"late_events" }o--o| "scoring_points" : scoring_points
+"line_items" }o--|| "delivery_orders" : order
+"line_items" |o--o| "line_items" : replaces
+"line_items" }o--o| "line_items" : parent_side
+"line_items" }o--o| "line_items" : parent_extra
+"drivers" |o--o| "users" : user
+"drivers" |o--o| "vehicles" : current_vehicle
+```
+
+### `delivery_orders`
+
+Courier/food delivery orders with items, status timeline and driver.
+
+Properties as follows:
+
+- `order_id`:
+- `user_id`:
+- `route`:
+- `pickup_location`:
+- `delivery_location`:
+- `payment`:
+- `estimates`:
+- `details`:
+- `courier_instructions`:
+- `restaurant_message`:
+- `rejection_reason`:
+- `scheduled`:
+- `timeline`:
+- `status`:
+- `last_sent_at`:
+- `created_at`:
+- `updated_at`:
+- `vehicle_id`:
+- `driver_id`:
+- `transport_module_id`:
+- `payment_intent_id`:
+- `find_drivers_attempts`:
+- `is_daily_meal`:
+- `allow_credits_usage`:
+- `order_number`:
+- `business_local_location_id`:
+- `review_id`:
+- `stores_id`:
+- `food_drinks_id`:
+- `file_id`:
+
+### `delivery_order_sent`
+
+Properties as follows:
+
+- `delivery_order_sent_id`:
+- `order_id`:
+- `accepted`:
+- `location`:
+- `timeline`:
+- `created_at`:
+- `updated_at`:
+- `driver_id`:
+
+### `business_users`
+
+User membership within a business (employees/managers).
+
+Properties as follows:
+
+- `business_users_id`:
+- `online`:
+- `company_role`:
+- `created_at`:
+- `updated_at`:
+- `user_id`:
+- `business_id`:
+- `operating_address_id`:
+
+### `transactions`
+
+Ledger transactions for users and orders (credit/debit entries).
+
+Properties as follows:
+
+- `transaction_id`:
+- `user_id`:
+- `amount`:
+- `type`:
+- `description`:
+- `createdAt`:
+- `updatedAt`:
+- `delivery_order_id`:
+- `taxi_order_id`:
+- `wallet_fund_id`:
+
+### `wallet_transfer_history`
+
+Wallet transfer history for taxi and delivery orders.
+
+Properties as follows:
+
+- `wallet_transfer_history_id`:
+- `order_id`:
+- `amount`:
+- `created_at`:
+- `updated_at`:
+- `success`:
+
+### `scoring_points`
+
+Scoring points (rewards/penalties) for users and businesses.
+
+Properties as follows:
+
+- `scoring_points_id`:
+- `business_id`:
+- `user_id`:
+- `delivery_order_id`:
+- `taxi_order_id`:
+- `points`:
+- `isPenalty`:
+- `reason`:
+- `expiration_date`:
+- `created_at`:
+- `updated_at`:
+
+### `late_events`
+
+Recorded late events for orders impacting scoring.
+
+Properties as follows:
+
+- `late_events_id`:
+- `stores_id`:
+- `food_drinks_id`:
+- `driver_id`:
+- `user_id`:
+- `delivery_order_id`:
+- `taxi_order_id`:
+- `scoring_points_id`:
+- `seconds`:
+- `created_at`:
+- `updated_at`:
+
+### `business_clients`
+
+Client contacts managed by a CRM module.
+
+Represents end customers of a business using CRM. Telephone is unique per CRM module
+to avoid duplicate client records within the same business context.
+
+Properties as follows:
+
+- `business_clients_id`:
+- `created_at`:
+- `updated_at`:
+- `crm_module_id`:
+- `first_name`:
+- `last_name`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+
+### `line_items`
+
+Individual items within an order, including sides/extras and replacements.
+
+Properties as follows:
+
+- `line_item_id`:
+- `menu_item_id`:
+- `menu_item_version_id`:
+- `order_id`:
+- `quantity`:
+- `comment`:
+- `replacement_id`:
+- `replaces_id`:
+- `parent_side_id`:
+- `parent_extra_id`:
+- `removed`:
+
+### `drivers`
+
+Driver entity linked to a user and (optionally) a transport module.
+
+Tracks online state, capabilities, documents, orders and current vehicle.
+
+Properties as follows:
+
+- `driver_id`:
+- `transport_module_id`:
+- `online`:
+- `on_order`:
+- `working_hours`:
+- `ride_requirements`:
+- `created_at`:
+- `updated_at`:
+- `user_id`:
+- `current_vehicle_id`:
+- `last_used_vehicle_id`:
+- `location`:
+- `delivery_timeline`:
+- `last_ping_at`:
+- `is_inactive`:
+- `transfer_requirements`:
+- `regions`:
+- `handles_taxi_orders`:
+- `handles_transfer_orders`:
+- `handles_courier_orders`:
+- `handles_delivery_orders`:
+- `taxi_orders_toggled`:
+- `transfer_orders_toggled`:
+- `courier_orders_toggled`:
+- `delivery_orders_toggled`:
+- `partner_cash_balance`:
+- `come_to_work_last_sent_at`:
+- `daily_meals_id`:
+- `delivers_daily_meals`:
+- `on_daily_meals`:
+- `scheduled_meals_route`:
+- `vehicle_type`:
+- `reviewable_id`:
+
+### `vehicles`
+
+Vehicle entity with class/category, documents and invoice relations.
+
+Properties as follows:
+
+- `vehicle_id`:
+- `transport_module_id`:
+- `active`:
+- `class`:
+- `category`:
+- `make`:
+- `model`:
+- `color`:
+- `license_plate`:
+- `created_at`:
+- `updated_at`:
+- `vehicle_specification_id`:
+- `business_premise_id`:
+
+### `users`
+
+End user account with profile, preferences and relations.
+
+Central user entity linking to roles, orders, documents, wallets and analytics.
+
+Properties as follows:
+
+- `user_id`:
+- `first_name`:
+- `last_name`:
+- `password`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+- `date_of_birth`:
+- `created_at`:
+- `updated_at`:
+- `user_role`:
+- `phone_verified`:
+- `notification_preferences`:
+- `taxi_preferences`:
+- `profile_picture_id`:
+- `reviewable_id`:
+- `review_complete`:
+- `one_signal_id`:
+- `stripe_customer_id`:
+- `wallet_balance`:
+- `transfer_preferences`:
+- `allergies_preferences`:
+- `spicy_preferences`:
+- `radio_preferences`:
+- `subscribed_to_daily_meals`:
+- `daily_meal_preferences`:
+- `details`:
+- `taxi_push_notification_preferences`:
+- `transfer_push_notification_preferences`:
+- `delivery_push_notification_preferences`:
+- `spoken_languages`:
+- `daily_meal_day_preferences`:
+- `disabled`:
+- `active`:
+- `language`:
+- `apple_id`:
+- `google_id`:
+- `referral_code`:
+- `activated_at`:
+- `deactivated_at`:
+- `deactivated`:
+- `business_teams_id`:
+- `allow_marketing_push_notifications`:
+- `allow_ads_personalization`:
+- `allow_newsletter`:
 
 ## FoodDrinks
 
@@ -4710,6 +4862,35 @@ erDiagram
   String user_id FK
   RESERVATION_STATUS status
   Int table "nullable"
+}
+"business" {
+  String business_id PK
+  String address_id FK "nullable"
+  String finance_id "nullable"
+  BUSINESS_TYPE type
+  Boolean is_business_unit
+  String business_group_name "nullable"
+  String name
+  String description "nullable"
+  String tax_id
+  String registration_id
+  String email UK
+  String telephone "nullable"
+  String telephone_code
+  String telephone_number
+  String website_url "nullable"
+  Json working_hours "nullable"
+  Boolean popular
+  Boolean new
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String parent_business_id FK "nullable"
+  String stripe_account_id "nullable"
+  String stripe_customer_id "nullable"
+  String word_buy_stripe_subscription_id "nullable"
+  DateTime first_activated_at "nullable"
+  Boolean active
+  String sales_representative_id "nullable"
 }
 "food_drinks" {
   String food_drinks_id PK
@@ -4742,6 +4923,8 @@ erDiagram
 }
 "daily_meals_module" |o--|| "food_drinks" : food_drinks
 "reservations" }o--|| "food_drinks" : food_drinks
+"business" }o--o| "business" : parent_business
+"food_drinks" |o--|| "business" : business
 "order_lobbies" }o--o| "food_drinks" : food_drinks
 ```
 
@@ -4778,6 +4961,42 @@ Properties as follows:
 - `user_id`:
 - `status`:
 - `table`:
+
+### `business`
+
+Business entity representing a merchant/partner account or crm.
+
+Core company profile linked to address, documents, analytics, roles and users.
+
+Properties as follows:
+
+- `business_id`:
+- `address_id`:
+- `finance_id`:
+- `type`:
+- `is_business_unit`:
+- `business_group_name`:
+- `name`:
+- `description`:
+- `tax_id`:
+- `registration_id`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+- `website_url`:
+- `working_hours`:
+- `popular`:
+- `new`:
+- `created_at`:
+- `updated_at`:
+- `parent_business_id`:
+- `stripe_account_id`:
+- `stripe_customer_id`:
+- `word_buy_stripe_subscription_id`:
+- `first_activated_at`:
+- `active`:
+- `sales_representative_id`:
 
 ### `food_drinks`
 
@@ -4853,6 +5072,35 @@ erDiagram
   DateTime(6) created_at
   DateTime(6) updated_at
 }
+"business" {
+  String business_id PK
+  String address_id FK "nullable"
+  String finance_id "nullable"
+  BUSINESS_TYPE type
+  Boolean is_business_unit
+  String business_group_name "nullable"
+  String name
+  String description "nullable"
+  String tax_id
+  String registration_id
+  String email UK
+  String telephone "nullable"
+  String telephone_code
+  String telephone_number
+  String website_url "nullable"
+  Json working_hours "nullable"
+  Boolean popular
+  Boolean new
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String parent_business_id FK "nullable"
+  String stripe_account_id "nullable"
+  String stripe_customer_id "nullable"
+  String word_buy_stripe_subscription_id "nullable"
+  DateTime first_activated_at "nullable"
+  Boolean active
+  String sales_representative_id "nullable"
+}
 "stores" {
   String stores_id PK
   String business_id FK,UK
@@ -4867,6 +5115,8 @@ erDiagram
 "business_local_locations" }o--|| "local_locations" : local_location
 "business_local_locations" }o--|| "stores" : stores
 "order_lobbies" }o--|| "stores" : stores
+"business" }o--o| "business" : parent_business
+"stores" |o--|| "business" : business
 ```
 
 ### `business_local_locations`
@@ -4916,6 +5166,42 @@ Properties as follows:
 - `delivery_orders_id`:
 - `created_at`:
 - `updated_at`:
+
+### `business`
+
+Business entity representing a merchant/partner account or crm.
+
+Core company profile linked to address, documents, analytics, roles and users.
+
+Properties as follows:
+
+- `business_id`:
+- `address_id`:
+- `finance_id`:
+- `type`:
+- `is_business_unit`:
+- `business_group_name`:
+- `name`:
+- `description`:
+- `tax_id`:
+- `registration_id`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+- `website_url`:
+- `working_hours`:
+- `popular`:
+- `new`:
+- `created_at`:
+- `updated_at`:
+- `parent_business_id`:
+- `stripe_account_id`:
+- `stripe_customer_id`:
+- `word_buy_stripe_subscription_id`:
+- `first_activated_at`:
+- `active`:
+- `sales_representative_id`:
 
 ### `stores`
 
@@ -6296,6 +6582,36 @@ erDiagram
   Json provider_raw "nullable"
   DateTime occurred_at
 }
+"business" {
+  String business_id PK
+  String address_id FK "nullable"
+  String finance_id "nullable"
+  BUSINESS_TYPE type
+  Boolean is_business_unit
+  String business_group_name "nullable"
+  String name
+  String description "nullable"
+  String tax_id
+  String registration_id
+  String email UK
+  String telephone "nullable"
+  String telephone_code
+  String telephone_number
+  String website_url "nullable"
+  Json working_hours "nullable"
+  Boolean popular
+  Boolean new
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String parent_business_id FK "nullable"
+  String stripe_account_id "nullable"
+  String stripe_customer_id "nullable"
+  String word_buy_stripe_subscription_id "nullable"
+  DateTime first_activated_at "nullable"
+  Boolean active
+  String sales_representative_id "nullable"
+}
+"reservation_module" |o--|| "business" : business
 "location" }o--|| "reservation_module" : reservation_module
 "service_category" }o--o| "service_category" : parent
 "service_category" }o--|| "reservation_module" : reservation_module
@@ -6328,6 +6644,7 @@ erDiagram
 "notification_message" }o--o| "notification_template" : template
 "notification_message" }o--o| "notification_template_version" : version
 "notification_message_event" }o--|| "notification_message" : message
+"business" }o--o| "business" : parent_business
 ```
 
 ### `reservation_module`
@@ -6656,6 +6973,42 @@ Properties as follows:
 - `provider_raw`:
 - `occurred_at`:
 
+### `business`
+
+Business entity representing a merchant/partner account or crm.
+
+Core company profile linked to address, documents, analytics, roles and users.
+
+Properties as follows:
+
+- `business_id`:
+- `address_id`:
+- `finance_id`:
+- `type`:
+- `is_business_unit`:
+- `business_group_name`:
+- `name`:
+- `description`:
+- `tax_id`:
+- `registration_id`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+- `website_url`:
+- `working_hours`:
+- `popular`:
+- `new`:
+- `created_at`:
+- `updated_at`:
+- `parent_business_id`:
+- `stripe_account_id`:
+- `stripe_customer_id`:
+- `word_buy_stripe_subscription_id`:
+- `first_activated_at`:
+- `active`:
+- `sales_representative_id`:
+
 ## Subscriptions
 
 ```mermaid
@@ -6824,42 +7177,34 @@ erDiagram
   String vehicle_specification_id FK,UK "nullable"
   String business_premise_id FK,UK "nullable"
 }
-"taxi_orders" {
-  String order_id PK
-  String user_id FK
-  String business_users_id FK "nullable"
-  String business_clients_id FK "nullable"
-  String driver_id FK "nullable"
-  String vehicle_id FK "nullable"
-  Json route
-  Json pickup_location
-  Json delivery_location "nullable"
-  Json payment "nullable"
-  Json estimates "nullable"
-  Json timeline
-  Json preferences "nullable"
-  TAXI_ORDER_STATUS status
-  DateTime(6) last_sent_at "nullable"
+"business" {
+  String business_id PK
+  String address_id FK "nullable"
+  String finance_id "nullable"
+  BUSINESS_TYPE type
+  Boolean is_business_unit
+  String business_group_name "nullable"
+  String name
+  String description "nullable"
+  String tax_id
+  String registration_id
+  String email UK
+  String telephone "nullable"
+  String telephone_code
+  String telephone_number
+  String website_url "nullable"
+  Json working_hours "nullable"
+  Boolean popular
+  Boolean new
   DateTime(6) created_at
   DateTime(6) updated_at
-  String telephone "nullable"
-  String first_name "nullable"
-  String last_name "nullable"
-  String cancellation_reason "nullable"
-  Int find_drivers_attempts "nullable"
-  Boolean is_scheduled
-  String parent_order_id FK "nullable"
-  ORDER_TYPE type
-  ORDER_SUBTYPE subtype
-  Json flags "nullable"
-  Json cargo_preferences "nullable"
-  String customer_note "nullable"
-  String parent_user_type "nullable"
-  String creating_user_id "nullable"
-  Boolean allow_credits_usage
-  Int order_number
-  String review_id FK,UK "nullable"
-  String transport_module_id FK "nullable"
+  String parent_business_id FK "nullable"
+  String stripe_account_id "nullable"
+  String stripe_customer_id "nullable"
+  String word_buy_stripe_subscription_id "nullable"
+  DateTime first_activated_at "nullable"
+  Boolean active
+  String sales_representative_id "nullable"
 }
 "delivery_orders" {
   String order_id PK
@@ -6891,17 +7236,56 @@ erDiagram
   String review_id FK,UK "nullable"
   String stores_id FK "nullable"
   String food_drinks_id FK "nullable"
+  String file_id "nullable"
 }
+"taxi_orders" {
+  String order_id PK
+  String user_id FK
+  String business_users_id FK "nullable"
+  String business_clients_id FK "nullable"
+  String driver_id FK "nullable"
+  String vehicle_id FK "nullable"
+  Json route
+  Json pickup_location
+  Json delivery_location "nullable"
+  Json payment "nullable"
+  Json estimates "nullable"
+  Json timeline
+  Json preferences "nullable"
+  TAXI_ORDER_STATUS status
+  DateTime(6) last_sent_at "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String telephone "nullable"
+  String first_name "nullable"
+  String last_name "nullable"
+  String cancellation_reason "nullable"
+  Int find_drivers_attempts "nullable"
+  Boolean is_scheduled
+  String parent_order_id FK "nullable"
+  ORDER_TYPE type
+  ORDER_SUBTYPE subtype
+  Json cargo_preferences "nullable"
+  String customer_note "nullable"
+  String parent_user_type "nullable"
+  String creating_user_id "nullable"
+  Boolean allow_credits_usage
+  Int order_number
+  String review_id FK,UK "nullable"
+  String transport_module_id FK "nullable"
+}
+"transport_module" |o--|| "business" : business
 "drivers" |o--o| "vehicles" : current_vehicle
 "drivers" }o--o| "transport_module" : transport_module
 "vehicles" }o--o| "transport_module" : transport_module
+"business" }o--o| "business" : parent_business
+"delivery_orders" }o--o| "vehicles" : vehicle
+"delivery_orders" }o--o| "drivers" : driver
+"delivery_orders" }o--o| "transport_module" : transport_module
 "taxi_orders" }o--o| "drivers" : driver
 "taxi_orders" }o--o| "vehicles" : vehicle
 "taxi_orders" }o--o| "taxi_orders" : parent_order
 "taxi_orders" }o--o| "transport_module" : transport_module
-"delivery_orders" }o--o| "vehicles" : vehicle
-"delivery_orders" }o--o| "drivers" : driver
-"delivery_orders" }o--o| "transport_module" : transport_module
 ```
 
 ### `transport_module`
@@ -6980,47 +7364,41 @@ Properties as follows:
 - `vehicle_specification_id`:
 - `business_premise_id`:
 
-### `taxi_orders`
+### `business`
 
-Ride-hailing taxi orders with route, payment and driver relations.
+Business entity representing a merchant/partner account or crm.
+
+Core company profile linked to address, documents, analytics, roles and users.
 
 Properties as follows:
 
-- `order_id`:
-- `user_id`:
-- `business_users_id`:
-- `business_clients_id`:
-- `driver_id`:
-- `vehicle_id`:
-- `route`:
-- `pickup_location`:
-- `delivery_location`:
-- `payment`:
-- `estimates`:
-- `timeline`:
-- `preferences`:
-- `status`:
-- `last_sent_at`:
+- `business_id`:
+- `address_id`:
+- `finance_id`:
+- `type`:
+- `is_business_unit`:
+- `business_group_name`:
+- `name`:
+- `description`:
+- `tax_id`:
+- `registration_id`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+- `website_url`:
+- `working_hours`:
+- `popular`:
+- `new`:
 - `created_at`:
 - `updated_at`:
-- `telephone`:
-- `first_name`:
-- `last_name`:
-- `cancellation_reason`:
-- `find_drivers_attempts`:
-- `is_scheduled`:
-- `parent_order_id`:
-- `type`:
-- `subtype`:
-- `flags`:
-- `cargo_preferences`:
-- `customer_note`:
-- `parent_user_type`:
-- `creating_user_id`:
-- `allow_credits_usage`:
-- `order_number`:
-- `review_id`:
-- `transport_module_id`:
+- `parent_business_id`:
+- `stripe_account_id`:
+- `stripe_customer_id`:
+- `word_buy_stripe_subscription_id`:
+- `first_activated_at`:
+- `active`:
+- `sales_representative_id`:
 
 ### `delivery_orders`
 
@@ -7057,6 +7435,48 @@ Properties as follows:
 - `review_id`:
 - `stores_id`:
 - `food_drinks_id`:
+- `file_id`:
+
+### `taxi_orders`
+
+Ride-hailing taxi orders with route, payment and driver relations.
+
+Properties as follows:
+
+- `order_id`:
+- `user_id`:
+- `business_users_id`:
+- `business_clients_id`:
+- `driver_id`:
+- `vehicle_id`:
+- `route`:
+- `pickup_location`:
+- `delivery_location`:
+- `payment`:
+- `estimates`:
+- `timeline`:
+- `preferences`:
+- `status`:
+- `last_sent_at`:
+- `created_at`:
+- `updated_at`:
+- `telephone`:
+- `first_name`:
+- `last_name`:
+- `cancellation_reason`:
+- `find_drivers_attempts`:
+- `is_scheduled`:
+- `parent_order_id`:
+- `type`:
+- `subtype`:
+- `cargo_preferences`:
+- `customer_note`:
+- `parent_user_type`:
+- `creating_user_id`:
+- `allow_credits_usage`:
+- `order_number`:
+- `review_id`:
+- `transport_module_id`:
 
 ## Vehicles
 
@@ -7085,6 +7505,7 @@ erDiagram
   String business_id FK "nullable"
   String vehicle_id FK "nullable"
   String transaction_id FK "nullable"
+  String order_id FK "nullable"
 }
 "vehicles" {
   String vehicle_id PK
@@ -7138,6 +7559,7 @@ Properties as follows:
 - `business_id`:
 - `vehicle_id`:
 - `transaction_id`:
+- `order_id`:
 
 ### `vehicles`
 
@@ -7163,6 +7585,35 @@ Properties as follows:
 
 ```mermaid
 erDiagram
+"business" {
+  String business_id PK
+  String address_id FK "nullable"
+  String finance_id "nullable"
+  BUSINESS_TYPE type
+  Boolean is_business_unit
+  String business_group_name "nullable"
+  String name
+  String description "nullable"
+  String tax_id
+  String registration_id
+  String email UK
+  String telephone "nullable"
+  String telephone_code
+  String telephone_number
+  String website_url "nullable"
+  Json working_hours "nullable"
+  Boolean popular
+  Boolean new
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String parent_business_id FK "nullable"
+  String stripe_account_id "nullable"
+  String stripe_customer_id "nullable"
+  String word_buy_stripe_subscription_id "nullable"
+  DateTime first_activated_at "nullable"
+  Boolean active
+  String sales_representative_id "nullable"
+}
 "business_users" {
   String business_users_id PK
   Boolean online "nullable"
@@ -7260,11 +7711,50 @@ erDiagram
   Boolean allow_ads_personalization "nullable"
   Boolean allow_newsletter "nullable"
 }
+"business" }o--o| "addresses" : address
+"business" }o--o| "business" : parent_business
 "business_users" }o--|| "users" : users
+"business_users" }o--|| "business" : business
 "business_users" }o--o| "addresses" : operating_address
 "allowances" |o--o| "business_users" : business_user
 "employee" |o--o| "business_users" : business_user
 ```
+
+### `business`
+
+Business entity representing a merchant/partner account or crm.
+
+Core company profile linked to address, documents, analytics, roles and users.
+
+Properties as follows:
+
+- `business_id`:
+- `address_id`:
+- `finance_id`:
+- `type`:
+- `is_business_unit`:
+- `business_group_name`:
+- `name`:
+- `description`:
+- `tax_id`:
+- `registration_id`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+- `website_url`:
+- `working_hours`:
+- `popular`:
+- `new`:
+- `created_at`:
+- `updated_at`:
+- `parent_business_id`:
+- `stripe_account_id`:
+- `stripe_customer_id`:
+- `word_buy_stripe_subscription_id`:
+- `first_activated_at`:
+- `active`:
+- `sales_representative_id`:
 
 ### `business_users`
 
@@ -8564,35 +9054,3 @@ Properties as follows:
 - `type`:
 - `provider_raw`:
 - `occurred_at`:
-
-## default
-
-```mermaid
-erDiagram
-"translatable" {
-  String translatable_id PK
-}
-"daily_meals_drivers" {
-  String id PK
-  String daily_meals_id FK
-  String driver_id FK
-  DateTime(6) created_at
-  DateTime(6) updated_at
-}
-```
-
-### `translatable`
-
-Properties as follows:
-
-- `translatable_id`:
-
-### `daily_meals_drivers`
-
-Properties as follows:
-
-- `id`:
-- `daily_meals_id`:
-- `driver_id`:
-- `created_at`:
-- `updated_at`:

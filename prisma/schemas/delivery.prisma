@@ -61,6 +61,81 @@ model food_drinks {
     late_events late_events[] @relation("late_events_to_food_drinks")
 }
 
+/// @namespace DeliveryOrders
+/// @namespace Transport
+/// @summary Courier/food delivery orders with items, status timeline and driver.
+model delivery_orders {
+    order_id                   String                     @id @default(uuid()) @db.Uuid
+    user_id                    String?                    @db.Uuid
+    route                      Json
+    pickup_location            Json
+    delivery_location          Json
+    payment                    Json?
+    estimates                  Json?
+    items                      line_items[]
+    details                    Json?
+    courier_instructions       Json?
+    restaurant_message         Json?
+    rejection_reason           String?
+    scheduled                  Json?
+    timeline                   Json                       @default("[]")
+    status                     DELIVERY_ORDER_STATUS
+    last_sent_at               DateTime?                  @db.Timestamptz(6)
+    created_at                 DateTime                   @default(now()) @db.Timestamptz(6)
+    updated_at                 DateTime                   @default(now()) @updatedAt @db.Timestamptz(6)
+    user                       users?                     @relation(fields: [user_id], references: [user_id])
+    history                    delivery_order_sent[]
+    vehicle_id                 String?                    @db.Uuid
+    vehicle                    vehicles?                  @relation(fields: [vehicle_id], references: [vehicle_id])
+    driver_id                  String?                    @db.Uuid
+    driver                     drivers?                   @relation(fields: [driver_id], references: [driver_id])
+    transport_module_id        String?                    @db.Uuid
+    transport_module           transport_module?          @relation(fields: [transport_module_id], references: [transport_module_id])
+    payment_intent_id          String?
+    transactions               transactions[]
+    find_drivers_attempts      Int?                       @default(0)
+    is_daily_meal              Boolean                    @default(false)
+    // flags                      Json?
+    wallet_transfer            wallet_transfer_history[]
+    driver_history_locations   driver_history_locations[]
+    cashback                   cashback[]
+    order_lobbies              order_lobbies?             @relation("origin_lobby")
+    allow_credits_usage        Boolean                    @default(false)
+    order_number               Int                        @default(0)
+    scoring_points             scoring_points[]           @relation("scoring_points_to_delivery_order")
+    late_events                late_events[]              @relation("late_events_to_delivery_order")
+    stock_movements            menu_item_stock_change[]
+    business_local_location_id String?                    @db.Uuid
+    business_local_location    business_local_locations?  @relation(fields: [business_local_location_id], references: [business_local_location_id])
+    promo_analytics            promo_analytics[]
+    invoice                    invoice?
+    review_id                  String?                    @unique @db.Uuid
+    review                     reviews?                   @relation("delivery_order_review", fields: [review_id], references: [review_id])
+    stores_id                  String?                    @db.Uuid
+    stores                     stores?                    @relation(fields: [stores_id], references: [stores_id])
+    food_drinks_id             String?                    @db.Uuid
+    food_drinks                food_drinks?               @relation(fields: [food_drinks_id], references: [food_drinks_id])
+    file_id                    String?                    @db.Uuid
+    picture_of_delivery        files?
+}
+
+/// @namespace DeliveryOrders
+/// @namespace Delivery
+model delivery_order_sent {
+    delivery_order_sent_id String           @id @default(uuid()) @db.Uuid
+    order_id               String           @db.Uuid
+    accepted               Boolean          @default(false)
+    location               Json
+    timeline               Json             @default("[]")
+    created_at             DateTime         @default(now()) @db.Timestamptz(6)
+    updated_at             DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
+    order                  delivery_orders? @relation(fields: [order_id], references: [order_id])
+    driver_id              String?          @db.Uuid
+    driver                 drivers?         @relation(fields: [driver_id], references: [driver_id])
+
+    @@unique([order_id, driver_id], name: "delivery_order_sent_driver_unique")
+}
+
 /// @summary Daily meals configuration and scheduling.
 /// @namespace FoodDrinks
 /// @namespace DailyMeals
@@ -80,6 +155,9 @@ model daily_meals_module {
     daily_meal_subscriptions        daily_meal_subscriptions[]
 }
 
+/// @summary Drivers assigned to daily meals deliveries.
+/// @namespace DailyMeals
+/// @hidden
 model daily_meals_drivers {
     id             String   @id @default(uuid()) @db.Uuid
     daily_meals_id String   @db.Uuid

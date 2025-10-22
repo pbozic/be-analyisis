@@ -20,6 +20,82 @@ model transport_module {
     business_premises business_premise[]
 }
 
+/// @namespace TaxiOrders
+/// @namespace Transport
+/// @summary Ride-hailing taxi orders with route, payment and driver relations.
+model taxi_orders {
+    order_id                 String                     @id @default(uuid()) @db.Uuid
+    user_id                  String                     @db.Uuid
+    business_users_id        String?                    @db.Uuid
+    business_clients_id      String?                    @db.Uuid
+    driver_id                String?                    @db.Uuid
+    vehicle_id               String?                    @db.Uuid
+    route                    Json
+    pickup_location          Json
+    delivery_location        Json?
+    payment                  Json?
+    estimates                Json?
+    timeline                 Json                       @default("[]")
+    preferences              Json?
+    status                   TAXI_ORDER_STATUS
+    last_sent_at             DateTime?                  @db.Timestamptz(6)
+    created_at               DateTime                   @default(now()) @db.Timestamptz(6)
+    updated_at               DateTime                   @default(now()) @updatedAt @db.Timestamptz(6)
+    driver                   drivers?                   @relation(fields: [driver_id], references: [driver_id])
+    vehicle                  vehicles?                  @relation(fields: [vehicle_id], references: [vehicle_id])
+    user                     users?                     @relation(fields: [user_id], references: [user_id])
+    business_users           business_users?            @relation(fields: [business_users_id], references: [business_users_id])
+    business_clients         business_clients?          @relation(fields: [business_clients_id], references: [business_clients_id])
+    history                  taxi_order_sent[]
+    telephone                String?
+    first_name               String?
+    last_name                String?
+    cancellation_reason      String?
+    find_drivers_attempts    Int?                       @default(0)
+    is_scheduled             Boolean                    @default(false)
+    parent_order_id          String?                    @db.Uuid
+    parent_order             taxi_orders?               @relation("grouped_orders", fields: [parent_order_id], references: [order_id])
+    grouped_orders           taxi_orders[]              @relation("grouped_orders")
+    type                     ORDER_TYPE                 @default(TAXI)
+    subtype                  ORDER_SUBTYPE              @default(CREATED_BY_USER)
+    // flags                    Json?
+    cargo_documents          documents[]
+    cargo_preferences        Json?
+    driver_history_locations driver_history_locations[]
+    wallet_transfer          wallet_transfer_history[]
+    transactions             transactions[]
+    customer_note            String?
+    parent_user_type         String?                    @default("")
+    creating_user_id         String?                    @db.Uuid
+    cashback                 cashback[]
+    allow_credits_usage      Boolean                    @default(false)
+    order_number             Int                        @default(0)
+    scoring_points           scoring_points[]           @relation("scoring_points_to_taxi_order")
+    late_events              late_events[]              @relation("late_events_to_taxi_order")
+    invoice                  invoice?
+    review_id                String?                    @unique @db.Uuid
+    review                   reviews?                   @relation("taxi_order_review", fields: [review_id], references: [review_id])
+    transport_module_id      String?                    @db.Uuid
+    transport_module         transport_module?          @relation(fields: [transport_module_id], references: [transport_module_id])
+}
+
+/// @namespace TaxiOrders
+model taxi_order_sent {
+    taxi_order_sent_id String       @id @default(uuid()) @db.Uuid
+    order_id           String       @db.Uuid
+    driver_id          String       @db.Uuid
+    accepted           Boolean      @default(false)
+    location           Json?
+    timeline           Json         @default("[]")
+    created_at         DateTime     @default(now()) @db.Timestamptz(6)
+    updated_at         DateTime     @default(now()) @updatedAt @db.Timestamptz(6)
+    order              taxi_orders? @relation(fields: [order_id], references: [order_id], onDelete: Cascade)
+    driver             drivers?     @relation(fields: [driver_id], references: [driver_id])
+    rejected           Boolean      @default(false)
+
+    @@unique([order_id, driver_id], name: "taxi_order_sent_driver_unique")
+}
+
 /// @summary Global settings for driver activity and lockouts.
 /// @namespace Drivers
 model driver_activity_settings {
@@ -143,6 +219,7 @@ model drivers {
     reviewable_id         String?                    @db.Uuid
     reviewable            reviewable?                @relation(fields: [reviewable_id], references: [reviewable_id])
     late_events           late_events[]              @relation("late_events_to_driver")
+    user_favorite_drivers user_favorite_drivers[]
 }
 
 /// @summary Pairing of a driver to a vehicle with drive permission.
