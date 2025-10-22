@@ -20,57 +20,64 @@ enum FURS_JOB_TYPE {
 
 enum FURS_JOB_STATUS {
   DRAFT
-  SIGNED   // token produced on device
-  SENT     // HTTP sent
-  ACK      // accepted (no error)
-  ERROR    // transport or business error
+  SIGNED // token produced on device
+  SENT // HTTP sent
+  ACK // accepted (no error)
+  ERROR // transport or business error
 }
-
 
 // -----------------------------
 // Business Premises (FURS registration target)
 // -----------------------------
+/// @summary Business premise registered for fiscalization (FURS).
+/// @namespace Invoices
+///
+/// Represents a physical or movable premise (including vehicles) used when issuing invoices.
 model business_premise {
-  business_premise_id String       @id @db.Uuid
-  business_id         String       @db.Uuid
+  business_premise_id String @id @db.Uuid
+  transport_module_id String @db.Uuid
 
-  name                String?      @db.VarChar(120)
-  premise_type        PREMISE_TYPE @default(A)       // A for taxis/vehicles
-  validity_date       DateTime?                        // when FURS registration becomes valid
-  special_notes       String?      @db.VarChar(255)
+  name          String?      @db.VarChar(120)
+  premise_type  PREMISE_TYPE @default(A) // A for taxis/vehicles
+  validity_date DateTime? // when FURS registration becomes valid
+  special_notes String?      @db.VarChar(255)
 
   // Registration state (convenience flags; true after successful FURS ACK)
-  is_registered       Boolean      @default(false)
-  registered_at       DateTime?
+  is_registered Boolean   @default(false)
+  registered_at DateTime?
 
-  business            business      @relation(fields: [business_id], references: [business_id])
-  vehicle             vehicles?     // 1:1 back-reference (set via vehicle.business_premise_id)
+  transport_module transport_module @relation(fields: [transport_module_id], references: [transport_module_id])
+  vehicle          vehicles? // 1:1 back-reference (set via vehicle.business_premise_id)
 
-  devices             electronic_device[]
-  invoices            invoice[]     @relation("premise_invoices")
+  devices  electronic_device[]
+  invoices invoice[]           @relation("premise_invoices")
 
-  created_at          DateTime @default(now())
-  updated_at          DateTime @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-  @@index([business_id])
+  @@index([transport_module_id])
 }
 
 // -----------------------------
 // Electronic Devices (internal IDs, not registered with FURS)
 // -----------------------------
+/// @summary Electronic device identifier inside a business premise.
+/// @namespace Invoices
+///
+/// Internal device IDs used to number invoices; paired with a business premise.
 model electronic_device {
   business_premise_id  String @db.Uuid
   electronic_device_id String @db.Uuid
 
-  name                 String?  @db.VarChar(120)
-  active               Boolean  @default(true)
+  name   String? @db.VarChar(120)
+  active Boolean @default(true)
 
-  business_premise     business_premise @relation(fields: [business_premise_id], references: [business_premise_id])
-  invoices             invoice[]         @relation("device_invoices")
-  assignments          device_assignment[]
+  business_premise business_premise    @relation(fields: [business_premise_id], references: [business_premise_id])
+  invoices         invoice[]           @relation("device_invoices")
+  assignments      device_assignment[]
 
-  created_at           DateTime @default(now())
-  updated_at           DateTime @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   @@id([business_premise_id, electronic_device_id])
   @@index([business_premise_id])
@@ -79,19 +86,21 @@ model electronic_device {
 // -----------------------------
 // Who used what device, when (internal tracking)
 // -----------------------------
+/// @summary Assignment history of who used which device and when.
+/// @namespace Invoices
 model device_assignment {
-  device_assignment_id  String @id @default(uuid()) @db.Uuid
-  driver_id             String @db.Uuid
+  device_assignment_id String @id @default(uuid()) @db.Uuid
+  driver_id            String @db.Uuid
 
-  business_premise_id   String @db.Uuid
-  electronic_device_id  String @db.Uuid
+  business_premise_id  String @db.Uuid
+  electronic_device_id String @db.Uuid
 
-  valid_from            DateTime
-  valid_to              DateTime?
+  valid_from DateTime
+  valid_to   DateTime?
 
-  device                electronic_device @relation(fields: [business_premise_id, electronic_device_id], references: [business_premise_id, electronic_device_id], onDelete: Cascade)
+  device electronic_device @relation(fields: [business_premise_id, electronic_device_id], references: [business_premise_id, electronic_device_id], onDelete: Cascade)
 
-  created_at            DateTime @default(now())
+  created_at DateTime @default(now())
 
   @@index([driver_id])
   @@index([business_premise_id, electronic_device_id])
@@ -100,57 +109,61 @@ model device_assignment {
 // -----------------------------
 // Invoices
 // -----------------------------
+/// @summary Fiscal invoice record (FURS compliant).
+/// @namespace Invoices
+///
+/// Stores numbering structure, totals, ZOI/EOR identifiers and related payloads.
 model invoice {
-  invoice_id            String   @id @default(uuid()) @db.Uuid
+  invoice_id String @id @default(uuid()) @db.Uuid
 
   // Who issued
-  driver_id             String   @db.Uuid             // FK to your users/drivers table if you have it
-  business_id           String?  @db.Uuid             // convenience link (from premise.business_id)
-  vehicle_id            String?  @db.Uuid             // convenience link
+  driver_id   String  @db.Uuid // FK to your users/drivers table if you have it
+  business_id String? @db.Uuid // convenience link (from premise.business_id)
+  vehicle_id  String? @db.Uuid // convenience link
 
-  tax_number            String   @db.VarChar(8)       // TIN of issuer (zavezanec)
-  taxi_order_id         String?  @db.Uuid @unique     // optional link to your order (if any)
-  delivery_order_id     String?  @db.Uuid @unique     // optional link to your order (if any)
-  taxi_order          taxi_orders?      @relation(fields: [taxi_order_id], references: [order_id])
-  delivery_order      delivery_orders?  @relation(fields: [delivery_order_id], references: [order_id])
+  tax_number           String              @db.VarChar(8) // TIN of issuer (zavezanec)
+  taxi_order_id        String?             @unique @db.Uuid // optional link to your order (if any)
+  delivery_order_id    String?             @unique @db.Uuid // optional link to your order (if any)
+  taxi_order           taxi_orders?        @relation(fields: [taxi_order_id], references: [order_id])
+  delivery_order       delivery_orders?    @relation(fields: [delivery_order_id], references: [order_id])
   // Identification
-  numbering_structure   NUMBERING_STRUCTURE
-  business_premise_id   String   @db.Uuid
-  electronic_device_id  String   @db.Uuid
-  invoice_number        String   @db.VarChar(20)      // numeric string, no leading zeros
+  numbering_structure  NUMBERING_STRUCTURE
+  business_premise_id  String              @db.Uuid
+  electronic_device_id String              @db.Uuid
+  invoice_number       String              @db.VarChar(20) // numeric string, no leading zeros
 
   // Timing
-  issue_datetime        DateTime                      // store UTC
-  issue_datetime_local  String?  @db.VarChar(19)      // 'dd.MM.yyyy HH:mm:ss' (exact string used for ZOI concat, optional)
+  issue_datetime       DateTime // store UTC
+  issue_datetime_local String?  @db.VarChar(19) // 'dd.MM.yyyy HH:mm:ss' (exact string used for ZOI concat, optional)
 
   // Totals (gross/payment)
-  invoice_amount        Decimal  @db.Decimal(14, 2)   // sum of lines incl. VAT
-  returns_amount        Decimal? @db.Decimal(14, 2)
-  payment_amount        Decimal  @db.Decimal(14, 2)
+  invoice_amount Decimal  @db.Decimal(14, 2) // sum of lines incl. VAT
+  returns_amount Decimal? @db.Decimal(14, 2)
+  payment_amount Decimal  @db.Decimal(14, 2)
 
   // Fiscal ids
-  zoi                   String   @db.Char(32)         // MD5 hex
-  eor                   String?  @db.Char(36)         // FURS UniqueInvoiceID
+  zoi String  @db.Char(32) // MD5 hex
+  eor String? @db.Char(36) // FURS UniqueInvoiceID
 
-  is_subsequent_submit  Boolean  @default(false)      // offline later submit
-  operator_tax_number   String?  @db.VarChar(8)       // if operator (different than taxpayer)
-  foreign_operator      Boolean? @default(false)
+  is_subsequent_submit Boolean  @default(false) // offline later submit
+  operator_tax_number  String?  @db.VarChar(8) // if operator (different than taxpayer)
+  foreign_operator     Boolean? @default(false)
 
   // Exact payloads for replay/audit
-  furs_request_json     Json?
-  furs_response_json    Json?
+  furs_request_json  Json?
+  furs_response_json Json?
 
   // Relations
   // composite FK to electronic_device
-  device                electronic_device @relation("device_invoices", fields: [business_premise_id, electronic_device_id], references: [business_premise_id, electronic_device_id])
-  premise               business_premise  @relation("premise_invoices", fields: [business_premise_id], references: [business_premise_id])
-  vehicle               vehicles?          @relation(fields: [vehicle_id], references: [vehicle_id])
-  items                 invoice_item[]
-  taxes                 invoice_tax[]
-  submissions           submission_log[]
+  device      electronic_device @relation("device_invoices", fields: [business_premise_id, electronic_device_id], references: [business_premise_id, electronic_device_id])
+  premise     business_premise  @relation("premise_invoices", fields: [business_premise_id], references: [business_premise_id])
+  vehicle     vehicles?         @relation(fields: [vehicle_id], references: [vehicle_id])
+  items       invoice_item[]
+  taxes       invoice_tax[]
+  submissions submission_log[]
 
-  created_at            DateTime @default(now())
-  updated_at            DateTime @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   // Uniqueness as per FURS expectations (per-premise/device sequence)
   @@unique([business_premise_id, electronic_device_id, invoice_number])
@@ -158,7 +171,6 @@ model invoice {
   @@unique([zoi])
   // EOR is unique when present
   @@unique([eor])
-
   // Useful indexes
   @@index([driver_id])
   @@index([business_id])
@@ -169,21 +181,25 @@ model invoice {
 // -----------------------------
 // Invoice line items (for exports & analytics)
 // -----------------------------
+/// @summary Line item belonging to an invoice.
+/// @namespace Invoices
+///
+/// Contains quantities, unit pricing and per-line tax rate.
 model invoice_item {
-  invoice_item_id  String  @id @default(uuid()) @db.Uuid
-  invoice_id       String  @db.Uuid
+  invoice_item_id String @id @default(uuid()) @db.Uuid
+  invoice_id      String @db.Uuid
 
-  description      String  @db.VarChar(256)
-  qty              Decimal @db.Decimal(12, 3)
-  unit             String? @db.VarChar(12)
-  unit_price       Decimal @db.Decimal(14, 4)
-  tax_rate         Decimal @db.Decimal(5, 2)   // e.g., 22.00, 9.50, 0.00
-  line_total       Decimal @db.Decimal(14, 2)  // choose incl/excl VAT and stay consistent
+  description String  @db.VarChar(256)
+  qty         Decimal @db.Decimal(12, 3)
+  unit        String? @db.VarChar(12)
+  unit_price  Decimal @db.Decimal(14, 4)
+  tax_rate    Decimal @db.Decimal(5, 2) // e.g., 22.00, 9.50, 0.00
+  line_total  Decimal @db.Decimal(14, 2) // choose incl/excl VAT and stay consistent
 
   // Relations
-  invoice          invoice @relation(fields: [invoice_id], references: [invoice_id], onDelete: Cascade)
+  invoice invoice @relation(fields: [invoice_id], references: [invoice_id], onDelete: Cascade)
 
-  created_at       DateTime @default(now())
+  created_at DateTime @default(now())
 
   @@index([invoice_id])
 }
@@ -191,13 +207,17 @@ model invoice_item {
 // -----------------------------
 // Per-rate VAT buckets (FURS wants per-rate totals)
 // -----------------------------
+/// @summary VAT/tax buckets per rate for an invoice.
+/// @namespace Invoices
+///
+/// Sums taxable and tax amounts per applied rate as required by FURS.
 model invoice_tax {
-  invoice_tax_id             String  @id @default(uuid()) @db.Uuid
-  invoice_id                 String  @db.Uuid
+  invoice_tax_id String @id @default(uuid()) @db.Uuid
+  invoice_id     String @db.Uuid
 
-  tax_rate                   Decimal @db.Decimal(5, 2)    // 22.00, 9.50, etc.
-  taxable_amount             Decimal @db.Decimal(14, 2)   // osnova
-  tax_amount                 Decimal @db.Decimal(14, 2)   // davek
+  tax_rate       Decimal @db.Decimal(5, 2) // 22.00, 9.50, etc.
+  taxable_amount Decimal @db.Decimal(14, 2) // osnova
+  tax_amount     Decimal @db.Decimal(14, 2) // davek
 
   // Optional buckets present in FURS spec
   other_taxes_amount         Decimal? @db.Decimal(14, 2)
@@ -207,29 +227,31 @@ model invoice_tax {
   special_tax_rules_amount   Decimal? @db.Decimal(14, 2)
 
   // Relations
-  invoice               invoice @relation(fields: [invoice_id], references: [invoice_id], onDelete: Cascade)
+  invoice invoice @relation(fields: [invoice_id], references: [invoice_id], onDelete: Cascade)
 
-  created_at           DateTime @default(now())
+  created_at DateTime @default(now())
 
-  @@index([invoice_id])
   @@unique([invoice_id, tax_rate]) // one row per rate per invoice
+  @@index([invoice_id])
 }
 
 // -----------------------------
 // Certificate metadata (NO private keys)
 // -----------------------------
+/// @summary Metadata about fiscal certificates (no private keys).
+/// @namespace Invoices
 model certificate_metadata {
-  certificate_metadata_id String  @id @default(uuid()) @db.Uuid
-  driver_id               String  @db.Uuid          // FK to drivers/users if you want
-  subject_dn              String  @db.VarChar(512)
-  serial_number           String  @db.VarChar(64)
-  sha256_thumbprint       String  @db.VarChar(64)
+  certificate_metadata_id String   @id @default(uuid()) @db.Uuid
+  driver_id               String   @db.Uuid // FK to drivers/users if you want
+  subject_dn              String   @db.VarChar(512)
+  serial_number           String   @db.VarChar(64)
+  sha256_thumbprint       String   @db.VarChar(64)
   valid_from              DateTime
   valid_to                DateTime
-  ca_chain_pinned         String? @db.VarChar(256)
+  ca_chain_pinned         String?  @db.VarChar(256)
 
-  created_at              DateTime @default(now())
-  updated_at              DateTime @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   @@unique([driver_id, serial_number])
   @@index([sha256_thumbprint])
@@ -238,31 +260,33 @@ model certificate_metadata {
 // -----------------------------
 // Submission/audit log for each call to FURS (typically invoices)
 // -----------------------------
+/// @summary Transport/submission audit log for FURS communications.
+/// @namespace Invoices
 model submission_log {
-  submission_log_id String   @id @default(uuid()) @db.Uuid
-  invoice_id        String   @db.Uuid
+  submission_log_id String @id @default(uuid()) @db.Uuid
+  invoice_id        String @db.Uuid
 
   // Transport details
-  message_id        String   @db.VarChar(64) // your GUID/correlation id
-  sent_at           DateTime @default(now())
-  http_status       Int?
-  transport         String?  @db.VarChar(16) // 'XML' | 'JSON'
-  tls_version       String?  @db.VarChar(16)
-  mtls_cn           String?  @db.VarChar(256) // client cert CN used (if server is caller)
+  message_id  String   @db.VarChar(64) // your GUID/correlation id
+  sent_at     DateTime @default(now())
+  http_status Int?
+  transport   String?  @db.VarChar(16) // 'XML' | 'JSON'
+  tls_version String?  @db.VarChar(16)
+  mtls_cn     String?  @db.VarChar(256) // client cert CN used (if server is caller)
 
   // Results
-  eor               String?  @db.Char(36)
-  error_code        String?  @db.VarChar(32)
-  error_message     String?  @db.VarChar(512)
+  eor           String? @db.Char(36)
+  error_code    String? @db.VarChar(32)
+  error_message String? @db.VarChar(512)
 
   // Raw payloads (store here, keep logs clean)
-  request_payload   Json?
-  response_payload  Json?
+  request_payload  Json?
+  response_payload Json?
 
   // Relations
-  invoice           invoice  @relation(fields: [invoice_id], references: [invoice_id], onDelete: Cascade)
+  invoice invoice @relation(fields: [invoice_id], references: [invoice_id], onDelete: Cascade)
 
-  created_at        DateTime @default(now())
+  created_at DateTime @default(now())
 
   @@index([invoice_id])
   @@index([message_id])
@@ -271,29 +295,31 @@ model submission_log {
 // -----------------------------
 // Generic FURS jobs (BusinessPremise, Invoice, Echo)
 // -----------------------------
+/// @summary Generic FURS job queue entry (BusinessPremise, Invoice, Echo).
+/// @namespace Invoices
 model furs_job {
-  furs_job_id          String          @id @default(uuid()) @db.Uuid
-  type                 FURS_JOB_TYPE
-  status               FURS_JOB_STATUS @default(DRAFT)
+  furs_job_id String          @id @default(uuid()) @db.Uuid
+  type        FURS_JOB_TYPE
+  status      FURS_JOB_STATUS @default(DRAFT)
 
-  business_id          String?         @db.Uuid
-  business_premise_id  String?         @db.Uuid
-  invoice_id           String?         @db.Uuid
-  driver_id            String?         @db.Uuid
+  business_id         String? @db.Uuid
+  business_premise_id String? @db.Uuid
+  invoice_id          String? @db.Uuid
+  driver_id           String? @db.Uuid
 
-  request_url          String?         @db.VarChar(255)
-  message_id           String          @db.VarChar(64) // your GUID/correlation id
+  request_url String? @db.VarChar(255)
+  message_id  String  @db.VarChar(64) // your GUID/correlation id
 
-  request_payload      Json?           // decoded JSON payload (e.g., BusinessPremiseRequest)
-  request_token        String?         // compact JWS string sent
-  response_token       String?         // compact JWS string received
+  request_payload Json? // decoded JSON payload (e.g., BusinessPremiseRequest)
+  request_token   String? // compact JWS string sent
+  response_token  String? // compact JWS string received
 
-  http_status          Int?
-  error_code           String?         @db.VarChar(32)
-  error_message        String?         @db.VarChar(512)
+  http_status   Int?
+  error_code    String? @db.VarChar(32)
+  error_message String? @db.VarChar(512)
 
-  created_at           DateTime @default(now())
-  updated_at           DateTime @updatedAt
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   @@index([type, status])
   @@index([business_id])

@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator markdown {
+  provider = "prisma-markdown"
+  output   = "./ERD.md"
+  title    = "Database ERD"
+}
+
 // generator dbml {
 //   provider = "prisma-dbml-generator"
 // }
@@ -36,20 +42,10 @@ generator typescriptInterfaces {
 //   addInputTypeValidation    = true
 // }
 
-model finances {
-  finance_id          String     @id @default(uuid()) @db.Uuid
-  bank_name           String
-  account_holder      String
-  account_number      String
-  payment_preferences Json
-  created_at          DateTime   @default(now()) @db.Timestamptz(6)
-  updated_at          DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
-  business            business[]
-
-  @@unique([account_number], name: "uniqueAccountNumber")
-  @@map("finances")
-}
-
+/// @summary Business entity representing a merchant/partner account or crm.
+/// @namespace Business
+///
+/// Core company profile linked to address, documents, analytics, roles and users.
 model business {
   business_id         String        @id @unique @default(uuid()) @db.Uuid
   address_id          String?       @db.Uuid
@@ -72,18 +68,15 @@ model business {
   created_at          DateTime      @default(now()) @db.Timestamptz(6)
   updated_at          DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
   address             addresses?    @relation(name: "address", fields: [address_id], references: [address_id])
-  finances            finances?     @relation(fields: [finance_id], references: [finance_id])
   documents           documents[]
+  logo                files?        @relation("business_logo")
+  banner              files?        @relation("business_banner")
   parent_business_id  String?       @db.Uuid
-  parent_business     business?     @relation("parent_business", fields: [parent_business_id], references: [business_id])
+  parent_business     business?     @relation("parent_business", fields: [parent_business_id], references: [business_id], onDelete: SetNull)
   child_businesses    business[]    @relation("parent_business")
-  reviewable_id       String?       @db.Uuid
-  reviewable          reviewable?   @relation(fields: [reviewable_id], references: [reviewable_id])
-  stripe_account_id   String?
-  stripe_customer_id  String?
 
-  word_buy_stripe_product_id      String?
-  word_buy_stripe_product         local_products?
+  stripe_account_id               String?
+  stripe_customer_id              String?
   word_buy_stripe_subscription_id String?
   word_buys                       word_buy[]
   promo_sections                  promo_sections_buy[]
@@ -94,27 +87,33 @@ model business {
 
   user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_business")
   scoring_points           scoring_points[]           @relation("scoring_points_to_business")
-  late_events              late_events[]              @relation("late_events_to_business")
   account_actions          account_actions[]
 
   business_money_flows business_money_flows[]
-  reservation_module   reservation_module?
-  transport_module     transport_module?
-  stores               stores?
-  food_drinks          food_drinks?
-  crm_module           crm_module?
   roles                role[]
-  business_premises    business_premise[]
   business_users       business_users[]
+
+  reservation_module reservation_module?
+  transport_module   transport_module?
+  stores             stores?
+  food_drinks        food_drinks?
+  crm_module         crm_module?
+
+  @@index([parent_business_id])
 }
 
+/// @summary User membership within a business (employees/managers).
+/// @namespace Business
+/// @namespace BusinessUsers
+/// @namespace TaxiOrders
+/// @namespace DeliveryOrders
 model business_users {
   business_users_id    String        @id @default(uuid()) @db.Uuid
   online               Boolean?      @default(false)
   company_role         COMPANY_ROLE  @default(DIRECTOR)
   created_at           DateTime      @default(now()) @db.Timestamptz(6)
   updated_at           DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
-  user_id              String        @unique @db.Uuid
+  user_id              String        @db.Uuid
   users                users?        @relation(fields: [user_id], references: [user_id])
   business_id          String        @db.Uuid
   business             business?     @relation(fields: [business_id], references: [business_id])
@@ -125,8 +124,12 @@ model business_users {
   employee             employee?
 
   @@unique([user_id, business_id], name: "uniqueBusinessUser")
+  @@index([business_id])
+  @@index([user_id])
 }
 
+/// @namespace Cashback
+/// @summary Cashback rewards tied to orders or promotions.
 model cashback {
   cashback_id       String           @id @unique @default(uuid()) @db.Uuid
   user_id           String           @db.Uuid
@@ -165,6 +168,8 @@ model cashback {
 //   @@index([expires_at])
 // }
 
+/// @namespace Referral
+/// @summary Referral link between referrer and referred users.
 model referrals {
   referral_id      String         @id @default(uuid()) @db.Uuid
   referral_code    String         @db.Char(6)
@@ -179,6 +184,9 @@ model referrals {
   credits          wallet_funds[]
 }
 
+/// @namespace FamilyUsers
+/// @namespace BusinessUsers
+/// @summary User allowances for different service wallets and purchase orders.
 model allowances {
   allowance_id                   String          @id @default(uuid()) @db.Uuid
   group_user_id                  String?         @unique @db.Uuid
@@ -197,6 +205,11 @@ model allowances {
   business_user                  business_users? @relation(fields: [business_users_id], references: [business_users_id], onDelete: Cascade)
 }
 
+/// @summary Documents attached to business, user, driver, vehicle, menu items or orders.
+/// @namespace Business
+/// @namespace Drivers
+/// @namespace Vehicles
+/// @namespace Documents
 model documents {
   document_id     String        @id @default(uuid()) @db.Uuid
   document_type   DOCUMENT_TYPE
@@ -211,34 +224,46 @@ model documents {
   drivers         drivers?      @relation(fields: [driver_id], references: [driver_id])
   business_id     String?       @db.Uuid
   business        business?     @relation(fields: [business_id], references: [business_id])
-  user_id         String?       @db.Uuid
-  user            users?        @relation(fields: [user_id], references: [user_id])
   vehicle_id      String?       @db.Uuid
   vehicles        vehicles?     @relation(fields: [vehicle_id], references: [vehicle_id])
-  menu_item_id    String?       @db.Uuid
-  menu_items      menu_items?   @relation(fields: [menu_item_id], references: [menu_item_id])
-  lost_item_id    String?       @db.Uuid
-  lost_items      lost_items?   @relation(fields: [lost_item_id], references: [lost_item_id])
   transaction_id  String?       @db.Uuid
   transactions    transactions? @relation("Documents_transaction", fields: [transaction_id], references: [transaction_id])
 }
 
+/// @summary File storage for documents, images, logos, banners, menu items, blog posts, categories, promo banners and more.
+/// @namespace Documents
+/// @namespace Business
+/// @namespace Users
+/// @namespace MenuItems
+/// @namespace LostItems
+/// @namespace PromoAds
 model files {
-  file_id     String       @id @default(uuid()) @db.Uuid
-  url         String?
-  file_type   FILE_TYPE
-  public      Boolean      @default(false)
-  mime_type   String
-  created_at  DateTime     @default(now()) @db.Timestamptz(6)
-  updated_at  DateTime     @default(now()) @updatedAt @db.Timestamptz(6)
-  document_id String?      @db.Uuid
-  documents   documents?   @relation(fields: [document_id], references: [document_id])
-  categories  categories[]
-  blog_posts  blog_posts[]
-
-  promo_banners promo_banners[]
+  file_id            String          @id @default(uuid()) @db.Uuid
+  url                String?
+  file_type          FILE_TYPE
+  public             Boolean         @default(false)
+  mime_type          String
+  created_at         DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime        @default(now()) @updatedAt @db.Timestamptz(6)
+  document_id        String?         @db.Uuid
+  documents          documents?      @relation(fields: [document_id], references: [document_id])
+  categories         categories[]
+  blog_posts         blog_posts[]
+  business_logo_id   String?         @unique @db.Uuid
+  business_logo      business?       @relation("business_logo", fields: [business_logo_id], references: [business_id])
+  business_banner_id String?         @unique @db.Uuid
+  business_banner    business?       @relation("business_banner", fields: [business_banner_id], references: [business_id])
+  user_id            String?         @unique @db.Uuid
+  user               users?          @relation(fields: [user_id], references: [user_id])
+  menu_item_id       String?         @unique @db.Uuid
+  menu_item          menu_items?     @relation(fields: [menu_item_id], references: [menu_item_id])
+  lost_item_id       String?         @unique @db.Uuid
+  lost_item          lost_items?     @relation(fields: [lost_item_id], references: [lost_item_id])
+  promo_banners      promo_banners[]
 }
 
+/// @summary API and session tokens for users.
+/// @namespace Users
 model tokens {
   token_id   String    @id @default(uuid()) @db.Uuid
   user_id    String    @db.Uuid
@@ -251,6 +276,11 @@ model tokens {
   users      users     @relation(fields: [user_id], references: [user_id])
 }
 
+/// @summary Postal/geo address used by businesses, users and modules.
+/// @namespace Business
+/// @namespace Users
+/// @namespace BusinessUsers
+/// @namespace DailyMeals
 model addresses {
   address_id               String                     @id @default(uuid()) @db.Uuid
   address                  String
@@ -273,18 +303,25 @@ model addresses {
   @@unique([address, latitude, longitude], name: "uniqueAddressIdentifier")
 }
 
+/// @summary User address book entries linking users to addresses.
+/// @namespace Users
 model user_address {
-  user_id    String    @db.Uuid
-  address_id String    @db.Uuid
-  name       String?
-  icon       String?
-  primary    Boolean   @default(false)
-  users      users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
-  address    addresses @relation(fields: [address_id], references: [address_id], onDelete: Cascade)
+  user_id    String       @db.Uuid
+  address_id String       @db.Uuid
+  // name       String?
+  // icon       String?
+  primary    Boolean      @default(false)
+  details    Json? // subtype, floor, apartment/door number, entrance, details/courier_instructions
+  type       ADDRESS_TYPE @default(HOME)
+  users      users        @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  address    addresses    @relation(fields: [address_id], references: [address_id], onDelete: Cascade)
 
   @@id([user_id, address_id])
 }
 
+/// @namespace TaxiOrders
+/// @namespace Transport
+/// @summary Ride-hailing taxi orders with route, payment and driver relations.
 model taxi_orders {
   order_id                 String                     @id @default(uuid()) @db.Uuid
   user_id                  String                     @db.Uuid
@@ -334,11 +371,13 @@ model taxi_orders {
   scoring_points           scoring_points[]           @relation("scoring_points_to_taxi_order")
   late_events              late_events[]              @relation("late_events_to_taxi_order")
   invoice                  invoice?
-
-  transport_module_id String?           @db.Uuid
-  transport_module    transport_module? @relation(fields: [transport_module_id], references: [transport_module_id])
+  review_id                String?                    @unique @db.Uuid
+  review                   reviews?                   @relation("taxi_order_review", fields: [review_id], references: [review_id])
+  transport_module_id      String?                    @db.Uuid
+  transport_module         transport_module?          @relation(fields: [transport_module_id], references: [transport_module_id])
 }
 
+/// @namespace TaxiOrders
 model taxi_order_sent {
   taxi_order_sent_id String       @id @default(uuid()) @db.Uuid
   order_id           String       @db.Uuid
@@ -355,6 +394,9 @@ model taxi_order_sent {
   @@unique([order_id, driver_id], name: "taxi_order_sent_driver_unique")
 }
 
+/// @namespace DeliveryOrders
+/// @namespace Transport
+/// @summary Courier/food delivery orders with items, status timeline and driver.
 model delivery_orders {
   order_id                   String                     @id @default(uuid()) @db.Uuid
   user_id                    String?                    @db.Uuid
@@ -363,7 +405,7 @@ model delivery_orders {
   delivery_location          Json
   payment                    Json?
   estimates                  Json?
-  items                      Json
+  items                      line_items[]
   details                    Json?
   courier_instructions       Json?
   restaurant_message         Json?
@@ -386,7 +428,7 @@ model delivery_orders {
   transactions               transactions[]
   find_drivers_attempts      Int?                       @default(0)
   is_daily_meal              Boolean                    @default(false)
-  flags                      Json?
+  // flags                      Json?
   wallet_transfer            wallet_transfer_history[]
   driver_history_locations   driver_history_locations[]
   cashback                   cashback[]
@@ -400,12 +442,16 @@ model delivery_orders {
   business_local_location    business_local_locations?  @relation(fields: [business_local_location_id], references: [business_local_location_id])
   promo_analytics            promo_analytics[]
   invoice                    invoice?
+  review_id                  String?                    @unique @db.Uuid
+  review                     reviews?                   @relation("delivery_order_review", fields: [review_id], references: [review_id])
   stores_id                  String?                    @db.Uuid
   stores                     stores?                    @relation(fields: [stores_id], references: [stores_id])
   food_drinks_id             String?                    @db.Uuid
   food_drinks                food_drinks?               @relation(fields: [food_drinks_id], references: [food_drinks_id])
 }
 
+/// @namespace DeliveryOrders
+/// @namespace Delivery
 model delivery_order_sent {
   delivery_order_sent_id String           @id @default(uuid()) @db.Uuid
   order_id               String           @db.Uuid
@@ -421,13 +467,26 @@ model delivery_order_sent {
   @@unique([order_id, driver_id], name: "delivery_order_sent_driver_unique")
 }
 
+/// @summary Entity that can be reviewed (business, user, driver, module, store, food/drink).
+/// @namespace Users
+/// @namespace Drivers
+/// @namespace Business
+/// @hidden
 model reviewable {
-  reviewable_id String     @id @default(uuid()) @db.Uuid
-  reviews       reviews[]
-  user          users[]
-  business      business[]
+  reviewable_id      String               @id @default(uuid()) @db.Uuid
+  reviews            reviews[]
+  user               users[]
+  driver             drivers[]
+  reservation_module reservation_module[]
+  transport_module   transport_module[]
+  stores             stores[]
+  food_drinks        food_drinks[]
 }
 
+/// @summary Review record authored by a user about a business or user.
+/// @namespace Users
+/// @namespace Drivers
+/// @namespace Business
 model reviews {
   review_id     String     @id @default(uuid()) @db.Uuid
   reviewable_id String     @db.Uuid
@@ -439,8 +498,18 @@ model reviews {
   updated_at    DateTime   @default(now()) @updatedAt @db.Timestamptz(6)
   reviewable    reviewable @relation(fields: [reviewable_id], references: [reviewable_id])
   author        users      @relation(fields: [author_id], references: [user_id], name: "review_author")
+
+  delivery_order delivery_orders? @relation("delivery_order_review")
+  taxi_order     taxi_orders?     @relation("taxi_order_review")
+  vehicle_id     String?          @db.Uuid
 }
 
+/// @namespace Payments
+/// @namespace Users
+/// @namespace TaxiOrders
+/// @namespace DeliveryOrders
+/// @namespace Documents
+/// @summary Ledger transactions for users and orders (credit/debit entries).
 model transactions {
   transaction_id    String           @id @default(uuid()) @db.Uuid
   user_id           String           @db.Uuid
@@ -461,6 +530,9 @@ model transactions {
   wallet_funds wallet_funds? @relation("wallet_funds_transaction", fields: [wallet_fund_id], references: [wallet_funds_id])
 }
 
+/// @namespace Payments
+/// @namespace Users
+/// @summary Money flow entries for a user (credits/debits and fees).
 model user_money_flows {
   balance_change_id String           @id @default(uuid()) @db.Uuid
   user_id           String           @db.Uuid
@@ -472,6 +544,9 @@ model user_money_flows {
   user              users            @relation(fields: [user_id], references: [user_id])
 }
 
+/// @summary Money flow entries for a business (credits/debits and fees).
+/// @namespace Business
+/// @namespace Payments
 model business_money_flows {
   balance_change_id String           @id @default(uuid()) @db.Uuid
   business_id       String           @db.Uuid
@@ -483,63 +558,51 @@ model business_money_flows {
   business          business         @relation(fields: [business_id], references: [business_id])
 }
 
+/// @namespace Payments
 model payment_intent_logs {
   payment_intent_logs_id String   @id @default(uuid())
   stripe_id              String   @unique
   created_at             DateTime @default(now()) @db.Timestamptz(6)
 }
 
-enum TRANSACTION_TYPE {
-  DEBIT
-  CREDIT
-}
-
+/// @summary Lost and found items reported by users/drivers.
+/// @namespace LostItems
 model lost_items {
   lost_item_id String            @id @default(uuid()) @db.Uuid
   user_id      String?           @db.Uuid
   status       LOST_FOUND_STATUS @default(REPORTED)
   description  String
-  documents    documents[]
+  file_id      String?           @db.Uuid
+  file         files?
   found        Boolean?          @default(false)
   created_at   DateTime          @default(now()) @db.Timestamptz(6)
   updated_at   DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
   user         users?            @relation(fields: [user_id], references: [user_id], onDelete: SetNull) // Update the relation
 }
 
-model flags {
-  flag_id    String         @id @default(uuid()) @db.Uuid
-  name       String
-  status     Boolean        @default(false)
-  created_at DateTime       @default(now()) @db.Timestamptz(6)
-  updated_at DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
-  history    flag_history[]
-}
+// model flags {
+//   flag_id    String         @id @default(uuid()) @db.Uuid
+//   name       String
+//   status     Boolean        @default(false)
+//   created_at DateTime       @default(now()) @db.Timestamptz(6)
+//   updated_at DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
+//   history    flag_history[]
+// }
 
-model flag_history {
-  flag_history_id String   @id @default(uuid()) @db.Uuid
-  flag_id         String   @db.Uuid
-  user_id         String   @db.Uuid
-  status          Boolean
-  created_at      DateTime @default(now()) @db.Timestamptz(6)
-  updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz(6)
-  flag            flags    @relation(fields: [flag_id], references: [flag_id])
-  user            users    @relation(fields: [user_id], references: [user_id])
-}
+// model flag_history {
+//   flag_history_id String   @id @default(uuid()) @db.Uuid
+//   flag_id         String   @db.Uuid
+//   user_id         String   @db.Uuid
+//   status          Boolean
+//   created_at      DateTime @default(now()) @db.Timestamptz(6)
+//   updated_at      DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+//   flag            flags    @relation(fields: [flag_id], references: [flag_id])
+//   user            users    @relation(fields: [user_id], references: [user_id])
+// }
 
-model driver_history_locations {
-  driver_history_location_id String           @id @default(uuid()) @db.Uuid
-  driver_id                  String           @db.Uuid
-  taxi_order_id              String?          @db.Uuid
-  delivery_order_id          String?          @db.Uuid
-  status                     String?
-  location                   Json?
-  driver                     drivers?         @relation(fields: [driver_id], references: [driver_id])
-  order                      taxi_orders?     @relation(fields: [taxi_order_id], references: [order_id], onDelete: Cascade)
-  delivery_order             delivery_orders? @relation(fields: [delivery_order_id], references: [order_id], onDelete: Cascade)
-  created_at                 DateTime         @default(now()) @db.Timestamptz(6)
-  updated_at                 DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
-}
-
+/// @namespace TaxiOrders
+/// @namespace DeliveryOrders
+/// @summary Wallet transfer history for taxi and delivery orders.
 model wallet_transfer_history {
   wallet_transfer_history_id String           @id @default(uuid()) @db.Uuid
   order_id                   String           @db.Uuid
@@ -551,6 +614,10 @@ model wallet_transfer_history {
   taxi_order                 taxi_orders?     @relation(fields: [order_id], references: [order_id], map: "wallet_transfer_history_taxi_order_id_fkey")
 }
 
+/// @namespace Users
+/// @namespace Wallet
+/// @namespace Payments
+/// @summary Wallet and credit balances for users with optional expiry and reservations.
 model wallet_funds {
   wallet_funds_id                   String         @id @unique @default(uuid()) @db.Uuid
   user_id                           String         @db.Uuid
@@ -572,37 +639,9 @@ model wallet_funds {
   @@unique([user_id, charge_id, reserved_order, reserved_business, type, status, referral_id, expires_at])
 }
 
-model local_products {
-  local_product_id  String         @id @default(uuid()) @db.Uuid
-  name              String
-  description       String?
-  prices            local_prices[]
-  currency          String
-  stripe_product_id String         @unique
-  business_id       String         @unique @db.Uuid
-  business          business       @relation(fields: [business_id], references: [business_id])
-  created_at        DateTime       @default(now()) @db.Timestamptz(6)
-  updated_at        DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
-
-  @@index([stripe_product_id])
-}
-
-model local_prices {
-  local_prices_id   String         @id @default(uuid()) @db.Uuid
-  local_product_id  String         @db.Uuid
-  product           local_products @relation(fields: [local_product_id], references: [local_product_id])
-  currency          String
-  stripe_price_id   String         @unique
-  stripe_product_id String
-  tier              String?
-  created_at        DateTime       @default(now()) @db.Timestamptz(6)
-  updated_at        DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
-
-  @@index([local_product_id])
-  @@index([stripe_product_id])
-  @@index([currency])
-}
-
+/// @namespace PromoSections
+/// @namespace Promo
+/// @summary Configurable promotional sections purchasable by businesses.
 model promo_sections {
   promo_sections_id      String               @id @default(uuid()) @db.Uuid
   name                   String
@@ -626,6 +665,9 @@ model promo_sections {
   promo_analytics        promo_analytics[]
 }
 
+/// @namespace PromoAds
+/// @namespace Promo
+/// @summary Visual assets attached to promo ads or section buys.
 model promo_banners {
   promo_banners_id     String     @id @default(uuid()) @db.Uuid
   type                 String
@@ -639,6 +681,10 @@ model promo_banners {
   promo_ads            promo_ads? @relation(fields: [promo_ads_id], references: [promo_ads_id])
 }
 
+/// @summary Purchase of a promo section placement by a business.
+/// @namespace Business
+/// @namespace Promo
+/// @namespace PromoSections
 model promo_sections_buy {
   promo_sections_buy_id String         @id @default(uuid()) @db.Uuid
   promo_sections_id     String         @db.Uuid
@@ -655,6 +701,9 @@ model promo_sections_buy {
   duration              Int            @default(30) // in days
 }
 
+/// @namespace PromoAds
+/// @namespace Promo
+/// @summary Promotional advertisements with categories and analytics.
 model promo_ads {
   promo_ads_id    String               @id @default(uuid()) @db.Uuid
   title           String
@@ -672,6 +721,8 @@ model promo_ads {
   promo_analytics promo_analytics[]
 }
 
+/// @namespace PromoAds
+/// @hidden
 model promo_ads_category {
   promo_ads_category_id String     @id @default(uuid()) @db.Uuid
   promo_ads_id          String     @db.Uuid
@@ -680,6 +731,9 @@ model promo_ads_category {
   category              categories @relation(fields: [categories_id], references: [categories_id])
 }
 
+/// @namespace PromoWords
+/// @namespace Promo
+/// @summary Search words/tags that can be promoted and analyzed.
 model words {
   word_id         String            @id @default(uuid()) @db.Uuid
   word            String            @unique
@@ -695,6 +749,10 @@ model words {
   promo_analytics promo_analytics[]
 }
 
+/// @summary Subscription/purchase of promoted word by a business.
+/// @namespace Business
+/// @namespace Promo
+/// @namespace PromoWords
 model word_buy {
   word_buy_id             String    @id @default(uuid()) @db.Uuid
   word_id                 String    @db.Uuid
@@ -714,6 +772,8 @@ model word_buy {
   deleted_at              DateTime? @db.Timestamptz(6)
 }
 
+/// @namespace PromoWords
+/// @hidden
 model word_bundles {
   id          String   @id @default(uuid()) @db.Uuid
   name        String
@@ -722,6 +782,9 @@ model word_bundles {
   created_at  DateTime @default(now()) @db.Timestamptz(6)
 }
 
+/// @summary Analytics events for promotions and searches associated to a business.
+/// @namespace Business
+/// @namespace Promo
 model promo_analytics {
   promo_analytics_id         String         @id @default(uuid()) @db.Uuid
   promo_ads_id               String?        @db.Uuid
@@ -745,8 +808,6 @@ model promo_analytics {
   daily_meal_subscription daily_meal_subscriptions? @relation(fields: [daily_meal_subscription_id], references: [id])
 }
 
-// moved: business_teams -> crm module
-
 model translatable {
   translatable_id String           @id @default(uuid()) @db.Uuid
   translations    translations[]
@@ -755,6 +816,9 @@ model translatable {
   promo_sections  promo_sections[]
 }
 
+/// @summary Translations for various translatable entities (categories, words, promo sections).
+/// @namespace PromoWords
+/// @namespace PromoSections
 model translations {
   translations_id String       @id @default(uuid()) @db.Uuid
   translatable_id String       @db.Uuid
@@ -768,6 +832,9 @@ model translations {
   @@unique(name: "translationPair", [translatable_id, language])
 }
 
+/// @namespace Business
+/// @namespace Users
+/// @hidden
 model user_favorite_businesses {
   user_favorite_businesses_id String        @id @default(uuid()) @db.Uuid
   user_id                     String        @db.Uuid
@@ -783,6 +850,11 @@ model user_favorite_businesses {
   @@index([user_id, business_type])
 }
 
+/// @summary Scoring points (rewards/penalties) for users and businesses.
+/// @namespace Business
+/// @namespace Users
+/// @namespace TaxiOrders
+/// @namespace DeliveryOrders
 model scoring_points {
   scoring_points_id String                @id @default(uuid()) @db.Uuid
   business_id       String                @db.Uuid
@@ -804,9 +876,15 @@ model scoring_points {
   late_events     late_events[]    @relation("late_events_to_scoring_points")
 }
 
+/// @summary Recorded late events for orders impacting scoring.
+/// @namespace TaxiOrders
+/// @namespace DeliveryOrders
+/// @namespace Drivers
 model late_events {
   late_events_id    String  @id @default(uuid()) @db.Uuid
-  business_id       String  @db.Uuid
+  stores_id         String? @db.Uuid
+  food_drinks_id    String? @db.Uuid
+  driver_id         String  @db.Uuid
   user_id           String  @db.Uuid
   delivery_order_id String? @db.Uuid
   taxi_order_id     String? @db.Uuid
@@ -816,13 +894,140 @@ model late_events {
   created_at DateTime @default(now()) @db.Timestamptz(6)
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
-  users           users?           @relation("late_events_to_user", fields: [user_id], references: [user_id])
-  businesses      business         @relation("late_events_to_business", fields: [business_id], references: [business_id])
+  stores          stores?          @relation("late_events_to_stores", fields: [stores_id], references: [stores_id])
+  food_drinks     food_drinks?     @relation("late_events_to_food_drinks", fields: [food_drinks_id], references: [food_drinks_id])
+  driver          drivers?         @relation("late_events_to_driver", fields: [driver_id], references: [driver_id])
   delivery_orders delivery_orders? @relation("late_events_to_delivery_order", fields: [delivery_order_id], references: [order_id])
   taxi_orders     taxi_orders?     @relation("late_events_to_taxi_order", fields: [taxi_order_id], references: [order_id])
   scoring_points  scoring_points?  @relation("late_events_to_scoring_points", fields: [scoring_points_id], references: [scoring_points_id])
 }
 
+/// @summary Moderation/account actions affecting user or business accounts.
+/// @namespace Business
+/// @namespace Users
+model account_actions {
+  account_action_id      String   @id @unique @default(uuid()) @db.Uuid
+  business_id            String?  @db.Uuid
+  user_id                String?  @db.Uuid
+  created_at             DateTime @default(now()) @db.Timestamptz(6)
+  action_creator_user_id String   @db.Uuid
+
+  reason ACCOUNT_ACTIONS_REASON
+  action ACCOUNT_ACTIONS
+
+  business       business? @relation(fields: [business_id], references: [business_id])
+  user           users?    @relation("action_to_affected_user", fields: [user_id], references: [user_id])
+  action_creator users?    @relation("action_to_creator", fields: [action_creator_user_id], references: [user_id])
+}
+
+/// @namespace Payments
+/// @summary Payments and statuses (with splits and transfer groups).
+model payments {
+  payment_id        String         @id @default(uuid()) @db.Uuid
+  amount            Int
+  credits_amount    Int            @default(0)
+  payment_method    PAYMENT_METHOD
+  payment_intent_id String?        @unique
+  status            PAYMENT_STATUS @default(PENDING)
+  created_at        DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
+  order_type        String?
+  payment_type      String?
+
+  // For daily meals subscriptions
+  daily_meal_subscription_id String?                   @unique @db.Uuid
+  daily_meal_subscription    daily_meal_subscriptions? @relation("PaymentToDMSubscription", fields: [daily_meal_subscription_id], references: [id], onDelete: Cascade)
+
+  // delivery_order_id         String?                      @db.Uuid
+  // delivery_order            delivery_orders?             @relation(fields: [delivery_order_id], references: [order_id])
+  // taxi_order_id             String?                      @db.Uuid
+  // taxi_order                taxi_orders?                 @relation(fields: [taxi_order_id], references: [order_id])
+
+  user_id        String           @db.Uuid
+  user           users            @relation(fields: [user_id], references: [user_id])
+  payment_splits payment_splits[]
+
+  payment_transfer_groups payment_transfer_groups[] @relation("PaymentToTransferGroups")
+}
+
+/// @namespace Payments
+model payment_splits {
+  payment_split_id          String                 @id @default(uuid()) @db.Uuid
+  status                    SPLIT_STATUS           @default(RESERVED)
+  type                      SPLIT_TYPE             @default(TRANSFER)
+  payment_id                String                 @db.Uuid
+  destination_type          SPLIT_DESTINATION_TYPE
+  destination_id            String?
+  payment_transfer_group_id String?                @db.Uuid
+  amount_regular            Int
+  amount_credits            Int                    @default(0)
+  metadata                  Json?
+  external_id               String?                @unique
+  created_at                DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at                DateTime               @default(now()) @updatedAt @db.Timestamptz(6)
+
+  payment                payments                 @relation(fields: [payment_id], references: [payment_id], onDelete: Cascade)
+  payment_transfer_group payment_transfer_groups? @relation(fields: [payment_transfer_group_id], references: [payment_transfer_group_id], onDelete: Cascade)
+}
+
+/// @namespace Payments
+model payment_transfer_groups {
+  payment_transfer_group_id String                @id @default(uuid()) @db.Uuid
+  status                    TRANSFER_GROUP_STATUS @default(PENDING)
+  type                      TRANSFER_GROUP_TYPE
+  amount                    Int
+  metadata                  Json?
+  payment_id                String                @db.Uuid
+
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+  payment_splits payment_splits[]
+  payment        payments         @relation("PaymentToTransferGroups", fields: [payment_id], references: [payment_id], onDelete: Cascade)
+}
+
+/// @namespace Blog
+/// @summary Blog tags, categories and posts with relations.
+model blog_tags {
+  blog_tags_id String       @id @default(uuid()) @db.Uuid
+  name         String
+  description  String?
+  blog_posts   blog_posts[] @relation("blog_posts_in_tag")
+}
+
+/// @namespace Blog
+/// @summary Blog categories and their posts.
+model blog_categories {
+  blog_categories_id String       @id @default(uuid()) @db.Uuid
+  name               String
+  description        String?
+  blog_posts         blog_posts[] @relation("blog_posts_in_category")
+}
+
+/// @namespace Blog
+/// @summary Blog posts with authors, categories, tags and content.
+model blog_posts {
+  blog_posts_id String           @id @default(uuid()) @db.Uuid
+  slug          String           @unique
+  title         String
+  short_content String?
+  image_file_id String?          @db.Uuid
+  image         files?           @relation(fields: [image_file_id], references: [file_id])
+  content       Json
+  status        BLOG_POST_STATUS @default(PUBLISHED)
+  author_id     String           @db.Uuid
+  category_id   String?          @db.Uuid
+  publish_at    DateTime         @default(now()) @db.Timestamptz(6)
+  created_at    DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
+  author        users            @relation(fields: [author_id], references: [user_id])
+  category      blog_categories? @relation("blog_posts_in_category", fields: [category_id], references: [blog_categories_id])
+  tags          blog_tags[]      @relation("blog_posts_in_tag")
+}
+
+/// @namespace Drivers
+/// @namespace Regions
+/// @summary Municipalities and settlements with geojson and weather data, linked to drivers.
 model municipalities {
   municipalities_id     String                   @id @default(uuid()) @db.Uuid
   name                  String
@@ -844,22 +1049,8 @@ model municipalities {
   @@index([geom_generated], name: "municipalities_geom_generated_idx", type: Gist)
 }
 
-// moved: fiscal_devices -> transport module
-
-model driver_municipalities {
-  driver_municipalities_id String   @id @default(uuid()) @db.Uuid
-  driver_id                String   @db.Uuid
-  municipalities_id        String   @db.Uuid
-  created_at               DateTime @default(now()) @db.Timestamptz(6)
-  updated_at               DateTime @default(now()) @updatedAt @db.Timestamptz(6)
-
-  drivers        drivers        @relation(fields: [driver_id], references: [driver_id])
-  municipalities municipalities @relation(fields: [municipalities_id], references: [municipalities_id])
-
-  @@unique([driver_id, municipalities_id])
-  @@index([driver_id])
-}
-
+/// @namespace Regions
+/// @summary Settlements linked to municipalities with geojson and weather data.
 model settlements {
   settlement_id     String                   @id @default(uuid()) @db.Uuid
   name              String
@@ -879,6 +1070,8 @@ model settlements {
   @@index([geom_generated], name: "settlements_geom_generated_idx", type: Gist)
 }
 
+/// @namespace Regions
+/// @summary Weather data linked to municipalities and settlements.
 model weather_data {
   weather_data_id String   @id @default(uuid()) @db.Uuid
   time_epoch      BigInt
@@ -927,81 +1120,39 @@ model weather_data {
   @@index([municipalities_id, time])
 }
 
-model account_actions {
-  account_action_id      String   @id @unique @default(uuid()) @db.Uuid
-  business_id            String?  @db.Uuid
-  user_id                String?  @db.Uuid
-  created_at             DateTime @default(now()) @db.Timestamptz(6)
-  action_creator_user_id String   @db.Uuid
+/// @namespace MenuItems
+/// @namespace Services
+model tax_rates {
+  tax_rates_id String    @id @default(uuid()) @db.Uuid
+  name         String
+  description  String?
+  country      String?
+  rate         Float
+  active       Boolean   @default(true)
+  valid_from   DateTime  @db.Timestamptz(6)
+  created_at   DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at   DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+  activated_at DateTime? @db.Timestamptz(6)
 
-  reason ACCOUNT_ACTIONS_REASON
-  action ACCOUNT_ACTIONS
+  menu_items menu_items[]
+  service    service[]
 
-  business       business? @relation(fields: [business_id], references: [business_id])
-  user           users?    @relation("action_to_affected_user", fields: [user_id], references: [user_id])
-  action_creator users?    @relation("action_to_creator", fields: [action_creator_user_id], references: [user_id])
+  @@unique([name, rate, valid_from], name: "unique_tax_rate")
 }
 
-model payments {
-  payment_id        String         @id @default(uuid()) @db.Uuid
-  amount            Int
-  credits_amount    Int            @default(0)
-  payment_method    PAYMENT_METHOD
-  payment_intent_id String?        @unique
-  status            PAYMENT_STATUS @default(PENDING)
-  created_at        DateTime       @default(now()) @db.Timestamptz(6)
-  updated_at        DateTime       @default(now()) @updatedAt @db.Timestamptz(6)
-  order_type        String?
-  payment_type      String?
-
-  // For daily meals subscriptions
-  daily_meal_subscription_id String?                   @unique @db.Uuid
-  daily_meal_subscription    daily_meal_subscriptions? @relation("PaymentToDMSubscription", fields: [daily_meal_subscription_id], references: [id], onDelete: Cascade)
-
-  // delivery_order_id         String?                      @db.Uuid
-  // delivery_order            delivery_orders?             @relation(fields: [delivery_order_id], references: [order_id])
-  // taxi_order_id             String?                      @db.Uuid
-  // taxi_order                taxi_orders?                 @relation(fields: [taxi_order_id], references: [order_id])
-
-  user_id        String           @db.Uuid
-  user           users            @relation(fields: [user_id], references: [user_id])
-  payment_splits payment_splits[]
-
-  payment_transfer_groups payment_transfer_groups[] @relation("PaymentToTransferGroups")
+/// @summary Allergen master data.
+/// @namespace Menus
+/// @hidden
+model allergens {
+  allergen_id String  @id @default(uuid()) @db.Uuid
+  name        String
+  description String?
+  code        Int     @unique @db.SmallInt
 }
 
-model payment_splits {
-  payment_split_id          String                 @id @default(uuid()) @db.Uuid
-  status                    SPLIT_STATUS           @default(RESERVED)
-  type                      SPLIT_TYPE             @default(TRANSFER)
-  payment_id                String                 @db.Uuid
-  destination_type          SPLIT_DESTINATION_TYPE
-  destination_id            String?
-  payment_transfer_group_id String?                @db.Uuid
-  amount_regular            Int
-  amount_credits            Int                    @default(0)
-  metadata                  Json?
-  external_id               String?                @unique
-  created_at                DateTime               @default(now()) @db.Timestamptz(6)
-  updated_at                DateTime               @default(now()) @updatedAt @db.Timestamptz(6)
-
-  payment                payments                 @relation(fields: [payment_id], references: [payment_id], onDelete: Cascade)
-  payment_transfer_group payment_transfer_groups? @relation(fields: [payment_transfer_group_id], references: [payment_transfer_group_id], onDelete: Cascade)
-}
-
-model payment_transfer_groups {
-  payment_transfer_group_id String                @id @default(uuid()) @db.Uuid
-  status                    TRANSFER_GROUP_STATUS @default(PENDING)
-  type                      TRANSFER_GROUP_TYPE
-  amount                    Int
-  metadata                  Json?
-  payment_id                String                @db.Uuid
-
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
-
-  payment_splits payment_splits[]
-  payment        payments         @relation("PaymentToTransferGroups", fields: [payment_id], references: [payment_id], onDelete: Cascade)
+enum TRANSACTION_TYPE {
+  DEBIT
+  CREDIT
 }
 
 enum PAYMENT_METHOD {
@@ -1071,71 +1222,6 @@ enum DAILY_MEAL_INSTANCE_STATUS {
   DELIVERED
 }
 
-model blog_tags {
-  blog_tags_id String       @id @default(uuid()) @db.Uuid
-  name         String
-  description  String?
-  blog_posts   blog_posts[] @relation("blog_posts_in_tag")
-}
-
-model blog_categories {
-  blog_categories_id String       @id @default(uuid()) @db.Uuid
-  name               String
-  description        String?
-  blog_posts         blog_posts[] @relation("blog_posts_in_category")
-}
-
-model blog_posts {
-  blog_posts_id String           @id @default(uuid()) @db.Uuid
-  slug          String           @unique
-  title         String
-  short_content String?
-  image_file_id String?          @db.Uuid
-  image         files?           @relation(fields: [image_file_id], references: [file_id])
-  content       Json
-  status        BLOG_POST_STATUS @default(PUBLISHED)
-  author_id     String           @db.Uuid
-  category_id   String?          @db.Uuid
-  publish_at    DateTime         @default(now()) @db.Timestamptz(6)
-  created_at    DateTime         @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
-  author        users            @relation(fields: [author_id], references: [user_id])
-  category      blog_categories? @relation("blog_posts_in_category", fields: [category_id], references: [blog_categories_id])
-  tags          blog_tags[]      @relation("blog_posts_in_tag")
-}
-
-model menu_item_stock_change {
-  id           String           @id @default(uuid()) @db.Uuid
-  menu_item_id String           @db.Uuid
-  quantity     Float
-  reason       String
-  menu_item    menu_items       @relation(fields: [menu_item_id], references: [menu_item_id])
-  order_id     String?          @db.Uuid
-  order        delivery_orders? @relation(fields: [order_id], references: [order_id])
-  created_at   DateTime         @default(now())
-
-  // Table has postgresql trigger "update_menu_item_stock" to update menu_items stock after insert
-  @@unique([menu_item_id, order_id], name: "unique_menu_item_stock_change")
-}
-
-model tax_rates {
-  tax_rates_id String    @id @default(uuid()) @db.Uuid
-  name         String
-  description  String?
-  country      String?
-  rate         Float
-  active       Boolean   @default(true)
-  valid_from   DateTime  @db.Timestamptz(6)
-  created_at   DateTime  @default(now()) @db.Timestamptz(6)
-  updated_at   DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
-  activated_at DateTime? @db.Timestamptz(6)
-
-  menu_items menu_items[]
-  service    service[]
-
-  @@unique([name, rate, valid_from], name: "unique_tax_rate")
-}
-
 enum BLOG_POST_STATUS {
   DRAFT
   PUBLISHED
@@ -1189,7 +1275,6 @@ enum USER_ROLES {
   BUSINESS_USER
   PERSONAL
   DRIVER
-  DELIVERY_DRIVER
   DISPATCHER
 }
 
@@ -1331,12 +1416,6 @@ enum VEHICLE_CLASS {
   PRIVATE_DRIVER
 }
 
-enum GENDER {
-  MALE
-  FEMALE
-  OTHER
-}
-
 enum COMPANY_ROLE {
   DIRECTOR
   MANAGER
@@ -1452,4 +1531,10 @@ enum ANALYTICS_TYPE {
   ORDER_FINISH
   DAILY_MEAL_SUBSCRIPTION_START
   DAILY_MEAL_SUBSCRIPTION_CREATE
+}
+
+enum ADDRESS_TYPE {
+  HOME
+  WORK
+  OTHER
 }

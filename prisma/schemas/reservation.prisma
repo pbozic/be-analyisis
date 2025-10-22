@@ -7,6 +7,10 @@ enum BOOKING_STATUS {
 
 // --- MODELS ---
 
+/// @summary Reservation module root configuration for a business.
+/// @namespace Reservations
+///
+/// Holds locations, services, employees, customers, bookings and notification settings.
 model reservation_module {
   reservation_module_id           String         @id @default(uuid()) @db.Uuid
   public_link_hash                String?        @unique
@@ -38,8 +42,17 @@ model reservation_module {
   notification_preferences          notification_preference[]
   notification_provider_credentials notification_provider_credential[]
   notification_messages             notification_message[]
+
+  // Reviews linkage for Reservations module
+  reviewable_id String?     @db.Uuid
+  reviewable    reviewable? @relation(fields: [reviewable_id], references: [reviewable_id])
 }
 
+/// @summary Physical location accepting reservations.
+/// @namespace Reservations
+/// @namespace Locations
+///
+/// Defines address, phone, working days and online visibility for booking.
 model location {
   location_id           String             @id @default(uuid()) @db.Uuid
   reservation_module_id String             @db.Uuid
@@ -56,6 +69,9 @@ model location {
   address               addresses?         @relation(fields: [address_id], references: [address_id])
 }
 
+/// @summary Category of services (supports hierarchy and translations).
+/// @namespace Reservations
+/// @namespace Services
 model service_category {
   service_category_id   String             @id @default(uuid()) @db.Uuid
   reservation_module_id String             @db.Uuid
@@ -68,6 +84,9 @@ model service_category {
   reservation_module    reservation_module @relation(fields: [reservation_module_id], references: [reservation_module_id])
 }
 
+/// @summary Bookable service with pricing and duration.
+/// @namespace Reservations
+/// @namespace Services
 model service {
   service_id            String   @id @default(uuid()) @db.Uuid
   reservation_module_id String   @db.Uuid
@@ -91,6 +110,9 @@ model service {
   tax_rate           tax_rates?           @relation(fields: [tax_rate_id], references: [tax_rates_id])
 }
 
+/// @summary Staff member performing services.
+/// @namespace Reservations
+/// @namespace Services
 model employee {
   employee_id           String               @id @default(uuid()) @db.Uuid
   reservation_module_id String               @db.Uuid
@@ -111,6 +133,9 @@ model employee {
   schedule_slots        schedule_slot[]
 }
 
+/// @summary Customer tracked by a reservation module.
+/// @namespace Reservations
+/// @namespace Bookings
 model customers {
   customer_id           String   @id @default(uuid()) @db.Uuid
   reservation_module_id String   @db.Uuid
@@ -132,6 +157,10 @@ model customers {
   @@unique([code])
 }
 
+/// @summary Assignment binding an employee to a service.
+/// @namespace Reservations
+/// @namespace Services
+/// @hidden
 model service_assignment {
   employee_id String @db.Uuid
   service_id  String @db.Uuid
@@ -142,6 +171,9 @@ model service_assignment {
   @@id([employee_id, service_id])
 }
 
+/// @summary Schedule template for a location (and indirectly employees).
+/// @namespace Reservations
+/// @namespace Schedules
 model schedule {
   schedule_id        String              @id @default(uuid()) @db.Uuid
   location_id        String              @db.Uuid
@@ -156,6 +188,10 @@ model schedule {
   schedule_slots     schedule_slot[]
 }
 
+/// @summary Employee inclusion into a schedule.
+/// @namespace Reservations
+/// @namespace Schedules
+/// @hidden
 model schedule_employee {
   schedule_employee_id String @id @default(uuid()) @db.Uuid
   schedule_id          String @db.Uuid
@@ -166,6 +202,9 @@ model schedule_employee {
   schedule_slots schedule_slot[]
 }
 
+/// @summary Bookable time slot within a schedule and employee assignment.
+/// @namespace Reservations
+/// @namespace Schedules
 model schedule_slot {
   schedule_slot_id     String   @id @default(uuid()) @db.Uuid
   schedule_id          String   @db.Uuid
@@ -195,6 +234,9 @@ enum SCHEDULE_SLOT_EXCEPTION_TYPE {
   lunch
 }
 
+/// @summary Exceptions to availability (vacation, closed, health, etc.).
+/// @namespace Reservations
+/// @namespace Schedules
 model schedule_slot_exceptions {
   schedule_slot_exception_id String                       @id @default(uuid()) @db.Uuid
   schedule_slot_id           String                       @db.Uuid
@@ -208,6 +250,9 @@ model schedule_slot_exceptions {
   @@unique([schedule_slot_id, date, start_time, end_time, type], name: "unique_schedule_slot")
 }
 
+/// @summary Granular booking slots linked to schedule slots.
+/// @namespace Reservations
+/// @namespace Schedules
 model booking_slots {
   booking_slot_id  String @id @default(uuid()) @db.Uuid
   schedule_slot_id String @db.Uuid
@@ -217,6 +262,9 @@ model booking_slots {
   end_time      DateTime // End time of the booking slot, e.g. 2023-10-01T10:00:00Z
 }
 
+/// @summary Booking record connecting a customer, service and schedule.
+/// @namespace Reservations
+/// @namespace Bookings
 model booking {
   booking_id            String                @id @default(uuid()) @db.Uuid
   customer_id           String                @db.Uuid
@@ -245,6 +293,9 @@ model booking {
   booking_history_log   booking_history_log[]
 }
 
+/// @summary Audit trail of booking status changes and actions.
+/// @namespace Reservations
+/// @namespace Bookings
 model booking_history_log {
   booking_history_id String         @id @default(uuid()) @db.Uuid
   booking_id         String         @db.Uuid

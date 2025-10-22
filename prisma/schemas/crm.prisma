@@ -1,5 +1,10 @@
 // CRM module for non-partnered business accounts
 
+/// @summary CRM module for non-partnered business accounts.
+/// @namespace CRM
+///
+/// Holds configuration for businesses using CRM features without being full platform partners.
+/// Links to client contacts and internal teams.
 model crm_module {
     crm_module_id               String   @id @default(uuid()) @db.Uuid
     business_id                 String   @unique @db.Uuid
@@ -12,6 +17,13 @@ model crm_module {
     business_teams   business_teams[]
 }
 
+/// @summary Client contacts managed by a CRM module.
+/// @namespace CRM
+/// @namespace TaxiOrders
+/// @namespace DeliveryOrders
+///
+/// Represents end customers of a business using CRM. Telephone is unique per CRM module
+/// to avoid duplicate client records within the same business context.
 model business_clients {
     business_clients_id String     @id @default(uuid()) @db.Uuid
     created_at          DateTime   @default(now()) @db.Timestamptz(6)
@@ -30,9 +42,13 @@ model business_clients {
     @@unique([telephone, crm_module_id], name: "uniqueBusinessClient")
 }
 
+/// @summary Internal teams/groups within a CRM module.
+/// @namespace CRM
+///
+/// Used to organize users into teams with optional per-person limits for purchases or actions.
 model business_teams {
     business_teams_id String   @id @default(uuid()) @db.Uuid
-    team_name         String   @unique
+    team_name         String
     crm_module_id     String   @db.Uuid
     limit_per_person  Float
     created_at        DateTime @default(now()) @db.Timestamptz(6)
@@ -40,4 +56,7 @@ model business_teams {
 
     users      users[]    @relation("user_to_business_team")
     crm_module crm_module @relation(fields: [crm_module_id], references: [crm_module_id])
+
+    @@unique([team_name, crm_module_id], name: "uniqueTeamPerCrmModule")
+    @@index([crm_module_id])
 }

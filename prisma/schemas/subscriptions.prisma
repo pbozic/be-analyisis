@@ -7,82 +7,100 @@ enum MODULE_TYPE {
 }
 
 // --- SUBSCRIPTION + ADDON SYSTEM ---
+/// @summary Subscription bundle of actions for a module.
+/// @namespace Subscriptions
+///
+/// Commercial package defining permitted actions and their limits for a module.
 model action_bundle {
   action_bundle_id  String                 @id @default(uuid()) @db.Uuid
-  module           MODULE_TYPE
-  name             String @unique
-  price_cents      Int
-  stripe_price_id  String
-  stripe_product_id  String
-  actions          action_bundle_action[]
-  business_modules reservation_module[]
+  module            MODULE_TYPE
+  name              String                 @unique
+  price_cents       Int
+  stripe_price_id   String
+  stripe_product_id String
+  actions           action_bundle_action[]
+  business_modules  reservation_module[]
 }
 
+/// @summary Add-on product extending a module with extra actions.
+/// @namespace Subscriptions
 model addon {
-  addon_id         String             @id @default(uuid()) @db.Uuid
-  module           MODULE_TYPE
-  name             String @unique
-  price_cents      Int
-  stripe_price_id  String
-  stripe_product_id  String
-  actions          addon_action[]
-  business_addons  business_addon[]
+  addon_id          String           @id @default(uuid()) @db.Uuid
+  module            MODULE_TYPE
+  name              String           @unique
+  price_cents       Int
+  stripe_price_id   String
+  stripe_product_id String
+  actions           addon_action[]
+  business_addons   business_addon[]
 }
 
+/// @summary Atomic permissionable capability within a module.
+/// @namespace Subscriptions
 model action {
-  action_id             String       @id @default(uuid()) @db.Uuid
+  action_id             String                 @id @default(uuid()) @db.Uuid
   module                MODULE_TYPE
-  name                  String       @unique
-  action_bundle_actions  action_bundle_action[]
+  name                  String                 @unique
+  action_bundle_actions action_bundle_action[]
   addon_actions         addon_action[]
   business_usages       business_usage[]
   permissions           permission[]
   user_permissions      user_permission[]
 }
 
+/// @summary Pairing between an action bundle and an action with optional limit.
+/// @namespace Subscriptions
+/// @hidden
 model action_bundle_action {
-  action_bundle_action_id               String        @id @default(uuid()) @db.Uuid
-  action_bundle_id  String   @db.Uuid
-  action_id        String    @db.Uuid
-  module           MODULE_TYPE
-  limit            Int?          // null = unlimited
+  action_bundle_action_id String      @id @default(uuid()) @db.Uuid
+  action_bundle_id        String      @db.Uuid
+  action_id               String      @db.Uuid
+  module                  MODULE_TYPE
+  limit                   Int? // null = unlimited
 
-  action_bundle     action_bundle  @relation(fields: [action_bundle_id], references: [action_bundle_id])
-  action           action        @relation(fields: [action_id], references: [action_id])
+  action_bundle action_bundle @relation(fields: [action_bundle_id], references: [action_bundle_id])
+  action        action        @relation(fields: [action_id], references: [action_id])
 }
 
+/// @summary Pairing between an add-on and an action with optional limit.
+/// @namespace Subscriptions
+/// @hidden
 model addon_action {
-  addon_action_id         String   @id @default(uuid()) @db.Uuid
-  addon_id   String    @db.Uuid
-  action_id  String    @db.Uuid
-  module     MODULE_TYPE
-  limit      Int?
+  addon_action_id String      @id @default(uuid()) @db.Uuid
+  addon_id        String      @db.Uuid
+  action_id       String      @db.Uuid
+  module          MODULE_TYPE
+  limit           Int?
 
-  addon      addon    @relation(fields: [addon_id], references: [addon_id])
-  action     action   @relation(fields: [action_id], references: [action_id])
+  addon  addon  @relation(fields: [addon_id], references: [addon_id])
+  action action @relation(fields: [action_id], references: [action_id])
 }
 
+/// @summary Purchased add-ons per business/module.
+/// @namespace Subscriptions
 model business_addon {
-  business_addon_id     String   @id @default(uuid()) @db.Uuid
-  addon_id              String   @db.Uuid
-  reservation_module_id String?   @db.Uuid
+  business_addon_id     String  @id @default(uuid()) @db.Uuid
+  addon_id              String  @db.Uuid
+  reservation_module_id String? @db.Uuid
   sms_module_id         String?
   ads_module_id         String?
-  quantity             Int      @default(1)
+  quantity              Int     @default(1)
 
-  addon                 addon               @relation(fields: [addon_id], references: [addon_id])
-  reservation_module    reservation_module? @relation(fields: [reservation_module_id], references: [reservation_module_id])
+  addon              addon               @relation(fields: [addon_id], references: [addon_id])
+  reservation_module reservation_module? @relation(fields: [reservation_module_id], references: [reservation_module_id])
+
   @@unique([addon_id, reservation_module_id], name: "business_addon_connection")
 }
 
+/// @summary Usage counters of actions for a business/module.
+/// @namespace Subscriptions
 model business_usage {
-  business_usage_id     String   @id @default(uuid()) @db.Uuid
-  action_id             String   @db.Uuid
+  business_usage_id     String    @id @default(uuid()) @db.Uuid
+  action_id             String    @db.Uuid
   used                  Int
   reset_date            DateTime?
-  reservation_module_id String? @db.Uuid
+  reservation_module_id String?   @db.Uuid
 
-  action                action             @relation(fields: [action_id], references: [action_id])
-  reservation_module   reservation_module? @relation(fields: [reservation_module_id], references: [reservation_module_id])
-
+  action             action              @relation(fields: [action_id], references: [action_id])
+  reservation_module reservation_module? @relation(fields: [reservation_module_id], references: [reservation_module_id])
 }

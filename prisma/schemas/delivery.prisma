@@ -1,3 +1,8 @@
+/// @summary Storefront settings for a business (Delivery module).
+/// @namespace Delivery
+/// @namespace Stores
+///
+/// Holds store configuration, delivery address, menus and order lobbies.
 model stores {
     stores_id                String                     @id @default(uuid()) @db.Uuid
     business_id              String                     @unique @db.Uuid
@@ -5,6 +10,9 @@ model stores {
     settings                 Json?
     created_at               DateTime                   @default(now()) @db.Timestamptz(6)
     updated_at               DateTime                   @default(now()) @updatedAt @db.Timestamptz(6)
+    // Reviews linkage for Stores submodule
+    reviewable_id            String?                    @db.Uuid
+    reviewable               reviewable?                @relation(fields: [reviewable_id], references: [reviewable_id])
     business_local_locations business_local_locations[]
     business                 business                   @relation(fields: [business_id], references: [business_id])
     delivery_address_id      String?                    @db.Uuid
@@ -13,8 +21,15 @@ model stores {
     minimum_order            Int                        @default(0)
     menus                    menus[]
     order_lobbies            order_lobbies[]
+
+    late_events late_events[] @relation("late_events_to_stores")
 }
 
+/// @summary Food & drinks configuration for a business (Delivery module).
+/// @namespace Delivery
+/// @namespace FoodDrinks
+///
+/// Controls restaurant state, delivery address and restaurant/table reservations.
 model food_drinks {
     food_drinks_id String   @id @default(uuid()) @db.Uuid
     business_id    String   @unique @db.Uuid
@@ -22,6 +37,10 @@ model food_drinks {
     settings       Json?
     created_at     DateTime @default(now()) @db.Timestamptz(6)
     updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    // Reviews linkage for Food & Drinks submodule
+    reviewable_id String?     @db.Uuid
+    reviewable    reviewable? @relation(fields: [reviewable_id], references: [reviewable_id])
 
     restaurant_overwhelmed Boolean           @default(false)
     business               business          @relation(fields: [business_id], references: [business_id])
@@ -36,11 +55,18 @@ model food_drinks {
     reservations reservations[]
     seats        Int?
 
-    daily_meals_id String?      @db.Uuid
-    daily_meals    daily_meals?
+    daily_meals_id String?             @db.Uuid
+    daily_meals    daily_meals_module?
+
+    late_events late_events[] @relation("late_events_to_food_drinks")
 }
 
-model daily_meals {
+/// @summary Daily meals configuration and scheduling.
+/// @namespace FoodDrinks
+/// @namespace DailyMeals
+///
+/// Defines daily meal program with categories, drivers and subscriptions.
+model daily_meals_module {
     daily_meals_id                  String                     @id @default(uuid()) @db.Uuid
     food_drinks_id                  String                     @unique @db.Uuid
     food_drinks                     food_drinks                @relation(fields: [food_drinks_id], references: [food_drinks_id])
@@ -49,12 +75,29 @@ model daily_meals {
     maximum_daily_meals_subscribers Int?
     daily_users_sorted              Json?                      @default("[]")
     daily_users_sorting_type        SORTING_TYPE               @default(AUTOMATIC)
-    daily_meal_drivers              drivers[]
+    daily_meal_drivers              daily_meals_drivers[]
     daily_meal_categories           daily_meal_categories[]
     daily_meal_subscriptions        daily_meal_subscriptions[]
 }
 
-// Business-local-locations are used for pickup/delivery context and belong to the delivery module
+model daily_meals_drivers {
+    id             String   @id @default(uuid()) @db.Uuid
+    daily_meals_id String   @db.Uuid
+    driver_id      String   @db.Uuid
+    created_at     DateTime @default(now()) @db.Timestamptz(6)
+    updated_at     DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    daily_meals daily_meals_module @relation(fields: [daily_meals_id], references: [daily_meals_id])
+    driver      drivers            @relation(fields: [driver_id], references: [driver_id])
+
+    @@unique([daily_meals_id, driver_id])
+    @@index([driver_id])
+}
+
+/// @summary Business-local locations for pickup/delivery windows.
+/// @namespace Stores
+///
+/// Defines time-based local pickup/delivery points bound to a store location.
 model business_local_locations {
     business_local_location_id String   @id @default(uuid()) @db.Uuid
     stores_id                  String   @db.Uuid
@@ -70,6 +113,10 @@ model business_local_locations {
     @@unique([stores_id, local_location_id, time], name: "uniqueBusinessLocalLocation")
 }
 
+/// @summary Geocoded local locations linked to addresses.
+/// @namespace Stores
+///
+/// Unique wrapper over an address used for local pickup/delivery points.
 model local_locations {
     local_location_id String   @id @default(uuid()) @db.Uuid
     address_id        String   @db.Uuid
@@ -82,6 +129,11 @@ model local_locations {
     @@unique([address_id], name: "uniqueLocalLocation")
 }
 
+/// @summary Catalog categories (shared across menus/promo/words).
+/// @namespace Menus
+/// @namespace DailyMeals
+///
+/// Hierarchical categories with translatable labels and optional icon.
 model categories {
     categories_id        String                       @id @default(uuid()) @db.Uuid
     name                 String
@@ -107,6 +159,8 @@ model categories {
     @@unique([tag, category_type])
 }
 
+/// @summary Pair table linking menu categories to catalog categories.
+/// @hidden
 model menu_categories_categories {
     menu_categories_id String          @db.Uuid
     categories_id      String          @db.Uuid
@@ -116,13 +170,10 @@ model menu_categories_categories {
     @@id([menu_categories_id, categories_id])
 }
 
-model allergens {
-    allergen_id String  @id @default(uuid()) @db.Uuid
-    name        String
-    description String?
-    code        Int     @unique @db.SmallInt
-}
-
+/// @summary Menu header for a store or food_drinks venue.
+/// @namespace Menus
+///
+/// A menu can be daily (isDailyMeal with date) and groups menu categories.
 model menus {
     menu_id                 String            @id @default(uuid()) @db.Uuid
     stores_id               String?           @db.Uuid
@@ -138,6 +189,10 @@ model menus {
     @@unique([menu_id])
 }
 
+/// @summary Group of menu items with optional price and ordering.
+/// @namespace Menus
+///
+/// Links to business and optionally to a daily meal category/price.
 model menu_categories {
     menu_category_id           String                       @id @default(uuid()) @db.Uuid
     names                      Json? // l10n names
@@ -162,6 +217,11 @@ model menu_categories {
     @@unique([menu_category_id])
 }
 
+/// @summary Sellable dish/product with pricing and attributes.
+/// @namespace Menus
+/// @namespace MenuItems
+///
+/// Includes allergens, ingredients, stock and tax rate. Documents can be attached.
 model menu_items {
     menu_item_id              String                   @id @default(uuid()) @db.Uuid
     names                     Json // l10n names
@@ -172,15 +232,16 @@ model menu_items {
     unit_size                 String?
     price                     Float                    @default(0)
     discount                  Float?
-    sides                     String[] // Optional, for sides
-    extras                    String[] // Optional, for extras, inside are menu_ids
+    sides                     String[] // Replace with options
+    extras                    String[] // Replace with options
     ingredients               Json // Includes allergen and multilingual names
     availability              String[] // Array of availability -> ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"]
     business_id               String                   @db.Uuid
     menu_category_id          String?                  @db.Uuid
     daily_date                DateTime?                @db.Timestamptz(6)
     menu_category             menu_categories?         @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id], onDelete: Cascade)
-    documents                 documents[]
+    file_id                   String?                  @db.Uuid
+    file                      files?
     requires_id_check         Boolean                  @default(false)
     is_enabled                Boolean                  @default(true)
     is_copy                   Boolean                  @default(false)
@@ -194,6 +255,9 @@ model menu_items {
     weight_quantity           Float? // Quantity for weighted items
     stock                     Float?                   @default(1) // Stock for the item, if applicable 
     stock_movements           menu_item_stock_change[]
+    line_items                line_items[]
+    latest_version_id         String?                  @db.Uuid
+    versions                  menu_item_versions[]
 
     tax_rates_id String?    @db.Uuid
     tax_rate     tax_rates? @relation(fields: [tax_rates_id], references: [tax_rates_id])
@@ -201,6 +265,68 @@ model menu_items {
     @@unique([menu_item_id])
 }
 
+/// @summary Individual items within an order, including sides/extras and replacements.
+/// @namespace MenuItems
+/// @namespace DeliveryOrders
+model line_items {
+    line_item_id         String             @id @default(uuid()) @db.Uuid
+    menu_item_id         String             @db.Uuid
+    menu_item_version_id String             @db.Uuid
+    order_id             String             @db.Uuid
+    quantity             Int
+    comment              String?
+    menu_item            menu_items         @relation(fields: [menu_item_id], references: [menu_item_id])
+    menu_item_version    menu_item_versions @relation(fields: [menu_item_version_id], references: [menu_item_version_id])
+    order                delivery_orders    @relation(fields: [order_id], references: [order_id])
+    replacement_id       String?            @db.Uuid
+    replacement          line_items?        @relation("line_item_replacement")
+    replaces_id          String?            @unique @db.Uuid
+    replaces             line_items?        @relation("line_item_replacement", fields: [replaces_id], references: [line_item_id])
+    parent_side_id       String?            @db.Uuid
+    parent_side          line_items?        @relation("line_item_sides", fields: [parent_side_id], references: [line_item_id])
+    parent_extra_id      String?            @db.Uuid
+    parent_extra         line_items?        @relation("line_item_extras", fields: [parent_extra_id], references: [line_item_id])
+    sides                line_items[]       @relation("line_item_sides")
+    extras               line_items[]       @relation("line_item_extras")
+    removed              Boolean            @default(false)
+}
+
+/// @summary Snapshot of a menu item at a specific version.
+/// @namespace MenuItems
+///
+/// Stores the state of a menu item whenever it changes, to preserve order accuracy over time.
+model menu_item_versions {
+    menu_item_version_id String   @id @default(uuid()) @db.Uuid
+    menu_item_id         String   @db.Uuid
+    version              Int
+    snapshot             Json // Snapshot of menu_item fields at this version
+    created_at           DateTime @default(now()) @db.Timestamptz(6)
+
+    menu_item  menu_items   @relation(fields: [menu_item_id], references: [menu_item_id], onDelete: Cascade)
+    line_items line_items[]
+
+    @@unique([menu_item_id, version], name: "uniqueMenuItemVersion")
+    @@index([menu_item_id])
+}
+
+/// @summary Records changes in stock levels for menu items.
+/// @namespace MenuItems
+model menu_item_stock_change {
+    id           String           @id @default(uuid()) @db.Uuid
+    menu_item_id String           @db.Uuid
+    quantity     Float
+    reason       String
+    menu_item    menu_items       @relation(fields: [menu_item_id], references: [menu_item_id])
+    order_id     String?          @db.Uuid
+    order        delivery_orders? @relation(fields: [order_id], references: [order_id])
+    created_at   DateTime         @default(now())
+
+    // Table has postgresql trigger "update_menu_item_stock" to update menu_items stock after insert
+    @@unique([menu_item_id, order_id], name: "unique_menu_item_stock_change")
+}
+
+/// @summary Table/restaurant reservation for a food_drinks venue.
+/// @namespace FoodDrinks
 model reservations {
     reservation_id String             @id @default(uuid()) @db.Uuid
     seats          Int
@@ -217,6 +343,8 @@ model reservations {
     table          Int?
 }
 
+/// @summary Subscription to the daily meals program for a user.
+/// @namespace DailyMeals
 model daily_meal_subscriptions {
     id                  String              @id @default(uuid()) @db.Uuid
     user_id             String              @db.Uuid
@@ -235,7 +363,7 @@ model daily_meal_subscriptions {
     user                 users                               @relation(fields: [user_id], references: [user_id])
     driver               drivers?                            @relation(fields: [driver_id], references: [driver_id])
     delivery_address     addresses                           @relation(fields: [delivery_address_id], references: [address_id])
-    daily_meals          daily_meals                         @relation(fields: [daily_meals_id], references: [daily_meals_id])
+    daily_meals          daily_meals_module                  @relation(fields: [daily_meals_id], references: [daily_meals_id])
     customers            daily_meal_subscription_customers[]
     days                 daily_meal_subscription_days[]
     weekdays             daily_meal_subscription_weekdays[]
@@ -244,6 +372,8 @@ model daily_meal_subscriptions {
     promo_analytics      promo_analytics[]
 }
 
+/// @summary Customers attached to a daily meal subscription.
+/// @namespace DailyMeals
 model daily_meal_subscription_customers {
     id                           String  @id @default(uuid()) @db.Uuid
     subscription_id              String  @db.Uuid
@@ -263,6 +393,8 @@ model daily_meal_subscription_customers {
     daily_meal_category_price daily_meal_category_prices @relation(fields: [daily_meal_category_price_id], references: [daily_meal_category_prices_id])
 }
 
+/// @summary Concrete delivery days for a subscription (intended vs delivered).
+/// @namespace DailyMeals
 model daily_meal_subscription_days {
     id              String   @id @default(uuid()) @db.Uuid
     subscription_id String   @db.Uuid
@@ -276,6 +408,8 @@ model daily_meal_subscription_days {
     @@index([intended_date])
 }
 
+/// @summary Weekly schedule for subscription deliveries (weekday mapping).
+/// @namespace DailyMeals
 model daily_meal_subscription_weekdays {
     id               String @id @default(uuid()) @db.Uuid
     subscription_id  String @db.Uuid
@@ -289,6 +423,8 @@ model daily_meal_subscription_weekdays {
     @@index([delivery_weekday])
 }
 
+/// @summary Generated meal instances per customer and menu category.
+/// @namespace DailyMeals
 model daily_meal_instances {
     id                           String                     @id @default(uuid()) @db.Uuid
     subscription_id              String                     @db.Uuid
@@ -313,6 +449,8 @@ model daily_meal_instances {
     @@index([status])
 }
 
+/// @summary Category selection for a daily meals program with validity.
+/// @namespace DailyMeals
 model daily_meal_categories {
     daily_meal_category_id String @id @default(uuid()) @db.Uuid
     daily_meals_id         String @db.Uuid
@@ -323,13 +461,15 @@ model daily_meal_categories {
     active     Boolean  @default(true)
 
     category                          categories                          @relation(fields: [category_id], references: [categories_id], onDelete: Cascade)
-    daily_meals                       daily_meals                         @relation(fields: [daily_meals_id], references: [daily_meals_id], onDelete: Cascade)
+    daily_meals                       daily_meals_module                  @relation(fields: [daily_meals_id], references: [daily_meals_id], onDelete: Cascade)
     menu_categories                   menu_categories[]                   @relation("daily_meal_categories_to_menu_categories")
     daily_meal_subscription_customers daily_meal_subscription_customers[]
 
     daily_meal_category_prices daily_meal_category_prices[]
 }
 
+/// @summary Price history for a daily meal category.
+/// @namespace DailyMeals
 model daily_meal_category_prices {
     daily_meal_category_prices_id String   @id @default(uuid()) @db.Uuid
     daily_meal_category_id        String   @db.Uuid
@@ -346,6 +486,10 @@ model daily_meal_category_prices {
     daily_meal_subscription_customers daily_meal_subscription_customers[]
 }
 
+/// @summary Group ordering lobbies for coordinated deliveries.
+/// @namespace Stores
+/// @namespace FoodDrinks
+/// @namespace OrderLobbies
 model order_lobbies {
     order_lobbies_id   String   @id @default(uuid()) @db.Uuid
     lobby_name         String
@@ -369,6 +513,8 @@ model order_lobbies {
     // restaurant      business @relation("restaurant_to_lobby",fields: [restaurant_id],references: [business_id])
 }
 
+/// @summary Items added by users into an order lobby.
+/// @namespace OrderLobbies
 model order_lobby_items {
     order_lobby_items_id String   @id @default(uuid()) @db.Uuid
     order_lobbies_id     String   @db.Uuid
@@ -385,6 +531,8 @@ model order_lobby_items {
     order_lobbies order_lobbies @relation("item_to_lobby", fields: [order_lobbies_id], references: [order_lobbies_id])
 }
 
+/// @summary Users participating in an order lobby with spending limits.
+/// @namespace OrderLobbies
 model order_lobby_users {
     order_lobby_users_id String   @id @default(uuid()) @db.Uuid
     user_id              String   @db.Uuid
@@ -397,4 +545,11 @@ model order_lobby_users {
     users         users         @relation("user_to_OL_user", fields: [user_id], references: [user_id])
 
     @@unique([user_id, order_lobbies_id])
+}
+
+enum LINE_ITEM_FLAGS {
+    NONE
+    EDITED
+    REMOVED
+    REPLACED
 }

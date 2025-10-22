@@ -1,3 +1,7 @@
+/// @summary Transport module root for a business.
+/// @namespace Transport
+///
+/// Hosts drivers, vehicles and orders (taxi/delivery) for the business.
 model transport_module {
     transport_module_id String   @id @default(uuid()) @db.Uuid
     business_id         String   @unique @db.Uuid
@@ -5,12 +9,19 @@ model transport_module {
     updated_at          DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
     business        business          @relation(fields: [business_id], references: [business_id])
+    // Reviews linkage for transport module
+    reviewable_id   String?           @db.Uuid
+    reviewable      reviewable?       @relation(fields: [reviewable_id], references: [reviewable_id])
     taxi_orders     taxi_orders[]
     delivery_orders delivery_orders[]
     drivers         drivers[]
     vehicles        vehicles[]
+
+    business_premises business_premise[]
 }
 
+/// @summary Global settings for driver activity and lockouts.
+/// @namespace Drivers
 model driver_activity_settings {
     driver_activity_settings_id String   @id @default(uuid()) @db.Uuid
     first_offline_lockout       Int      @default(30) // Default 30 minutes
@@ -21,6 +32,8 @@ model driver_activity_settings {
     active                      Boolean  @default(true)
 }
 
+/// @summary Timeline of a driver's activities and timeouts.
+/// @namespace Drivers
 model driver_activity_logs {
     driver_activity_log_id String        @id @default(uuid()) @db.Uuid
     driver_id              String        @db.Uuid
@@ -37,6 +50,48 @@ model driver_activity_logs {
     @@index([ended_at])
 }
 
+/// @summary Historical location records for drivers during orders.
+/// @namespace Drivers
+model driver_history_locations {
+    driver_history_location_id String           @id @default(uuid()) @db.Uuid
+    driver_id                  String           @db.Uuid
+    taxi_order_id              String?          @db.Uuid
+    delivery_order_id          String?          @db.Uuid
+    status                     String?
+    location                   Json?
+    driver                     drivers?         @relation(fields: [driver_id], references: [driver_id])
+    order                      taxi_orders?     @relation(fields: [taxi_order_id], references: [order_id], onDelete: Cascade)
+    delivery_order             delivery_orders? @relation(fields: [delivery_order_id], references: [order_id], onDelete: Cascade)
+    created_at                 DateTime         @default(now()) @db.Timestamptz(6)
+    updated_at                 DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
+}
+
+/// @summary Junction table linking drivers to municipalities they operate in.
+/// @namespace Drivers
+/// @namespace Regions
+/// @hidden
+model driver_municipalities {
+    driver_municipalities_id String   @id @default(uuid()) @db.Uuid
+    driver_id                String   @db.Uuid
+    municipalities_id        String   @db.Uuid
+    created_at               DateTime @default(now()) @db.Timestamptz(6)
+    updated_at               DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+
+    drivers        drivers        @relation(fields: [driver_id], references: [driver_id])
+    municipalities municipalities @relation(fields: [municipalities_id], references: [municipalities_id])
+
+    @@unique([driver_id, municipalities_id])
+    @@index([driver_id])
+}
+
+/// @summary Driver entity linked to a user and (optionally) a transport module.
+/// @namespace Transport
+/// @namespace Drivers
+/// @namespace TaxiOrders
+/// @namespace DeliveryOrders
+/// @namespace DailyMeals
+///
+/// Tracks online state, capabilities, documents, orders and current vehicle.
 model drivers {
     driver_id                 String                     @id @default(uuid()) @db.Uuid
     transport_module_id       String?                    @db.Uuid
@@ -79,14 +134,21 @@ model drivers {
     transport_module          transport_module?          @relation(fields: [transport_module_id], references: [transport_module_id])
 
     daily_meals_id        String?                    @db.Uuid
-    daily_meals           daily_meals[]
+    daily_meals           daily_meals_drivers[]
     delivers_daily_meals  Boolean?                   @default(false)
     on_daily_meals        Boolean?                   @default(false)
     scheduled_meals_route Json?                      @default("[]")
     subscriptions         daily_meal_subscriptions[]
     vehicle_type          VEHICLE_TYPE?
+    reviewable_id         String?                    @db.Uuid
+    reviewable            reviewable?                @relation(fields: [reviewable_id], references: [reviewable_id])
+    late_events           late_events[]              @relation("late_events_to_driver")
 }
 
+/// @summary Pairing of a driver to a vehicle with drive permission.
+/// @namespace Drivers
+/// @namespace Vehicles
+/// @hidden
 model vehicle_drivers {
     vehicle_drivers_id String   @id @unique @default(uuid()) @db.Uuid
     vehicle_id         String   @db.Uuid
@@ -102,6 +164,11 @@ model vehicle_drivers {
     @@index([vehicle_id, can_drive])
 }
 
+/// @summary Vehicle entity with class/category, documents and invoice relations.
+/// @namespace Transport
+/// @namespace Vehicles
+/// @namespace TaxiOrders
+/// @namespace DeliveryOrders
 model vehicles {
     vehicle_id               String                  @id @unique @default(uuid()) @db.Uuid
     transport_module_id      String?                 @db.Uuid
@@ -127,6 +194,8 @@ model vehicles {
     transport_module         transport_module?       @relation(fields: [transport_module_id], references: [transport_module_id])
 }
 
+/// @summary Canonical vehicle specification presets (pricing/capacity).
+/// @namespace Vehicles
 model vehicle_specifications {
     vehicle_specification_id String           @id @unique @default(uuid()) @db.Uuid
     class                    VEHICLE_CLASS

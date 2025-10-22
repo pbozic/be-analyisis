@@ -4,12 +4,29 @@ enum PERMISSION_SCOPE {
   USER
 }
 
+/// @summary End user account with profile, preferences and relations.
+/// @namespace Users
+/// @namespace FamilyUsers
+/// @namespace BusinessUsers
+/// @namespace CRM
+/// @namespace Drivers
+/// @namespace TaxiOrders
+/// @namespace DeliveryOrders
+/// @namespace OrderLobbies
+/// @namespace DailyMeals
+/// @namespace Referral
+/// @namespace Cashback
+/// @namespace Wallet
+/// @namespace Payments
+/// @namespace LostItems
+/// @namespace Blog
+///
+/// Central user entity linking to roles, orders, documents, wallets and analytics.
 model users {
   user_id                                String               @id @unique @default(uuid()) @db.Uuid
   first_name                             String?
   last_name                              String?
   password                               String
-  gender                                 GENDER?
   email                                  String?
   telephone                              String               @unique
   telephone_code                         String
@@ -27,7 +44,8 @@ model users {
   business_users                         business_users[]
   driver                                 drivers?
   orders                                 taxi_orders[]
-  documents                              documents[]
+  profile_picture_id                     String?              @unique @db.Uuid
+  profile_picture                        files?
   delivery_orders                        delivery_orders[]
   reviewable_id                          String?              @db.Uuid
   reviewable                             reviewable?          @relation(fields: [reviewable_id], references: [reviewable_id])
@@ -45,7 +63,7 @@ model users {
   subscribed_to_daily_meals              Boolean              @default(false)
   daily_meal_preferences                 Json?
   details                                Json?
-  flag_changes                           flag_history[]
+  // flag_changes                           flag_history[] TODO: What is this???
   taxi_push_notification_preferences     Json?
   transfer_push_notification_preferences Json?
   delivery_push_notification_preferences Json?
@@ -66,6 +84,8 @@ model users {
   //credits                                credits[]
   cashback                               cashback[]
   activated_at                           DateTime?
+  deactivated_at                         DateTime?
+  deactivated                            Boolean              @default(false)
   business_teams_id                      String?              @db.Uuid
   business_teams                         business_teams?      @relation("user_to_business_team", fields: [business_teams_id], references: [business_teams_id])
   order_lobby_users                      order_lobby_users[]  @relation("user_to_OL_user")
@@ -76,8 +96,6 @@ model users {
 
   user_favorite_businesses user_favorite_businesses[] @relation("user_favorite_businesses_to_user")
   scoring_points           scoring_points[]           @relation("scoring_points_to_user")
-
-  late_events late_events[] @relation("late_events_to_user")
 
   account_actions         account_actions[] @relation("action_to_affected_user")
   created_account_actions account_actions[] @relation("action_to_creator")
@@ -94,6 +112,8 @@ model users {
   user_permissions    user_permission[]
 }
 
+/// @summary User role assignments (simple historical list, not RBAC).
+/// @namespace Users
 model user_roles {
   user_roles_id String     @id @unique @default(uuid()) @db.Uuid
   user_id       String     @db.Uuid
@@ -102,6 +122,8 @@ model user_roles {
   primary       Boolean?   @default(false)
 }
 
+/// @summary Role definition for RBAC per module and optionally per business.
+/// @namespace Users
 model role {
   role_id     String            @id @default(uuid()) @db.Uuid
   name        String
@@ -115,6 +137,8 @@ model role {
   @@unique([name, business_id]) // same role name allowed globally and per business
 }
 
+/// @summary User-to-role assignment (optionally scoped to a reservation module).
+/// @namespace Users
 model user_role {
   user_id               String  @id @db.Uuid
   role_id               String  @db.Uuid
@@ -127,6 +151,8 @@ model user_role {
   @@unique([user_id, role_id, reservation_module_id])
 }
 
+/// @summary Role-to-permission mapping.
+/// @namespace Users
 model role_permission {
   role_permission_id String @id @default(uuid()) @db.Uuid
   role_id            String @db.Uuid
@@ -138,6 +164,8 @@ model role_permission {
   @@unique([role_id, permission_id])
 }
 
+/// @summary Permission definition (action-based or named), with scope and module.
+/// @namespace Users
 model permission {
   permission_id String            @id @default(uuid()) @db.Uuid
   action_id     String?           @db.Uuid // null = non-action permission
@@ -152,6 +180,8 @@ model permission {
   action        action?           @relation(fields: [action_id], references: [action_id])
 }
 
+/// @summary User-specific permission overrides (grants/limits/blocks).
+/// @namespace Users
 model user_permission {
   user_permission_id    String              @id @default(uuid()) @db.Uuid
   user_id               String              @db.Uuid
@@ -171,6 +201,9 @@ model user_permission {
   @@unique([action_id, module])
 }
 
+/// @summary Parent-child user relationship (household/group) with allowances.
+/// @namespace Users
+/// @namespace FamilyUsers
 model group_users {
   group_user_id  String      @id @default(uuid()) @db.Uuid
   parent_user_id String      @db.Uuid
