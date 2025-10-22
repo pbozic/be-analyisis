@@ -20,6 +20,7 @@ enum PERMISSION_SCOPE {
 /// @namespace Payments
 /// @namespace LostItems
 /// @namespace Blog
+/// @namespace Bookings
 ///
 /// Central user entity linking to roles, orders, documents, wallets and analytics.
 model users {

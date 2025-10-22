@@ -9,6 +9,7 @@ enum BOOKING_STATUS {
 
 /// @summary Reservation module root configuration for a business.
 /// @namespace Reservations
+/// @namespace Business
 ///
 /// Holds locations, services, employees, customers, bookings and notification settings.
 model reservation_module {
@@ -113,6 +114,10 @@ model service {
 /// @summary Staff member performing services.
 /// @namespace Reservations
 /// @namespace Services
+/// @namespace Bookings
+/// @namespace Schedules
+/// @namespace Users
+/// @namespace BusinessUsers
 model employee {
   employee_id           String               @id @default(uuid()) @db.Uuid
   reservation_module_id String               @db.Uuid
@@ -136,6 +141,7 @@ model employee {
 /// @summary Customer tracked by a reservation module.
 /// @namespace Reservations
 /// @namespace Bookings
+/// @namespace Users
 model customers {
   customer_id           String   @id @default(uuid()) @db.Uuid
   reservation_module_id String   @db.Uuid
@@ -174,6 +180,7 @@ model service_assignment {
 /// @summary Schedule template for a location (and indirectly employees).
 /// @namespace Reservations
 /// @namespace Schedules
+/// @namespace Locations
 model schedule {
   schedule_id        String              @id @default(uuid()) @db.Uuid
   location_id        String              @db.Uuid

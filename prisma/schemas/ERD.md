@@ -32,11 +32,11 @@
 - [Transport](#transport)
 - [Vehicles](#vehicles)
 - [BusinessUsers](#businessusers)
+- [Bookings](#bookings)
 - [Wallet](#wallet)
 - [Promo](#promo)
 - [Services](#services)
 - [Locations](#locations)
-- [Bookings](#bookings)
 - [Schedules](#schedules)
 - [Notifications](#notifications)
 - [default](#default)
@@ -208,6 +208,19 @@ erDiagram
   DateTime(6) updated_at
   String vehicle_id "nullable"
 }
+"reservation_module" {
+  String reservation_module_id PK
+  String public_link_hash UK "nullable"
+  String business_id FK,UK
+  String action_bundle_id FK "nullable"
+  DateTime subscription_active_until "nullable"
+  DateTime subscription_expires_at "nullable"
+  String stripe_subscription_schedule_id "nullable"
+  Int hours_before_reschedule "nullable"
+  Int hours_before_cancel "nullable"
+  Boolean publicly_visible
+  String reviewable_id FK "nullable"
+}
 "business" }o--o| "addresses" : address
 "business" }o--o| "business" : parent_business
 "business_users" }o--|| "business" : business
@@ -222,6 +235,7 @@ erDiagram
 "files" }o--o| "documents" : documents
 "files" |o--o| "business" : business_logo
 "files" |o--o| "business" : business_banner
+"reservation_module" |o--|| "business" : business
 ```
 
 ### `business`
@@ -448,6 +462,26 @@ Properties as follows:
 - `created_at`:
 - `updated_at`:
 - `vehicle_id`:
+
+### `reservation_module`
+
+Reservation module root configuration for a business.
+
+Holds locations, services, employees, customers, bookings and notification settings.
+
+Properties as follows:
+
+- `reservation_module_id`:
+- `public_link_hash`:
+- `business_id`:
+- `action_bundle_id`:
+- `subscription_active_until`:
+- `subscription_expires_at`:
+- `stripe_subscription_schedule_id`:
+- `hours_before_reschedule`:
+- `hours_before_cancel`:
+- `publicly_visible`:
+- `reviewable_id`:
 
 ## Cashback
 
@@ -1219,6 +1253,31 @@ erDiagram
   ACCOUNT_ACTIONS_REASON reason
   ACCOUNT_ACTIONS action
 }
+"employee" {
+  String employee_id PK
+  String reservation_module_id FK
+  String first_name "nullable"
+  String last_name "nullable"
+  String email "nullable"
+  String telephone "nullable"
+  String telephone_code "nullable"
+  String telephone_number "nullable"
+  String business_users_id FK,UK "nullable"
+  DateTime created_at
+  DateTime deleted_at "nullable"
+}
+"customers" {
+  String customer_id PK
+  String reservation_module_id FK
+  String first_name
+  String last_name
+  String email "nullable"
+  String telephone "nullable"
+  DateTime created_at
+  DateTime updated_at
+  String(16) code UK
+  String user_id FK "nullable"
+}
 "tokens" }o--|| "users" : users
 "user_address" }o--|| "users" : users
 "user_address" }o--|| "addresses" : address
@@ -1239,6 +1298,7 @@ erDiagram
 "scoring_points" }o--o| "users" : users
 "account_actions" }o--o| "users" : user
 "account_actions" }o--|| "users" : action_creator
+"customers" }o--o| "users" : user
 ```
 
 ### `tokens`
@@ -1546,6 +1606,41 @@ Properties as follows:
 - `action_creator_user_id`:
 - `reason`:
 - `action`:
+
+### `employee`
+
+Staff member performing services.
+
+Properties as follows:
+
+- `employee_id`:
+- `reservation_module_id`:
+- `first_name`:
+- `last_name`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+- `business_users_id`:
+- `created_at`:
+- `deleted_at`:
+
+### `customers`
+
+Customer tracked by a reservation module.
+
+Properties as follows:
+
+- `customer_id`:
+- `reservation_module_id`:
+- `first_name`:
+- `last_name`:
+- `email`:
+- `telephone`:
+- `created_at`:
+- `updated_at`:
+- `code`:
+- `user_id`:
 
 ## TaxiOrders
 
@@ -7104,6 +7199,19 @@ erDiagram
   String country "nullable"
   String postal "nullable"
 }
+"employee" {
+  String employee_id PK
+  String reservation_module_id FK
+  String first_name "nullable"
+  String last_name "nullable"
+  String email "nullable"
+  String telephone "nullable"
+  String telephone_code "nullable"
+  String telephone_number "nullable"
+  String business_users_id FK,UK "nullable"
+  DateTime created_at
+  DateTime deleted_at "nullable"
+}
 "users" {
   String user_id PK
   String first_name "nullable"
@@ -7155,6 +7263,7 @@ erDiagram
 "business_users" }o--|| "users" : users
 "business_users" }o--o| "addresses" : operating_address
 "allowances" |o--o| "business_users" : business_user
+"employee" |o--o| "business_users" : business_user
 ```
 
 ### `business_users`
@@ -7207,6 +7316,298 @@ Properties as follows:
 - `city`:
 - `country`:
 - `postal`:
+
+### `employee`
+
+Staff member performing services.
+
+Properties as follows:
+
+- `employee_id`:
+- `reservation_module_id`:
+- `first_name`:
+- `last_name`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+- `business_users_id`:
+- `created_at`:
+- `deleted_at`:
+
+### `users`
+
+End user account with profile, preferences and relations.
+
+Central user entity linking to roles, orders, documents, wallets and analytics.
+
+Properties as follows:
+
+- `user_id`:
+- `first_name`:
+- `last_name`:
+- `password`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+- `date_of_birth`:
+- `created_at`:
+- `updated_at`:
+- `user_role`:
+- `phone_verified`:
+- `notification_preferences`:
+- `taxi_preferences`:
+- `profile_picture_id`:
+- `reviewable_id`:
+- `review_complete`:
+- `one_signal_id`:
+- `stripe_customer_id`:
+- `wallet_balance`:
+- `transfer_preferences`:
+- `allergies_preferences`:
+- `spicy_preferences`:
+- `radio_preferences`:
+- `subscribed_to_daily_meals`:
+- `daily_meal_preferences`:
+- `details`:
+- `taxi_push_notification_preferences`:
+- `transfer_push_notification_preferences`:
+- `delivery_push_notification_preferences`:
+- `spoken_languages`:
+- `daily_meal_day_preferences`:
+- `disabled`:
+- `active`:
+- `language`:
+- `apple_id`:
+- `google_id`:
+- `referral_code`:
+- `activated_at`:
+- `deactivated_at`:
+- `deactivated`:
+- `business_teams_id`:
+- `allow_marketing_push_notifications`:
+- `allow_ads_personalization`:
+- `allow_newsletter`:
+
+## Bookings
+
+```mermaid
+erDiagram
+"business_users" {
+  String business_users_id PK
+  Boolean online "nullable"
+  COMPANY_ROLE company_role
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String user_id FK
+  String business_id FK
+  String operating_address_id FK "nullable"
+}
+"employee" {
+  String employee_id PK
+  String reservation_module_id FK
+  String first_name "nullable"
+  String last_name "nullable"
+  String email "nullable"
+  String telephone "nullable"
+  String telephone_code "nullable"
+  String telephone_number "nullable"
+  String business_users_id FK,UK "nullable"
+  DateTime created_at
+  DateTime deleted_at "nullable"
+}
+"customers" {
+  String customer_id PK
+  String reservation_module_id FK
+  String first_name
+  String last_name
+  String email "nullable"
+  String telephone "nullable"
+  DateTime created_at
+  DateTime updated_at
+  String(16) code UK
+  String user_id FK "nullable"
+}
+"booking" {
+  String booking_id PK
+  String customer_id FK
+  String reservation_module_id FK
+  String location_id FK "nullable"
+  BOOKING_STATUS status
+  String service_id FK
+  String comment "nullable"
+  DateTime created_at
+  DateTime updated_at
+  Int price_cents "nullable"
+  Int discount_percent "nullable"
+  Int discount_amount "nullable"
+  DateTime start_time "nullable"
+  DateTime end_time "nullable"
+  DateTime deleted_at "nullable"
+  String employee_id FK "nullable"
+  String parent_booking_id FK "nullable"
+}
+"booking_history_log" {
+  String booking_history_id PK
+  String booking_id FK
+  BOOKING_STATUS status
+  String comment "nullable"
+  String type "nullable"
+  String title "nullable"
+  String description "nullable"
+  DateTime created_at
+  DateTime updated_at
+  String user_id FK "nullable"
+}
+"users" {
+  String user_id PK
+  String first_name "nullable"
+  String last_name "nullable"
+  String password
+  String email "nullable"
+  String telephone UK
+  String telephone_code
+  String telephone_number
+  DateTime date_of_birth "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  USER_ROLES user_role
+  Boolean phone_verified
+  Json notification_preferences "nullable"
+  Json taxi_preferences "nullable"
+  String profile_picture_id UK "nullable"
+  String reviewable_id FK "nullable"
+  Boolean review_complete
+  String one_signal_id "nullable"
+  String stripe_customer_id "nullable"
+  Float wallet_balance
+  Json transfer_preferences "nullable"
+  Json allergies_preferences "nullable"
+  Json spicy_preferences "nullable"
+  Json radio_preferences "nullable"
+  Boolean subscribed_to_daily_meals
+  Json daily_meal_preferences "nullable"
+  Json details "nullable"
+  Json taxi_push_notification_preferences "nullable"
+  Json transfer_push_notification_preferences "nullable"
+  Json delivery_push_notification_preferences "nullable"
+  Json spoken_languages "nullable"
+  Json daily_meal_day_preferences "nullable"
+  Boolean disabled
+  Boolean active
+  String language "nullable"
+  String apple_id "nullable"
+  String google_id "nullable"
+  String(6) referral_code UK "nullable"
+  DateTime activated_at "nullable"
+  DateTime deactivated_at "nullable"
+  Boolean deactivated
+  String business_teams_id FK "nullable"
+  Boolean allow_marketing_push_notifications "nullable"
+  Boolean allow_ads_personalization "nullable"
+  Boolean allow_newsletter "nullable"
+}
+"business_users" }o--|| "users" : users
+"employee" |o--o| "business_users" : business_user
+"customers" }o--o| "users" : user
+"booking" }o--o| "booking" : parent_booking
+"booking" }o--o| "employee" : employee
+"booking" }o--|| "customers" : customer
+"booking_history_log" }o--o| "users" : user
+"booking_history_log" }o--|| "booking" : booking
+```
+
+### `business_users`
+
+User membership within a business (employees/managers).
+
+Properties as follows:
+
+- `business_users_id`:
+- `online`:
+- `company_role`:
+- `created_at`:
+- `updated_at`:
+- `user_id`:
+- `business_id`:
+- `operating_address_id`:
+
+### `employee`
+
+Staff member performing services.
+
+Properties as follows:
+
+- `employee_id`:
+- `reservation_module_id`:
+- `first_name`:
+- `last_name`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+- `business_users_id`:
+- `created_at`:
+- `deleted_at`:
+
+### `customers`
+
+Customer tracked by a reservation module.
+
+Properties as follows:
+
+- `customer_id`:
+- `reservation_module_id`:
+- `first_name`:
+- `last_name`:
+- `email`:
+- `telephone`:
+- `created_at`:
+- `updated_at`:
+- `code`:
+- `user_id`:
+
+### `booking`
+
+Booking record connecting a customer, service and schedule.
+
+Properties as follows:
+
+- `booking_id`:
+- `customer_id`:
+- `reservation_module_id`:
+- `location_id`:
+- `status`:
+- `service_id`:
+- `comment`:
+- `created_at`:
+- `updated_at`:
+- `price_cents`:
+- `discount_percent`:
+- `discount_amount`:
+- `start_time`:
+- `end_time`:
+- `deleted_at`:
+- `employee_id`:
+- `parent_booking_id`:
+
+### `booking_history_log`
+
+Audit trail of booking status changes and actions.
+
+Properties as follows:
+
+- `booking_history_id`:
+- `booking_id`:
+- `status`:
+- `comment`:
+- `type`:
+- `title`:
+- `description`:
+- `created_at`:
+- `updated_at`:
+- `user_id`:
 
 ### `users`
 
@@ -7779,6 +8180,15 @@ erDiagram
   Boolean closed_on_holidays
   Json working_days
 }
+"schedule" {
+  String schedule_id PK
+  String location_id FK
+  String name
+  String color "nullable"
+  DateTime start_date
+  DateTime end_date
+}
+"schedule" }o--|| "location" : location
 ```
 
 ### `location`
@@ -7799,120 +8209,36 @@ Properties as follows:
 - `closed_on_holidays`:
 - `working_days`:
 
-## Bookings
+### `schedule`
 
-```mermaid
-erDiagram
-"customers" {
-  String customer_id PK
-  String reservation_module_id FK
-  String first_name
-  String last_name
-  String email "nullable"
-  String telephone "nullable"
-  DateTime created_at
-  DateTime updated_at
-  String(16) code UK
-  String user_id FK "nullable"
-}
-"booking" {
-  String booking_id PK
-  String customer_id FK
-  String reservation_module_id FK
-  String location_id FK "nullable"
-  BOOKING_STATUS status
-  String service_id FK
-  String comment "nullable"
-  DateTime created_at
-  DateTime updated_at
-  Int price_cents "nullable"
-  Int discount_percent "nullable"
-  Int discount_amount "nullable"
-  DateTime start_time "nullable"
-  DateTime end_time "nullable"
-  DateTime deleted_at "nullable"
-  String employee_id FK "nullable"
-  String parent_booking_id FK "nullable"
-}
-"booking_history_log" {
-  String booking_history_id PK
-  String booking_id FK
-  BOOKING_STATUS status
-  String comment "nullable"
-  String type "nullable"
-  String title "nullable"
-  String description "nullable"
-  DateTime created_at
-  DateTime updated_at
-  String user_id FK "nullable"
-}
-"booking" }o--o| "booking" : parent_booking
-"booking" }o--|| "customers" : customer
-"booking_history_log" }o--|| "booking" : booking
-```
-
-### `customers`
-
-Customer tracked by a reservation module.
+Schedule template for a location (and indirectly employees).
 
 Properties as follows:
 
-- `customer_id`:
-- `reservation_module_id`:
-- `first_name`:
-- `last_name`:
-- `email`:
-- `telephone`:
-- `created_at`:
-- `updated_at`:
-- `code`:
-- `user_id`:
-
-### `booking`
-
-Booking record connecting a customer, service and schedule.
-
-Properties as follows:
-
-- `booking_id`:
-- `customer_id`:
-- `reservation_module_id`:
+- `schedule_id`:
 - `location_id`:
-- `status`:
-- `service_id`:
-- `comment`:
-- `created_at`:
-- `updated_at`:
-- `price_cents`:
-- `discount_percent`:
-- `discount_amount`:
-- `start_time`:
-- `end_time`:
-- `deleted_at`:
-- `employee_id`:
-- `parent_booking_id`:
-
-### `booking_history_log`
-
-Audit trail of booking status changes and actions.
-
-Properties as follows:
-
-- `booking_history_id`:
-- `booking_id`:
-- `status`:
-- `comment`:
-- `type`:
-- `title`:
-- `description`:
-- `created_at`:
-- `updated_at`:
-- `user_id`:
+- `name`:
+- `color`:
+- `start_date`:
+- `end_date`:
 
 ## Schedules
 
 ```mermaid
 erDiagram
+"employee" {
+  String employee_id PK
+  String reservation_module_id FK
+  String first_name "nullable"
+  String last_name "nullable"
+  String email "nullable"
+  String telephone "nullable"
+  String telephone_code "nullable"
+  String telephone_number "nullable"
+  String business_users_id FK,UK "nullable"
+  DateTime created_at
+  DateTime deleted_at "nullable"
+}
 "schedule" {
   String schedule_id PK
   String location_id FK
@@ -7946,9 +8272,28 @@ erDiagram
   DateTime end_time
 }
 "schedule_slot" }o--|| "schedule" : schedule
+"schedule_slot" }o--|| "employee" : employee
 "schedule_slot_exceptions" }o--|| "schedule_slot" : schedule_slot
 "booking_slots" }o--|| "schedule_slot" : schedule_slot
 ```
+
+### `employee`
+
+Staff member performing services.
+
+Properties as follows:
+
+- `employee_id`:
+- `reservation_module_id`:
+- `first_name`:
+- `last_name`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+- `business_users_id`:
+- `created_at`:
+- `deleted_at`:
 
 ### `schedule`
 

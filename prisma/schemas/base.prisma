@@ -107,6 +107,7 @@ model business {
 /// @namespace BusinessUsers
 /// @namespace TaxiOrders
 /// @namespace DeliveryOrders
+/// @namespace Bookings
 model business_users {
   business_users_id    String        @id @default(uuid()) @db.Uuid
   online               Boolean?      @default(false)
