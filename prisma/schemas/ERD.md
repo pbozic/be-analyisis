@@ -39,6 +39,7 @@
 - [Locations](#locations)
 - [Schedules](#schedules)
 - [Notifications](#notifications)
+- [default](#default)
 
 ## Business
 
@@ -4452,6 +4453,7 @@ erDiagram
   String reviewable_id FK "nullable"
   String delivery_address_id FK "nullable"
   Int minimum_order
+  STORE_TYPE type
 }
 "food_drinks" {
   String food_drinks_id PK
@@ -4465,6 +4467,7 @@ erDiagram
   String delivery_address_id FK "nullable"
   Int minimum_order
   Int seats "nullable"
+  FOOD_DRINKS_TYPE type "nullable"
   String daily_meals_id "nullable"
 }
 "business" {
@@ -4528,6 +4531,7 @@ Properties as follows:
 - `reviewable_id`:
 - `delivery_address_id`:
 - `minimum_order`:
+- `type`:
 
 ### `food_drinks`
 
@@ -4548,6 +4552,7 @@ Properties as follows:
 - `delivery_address_id`:
 - `minimum_order`:
 - `seats`:
+- `type`:
 - `daily_meals_id`:
 
 ### `business`
@@ -5137,7 +5142,7 @@ Properties as follows:
 ```mermaid
 erDiagram
 "daily_meals_module" {
-  String daily_meals_id PK
+  String id PK
   String food_drinks_id FK,UK
   DAY_OF_WEEK daily_meals_days
   Json daily_meals_delivery_mapping "nullable"
@@ -5153,10 +5158,10 @@ erDiagram
   DateTime datetime
   DateTime(6) created_at
   DateTime(6) updated_at
-  String food_drinks_id FK
   String user_id FK
   RESERVATION_STATUS status
   Int table "nullable"
+  String table_reservation_id FK
 }
 "business" {
   String business_id PK
@@ -5199,6 +5204,7 @@ erDiagram
   String delivery_address_id FK "nullable"
   Int minimum_order
   Int seats "nullable"
+  FOOD_DRINKS_TYPE type "nullable"
   String daily_meals_id "nullable"
 }
 "order_lobbies" {
@@ -5217,7 +5223,6 @@ erDiagram
   DateTime(6) updated_at
 }
 "daily_meals_module" |o--|| "food_drinks" : food_drinks
-"reservations" }o--|| "food_drinks" : food_drinks
 "business" }o--o| "business" : parent_business
 "food_drinks" |o--|| "business" : business
 "order_lobbies" }o--o| "food_drinks" : food_drinks
@@ -5233,7 +5238,7 @@ Defines daily meal program with categories, drivers and subscriptions.
 
 Properties as follows:
 
-- `daily_meals_id`:
+- `id`:
 - `food_drinks_id`:
 - `daily_meals_days`:
 - `daily_meals_delivery_mapping`:
@@ -5254,10 +5259,10 @@ Properties as follows:
 - `datetime`:
 - `created_at`:
 - `updated_at`:
-- `food_drinks_id`:
 - `user_id`:
 - `status`:
 - `table`:
+- `table_reservation_id`:
 
 ### `business`
 
@@ -5314,6 +5319,7 @@ Properties as follows:
 - `delivery_address_id`:
 - `minimum_order`:
 - `seats`:
+- `type`:
 - `daily_meals_id`:
 
 ### `order_lobbies`
@@ -5408,6 +5414,7 @@ erDiagram
   String reviewable_id FK "nullable"
   String delivery_address_id FK "nullable"
   Int minimum_order
+  STORE_TYPE type
 }
 "business_local_locations" }o--|| "local_locations" : local_location
 "business_local_locations" }o--|| "stores" : stores
@@ -5519,6 +5526,7 @@ Properties as follows:
 - `reviewable_id`:
 - `delivery_address_id`:
 - `minimum_order`:
+- `type`:
 
 ## Menus
 
@@ -5810,7 +5818,7 @@ erDiagram
   DateTime(6) updated_at
 }
 "daily_meals_module" {
-  String daily_meals_id PK
+  String id PK
   String food_drinks_id FK,UK
   DAY_OF_WEEK daily_meals_days
   Json daily_meals_delivery_mapping "nullable"
@@ -6075,7 +6083,7 @@ Defines daily meal program with categories, drivers and subscriptions.
 
 Properties as follows:
 
-- `daily_meals_id`:
+- `id`:
 - `food_drinks_id`:
 - `daily_meals_days`:
 - `daily_meals_delivery_mapping`:
@@ -9482,3 +9490,20 @@ Properties as follows:
 - `type`:
 - `provider_raw`:
 - `occurred_at`:
+
+## default
+
+```mermaid
+erDiagram
+"table_reservations_module" {
+  String id PK
+  String food_drinks_id FK,UK
+}
+```
+
+### `table_reservations_module`
+
+Properties as follows:
+
+- `id`:
+- `food_drinks_id`:
