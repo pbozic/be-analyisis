@@ -298,6 +298,8 @@ model booking {
   service               service?              @relation(fields: [service_id], references: [service_id])
   customer              customers             @relation(fields: [customer_id], references: [customer_id])
   booking_history_log   booking_history_log[]
+  reviewable_id         String?               @db.Uuid
+  reviewable            reviewable?           @relation(fields: [reviewable_id], references: [reviewable_id])
 }
 
 /// @summary Audit trail of booking status changes and actions.

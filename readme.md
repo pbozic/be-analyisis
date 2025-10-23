@@ -173,3 +173,32 @@ Here are some common Prisma commands you might find useful:
 - **npx prisma studio**: This command opens the Prisma Studio, which is a super handy GUI for managing and viewing your database data.
 
 For more detailed information, please refer to the official Prisma [documentation](https://www.prisma.io/docs/).
+
+## ERD
+
+The Entity-Relationship Diagram (ERD) for the database schema can be found [here](./prisma/schemas/ERD.md). This diagram visually represents the structure of the database, including the tables (entities), their fields (attributes), and the relationships between them.
+
+We generate the ERD by first generating the Prisma client and then running a custom script that processes the schema and creates the ERD markdown file. Since many-to-many relations are not directly represented in the generated ERD diagram we add them manually in the post-processing script. An example of junction table that represents a many-to-many relation is the `translatable` table that connects the `translations` and `words`, `categories` and `promo_sections` tables. This example requires specific annotations in the schema to indicate which tables are connected via many-to-many relations and in which namespaces.
+
+```
+/// @summary Base entity for translatable content (categories, words, promo sections).
+/// @namespace PromoWords
+/// @namespace PromoSections
+/// @namespace Menus
+/// @namespace DailyMeals
+/// @hidden
+model translatable {
+  translatable_id String           @id @default(uuid()) @db.Uuid
+  translations    translations[]
+  // --------------SEPARATOR--------------
+  words           words[]
+  categories      categories[] // @namespace Menus, @namespace DailyMeals
+  promo_sections  promo_sections[]
+}
+```
+
+To update the ERD please run the following command:
+
+```bash
+npx prisma generate | node ./prisma/schemas/postprocess-erd.mjs
+```

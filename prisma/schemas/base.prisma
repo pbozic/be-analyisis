@@ -51,6 +51,7 @@ generator typescriptInterfaces {
 /// @namespace Stores
 /// @namespace FoodDrinks
 /// @namespace Reservations
+/// @namespace Users
 ///
 /// Core company profile linked to address, documents, analytics, roles and users.
 model business {
@@ -334,17 +335,23 @@ model user_address {
 /// @summary Entity that can be reviewed (business, user, driver, module, store, food/drink).
 /// @namespace Users
 /// @namespace Drivers
-/// @namespace Business
+/// @namespace Transport
+/// @namespace Stores
+/// @namespace FoodDrinks
+/// @namespace Reservations
+/// @namespace Bookings
 /// @hidden
 model reviewable {
-  reviewable_id      String               @id @default(uuid()) @db.Uuid
-  reviews            reviews[]
-  user               users[]
-  driver             drivers[]
-  reservation_module reservation_module[]
-  transport_module   transport_module[]
-  stores             stores[]
-  food_drinks        food_drinks[]
+  reviewable_id       String               @id @default(uuid()) @db.Uuid
+  reviews             reviews[]
+  // --------------SEPARATOR--------------
+  user                users[]
+  driver              drivers[]
+  reservation_module  reservation_module[]
+  reservation_booking booking[]
+  transport_module    transport_module[]
+  stores              stores[]
+  food_drinks         food_drinks[]
 }
 
 /// @summary Review record authored by a user about a business or user.
@@ -530,7 +537,6 @@ model promo_sections {
 }
 
 /// @namespace PromoAds
-/// @namespace Promo
 /// @summary Visual assets attached to promo ads or section buys.
 model promo_banners {
   promo_banners_id     String     @id @default(uuid()) @db.Uuid
@@ -675,18 +681,23 @@ model promo_analytics {
 /// @summary Base entity for translatable content (categories, words, promo sections).
 /// @namespace PromoWords
 /// @namespace PromoSections
+/// @namespace Menus
+/// @namespace DailyMeals
 /// @hidden
 model translatable {
   translatable_id String           @id @default(uuid()) @db.Uuid
   translations    translations[]
+  // --------------SEPARATOR--------------
   words           words[]
-  categories      categories[]
+  categories      categories[] // @namespace Menus, @namespace DailyMeals
   promo_sections  promo_sections[]
 }
 
 /// @summary Translations for various translatable entities (categories, words, promo sections).
 /// @namespace PromoWords
 /// @namespace PromoSections
+/// @namespace Menus
+/// @namespace DailyMeals
 model translations {
   translations_id String       @id @default(uuid()) @db.Uuid
   translatable_id String       @db.Uuid
@@ -700,7 +711,6 @@ model translations {
   @@unique(name: "translationPair", [translatable_id, language])
 }
 
-/// @namespace Business
 /// @namespace Users
 /// @hidden
 model user_favorite_businesses {
@@ -718,8 +728,7 @@ model user_favorite_businesses {
   @@index([user_id, business_type])
 }
 
-/// @namespace Business
-/// @namespace Drivers
+/// @namespace Users
 /// @hidden
 model user_favorite_drivers {
   user_favorite_drivers_id String   @id @default(uuid()) @db.Uuid
@@ -874,10 +883,23 @@ model payment_transfer_groups {
 /// @namespace Blog
 /// @summary Blog tags, categories and posts with relations.
 model blog_tags {
-  blog_tags_id String       @id @default(uuid()) @db.Uuid
+  blog_tags_id String                 @id @default(uuid()) @db.Uuid
   name         String
   description  String?
-  blog_posts   blog_posts[] @relation("blog_posts_in_tag")
+  blog_posts   blog_tags_blog_posts[]
+}
+
+/// @namespace Blog
+/// @summary Junction table linking blog tags to blog posts.
+/// @hidden
+model blog_tags_blog_posts {
+  blog_tags_id  String @db.Uuid
+  blog_posts_id String @db.Uuid
+
+  blog_tags  blog_tags  @relation(fields: [blog_tags_id], references: [blog_tags_id], onDelete: Cascade)
+  blog_posts blog_posts @relation(fields: [blog_posts_id], references: [blog_posts_id], onDelete: Cascade)
+
+  @@id([blog_tags_id, blog_posts_id])
 }
 
 /// @namespace Blog
@@ -892,22 +914,22 @@ model blog_categories {
 /// @namespace Blog
 /// @summary Blog posts with authors, categories, tags and content.
 model blog_posts {
-  blog_posts_id String           @id @default(uuid()) @db.Uuid
-  slug          String           @unique
+  blog_posts_id String                 @id @default(uuid()) @db.Uuid
+  slug          String                 @unique
   title         String
   short_content String?
-  image_file_id String?          @db.Uuid
-  image         files?           @relation(fields: [image_file_id], references: [file_id])
+  image_file_id String?                @db.Uuid
+  image         files?                 @relation(fields: [image_file_id], references: [file_id])
   content       Json
-  status        BLOG_POST_STATUS @default(PUBLISHED)
-  author_id     String           @db.Uuid
-  category_id   String?          @db.Uuid
-  publish_at    DateTime         @default(now()) @db.Timestamptz(6)
-  created_at    DateTime         @default(now()) @db.Timestamptz(6)
-  updated_at    DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
-  author        users            @relation(fields: [author_id], references: [user_id])
-  category      blog_categories? @relation("blog_posts_in_category", fields: [category_id], references: [blog_categories_id])
-  tags          blog_tags[]      @relation("blog_posts_in_tag")
+  status        BLOG_POST_STATUS       @default(PUBLISHED)
+  author_id     String                 @db.Uuid
+  category_id   String?                @db.Uuid
+  publish_at    DateTime               @default(now()) @db.Timestamptz(6)
+  created_at    DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime               @default(now()) @updatedAt @db.Timestamptz(6)
+  author        users                  @relation(fields: [author_id], references: [user_id])
+  category      blog_categories?       @relation("blog_posts_in_category", fields: [category_id], references: [blog_categories_id])
+  tags          blog_tags_blog_posts[]
 }
 
 /// @namespace Drivers

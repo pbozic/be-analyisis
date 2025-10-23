@@ -96,8 +96,8 @@ model taxi_order_sent {
     @@unique([order_id, driver_id], name: "taxi_order_sent_driver_unique")
 }
 
-/// @summary Global settings for driver activity and lockouts.
-/// @namespace Drivers
+/// @summary Global settings for driver activity and lockouts
+/// @describe Drivers
 model driver_activity_settings {
     driver_activity_settings_id String   @id @default(uuid()) @db.Uuid
     first_offline_lockout       Int      @default(30) // Default 30 minutes
@@ -162,7 +162,10 @@ model driver_municipalities {
 
 /// @summary Driver entity linked to a user and (optionally) a transport module.
 /// @namespace Transport
+/// @namespace Users
 /// @namespace Drivers
+/// @namespace Vehicles
+/// @namespace Regions
 /// @namespace TaxiOrders
 /// @namespace DeliveryOrders
 /// @namespace DailyMeals
@@ -244,6 +247,7 @@ model vehicle_drivers {
 /// @summary Vehicle entity with class/category, documents and invoice relations.
 /// @namespace Transport
 /// @namespace Vehicles
+/// @namespace Drivers
 /// @namespace TaxiOrders
 /// @namespace DeliveryOrders
 model vehicles {

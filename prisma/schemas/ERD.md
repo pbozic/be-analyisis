@@ -1191,6 +1191,35 @@ erDiagram
   DateTime(6) updated_at
   Boolean enabled
 }
+"business" {
+  String business_id PK
+  String address_id FK "nullable"
+  String finance_id "nullable"
+  BUSINESS_TYPE type
+  Boolean is_business_unit
+  String business_group_name "nullable"
+  String name
+  String description "nullable"
+  String tax_id
+  String registration_id
+  String email UK
+  String telephone "nullable"
+  String telephone_code
+  String telephone_number
+  String website_url "nullable"
+  Json working_hours "nullable"
+  Boolean popular
+  Boolean new
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String parent_business_id FK "nullable"
+  String stripe_account_id "nullable"
+  String stripe_customer_id "nullable"
+  String word_buy_stripe_subscription_id "nullable"
+  DateTime first_activated_at "nullable"
+  Boolean active
+  String sales_representative_id "nullable"
+}
 "files" {
   String file_id PK
   String url "nullable"
@@ -1286,12 +1315,48 @@ erDiagram
   String(16) code UK
   String user_id FK "nullable"
 }
+"drivers" {
+  String driver_id PK
+  String transport_module_id FK "nullable"
+  Boolean online "nullable"
+  Boolean on_order "nullable"
+  Json working_hours "nullable"
+  Json ride_requirements "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String user_id FK,UK "nullable"
+  String current_vehicle_id FK,UK "nullable"
+  String last_used_vehicle_id "nullable"
+  Json location "nullable"
+  Json delivery_timeline "nullable"
+  DateTime(6) last_ping_at
+  Boolean is_inactive "nullable"
+  Json transfer_requirements "nullable"
+  String regions
+  Boolean handles_taxi_orders "nullable"
+  Boolean handles_transfer_orders "nullable"
+  Boolean handles_courier_orders "nullable"
+  Boolean handles_delivery_orders "nullable"
+  Boolean taxi_orders_toggled "nullable"
+  Boolean transfer_orders_toggled "nullable"
+  Boolean courier_orders_toggled "nullable"
+  Boolean delivery_orders_toggled "nullable"
+  Float partner_cash_balance "nullable"
+  DateTime(6) come_to_work_last_sent_at "nullable"
+  String daily_meals_id "nullable"
+  Boolean delivers_daily_meals "nullable"
+  Boolean on_daily_meals "nullable"
+  Json scheduled_meals_route "nullable"
+  VEHICLE_TYPE vehicle_type "nullable"
+  String reviewable_id FK "nullable"
+}
 "tokens" }o--|| "users" : users
 "user_address" }o--|| "users" : users
 "user_address" }o--|| "addresses" : address
 "reviews" }o--|| "users" : author
 "wallet_funds" }o--|| "users" : user
 "user_roles" }o--|| "users" : user
+"role" }o--o| "business" : business
 "user_role" |o--|| "users" : user
 "user_role" }o--|| "role" : role
 "role_permission" }o--|| "role" : role
@@ -1299,14 +1364,27 @@ erDiagram
 "user_permission" }o--|| "users" : user
 "group_users" }o--|| "users" : parent_user
 "group_users" |o--|| "users" : child_user
+"business" }o--o| "addresses" : address
+"business" }o--o| "business" : parent_business
+"files" |o--o| "business" : business_logo
+"files" |o--o| "business" : business_banner
 "files" |o--o| "users" : user
 "transactions" }o--|| "users" : user
 "transactions" }o--o| "wallet_funds" : wallet_funds
 "user_money_flows" }o--|| "users" : user
 "scoring_points" }o--o| "users" : users
+"scoring_points" }o--|| "business" : businesses
+"account_actions" }o--o| "business" : business
 "account_actions" }o--o| "users" : user
 "account_actions" }o--|| "users" : action_creator
 "customers" }o--o| "users" : user
+"drivers" |o--o| "users" : user
+
+"reviews" }o--o{ "users" : "via reviewable"
+
+"users" }o--o{ "business" : "via user_favorite_businesses"
+
+"users" }o--o{ "drivers" : "via user_favorite_drivers"
 ```
 
 ### `tokens`
@@ -1516,6 +1594,42 @@ Properties as follows:
 - `updated_at`:
 - `enabled`:
 
+### `business`
+
+Business entity representing a merchant/partner account or crm.
+
+Core company profile linked to address, documents, analytics, roles and users.
+
+Properties as follows:
+
+- `business_id`:
+- `address_id`:
+- `finance_id`:
+- `type`:
+- `is_business_unit`:
+- `business_group_name`:
+- `name`:
+- `description`:
+- `tax_id`:
+- `registration_id`:
+- `email`:
+- `telephone`:
+- `telephone_code`:
+- `telephone_number`:
+- `website_url`:
+- `working_hours`:
+- `popular`:
+- `new`:
+- `created_at`:
+- `updated_at`:
+- `parent_business_id`:
+- `stripe_account_id`:
+- `stripe_customer_id`:
+- `word_buy_stripe_subscription_id`:
+- `first_activated_at`:
+- `active`:
+- `sales_representative_id`:
+
 ### `files`
 
 File storage for documents, images, logos, banners, menu items, blog posts, categories, promo banners and more.
@@ -1650,6 +1764,48 @@ Properties as follows:
 - `updated_at`:
 - `code`:
 - `user_id`:
+
+### `drivers`
+
+Driver entity linked to a user and (optionally) a transport module.
+
+Tracks online state, capabilities, documents, orders and current vehicle.
+
+Properties as follows:
+
+- `driver_id`:
+- `transport_module_id`:
+- `online`:
+- `on_order`:
+- `working_hours`:
+- `ride_requirements`:
+- `created_at`:
+- `updated_at`:
+- `user_id`:
+- `current_vehicle_id`:
+- `last_used_vehicle_id`:
+- `location`:
+- `delivery_timeline`:
+- `last_ping_at`:
+- `is_inactive`:
+- `transfer_requirements`:
+- `regions`:
+- `handles_taxi_orders`:
+- `handles_transfer_orders`:
+- `handles_courier_orders`:
+- `handles_delivery_orders`:
+- `taxi_orders_toggled`:
+- `transfer_orders_toggled`:
+- `courier_orders_toggled`:
+- `delivery_orders_toggled`:
+- `partner_cash_balance`:
+- `come_to_work_last_sent_at`:
+- `daily_meals_id`:
+- `delivers_daily_meals`:
+- `on_daily_meals`:
+- `scheduled_meals_route`:
+- `vehicle_type`:
+- `reviewable_id`:
 
 ## Payments
 
@@ -2710,6 +2866,8 @@ erDiagram
   DateTime(6) updated_at
 }
 "promo_sections_buy" }o--|| "promo_sections" : promo_section
+
+"translations" }o--o{ "promo_sections" : "via translatable"
 ```
 
 ### `promo_sections`
@@ -2810,8 +2968,25 @@ erDiagram
   String lost_item_id FK,UK "nullable"
   String delivery_order_id FK,UK "nullable"
 }
+"categories" {
+  String categories_id PK
+  String name
+  String description "nullable"
+  String tag
+  String icon_file_id FK "nullable"
+  CATEGORY_TYPE category_type
+  String parent_categories_id FK "nullable"
+  String translatable_id FK
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  DateTime(6) deleted_at "nullable"
+}
 "promo_banners" }o--|| "files" : files
 "promo_banners" }o--o| "promo_ads" : promo_ads
+"categories" }o--o| "files" : icon
+"categories" }o--o| "categories" : parent_category
+
+"promo_ads" }o--o{ "categories" : "via promo_ads_category"
 ```
 
 ### `promo_banners`
@@ -2868,6 +3043,26 @@ Properties as follows:
 - `lost_item_id`:
 - `delivery_order_id`:
 
+### `categories`
+
+Catalog categories (shared across menus/promo/words).
+
+Hierarchical categories with translatable labels and optional icon.
+
+Properties as follows:
+
+- `categories_id`:
+- `name`:
+- `description`:
+- `tag`:
+- `icon_file_id`:
+- `category_type`:
+- `parent_categories_id`:
+- `translatable_id`:
+- `created_at`:
+- `updated_at`:
+- `deleted_at`:
+
 ## PromoWords
 
 ```mermaid
@@ -2907,6 +3102,8 @@ erDiagram
   DateTime(6) deleted_at "nullable"
 }
 "word_buy" }o--|| "words" : word
+
+"translations" }o--o{ "words" : "via translatable"
 ```
 
 ### `words`
@@ -2986,10 +3183,6 @@ erDiagram
   DateTime(6) created_at
   DateTime(6) updated_at
 }
-"_blog_postsToblog_tags" {
-  String A FK
-  String B FK
-}
 "users" {
   String user_id PK
   String first_name "nullable"
@@ -3040,8 +3233,8 @@ erDiagram
 }
 "blog_posts" }o--|| "users" : author
 "blog_posts" }o--o| "blog_categories" : category
-"_blog_postsToblog_tags" }o--|| "blog_posts" : blog_posts
-"_blog_postsToblog_tags" }o--|| "blog_tags" : blog_tags
+
+"blog_tags" }o--o{ "blog_posts" : "via blog_tags_blog_posts"
 ```
 
 ### `blog_tags`
@@ -3082,15 +3275,6 @@ Properties as follows:
 - `publish_at`:
 - `created_at`:
 - `updated_at`:
-
-### `_blog_postsToblog_tags`
-
-Pair relationship table between [blog_posts](#blog_posts) and [blog_tags](#blog_tags)
-
-Properties as follows:
-
-- `A`:
-- `B`:
 
 ### `users`
 
@@ -3161,15 +3345,6 @@ erDiagram
   String feature_id "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
-}
-"driver_activity_settings" {
-  String driver_activity_settings_id PK
-  Int first_offline_lockout
-  Int second_offline_lockout
-  Int online_timeout
-  DateTime(6) created_at
-  DateTime(6) updated_at
-  Boolean active
 }
 "driver_activity_logs" {
   String driver_activity_log_id PK
@@ -3264,6 +3439,21 @@ erDiagram
   VEHICLE_TYPE vehicle_type "nullable"
   String reviewable_id FK "nullable"
 }
+"vehicles" {
+  String vehicle_id PK
+  String transport_module_id FK "nullable"
+  Boolean active "nullable"
+  VEHICLE_CLASS class "nullable"
+  VEHICLE_CATEGORY category "nullable"
+  String make "nullable"
+  String model "nullable"
+  String color "nullable"
+  String license_plate "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String vehicle_specification_id FK,UK "nullable"
+  String business_premise_id FK,UK "nullable"
+}
 "users" {
   String user_id PK
   String first_name "nullable"
@@ -3315,9 +3505,17 @@ erDiagram
 "driver_activity_logs" }o--|| "drivers" : driver
 "driver_history_locations" }o--|| "drivers" : driver
 "documents" }o--o| "drivers" : drivers
+"documents" }o--o| "vehicles" : vehicles
 "reviews" }o--|| "users" : author
 "late_events" }o--|| "drivers" : driver
 "drivers" |o--o| "users" : user
+"drivers" |o--o| "vehicles" : current_vehicle
+
+"reviews" }o--o{ "drivers" : "via reviewable"
+
+"drivers" }o--o{ "municipalities" : "via driver_municipalities"
+
+"vehicles" }o--o{ "drivers" : "via vehicle_drivers"
 ```
 
 ### `municipalities`
@@ -3335,20 +3533,6 @@ Properties as follows:
 - `feature_id`:
 - `created_at`:
 - `updated_at`:
-
-### `driver_activity_settings`
-
-Global settings for driver activity and lockouts.
-
-Properties as follows:
-
-- `driver_activity_settings_id`:
-- `first_offline_lockout`:
-- `second_offline_lockout`:
-- `online_timeout`:
-- `created_at`:
-- `updated_at`:
-- `active`:
 
 ### `driver_activity_logs`
 
@@ -3475,6 +3659,26 @@ Properties as follows:
 - `vehicle_type`:
 - `reviewable_id`:
 
+### `vehicles`
+
+Vehicle entity with class/category, documents and invoice relations.
+
+Properties as follows:
+
+- `vehicle_id`:
+- `transport_module_id`:
+- `active`:
+- `class`:
+- `category`:
+- `make`:
+- `model`:
+- `color`:
+- `license_plate`:
+- `created_at`:
+- `updated_at`:
+- `vehicle_specification_id`:
+- `business_premise_id`:
+
 ### `users`
 
 End user account with profile, preferences and relations.
@@ -3529,6 +3733,20 @@ Properties as follows:
 - `allow_marketing_push_notifications`:
 - `allow_ads_personalization`:
 - `allow_newsletter`:
+
+### `driver_activity_settings`
+
+Global settings for driver activity and lockouts
+
+Properties as follows:
+
+- `driver_activity_settings_id`:
+- `first_offline_lockout`:
+- `second_offline_lockout`:
+- `online_timeout`:
+- `created_at`:
+- `updated_at`:
+- `active`:
 
 ## Regions
 
@@ -3588,6 +3806,41 @@ erDiagram
   String feature_id "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
+}
+"drivers" {
+  String driver_id PK
+  String transport_module_id FK "nullable"
+  Boolean online "nullable"
+  Boolean on_order "nullable"
+  Json working_hours "nullable"
+  Json ride_requirements "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String user_id FK,UK "nullable"
+  String current_vehicle_id FK,UK "nullable"
+  String last_used_vehicle_id "nullable"
+  Json location "nullable"
+  Json delivery_timeline "nullable"
+  DateTime(6) last_ping_at
+  Boolean is_inactive "nullable"
+  Json transfer_requirements "nullable"
+  String regions
+  Boolean handles_taxi_orders "nullable"
+  Boolean handles_transfer_orders "nullable"
+  Boolean handles_courier_orders "nullable"
+  Boolean handles_delivery_orders "nullable"
+  Boolean taxi_orders_toggled "nullable"
+  Boolean transfer_orders_toggled "nullable"
+  Boolean courier_orders_toggled "nullable"
+  Boolean delivery_orders_toggled "nullable"
+  Float partner_cash_balance "nullable"
+  DateTime(6) come_to_work_last_sent_at "nullable"
+  String daily_meals_id "nullable"
+  Boolean delivers_daily_meals "nullable"
+  Boolean on_daily_meals "nullable"
+  Json scheduled_meals_route "nullable"
+  VEHICLE_TYPE vehicle_type "nullable"
+  String reviewable_id FK "nullable"
 }
 "settlements" }o--|| "municipalities" : municipality
 "weather_data" }o--o| "municipalities" : municipality
@@ -3663,6 +3916,48 @@ Properties as follows:
 - `feature_id`:
 - `created_at`:
 - `updated_at`:
+
+### `drivers`
+
+Driver entity linked to a user and (optionally) a transport module.
+
+Tracks online state, capabilities, documents, orders and current vehicle.
+
+Properties as follows:
+
+- `driver_id`:
+- `transport_module_id`:
+- `online`:
+- `on_order`:
+- `working_hours`:
+- `ride_requirements`:
+- `created_at`:
+- `updated_at`:
+- `user_id`:
+- `current_vehicle_id`:
+- `last_used_vehicle_id`:
+- `location`:
+- `delivery_timeline`:
+- `last_ping_at`:
+- `is_inactive`:
+- `transfer_requirements`:
+- `regions`:
+- `handles_taxi_orders`:
+- `handles_transfer_orders`:
+- `handles_courier_orders`:
+- `handles_delivery_orders`:
+- `taxi_orders_toggled`:
+- `transfer_orders_toggled`:
+- `courier_orders_toggled`:
+- `delivery_orders_toggled`:
+- `partner_cash_balance`:
+- `come_to_work_last_sent_at`:
+- `daily_meals_id`:
+- `delivers_daily_meals`:
+- `on_daily_meals`:
+- `scheduled_meals_route`:
+- `vehicle_type`:
+- `reviewable_id`:
 
 ## MenuItems
 
@@ -4926,6 +5221,8 @@ erDiagram
 "business" }o--o| "business" : parent_business
 "food_drinks" |o--|| "business" : business
 "order_lobbies" }o--o| "food_drinks" : food_drinks
+
+"reviews" }o--o{ "food_drinks" : "via reviewable"
 ```
 
 ### `daily_meals_module`
@@ -5117,6 +5414,8 @@ erDiagram
 "order_lobbies" }o--|| "stores" : stores
 "business" }o--o| "business" : parent_business
 "stores" |o--|| "business" : business
+
+"reviews" }o--o{ "stores" : "via reviewable"
 ```
 
 ### `business_local_locations`
@@ -5293,9 +5592,22 @@ erDiagram
   String latest_version_id "nullable"
   String tax_rates_id FK "nullable"
 }
+"translations" {
+  String translations_id PK
+  String translatable_id FK
+  String field "nullable"
+  String language
+  String translation
+  DateTime(6) created_at
+  DateTime(6) updated_at
+}
 "categories" }o--o| "categories" : parent_category
 "menu_categories" }o--o| "menus" : menu
 "menu_items" }o--o| "menu_categories" : menu_category
+
+"translations" }o--o{ "categories" : "via translatable"
+
+"menu_categories" }o--o{ "categories" : "via menu_categories_categories"
 ```
 
 ### `categories`
@@ -5394,6 +5706,20 @@ Properties as follows:
 - `latest_version_id`:
 - `tax_rates_id`:
 
+### `translations`
+
+Translations for various translatable entities (categories, words, promo sections).
+
+Properties as follows:
+
+- `translations_id`:
+- `translatable_id`:
+- `field`:
+- `language`:
+- `translation`:
+- `created_at`:
+- `updated_at`:
+
 ## DailyMeals
 
 ```mermaid
@@ -5473,6 +5799,15 @@ erDiagram
   String city "nullable"
   String country "nullable"
   String postal "nullable"
+}
+"translations" {
+  String translations_id PK
+  String translatable_id FK
+  String field "nullable"
+  String language
+  String translation
+  DateTime(6) created_at
+  DateTime(6) updated_at
 }
 "daily_meals_module" {
   String daily_meals_id PK
@@ -5596,6 +5931,10 @@ erDiagram
 "daily_meal_category_prices" }o--|| "daily_meal_categories" : daily_meal_category
 "categories" }o--o| "categories" : parent_category
 "drivers" |o--o| "users" : user
+
+"translations" }o--o{ "categories" : "via translatable"
+
+"daily_meals_module" }o--o{ "drivers" : "via daily_meals_drivers"
 ```
 
 ### `daily_meal_subscriptions`
@@ -5713,6 +6052,20 @@ Properties as follows:
 - `city`:
 - `country`:
 - `postal`:
+
+### `translations`
+
+Translations for various translatable entities (categories, words, promo sections).
+
+Properties as follows:
+
+- `translations_id`:
+- `translatable_id`:
+- `field`:
+- `language`:
+- `translation`:
+- `created_at`:
+- `updated_at`:
 
 ### `daily_meals_module`
 
@@ -6492,6 +6845,7 @@ erDiagram
   DateTime deleted_at "nullable"
   String employee_id FK "nullable"
   String parent_booking_id FK "nullable"
+  String reviewable_id FK "nullable"
 }
 "booking_history_log" {
   String booking_history_id PK
@@ -6645,6 +6999,8 @@ erDiagram
 "notification_message" }o--o| "notification_template_version" : version
 "notification_message_event" }o--|| "notification_message" : message
 "business" }o--o| "business" : parent_business
+
+"reviews" }o--o{ "reservation_module" : "via reviewable"
 ```
 
 ### `reservation_module`
@@ -6828,6 +7184,7 @@ Properties as follows:
 - `deleted_at`:
 - `employee_id`:
 - `parent_booking_id`:
+- `reviewable_id`:
 
 ### `booking_history_log`
 
@@ -7051,6 +7408,10 @@ erDiagram
 }
 "business_addon" }o--|| "addon" : addon
 "business_usage" }o--|| "action" : action
+
+"action_bundle" }o--o{ "action" : "via action_bundle_action"
+
+"addon" }o--o{ "action" : "via addon_action"
 ```
 
 ### `action_bundle`
@@ -7286,6 +7647,8 @@ erDiagram
 "taxi_orders" }o--o| "vehicles" : vehicle
 "taxi_orders" }o--o| "taxi_orders" : parent_order
 "taxi_orders" }o--o| "transport_module" : transport_module
+
+"reviews" }o--o{ "transport_module" : "via reviewable"
 ```
 
 ### `transport_module`
@@ -7507,6 +7870,41 @@ erDiagram
   String transaction_id FK "nullable"
   String order_id FK "nullable"
 }
+"drivers" {
+  String driver_id PK
+  String transport_module_id FK "nullable"
+  Boolean online "nullable"
+  Boolean on_order "nullable"
+  Json working_hours "nullable"
+  Json ride_requirements "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String user_id FK,UK "nullable"
+  String current_vehicle_id FK,UK "nullable"
+  String last_used_vehicle_id "nullable"
+  Json location "nullable"
+  Json delivery_timeline "nullable"
+  DateTime(6) last_ping_at
+  Boolean is_inactive "nullable"
+  Json transfer_requirements "nullable"
+  String regions
+  Boolean handles_taxi_orders "nullable"
+  Boolean handles_transfer_orders "nullable"
+  Boolean handles_courier_orders "nullable"
+  Boolean handles_delivery_orders "nullable"
+  Boolean taxi_orders_toggled "nullable"
+  Boolean transfer_orders_toggled "nullable"
+  Boolean courier_orders_toggled "nullable"
+  Boolean delivery_orders_toggled "nullable"
+  Float partner_cash_balance "nullable"
+  DateTime(6) come_to_work_last_sent_at "nullable"
+  String daily_meals_id "nullable"
+  Boolean delivers_daily_meals "nullable"
+  Boolean on_daily_meals "nullable"
+  Json scheduled_meals_route "nullable"
+  VEHICLE_TYPE vehicle_type "nullable"
+  String reviewable_id FK "nullable"
+}
 "vehicles" {
   String vehicle_id PK
   String transport_module_id FK "nullable"
@@ -7522,7 +7920,9 @@ erDiagram
   String vehicle_specification_id FK,UK "nullable"
   String business_premise_id FK,UK "nullable"
 }
+"documents" }o--o| "drivers" : drivers
 "documents" }o--o| "vehicles" : vehicles
+"drivers" |o--o| "vehicles" : current_vehicle
 "vehicles" |o--o| "vehicle_specifications" : vehicle_specification
 ```
 
@@ -7560,6 +7960,48 @@ Properties as follows:
 - `vehicle_id`:
 - `transaction_id`:
 - `order_id`:
+
+### `drivers`
+
+Driver entity linked to a user and (optionally) a transport module.
+
+Tracks online state, capabilities, documents, orders and current vehicle.
+
+Properties as follows:
+
+- `driver_id`:
+- `transport_module_id`:
+- `online`:
+- `on_order`:
+- `working_hours`:
+- `ride_requirements`:
+- `created_at`:
+- `updated_at`:
+- `user_id`:
+- `current_vehicle_id`:
+- `last_used_vehicle_id`:
+- `location`:
+- `delivery_timeline`:
+- `last_ping_at`:
+- `is_inactive`:
+- `transfer_requirements`:
+- `regions`:
+- `handles_taxi_orders`:
+- `handles_transfer_orders`:
+- `handles_courier_orders`:
+- `handles_delivery_orders`:
+- `taxi_orders_toggled`:
+- `transfer_orders_toggled`:
+- `courier_orders_toggled`:
+- `delivery_orders_toggled`:
+- `partner_cash_balance`:
+- `come_to_work_last_sent_at`:
+- `daily_meals_id`:
+- `delivers_daily_meals`:
+- `on_daily_meals`:
+- `scheduled_meals_route`:
+- `vehicle_type`:
+- `reviewable_id`:
 
 ### `vehicles`
 
@@ -7937,6 +8379,7 @@ erDiagram
   DateTime deleted_at "nullable"
   String employee_id FK "nullable"
   String parent_booking_id FK "nullable"
+  String reviewable_id FK "nullable"
 }
 "booking_history_log" {
   String booking_history_id PK
@@ -8006,6 +8449,8 @@ erDiagram
 "booking" }o--|| "customers" : customer
 "booking_history_log" }o--o| "users" : user
 "booking_history_log" }o--|| "booking" : booking
+
+"reviews" }o--o{ "booking" : "via reviewable"
 ```
 
 ### `business_users`
@@ -8081,6 +8526,7 @@ Properties as follows:
 - `deleted_at`:
 - `employee_id`:
 - `parent_booking_id`:
+- `reviewable_id`:
 
 ### `booking_history_log`
 
@@ -8322,16 +8768,6 @@ erDiagram
   String translatable_id FK
   Int display_cards_per_page "nullable"
 }
-"promo_banners" {
-  String promo_banners_id PK
-  String type
-  String size "nullable"
-  String title
-  String text
-  String promo_section_buy_id "nullable"
-  String file_id FK
-  String promo_ads_id FK "nullable"
-}
 "promo_sections_buy" {
   String promo_sections_buy_id PK
   String promo_sections_id FK
@@ -8396,7 +8832,6 @@ erDiagram
   PROMO_TYPE promo_type
   ANALYTICS_TYPE type
 }
-"promo_banners" }o--o| "promo_ads" : promo_ads
 "promo_sections_buy" }o--|| "promo_sections" : promo_section
 "word_buy" }o--|| "words" : word
 "promo_analytics" }o--o| "promo_ads" : promo_ads
@@ -8427,21 +8862,6 @@ Properties as follows:
 - `promo_duration_days`:
 - `translatable_id`:
 - `display_cards_per_page`:
-
-### `promo_banners`
-
-Visual assets attached to promo ads or section buys.
-
-Properties as follows:
-
-- `promo_banners_id`:
-- `type`:
-- `size`:
-- `title`:
-- `text`:
-- `promo_section_buy_id`:
-- `file_id`:
-- `promo_ads_id`:
 
 ### `promo_sections_buy`
 
@@ -8587,6 +9007,8 @@ erDiagram
 "service_category" }o--o| "service_category" : parent
 "service" }o--o| "service_category" : service_category
 "service" }o--o| "tax_rates" : tax_rate
+
+"employee" }o--o{ "service" : "via service_assignment"
 ```
 
 ### `tax_rates`
@@ -8765,6 +9187,12 @@ erDiagram
 "schedule_slot" }o--|| "employee" : employee
 "schedule_slot_exceptions" }o--|| "schedule_slot" : schedule_slot
 "booking_slots" }o--|| "schedule_slot" : schedule_slot
+
+"schedule" }o--o{ "employee" : "via schedule_employee"
+
+"schedule" }o--o{ "schedule_slot" : "via schedule_employee"
+
+"employee" }o--o{ "schedule_slot" : "via schedule_employee"
 ```
 
 ### `employee`

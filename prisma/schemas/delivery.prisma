@@ -210,6 +210,7 @@ model local_locations {
 /// @summary Catalog categories (shared across menus/promo/words).
 /// @namespace Menus
 /// @namespace DailyMeals
+/// @namespace PromoAds
 ///
 /// Hierarchical categories with translatable labels and optional icon.
 model categories {
