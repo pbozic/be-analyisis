@@ -7,7 +7,6 @@ import {
 	updateSchema,
 	verifyPhoneSchema,
 	updateEmailSchema,
-	updateUserLanguageSchema,
 	updateTelephoneSchema,
 	updatePasswordSchema,
 	addAddressSchema,
@@ -24,26 +23,86 @@ router.get('/personal', UserController.listPersonalUsers);
 router.get('/me', UserController.me);
 router.get('/me/ping', UserController.ping);
 router.get('/me/reviews', UserController.getMyReviews);
+/**
+ *    * @module user,order
+ *
+ */
 router.get('/me/active_order_ids', UserController.getMyActiveOrderIds);
+/**
+ *    * @module order
+ *
+ */
 router.get('/me/active_orders', UserController.getMyActiveOrders);
 router.get('/:user_id/reviews', UserController.getReviewsByUserId);
+/**
+ *    * @module wallet
+ *
+ */
 router.get('/:user_id/wallet', UserController.getAvailableWalletBalance);
+/**
+ *    * @module wallet
+ *
+ */
 router.get('/:user_id/family_wallet', UserController.getFamilyWalletBalanceAndType);
+/**
+ *    * @module wallet
+ *
+ */
 router.get('/:user_id/transactions', UserController.getTransactions);
 router.get('/:user_id', UserController.getUserById);
+/**
+ *    * @module wallet
+ *
+ */
 router.patch('/:user_id/wallet', UserController.updateWalletBalance);
 router.patch('/me', joi(updateSchema), UserController.updateMe);
 router.patch('/me/password', joi(updatePasswordSchema), UserController.updatePassword);
 router.patch('/me/email', joi(updateEmailSchema), UserController.updateEmail);
 router.patch('/me/profile_picture', UserController.updateProfilePicture);
+/**
+ *    * @module preferences
+ *
+ */
 router.patch('/me/taxi-preferences', UserController.updateUserTaxiPreferences);
+/**
+ *    * @module preferences
+ *
+ */
 router.patch('/me/notification-preferences', UserController.updateUserNotificationPreferences);
+/**
+ *    * @module preferences
+ *
+ */
 router.patch('/me/taxi-push-notification-preferences', UserController.updateUserTaxiPushNotifications);
+/**
+ *    * @module preferences
+ *
+ */
 router.patch('/me/transfer-push-notification-preferences', UserController.updateUserTransferPushNotifications);
+/**
+ *    * @module preferences
+ *
+ */
 router.patch('/me/delivery-push-notification-preferences', UserController.updateUserDeliveryPushNotifications);
+/**
+ *    * @module preferences
+ *
+ */
 router.patch('/me/spicy-preferences', UserController.updateUserSpicyPreferences);
+/**
+ *    * @module preferences
+ *
+ */
 router.patch('/me/transfer-preferences', UserController.updateUserTransferPreferences);
+/**
+ *    * @module preferences
+ *
+ */
 router.patch('/me/radio-preferences', UserController.updateUserRadioPreferences);
+/**
+ *    * @module preferences
+ *
+ */
 router.patch('/me/allergies-preferences', UserController.updateUserAllergiesPreferences);
 router.patch('/me/phone', joi(updateTelephoneSchema), UserController.updateTelephone);
 router.post('/me/oneSignalId', joi(oneSignalIdSchema), UserController.oneSignalId);
@@ -54,7 +113,15 @@ router.patch('/me/address/:address_id/primary', UserController.setPrimaryAddress
 router.get('/me/verify/phone', UserController.requestSMSVerification);
 router.post('/me/verify/phone', joi(verifyPhoneSchema), UserController.verifyMe);
 router.post('/review', joi(reviewUserSchema), UserController.reviewUser);
+/**
+ *    * @module wallet
+ *
+ */
 router.get('/me/payment-sheet/:type?/:business_id?', UserController.getPaymentSheetCredentials);
+/**
+ *    * @module wallet
+ *
+ */
 router.post('/me/requestToAddFunds', UserController.requestToAddFundsToWallet);
 router.get('/me/scheduled_orders', UserController.getSelfScheduledOrders);
 router.delete('/delete/:user_id', UserController.softDeleteUserByUserId);
@@ -65,11 +132,31 @@ router.patch('/active/:user_id', UserController.updateUserActiveByUserId);
 router.patch('/me/disabled', UserController.disableMe);
 router.post('/me/group_user/register-child', joi(registerChildSchema), UserController.registerChildUser);
 router.patch('/me/group_user/status/', UserController.updateChildUserEnabledByGroupUserId);
+/**
+ *    * @module wallet
+ *
+ */
 router.patch('/me/group_user/allowance/', UserController.updateChildUserAllowanceByGroupUserId);
+/**
+ *    * @module wallet
+ *
+ */
 router.patch('/group_user/allowance', UserController.updateChildUserAllowanceByGroupUserId);
 router.delete('/me/group_user/delete/:group_user_id', UserController.deleteChildUserByGroupUserId);
+/**
+ *    * @module wallet
+ *
+ */
 router.post('/me/request-payment-intent', UserController.requestPaymentIntent);
+/**
+ *    * @module wallet
+ *
+ */
 router.post('/me/confirm-payment-intent', UserController.confirmPaymentIntent);
+/**
+ *    * @module wallet
+ *
+ */
 router.get('/me/credits/:service_type', UserController.getUserCredits);
 router.patch('/me/claim-reward', UserController.claimReward);
 router.post('/me/redeem-referral-code', UserController.redeemReferralCode);
@@ -79,5 +166,9 @@ router.patch('/me/marketing-notifications', UserController.updateMarketingNotifi
 router.patch('/me/ads-personalization', UserController.updateAdsPersonalization);
 router.patch('/me/newsletter', UserController.updateNewsletter);
 router.post('/me/request-data', UserController.requestData);
+/**
+ *    * @module wallet
+ *
+ */
 router.delete('/me/remove-payment-method/:pm_id', StripeController.removePaymentMethod);
 export default router;

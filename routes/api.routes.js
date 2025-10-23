@@ -44,41 +44,185 @@ import withUserMiddleware from '../middleware/user.js';
 import sessionRoutes from './api/session.routes.js';
 const router = express.Router();
 const authUserRoutes = authRoutes;
+/**
+ *    * @module stripe
+ *
+ */
 router.use('/stripe', stripeRoutes);
+/**
+ *    * @module admin
+ *
+ */
 router.use('/admin', [authMiddleware, adminMiddleware], adminRoutes);
+/**
+ *    * @module user
+ *
+ */
 router.use('/users', [authMiddleware], userRoutes);
+/**
+ *    * @module general,auth
+ *
+ */
 router.use('/auth', authRoutes);
+/**
+ *    * @module general,auth
+ *
+ */
 router.use('/user/auth', authRoutes);
+/**
+ *    * @module transport,auth,register
+ *
+ */
 router.use('/taxi/auth', authTaxiRoutes);
+/**
+ *    * @module delivery,auth,register
+ *
+ */
 router.use('/delivery/auth', authDeliveryRoutes);
+/**
+ *    * @module merchant,auth,register
+ *
+ */
 router.use('/merchant/auth', authMerchantRoutes);
+/**
+ *    * @module merchant
+ *
+ */
 router.use('/merchant/reservations', reservationsMerchantRoutes);
+/**
+ *    * @module delivery,merchant,general
+ *
+ */
 router.use('/delivery/orders', [authMiddleware], deliveryRoutes);
+/**
+ *    * @module general,merchant
+ *
+ */
 router.use('/delivery/daily_meals', [authMiddleware], dailyMealsRoutes);
+/**
+ *    * @module transport
+ *
+ */
 router.use('/taxi', [authMiddleware], taxiRoutes);
+/**
+ *    * @module business,register
+ *
+ */
 router.use('/business/auth', authBusinessRoutes);
+/**
+ *    * @module business
+ *
+ */
 router.use('/business/search', [withUserMiddleware], searchRoutes);
+/**
+ *    * @module business
+ *
+ */
 router.use('/business', [authMiddleware], businessRoutes);
+/**
+ *    * @module overwatch
+ *
+ */
 router.use('/overwatch', overwatchRoutes);
+/**
+ *    * @module transport
+ *
+ */
 router.use('/drivers', [authMiddleware], driverRoutes);
+/**
+ *    * @module transport
+ *
+ */
 router.use('/delivery_drivers', [authMiddleware], deliveryDriverRoutes);
+/**
+ *    * @module transport
+ *
+ */
 router.use('/vehicles', [authMiddleware], vehicleRoutes);
+/**
+ *    * @module finances
+ *
+ */
 router.use('/finances', [authMiddleware], financesRoutes);
+/**
+ *    * @module documents
+ *
+ */
 router.use('/documents', [authMiddleware], documentsRoutes);
+/**
+ *    * @module merchant,delivery
+ *
+ */
 router.use('/menus', [authMiddleware], menusRoutes);
+/**
+ *    * @module business,general
+ *
+ */
 router.use('/business-users', [authMiddleware], businessUserRoutes);
+/**
+ *    * @module business,general
+ *
+ */
 router.use('/business-teams', [authMiddleware], businessTeamRoutes);
+/**
+ *    * @module business
+ *
+ */
 router.use('/business-clients', [authMiddleware], businessClientRoutes);
+/**
+ *    * @module lobby
+ *
+ */
 router.use('/order_lobby', [authMiddleware], orderLobbyRoutes);
+/**
+ *    * @module general
+ *
+ */
 router.use('/lost_items', lostItemsRoutes);
+/**
+ *    * @module flags
+ *
+ */
 router.use('/flags', [authMiddleware], flagRoutes);
+/**
+ *    * @module google_maps
+ *
+ */
 router.use('/google_maps', googleMaps);
+/**
+ *    * @module general,merchant
+ *
+ */
 router.use('/categories', categoriesRoutes);
+/**
+ *    * @module merchant,general
+ *
+ */
 router.use('/promo', promoRoutes);
+/**
+ *    * @module blog
+ *
+ */
 router.use('/blog', blogRoutes);
+/**
+ *    * @module merchant,general
+ *
+ */
 router.use('/reservation', reservationRoutes);
+/**
+ *    * @module roles
+ *
+ */
 router.use('/roles', [authMiddleware], RolesRoutes);
+/**
+ *    * @module general
+ *
+ */
 router.use('/session', sessionRoutes);
+/**
+ *    * @module merchant,general
+ *
+ */
 router.use('/reviews', [authMiddleware], async (req, res) => {
 	let reviews = await prisma.reviews.findMany({
 		include: {
