@@ -6,21 +6,22 @@ enum PERMISSION_SCOPE {
 
 /// @summary End user account with profile, preferences and relations.
 /// @namespace Users
-/// @namespace FamilyUsers
-/// @namespace BusinessUsers
-/// @namespace CRM
-/// @namespace Drivers
-/// @namespace TaxiOrders
-/// @namespace DeliveryOrders
-/// @namespace OrderLobbies
-/// @namespace DailyMeals
-/// @namespace Referral
-/// @namespace Cashback
-/// @namespace Wallet
-/// @namespace Payments
-/// @namespace LostItems
-/// @namespace Blog
-/// @namespace Bookings
+/// @erd FamilyUsers
+/// @erd BusinessUsers
+/// @erd CRM
+/// @erd Drivers
+/// @erd TaxiOrders
+/// @erd DeliveryOrders
+/// @erd OrderLobbies
+/// @erd DailyMeals
+/// @erd TableReservations
+/// @erd Referral
+/// @erd Cashback
+/// @erd Wallet
+/// @erd Payments
+/// @erd LostItems
+/// @erd Blog
+/// @erd Bookings
 ///
 /// Central user entity linking to roles, orders, documents, wallets and analytics.
 model users {
@@ -46,7 +47,7 @@ model users {
   driver                                 drivers?
   orders                                 taxi_orders[]
   profile_picture_id                     String?                    @unique @db.Uuid
-  profile_picture                        files?
+  profile_picture                        files?                     @relation(fields: [profile_picture_id], references: [file_id])
   delivery_orders                        delivery_orders[]
   reviewable_id                          String?                    @db.Uuid
   reviewable                             reviewable?                @relation(fields: [reviewable_id], references: [reviewable_id])

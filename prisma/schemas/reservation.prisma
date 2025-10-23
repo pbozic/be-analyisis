@@ -52,6 +52,7 @@ model reservation_module {
 /// @summary Physical location accepting reservations.
 /// @namespace Reservations
 /// @namespace Locations
+/// @erd Addresses
 ///
 /// Defines address, phone, working days and online visibility for booking.
 model location {

@@ -21,7 +21,7 @@ model transport_module {
 }
 
 /// @namespace TaxiOrders
-/// @namespace Transport
+/// @erd Transport
 /// @summary Ride-hailing taxi orders with route, payment and driver relations.
 model taxi_orders {
     order_id                 String                     @id @default(uuid()) @db.Uuid
@@ -43,7 +43,8 @@ model taxi_orders {
     updated_at               DateTime                   @default(now()) @updatedAt @db.Timestamptz(6)
     driver                   drivers?                   @relation(fields: [driver_id], references: [driver_id])
     vehicle                  vehicles?                  @relation(fields: [vehicle_id], references: [vehicle_id])
-    user                     users?                     @relation(fields: [user_id], references: [user_id])
+    // Customer who placed the order
+    customer                 users?                     @relation(fields: [user_id], references: [user_id])
     business_users           business_users?            @relation(fields: [business_users_id], references: [business_users_id])
     business_clients         business_clients?          @relation(fields: [business_clients_id], references: [business_clients_id])
     history                  taxi_order_sent[]
@@ -143,8 +144,8 @@ model driver_history_locations {
 }
 
 /// @summary Junction table linking drivers to municipalities they operate in.
-/// @namespace Drivers
 /// @namespace Regions
+/// @erd Drivers
 /// @hidden
 model driver_municipalities {
     driver_municipalities_id String   @id @default(uuid()) @db.Uuid
@@ -161,14 +162,14 @@ model driver_municipalities {
 }
 
 /// @summary Driver entity linked to a user and (optionally) a transport module.
-/// @namespace Transport
-/// @namespace Users
 /// @namespace Drivers
-/// @namespace Vehicles
-/// @namespace Regions
-/// @namespace TaxiOrders
-/// @namespace DeliveryOrders
-/// @namespace DailyMeals
+/// @erd Transport
+/// @erd Users
+/// @erd Vehicles
+/// @erd Regions
+/// @erd TaxiOrders
+/// @erd DeliveryOrders
+/// @erd DailyMeals
 ///
 /// Tracks online state, capabilities, documents, orders and current vehicle.
 model drivers {
@@ -245,11 +246,11 @@ model vehicle_drivers {
 }
 
 /// @summary Vehicle entity with class/category, documents and invoice relations.
-/// @namespace Transport
 /// @namespace Vehicles
-/// @namespace Drivers
-/// @namespace TaxiOrders
-/// @namespace DeliveryOrders
+/// @erd Transport
+/// @erd Drivers
+/// @erd TaxiOrders
+/// @erd DeliveryOrders
 model vehicles {
     vehicle_id               String                  @id @unique @default(uuid()) @db.Uuid
     transport_module_id      String?                 @db.Uuid

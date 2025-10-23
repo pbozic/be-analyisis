@@ -70,9 +70,9 @@ function parseModels(prismaContent) {
 	return models;
 }
 
-/** Create Mermaid line for A }o--o{ B : via junction */
+/** Create Mermaid line for A }o--o{ B : via junction (no trailing newline) */
 function makeEdgeLine(a, b, via) {
-	return `"${a}" }o--o{ "${b}" : "via ${via.trim()}"\n`;
+	return `"${a}" }o--o{ "${b}" : "via ${via.trim()}"`;
 }
 
 async function main() {
@@ -279,7 +279,13 @@ async function main() {
 		}
 		if (toInsert.length === 0) return { md, inserted: 0, reason: 'deduped' };
 
-		const insertText = toInsert.map(l => `\n${l}`).join('');
+		// Build insertion ensuring no unnecessary leading newline, and exactly one
+		// newline between existing content and the first inserted line, and a trailing
+		// newline before the closing fence for proper Mermaid formatting.
+		const beforeFence = md.slice(0, fenceClose);
+		const needsLeadingNewline = !beforeFence.endsWith('\n');
+		const insertCore = toInsert.join('\n') + '\n';
+		const insertText = (needsLeadingNewline ? '\n' : '') + insertCore;
 		const newMd = md.slice(0, fenceClose) + insertText + md.slice(fenceClose);
 		return { md: newMd, inserted: toInsert.length };
 	};

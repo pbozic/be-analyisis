@@ -44,14 +44,15 @@ generator typescriptInterfaces {
 
 /// @summary Business entity representing a merchant/partner account or crm.
 /// @namespace Business
-/// @namespace BusinessUsers
-/// @namespace CRM
-/// @namespace Transport
-/// @namespace Delivery
-/// @namespace Stores
-/// @namespace FoodDrinks
-/// @namespace Reservations
-/// @namespace Users
+/// @erd BusinessUsers
+/// @erd CRM
+/// @erd Transport
+/// @erd Delivery
+/// @erd Stores
+/// @erd FoodDrinks
+/// @erd Reservations
+/// @erd Users
+/// @erd Addresses
 ///
 /// Core company profile linked to address, documents, analytics, roles and users.
 model business {
@@ -77,8 +78,10 @@ model business {
   updated_at          DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
   address             addresses?    @relation(name: "address", fields: [address_id], references: [address_id])
   documents           documents[]
-  logo                files?        @relation("business_logo")
-  banner              files?        @relation("business_banner")
+  logo_id             String?       @unique @db.Uuid
+  logo                files?        @relation("business_logo", fields: [logo_id], references: [file_id])
+  banner_id           String?       @unique @db.Uuid
+  banner              files?        @relation("business_banner", fields: [banner_id], references: [file_id])
   parent_business_id  String?       @db.Uuid
   parent_business     business?     @relation("parent_business", fields: [parent_business_id], references: [business_id], onDelete: SetNull)
   child_businesses    business[]    @relation("parent_business")
@@ -111,11 +114,13 @@ model business {
 }
 
 /// @summary User membership within a business (employees/managers).
-/// @namespace Business
 /// @namespace BusinessUsers
-/// @namespace TaxiOrders
-/// @namespace DeliveryOrders
-/// @namespace Bookings
+/// @erd Business
+/// @erd TaxiOrders
+/// @erd DeliveryOrders
+/// @erd Bookings
+/// @erd Addresses
+/// @erd CRM
 model business_users {
   business_users_id    String        @id @default(uuid()) @db.Uuid
   online               Boolean?      @default(false)
@@ -215,10 +220,10 @@ model allowances {
 }
 
 /// @summary Documents attached to business, user, driver, vehicle, menu items or orders.
-/// @namespace Business
-/// @namespace Drivers
-/// @namespace Vehicles
 /// @namespace Documents
+/// @erd Business
+/// @erd Drivers
+/// @erd Vehicles
 model documents {
   document_id     String        @id @default(uuid()) @db.Uuid
   document_type   DOCUMENT_TYPE
@@ -243,36 +248,33 @@ model documents {
 
 /// @summary File storage for documents, images, logos, banners, menu items, blog posts, categories, promo banners and more.
 /// @namespace Documents
-/// @namespace Business
-/// @namespace Users
-/// @namespace MenuItems
-/// @namespace LostItems
-/// @namespace PromoAds
+/// @erd Business
+/// @erd Users
+/// @erd MenuItems
+/// @erd LostItems
+/// @erd PromoAds
 model files {
-  file_id            String           @id @default(uuid()) @db.Uuid
-  url                String?
-  file_type          FILE_TYPE
-  public             Boolean          @default(false)
-  mime_type          String
-  created_at         DateTime         @default(now()) @db.Timestamptz(6)
-  updated_at         DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
-  document_id        String?          @db.Uuid
-  documents          documents?       @relation(fields: [document_id], references: [document_id])
-  categories         categories[]
-  blog_posts         blog_posts[]
-  business_logo_id   String?          @unique @db.Uuid
-  business_logo      business?        @relation("business_logo", fields: [business_logo_id], references: [business_id])
-  business_banner_id String?          @unique @db.Uuid
-  business_banner    business?        @relation("business_banner", fields: [business_banner_id], references: [business_id])
-  user_id            String?          @unique @db.Uuid
-  user               users?           @relation(fields: [user_id], references: [user_id])
-  menu_item_id       String?          @unique @db.Uuid
-  menu_item          menu_items?      @relation(fields: [menu_item_id], references: [menu_item_id])
-  lost_item_id       String?          @unique @db.Uuid
-  lost_item          lost_items?      @relation(fields: [lost_item_id], references: [lost_item_id])
-  promo_banners      promo_banners[]
-  delivery_order_id  String?          @unique @db.Uuid
-  delivery_order     delivery_orders? @relation(fields: [delivery_order_id], references: [order_id])
+  file_id           String           @id @default(uuid()) @db.Uuid
+  url               String?
+  file_type         FILE_TYPE
+  public            Boolean          @default(false)
+  mime_type         String
+  created_at        DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime         @default(now()) @updatedAt @db.Timestamptz(6)
+  document_id       String?          @db.Uuid
+  documents         documents?       @relation(fields: [document_id], references: [document_id])
+  categories        categories[]
+  blog_posts        blog_posts[]
+  business_logo     business[]       @relation("business_logo")
+  business_banner   business[]       @relation("business_banner")
+  user_id           String?          @unique @db.Uuid
+  user              users?
+  menu_item         menu_items[]     @relation("menu_item_image") // TODO: This was needed for duplicate menu_items -> UPDATE DAO
+  lost_item_id      String?          @unique @db.Uuid
+  lost_item         lost_items?      @relation(fields: [lost_item_id], references: [lost_item_id])
+  promo_banners     promo_banners[]
+  delivery_order_id String?          @unique @db.Uuid
+  delivery_order    delivery_orders? @relation(fields: [delivery_order_id], references: [order_id])
 }
 
 /// @summary API and session tokens for users.
@@ -290,10 +292,11 @@ model tokens {
 }
 
 /// @summary Postal/geo address used by businesses, users and modules.
-/// @namespace Business
-/// @namespace Users
-/// @namespace BusinessUsers
-/// @namespace DailyMeals
+/// @namespace Addresses
+/// @erd Business
+/// @erd Users
+/// @erd BusinessUsers
+/// @erd DailyMeals
 model addresses {
   address_id               String                     @id @default(uuid()) @db.Uuid
   address                  String
@@ -318,6 +321,7 @@ model addresses {
 
 /// @summary User address book entries linking users to addresses.
 /// @namespace Users
+/// @erd Addresses
 model user_address {
   user_id    String       @db.Uuid
   address_id String       @db.Uuid
@@ -356,8 +360,12 @@ model reviewable {
 
 /// @summary Review record authored by a user about a business or user.
 /// @namespace Users
-/// @namespace Drivers
-/// @namespace Business
+/// @erd Drivers
+/// @erd Transport
+/// @erd Stores
+/// @erd FoodDrinks
+/// @erd Reservations
+/// @erd Bookings
 model reviews {
   review_id     String     @id @default(uuid()) @db.Uuid
   reviewable_id String     @db.Uuid
@@ -376,10 +384,11 @@ model reviews {
 }
 
 /// @namespace Payments
-/// @namespace Users
-/// @namespace TaxiOrders
-/// @namespace DeliveryOrders
-/// @namespace Documents
+/// @erd Users
+/// @erd TaxiOrders
+/// @erd DeliveryOrders
+/// @erd Documents
+/// @erd Wallet
 /// @summary Ledger transactions for users and orders (credit/debit entries).
 model transactions {
   transaction_id    String           @id @default(uuid()) @db.Uuid
@@ -402,7 +411,7 @@ model transactions {
 }
 
 /// @namespace Payments
-/// @namespace Users
+/// @erd Users
 /// @summary Money flow entries for a user (credits/debits and fees).
 model user_money_flows {
   balance_change_id String           @id @default(uuid()) @db.Uuid
@@ -416,8 +425,8 @@ model user_money_flows {
 }
 
 /// @summary Money flow entries for a business (credits/debits and fees).
-/// @namespace Business
 /// @namespace Payments
+/// @erd Business
 model business_money_flows {
   balance_change_id String           @id @default(uuid()) @db.Uuid
   business_id       String           @db.Uuid
@@ -430,6 +439,7 @@ model business_money_flows {
 }
 
 /// @namespace Payments
+/// @hidden
 model payment_intent_logs {
   payment_intent_logs_id String   @id @default(uuid())
   stripe_id              String   @unique
@@ -438,6 +448,7 @@ model payment_intent_logs {
 
 /// @summary Lost and found items reported by users/drivers.
 /// @namespace LostItems
+/// @erd Users
 model lost_items {
   lost_item_id String            @id @default(uuid()) @db.Uuid
   user_id      String?           @db.Uuid
@@ -471,8 +482,9 @@ model lost_items {
 //   user            users    @relation(fields: [user_id], references: [user_id])
 // }
 
-/// @namespace TaxiOrders
-/// @namespace DeliveryOrders
+/// @namespace Wallet
+/// @erd TaxiOrders
+/// @erd DeliveryOrders
 /// @summary Wallet transfer history for taxi and delivery orders.
 model wallet_transfer_history {
   wallet_transfer_history_id String           @id @default(uuid()) @db.Uuid
@@ -485,9 +497,9 @@ model wallet_transfer_history {
   taxi_order                 taxi_orders?     @relation(fields: [order_id], references: [order_id], map: "wallet_transfer_history_taxi_order_id_fkey")
 }
 
-/// @namespace Users
 /// @namespace Wallet
-/// @namespace Payments
+/// @erd Users
+/// @erd Payments
 /// @summary Wallet and credit balances for users with optional expiry and reservations.
 model wallet_funds {
   wallet_funds_id                   String         @id @unique @default(uuid()) @db.Uuid
@@ -511,7 +523,7 @@ model wallet_funds {
 }
 
 /// @namespace PromoSections
-/// @namespace Promo
+/// @erd Promo
 /// @summary Configurable promotional sections purchasable by businesses.
 model promo_sections {
   promo_sections_id      String               @id @default(uuid()) @db.Uuid
@@ -552,9 +564,9 @@ model promo_banners {
 }
 
 /// @summary Purchase of a promo section placement by a business.
-/// @namespace Business
-/// @namespace Promo
 /// @namespace PromoSections
+/// @erd Business
+/// @erd Promo
 model promo_sections_buy {
   promo_sections_buy_id String         @id @default(uuid()) @db.Uuid
   promo_sections_id     String         @db.Uuid
@@ -572,7 +584,7 @@ model promo_sections_buy {
 }
 
 /// @namespace PromoAds
-/// @namespace Promo
+/// @erd Promo
 /// @summary Promotional advertisements with categories and analytics.
 model promo_ads {
   promo_ads_id    String               @id @default(uuid()) @db.Uuid
@@ -602,7 +614,7 @@ model promo_ads_category {
 }
 
 /// @namespace PromoWords
-/// @namespace Promo
+/// @erd Promo
 /// @summary Search words/tags that can be promoted and analyzed.
 model words {
   word_id         String            @id @default(uuid()) @db.Uuid
@@ -620,9 +632,9 @@ model words {
 }
 
 /// @summary Subscription/purchase of promoted word by a business.
-/// @namespace Business
-/// @namespace Promo
 /// @namespace PromoWords
+/// @erd Promo
+/// @erd Business
 model word_buy {
   word_buy_id             String    @id @default(uuid()) @db.Uuid
   word_id                 String    @db.Uuid
@@ -653,8 +665,8 @@ model word_bundles {
 }
 
 /// @summary Analytics events for promotions and searches associated to a business.
-/// @namespace Business
 /// @namespace Promo
+/// @erd Business
 model promo_analytics {
   promo_analytics_id         String         @id @default(uuid()) @db.Uuid
   promo_ads_id               String?        @db.Uuid
@@ -694,10 +706,10 @@ model translatable {
 }
 
 /// @summary Translations for various translatable entities (categories, words, promo sections).
-/// @namespace PromoWords
-/// @namespace PromoSections
-/// @namespace Menus
-/// @namespace DailyMeals
+/// @erd PromoWords
+/// @erd PromoSections
+/// @erd Menus
+/// @erd DailyMeals
 model translations {
   translations_id String       @id @default(uuid()) @db.Uuid
   translatable_id String       @db.Uuid
@@ -747,8 +759,8 @@ model user_favorite_drivers {
 /// @summary Scoring points (rewards/penalties) for users and businesses.
 /// @namespace Business
 /// @namespace Users
-/// @namespace TaxiOrders
-/// @namespace DeliveryOrders
+/// @erd TaxiOrders
+/// @erd DeliveryOrders
 model scoring_points {
   scoring_points_id String                @id @default(uuid()) @db.Uuid
   business_id       String                @db.Uuid
@@ -771,9 +783,9 @@ model scoring_points {
 }
 
 /// @summary Recorded late events for orders impacting scoring.
-/// @namespace TaxiOrders
-/// @namespace DeliveryOrders
 /// @namespace Drivers
+/// @erd TaxiOrders
+/// @erd DeliveryOrders
 model late_events {
   late_events_id    String  @id @default(uuid()) @db.Uuid
   stores_id         String? @db.Uuid
@@ -932,8 +944,8 @@ model blog_posts {
   tags          blog_tags_blog_posts[]
 }
 
-/// @namespace Drivers
 /// @namespace Regions
+/// @erd Drivers
 /// @summary Municipalities and settlements with geojson and weather data, linked to drivers.
 model municipalities {
   municipalities_id     String                   @id @default(uuid()) @db.Uuid
@@ -1027,8 +1039,8 @@ model weather_data {
   @@index([municipalities_id, time])
 }
 
-/// @namespace MenuItems
-/// @namespace Services
+/// @erd MenuItems
+/// @erd Services
 model tax_rates {
   tax_rates_id String    @id @default(uuid()) @db.Uuid
   name         String

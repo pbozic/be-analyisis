@@ -1,6 +1,7 @@
 /// @summary Storefront settings for a business (Delivery module).
-/// @namespace Delivery
 /// @namespace Stores
+/// @erd Delivery
+/// @erd Addresses
 ///
 /// Holds store configuration, delivery address, menus and order lobbies.
 model stores {
@@ -26,8 +27,9 @@ model stores {
 }
 
 /// @summary Food & drinks configuration for a business (Delivery module).
-/// @namespace Delivery
 /// @namespace FoodDrinks
+/// @erd Delivery
+/// @erd Addresses
 ///
 /// Controls restaurant state, delivery address and restaurant/table reservations.
 model food_drinks {
@@ -59,7 +61,7 @@ model food_drinks {
 }
 
 /// @namespace DeliveryOrders
-/// @namespace Transport
+/// @erd Transport
 /// @summary Courier/food delivery orders with items, status timeline and driver.
 model delivery_orders {
     order_id                   String                     @id @default(uuid()) @db.Uuid
@@ -80,7 +82,8 @@ model delivery_orders {
     last_sent_at               DateTime?                  @db.Timestamptz(6)
     created_at                 DateTime                   @default(now()) @db.Timestamptz(6)
     updated_at                 DateTime                   @default(now()) @updatedAt @db.Timestamptz(6)
-    user                       users?                     @relation(fields: [user_id], references: [user_id])
+    // Customer who placed the order
+    customer                   users?                     @relation(fields: [user_id], references: [user_id])
     history                    delivery_order_sent[]
     vehicle_id                 String?                    @db.Uuid
     vehicle                    vehicles?                  @relation(fields: [vehicle_id], references: [vehicle_id])
@@ -117,7 +120,6 @@ model delivery_orders {
 }
 
 /// @namespace DeliveryOrders
-/// @namespace Delivery
 model delivery_order_sent {
     delivery_order_sent_id String           @id @default(uuid()) @db.Uuid
     order_id               String           @db.Uuid
@@ -134,8 +136,8 @@ model delivery_order_sent {
 }
 
 /// @summary Daily meals configuration and scheduling.
-/// @namespace FoodDrinks
 /// @namespace DailyMeals
+/// @erd FoodDrinks
 ///
 /// Defines daily meal program with categories, drivers and subscriptions.
 model daily_meals_module {
@@ -190,6 +192,7 @@ model business_local_locations {
 
 /// @summary Geocoded local locations linked to addresses.
 /// @namespace Stores
+/// @erd Addresses
 ///
 /// Unique wrapper over an address used for local pickup/delivery points.
 model local_locations {
@@ -207,7 +210,7 @@ model local_locations {
 /// @summary Catalog categories (shared across menus/promo/words).
 /// @namespace Menus
 /// @namespace DailyMeals
-/// @namespace PromoAds
+/// @erd PromoAds
 ///
 /// Hierarchical categories with translatable labels and optional icon.
 model categories {
@@ -248,6 +251,8 @@ model menu_categories_categories {
 
 /// @summary Menu header for a store or food_drinks venue.
 /// @namespace Menus
+/// @erd Stores
+/// @erd FoodDrinks
 ///
 /// A menu can be daily (isDailyMeal with date) and groups menu categories.
 model menus {
@@ -294,8 +299,8 @@ model menu_categories {
 }
 
 /// @summary Sellable dish/product with pricing and attributes.
-/// @namespace Menus
 /// @namespace MenuItems
+/// @erd Menus
 ///
 /// Includes allergens, ingredients, stock and tax rate. Documents can be attached.
 model menu_items {
@@ -316,8 +321,8 @@ model menu_items {
     menu_category_id          String?                  @db.Uuid
     daily_date                DateTime?                @db.Timestamptz(6)
     menu_category             menu_categories?         @relation("menu_items_in_category", fields: [menu_category_id], references: [menu_category_id], onDelete: Cascade)
-    file_id                   String?                  @db.Uuid
-    file                      files?
+    image_file_id             String?                  @unique @db.Uuid
+    image_file                files?                   @relation("menu_item_image", fields: [image_file_id], references: [file_id])
     requires_id_check         Boolean                  @default(false)
     is_enabled                Boolean                  @default(true)
     is_copy                   Boolean                  @default(false)
@@ -343,7 +348,7 @@ model menu_items {
 
 /// @summary Individual items within an order, including sides/extras and replacements.
 /// @namespace MenuItems
-/// @namespace DeliveryOrders
+/// @erd DeliveryOrders
 model line_items {
     line_item_id         String             @id @default(uuid()) @db.Uuid
     menu_item_id         String             @db.Uuid
@@ -401,6 +406,9 @@ model menu_item_stock_change {
     @@unique([menu_item_id, order_id], name: "unique_menu_item_stock_change")
 }
 
+/// @summary Table reservations module for a food_drinks venue.
+/// @namespace TableReservations
+/// @erd FoodDrinks
 model table_reservations_module {
     id             String         @id @default(uuid()) @db.Uuid
     food_drinks_id String         @unique @db.Uuid
@@ -409,7 +417,7 @@ model table_reservations_module {
 }
 
 /// @summary Table/restaurant reservation for a food_drinks venue.
-/// @namespace FoodDrinks
+/// @namespace TableReservations
 model reservations {
     reservation_id String             @id @default(uuid()) @db.Uuid
     seats          Int
@@ -429,6 +437,7 @@ model reservations {
 
 /// @summary Subscription to the daily meals program for a user.
 /// @namespace DailyMeals
+/// @erd Addresses
 model daily_meal_subscriptions {
     id                  String              @id @default(uuid()) @db.Uuid
     user_id             String              @db.Uuid
@@ -571,9 +580,9 @@ model daily_meal_category_prices {
 }
 
 /// @summary Group ordering lobbies for coordinated deliveries.
-/// @namespace Stores
-/// @namespace FoodDrinks
 /// @namespace OrderLobbies
+/// @erd Stores
+/// @erd FoodDrinks
 model order_lobbies {
     order_lobbies_id   String   @id @default(uuid()) @db.Uuid
     lobby_name         String
