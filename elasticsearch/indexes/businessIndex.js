@@ -32,20 +32,20 @@ async function createBusinessIndex(force = false) {
 						business_id: { type: 'keyword' },
 						name: { type: 'text', analyzer: 'custom_text_analyzer' },
 						description: { type: 'text', analyzer: 'custom_text_analyzer' },
-						type: { type: 'keyword' }, // Business type (LOCAL, MERCHANT, etc.)
 						location: { type: 'geo_point' }, // Allows geo-based queries
-						popular: { type: 'boolean' },
+						types: {
+							type: 'nested',
+							properties: {
+								type: { type: 'keyword' },
+							},
+						},
 						active: { type: 'boolean' },
 						online: { type: 'boolean' },
-						new: { type: 'boolean' },
 						working_hours: { type: 'object' },
 						delivery_address: { type: 'object' },
 						address: { type: 'object' },
-						seats: { type: 'integer' },
-						restaurant_overwhelmed: { type: 'boolean' },
-						logo: { type: 'text' },
-						banner: { type: 'text' },
-						telephone: { type: 'text' },
+						overwhelmed: { type: 'boolean' },
+						// telephone: { type: 'text' },
 						menus: {
 							type: 'nested',
 							properties: {
@@ -92,30 +92,34 @@ async function createBusinessIndex(force = false) {
 						business_local_locations: {
 							type: 'nested',
 							properties: {
-								business_local_location_id: { type: 'keyword' },
-								local_location_id: { type: 'keyword' },
+								address: { type: 'object' },
+								geo: { type: 'geo_point' },
 								time: { type: 'date' },
-								local_location: {
-									type: 'object',
-									properties: {
-										local_location_id: { type: 'keyword' },
-										address_id: { type: 'keyword' },
-										address: {
-											type: 'object',
-											properties: {
-												address_id: { type: 'keyword' },
-												address: { type: 'text' },
-												latitude: { type: 'keyword' },
-												longitude: { type: 'keyword' },
-												street: { type: 'text' },
-												house_number: { type: 'text' },
-												city: { type: 'text' },
-												country: { type: 'text' },
-												postal: { type: 'text' },
-											},
-										},
-									},
-								},
+							},
+						},
+						reservation_locations: {
+							type: 'nested',
+							properties: {
+								address: { type: 'object' },
+								geo: { type: 'geo_point' },
+							},
+						},
+						reservation_services: {
+							type: 'nested',
+							properties: {
+								service_id: { type: 'keyword' },
+								name: { type: 'text', analyzer: 'custom_text_analyzer' },
+								translations: { type: 'text', analyzer: 'custom_text_analyzer' },
+								description: { type: 'text', analyzer: 'custom_text_analyzer' },
+								service_category_id: { type: 'keyword' },
+							},
+						},
+						reservation_service_categories: {
+							type: 'nested',
+							properties: {
+								service_category_id: { type: 'keyword' },
+								name: { type: 'text', analyzer: 'custom_text_analyzer' },
+								translations: { type: 'text', analyzer: 'custom_text_analyzer' },
 							},
 						},
 					},
@@ -128,7 +132,7 @@ async function createBusinessIndex(force = false) {
 	}
 }
 async function indexBusinesses(business_id = null, force = false) {
-	//TODO:
+	//TODO: Set up indexing for reservation businesses and change for merchants
 	//- Call this function on:
 	//  - App startup
 	//  - Business creation
@@ -283,8 +287,8 @@ async function indexBusinesses(business_id = null, force = false) {
 							lon: parseFloat(business?.delivery_address?.longitude || 0),
 						}
 					: {
-							lat: parseFloat(business?.address?.latitude || 0),
-							lon: parseFloat(business?.address?.longitude || 0),
+							lat: parseFloat(business?.address?.latitude || 0), // TODO: handle LOCAL (no delivery address)
+							lon: parseFloat(business?.address?.longitude || 0), // TODO: handle LOCAL (no delivery address)
 						},
 				menus: business.menus
 					.filter((menu) => {

@@ -21,7 +21,8 @@ model stores {
     minimum_order            Int                        @default(0)
     menus                    menus[]
     order_lobbies            order_lobbies[]
-    type                     STORE_TYPE                 @default(RETAIL)
+    overwhelmed              Boolean                    @default(false)
+    online                   Boolean                    @default(false)
 
     late_events late_events[] @relation("late_events_to_stores")
 }
@@ -42,18 +43,18 @@ model food_drinks {
     reviewable_id  String?     @db.Uuid
     reviewable     reviewable? @relation(fields: [reviewable_id], references: [reviewable_id])
 
-    restaurant_overwhelmed Boolean           @default(false)
-    business               business          @relation(fields: [business_id], references: [business_id])
-    delivery_address_id    String?           @db.Uuid
-    delivery_address       addresses?        @relation(name: "delivery_address", fields: [delivery_address_id], references: [address_id])
-    delivery_orders        delivery_orders[]
-    minimum_order          Int               @default(0)
-    menus                  menus[]
-    order_lobbies          order_lobbies[]
+    business            business          @relation(fields: [business_id], references: [business_id])
+    delivery_address_id String?           @db.Uuid
+    delivery_address    addresses?        @relation(name: "delivery_address", fields: [delivery_address_id], references: [address_id])
+    delivery_orders     delivery_orders[]
+    minimum_order       Int               @default(0)
+    menus               menus[]
+    order_lobbies       order_lobbies[]
 
     table_reservations_module table_reservations_module?
     seats                     Int?
-    type                      FOOD_DRINKS_TYPE?
+    overwhelmed               Boolean                    @default(false)
+    online                    Boolean                    @default(false)
     daily_meals_id            String?                    @db.Uuid
     daily_meals               daily_meals_module?
 

@@ -49,8 +49,6 @@ erDiagram
 "business" {
   String business_id PK
   String address_id FK "nullable"
-  String finance_id "nullable"
-  BUSINESS_TYPE type
   Boolean is_business_unit
   String business_group_name "nullable"
   String name
@@ -58,7 +56,7 @@ erDiagram
   String tax_id
   String registration_id
   String email UK
-  String telephone "nullable"
+  String telephone
   String telephone_code
   String telephone_number
   String website_url "nullable"
@@ -76,6 +74,10 @@ erDiagram
   DateTime first_activated_at "nullable"
   Boolean active
   String sales_representative_id "nullable"
+}
+"business_type" {
+  String type_id PK
+  String type UK
 }
 "scoring_points" {
   String scoring_points_id PK
@@ -227,6 +229,7 @@ erDiagram
 "promo_sections_buy" }o--|| "business" : business
 "word_buy" }o--|| "business" : business
 "promo_analytics" }o--|| "business" : business
+"business" }o--o{ "business_type" : "via business_to_types"
 ```
 
 ### `business`
@@ -239,8 +242,6 @@ Properties as follows:
 
 - `business_id`:
 - `address_id`:
-- `finance_id`:
-- `type`:
 - `is_business_unit`:
 - `business_group_name`:
 - `name`:
@@ -266,6 +267,15 @@ Properties as follows:
 - `first_activated_at`:
 - `active`:
 - `sales_representative_id`:
+
+### `business_type`
+
+Types of businesses (e.g., Local, Store, Restaurant).
+
+Properties as follows:
+
+- `type_id`:
+- `type`:
 
 ### `scoring_points`
 
@@ -364,8 +374,6 @@ erDiagram
 "business" {
   String business_id PK
   String address_id FK "nullable"
-  String finance_id "nullable"
-  BUSINESS_TYPE type
   Boolean is_business_unit
   String business_group_name "nullable"
   String name
@@ -373,7 +381,7 @@ erDiagram
   String tax_id
   String registration_id
   String email UK
-  String telephone "nullable"
+  String telephone
   String telephone_code
   String telephone_number
   String website_url "nullable"
@@ -1065,8 +1073,6 @@ erDiagram
 "business" {
   String business_id PK
   String address_id FK "nullable"
-  String finance_id "nullable"
-  BUSINESS_TYPE type
   Boolean is_business_unit
   String business_group_name "nullable"
   String name
@@ -1074,7 +1080,7 @@ erDiagram
   String tax_id
   String registration_id
   String email UK
-  String telephone "nullable"
+  String telephone
   String telephone_code
   String telephone_number
   String website_url "nullable"
@@ -1506,8 +1512,6 @@ erDiagram
 "business" {
   String business_id PK
   String address_id FK "nullable"
-  String finance_id "nullable"
-  BUSINESS_TYPE type
   Boolean is_business_unit
   String business_group_name "nullable"
   String name
@@ -1515,7 +1519,7 @@ erDiagram
   String tax_id
   String registration_id
   String email UK
-  String telephone "nullable"
+  String telephone
   String telephone_code
   String telephone_number
   String website_url "nullable"
@@ -1561,7 +1565,8 @@ erDiagram
   String reviewable_id FK "nullable"
   String delivery_address_id FK "nullable"
   Int minimum_order
-  STORE_TYPE type
+  Boolean overwhelmed
+  Boolean online
 }
 "food_drinks" {
   String food_drinks_id PK
@@ -1571,11 +1576,11 @@ erDiagram
   DateTime(6) created_at
   DateTime(6) updated_at
   String reviewable_id FK "nullable"
-  Boolean restaurant_overwhelmed
   String delivery_address_id FK "nullable"
   Int minimum_order
   Int seats "nullable"
-  FOOD_DRINKS_TYPE type "nullable"
+  Boolean overwhelmed
+  Boolean online
   String daily_meals_id "nullable"
 }
 "local_locations" {
@@ -3082,8 +3087,6 @@ erDiagram
 "business" {
   String business_id PK
   String address_id FK "nullable"
-  String finance_id "nullable"
-  BUSINESS_TYPE type
   Boolean is_business_unit
   String business_group_name "nullable"
   String name
@@ -3091,7 +3094,7 @@ erDiagram
   String tax_id
   String registration_id
   String email UK
-  String telephone "nullable"
+  String telephone
   String telephone_code
   String telephone_number
   String website_url "nullable"
@@ -3241,7 +3244,8 @@ erDiagram
   String reviewable_id FK "nullable"
   String delivery_address_id FK "nullable"
   Int minimum_order
-  STORE_TYPE type
+  Boolean overwhelmed
+  Boolean online
 }
 "business_local_locations" {
   String business_local_location_id PK
@@ -3260,8 +3264,6 @@ erDiagram
 "business" {
   String business_id PK
   String address_id FK "nullable"
-  String finance_id "nullable"
-  BUSINESS_TYPE type
   Boolean is_business_unit
   String business_group_name "nullable"
   String name
@@ -3269,7 +3271,7 @@ erDiagram
   String tax_id
   String registration_id
   String email UK
-  String telephone "nullable"
+  String telephone
   String telephone_code
   String telephone_number
   String website_url "nullable"
@@ -3349,7 +3351,8 @@ Properties as follows:
 - `reviewable_id`:
 - `delivery_address_id`:
 - `minimum_order`:
-- `type`:
+- `overwhelmed`:
+- `online`:
 
 ### `business_local_locations`
 
@@ -3391,18 +3394,16 @@ erDiagram
   DateTime(6) created_at
   DateTime(6) updated_at
   String reviewable_id FK "nullable"
-  Boolean restaurant_overwhelmed
   String delivery_address_id FK "nullable"
   Int minimum_order
   Int seats "nullable"
-  FOOD_DRINKS_TYPE type "nullable"
+  Boolean overwhelmed
+  Boolean online
   String daily_meals_id "nullable"
 }
 "business" {
   String business_id PK
   String address_id FK "nullable"
-  String finance_id "nullable"
-  BUSINESS_TYPE type
   Boolean is_business_unit
   String business_group_name "nullable"
   String name
@@ -3410,7 +3411,7 @@ erDiagram
   String tax_id
   String registration_id
   String email UK
-  String telephone "nullable"
+  String telephone
   String telephone_code
   String telephone_number
   String website_url "nullable"
@@ -3501,11 +3502,11 @@ Properties as follows:
 - `created_at`:
 - `updated_at`:
 - `reviewable_id`:
-- `restaurant_overwhelmed`:
 - `delivery_address_id`:
 - `minimum_order`:
 - `seats`:
-- `type`:
+- `overwhelmed`:
+- `online`:
 - `daily_meals_id`:
 
 ## DeliveryOrders
@@ -5289,8 +5290,6 @@ erDiagram
 "business" {
   String business_id PK
   String address_id FK "nullable"
-  String finance_id "nullable"
-  BUSINESS_TYPE type
   Boolean is_business_unit
   String business_group_name "nullable"
   String name
@@ -5298,7 +5297,7 @@ erDiagram
   String tax_id
   String registration_id
   String email UK
-  String telephone "nullable"
+  String telephone
   String telephone_code
   String telephone_number
   String website_url "nullable"
@@ -5815,8 +5814,6 @@ erDiagram
 "business" {
   String business_id PK
   String address_id FK "nullable"
-  String finance_id "nullable"
-  BUSINESS_TYPE type
   Boolean is_business_unit
   String business_group_name "nullable"
   String name
@@ -5824,7 +5821,7 @@ erDiagram
   String tax_id
   String registration_id
   String email UK
-  String telephone "nullable"
+  String telephone
   String telephone_code
   String telephone_number
   String website_url "nullable"
@@ -7174,8 +7171,6 @@ erDiagram
 "business" {
   String business_id PK
   String address_id FK "nullable"
-  String finance_id "nullable"
-  BUSINESS_TYPE type
   Boolean is_business_unit
   String business_group_name "nullable"
   String name
@@ -7183,7 +7178,7 @@ erDiagram
   String tax_id
   String registration_id
   String email UK
-  String telephone "nullable"
+  String telephone
   String telephone_code
   String telephone_number
   String website_url "nullable"
@@ -7212,7 +7207,8 @@ erDiagram
   String reviewable_id FK "nullable"
   String delivery_address_id FK "nullable"
   Int minimum_order
-  STORE_TYPE type
+  Boolean overwhelmed
+  Boolean online
 }
 "food_drinks" {
   String food_drinks_id PK
@@ -7222,11 +7218,11 @@ erDiagram
   DateTime(6) created_at
   DateTime(6) updated_at
   String reviewable_id FK "nullable"
-  Boolean restaurant_overwhelmed
   String delivery_address_id FK "nullable"
   Int minimum_order
   Int seats "nullable"
-  FOOD_DRINKS_TYPE type "nullable"
+  Boolean overwhelmed
+  Boolean online
   String daily_meals_id "nullable"
 }
 "business" }o--o| "business" : parent_business

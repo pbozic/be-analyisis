@@ -56,35 +56,33 @@ generator typescriptInterfaces {
 ///
 /// Core company profile linked to address, documents, analytics, roles and users.
 model business {
-  business_id         String        @id @unique @default(uuid()) @db.Uuid
-  address_id          String?       @db.Uuid
-  finance_id          String?       @db.Uuid
-  type                BUSINESS_TYPE
-  is_business_unit    Boolean       @default(false)
+  business_id         String      @id @unique @default(uuid()) @db.Uuid
+  address_id          String?     @db.Uuid
+  is_business_unit    Boolean     @default(false) // TODO: Remove later
   business_group_name String? // if part of any holding or other business group
   name                String
   description         String?
   tax_id              String
   registration_id     String
-  email               String        @unique
-  telephone           String?
-  telephone_code      String
-  telephone_number    String
+  email               String      @unique
+  telephone           String
+  telephone_code      String // TODO: Remove later
+  telephone_number    String // TODO: Remove later
   website_url         String?
   working_hours       Json?
-  popular             Boolean       @default(true)
-  new                 Boolean       @default(false)
-  created_at          DateTime      @default(now()) @db.Timestamptz(6)
-  updated_at          DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
-  address             addresses?    @relation(name: "address", fields: [address_id], references: [address_id])
+  popular             Boolean     @default(true) // TODO: Remove later
+  new                 Boolean     @default(false) // TODO: Remove later
+  created_at          DateTime    @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime    @default(now()) @updatedAt @db.Timestamptz(6)
+  address             addresses?  @relation(name: "address", fields: [address_id], references: [address_id])
   documents           documents[]
-  logo_id             String?       @unique @db.Uuid
-  logo                files?        @relation("business_logo", fields: [logo_id], references: [file_id])
-  banner_id           String?       @unique @db.Uuid
-  banner              files?        @relation("business_banner", fields: [banner_id], references: [file_id])
-  parent_business_id  String?       @db.Uuid
-  parent_business     business?     @relation("parent_business", fields: [parent_business_id], references: [business_id], onDelete: SetNull)
-  child_businesses    business[]    @relation("parent_business")
+  logo_id             String?     @unique @db.Uuid
+  logo                files?      @relation("business_logo", fields: [logo_id], references: [file_id])
+  banner_id           String?     @unique @db.Uuid
+  banner              files?      @relation("business_banner", fields: [banner_id], references: [file_id])
+  parent_business_id  String?     @db.Uuid
+  parent_business     business?   @relation("parent_business", fields: [parent_business_id], references: [business_id], onDelete: SetNull)
+  child_businesses    business[]  @relation("parent_business")
 
   stripe_account_id               String?
   stripe_customer_id              String?
@@ -104,6 +102,7 @@ model business {
   roles                role[]
   business_users       business_users[]
 
+  types              business_to_types[]
   reservation_module reservation_module?
   transport_module   transport_module?
   stores             stores?
@@ -111,6 +110,27 @@ model business {
   crm_module         crm_module?
 
   @@index([parent_business_id])
+}
+
+/// @summary Junction table linking businesses to their types.
+/// @namespace Business
+/// @hidden
+model business_to_types {
+  business_id   String        @db.Uuid
+  type_id       String        @db.Uuid
+  business      business      @relation(fields: [business_id], references: [business_id], onDelete: Cascade)
+  business_type business_type @relation(fields: [type_id], references: [type_id], onDelete: Cascade)
+
+  @@id([business_id, type_id])
+  @@index([type_id, business_id])
+}
+
+/// @summary Types of businesses (e.g., Local, Store, Restaurant).
+/// @namespace Business
+model business_type {
+  type_id    String              @id @default(uuid()) @db.Uuid
+  type       String              @unique // TODO: seeder
+  businesses business_to_types[]
 }
 
 /// @summary User membership within a business (employees/managers).
@@ -123,7 +143,7 @@ model business {
 /// @erd CRM
 model business_users {
   business_users_id    String        @id @default(uuid()) @db.Uuid
-  online               Boolean?      @default(false)
+  online               Boolean?      @default(false) // TODO: remove?
   company_role         COMPANY_ROLE  @default(DIRECTOR)
   created_at           DateTime      @default(now()) @db.Timestamptz(6)
   updated_at           DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
@@ -726,18 +746,18 @@ model translations {
 /// @namespace Users
 /// @hidden
 model user_favorite_businesses {
-  user_favorite_businesses_id String        @id @default(uuid()) @db.Uuid
-  user_id                     String        @db.Uuid
-  business_id                 String        @db.Uuid
-  business_type               BUSINESS_TYPE
-  created_at                  DateTime      @default(now()) @db.Timestamptz(6)
-  updated_at                  DateTime      @default(now()) @updatedAt @db.Timestamptz(6)
+  user_favorite_businesses_id String   @id @default(uuid()) @db.Uuid
+  user_id                     String   @db.Uuid
+  business_id                 String   @db.Uuid
+  module                      MODULE
+  created_at                  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at                  DateTime @default(now()) @updatedAt @db.Timestamptz(6)
 
   users      users    @relation("user_favorite_businesses_to_user", fields: [user_id], references: [user_id])
   businesses business @relation("user_favorite_businesses_to_business", fields: [business_id], references: [business_id])
 
-  @@unique(name: "user_typed_favorite", [user_id, business_id, business_type])
-  @@index([user_id, business_type])
+  @@unique(name: "user_typed_favorite", [user_id, business_id, module])
+  @@index([user_id, module])
 }
 
 /// @namespace Users
@@ -1205,29 +1225,6 @@ enum TokenType {
   BUSINESS_REGISTRATION
 }
 
-enum BUSINESS_TYPE {
-  TRANSFER
-  MERCHANT
-  LOCAL
-  RESTAURANT
-  BUSINESS
-  DISPATCHER
-  RESERVATION
-}
-
-enum MERCHANT_TYPE {
-  RESTAURANT
-  BAR
-  MARKET
-  STORE
-}
-
-enum BUSINESS_CATEGORY {
-  TAXI
-  TRANSFER
-  MERCHANT
-}
-
 enum FILE_TYPE {
   IMAGE
   DOCUMENT
@@ -1456,4 +1453,10 @@ enum ADDRESS_TYPE {
   HOME
   WORK
   OTHER
+}
+
+enum MODULE {
+  STORES
+  FOOD_DRINKS
+  RESERVATIONS
 }
