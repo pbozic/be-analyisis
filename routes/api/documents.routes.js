@@ -6,11 +6,31 @@ const router = express.Router();
 router.get('/', DocumentsController.listDocuments);
 router.get('/:documentId', DocumentsController.getDocumentById);
 router.get('/users/:userId', DocumentsController.getDocumentsForUser);
+/**
+ *    * @module business
+ *
+ */
 router.get('/businesses/:businessId', DocumentsController.getDocumentsForBusiness);
+/**
+ *    * @module transport
+ *
+ */
 router.get('/deliveryPersons/:deliveryPersonId', DocumentsController.getDocumentsForDeliveryPerson);
+/**
+ *    * @module transport
+ *
+ */
 router.get('/drivers/:driver_id', DocumentsController.getDocumentsForDriver);
+/**
+ *    * @module transport
+ *
+ */
 router.get('/vehicles/:vehicleId', DocumentsController.getDocumentsForVehicle);
 router.get('/type/:documentType', DocumentsController.getDocumentsByDocumentType);
+/**
+ *    * @module business
+ *
+ */
 router.get('/business/:business_id/type/:document_type', DocumentsController.getDocumentsForBusinessByDocumentType);
 router.get('/user/type/:document_type', DocumentsController.getDocumentsForUserByDocumentType);
 router.get('/drivers/:driverId/type/:documentType', DocumentsController.getDocumentsForDriverByDocumentType);
@@ -19,10 +39,30 @@ router.get(
 	DocumentsController.getDocumentsForDeliveryPersonByDocumentType
 );
 router.get('/vehicles/:vehicleId/type/:documentType', DocumentsController.getDocumentsForVehicleByDocumentType);
+/**
+ *    * @module general
+ *
+ */
 router.post('/create/user/:user_id', DocumentsController.createUserDocument);
+/**
+ *    * @module business
+ *
+ */
 router.post('/create/business/:business_id', DocumentsController.createBusinessDocument);
+/**
+ *    * @module transport
+ *
+ */
 router.post('/create/driver/:driver_id', DocumentsController.createDriverDocument);
+/**
+ *    * @module transport
+ *
+ */
 router.post('/create/vehicle/:vehicle_id', DocumentsController.createVehicleDocument);
+/**
+ *    * @module transport
+ *
+ */
 router.post('/create/delivery_driver/:delivery_driver_id', DocumentsController.createDeliveryPersonDocument);
 router.patch('/expirationDate', DocumentsController.updateDocumentExpirationDate);
 router.patch('/issueDate', DocumentsController.updateDocumentIssueDate);

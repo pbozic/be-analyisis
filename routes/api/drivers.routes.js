@@ -1,7 +1,6 @@
 import express from 'express';
 
 import DriverController from '../../controllers/DriverController.js';
-import joi from '../../middleware/joi.js';
 import driverSchemas from '../../joi/driverSchemas.js';
 const router = express.Router();
 const { updateSchema } = driverSchemas;
@@ -14,9 +13,25 @@ router.get('/orders', DriverController.resendDelegatedOrdersToDriver);
 router.get('/:driver_id', DriverController.getDriverById);
 router.get('/:driver_id/location', DriverController.getDriverLocation);
 router.get('/:driver_id/history_location', DriverController.getDriverHistoryLocations);
+/**
+ *    * @module finances
+ *
+ */
 router.get('/earnings/all', DriverController.getAllDriversEarnings);
+/**
+ *    * @module finances
+ *
+ */
 router.get('/earnings/total', DriverController.getTotalEarnings);
+/**
+ *    * @module finances
+ *
+ */
 router.get('/earnings/:driver_id', DriverController.getDriverEarnings);
+/**
+ *    * @module finances
+ *
+ */
 router.get('/earnings/:driver_id/total', DriverController.getDriverTotalEarnings);
 router.get('/business/:business_id', DriverController.getDriversByBusinessId);
 router.patch('/update/:driver_id', DriverController.updateDriver);

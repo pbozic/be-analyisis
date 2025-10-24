@@ -1,8 +1,6 @@
 import express from 'express';
 
 import DeliveryDriverController from '../../controllers/DeliveryDriverController.js';
-import joi from '../../middleware/joi.js';
-import DriverController from '../../controllers/DriverController.js';
 const router = express.Router();
 router.get('/', DeliveryDriverController.listDeliveryDrivers);
 router.get('/orders/:user_id', DeliveryDriverController.resendDelegatedOrdersToDeliveryDriver);
@@ -13,9 +11,25 @@ router.get('/user/:user_id', DeliveryDriverController.getDeliveryDriverByUserId)
 router.get('/daily-meal-business/:business_id', DeliveryDriverController.getDeliveryDriversByBusinessId);
 router.get('/:delivery_driver_id', DeliveryDriverController.getDeliveryDriverById);
 router.get('/:delivery_driver_id/location', DeliveryDriverController.getDeliveryDriverLocation);
+/**
+ *    * @module finances
+ *
+ */
 router.get('/earnings/all', DeliveryDriverController.getAllDriversEarnings);
+/**
+ *    * @module finances
+ *
+ */
 router.get('/earnings/total', DeliveryDriverController.getTotalEarnings);
+/**
+ *    * @module finances
+ *
+ */
 router.get('/earnings/:delivery_driver_id', DeliveryDriverController.getDriverEarnings);
+/**
+ *    * @module finances
+ *
+ */
 router.get('/earnings/:delivery_driver_id/total', DeliveryDriverController.getDriverTotalEarnings);
 router.patch('/edit', DeliveryDriverController.editDeliveryDriver);
 router.patch('/assign/:delivery_driver_id', DeliveryDriverController.updateDeliveryDriverDailyMealBusiness);
