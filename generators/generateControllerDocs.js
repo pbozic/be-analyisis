@@ -133,16 +133,31 @@ function updateMarkdownDoc(fileName, functions) {
 	let existingContent = fs.existsSync(docFile) ? fs.readFileSync(docFile, 'utf-8') : `# ${fileName} Controller\n\n`;
 
 	functions.forEach((fn) => {
+		console.log(`Generating doc for ${fileName}.${fn.name}()`);
+		// Escape literal text for use inside a RegExp
+		const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 		const startTag = `<!-- DOCGEN:START ${fn.name} -->`;
 		const endTag = `<!-- DOCGEN:END ${fn.name} -->`;
 		const block = formatDocBlock(fn.name, fn.doc);
 
-		// eslint-disable-next-line no-useless-escape
-		const regex = new RegExp(`${startTag}[\s\S]*?${endTag}`, 'gm');
-		if (regex.test(existingContent)) {
+		// Option A: dotAll + non-greedy
+		// const regex = new RegExp(`${escapeRegExp(startTag)}.*?${escapeRegExp(endTag)}`, 'gs');
+
+		// Option B: classic any-char trick (works everywhere)
+		const regex = new RegExp(`${escapeRegExp(startTag)}[\\s\\S]*?${escapeRegExp(endTag)}`, 'g');
+
+		// Log once without breaking the state. Use .test on a clone or just .includes
+		const hasBlock = existingContent.includes(startTag);
+		console.log('Regex:', regex, 'hasBlock?', hasBlock);
+
+		if (hasBlock) {
+			// Replace ALL occurrences of that block
 			existingContent = existingContent.replace(regex, block);
 		} else {
-			existingContent += block;
+			// Append if block not present
+			// Add a separating newline if you care about formatting
+			existingContent += (existingContent.endsWith('\n') ? '' : '\n') + block;
 		}
 	});
 
@@ -161,3 +176,8 @@ export default async function generateControllerDocs() {
 		updateMarkdownDoc(baseName, functions);
 	}
 }
+
+generateControllerDocs().catch((err) => {
+	console.error('Error generating controller docs:', err);
+	process.exit(1);
+});
