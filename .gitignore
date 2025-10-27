@@ -19,4 +19,6 @@ dist
 prisma/schemas/interfaces.ts
 prisma/docs
 docs/static/prisma/
-**/diagrams/images
+**/diagrams/images¸
+scripts/diagrams
+docs/docs/diagrams/images/*

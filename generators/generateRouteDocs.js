@@ -1,9 +1,17 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const fg = require('fast-glob');
-const yaml = require('js-yaml');
-const openapi = require('openapi-comment-parser');
+import fg from 'fast-glob';
+import yaml from 'js-yaml';
+import openapi from 'openapi-comment-parser';
+import merge from 'lodash.merge';
+
+import generateRoutesMap from './generateRouteMap.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const ROUTES_MAP = path.join(__dirname, './routesMap.json');
 const OUTPUT_DIR = path.join(process.cwd(), 'docs', 'docs', 'api');
 const CONTROLLERS_DIR = path.join(process.cwd(), 'docs', 'docs', 'controllers');
@@ -12,9 +20,7 @@ const SWAGGER_INPUT = path.join(DOCS_DIR, 'static/swagger/openApiConfig.yaml');
 const SWAGGER_SMALL_INPUT = path.join(DOCS_DIR, 'static/swagger/openApiConfig.yaml');
 console.log('SWAGGER_INPUT', SWAGGER_INPUT);
 const SWAGGER_OUTPUT_DIR = path.join(DOCS_DIR, 'static/swagger-per-route');
-const merge = require('lodash.merge');
 
-const generateRoutesMap = require('./generateRouteMap');
 function ensureDir(dir) {
 	if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 }
@@ -104,7 +110,7 @@ _Add details here._
 	}
 }
 
-async function generateRouteDocs() {
+export default async function generateRouteDocs() {
 	await generateRoutesMap(path.join(__dirname, '../routes'), ROUTES_MAP);
 	console.log('Generating route docs...');
 	const data = JSON.parse(fs.readFileSync(ROUTES_MAP, 'utf-8'));
@@ -117,14 +123,10 @@ async function generateRouteDocs() {
 			cwd: process.cwd(), // base dir to resolve from
 			absolute: true, // get full paths
 		});
-		//console.log('path', path.join(process.cwd(), 'routes/**/*.js'));
-		//console.log('files', files);
 		// This triggers parsing of comments
 		spec = openapi({
 			include: files,
 		});
-		//console.log('spec', spec);
-		//console.log('baseSpec', baseSpec);
 		finalSpec = merge({}, baseSpec, spec);
 		if (!finalSpec.openapi) finalSpec.openapi = '3.0.3';
 		const yamlSpec = yaml.dump(finalSpec);
@@ -138,5 +140,3 @@ async function generateRouteDocs() {
 	ensureDir(OUTPUT_DIR);
 	data.forEach(generateRouteDoc);
 }
-
-module.exports = generateRouteDocs;

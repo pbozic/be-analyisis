@@ -1,9 +1,9 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-const recast = require('recast');
-const parser = require('@babel/parser');
-const commentParser = require('comment-parser');
+import * as recast from 'recast';
+import * as parser from '@babel/parser';
+import * as commentParser from 'comment-parser';
 
 const DAO_DIR = path.join(process.cwd(), 'dao');
 const DOCS_DIR = path.join(process.cwd(), 'docs', 'docs', 'daos');
@@ -19,7 +19,21 @@ function parseJsFile(filePath) {
 			parse: (src) =>
 				parser.parse(src, {
 					sourceType: 'module',
-					plugins: ['jsx', 'classProperties', 'optionalChaining'],
+					plugins: [
+						'jsx',
+						'classProperties',
+						'classPrivateProperties',
+						'classPrivateMethods',
+						'decorators-legacy',
+						'exportDefaultFrom',
+						'exportNamespaceFrom',
+						'optionalChaining',
+						'nullishCoalescingOperator',
+						'dynamicImport',
+						'importMeta',
+						'topLevelAwait',
+						'typescript',
+					],
 				}),
 		},
 	});
@@ -83,7 +97,7 @@ function updateMarkdownDoc(fileName, functions) {
 	fs.writeFileSync(docFile, existingContent);
 }
 
-async function generateDaoDocs() {
+export default async function generateDaoDocs() {
 	ensureDocsDir();
 	const files = fs.readdirSync(DAO_DIR).filter((f) => f.endsWith('.js') || f.endsWith('.ts'));
 	for (const file of files) {
@@ -93,5 +107,3 @@ async function generateDaoDocs() {
 		updateMarkdownDoc(baseName, functions);
 	}
 }
-
-module.exports = generateDaoDocs;

@@ -3,6 +3,10 @@ import express from 'express';
 import FinanceController from '../../controllers/FinancesController.js';
 const router = express.Router();
 router.get('/:finance_id', FinanceController.getFinanceRecordById);
+/**
+ *    * @module business
+ *
+ */
 router.get('/business/:business_id', FinanceController.getFinanceRecordByBusinessId);
 router.post('/create', FinanceController.createNewFinanceRecord);
 router.patch('/:finance_id', FinanceController.updateFinanceRecord);

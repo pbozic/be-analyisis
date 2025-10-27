@@ -51,7 +51,6 @@
         "@aws-sdk/client-s3": "^3.596.0",
         "@aws-sdk/lib-storage": "^3.596.0",
         "@aws-sdk/s3-request-presigner": "^3.596.0",
-        "@babel/parser": "^7.27.2",
         "@commitlint/cli": "^19.8.1",
         "@elastic/elasticsearch": "^8.17.0",
         "@googlemaps/google-maps-services-js": "^3.4.0",
@@ -124,7 +123,6 @@
         "pug": "^3.0.3",
         "qr-code-styling": "^1.6.0-rc.1",
         "qr-code-styling-node": "^1.5.0",
-        "react-export-excel": "^0.5.3",
         "read-excel-file": "^5.2.6",
         "recast": "^0.23.11",
         "redis": "^4.7.0",
@@ -135,8 +133,6 @@
         "swagger-ui-express": "^5.0.0",
         "twilio": "^5.1.1",
         "unklogger": "^2.3.0",
-        "wkhtmltopdf": "^0.4.0",
-        "wkhtmltopdf-installer": "^0.3.2",
         "yaml": "^2.8.0",
         "zod-prisma-types": "^3.2.4"
     },
@@ -145,6 +141,8 @@
     "author": "Tadej Hiti",
     "license": "ISC",
     "devDependencies": {
+        "@babel/parser": "^7.28.4",
+        "@babel/traverse": "^7.28.4",
         "@eslint/eslintrc": "^3.3.1",
         "@faker-js/faker": "^9.5.0",
         "@types/express": "^5.0.3",

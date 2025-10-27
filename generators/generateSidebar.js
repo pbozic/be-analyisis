@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 const DOCS_ROOT = path.join(process.cwd(), 'docs', 'docs');
 const SIDEBAR_PATH = path.join(process.cwd(), 'docs', 'sidebars.js');
@@ -94,7 +94,7 @@ function convertToSidebar(tree) {
 	return items;
 }
 
-function generateSidebar() {
+export default function generateSidebar() {
 	if (!fs.existsSync(DOCS_ROOT)) {
 		console.error(`❌ Docs root not found: ${DOCS_ROOT}`);
 		return;
@@ -112,5 +112,3 @@ function generateSidebar() {
 	console.log(`✅ Sidebar written to ${SIDEBAR_PATH}`);
 	return sidebar;
 }
-
-module.exports = generateSidebar;

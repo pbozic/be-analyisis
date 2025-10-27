@@ -13,6 +13,10 @@ router.get(
 );
 router.post('/', BusinessUsersController.createBusinessUser);
 router.post('/address/operating', BusinessUsersController.addOperatingAddress);
+/**
+ *    * @module finances
+ *
+ */
 router.patch('/allowance', BusinessUsersController.setAllowance);
 router.patch('/company-role', BusinessUsersController.updateCompanyRole);
 router.patch('/online', BusinessUsersController.updateBusinessUserOnlineStatus);

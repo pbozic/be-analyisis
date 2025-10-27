@@ -10,18 +10,38 @@ router.get('/order/:order_id', TaxiOrderController.getOrder);
 router.get('/order/:order_id/available-drivers', TaxiOrderController.getDriversForOrder);
 router.post('/orders/pagination/', TaxiOrderController.getTaxiOrdersWithPagination);
 router.get('/orders/completed/:driver_id', TaxiOrderController.getCompletedTaxiOrders);
+/**
+ *    * @module user
+ *
+ */
 router.get('/orders/completed/user/:user_id', TaxiOrderController.getCompletedTaxiOrdersByUserId);
 router.get('/orders/completed/business/:business_id', TaxiOrderController.getCompletedTaxiOrdersByBusinessId);
 router.get('/orders/rejected/:driver_id', TaxiOrderController.getRejectedTaxiOrders);
 router.get('/orders/canceled/:driver_id', TaxiOrderController.getCanceledTaxiOrders);
+/**
+ *    * @module user
+ *
+ */
 router.get('/orders/canceled/user/:user_id', TaxiOrderController.getCanceledTaxiOrdersByUserId);
 router.get('/orders/active/driver/:driver_id', TaxiOrderController.getActiveTaxiOrdersByDriverId);
+/**
+ *    * @module user
+ *
+ */
 router.get('/orders/active/me', TaxiOrderController.getMyActiveTaxiOrders);
+/**
+ *    * @module user
+ *
+ */
 router.get('/orders/active/:user_id/:type', TaxiOrderController.getActiveTaxiOrders);
 router.get('/orders/driver/:driver_id', TaxiOrderController.getTaxiOrdersByDriverId);
 router.post('/order', joi(createOrderSchema), TaxiOrderController.createOrder);
 router.get('/orders/scheduled_orders', TaxiOrderController.getScheduledOrders);
 router.get('/orders/scheduled_orders/driver/:driver_id', TaxiOrderController.getAcceptedScheduledOrders);
+/**
+ *    * @module user
+ *
+ */
 router.get('/orders/scheduled_orders/user/:user_id', TaxiOrderController.getScheduledOrdersByUserId);
 router.post('/dispatch-order', joi(createOrderSchema), TaxiOrderController.createDispatchOrder);
 router.post('/order/status', TaxiOrderController.updateOrderStatus);

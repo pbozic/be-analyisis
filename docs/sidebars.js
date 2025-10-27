@@ -65,6 +65,19 @@ module.exports = {
 						},
 						{
 							type: 'category',
+							label: 'drivers.routes',
+							collapsible: true,
+							collapsed: true,
+							items: [
+								{
+									type: 'doc',
+									id: 'api/api/admin/drivers.routes/get-api-admin-drivers.routes',
+									label: '[GET] /',
+								},
+							],
+						},
+						{
+							type: 'category',
 							label: 'users',
 							collapsible: true,
 							collapsed: true,
@@ -85,6 +98,19 @@ module.exports = {
 								{
 									type: 'doc',
 									id: 'api/api/admin/vehicles/get-api-admin-vehicles',
+									label: '[GET] /',
+								},
+							],
+						},
+						{
+							type: 'category',
+							label: 'vehicles.routes',
+							collapsible: true,
+							collapsed: true,
+							items: [
+								{
+									type: 'doc',
+									id: 'api/api/admin/vehicles.routes/get-api-admin-vehicles.routes',
 									label: '[GET] /',
 								},
 							],
@@ -150,6 +176,69 @@ module.exports = {
 						{
 							type: 'doc',
 							id: 'api/api/ads/post-api-ads',
+							label: '[POST] /',
+						},
+					],
+				},
+				{
+					type: 'category',
+					label: 'ads.routes',
+					collapsible: true,
+					collapsed: true,
+					items: [
+						{
+							type: 'doc',
+							id: 'api/api/ads.routes/delete-api-ads.routes-ad_id',
+							label: '[DELETE] /:ad_id',
+						},
+						{
+							type: 'doc',
+							id: 'api/api/ads.routes/get-api-ads.routes-active',
+							label: '[GET] /active',
+						},
+						{
+							type: 'doc',
+							id: 'api/api/ads.routes/get-api-ads.routes-ad_id',
+							label: '[GET] /:ad_id',
+						},
+						{
+							type: 'doc',
+							id: 'api/api/ads.routes/get-api-ads.routes-business-business_id',
+							label: '[GET] /business/:business_id',
+						},
+						{
+							type: 'doc',
+							id: 'api/api/ads.routes/get-api-ads.routes-user-user_id',
+							label: '[GET] /user/:user_id',
+						},
+						{
+							type: 'doc',
+							id: 'api/api/ads.routes/get-api-ads.routes',
+							label: '[GET] /',
+						},
+						{
+							type: 'doc',
+							id: 'api/api/ads.routes/patch-api-ads.routes-ad_id-activate',
+							label: '[PATCH] /:ad_id/activate',
+						},
+						{
+							type: 'doc',
+							id: 'api/api/ads.routes/patch-api-ads.routes-ad_id-deactivate',
+							label: '[PATCH] /:ad_id/deactivate',
+						},
+						{
+							type: 'doc',
+							id: 'api/api/ads.routes/patch-api-ads.routes-ad_id',
+							label: '[PATCH] /:ad_id',
+						},
+						{
+							type: 'doc',
+							id: 'api/api/ads.routes/post-api-ads.routes-active-category',
+							label: '[POST] /active/category',
+						},
+						{
+							type: 'doc',
+							id: 'api/api/ads.routes/post-api-ads.routes',
 							label: '[POST] /',
 						},
 					],
@@ -1539,6 +1628,19 @@ module.exports = {
 				},
 				{
 					type: 'category',
+					label: 'orderLobbyUser.routes',
+					collapsible: true,
+					collapsed: true,
+					items: [
+						{
+							type: 'doc',
+							id: 'api/api/orderLobbyUser.routes/patch-api-orderLobbyUser.routes-limit-order_lobby_users_id',
+							label: '[PATCH] /limit/:order_lobby_users_id',
+						},
+					],
+				},
+				{
+					type: 'category',
 					label: 'overwatch',
 					collapsible: true,
 					collapsed: true,
@@ -2450,6 +2552,16 @@ module.exports = {
 		},
 		{
 			type: 'doc',
+			id: 'controllers/BlogController',
+			label: 'BlogController',
+		},
+		{
+			type: 'doc',
+			id: 'controllers/BusinessClient',
+			label: 'BusinessClient',
+		},
+		{
+			type: 'doc',
 			id: 'controllers/BusinessController',
 			label: 'BusinessController',
 		},
@@ -2467,6 +2579,16 @@ module.exports = {
 			type: 'doc',
 			id: 'controllers/CategoriesController',
 			label: 'CategoriesController',
+		},
+		{
+			type: 'doc',
+			id: 'controllers/DailyMealCategoryController',
+			label: 'DailyMealCategoryController',
+		},
+		{
+			type: 'doc',
+			id: 'controllers/DailyMealController',
+			label: 'DailyMealController',
 		},
 		{
 			type: 'doc',
@@ -2555,6 +2677,11 @@ module.exports = {
 		},
 		{
 			type: 'doc',
+			id: 'controllers/SubscriptionController',
+			label: 'SubscriptionController',
+		},
+		{
+			type: 'doc',
 			id: 'controllers/TaxiOrderController',
 			label: 'TaxiOrderController',
 		},
@@ -2577,8 +2704,18 @@ module.exports = {
 	daos: [
 		{
 			type: 'doc',
+			id: 'daos/Actions',
+			label: 'Actions',
+		},
+		{
+			type: 'doc',
 			id: 'daos/Ad',
 			label: 'Ad',
+		},
+		{
+			type: 'doc',
+			id: 'daos/Addon',
+			label: 'Addon',
 		},
 		{
 			type: 'doc',
@@ -2587,8 +2724,23 @@ module.exports = {
 		},
 		{
 			type: 'doc',
+			id: 'daos/Blog',
+			label: 'Blog',
+		},
+		{
+			type: 'doc',
 			id: 'daos/Business',
 			label: 'Business',
+		},
+		{
+			type: 'doc',
+			id: 'daos/BusinessClient',
+			label: 'BusinessClient',
+		},
+		{
+			type: 'doc',
+			id: 'daos/BusinessMoneyFlows',
+			label: 'BusinessMoneyFlows',
 		},
 		{
 			type: 'doc',
@@ -2609,6 +2761,16 @@ module.exports = {
 			type: 'doc',
 			id: 'daos/Categories',
 			label: 'Categories',
+		},
+		{
+			type: 'doc',
+			id: 'daos/DailyMealCategory',
+			label: 'DailyMealCategory',
+		},
+		{
+			type: 'doc',
+			id: 'daos/DailyMealDao',
+			label: 'DailyMealDao',
 		},
 		{
 			type: 'doc',
@@ -2657,6 +2819,11 @@ module.exports = {
 		},
 		{
 			type: 'doc',
+			id: 'daos/LocalLocation',
+			label: 'LocalLocation',
+		},
+		{
+			type: 'doc',
 			id: 'daos/LostItems',
 			label: 'LostItems',
 		},
@@ -2692,6 +2859,16 @@ module.exports = {
 		},
 		{
 			type: 'doc',
+			id: 'daos/Payment',
+			label: 'Payment',
+		},
+		{
+			type: 'doc',
+			id: 'daos/PaymentSplit',
+			label: 'PaymentSplit',
+		},
+		{
+			type: 'doc',
 			id: 'daos/Product',
 			label: 'Product',
 		},
@@ -2699,6 +2876,11 @@ module.exports = {
 			type: 'doc',
 			id: 'daos/Promo',
 			label: 'Promo',
+		},
+		{
+			type: 'doc',
+			id: 'daos/PromoAnalytics',
+			label: 'PromoAnalytics',
 		},
 		{
 			type: 'doc',
@@ -2722,6 +2904,16 @@ module.exports = {
 		},
 		{
 			type: 'doc',
+			id: 'daos/Subscription',
+			label: 'Subscription',
+		},
+		{
+			type: 'doc',
+			id: 'daos/Tax',
+			label: 'Tax',
+		},
+		{
+			type: 'doc',
 			id: 'daos/TaxiOrder',
 			label: 'TaxiOrder',
 		},
@@ -2739,6 +2931,11 @@ module.exports = {
 			type: 'doc',
 			id: 'daos/UserFavoriteBusiness',
 			label: 'UserFavoriteBusiness',
+		},
+		{
+			type: 'doc',
+			id: 'daos/UserMoneyFlows',
+			label: 'UserMoneyFlows',
 		},
 		{
 			type: 'doc',
@@ -2761,5 +2958,36 @@ module.exports = {
 			label: 'Word',
 		},
 	],
-	prisma: ['prisma'],
+	// "prisma": [
+	//   {
+	//     "type": "doc",
+	//     "id": "p",
+	//     "label": "0"
+	//   },
+	//   {
+	//     "type": "doc",
+	//     "id": "r",
+	//     "label": "1"
+	//   },
+	//   {
+	//     "type": "doc",
+	//     "id": "i",
+	//     "label": "2"
+	//   },
+	//   {
+	//     "type": "doc",
+	//     "id": "s",
+	//     "label": "3"
+	//   },
+	//   {
+	//     "type": "doc",
+	//     "id": "m",
+	//     "label": "4"
+	//   },
+	//   {
+	//     "type": "doc",
+	//     "id": "a",
+	//     "label": "5"
+	//   }
+	// ]
 };

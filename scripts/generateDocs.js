@@ -2,10 +2,11 @@
 
 // Stub functions (replace with real logic)
 
-const generateControllerDocs = require('../generators/generateControllerDocs');
-const generateRouteDocs = require('../generators/generateRouteDocs');
-const generateDaoDocs = require('../generators/generateDaoDocs');
-const generateSidebar = require('../generators/generateSidebar');
+import generateControllerDocs from '../generators/generateControllerDocs.js';
+import generateRouteDocs from '../generators/generateRouteDocs.js';
+import generateDaoDocs from '../generators/generateDaoDocs.js';
+import generateSidebar from '../generators/generateSidebar.js';
+
 const args = process.argv.slice(2);
 const runControllers = args.includes('--controllers');
 const runRoutes = args.includes('--routes');

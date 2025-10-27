@@ -9,12 +9,12 @@ import cookie from 'cookie';
 import logger from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'js-yaml';
-import merge from 'lodash.merge';
 import cors from 'cors';
 import openapi from 'openapi-comment-parser';
 import compression from 'compression';
 import multer from 'multer';
 import { v4 as uuidv4 } from 'uuid';
+import merge from 'lodash.merge';
 
 import prisma from './prisma/prisma.js';
 import startCronJobs from './cron.js';
@@ -26,6 +26,7 @@ import authMiddleware from './middleware/auth.js';
 const upload = multer({ storage: multer.memoryStorage() });
 const __filename = url.fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const projectRoot = path.resolve(__dirname, '..', '..');
 // app.js
 config();
 const isDev = process.env.NODE_ENV !== 'production';
@@ -152,17 +153,25 @@ app.use((req, res, next) => {
 app.use(mainRouter);
 app.use(REST_API_ENDPOINT, apiRouter);
 // Uncomment if you want Swagger from comments
-let spec;
 let finalSpec;
 try {
 	if (process.env.ENVIRONMENT !== 'production') {
-		const baseYamlPath = path.join(__dirname, 'swagger', 'openApiConfig.yaml');
+		const baseYamlPath = path.resolve(projectRoot, 'swagger', 'openApiConfig.yaml');
 		const baseSpec = YAML.load(fs.readFileSync(baseYamlPath, 'utf8'));
-		// This triggers parsing of comments
-		spec = openapi({
-			include: ['./routes/**/*.js', './controllers/**/*.js', './middlewares/**/*.js'],
+
+		// 2) Generate spec from comments.
+		// Many “comment to OpenAPI” libs resolve includes relative to CWD.
+		// Don’t trust CWD. Hand them absolute paths.
+		const specFromComments = openapi({
+			include: [
+				path.resolve(projectRoot, 'routes/**/*.js'),
+				path.resolve(projectRoot, 'controllers/**/*.js'),
+				path.resolve(projectRoot, 'middlewares/**/*.js'),
+			],
+			// Some parsers accept cwd/root. If yours does, set it too:
+			// cwd: projectRoot,
 		});
-		finalSpec = merge({}, baseSpec, spec);
+		finalSpec = merge({}, baseSpec, specFromComments);
 		if (!finalSpec.openapi) finalSpec.openapi = '3.0.3';
 	}
 } catch (err) {
