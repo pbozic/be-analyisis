@@ -860,6 +860,38 @@ const getActiveTaxRates = async (req, res) => {
 		res.status(500).json({ error: 'Error fetching tax rates', e });
 	}
 };
+
+/**
+ *
+ * - POST /menu-items/{menu_item_id}/versions
+ * - @tag MenuItems
+ * - @summary Create a new menu item version
+ * - @description Creates a menu_item_versions snapshot for a menu item.
+ * - @operationId createMenuItemVersion
+ * - @bodyDescription Version payload
+ * - @bodyContent {
+ *   "version": 2,
+ *   "snapshot": { "price": 999, "names": { "en": "Burger" } }
+ * } application/json
+ * - @bodyRequired
+ * - @prisma_model menu_item_versions
+ * - @response 200 - Version created
+ */
+export async function createMenuItemVersion(req, res) {
+	try {
+		const { menu_item_id } = req.params;
+		const { version, snapshot } = req.body;
+		if (typeof version !== 'number' || !snapshot) {
+			res.status(400).json({ error: 'version (number) and snapshot (object) are required' });
+			return;
+		}
+		const created = await MenuItemDao.createMenuItemVersion(menu_item_id, version, snapshot);
+		res.json(created);
+	} catch (e) {
+		res.status(500).json({ error: e.message });
+	}
+}
+
 export { getMenuItemsByIds };
 export { updateDailyMealMenuPrice };
 export { getMenuItemsByDate };
@@ -933,4 +965,5 @@ export default {
 	getDailyMenuByBusinessId,
 	updateMenuItemEnabled,
 	getActiveTaxRates,
+	createMenuItemVersion,
 };

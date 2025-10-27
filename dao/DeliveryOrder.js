@@ -1,7 +1,7 @@
 import { validate as isUuid } from 'uuid';
 
 import prisma from '../prisma/prisma.js';
-import { DOCUMENT_TYPE, DELIVERY_ORDER_STATUS, DELIVERY_ORDER_END_STATES } from '../lib/constants.js';
+import { DOCUMENT_TYPE, DELIVERY_ORDER_STATUS, DELIVERY_ORDER_END_STATES, FILE_TYPE } from '../lib/constants.js';
 /**
  *
  * @param {Object} timeline - the order timeline object with entries which must have status and timestamp and can have additional fields
@@ -952,6 +952,31 @@ async function getOrdersByBusinessLocalLocation(business_local_location_id, stat
 	}
 }
 
+async function setDeliveryImage(order_id, url, mime_type, isPublic = false) {
+	try {
+		// files.delivery_order_id is unique – upsert to replace the image for an order
+		const existing = await prisma.files.findUnique({ where: { delivery_order_id: order_id } });
+		if (existing) {
+			return await prisma.files.update({
+				where: { delivery_order_id: order_id },
+				data: { url, mime_type, public: isPublic, file_type: FILE_TYPE.IMAGE },
+			});
+		}
+		return await prisma.files.create({
+			data: {
+				url,
+				mime_type,
+				public: isPublic,
+				file_type: FILE_TYPE.IMAGE,
+				delivery_order: { connect: { order_id } },
+			},
+		});
+	} catch (error) {
+		console.error('Error setting delivery image:', error);
+		throw new Error(error);
+	}
+}
+
 export { getOrders };
 export { getActiveDeliveryOrders };
 export { getOrder };
@@ -981,6 +1006,7 @@ export { getInProgressDeliveryOrdersCountForBusinessId };
 export { getActiveOrderIdsForUser };
 export { removeDriverFromOrder };
 export { getOrdersByBusinessLocalLocation };
+export { setDeliveryImage };
 export default {
 	getOrders,
 	getActiveDeliveryOrders,
@@ -1011,5 +1037,6 @@ export default {
 	getActiveOrderIdsForUser,
 	removeDriverFromOrder,
 	getOrdersByBusinessLocalLocation,
+	setDeliveryImage,
 	acceptOrderDeliveryWithRawLock,
 };

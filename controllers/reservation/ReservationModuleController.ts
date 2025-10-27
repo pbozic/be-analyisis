@@ -55,6 +55,56 @@ export async function getReservationModuleByBusinessId(
 	}
 }
 
+/**
+ *
+ * - PATCH /reservation/admin/{reservation_module_id}/disable
+ * - @tag Reservations
+ * - @summary Disable reservation module public visibility
+ * - @description Sets reservation_module.publicly_visible to false.
+ * - @operationId disableReservations
+ * - @prisma_model reservation_module
+ * - @response 200 - Module disabled
+ */
+export async function disableReservations(
+	req: ValidatedRequest<null, { reservation_module_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const { company_role } = req.user!;
+		const { reservation_module_id } = req.params;
+		if (company_role !== COMPANY_ROLE.DIRECTOR) throw new Error('Forbidden');
+		const updated = await ReservationModuleDao.disableReservations(reservation_module_id);
+		res.status(200).json(updated);
+	} catch (e) {
+		console.error('Error disabling reservations:', e);
+		res.status(400).json({ error: 'Error disabling reservations', e });
+	}
+}
+/**
+ *
+ * - PATCH /reservation/admin/{reservation_module_id}/enable
+ * - @tag Reservations
+ * - @summary Enable reservation module public visibility
+ * - @description Sets reservation_module.publicly_visible to true.
+ * - @operationId enableReservations
+ * - @prisma_model reservation_module
+ * - @response 200 - Module enabled
+ */
+export async function enableReservations(
+	req: ValidatedRequest<null, { reservation_module_id: string }>,
+	res: Response
+): Promise<void> {
+	try {
+		const { company_role } = req.user!;
+		const { reservation_module_id } = req.params;
+		if (company_role !== COMPANY_ROLE.DIRECTOR) throw new Error('Forbidden');
+		const updated = await ReservationModuleDao.enableReservations(reservation_module_id);
+		res.status(200).json(updated);
+	} catch (e) {
+		console.error('Error enabling reservations:', e);
+		res.status(400).json({ error: 'Error enabling reservations', e });
+	}
+}
 export async function getReservationModuleBookingDataByHashOrBusinessId(
 	req: ValidatedRequest<{ public_link_hash?: string; business_id?: string }>,
 	res: Response
@@ -83,4 +133,6 @@ export default {
 	updateReservationSettings,
 	getReservationModuleByBusinessId,
 	getReservationModuleBookingDataByHashOrBusinessId,
+	disableReservations,
+	enableReservations,
 };

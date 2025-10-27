@@ -2020,6 +2020,8 @@ async function addToDeliveryOrderTimeline(req, res) {
 async function updateDeliveryOrderItems(req, res) {
 	const { order_id, items } = req.body;
 	try {
+		// TODO: replace this with line items update logic
+		// const updated = await LineItemsDao.updateLineItem(line_item_id, data);
 		let order = await DeliveryOrderDao.updateOrderItems(order_id, items);
 		res.status(200).json(order);
 	} catch (e) {
@@ -2252,6 +2254,39 @@ async function startOrder(req, res) {
 	}
 }
 
+/**
+ *
+ * - POST /delivery/orders/{order_id}/image
+ * - @tag DeliveryOrders
+ * - @summary Set or replace delivery proof image for an order
+ * - @description Upserts a files row linked to delivery_orders via file_id/delivery_order_id.
+ * - @operationId setDeliveryImage
+ * - @bodyDescription Image info
+ * - @bodyContent {
+ *   "url": "https://...",
+ *   "mime_type": "image/jpeg",
+ *   "public": false
+ * } application/json
+ * - @bodyRequired
+ * - @prisma_model files
+ * - @prisma_model delivery_orders
+ * - @response 200 - Image set
+ */
+export async function setDeliveryImage(req, res) {
+	try {
+		const { order_id } = req.params;
+		const { url, mime_type, public: isPublic } = req.body;
+		if (!url || !mime_type) {
+			res.status(400).json({ error: 'url and mime_type are required' });
+			return;
+		}
+		const file = await DeliveryOrderDao.setDeliveryImage(order_id, url, mime_type, !!isPublic);
+		res.json(file);
+	} catch (e) {
+		res.status(500).json({ error: e.message });
+	}
+}
+
 export { getDeliveryOrders };
 export { getDeliveryOrdersToday };
 export { getActiveDeliveryOrders };
@@ -2317,4 +2352,5 @@ export default {
 	localConfirmMultipleOrdersReady,
 	generateOrder,
 	startOrder,
+	setDeliveryImage,
 };

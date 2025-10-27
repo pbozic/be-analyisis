@@ -24,6 +24,8 @@ import BusinessUsersDao from '../dao/BusinessUsers.js';
 import PromoAnalyticsDao from '../dao/PromoAnalytics.js';
 import PromoDao from '../dao/Promo.js';
 import WordDao from '../dao/Word.js';
+import BusinessTypesDao from '../dao/BusinessTypes.js';
+
 config();
 const { UserSockets, io } = socket;
 const { businessIndex, fullSearch } = elasticsearch;
@@ -2595,6 +2597,72 @@ async function getBusinessPromoAdsAnalytics(req, res) {
 	}
 }
 
+/**
+ *
+ * - POST /business-types
+ * - @tag BusinessTypes
+ * - @summary Create a new business type
+ * - @description Creates a new business_type row.
+ * - @operationId createBusinessType
+ * - @bodyDescription The business type to create
+ * - @bodyContent {
+ *   "type": "RESTAURANT"
+ * } application/json
+ * - @bodyRequired
+ * - @prisma_model business_type
+ * - @response 200 - Business type created successfully
+ * - @responseContent {object} 200.application/json
+ * - @responseExample 200.application/json {
+ *   "type_id": "uuid",
+ *   "type": "RESTAURANT"
+ * }
+ * - @response 500 - Error creating business type
+ */
+export async function createBusinessType(req, res) {
+	try {
+		const { type } = req.body;
+		if (!type) {
+			res.status(400).json({ error: 'type is required' });
+			return;
+		}
+		const created = await BusinessTypesDao.createBusinessType(type);
+		res.json(created);
+	} catch (e) {
+		res.status(500).json({ error: e.message });
+	}
+}
+
+/**
+ *
+ * - PUT /business/{business_id}/types
+ * - @tag BusinessTypes
+ * - @summary Replace all business types for a business
+ * - @description Sets the list of type_ids for a given business using junction table business_to_types.
+ * - @operationId setBusinessTypes
+ * - @bodyDescription Array of business_type IDs to assign
+ * - @bodyContent {
+ *   "type_ids": ["uuid1", "uuid2"]
+ * } application/json
+ * - @bodyRequired
+ * - @prisma_model business_to_types
+ * - @response 200 - Types updated successfully
+ * - @responseContent {array} 200.application/json
+ * - @responseExample 200.application/json [
+ *   { "business_id": "uuid", "type_id": "uuid", "business_type": { "type_id": "uuid", "type": "RESTAURANT" } }
+ * ]
+ * - @response 500 - Error updating business types
+ */
+export async function setBusinessTypesForBusiness(req, res) {
+	try {
+		const { business_id } = req.params;
+		const { type_ids } = req.body;
+		const result = await BusinessTypesDao.setBusinessTypes(business_id, type_ids || []);
+		res.json(result);
+	} catch (e) {
+		res.status(500).json({ error: e.message });
+	}
+}
+
 export { getScheduledUsersByBusinessId };
 export { listBusinesses };
 export { listTransferBusinesses };
@@ -2726,4 +2794,6 @@ export default {
 	getBusinessPromoAdsAnalytics,
 	getBusinessPromoSectionsAnalytics,
 	getBusinessPromoWordsAnalytics,
+	setBusinessTypesForBusiness,
+	createBusinessType,
 };

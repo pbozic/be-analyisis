@@ -81,6 +81,31 @@ const getOnlineDrivers = async (args) => {
 		throw new Error(error);
 	}
 };
+const getDriversByDailyMealBusinessId = async (businessId) => {
+	try {
+		return await prisma.drivers.findMany({
+			where: {
+				daily_meal_business_id: businessId,
+			},
+			include: {
+				user: true,
+				vehicles: {
+					include: {
+						vehicle: {
+							include: {
+								vehicle_specification: true,
+							},
+						},
+					},
+				},
+				current_vehicle: true,
+			},
+		});
+	} catch (error) {
+		console.error('Error retrieving drivers by business ID:', error);
+		throw new Error(error);
+	}
+};
 const getDriverById = async (driver_id) => {
 	try {
 		return await prisma.drivers.findUnique({
@@ -699,6 +724,7 @@ export { setDriverHandle };
 export { toggleDriverOrders };
 export { getDrivers };
 export { getOnlineDrivers };
+export { getDriversByDailyMealBusinessId };
 export { getDriverById };
 export { getDriverByUserId };
 export { getDriverLocation };
@@ -721,6 +747,7 @@ export default {
 	toggleDriverOrders,
 	getDrivers,
 	getOnlineDrivers,
+	getDriversByDailyMealBusinessId,
 	getDriverById,
 	getDriverByUserId,
 	getDriverLocation,

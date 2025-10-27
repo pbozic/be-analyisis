@@ -37,6 +37,7 @@ import { sendNotificationToUser } from '../lib/oneSignal.js';
 import { getLocalisedTexts } from '../localisations/languages.js';
 import { handleDriverStatusChange } from '../lib/driverHelpers.js';
 import { sendDeliveryOrderNotifications, sendOrderNotifications } from '../lib/notifications.js';
+import dailyMealHelpers from '../lib/dailyMealHelpers.js';
 config();
 const { io } = socket;
 /**
@@ -211,7 +212,7 @@ async function getDriverLocation(req, res) {
  * @response 400 - Error retrieving orders
  */
 async function resendDelegatedOrdersToDriver(req, res) {
-	const userId = req.user.user_id;
+	const userId = req.params?.user_id || req.user.user_id;
 	try {
 		const driver = await DriverDao.getDriverByUserId(userId);
 		if (!driver) {
@@ -230,6 +231,147 @@ async function resendDelegatedOrdersToDriver(req, res) {
 	} catch (error) {
 		console.error('Error retrieving orders for driver:', error);
 		res.status(400).json({ error: 'Error retrieving orders', detail: error.message });
+	}
+}
+/**
+ * GET /drivers/user/:user_id
+ * @tag Drivers
+ * @summary Get a driver by user ID
+ * @description Retrieves detailed information about a specific driver by their user ID.
+ * @operationId getDriverByUserId
+ * @pathParam {string} user_id - The ID of the user
+ * @response 200 - Successful operation, returns detailed driver information
+ * @responseContent {Driver} 200.application/json
+ * @response 404 - Driver not found
+ * @response 400 - Error retrieving driver information
+ */
+async function getDriverByUserId(req, res) {
+	try {
+		const driver = await DriverDao.getDriverByUserId(req.params.user_id);
+		if (driver) {
+			res.status(200).json(driver);
+		} else {
+			res.status(404).json({ error: 'Driver not found by user_id' });
+		}
+	} catch (error) {
+		res.status(500).json({ error: 'Error retrieving driver (by user_id) information', detail: error.message });
+	}
+}
+
+/**
+ * GET /drivers/daily-meals
+ * @tag Drivers
+ * @summary List all drivers offering daily meals
+ * @description Retrieves a list of all drivers that offer daily meals.
+ * @operationId listDriversWithDailyMeals
+ * @response 200 - Successful operation, returns a list of drivers offering daily meals
+ * @responseContent {Driver[]} 200.application/json
+ * @response 400 - Error occurred while obtaining the driver list
+ */
+async function listDriversWithDailyMeals(req, res) {
+	try {
+		const drivers = await DriverDao.getDrivers({ where: { delivers_daily_meals: true } });
+		res.status(200).json(drivers);
+	} catch (e) {
+		console.error('Error listing drivers with daily meals:', e);
+		res.status(400).json({ error: 'Error listing drivers with daily meals', e });
+	}
+}
+
+/**
+ * GET /drivers/daily-meal-business/:business_id
+ * @tag Drivers
+ * @summary Get drivers by daily meal business ID
+ * @description Retrieves drivers linked to a specific daily meal business.
+ * @operationId getDriversByDailyMealBusinessId
+ * @pathParam {string} business_id - The ID of the daily meal business
+ * @response 200 - Successful operation, returns drivers for the business
+ * @responseContent {Driver[]} 200.application/json
+ * @response 404 - Drivers not found
+ * @response 400 - Error retrieving drivers
+ */
+async function getDriversByDailyMealBusinessId(req, res) {
+	try {
+		const drivers = await DriverDao.getDriversByDailyMealBusinessId(req.params.business_id);
+		if (drivers) {
+			res.status(200).json(drivers);
+		} else {
+			res.status(404).json({ error: 'Drivers not found for business_id' });
+		}
+	} catch (error) {
+		res.status(500).json({ error: 'Error retrieving drivers by business_id', detail: error.message });
+	}
+}
+
+/**
+ * PATCH /drivers/assign/:driver_id
+ * @tag Drivers
+ * @summary Update a driver's daily meal business
+ * @description Connects or disconnects a driver's daily meal business and toggles delivers_daily_meals.
+ * @operationId updateDriverDailyMealBusiness
+ * @pathParam {string} driver_id - The ID of the driver to update
+ * @bodyContent {Object} application/json
+ * @bodyRequired
+ * @response 200 - Driver updated successfully
+ * @responseContent {Driver} 200.application/json
+ * @response 400 - Error updating driver
+ */
+async function updateDriverDailyMealBusiness(req, res) {
+	const { driver_id } = req.params;
+	const { businessId } = req.body;
+	try {
+		let updateData = {};
+		if (businessId) {
+			updateData = {
+				delivers_daily_meals: true,
+				daily_meal_business: {
+					connect: { business_id: businessId },
+				},
+			};
+		} else {
+			updateData = {
+				delivers_daily_meals: false,
+				daily_meal_business: { disconnect: true },
+			};
+			await dailyMealHelpers.disconnectDriverFromAllSubscriptions(driver_id);
+		}
+		const updatedDriver = await DriverDao.updateDriver(driver_id, updateData);
+		res.status(200).json(updatedDriver);
+	} catch (error) {
+		console.error('Error updating driver:', error);
+		res.status(400).json({ error: 'Error updating driver', detail: error.message });
+	}
+}
+
+/**
+ * POST /drivers/daily_meals/business
+ * @tag Drivers
+ * @summary Assign a business for daily meals to a driver
+ * @description Assigns a business for daily meals to the specified driver.
+ * @operationId assignBusinessForDailyMealsToDriver
+ * @bodyContent {Object} application/json
+ * @bodyRequired
+ * @response 200 - Business assigned for daily meals
+ * @responseContent {Object} 200.application/json
+ * @response 404 - Driver not found
+ * @response 400 - Error assigning business for daily meals
+ */
+async function assignBusinessForDailyMealsToDriver(req, res) {
+	const { driver_id, business_id } = req.body;
+	try {
+		const driver = await DriverDao.getDriverById(driver_id);
+		if (!driver) {
+			return res.status(404).json({ error: 'Driver not found' });
+		}
+		await DriverDao.updateDriver(driver_id, {
+			daily_meal_business: {
+				connect: { business_id: business_id },
+			},
+		});
+		res.status(200).json({ message: 'Business assigned for daily meals' });
+	} catch (error) {
+		console.error('Error assigning business for daily meals to driver:', error);
+		res.status(400).json({ error: 'Error assigning business for daily meals to driver', detail: error.message });
 	}
 }
 /**
@@ -1111,6 +1253,11 @@ export { getTotalEarnings };
 export { getDriverTotalEarnings };
 export { sendComeToWorkNotification };
 export { setCurrentVehicle };
+export { getDriverByUserId };
+export { listDriversWithDailyMeals };
+export { getDriversByDailyMealBusinessId };
+export { updateDriverDailyMealBusiness };
+export { assignBusinessForDailyMealsToDriver };
 export default {
 	getDriversByBusinessId,
 	setDriverHandle,
@@ -1137,4 +1284,9 @@ export default {
 	getDriverTotalEarnings,
 	sendComeToWorkNotification,
 	setCurrentVehicle,
+	getDriverByUserId,
+	listDriversWithDailyMeals,
+	getDriversByDailyMealBusinessId,
+	updateDriverDailyMealBusiness,
+	assignBusinessForDailyMealsToDriver,
 };

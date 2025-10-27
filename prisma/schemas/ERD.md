@@ -1436,7 +1436,6 @@ erDiagram
   Boolean delivery_orders_toggled "nullable"
   Float partner_cash_balance "nullable"
   DateTime(6) come_to_work_last_sent_at "nullable"
-  String daily_meals_id "nullable"
   Boolean delivers_daily_meals "nullable"
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
@@ -2780,7 +2779,6 @@ erDiagram
   Boolean delivery_orders_toggled "nullable"
   Float partner_cash_balance "nullable"
   DateTime(6) come_to_work_last_sent_at "nullable"
-  String daily_meals_id "nullable"
   Boolean delivers_daily_meals "nullable"
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
@@ -2982,7 +2980,6 @@ Properties as follows:
 - `delivery_orders_toggled`:
 - `partner_cash_balance`:
 - `come_to_work_last_sent_at`:
-- `daily_meals_id`:
 - `delivers_daily_meals`:
 - `on_daily_meals`:
 - `scheduled_meals_route`:
@@ -3210,7 +3207,6 @@ erDiagram
   Boolean delivery_orders_toggled "nullable"
   Float partner_cash_balance "nullable"
   DateTime(6) come_to_work_last_sent_at "nullable"
-  String daily_meals_id "nullable"
   Boolean delivers_daily_meals "nullable"
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
@@ -3903,7 +3899,6 @@ erDiagram
   Boolean delivery_orders_toggled "nullable"
   Float partner_cash_balance "nullable"
   DateTime(6) come_to_work_last_sent_at "nullable"
-  String daily_meals_id "nullable"
   Boolean delivers_daily_meals "nullable"
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
@@ -4204,7 +4199,6 @@ erDiagram
   Boolean delivery_orders_toggled "nullable"
   Float partner_cash_balance "nullable"
   DateTime(6) come_to_work_last_sent_at "nullable"
-  String daily_meals_id "nullable"
   Boolean delivers_daily_meals "nullable"
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
@@ -6186,7 +6180,6 @@ erDiagram
   Boolean delivery_orders_toggled "nullable"
   Float partner_cash_balance "nullable"
   DateTime(6) come_to_work_last_sent_at "nullable"
-  String daily_meals_id "nullable"
   Boolean delivers_daily_meals "nullable"
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
@@ -6386,7 +6379,6 @@ erDiagram
   Boolean delivery_orders_toggled "nullable"
   Float partner_cash_balance "nullable"
   DateTime(6) come_to_work_last_sent_at "nullable"
-  String daily_meals_id "nullable"
   Boolean delivers_daily_meals "nullable"
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"
@@ -6624,7 +6616,6 @@ erDiagram
   Boolean delivery_orders_toggled "nullable"
   Float partner_cash_balance "nullable"
   DateTime(6) come_to_work_last_sent_at "nullable"
-  String daily_meals_id "nullable"
   Boolean delivers_daily_meals "nullable"
   Boolean on_daily_meals "nullable"
   Json scheduled_meals_route "nullable"

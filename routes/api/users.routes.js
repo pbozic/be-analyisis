@@ -173,4 +173,10 @@ router.post('/me/request-data', UserController.requestData);
  *
  */
 router.delete('/me/remove-payment-method/:pm_id', StripeController.removePaymentMethod);
+
+import FavoriteDriversController from '../../controllers/FavoriteDriversController.ts';
+router.post('/me/favorite-drivers', FavoriteDriversController.addFavoriteDriver);
+router.delete('/me/favorite-drivers/:driver_id', FavoriteDriversController.removeFavoriteDriver);
+router.get('/me/favorite-drivers', FavoriteDriversController.listFavoriteDrivers);
+
 export default router;

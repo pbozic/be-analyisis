@@ -213,7 +213,6 @@ model drivers {
     activity_logs             driver_activity_logs[]
     transport_module          transport_module?          @relation(fields: [transport_module_id], references: [transport_module_id])
 
-    daily_meals_id        String?                    @db.Uuid
     daily_meals           daily_meals_drivers[]
     delivers_daily_meals  Boolean?                   @default(false)
     on_daily_meals        Boolean?                   @default(false)

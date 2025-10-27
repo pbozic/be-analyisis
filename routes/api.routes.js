@@ -19,7 +19,7 @@ import dailyMealsRoutes from './api/delivery/dailyMeals.routes.js';
 import authBusinessRoutes from './api/business/auth.routes.js';
 import businessRoutes from './api/business.routes.js';
 import driverRoutes from './api/drivers.routes.js';
-import deliveryDriverRoutes from './api/deliveryDrivers.routes.js';
+// import deliveryDriverRoutes from './api/deliveryDrivers.routes.js';
 import vehicleRoutes from './api/vehicles.routes.js';
 import financesRoutes from './api/finances.routes.js';
 import documentsRoutes from './api/documents.routes.js';
@@ -39,6 +39,9 @@ import overwatchRoutes from './api/overwatch.routes.js';
 import blogRoutes from './api/blog.routes.js';
 import reservationRoutes from './api/reservations/index.routes.js';
 import RolesRoutes from './api/roles.routes.js';
+import storesRoutes from './api/stores.routes.js';
+import foodDrinksRoutes from './api/foodDrinks.routes.js';
+import reviewsRoutes from './api/reviews.routes.js';
 import { sendNotificationToUser } from '../lib/oneSignal.js';
 import withUserMiddleware from '../middleware/user.js';
 import sessionRoutes from './api/session.routes.js';
@@ -129,15 +132,7 @@ router.use('/overwatch', overwatchRoutes);
  *
  */
 router.use('/drivers', [authMiddleware], driverRoutes);
-/**
- *    * @module transport
- *
- */
-router.use('/delivery_drivers', [authMiddleware], deliveryDriverRoutes);
-/**
- *    * @module transport
- *
- */
+// router.use('/delivery_drivers', [authMiddleware], deliveryDriverRoutes);
 router.use('/vehicles', [authMiddleware], vehicleRoutes);
 /**
  *    * @module finances
@@ -219,10 +214,10 @@ router.use('/roles', [authMiddleware], RolesRoutes);
  *
  */
 router.use('/session', sessionRoutes);
-/**
- *    * @module merchant,general
- *
- */
+router.use('/stores', [authMiddleware], storesRoutes);
+router.use('/food-drinks', [authMiddleware], foodDrinksRoutes);
+router.use('/review', [authMiddleware], reviewsRoutes);
+
 router.use('/reviews', [authMiddleware], async (req, res) => {
 	let reviews = await prisma.reviews.findMany({
 		include: {

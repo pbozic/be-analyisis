@@ -1,4 +1,22 @@
 import prisma from '../prisma/prisma.js';
+const createMenuItemVersion = async (menu_item_id, version, snapshot) => {
+	// Create a transaction to update the menu item version
+	const transaction = await prisma.$transaction(async (prisma) => {
+		// Create the new version
+		const newVersion = await prisma.menu_item_versions.create({
+			data: { menu_item_id, version, snapshot },
+		});
+		// Update the menu item to point to the new version
+		await prisma.menu_items.update({
+			where: { menu_item_id },
+			data: { current_version_id: newVersion.menu_item_version_id },
+		});
+		return newVersion;
+	});
+
+	return transaction;
+};
+
 const createMenuItem = async (categoryId, taxRateId, menuItemData, is_copy) => {
 	return await prisma.menu_items.create({
 		data: {
@@ -179,6 +197,7 @@ export { updateMenuItem };
 export { updateMenuItemPrice };
 export { addMenuItemToCategory };
 export { removeMenuItemFromCategory };
+export { createMenuItemVersion };
 export default {
 	createMenuItem,
 	addMenuItemIdToOrder,
@@ -191,4 +210,5 @@ export default {
 	updateMenuItemPrice,
 	addMenuItemToCategory,
 	removeMenuItemFromCategory,
+	createMenuItemVersion,
 };

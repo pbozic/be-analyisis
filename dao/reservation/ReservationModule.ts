@@ -159,6 +159,42 @@ export async function deleteReservationModule(
 }
 
 /**
+ * Disables a reservation module (soft) by setting publicly_visible to false.
+ */
+export async function disableReservations(
+	reservationModuleId: string,
+	tx?: TPrisma.TransactionClient
+): Promise<ReservationModule> {
+	const prisma_client = tx || prisma;
+	try {
+		return await prisma_client.reservation_module.update({
+			where: { reservation_module_id: reservationModuleId },
+			data: { publicly_visible: false },
+		});
+	} catch {
+		throw new Error('Error disabling reservation module');
+	}
+}
+
+/**
+ * Enables a reservation module by setting publicly_visible to true.
+ */
+export async function enableReservations(
+	reservationModuleId: string,
+	tx?: TPrisma.TransactionClient
+): Promise<ReservationModule> {
+	const prisma_client = tx || prisma;
+	try {
+		return await prisma_client.reservation_module.update({
+			where: { reservation_module_id: reservationModuleId },
+			data: { publicly_visible: true },
+		});
+	} catch {
+		throw new Error('Error enabling reservation module');
+	}
+}
+
+/**
  * Retrieves a reservation module by its public link hash.
  */
 export async function getReservationModuleByPublicLinkHashOrBusinessId(
@@ -224,5 +260,7 @@ export default {
 	updateReservationModule,
 	updateReservationModuleSettings,
 	deleteReservationModule,
+	disableReservations,
+	enableReservations,
 	getReservationModuleByPublicLinkHashOrBusinessId,
 };
