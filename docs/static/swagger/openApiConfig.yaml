@@ -334,6 +334,163 @@ paths:
                 $ref: '#/components/schemas/AuthenticatedUser'
         '400':
           description: Error updating user information.
+  /business-clients:
+    get:
+      tags:
+        - BusinessClients
+      summary: Get a list of all business clients
+      description: Returns a list of all business clients.
+      operationId: getAllBusinessClients
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BusinessClient'
+        '400':
+          description: Error occurred while obtaining the business client list
+          content:
+            application/json:
+              schema:
+                type: object
+    post:
+      tags:
+        - BusinessClients
+      summary: Create a new business client
+      description: Creates a new business client and links it to a business.
+      operationId: createBusinessClient
+      requestBody:
+        description: The data to create a new business client
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBusinessClientRequest'
+        required: true
+      responses:
+        '201':
+          description: >-
+            Business client created successfully. Returns the created business
+            client.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessClient'
+        '400':
+          description: Error creating business client.
+  /business-clients/{business_clients_id}:
+    get:
+      tags:
+        - BusinessClients
+      summary: Get a business client by ID
+      description: Returns a business client.
+      operationId: getBusinessClientById
+      parameters:
+        - name: business_clients_id
+          in: path
+          description: The ID of the business client
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessClient'
+        '400':
+          description: Error occurred while obtaining the business client
+          content:
+            application/json:
+              schema:
+                type: object
+    patch:
+      tags:
+        - BusinessClients
+      summary: Update a business client
+      description: Updates a business client's information.
+      operationId: updateBusinessClient
+      parameters:
+        - name: business_clients_id
+          in: path
+          description: The ID of the business client to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The data to update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBusinessClientRequest'
+        required: true
+      responses:
+        '200':
+          description: >-
+            Business client updated successfully. Returns the updated business
+            client.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessClient'
+        '400':
+          description: Error updating business client.
+        '404':
+          description: Business client not found.
+    delete:
+      tags:
+        - BusinessClients
+      summary: Remove a business client
+      description: Removes a business client by their ID.
+      operationId: removeBusinessClient
+      parameters:
+        - name: business_clients_id
+          in: path
+          description: The ID of the business client to remove
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Business client removed successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Error removing business client.
+  /business-clients/business/{business_id}:
+    get:
+      tags:
+        - BusinessClients
+      summary: Get business clients by business ID
+      description: Returns a list of business clients for a specific business ID.
+      operationId: getBusinessClientsByBusinessId
+      parameters:
+        - name: business_id
+          in: path
+          description: The ID of the business
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BusinessClient'
+        '400':
+          description: Error occurred while obtaining the business client list
+          content:
+            application/json:
+              schema:
+                type: object
   /business/activate:
     post:
       tags:
@@ -384,7 +541,7 @@ paths:
         - Business
       summary: Get a list of businesses
       description: Returns a list of businesses.
-      operationId: getBusinesses
+      operationId: getBusinessesByType
       responses:
         '200':
           description: successful operation
@@ -426,18 +583,22 @@ paths:
     post:
       tags:
         - Business
-      summary: Get a list of businesses by query, location and categories
-      description: Returns a list of businesses.
+      summary: Get a list of businesses by query, location, categories, radius, etc.
+      description: Returns a list of businesses filtered by search criteria.
       operationId: getBusinessesSearch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchBusinessesRequest'
+        required: true
       responses:
         '200':
           description: successful operation
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/SearchBusinessesResponse'
         '400':
           description: Error occurred while obtaining the business list
           content:
@@ -1480,6 +1641,178 @@ paths:
                 $ref: '#/components/schemas/Business'
         '400':
           description: Error updating business information.
+  /business/local/locations:
+    get:
+      tags:
+        - Business
+      summary: Get local locations with address_id
+      description: Retrieves all local locations that have an associated address_id.
+      operationId: getLocalLocations
+      responses:
+        '200':
+          description: >-
+            Successful operation, returns the list of local locations with
+            address_id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LocalLocation'
+        '400':
+          description: Error retrieving local locations
+          content:
+            application/json:
+              schema:
+                type: object
+  /business/local/locations/:business_id:
+    post:
+      tags:
+        - Business
+      summary: Create a new local location for a business
+      description: >-
+        Creates a new local location for a business with the specified
+        local_location_id and time.
+      operationId: createBusinessLocalLocation
+      parameters:
+        - name: business_id
+          in: path
+          description: The ID of the business to create the local location for
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The local location data to create.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLocalLocationRequest'
+        required: true
+      responses:
+        '201':
+          description: Local location created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocalLocation'
+        '400':
+          description: Missing required fields in the request body
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Error creating local location
+          content:
+            application/json:
+              schema:
+                type: object
+  /business/local/locations/:location_id:
+    patch:
+      tags:
+        - Business
+      summary: Update a local location for a business
+      description: >-
+        Updates the time of a local location for a business with the specified
+        location_id.
+      operationId: updateBusinessLocalLocation
+      parameters:
+        - name: location_id
+          in: path
+          description: The ID of the local location to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The new time for the local location.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLocalLocationRequest'
+        required: true
+      responses:
+        '200':
+          description: Local location updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocalLocation'
+        '400':
+          description: Missing required fields in the request body
+          content:
+            application/json:
+              schema:
+                type: object
+        '500':
+          description: Error updating local location
+          content:
+            application/json:
+              schema:
+                type: object
+  /business/analytics/promo/sections/{business_id}:
+    post:
+      tags:
+        - Business
+      summary: Promo analytics for sections
+      description: >-
+        Returns promo analytics for sections for a business and time period,
+        including purchased promo sections.
+      operationId: getBusinessPromoSectionsAnalytics
+      requestBody:
+        description: Time period definition
+        content:
+          application/json:
+            schema:
+              $ref: |
+                #/components/schemas/
+                  "type": 0,
+                  "start_date": "2025-01-01T00:00:00.000Z",
+                  "end_date": null,
+                  "ids": ["optional array of promo_sections_id to filter"]
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid request
+        '401':
+          description: Unauthorized
+  /business/analytics/promo/words/{business_id}:
+    post:
+      tags:
+        - Business
+      summary: Promo analytics for words
+      description: >-
+        Returns promo analytics for words for a business and time period,
+        including purchased words.
+      operationId: getBusinessPromoWordsAnalytics
+      requestBody:
+        description: Time period definition
+        content:
+          application/json:
+            schema:
+              $ref: |
+                #/components/schemas/
+                  "type": 0,
+                  "start_date": "2025-01-01T00:00:00.000Z",
+                  "end_date": null,
+                  "ids": ["optional array of word_id to filter"]
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+        '400':
+          description: Invalid request
+        '401':
+          description: Unauthorized
   /business-users:
     get:
       tags:
@@ -2027,6 +2360,31 @@ paths:
           description: Error retrieving delivery driver information
         '404':
           description: Delivery driver not found
+  /delivery_drivers/daily-meal-business/:business_id:
+    get:
+      tags:
+        - DeliveryDrivers
+      summary: Get delivery drivers by business ID
+      description: Retrieves detailed information about delivery drivers by business ID.
+      operationId: getDeliveryDriverByBusinessId
+      parameters:
+        - name: business_id
+          in: path
+          description: The ID of the daily meal business
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation, returns detailed delivery drivers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryDriver'
+        '400':
+          description: Error retrieving delivery drivers
+        '404':
+          description: Delivery drivers not found
   /delivery/:delivery_driver_id/location:
     get:
       tags:
@@ -2052,6 +2410,35 @@ paths:
           description: Error retrieving delivery driver's location
         '404':
           description: Delivery driver not found
+  /delivery_drivers/assign/:delivery_driver_id:
+    patch:
+      tags:
+        - DeliveryDrivers
+      summary: Update a delivery driver daily_meal_business
+      description: Updates information about a specific delivery driver.
+      operationId: updateDeliveryDriverDailyMealBusiness
+      parameters:
+        - name: delivery_driver_id
+          in: path
+          description: The ID of the delivery driver to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryDriverUpdate'
+        required: true
+      responses:
+        '200':
+          description: Delivery driver updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryDriver'
+        '400':
+          description: Error updating delivery driver
   /delivery_drivers/update/:delivery_driver_id:
     patch:
       tags:
@@ -2381,15 +2768,11 @@ paths:
       tags:
         - Delivery
       summary: Create daily meals.
-      description: >-
-        This creates the daily meals for the subscribed users. Returns list of
-        orders if successful.
-      operationId: createDailyMeals
+      description: This creates the daily meals for the subscribed users.
+      operationId: startDailyMeals
       responses:
         '200':
-          description: >-
-            Successful operation. Returns the newly created daily meals in the
-            response body.
+          description: Successful operation. Returns updated delivery driver.
           content:
             application/json:
               schema:
@@ -2696,26 +3079,26 @@ paths:
           description: >-
             Server error. Returns error message if any exception is encountered
             during execution.
-  /delivery/order/merchant_accept:
+  /delivery/orders/order/reject:
     post:
       tags:
         - Delivery
-      summary: Process a delivery order from PENDING status.
+      summary: Reject a delivery order.
       description: >-
-        Processes the order payment capture and moves the order to the next
-        state accordingly.
-      operationId: merchantAcceptOrder
+        Rejects a delivery order by updating its status to MERCHANT_REJECTED and
+        FAIL, and emits the order status change event.
+      operationId: rejectOrder
       requestBody:
         description: Request body must include 'order_id' to identify the order.
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ProcessOrderRequest'
+              $ref: '#/components/schemas/RejectOrderRequest'
         required: true
       responses:
         '200':
           description: >-
-            Successful operation. Returns the processed order in the response
+            Successful operation. Returns the updated order in the response
             body.
           content:
             application/json:
@@ -2724,7 +3107,179 @@ paths:
         '500':
           description: >-
             Server error. Returns error message if any exception is encountered
-            during execution.
+            during execution
+  /delivery/order/merchant_accept:
+    post:
+      tags:
+        - Delivery
+      summary: Merchant accepts a delivery order and processes payment.
+      description: >-
+
+        Processes a delivery order from PENDING status.
+
+        Captures payment (if neccessary), updates order status, and emits
+        relevant events.
+
+        Handles payment via CARD, WALLET, PLATFORM, or CASH, and moves the order
+        through the correct state transitions.
+
+        In the case of a CARD or PLATFORM payment, the payment and state
+        transitions are left up to the stripe webhook handler.
+
+        If preparation_time is provided, updates the order's pickup time.
+      operationId: merchantAcceptOrder
+      requestBody:
+        description: >-
+          The request body must include 'order_id' to identify the order and
+          optionally 'preparation_time' (ISO string or timestamp).
+        content:
+          application/json:
+            schema:
+              $ref: |
+                #/components/schemas/
+                  "order_id": 123,
+                  "preparation_time": "2025-07-30T12:00:00.000Z"
+        required: true
+      responses:
+        '200':
+          description: >-
+            Order processed and moved to next state. Returns the updated
+            DeliveryOrder object.
+          content:
+            application/json:
+              schema:
+                $ref: |
+                  #/components/schemas/
+                    "order_id": 123,
+                    "user_id": 456,
+                    "business_id": 789,
+                    "details": { ... },
+                    "status": "MERCHANT_PREPARING",
+                    "payment": { ... },
+                    "items": [ ... ],
+                    "timeline": [ ... ],
+                    "created_at": "...",
+                    "updated_at": "..."
+              examples:
+                undefined:
+                  $ref: '#/components/examples/'
+        '400':
+          description: Preparation time must be set if not scheduled.
+        '500':
+          description: Error processing the order.
+  /delivery/orders/order/merchant_ready:
+    post:
+      tags:
+        - Delivery
+      summary: Merchant confirms order is ready for pickup.
+      description: >-
+
+        If needed recalculates pricing and processes payment then updates the
+        order
+
+        as ready for pickup and if needed, and emits relevant events.
+
+        Handles payment via CARD, WALLET, PLATFORM, or CASH, and moves the order
+        through the correct state transitions.
+
+        In the case of a CARD or PLATFORM payment, the payment and state
+        transitions are left up to the stripe webhook handler.
+      operationId: merchantConfirmOrderReady
+      requestBody:
+        description: The request body must include 'order_id' to identify the order.
+        content:
+          application/json:
+            schema:
+              $ref: |
+                #/components/schemas/
+                  "order_id": 123
+        required: true
+      responses:
+        '200':
+          description: >-
+            Order marked as ready for pickup. Returns the updated DeliveryOrder
+            object.
+          content:
+            application/json:
+              schema:
+                $ref: |
+                  #/components/schemas/
+                    "order_id": 123,
+                    "user_id": 456,
+                    "business_id": 789,
+                    "details": { ... },
+                    "status": "MERCHANT_READY_FOR_PICKUP",
+                    "payment": { ... },
+                    "items": [ ... ],
+                    "timeline": [ ... ],
+                    "created_at": "...",
+                    "updated_at": "..."
+              examples:
+                undefined:
+                  $ref: '#/components/examples/'
+        '500':
+          description: Error processing the order.
+  /delivery/orders/order/local_ready:
+    post:
+      tags:
+        - Delivery
+      summary: LOCAL business confirms multiple orders are ready for pickup.
+      description: >-
+
+        Sets all preparing orders for a specific business_local_location as
+        ready for pickup.
+
+        Only works for LOCAL business type. Recalculates pricing and processes
+        payments for all orders,
+
+        then updates them as ready for pickup and emits relevant events.
+
+        Handles payment via CARD, WALLET, PLATFORM, or CASH for each order.
+      operationId: localConfirmMultipleOrdersReady
+      requestBody:
+        description: >-
+          The request body must include 'business_local_location_id' to identify
+          which location's orders to process.
+        content:
+          application/json:
+            schema:
+              $ref: |
+                #/components/schemas/
+                  "business_local_location_id": "uuid-string"
+        required: true
+      responses:
+        '200':
+          description: >-
+            Orders marked as ready for pickup. Returns summary of processed
+            orders.
+          content:
+            application/json:
+              schema:
+                $ref: |
+                  #/components/schemas/
+                    "success": true,
+                    "processed_orders": 5,
+                    "successful_orders": 4,
+                    "failed_orders": 1,
+                    "orders": [
+                      {
+                        "order_id": 123,
+                        "status": "success",
+                        "order": { ... }
+                      },
+                      {
+                        "order_id": 124,
+                        "status": "failed",
+                        "error": "Payment processing failed"
+                      }
+                    ]
+              examples:
+                undefined:
+                  $ref: '#/components/examples/'
+        '400':
+          description: Invalid business_local_location_id or no preparing orders found.
+        '500':
+          description: Error processing the orders.
   /delivery/orders/order/pickup_time:
     post:
       tags:
@@ -2839,19 +3394,19 @@ paths:
           description: >-
             Server error. Returns error message if any exception is encountered
             during execution.
-  /delivery/order/update:
+  /delivery/orders/order/update/items:
     post:
       tags:
         - Taxi
-      summary: Update a delivery order.
+      summary: Update delivery order items.
       description: Updates a delivery order.
-      operationId: updateDeliveryOrderTimeline
+      operationId: updateDeliveryOrderItems
       requestBody:
-        description: Request body must include 'order_id', and the new 'timeline' details.
+        description: Request body must include 'order_id'
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/updateDeliveryOrderTimelineRequest'
+              $ref: '#/components/schemas/updateDeliveryOrderItemsRequest'
         required: true
       responses:
         '200':
@@ -3644,6 +4199,24 @@ paths:
             Emits:
             - "driver_available" event with driver object if online is true
             - "driver_unavailable" event with driver_id if online is false
+  /drivers/available:
+    get:
+      tags:
+        - Drivers
+      summary: Get available drivers
+      description: Returns a list of available drivers based on the specified type.
+      operationId: getAvailableDrivers
+      responses:
+        '200':
+          description: Successful operation, returns a list of available drivers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Driver'
+        '400':
+          description: Error occurred while obtaining the available drivers list
   /drivers/:driver_id:
     get:
       tags:
@@ -5223,6 +5796,43 @@ paths:
                 type: object
         '500':
           description: Error deleting promo section
+  /promo-section-buys:
+    post:
+      tags:
+        - PromoSectionBuy
+      summary: Create promo section buys and payment intent
+      description: >-
+        Creates pending promo section buy records (unpaid) and a Stripe
+        PaymentIntent for all of them. On successful webhook confirmation the
+        buys become active.
+      operationId: createPromoSectionBuy
+      requestBody:
+        description: >-
+          Promo sections to purchase with tier, duration (days) and activePrice
+          per day
+        content:
+          application/json:
+            schema:
+              $ref: |
+                #/components/schemas/
+                  "promoSections": [
+                    { "promo_sections_id": "uuid", "tier": 1, "duration": 30, "activePrice": 12.5 }
+                  ]
+        required: true
+      responses:
+        '200':
+          description: Created payment intent for promo section buys
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                undefined:
+                  $ref: '#/components/examples/'
+        '400':
+          description: Validation error
+        '500':
+          description: Error creating promo section buy payment intent
   /reservations:
     get:
       tags:
@@ -5446,6 +6056,28 @@ paths:
             Server error. Returns error message "Error something went wrong..."
             if any exception is encountered during execution.
   /taxi/orders/active/:user_id/:type:
+    get:
+      tags:
+        - Taxi
+      summary: Get active taxi orders.
+      description: This fetches all completed orders for a specific user.
+      operationId: getCompletedDeliveryOrders
+      responses:
+        '200':
+          description: >-
+            Successful operation. Returns a list of completed orders in the
+            response body.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+        '500':
+          description: >-
+            Server error. Returns error message "Error something went wrong..."
+            if any exception is encountered during execution.
+  /taxi/orders/active/me:
     get:
       tags:
         - Taxi
@@ -7436,7 +8068,7 @@ paths:
         content:
           vehicles:
             schema:
-              type: string
+              type: array
           driver_id:
             schema:
               type: string
@@ -7453,15 +8085,15 @@ paths:
     patch:
       tags:
         - Vehicles
-      summary: Remove a vehicle from a driver
+      summary: Remove vehicles from a driver
       description: >-
-        Disassociates a vehicle from its assigned driver by setting the
-        vehicle's driver_id to null.
+        Disassociates vehicles from its assigned driver by setting the vehicle's
+        can_drive to false.
       requestBody:
         content:
-          vehicle_id:
+          vehicles:
             schema:
-              type: string
+              type: array
           driver_id:
             schema:
               type: string

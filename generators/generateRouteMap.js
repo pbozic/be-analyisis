@@ -1,7 +1,7 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-function generateRoutesMap(routesFolderPath, outputFilePath) {
+export default function generateRoutesMap(routesFolderPath, outputFilePath) {
 	const allRouteFiles = getAllRouteFiles(routesFolderPath);
 	const routesMap = [];
 
@@ -174,5 +174,3 @@ function checkIfDocumented(controllerPath, functionName) {
 	}
 	return false;
 }
-
-module.exports = generateRoutesMap;

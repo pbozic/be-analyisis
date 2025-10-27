@@ -1,9 +1,9 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-const recast = require('recast');
-const parser = require('@babel/parser');
-const commentParser = require('comment-parser');
+import * as recast from 'recast';
+import * as parser from '@babel/parser';
+import * as commentParser from 'comment-parser';
 
 const CONTROLLER_DIR = path.join(process.cwd(), 'controllers');
 const DOCS_DIR = path.join(process.cwd(), 'docs', 'docs', 'controllers');
@@ -19,7 +19,21 @@ function parseJsFile(filePath) {
 			parse: (src) =>
 				parser.parse(src, {
 					sourceType: 'module',
-					plugins: ['jsx', 'classProperties', 'optionalChaining'],
+					plugins: [
+						'jsx',
+						'classProperties',
+						'classPrivateProperties',
+						'classPrivateMethods',
+						'decorators-legacy',
+						'exportDefaultFrom',
+						'exportNamespaceFrom',
+						'optionalChaining',
+						'nullishCoalescingOperator',
+						'dynamicImport',
+						'importMeta',
+						'topLevelAwait',
+						'typescript',
+					],
 				}),
 		},
 	});
@@ -135,7 +149,7 @@ function updateMarkdownDoc(fileName, functions) {
 	fs.writeFileSync(docFile, existingContent);
 }
 
-async function generateControllerDocs() {
+export default async function generateControllerDocs() {
 	ensureDocsDir();
 
 	const files = fs.readdirSync(CONTROLLER_DIR).filter((f) => f.endsWith('.js') || f.endsWith('.ts'));
@@ -147,5 +161,3 @@ async function generateControllerDocs() {
 		updateMarkdownDoc(baseName, functions);
 	}
 }
-
-module.exports = generateControllerDocs;
