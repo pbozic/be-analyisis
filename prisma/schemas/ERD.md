@@ -8,6 +8,7 @@
 - [Referral](#referral)
 - [FamilyUsers](#familyusers)
 - [Documents](#documents)
+- [Files](#files)
 - [Users](#users)
 - [Addresses](#addresses)
 - [Payments](#payments)
@@ -148,9 +149,9 @@ erDiagram
   DateTime(6) created_at
   DateTime(6) updated_at
   String document_id FK "nullable"
-  String user_id UK "nullable"
-  String lost_item_id FK,UK "nullable"
-  String delivery_order_id FK,UK "nullable"
+  String user_id "nullable"
+  String lost_item_id "nullable"
+  String delivery_order_id "nullable"
 }
 "addresses" {
   String address_id PK
@@ -831,9 +832,9 @@ erDiagram
   DateTime(6) created_at
   DateTime(6) updated_at
   String document_id FK "nullable"
-  String user_id UK "nullable"
-  String lost_item_id FK,UK "nullable"
-  String delivery_order_id FK,UK "nullable"
+  String user_id "nullable"
+  String lost_item_id "nullable"
+  String delivery_order_id "nullable"
 }
 "transactions" {
   String transaction_id PK
@@ -870,6 +871,244 @@ Properties as follows:
 - `vehicle_id`:
 - `transaction_id`:
 - `order_id`:
+
+## Files
+
+```mermaid
+erDiagram
+"files" {
+  String file_id PK
+  String url "nullable"
+  FILE_TYPE file_type
+  Boolean public
+  String mime_type
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String document_id FK "nullable"
+  String user_id "nullable"
+  String lost_item_id "nullable"
+  String delivery_order_id "nullable"
+}
+"business" {
+  String business_id PK
+  String address_id FK "nullable"
+  Boolean is_business_unit
+  String business_group_name "nullable"
+  String name
+  String description "nullable"
+  String tax_id
+  String registration_id
+  String email UK
+  String telephone
+  String telephone_code
+  String telephone_number
+  String website_url "nullable"
+  Json working_hours "nullable"
+  Boolean popular
+  Boolean new
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String logo_id FK,UK "nullable"
+  String banner_id FK,UK "nullable"
+  String parent_business_id FK "nullable"
+  String stripe_account_id "nullable"
+  String stripe_customer_id "nullable"
+  String word_buy_stripe_subscription_id "nullable"
+  DateTime first_activated_at "nullable"
+  Boolean active
+  String sales_representative_id "nullable"
+}
+"documents" {
+  String document_id PK
+  DOCUMENT_TYPE document_type
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  DateTime(6) expiration_date "nullable"
+  DateTime(6) issue_date "nullable"
+  Json additional_info "nullable"
+  Boolean public
+  String driver_id FK "nullable"
+  String business_id FK "nullable"
+  String vehicle_id FK "nullable"
+  String transaction_id FK "nullable"
+  String order_id FK "nullable"
+}
+"lost_items" {
+  String lost_item_id PK
+  String user_id FK "nullable"
+  LOST_FOUND_STATUS status
+  String description
+  String image_id FK,UK "nullable"
+  Boolean found "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+}
+"promo_banners" {
+  String promo_banners_id PK
+  String type
+  String size "nullable"
+  String title
+  String text
+  String promo_section_buy_id "nullable"
+  String file_id FK
+  String promo_ads_id FK "nullable"
+}
+"blog_posts" {
+  String blog_posts_id PK
+  String slug UK
+  String title
+  String short_content "nullable"
+  String image_file_id FK "nullable"
+  Json content
+  BLOG_POST_STATUS status
+  String author_id FK
+  String category_id FK "nullable"
+  DateTime(6) publish_at
+  DateTime(6) created_at
+  DateTime(6) updated_at
+}
+"delivery_orders" {
+  String order_id PK
+  String user_id FK "nullable"
+  Json route
+  Json pickup_location
+  Json delivery_location
+  Json payment "nullable"
+  Json estimates "nullable"
+  Json details "nullable"
+  Json courier_instructions "nullable"
+  Json restaurant_message "nullable"
+  String rejection_reason "nullable"
+  Json scheduled "nullable"
+  Json timeline
+  DELIVERY_ORDER_STATUS status
+  DateTime(6) last_sent_at "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  String vehicle_id FK "nullable"
+  String driver_id FK "nullable"
+  String transport_module_id FK "nullable"
+  String payment_intent_id "nullable"
+  Int find_drivers_attempts "nullable"
+  Boolean is_daily_meal
+  Boolean allow_credits_usage
+  Int order_number
+  String business_local_location_id FK "nullable"
+  String review_id FK,UK "nullable"
+  String stores_id FK "nullable"
+  String food_drinks_id FK "nullable"
+  String file_id FK,UK "nullable"
+}
+"categories" {
+  String categories_id PK
+  String name
+  String description "nullable"
+  String tag
+  String icon_file_id FK "nullable"
+  CATEGORY_TYPE category_type
+  String parent_categories_id FK "nullable"
+  String translatable_id FK
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  DateTime(6) deleted_at "nullable"
+}
+"menu_items" {
+  String menu_item_id PK
+  Json names
+  String image "nullable"
+  Json description
+  String allergens
+  Int spicy_level "nullable"
+  String unit_size "nullable"
+  Float price
+  Float discount "nullable"
+  String sides
+  String extras
+  Json ingredients
+  String availability
+  String business_id
+  String menu_category_id FK "nullable"
+  DateTime(6) daily_date "nullable"
+  String image_file_id FK,UK "nullable"
+  Boolean requires_id_check
+  Boolean is_enabled
+  Boolean is_copy
+  Int menu_category_order_index "nullable"
+  Json allergens_text "nullable"
+  Json ingredients_text "nullable"
+  Json usage_text "nullable"
+  Json origin_text "nullable"
+  Boolean is_weighted
+  Float weight_quantity "nullable"
+  Float stock "nullable"
+  String latest_version_id "nullable"
+  String tax_rates_id FK "nullable"
+}
+"users" {
+  String user_id PK
+  String first_name "nullable"
+  String last_name "nullable"
+  String password
+  String email "nullable"
+  String telephone UK
+  String telephone_code
+  String telephone_number
+  DateTime date_of_birth "nullable"
+  DateTime(6) created_at
+  DateTime(6) updated_at
+  USER_ROLES user_role
+  Boolean phone_verified
+  Json notification_preferences "nullable"
+  Json taxi_preferences "nullable"
+  String profile_picture_id FK,UK "nullable"
+  String reviewable_id FK "nullable"
+  Boolean review_complete
+  String one_signal_id "nullable"
+  String stripe_customer_id "nullable"
+  Float wallet_balance
+  Json transfer_preferences "nullable"
+  Json allergies_preferences "nullable"
+  Json spicy_preferences "nullable"
+  Json radio_preferences "nullable"
+  Boolean subscribed_to_daily_meals
+  Json daily_meal_preferences "nullable"
+  Json details "nullable"
+  Json taxi_push_notification_preferences "nullable"
+  Json transfer_push_notification_preferences "nullable"
+  Json delivery_push_notification_preferences "nullable"
+  Json spoken_languages "nullable"
+  Json daily_meal_day_preferences "nullable"
+  Boolean disabled
+  Boolean active
+  String language "nullable"
+  String apple_id "nullable"
+  String google_id "nullable"
+  String(6) referral_code UK "nullable"
+  DateTime activated_at "nullable"
+  DateTime deactivated_at "nullable"
+  Boolean deactivated
+  String business_teams_id FK "nullable"
+  Boolean allow_marketing_push_notifications "nullable"
+  Boolean allow_ads_personalization "nullable"
+  Boolean allow_newsletter "nullable"
+}
+"files" }o--o| "documents" : documents
+"business" |o--o| "files" : logo
+"business" |o--o| "files" : banner
+"business" }o--o| "business" : parent_business
+"documents" }o--o| "business" : business
+"lost_items" |o--o| "files" : image
+"lost_items" }o--o| "users" : user
+"promo_banners" }o--|| "files" : files
+"blog_posts" }o--o| "files" : image
+"blog_posts" }o--|| "users" : author
+"delivery_orders" }o--o| "users" : customer
+"delivery_orders" |o--o| "files" : picture_of_delivery
+"categories" }o--o| "files" : icon
+"categories" }o--o| "categories" : parent_category
+"menu_items" |o--o| "files" : image_file
+"users" |o--o| "files" : profile_picture
+```
 
 ### `files`
 
@@ -1108,9 +1347,9 @@ erDiagram
   DateTime(6) created_at
   DateTime(6) updated_at
   String document_id FK "nullable"
-  String user_id UK "nullable"
-  String lost_item_id FK,UK "nullable"
-  String delivery_order_id FK,UK "nullable"
+  String user_id "nullable"
+  String lost_item_id "nullable"
+  String delivery_order_id "nullable"
 }
 "addresses" {
   String address_id PK
@@ -1149,7 +1388,7 @@ erDiagram
   String user_id FK "nullable"
   LOST_FOUND_STATUS status
   String description
-  String file_id "nullable"
+  String image_id FK,UK "nullable"
   Boolean found "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -1228,10 +1467,10 @@ erDiagram
 "business" |o--o| "files" : logo
 "business" |o--o| "files" : banner
 "business" }o--o| "business" : parent_business
-"files" |o--o| "lost_items" : lost_item
 "transactions" }o--|| "users" : user
 "transactions" }o--o| "wallet_funds" : wallet_funds
 "user_money_flows" }o--|| "users" : user
+"lost_items" |o--o| "files" : image
 "lost_items" }o--o| "users" : user
 "wallet_funds" }o--|| "users" : user
 "drivers" |o--o| "users" : user
@@ -1894,7 +2133,7 @@ erDiagram
   String user_id FK "nullable"
   LOST_FOUND_STATUS status
   String description
-  String file_id "nullable"
+  String image_id FK,UK "nullable"
   Boolean found "nullable"
   DateTime(6) created_at
   DateTime(6) updated_at
@@ -1908,9 +2147,9 @@ erDiagram
   DateTime(6) created_at
   DateTime(6) updated_at
   String document_id FK "nullable"
-  String user_id UK "nullable"
-  String lost_item_id FK,UK "nullable"
-  String delivery_order_id FK,UK "nullable"
+  String user_id "nullable"
+  String lost_item_id "nullable"
+  String delivery_order_id "nullable"
 }
 "users" {
   String user_id PK
@@ -1960,8 +2199,8 @@ erDiagram
   Boolean allow_ads_personalization "nullable"
   Boolean allow_newsletter "nullable"
 }
+"lost_items" |o--o| "files" : image
 "lost_items" }o--o| "users" : user
-"files" |o--o| "lost_items" : lost_item
 "users" |o--o| "files" : profile_picture
 ```
 
@@ -1975,7 +2214,7 @@ Properties as follows:
 - `user_id`:
 - `status`:
 - `description`:
-- `file_id`:
+- `image_id`:
 - `found`:
 - `created_at`:
 - `updated_at`:
@@ -2230,9 +2469,9 @@ erDiagram
   DateTime(6) created_at
   DateTime(6) updated_at
   String document_id FK "nullable"
-  String user_id UK "nullable"
-  String lost_item_id FK,UK "nullable"
-  String delivery_order_id FK,UK "nullable"
+  String user_id "nullable"
+  String lost_item_id "nullable"
+  String delivery_order_id "nullable"
 }
 "categories" {
   String categories_id PK
@@ -3543,7 +3782,7 @@ erDiagram
   String review_id FK,UK "nullable"
   String stores_id FK "nullable"
   String food_drinks_id FK "nullable"
-  String file_id "nullable"
+  String file_id FK,UK "nullable"
 }
 "delivery_order_sent" {
   String delivery_order_sent_id PK
@@ -4395,9 +4634,9 @@ erDiagram
   DateTime(6) created_at
   DateTime(6) updated_at
   String document_id FK "nullable"
-  String user_id UK "nullable"
-  String lost_item_id FK,UK "nullable"
-  String delivery_order_id FK,UK "nullable"
+  String user_id "nullable"
+  String lost_item_id "nullable"
+  String delivery_order_id "nullable"
 }
 "tax_rates" {
   String tax_rates_id PK
@@ -5881,7 +6120,7 @@ erDiagram
   String review_id FK,UK "nullable"
   String stores_id FK "nullable"
   String food_drinks_id FK "nullable"
-  String file_id "nullable"
+  String file_id FK,UK "nullable"
 }
 "taxi_orders" {
   String order_id PK

@@ -53,6 +53,7 @@ generator typescriptInterfaces {
 /// @erd Reservations
 /// @erd Users
 /// @erd Addresses
+/// @erd Files
 ///
 /// Core company profile linked to address, documents, analytics, roles and users.
 model business {
@@ -241,6 +242,7 @@ model allowances {
 
 /// @summary Documents attached to business, user, driver, vehicle, menu items or orders.
 /// @namespace Documents
+/// @erd Files
 /// @erd Business
 /// @erd Drivers
 /// @erd Vehicles
@@ -267,7 +269,8 @@ model documents {
 }
 
 /// @summary File storage for documents, images, logos, banners, menu items, blog posts, categories, promo banners and more.
-/// @namespace Documents
+/// @namespace Files
+/// @erd Documents
 /// @erd Business
 /// @erd Users
 /// @erd MenuItems
@@ -287,14 +290,14 @@ model files {
   blog_posts        blog_posts[]
   business_logo     business[]       @relation("business_logo")
   business_banner   business[]       @relation("business_banner")
-  user_id           String?          @unique @db.Uuid
+  user_id           String?          @db.Uuid
   user              users?
-  menu_item         menu_items[]     @relation("menu_item_image") // TODO: This was needed for duplicate menu_items -> UPDATE DAO
-  lost_item_id      String?          @unique @db.Uuid
-  lost_item         lost_items?      @relation(fields: [lost_item_id], references: [lost_item_id])
+  menu_items        menu_items[]     @relation("menu_item_image") // TODO: This was needed for duplicate menu_items -> UPDATE DAO
+  lost_item_id      String?          @db.Uuid
+  lost_item         lost_items?
   promo_banners     promo_banners[]
-  delivery_order_id String?          @unique @db.Uuid
-  delivery_order    delivery_orders? @relation(fields: [delivery_order_id], references: [order_id])
+  delivery_order_id String?          @db.Uuid
+  delivery_order    delivery_orders?
 }
 
 /// @summary API and session tokens for users.
@@ -469,13 +472,14 @@ model payment_intent_logs {
 /// @summary Lost and found items reported by users/drivers.
 /// @namespace LostItems
 /// @erd Users
+/// @erd Files
 model lost_items {
   lost_item_id String            @id @default(uuid()) @db.Uuid
   user_id      String?           @db.Uuid
   status       LOST_FOUND_STATUS @default(REPORTED)
   description  String
-  file_id      String?           @db.Uuid
-  file         files?
+  image_id     String?           @unique @db.Uuid
+  image        files?            @relation(fields: [image_id], references: [file_id])
   found        Boolean?          @default(false)
   created_at   DateTime          @default(now()) @db.Timestamptz(6)
   updated_at   DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
@@ -569,6 +573,7 @@ model promo_sections {
 }
 
 /// @namespace PromoAds
+/// @erd Files
 /// @summary Visual assets attached to promo ads or section buys.
 model promo_banners {
   promo_banners_id     String     @id @default(uuid()) @db.Uuid
@@ -944,6 +949,7 @@ model blog_categories {
 }
 
 /// @namespace Blog
+/// @erd Files
 /// @summary Blog posts with authors, categories, tags and content.
 model blog_posts {
   blog_posts_id String                 @id @default(uuid()) @db.Uuid

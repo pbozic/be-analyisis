@@ -22,6 +22,7 @@ enum PERMISSION_SCOPE {
 /// @erd LostItems
 /// @erd Blog
 /// @erd Bookings
+/// @erd Files
 ///
 /// Central user entity linking to roles, orders, documents, wallets and analytics.
 model users {

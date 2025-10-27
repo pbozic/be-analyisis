@@ -63,6 +63,7 @@ model food_drinks {
 
 /// @namespace DeliveryOrders
 /// @erd Transport
+/// @erd Files
 /// @summary Courier/food delivery orders with items, status timeline and driver.
 model delivery_orders {
     order_id                   String                     @id @default(uuid()) @db.Uuid
@@ -116,8 +117,8 @@ model delivery_orders {
     stores                     stores?                    @relation(fields: [stores_id], references: [stores_id])
     food_drinks_id             String?                    @db.Uuid
     food_drinks                food_drinks?               @relation(fields: [food_drinks_id], references: [food_drinks_id])
-    file_id                    String?                    @db.Uuid
-    picture_of_delivery        files?
+    file_id                    String?                    @unique @db.Uuid
+    picture_of_delivery        files?                     @relation(fields: [file_id], references: [file_id])
 }
 
 /// @namespace DeliveryOrders
@@ -212,6 +213,7 @@ model local_locations {
 /// @namespace Menus
 /// @namespace DailyMeals
 /// @erd PromoAds
+/// @erd Files
 ///
 /// Hierarchical categories with translatable labels and optional icon.
 model categories {
@@ -302,6 +304,7 @@ model menu_categories {
 /// @summary Sellable dish/product with pricing and attributes.
 /// @namespace MenuItems
 /// @erd Menus
+/// @erd Files
 ///
 /// Includes allergens, ingredients, stock and tax rate. Documents can be attached.
 model menu_items {
@@ -646,16 +649,4 @@ enum LINE_ITEM_FLAGS {
     EDITED
     REMOVED
     REPLACED
-}
-
-enum STORE_TYPE {
-    RETAIL
-    LOCAL
-}
-
-enum FOOD_DRINKS_TYPE {
-    RESTAURANT
-    CAFE
-    BAR
-    PASTRY_SHOP
 }
