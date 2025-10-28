@@ -8,6 +8,8 @@ import UserDao from '../dao/User.js';
 import socket from '../socket.js';
 import TaxiOrderDao from '../dao/TaxiOrder.js';
 import DeliveryOrderDao from '../dao/DeliveryOrder.js';
+import ReviewsDao from '../dao/Review.js';
+import InvoicesDao from '../dao/Invoices.ts';
 import taxiHelpers from '../lib/taxiHelpers.js';
 import { updateAddressByAddressId, addAddress, addUserAddress } from '../dao/Address.js';
 import {
@@ -59,6 +61,224 @@ async function listDrivers(req, res) {
 		res.status(400).json({ error: 'Error listing drivers', detail: error.message });
 	}
 }
+/**
+ * GET /drivers/:driver_id/reviews
+ * @tag Drivers
+ * @summary List reviews for a driver
+ * @description Returns all reviews written about the specified driver.
+ * @operationId getDriverReviews
+ * @pathParam {string} driver_id - Driver id
+ * @response 200 - Reviews list
+ * @responseContent {object[]} 200.application/json
+ * @response 404 - Driver not found
+ * @prisma_model reviews
+ */
+async function getDriverReviews(req, res) {
+	try {
+		const { driver_id } = req.params;
+		const driver = await DriverDao.getDriverById(driver_id);
+		if (!driver) return res.status(404).json({ error: 'Driver not found' });
+		const reviews = await ReviewsDao.getReviewsForDriver(driver_id);
+		return res.status(200).json(reviews);
+	} catch (e) {
+		console.error('DriverController.getDriverReviews', e);
+		return res.status(500).json({ error: 'Error fetching driver reviews' });
+	}
+}
+
+/**
+ * PATCH /drivers/:driver_id/unlink
+ * @tag Drivers
+ * @summary Remove driver by unlinking from business
+ * @description Deletes the driver entity while keeping the user account active.
+ * @operationId unlinkDriverFromBusiness
+ * @pathParam {string} driver_id - Driver id to unlink
+ * @response 200 - Unlinked successfully
+ * @response 404 - Driver not found
+ * @prisma_model drivers
+ */
+async function unlinkDriverFromBusiness(req, res) {
+	try {
+		const { driver_id } = req.params;
+		const driver = await DriverDao.getDriverById(driver_id);
+		if (!driver) return res.status(404).json({ error: 'Driver not found' });
+		// Remove driver record; user remains
+		await DriverDao.removeDriver(driver_id);
+		return res.status(200).json({ message: 'Driver unlinked from business successfully' });
+	} catch (e) {
+		console.error('DriverController.unlinkDriverFromBusiness', e);
+		return res.status(500).json({ error: 'Error unlinking driver from business' });
+	}
+}
+
+/**
+ * POST /drivers/:driver_id/vehicles/:vehicle_id/register-invoices
+ * @tag Drivers
+ * @summary Register a vehicle for invoicing
+ * @description Creates an invoices.business_premise for the driver’s transport module, an electronic_device and assigns it; links the vehicle to the premise.
+ * @operationId registerVehicleInvoices
+ * @pathParam {string} driver_id - Driver id
+ * @pathParam {string} vehicle_id - Vehicle id
+ * @response 200 - Registration objects
+ * @response 400 - Bad request or missing transport module
+ * @prisma_model business_premise
+ * @prisma_model electronic_device
+ * @prisma_model device_assignment
+ * @prisma_model vehicles
+ */
+async function registerVehicleInvoices(req, res) {
+	try {
+		const { driver_id, vehicle_id } = req.params;
+		const driver = await DriverDao.getDriverById(driver_id);
+		if (!driver) return res.status(404).json({ error: 'Driver not found' });
+		if (!driver.transport_module_id) {
+			return res.status(400).json({ error: 'Driver is not linked to a transport module' });
+		}
+		const name = driver?.current_vehicle?.license_plate || 'Movable premise';
+		const premise = await InvoicesDao.createBusinessPremise(driver.transport_module_id, { name });
+		/* 
+		const device = await InvoicesDao.createElectronicDevice(premise.business_premise_id, { name: 'Device #1' });
+		const assignment = await InvoicesDao.assignDeviceToDriver(
+			driver.driver_id,
+			premise.business_premise_id,
+			device.electronic_device_id
+		);
+		 */
+		await InvoicesDao.linkPremiseToVehicle(vehicle_id, premise.business_premise_id);
+		return res.status(200).json(premise);
+	} catch (e) {
+		console.error('DriverController.registerVehicleInvoices', e);
+		return res.status(500).json({ error: 'Error registering vehicle for invoices' });
+	}
+}
+
+/**
+ * POST /drivers/:driver_id/premises/:business_premise_id/devices
+ * @tag Drivers
+ * @summary Create an electronic device for a business premise
+ * @description Creates a new invoices.electronic_device under the given business premise. Optionally assigns it to the driver.
+ * @operationId createElectronicDeviceForPremise
+ * @pathParam {string} driver_id - Driver id
+ * @pathParam {string} business_premise_id - Business premise id
+ * @bodyDescription Device details and optional assignment
+ * @bodyContent {
+ *   "name": "Device #1",
+ *   "active": true,
+ *   "electronic_device_id": "uuid",
+ *   "assign_to_driver": true,
+ *   "valid_from": "2025-01-01T00:00:00.000Z"
+ * } application/json
+ * @bodyRequired
+ * @response 200 - Device created (and assignment if requested)
+ * @responseContent {object} 200.application/json
+ * @responseExample 200.application/json {
+ *   "device": {"business_premise_id": "uuid", "electronic_device_id": "uuid", "name": "Device #1", "active": true},
+ *   "assignment": {"device_assignment_id": "uuid", "driver_id": "uuid", "valid_from": "2025-01-01T00:00:00.000Z"}
+ * }
+ * @prisma_model electronic_device
+ * @prisma_model device_assignment
+ */
+async function createElectronicDeviceForPremise(req, res) {
+	try {
+		const { driver_id, business_premise_id } = req.params;
+		const { name, active, electronic_device_id, assign_to_driver, valid_from } = req.body || {};
+		const driver = await DriverDao.getDriverById(driver_id);
+		if (!driver) return res.status(404).json({ error: 'Driver not found' });
+		const device = await InvoicesDao.createElectronicDevice(business_premise_id, {
+			name: name ?? null,
+			active: typeof active === 'boolean' ? active : true,
+			electronic_device_id,
+		});
+		let assignment = null;
+		if (assign_to_driver) {
+			assignment = await InvoicesDao.assignDeviceToDriver(
+				driver.driver_id,
+				business_premise_id,
+				device.electronic_device_id,
+				valid_from ? new Date(valid_from) : new Date()
+			);
+		}
+		return res.status(200).json({ device, assignment });
+	} catch (e) {
+		console.error('DriverController.createElectronicDeviceForPremise', e);
+		return res.status(500).json({ error: 'Error creating electronic device' });
+	}
+}
+
+/**
+ * PATCH /drivers/:driver_id/premises/:business_premise_id/devices/:electronic_device_id/disable
+ * @tag Drivers
+ * @summary Disable an electronic device
+ * @description Sets invoices.electronic_device.active to false for the given device.
+ * @operationId disableElectronicDevice
+ * @pathParam {string} driver_id - Driver id (for scoping)
+ * @pathParam {string} business_premise_id - Business premise id
+ * @pathParam {string} electronic_device_id - Electronic device id
+ * @response 200 - Device disabled
+ * @prisma_model electronic_device
+ */
+async function disableElectronicDevice(req, res) {
+	try {
+		const { business_premise_id, electronic_device_id } = req.params;
+		const device = await InvoicesDao.disableElectronicDevice(business_premise_id, electronic_device_id);
+		return res.status(200).json(device);
+	} catch (e) {
+		console.error('DriverController.disableElectronicDevice', e);
+		return res.status(500).json({ error: 'Error disabling electronic device' });
+	}
+}
+
+/**
+ * POST /drivers/:driver_id/premises/:business_premise_id/devices/:electronic_device_id/assignment
+ * @tag Drivers
+ * @summary Assign or unassign an electronic device to/from a driver
+ * @description One route to assign (create new assignment) or unassign (end current assignment) the device.
+ * @operationId updateDeviceAssignment
+ * @pathParam {string} driver_id - Driver id
+ * @pathParam {string} business_premise_id - Business premise id
+ * @pathParam {string} electronic_device_id - Electronic device id
+ * @bodyDescription Action and optional valid_from
+ * @bodyContent {
+ *   "action": "assign|unassign",
+ *   "valid_from": "2025-01-01T00:00:00.000Z"
+ * } application/json
+ * @bodyRequired
+ * @response 200 - Assignment changed
+ * @responseContent {object} 200.application/json
+ * @responseExample 200.application/json { "assignment": { "device_assignment_id": "uuid" }, "action": "assign" }
+ * @prisma_model device_assignment
+ */
+async function updateDeviceAssignment(req, res) {
+	try {
+		const { driver_id, business_premise_id, electronic_device_id } = req.params;
+		const { action, valid_from } = req.body || {};
+		if (!['assign', 'unassign'].includes(action)) {
+			return res.status(400).json({ error: 'Invalid action. Use assign or unassign.' });
+		}
+		const driver = await DriverDao.getDriverById(driver_id);
+		if (!driver) return res.status(404).json({ error: 'Driver not found' });
+		if (action === 'assign') {
+			const assignment = await InvoicesDao.assignDeviceToDriver(
+				driver.driver_id,
+				business_premise_id,
+				electronic_device_id,
+				valid_from ? new Date(valid_from) : new Date()
+			);
+			return res.status(200).json({ action, assignment });
+		} else {
+			const assignment = await InvoicesDao.endDeviceAssignment(
+				driver.driver_id,
+				business_premise_id,
+				electronic_device_id
+			);
+			return res.status(200).json({ action, assignment });
+		}
+	} catch (e) {
+		console.error('DriverController.updateDeviceAssignment', e);
+		return res.status(500).json({ error: 'Error updating device assignment' });
+	}
+}
+
 /**
  * GET /drivers/business/:business_id
  * @tag Drivers
@@ -1289,4 +1509,11 @@ export default {
 	getDriversByDailyMealBusinessId,
 	updateDriverDailyMealBusiness,
 	assignBusinessForDailyMealsToDriver,
+	getDriverReviews,
+	unlinkDriverFromBusiness,
+	registerVehicleInvoices,
+	createElectronicDeviceForPremise,
+	disableElectronicDevice,
+	updateDeviceAssignment,
+	confirmBusinessPremise,
 };

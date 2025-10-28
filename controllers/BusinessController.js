@@ -25,7 +25,7 @@ import PromoAnalyticsDao from '../dao/PromoAnalytics.js';
 import PromoDao from '../dao/Promo.js';
 import WordDao from '../dao/Word.js';
 import BusinessTypesDao from '../dao/BusinessTypes.js';
-
+import InvoicesDao from '../dao/Invoices.js';
 config();
 const { UserSockets, io } = socket;
 const { businessIndex, fullSearch } = elasticsearch;
@@ -2663,6 +2663,27 @@ export async function setBusinessTypesForBusiness(req, res) {
 	}
 }
 
+/**
+ * PATCH /business/admin/premises/:business_premise_id/confirm
+ * @tag Business
+ * @summary Confirm business premise registration (admin)
+ * @description Sets is_registered=true and registered_at=now for the given business premise.
+ * @operationId confirmBusinessPremise
+ * @pathParam {string} business_premise_id - Business premise id
+ * @response 200 - Premise confirmed
+ * @prisma_model business_premise
+ */
+async function confirmBusinessPremise(req, res) {
+	try {
+		const { business_premise_id } = req.params;
+		const premise = await InvoicesDao.confirmBusinessPremise(business_premise_id);
+		return res.status(200).json(premise);
+	} catch (e) {
+		console.error('DriverController.confirmBusinessPremise', e);
+		return res.status(500).json({ error: 'Error confirming business premise' });
+	}
+}
+
 export { getScheduledUsersByBusinessId };
 export { listBusinesses };
 export { listTransferBusinesses };
@@ -2728,6 +2749,7 @@ export { getBusinessOverallAnalytics };
 export { getBusinessPromoAdsAnalytics };
 export { getBusinessPromoSectionsAnalytics };
 export { getBusinessPromoWordsAnalytics };
+export { confirmBusinessPremise };
 export default {
 	getScheduledUsersByBusinessId,
 	listBusinesses,
@@ -2796,4 +2818,5 @@ export default {
 	getBusinessPromoWordsAnalytics,
 	setBusinessTypesForBusiness,
 	createBusinessType,
+	confirmBusinessPremise,
 };

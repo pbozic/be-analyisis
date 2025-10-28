@@ -1,0 +1,106 @@
+import { Request, Response } from 'express';
+
+import * as TutorialsDao from '../dao/Tutorials.ts';
+
+/**
+ *
+ * - GET /tutorials
+ * - @tag Tutorials
+ * - @summary List tutorials with current user's status
+ * - @description Returns all tutorials with status for the current epoch for the authenticated user.
+ * - @operationId listTutorialsWithStatus
+ * - @prisma_model tutorial
+ * - @prisma_model user_tutorials
+ * - @prisma_model user_tutorial_state
+ * - @response 200 - Tutorials with status listed
+ */
+export async function listTutorials(req: Request, res: Response): Promise<void> {
+	try {
+		// @ts-ignore
+		const user_id: string = req.user?.user_id;
+		if (!user_id) {
+			res.status(401).json({ error: 'Unauthorized' });
+			return;
+		}
+		const tutorials = await TutorialsDao.listTutorialsWithStatus(user_id);
+		res.json({ tutorials });
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	} catch (e: any) {
+		res.status(500).json({ error: e.message });
+	}
+}
+
+/**
+ *
+ * - POST /tutorials/state/reset
+ * - @tag Tutorials
+ * - @summary Reset tutorials by incrementing epoch for the authenticated user
+ * - @description Increments user_tutorial_state.epoch which resets per-tutorial statuses for next run.
+ * - @operationId resetTutorials
+ * - @prisma_model user_tutorial_state
+ * - @response 200 - Tutorials reset (epoch incremented)
+ * - @responseContent {object} 200.application/json
+ * - @responseExample 200.application/json {
+ *   "user_id": "uuid",
+ *   "epoch": 2
+ * }
+ */
+export async function resetTutorials(req: Request, res: Response): Promise<void> {
+	try {
+		// @ts-ignore
+		const user_id: string = req.user?.user_id;
+		if (!user_id) {
+			res.status(401).json({ error: 'Unauthorized' });
+			return;
+		}
+		const state = await TutorialsDao.incrementEpoch(user_id);
+		res.json(state);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	} catch (e: any) {
+		res.status(500).json({ error: e.message });
+	}
+}
+
+/**
+ *
+ * - POST /tutorials/{tutorial_key}/status
+ * - @tag Tutorials
+ * - @summary Set a tutorial status for the authenticated user
+ * - @description Upserts user_tutorials for the current epoch and given tutorial key.
+ * - @operationId setTutorialStatus
+ * - @bodyDescription Tutorial status payload
+ * - @bodyContent {
+ *   "status": "COMPLETED|DISMISSED|NOT_SEEN",
+ *   "versionSeen": 1
+ * } application/json
+ * - @bodyRequired
+ * - @prisma_model tutorial
+ * - @prisma_model user_tutorials
+ * - @response 200 - Tutorial status updated
+ */
+export async function setTutorialStatus(req: Request, res: Response): Promise<void> {
+	try {
+		// @ts-ignore
+		const user_id: string = req.user?.user_id;
+		const { tutorial_key } = req.params as { tutorial_key: string };
+		const { status, versionSeen } = req.body as {
+			status: 'NOT_SEEN' | 'COMPLETED' | 'DISMISSED';
+			versionSeen?: number;
+		};
+		if (!user_id) {
+			res.status(401).json({ error: 'Unauthorized' });
+			return;
+		}
+		if (!tutorial_key || !status || !['NOT_SEEN', 'COMPLETED', 'DISMISSED'].includes(status)) {
+			res.status(400).json({ error: 'tutorial_key and valid status are required' });
+			return;
+		}
+		const link = await TutorialsDao.setTutorialStatus(user_id, tutorial_key, status, versionSeen);
+		res.json(link);
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	} catch (e: any) {
+		res.status(500).json({ error: e.message });
+	}
+}
+
+export default { listTutorials, resetTutorials, setTutorialStatus };

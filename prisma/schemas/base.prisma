@@ -1104,11 +1104,12 @@ model allergens {
 /// @namespace Users
 /// @hidden
 model user_favorite_service_links {
-  id         String   @id @default(uuid()) @db.Uuid
-  user_id    String   @db.Uuid
-  service_id String   @db.Uuid
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  id          String   @id @default(uuid()) @db.Uuid
+  user_id     String   @db.Uuid
+  service_id  String   @db.Uuid
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz(6)
+  order_index Int      @default(0)
 
   users    users         @relation("user_favorite_services_to_user", fields: [user_id], references: [user_id])
   services service_links @relation("user_favorite_services_to_service", fields: [service_id], references: [id])

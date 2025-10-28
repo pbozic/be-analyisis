@@ -41,6 +41,9 @@ import LateEventsDao from '../dao/LateEvents.js';
 import stripe from '../lib/stripe.js';
 import { calculateTransferOrderPaymentCuts } from '../lib/taxiHelpers.js';
 import ReviewsDao from '../dao/Review.js';
+import FileDao from '../dao/File.js';
+import S3Helper from '../lib/s3.js';
+// DOCUMENT_TYPE not needed here; keep constants lean
 
 const { UserSockets, io, SocketStore } = socket;
 
@@ -2168,6 +2171,165 @@ async function updateTaxiOrderPayment(req, res) {
 }
 
 /**
+ * POST /taxi/order/confirm_wallet
+ * @tag Taxi
+ * @summary Confirm wallet payment for an awaiting-payment taxi order
+ * @description Reserves wallet funds (personal, family or business wallet) and marks the order as PAID, then moves it to PENDING.
+ * @operationId confirmWalletPayment
+ * @bodyDescription Body must contain order_id.
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Updated order with payment.status=PAID and status=PENDING
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 400 - Bad request (wrong status/type or insufficient funds)
+ * @response 500 - Server error
+ * @prisma_model wallet_funds
+ * @prisma_model allowances
+ * @prisma_model taxi_orders
+ */
+async function confirmWalletPayment(req, res) {
+	const { order_id } = req.body;
+	try {
+		let order = await TaxiOrderDao.getOrder(order_id);
+		if (!order) return res.status(404).json({ error: 'Order not found' });
+		if (order.status !== TAXI_ORDER_STATUS.AWAITING_PAYMENT) {
+			return res.status(400).json({ error: 'Order is not awaiting payment' });
+		}
+		if (!order.payment || !['WALLET', 'FAMILY_WALLET'].includes(order.payment.type)) {
+			return res.status(400).json({ error: 'Only wallet payments can be confirmed' });
+		}
+		const PRICE_CENTS = Math.round(parseFloat(order.payment.price) * 100);
+		const EXTRAS_COST_CENTS = Math.round(
+			parseFloat(
+				[VEHICLE_CLASS.PRIVATE_DRIVER, VEHICLE_CLASS.CARGO_VAN].includes(order.preferences?.vehicle_class)
+					? order.payment.extras?.price ||
+							order.cargo_preferences?.additional_workers * CARGO_TRANSFER_FEE.ADDITIONAL_WORKER_FEE +
+								CARGO_TRANSFER_FEE.CARGO_FEE
+					: 0
+			) * 100
+		);
+		const TOTAL_COST_CENTS = PRICE_CENTS + EXTRAS_COST_CENTS;
+		const discounted = TOTAL_COST_CENTS - (order.payment.credit_discount || 0);
+		if (discounted > 0) {
+			let walletUserId = order.user_id;
+			if (order.payment.type === 'FAMILY_WALLET') {
+				const user = order.user || (await UsersDao.getUserById(order.user_id));
+				if (!user?.parent_user?.parent_user_id)
+					return res.status(400).json({ error: 'User has no family wallet' });
+				walletUserId = user.parent_user.parent_user_id;
+			}
+			const available = await WalletFundsDao.getAvailableWalletBalanceGroupedByType(walletUserId);
+			if ((available['TAXI'] || 0) + (available[null] || 0) < discounted / 100) {
+				return res.status(400).json({ error: 'Insufficient wallet funds' });
+			}
+			await WalletFundsHelpers.reserveAvailableWalletFundsForOrder(walletUserId, discounted, order.order_id);
+		}
+		order = await TaxiOrderDao.updateOrder(order.order_id, {
+			payment: { ...order.payment, status: 'PAID' },
+			status: TAXI_ORDER_STATUS.PENDING,
+		});
+		io.to('order_' + order.order_id).emit('order_payment_change__taxi', order);
+		io.to('order_' + order.order_id).emit('order_status_change__taxi', order);
+		return res.status(200).json(order);
+	} catch (e) {
+		console.error('TaxiOrderController.confirmWalletPayment', e);
+		res.status(500).json(e);
+	}
+}
+
+/**
+ * POST /taxi/order/{order_id}/signature
+ * @tag Taxi
+ * @summary Upload a signature for a taxi order
+ * @description Stores a signature image/PDF for the order and appends a timeline entry.
+ * @operationId uploadTaxiOrderSignature
+ * @pathParam {string} order_id - Taxi order id
+ * @bodyDescription Body must contain file.base64 and file.mime_type
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Updated order with new timeline entry
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 400 - Missing file data or order not found
+ * @prisma_model files
+ * @prisma_model taxi_orders
+ */
+async function uploadTaxiOrderSignature(req, res) {
+	try {
+		const { order_id } = req.params;
+		const { file } = req.body || {};
+		if (!file?.base64 || !file?.mime_type) {
+			return res.status(400).json({ error: 'Missing file data' });
+		}
+		const order = await TaxiOrderDao.getOrder(order_id);
+		if (!order) return res.status(404).json({ error: 'Order not found' });
+		const file_type = file.mime_type.startsWith('image/') ? 'IMAGE' : 'DOCUMENT';
+		const newFile = await FileDao.createFile(file_type, file.mime_type, true);
+		const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
+		await S3Helper.SaveObject(key, file.base64, file.mime_type, {}, newFile, true);
+		const savedFile = await FileDao.getFile(newFile.file_id);
+		const entry = [
+			{
+				status: 'ORDER_SIGNATURE',
+				file: { file_id: savedFile.file_id, url: savedFile.url, mime_type: savedFile.mime_type },
+				location: { timestamp: new Date().toISOString(), uploaded_by: req.user?.user_id || null },
+			},
+		];
+		const updated = await TaxiOrderDao.updateTaxiOrderTimeline(order_id, entry);
+		io.to('order_' + updated.order_id).emit('order_timeline_change', updated);
+		return res.status(200).json(updated);
+	} catch (e) {
+		console.error('TaxiOrderController.uploadTaxiOrderSignature', e);
+		return res.status(500).json(e);
+	}
+}
+
+/**
+ * POST /taxi/order/{order_id}/photo
+ * @tag Taxi
+ * @summary Upload a photo for a taxi order
+ * @description Stores a photo for the order (e.g., proof) and appends a timeline entry.
+ * @operationId uploadTaxiOrderPhoto
+ * @pathParam {string} order_id - Taxi order id
+ * @bodyDescription Body must contain file.base64 and file.mime_type
+ * @bodyContent {object} application/json
+ * @bodyRequired
+ * @response 200 - Updated order with new timeline entry
+ * @responseContent {TaxiOrder} 200.application/json
+ * @response 400 - Missing file data or order not found
+ * @prisma_model files
+ * @prisma_model taxi_orders
+ */
+async function uploadTaxiOrderPhoto(req, res) {
+	try {
+		const { order_id } = req.params;
+		const { file } = req.body || {};
+		if (!file?.base64 || !file?.mime_type) {
+			return res.status(400).json({ error: 'Missing file data' });
+		}
+		const order = await TaxiOrderDao.getOrder(order_id);
+		if (!order) return res.status(404).json({ error: 'Order not found' });
+		const file_type = file.mime_type.startsWith('image/') ? 'IMAGE' : 'DOCUMENT';
+		const newFile = await FileDao.createFile(file_type, file.mime_type, true);
+		const key = S3Helper.getFileKey(newFile.file_id, file.mime_type);
+		await S3Helper.SaveObject(key, file.base64, file.mime_type, {}, newFile, true);
+		const savedFile = await FileDao.getFile(newFile.file_id);
+		const entry = [
+			{
+				status: 'ORDER_PHOTO',
+				file: { file_id: savedFile.file_id, url: savedFile.url, mime_type: savedFile.mime_type },
+				location: { timestamp: new Date().toISOString(), uploaded_by: req.user?.user_id || null },
+			},
+		];
+		const updated = await TaxiOrderDao.updateTaxiOrderTimeline(order_id, entry);
+		io.to('order_' + updated.order_id).emit('order_timeline_change', updated);
+		return res.status(200).json(updated);
+	} catch (e) {
+		console.error('TaxiOrderController.uploadTaxiOrderPhoto', e);
+		return res.status(500).json(e);
+	}
+}
+
+/**
  * POST /taxi/driver
  * @tag Taxi
  * @summary Append driver to taxi order.
@@ -2347,7 +2509,7 @@ async function cancelGroupedOrderByParentId(req, res) {
 		await TaxiHelper.revokeTaxiOrderFromDrivers(parent_order_id);
 		let parent_order = await TaxiOrderDao.getOrder(parent_order_id);
 		console.info(parent_order.grouped_orders);
-		const skip_cancellation_fee = order.type === 'TAXI' || req.user.user_id !== order?.user_id;
+		const skip_cancellation_fee = parent_order.type === 'TAXI' || req.user.user_id !== parent_order?.user_id;
 		for (let order of parent_order.grouped_orders) {
 			console.info('TaxiOrderController', 'CANCELLING CHILD ORDER', order);
 			const { order_id, user_id, driver_id } = order;
@@ -2564,6 +2726,9 @@ export { updateTaxiOrderDeliveryLocation };
 export { updateTaxiOrderPreferences };
 export { updateCompleteTaxiRoute };
 export { updateTaxiOrderPayment };
+export { confirmWalletPayment };
+export { uploadTaxiOrderSignature };
+export { uploadTaxiOrderPhoto };
 export { updateTaxiOrderTimeline };
 export { getActiveTaxiOrders };
 export { getCompletedTaxiOrdersByUserId };
@@ -2601,7 +2766,10 @@ export default {
 	updateTaxiOrderPreferences,
 	updateCompleteTaxiRoute,
 	updateTaxiOrderPayment,
+	confirmWalletPayment,
 	updateTaxiOrderTimeline,
+	uploadTaxiOrderSignature,
+	uploadTaxiOrderPhoto,
 	getActiveTaxiOrders,
 	getCompletedTaxiOrdersByUserId,
 	getCompletedTaxiOrdersByBusinessId,

@@ -16,6 +16,9 @@ import { reviewUserSchema } from '../../joi/reviewSchemas.js';
 import { registerChildSchema } from '../../joi/authSchemas.js';
 import StripeController from '../../controllers/StripeController.js';
 import { verifyPhoneSchema } from '../../joi/userSchemas.js';
+import FavoriteDriversController from '../../controllers/FavoriteDriversController.ts';
+import FavoriteServicesController from '../../controllers/FavoriteServicesController.ts';
+import TutorialsController from '../../controllers/TutorialsController.ts';
 config();
 const router = express.Router();
 router.get('/', UserController.listUsers);
@@ -174,9 +177,15 @@ router.post('/me/request-data', UserController.requestData);
  */
 router.delete('/me/remove-payment-method/:pm_id', StripeController.removePaymentMethod);
 
-import FavoriteDriversController from '../../controllers/FavoriteDriversController.ts';
 router.post('/me/favorite-drivers', FavoriteDriversController.addFavoriteDriver);
 router.delete('/me/favorite-drivers/:driver_id', FavoriteDriversController.removeFavoriteDriver);
 router.get('/me/favorite-drivers', FavoriteDriversController.listFavoriteDrivers);
+
+router.patch('/me/favorite-services', FavoriteServicesController.updateFavoriteServices);
+router.get('/me/favorite-services', FavoriteServicesController.listFavoriteServices);
+
+router.get('/me/tutorials', TutorialsController.listTutorials);
+router.post('/me/tutorials/state/reset', TutorialsController.resetTutorials);
+router.post('/me/tutorials/:tutorial_key/status', TutorialsController.setTutorialStatus);
 
 export default router;

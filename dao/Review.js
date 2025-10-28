@@ -193,6 +193,20 @@ export async function reviewFoodDrinks(
 		throw new Error(e);
 	}
 }
+
+export async function getReviewsForDriver(driver_id) {
+	try {
+		const driver = await prisma.drivers.findUnique({ where: { driver_id }, select: { reviewable_id: true } });
+		if (!driver?.reviewable_id) return [];
+		return await prisma.reviews.findMany({
+			where: { reviewable_id: driver.reviewable_id },
+			orderBy: { created_at: 'desc' },
+		});
+	} catch (e) {
+		console.error('Error fetching driver reviews:', e);
+		throw new Error(e);
+	}
+}
 export default {
 	createReviewableBusiness,
 	createReviewableUser,
@@ -204,4 +218,5 @@ export default {
 	reviewTransportBusiness,
 	reviewStore,
 	reviewFoodDrinks,
+	getReviewsForDriver,
 };

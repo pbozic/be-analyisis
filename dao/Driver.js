@@ -674,6 +674,19 @@ async function clearDriverCurrentVehicle(driver_id) {
 		throw new Error(error);
 	}
 }
+async function removeDriver(driver_id) {
+	try {
+		return await prisma.drivers.update({
+			where: { driver_id },
+			data: {
+				transport_module_id: null,
+			},
+		});
+	} catch (error) {
+		console.error('Error deleting driver:', error);
+		throw new Error(error);
+	}
+}
 const addDriverMunicipalities = async (driver_id, newMunicipalityIds) => {
 	try {
 		const existingMunicipalities = await prisma.driver_municipalities.findMany({
@@ -742,6 +755,7 @@ export { getDriverLocations };
 export { getDriverLocationsWithPerformance };
 export { setDriverCurrentVehicle };
 export { addDriverMunicipalities };
+export { removeDriver };
 export default {
 	setDriverHandle,
 	toggleDriverOrders,
@@ -765,4 +779,5 @@ export default {
 	getDriverLocationsWithPerformance,
 	setDriverCurrentVehicle,
 	addDriverMunicipalities,
+	removeDriver,
 };

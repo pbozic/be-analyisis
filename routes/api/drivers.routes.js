@@ -1,9 +1,7 @@
 import express from 'express';
 
 import DriverController from '../../controllers/DriverController.js';
-import driverSchemas from '../../joi/driverSchemas.js';
 const router = express.Router();
-const { updateSchema } = driverSchemas;
 router.get('/', DriverController.listDrivers);
 router.get('/full', DriverController.listDriversFull);
 router.get('/online', DriverController.listOnlineDrivers);
@@ -15,6 +13,7 @@ router.get('/daily-meals', DriverController.listDriversWithDailyMeals);
 router.get('/:driver_id', DriverController.getDriverById);
 router.get('/:driver_id/location', DriverController.getDriverLocation);
 router.get('/:driver_id/history_location', DriverController.getDriverHistoryLocations);
+router.get('/:driver_id/reviews', DriverController.getDriverReviews);
 /**
  *    * @module finances
  *
@@ -46,6 +45,17 @@ router.patch('/assign/:driver_id', DriverController.updateDriverDailyMealBusines
 router.patch('/:driver_id/toggle_orders', DriverController.toggleDriverOrders);
 router.patch('/:driver_id/set_current_vehicle', DriverController.setCurrentVehicle);
 router.patch('/:driver_id/:action/:type', DriverController.setDriverHandle);
+router.patch('/:driver_id/unlink', DriverController.unlinkDriverFromBusiness);
+router.post('/:driver_id/vehicles/:vehicle_id/register-invoices', DriverController.registerVehicleInvoices);
+router.post('/:driver_id/premises/:business_premise_id/devices', DriverController.createElectronicDeviceForPremise);
+router.patch(
+	'/:driver_id/premises/:business_premise_id/devices/:electronic_device_id/disable',
+	DriverController.disableElectronicDevice
+);
+router.post(
+	'/:driver_id/premises/:business_premise_id/devices/:electronic_device_id/assignment',
+	DriverController.updateDeviceAssignment
+);
 router.post('/come_to_work', DriverController.sendComeToWorkNotification);
 router.post('/create', DriverController.createDriver);
 router.post('/daily_meals/business', DriverController.assignBusinessForDailyMealsToDriver);
