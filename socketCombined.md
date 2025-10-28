@@ -105,22 +105,12 @@ Redis persistence sets (SocketStore):
 ---
 
 ## 6) Known server-side room patterns and descriptions
-(These come from `SOCKETS.md` and code conventions.)
 
-- `user:{userId}` — per-user private room for notifications and account updates.
-- `<socketId>` — socket private room used to target a single socket.
-- `business:{businessId}` — business-scoped broadcasts (menu/availability/offers).
-- `store:{storeId}` / `branch:{branchId}` / `restaurant:{restaurantId}` — branch-specific events.
-- `order:{orderId}` — live order status updates (assignment, ETA, status changes).
-- `chat:{conversationId}` / `conversation:{conversationId}` — messaging channels (messages, read receipts, typing).
-- `delivery:{deliveryId}` / `courier:{courierId}` / `driver:{driverId}` — delivery lifecycle and courier updates.
-- `promo:{promoId}` / `promo-section:{sectionId}` — promo updates; prompt FE to refresh.
-- `lobby`, `global`, `notifications` — generic system-wide channels.
-- `admin:{area}` / `support:{teamId}` — admin/support operator channels.
-- `table:{tableId}` / `queue:{queueId}` / `kitchen:{kitchenId}` — hospitality/restaurant rooms.
-- `zone:{zoneId}` / `broadcast:system` — geographic or system-wide broadcast channels.
-
-Notes: Many concrete names are dynamic (IDs appended to patterns). Use server helpers to join in a cluster-safe manner.
+- `user:{userId}` — Per-user room for all sockets of a single user, used for targeted emits and cluster-safe disconnects.
+- `<socket.id> — Implicit per-socket private room, used to target a specific socket across the cluster.
+- `order_{orderId}` — Domain room for a specific order; includes customer, driver, and staff; receives order events and updates.
+- `orders_{businessId}` — Delivery merchant inbox room; business users receive new/updated order notifications for their business.
+- Global (no room) — io.emit to broadcast to all connected clients.
 
 ---
 

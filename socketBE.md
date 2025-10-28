@@ -72,51 +72,11 @@ All implemented in [socket.js](socket.js) and exported via the module default.
 
 ## Known rooms and descriptions
 
-Below are room name patterns and common literal rooms used by the socket subsystem. Many rooms are created dynamically; patterns show how names are constructed.
-
-- `user:{userId}`
-  - Description: Per-user private room that contains every socket connection belonging to the given user. Used for notifications, account updates and anything targeted at the user's devices. Managed by UserSockets.set and restoreUserSockets.
-
-- `<socketId>` (each socket's private room)
-  - Description: Socket.IO assigns each socket a private room with the id equal to the socket id. Used to target a single socket instance and for cluster-wide socket operations.
-
-- `business:{businessId}`
-  - Description: Business-scoped channel for broadcasts related to a specific business (menu/availability updates, business settings, offers).
-
-- `store:{storeId}` / `branch:{branchId}` / `restaurant:{restaurantId}`
-  - Description: Store/branch/restaurant scoped room for inventory changes, opening/closing notifications, or branch-specific events.
-
-- `order:{orderId}`
-  - Description: Order-specific room for live order status updates (accepted, preparing, out-for-delivery, delivered), assignment changes and ETA updates.
-
-- `chat:{conversationId}` / `conversation:{conversationId}`
-  - Description: Real-time messaging channels for user-to-user or group chats (messages, read receipts, typing indicators).
-
-- `delivery:{deliveryId}` / `courier:{courierId}` / `driver:{driverId}`
-  - Description: Delivery lifecycle and courier-specific updates (live location, assignment, status changes).
-
-- `promo:{promoId}` / `promo-section:{sectionId}`
-  - Description: Promo and promotional section updates (new promo published, changes to promo sections). Often used to notify frontends to refresh promotional content.
-
-- `lobby` / `global` / `notifications`
-  - Description: Generic global channels used for system-wide announcements, discovery lobbies, or application-wide notifications.
-
-- `admin:{area}` / `support:{teamId}`
-  - Description: Admin and support operator channels for moderation, operator dashboards and support rooms.
-
-- `table:{tableId}` / `queue:{queueId}` / `kitchen:{kitchenId}`
-  - Description: Hospitality/restaurant-specific rooms (table status, queue updates, kitchen tickets).
-
-- `zone:{zoneId}` / `broadcast:system`
-  - Description: Geographic or system broadcast channels for region-limited announcements or system-wide messages.
-
-- Domain-room patterns stored in Redis (persistence sets; not Socket.IO room names themselves)
-  - `user_rooms:{userId}` — Set of domain room names the user should auto-rejoin on reconnect.
-  - `room_users:{roomName}` — Set of userIds in the room.
-
-Notes:
-- The concrete set of room names depends on runtime IDs (orders, businesses, chats). The patterns above capture the shapes used across the codebase.
-- If you find additional literal room names in the repository, add them here with the source file reference and a short description.
+- `user:{userId}` — Per-user room for all sockets of a single user, used for targeted emits and cluster-safe disconnects.
+- `<socket.id> — Implicit per-socket private room, used to target a specific socket across the cluster.
+- `order_{orderId}` — Domain room for a specific order; includes customer, driver, and staff; receives order events and updates.
+- `orders_{businessId}` — Delivery merchant inbox room; business users receive new/updated order notifications for their business.
+- Global (no room) — io.emit to broadcast to all connected clients.
 
 ## Redis key conventions (used by SocketStore)
 - `user_sockets:{userId}` — Set of socket ids for that user.
