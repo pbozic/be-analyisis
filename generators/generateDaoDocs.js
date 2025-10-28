@@ -64,13 +64,15 @@ function parseJsFile(filePath) {
 
 function formatDocBlock(name, doc) {
 	const tags = doc.tags || [];
-	const summary = tags.find((t) => t.tag === 'summary')?.name || '';
-	const description = tags.find((t) => t.tag === 'description')?.name || '';
-	const summaryText = (summary?.name || '') + ' ' + (summary?.description || '');
-	const descriptionText = (description?.name || '') + ' ' + (description?.description || '');
-	let block = `\n<!-- DOCGEN:START ${name} -->\n### ${name}\n\n`;
-	if (summary) block += `**Summary**: ${summaryText}\n\n`;
-	if (description) block += `**Description**: ${descriptionText}\n\n`;
+	const summaryTag = tags.find((t) => t.tag === 'summary');
+	const descriptionTag = tags.find((t) => t.tag === 'description');
+
+	const summaryText = ((summaryTag?.name || '') + ' ' + (summaryTag?.description || '')).trim();
+	const descriptionText = ((descriptionTag?.name || '') + ' ' + (descriptionTag?.description || '')).trim();
+
+	let block = `<!-- DOCGEN:START ${name} -->\n### ${name}\n\n`;
+	if (summaryText) block += `**Summary**: ${summaryText}\n\n`;
+	if (descriptionText) block += `**Description**: ${descriptionText}\n\n`;
 	block += `<!-- DOCGEN:END ${name} -->\n`;
 
 	return block;
@@ -81,18 +83,39 @@ function updateMarkdownDoc(fileName, functions) {
 	let existingContent = fs.existsSync(docFile) ? fs.readFileSync(docFile, 'utf-8') : `# ${fileName} DAO\n\n`;
 
 	functions.forEach((fn) => {
+		// Escape literal text for use inside a RegExp
+		const escapeRegExp = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
 		const startTag = `<!-- DOCGEN:START ${fn.name} -->`;
 		const endTag = `<!-- DOCGEN:END ${fn.name} -->`;
 		const block = formatDocBlock(fn.name, fn.doc);
 
-		// eslint-disable-next-line no-useless-escape
-		const regex = new RegExp(`${startTag}[\s\S]*?${endTag}`, 'gm');
-		if (regex.test(existingContent)) {
+		// Option A: dotAll + non-greedy
+		// const regex = new RegExp(`${escapeRegExp(startTag)}.*?${escapeRegExp(endTag)}`, 'gs');
+
+		// Option B: classic any-char trick (works everywhere)
+		const regex = new RegExp(`${escapeRegExp(startTag)}[\\s\\S]*?${escapeRegExp(endTag)}`, 'g');
+
+		// Log once without breaking the state. Use .test on a clone or just .includes
+		const hasBlock = existingContent.includes(startTag);
+
+		if (hasBlock) {
+			// Replace ALL occurrences of that block
 			existingContent = existingContent.replace(regex, block);
 		} else {
+			// Append if block not present; ensure clean separation
+			if (!existingContent.endsWith('\n\n')) {
+				existingContent += existingContent.endsWith('\n') ? '\n' : '\n\n';
+			}
 			existingContent += block;
 		}
 	});
+
+	// Normalize whitespace: trim trailing spaces and collapse 3+ blank lines to 2
+	existingContent = existingContent.replace(/[ \t]+$/gm, '');
+	existingContent = existingContent.replace(/\n{3,}/g, '\n\n');
+	// Ensure file ends with a single newline
+	if (!existingContent.endsWith('\n')) existingContent += '\n';
 
 	fs.writeFileSync(docFile, existingContent);
 }

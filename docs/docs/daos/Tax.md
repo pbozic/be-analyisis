@@ -1,6 +1,5 @@
 # Tax DAO
 
-
 <!-- DOCGEN:START createTaxRate -->
 ### createTaxRate
 
@@ -20,3 +19,4 @@
 ### getInactiveTaxRates
 
 <!-- DOCGEN:END getInactiveTaxRates -->
+

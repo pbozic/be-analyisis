@@ -1,6 +1,5 @@
 # PromoAnalytics DAO
 
-
 <!-- DOCGEN:START getAllPromoAnalyticsForPeriod -->
 ### getAllPromoAnalyticsForPeriod
 
@@ -10,3 +9,4 @@
 ### getPromoAnalyticsForPeriodByPromoType
 
 <!-- DOCGEN:END getPromoAnalyticsForPeriodByPromoType -->
+

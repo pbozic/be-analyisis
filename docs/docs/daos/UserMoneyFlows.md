@@ -1,6 +1,5 @@
 # UserMoneyFlows DAO
 
-
 <!-- DOCGEN:START createUserMoneyFlow -->
 ### createUserMoneyFlow
 
@@ -25,3 +24,4 @@
 ### getAllUserMoneyFlows
 
 <!-- DOCGEN:END getAllUserMoneyFlows -->
+

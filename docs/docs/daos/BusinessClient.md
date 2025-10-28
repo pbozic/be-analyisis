@@ -1,6 +1,5 @@
 # BusinessClient DAO
 
-
 <!-- DOCGEN:START getAllBusinessClients -->
 ### getAllBusinessClients
 
@@ -30,3 +29,4 @@
 ### removeBusinessClient
 
 <!-- DOCGEN:END removeBusinessClient -->
+

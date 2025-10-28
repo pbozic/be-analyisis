@@ -1,6 +1,5 @@
 # Addon DAO
 
-
 <!-- DOCGEN:START createAddon -->
 ### createAddon
 
@@ -135,3 +134,4 @@
 ### getAddonsByBusinessIdWithActionsUsagesAndBusinessAddons
 
 <!-- DOCGEN:END getAddonsByBusinessIdWithActionsUsagesAndBusinessAddons -->
+

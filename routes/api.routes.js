@@ -133,6 +133,10 @@ router.use('/overwatch', overwatchRoutes);
  */
 router.use('/drivers', [authMiddleware], driverRoutes);
 // router.use('/delivery_drivers', [authMiddleware], deliveryDriverRoutes);
+/**
+ *    * @module transport
+ *
+ */
 router.use('/vehicles', [authMiddleware], vehicleRoutes);
 /**
  *    * @module finances
@@ -214,8 +218,20 @@ router.use('/roles', [authMiddleware], RolesRoutes);
  *
  */
 router.use('/session', sessionRoutes);
+/**
+ *    * @module delivery
+ *
+ */
 router.use('/stores', [authMiddleware], storesRoutes);
+/**
+ *    * @module delivery
+ *
+ */
 router.use('/food-drinks', [authMiddleware], foodDrinksRoutes);
+/**
+ *    * @module transport,delivery
+ *
+ */
 router.use('/review', [authMiddleware], reviewsRoutes);
 
 router.use('/reviews', [authMiddleware], async (req, res) => {

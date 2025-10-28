@@ -7,7 +7,7 @@ import * as FoodDrinksDao from '../dao/FoodDrinks.ts';
  * - PATCH /food-drinks/{food_drinks_id}/online
  * - @tag FoodDrinks
  * - @summary Toggle a food_drinks online status
- * - @description Sets food_drinks.online flag.
+ * - @description Sets a food_drinks online flag.
  * - @operationId setFoodDrinksOnline
  * - @bodyDescription Online state
  * - @bodyContent { "online": true } application/json
@@ -32,7 +32,7 @@ export async function setFoodDrinksOnline(req: Request, res: Response): Promise<
  * - PATCH /food-drinks/{food_drinks_id}/overwhelmed
  * - @tag FoodDrinks
  * - @summary Toggle a food_drinks overwhelmed status
- * - @description Sets food_drinks.overwhelmed flag.
+ * - @description Sets a food_drinks overwhelmed flag.
  * - @operationId setFoodDrinksOverwhelmed
  * - @bodyDescription Overwhelmed state
  * - @bodyContent { "overwhelmed": true } application/json
@@ -57,7 +57,7 @@ export async function setFoodDrinksOverwhelmed(req: Request, res: Response): Pro
  * - POST /food-drinks/{food_drinks_id}/disable
  * - @tag FoodDrinks
  * - @summary Disable a food_drinks module
- * - @description Sets food_drinks.enabled=false and food_drinks.online=false.
+ * - @description Sets a food_drinks enabled flag to false and online flag to false.
  * - @operationId disableFoodDrinks
  * - @prisma_model food_drinks
  * - @response 200 - FoodDrinks disabled
@@ -77,7 +77,7 @@ export async function disableFoodDrinks(req: Request, res: Response): Promise<vo
  * - POST /food-drinks/{food_drinks_id}/enable
  * - @tag FoodDrinks
  * - @summary Enable a food_drinks module
- * - @description Sets food_drinks.enabled=true.
+ * - @description Sets a food_drinks enabled flag to true.
  * - @operationId enableFoodDrinks
  * - @prisma_model food_drinks
  * - @response 200 - FoodDrinks enabled

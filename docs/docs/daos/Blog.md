@@ -1,6 +1,5 @@
 # Blog DAO
 
-
 <!-- DOCGEN:START getBlogPosts -->
 ### getBlogPosts
 
@@ -85,3 +84,4 @@
 ### deleteBlogTag
 
 <!-- DOCGEN:END deleteBlogTag -->
+

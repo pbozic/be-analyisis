@@ -1,6 +1,5 @@
 # BusinessMoneyFlows DAO
 
-
 <!-- DOCGEN:START createBusinessMoneyFlow -->
 ### createBusinessMoneyFlow
 
@@ -25,3 +24,4 @@
 ### getAllBusinessMoneyFlows
 
 <!-- DOCGEN:END getAllBusinessMoneyFlows -->
+

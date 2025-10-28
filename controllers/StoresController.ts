@@ -6,8 +6,8 @@ import * as StoresDao from '../dao/Stores.ts';
  *
  * - PATCH /stores/{stores_id}/online
  * - @tag Stores
- * - @summary Toggle a store online status
- * - @description Sets stores.online flag.
+ * - @summary Toggle a store's online status
+ * - @description Sets a store's online flag.
  * - @operationId setStoreOnline
  * - @bodyDescription Online state
  * - @bodyContent { "online": true } application/json
@@ -31,8 +31,8 @@ export async function setStoreOnline(req: Request, res: Response): Promise<void>
  *
  * - PATCH /stores/{stores_id}/overwhelmed
  * - @tag Stores
- * - @summary Toggle a store overwhelmed status
- * - @description Sets stores.overwhelmed flag.
+ * - @summary Toggle a store's overwhelmed status
+ * - @description Sets a store's overwhelmed flag.
  * - @operationId setStoreOverwhelmed
  * - @bodyDescription Overwhelmed state
  * - @bodyContent { "overwhelmed": true } application/json
@@ -57,7 +57,7 @@ export async function setStoreOverwhelmed(req: Request, res: Response): Promise<
  * - POST /stores/{stores_id}/disable
  * - @tag Stores
  * - @summary Disable a store
- * - @description Sets stores.enabled=false and stores.online=false.
+ * - @description Sets a store's enabled flag to false and online flag to false.
  * - @operationId disableStore
  * - @prisma_model stores
  * - @response 200 - Store disabled
@@ -78,7 +78,7 @@ export async function disableStore(req: Request, res: Response): Promise<void> {
  * - POST /stores/{stores_id}/enable
  * - @tag Stores
  * - @summary Enable a store
- * - @description Sets stores.enabled=true.
+ * - @description Sets a store's enabled flag to true.
  * - @operationId enableStore
  * - @prisma_model stores
  * - @response 200 - Store enabled

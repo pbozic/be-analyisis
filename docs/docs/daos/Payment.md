@@ -1,6 +1,5 @@
 # Payment DAO
 
-
 <!-- DOCGEN:START createPayment -->
 ### createPayment
 
@@ -30,3 +29,4 @@
 ### listPayments
 
 <!-- DOCGEN:END listPayments -->
+

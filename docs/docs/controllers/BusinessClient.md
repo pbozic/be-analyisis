@@ -1,6 +1,5 @@
 # BusinessClient Controller
 
-
 <!-- DOCGEN:START getAllBusinessClients -->
 ### getAllBusinessClients
 
@@ -14,8 +13,8 @@
 
 **Response Content:**
 
-- ⚠️ Could not parse: `200.application/json`
-- ⚠️ Could not parse: `400.application/json`
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+- Status: 400, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getAllBusinessClients )
 
@@ -40,8 +39,8 @@
 
 **Response Content:**
 
-- ⚠️ Could not parse: `200.application/json`
-- ⚠️ Could not parse: `400.application/json`
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+- Status: 400, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBusinessClientById )
 
@@ -66,8 +65,8 @@
 
 **Response Content:**
 
-- ⚠️ Could not parse: `200.application/json`
-- ⚠️ Could not parse: `400.application/json`
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
+- Status: 400, Type: `unknown`, Content-Type: `application/json`, Example: `The error object`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/getBusinessClientsByBusinessId )
 
@@ -90,7 +89,7 @@ Content-Type: `application/json`
 
 **Response Content:**
 
-- ⚠️ Could not parse: `201.application/json`
+- Status: 201, Type: `unknown`, Content-Type: `application/json`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/createBusinessClient )
 
@@ -120,7 +119,7 @@ Content-Type: `application/json`
 
 **Response Content:**
 
-- ⚠️ Could not parse: `200.application/json`
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/updateBusinessClient )
 
@@ -145,7 +144,7 @@ Content-Type: `application/json`
 
 **Response Content:**
 
-- ⚠️ Could not parse: `200.application/json`
+- Status: 200, Type: `unknown`, Content-Type: `application/json`
 
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/removeBusinessClient )
 

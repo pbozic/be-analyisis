@@ -4283,6 +4283,131 @@ paths:
           description: Error retrieving orders
         '404':
           description: Driver not found
+  /drivers/user/:user_id:
+    get:
+      tags:
+        - Drivers
+      summary: Get a driver by user ID
+      description: Retrieves detailed information about a specific driver by their user ID.
+      operationId: getDriverByUserId
+      parameters:
+        - name: user_id
+          in: path
+          description: The ID of the user
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation, returns detailed driver information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Driver'
+        '400':
+          description: Error retrieving driver information
+        '404':
+          description: Driver not found
+  /drivers/daily-meals:
+    get:
+      tags:
+        - Drivers
+      summary: List all drivers offering daily meals
+      description: Retrieves a list of all drivers that offer daily meals.
+      operationId: listDriversWithDailyMeals
+      responses:
+        '200':
+          description: Successful operation, returns a list of drivers offering daily meals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Driver'
+        '400':
+          description: Error occurred while obtaining the driver list
+  /drivers/daily-meal-business/:business_id:
+    get:
+      tags:
+        - Drivers
+      summary: Get drivers by daily meal business ID
+      description: Retrieves drivers linked to a specific daily meal business.
+      operationId: getDriversByDailyMealBusinessId
+      parameters:
+        - name: business_id
+          in: path
+          description: The ID of the daily meal business
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful operation, returns drivers for the business
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Driver'
+        '400':
+          description: Error retrieving drivers
+        '404':
+          description: Drivers not found
+  /drivers/assign/:driver_id:
+    patch:
+      tags:
+        - Drivers
+      summary: Update a driver's daily meal business
+      description: >-
+        Connects or disconnects a driver's daily meal business and toggles
+        delivers_daily_meals.
+      operationId: updateDriverDailyMealBusiness
+      parameters:
+        - name: driver_id
+          in: path
+          description: The ID of the driver to update
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Object'
+        required: true
+      responses:
+        '200':
+          description: Driver updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Driver'
+        '400':
+          description: Error updating driver
+  /drivers/daily_meals/business:
+    post:
+      tags:
+        - Drivers
+      summary: Assign a business for daily meals to a driver
+      description: Assigns a business for daily meals to the specified driver.
+      operationId: assignBusinessForDailyMealsToDriver
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Object'
+        required: true
+      responses:
+        '200':
+          description: Business assigned for daily meals
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Object'
+        '400':
+          description: Error assigning business for daily meals
+        '404':
+          description: Driver not found
   /drivers/update/:driver_id:
     patch:
       tags:

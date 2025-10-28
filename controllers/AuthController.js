@@ -1078,33 +1078,33 @@ async function registerBusiness(req, res) {
 - @operationId registerReservationBusiness
 - @bodyDescription The required data to register a new reservation business and user.
 - @bodyContent {
-    "userData": {
-      "email": "user@example.com",
-      "password": "Password123!",
-      "registration_token": "optional-token",
-      "date_of_birth": "1990-01-01",
-      "telephone": "+123456789",
-      "telephone_number": "123456789",
-      "telephone_code": "+1"
-    },
-    "businessData": {
-      "business_id": "optional-business-id",
-      "name": "Business Name",
-      "email": "business@example.com",
-      "telephone": "+123456789",
-      "telephone_number": "123456789",
-      "telephone_code": "+1",
-      "type": "RESERVATION",
-      "tax_id": "TAX123",
-      "registration_id": "REG123"
-    },
-    "plan": "optional-plan"
+	"userData": {
+	  "email": "user@_example.com",
+	  "password": "Password123!",
+	  "registration_token": "optional-token",
+	  "date_of_birth": "1990-01-01",
+	  "telephone": "+123456789",
+	  "telephone_number": "123456789",
+	  "telephone_code": "+1"
+	},
+	"businessData": {
+	  "business_id": "optional-business-id",
+	  "name": "Business Name",
+	  "email": "business@_example.com",
+	  "telephone": "+123456789",
+	  "telephone_number": "123456789",
+	  "telephone_code": "+1",
+	  "type": "RESERVATION",
+	  "tax_id": "TAX123",
+	  "registration_id": "REG123"
+	},
+	"plan": "optional-plan"
   } application/json
 - @bodyRequired
 - @response 201 - Business registered successfully
 - @responseContent {
-    "message": "Business registered successfully",
-    "business": {  business fields from ./prisma/schema.prisma  }
+	"message": "Business registered successfully",
+	"business": {  business fields from ./prisma/schema.prisma  }
   } 201.application/json
 - @response 400 - Error registering business
 - @prisma_model users (see ./prisma/schema.prisma)

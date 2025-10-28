@@ -2,9 +2,9 @@
   {
     "path": "/api/admin/drivers.routes/",
     "method": "get",
-    "controller": "C:\\Users\\hp\\Desktop\\Work\\klikni-be\\controllers\\DriverController.js",
+    "controller": "C:\\Users\\timvr\\WebstormProjects\\klikni-be\\controllers\\DriverController.js",
     "function": "listDrivers",
-    "line": 52,
+    "line": 53,
     "documented": false,
     "filename": "get-api-admin-drivers.routes-",
     "pathParts": [
@@ -18,7 +18,7 @@
   {
     "path": "/api/admin/vehicles.routes/",
     "method": "get",
-    "controller": "C:\\Users\\hp\\Desktop\\Work\\klikni-be\\controllers\\VehiclesController.js",
+    "controller": "C:\\Users\\timvr\\WebstormProjects\\klikni-be\\controllers\\VehiclesController.js",
     "function": "listVehicles",
     "line": 21,
     "documented": false,
@@ -34,7 +34,7 @@
   {
     "path": "/api/ads.routes/",
     "method": "get",
-    "controller": "C:\\Users\\hp\\Desktop\\Work\\klikni-be\\controllers\\AdController.js",
+    "controller": "C:\\Users\\timvr\\WebstormProjects\\klikni-be\\controllers\\AdController.js",
     "function": "listAds",
     "line": 10,
     "documented": false,
@@ -49,7 +49,7 @@
   {
     "path": "/api/ads.routes/active",
     "method": "get",
-    "controller": "C:\\Users\\hp\\Desktop\\Work\\klikni-be\\controllers\\AdController.js",
+    "controller": "C:\\Users\\timvr\\WebstormProjects\\klikni-be\\controllers\\AdController.js",
     "function": "listActiveAds",
     "line": 159,
     "documented": false,
@@ -64,7 +64,7 @@
   {
     "path": "/api/ads.routes/:ad_id",
     "method": "get",
-    "controller": "C:\\Users\\hp\\Desktop\\Work\\klikni-be\\controllers\\AdController.js",
+    "controller": "C:\\Users\\timvr\\WebstormProjects\\klikni-be\\controllers\\AdController.js",
     "function": "getAd",
     "line": 19,
     "documented": false,
@@ -79,7 +79,7 @@
   {
     "path": "/api/ads.routes/",
     "method": "post",
-    "controller": "C:\\Users\\hp\\Desktop\\Work\\klikni-be\\controllers\\AdController.js",
+    "controller": "C:\\Users\\timvr\\WebstormProjects\\klikni-be\\controllers\\AdController.js",
     "function": "createAd",
     "line": 28,
     "documented": false,
@@ -94,7 +94,7 @@
   {
     "path": "/api/ads.routes/:ad_id",
     "method": "patch",
-    "controller": "C:\\Users\\hp\\Desktop\\Work\\klikni-be\\controllers\\AdController.js",
+    "controller": "C:\\Users\\timvr\\WebstormProjects\\klikni-be\\controllers\\AdController.js",
     "function": "editAd",
     "line": 96,
     "documented": false,
@@ -109,7 +109,7 @@
   {
     "path": "/api/ads.routes/:ad_id",
     "method": "delete",
-    "controller": "C:\\Users\\hp\\Desktop\\Work\\klikni-be\\controllers\\AdController.js",
+    "controller": "C:\\Users\\timvr\\WebstormProjects\\klikni-be\\controllers\\AdController.js",
     "function": "deleteAd",
     "line": 105,
     "documented": false,
@@ -124,7 +124,7 @@
   {
     "path": "/api/ads.routes/:ad_id/activate",
     "method": "patch",
-    "controller": "C:\\Users\\hp\\Desktop\\Work\\klikni-be\\controllers\\AdController.js",
+    "controller": "C:\\Users\\timvr\\WebstormProjects\\klikni-be\\controllers\\AdController.js",
     "function": "activateAd",
     "line": 114,
     "documented": false,
@@ -139,7 +139,7 @@
   {
     "path": "/api/ads.routes/:ad_id/deactivate",
     "method": "patch",
-    "controller": "C:\\Users\\hp\\Desktop\\Work\\klikni-be\\controllers\\AdController.js",
+    "controller": "C:\\Users\\timvr\\WebstormProjects\\klikni-be\\controllers\\AdController.js",
     "function": "deactivateAd",
     "line": 123,
     "documented": false,
@@ -154,7 +154,7 @@
   {
     "path": "/api/ads.routes/user/:user_id",
     "method": "get",
-    "controller": "C:\\Users\\hp\\Desktop\\Work\\klikni-be\\controllers\\AdController.js",
+    "controller": "C:\\Users\\timvr\\WebstormProjects\\klikni-be\\controllers\\AdController.js",
     "function": "getAdsByUserId",
     "line": 132,
     "documented": false,
@@ -169,7 +169,7 @@
   {
     "path": "/api/ads.routes/business/:business_id",
     "method": "get",
-    "controller": "C:\\Users\\hp\\Desktop\\Work\\klikni-be\\controllers\\AdController.js",
+    "controller": "C:\\Users\\timvr\\WebstormProjects\\klikni-be\\controllers\\AdController.js",
     "function": "getAdsByBusinessId",
     "line": 141,
     "documented": false,
@@ -184,7 +184,7 @@
   {
     "path": "/api/ads.routes/active/category",
     "method": "post",
-    "controller": "C:\\Users\\hp\\Desktop\\Work\\klikni-be\\controllers\\AdController.js",
+    "controller": "C:\\Users\\timvr\\WebstormProjects\\klikni-be\\controllers\\AdController.js",
     "function": "getAdsByCategory",
     "line": 150,
     "documented": false,
@@ -199,7 +199,7 @@
   {
     "path": "/api/orderLobbyUser.routes/limit/:order_lobby_users_id",
     "method": "patch",
-    "controller": "C:\\Users\\hp\\Desktop\\Work\\klikni-be\\controllers\\OrderLobbyUserController.js",
+    "controller": "C:\\Users\\timvr\\WebstormProjects\\klikni-be\\controllers\\OrderLobbyUserController.js",
     "function": "setOrderLobbyUserLimit",
     "line": 14,
     "documented": false,

@@ -1,6 +1,5 @@
 # LocalLocation DAO
 
-
 <!-- DOCGEN:START getAllLocalLocations -->
 ### getAllLocalLocations
 
@@ -20,3 +19,4 @@
 ### updateBusinessLocalLocation
 
 <!-- DOCGEN:END updateBusinessLocalLocation -->
+

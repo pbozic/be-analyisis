@@ -1,6 +1,5 @@
 # Subscription DAO
 
-
 <!-- DOCGEN:START createSubscription -->
 ### createSubscription
 
@@ -35,3 +34,4 @@
 ### listSubscriptionsByModule
 
 <!-- DOCGEN:END listSubscriptionsByModule -->
+

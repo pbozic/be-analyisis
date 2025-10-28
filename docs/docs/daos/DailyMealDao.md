@@ -1,6 +1,5 @@
 # DailyMealDao DAO
 
-
 <!-- DOCGEN:START getDailyMealSubscriptionsByBusinessId -->
 ### getDailyMealSubscriptionsByBusinessId
 
@@ -55,3 +54,4 @@
 ### updateDailyMealInstanceStatusById
 
 <!-- DOCGEN:END updateDailyMealInstanceStatusById -->
+

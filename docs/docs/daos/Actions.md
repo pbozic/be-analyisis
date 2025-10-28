@@ -1,6 +1,5 @@
 # Actions DAO
 
-
 <!-- DOCGEN:START createAction -->
 ### createAction
 
@@ -70,3 +69,4 @@
 ### logBussinesUsage
 
 <!-- DOCGEN:END logBussinesUsage -->
+

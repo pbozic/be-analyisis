@@ -2612,6 +2612,11 @@ module.exports = {
 		},
 		{
 			type: 'doc',
+			id: 'controllers/FavoriteDriversController',
+			label: 'FavoriteDriversController',
+		},
+		{
+			type: 'doc',
 			id: 'controllers/FilesController',
 			label: 'FilesController',
 		},
@@ -2624,6 +2629,11 @@ module.exports = {
 			type: 'doc',
 			id: 'controllers/FlagsController',
 			label: 'FlagsController',
+		},
+		{
+			type: 'doc',
+			id: 'controllers/FoodDrinksController',
+			label: 'FoodDrinksController',
 		},
 		{
 			type: 'doc',
@@ -2669,6 +2679,16 @@ module.exports = {
 			type: 'doc',
 			id: 'controllers/ReservationController',
 			label: 'ReservationController',
+		},
+		{
+			type: 'doc',
+			id: 'controllers/ReviewsController',
+			label: 'ReviewsController',
+		},
+		{
+			type: 'doc',
+			id: 'controllers/StoresController',
+			label: 'StoresController',
 		},
 		{
 			type: 'doc',
@@ -2749,6 +2769,11 @@ module.exports = {
 		},
 		{
 			type: 'doc',
+			id: 'daos/BusinessTypes',
+			label: 'BusinessTypes',
+		},
+		{
+			type: 'doc',
 			id: 'daos/BusinessUsers',
 			label: 'BusinessUsers',
 		},
@@ -2809,6 +2834,11 @@ module.exports = {
 		},
 		{
 			type: 'doc',
+			id: 'daos/FoodDrinks',
+			label: 'FoodDrinks',
+		},
+		{
+			type: 'doc',
 			id: 'daos/Group',
 			label: 'Group',
 		},
@@ -2816,6 +2846,11 @@ module.exports = {
 			type: 'doc',
 			id: 'daos/LateEvents',
 			label: 'LateEvents',
+		},
+		{
+			type: 'doc',
+			id: 'daos/LineItems',
+			label: 'LineItems',
 		},
 		{
 			type: 'doc',
@@ -2904,6 +2939,11 @@ module.exports = {
 		},
 		{
 			type: 'doc',
+			id: 'daos/Stores',
+			label: 'Stores',
+		},
+		{
+			type: 'doc',
 			id: 'daos/Subscription',
 			label: 'Subscription',
 		},
@@ -2934,6 +2974,11 @@ module.exports = {
 		},
 		{
 			type: 'doc',
+			id: 'daos/UserFavoriteDriver',
+			label: 'UserFavoriteDriver',
+		},
+		{
+			type: 'doc',
 			id: 'daos/UserMoneyFlows',
 			label: 'UserMoneyFlows',
 		},
@@ -2958,36 +3003,36 @@ module.exports = {
 			label: 'Word',
 		},
 	],
-	// "prisma": [
-	//   {
-	//     "type": "doc",
-	//     "id": "p",
-	//     "label": "0"
-	//   },
-	//   {
-	//     "type": "doc",
-	//     "id": "r",
-	//     "label": "1"
-	//   },
-	//   {
-	//     "type": "doc",
-	//     "id": "i",
-	//     "label": "2"
-	//   },
-	//   {
-	//     "type": "doc",
-	//     "id": "s",
-	//     "label": "3"
-	//   },
-	//   {
-	//     "type": "doc",
-	//     "id": "m",
-	//     "label": "4"
-	//   },
-	//   {
-	//     "type": "doc",
-	//     "id": "a",
-	//     "label": "5"
-	//   }
-	// ]
+	prisma: [
+		{
+			type: 'doc',
+			id: 'p',
+			label: '0',
+		},
+		{
+			type: 'doc',
+			id: 'r',
+			label: '1',
+		},
+		{
+			type: 'doc',
+			id: 'i',
+			label: '2',
+		},
+		{
+			type: 'doc',
+			id: 's',
+			label: '3',
+		},
+		{
+			type: 'doc',
+			id: 'm',
+			label: '4',
+		},
+		{
+			type: 'doc',
+			id: 'a',
+			label: '5',
+		},
+	],
 };

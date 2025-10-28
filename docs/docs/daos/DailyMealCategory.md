@@ -1,6 +1,5 @@
 # DailyMealCategory DAO
 
-
 <!-- DOCGEN:START getDailyMealCategoryById -->
 ### getDailyMealCategoryById
 
@@ -40,3 +39,4 @@
 ### getDailyMealCategoryPriceForDate
 
 <!-- DOCGEN:END getDailyMealCategoryPriceForDate -->
+
