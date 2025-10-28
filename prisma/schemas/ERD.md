@@ -79,6 +79,8 @@ erDiagram
 "business_type" {
   String type_id PK
   String type UK
+  DateTime(6) created_at
+  DateTime(6) updated_at
 }
 "scoring_points" {
   String scoring_points_id PK
@@ -277,6 +279,8 @@ Properties as follows:
 
 - `type_id`:
 - `type`:
+- `created_at`:
+- `updated_at`:
 
 ### `scoring_points`
 
@@ -1160,6 +1164,27 @@ erDiagram
   DateTime(6) updated_at
   String vehicle_id "nullable"
 }
+"service_links" {
+  String id PK
+  String name UK
+  DateTime(6) created_at
+  DateTime(6) updated_at
+}
+"tutorial" {
+  String tutorial_id PK
+  String key UK
+  String title
+  Int version
+  Boolean mandatory
+  DateTime(6) createdAt
+  DateTime retiredAt "nullable"
+}
+"user_tutorial_state" {
+  String id PK
+  String user_id FK,UK
+  Int epoch
+  DateTime(6) updatedAt
+}
 "users" {
   String user_id PK
   String first_name "nullable"
@@ -1446,6 +1471,7 @@ erDiagram
 "user_address" }o--|| "users" : users
 "user_address" }o--|| "addresses" : address
 "reviews" }o--|| "users" : author
+"user_tutorial_state" |o--|| "users" : user
 "users" |o--o| "files" : profile_picture
 "user_roles" }o--|| "users" : user
 "role" }o--o| "business" : business
@@ -1476,6 +1502,8 @@ erDiagram
 "reviews" }o--o{ "users" : "via reviewable"
 "users" }o--o{ "business" : "via user_favorite_businesses"
 "users" }o--o{ "drivers" : "via user_favorite_drivers"
+"users" }o--o{ "service_links" : "via user_favorite_service_links"
+"users" }o--o{ "tutorial" : "via user_tutorials"
 ```
 
 ### `tokens`
@@ -1520,6 +1548,42 @@ Properties as follows:
 - `created_at`:
 - `updated_at`:
 - `vehicle_id`:
+
+### `service_links`
+
+Klikni service links (e.g., taxi, courier, stores) that can be favorited by users on home screen.
+
+Properties as follows:
+
+- `id`:
+- `name`:
+- `created_at`:
+- `updated_at`:
+
+### `tutorial`
+
+Tutorials available in the system.
+
+Properties as follows:
+
+- `tutorial_id`:
+- `key`:
+- `title`:
+- `version`:
+- `mandatory`:
+- `createdAt`:
+- `retiredAt`:
+
+### `user_tutorial_state`
+
+State of user tutorials.
+
+Properties as follows:
+
+- `id`:
+- `user_id`:
+- `epoch`:
+- `updatedAt`:
 
 ### `users`
 
