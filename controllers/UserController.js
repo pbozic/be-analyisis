@@ -42,7 +42,7 @@ config();
  * @description Returns a list of users.
  * @operationId getUsers
  * @response 200 - successful operation
- * @responseContent {User[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the user list
  * @responseContent {object} 400.application/json The error object
  */
@@ -78,7 +78,7 @@ async function listUsers(req, res) {
  * @description Returns a list of users.
  * @operationId getUsers
  * @response 200 - successful operation
- * @responseContent {User[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the user list
  * @responseContent {object} 400.application/json The error object
  */
@@ -118,7 +118,7 @@ async function listPersonalUsers(req, res) {
  * @operationId getUserById
  * @pathParam {string} user_id - The ID of the user to retrieve
  * @response 200 - Successful operation, returns detailed user information
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - User not found
  * @response 400 - Error retrieving user information
  */
@@ -159,7 +159,7 @@ async function getUserById(req, res) {
  * @security bearerAuth: []
  * @operationId retrieveUserInformation
  * @response 200 - Successful operation, returns user info.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error obtaining user information.
  * @responseContent {object} 400.application/json
  */
@@ -286,10 +286,10 @@ async function me(req, res) {
  * @description This endpoint is used to update the current user's details.
  * @operationId updateMe
  * @bodyDescription The data to update for the current user
- * @bodyContent {UpdateUserRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - User updated successfully. Returns the updated user's details.
- * @responseContent {AuthenticatedUser} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
  */
 async function updateMe(req, res) {
@@ -312,10 +312,10 @@ async function updateMe(req, res) {
  * @description This endpoint is used to update the current user's details.
  * @operationId updateMe
  * @bodyDescription The data to update for the current user
- * @bodyContent {UpdateUserRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - User updated successfully. Returns the updated user's details.
- * @responseContent {AuthenticatedUser} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
  */
 async function updateUserByUserId(req, res) {
@@ -338,10 +338,10 @@ async function updateUserByUserId(req, res) {
  * @description This endpoint is used to update the current user's password.
  * @operationId updatePassword
  * @bodyDescription The current password and the new password
- * @bodyContent {UpdatePasswordRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Password updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
  */
 async function updatePassword(req, res) {
@@ -371,10 +371,10 @@ async function updatePassword(req, res) {
  * @description This endpoint is used to update the current user's email.
  * @operationId updateEmail
  * @bodyDescription The new email
- * @bodyContent {UpdateEmailRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Email updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
  */
 async function updateEmail(req, res) {
@@ -405,7 +405,7 @@ async function updateEmail(req, res) {
  * @summary Updates the current user's profile picture
  * @operationId updateProfilePicture
  * @response 200 - Profile picture updated successfully
- * @responseContent {User} 200.application/json - Updated user details
+ * @responseContent {object} 200.application/json - Updated user details
  * @response 400 - Error updating profile picture
  */
 async function updateProfilePicture(req, res) {
@@ -442,10 +442,10 @@ async function updateProfilePicture(req, res) {
  * @description This endpoint is used to update the current user's taxi preferences.
  * @operationId updateUserTaxiPreferences
  * @bodyDescription The new taxi preferences
- * @bodyContent {UpdateTaxiPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Taxi preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
  */
 async function updateUserTaxiPreferences(req, res) {
@@ -464,10 +464,10 @@ async function updateUserTaxiPreferences(req, res) {
  * @description This endpoint is used to update the current user's notification preferences.
  * @operationId updateUserNotificationPreferences
  * @bodyDescription The new notification preferences
- * @bodyContent {UpdateNotificationPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Notification preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
  */
 async function updateUserNotificationPreferences(req, res) {
@@ -486,10 +486,10 @@ async function updateUserNotificationPreferences(req, res) {
  * @description This endpoint is used to update the current user's push notification preferences.
  * @operationId updateUserTaxiPushNotifications
  * @bodyDescription The new push notification preferences
- * @bodyContent {UpdatePushNotificationPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Push notification preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
  */
 async function updateUserTaxiPushNotifications(req, res) {
@@ -511,10 +511,10 @@ async function updateUserTaxiPushNotifications(req, res) {
  * @description This endpoint is used to update the current user's transfer push notification preferences.
  * @operationId updateUserTransferPushNotifications
  * @bodyDescription The new push notification preferences for transfers
- * @bodyContent {UpdatePushNotificationPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Transfer push notification preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
  */
 async function updateUserTransferPushNotifications(req, res) {
@@ -536,10 +536,10 @@ async function updateUserTransferPushNotifications(req, res) {
  * @description This endpoint is used to update the current user's delivery push notification preferences.
  * @operationId updateUserDeliveryPushNotifications
  * @bodyDescription The new push notification preferences for deliveries
- * @bodyContent {UpdatePushNotificationPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Delivery push notification preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
  */
 async function updateUserDeliveryPushNotifications(req, res) {
@@ -561,10 +561,10 @@ async function updateUserDeliveryPushNotifications(req, res) {
  * @description This endpoint is used to update the current user's spicy preferences.
  * @operationId updateUserSpicyPreferences
  * @bodyDescription The new spicy preferences
- * @bodyContent {UpdateSpicyPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Spicy preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
  */
 async function updateUserSpicyPreferences(req, res) {
@@ -583,10 +583,10 @@ async function updateUserSpicyPreferences(req, res) {
  * @description This endpoint is used to update the current user's transfer preferences.
  * @operationId updateUserTransferPreferences
  * @bodyDescription The new transfer preferences
- * @bodyContent {UpdateTransferPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Transfer preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
  */
 async function updateUserTransferPreferences(req, res) {
@@ -605,10 +605,10 @@ async function updateUserTransferPreferences(req, res) {
  * @description This endpoint is used to update the current user's radio preferences.
  * @operationId updateUserRadioPreferences
  * @bodyDescription The new radio preferences
- * @bodyContent {UpdateRadioPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Radio preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
  */
 async function updateUserRadioPreferences(req, res) {
@@ -627,10 +627,10 @@ async function updateUserRadioPreferences(req, res) {
  * @description This endpoint is used to update the current user's allergies preferences.
  * @operationId updateUserAllergiesPreferences
  * @bodyDescription The new allergies preferences
- * @bodyContent {UpdateAllergiesPreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Allergies preferences updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
  */
 async function updateUserAllergiesPreferences(req, res) {
@@ -649,10 +649,10 @@ async function updateUserAllergiesPreferences(req, res) {
  * @description This endpoint is used to update the current user's telephone.
  * @operationId updateTelephone
  * @bodyDescription The new telephone
- * @bodyContent {UpdateTelephoneRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Telephone updated successfully. Returns the updated user's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
  */
 async function updateTelephone(req, res) {
@@ -701,7 +701,7 @@ async function requestSMSVerification(req, res) {
  * @description This endpoint is used to verify the current user via a token.
  * @operationId verifyMe
  * @bodyDescription The token to verify the user
- * @bodyContent {VerifyUserPhoneRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - User verified successfully.
  * @response 400 - Invalid token or error obtaining user information.
@@ -742,10 +742,10 @@ async function oneSignalId(req, res) {
  * @description This endpoint is used to add an address to the current user.
  * @operationId addAddress
  * @bodyDescription The address to add
- * @bodyContent {Address} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Address added successfully. Returns the updated user's details.
- * @responseContent {UserAddress} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error adding address.
  */
 async function addAddress(req, res) {
@@ -817,9 +817,9 @@ async function deleteUserByUserId(req, res) {
  * @operationId updateUserActiveByUserId
  * @pathParam {string} user_id - The ID of the user to disable
  * @bodyDescription The new value
- * @bodyContent {boolean} application/json
+ * @bodyContent {object} application/json
  * @response 200 - User active field updated successfully.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating active field.
  */
 async function updateUserActiveByUserId(req, res) {
@@ -850,7 +850,7 @@ async function updateUserActiveByUserId(req, res) {
  * @operationId disableUserByUserId
  * @pathParam {string} user_id - The ID of the user to disable
  * @response 200 - User disabled successfully.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error disabling user.
  */
 async function updateUserDisabledByUserId(req, res) {
@@ -881,7 +881,7 @@ async function updateUserDisabledByUserId(req, res) {
  * @operationId softDeleteUserByUserId
  * @pathParam {string} user_id - The ID of the user to disable
  * @response 200 - User "soft delete" successful.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error soft deleting user.
  */
 async function softDeleteUserByUserId(req, res) {
@@ -913,7 +913,7 @@ async function softDeleteUserByUserId(req, res) {
  * @operationId disableMe
 
  * @response 200 - User disabled successfully. Returns user.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
  */
 async function disableMe(req, res) {
@@ -943,10 +943,10 @@ async function disableMe(req, res) {
  * @operationId editAddress
  * @pathParam {string} address_id - The ID of the address to edit
  * @bodyDescription The address to edit
- * @bodyContent {Address} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Address edited successfully. Returns the updated user's details.
- * @responseContent {UserAddress} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error editing address.
  * @responseContent {object} 400.application/json
  */
@@ -991,7 +991,7 @@ async function setPrimaryAddress(req, res) {
  * @description This endpoint is used add a review of user.
  * @operationId reviewUser
  * @bodyDescription Content of the review
- * @bodyContent {ReviewRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Primary address set successfully.
  * @response 400 - Error setting primary address.
@@ -1453,10 +1453,10 @@ async function getReviewsByUserId(req, res) {
  * @description This endpoint is used to register a new user and create group_user entry .
  * @operationId registerNewUser
  * @bodyDescription The required data to register a new user
- * @bodyContent {RegisterRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - User registered successfully. Returns user info and tokens.
- * @responseContent {AuthenticatedUser} 200.application/json
+ * @responseContent {object} 200.application/json
  * @responseHeader {string} 200.Authorization - The newly generated access token.
  * @response 400 - Error something went wrong.
  */
@@ -1519,10 +1519,10 @@ async function registerChildUser(req, res) {
  * @description This endpoint is used to update enabled field of the given child_user_id
  * @operationId updateChildUser
  * @bodyDescription The child's group_user_id and value to set for the child user's enabled field
- * @bodyContent {group_user_id,value} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - User updated successfully. Returns the updated group_user.
- * @responseContent {group_user} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating group user enabled status.
  */
 async function updateChildUserEnabledByGroupUserId(req, res) {
@@ -1550,10 +1550,10 @@ async function updateChildUserEnabledByGroupUserId(req, res) {
  * @description This endpoint is used to update the allowance of the given child_user_id for the given service_type
  * @operationId updateChildUserAllowance
  * @bodyDescription The child's group_user_id and value to set for the child user's allowance for the given service type
- * @bodyContent { group_user_id, value, type } application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - User allowance updated successfully. Returns the updated group_user.
- * @responseContent {group_user} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating group user enabled status.
  */
 async function updateChildUserAllowanceByGroupUserId(req, res) {
@@ -1724,7 +1724,7 @@ async function getTransactions(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Language updated successfully. Returns the updated user details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user language.
  */
 async function updateUserLanguage(req, res) {

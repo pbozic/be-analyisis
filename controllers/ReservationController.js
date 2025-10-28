@@ -9,7 +9,7 @@ const { UserSockets, io } = socket;
  * @description Returns a list of reservations along with their business and user information.
  * @operationId getReservations
  * @response 200 - Successful operation, returns a list of reservations
- * @responseContent {Reservation[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the reservation list
  */
 async function getReservations(req, res) {
@@ -29,7 +29,7 @@ async function getReservations(req, res) {
  * @operationId getReservationById
  * @pathParam {string} reservation_id - The ID of the reservation to retrieve
  * @response 200 - Successful operation, returns detailed reservation information
- * @responseContent {Reservation} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Reservation not found
  * @response 400 - Error retrieving reservation information
  */
@@ -54,7 +54,7 @@ async function getReservationById(req, res) {
  * @operationId getReservationsByBusinessId
  * @pathParam {string} business_id - The ID of the business to retrieve reservations for
  * @response 200 - Successful operation, returns a list of reservations
- * @responseContent {Reservation[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Business not found
  * @response 400 - Error retrieving reservations
  */
@@ -82,7 +82,7 @@ async function getReservationsByBusinessId(req, res) {
  * @description This fetches all completed orders for a specific driver.
  * @operationId getActiveTableReservation
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getActiveTableReservation(req, res) {
@@ -101,10 +101,10 @@ async function getActiveTableReservation(req, res) {
  * @summary Create a new reservation
  * @description Adds a new reservation to the database.
  * @operationId createReservation
- * @bodyContent {Reservation} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Reservation created successfully
- * @responseContent {Reservation} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating reservation
  */
 async function createReservation(req, res) {
@@ -148,7 +148,7 @@ async function createReservation(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Reservation table updated successfully
- * @responseContent {Reservation} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating reservation status
  */
 async function addTableNumber(req, res) {
@@ -175,7 +175,7 @@ async function addTableNumber(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Reservation status updated successfully
- * @responseContent {Reservation} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating reservation status
  */
 async function updateReservationStatus(req, res) {

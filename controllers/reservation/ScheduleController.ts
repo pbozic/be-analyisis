@@ -19,7 +19,7 @@ import ScheduleEmployeeDao from '../../dao/reservation/ScheduleEmployee.ts';
  * @description Retrieves all location schedules.
  * @operationId getLocationSchedules
  * @response 200 - Location schedules retrieved successfully
- * @responseContent {Schedule[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving schedules
  */
 export async function getSchedule(req: Request, res: Response): Promise<void> {
@@ -40,7 +40,7 @@ export async function getSchedule(req: Request, res: Response): Promise<void> {
  * @operationId createLocationSchedule
  * @requestBody {CreateScheduleInput} requestBody - The schedule data to create.
  * @response 201 - Schedule created successfully
- * @responseContent {Schedule} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating schedule
  */
@@ -64,7 +64,7 @@ export async function createSchedule(req: ValidatedRequest<CreateScheduleInput>,
  * @pathParam {string} schedule_id - The ID of the schedule to update.
  * @requestBody {UpdateScheduleInput} requestBody - The data to update the schedule with.
  * @response 200 - Schedule updated successfully
- * @responseContent {Schedule} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Schedule not found
  * @response 500 - Error updating schedule
  */
@@ -116,7 +116,7 @@ export async function deleteSchedule(
  * @operationId getLocationScheduleById
  * @pathParam {string} schedule_id - The ID of the schedule to retrieve.
  * @response 200 - Schedule retrieved successfully
- * @responseContent {Schedule} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Schedule not found
  * @response 500 - Error retrieving schedule
  */
@@ -148,7 +148,7 @@ export async function getScheduleById(
  * @pathParam {string} schedule_id - The ID of the schedule to update.
  * @requestBody {UpdateScheduleWithEmployeesInput} requestBody - The data to update the schedule with and its employees.
  * @response 200 - Schedule updated successfully
- * @responseContent {Schedule} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Schedule not found
  * @response 500 - Error updating schedule
  */
@@ -195,7 +195,7 @@ export async function updateScheduleWithData(
  * @operationId createScheduleWithData
  * @requestBody {CreateScheduleWithEmployeesInput} requestBody - The data to create the schedule with and its employees.
  * @response 200 - Schedule created successfully
- * @responseContent {Schedule} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Schedule not found
  * @response 500 - Error creating schedule
  */

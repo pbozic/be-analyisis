@@ -31,7 +31,7 @@ import CustomerDao from '../../dao/reservation/Customer.ts';
  * @operationId listBookings
  * @requestBody {ListBookingsParams} requestBody
  * @response 200 - Bookings retrieved
- * @responseContent {Booking[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving bookings
  */
 export async function listBookings(req: ValidatedRequest<ListBookingsParams>, res: Response): Promise<void> {
@@ -59,7 +59,7 @@ export async function listBookings(req: ValidatedRequest<ListBookingsParams>, re
  * @operationId getBookingById
  * @pathParam {string} booking_id
  * @response 200 - Booking retrieved
- * @responseContent {Booking} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Booking not found
  * @response 500 - Error retrieving booking
  */
@@ -83,7 +83,7 @@ export async function getBooking(req: ValidatedRequest<null, { booking_id: strin
  * @operationId createBooking
  * @requestBody {CreateBookingInput} requestBody
  * @response 201 - Booking created
- * @responseContent {Booking} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error creating booking
  */
 export async function createBooking(req: ValidatedRequest<CreateBookingInput>, res: Response): Promise<void> {
@@ -134,7 +134,7 @@ export async function createBooking(req: ValidatedRequest<CreateBookingInput>, r
  * @pathParam {string} booking_id
  * @requestBody {UpdateBookingInput} requestBody
  * @response 200 - Booking updated
- * @responseContent {Booking} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error updating booking
  */
 export async function updateBooking(
@@ -182,7 +182,7 @@ export async function deleteBooking(req: ValidatedRequest<null, { booking_id: st
  * @pathParam {string} booking_id
  * @requestBody {CreateBookingHistoryLogInput} requestBody
  * @response 201 - Booking history log created
- * @responseContent {BookingHistoryLog} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error creating booking history log
  */
 export async function createBookingHistoryLog(
@@ -214,7 +214,7 @@ export async function createBookingHistoryLog(
  * @property {string} date.required - Date for which to find slots (ISO string)
  * @property {boolean} [returnFirst=false] - If true, return only the first available slot
  * @response 200 - Slots retrieved
- * @responseContent {any[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error finding slots
  */
 export async function findBookingSlots(req: ValidatedRequest<FindBookingSlotsInput>, res: Response): Promise<void> {
@@ -247,7 +247,7 @@ export async function findBookingSlots(req: ValidatedRequest<FindBookingSlotsInp
  * @description Retrieves all reservation locations and their employees for the current reservation module.
  * @operationId getLocationsAndEmployees
  * @response 200 - Reservation locations and employees retrieved successfully
- * @responseContent {bookings, employees} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving locations and employees
  */
 export async function getLocationsAndEmployees(req: ValidatedRequest, res: Response): Promise<void> {
@@ -273,7 +273,7 @@ export async function getLocationsAndEmployees(req: ValidatedRequest, res: Respo
  * @operationId getBookingsForLocationAndEmployees
  * @requestBody {AllBookingsForLocationAndEmployeesParams} requestBody - The input data for retrieving bookings.
  * @response 200 - Reservation bookings and employees retrieved successfully
- * @responseContent {Employee[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving employees with schedule slots
  */
 export async function getBookingsForLocationAndEmployees(
@@ -345,7 +345,7 @@ export async function getBookingsForLocationAndEmployees(
  * @description Retrieves all reservation services and their employees for the current reservation module.
  * @operationId getServicesAndEmployees
  * @response 200 - Reservation locations and employees retrieved successfully
- * @responseContent {services, employees} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving locations and employees
  */
 export async function getServicesAndEmployees(req: ValidatedRequest, res: Response): Promise<void> {
@@ -408,7 +408,7 @@ function splitConsecutiveSlots(
  * @operationId createBooking
  * @requestBody {CreateBookingInput} requestBody
  * @response 201 - Booking created
- * @responseContent {Booking} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error creating booking
  */
 export async function createBookingAdmin(
@@ -477,7 +477,7 @@ export async function createBookingAdmin(
  * @pathParam {string} booking_id
  * @requestBody {UpdateBookingInput} requestBody
  * @response 200 - Booking updated
- * @responseContent {Booking} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error updating booking
  */
 export async function updateBookingStartAdmin(
@@ -521,7 +521,7 @@ export async function updateBookingStartAdmin(
  * @operationId getBookingById
  * @pathParam {string} booking_id
  * @response 200 - Booking retrieved
- * @responseContent {Booking} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Booking not found
  * @response 500 - Error retrieving booking
  */
@@ -569,7 +569,7 @@ function durationInMinutes(startIso: string | undefined, endIso: string | undefi
  * @pathParam {string} booking_id
  * @requestBody {UpdateBookingInput} requestBody
  * @response 200 - Bookings updated
- * @responseContent {Booking} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error updating booking group
  */
 export async function updateBookingStartGroupAdmin(
@@ -802,7 +802,7 @@ export async function updateBookingStartGroupAdmin(
  * @pathParam {string} booking_id
  * @requestBody {UpdateBookingInput} requestBody
  * @response 200 - Booking updated
- * @responseContent {Booking} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error updating booking
  */
 export async function updateBookingStartFirstInGroupAdmin(
@@ -868,7 +868,7 @@ export async function updateBookingStartFirstInGroupAdmin(
  * @operationId updateBookingGroupAdmin
  * @requestBody {UpdateMultipleBookingsInput} requestBody
  * @response 201 - Bookings updated
- * @responseContent {Booking} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error updating booking
  */
 export async function updateBookingGroupAdmin(
@@ -1054,7 +1054,7 @@ export function sortBookingStats(bookings: Booking[], startDate: string, endDate
  * @operationId listBookingsAnalytics
  * @requestBody {BookingsAnalyticsParams} requestBody
  * @response 200 - Analytics retrieved
- * @responseContent {data} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving analytics
  */
 export async function getBookingsAnalytics(

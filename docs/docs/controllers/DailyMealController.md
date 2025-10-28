@@ -1,6 +1,7 @@
 # DailyMealController Controller
 
 
+
 <!-- DOCGEN:START dailyMealsSubscriptionPayment -->
 ### dailyMealsSubscriptionPayment
 
@@ -11,6 +12,8 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END dailyMealsSubscriptionPayment -->
+
+
 
 <!-- DOCGEN:START getUserDailyMealSubscriptions -->
 ### getUserDailyMealSubscriptions
@@ -23,6 +26,8 @@
 
 <!-- DOCGEN:END getUserDailyMealSubscriptions -->
 
+
+
 <!-- DOCGEN:START getActiveDailyMealsSubscriptionsByBusinessId -->
 ### getActiveDailyMealsSubscriptionsByBusinessId
 
@@ -33,6 +38,8 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getActiveDailyMealsSubscriptionsByBusinessId -->
+
+
 
 <!-- DOCGEN:START getDailyMealsSubscriptionsByBusinessId -->
 ### getDailyMealsSubscriptionsByBusinessId
@@ -45,6 +52,8 @@
 
 <!-- DOCGEN:END getDailyMealsSubscriptionsByBusinessId -->
 
+
+
 <!-- DOCGEN:START activateSubscriptionById -->
 ### activateSubscriptionById
 
@@ -55,6 +64,8 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END activateSubscriptionById -->
+
+
 
 <!-- DOCGEN:START cancelSubscriptionById -->
 ### cancelSubscriptionById
@@ -67,6 +78,8 @@
 
 <!-- DOCGEN:END cancelSubscriptionById -->
 
+
+
 <!-- DOCGEN:START cancelDailyMealInstanceById -->
 ### cancelDailyMealInstanceById
 
@@ -77,6 +90,8 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END cancelDailyMealInstanceById -->
+
+
 
 <!-- DOCGEN:START getSubscriptionById -->
 ### getSubscriptionById
@@ -89,6 +104,8 @@
 
 <!-- DOCGEN:END getSubscriptionById -->
 
+
+
 <!-- DOCGEN:START assignDeliveryDriverToSubscription -->
 ### assignDeliveryDriverToSubscription
 
@@ -99,3 +116,4 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END assignDeliveryDriverToSubscription -->
+

@@ -11,7 +11,7 @@ config();
  * @description Retrieves all documents in the system. Intended for admin usage.
  * @operationId getDocuments
  * @response 200 - Successful operation, returns all documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  */
 async function listDocuments(req, res) {
@@ -31,7 +31,7 @@ async function listDocuments(req, res) {
  * @operationId getDocumentById
  * @pathParam {string} document_id - The ID of the document to retrieve
  * @response 200 - Successful operation, returns the document
- * @responseContent {Document} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving the document
  */
 async function getDocumentById(req, res) {
@@ -56,7 +56,7 @@ async function getDocumentById(req, res) {
  * @operationId getDocumentsForUser
  * @pathParam {string} userId - The ID of the user
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  */
 async function getDocumentsForUser(req, res) {
@@ -77,7 +77,7 @@ async function getDocumentsForUser(req, res) {
  * @operationId getDocumentsForBusiness
  * @pathParam {string} businessId - The ID of the business
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  */
 async function getDocumentsForBusiness(req, res) {
@@ -98,7 +98,7 @@ async function getDocumentsForBusiness(req, res) {
  * @operationId getDocumentsForDeliveryPerson
  * @pathParam {string} deliveryPersonId - The ID of the delivery person
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  */
 async function getDocumentsForDeliveryPerson(req, res) {
@@ -119,7 +119,7 @@ async function getDocumentsForDeliveryPerson(req, res) {
  * @operationId getDocumentsForDriver
  * @pathParam {string} driverId - The ID of the driver
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  */
 async function getDocumentsForDriver(req, res) {
@@ -140,7 +140,7 @@ async function getDocumentsForDriver(req, res) {
  * @operationId getDocumentsForVehicle
  * @pathParam {string} vehicleId - The ID of the vehicle
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  */
 async function getDocumentsForVehicle(req, res) {
@@ -161,7 +161,7 @@ async function getDocumentsForVehicle(req, res) {
  * @operationId getDocumentsByType
  * @pathParam {string} documentType - The type of the documents to retrieve
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  */
 async function getDocumentsByDocumentType(req, res) {
@@ -183,7 +183,7 @@ async function getDocumentsByDocumentType(req, res) {
  * @pathParam {string} businessId - The ID of the business
  * @pathParam {string} documentType - The type of the documents
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  */
 async function getDocumentsForBusinessByDocumentType(req, res) {
@@ -204,7 +204,7 @@ async function getDocumentsForBusinessByDocumentType(req, res) {
  * @operationId getDocumentsForUserByDocumentType
  * @pathParam {string} document_type - The type of the documents
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  */
 async function getDocumentsForUserByDocumentType(req, res) {
@@ -226,7 +226,7 @@ async function getDocumentsForUserByDocumentType(req, res) {
  * @pathParam {string} driverId - The ID of the driver
  * @pathParam {string} documentType - The type of the documents
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  */
 async function getDocumentsForDriverByDocumentType(req, res) {
@@ -248,7 +248,7 @@ async function getDocumentsForDriverByDocumentType(req, res) {
  * @pathParam {string} deliveryPersonId - The ID of the delivery person
  * @pathParam {string} documentType - The type of the documents
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  */
 async function getDocumentsForDeliveryPersonByDocumentType(req, res) {
@@ -270,7 +270,7 @@ async function getDocumentsForDeliveryPersonByDocumentType(req, res) {
  * @pathParam {string} vehicleId - The ID of the vehicle
  * @pathParam {string} documentType - The type of the documents
  * @response 200 - Successful operation, returns documents
- * @responseContent {Document[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving documents
  */
 async function getDocumentsForVehicleByDocumentType(req, res) {
@@ -290,10 +290,10 @@ async function getDocumentsForVehicleByDocumentType(req, res) {
  * @description Creates a new document and links it to a specific user.
  * @operationId createUserDocument
  * @pathParam {string} user_id - The ID of the user
- * @bodyContent {DocumentCreationRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Document created and linked successfully
- * @responseContent {Document} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating or linking the document
  */
 async function createUserDocument(req, res) {
@@ -317,10 +317,10 @@ async function createUserDocument(req, res) {
  * @description Creates a new document and links it to a specific business.
  * @operationId createBusinessDocument
  * @pathParam {string} business_id - The ID of the business
- * @bodyContent {DocumentCreationRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Document created and linked successfully
- * @responseContent {Document} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating or linking the document
  */
 async function createBusinessDocument(req, res) {
@@ -344,10 +344,10 @@ async function createBusinessDocument(req, res) {
  * @description Creates a new document and links it to a specific driver.
  * @operationId createDriverDocument
  * @pathParam {string} driver_id - The ID of the driver
- * @bodyContent {DocumentCreationRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Document created and linked successfully
- * @responseContent {Document} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating or linking the document
  */
 async function createDriverDocument(req, res) {
@@ -371,10 +371,10 @@ async function createDriverDocument(req, res) {
  * @description Creates a new document and links it to a specific vehicle.
  * @operationId createVehicleDocument
  * @pathParam {string} vehicle_id - The ID of the vehicle
- * @bodyContent {DocumentCreationRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Document created and linked successfully
- * @responseContent {Document} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating or linking the document
  */
 async function createVehicleDocument(req, res) {
@@ -399,10 +399,10 @@ async function createVehicleDocument(req, res) {
  * @description Creates a new document and links it to a specific delivery person.
  * @operationId createDeliveryPersonDocument
  * @pathParam {string} delivery_person_id - The ID of the delivery person
- * @bodyContent {DocumentCreationRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Document created and linked successfully
- * @responseContent {Document} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating or linking the document
  */
 async function createDeliveryPersonDocument(req, res) {
@@ -435,10 +435,10 @@ async function createDeliveryPersonDocument(req, res) {
  * @description Updates the expiration date of a specific document.
  * @operationId updateDocumentExpirationDate
  * @pathParam {string} document_id - The ID of the document to update
- * @bodyContent {UpdateExpirationDateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Document expiration date updated successfully
- * @responseContent {Document} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating document's expiration date
  */
 async function updateDocumentExpirationDate(req, res) {
@@ -459,10 +459,10 @@ async function updateDocumentExpirationDate(req, res) {
  * @description Updates the issue date of a specific document.
  * @operationId updateDocumentIssueDate
  * @pathParam {string} document_id - The ID of the document to update
- * @bodyContent {UpdateIssueDateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Document issue date updated successfully
- * @responseContent {Document} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating document's issue date
  */
 async function updateDocumentIssueDate(req, res) {
@@ -483,10 +483,10 @@ async function updateDocumentIssueDate(req, res) {
  * @description Updates the files associated with a specific document.
  * @operationId updateDocumentFiles
  * @pathParam {string} document_id - The ID of the document to update
- * @bodyContent {UpdateFilesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Document files updated successfully
- * @responseContent {Document} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating document's files
  */
 async function updateDocumentFiles(req, res) {
@@ -507,10 +507,10 @@ async function updateDocumentFiles(req, res) {
  * @description Updates the additional information of a specific document.
  * @operationId updateDocumentAdditionalInfo
  * @pathParam {string} document_id - The ID of the document to update
- * @bodyContent {UpdateAdditionalInfoRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Document additional info updated successfully
- * @responseContent {Document} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating document's additional info
  */
 async function updateDocumentAdditionalInfo(req, res) {

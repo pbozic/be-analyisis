@@ -52,7 +52,7 @@ const { UserSockets, io, SocketStore } = socket;
  * @operationId getOrder
  * @pathParam {integer} orderId - The ID of the taxi order to retrieve
  * @response 200 - Successful operation. Returns order details in the response body.
- * @responseContent {Order} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getOrder(req, res) {
@@ -73,7 +73,7 @@ async function getOrder(req, res) {
  * @description This fetches all completed orders for a specific user.
  * @operationId getCompletedDeliveryOrders
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getActiveTaxiOrders(req, res) {
@@ -94,7 +94,7 @@ async function getActiveTaxiOrders(req, res) {
  * @description This fetches all completed orders for a specific user.
  * @operationId getCompletedDeliveryOrders
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 export async function getMyActiveTaxiOrders(req, res) {
@@ -178,7 +178,7 @@ async function getActiveOrdersHelper(user_id, type, isBusinessUser = false) {
  * @operationId getActiveTaxiOrdersByDriverId
  * @pathParam {integer} driver_id - The ID of the driver to retrieve active orders for
  * @response 200 - Successful operation. Returns a list of active orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getActiveTaxiOrdersByDriverId(req, res) {
@@ -212,7 +212,7 @@ async function getActiveTaxiOrdersByDriverId(req, res) {
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedTaxiOrders
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getTaxiOrdersByDriverId(req, res) {
@@ -237,7 +237,7 @@ async function getTaxiOrdersByDriverId(req, res) {
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedTaxiOrders
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getCompletedTaxiOrders(req, res) {
@@ -263,7 +263,7 @@ async function getCompletedTaxiOrders(req, res) {
  * @description This fetches all canceled orders for a specific driver.
  * @operationId getCanceledTaxiOrders
  * @response 200 - Successful operation. Returns a list of canceled orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getCanceledTaxiOrders(req, res) {
@@ -289,7 +289,7 @@ async function getCanceledTaxiOrders(req, res) {
  * @description This fetches all rejected orders for a specific driver.
  * @operationId getRejectedTaxiOrders
  * @response 200 - Successful operation. Returns a list of rejected orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getRejectedTaxiOrders(req, res) {
@@ -315,7 +315,7 @@ async function getRejectedTaxiOrders(req, res) {
  * @description This fetches all taxi orders.
  * @operationId getTaxiOrders
  * @response 200 - Successful operation. Returns a list of all taxi orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getTaxiOrders(req, res) {
@@ -347,7 +347,7 @@ async function getTaxiOrders(req, res) {
  * @description This fetches all completed orders for a specific driver.
  * @operationId getCompletedTaxiOrdersByUserId
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getCompletedTaxiOrdersByUserId(req, res) {
@@ -396,7 +396,7 @@ async function getCompletedTaxiOrdersByUserId(req, res) {
  * @description This fetches all completed orders for a business.
  * @operationId getCompletedTaxiOrdersByBusinessId
  * @response 200 - Successful operation. Returns a list of completed orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getCompletedTaxiOrdersByBusinessId(req, res) {
@@ -425,7 +425,7 @@ async function getCompletedTaxiOrdersByBusinessId(req, res) {
  * @description This fetches all canceled orders for a specific driver.
  * @operationId getCanceledTaxiOrders
  * @response 200 - Successful operation. Returns a list of canceled orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getCanceledTaxiOrdersByUserId(req, res) {
@@ -885,10 +885,10 @@ async function handlePaymentForTransferOrder(order, return_url) {
  * @description This creates a new taxi order with the provided details from the request body. Returns the created order if successful.
  * @operationId createOrder
  * @bodyDescription Request body must include necessary order details.
- * @bodyContent {TaxiOrderRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the newly created order in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function createOrder(req, res) {
@@ -1107,10 +1107,10 @@ function generateOrdersForRepeatOrder(orderData, repeatData, repeatDuration) {
  * @description This creates a new delivery order with the provided details from the request body. Returns the created order if successful.
  * @operationId createOrder
  * @bodyDescription Request body must include necessary order details.
- * @bodyContent {DeliveryOrderRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the newly created order in the response body.
- * @responseContent {DeliveryOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function createDispatchOrder(req, res) {
@@ -1136,10 +1136,10 @@ async function createDispatchOrder(req, res) {
  * @description Accepts taxi order with the provided details from the request body. Returns the accepted order if successful.
  * @operationId acceptOrder
  * @bodyDescription Request body must include necessary order details.
- * @bodyContent {TaxiOrderRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the accepted order in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function acceptOrder(req, res) {
@@ -1241,7 +1241,7 @@ async function acceptOrder(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the completed order in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Console logs the error message and returns it in the response.
  */
 async function completeOrder(req, res) {
@@ -1683,10 +1683,10 @@ async function completeOrder(req, res) {
  * @description Updates the status of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
  * @operationId updateOrderStatus
  * @bodyDescription Request body must include 'order_id' to identify the order and 'status' to specify the new status.
- * @bodyContent {UpdateOrderStatusRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
 async function updateOrderStatus(req, res) {
@@ -1737,10 +1737,10 @@ async function updateOrderStatus(req, res) {
  * @description Updates the vehicle preferences of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
  * @operationId updateTaxiOrderPreferences
  * @bodyDescription Request body must include 'order_id' to identify the order and 'vehicle_category' and 'vehicle_class' to specify the new vehicle preferences.
- * @bodyContent {UpdateOrderVehiclePreferencesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
 async function updateTaxiOrderPreferences(req, res) {
@@ -1779,7 +1779,7 @@ async function updateTaxiOrderPreferences(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the cancelled order in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Console logs the error message and returns it in the response.
  */
 async function cancelOrder(req, res) {
@@ -1914,7 +1914,7 @@ async function cancelOrder(req, res) {
  * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the rejected order in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Console logs the error message and returns it in the response.
  */
 async function rejectOrder(req, res) {
@@ -2022,10 +2022,10 @@ async function rejectOrder(req, res) {
  * @description Updates the route of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
  * @operationId updateTaxiOrderRoute
  * @bodyDescription Request body must include 'order_id' and the new 'route' details.
- * @bodyContent {UpdateOrderRouteRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new route in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
 async function updateTaxiOrderRoute(req, res) {
@@ -2046,10 +2046,10 @@ async function updateTaxiOrderRoute(req, res) {
  * @description Updates the pickup location of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
  * @operationId updateTaxiOrderPickupLocation
  * @bodyDescription Request body must include 'order_id' and the new 'pickup_location' details.
- * @bodyContent {UpdateOrderPickupLocationRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new pickup location in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
 async function updateTaxiOrderPickupLocation(req, res) {
@@ -2070,10 +2070,10 @@ async function updateTaxiOrderPickupLocation(req, res) {
  * @description Updates the delivery location of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
  * @operationId updateTaxiOrderDeliveryLocation
  * @bodyDescription Request body must include 'order_id' and the new 'delivery_location' details.
- * @bodyContent {UpdateOrderDeliveryLocationRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new delivery location in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
 async function updateTaxiOrderDeliveryLocation(req, res) {
@@ -2094,10 +2094,10 @@ async function updateTaxiOrderDeliveryLocation(req, res) {
  * @description Updates the complete route of a specific taxi order based on the provided details from the request body. Returns the updated order if successful.
  * @operationId updateCompleteTaxiRoute
  * @bodyDescription Request body must include 'order_id', and the new 'route' details.
- * @bodyContent {UpdateCompleteRouteRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new complete route in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
 async function updateCompleteTaxiRoute(req, res) {
@@ -2119,10 +2119,10 @@ async function updateCompleteTaxiRoute(req, res) {
  * @description Updates the timeline of a taxi order.
  * @operationId updateTaxiOrderTimeline
  * @bodyDescription Request body must include 'order_id', and the new 'timeline' details.
- * @bodyContent {UpdateTaxiOrderTimelineRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new timeline in the response body.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
 async function updateTaxiOrderTimeline(req, res) {
@@ -2145,10 +2145,10 @@ async function updateTaxiOrderTimeline(req, res) {
  * @description Updates the payment details of the order.
  * @operationId updateTaxiOrderPayment
  * @bodyDescription Request body must include 'order_id', and the new 'route' details.
- * @bodyContent {UpdateTaxiOrderPaymentRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new payment details.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
 async function updateTaxiOrderPayment(req, res) {
@@ -2174,10 +2174,10 @@ async function updateTaxiOrderPayment(req, res) {
  * @description Append driver to taxi order.
  * @operationId appendTaxiDriver
  * @bodyDescription Request body must include 'order_id', and 'driver_id'
- * @bodyContent {selectTaxiDriverRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the updated order with the new driver details.
- * @responseContent {TaxiOrder} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message if any exception is encountered during execution.
  */
 async function appendTaxiDriver(req, res) {
@@ -2276,7 +2276,7 @@ async function getDriversForOrder(req, res) {
  * @description This fetches orders with pagination.
  * @operationId getTaxiOrdersWithPagination
  * @response 200 - Successful operation. Returns a list of orders in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getTaxiOrdersWithPagination(req, res) {
@@ -2311,7 +2311,7 @@ async function getTaxiOrdersWithPagination(req, res) {
  * @description This fetches all taxi orders for today and earnings.
  * @operationId getTaxiOrdersToday
  * @response 200 - Successful operation. Returns a list of all taxi orders today and earnings in the response body.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function getTaxiOrdersToday(req, res) {
@@ -2494,7 +2494,7 @@ async function rejectGroupedOrderByParentId(req, res) {
  * @description If we cant find a Van driver, we offer the user to split his order into multiple smaller orders.
  * @operationId splitVanOrder
  * @response 200 - Successful operation. Returns a list of all taxi orders created.
- * @responseContent {Order[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Error something went wrong..." if any exception is encountered during execution.
  */
 async function splitVanOrder(req, res) {

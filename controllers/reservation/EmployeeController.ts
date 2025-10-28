@@ -19,7 +19,7 @@ import { calcBookings } from './BookingController.ts';
  * @description Retrieves all reservation employees.
  * @operationId getReservationEmployees
  * @response 200 - Reservation employees retrieved successfully
- * @responseContent {Employee[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving employees
  */
 export async function getEmployees(req: ValidatedRequest, res: Response): Promise<void> {
@@ -40,7 +40,7 @@ export async function getEmployees(req: ValidatedRequest, res: Response): Promis
  * @operationId createReservationEmployee
  * @requestBody {CreateEmployeeInput} requestBody - The employee data to create.
  * @response 201 - Employee created successfully
- * @responseContent {Employee} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating employee
  */
@@ -118,7 +118,7 @@ export async function deleteEmployee(req: Request, res: Response): Promise<void>
  * @pathParam {string} employee_id - The ID of the employee to update.
  * @requestBody {UpdateEmployeeInput} requestBody - The employee data to update.
  * @response 200 - Employee updated successfully
- * @responseContent {Employee} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Employee not found
  * @response 500 - Error updating employee
  */
@@ -144,7 +144,7 @@ export async function updateEmployee(
  * @operationId getReservationEmployeeById
  * @pathParam {string} employee_id - The ID of the employee to retrieve.
  * @response 200 - Employee retrieved successfully
- * @responseContent {Employee} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Employee not found
  * @response 500 - Error retrieving employee
  */
@@ -171,7 +171,7 @@ export async function getEmployeeById(req: Request, res: Response): Promise<void
  * @operationId getEmployeesWithScheduleSlots
  * @requestBody {GetSchedulesWithSlotsInput} requestBody - The input data for retrieving employees with schedule slots.
  * @response 200 - Reservation employees with schedule slots retrieved successfully
- * @responseContent {Employee[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving employees with schedule slots
  */
 export async function getEmployeesWithScheduleSlots(
@@ -218,7 +218,7 @@ export async function getEmployeesWithScheduleSlots(
  * @operationId getReservationEmployeeById
  * @pathParam {string} employee_id - The ID of the employee to retrieve.
  * @response 200 - Employee retrieved successfully
- * @responseContent {Employee} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Employee not found
  * @response 500 - Error retrieving employee
  */

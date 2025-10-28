@@ -20,7 +20,7 @@ import { NotificationChannel } from '../../types/reservationNotifications/enums'
  * @operationId getNotificationMessage
  * @pathParam {string} notification_message_id
  * @response 200 - Message retrieved
- * @responseContent {NotificationMessage} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Not found
  * @response 500 - Error
  */
@@ -51,7 +51,7 @@ export async function getNotificationMessage(
  * @property {number} [take=50]
  * @property {number} [skip=0]
  * @response 200 - Messages retrieved
- * @responseContent {NotificationMessage[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
 export async function listNotificationMessages(
@@ -85,7 +85,7 @@ export async function listNotificationMessages(
  * @operationId createNotificationMessage
  * @requestBody {CreateNotificationMessageInput} requestBody
  * @response 201 - Message created
- * @responseContent {NotificationMessage} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error
  */
 export async function createNotificationMessage(
@@ -108,7 +108,7 @@ export async function createNotificationMessage(
  * @pathParam {string} notification_message_id
  * @requestBody {Omit<UpdateNotificationMessageStatusInput,"notification_message_id">} requestBody
  * @response 200 - Message updated
- * @responseContent {NotificationMessage} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
 export async function updateNotificationMessageStatus(
@@ -136,7 +136,7 @@ export async function updateNotificationMessageStatus(
  * @operationId listNotificationMessageEvents
  * @pathParam {string} notification_message_id
  * @response 200 - Events retrieved
- * @responseContent {NotificationMessageEvent[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
 export async function listNotificationMessageEvents(
@@ -159,7 +159,7 @@ export async function listNotificationMessageEvents(
  * @pathParam {string} notification_message_id
  * @requestBody {Omit<CreateNotificationMessageEventInput,"notification_message_id">} requestBody
  * @response 201 - Event created
- * @responseContent {NotificationMessageEvent} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error
  */
 export async function createNotificationMessageEvent(
@@ -187,7 +187,7 @@ export async function createNotificationMessageEvent(
  * @operationId listNotificationProviderCredentials
  * @queryParam {NotificationChannel} [channel]
  * @response 200 - Credentials retrieved
- * @responseContent {NotificationProviderCredential[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
 export async function listNotificationProviderCredentials(
@@ -215,7 +215,7 @@ export async function listNotificationProviderCredentials(
  * @operationId createNotificationProviderCredential
  * @requestBody {CreateNotificationProviderCredentialInput} requestBody
  * @response 201 - Credentials created
- * @responseContent {NotificationProviderCredential} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error
  */
 export async function createNotificationProviderCredential(
@@ -246,7 +246,7 @@ export async function createNotificationProviderCredential(
  * @pathParam {string} notification_provider_credential_id
  * @requestBody {UpdateNotificationProviderCredentialInput} requestBody
  * @response 200 - Credentials updated
- * @responseContent {NotificationProviderCredential} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
 export async function updateNotificationProviderCredential(

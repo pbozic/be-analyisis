@@ -12,7 +12,7 @@ import { CreateScheduleEmployeeInput, UpdateScheduleEmployeeInput } from '../../
  * @operationId getScheduleEmployeesBySchedule
  * @pathParam {string} schedule_id - The ID of the schedule.
  * @response 200 - Schedule-employee assignments retrieved successfully
- * @responseContent {ScheduleEmployee[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving schedule employees
  */
 export async function getScheduleEmployeesByScheduleId(
@@ -37,7 +37,7 @@ export async function getScheduleEmployeesByScheduleId(
  * @operationId createScheduleEmployee
  * @requestBody {CreateScheduleEmployeeInput} requestBody - The schedule-employee data to create.
  * @response 201 - Schedule-employee assignment created successfully
- * @responseContent {ScheduleEmployee} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating schedule employee
  */
@@ -63,7 +63,7 @@ export async function createScheduleEmployee(
  * @pathParam {string} id - The ID of the assignment to update.
  * @requestBody {UpdateScheduleEmployeeInput} requestBody - The data to update the assignment with.
  * @response 200 - Schedule-employee updated successfully
- * @responseContent {ScheduleEmployee} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Schedule-employee not found
  * @response 500 - Error updating schedule employee
  */
@@ -112,7 +112,7 @@ export async function deleteScheduleEmployee(
  * @operationId getScheduleEmployeeById
  * @pathParam {string} id - The ID of the schedule-employee to retrieve.
  * @response 200 - Schedule-employee retrieved successfully
- * @responseContent {ScheduleEmployee} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Schedule-employee not found
  * @response 500 - Error retrieving schedule employee
  */
@@ -141,7 +141,7 @@ export async function getScheduleEmployeeById(
  * @operationId getReservationEmployeeById
  * @pathParam {string} employee_id - The ID of the employee to retrieve.
  * @response 200 - Employee retrieved successfully
- * @responseContent {Employee} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Employee not found
  * @response 500 - Error retrieving employee
  */

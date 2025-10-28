@@ -808,7 +808,7 @@ export async function createBlogImageByUrl(req: ValidatedRequest<{ url: string }
  * @description Creates a new image file from an uploaded file.
  * @operationId createBlogImageByFile
  * @bodyDescription The image file to upload (multipart/form-data).
- * @bodyContent {file: "image file"} multipart/form-data
+ * @bodyContent {object} multipart/form-data
  * @bodyRequired
  * @response 201 - Image created successfully
  * @responseContent {object} 201.application/json

@@ -15,7 +15,7 @@ config();
  * @summary List all vehicles
  * @description Retrieves a list of all vehicles in the database.
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error fetching vehicles
  */
 async function listVehicles(req, res) {
@@ -34,7 +34,7 @@ async function listVehicles(req, res) {
  * @description Retrieves vehicles associated with a specific business ID.
  * @pathParam {string} businessId - The ID of the business
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error fetching vehicles
  */
 async function listVehiclesByBusiness(req, res) {
@@ -54,7 +54,7 @@ async function listVehiclesByBusiness(req, res) {
  * @description Retrieves a single vehicle by its ID from the database.
  * @pathParam {string} vehicle_id - The ID of the vehicle to retrieve
  * @response 200 - Success
- * @responseContent {Vehicle} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Vehicle not found
  * @response 500 - Error fetching vehicle
  */
@@ -79,7 +79,7 @@ async function getVehicleById(req, res) {
  * @description Retrieves a list of vehicles assigned to a specific driver.
  * @pathParam {string} driver_id - The ID of the driver
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error fetching vehicles for driver
  */
 async function getVehiclesByDriverId(req, res) {
@@ -99,7 +99,7 @@ async function getVehiclesByDriverId(req, res) {
  * @description Retrieves a list of vehicles of a specific class.
  * @pathParam {string} vehicleClass - The class of the vehicles to retrieve
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error fetching vehicles
  */
 async function getVehiclesByClass(req, res) {
@@ -119,7 +119,7 @@ async function getVehiclesByClass(req, res) {
  * @description Retrieves a list of vehicles of a specific category.
  * @pathParam {string} vehicleCategory - The category of the vehicles to retrieve
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error fetching vehicles
  */
 async function getVehiclesByCategory(req, res) {
@@ -140,7 +140,7 @@ async function getVehiclesByCategory(req, res) {
  * @pathParam {string} vehicleClass - The class of the vehicles
  * @pathParam {string} vehicleCategory - The category of the vehicles
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error fetching vehicles
  */
 async function getVehiclesByClassAndCategory(req, res) {
@@ -161,7 +161,7 @@ async function getVehiclesByClassAndCategory(req, res) {
  * @pathParam {string} driverId - The ID of the driver
  * @pathParam {string} vehicleClass - The class of the vehicles to retrieve
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error fetching vehicles
  */
 async function getVehiclesOfDriverByClass(req, res) {
@@ -182,7 +182,7 @@ async function getVehiclesOfDriverByClass(req, res) {
  * @pathParam {string} driverId - The ID of the driver
  * @pathParam {string} vehicleCategory - The category of the vehicles to retrieve
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error fetching vehicles
  */
 async function getVehiclesOfDriverByCategory(req, res) {
@@ -204,7 +204,7 @@ async function getVehiclesOfDriverByCategory(req, res) {
  * @pathParam {string} vehicleClass - The class of the vehicles
  * @pathParam {string} vehicleCategory - The category of the vehicles
  * @response 200 - Success
- * @responseContent {Vehicle[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error fetching vehicles
  */
 async function getVehiclesOfDriverByClassAndCategory(req, res) {
@@ -230,10 +230,10 @@ async function getVehiclesOfDriverByClassAndCategory(req, res) {
  * @summary Create a new vehicle
  * @description Adds a new vehicle to the database, including its specifications.
  * @operationId createNewVehicle
- * @bodyContent {Vehicle} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Vehicle created successfully
- * @responseContent {Vehicle} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating vehicle
  */
 async function createVehicle(req, res) {
@@ -292,10 +292,10 @@ async function createVehicle(req, res) {
  * @description Updates an existing vehicle's details and specifications.
  * @operationId updateVehicle
  * @pathParam {string} vehicle_id - The ID of the vehicle to update
- * @bodyContent {VehicleUpdate} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Vehicle updated successfully
- * @responseContent {Vehicle} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating vehicle
  */
 async function updateVehicle(req, res) {
@@ -355,10 +355,10 @@ async function updateVehicle(req, res) {
  * @tag Vehicles
  * @summary Assign vehicles to a driver
  * @description Assigns existing vehicles to a driver by creating a vehicle_drivers entry.
- * @bodyContent {array} vehicles - The vehicles to assign
- * @bodyContent {string} driver_id - The ID of the driver to whom the vehicle is being assigned
+ * @bodyContent {object} vehicles - The vehicles to assign
+ * @bodyContent {object} driver_id - The ID of the driver to whom the vehicle is being assigned
  * @response 200 - Vehicle assigned successfully
- * @responseContent {Vehicle} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error assigning vehicles to driver
  */
 async function assignVehiclesToDriver(req, res) {
@@ -394,10 +394,10 @@ async function assignVehiclesToDriver(req, res) {
  * @tag Vehicles
  * @summary Remove vehicles from a driver
  * @description Disassociates vehicles from its assigned driver by setting the vehicle's can_drive to false.
- * @bodyContent {array} vehicles - The vehicles to unassign
- * @bodyContent {string} driver_id - The ID of the driver to unassign
+ * @bodyContent {object} vehicles - The vehicles to unassign
+ * @bodyContent {object} driver_id - The ID of the driver to unassign
  * @response 200 - Vehicle disassociated successfully
- * @responseContent {Vehicle} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error removing vehicle from driver
  */
 async function removeVehiclesFromDriver(req, res) {

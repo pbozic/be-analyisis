@@ -35,10 +35,10 @@ config();
  * @description This function fetches all scheduled users.
  * @operationId getScheduledUsers
  * @bodyDescription Request body must include necessary order details.
- * @bodyContent {getScheduledUsersRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the newly created order in the response body.
- * @responseContent {getScheduledUsers} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function getScheduledUsers(req, res) {
@@ -58,10 +58,10 @@ async function getScheduledUsers(req, res) {
  * @description This verifies the user's credentials and responds with an access token and refresh token if successful.
  * @operationId loginUser.
  * @bodyDescription Request body must include email and password for verification.
- * @bodyContent {LoginRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns user details along with accessToken and refreshToken in the response body, additionally sets Authorization header with the accessToken.
- * @responseContent {AuthenticatedUser} 200.application/json
+ * @responseContent {object} 200.application/json
  * @responseHeader {string} 200.Authorization - The newly generated access token.
  * @response 400 - Unsuccessful operation. Returns error message "Wrong email / password combination." if the either the email or password (or both) are incorrect.
  * @response 500 - Server error. Returns error message "Error something went wrong.." if any exception is encountered during execution.
@@ -189,10 +189,10 @@ async function login(req, res) {
  * @description This endpoint is used to register a new user.
  * @operationId registerNewUser
  * @bodyDescription The required data to register a new user
- * @bodyContent {RegisterRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - User registered successfully. Returns user info and tokens.
- * @responseContent {AuthenticatedUser} 200.application/json
+ * @responseContent {object} 200.application/json
  * @responseHeader {string} 200.Authorization - The newly generated access token.
  * @response 400 - Error something went wrong.
  */
@@ -271,10 +271,10 @@ async function register(req, res) {
  * @description This endpoint is used to refresh the user's access and refresh tokens.
  * @operationId refreshToken
  * @bodyDescription The refresh token of the user
- * @bodyContent {RefreshTokenRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Access token successfully refreshed. Returns newly generated access and refresh tokens.
- * @responseContent {RefreshTokenResponse} 200.application/json
+ * @responseContent {object} 200.application/json
  * @responseHeader {string} 200.Authorization - The newly generated access token.
  * @response 400 - Access Denied. No refresh token provided.
  * @response 401 - Access Denied. Token expired.
@@ -328,7 +328,7 @@ async function refreshToken(req, res) {
  * @description This endpoint is used to request a password reset. It will generate and send a password reset token to the user.
  * @operationId requestPasswordReset
  * @bodyDescription The email of the user who wants to reset their password.
- * @bodyContent {PasswordResetRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Password reset request processed. A token is sent to the user if the account is found.
  * @response 400 - Error obtaining user information.
@@ -408,10 +408,10 @@ async function passwordReset(req, res) {
  * @summary Register a new taxi service
  * @description Creates a new business, multiple taxi, vehicles, and optionally finances and documents, and links them together.
  * @operationId registerTaxiService
- * @bodyContent {TaxiServiceRegistration} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Taxi service registered successfully
- * @responseContent {TaxiServiceRegistrationResponse} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error registering taxi service
  */
 async function registerTaxiService(req, res) {
@@ -638,10 +638,10 @@ async function registerTaxiService(req, res) {
  * @summary Register a new delivery service
  * @description Creates a new business, multiple delivery drivers, vehicles, and optionally finances and documents, and links them together.
  * @operationId registerDeliveryService
- * @bodyContent {DeliveryServiceRegistration} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Delivery service registered successfully
- * @responseContent {DeliveryServiceRegistrationResponse} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error registering delivery service
  */
 async function registerDeliveryService(req, res) {
@@ -829,10 +829,10 @@ async function registerDeliveryService(req, res) {
  * @summary Register a new merchant service
  * @description Creates a new business, optionally business users, finances, and documents, and links them together.
  * @operationId registerMerchantService
- * @bodyContent {MerchantServiceRegistration} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Merchant service registered successfully
- * @responseContent {MerchantServiceRegistrationResponse} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error registering merchant service
  */
 async function registerMerchantService(req, res) {
@@ -961,10 +961,10 @@ async function registerMerchantService(req, res) {
  * @summary Register a new business
  * @description Creates a new business, optionally business users, finances, and documents, and links them together.
  * @operationId registerBusiness
- * @bodyContent {BusinessRegistration} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Business registered successfully
- * @responseContent {BusinessRegistrationResponse} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error registering business
  */
 async function registerBusiness(req, res) {
@@ -1452,10 +1452,10 @@ async function registerReservationBusiness(req, res) {
  * @description This created new scheduled user.
  * @operationId createScheduledUser
  * @bodyDescription Request body must include necessary order details.
- * @bodyContent {createScheduledUserRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Successful operation. Returns the newly created order in the response body.
- * @responseContent {createScheduledUser} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Server error. Returns error message "Something went wrong..." if any exception is encountered during execution.
  */
 async function createScheduledUser(req, res) {
@@ -1488,10 +1488,10 @@ async function createScheduledUser(req, res) {
  * @description This endpoint is used to update a scheduled user's details.
  * @operationId updateScheduledUser
  * @bodyDescription The data to update for the current user
- * @bodyContent {updateScheduledUserRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - User updated successfully. Returns the updated user's details.
- * @responseContent {AuthenticatedUser} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
  */
 async function updateScheduledUser(req, res) {
@@ -1549,10 +1549,10 @@ async function getMunicipalitiesWithLicenseRequirements(req, res) {
  * @summary Check if an email is already taken
  * @description Checks if the provided email is already registered in the system.
  * @operationId checkEmailAvailability
- * @bodyContent { "email": "user@example.com" } application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Returns the availability status for email.
- * @responseContent { "emailTaken": false } 200.application/json
+ * @responseContent {object} 200.application/json
  */
 async function checkEmailAvailability(req, res) {
 	try {
@@ -1577,10 +1577,10 @@ async function checkEmailAvailability(req, res) {
  * @summary Check if a telephone number is already taken
  * @description Checks if the provided telephone number is already registered in the system.
  * @operationId checkTelephoneAvailability
- * @bodyContent { "telephone": "+123456789" } application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Returns the availability status for telephone.
- * @responseContent { "telephoneTaken": true } 200.application/json
+ * @responseContent {object} 200.application/json
  */
 async function checkTelephoneAvailability(req, res) {
 	try {

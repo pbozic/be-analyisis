@@ -10,3 +10,33 @@
 ### getPromoAnalyticsForPeriodByPromoType
 
 <!-- DOCGEN:END getPromoAnalyticsForPeriodByPromoType -->
+
+<!-- DOCGEN:START getAllPromoAnalyticsForPeriod -->
+### getAllPromoAnalyticsForPeriod
+
+<!-- DOCGEN:END getAllPromoAnalyticsForPeriod -->
+
+<!-- DOCGEN:START getPromoAnalyticsForPeriodByPromoType -->
+### getPromoAnalyticsForPeriodByPromoType
+
+<!-- DOCGEN:END getPromoAnalyticsForPeriodByPromoType -->
+
+<!-- DOCGEN:START getAllPromoAnalyticsForPeriod -->
+### getAllPromoAnalyticsForPeriod
+
+<!-- DOCGEN:END getAllPromoAnalyticsForPeriod -->
+
+<!-- DOCGEN:START getPromoAnalyticsForPeriodByPromoType -->
+### getPromoAnalyticsForPeriodByPromoType
+
+<!-- DOCGEN:END getPromoAnalyticsForPeriodByPromoType -->
+
+<!-- DOCGEN:START getAllPromoAnalyticsForPeriod -->
+### getAllPromoAnalyticsForPeriod
+
+<!-- DOCGEN:END getAllPromoAnalyticsForPeriod -->
+
+<!-- DOCGEN:START getPromoAnalyticsForPeriodByPromoType -->
+### getPromoAnalyticsForPeriodByPromoType
+
+<!-- DOCGEN:END getPromoAnalyticsForPeriodByPromoType -->

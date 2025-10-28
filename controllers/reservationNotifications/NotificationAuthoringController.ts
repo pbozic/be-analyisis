@@ -28,7 +28,7 @@ import { VARIABLE_CATALOG } from '../../lib/reservationNotifications.ts';
  * @summary List notification events
  * @operationId listNotificationEvents
  * @response 200 - Events retrieved
- * @responseContent {NotificationEvent[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
 export async function listNotificationEvents(_req: ValidatedRequest<null>, res: Response): Promise<void> {
@@ -47,7 +47,7 @@ export async function listNotificationEvents(_req: ValidatedRequest<null>, res: 
  * @operationId createNotificationEvent
  * @requestBody {CreateNotificationEventInput} requestBody
  * @response 201 - Event created
- * @responseContent {NotificationEvent} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error
  */
 export async function createNotificationEvent(
@@ -70,7 +70,7 @@ export async function createNotificationEvent(
  * @pathParam {string} notification_event_id
  * @requestBody {UpdateNotificationEventInput} requestBody
  * @response 200 - Event updated
- * @responseContent {NotificationEvent} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
 export async function updateNotificationEvent(
@@ -112,7 +112,7 @@ export async function deleteNotificationEvent(
  * @summary List templates for current module
  * @operationId listNotificationTemplates
  * @response 200 - Templates retrieved
- * @responseContent {NotificationTemplate[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
 export async function listNotificationTemplates(req: ValidatedRequest<null>, res: Response): Promise<void> {
@@ -136,7 +136,7 @@ export async function listNotificationTemplates(req: ValidatedRequest<null>, res
  * @operationId createNotificationTemplate
  * @requestBody {CreateNotificationTemplateInput} requestBody
  * @response 201 - Template created
- * @responseContent {NotificationTemplate} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error
  */
 export async function createNotificationTemplate(
@@ -167,7 +167,7 @@ export async function createNotificationTemplate(
  * @pathParam {string} notification_template_id
  * @requestBody {UpdateNotificationTemplateInput} requestBody
  * @response 200 - Template updated
- * @responseContent {NotificationTemplate} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
 export async function updateNotificationTemplate(
@@ -211,7 +211,7 @@ export async function deleteNotificationTemplate(
  * @pathParam {string} notification_template_id
  * @requestBody {Omit<CreateNotificationTemplateVersionInput,"notification_template_id">} requestBody
  * @response 201 - Version created
- * @responseContent {NotificationTemplateVersion} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error
  */
 export async function createNotificationTemplateVersion(
@@ -245,7 +245,7 @@ export async function createNotificationTemplateVersion(
  * @pathParam {string} notification_template_version_id
  * @requestBody {UpdateNotificationTemplateVersionByIdInput} requestBody
  * @response 200 - Version updated
- * @responseContent {NotificationTemplateVersion} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
 export async function updateNotificationTemplateVersionById(
@@ -290,7 +290,7 @@ export async function deleteNotificationTemplateVersionById(
  * @summary List mappings for current module
  * @operationId listNotificationMappings
  * @response 200 - Mappings retrieved
- * @responseContent {NotificationMapping[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
 export async function listNotificationMappings(req: ValidatedRequest<null>, res: Response): Promise<void> {
@@ -314,7 +314,7 @@ export async function listNotificationMappings(req: ValidatedRequest<null>, res:
  * @operationId createNotificationMapping
  * @requestBody {CreateNotificationMappingInput} requestBody
  * @response 201 - Mapping created
- * @responseContent {NotificationMapping} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error
  */
 export async function createNotificationMapping(
@@ -337,7 +337,7 @@ export async function createNotificationMapping(
  * @pathParam {string} notification_mapping_id
  * @requestBody {UpdateNotificationMappingInput} requestBody
  * @response 200 - Mapping updated
- * @responseContent {NotificationMapping} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
 export async function updateNotificationMapping(
@@ -361,7 +361,7 @@ export async function updateNotificationMapping(
  * @property {string} notification_event_id.required
  * @property {string} notification_template_version_id.required
  * @response 200 - Active mapping set
- * @responseContent {NotificationMapping} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
 export async function upsertActiveNotificationMapping(
@@ -392,7 +392,7 @@ export async function upsertActiveNotificationMapping(
  * @summary List channel preferences for current module
  * @operationId listNotificationPreferences
  * @response 200 - Preferences retrieved
- * @responseContent {NotificationPreference[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
 export async function listNotificationPreferences(req: ValidatedRequest<null>, res: Response): Promise<void> {
@@ -416,7 +416,7 @@ export async function listNotificationPreferences(req: ValidatedRequest<null>, r
  * @operationId upsertNotificationPreference
  * @requestBody {UpsertNotificationPreferenceInput} requestBody
  * @response 200 - Preference upserted
- * @responseContent {NotificationPreference} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
 export async function upsertNotificationPreference(
@@ -447,7 +447,7 @@ export async function upsertNotificationPreference(
  * @summary List supported channels
  * @operationId listNotificationChannels
  * @response 200 - Channels retrieved
- * @responseContent {string[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error
  */
 export async function listNotificationChannels(_req: ValidatedRequest<null>, res: Response): Promise<void> {

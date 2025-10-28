@@ -46,7 +46,7 @@ const { io } = socket;
  * @description Returns a list of drivers along with their user and vehicle information.
  * @operationId getDrivers
  * @response 200 - Successful operation, returns a list of drivers
- * @responseContent {Driver[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the driver list
  */
 async function listDrivers(req, res) {
@@ -65,7 +65,7 @@ async function listDrivers(req, res) {
  * @description Returns a list of drivers along with their user and vehicle information.
  * @operationId getDrivers
  * @response 200 - Successful operation, returns a list of drivers
- * @responseContent {Driver[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the driver list
  */
 async function getDriversByBusinessId(req, res) {
@@ -85,7 +85,7 @@ async function getDriversByBusinessId(req, res) {
  * @description Returns a list of drivers along with their user and vehicle information.
  * @operationId getDrivers
  * @response 200 - Successful operation, returns a list of drivers
- * @responseContent {Driver[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the driver list
  */
 async function listDriversFull(req, res) {
@@ -105,7 +105,7 @@ async function listDriversFull(req, res) {
  * @description Returns a list of all drivers who are currently online.
  * @operationId getOnlineDrivers
  * @response 200 - Successful operation, returns a list of online drivers
- * @responseContent {Driver[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the online driver list
  */
 async function listOnlineDrivers(req, res) {
@@ -124,7 +124,7 @@ async function listOnlineDrivers(req, res) {
  * @description Returns a list of available drivers based on the specified type.
  * @operationId getAvailableDrivers
  * @response 200 - Successful operation, returns a list of available drivers
- * @responseContent {Driver[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the available drivers list
  */
 async function getAvailableDrivers(req, res) {
@@ -154,7 +154,7 @@ async function getUnavailableDrivers(req, res) {
  * @operationId getDriverById
  * @pathParam {string} driver_id - The ID of the driver to retrieve
  * @response 200 - Successful operation, returns detailed driver information
- * @responseContent {Driver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error retrieving driver information
  */
@@ -179,7 +179,7 @@ async function getDriverById(req, res) {
  * @operationId getDriverLocation
  * @pathParam {string} driver_id - The ID of the driver whose location is being retrieved
  * @response 200 - Successful operation, returns driver's location
- * @responseContent {Location} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error retrieving driver's location
  */
@@ -239,10 +239,10 @@ async function resendDelegatedOrdersToDriver(req, res) {
  * @description Updates information about a specific driver, excluding location.
  * @operationId updateDriver
  * @pathParam {string} driver_id - The ID of the driver to update
- * @bodyContent {DriverUpdate} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Driver updated successfully
- * @responseContent {Driver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating driver
  */
 async function updateDriver(req, res) {
@@ -263,10 +263,10 @@ async function updateDriver(req, res) {
  * @description Edits the data of specific driver.
  * @operationId editDriver
  * @pathParam {string} driver_id - The ID of the driver to edit
- * @bodyContent {DriverEdit} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Driver edited successfully
- * @responseContent {Driver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating driver
  */
 async function editDriver(req, res) {
@@ -402,10 +402,10 @@ async function editDriver(req, res) {
  * @description Updates the location of a specific driver.
  * @operationId updateDriverLocation
  * @pathParam {string} driver_id - The ID of the driver to update location for
- * @bodyContent {Location} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Location updated successfully
- * @responseContent {Driver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating driver location
  */
 async function updateDriverLocation(req, res) {
@@ -552,10 +552,10 @@ async function updateDriverLocation(req, res) {
  * @description This endpoint is used to update the current user's ride requirements.
  * @operationId updateDriverRideRequirements
  * @bodyDescription The new ride requirements of the driver.
- * @bodyContent {updateDriverRideRequirementsRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Ride requirements updated successfully. Returns the updated driver's details.
- * @responseContent {User} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating user information.
  */
 async function updateDriverRideRequirements(req, res) {
@@ -574,10 +574,10 @@ async function updateDriverRideRequirements(req, res) {
  * @description Sets the online status of a specific driver and emits appropriate socket events.
  * @operationId setDriverOnlineStatus
  * @pathParam {string} driver_id - The ID of the driver to update the online status for
- * @bodyContent {DriverOnlineStatus} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Online status updated successfully
- * @responseContent {Driver} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating online status
  *
  * Emits:
@@ -636,10 +636,10 @@ async function updateDriverOnlineStatus(req, res) {
  * @summary Create a new driver
  * @description Adds a new driver to the database.
  * @operationId createNewDriver
- * @bodyContent {Driver} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Driver created successfully
- * @responseContent {Driver} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating driver
  */
 async function createDriver(req, res) {
@@ -743,7 +743,7 @@ async function handleSosAlert(req, res) {
  * @description Get history of locations for a driver with a given driver id and between specified time interval
  * @operationId getDriverLocationsController
  * @response 201 - Driver history locations fetched successfully
- * @responseContent {Driver} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error fetching history locations for a particular driver
  */
 async function getDriverHistoryLocations(req, res) {
@@ -771,7 +771,7 @@ async function getDriverHistoryLocations(req, res) {
  * @pathParam {string} start_date - The start date for the earnings period (format: YYYY-MM-DD)
  * @pathParam {string} end_date - The end date for the earnings period (format: YYYY-MM-DD)
  * @response 200 - Successful operation, returns driver's earnings
- * @responseContent {Earnings} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error retrieving driver's earnings
  */
@@ -823,7 +823,7 @@ async function getDriverEarnings(req, res) {
  * @pathParam {string} start_date - The start date for the earnings period (format: YYYY-MM-DD)
  * @pathParam {string} end_date - The end date for the earnings period (format: YYYY-MM-DD)
  * @response 200 - Successful operation, returns all drivers' earnings
- * @responseContent {Earnings[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving all drivers' earnings
  */
 async function getAllDriversEarnings(req, res) {
@@ -870,7 +870,7 @@ async function getAllDriversEarnings(req, res) {
  * @description Retrieves the total earnings of all drivers based on completed orders.
  * @operationId getTotalEarnings
  * @response 200 - Successful operation, returns total earnings for all drivers
- * @responseContent {TotalEarnings} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving total earnings
  */
 async function getTotalEarnings(req, res) {
@@ -901,7 +901,7 @@ async function getTotalEarnings(req, res) {
  * @operationId getDriverTotalEarnings
  * @pathParam {string} driver_id - The ID of the driver whose total earnings are being retrieved
  * @response 200 - Successful operation, returns total earnings for the specified driver
- * @responseContent {TotalEarnings} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error retrieving driver's total earnings
  */
@@ -965,10 +965,10 @@ async function setDriverHandle(req, res) {
  * @description This endpoint allows toggling the types of orders a specific driver can receive. The request body should contain an object specifying which order types (taxi, transfer, delivery) to toggle on or off.
  * @operationId toggleDriverOrders
  * @pathParam {string} driver_id - The ID of the driver to toggle
- * @bodyContent {Object} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Driver orders toggled successfully
- * @responseContent {Object} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Driver not found
  * @response 400 - Error toggling driver orders
  */
@@ -996,10 +996,10 @@ async function toggleDriverOrders(req, res) {
  * @summary Send notifications for drivers to come to work
  * @description This endpoint allows sending a "come to work" notifications to all drivers who are currently offline.
  * @operationId comeToWorkDrivers
- * @bodyContent {Object} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Notification sent out successfully
- * @responseContent {Object} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Problem sending notification
  * @response 400 - Problem sending notification
  */
@@ -1046,10 +1046,10 @@ async function sendComeToWorkNotification(req, res) {
  * @description This endpoint sets the current vehicle for a specific driver. It first checks that the vehicle belongs to the driver. If a vehicle was previously assigned, it will be disconnected. The request body should contain the new vehicle ID to assign.
  * @operationId setDriverCurrentVehicle
  * @pathParam {string} driver_id - The ID of the driver
- * @bodyContent {Object} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Driver vehicle updated successfully
- * @responseContent {Object} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Driver or vehicle not found
  * @response 400 - Invalid vehicle ID or error setting vehicle
  */

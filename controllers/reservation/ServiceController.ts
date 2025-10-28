@@ -19,7 +19,7 @@ import { ValidatedRequest } from '../../types/validatedRequest.ts';
  * @description Retrieves all reservation services.
  * @operationId getReservationServices
  * @response 200 - Reservation services retrieved successfully
- * @responseContent {Services[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving services
  * @prisma_model services
  */
@@ -41,7 +41,7 @@ export async function getServices(req: ValidatedRequest, res: Response): Promise
  * @operationId createReservationService
  * @requestBody {CreateServiceInput} requestBody - The service data to create.
  * @response 201 - Service created successfully
- * @responseContent {Service} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating service
  * @prisma_model services
@@ -87,7 +87,7 @@ export async function deleteService(req: Request, res: Response): Promise<void> 
  * @pathParam {string} service_id - The ID of the service to update.
  * @requestBody {UpdateServiceInput} requestBody - The updated service data.
  * @response 200 - Service updated successfully
- * @responseContent {Service} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Invalid input data
  * @response 404 - Service not found
  * @response 500 - Error updating service
@@ -129,7 +129,7 @@ export async function getServiceById(req: Request, res: Response): Promise<void>
  * @operationId getServicesByCategoryId
  * @pathParam {string} service_category_id - The ID of the service category to retrieve services for.
  * @response 200 - Services retrieved successfully
- * @responseContent {Service[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - No services found for this category
  * @response 500 - Error retrieving services by category
  */
@@ -157,7 +157,7 @@ export async function getServicesByCategoryId(req: Request, res: Response): Prom
  * @pathParam {string} service_id - The ID of the service to connect.
  * @pathParam {string} service_category_id - The ID of the service category to connect to.
  * @response 200 - Service connected to category successfully
- * @responseContent {Service} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Service or category not found
  * @response 500 - Error connecting service to category
  * @prisma_model services
@@ -183,7 +183,7 @@ export async function connectServiceToCategory(
  * @operationId disconnectServiceFromCategory
  * @pathParam {string} service_id - The ID of the service to disconnect.
  * @response 200 - Service disconnected from category successfully
- * @responseContent {Service} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Service not found
  * @response 500 - Error disconnecting service from category
  */
@@ -208,7 +208,7 @@ export async function disconnectServiceFromCategory(
  * @description Retrieves all data needed for the service creation/edit form.
  * @operationId getDataForServiceForm
  * @response 200 - Data retrieved successfully
- * @responseContent {data} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving data
  */
 export async function getDataForServiceForm(req: ValidatedRequest, res: Response): Promise<void> {
@@ -232,7 +232,7 @@ export async function getDataForServiceForm(req: ValidatedRequest, res: Response
  * @operationId createServiceWithData
  * @requestBody {CreateServiceWithEmployeesInput} requestBody - The data to create the service and assign employees.
  * @response 200 - Schedule created successfully
- * @responseContent {Schedule} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Related entity not found
  * @response 500 - Error creating schedule
  */
@@ -267,7 +267,7 @@ export async function createServiceWithData(
  * @pathParam {string} service_id - The ID of the service to update.
  * @requestBody {UpdateServiceWithEmployeesInput} requestBody - The updated service data and its employees.
  * @response 200 - Service updated successfully
- * @responseContent {Service} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Invalid input data
  * @response 404 - Service not found
  * @response 500 - Error updating service

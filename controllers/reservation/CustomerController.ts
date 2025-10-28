@@ -10,7 +10,7 @@ import { CreateCustomerInput, UpdateCustomerInput } from '../../types/reservatio
  * @description Retrieves all reservation customers for a specific business.
  * @operationId getReservationCustomers
  * @response 200 - Reservation customers retrieved successfully
- * @responseContent {Customer[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving customers
  */
 export async function getCustomers(req: ValidatedRequest, res: Response): Promise<void> {
@@ -35,7 +35,7 @@ export async function getCustomers(req: ValidatedRequest, res: Response): Promis
  * @operationId createReservationCustomer
  * @requestBody {CreateCustomerInput} requestBody - The customer data to create.
  * @response 201 - Customer created successfully
- * @responseContent {Customer} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating customer
  */
@@ -63,7 +63,7 @@ export async function createCustomer(req: ValidatedRequest<CreateCustomerInput>,
  * @pathParam {string} customer_id - The ID of the customer to update.
  * @requestBody {UpdateCustomerInput} requestBody - The data to update the customer with.
  * @response 200 - Customer updated successfully
- * @responseContent {Customer} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Invalid input data
  * @response 404 - Customer not found
  * @response 500 - Error updating customer
@@ -117,7 +117,7 @@ export async function deleteCustomer(
  * @operationId getReservationCustomerById
  * @pathParam {string} customer_id - The ID of the customer to retrieve.
  * @response 200 - Customer retrieved successfully
- * @responseContent {Customer} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Customer not found
  * @response 500 - Error retrieving customer
  */
@@ -147,7 +147,7 @@ export async function getCustomerById(
  * @operationId getReservationCustomerById
  * @pathParam {string} customer_id - The ID of the customer to retrieve.
  * @response 200 - Customer retrieved successfully
- * @responseContent {Customer} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Customer not found
  * @response 500 - Error retrieving customer
  */

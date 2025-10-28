@@ -11,7 +11,7 @@ import { ValidatedRequest } from '../../types/validatedRequest.ts';
  * @description Retrieves all reservation service categories.
  * @operationId getReservationServiceCategories
  * @response 200 - Reservation service categories retrieved successfully
- * @responseContent {ServiceCategory[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving service categories
  */
 export async function getServiceCategories(req: ValidatedRequest, res: Response): Promise<void> {
@@ -34,7 +34,7 @@ export async function getServiceCategories(req: ValidatedRequest, res: Response)
  * @operationId createReservationServiceCategory
  * @requestBody {CreateServiceCategoryInput} requestBody - The service category data to create.
  * @response 201 - Service category created successfully
- * @responseContent {ServiceCategory} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating service category
  */
@@ -82,7 +82,7 @@ export async function deleteServiceCategory(req: Request, res: Response): Promis
  * @pathParam {string} service_category_id - The ID of the service category to update.
  * @requestBody {UpdateServiceCategoryInput} requestBody - The service category data to update.
  * @response 200 - Service category updated successfully
- * @responseContent {ServiceCategory} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Invalid input data
  * @response 404 - Service category not found
  * @response 500 - Error updating service category
@@ -107,7 +107,7 @@ export async function updateServiceCategory(
  * @operationId getReservationServiceCategoryById
  * @pathParam {string} service_category_id - The ID of the service category to retrieve.
  * @response 200 - Service category retrieved successfully
- * @responseContent {ServiceCategory} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Service category not found
  * @response 500 - Error retrieving service category
  */

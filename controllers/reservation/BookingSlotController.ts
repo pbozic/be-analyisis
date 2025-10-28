@@ -20,7 +20,7 @@ import { splitByBookingId } from '../../lib/bookingHelpers';
  * @operationId getBookingSlotsByScheduleSlot
  * @pathParam {string} schedule_slot_id - The ID of the schedule slot.
  * @response 200 - Booking slots retrieved successfully
- * @responseContent {BookingSlot[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving booking slots
  */
 export async function getBookingSlotsByScheduleSlotId(
@@ -45,7 +45,7 @@ export async function getBookingSlotsByScheduleSlotId(
  * @operationId createBookingSlot
  * @requestBody {CreateBookingSlotInput} requestBody - The booking slot data to create.
  * @response 201 - Booking slot created successfully
- * @responseContent {BookingSlot} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating booking slot
  */
@@ -68,7 +68,7 @@ export async function createBookingSlot(req: ValidatedRequest<CreateBookingSlotI
  * @pathParam {string} id - The ID of the booking slot to update.
  * @requestBody {UpdateBookingSlotSchemaInput} requestBody - The data to update the slot with.
  * @response 200 - Booking slot updated successfully
- * @responseContent {BookingSlot} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Booking slot not found
  * @response 500 - Error updating booking slot
  */
@@ -114,7 +114,7 @@ export async function deleteBookingSlot(req: ValidatedRequest<null, { id: string
  * @operationId getBookingSlotById
  * @pathParam {string} id - The ID of the booking slot to retrieve.
  * @response 200 - Booking slot retrieved successfully
- * @responseContent {BookingSlot} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Booking slot not found
  * @response 500 - Error retrieving booking slot
  */
@@ -140,7 +140,7 @@ export async function getBookingSlotById(req: ValidatedRequest<null, { id: strin
  * @operationId updateOrCreateBookingSlots
  * @requestBody {CreateOrUpdateBookingSlotInput} requestBody - The booking slot data to create or update.
  * @response 201 - Booking slots created or updated successfully
- * @responseContent {BookingSlot} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating booking slot
  */
@@ -190,7 +190,7 @@ export async function updateOrCreateBookingSlots(
  * @operationId createScheduleSlotWithBookingSlots
  * @requestBody {CreateScheduleSlotWithBookingSlotsInput} requestBody - The schedule slot and booking slots data to create.
  * @response 201 - Schedule slot with booking slots created successfully
- * @responseContent {ScheduleSlot} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating schedule slot with booking slots
  */
@@ -237,7 +237,7 @@ export async function createScheduleSlotWithBookingSlots(
  * @operationId updateScheduleSlotWithBookingSlots
  * @requestBody {UpdateScheduleSlotWithBookingSlotsInput} requestBody - The schedule slot and booking slots data to update.
  * @response 201 - Schedule slot with booking slots updated successfully
- * @responseContent {ScheduleSlot} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error updating schedule slot with booking slots
  */

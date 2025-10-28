@@ -1,6 +1,7 @@
 # DailyMealCategoryController Controller
 
 
+
 <!-- DOCGEN:START createDailyMealCategoryWithPrice -->
 ### createDailyMealCategoryWithPrice
 
@@ -11,6 +12,8 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createDailyMealCategoryWithPrice -->
+
+
 
 <!-- DOCGEN:START getDailyMealCategoriesForBusiness -->
 ### getDailyMealCategoriesForBusiness
@@ -23,6 +26,8 @@
 
 <!-- DOCGEN:END getDailyMealCategoriesForBusiness -->
 
+
+
 <!-- DOCGEN:START addPriceToDailyMealCategory -->
 ### addPriceToDailyMealCategory
 
@@ -33,6 +38,8 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END addPriceToDailyMealCategory -->
+
+
 
 <!-- DOCGEN:START deactivateDailyMealCategory -->
 ### deactivateDailyMealCategory
@@ -45,6 +52,8 @@
 
 <!-- DOCGEN:END deactivateDailyMealCategory -->
 
+
+
 <!-- DOCGEN:START activateDailyMealCategory -->
 ### activateDailyMealCategory
 
@@ -55,3 +64,4 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END activateDailyMealCategory -->
+

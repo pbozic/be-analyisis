@@ -1,6 +1,7 @@
 # BlogController Controller
 
 
+
 <!-- DOCGEN:START searchBlogPosts -->
 ### searchBlogPosts
 
@@ -11,6 +12,8 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END searchBlogPosts -->
+
+
 
 <!-- DOCGEN:START getBlogPostById -->
 ### getBlogPostById
@@ -23,6 +26,8 @@
 
 <!-- DOCGEN:END getBlogPostById -->
 
+
+
 <!-- DOCGEN:START getBlogPostBySlug -->
 ### getBlogPostBySlug
 
@@ -33,6 +38,8 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getBlogPostBySlug -->
+
+
 
 <!-- DOCGEN:START createBlogPost -->
 ### createBlogPost
@@ -45,6 +52,8 @@
 
 <!-- DOCGEN:END createBlogPost -->
 
+
+
 <!-- DOCGEN:START updateBlogPost -->
 ### updateBlogPost
 
@@ -55,6 +64,8 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END updateBlogPost -->
+
+
 
 <!-- DOCGEN:START deleteBlogPost -->
 ### deleteBlogPost
@@ -67,6 +78,8 @@
 
 <!-- DOCGEN:END deleteBlogPost -->
 
+
+
 <!-- DOCGEN:START getBlogPosts -->
 ### getBlogPosts
 
@@ -77,6 +90,8 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END getBlogPosts -->
+
+
 
 <!-- DOCGEN:START getBlogCategories -->
 ### getBlogCategories
@@ -89,6 +104,8 @@
 
 <!-- DOCGEN:END getBlogCategories -->
 
+
+
 <!-- DOCGEN:START createBlogCategory -->
 ### createBlogCategory
 
@@ -99,6 +116,8 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createBlogCategory -->
+
+
 
 <!-- DOCGEN:START deleteBlogCategory -->
 ### deleteBlogCategory
@@ -111,6 +130,8 @@
 
 <!-- DOCGEN:END deleteBlogCategory -->
 
+
+
 <!-- DOCGEN:START updateBlogCategory -->
 ### updateBlogCategory
 
@@ -121,6 +142,8 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END updateBlogCategory -->
+
+
 
 <!-- DOCGEN:START getBlogTags -->
 ### getBlogTags
@@ -133,6 +156,8 @@
 
 <!-- DOCGEN:END getBlogTags -->
 
+
+
 <!-- DOCGEN:START createBlogTag -->
 ### createBlogTag
 
@@ -143,6 +168,8 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createBlogTag -->
+
+
 
 <!-- DOCGEN:START deleteBlogTag -->
 ### deleteBlogTag
@@ -155,6 +182,8 @@
 
 <!-- DOCGEN:END deleteBlogTag -->
 
+
+
 <!-- DOCGEN:START updateBlogTag -->
 ### updateBlogTag
 
@@ -165,6 +194,8 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END updateBlogTag -->
+
+
 
 <!-- DOCGEN:START createBlogImageByUrl -->
 ### createBlogImageByUrl
@@ -177,6 +208,8 @@
 
 <!-- DOCGEN:END createBlogImageByUrl -->
 
+
+
 <!-- DOCGEN:START createBlogImageByFile -->
 ### createBlogImageByFile
 
@@ -187,3 +220,4 @@
 🔗 [Swagger Operation](/swagger/openApiConfig.yaml#operation/ )
 
 <!-- DOCGEN:END createBlogImageByFile -->
+

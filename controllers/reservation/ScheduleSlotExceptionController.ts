@@ -22,7 +22,7 @@ import { splitByBookingId, splitByExceptionsId } from '../../lib/bookingHelpers'
  * @operationId getScheduleSlotExceptionsBySlot
  * @pathParam {string} schedule_slot_id - The ID of the schedule slot.
  * @response 200 - Exceptions retrieved successfully
- * @responseContent {ScheduleSlotException[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving exceptions
  */
 export async function getScheduleSlotExceptionsBySlotId(
@@ -46,7 +46,7 @@ export async function getScheduleSlotExceptionsBySlotId(
  * @operationId createScheduleSlotException
  * @requestBody {CreateScheduleSlotExceptionInput} requestBody - The exception data to create.
  * @response 201 - Exception created successfully
- * @responseContent {ScheduleSlotException} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 500 - Error creating exception
  */
 export async function createScheduleSlotException(
@@ -71,7 +71,7 @@ export async function createScheduleSlotException(
  * @pathParam {string} id - The ID of the exception to update.
  * @requestBody {UpdateScheduleSlotExceptionInput} requestBody - The data to update the exception with.
  * @response 200 - Exception updated successfully
- * @responseContent {ScheduleSlotException} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Exception not found
  * @response 500 - Error updating exception
  */
@@ -119,7 +119,7 @@ export async function deleteScheduleSlotException(
  * @operationId getScheduleSlotExceptionById
  * @pathParam {string} id - The ID of the exception to retrieve.
  * @response 200 - Exception retrieved successfully
- * @responseContent {ScheduleSlotException} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Exception not found
  * @response 500 - Error retrieving exception
  */
@@ -148,7 +148,7 @@ export async function getScheduleSlotExceptionById(
  * @operationId updateOrCreateScheduleSlotExceptions
  * @requestBody {CreateOrUpdateExceptionsInput} requestBody - The exception data to create or update.
  * @response 201 - Schedule slot exceptions created or updated successfully
- * @responseContent {ScheduleSlotException} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error updating or creating schedule slot exceptions
  */
@@ -201,7 +201,7 @@ export async function updateOrCreateScheduleSlotExceptions(
  * @operationId updateOrCreateScheduleSlotExceptionsAndBookingSlots
  * @requestBody {CreateOrUpdateExceptionsAndBookingsInput} requestBody - The data to create or update.
  * @response 201 - Schedule slot exceptions created or updated successfully and booking slots created or updated
- * @responseContent {ScheduleSlotException} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error updating or creating schedule slot exceptions and booking slots
  */
@@ -343,7 +343,7 @@ export async function createScheduleSlotWithData(data: CreateScheduleSlotWithExc
  * @operationId createScheduleSlotWithBookingSlotsAndExceptions
  * @requestBody {CreateScheduleSlotWithExceptionsAndBookingSlotsInput} requestBody - The schedule slot, booking slots, and exceptions data to create.
  * @response 201 - Schedule slot with booking slots and exceptions created successfully
- * @responseContent {ScheduleSlot} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating schedule slot with booking slots and exceptions
  */
@@ -452,7 +452,7 @@ export async function updateScheduleSlotWithData(
  * @operationId updateScheduleSlotWithBookingSlotsAndExceptions
  * @requestBody {UpdateScheduleSlotWithBookingSlotsAndExceptionsInput} requestBody - The schedule slot with booking slots and exceptions data to update.
  * @response 201 - Schedule slot with booking slots and exceptions updated successfully
- * @responseContent {ScheduleSlot} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error updating schedule slot with booking slots and exceptions
  */

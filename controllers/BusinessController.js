@@ -34,7 +34,7 @@ const { businessIndex, fullSearch } = elasticsearch;
  * @description Activates a business.
  * @operationId activateBusiness
  * @response 200 - successful operation
- * @responseContent {User[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business list
  * @responseContent {object} 400.application/json The error object
  */
@@ -74,7 +74,7 @@ async function activateBusiness(req, res) {
  * @description Deactivates a business.
  * @operationId deactivateBusiness
  * @response 200 - successful operation
- * @responseContent {User[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business list
  * @responseContent {object} 400.application/json The error object
  */
@@ -114,7 +114,7 @@ async function deactivateBusiness(req, res) {
  * @description Returns a list of businesses.
  * @operationId getBusinessesByType
  * @response 200 - successful operation
- * @responseContent {User[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business list
  * @responseContent {object} 400.application/json The error object
  */
@@ -140,7 +140,7 @@ async function listBusinesses(req, res) {
  * @description Returns a list of businesses.
  * @operationId getBusinessesByIds
  * @response 200 - successful operation
- * @responseContent {User[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business list
  * @responseContent {object} 400.application/json The error object
  */
@@ -178,10 +178,10 @@ async function getBusinessesByIds(req, res) {
  * @summary Get a list of businesses by query, location, categories, radius, etc.
  * @description Returns a list of businesses filtered by search criteria.
  * @operationId getBusinessesSearch
- * @bodyContent {SearchBusinessesRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - successful operation
- * @responseContent {SearchBusinessesResponse} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the business list
  * @responseContent {object} 400.application/json The error object
  */
@@ -250,7 +250,7 @@ async function searchBusinesses(req, res) {
  * @description Retrieves a list of all businesses classified as merchants.
  * @operationId listMerchantBusinesses
  * @response 200 - Successful operation, returns a list of merchant businesses
- * @responseContent {Business[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the merchant business list
  */
 async function listMerchantBusinesses(req, res) {
@@ -274,7 +274,7 @@ async function listMerchantBusinesses(req, res) {
  * @description Retrieves a list of all businesses classified as merchants.
  * @operationId listMerchantBusinesses
  * @response 200 - Successful operation, returns a list of merchant businesses
- * @responseContent {Business[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the merchant business list
  */
 async function listPromoSectionsWithMerchants(req, res) {
@@ -386,7 +386,7 @@ async function listPromoSectionsWithMerchants(req, res) {
  * @description Retrieves a list of all businesses classified as merchants that offer daily meals.
  * @operationId listMerchantBusinessesWithDailyMeals
  * @response 200 - Successful operation, returns a list of merchant businesses offering daily meals
- * @responseContent {Business[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the merchant business list
  */
 async function listMerchantBusinessesWithDailyMeals(req, res) {
@@ -410,7 +410,7 @@ async function listMerchantBusinessesWithDailyMeals(req, res) {
  * @description Retrieves a list of all businesses classified as merchants that offer daily meals.
  * @operationId listMerchantBusinessesWithDailyMeals
  * @response 200 - Successful operation, returns a list of merchant businesses offering daily meals
- * @responseContent {Business[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the merchant business list
  */
 async function listMerchantBusinessesMainInfo(req, res) {
@@ -433,7 +433,7 @@ async function listMerchantBusinessesMainInfo(req, res) {
  * @description Retrieves a list of all transfer businesses
  * @operationId listTransferBusinessesMainInfo
  * @response 200 - Successful operation, returns a list of transfer businesses
- * @responseContent {Business[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the transfer businesses list
  */
 async function listTransferBusinessesMainInfo(req, res) {
@@ -454,7 +454,7 @@ async function listTransferBusinessesMainInfo(req, res) {
  * @description Retrieves a list of all businesses classified as taxis (TRANSFER).
  * @operationId listTaxiBusinesses
  * @response 200 - Successful operation, returns a list of taxi businesses
- * @responseContent {Business[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the taxi business list
  */
 async function listTransferBusinesses(req, res) {
@@ -474,7 +474,7 @@ async function listTransferBusinesses(req, res) {
  * @operationId getBusinessById
  * @pathParam {string} business_id - The ID of the business to retrieve
  * @response 200 - Successful operation, returns detailed business information
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Business not found
  * @response 400 - Error retrieving business information
  */
@@ -501,7 +501,7 @@ async function getBusinessById(req, res) {
  * @operationId getBusinessAdminDataById
  * @pathParam {string} business_id - The ID of the business to retrieve
  * @response 200 - Successful operation, returns detailed business information
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Business not found
  * @response 400 - Error retrieving business information
  */
@@ -530,7 +530,7 @@ async function getBusinessAdminDataById(req, res) {
  * @pathQuery {string} [ANALYTICS_PARAM_PROMO_SECTION] - Optional promo section ID for analytics
  * @pathQuery {string} [ANALYTICS_PARAM_PROMO_AD] - Optional promo ad ID for analytics
  * @response 200 - Successful operation, returns detailed business information
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Business not found
  * @response 400 - Error retrieving business information
  */
@@ -586,7 +586,7 @@ async function getBusinessForSearchById(req, res) {
  * @operationId getParentBusiness
  * @pathParam {string} business_id - The ID of the child business
  * @response 200 - Successful operation, returns parent business information
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Parent business not found
  * @response 400 - Error retrieving parent business information
  */
@@ -611,7 +611,7 @@ async function getParentBusiness(req, res) {
  * @operationId getChildBusinesses
  * @pathParam {string} parent_business_id - The ID of the parent business
  * @response 200 - Successful operation, returns a list of child businesses
- * @responseContent {Business[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving child businesses information
  */
 async function getChildBusinesses(req, res) {
@@ -630,10 +630,10 @@ async function getChildBusinesses(req, res) {
  * @description Creates a new business with the provided details.
  * @operationId createNewBusiness
  * @bodyDescription The business details to create
- * @bodyContent {BusinessCreateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Business created successfully
- * @responseContent {Business} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating new business
  */
 async function createNewBusiness(req, res) {
@@ -658,10 +658,10 @@ async function createNewBusiness(req, res) {
  * @operationId updateBusiness
  * @pathParam {string} businessId - The ID of the business to update
  * @bodyDescription The data to update for the business.
- * @bodyContent {UpdateBusinessRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Business updated successfully. Returns the updated business details.
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating business information.
  */
 async function update(req, res) {
@@ -693,10 +693,10 @@ async function update(req, res) {
  * @description This endpoint is used to update a business's type.
  * @operationId updateBusinessType
  * @bodyDescription The new type for the business
- * @bodyContent {UpdateBusinessTypeRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Type updated successfully. Returns the updated business details.
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating business information.
  */
 async function updateBusinessType(req, res) {
@@ -725,10 +725,10 @@ async function updateBusinessType(req, res) {
  * @description This endpoint is used to update whether a business is considered a business unit.
  * @operationId updateIsBusinessUnit
  * @bodyDescription The new business unit status
- * @bodyContent {UpdateIsBusinessUnitRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Business unit status updated successfully. Returns the updated business details.
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating business information.
  */
 async function updateIsBusinessUnit(req, res) {
@@ -757,10 +757,10 @@ async function updateIsBusinessUnit(req, res) {
  * @description This endpoint is used to update a business's group name.
  * @operationId updateBusinessGroupName
  * @bodyDescription The new group name for the business
- * @bodyContent {UpdateBusinessGroupNameRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Group name updated successfully. Returns the updated business details.
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating business information.
  */
 async function updateBusinessGroupName(req, res) {
@@ -790,10 +790,10 @@ async function updateBusinessGroupName(req, res) {
  * @operationId updateBusinessEmail
  * @pathParam {string} business_id - The ID of the business to update
  * @bodyDescription The new email for the business
- * @bodyContent {UpdateBusinessEmailRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Email updated successfully. Returns the updated business details.
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating business information.
  */
 async function updateBusinessEmail(req, res) {
@@ -823,10 +823,10 @@ async function updateBusinessEmail(req, res) {
  * @operationId updateBusinessTelephone
  * @pathParam {string} business_id - The ID of the business to update
  * @bodyDescription The new telephone details for the business
- * @bodyContent {UpdateBusinessTelephoneRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Telephone updated successfully. Returns the updated business details.
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating business information.
  */
 async function updateBusinessTelephone(req, res) {
@@ -861,10 +861,10 @@ async function updateBusinessTelephone(req, res) {
  * @operationId updateBusinessWorkingHours
  * @pathParam {string} business_id - The ID of the business to update
  * @bodyDescription The new working hours for the business
- * @bodyContent {UpdateBusinessWorkingHoursRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Working hours updated successfully. Returns the updated business details.
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating business information.
  */
 async function updateBusinessWorkingHours(req, res) {
@@ -894,9 +894,9 @@ async function updateBusinessWorkingHours(req, res) {
  * @operationId updateRestaurantOverwhelmed
  * @pathParam {string} business_id - The ID of the restaurant to update
  * @bodyDescription The overwhelmed status for the restaurant
- * @bodyContent {UpdateRestaurantOverwhelmedRequest} application/json
+ * @bodyContent {object} application/json
  * @response 200 - Overwhelmed status updated successfully. Returns the updated restaurant details.
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating restaurant information.
  */
 async function updateRestaurantOverwhelmed(req, res) {
@@ -923,10 +923,10 @@ async function updateRestaurantOverwhelmed(req, res) {
  * @operationId updateBusinessIsNew
  * @pathParam {string} business_id - The ID of the business to update
  * @bodyDescription The new status for the business
- * @bodyContent {UpdateBusinessIsNewRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - New status updated successfully. Returns the updated business details.
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating business information.
  */
 async function updateBusinessIsNew(req, res) {
@@ -956,10 +956,10 @@ async function updateBusinessIsNew(req, res) {
  * @operationId updateBusinessIsPopular
  * @pathParam {string} business_id - The ID of the business to update
  * @bodyDescription The popularity status for the business
- * @bodyContent {UpdateBusinessIsPopularRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Popularity status updated successfully. Returns the updated business details.
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating business information.
  */
 async function updateBusinessIsPopular(req, res) {
@@ -989,7 +989,7 @@ async function updateBusinessIsPopular(req, res) {
  * @operationId getBusinessesByGroupName
  * @queryParam {string} search - The search term to look for in business group names
  * @response 200 - Successful operation, returns a list of matching businesses
- * @responseContent {Business[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while searching for businesses by group name
  */
 async function getBusinessesByGroupName(req, res) {
@@ -1013,7 +1013,7 @@ async function getBusinessesByGroupName(req, res) {
  * @operationId getBusinessesByNameSearch
  * @queryParam {string} search - The search term to look for in business names
  * @response 200 - Successful operation, returns a list of matching businesses
- * @responseContent {Business[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while searching for businesses by name
  */
 async function getBusinessesByNameSearch(req, res) {
@@ -1036,7 +1036,7 @@ async function getBusinessesByNameSearch(req, res) {
  * @description Adds an address to a specific business.
  * @operationId addBusinessAddress
  * @pathParam {string} business_id - The ID of the business
- * @bodyContent {Address} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Address added successfully
  * @response 400 - Error adding address
@@ -1066,7 +1066,7 @@ async function addBusinessAddress(req, res) {
  * @description Adds a delivery address to a specific business.
  * @operationId addDeliveryAddress
  * @pathParam {string} business_id - The ID of the business
- * @bodyContent {Address} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Delivery address added successfully
  * @response 400 - Error adding delivery address
@@ -1097,10 +1097,10 @@ async function addDeliveryAddress(req, res) {
  * @operationId updateParentBusiness
  * @pathParam {string} business_id - The ID of the business to update
  * @bodyDescription The ID of the new parent business
- * @bodyContent {UpdateParentBusinessRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Parent business updated successfully
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating parent business
  */
 async function updateParentBusinessId(req, res) {
@@ -1123,10 +1123,10 @@ async function updateParentBusinessId(req, res) {
  * @operationId updateBusinessAddress
  * @pathParam {string} business_id - The ID of the business to update
  * @bodyDescription The new address details for the business
- * @bodyContent {UpdateBusinessAddressRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Address updated successfully. Returns the updated business details.
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating business address.
  */
 async function updateBusinessAddress(req, res) {
@@ -1146,10 +1146,10 @@ async function updateBusinessAddress(req, res) {
  * @operationId updateBusinessDeliveryAddress
  * @pathParam {string} business_id - The ID of the business to update
  * @bodyDescription The new delivery address details for the business
- * @bodyContent {UpdateBusinessDeliveryAddressRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Delivery address updated successfully. Returns the updated business details.
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating business delivery address.
  */
 async function updateBusinessDeliveryAddress(req, res) {
@@ -1188,7 +1188,7 @@ async function deleteBusiness(req, res) {
  * @operationId removeChildBusiness
  * @pathParam {string} business_id - The ID of the "child" business to remove from its parent
  * @response 200 - Child business removed from parent successfully
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error removing parent business from business
  */
 async function removeParentBusinessId(req, res) {
@@ -1207,7 +1207,7 @@ async function removeParentBusinessId(req, res) {
  * @description This endpoint is used add a review of business.
  * @operationId reviewBusiness
  * @bodyDescription Content of the review
- * @bodyContent {ReviewRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Primary address set successfully.
  * @response 400 - Error setting primary address.
@@ -1280,7 +1280,7 @@ async function confirmBusinessReview(req, res) {
  * @description This endpoint is used to create a payment intent.
  * @operationId createPaymentIntent
  * @bodyDescription The amount, currency, and user_id of the payment.
- * @bodyContent {CreatePaymentIntentRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Payment Intent created successfully.
  * @response 400 - Error creating payment intent.
@@ -1303,7 +1303,7 @@ async function createPaymentIntent(req, res) {
  * @description This endpoint is used to manually sort scheduled users.
  * @operationId manualSortScheduledUsers
  * @bodyDescription The list of sorted user IDs.
- * @bodyContent {ManualSortScheduledUsersRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Users sorted successfully.
  * @response 400 - Error sorting users.
@@ -1327,7 +1327,7 @@ async function manualSortScheduledUsers(req, res) {
  * @description This endpoint is used to add the sorting type for scheduled users.
  * @operationId addScheduledUserSortingType
  * @bodyDescription The sorting type (manual or automatic).
- * @bodyContent {AddScheduledUserSortingTypeRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Sorting type added successfully.
  * @response 400 - Error adding sorting type.
@@ -1396,7 +1396,7 @@ async function getBusinessEarnings(req, res) {
  * @queryParam {string} start_date - The start date for the earnings calculation
  * @queryParam {string} end_date - The end date for the earnings calculation
  * @response 200 - Successful operation, returns the earnings data for all businesses
- * @responseContent {object[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Missing required parameters
  * @responseContent {object} 400.application/json The error object
  */
@@ -1464,7 +1464,7 @@ async function getTotalEarnings(req, res) {
  * @operationId getBusinessTotalEarnings
  * @pathParam {string} business_id - The ID of the business whose total earnings are being retrieved
  * @response 200 - Successful operation, returns total earnings for the specified business
- * @responseContent {TotalEarnings} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Business not found
  * @response 400 - Error retrieving business' total earnings
  */
@@ -1584,10 +1584,10 @@ async function getBusinessReviewsById(req, res) {
  * @description This endpoint is used to update multiple details of a business, including address, delivery address, finances, and other specific data.
  * @operationId editBusiness
  * @bodyDescription The data to update for the business.
- * @bodyContent {EditBusinessRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Business updated successfully. Returns the updated business details.
- * @responseContent {Business} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating business information.
  */
 async function editBusiness(req, res) {
@@ -1908,7 +1908,7 @@ async function removeBusinessPaymentMethod(req, res) {
  * @description Retrieves all local locations that have an associated address_id.
  * @operationId getLocalLocations
  * @response 200 - Successful operation, returns the list of local locations with address_id
- * @responseContent {LocalLocation[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error retrieving local locations
  * @responseContent {object} 400.application/json The error object
  */
@@ -1934,10 +1934,10 @@ async function getLocalLocations(req, res) {
  * @operationId createBusinessLocalLocation
  * @pathParam {string} business_id - The ID of the business to create the local location for
  * @bodyDescription The local location data to create.
- * @bodyContent {CreateLocalLocationRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Local location created successfully.
- * @responseContent {LocalLocation} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Missing required fields in the request body
  * @responseContent {object} 400.application/json The error object
  * @response 500 - Error creating local location
@@ -1973,10 +1973,10 @@ async function createBusinessLocalLocation(req, res) {
  * @operationId updateBusinessLocalLocation
  * @pathParam {string} location_id - The ID of the local location to update
  * @bodyDescription The new time for the local location.
- * @bodyContent {UpdateLocalLocationRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Local location updated successfully.
- * @responseContent {LocalLocation} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Missing required fields in the request body
  * @responseContent {object} 400.application/json The error object
  * @response 500 - Error updating local location

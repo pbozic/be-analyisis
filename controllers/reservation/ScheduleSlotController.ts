@@ -21,7 +21,7 @@ import { createScheduleSlotWithData, updateScheduleSlotWithData } from './Schedu
  * @operationId getScheduleSlotsBySchedule
  * @pathParam {string} schedule_id - The ID of the schedule.
  * @response 200 - Schedule slots retrieved successfully
- * @responseContent {ScheduleSlot[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving schedule slots
  */
 export async function getScheduleSlotsByScheduleId(
@@ -46,7 +46,7 @@ export async function getScheduleSlotsByScheduleId(
  * @operationId createScheduleSlot
  * @requestBody {CreateScheduleSlotInput} requestBody - The schedule slot data to create.
  * @response 201 - Schedule slot created successfully
- * @responseContent {ScheduleSlot} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating schedule slot
  */
@@ -69,7 +69,7 @@ export async function createScheduleSlot(req: ValidatedRequest<CreateScheduleSlo
  * @pathParam {string} id - The ID of the schedule slot to update.
  * @requestBody {UpdateScheduleSlotSInput} requestBody - The data to update the slot with.
  * @response 200 - Schedule slot updated successfully
- * @responseContent {ScheduleSlot} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Schedule slot not found
  * @response 500 - Error updating schedule slot
  */
@@ -115,7 +115,7 @@ export async function deleteScheduleSlot(req: ValidatedRequest<null, { id: strin
  * @operationId getScheduleSlotById
  * @pathParam {string} id - The ID of the schedule slot to retrieve.
  * @response 200 - Schedule slot retrieved successfully
- * @responseContent {ScheduleSlot} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Schedule slot not found
  * @response 500 - Error retrieving schedule slot
  */
@@ -146,7 +146,7 @@ function removeMatchingIsoDates(firstArray: string[], secondArray: string[]): st
  * @operationId createLocationSchedule
  * @requestBody {CreateScheduleInput} requestBody - The schedule data to create.
  * @response 201 - Schedule created successfully
- * @responseContent {Schedule} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating schedule
  */
@@ -208,7 +208,7 @@ export async function createMultipleSchedules(
  * @operationId overwriteMultipleSchedules
  * @requestBody {OverwriteMultipleSchedulesInput} requestBody - The schedule data to overwrite.
  * @response 201 - Schedule created successfully
- * @responseContent {Schedule} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error overwriting schedules
  */
@@ -301,7 +301,7 @@ function updateUtcDateRetainTime(startTimeUtc: string, newDateUtc: string): stri
  * @pathParam {string} id - The ID of the schedule slot to update.
  * @requestBody {UpdateMultipleSchedulesInput} requestBody - The schedule data to create.
  * @response 201 - Schedule updated successfully and new schedules created
- * @responseContent {Schedule} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error updating schedules and creating new schedules
  */

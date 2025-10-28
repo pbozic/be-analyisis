@@ -16,7 +16,7 @@ const { businessIndex } = elasticsearch;
  * @operationId getMenuByBusinessId
  * @pathParam {string} business_id - The ID of the business
  * @response 200 - Successful operation, returns a list of menus
- * @responseContent {Menu[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the menu list
  */
 async function getMenuByBusinessId(req, res) {
@@ -36,7 +36,7 @@ async function getMenuByBusinessId(req, res) {
  * @operationId getDailyMenuByBusinessId
  * @pathParam {string} business_id - The ID of the business
  * @response 200 - Successful operation, returns a list of menus
- * @responseContent {Menu[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the menu list
  */
 async function getDailyMenuByBusinessId(req, res) {
@@ -55,10 +55,10 @@ async function getDailyMenuByBusinessId(req, res) {
  * @description Creates a new menu for a business.
  * @operationId createMenu
  * @bodyDescription The menu details to create
- * @bodyContent {MenuCreateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Menu created successfully
- * @responseContent {Menu} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating new menu
  */
 async function createMenu(req, res) {
@@ -79,10 +79,10 @@ async function createMenu(req, res) {
  * @description Creates a new daily meal menu for merchant.
  * @operationId createDailyMealMenu
  * @bodyDescription The menu details to create
- * @bodyContent {MenuCreateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu created successfully
- * @responseContent {Menu} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error creating new menu
  */
 async function createDailyMealMenu(req, res) {
@@ -126,10 +126,10 @@ async function deleteMenu(req, res) {
  * @operationId setActiveMenu
  * @pathParam {string} menu_id - The ID of the menu to update
  * @bodyDescription The active status to set
- * @bodyContent {ActiveStatusRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu active status updated successfully
- * @responseContent {Menu} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating menu active status
  */
 async function setActiveMenu(req, res) {
@@ -151,10 +151,10 @@ async function setActiveMenu(req, res) {
  * @description Creates a new menu category for a menu.
  * @operationId createMenuCategory
  * @bodyDescription The menu category details to create
- * @bodyContent {MenuCategoryCreateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Menu category created successfully
- * @responseContent {MenuCategory} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating new menu category
  */
 async function createMenuCategory(req, res) {
@@ -175,10 +175,10 @@ async function createMenuCategory(req, res) {
  * @description Adds a menu item ID to the ordered list of a menu category.
  * @operationId addMenuItemIdToOrder
  * @bodyDescription The menu category ID and menu item ID to add
- * @bodyContent {MenuItemOrderAddRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu item ID added to order successfully
- * @responseContent {MenuCategory} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error adding menu item ID to order
  */
 async function addMenuItemIdToOrder(req, res) {
@@ -198,10 +198,10 @@ async function addMenuItemIdToOrder(req, res) {
  * @description Removes a menu item ID from the ordered list of a menu category.
  * @operationId removeMenuItemIdFromOrder
  * @bodyDescription The menu category ID and menu item ID to remove
- * @bodyContent {MenuItemOrderRemoveRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu item ID removed from order successfully
- * @responseContent {MenuCategory} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error removing menu item ID from order
  */
 async function removeMenuItemIdFromOrder(req, res) {
@@ -221,10 +221,10 @@ async function removeMenuItemIdFromOrder(req, res) {
  * @description Adds a menu category ID to the ordered list of categories in a menu.
  * @operationId addMenuCategoryIdToOrder
  * @bodyDescription The menu ID and the menu category ID to add
- * @bodyContent {MenuCategoryOrderAddRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu category ID added to order successfully
- * @responseContent {Menu} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error adding menu category ID to order
  */
 async function addMenuCategoryIdToOrder(req, res) {
@@ -244,10 +244,10 @@ async function addMenuCategoryIdToOrder(req, res) {
  * @description Removes a menu category ID from the ordered list of categories in a menu.
  * @operationId removeMenuCategoryIdFromOrder
  * @bodyDescription The menu ID and the menu category ID to remove
- * @bodyContent {MenuCategoryOrderRemoveRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu category ID removed from order successfully
- * @responseContent {Menu} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error removing menu category ID from order
  */
 async function removeMenuCategoryIdFromOrder(req, res) {
@@ -268,7 +268,7 @@ async function removeMenuCategoryIdFromOrder(req, res) {
  * @operationId getMenuItemsByCategoryId
  * @pathParam {string} category_id - The ID of the menu category
  * @response 200 - Successful operation, returns a list of menu items
- * @responseContent {MenuItem[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the menu items
  */
 async function getMenuItemsByCategoryId(req, res) {
@@ -288,7 +288,7 @@ async function getMenuItemsByCategoryId(req, res) {
  * @operationId getMenuCategoriesByMenuId
  * @pathParam {string} menu_id - The ID of the menu
  * @response 200 - Successful operation, returns a list of menu categories
- * @responseContent {MenuCategory[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the menu categories
  */
 async function getMenuCategoriesByMenuId(req, res) {
@@ -308,7 +308,7 @@ async function getMenuCategoriesByMenuId(req, res) {
  * @operationId getMenuCategoriesByBusinessId
  * @pathParam {string} business_id - The ID of the business
  * @response 200 - Successful operation, returns a list of menu categories
- * @responseContent {MenuCategory[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the menu categories
  */
 async function getMenuCategoriesByBusinessId(req, res) {
@@ -328,7 +328,7 @@ async function getMenuCategoriesByBusinessId(req, res) {
  * @operationId getMenuItemsByBusinessId
  * @pathParam {string} business_id - The ID of the business
  * @response 200 - Successful operation, returns a list of menu items
- * @responseContent {MenuItem[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error occurred while obtaining the menu items
  */
 async function getMenuItemsByBusinessId(req, res) {
@@ -371,10 +371,10 @@ async function deleteMenuCategory(req, res) {
  * @operationId updateMenuCategory
  * @pathParam {string} menu_category_id - The ID of the menu category to update
  * @bodyDescription The menu category details to update
- * @bodyContent {MenuCategoryUpdateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu category updated successfully
- * @responseContent {MenuCategory} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating menu category
  */
 async function updateMenuCategory(req, res) {
@@ -410,10 +410,10 @@ async function updateMenuCategory(req, res) {
  * @operationId updateMenuOrder
  * @pathParam {string} menu_id - The ID of the menu to update
  * @bodyDescription The request body must include the new order of menu category IDs. This order is used to update the sequence of categories in the specified menu.
- * @bodyContent {MenuCategoryUpdateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu category updated successfully
- * @responseContent {Menu} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating menu order
  */
 async function updateMenuOrder(req, res) {
@@ -435,10 +435,10 @@ async function updateMenuOrder(req, res) {
  * @operationId updateMenuItemsOrder
  * @pathParam {string} menu_category_id - The ID of the menu category to update
  * @bodyDescription The request body must include the new order of menu category IDs. This order is used to update the sequence of menu items in the specified menu category.
- * @bodyContent {MenuCategoryUpdateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu items order updated successfully
- * @responseContent {Menu} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating menu order
  */
 async function updateMenuItemsOrder(req, res) {
@@ -458,10 +458,10 @@ async function updateMenuItemsOrder(req, res) {
  * @description Creates a new menu item for a menu category.
  * @operationId createMenuItem
  * @bodyDescription The menu item details to create
- * @bodyContent {MenuItemCreateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Menu item created successfully
- * @responseContent {MenuItem} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating new menu item
  */
 async function createMenuItem(req, res) {
@@ -498,10 +498,10 @@ async function createMenuItem(req, res) {
  * @description Creates a new daily meals menu for a business
  * @operationId createDailyMealsMenu
  * @bodyDescription The menu details to create
- * @bodyContent {createDailyMealsMenuRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 201 - Menu created successfully
- * @responseContent {MenuItem} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Error creating new menu
  */
 async function createDailyMealsMenu(req, res) {
@@ -533,11 +533,11 @@ async function createDailyMealsMenu(req, res) {
  * @description Fetches the most recent daily meals menu for a business, including the menu's name and URL.
  * @operationId getLastDailyMealsMenu
  * @response 200 - Last daily meals menu retrieved successfully
- * @responseContent {LastDailyMealsMenuResponse} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - No daily meals menu found
- * @responseContent {Error} 404.application/json
+ * @responseContent {object} 404.application/json
  * @response 500 - Error retrieving the last daily meals menu
- * @responseContent {Error} 500.application/json
+ * @responseContent {object} 500.application/json
  */
 async function getLastUploadedDailyMealsMenu(req, res) {
 	const { business_id } = req.params;
@@ -592,10 +592,10 @@ async function deleteMenuItem(req, res) {
  * @operationId updateMenuItem
  * @pathParam {string} menu_item_id - The ID of the menu item to update
  * @bodyDescription The menu item details to update
- * @bodyContent {MenuItemUpdateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu item updated successfully
- * @responseContent {MenuItem} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating menu item
  */
 async function updateMenuItem(req, res) {
@@ -630,10 +630,10 @@ async function updateMenuItem(req, res) {
  * @operationId updateMenuItem
  * @pathParam {string} menu_item_id - The ID of the menu item to update
  * @bodyDescription The new menu item enabled field value
- * @bodyContent {MenuItemUpdateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu item updated successfully
- * @responseContent {MenuItem} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating menu item
  */
 async function updateMenuItemEnabled(req, res) {
@@ -655,10 +655,10 @@ async function updateMenuItemEnabled(req, res) {
  * @operationId updateMenuItemPrice
  * @pathParam {string} menu_item_id - The ID of the menu item to update
  * @bodyDescription The new price to set
- * @bodyContent {PriceUpdateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu item price updated successfully
- * @responseContent {MenuItem} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating menu item price
  */
 async function updateMenuItemPrice(req, res) {
@@ -681,10 +681,10 @@ async function updateMenuItemPrice(req, res) {
  * @operationId addMenuItemToCategory
  * @pathParam {string} menu_item_id - The ID of the menu item to update
  * @bodyDescription The new category ID to set
- * @bodyContent {CategoryUpdateRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu item category updated successfully
- * @responseContent {MenuItem} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error updating menu item category
  */
 async function addMenuItemMenuCategory(req, res) {
@@ -706,7 +706,7 @@ async function addMenuItemMenuCategory(req, res) {
  * @operationId removeMenuItemFromCategory
  * @pathParam {string} menu_item_id - The ID of the menu item to update
  * @response 200 - Menu item removed from category successfully
- * @responseContent {MenuItem} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error removing menu item from category
  */
 async function removeMenuItemFromCategory(req, res) {
@@ -727,10 +727,10 @@ async function removeMenuItemFromCategory(req, res) {
  * @description Adds a menu category to a menu.
  * @operationId addMenuCategory
  * @bodyDescription The menu ID and category ID to add
- * @bodyContent {AddMenuCategoryRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu category added successfully
- * @responseContent {MenuCategory} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error adding menu category
  */
 async function addMenuCategory(req, res) {
@@ -751,10 +751,10 @@ async function addMenuCategory(req, res) {
  * @description Removes a menu category from a menu.
  * @operationId removeMenuCategory
  * @bodyDescription The category ID to remove
- * @bodyContent {RemoveMenuCategoryRequest} application/json
+ * @bodyContent {object} application/json
  * @bodyRequired
  * @response 200 - Menu category removed successfully
- * @responseContent {MenuCategory} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 400 - Error removing menu category
  */
 async function removeMenuCategory(req, res) {

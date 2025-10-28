@@ -12,7 +12,7 @@ import { CreateLocationInput, UpdateLocationInput } from '../../types/reservatio
  * @description Retrieves all reservation locations for a specific business.
  * @operationId getReservationLocations
  * @response 200 - Reservation locations retrieved successfully
- * @responseContent {Location[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving locations
  */
 export async function getLocations(req: ValidatedRequest, res: Response): Promise<void> {
@@ -37,7 +37,7 @@ export async function getLocations(req: ValidatedRequest, res: Response): Promis
  * @operationId createReservationLocation
  * @requestBody {CreateLocationInput} requestBody - The location data to create.
  * @response 201 - Location created successfully
- * @responseContent {Location} 201.application/json
+ * @responseContent {object} 201.application/json
  * @response 400 - Invalid input data
  * @response 500 - Error creating location
  */
@@ -74,7 +74,7 @@ export async function createLocation(req: ValidatedRequest<CreateLocationInput>,
  * @pathParam {string} location_id - The ID of the location to update.
  * @requestBody {UpdateLocationInput} requestBody - The data to update the location with.
  * @response 200 - Location updated successfully
- * @responseContent {Location} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Location not found
  * @response 500 - Error updating location
  */
@@ -142,7 +142,7 @@ export async function deleteLocation(
  * @operationId getReservationLocationById
  * @pathParam {string} location_id - The ID of the location to retrieve.
  * @response 200 - Location retrieved successfully
- * @responseContent {Location} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 404 - Location not found
  * @response 500 - Error retrieving location
  */
@@ -171,7 +171,7 @@ export async function getLocationById(
  * @description Retrieves all reservation locations with their schedules.
  * @operationId getLocationsWithSchedules
  * @response 200 - Reservation locations with schedules retrieved successfully
- * @responseContent {Location[]} 200.application/json
+ * @responseContent {object} 200.application/json
  * @response 500 - Error retrieving locations with schedules
  */
 export async function getLocationsWithSchedules(req: ValidatedRequest, res: Response): Promise<void> {
